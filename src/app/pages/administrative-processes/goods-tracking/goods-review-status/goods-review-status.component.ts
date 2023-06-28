@@ -6,6 +6,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
@@ -69,9 +70,68 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.params
+    this.data
+      .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getMotives());
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              goodNumber: () => (searchFilter = SearchFilter.EQ),
+              motive1: () => (searchFilter = SearchFilter.ILIKE),
+              motive2: () => (searchFilter = SearchFilter.ILIKE),
+              motive3: () => (searchFilter = SearchFilter.ILIKE),
+              motive4: () => (searchFilter = SearchFilter.ILIKE),
+              motive5: () => (searchFilter = SearchFilter.ILIKE),
+              motive6: () => (searchFilter = SearchFilter.ILIKE),
+              motive7: () => (searchFilter = SearchFilter.ILIKE),
+              motive8: () => (searchFilter = SearchFilter.ILIKE),
+              motive9: () => (searchFilter = SearchFilter.ILIKE),
+              motive10: () => (searchFilter = SearchFilter.ILIKE),
+              motive11: () => (searchFilter = SearchFilter.ILIKE),
+              motive12: () => (searchFilter = SearchFilter.ILIKE),
+              motive13: () => (searchFilter = SearchFilter.ILIKE),
+              motive14: () => (searchFilter = SearchFilter.ILIKE),
+              motive15: () => (searchFilter = SearchFilter.ILIKE),
+              motive16: () => (searchFilter = SearchFilter.ILIKE),
+              motive17: () => (searchFilter = SearchFilter.ILIKE),
+              motive18: () => (searchFilter = SearchFilter.ILIKE),
+              motive19: () => (searchFilter = SearchFilter.ILIKE),
+              motive20: () => (searchFilter = SearchFilter.ILIKE),
+              descriptionGood: () => (searchFilter = SearchFilter.ILIKE),
+            };
+            // console.log("search.goodId()1", search.goodId())
+            // if (search.goodId()) {
+            //   console.log("search.goodId()", search.goodId())
+            //   search.goodNumber()
+            // }
+            // console.log("filter.field", search[filter.field])
+
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.paramsList = this.pageFilter(this.paramsList);
+          //Su respectivo metodo de busqueda de datos
+          this.getMotives();
+        }
+      });
+
+    this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getMotives();
+    });
+
     this.prepareForm();
     this.getDataPupInicializaForma();
   }
@@ -86,6 +146,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     this.loading = true;
     let params = {
       ...this.paramsList.getValue(),
+      ...this.columnFilters,
     };
 
     if (this.selectedGender == 'movables') {
@@ -100,12 +161,13 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
           const detailsDelegation: any = await this.getDelegation(
             item.delegation
           );
-          item['goodId'] = item.goodNumber ? item.goodNumber.id : null;
-          item['detailsDelegation'] = detailsDelegation
-            ? detailsDelegation.description
-            : null;
           item['descriptionGood'] = item.goodNumber
             ? item.goodNumber.description
+            : null;
+          item['goodDetails'] = item.goodNumber;
+          item['goodNumber'] = item.goodNumber ? item.goodNumber.id : null;
+          item['detailsDelegation'] = detailsDelegation
+            ? detailsDelegation.description
             : null;
         });
 
@@ -351,6 +413,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             }
           }
         }
+
+        await this.getMotives();
       }
     });
   }
