@@ -15,7 +15,7 @@
           </button>
           <button
             type="button"
-            class="btn btn-success btn-sm active mr-5"
+            class="btn btn-success btn-sm active mr-3"
             (click)="file.click()">
             Cargar Excel/CSV
             <i aria-hidden="true" class="fa fa-upload"></i>
@@ -27,9 +27,11 @@
             class="d-none"
             accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
             (change)="onFileChange($event)" />
-            <button class="btn btn-danger btn-sm active" (click)="clearAll()">
-              Limpiar <i class="fa fa-eraser" aria-hidden="true"></i>
-            </button>
+          <button class="btn btn-danger btn-sm active" (click)="clearAll()">
+            <span class="ml-2"></span>
+            Limpiar <i class="fa fa-eraser" aria-hidden="true"></i>
+            <span class="mr-2"></span>
+          </button>
         </div>
       </div>
       <div class="row">
@@ -84,7 +86,7 @@
             ><i class="fa fa-square"></i>No disponibles</span
           >
         </p>
-        <div class="row pt-4"> 
+        <div class="row pt-4">
           <div class="col-md-12">
             <div [class]="loading ? 'table-loading' : ''">
               <ng2-smart-table
@@ -93,9 +95,9 @@
                 [source]="data">
               </ng2-smart-table>
               <app-pagination
-                  [params]="params"
-                  [totalItems]="goods.length"
-                  [limit]="newLimit"></app-pagination>
+                [params]="params"
+                [totalItems]="goods.length"
+                [limit]="newLimit"></app-pagination>
             </div>
           </div>
         </div>
@@ -153,8 +155,9 @@
           <div
             class="row pt-3 pb-3"
             style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
-            <span>Número de registros actualizados
-              <strong style="color: #1e7e34">{{idsUpdated.length}}</strong>
+            <span
+              >Número de registros actualizados
+              <strong style="color: #1e7e34">{{ idsUpdated.length }}</strong>
             </span>
           </div>
           <div

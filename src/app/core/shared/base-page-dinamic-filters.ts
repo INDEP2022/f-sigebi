@@ -70,6 +70,10 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
             //   searchFilter = SearchFilter.ILIKE;
             // }
             field = `filter.${filter.field}`;
+            // let search = filter.search;
+            // if (isNaN(+search)) {
+            //   search = search + ''.toUpperCase();
+            // }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {

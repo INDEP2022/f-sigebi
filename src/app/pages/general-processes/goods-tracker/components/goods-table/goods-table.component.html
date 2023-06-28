@@ -12,8 +12,10 @@
           [btnSmall]="true"
           (confirm)="include()"></confirm-button>
       </div>
-      <app-columns-select [(settings)]="settings"></app-columns-select>
-      <div class="btn-group" dropdown>
+      <app-columns-select
+        class="mx-1"
+        [(settings)]="settings"></app-columns-select>
+      <div class="btn-group mx-1" dropdown>
         <button
           id="button-basic"
           dropdownToggle
@@ -79,18 +81,17 @@
         </button>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div [ngClass]="{ 'table-loading': loading }">
-          <ng2-smart-table
-            [settings]="settings"
-            [source]="goods"></ng2-smart-table>
-        </div>
-
-        <app-pagination
-          [totalItems]="totalItems"
-          [params]="params"></app-pagination>
+    <div class="row" [ngClass]="{ 'table-loading': loading }">
+      <div class="col-md-12 table-responsive">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="goods"></ng2-smart-table>
       </div>
+    </div>
+    <div class="row">
+      <app-pagination
+        [totalItems]="totalItems"
+        [params]="params"></app-pagination>
     </div>
   </div>
 </app-card>

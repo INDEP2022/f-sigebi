@@ -59,14 +59,18 @@
       [control]="form.get('flyerType')"
       label="Tipo de Volante"
       class="col-md-2">
-      <!-- <input type="text" formControlName="flyerType" class="form-control" /> -->
-      <select
+      <input
+        type="text"
+        formControlName="flyerType"
+        class="form-control"
+        oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3)" />
+      <!-- <select
         formControlName="flyerType"
         class="form-control"
         (change)="flyerTypeChange()">
         <option value="T">T</option>
         <option value="P">P</option>
-      </select>
+      </select> -->
     </form-field>
     <form-field
       [control]="form.get('officeDate')"
@@ -162,9 +166,9 @@
 
   <div class="row">
     <div class="col-md-12">
-      <button class="btn btn-primary active" [disabled]="subloading">
-        {{ subloading ? 'Espere un momento...' : 'Buscar'
-        }}<i class="fa fa-search ml-2"></i>
+      <button class="btn btn-primary active btn-sm">
+        Buscar
+        <i class="bx bx-search-alt bx-sm float-icon"></i>
       </button>
     </div>
   </div>
