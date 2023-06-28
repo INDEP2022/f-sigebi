@@ -38,7 +38,6 @@ export class DelegationFormComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
-
     this.delegationForm = this.fb.group({
       id: [null],
       description: [null, [Validators.required, Validators.maxLength(80)]],
@@ -84,7 +83,7 @@ export class DelegationFormComponent extends BasePage implements OnInit {
 
     this.delegationForm.get('etapaEdo').disable();
     this.delegationForm.patchValue(this.delegation);
-    this.getStates(new ListParams, this.delegation.stateKey);
+    this.getStates(new ListParams(), this.delegation.stateKey);
     console.log(this.delegation);
   }
 

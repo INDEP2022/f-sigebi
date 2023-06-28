@@ -388,4 +388,8 @@ export class GoodService extends HttpService {
   }) {
     return this.get('good/get-facta-dbo-ficio-gestrel', body);
   }
+
+  updateGoodsRev(params?: any): Observable<IListResponse<any>> {
+    return this.put(GoodEndpoints.GoodsMotivesrev2, params);
+  }
 }

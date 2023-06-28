@@ -1478,6 +1478,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   toggleActa() {
+    this.loading = true
     if (this.labelActa == 'Abrir acta') {
       this.fnOpenProceeding();
     } else if (this.labelActa == 'Cerrar acta') {
@@ -1969,6 +1970,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
           .subscribe(
             res => {
               VAL_MOVIMIENTO = res.data[0]['valmovement'];
+              this.loading = false
             },
             err => {
               const fec_elab = this.form.get('fecElab').value;
@@ -1976,6 +1978,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                 if (
                   format(fec_elab, 'MM-yyyy') != format(new Date(), 'MM-yyyy')
                 ) {
+                  this.loading = false
                   //!TIEMPO MÁXIMO
                 } else if (this.form.get('folioEscaneo').value == null) {
                   this.alert(
@@ -1983,6 +1986,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                     'Debe introducir el valor del folio',
                     ''
                   );
+                  this.loading = false
                 } else
                   this.serviceDocuments
                     .getByFolio(this.form.get('folioEscaneo').value)
@@ -1998,6 +2002,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                               'No hay bienes registrados',
                               'Necesita registrar bienes en el acta para crearla'
                             );
+                            this.loading = false
                           } else {
                             const modelEdit: IProccedingsDeliveryReception = {
                               statusProceedings: 'ABIERTA',
@@ -2034,6 +2039,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                       this.form.get('acta2').value
                                     } fue abierta con`
                                   );
+                                   this.loading = false
                                 },
                                 err => {
                                   console.log(err);
@@ -2042,6 +2048,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                     'No se pudo abrir el acta',
                                     'Ocurrió un error que no permite abrir el acta'
                                   );
+                                  this.loading = false
                                 }
                               );
                           }
@@ -2051,6 +2058,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                             'No se ha realizado el escaneo',
                             ''
                           );
+                          this.loading = false
                         }
                       },
                       err => {
@@ -2060,6 +2068,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                             'No hay bienes registrados',
                             'Necesita registrar bienes en el acta para crearla'
                           );
+                          this.loading = false
                         } else {
                           const paramsF = new FilterParams();
                           let VAL_MOVIMIENTO = 0;
@@ -2475,11 +2484,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                                   this.form.get('acta2').value
                                 } fue abierta`
                               );
+                              this.loading = false
                               /* const btn = document.getElementById('expedient-number');
                         this.render.removeClass(btn, 'disabled');
                         this.render.addClass(btn, 'enabled'); */
                             },
                             err => {
+                              this.loading = false
                               console.log(err);
                               /* const btn = document.getElementById('expedient-number');
                         this.render.removeClass(btn, 'disabled');
@@ -2494,6 +2505,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                       }
                     },
                     err => {
+                      this.loading = false
                       console.log(err);
                       VAL_MOVIMIENTO = 0;
                       this.alert(
@@ -2514,6 +2526,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                   'No se pudo abrir el acta',
                   err.error.message
                 );
+                this.loading = false
               }
             );
         }
@@ -2530,11 +2543,14 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         'No se registraron bienes',
         'El Acta no contiene Bienes, no se podrá Cerrar.'
       );
+      this.loading = false
     } else if (
       ['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)
     ) {
+      this.loading = false
       this.alert('warning', 'El acta ya se encuentra cerrada', '');
     } else if (this.form.get('folioEscaneo').value == null) {
+      this.loading = false
       this.alert('warning', 'No se registro un número de folio', '');
     } else {
       const paramsF = new FilterParams();
@@ -2566,13 +2582,16 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                     'Está fuera de tiempo para cerrar el acta',
                     ''
                   );
+                  this.loading = false
                 } else if (this.form.get('folioEscaneo').value === null) {
                   this.alert(
                     'warning',
                     'Debe introducir el valor del folio',
                     ''
                   );
-                  this.validateFolio();
+                  this.loading = false
+
+                  /* this.validateFolio();
                   if (this.scanStatus) {
                     const splitActa = this.form.get('acta2').value.split('/');
                     const tipo_acta = ['C'].includes(splitActa[0])
@@ -2608,7 +2627,9 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
                         );
                       }
                     );
-                  }
+                  } */
+                }else{
+                  this.closeProceedingFn(this.idProceeding)
                 }
               } else {
                 this.closeProceedingFn(this.idProceeding);
@@ -2654,6 +2675,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             this.getGoodsActFn();
             this.getGoodsFn();
             this.alert('success', 'Acta cerrada', 'El acta fue cerrada');
+            this.loading = false
           },
           err => {
             this.loading = false;

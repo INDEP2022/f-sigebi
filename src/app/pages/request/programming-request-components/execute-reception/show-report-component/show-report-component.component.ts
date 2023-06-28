@@ -189,14 +189,18 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   signDocument() {
     //mostrar listado de reportes
-
-    if (!this.listSigns && this.printReport && !this.isAttachDoc) {
-      this.printReport = false;
-      this.listSigns = true;
-      this.title = 'Firma electrónica';
-    } else if (!this.listSigns && this.printReport && this.isAttachDoc) {
-      //adjuntar el reporte
-      this.openMessage2();
+    if (this.idTypeDoc == 185) {
+      this.modalRef.content.callback(true);
+      this.modalRef.hide();
+    } else {
+      if (!this.listSigns && this.printReport && !this.isAttachDoc) {
+        this.printReport = false;
+        this.listSigns = true;
+        this.title = 'Firma electrónica';
+      } else if (!this.listSigns && this.printReport && this.isAttachDoc) {
+        //adjuntar el reporte
+        this.openMessage2();
+      }
     }
   }
 
