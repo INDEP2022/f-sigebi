@@ -12,7 +12,7 @@ export const RECEIPT_WITNESS_COLUMNS = {
   },
 
   electronicSignatureName: {
-    title: 'Firma Electronica',
+    title: 'Firma Electrónica',
     type: 'string',
     sort: false,
   },
