@@ -32,4 +32,31 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
   create(model: INumerary): Observable<INumerary> {
     return this.post(NumeraryEndpoints.RateInt, model);
   }
+
+  createChangeNumerary(model: any): Observable<any> {
+    return this.post(NumeraryEndpoints.RequestChangeNumerary, model);
+  }
+
+  createSolCamNum(model: any): Observable<any> {
+    return this.post(NumeraryEndpoints.RequestSolCamNum, model);
+  }
+
+  getSolCamNum(params?: ListParams): Observable<any> {
+    return this.get(NumeraryEndpoints.RequestSolCamNum, params);
+  }
+
+  DeleteOneCamNum(id: number | string) {
+    const route = `${NumeraryEndpoints.RequestSolCamNum}/${id}`;
+    return this.delete<IListResponse<any>>(route);
+  }
+
+  DeleteAllCamNum(id: number | string) {
+    const route = `${NumeraryEndpoints.RequestDSolCamNum}/${id}`;
+    return this.delete<IListResponse<any>>(route);
+  }
+
+  getSolById(id: number | string) {
+    const route = `${NumeraryEndpoints.RequestChangeNumerary}/${id}`;
+    return this.get<IListResponse<any>>(route);
+  }
 }
