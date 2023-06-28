@@ -8,41 +8,35 @@
       class="form-material"
       class="form-material">
       <div class="row pt-5">
-        <div class="col-md-2">
-          <form-field [control]="delegationForm.get('id')" label="Id">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="id"
-              min="0" />
+        <!-- <div class="col-md-4">
+          <form-field [control]="delegationForm.get('id')" label="Código">
+            <input type="number" class="form-control" formControlName="id" min="0" />
           </form-field>
-        </div>
+        </div> -->
 
-        <div class="col-md-4 offset-md-2">
-          <form-field [control]="delegationForm.get('cveState')">
+        <div class="col-md-6">
+          <form-field [control]="delegationForm.get('stateKey')">
             <ngx-select
               [form]="delegationForm"
-              control="cveState"
-              value="descCondition"
+              control="stateKey"
+              value="id"
               bindLabel="descCondition"
               [data]="states"
               (fetchItems)="getStates($event)"
-              (change)="stateChange($event)"
-              label="CVE Estado">
+              label="Clave Estado">
             </ngx-select>
           </form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field [control]="delegationForm.get('idZoneGeographic')">
             <ngx-select
               [form]="delegationForm"
               control="idZoneGeographic"
-              value="idZoneGeographic"
-              bindLabel="idZoneGeographic"
+              value="id"
+              bindLabel="description"
               [data]="zones"
               (fetchItems)="getZones($event)"
-              (change)="zoneChange($event)"
               label="Zona Geogr&aacute;fica">
             </ngx-select>
           </form-field>

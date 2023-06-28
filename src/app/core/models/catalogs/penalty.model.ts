@@ -1,6 +1,6 @@
 export interface IPenalty {
   id: number;
-  serviceType: string;
+  serviceType?: string;
   penaltyPercentage: number;
   equivalentDays: number;
   userCreation?: string;

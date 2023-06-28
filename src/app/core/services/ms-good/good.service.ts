@@ -232,7 +232,6 @@ export class GoodService extends HttpService {
     // if (params) {
     //   params['expedient'] = expedient;
     // }
-
     const route = `${GoodEndpoints.SearchByExpedient}?expedient=${expedient}`;
     return this.get<IListResponse<IGood>>(route, params);
   }
@@ -388,5 +387,9 @@ export class GoodService extends HttpService {
     no_bien: string | number;
   }) {
     return this.get('good/get-facta-dbo-ficio-gestrel', body);
+  }
+
+  updateGoodsRev(params?: any): Observable<IListResponse<any>> {
+    return this.put(GoodEndpoints.GoodsMotivesrev2, params);
   }
 }

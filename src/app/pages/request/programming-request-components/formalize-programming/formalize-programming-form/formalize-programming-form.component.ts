@@ -27,7 +27,7 @@ import { ReceptionGoodService } from 'src/app/core/services/reception/reception-
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ESTATE_COLUMNS_VIEW } from '../../acept-programming/columns/estate-columns';
 import {
-  RECEIPT_COLUMNS,
+  RECEIPT_COLUMNS_FORMALIZE,
   RECEIPT_GUARD_COLUMNS,
 } from '../../execute-reception/execute-reception-form/columns/minute-columns';
 import { TRANSPORTABLE_GOODS_FORMALIZE } from '../../execute-reception/execute-reception-form/columns/transportable-goods-columns';
@@ -114,7 +114,7 @@ export class FormalizeProgrammingFormComponent
   settingsReceipt = {
     ...this.settings,
     actions: false,
-    columns: RECEIPT_COLUMNS,
+    columns: RECEIPT_COLUMNS_FORMALIZE,
   };
 
   settingsReprog = {

@@ -1,13 +1,15 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="catserviceForm" class="form-material">
       <div class="row">
         <div class="col-md-6">
-          <form-field [control]="catserviceForm.get('code')" label="Codigo">
-            <input type="number" class="form-control" formControlName="code" />
+          <form-field
+            [control]="catserviceForm.get('code')"
+            label="C&oacute;digo">
+            <input type="string" class="form-control" formControlName="code" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -64,8 +66,7 @@
               <ng-option value="Y">Si</ng-option>
               <ng-option value="N">No</ng-option>
             </ng-select>
-               </form-field
-          >
+          </form-field>
         </div>
       </div>
     </form>

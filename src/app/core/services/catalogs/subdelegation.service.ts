@@ -26,7 +26,7 @@ export class SubdelegationService implements ICrudMethods<ISubdelegation> {
   }
 
   update(id: string | number, model: ISubdelegation): Observable<Object> {
-    return this.subdelegationRepository.update(this.route, id, model);
+    return this.subdelegationRepository.newUpdate(this.route, model);
   }
 
   remove(model: any): Observable<Object> {

@@ -29,11 +29,7 @@ export class TypeRelevantService implements ICrudMethods<ITypeRelevant> {
     id: string | number,
     model: ITypeRelevant
   ): Observable<Object> {
-    return this.typeRelevantRepository.updateTypeRelevant(
-      this.route,
-      id,
-      model
-    );
+    return this.typeRelevantRepository.updateTypeRelevant2(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {

@@ -5,6 +5,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import {
   IReceipt,
   IReceiptwitness,
@@ -28,6 +29,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
   idProgramming: number = 0;
   loadingWitness: boolean = false;
   keyDoc: string = '';
+  programming: Iprogramming;
   closeModal: boolean = false;
   constructor(
     private modalRef: BsModalRef,
@@ -71,10 +73,12 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     });
 
     this.params.getValue()['filter.id'] = this.proceeding.id;
+    this.params.getValue()['filter.actId'] = this.proceeding.actId;
     this.params.getValue()['filter.programmingId'] =
       this.proceeding.programmingId;
     this.receptionGoodService.getReceipt(this.params.getValue()).subscribe({
       next: response => {
+        console.log('patch', response);
         this.generateReceiptForm.patchValue(response.data[0]);
       },
       error: error => {
@@ -111,8 +115,11 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     this.loadingWitness = true;
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.idProgramming;
+    params.getValue()['filter.actId'] = this.proceeding.actId;
+    params.getValue()['filter.receiptId'] = this.proceeding.id;
     this.receptionGoodService.getReceiptsWitness(params.getValue()).subscribe({
       next: response => {
+        console.log('response', response);
         const infoReceipt = response.data.map((item: IReceiptwitness) => {
           if (item.electronicSignature == 'S')
             item.electronicSignatureName = 'SI';
@@ -402,7 +409,15 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
 
         this.receptionGoodService.deleteReceiptWitness(formData).subscribe({
           next: response => {
-            this.showReceiptWitness();
+            this.alertInfo(
+              'info',
+              'Acción Correcta',
+              'Testigo eliminado correctamente'
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.showReceiptWitness();
+              }
+            });
           },
           error: error => {
             console.log('error', error);

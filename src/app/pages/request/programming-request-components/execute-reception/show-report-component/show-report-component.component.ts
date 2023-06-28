@@ -85,7 +85,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     console.log('this.idTypeDoc', this.idTypeDoc);
-    console.log('this.receiptGuards', this.receiptGuards);
+
     this.showReportByTypeDoc();
     this.getReceipt();
     this.params
@@ -117,7 +117,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       this.src = linkDoc;
     }
 
-    if (this.idTypeDoc == 185) {
+    if (this.idTypeDoc == 185 || this.idTypeDoc == 186) {
       let linkDoc: string = `${this.urlBaseReport}Recibo_Resguardo.jasper&ID_RECIBO_RESGUARDO=${this.receiptGuards.id}`;
       this.src = linkDoc;
     }
@@ -189,14 +189,18 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   signDocument() {
     //mostrar listado de reportes
-
-    if (!this.listSigns && this.printReport && !this.isAttachDoc) {
-      this.printReport = false;
-      this.listSigns = true;
-      this.title = 'Firma electrónica';
-    } else if (!this.listSigns && this.printReport && this.isAttachDoc) {
-      //adjuntar el reporte
-      this.openMessage2();
+    if (this.idTypeDoc == 185 || this.idTypeDoc == 186) {
+      this.modalRef.content.callback(true);
+      this.modalRef.hide();
+    } else {
+      if (!this.listSigns && this.printReport && !this.isAttachDoc) {
+        this.printReport = false;
+        this.listSigns = true;
+        this.title = 'Firma electrónica';
+      } else if (!this.listSigns && this.printReport && this.isAttachDoc) {
+        //adjuntar el reporte
+        this.openMessage2();
+      }
     }
   }
 
@@ -300,9 +304,11 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
               )
               .subscribe({
                 next: response => {
+                  console.log(response);
                   this.msjCheck = true;
                 },
                 error: error => {
+                  //console.log(error);
                   //this.msjCheck = true;
                 },
               });
