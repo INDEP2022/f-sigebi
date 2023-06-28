@@ -6,7 +6,9 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <!--Options-->
-        <label for="">Proceso Gabinete Social</label>
+        <label for="" class="labelCabinetSocial"
+          >Proceso Gabinete Social <span>*</span></label
+        >
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mt-3 align-self-center">
           <div>
             <div class="row justify-content-between">
@@ -32,9 +34,7 @@
               </div>
             </div>
           </div>
-          <div
-            class="col-12 mb-3 mt-3 p-0"
-            [class]="option === null ? 'not-press' : ''">
+          <div class="col-12 mb-3 mt-3 p-0">
             <form-field
               [control]="form.get('file')"
               label="Abrir Archivo de Texto TXT">
