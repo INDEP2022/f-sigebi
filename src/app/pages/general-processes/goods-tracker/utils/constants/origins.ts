@@ -5,7 +5,7 @@ export enum GOOD_TRACKER_ORIGINS {
   MaintenanceProceedings = 'FACTREFACTAERCIER',
   DestructionManagement = 'FESTATUSRGA',
   EventosCapture = 'FINDICA_0035_1',
-  MassiveChangeStatus = "FACTADBCAMBIOESTAT"
+  MassiveChangeStatus = 'FACTADBCAMBIOESTAT',
 }
 
 export enum GOOD_TRACKER_ORIGINS_TITLES {
@@ -14,5 +14,5 @@ export enum GOOD_TRACKER_ORIGINS_TITLES {
   'FACTREFACTAERCIER' = 'Mantenimiento de Actas',
   'FESTATUSRGA' = 'Gestión de Autorización de Destrucción',
   'FINDICA_0035_1' = 'Capura de Eventos',
-  'FACTADBCAMBIOESTAT' = 'Cambio masivo de estatus bienes'
+  'FACTADBCAMBIOESTAT' = 'Cambio masivo de estatus bienes',
 }
