@@ -6,12 +6,15 @@ export const LAWYER_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  office: {
+  officeDetails: {
     title: 'Despacho',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
       return value.name;
+    },
+    filterFunction: (cell?: any, search?: string) => {
+      return search != null ? search : '';
     },
   },
   name: {

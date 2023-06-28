@@ -3,47 +3,26 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
-    <form
-      [formGroup]="delegationForm"
-      class="form-material"
-      class="form-material">
+    <form [formGroup]="delegationForm" class="form-material" class="form-material">
       <div class="row pt-5">
-        <div class="col-md-2">
-          <form-field [control]="delegationForm.get('id')" label="Id">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="id"
-              min="0" />
+        <!-- <div class="col-md-4">
+          <form-field [control]="delegationForm.get('id')" label="Código">
+            <input type="number" class="form-control" formControlName="id" min="0" />
           </form-field>
-        </div>
+        </div> -->
 
-        <div class="col-md-4 offset-md-2">
-          <form-field [control]="delegationForm.get('cveState')">
-            <ngx-select
-              [form]="delegationForm"
-              control="cveState"
-              value="descCondition"
-              bindLabel="descCondition"
-              [data]="states"
-              (fetchItems)="getStates($event)"
-              (change)="stateChange($event)"
-              label="CVE Estado">
+        <div class="col-md-6">
+          <form-field [control]="delegationForm.get('stateKey')">
+            <ngx-select [form]="delegationForm" control="stateKey" value="id" bindLabel="descCondition" [data]="states"
+              (fetchItems)="getStates($event)" label="Clave Estado">
             </ngx-select>
           </form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field [control]="delegationForm.get('idZoneGeographic')">
-            <ngx-select
-              [form]="delegationForm"
-              control="idZoneGeographic"
-              value="idZoneGeographic"
-              bindLabel="idZoneGeographic"
-              [data]="zones"
-              (fetchItems)="getZones($event)"
-              (change)="zoneChange($event)"
-              label="Zona Geogr&aacute;fica">
+            <ngx-select [form]="delegationForm" control="idZoneGeographic" value="id" bindLabel="description"
+              [data]="zones" (fetchItems)="getZones($event)" label="Zona Geogr&aacute;fica">
             </ngx-select>
           </form-field>
         </div>
@@ -51,23 +30,13 @@
 
       <div class="row pt-5">
         <div class="col-md-6">
-          <form-field
-            [control]="delegationForm.get('addressOffice')"
-            label="Direcci&oacute;n de Oficina">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="addressOffice" />
+          <form-field [control]="delegationForm.get('addressOffice')" label="Direcci&oacute;n de Oficina">
+            <input type="text" class="form-control" formControlName="addressOffice" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field
-            [control]="delegationForm.get('regionalDelegate')"
-            label="Delegado regional">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="regionalDelegate" />
+          <form-field [control]="delegationForm.get('regionalDelegate')" label="Delegado regional">
+            <input type="text" class="form-control" formControlName="regionalDelegate" />
           </form-field>
         </div>
       </div>
@@ -80,102 +49,56 @@
         </div>
 
         <div class="col-md-2">
-          <form-field
-            [control]="delegationForm.get('etapaEdo')"
-            label="Etapa Estado">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="etapaEdo"
-              min="0" />
+          <form-field [control]="delegationForm.get('etapaEdo')" label="Etapa Estado">
+            <input type="number" class="form-control" formControlName="etapaEdo" min="0" />
           </form-field>
         </div>
 
         <div class="col-md-2">
           <form-field [control]="delegationForm.get('status')" label="Estatus">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="status"
-              min="0" />
+            <input type="number" class="form-control" formControlName="status" min="0" />
           </form-field>
         </div>
 
         <div class="col-md-2">
           <form-field [control]="delegationForm.get('iva')" label="IVA">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="iva"
-              min="0" />
+            <input type="number" class="form-control" formControlName="iva" min="0" />
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-12">
-          <form-field
-            [control]="delegationForm.get('description')"
-            label="Descripci&oacute;n">
-            <textarea
-              class="form-control"
-              type="text"
-              row
-              pt-5s="2"
-              formControlName="description"></textarea>
+          <form-field [control]="delegationForm.get('description')" label="Descripci&oacute;n">
+            <textarea class="form-control" type="text" row pt-5s="2" formControlName="description"></textarea>
           </form-field>
         </div>
       </div>
 
       <div class="row pt-5">
         <div class="col-md-3">
-          <form-field
-            [control]="delegationForm.get('zoneVigilanceKey')"
-            label="CVE Zona">
-            <input
-              type="number"
-              class="form-control"
-              class="form-control"
-              formControlName="zoneVigilanceKey"
-              min="0" />
+          <form-field [control]="delegationForm.get('zoneVigilanceKey')" label="CVE Zona">
+            <input type="number" class="form-control" class="form-control" formControlName="zoneVigilanceKey" min="0" />
           </form-field>
         </div>
 
         <!-- Diferencia de hras -->
         <div class="col-md-3">
-          <form-field
-            [control]="delegationForm.get('diffHours')"
-            label="Diferencia de horas">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="diffHours"
-              min="0" />
+          <form-field [control]="delegationForm.get('diffHours')" label="Diferencia de horas">
+            <input type="number" class="form-control" formControlName="diffHours" min="0" />
           </form-field>
         </div>
 
         <!-- Cona de contrato CVE -->
         <div class="col-md-3">
-          <form-field
-            [control]="delegationForm.get('zoneContractKey')"
-            label="CVE zona de contrato">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="zoneContractKey"
-              min="0" />
+          <form-field [control]="delegationForm.get('zoneContractKey')" label="CVE zona de contrato">
+            <input type="number" class="form-control" formControlName="zoneContractKey" min="0" />
           </form-field>
         </div>
 
         <!-- No Register -->
         <div class="col-md-3">
-          <form-field
-            [control]="delegationForm.get('noRegister')"
-            label="No. Registro">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="noRegister"
-              min="0" />
+          <form-field [control]="delegationForm.get('noRegister')" label="No. Registro">
+            <input type="number" class="form-control" formControlName="noRegister" min="0" />
           </form-field>
         </div>
       </div>
@@ -184,10 +107,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="delegationForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [disabled]="delegationForm.invalid" [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

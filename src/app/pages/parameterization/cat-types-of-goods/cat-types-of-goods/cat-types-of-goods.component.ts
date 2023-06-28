@@ -73,6 +73,7 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
   idTypeGood: string;
   idSsTypeGood: string;
   idSssTypeGood: string;
+  numGood: string;
   constructor(
     private goodTypesService: GoodTypeService,
     private goodSubTypesService: GoodSubtypeService,
@@ -419,12 +420,15 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
     const idTypeGood = this.idTypeGood;
     const idSsTypeGood = this.idSsTypeGood;
     const idSssTypeGood = this.idSssTypeGood;
+    //const numGood = 'hola';
+    //console.log(event.data.numClasifGoods);
     let config: ModalOptions = {
       initialState: {
         data,
         idTypeGood,
         idSsTypeGood,
         idSssTypeGood,
+        //numGood,
         callback: (next: boolean) => {
           if (next) {
             this.params
@@ -438,6 +442,11 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
     };
     this.modalService.show(CatTypesOfGoodsSubSubSubTypeComponent, config);
   }
+
+  selectedTypeGoods(data: any) {
+    console.log(data);
+  }
+
   onDeleteConfirm(event: any) {
     // console.log(event);
     // this.deleteTypeGood(event['data']);

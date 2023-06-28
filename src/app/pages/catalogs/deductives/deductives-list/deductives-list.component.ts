@@ -77,6 +77,7 @@ export class DeductivesListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    console.log('params:', params);
     this.deductiveService.getAll(params).subscribe({
       next: response => {
         this.deductives = response.data;

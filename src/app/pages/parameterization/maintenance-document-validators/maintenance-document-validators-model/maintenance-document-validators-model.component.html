@@ -5,33 +5,37 @@
   <div body>
     <form class="form-material" [formGroup]="validatorsProceedingsForm">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field
             [control]="validatorsProceedingsForm.get('proceedingsType')"
-            label="Tipo&#58;">
-            <select class="form-control" formControlName="proceedingsType">
-              <option [value]="0">Seleccione un tipo acta</option>
-              <option *ngFor="let item of typeItem" [value]="item.value">
-                {{ item.label }}
-              </option>
-            </select>
+            label="Tipo de Acta">
+            <input
+              class="form-control"
+              formControlName="proceedingsType"
+              type="text"
+              oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field
             [control]="validatorsProceedingsForm.get('secVal')"
             label="Secuencia">
             <input
               class="form-control"
               formControlName="secVal"
-              type="number" />
+              type="number"
+              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-12">
           <form-field
             [control]="validatorsProceedingsForm.get('descVal')"
-            label="Validacion">
-            <input class="form-control" formControlName="descVal" type="text" />
+            label="Descripción">
+            <input
+              class="form-control"
+              formControlName="descVal"
+              type="text"
+              oninput="if(this.value.length > 200) this.value = this.value.slice(0, 200);" />
           </form-field>
         </div>
       </div>
@@ -41,9 +45,10 @@
             [control]="validatorsProceedingsForm.get('scriptVal')"
             label="Script">
             <textarea
-              class="form-control"
+              class="form-control pt-2"
               formControlName="scriptVal"
-              rows="10"></textarea>
+              rows="10"
+              oninput="if(this.value.length > 4000) this.value = this.value.slice(0, 4000);"></textarea>
           </form-field>
         </div>
       </div>

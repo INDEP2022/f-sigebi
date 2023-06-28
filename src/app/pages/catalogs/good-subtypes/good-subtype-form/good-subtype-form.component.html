@@ -21,13 +21,12 @@
               [data]="types"
               value="id"
               bindLabel="nameGoodType"
-              label="Tipo Bien"
               (fetchItems)="getTypes($event)"></ngx-select>
           </form-field>
         </div>
       </div>
 
-      <div class="row pt-5">
+      <div class="row pt-3">
         <div class="col-md-6">
           <form-field
             [control]="goodSubtypeForm.get('nameSubtypeGood')"
@@ -41,7 +40,7 @@
         <div class="col-md-6">
           <form-field
             [control]="goodSubtypeForm.get('noPhotography')"
-            label="Nº Fotograf&iacute;a">
+            label="No. Fotograf&iacute;a">
             <input
               type="text"
               class="form-control"
@@ -59,13 +58,13 @@
           </form-field>
         </div> -->
       </div>
-      <div class="row pt-5">
+      <div class="row pt-3">
         <div class="col-md-12">
           <form-field
             [control]="goodSubtypeForm.get('descriptionPhotography')"
             label="Descripci&oacute;n Fotogr&aacute;fica">
             <textarea
-              rows="1"
+              rows="2"
               class="form-control"
               formControlName="descriptionPhotography"></textarea>
           </form-field>

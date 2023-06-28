@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IAuthority2 } from 'src/app/core/models/catalogs/authority.model';
 import { IStation2 } from 'src/app/core/models/catalogs/station.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-cat-authority-modal',
@@ -18,7 +19,7 @@ export class CatAuthorityModalComponent extends BasePage implements OnInit {
 
   idAuth: IStation2;
 
-  title: string = 'AUTORIDADES';
+  title: string = 'AUTORIDAD';
   edit: boolean = false;
 
   constructor(
@@ -38,9 +39,27 @@ export class CatAuthorityModalComponent extends BasePage implements OnInit {
       idAuthority: [null, []],
       idTransferer: [null, []],
       idStation: [null, []],
-      cveUnique: [null, []],
-      idCity: [null, []],
-      authorityName: [null, []],
+      cveUnique: [null, [Validators.pattern(NUM_POSITIVE)]],
+      idCity: [
+        null,
+        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+      ],
+      authorityName: [
+        null,
+        [Validators.maxLength(150), Validators.pattern(STRING_PATTERN)],
+      ],
+      status: [
+        null,
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+      ],
+      codeStatus: [
+        null,
+        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+      ],
+      cveStatus: [
+        null,
+        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.authority != null) {
       this.edit = true;
@@ -72,15 +91,20 @@ export class CatAuthorityModalComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.authorityService.update2(this.authorityForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    const idAuthority = this.authorityForm.controls['idAuthority'].value;
+    //console.log(this.authorityForm.value, Number(idAuthority));
+    this.authorityService
+      .update3(Number(idAuthority), this.authorityForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

@@ -17,6 +17,11 @@ export class RegulatoryService implements ICrudMethods<IRegulatory> {
     return this.regulatoryRepository.getAllPaginated(this.route, params);
   }
 
+  getAllDetail(params?: ListParams): Observable<IListResponse<IRegulatory>> {
+    const route = `${this.route}/get-all`;
+    return this.regulatoryRepository.getAllPaginated(route, params);
+  }
+
   getById(id: string | number): Observable<IRegulatory> {
     return this.regulatoryRepository.getById(this.route, id);
   }
