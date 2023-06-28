@@ -20,6 +20,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class GoodsDialogComponent extends BasePage implements OnInit {
   dictationXGoodForm: ModelForm<IDictationXGood1>;
   dictationXGood: IDictationXGood1;
+  dataCreate: { ofDictNumber: number; typeDict: number } | null = null;
 
   title: string = 'Bien';
   edit: boolean = false;
@@ -76,6 +77,10 @@ export class GoodsDialogComponent extends BasePage implements OnInit {
       proceedingsNumber: [null, Validators.required],
       typeDict: ['', Validators.required],
     });
+
+    if (this.dataCreate) {
+      this.dictationXGoodForm.patchValue(this.dataCreate);
+    }
 
     if (this.dictationXGood != null) {
       this.edit = true;
