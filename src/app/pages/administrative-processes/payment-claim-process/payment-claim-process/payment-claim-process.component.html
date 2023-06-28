@@ -15,6 +15,7 @@
         </div>
       </div>
       <app-pagination
+        *ngIf="paginadoNG == true"
         [params]="paramsList"
         [totalItems]="totalItems"></app-pagination>
     </div>

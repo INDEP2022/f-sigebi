@@ -5,7 +5,7 @@ export interface IBankAccount {
   delegationNumber?: any;
   cveAccount: string;
   accountType: string;
-  cveCurrency: string;
+  cveCurrency?: string | any;
   square?: any;
   branch: string;
   cveInterestCalcRate?: any;

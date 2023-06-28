@@ -37,6 +37,8 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems2: number = 0;
   settings2 = { ...this.settings };
+  valorAditional: any;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -110,6 +112,8 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
     });
   }
   rowsSelected(event: any) {
+    this.valorAditional = event.data;
+
     this.totalItems2 = 0;
     this.tvalTableList = [];
     this.values = event.data;
@@ -132,12 +136,17 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
               delete this.columnFilters1[field];
             }
           });
+          console.log('this.params ad:', this.params);
+
+          this.params = this.pageFilter(this.params);
+          this.params2 = this.pageFilter(this.params2);
+
           this.gettvalTable(this.values);
         }
       });
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.gettvalTable(this.values));
+      .subscribe(() => this.gettvalTable2(this.values));
   }
   gettvalTable(values: ITablesType) {
     this.loading = true;
@@ -157,24 +166,57 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
       error: error => (this.loading = false),
     });
   }
+
+  gettvalTable2(values: ITablesType) {
+    this.loading = true;
+    let params2 = {
+      ...this.params2.getValue(),
+      ...this.columnFilters,
+    };
+    this.tvalTableService.getById4(values.nmtabla, params2).subscribe({
+      next: response => {
+        console.log(response);
+        this.tvalTableList = response.data;
+        this.data1.load(this.tvalTableList);
+        this.data1.refresh();
+        this.totalItems2 = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
   openForm(tvalTable?: ITvalTable5) {
     console.log(tvalTable);
-    let value = this.values;
-    let config: ModalOptions = {
-      initialState: {
-        tvalTable,
-        value,
-        callback: (next: boolean) => {
-          if (next) {
-            this.totalItems2 = 0;
-            this.tvalTableList = [];
-            this.getValuesAll();
-          }
+    console.log('valorAditional', this.valorAditional);
+
+    if (this.valorAditional) {
+      let value = this.values;
+
+      console.log('value', value);
+
+      let config: ModalOptions = {
+        initialState: {
+          tvalTable,
+          value,
+          callback: (next: boolean) => {
+            if (next) {
+              this.totalItems2 = 0;
+              this.tvalTableList = [];
+              this.getValuesAll();
+              this.gettvalTable2(this.values);
+            }
+          },
         },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(AdditionalValuesModalComponent, config);
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(AdditionalValuesModalComponent, config);
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Se debe seleccionar un valor adicional'
+      );
+    }
   }
 }

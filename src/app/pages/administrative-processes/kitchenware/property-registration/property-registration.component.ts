@@ -32,7 +32,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   goods = new DefaultSelect<IGood>();
   expedient: IExpedient;
   numberGoodSelect: number;
-
   addGood: boolean = false;
   enableAddgood: boolean = true;
   textButton: string = 'Agregar menaje';
@@ -77,7 +76,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.settings.actions.delete = true;
     this.settings.actions.edit = false;
   }
-
   ngOnInit(): void {
     this.buildForm();
     this.form.disable();

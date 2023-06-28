@@ -45,7 +45,10 @@ export class CircuitSharedComponent extends BasePage implements OnInit {
       next: response => {
         this.circuit = new DefaultSelect(response.data, response.count);
       },
-      error: err => this.onLoadToast('error', err.error.message, ''),
+      error: err => {
+        this.onLoadToast('error', err.error.message, '');
+        this.circuit = new DefaultSelect();
+      },
     });
   }
 

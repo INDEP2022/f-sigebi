@@ -7,7 +7,7 @@ export const CLAIMCONCLUSION_COLUMS = {
     // width: '25px'
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },

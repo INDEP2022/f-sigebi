@@ -6,7 +6,9 @@
     <form [formGroup]="additionalValuesForm" class="form-material">
       <div class="row margin-input">
         <div class="col-md-5">
-          <form-field [control]="additionalValuesForm.get('cdtabla')">
+          <form-field
+            [control]="additionalValuesForm.get('cdtabla')"
+            style="pointer-events: none">
             <ngx-select
               (fetchItems)="getAditionalValues($event)"
               [data]="values"
@@ -22,7 +24,8 @@
         <div class="col-md-5">
           <form-field
             [control]="additionalValuesForm.get('dstabla')"
-            label="Descripci&oacute;n">
+            label="Descripci&oacute;n"
+            style="pointer-events: none">
             <input type="text" formControlName="dstabla" class="form-control" />
           </form-field>
         </div>
