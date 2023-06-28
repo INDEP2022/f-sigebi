@@ -1192,7 +1192,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.onLoadToast(
         'warning',
-        'Acción invalida',
+        'Acción inválida',
         'Se necesita tener un bien seleccionado'
       );
     }
@@ -1213,7 +1213,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.onLoadToast(
         'warning',
-        'Acción invalida',
+        'Acción inválida',
         'Se necesita tener un bien seleccionado'
       );
     }
@@ -1234,7 +1234,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.onLoadToast(
         'warning',
-        'Acción invalida',
+        'Acción inválida',
         'Se necesita tener un bien seleccionado'
       );
     }
@@ -1331,7 +1331,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.onLoadToast(
         'warning',
-        'Acción invalida',
+        'Acción inválida',
         'Se necesita tener un bien seleccionado'
       );
     }
@@ -1673,11 +1673,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       };
       this.modalService.show(ShowDocumentsGoodComponent, config);
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción invalida',
+        'Acción inválida',
         'Necesitas tener un bien seleccionado'
-      );
+      ).then();
     }
   }
 
@@ -1697,11 +1697,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       };
       this.modalService.show(PhotographyFormComponent, config);
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción invalida',
+        'Acción inválida',
         'Necesitas tener un bien seleccionado'
-      );
+      ).then();
     }
   }
 
@@ -1710,6 +1710,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     config.initialState = {
       proceeding: data,
       idProgramming: this.programmingId,
+      programming: this.programming,
       callback: (receipt: IProceedings, keyDoc: string) => {
         if (receipt && keyDoc) {
           this.openReportReceipt(receipt, keyDoc);
@@ -1778,11 +1779,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
       this.modalService.show(AssignReceiptFormComponent, config);
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción no permitida',
-        'Se necesita tener un bien seleccionado'
-      );
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      ).then();
     }
   }
 
@@ -1820,11 +1821,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         });
       });
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción no permitida',
-        'Se necesita tener un bien seleccionado'
-      );
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      ).then();
     }
   }
 
@@ -1845,11 +1846,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         });
       });
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción no permitida',
-        'Se necesita tener un bien seleccionado'
-      );
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      ).then();
     }
   }
 
@@ -2018,17 +2019,25 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       '¿Desea eliminar el recibo?'
     ).then(question => {
       if (question.isConfirmed) {
-        const formData: Object = {
-          id: receipt.id,
-          actId: receipt.actId,
-          programmingId: receipt.programmingId,
+        const formProce = {
+          id: receipt.actId,
         };
 
-        this.receptionGoodService.deleteReceipt(formData).subscribe({
+        this.proceedingService.deleteProceeding(formProce).subscribe({
           next: response => {
-            this.getReceipts();
+            const formData: Object = {
+              id: receipt.id,
+              actId: receipt.actId,
+              programmingId: receipt.programmingId,
+            };
+            console.log('formData', formData);
+            this.receptionGoodService.deleteReceipt(formData).subscribe({
+              next: response => {
+                this.getReceipts();
+              },
+              error: error => {},
+            });
           },
-          error: error => {},
         });
       }
     });
@@ -2050,11 +2059,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         });
       });
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción invalida',
-        'Se debe seleccionar un bien'
-      );
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      ).then();
     }
   }
 
@@ -2074,11 +2083,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         });
       });
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción invalida',
-        'Se debe seleccionar un bien'
-      );
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      ).then();
     }
   }
 
@@ -2098,11 +2107,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         });
       });
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción invalida',
-        'Se debe seleccionar un bien'
-      );
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      ).then();
     }
   }
 
@@ -2124,11 +2133,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         });
       });
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción invalida',
-        'Se debe seleccionar un bien'
-      );
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      ).then();
     }
   }
 
@@ -2150,11 +2159,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         });
       });
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción invalida',
-        'Se debe seleccionar un bien'
-      );
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      ).then();
     }
   }
 
@@ -2316,7 +2325,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     }
 
     if (banError) {
-      this.onLoadToast('warning', 'Atención', `${message}`);
+      this.alertInfo('warning', 'Error', `${message}`).then();
     } else {
       this.alertQuestion(
         'question',
@@ -2343,11 +2352,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
                 const closeTask = await this.closeTaskExecuteRecepcion(body);
                 if (closeTask) {
-                  this.onLoadToast(
+                  this.alertInfo(
                     'success',
                     'Acción correcta',
                     'Se cerro la tarea ejecutar recepción correctamente'
-                  );
+                  ).then();
+
                   this.router.navigate(['pages/siab-web/sami/consult-tasks']);
                 }
               },
@@ -2364,7 +2374,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           resolve(resp);
         },
         error: error => {
-          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          this.alertInfo('error', 'Error', 'No se pudo crear la tarea').then();
           reject(false);
         },
       });

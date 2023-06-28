@@ -91,9 +91,9 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         .get('noBien')
         .valueChanges.pipe(debounceTime(500), takeUntil(this.$unSubscribe))
         .subscribe(async res => {
-          console.log('Desde el componenete de change', this.goodselect);
+          console.log('Desde el componenete de change', res);
 
-          if (this.goodselect) {
+          if (this.goodselect && res !== null) {
             if (this.goodselect.goodClassNumber) {
               const params = new ListParams();
               const response: any = await this.getClassif(
@@ -105,8 +105,6 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
               this.onSssubtypesChange(response);
             }
           } else {
-            console.log('Desde el componenete de change ELSE', this.goodselect);
-
             this.type.setValue('');
             this.types = new DefaultSelect([], 0);
             this.subtype.setValue('');

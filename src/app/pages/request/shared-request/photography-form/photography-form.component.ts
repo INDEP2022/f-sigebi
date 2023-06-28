@@ -41,7 +41,9 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       columns: PHOTOGRAPHY_COLUMNS,
-      edit: { editButtonContent: '<i class="bx bxs-image"></i> Ver' },
+      edit: {
+        editButtonContent: '<i  class="fa fa-eye text-info mx-2" > Ver</i>',
+      },
     };
   }
 
@@ -85,11 +87,11 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
           this.totalItems = _data.length;
           this.loadingTable = false;
         } else {
-          this.onLoadToast(
+          this.alertInfo(
             'info',
-            'Error',
-            'No hay imagenes agregadadas a este bien'
-          );
+            'Información',
+            'No hay imágenes agregadadas a este bien'
+          ).then();
           this.loadingTable = false;
         }
       },
@@ -129,13 +131,13 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
           setTimeout(() => {
             this.getImageGood();
             this.formLoading = false;
-          }, 7000);
+          }, 8000);
           if (loadingPhotos == 1) {
-            this.onLoadToast(
+            this.alertInfo(
               'success',
               'Acción correcta',
               'Imagen agregada correctamente'
-            );
+            ).then();
           }
         }
       },
