@@ -85,6 +85,9 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
               case 'keyTypeDocument':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'flyerNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -231,7 +234,7 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
         if (indice1 !== -1) {
           content = this.generateFilterParams(this.form)[i].substring(
             indice1 + 1
-          ); // Resultado: "Juan"
+          );
         }
         this.params.getValue()[filter] = content;
       }
@@ -251,18 +254,14 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             '',
-            `No existe el No. expediente ${this.dateInput}`
+            `No existe el expediente No. ${this.dateInput}`
           );
           this.form.get('numberProceedings').reset();
         } else if (this.aux === 'flyerNumber') {
-          this.alert('error', '', `No existe el No. volante ${this.dateInput}`);
+          this.alert('error', '', `No existe el volante No. ${this.dateInput}`);
           this.form.get('flyerNumber').reset();
         } else if (this.aux === 'separador') {
-          this.alert(
-            'error',
-            '',
-            `No existe el No. separador ${this.dateInput}`
-          );
+          this.alert('error', '', `No existe el separador ${this.dateInput}`);
           this.form.get('separador').reset();
         } else if (this.aux === 'significantDate') {
           this.alert(
@@ -293,18 +292,11 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
           );
           this.form.get('preliminaryInquiry').reset();
         } else if (this.aux === 'criminalCase') {
-          this.alert(
-            'error',
-            '',
-            `No existe la No. causa penal ${this.dateInput}`
-          );
+          this.alert('error', '', `No existe la causa penal ${this.dateInput}`);
           this.form.get('criminalCase').reset();
         } else if (this.aux === 'scanStatus') {
           this.alert('error', '', `No existe el el estatus ${this.dateInput}`);
           this.form.get('scanStatus').reset();
-        } else if (this.aux === 'origen') {
-          this.alert('error', '', `No existe el origen ${this.dateInput}`);
-          this.form.get('origen').reset();
         }
         this.loading = false;
         this.data.load([]);
