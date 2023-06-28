@@ -119,7 +119,7 @@ export class SaveValuesListComponent extends BasePage implements OnInit {
 
     this.saveValueService.remove2(data).subscribe({
       next: () => {
-        this.alert('success', 'Valores Guardado', 'Borrado.');
+        this.alert('success', 'Valor Guardado', 'Borrado Correctamente');
         this.getSaveValues();
       },
       error: err => {

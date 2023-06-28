@@ -11,7 +11,6 @@ import {
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { ICity } from '../../../../core/models/catalogs/city.model';
 import { CityService } from '../../../../core/services/catalogs/city.service';
 import { CityDetailComponent } from '../city-detail/city-detail.component';
@@ -173,14 +172,17 @@ export class CityListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(cities.idCity);
-        Swal.fire('Borrado', '', 'success');
+        //Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.cityService.remove2(id).subscribe({
-      next: () => this.getCities(),
+      next: () => {
+        this.getCities();
+        this.alert('success', 'Ciudad', 'Borrada Correctamente');
+      },
     });
   }
 }
