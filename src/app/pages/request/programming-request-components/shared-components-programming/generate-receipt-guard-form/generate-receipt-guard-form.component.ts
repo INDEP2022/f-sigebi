@@ -18,7 +18,6 @@ import { ReceptionGoodService } from 'src/app/core/services/reception/reception-
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PrintReportModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
-import { ShowReportComponentComponent } from '../../execute-reception/show-report-component/show-report-component.component';
 
 @Component({
   selector: 'app-generate-receipt-guard-form',
@@ -91,169 +90,15 @@ export class GenerateReceiptGuardFormComponent
       .updateReceiptGuard(this.receiptId, this.form.value)
       .subscribe({
         next: async response => {
-          console.log('actualizo recibo', response);
-          const signatoreGuard = await this.createSignatorieGuard(response);
-          if (signatoreGuard) {
-            this.close();
-            this.openReport(response);
-          }
+          this.modalRef.content.callback(this.receiptGuards);
+
+          this.modalRef.hide();
+          //this.openReport(response);
         },
         error: error => {
           console.log();
         },
       });
-  }
-
-  async createSignatorieGuard(receiptGuard: IRecepitGuard) {
-    return new Promise((resolve, reject) => {
-      //Creamos firmante witness1//
-
-      const learnedType = 185;
-      const learnedId = this.programming.id;
-      this.signatoriesService
-        .getSignatoriesFilter(learnedType, learnedId)
-        .subscribe({
-          next: async response => {
-            response.data.map(item => {
-              this.signatoriesService
-                .deleteFirmante(Number(item.signatoryId))
-                .subscribe({
-                  next: () => {},
-                  error: error => {},
-                });
-            });
-
-            if (receiptGuard.nameWitnessOne) {
-              await this.createSign(
-                this.programming.id,
-                185,
-                null,
-                null,
-                receiptGuard.nameWitnessOne,
-                null
-              );
-            }
-
-            if (receiptGuard.nameWitnessTwo) {
-              await this.createSign(
-                this.programming.id,
-                185,
-                null,
-                null,
-                receiptGuard.nameWitnessTwo,
-                null
-              );
-            }
-
-            if (receiptGuard.officialSeg) {
-              await this.createSign(
-                this.programming.id,
-                185,
-                null,
-                null,
-                receiptGuard.officialSeg,
-                receiptGuard.chargeSeg
-              );
-            }
-
-            if (receiptGuard.officialSae) {
-              const signature = await this.createSign(
-                this.programming.id,
-                185,
-                null,
-                null,
-                receiptGuard.officialSae,
-                receiptGuard.chargeSae
-              );
-
-              if (signature) {
-                resolve(true);
-              }
-            }
-          },
-          error: async error => {
-            console.log('No firmantes');
-
-            if (receiptGuard.nameWitnessOne) {
-              await this.createSign(
-                this.programming.id,
-                185,
-                null,
-                null,
-                receiptGuard.nameWitnessOne,
-                null
-              );
-            }
-
-            if (receiptGuard.nameWitnessTwo) {
-              await this.createSign(
-                this.programming.id,
-                185,
-                null,
-                null,
-                receiptGuard.nameWitnessTwo,
-                null
-              );
-            }
-
-            if (receiptGuard.officialSeg) {
-              await this.createSign(
-                this.programming.id,
-                185,
-                null,
-                null,
-                receiptGuard.officialSeg,
-                receiptGuard.chargeSeg
-              );
-            }
-
-            if (receiptGuard.officialSae) {
-              const signature = await this.createSign(
-                this.programming.id,
-                185,
-                null,
-                null,
-                receiptGuard.officialSae,
-                receiptGuard.chargeSae
-              );
-
-              if (signature) {
-                resolve(true);
-              }
-            }
-          },
-        });
-    });
-  }
-
-  createSign(
-    keyDoc: number,
-    docId: number,
-    boardSig: string,
-    columnSig: string,
-    name: string,
-    position: string
-  ) {
-    return new Promise((resolve, reject) => {
-      const formData: Object = {
-        learnedId: keyDoc,
-        learnedType: docId,
-        boardSignatory: boardSig,
-        columnSignatory: columnSig,
-        name: name,
-        post: position,
-      };
-      console.log('formData', formData);
-      this.signatoriesService.create(formData).subscribe({
-        next: response => {
-          console.log('firmantes creados');
-          resolve(true);
-        },
-        error: error => {
-          console.log('error', error);
-        },
-      });
-    });
   }
 
   openReport(response: IRecepitGuard) {
@@ -281,7 +126,7 @@ export class GenerateReceiptGuardFormComponent
       };
       this.modalService.show(PrintReportModalComponent, config);
     } else {
-      const idTypeDoc = 185;
+      /*const idTypeDoc = 185;
       let config: ModalOptions = {
         initialState: {
           idTypeDoc,
@@ -289,7 +134,6 @@ export class GenerateReceiptGuardFormComponent
           receiptGuards: this.receiptGuards,
           callback: (next: boolean) => {
             if (next) {
-              console.log('Modal cerrado');
               //this.changeStatusAnswered();
             } else {
               console.log('Modal no cerrado');
@@ -299,7 +143,7 @@ export class GenerateReceiptGuardFormComponent
         class: 'modal-lg modal-dialog-centered',
         ignoreBackdropClick: true,
       };
-      this.modalService.show(ShowReportComponentComponent, config);
+      this.modalService.show(ShowReportComponentComponent, config); */
     }
   }
 
