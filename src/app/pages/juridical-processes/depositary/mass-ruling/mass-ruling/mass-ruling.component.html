@@ -151,7 +151,7 @@
               path="massivegood/api/v1/application/getIdentifierCount">
               <ng-template let-item>
                 {{ item.identificador }} -
-                {{ item?.fec_cargamasiv | date: 'shortDate' }} -
+                {{ item?.fec_cargamasiv | date : 'shortDate' }} -
                 {{ item?.count }}
               </ng-template>
             </ng-custom-select>
@@ -256,7 +256,7 @@
             [settings]="tableSettings"
             [source]="dataTable"></ng2-smart-table>
         </div>
-        <div [hidden]="isFileLoad">
+        <div>
           <app-pagination
             [params]="params"
             [totalItems]="totalItems"></app-pagination>
@@ -268,6 +268,11 @@
             [attr.class]="'table-bordered'"
             [settings]="tableSettings1"
             [source]="dataTableErrors"></ng2-smart-table>
+        </div>
+        <div>
+          <app-pagination
+            [params]="paramsErrors"
+            [totalItems]="totalItemsErrors"></app-pagination>
         </div>
       </div>
     </div>

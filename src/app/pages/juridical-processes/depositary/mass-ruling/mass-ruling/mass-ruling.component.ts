@@ -20,6 +20,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { IncidentMaintenanceService } from 'src/app/core/services/ms-generalproc/incident-maintenance.service';
 import { MassiveDictationService } from 'src/app/core/services/ms-massivedictation/massivedictation.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
@@ -93,6 +94,8 @@ export class MassRulingComponent
   };
   // Data table
   dataTableErrors: { processId: any; description: string }[] = [];
+  totalItemsErrors = 0;
+  paramsErrors = new BehaviorSubject<ListParams>(new ListParams());
 
   btnsEnabled = {
     btnDictation: false,
@@ -142,7 +145,8 @@ export class MassRulingComponent
     private notificationsService: NotificationService,
     protected massiveDictationService: MassiveDictationService,
     protected documentsService: DocumentsService,
-    private authService: AuthService
+    private authService: AuthService,
+    protected incidentMaintenanceService: IncidentMaintenanceService
   ) {
     super();
   }
@@ -153,6 +157,10 @@ export class MassRulingComponent
     // });
     this.params.pipe(skip(1)).subscribe(params => {
       this.loadDataForDataTable(params);
+    });
+
+    this.paramsErrors.pipe(skip(1)).subscribe(params => {
+      this.getTmpErrores(params);
     });
   }
 
@@ -269,7 +277,15 @@ export class MassRulingComponent
         return { no_bien: x.goodNumber };
       });
     } else {
-      body['identifier'] = this.dataTable[0];
+      if (!this.formCargaMasiva.value.identificadorCargaMasiva) {
+        this.onLoadToast(
+          'warning',
+          'Debe ingresar un identificador de carga masiva y cargar los bienes del identificador'
+        );
+        return;
+      }
+
+      body['identifier'] = this.formCargaMasiva.value.identificadorCargaMasiva;
       this.btnsEnabled.btnGoodDictation = true;
       // this.uploadForIdentifier();
     }
@@ -277,6 +293,9 @@ export class MassRulingComponent
       next: () => {
         this.onLoadToast('success', 'Proceso Terminado');
         this.dataTable = [];
+        this.totalItems = 0;
+        this.dataTableErrors = [];
+        this.totalItemsErrors = 0;
         this.formCargaMasiva.reset();
         this.form.get('delete').setValue(false);
         this.form.get('delete').disable();
@@ -423,6 +442,7 @@ export class MassRulingComponent
         '',
         'Debe ingresar un identificador de carga masiva'
       );
+      this.totalItems = 0;
       return;
     }
     this.loading = true;
@@ -432,8 +452,8 @@ export class MassRulingComponent
         console.log(data.data);
         this.dataTable = data.data.map(item => {
           return {
-            goodNumber: (item.goodNumber as any).id,
-            fileNumber: (item.fileNumber as any).id,
+            goodNumber: (item.goodNumber as any)?.id,
+            fileNumber: (item.fileNumber as any)?.id,
           };
         });
         this.totalItems = data.count;

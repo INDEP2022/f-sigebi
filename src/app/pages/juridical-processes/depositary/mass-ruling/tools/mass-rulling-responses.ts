@@ -2,6 +2,7 @@ import { firstValueFrom, type BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { type DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { type DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { IncidentMaintenanceService } from 'src/app/core/services/ms-generalproc/incident-maintenance.service';
 import { type MassiveDictationService } from 'src/app/core/services/ms-massivedictation/massivedictation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -9,10 +10,14 @@ export abstract class MassRullingResponses extends BasePage {
   protected abstract documentsService: DocumentsService;
   protected abstract dictationService: DictationService;
   protected abstract massiveDictationService: MassiveDictationService;
+  protected abstract incidentMaintenanceService: IncidentMaintenanceService;
 
   abstract dataTable: any[];
   abstract totalItems: number;
   abstract params: BehaviorSubject<ListParams>;
+  abstract dataTableErrors: { processId: any; description: string }[];
+  abstract totalItemsErrors: number;
+  abstract paramsErrors: BehaviorSubject<ListParams>;
 
   async CountDictationGoodFile(armyOfficeKey: any) {
     const result = await firstValueFrom(
@@ -62,6 +67,7 @@ export abstract class MassRullingResponses extends BasePage {
         );
         // this.getTmpExpDesahogoB(new ListParams());
         this.params.next(new ListParams());
+        this.paramsErrors.next(new ListParams());
       },
       error: err => {
         this.onLoadToast(
@@ -73,17 +79,34 @@ export abstract class MassRullingResponses extends BasePage {
     });
   }
 
-  async getTmpExpDesahogoB(listParams: ListParams) {
+  getTmpExpDesahogoB(listParams: ListParams) {
     this.dictationService.getTmpExpDesahogoB(listParams).subscribe({
       next: result => {
         const data = result.data;
         this.dataTable = data.map(item => {
           return {
             goodNumber: item.goodNumber,
-            fileNumber: item.fileNumber,
+            fileNumber: item.numberProceedings,
           };
         });
         this.totalItems = result.count;
+      },
+    });
+  }
+
+  getTmpErrores(listParams: ListParams) {
+    listParams['filter.processId'] = '12345';
+    this.incidentMaintenanceService.getTmpErrores(listParams).subscribe({
+      next: result => {
+        // const data = result.data;
+
+        // this.dataTable = data.map(item => {
+        //   return {
+        //     goodNumber: item.goodNumber,
+        //     fileNumber: item.numberProceedings,
+        //   };
+        // });
+        this.totalItemsErrors = result.count;
       },
     });
   }
