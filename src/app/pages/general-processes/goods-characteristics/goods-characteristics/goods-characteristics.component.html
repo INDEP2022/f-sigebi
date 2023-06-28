@@ -146,7 +146,7 @@
                         class="form-control"
                         maxlength="6"
                         formControlName="noClasif"
-                        [disabled]="disabledNoClasifBien"
+                        readonly
                         (change)="updateClasif($event)"
                         (customEvent)="handleEvent($event)" />
                     </form-field>
@@ -156,7 +156,8 @@
                       <input
                         type="text"
                         class="form-control"
-                        formControlName="status" />
+                        formControlName="status"
+                        readonly />
                     </form-field>
                   </div>
                   <div class="row pt-3 buttons" style="margin: auto">
