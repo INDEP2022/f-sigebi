@@ -33,6 +33,7 @@ export class TargetTagsSharedComponent extends BasePage implements OnInit {
 
   constructor(private service: LabelOkeyService) {
     super();
+    this.getTargetTags(new ListParams());
   }
 
   ngOnInit(): void {}
@@ -40,6 +41,7 @@ export class TargetTagsSharedComponent extends BasePage implements OnInit {
   getTargetTags(params: ListParams) {
     this.service.getAll(params).subscribe(
       data => {
+        console.log(data);
         this.targetTags = new DefaultSelect(data.data, data.count);
       },
       err => {

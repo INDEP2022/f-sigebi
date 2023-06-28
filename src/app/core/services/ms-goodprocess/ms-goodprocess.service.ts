@@ -116,6 +116,10 @@ export class GoodprocessService extends HttpService {
     );
   }
 
+  packageClose(params: any) {
+    return this.post(`${GoodprocessEndpoints.PackageClose}`, params);
+  }
+
   postTransferGoodsTradeManagement(body: {
     ofManagementNumber: any;
     proceedingsNumber: any;

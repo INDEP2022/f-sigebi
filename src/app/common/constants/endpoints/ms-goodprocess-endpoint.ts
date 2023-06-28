@@ -14,4 +14,5 @@ export enum GoodprocessEndpoints {
   GetGoodScreenSend = '/application/get-good-status-screen',
   GetDistinctTypes = 'application/get-distinct-types',
   UpdateGoodStatus = 'update-good-status/updateManagementJob',
+  PackageClose = 'update-good-status/packageClose',
 }

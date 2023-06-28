@@ -38,7 +38,7 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getSelectedGoodStatus(this.goodStatus.value);
+    this.getGoodStatus(new ListParams());
   }
 
   getSelectedGoodStatus(id: string): void {
@@ -49,7 +49,7 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
     this.service.getStatusAll(newParams).subscribe({
       next: result => {
         const newResult = result.data[0];
-
+        console.log(newResult, ' Linea 53 goods-status-shared.component.ts');
         this.goodStatus.setValue(newResult.description);
         if (this.goodStatus.value) this.getGoodStatus(new ListParams());
       },
@@ -85,6 +85,7 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   onGoodStatusChange(type: any) {
     console.log(type);
     this.form.updateValueAndValidity();
+    this.getGoodStatus(new ListParams());
   }
 
   resetFields(fields: AbstractControl[]) {
