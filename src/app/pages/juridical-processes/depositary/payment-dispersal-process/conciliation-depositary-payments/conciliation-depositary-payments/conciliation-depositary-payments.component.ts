@@ -20,7 +20,7 @@ import {
 } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { IPaymentsGensDepositary } from 'src/app/core/models/ms-depositarypayment/ms-depositarypayment.interface';
 import { IGood } from 'src/app/core/models/ms-good/good';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ConciliationDepositaryPaymentsService } from '../services/conciliation-depositary-payments.service';
 import {
   CORRECT_REMOVE_PAYMENTS,
@@ -110,7 +110,14 @@ export class ConciliationDepositaryPaymentsComponent
   }
   private prepareForm() {
     this.form = this.fb.group({
-      noBien: ['', [Validators.required]], //*
+      noBien: [
+        { value: '', disabled: false },
+        [
+          Validators.required,
+          Validators.maxLength(11),
+          Validators.pattern(NUM_POSITIVE),
+        ],
+      ], //*
       nombramiento: [{ value: '', disabled: false }, [Validators.maxLength(6)]], //*
       fecha: [
         { value: this.actualDate, disabled: true },
@@ -171,8 +178,8 @@ export class ConciliationDepositaryPaymentsComponent
     if (dispersar.validDate) {
       console.log(dispersar);
       this.alertQuestion(
-        'question',
-        '¿Seguro que deseá eliminar todas las dispersiones de la la fecha: ' +
+        'warning',
+        '¿Seguro que desea eliminar todas las dispersiones de la la fecha: ' +
           this.datePipe.transform(dispersar.dateValue, 'dd/MM/yyyy') +
           '?',
         ''
@@ -341,6 +348,16 @@ export class ConciliationDepositaryPaymentsComponent
         ERROR_GOOD_NULL + ' y da clic en búscar para continuar'
       );
     }
+  }
+
+  clearData(event: any) {
+    console.log(event);
+    this.form.reset();
+    this.noBienReadOnly = null;
+    this.depositaryAppointment = null;
+    this.dataPersonsDepositary = null;
+    this.dataPagosRecibidos = null;
+    this.formDepositario.reset();
   }
 
   async btnSearchGood(goodNumber: number) {
@@ -639,6 +656,7 @@ export class ConciliationDepositaryPaymentsComponent
         next: res => {
           this.loading = false;
           console.log(res.data);
+          this.alert('success', 'Proceso completado correctamente', '');
         },
         error: err => {
           this.loading = false;
