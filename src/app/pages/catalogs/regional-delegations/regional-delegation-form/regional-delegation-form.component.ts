@@ -53,12 +53,11 @@ export class RegionalDelegationFormComponent
       registerNumber: [null],
       idGeographicZona: [
         null,
-        [Validators.required],
-        Validators.pattern(NUMBERS_PATTERN),
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
       version: [1],
       regionalDelegate: [null, [Validators.required]],
-      officeAddress: [null, [Validators.required]],
+      officeAddress: [null, [Validators.required, Validators.maxLength(200)]],
       status: [1],
       keyZone: [null, [Validators.required]],
       iva: [0.16, [Validators.required]],
@@ -104,7 +103,8 @@ export class RegionalDelegationFormComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

@@ -91,7 +91,7 @@ export class MaintenanceOfPublicMinistriesComponent
       insideNumber: [
         null,
         [
-          Validators.required,
+          //Validators.required,
           Validators.maxLength(10),
           Validators.pattern(STRING_PATTERN),
         ],
@@ -160,6 +160,7 @@ export class MaintenanceOfPublicMinistriesComponent
           error: error => {
             this.loading = false;
             this.onLoadToast('error', error.erro.message, '');
+            console.log(error);
           },
         });
       } else {

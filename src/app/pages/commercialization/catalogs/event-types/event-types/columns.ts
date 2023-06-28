@@ -1,6 +1,6 @@
 export const COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'No. Tipo evento',
     sort: false,
   },
   description: {
@@ -8,15 +8,19 @@ export const COLUMNS = {
     sort: false,
   },
   descReceipt: {
-    title: 'Descripción Reportes',
+    title: 'Descripción reportes',
     sort: false,
   },
   typeDispId: {
-    title: 'Tipo de Disperción',
+    title: 'Tipo de disperción',
     sort: false,
   },
   typeFailedpId: {
-    title: 'Tipo de Fallo',
+    title: 'Tipo de fallo',
+    sort: false,
+  },
+  use: {
+    title: 'Uso',
     sort: false,
   },
 };

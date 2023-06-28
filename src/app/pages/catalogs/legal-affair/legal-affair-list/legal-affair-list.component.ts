@@ -132,7 +132,7 @@ export class LegalAffairListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.legalAffairService.remove(id).subscribe(
       res => {
-        this.alert('success', 'Asuntos Jurídicos', 'Borrado.');
+        this.alert('success', 'Asunto Jurídico', 'Borrado.');
         this.getLegalAffairAll();
       },
       err => {

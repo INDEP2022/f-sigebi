@@ -5,7 +5,10 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITypeWarehouse } from 'src/app/core/models/catalogs/type-warehouse.model';
 import { TypeWarehouseService } from 'src/app/core/services/catalogs/type-warehouse.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-type-wharehouse-from',
@@ -14,7 +17,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class TypeWharehouseFromComponent extends BasePage implements OnInit {
   typeWarehouseForm: ModelForm<ITypeWarehouse>;
-  title: string = 'Tipo de Almacenes';
+  title: string = 'Tipo de Almacén';
   edit: boolean = false;
   typeWarehouse: ITypeWarehouse;
   constructor(
@@ -40,8 +43,20 @@ export class TypeWharehouseFromComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ]),
       ],
-      version: [null, Validators.compose([Validators.required])],
-      status: [null, Validators.compose([Validators.required])],
+      version: [
+        null,
+        Validators.compose([
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ]),
+      ],
+      status: [
+        null,
+        Validators.compose([
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+        ]),
+      ],
     });
     if (this.typeWarehouse != null) {
       this.edit = true;

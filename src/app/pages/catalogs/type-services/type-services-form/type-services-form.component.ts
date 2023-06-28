@@ -34,19 +34,19 @@ export class TypeServicesFormComponent extends BasePage implements OnInit {
       id: [null],
       type: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.maxLength(200),
           Validators.pattern(STRING_PATTERN),
-        ]),
+        ],
       ],
       concept: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.maxLength(200),
           Validators.pattern(STRING_PATTERN),
-        ]),
+        ],
       ],
       version: [null],
     });

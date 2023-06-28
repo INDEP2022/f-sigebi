@@ -103,7 +103,11 @@ export class IndicatedListComponent extends BasePage implements OnInit {
       initialState: {
         indicated,
         callback: (next: boolean) => {
-          if (next) this.getIndicated();
+          if (next) {
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getIndicated());
+          }
         },
       },
       class: 'modal-md modal-dialog-centered',

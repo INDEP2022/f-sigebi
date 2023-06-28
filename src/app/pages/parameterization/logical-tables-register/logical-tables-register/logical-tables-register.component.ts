@@ -1,19 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tables.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { LogicalTablesRegisterModalComponent } from '../logical-tables-register-modal/logical-tables-register-modal.component';
-import { LOGICAL_TABLES_REGISTER_COLUMNS } from './logical-tables-register-columns';
 //models
 import { ITables } from 'src/app/core/models/catalogs/dinamic-tables.model';
+import { LOGICAL_TABLES_REGISTER_COLUMNS } from './logical-tables-register-columns';
 //service
 import { LocalDataSource } from 'ng2-smart-table';
-import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tables.service';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { LogicalTablesRegisterModalComponent } from '../logical-tables-register-modal/logical-tables-register-modal.component';
 
 @Component({
   selector: 'app-logical-tables-register',
@@ -106,7 +107,11 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       dinamicTables,
       callback: (next: boolean) => {
-        if (next) this.getDinamicTables();
+        if (next) {
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getDinamicTables());
+        }
       },
     };
     this.modalService.show(LogicalTablesRegisterModalComponent, modalConfig);
@@ -129,12 +134,12 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
     this.dinamicTablesService.remove2(id).subscribe({
       next: () => {
         this.getDinamicTables();
-        this.alert('success', 'Borrado', '');
+        this.alert('success', 'Tablas Lógicas', 'Borrado');
       },
       error: erro => {
         this.alert(
           'warning',
-          'Atributos de Informaci&oacute;n Financiera',
+          'Tablas Lógicas',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },
