@@ -1192,7 +1192,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.onLoadToast(
         'warning',
-        'Acción invalida',
+        'Acción inválida',
         'Se necesita tener un bien seleccionado'
       );
     }
@@ -1213,7 +1213,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.onLoadToast(
         'warning',
-        'Acción invalida',
+        'Acción inválida',
         'Se necesita tener un bien seleccionado'
       );
     }
@@ -1234,7 +1234,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.onLoadToast(
         'warning',
-        'Acción invalida',
+        'Acción inválida',
         'Se necesita tener un bien seleccionado'
       );
     }
@@ -1331,7 +1331,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.onLoadToast(
         'warning',
-        'Acción invalida',
+        'Acción inválida',
         'Se necesita tener un bien seleccionado'
       );
     }
@@ -1675,7 +1675,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.alertInfo(
         'info',
-        'Acción invalida',
+        'Acción inválida',
         'Necesitas tener un bien seleccionado'
       ).then();
     }
@@ -1699,7 +1699,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.alertInfo(
         'info',
-        'Acción invalida',
+        'Acción inválida',
         'Necesitas tener un bien seleccionado'
       ).then();
     }
@@ -1710,6 +1710,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     config.initialState = {
       proceeding: data,
       idProgramming: this.programmingId,
+      programming: this.programming,
       callback: (receipt: IProceedings, keyDoc: string) => {
         if (receipt && keyDoc) {
           this.openReportReceipt(receipt, keyDoc);
@@ -1780,7 +1781,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.alertInfo(
         'info',
-        'Acción invalida',
+        'Acción inválida',
         'Necesitas tener un bien seleccionado'
       ).then();
     }
@@ -1822,7 +1823,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.alertInfo(
         'info',
-        'Acción invalida',
+        'Acción inválida',
         'Necesitas tener un bien seleccionado'
       ).then();
     }
@@ -1847,7 +1848,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.alertInfo(
         'info',
-        'Acción invalida',
+        'Acción inválida',
         'Necesitas tener un bien seleccionado'
       ).then();
     }
@@ -2018,17 +2019,25 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       '¿Desea eliminar el recibo?'
     ).then(question => {
       if (question.isConfirmed) {
-        const formData: Object = {
-          id: receipt.id,
-          actId: receipt.actId,
-          programmingId: receipt.programmingId,
+        const formProce = {
+          id: receipt.actId,
         };
 
-        this.receptionGoodService.deleteReceipt(formData).subscribe({
+        this.proceedingService.deleteProceeding(formProce).subscribe({
           next: response => {
-            this.getReceipts();
+            const formData: Object = {
+              id: receipt.id,
+              actId: receipt.actId,
+              programmingId: receipt.programmingId,
+            };
+            console.log('formData', formData);
+            this.receptionGoodService.deleteReceipt(formData).subscribe({
+              next: response => {
+                this.getReceipts();
+              },
+              error: error => {},
+            });
           },
-          error: error => {},
         });
       }
     });
@@ -2052,7 +2061,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.alertInfo(
         'info',
-        'Acción invalida',
+        'Acción inválida',
         'Necesitas tener un bien seleccionado'
       ).then();
     }
@@ -2076,7 +2085,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.alertInfo(
         'info',
-        'Acción invalida',
+        'Acción inválida',
         'Necesitas tener un bien seleccionado'
       ).then();
     }
@@ -2100,7 +2109,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.alertInfo(
         'info',
-        'Acción invalida',
+        'Acción inválida',
         'Necesitas tener un bien seleccionado'
       ).then();
     }
@@ -2126,7 +2135,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.alertInfo(
         'info',
-        'Acción invalida',
+        'Acción inválida',
         'Necesitas tener un bien seleccionado'
       ).then();
     }
@@ -2152,7 +2161,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.alertInfo(
         'info',
-        'Acción invalida',
+        'Acción inválida',
         'Necesitas tener un bien seleccionado'
       ).then();
     }
