@@ -114,6 +114,76 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     commissionTaxPercent: new FormControl(null, [Validators.required]),
   });
 
+  formGood = new FormGroup({
+    /** @description no_bien */
+    id: new FormControl(null, [Validators.required]),
+    /** @description val6 */
+    val6: new FormControl(null),
+    /** @description val5 */
+    val5: new FormControl(null),
+    /** @description valor_avaluo */
+    appraisedValue: new FormControl(null),
+    /** @description val4 */
+    val4: new FormControl(null),
+    /** @description val3 */
+    val3: new FormControl(null),
+    /** @description val2 */
+    val2: new FormControl(null),
+    /** @description val1 */
+    val1: new FormControl(null),
+    /** @description motivo_cambio_numerario */
+    causeNumberChange: new FormControl(null),
+    /** @description SOLICITO_CAMBIO_NUMERARIO */
+    changeRequestNumber: new FormControl(null),
+    /** @description FEC_RATIFICA_CAMBIO_NUMERARIO */
+    numberChangeRatifiesDate: new FormControl(null),
+    /** @description USUARIO_RATIFICA_CAMBIO_NUMERA */
+    numberChangeRatifiesUser: new FormControl(null),
+    /** @description ESTATUS */
+    status: new FormControl(null),
+    /** @description IDENTIFICADOR */
+    identifier: new FormControl(null),
+    /** @description DESCRIPCION */
+    description: new FormControl(null),
+    /** @description NO_EXPEDIENTE */
+    fileNumber: new FormControl(null),
+    /** @description NO_EXP_ASOCIADO */
+    associatedFileNumber: new FormControl(null),
+    /** @description CANTIDAD */
+    quantity: new FormControl(null),
+    /** @description NO_REGISTRO */
+    registryNumber: new FormControl(null),
+    /** @description NO_DELEGACION */
+    delegationNumber: new FormControl(null),
+    /** @description NO_SUBDELEGACION */
+    subDelegationNumber: new FormControl(null),
+    /** @description NO_ETIQUETA */
+    labelNumber: new FormControl(null),
+    /** @description no_volante */
+    flyerNumber: new FormControl(null),
+    /** @description PROCESO_EXT_DOM */
+    extDomProcess: new FormControl(null),
+    /** @description IMPORTEVTA */
+    importSell: new FormControl(null),
+    /** @description PORC1 */
+    percent1: new FormControl(null),
+    /** @description IVAVTA */
+    taxSell: new FormControl(null),
+    /** @description PORC2 */
+    percent2: new FormControl(null),
+    /** @description COMISION */
+    commission: new FormControl(null),
+    /** @description PORC3 */
+    percent3: new FormControl(null),
+    /** @description IVACOM */
+    taxCommission: new FormControl(null),
+    /** @description DI_ESTATUS_BIEN */
+    diStatusGood: new FormControl(null),
+    /** @description MONEDA_A */
+    currency_to: new FormControl(null),
+    /** @description MONEDA_DE */
+  });
+
   fileForm: FormGroup = new FormGroup({
     file: new FormArray([], [Validators.required]),
   });
