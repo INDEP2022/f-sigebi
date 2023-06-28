@@ -46,7 +46,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    console.log('this.typeDoc', this.typeDoc);
     if (this.typeDoc == 185 || this.typeDoc == 186) {
       this.getGoodsRelReceipt();
     }
