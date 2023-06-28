@@ -5,8 +5,13 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { AppraiseService } from 'src/app/core/services/ms-appraise/appraise.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -23,6 +28,8 @@ export class DataValuationsComponent
   list: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  columnFilter: any = [];
+  dataLoand: LocalDataSource = new LocalDataSource();
 
   constructor(private readonly appraiseService: AppraiseService) {
     super();
@@ -36,13 +43,31 @@ export class DataValuationsComponent
       },
       valuationDate: {
         title: 'Fecha Avalúo',
-        type: 'string',
         sort: false,
+        type: 'html',
+        valuePrepareFunction: (text: string) => {
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+          }`;
+        },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
+        },
       },
       validityDate: {
         title: 'Fecha Vigencia',
-        type: 'string',
         sort: false,
+        type: 'html',
+        valuePrepareFunction: (text: string) => {
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+          }`;
+        },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
+        },
       },
       cost: {
         title: 'Costo',
@@ -104,6 +129,47 @@ export class DataValuationsComponent
   }
 
   ngOnInit(): void {
+    this.dataLoand
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'noRequest':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'valuationDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'validityDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilter[field] = `${searchFilter}:${filter.search}`;
+              console.log('this.param:', this.params);
+              this.params.value.page = 1;
+            } else {
+              delete this.columnFilter[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.searchDataValuations(this.goodId);
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.searchDataValuations(this.goodId));
@@ -113,8 +179,12 @@ export class DataValuationsComponent
     this.loading = true;
     this.params.getValue()['filter.noGood'] = `$eq:${idGood}`;
     this.params.getValue()['order'] = 'DESC';
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilter,
+    };
     console.log(this.params.getValue());
-    this.appraiseService.getAllAvaluoXGood(this.params.getValue()).subscribe({
+    this.appraiseService.getAllAvaluoXGood(params).subscribe({
       next: response => {
         console.log(response);
         this.list = response.data.map(apprise => {
@@ -135,10 +205,14 @@ export class DataValuationsComponent
             origin: '',
           };
         });
+        this.dataLoand.load(this.list);
+        this.dataLoand.refresh();
         this.totalItems = response.count;
         this.loading = false;
       },
       error: err => {
+        this.dataLoand.load([]);
+        this.dataLoand.refresh();
         this.loading = false;
         console.log(err);
       },
