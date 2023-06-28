@@ -178,18 +178,18 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     actions: {
       delete: true,
       edit: true,
-      columnTitle: 'Generar recibo resguardo',
+      columnTitle: 'Generar Recibo Resguardo',
       position: 'right',
     },
 
     edit: {
       editButtonContent:
-        '<i class="fa fa-eye text-primary mx-2" > Ver bienes</i>',
+        '<i class="fa fa-eye text-primary mx-2" > Ver Bienes</i>',
     },
 
     delete: {
       deleteButtonContent:
-        '<i class="fa fa-file text-info mx-2"> Generar recibo</i>',
+        '<i class="fa fa-file text-info mx-2"> Generar Recibo Resguardo</i>',
     },
 
     columns: RECEIPT_GUARD_COLUMNS,
@@ -1652,7 +1652,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           receiptGuards: receiptGuards,
           callback: (next: boolean) => {
             if (next) {
-              console.log('Modal cerrado');
               this.uploadData(receiptGuards, idTypeDoc);
             }
           },
@@ -1670,7 +1669,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           receiptGuards: receiptGuards,
           callback: (next: boolean) => {
             if (next) {
-              console.log('Modal cerrado');
               this.uploadData(receiptGuards, idTypeDoc);
             }
           },
@@ -2340,128 +2338,112 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     let banError: boolean = false;
     this.receipts.getElements().then(data => {
       data.map((receipt: IReceipt) => {
-        if (receipt?.statusReceipt == 'ABIERTO') {
+        if (receipt?.statusReceipt == 'ABIERTO' && !banError) {
           message += 'Es necesario tener todos los recibos cerrados';
           banError = true;
         }
       });
-      const params = new BehaviorSubject<ListParams>(new ListParams());
-      params.getValue()['filter.programmingId'] = this.programmingId;
-      this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
-        next: response => {
-          this.goodsProgramming = response.data;
-          //Filtramos bienes tranportables
-          const goodsTransportable = this.goodsProgramming.filter(good => {
-            return good.status == 'EN_TRANSPORTABLE';
-          });
-
-          if (goodsTransportable.length > 0 && banError == false) {
-            message +=
-              'Es necesario no tener bienes en el apartado Transportables';
-            banError = true;
-          }
-
-          const goodsGuard = this.goodsProgramming.filter(good => {
-            return good.status == 'EN_RESGUARDO_TMP';
-          });
-
-          if (goodsGuard.length > 0 && banError == false) {
-            message +=
-              'Es necesario tener todos los bienes asignados a una acta';
-            banError = true;
-          }
-
-          const goodsWarehouse = this.goodsProgramming.filter(good => {
-            return good.status == 'EN_ALMACEN_TMP';
-          });
-
-          if (goodsWarehouse.length > 0 && banError == false) {
-            message +=
-              'Es necesario tener todos los bienes asignados a una acta';
-            banError = true;
-          }
-
-          const goodsReprog = this.goodsProgramming.filter(good => {
-            return good.status == 'EN_PROGRAMACION_TMP';
-          });
-
-          if (goodsReprog.length > 0 && banError == false) {
-            message +=
-              'Es necesario tener todos los bienes asignados a una acta';
-            banError = true;
-          }
-
-          const goodsCancel = this.goodsProgramming.filter(good => {
-            return good.status == 'CANCELADO_TMP';
-          });
-
-          if (goodsCancel.length > 0 && banError == false) {
-            message +=
-              'Es necesario tener todos los bienes asignados a una acta';
-            banError = true;
-          }
-        },
-        error: error => {},
-      });
     });
 
-    if (!banError) {
-      this.receiptGuards.getElements().then(receiptGuard => {
-        if (receiptGuard[0].contentId == null) {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.programmingId;
+    this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+      next: async response => {
+        this.goodsProgramming = response.data;
+        //Filtramos bienes tranportables
+        const goodsTransportable = this.goodsProgramming.filter(good => {
+          return good.status == 'EN_TRANSPORTABLE';
+        });
+        if (goodsTransportable.length > 0 && !banError) {
+          message +=
+            'Es necesario no tener bienes en el apartado Transportables';
           banError = true;
-          message += 'No se han generado todos los recibo de resguado';
         }
-      });
 
-      this.receiptWarehouse.getElements().then(receiptWarehouse => {
-        if (receiptWarehouse[0].contentId == null) {
+        const goodsGuard = this.goodsProgramming.filter(good => {
+          return good.status == 'EN_RESGUARDO_TMP';
+        });
+
+        if (goodsGuard.length > 0 && !banError) {
+          message += 'Es necesario tener todos los bienes asignados a una acta';
           banError = true;
-          message += 'No se han generado todos los recibo de resguado almacén';
         }
-      });
-    }
 
-    if (banError) {
-      this.alertInfo('warning', 'Error', `${message}`).then();
-    } else {
-      this.alertQuestion(
-        'question',
-        'Confirmación',
-        '¿Desea terminar la ejecución de recepción?'
-      ).then(question => {
-        if (question.isConfirmed) {
-          const formData: Object = {
-            termEjecutionDate: new Date(),
-          };
-          this.programmingService
-            .updateProgramming(this.programmingId, formData)
-            .subscribe({
-              next: async () => {
-                //Cierra la tarea//
-                const _task = JSON.parse(localStorage.getItem('Task'));
-                const user: any = this.authService.decodeToken();
-                let body: any = {};
-                body['idTask'] = _task.id;
-                body['userProcess'] = user.username;
-                body['type'] = 'SOLICITUD_PROGRAMACION';
-                body['subtype'] = 'Ejecutar_Recepcion';
-                body['ssubtype'] = 'ACCEPT';
+        const goodsWarehouse = this.goodsProgramming.filter(good => {
+          return good.status == 'EN_ALMACEN_TMP';
+        });
 
-                const closeTask = await this.closeTaskExecuteRecepcion(body);
-                if (closeTask) {
-                  this.alertInfo(
-                    'success',
-                    'Acción correcta',
-                    'Se cerro la tarea ejecutar recepción correctamente'
-                  ).then();
-
-                  this.router.navigate(['pages/siab-web/sami/consult-tasks']);
-                }
-              },
-            });
+        if (goodsWarehouse.length > 0 && !banError) {
+          message += 'Es necesario tener todos los bienes asignados a una acta';
+          banError = true;
         }
-      });
-    }
+
+        const goodsReprog = this.goodsProgramming.filter(good => {
+          return good.status == 'EN_PROGRAMACION_TMP';
+        });
+
+        if (goodsReprog.length > 0 && !banError) {
+          message += 'Es necesario tener todos los bienes asignados a una acta';
+          banError = true;
+        }
+
+        const goodsCancel = this.goodsProgramming.filter(good => {
+          return good.status == 'CANCELADO_TMP';
+        });
+
+        if (goodsCancel.length > 0 && !banError) {
+          message += 'Es necesario tener todos los bienes asignados a una acta';
+          banError = true;
+        }
+
+        if (banError) {
+          this.alertInfo('warning', 'Error', `${message}`).then();
+        } else if (!banError) {
+          this.alertQuestion(
+            'question',
+            'Confirmación',
+            '¿Desea terminar la ejecución de recepción?'
+          ).then(question => {
+            if (question.isConfirmed) {
+              const formData: Object = {
+                termEjecutionDate: new Date(),
+              };
+              this.programmingService
+                .updateProgramming(this.programmingId, formData)
+                .subscribe({
+                  next: async () => {
+                    //Cierra la tarea//
+                    const _task = JSON.parse(localStorage.getItem('Task'));
+                    const user: any = this.authService.decodeToken();
+                    let body: any = {};
+                    body['idTask'] = _task.id;
+                    body['userProcess'] = user.username;
+                    body['type'] = 'SOLICITUD_PROGRAMACION';
+                    body['subtype'] = 'Ejecutar_Recepcion';
+                    body['ssubtype'] = 'ACCEPT';
+
+                    const closeTask = await this.closeTaskExecuteRecepcion(
+                      body
+                    );
+                    if (closeTask) {
+                      this.alertInfo(
+                        'success',
+                        'Acción correcta',
+                        'Se cerro la tarea ejecutar recepción correctamente'
+                      ).then();
+
+                      this.router.navigate([
+                        'pages/siab-web/sami/consult-tasks',
+                      ]);
+                    }
+                  },
+                });
+            }
+          });
+        }
+      },
+      error: error => {},
+    });
   }
 
   closeTaskExecuteRecepcion(body: any) {
