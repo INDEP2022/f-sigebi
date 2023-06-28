@@ -5,9 +5,14 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ServiceGoodService } from 'src/app/core/services/ms-serviceGood/servicegood.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RegisterServiceComponent } from './register-service/register-service.component';
@@ -25,6 +30,9 @@ export class RegistryServicesComponent
   list: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  columnFilter: any = [];
+  dataLoand: LocalDataSource = new LocalDataSource();
+
   constructor(
     private readonly serviceGoodService: ServiceGoodService,
     private modalService: BsModalService
@@ -50,10 +58,16 @@ export class RegistryServicesComponent
       },
       courtDate: {
         title: 'Fecha de Corte',
-        type: 'string',
         sort: false,
-        valuePrepareFunction: (value: any) => {
-          return this.formatearFecha(new Date(value));
+        type: 'html',
+        valuePrepareFunction: (text: string) => {
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+          }`;
+        },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
         },
       },
     };
@@ -66,6 +80,40 @@ export class RegistryServicesComponent
   }
 
   ngOnInit(): void {
+    this.dataLoand
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'courtDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilter[field] = `${searchFilter}:${filter.search}`;
+              console.log('this.param:', this.params);
+              this.params.value.page = 1;
+            } else {
+              delete this.columnFilter[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.searchRegistryService(this.goodId);
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.searchRegistryService(this.goodId));
@@ -74,8 +122,12 @@ export class RegistryServicesComponent
   searchRegistryService(idGood: number) {
     this.loading = true;
     this.params.getValue()['filter.goodNumber'] = `$eq:${idGood}`;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilter,
+    };
     console.log(this.params.getValue());
-    this.serviceGoodService.getAll(this.params.getValue()).subscribe({
+    this.serviceGoodService.getAll(params).subscribe({
       next: response => {
         this.list = response.data.map(service => {
           return {
@@ -85,10 +137,14 @@ export class RegistryServicesComponent
             courtDate: service.dateCourt,
           };
         });
+        this.dataLoand.load(this.list);
+        this.dataLoand.refresh();
         this.totalItems = response.count;
         this.loading = false;
       },
       error: err => {
+        this.dataLoand.load(this.list);
+        this.dataLoand.refresh();
         this.loading = false;
         console.log(err);
       },

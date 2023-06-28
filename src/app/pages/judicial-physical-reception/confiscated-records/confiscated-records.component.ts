@@ -2665,35 +2665,35 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         'No se registraron bienes',
         'El Acta no contiene Bienes, no se podrá Cerrar.'
       );
-      this.loading = false
+      this.loading = false;
     } else if (
       ['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)
     ) {
-      this.loading = false
+      this.loading = false;
       this.alert('warning', 'El acta ya se encuentra cerrada', '');
     } else if (
       this.dataGoodAct['data'].find(
         (e: any) => e.indEdoFisico && e.good[`val${e.vNoColumna}`] == null
       )
     ) {
-      this.loading = false
+      this.loading = false;
       this.alert(
         'warning',
         'Hay bienes con estado físico requerido sin establecer',
         ''
       );
     } else if (this.dataGoodAct['data'].find((e: any) => e.received != 'S')) {
-      this.loading = false
+      this.loading = false;
       this.alert('warning', 'Hay bienes no marcados como recibido', '');
     } else if (validate) {
-      this.loading = false
+      this.loading = false;
       this.alert(
         'warning',
         'Se debe especificar el Almacén y/o la Bóveda para cerrar el Acta, favor de ingresar',
         ''
       );
     } else if (this.form.get('folioEscaneo').value == null) {
-      this.loading = false
+      this.loading = false;
       this.alert('warning', 'No se registro número de folio', '');
     } else {
       const paramsF = new FilterParams();
@@ -2720,7 +2720,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               );
               localStorage.setItem('numberExpedient', this.numberExpedient);
               this.getNulls();
-              this.loading = false
+              this.loading = false;
             } else {
               if (this.scanStatus) {
                 const paramsF = new FilterParams();
@@ -2855,8 +2855,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           });
         },
         err => {
-      this.loading = false
-      console.log(err);
+          this.loading = false;
+          console.log(err);
         }
       );
     }
