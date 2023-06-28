@@ -122,6 +122,7 @@ export interface IGoodProgrammingSelect {
   transferFile: number;
   typeTransfer: string;
   unitMeasurement: string;
+  stockSiabNumber?: number;
 }
 
 export interface IGoodInfo {

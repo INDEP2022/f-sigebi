@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
@@ -14,6 +15,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class WarehouseSelectFormComponent extends BasePage implements OnInit {
+  @Output() formValue = new EventEmitter<any>();
   form: FormGroup = new FormGroup({});
   data: any[] = [];
   warehouses = new DefaultSelect<IWarehouse>();
@@ -23,7 +25,8 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private warehouseService: WarehouseService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private router: Router
   ) {
     super();
   }
@@ -47,6 +50,9 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    // this.formValue.emit(this.form.value(this.warehouse));
+    // console.log('entrada', this.form.value(this.warehouse));
+    // const dato = this.form.value.warehouse;
     if (this.typeTransportable == 'guard') {
       this.alertQuestion(
         'warning',
@@ -55,13 +61,14 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
       ).then(question => {
         if (question.isConfirmed) {
           this.loading = true;
-          this.modalRef.content.callback(this.form.value);
+          this.modalRef.content.callback(this.form.value.warehouse);
           this.close();
         } else {
           this.close();
         }
       });
     } else if (this.typeTransportable == 'warehouse') {
+      console.log('entrada2', this.form.value.warehouse);
       this.alertQuestion(
         'warning',
         'Advertencia',
@@ -69,7 +76,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
       ).then(question => {
         if (question.isConfirmed) {
           this.loading = true;
-          this.modalRef.content.callback(this.form.value);
+          this.modalRef.content.callback(this.form.value.warehouse);
           this.close();
         } else {
           this.close();
