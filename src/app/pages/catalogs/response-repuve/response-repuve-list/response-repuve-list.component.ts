@@ -77,7 +77,7 @@ export class ResponseRepuveListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.responseRepuveService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Respuesta Repuve', 'Borrado');
+        this.alert('success', 'Respuesta repuve', 'Borrado Correctamente');
         this.getExample();
       },
       error: error => {

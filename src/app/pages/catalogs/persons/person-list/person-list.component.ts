@@ -227,7 +227,11 @@ export class PersonListComponent extends BasePage implements OnInit {
 
     this.personService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Alerta', 'Borrado');
+        this.alert(
+          'success',
+          'Mantto. a administrador, depositario e interventor',
+          'Borrado Correctamente'
+        );
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getPersons());

@@ -121,7 +121,7 @@ export class SiabClasificationListComponent extends BasePage implements OnInit {
     this.siabClasificationService.removeCatalogSiabClasification(id).subscribe({
       next: () => {
         this.getSiabClasifications(),
-          this.alert('success', 'Clasificación SIAB', 'Borrado');
+          this.alert('success', 'Clasificación SIAB', 'Borrado Correctamente');
       },
     });
   }
