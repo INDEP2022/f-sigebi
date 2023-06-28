@@ -52,7 +52,18 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
 
   async searchGoods(params: any) {
     this.params.removeAllFilters();
+
+    /*lo nuevo mio */
+    const { photoDate } = this.form.value;
+
+    if (photoDate) {
+      const format = photoDate.split('/').reverse().join('-');
+      this.form.controls.photoDate.patchValue(format);
+    }
+    /*fin de lo mio */
+
     const form = this.form.value;
+
     for (const [key, value] of Object.entries(form)) {
       let operator = this.getOperator(key);
       const _val = this.getValue(value, key);
