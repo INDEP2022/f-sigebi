@@ -1,0 +1,35 @@
+.table-container {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-body {
+  padding: 200px 100px 20px;
+}
+
+.custom-card {
+  border: 10px solid black;
+}
+
+.custom-card-buttons {
+  border: 10px solid black;
+  align-items: center;
+}
+
+.custom-card-textareas {
+  border: 10px solid black;
+}
+
+.custom-cell {
+  width: 70%;
+  /* Ajusta este valor según sea necesario */
+  text-align: center;
+}
+
+.app-modal-dialog {
+  max-width: 90%;
+  /* Esto hará que el ancho del modal sea el 90% del ancho de la ventana. */
+}

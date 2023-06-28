@@ -147,7 +147,7 @@ export class InventoryDataComponent
     if (this.inventorySelect.no_inventario === null) {
       this.alert(
         'info',
-        'Información',
+        'Datos inventario',
         'Debe generar un nuevo inventario antes de mostrar los atributos',
         ''
       );
@@ -157,7 +157,7 @@ export class InventoryDataComponent
     if (this.inventorySelect.fec_inventario === null) {
       this.alert(
         'info',
-        'Información',
+        'Datos inventario',
         'Debe registrar la fecha en la que se toma el inventario',
         'S'
       );
@@ -167,7 +167,7 @@ export class InventoryDataComponent
     if (this.inventorySelect.responsable === null) {
       this.alert(
         'info',
-        'Información',
+        'Datos inventario',
         'Es necesario que sea ingresado el nombre del responsable o borre el registro.',
         'S'
       );

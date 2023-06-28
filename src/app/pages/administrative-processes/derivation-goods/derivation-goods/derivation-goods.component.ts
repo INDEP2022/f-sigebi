@@ -17,6 +17,8 @@ import { BasePage } from 'src/app/core/shared';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { GoodsComponent } from '../goods/goods.component';
 import { PwComponent } from '../pw/pw.component';
+import { ActaConvertionFormComponent } from './acta-convertion-form/acta-convertion.component'; // Importa el componente de tu modal
+//import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-derivation-goods',
@@ -32,7 +34,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
 
   //Deshabilitar el formulario
   wrongModal = true;
-
+  flagCargMasiva: boolean = false;
+  flagActa: boolean = false;
+  flagFinConversion: boolean = false;
+  flagCargaImagenes: boolean = false;
   //Variables de BLK_TIPO_BIEN
 
   no_bien_blk_tipo_bien: number;
@@ -85,37 +90,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     return this.form.get('destinationLabel');
   }
 
-  data = {
-    no_bien: 20,
-    val1: 'REGULAR',
-    val2: 'NO SE ESPECIFICA',
-    val3: 'NO SE INDICA',
-    val4: '',
-    val5: '',
-    val6: 'ESTADO FISICO',
-    val7: '',
-    val8: '',
-    val9: '',
-    val10: 'PROCEDENCIA',
-    val11: '',
-    val13: '',
-    val14: 'CONTENEDOR',
-    val15: '',
-    val16: '',
-    val17: 'NO SE ESPECIFICA',
-    val18: 'NO SE INDICA',
-    val19: 'NO SE ESPECIFICA',
-    val23: 'NO SE INDICA',
-    va24: 'NO SE ESPECIFICA',
-    val25: 'NO SE INDICA',
-    val26: 'NO SE INDICA',
-    val27: 'NO SE INDICA',
-    val28: 'NO SE INDICA',
-    val29: 'NO SE INDICA',
-    val30: 'NO SE INDICA',
-    val31: 'NO SE INDICA',
-    val32: 'NO SE INDICA',
-  };
   attributes: any;
 
   //Settings para la tabla
@@ -139,6 +113,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   goodFatherNumber: any;
   cveActaConv: any;
   tipoValue: any;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -152,7 +127,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
   ngOnInit(): void {
     this.buildForm();
-    this.searchGoodSon(this.goodFatherNumber);
 
     //Inicializando el modal
     let config = MODAL_CONFIG;
@@ -173,6 +147,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.tipo.setValue(data.typeConv);
             this.actConvertion.setValue(data.cveActaConv);
             this.searchGoods(data.goodFatherNumber);
+            this.searchGoodSon(data.goodFatherNumber);
           }
         },
       }, //pasar datos por aca
@@ -269,13 +244,23 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     );
   }
 
-  searchGoodSon(e: any) {
-    const paramsF = new FilterParams();
-    paramsF.addFilter('goodId', e);
-    this.serviceGood.getAllFilter(paramsF.getParams()).subscribe(
-      (res: any) => {
-        this.form.valueChanges.subscribe(value => {
-          if (value.tipo === '1') {
+  // Define una variable para almacenar el último id de conversión consultado
+  lastIdConversion: any = null;
+
+  async searchGoodSon(e: any) {
+    this.form.valueChanges.subscribe(async value => {
+      // Comprueba si el id de conversión ha cambiado
+      if (this.lastIdConversion !== value.idConversion) {
+        try {
+          const conversionData = await this.convertiongoodService
+            .getById(value.idConversion)
+            .toPromise();
+          const paramsF = new FilterParams();
+          paramsF.addFilter('goodId', e);
+          const res = await this.serviceGood
+            .getAllFilter(paramsF.getParams())
+            .toPromise();
+          if (conversionData.typeConv === '1') {
             this.observation.setValue(res.data[0]['observations']);
             this.descriptionSon.setValue(res.data[0]['descriptionSon']);
             this.quantity.setValue(res.data[0]['quantity']);
@@ -283,11 +268,13 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.unitOfMeasure.setValue(res.data[0]['unit']);
             this.destinationLabel.setValue(res.data[0]['labelNumber']);
             this.numberGoodSon.setValue(e);
-
             this.searchStatus(res.data[0]['status']);
             this.getAttributesGood(e);
-          }
-          if (value.tipo === '2') {
+            this.flagActa = true;
+            this.flagCargMasiva = false;
+            this.flagCargaImagenes = false;
+            this.flagFinConversion = false;
+          } else if (conversionData.typeConv === '2') {
             this.observation.setValue('');
             this.descriptionSon.setValue('');
             this.quantity.setValue('');
@@ -295,15 +282,22 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.unitOfMeasure.setValue('');
             this.destinationLabel.setValue('');
             this.numberGoodSon.setValue('');
-
             this.searchStatus('');
+
+            this.flagActa = false;
+            this.flagCargMasiva = true;
+            this.flagCargaImagenes = true;
+            this.flagFinConversion = true;
           }
-        });
-      },
-      err => {
-        console.log(err);
+
+          // Actualiza el último id de conversión consultado
+          this.lastIdConversion = value.idConversion;
+        } catch (err) {
+          console.error(err);
+          // maneja el error
+        }
       }
-    );
+    });
   }
 
   searchStatus(data: any) {
@@ -346,6 +340,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           );
       }
     });
+  }
+
+  watchFlagChanges(flag: any) {
+    this.flagActa = flag;
   }
 
   actConversionBtn() {}
@@ -409,4 +407,18 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   /* showToast(status: NbComponentStatus) {
     this.toastrService.show(status, 'Estado cambiado exitosamente !!', { status });
   } */
+
+  showActasConvertion() {
+    let config = { ...MODAL_CONFIG, class: 'modal-xl modal-dialog-centered' };
+    config.initialState = {
+      proceeding: {},
+      idProgramming: 1,
+      callback: (receipt: any, keyDoc: string) => {
+        if (receipt && keyDoc) {
+        }
+      },
+    };
+
+    this.modalService.show(ActaConvertionFormComponent, config);
+  }
 }

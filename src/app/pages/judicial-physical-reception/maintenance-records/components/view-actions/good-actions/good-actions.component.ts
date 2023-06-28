@@ -435,7 +435,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
               (index < this.selectedsForUpdate.length - 1 ? ',' : '');
           });
           const message = `Se actualizaron los bienes No. ${goods} `;
-          this.onLoadToast('success', 'Exito', message);
+          this.alert('success', 'Actualización', message);
           this.updateTable.emit();
         },
         error: err => {

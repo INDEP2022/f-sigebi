@@ -26,6 +26,7 @@ export enum GoodEndpoints {
   GoodsMotivesrev = 'good/goods-motivesrev',
   Vban = 'good/getBan',
   AttribGoodBad = 'attrib-good-bad/get-all',
+  AttribGoodBadId = 'attrib-good-bad',
   AttribGood = 'goods-attributes',
 
   GetAllGoodQuery = 'good/getAllGoodQuery',

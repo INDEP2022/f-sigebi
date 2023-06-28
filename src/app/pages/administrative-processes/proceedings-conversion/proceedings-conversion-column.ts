@@ -1,5 +1,4 @@
-import { CheckboxImprocedentElementComponent } from '../../documents-reception/flyers/related-documents/checkbox-improcedent/checkbox-improcedent-element';
-import { CheckboxSelectElementComponent } from '../../documents-reception/flyers/related-documents/checkbox-improcedent/checkbox-select-element';
+import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { FieldToSearch } from '../../juridical-processes/shared/form-search-handler/form-search-handler.component';
 
 export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
@@ -18,11 +17,15 @@ export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
     type: 'string',
     sort: false,
   },
-  identifier: {
-    title: 'Ident.',
-    type: 'string',
+  acta: {
+    title: 'Acta',
+    type: 'custom',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.fileNumber.ac;
+    },
   },
+
   status: {
     title: 'Estatus',
     type: 'string',
@@ -33,29 +36,6 @@ export const RELATED_DOCUMENTS_COLUMNS_GOODS = {
     type: 'string',
     sort: false,
     hide: true,
-  },
-  seleccion: {
-    title: 'Selección',
-    type: 'custom',
-    renderComponent: CheckboxSelectElementComponent, //CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
-    },
-    sort: false,
-    hide: false,
-  },
-  improcedente: {
-    title: 'Improcedente',
-    type: 'custom',
-    renderComponent: CheckboxImprocedentElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
-    },
-    sort: false,
   },
 };
 // Columnas de la tabla de documentos relacionados al volante y folio universal
@@ -323,3 +303,25 @@ export const COUNT_ACTAS_COLUMNS = {
     sort: false,
   },
 };
+
+export interface MassiveChargeGoodsDto {
+  id: number;
+  goodNumber: number;
+  fileNumber: number;
+  flyerNumber: number;
+  user: string;
+  massiveChargeDate: string;
+  daydayEviction: number;
+}
+export interface GooByExpediente {
+  goodId: number;
+  description: string;
+  quantity: number;
+  identifier: string;
+  status: string;
+  desEstatus: string;
+  seleccion: boolean;
+  improcedente: boolean;
+  disponible: boolean;
+  acta: IExpedient;
+}
