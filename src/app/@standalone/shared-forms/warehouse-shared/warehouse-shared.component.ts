@@ -53,7 +53,7 @@ export class WarehouseSharedComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     if (this.warehouseField == 'warehouse') {
-      this.getWarehouses(new ListParams);
+      this.getWarehouses(new ListParams());
     }
   }
 
@@ -71,7 +71,7 @@ export class WarehouseSharedComponent extends BasePage implements OnInit {
         }
         this.onLoadToast('error', 'Error', error);
       },
-      () => { }
+      () => {}
     );
   }
 
@@ -91,7 +91,7 @@ export class WarehouseSharedComponent extends BasePage implements OnInit {
         // this.onLoadToast('error', 'Error', error);
         this.warehouses = new DefaultSelect([], 0, true);
       },
-      () => { }
+      () => {}
     );
   }
 

@@ -13,8 +13,13 @@ export const LAWYER_COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value.name;
     },
-    filterFunction: (cell?: any, search?: string) => {
-      return search != null ? search : '';
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.name;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
   name: {
