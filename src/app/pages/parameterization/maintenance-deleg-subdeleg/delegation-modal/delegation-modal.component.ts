@@ -98,10 +98,12 @@ export class DelegationModalComponent extends BasePage implements OnInit {
   update() {
     console.log();
     this.loading = true;
-    this.delegationService.update2(this.delegationForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.delegationService
+      .update2(this.delegationForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {

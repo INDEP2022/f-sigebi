@@ -45,23 +45,31 @@
         <div
           class="col-lg-2 col-md-4 col-sm-12 col-12 align-self-baseline mb-3 mt-3">
           <button
-            (click)="updateGoodMotivosRev(params)"
-            class="btn btn-secondary btn-sm active w-100">
+            (click)="attention()"
+            class="btn btn-primary btn-sm active w-100">
             Atender
           </button>
         </div>
         <div
           class="col-lg-2 col-md-4 col-sm-12 col-12 align-self-baseline mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">
+          <button
+            class="btn btn-success btn-sm w-100"
+            type="button"
+            (click)="file.click()">
             Atención Masiva
           </button>
+          <input
+            type="file"
+            name="file"
+            #file
+            class="d-none"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            (change)="onFileChange($event)" />
         </div>
         <div
           class="col-lg-2 col-md-4 col-sm-12 col-12 mb-3 mt-3 align-self-baseline mb-3 mt-3">
-          <button
-            (click)="exportar()"
-            class="btn btn-success btn-sm active w-100">
-            Exportar
+          <button (click)="exportar()" class="btn btn-success btn-sm w-100">
+            Exportar<i class="bx bx-download float-icon"></i>
           </button>
         </div>
       </div>
@@ -79,18 +87,36 @@
       </div>
     </div>
     <div class="row pt-4">
+      <form-loader *ngIf="loading"></form-loader>
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '500px' }">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
             [settings]="settings"
             [source]="data"
-            (delete)="delete($event.data)">
+            (userRowSelect)="selectRow($event)">
           </ng2-smart-table>
-        </div>
+        </ng-scrollbar>
       </div>
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
+
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-6 mt-3">
+          <form-field [control]="form.get('responsable')" label="Responsable">
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="responsable" />
+          </form-field>
+        </div>
+      </div>
+    </form>
   </div>
 </app-card>

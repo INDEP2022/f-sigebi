@@ -7,6 +7,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { IGoodSsubType } from 'src/app/core/models/catalogs/good-ssubtype.model';
@@ -83,8 +84,14 @@ export class ClasificationFilterComponent implements OnInit {
     const _types = this.form.controls.types.value;
     const types = _types.map(type => type.id);
     this.changeSubloading(true);
-    this.goodSubtypeService.getByManyIds({ types }, params).subscribe({
+    const _params = new FilterParams();
+    _params.page = params?.page ?? 1;
+    _params.limit = params?.limit ?? 10;
+    _params.search = params?.text ?? '';
+    _params.addFilter('idTypeGood', types.join(','), SearchFilter.IN);
+    this.goodSubtypeService.getAllFilter(_params.getParams()).subscribe({
       next: response => {
+        console.log(response);
         this.changeSubloading(false);
         this.subtypes = new DefaultSelect(response.data, response.count);
       },
@@ -98,15 +105,19 @@ export class ClasificationFilterComponent implements OnInit {
     const _subtypes = this.form.controls.subtypes.value;
     const subtypes = _subtypes.map(subtype => subtype.id);
     this.changeSubloading(true);
-    this.goodSsubtypeService
-      .getByManyIds({ types, subtypes }, params)
-      .subscribe({
-        next: response => {
-          this.changeSubloading(false);
-          this.ssubtypes = new DefaultSelect(response.data, response.count);
-        },
-        error: () => this.changeSubloading(false),
-      });
+    const _params = new FilterParams();
+    _params.page = params?.page ?? 1;
+    _params.limit = params?.limit ?? 10;
+    _params.addFilter('noSubType', subtypes.join(','), SearchFilter.IN);
+    _params.addFilter('noType', types.join(','), SearchFilter.IN);
+    _params.search = params?.text ?? '';
+    this.goodSsubtypeService.getAllFilter(_params.getParams()).subscribe({
+      next: response => {
+        this.changeSubloading(false);
+        this.ssubtypes = new DefaultSelect(response.data, response.count);
+      },
+      error: () => this.changeSubloading(false),
+    });
   }
 
   getSssubtypes(params?: ListParams) {
@@ -117,15 +128,22 @@ export class ClasificationFilterComponent implements OnInit {
     const _ssubtypes = this.form.controls.ssubtypes.value;
     const ssubtypes = _ssubtypes.map(ssubtype => ssubtype.id);
     this.changeSubloading(true);
-    this.goodSssubtypeService
-      .getByManyIds({ types, subtypes, ssubtypes }, params)
-      .subscribe({
-        next: response => {
-          this.changeSubloading(false);
-          this.sssubtypes = new DefaultSelect(response.data, response.count);
-        },
-        error: () => this.changeSubloading(false),
-      });
+    const _params = new FilterParams();
+    _params.page = params?.page ?? 1;
+    _params.limit = params?.limit ?? 10;
+    if (params?.text) {
+      _params.addFilter('description', params.text, SearchFilter.ILIKE);
+    }
+    _params.addFilter('numType', types.join(','), SearchFilter.IN);
+    _params.addFilter('numSubType', subtypes.join(','), SearchFilter.IN);
+    _params.addFilter('numSsubType', ssubtypes.join(','), SearchFilter.IN);
+    this.goodSssubtypeService.getFilter(_params.getParams()).subscribe({
+      next: response => {
+        this.changeSubloading(false);
+        this.sssubtypes = new DefaultSelect(response.data, response.count);
+      },
+      error: () => this.changeSubloading(false),
+    });
   }
 
   getClasif() {

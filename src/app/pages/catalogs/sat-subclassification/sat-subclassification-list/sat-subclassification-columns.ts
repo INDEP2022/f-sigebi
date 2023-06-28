@@ -1,5 +1,3 @@
-import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
-
 export const SAT_SUBCLASSIFICATION_COLUMNS = {
   id: {
     title: 'Id',

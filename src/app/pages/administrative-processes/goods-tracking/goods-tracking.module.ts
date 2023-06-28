@@ -9,8 +9,8 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 //Routing
 import { GoodsTrackingRoutingModule } from './goods-tracking-routing.module';
 //Components
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { GoodsReviewStatusComponent } from './goods-review-status/goods-review-status.component';
-
 @NgModule({
   declarations: [GoodsReviewStatusComponent],
   imports: [
@@ -20,6 +20,7 @@ import { GoodsReviewStatusComponent } from './goods-review-status/goods-review-s
     FormsModule,
     ReactiveFormsModule,
     TabsModule,
+    FormLoaderComponent,
   ],
 })
 export class GoodsTrackingModule {}
