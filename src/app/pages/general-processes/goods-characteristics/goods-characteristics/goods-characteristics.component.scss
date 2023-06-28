@@ -8,6 +8,13 @@
   // }
 }
 
+:host ::ng-deep form-field {
+  .form-control:focus ~ .form-bar:after,
+  .form-control:focus ~ .form-bar:before {
+    width: 0% !important;
+  }
+}
+
 :host ::ng-deep app-goods-types-shared {
   .row {
     flex-direction: column;
