@@ -279,7 +279,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.activatedRoute.queryParams.subscribe({
       next: param => {
         // console.log(param);
-        debugger;
+        // debugger;
         this.origin = param['origin'] ?? null;
         this.origin1 = param['origin1'] ?? null;
         if (
@@ -406,7 +406,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       if (row.required && !row.value) {
         this.alert(
           'error',
-          'Características de bien (' + this.numberGood.value + ')',
+          'Características del bien ' + this.numberGood.value,
           'Complete el atributo ' + row.attribute
         );
         // this.onLoadToast(
@@ -477,7 +477,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         next: response => {
           this.alert(
             'success',
-            'Características de bien (' + this.numberGood.value + ')',
+            'Características del bien ' + this.numberGood.value,
             'Actualizadas correctamente'
           );
 
@@ -932,7 +932,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   async searchGood(byPage = false) {
     // const numberGood = Number(this.numberGood.value);
-    debugger;
+    // debugger;
     this.loading = true;
 
     if (this.fillParams(byPage)) {
@@ -1178,6 +1178,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       this.disabledTable = true;
       this.disabledNoClasifBien = true;
     }
+    // this.disabledBienes = false;
   }
 
   async pupInsertGeoreferencia() {
