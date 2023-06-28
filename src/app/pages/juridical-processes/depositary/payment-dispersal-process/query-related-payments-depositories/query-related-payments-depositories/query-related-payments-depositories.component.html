@@ -155,17 +155,18 @@
                   <div class="col-12 col-sm-4 col-md-4 p-2">
                     Detalle del Bien
                   </div>
+                </div>
+                <div class="card-body">
                   <form-field
-                    class="col-sm-12 col-12 col-md-offset-4 col-md-4 p-2"
+                    class="col-sm-12 col-12 col-md-4 p-2"
                     [control]="formBienDetalle.get('idBien')"
                     label="No. Bien">
                     <input
                       class="form-control"
                       formControlName="idBien"
+                      maxlength="11"
                       [readonly]="true" />
                   </form-field>
-                </div>
-                <div class="card-body">
                   <form-field
                     class="col-sm-12 col-12 col-md-4 p-2"
                     [control]="formBienDetalle.get('cantidad')"
@@ -173,16 +174,28 @@
                     <input
                       class="form-control"
                       formControlName="cantidad"
+                      maxlength="21"
                       [readonly]="true" />
                   </form-field>
                   <form-field
-                    class="col-sm-12 col-12 col-md-8 p-2"
+                    class="col-sm-12 col-12 col-md-4 p-2"
                     [control]="formBienDetalle.get('estatus')"
                     label="Estatus">
                     <input
                       class="form-control"
                       formControlName="estatus"
+                      maxlength="11"
                       [readonly]="true" />
+                  </form-field>
+                  <form-field
+                    class="col-sm-12 col-12 col-md-12 p-2"
+                    [control]="formBienDetalle.get('estatusDescription')"
+                    label="Estatus Descripci&oacute;n">
+                    <textarea
+                      class="form-control"
+                      formControlName="estatusDescription"
+                      maxlength="11"
+                      [readonly]="true"></textarea>
                   </form-field>
                   <form-field
                     class="col-sm-12 col-12 col-md-12 p-2"

@@ -221,7 +221,11 @@ export class QueryRelatedPaymentsDepositoriesComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1250)],
       ], //*
       cantidad: [{ value: '', disabled: false }, [Validators.maxLength(21)]], //*
-      estatus: [{ value: '', disabled: false }, [Validators.maxLength(300)]], //*
+      estatus: [{ value: '', disabled: false }, [Validators.maxLength(3)]], //*
+      estatusDescription: [
+        { value: '', disabled: false },
+        [Validators.maxLength(300)],
+      ], //*
     });
   }
 
@@ -337,6 +341,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
     this.router.navigate(['/pages/juridical/depositary/depository-fees'], {
       queryParams: {
         origin: this.screenKey,
+        p_bien: this.noBienReadOnly,
       },
     });
   }
@@ -417,10 +422,10 @@ export class QueryRelatedPaymentsDepositoriesComponent
       .subscribe({
         next: res => {
           if (res.data.length > 0) {
-            let status = this.formBienDetalle.get('estatus').value;
+            // let status = this.formBienDetalle.get('estatus').value;
             this.formBienDetalle
-              .get('estatus')
-              .setValue(status + ' --- ' + res.data[0].description);
+              .get('estatusDescription')
+              .setValue(res.data[0].description);
           }
         },
         error: err => {
