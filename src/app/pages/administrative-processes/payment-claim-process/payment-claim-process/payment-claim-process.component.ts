@@ -580,7 +580,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.document = null;
         this.alert(
           'success',
-          'Motivo actualizado del cambio de bienes y folio anterior eliminado.',
+          'Motivo de cambio actualizado y folio anterior eliminado.',
           'Actualizado'
         );
       },
