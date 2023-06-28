@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 
 import { LocalDataSource } from 'ng2-smart-table';
 import {
@@ -79,26 +78,40 @@ export class DelegationListComponent extends BasePage implements OnInit {
     this.settings.pager = { display: true };
     this.delegationService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        this.paragraphs = response.data;
-        this.totalItems = response.count;
+        console.log(response);
+        this.data.load(response.data);
         this.data.refresh();
+        this.totalItems = response.count;
         this.loading = false;
       },
       error: error => (this.loading = false),
     });
   }
 
-  openForm(delegation?: IDelegation) {
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      delegation,
-      callback: (next: boolean) => {
-        if (next) this.getExample();
+  // openForm(delegation?: any) {
+  //   console.log(delegation);
+  //   const modalConfig = MODAL_CONFIG;
+  //   modalConfig.initialState = {
+  //     delegation,
+  //     callback: (next: boolean) => {
+  //       if (next) this.getExample();
+  //     },
+  //   };
+  //   this.modalService.show(DelegationFormComponent, modalConfig);
+  // }
+  openForm(delegation?: any) {
+    let config: ModalOptions = {
+      initialState: {
+        delegation,
+        callback: (next: boolean) => {
+          if (next) this.getExample();
+        },
       },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     };
-    this.modalService.show(DelegationFormComponent, modalConfig);
+    this.modalService.show(DelegationFormComponent, config);
   }
-
   delete(delegation: IDelegation) {
     this.alertQuestion(
       'warning',

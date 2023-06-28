@@ -20,7 +20,7 @@ export class CatTypesOfGoodsSubSubSubTypeComponent
   idTypeGood: string;
   idSsTypeGood: string;
   idSssTypeGood: string;
-
+  numGood: string;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -36,7 +36,7 @@ export class CatTypesOfGoodsSubSubSubTypeComponent
     this.typeGoodsForm = this.fb.group({
       id: [null],
       description: ['', Validators.compose([Validators.required])],
-      // numClasifGoods: [null],
+      //numClasifGoods: [null],
       numSsubType: [null],
       numSubType: [null],
       numType: [null],
@@ -45,8 +45,10 @@ export class CatTypesOfGoodsSubSubSubTypeComponent
     });
     if (this.data != null) {
       this.edit = true;
-      console.log(this.data);
+      console.log(this.data.numClasifGoods);
       this.typeGoodsForm.patchValue(this.data);
+      //this.typeGoodsForm.controls['id'].setValue(this.data.numClasifGoods);
+      this.typeGoodsForm.controls['id'].disable();
       this.typeGoodsForm.controls['numSsubType'].setValue(
         this.data.numSsubType.id
       );
@@ -55,10 +57,14 @@ export class CatTypesOfGoodsSubSubSubTypeComponent
       );
       this.typeGoodsForm.controls['numType'].setValue(this.data.numType.id);
     } else {
+      //console.log(this.numGood);
+      //this.typeGoodsForm.controls['id'].setValue(this.numGood);
       this.typeGoodsForm.controls['numType'].setValue(this.idTypeGood);
       this.typeGoodsForm.controls['numSubType'].setValue(this.idSsTypeGood);
       this.typeGoodsForm.controls['numSsubType'].setValue(this.idSssTypeGood);
     }
+
+    console.log(this.typeGoodsForm.controls);
   }
   confirm() {
     this.edit ? this.update() : this.create();

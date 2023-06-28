@@ -60,10 +60,8 @@ export class ParametersListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'parameter' ||
             filter.field == 'description' ||
             filter.field == 'value' ||
-            filter.field == 'address' ||
             filter.field == 'typeEventId'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
@@ -115,15 +113,20 @@ export class ParametersListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.parameterModService.newRemove(parameter).subscribe(
-          response => {
-            this.getParameters();
+        this.parameterModService.newRemove(parameter).subscribe({
+          next: (resp: any) => {
+            if (resp) {
+              this.alert('success', 'Parámetro comercialización', 'Borrado');
+              this.getParameters();
+            }
           },
-          error => (this.loading = false)
-        );
+          error: error => {
+            this.loading = false;
+          },
+        });
       }
     });
   }

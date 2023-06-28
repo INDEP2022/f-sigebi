@@ -6,9 +6,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, map, of, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
@@ -20,15 +22,18 @@ import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { HistoryProtectionService } from 'src/app/core/services/ms-history-protection/history-protection.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { MaintenanceOfCoveragesService } from '../maintenace-of-coverages-services/maintenance-of-coverages.service';
+import { ReservedModalComponent } from '../reserved-modal/reserved-modal.component';
 import { SendingOfEMailsComponent } from '../sending-of-e-mails/sending-of-e-mails.component';
 import { COLUMNS } from './columns';
 
 export interface PathParams {
+  tramite: number;
   volante: number;
   expediente: number;
 }
@@ -48,6 +53,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
   data: any[] = [];
   form: FormGroup; //formulario notificaciones
   pathParams: PathParams = {
+    tramite: null,
     volante: null,
     expediente: null,
   };
@@ -56,6 +62,8 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     rel_est_si: null,
     rel_est_no: null,
   };
+  documents: IDocuments;
+  folioUniv: number = 0;
   receiptDateValue: Date;
   externalOfficeDateValue: Date;
   affairSelect = new DefaultSelect();
@@ -88,6 +96,8 @@ export class JpDMcCMaintenanceOfCoveragesComponent
   goodService = inject(GoodService);
   historyProtection = inject(HistoryProtectionService);
   maintenanceOfCoferageService = inject(MaintenanceOfCoveragesService);
+  documentsService = inject(DocumentsService);
+  bsModalRef = inject(BsModalRef);
 
   get wheelNumber() {
     return this.form.get('wheelNumber');
@@ -198,6 +208,10 @@ export class JpDMcCMaintenanceOfCoveragesComponent
 
   ngOnInit(): void {
     this.buildForm();
+    //no_tramite
+    this.pathParams.tramite = Number(
+      this.route.snapshot.queryParamMap.get('processNumber')
+    );
     //volante
     this.pathParams.volante = Number(
       this.route.snapshot.queryParamMap.get('wheelNumber')
@@ -208,6 +222,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     );
     this.getNotifications();
     this.getFolioUniv();
+    this.getDocument();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       const expediente = this.pathParams.expediente;
       if (expediente) {
@@ -258,6 +273,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       //broadcasterDescription: [null, [Validators.required]],
       autorityNumber: [null],
       //authorityDescription: [null, [Validators.required]],
+      reserved: [null],
     });
   }
 
@@ -606,18 +622,18 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       )
       .subscribe({
         next: resp => {
-          resp.data.map(item => {
-            const result: any = this.setFolioUnivAndSelects(item);
+          resp.data.map(async item => {
+            const result: any = await this.setFolioUnivAndSelects(item);
             item.selected = result.block;
             item.cambio_ch = result.block;
             item.folio_universal = result.folio;
-            this.blkControlForm.folioUniversal = result.folio;
-            if (result.block == true) {
-              this.listGoodSelected.push(item);
-            }
+            //this.blkControlForm.folioUniversal = result.folio;
+            //if (result.block == true) {
+            this.listGoodSelected.push(item);
+            //}
           });
           if (this.selectAll == true) {
-            this.listGoodSelected = [];
+            //this.listGoodSelected = [];
             resp.data.map((item: any) => {
               item.selected = true;
             });
@@ -635,14 +651,16 @@ export class JpDMcCMaintenanceOfCoveragesComponent
   }
 
   async setFolioUnivAndSelects(good: any) {
-    const folio = await this.getGoodFolio(good.id);
-    console.log('folio', folio);
-    let result = { block: false, folio: folio };
-    if (good.labelNumber == 6) {
-      result.block = true;
-      result.folio = folio;
-    }
-    return result;
+    return new Promise(async (resolve, reject) => {
+      const folio = await this.getGoodFolio(good.id);
+      console.log('folio ', folio, '// etiqueta:', good.labelNumber);
+      let result = { block: false, folio: folio };
+      if (good.labelNumber == 6) {
+        result.block = true;
+        result.folio = folio;
+      }
+      resolve(result);
+    });
   }
 
   getGoodFolio(id: number) {
@@ -657,6 +675,30 @@ export class JpDMcCMaintenanceOfCoveragesComponent
         },
       });
     });
+  }
+
+  getDocument() {
+    let params = new ListParams();
+    params['filter.flyerNumber'] = `$eq:${this.pathParams.volante}`;
+    params['filter.numberProceedings'] = `$eq:${this.pathParams.expediente}`;
+    params[
+      'filter.descriptionDocument'
+    ] = `$eq:AMPARO EXPEDIENTE ${this.pathParams.expediente}`;
+    this.documentsService
+      .getAll(params)
+      .pipe(
+        map(x => x.data[0]),
+        catchError((error, _a) => {
+          return of({ data: [], count: 0 });
+        })
+      )
+      .subscribe({
+        next: (resp: any) => {
+          this.blkControlForm.folioUniversal = resp.id;
+          this.folioUniv = resp.id;
+          this.documents = resp as IDocuments;
+        },
+      });
   }
 
   onCLickCheckBox(event: any) {
@@ -693,11 +735,11 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     let vc_pantalla = '';
     let v_cuantos = 0;
     let v_ind_si = false;
-    let v_ind_no = false;
-    let v_rel_si = null;
-    let v_rel_no = null;
+    let v_ind_no: boolean = false;
+    let v_rel_si: any = null;
+    let v_rel_no: any = null;
     let v_ban = false;
-    let v_no_etiqueta = '';
+    let v_no_etiqueta: any = null;
     let v_ban_esc = true;
     let v_val_esc = 0;
 
@@ -724,9 +766,175 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       return;
     }
 
-    /*this.data.map((item:any)=>{
-      if(data)
-    })*/
+    this.data.map((item: any) => {
+      if (item.selected != item.cambio_ch) {
+        //se ampara
+        if (item.selected == true && item.cambio_ch == false) {
+          if (v_rel_si == null) {
+            v_rel_si = `${item.id}  ${item.description}`;
+          } else {
+            const value = `${v_rel_si || ''} 
+            ${item.id}  ${item.description}`;
+            v_rel_si = value.substring(1, 4000);
+          }
+
+          if (this.blkControlForm.rel_est_si == null) {
+            const value = `${item.status}`;
+            this.blkControlForm.rel_est_si = value;
+          } else {
+            if (this.blkControlForm.rel_est_si.includes(item.status)) {
+              const value = this.blkControlForm.rel_est_si + ',' + item.status;
+              this.blkControlForm.rel_est_si = value.substring(1, 4000);
+            }
+          }
+          v_ind_si = true;
+          //insert historical bien amparos
+
+          v_no_etiqueta = 6;
+        } else {
+          if (v_ban_esc) {
+            v_ban_esc = false;
+
+            //query select documentos guardar en v_val_esc
+
+            if (
+              v_val_esc == 0 &&
+              notifications.affairKey &&
+              (Number(notifications.affairKey) == 13 ||
+                Number(notifications.affairKey) == 14)
+            ) {
+              this.alert(
+                'error',
+                'Error',
+                'No se puede actualizar por falta de escaneo de documentos...'
+              );
+              return;
+            }
+          }
+          if (v_rel_no == null) {
+            v_rel_no = `${item.id}  ${item.description}`;
+          } else {
+            const value = `${v_rel_no || ''}
+            ${item.id}  ${item.description}`;
+            v_rel_no = value.substring(1, 4000);
+          }
+
+          if (this.blkControlForm.rel_est_no == null) {
+            const value = `${item.status}`;
+            this.blkControlForm.rel_est_no = value;
+          } else {
+            if (this.blkControlForm.rel_est_no.includes(item.status)) {
+              const value = this.blkControlForm.rel_est_no + ',' + item.status;
+              this.blkControlForm.rel_est_no = value.substring(1, 4000);
+            }
+          }
+          //seleccionarmos v_no_etiquesta de historial
+          //actualizamos histoail con la fecha_libera
+
+          v_ind_no = true;
+        }
+        //item.labelNumber = v_no_etiqueta
+        //cambio_ch = selected
+      }
+    });
+  }
+
+  async knowledge() {
+    let v_val_esc: any = 0;
+    let v_ban: boolean = false;
+    console.log(this.folioUniv);
+    if (this.form.controls['wheelNumber'].value == null) {
+      this.alert('error', 'Se debe ingresar un Volante/Expediente.', '');
+      return;
+    }
+
+    if (this.data.length > 0) {
+      //consultar la logica de esta parte
+    }
+
+    /*if (v_ban == false) {
+      this.alert(
+        'error',
+        'Se tiene al menos 1 bien amparado, no puede concluir por este medio.',
+        ''
+      );
+      return;
+    }*/
+
+    const affair = Number(this.form.get('affairKey').value);
+    if (this.folioUniv == null && (affair == 13 || affair == 14)) {
+      this.alert('error', 'Se debe ingresar el Folio de escaneo.', '');
+      return;
+    }
+
+    v_val_esc = await this.getQuantityDocuments();
+    console.log(v_val_esc);
+
+    if (v_val_esc == 0 && (affair == 13 || affair == 14)) {
+      this.alert(
+        'error',
+        'No se puede actualizar por falta de escaneo de documentos...',
+        ''
+      );
+      return;
+    }
+
+    this.bsModalRef = this.openCustonModal(
+      ReservedModalComponent,
+      this.form.value,
+      this.pathParams.tramite
+    );
+
+    this.bsModalRef.content.event.subscribe((res: any) => {
+      console.log(res);
+      this.form.get('reserved').setValue(res);
+    });
+
+    /* this.bsModalRef.content.event.subscribe((res: any) => {
+      console.log(res);
+    }); */
+  }
+
+  getQuantityDocuments() {
+    return new Promise((resolve, reject) => {
+      let params = new ListParams();
+      params['filter.id'] = `$eq:${this.folioUniv}`;
+      params['filter.scanStatus'] = `$eq:ESCANEADO`;
+      this.documentsService
+        .getAll(params)
+        .pipe(
+          catchError((e, _a) => {
+            let result: any = null;
+            if (e.status == 400) {
+              return of({ data: [], count: 0 });
+            } else {
+              throw e;
+            }
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resolve(resp.count);
+          },
+        });
+    });
+  }
+
+  openCustonModal(component: any, notification: any, processNumber?: number) {
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        notification: notification,
+        processNumber: processNumber,
+        /*callback: (next: boolean) => {
+          if (next) this.getExample();
+        },*/
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+
+    return this.modalService.show(component, config);
   }
 
   manttoEmail() {

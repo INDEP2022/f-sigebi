@@ -24,6 +24,13 @@ export class DelegationStateService
     return this.delegationStateRepository.getAllPaginated(this.route, params);
   }
 
+  getAllDetail(
+    params?: ListParams
+  ): Observable<IListResponse<IDelegationState>> {
+    const route = `${this.route}/get-all`;
+    return this.delegationStateRepository.getAllPaginated(route, params);
+  }
+
   getById(id: string | number): Observable<IDelegationState> {
     return this.delegationStateRepository.getById(this.route, id);
   }

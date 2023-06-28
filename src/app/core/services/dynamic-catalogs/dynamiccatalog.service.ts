@@ -22,4 +22,8 @@ export class DynamicCatalogsService extends HttpService {
   getTvalTable5(params: _Params) {
     return this.get(DinamicCatalogEndPoints.TvalTable5, params);
   }
+
+  getOtValor(params: any) {
+    return this.get(DinamicCatalogEndPoints.GetOtValor, params);
+  }
 }

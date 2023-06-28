@@ -29,6 +29,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   idTypeDoc: number = 0;
   idProg: number = 0;
   receiptId: number = 0;
+  idReportAclara: any; //ID de los reportes
   isPdfLoaded = false;
   title: string = 'Imprimir Reporte';
   btnTitle: string = 'Firmar Reporte';
@@ -52,6 +53,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   programming: Iprogramming;
   nomReport: string = '';
   actId: number = 0;
+  receiptGuards: any;
   constructor(
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
@@ -82,10 +84,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('actId', this.actId);
-    console.log('progId', this.idProg);
-    console.log('nomReport', this.nomReport);
-    console.log('typeReport', this.idTypeDoc);
+    console.log('this.idTypeDoc', this.idTypeDoc);
+    console.log('this.receiptGuards', this.receiptGuards);
     this.showReportByTypeDoc();
     this.getReceipt();
     this.params
@@ -99,7 +99,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   showReportByTypeDoc() {
     if (this.idTypeDoc == 103) {
-      console.log('this.receipt', this.receipt);
       let linkDoc: string = `${this.urlBaseReport}Recibo_Entrega.jasper&ID_PROG=${this.idProg}&ID_RECIBO=${this.receipt.id}&ID_ACTA=${this.receipt.actId}`;
       this.src = linkDoc;
     }
@@ -117,6 +116,11 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       let linkDoc: string = `${this.urlBaseReport}${this.nomReport}&ID_ACTA=${this.actId}&ID_PROGRAMACION=${this.idProg}`;
       this.src = linkDoc;
     }
+
+    if (this.idTypeDoc == 185) {
+      let linkDoc: string = `${this.urlBaseReport}Recibo_Resguardo.jasper&ID_RECIBO_RESGUARDO=${this.receiptGuards.id}`;
+      this.src = linkDoc;
+    }
   }
 
   getReceipt() {
@@ -132,13 +136,14 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   getSignatories() {
     const learnedType = this.idTypeDoc;
-    const learnedId = this.idProg;
+    const learnedId = this.programming.id;
     this.loading = true;
 
     this.signatoriesService
       .getSignatoriesFilter(learnedType, learnedId)
       .subscribe({
         next: response => {
+          console.log('gg', response);
           this.signatories = response.data;
           this.totalItems = response.count;
           this.loading = false;
@@ -184,20 +189,18 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   signDocument() {
     //mostrar listado de reportes
-
-    if (!this.listSigns && this.printReport && !this.isAttachDoc) {
-      // if(this.notificationValidate == 'Y'){
-      //   console.log('Soy una notificación, no es necesario validar firmante creado');
-      // } else {
-      //   console.log('Soy un dictamen, es necesario validar firmante para evitar duplicidad');
-      //   this.verificateFirm();
-      // }
-      this.printReport = false;
-      this.listSigns = true;
-      this.title = 'Firma electrónica';
-    } else if (!this.listSigns && this.printReport && this.isAttachDoc) {
-      //adjuntar el reporte
-      this.openMessage2();
+    if (this.idTypeDoc == 185) {
+      this.modalRef.content.callback(true);
+      this.modalRef.hide();
+    } else {
+      if (!this.listSigns && this.printReport && !this.isAttachDoc) {
+        this.printReport = false;
+        this.listSigns = true;
+        this.title = 'Firma electrónica';
+      } else if (!this.listSigns && this.printReport && this.isAttachDoc) {
+        //adjuntar el reporte
+        this.openMessage2();
+      }
     }
   }
 
@@ -259,12 +262,9 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
       this.signatoriesService.create(formData).subscribe({
         next: response => {
-          console.log('firmantes creados');
           resolve(true);
         },
-        error: error => {
-          console.log('error', error);
-        },
+        error: error => {},
       });
     });
   }
@@ -305,11 +305,9 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
               .subscribe({
                 next: response => {
                   this.msjCheck = true;
-                  console.log('errror', response);
                 },
                 error: error => {
-                  console.log('errror', error);
-                  this.msjCheck = true;
+                  //this.msjCheck = true;
                 },
               });
           }
@@ -323,10 +321,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 .subscribe({
                   next: response => {
                     this.msjCheck = true;
-                    console.log('errror', response);
                   },
                   error: error => {
-                    console.log('errror', error);
                     //this.msjCheck = true;
                   },
                 });
@@ -342,10 +338,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 .subscribe({
                   next: response => {
                     this.msjCheck = true;
-                    console.log('errror', response);
                   },
                   error: error => {
-                    console.log('errror', error);
                     this.msjCheck = true;
                   },
                 });
@@ -361,10 +355,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 .subscribe({
                   next: response => {
                     this.msjCheck = true;
-                    console.log('errror', response);
                   },
                   error: error => {
-                    console.log('errror', error);
                     this.msjCheck = true;
                   },
                 });

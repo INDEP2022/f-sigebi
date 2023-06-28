@@ -202,7 +202,7 @@ export class RateCatalogComponent extends BasePage implements OnInit {
                     this.alert(
                       'success',
                       'Tasa Interés',
-                      'Ha sido creado exitosamente'
+                      'Ha sido creado correctamente'
                     );
                     this.clear();
                     this.getAllNumeraryRate();
@@ -287,7 +287,7 @@ export class RateCatalogComponent extends BasePage implements OnInit {
       if (answ.isConfirmed) {
         this.numeraryServ.remove(data.tasintId).subscribe({
           next: () => {
-            this.alert('success', 'Tasa Interés', 'Eliminado exitosamente');
+            this.alert('success', 'Tasa Interés', 'Ha sido eliminada');
             this.getAllNumeraryRate();
           },
           error: () => {
@@ -318,7 +318,7 @@ export class RateCatalogComponent extends BasePage implements OnInit {
                 this.alert(
                   'success',
                   'Tasa Interés',
-                  'Se actualizo exitasamente'
+                  'Se actualizo correctamente'
                 );
                 this.getAllNumeraryRate();
               },

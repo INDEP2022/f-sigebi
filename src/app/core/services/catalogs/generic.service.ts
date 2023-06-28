@@ -41,7 +41,7 @@ export class GenericService
   }
 
   remove1(name: string, key: number): Observable<Object> {
-    const route = `${'generics'}/name/${name}/key/${key}`;
+    const route = `generics/delete-custom/name/${name}/key/${key}`;
     return this.delete(route);
     // return this.genericRepository.remove(this.route, id);
   }

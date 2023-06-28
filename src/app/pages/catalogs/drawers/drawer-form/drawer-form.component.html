@@ -1,42 +1,33 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Crear' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="drawerForm" class="form-material">
-      <form-field
-        [control]="drawerForm.get('noDrawer')"
+      <!-- <form-field
+        [control]="drawerForm.get('id')"
         label="N&uacute;mero de gaveta">
-        <input type="text" class="form-control" formControlName="noDrawer" />
-      </form-field>
+        <input type="text" class="form-control" formControlName="id" />
+      </form-field> -->
 
       <div class="row pt-4">
-        <form-field [control]="drawerForm.get('noBobeda')">
+        <form-field [control]="drawerForm.get('noDrawer')">
           <ngx-select
             [form]="drawerForm"
-            control="noBobeda"
-            [data]="boveda"
+            control="noDrawer"
             value="idSafe"
             bindLabel="description"
-            label="Boveda"
-            (fetchItems)="getBovedaSelect($event)"></ngx-select>
+            [data]="boveda"
+            (fetchItems)="getBoveda($event)"
+            (change)="bovedaChange($event)"
+            label="Bóveda">
+          </ngx-select>
         </form-field>
       </div>
 
       <div class="row pt-4">
         <form-field [control]="drawerForm.get('status')" label="Estatus">
           <input type="text" class="form-control" formControlName="status" />
-        </form-field>
-      </div>
-
-      <div class="row pt-4">
-        <form-field
-          [control]="drawerForm.get('noRegistration')"
-          label="N&uacute;mero de registro">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="noRegistration" />
         </form-field>
       </div>
     </form>

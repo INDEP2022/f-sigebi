@@ -272,9 +272,6 @@
         <form [formGroup]="executeForm">
           <div class="table-responsive">
             <table class="table table-bordered">
-              <col style="width: 60%" />
-              <col style="width: 80%" />
-              <col style="width: 60%" />
               <thead>
                 <tr>
                   <th scope="col" class="text-center">
@@ -283,20 +280,35 @@
                       class="form-control ng-pristine ng-valid ng-touched"
                       ng-reflect-model="true" />
                   </th>
-                  <th scope="col">No. Gesti&oacute;n</th>
-                  <th scope="col">Clave &Uacute;nica</th>
-                  <th scope="col">Expediente</th>
+                  <th scope="col" class="text-nowrap">No. Gesti&oacute;n</th>
+                  <th scope="col" class="text-nowrap">Clave &Uacute;nica</th>
+                  <th scope="col" class="text-nowrap">Expediente</th>
                   <th scope="col">Descripci&oacute;n Transferente</th>
-                  <th scope="col">Descripci&oacute;n INDEP</th>
-                  <th scope="col">Cantidad Transferente</th>
-                  <th scope="col">Cantidad INDEP</th>
-                  <th scope="col">Unidad Medida Transferente</th>
-                  <th scope="col">Unidad Medida INDEP</th>
-                  <th scope="col">Estado F&iacute;sico Transferente</th>
-                  <th scope="col">Estado F&iacute;sico INDEP</th>
-                  <th scope="col">Conservaci&oacute;n Transferente</th>
-                  <th scope="col">Estado Conservaci&oacute;n INDEP</th>
-                  <th scope="col">Acciones</th>
+                  <th scope="col" class="text-nowrap">
+                    Descripci&oacute;n INDEP
+                  </th>
+                  <th scope="col" class="text-nowrap">Cantidad Transferente</th>
+                  <th scope="col" class="text-nowrap">Cantidad INDEP</th>
+                  <th scope="col" class="text-nowrap">
+                    Unidad Medida Transferente
+                  </th>
+                  <th scope="col" class="text-nowrap">Unidad Medida INDEP</th>
+                  <th scope="col" class="text-nowrap">
+                    Estado F&iacute;sico Transferente
+                  </th>
+                  <th scope="col" class="text-nowrap">
+                    Estado F&iacute;sico INDEP
+                  </th>
+                  <th scope="col" class="text-nowrap">
+                    Conservaci&oacute;n Transferente
+                  </th>
+                  <th scope="col" class="text-nowrap">
+                    Estado Conservaci&oacute;n INDEP
+                  </th>
+                  <th scope="col" class="text-nowrap">Destino Ligie</th>
+                  <th scope="col" class="text-nowrap">Destino Transferente</th>
+                  <th scope="col" class="text-nowrap">Destino INDEP</th>
+                  <th scope="col" class="text-nowrap text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -409,7 +421,28 @@
                           </option>
                         </select>
                       </td>
+                      <td class="text-center align-baseline"></td>
                       <td class="text-center align-baseline">
+                        {{ good.get('destiny').value }}
+                      </td>
+                      <td class="text-center align-baseline">
+                        <select
+                          [value]="executeForm.get('transferentDestiny').value"
+                          class="form-select"
+                          style="
+                            width: 150px;
+                            height: 40px;
+                            font-size: 13px !important;
+                          "
+                          formControlName="transferentDestiny">
+                          <option
+                            *ngFor="let transfer of transfersDestinity"
+                            [value]="transfer.keyId">
+                            {{ transfer.description }}
+                          </option>
+                        </select>
+                      </td>
+                      <td class="text-center align-baseline text-nowrap">
                         <a class="text-center">
                           <i
                             (click)="showGood(good.value)"
@@ -520,9 +553,6 @@
                     <form [formGroup]="receptionForm">
                       <div class="table-responsive">
                         <table class="table table-bordered">
-                          <col style="width: 60%" />
-                          <col style="width: 80%" />
-                          <col style="width: 60%" />
                           <thead>
                             <tr>
                               <th scope="col" class="text-center">
@@ -531,28 +561,48 @@
                                   class="form-control ng-pristine ng-valid ng-touched"
                                   ng-reflect-model="true" />
                               </th>
-                              <th scope="col">No. Gesti&oacute;n</th>
-                              <th scope="col">Clave &Uacute;nica</th>
-                              <th scope="col">Expediente</th>
+                              <th scope="col" class="text-nowrap">
+                                No. Gesti&oacute;n
+                              </th>
+                              <th scope="col" class="text-nowrap">
+                                Clave &Uacute;nica
+                              </th>
+                              <th scope="col" class="text-nowrap">
+                                Expediente
+                              </th>
                               <th scope="col">
                                 Descripci&oacute;n Transferente
                               </th>
-                              <th scope="col">Descripci&oacute;n INDEP</th>
-                              <th scope="col">Cantidad Transferente</th>
-                              <th scope="col">Cantidad INDEP</th>
-                              <th scope="col">Unidad Medida Transferente</th>
-                              <th scope="col">Unidad Medida INDEP</th>
-                              <th scope="col">
+                              <th scope="col" class="text-nowrap">
+                                Descripci&oacute;n INDEP
+                              </th>
+                              <th scope="col" class="text-nowrap">
+                                Cantidad Transferente
+                              </th>
+                              <th scope="col" class="text-nowrap">
+                                Cantidad INDEP
+                              </th>
+                              <th scope="col" class="text-nowrap">
+                                Unidad Medida Transferente
+                              </th>
+                              <th scope="col" class="text-nowrap">
+                                Unidad Medida INDEP
+                              </th>
+                              <th scope="col" class="text-nowrap">
                                 Estado F&iacute;sico Transferente
                               </th>
-                              <th scope="col">Estado F&iacute;sico INDEP</th>
-                              <th scope="col">
+                              <th scope="col" class="text-nowrap">
+                                Estado F&iacute;sico INDEP
+                              </th>
+                              <th scope="col" class="text-nowrap">
                                 Conservaci&oacute;n Transferente
                               </th>
-                              <th scope="col">
+                              <th scope="col" class="text-nowrap">
                                 Estado Conservaci&oacute;n INDEP
                               </th>
-                              <th scope="col">Acciones</th>
+                              <th scope="col" class="text-nowrap text-center">
+                                Acciones
+                              </th>
                             </tr>
                           </thead>
                           <tbody>
@@ -685,7 +735,9 @@
                                       </option>
                                     </select>
                                   </td>
-                                  <td class="text-center align-baseline">
+                                  <td
+                                    class="text-center align-baseline"
+                                    class="text-nowrap">
                                     <a class="text-center">
                                       <i
                                         (click)="showGood(good.value)"
@@ -751,9 +803,11 @@
                 <form [formGroup]="goodsGuardForm">
                   <div class="table-responsive">
                     <table class="table table-bordered">
-                      <col style="width: 60%" />
-                      <col style="width: 80%" />
-                      <col style="width: 60%" />
+                      <<<<<<< HEAD =======
+                      <col style="width: 90%" />
+                      <col style="width: 120%" />
+                      <col style="width: 90%" />
+                      >>>>>>> 51e7223e0a1d2edd5835369beae76959c747483b
                       <thead>
                         <tr>
                           <th scope="col" class="text-center">
@@ -762,11 +816,46 @@
                               class="form-control ng-pristine ng-valid ng-touched"
                               ng-reflect-model="true" />
                           </th>
-                          <th scope="col">No. Gesti&oacute;n</th>
-                          <th scope="col">Clave &Uacute;nica</th>
-                          <th scope="col">Expediente</th>
+                          <th scope="col" class="text-nowrap">
+                            No. Gesti&oacute;n
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Clave &Uacute;nica
+                          </th>
+                          <th scope="col" class="text-nowrap">Expediente</th>
                           <th scope="col">Descripci&oacute;n Transferente</th>
-                          <th scope="col">Descripci&oacute;n INDEP</th>
+                          <th scope="col" style="width: 90%">
+                            Descripci&oacute;n INDEP
+                          </th>
+                          <<<<<<< HEAD
+                          <th scope="col" class="text-nowrap">
+                            Cantidad Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Cantidad INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Unidad Medida Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Unidad Medida INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado F&iacute;sico Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado F&iacute;sico INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Conservaci&oacute;n Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado Conservaci&oacute;n INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap text-center">
+                            Acciones
+                          </th>
+                          =======
                           <th scope="col">Cantidad Transferente</th>
                           <th scope="col">Cantidad INDEP</th>
                           <th scope="col">Unidad Medida Transferente</th>
@@ -776,6 +865,7 @@
                           <th scope="col">Conservaci&oacute;n Transferente</th>
                           <th scope="col">Estado Conservaci&oacute;n INDEP</th>
                           <th scope="col">Acciones</th>
+                          >>>>>>> 51e7223e0a1d2edd5835369beae76959c747483b
                         </tr>
                       </thead>
                       <tbody>
@@ -899,7 +989,9 @@
                                   </option>
                                 </select>
                               </td>
-                              <td class="text-center align-baseline">
+                              <td
+                                class="text-center align-baseline"
+                                class="text-nowrap">
                                 <a class="text-center">
                                   <i
                                     (click)="showGood(good.value)"
@@ -1001,20 +1093,44 @@
                               class="form-control ng-pristine ng-valid ng-touched"
                               ng-reflect-model="true" />
                           </th>
-                          <th scope="col">No. Gesti&oacute;n</th>
-                          <th scope="col">Clave &Uacute;nica</th>
-                          <th scope="col">Expediente</th>
+                          <th scope="col" class="text-nowrap">
+                            No. Gesti&oacute;n
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Clave &Uacute;nica
+                          </th>
+                          <th scope="col" class="text-nowrap">Expediente</th>
                           <th scope="col">Descripci&oacute;n Transferente</th>
-                          <th scope="col">Descripci&oacute;n INDEP</th>
-                          <th scope="col">Cantidad Transferente</th>
-                          <th scope="col">Cantidad INDEP</th>
-                          <th scope="col">Unidad Medida Transferente</th>
-                          <th scope="col">Unidad Medida INDEP</th>
-                          <th scope="col">Estado F&iacute;sico Transferente</th>
-                          <th scope="col">Estado F&iacute;sico INDEP</th>
-                          <th scope="col">Conservaci&oacute;n Transferente</th>
-                          <th scope="col">Estado Conservaci&oacute;n INDEP</th>
-                          <th scope="col">Acciones</th>
+                          <th scope="col" class="text-nowrap">
+                            Descripci&oacute;n INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Cantidad Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Cantidad INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Unidad Medida Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Unidad Medida INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado F&iacute;sico Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado F&iacute;sico INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Conservaci&oacute;n Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado Conservaci&oacute;n INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap text-center">
+                            Acciones
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1143,7 +1259,8 @@
                                   </option>
                                 </select>
                               </td>
-                              <td class="text-center align-baseline">
+                              <td
+                                class="text-center align-baseline text-nowrap">
                                 <a class="text-center">
                                   <i
                                     (click)="showGood(good.value)"
@@ -1242,9 +1359,6 @@
                   <form [formGroup]="goodsReprogForm">
                     <div class="table-responsive">
                       <table class="table table-bordered">
-                        <col style="width: 60%" />
-                        <col style="width: 80%" />
-                        <col style="width: 60%" />
                         <thead>
                           <tr>
                             <th scope="col" class="text-center">
@@ -1253,26 +1367,44 @@
                                 class="form-control ng-pristine ng-valid ng-touched"
                                 ng-reflect-model="true" />
                             </th>
-                            <th scope="col">No. Gesti&oacute;n</th>
-                            <th scope="col">Clave &Uacute;nica</th>
-                            <th scope="col">Expediente</th>
+                            <th scope="col" class="text-nowrap">
+                              No. Gesti&oacute;n
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Clave &Uacute;nica
+                            </th>
+                            <th scope="col" class="text-nowrap">Expediente</th>
                             <th scope="col">Descripci&oacute;n Transferente</th>
-                            <th scope="col">Descripci&oacute;n INDEP</th>
-                            <th scope="col">Cantidad Transferente</th>
-                            <th scope="col">Cantidad INDEP</th>
-                            <th scope="col">Unidad Medida Transferente</th>
-                            <th scope="col">Unidad Medida INDEP</th>
-                            <th scope="col">
+                            <th scope="col" class="text-nowrap">
+                              Descripci&oacute;n INDEP
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Cantidad Transferente
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Cantidad INDEP
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Unidad Medida Transferente
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Unidad Medida INDEP
+                            </th>
+                            <th scope="col" class="text-nowrap">
                               Estado F&iacute;sico Transferente
                             </th>
-                            <th scope="col">Estado F&iacute;sico INDEP</th>
-                            <th scope="col">
+                            <th scope="col" class="text-nowrap">
+                              Estado F&iacute;sico INDEP
+                            </th>
+                            <th scope="col" class="text-nowrap">
                               Conservaci&oacute;n Transferente
                             </th>
-                            <th scope="col">
+                            <th scope="col" class="text-nowrap">
                               Estado Conservaci&oacute;n INDEP
                             </th>
-                            <th scope="col">Acciones</th>
+                            <th scope="col" class="text-nowrap text-center">
+                              Acciones
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1479,20 +1611,42 @@
                               class="form-control ng-pristine ng-valid ng-touched"
                               ng-reflect-model="true" />
                           </th>
-                          <th scope="col">No. Gesti&oacute;n</th>
-                          <th scope="col">Clave &Uacute;nica</th>
-                          <th scope="col">Expediente</th>
+                          <th scope="col" class="text-nowrap">
+                            No. Gesti&oacute;n
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Clave &Uacute;nica
+                          </th>
+                          <th scope="col" class="text-nowrap">Expediente</th>
                           <th scope="col">Descripci&oacute;n Transferente</th>
                           <th scope="col">Descripci&oacute;n INDEP</th>
-                          <th scope="col">Cantidad Transferente</th>
-                          <th scope="col">Cantidad INDEP</th>
-                          <th scope="col">Unidad Medida Transferente</th>
-                          <th scope="col">Unidad Medida INDEP</th>
-                          <th scope="col">Estado F&iacute;sico Transferente</th>
-                          <th scope="col">Estado F&iacute;sico INDEP</th>
-                          <th scope="col">Conservaci&oacute;n Transferente</th>
-                          <th scope="col">Estado Conservaci&oacute;n INDEP</th>
-                          <th scope="col">Acciones</th>
+                          <th scope="col" class="text-nowrap">
+                            Cantidad Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Cantidad INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Unidad Medida Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Unidad Medida INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado F&iacute;sico Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado F&iacute;sico INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Conservaci&oacute;n Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado Conservaci&oacute;n INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap text-center">
+                            Acciones
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1621,7 +1775,8 @@
                                   </option>
                                 </select>
                               </td>
-                              <td class="text-center align-baseline">
+                              <td
+                                class="text-center align-baseline text-nowrap">
                                 <a class="text-center">
                                   <i
                                     (click)="showGood(good.value)"
