@@ -73,13 +73,23 @@
             </form-field>
           </div>
           <div class="col-md-3">
-            <form-field [control]="form.get('good')" label="Bien">
-              <input
+            <form-field [control]="form.get('good')">
+              <ngx-select
+                label="Bien"
+                [form]="form"
+                control="good"
+                [data]="goodSelect"
+                value="id"
+                bindLabel="description"
+                label="Bien"
+                (fetchItems)="getGood($event)"
+                (change)="changeGood($event)"></ngx-select>
+              <!--<input
                 type="number"
                 class="form-control"
                 formControlName="good"
                 min="1"
-                pattern="^[0-9]+" />
+                pattern="^[0-9]+" />-->
             </form-field>
           </div>
         </div>
