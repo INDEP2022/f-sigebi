@@ -5,8 +5,13 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -25,6 +30,8 @@ export class AssignedVaultsComponent
   @Input() goodId: number;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  columnFilter: any = [];
+  dataLoand: LocalDataSource = new LocalDataSource();
 
   constructor(
     private readonly goodServices: GoodService,
@@ -53,11 +60,31 @@ export class AssignedVaultsComponent
         title: 'Fecha Entrada',
         width: '70%',
         sort: false,
+        type: 'html',
+        valuePrepareFunction: (text: string) => {
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+          }`;
+        },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
+        },
       },
       outDate: {
         title: 'Fecha Salida',
         width: '70%',
         sort: false,
+        type: 'html',
+        valuePrepareFunction: (text: string) => {
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+          }`;
+        },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
+        },
       },
     };
   }
@@ -69,6 +96,48 @@ export class AssignedVaultsComponent
   }
 
   ngOnInit(): void {
+    this.dataLoand
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'id':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'entryDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'outDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilter[field] = `${searchFilter}:${filter.search}`;
+              console.log('this.param:', this.params);
+              this.params.value.page = 1;
+            } else {
+              delete this.columnFilter[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.searchGoodMenage(this.goodId);
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.searchGoodMenage(this.goodId));
@@ -92,8 +161,13 @@ export class AssignedVaultsComponent
                   outDate: good.dateOut,
                 };
               });
+              this.dataLoand.load(this.list);
+              this.dataLoand.refresh();
             },
-            error: err => console.log(err),
+            error: err => {
+              this.dataLoand.load([]);
+              this.dataLoand.refresh();
+            },
           });
           this.totalItems = response.count;
         }

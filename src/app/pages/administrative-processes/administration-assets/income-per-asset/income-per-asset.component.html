@@ -10,7 +10,7 @@
   <div class="row">
     <div class="col-md-12">
       <div [class]="assetLoading ? 'table-loading' : ''">
-        <ng2-smart-table [settings]="assetSettings" [source]="assetList">
+        <ng2-smart-table [settings]="assetSettings" [source]="dataAsset">
         </ng2-smart-table>
       </div>
     </div>
@@ -32,7 +32,7 @@
   <div class="row">
     <div class="col-md-12">
       <div [class]="depositLoading ? 'table-loading' : ''">
-        <ng2-smart-table [settings]="depositSettings" [source]="depositList">
+        <ng2-smart-table [settings]="depositSettings" [source]="dataDeposit">
         </ng2-smart-table>
       </div>
     </div>
