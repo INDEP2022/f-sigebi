@@ -14,6 +14,7 @@
     </div>
     <div class="col-sm-12 col-12 col-md-8 p-2">
       <button
+        [disabled]="!searchForm.value.id && !searchForm.value.typeDict"
         type="submit"
         [disabled]="searchForm.invalid"
         class="btn btn-sm btn-primary active">

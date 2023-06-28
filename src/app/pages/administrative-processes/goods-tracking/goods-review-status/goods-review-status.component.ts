@@ -330,22 +330,4 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   async returnJsonToCsv() {
     return this.data.getAll();
   }
-
-  attention() {
-    let ATENCION = 1;
-    let ACTUALIZA = 0;
-    let v1_ID_EVENTO = 0;
-    let ESTATUSB: number;
-    this.alertQuestion(
-      'info',
-      '¿Está seguro de dar por atendidos los bienes del archivo?',
-      ''
-    ).then(async question => {
-      if (question.isConfirmed) {
-        ATENCION = 1;
-        ACTUALIZA = 0;
-        v1_ID_EVENTO = 0;
-      }
-    });
-  }
 }
