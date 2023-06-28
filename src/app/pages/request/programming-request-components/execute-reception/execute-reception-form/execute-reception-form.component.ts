@@ -2113,7 +2113,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   delete(receipt: IReceipt) {
     this.alertQuestion(
       'question',
-      'confirmación',
+      'Confirmación',
       '¿Desea eliminar el recibo?'
     ).then(question => {
       if (question.isConfirmed) {

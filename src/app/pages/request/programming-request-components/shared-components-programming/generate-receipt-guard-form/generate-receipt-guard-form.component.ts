@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -57,21 +57,21 @@ export class GenerateReceiptGuardFormComponent
   prepareForm() {
     this.form = this.fb.group({
       id: [this.receiptId],
-      nameWitnessOne: [null],
-      catIdWitnessOne: [null],
-      noIdWitnessOne: [null],
+      nameWitnessOne: [null, [Validators.required]],
+      catIdWitnessOne: [null, [Validators.required]],
+      noIdWitnessOne: [null, [Validators.required]],
       expIdWitnessIne: [null],
-      nameWitnessTwo: [null],
-      catIdWitnessTwo: [null],
-      noIdWitnessTwo: [null],
+      nameWitnessTwo: [null, [Validators.required]],
+      catIdWitnessTwo: [null, [Validators.required]],
+      noIdWitnessTwo: [null, [Validators.required]],
       expIdWitnessTwo: [null],
-      officialSeg: [null],
-      chargeSeg: [null],
-      catIdFuncSeg: [null],
-      noIdFuncSeg: [null],
+      officialSeg: [null, [Validators.required]],
+      chargeSeg: [null, [Validators.required]],
+      catIdFuncSeg: [null, [Validators.required]],
+      noIdFuncSeg: [null, [Validators.required]],
       expIdFuncSeg: [null],
-      officialSae: [null],
-      chargeSae: [null],
+      officialSae: [null, [Validators.required]],
+      chargeSae: [null, [Validators.required]],
       contractNumber: [null],
       vigencia: [null],
     });

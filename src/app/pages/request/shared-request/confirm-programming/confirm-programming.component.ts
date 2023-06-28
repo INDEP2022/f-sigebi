@@ -48,9 +48,7 @@ export class ConfirmProgrammingComponent extends BasePage implements OnInit {
           this.modalRef.content.callback(this.confirmForm.value);
           this.modalRef.hide();
         },
-        error: error => {
-          console.log('error', error);
-        },
+        error: error => {},
       });
   }
 
