@@ -85,7 +85,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     console.log('this.idTypeDoc', this.idTypeDoc);
-    console.log('this.receiptGuards', this.receiptGuards);
+
     this.showReportByTypeDoc();
     this.getReceipt();
     this.params
