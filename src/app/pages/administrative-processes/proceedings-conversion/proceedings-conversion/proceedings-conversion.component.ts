@@ -22,8 +22,10 @@ import { ICopiesJobManagementDto } from 'src/app/core/models/ms-officemanagement
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
+
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
@@ -370,6 +372,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             this.insert = true;
             console.log('readYes and writeYes');
             this.validPermisos = true;
+            this.validPermisos = true;
           } else if (
             filter.readingPermission == 'S' &&
             filter.writingPermission == 'N'
@@ -381,6 +384,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             filter.writingPermission == 'S'
           ) {
             this.insert = true;
+            this.validPermisos = true;
             this.validPermisos = true;
             console.log('readNo and writeYes');
           } else {
@@ -577,6 +581,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   async refreshTableGoodsJobManagement() {
     const params = new ListParams();
     params['filter.id'] = this.proceedingsConversionForm.value.fileNumber;
+    params['filter.id'] = this.proceedingsConversionForm.value.fileNumber;
     params.limit = 100000000;
     try {
       this.dataTableGoodsConvertion = (
@@ -659,31 +664,32 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     total: number
   ) {
     if (this.proceedingsConversionForm.value.fileNumber) {
-      await this.flyerService
-        .getGoodsJobManagementByIds({
-          goodNumber: dataGoodRes.goodId,
-          managementNumber: this.proceedingsConversionForm.value.fileNumber,
-        })
-        .subscribe({
-          next: res => {
-            console.log(res);
-            if (res.count > 0) {
-              this.dataGood[count].disponible = false;
-            }
-            this.validStatusGood(this.dataGood[count], count, total);
-          },
-          error: err => {
-            console.log(err);
-            this.dataGood[count].disponible = true;
-            this.validStatusGood(this.dataGood[count], count, total);
-          },
-        });
-    } else {
-      this.dataGood[count].disponible = true;
-      this.validStatusGood(this.dataGood[count], count, total);
+      if (this.proceedingsConversionForm.value.fileNumber) {
+        await this.flyerService
+          .getGoodsJobManagementByIds({
+            goodNumber: dataGoodRes.goodId,
+            managementNumber: this.proceedingsConversionForm.value.fileNumber,
+          })
+          .subscribe({
+            next: res => {
+              console.log(res);
+              if (res.count > 0) {
+                this.dataGood[count].disponible = false;
+              }
+              this.validStatusGood(this.dataGood[count], count, total);
+            },
+            error: err => {
+              console.log(err);
+              this.dataGood[count].disponible = true;
+              this.validStatusGood(this.dataGood[count], count, total);
+            },
+          });
+      } else {
+        this.dataGood[count].disponible = true;
+        this.validStatusGood(this.dataGood[count], count, total);
+      }
     }
   }
-
   async validStatusGood(
     dataGoodRes: IDataGoodsTable,
     count: number,

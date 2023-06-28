@@ -25,6 +25,14 @@ export class ProceedingsConversionDetailComponent implements OnInit {
     private modalRef: BsModalRef,
     private actasConvertionCommunicationService: ActasConvertionCommunicationService
   ) {}
+  inputValue: string;
+  userRes: any;
+  inputDisabled: boolean = true;
+  constructor(
+    private fb: FormBuilder,
+    private modalRef: BsModalRef,
+    private actasConvertionCommunicationService: ActasConvertionCommunicationService
+  ) {}
 
   ngOnInit(): void {
     this.prepareForm();
