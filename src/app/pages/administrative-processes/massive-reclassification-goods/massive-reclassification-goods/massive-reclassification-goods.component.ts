@@ -75,7 +75,7 @@ export class MassiveReclassificationGoodsComponent
     this.mode.valueChanges
       .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
       .subscribe(x => {
-        console.log(x);
+        // console.log(x);
         if (x === 'I') {
           this.classificationGoodAlterning.setValue(null);
           this.classificationGoodAlterning.addValidators(Validators.required);
@@ -86,7 +86,7 @@ export class MassiveReclassificationGoodsComponent
           );
         }
         this.form.updateValueAndValidity();
-        console.log(this.form.valid);
+        // console.log(this.form.valid);
       });
 
     // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
@@ -138,7 +138,7 @@ export class MassiveReclassificationGoodsComponent
     } else {
       newClassNumber = this.classificationOfGoods.value;
     }
-    console.log(this.selectedGooods);
+    // console.log(this.selectedGooods);
     forkJoin(
       this.selectedGooods.map(good => {
         return this.updateMode(good, newClassNumber);
@@ -179,7 +179,7 @@ export class MassiveReclassificationGoodsComponent
   // }
 
   updateMode(good: IGood, newClassNumber: string) {
-    console.log(Number(newClassNumber), this.classificationOfGoods.value);
+    // console.log(Number(newClassNumber), this.classificationOfGoods.value);
     let body: any = {};
     body.id = good.id;
     body.goodId = good.goodId;
@@ -187,7 +187,7 @@ export class MassiveReclassificationGoodsComponent
     body.requestId = Number(good.requestId);
     body.fractionId = Number(good.fractionId);
     body.addressId = Number(good.addressId);
-    console.log(body);
+    // console.log(body);
     return this.goodServices.update(body).pipe(takeUntil(this.$unSubscribe));
   }
 
