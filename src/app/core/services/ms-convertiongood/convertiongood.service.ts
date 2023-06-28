@@ -81,4 +81,14 @@ export class ConvertiongoodService extends HttpService {
     };
     return this.httpClient.get(`${ConvertiongoodEndpoints.ActsConvertion}`);
   }
+
+  getAllGoods(id: number) {
+    const URL = `${environment.API_URL}/convertiongood/api/v1/${ConvertiongoodEndpoints.ActsConvertion}`;
+    const headers = new HttpHeaders();
+    let params = new HttpParams().append('filter.conversionId', `$eq:${id}`);
+
+    return this.http
+      .get<any>(URL, { headers: headers, params: params })
+      .pipe(map(res => res));
+  }
 }
