@@ -52,18 +52,18 @@ export class MassiveReclassificationGoodsComponent
     this.service.loadGoods.next(true);
   }
 
-  disabledReclas() {
-    let validacion = this.selectedGooods.length === 0;
+  enabledReclass() {
+    let validacion = this.selectedGooods.length > 0;
     if (this.mode.value && this.mode.value === 'I') {
       validacion =
-        validacion ||
-        this.form.invalid ||
-        this.classificationGoodAlterning.value === null;
+        validacion &&
+        this.form.valid &&
+        this.classificationGoodAlterning.value !== null;
     } else {
       validacion =
-        validacion ||
-        this.mode.value === null ||
-        this.classificationOfGoods.value === null;
+        validacion &&
+        this.mode.value !== null &&
+        this.classificationOfGoods.value !== null;
     }
     return validacion;
   }
