@@ -41,12 +41,17 @@
             <form [formGroup]="form" class="container-fluid form-material p-0">
               <div class="card-header text-dark">
                 <div class="col-12 col-sm-4 col-md-4 p-2">Depositaria</div>
-                <div class="col-12 col-sm-8 col-md-8 p-2">
+              </div>
+              <div class="card-body">
+                <div class="col-12 col-sm-12 col-md-12 p-2">
                   <form-field
-                    class="col-sm-12 col-12 col-md-8 p-2"
+                    class="col-sm-12 col-12 col-md-4 p-2"
                     [control]="form.get('noBien')"
                     label="No&#46; Bien">
-                    <input class="form-control" formControlName="noBien" />
+                    <input
+                      class="form-control"
+                      maxlength="11"
+                      formControlName="noBien" />
                   </form-field>
                   <div class="col-sm-12 col-12 col-md-4 p-2">
                     <button
@@ -64,8 +69,6 @@
                     </button>
                   </div>
                 </div>
-              </div>
-              <div class="card-body">
                 <form-field
                   class="col-sm-12 col-12 col-md-4 p-2"
                   [control]="form.get('nombramiento')"
@@ -73,6 +76,7 @@
                   <input
                     class="form-control"
                     formControlName="nombramiento"
+                    maxlength="6"
                     [readonly]="true" />
                 </form-field>
                 <form-field
@@ -82,6 +86,7 @@
                   <input
                     class="form-control"
                     formControlName="fecha"
+                    maxlength="11"
                     bsDatapicker
                     [readonly]="true" />
                 </form-field>
@@ -92,6 +97,7 @@
                   <input
                     class="form-control"
                     formControlName="contraprestaciones"
+                    maxlength="11"
                     [readonly]="true" />
                 </form-field>
                 <form-field
@@ -101,6 +107,7 @@
                   <input
                     class="form-control"
                     formControlName="cveContrato"
+                    maxlength="60"
                     [readonly]="true" />
                 </form-field>
               </div>
@@ -112,25 +119,27 @@
               class="container-fluid form-material p-0">
               <div class="card-header text-dark">
                 <div class="col-12 col-sm-4 col-md-4 p-2">Depositario</div>
+              </div>
+              <div class="card-body">
                 <form-field
-                  class="col-sm-12 col-12 col-md-offset-4 col-md-4 p-2"
+                  class="col-sm-12 col-12 col-md-4 p-2"
                   [control]="formDepositario.get('idDepositario')"
                   label="Id Depositario">
                   <input
                     class="form-control"
                     formControlName="idDepositario"
+                    maxlength="30"
                     [readonly]="true" />
                 </form-field>
-              </div>
-              <div class="card-body">
                 <form-field
-                  class="col-sm-12 col-12 col-md-12 p-2"
+                  class="col-sm-12 col-12 col-md-8 p-2"
                   [control]="formDepositario.get('depositario')"
                   label="Depositario">
-                  <input
+                  <textarea
                     class="form-control"
                     formControlName="depositario"
-                    [readonly]="true" />
+                    maxlength="400"
+                    [readonly]="true"></textarea>
                 </form-field>
               </div>
             </form>

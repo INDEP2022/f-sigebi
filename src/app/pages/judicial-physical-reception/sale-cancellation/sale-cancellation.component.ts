@@ -1588,7 +1588,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
 
   //Functions
   toggleActa() {
-    this.loading = true
+    this.loading = true;
     if (this.labelActa == 'Abrir acta') {
       this.newOpenProceeding();
     } else {
@@ -1724,7 +1724,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                                   document.getElementById('expedient-number');
                                 this.render.removeClass(btn, 'disabled');
                                 this.render.addClass(btn, 'enabled');
-                                this.loading = false
+                                this.loading = false;
                               }
                             );
                         } else {
@@ -1733,7 +1733,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                             'Error al abrir acta',
                             'El estatus de los bienes no regresaron a su estado anterior, por favor volver a intentar abrir el acta'
                           );
-                          this.loading = false
+                          this.loading = false;
                         }
                       },
                       err => {
@@ -1742,7 +1742,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                           'Hubo un error al abrir el acta',
                           'Lo bienes no regresaron a su estado anterior'
                         );
-                        this.loading = false
+                        this.loading = false;
                       }
                     );
                 },
@@ -1752,14 +1752,14 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                     'Se presentó un error inesperado',
                     err.error.message
                   );
-                  this.loading = false
+                  this.loading = false;
                 }
               );
           }
         });
       } else {
         this.alert('info', 'El acta ya está abierta', '');
-        this.loading = false
+        this.loading = false;
       }
     });
   }
@@ -1771,7 +1771,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         'No se registraron bienes',
         'El Acta no contiene Bienes, no se podrá Cerrar.'
       );
-      this.loading = false
+      this.loading = false;
     } else if (
       this.dataGoodAct['data'].find(
         (e: any) => e.indEdoFisico && e.good[`val${e.vNoColumna}`] == null
@@ -1782,19 +1782,19 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         'Hay bienes con estado físico requerido sin establecer',
         ''
       );
-      this.loading = false
+      this.loading = false;
     } else if (this.dataGoodAct['data'].find((e: any) => e.received != 'S')) {
       this.alert('warning', 'Hay bienes no marcados como recibido', '');
-      this.loading = false
+      this.loading = false;
     } else if (
       this.isAlmacen &&
       this.dataGoodAct['data'].find((e: any) => e.good.storeNumber == null)
     ) {
       this.alert('warning', 'Hay bienes no guardados en almacén', '');
-      this.loading = false
+      this.loading = false;
     } else if (this.form.get('folioEscaneo').value == null) {
       this.alert('warning', 'No se ha ingresado un número de folio', '');
-      this.loading = false
+      this.loading = false;
     } else {
       const paramsF = new FilterParams();
       paramsF.addFilter('keysProceedings', this.form.get('acta2').value);
@@ -1828,7 +1828,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         },
         err => {
           console.log(err);
-      this.loading = false
+          this.loading = false;
         }
       );
     }
@@ -1889,12 +1889,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
         format(new Date(), 'dd-MM-yyyy')
       ) {
         this.alert('warning', 'Está fuera de tiempo para cerrar el acta.', '');
-        this.loading = false
+        this.loading = false;
         //* Desahibilitar el boton de cerrar acta
       }
     } else if (this.form.get('folioEscaneo').value == null) {
       this.alert('warning', 'Debe introducir el valor del folio', '');
-      this.loading = false
+      this.loading = false;
     } else {
       this.serviceDocuments
         .getByFolio(this.form.get('folioEscaneo').value)
@@ -1909,7 +1909,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               console.log(vanbal);
               if (vanbal == false) {
                 this.alert('warning', 'Debe especificar almacen', '');
-                this.loading = false
+                this.loading = false;
               } else {
                 //!Necesita validación de EDO_FISICO EN los que sean requeridos
                 this.alertQuestion(
@@ -1946,7 +1946,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                           'Ocurrió un error inesperado',
                           'Ocurrió un error inesperado al intentar cerrar el acta. Por favor intentelo nuevamente'
                         );
-                        this.loading = false
+                        this.loading = false;
                       }
                     );
                   }
@@ -1954,12 +1954,12 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               }
             } else {
               this.alert('warning', 'No se ha realizado el escaneo', '');
-              this.loading = false
+              this.loading = false;
             }
           },
           err => {
             this.alert('warning', 'No se ha realizado el escaneo', '');
-            this.loading = false
+            this.loading = false;
           }
         );
     }
