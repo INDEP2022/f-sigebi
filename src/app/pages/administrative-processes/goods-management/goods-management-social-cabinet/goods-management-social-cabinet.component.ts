@@ -75,6 +75,7 @@ export class GoodsManagementSocialCabinetComponent
         next: response => {
           this.processErrors++;
           this.disabledProcess = true;
+          this.selectedGoodstxt = [...this.selectedGoodstxt];
           this.alert(
             'success',
             'Procesamiento Gabinete Social',
