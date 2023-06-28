@@ -9,8 +9,14 @@
         <div class="row mt-4">
           <div class="col-md-6 pt-3">
             <form-field [control]="form.get('currency')">
-              <ngx-select (fetchItems)="getRegCurrency()" [data]="currencies" [form]="form" value="cve_moneda"
-                bindLabel="desc_moneda" label="Moneda" control="currency">
+              <ngx-select
+                (fetchItems)="getRegCurrency()"
+                [data]="currencies"
+                [form]="form"
+                value="cve_moneda"
+                bindLabel="desc_moneda"
+                label="Moneda"
+                control="currency">
               </ngx-select>
             </form-field>
           </div>
@@ -20,25 +26,41 @@
         </div>
         <div class="row mt-4">
           <div class="col-md-6">
-            <form-field [control]="form.get('fileFrom')" label="Del Expediente:">
-              <input type="number" formControlName="fileFrom" class="form-control" />
+            <form-field
+              [control]="form.get('fileFrom')"
+              label="Del Expediente:">
+              <input
+                type="number"
+                formControlName="fileFrom"
+                class="form-control" />
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field [control]="form.get('fileTo')" label="Al:">
-              <input type="number" formControlName="fileTo" class="form-control" />
+              <input
+                type="number"
+                formControlName="fileTo"
+                class="form-control" />
             </form-field>
           </div>
         </div>
         <div class="row mt-4">
           <div class="col-md-6">
             <form-field [control]="form.get('from')" label="Fecha del:">
-              <input [maxDate]="maxDate" formControlName="from" class="form-control" bsDatepicker />
+              <input
+                [maxDate]="maxDate"
+                formControlName="from"
+                class="form-control"
+                bsDatepicker />
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field [control]="form.get('to')" label="Al:">
-              <input [maxDate]="maxDate" formControlName="to" class="form-control" [minDate]="form.get('from').value"
+              <input
+                [maxDate]="maxDate"
+                formControlName="to"
+                class="form-control"
+                [minDate]="form.get('from').value"
                 bsDatepicker />
             </form-field>
           </div>
@@ -46,7 +68,10 @@
         <div class="row mt-4">
           <div class="col-md-6">
             <form-field [control]="form.get('import')" label="Importe:">
-              <input type="number" formControlName="import" class="form-control" />
+              <input
+                type="number"
+                formControlName="import"
+                class="form-control" />
             </form-field>
           </div>
         </div>
@@ -54,12 +79,19 @@
       <div footer>
         <div class="d-flex justify-content-center">
           <div class="m-3">
-            <button type="button" [disabled]="form.invalid" class="btn btn-primary active btn-sm" (click)="Generar()">
+            <button
+              type="button"
+              [disabled]="form.invalid"
+              class="btn btn-primary active btn-sm"
+              (click)="Generar()">
               Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
           </div>
           <div class="m-3">
-            <button type="button" class="btn btn-danger active btn-sm" (click)="cleanForm()">
+            <button
+              type="button"
+              class="btn btn-danger active btn-sm"
+              (click)="cleanForm()">
               Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
             </button>
           </div>

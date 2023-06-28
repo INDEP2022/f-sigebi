@@ -119,7 +119,7 @@ export class StatusTransferListComponent extends BasePage implements OnInit {
   ShowDeleteAlert(id: number) {
     this.statusTransferService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Estado Transferencia', 'Borrado');
+        this.alert('success', 'Estado transferencia', 'Borrado Correctamente');
         this.getExample();
       },
       error: error => {

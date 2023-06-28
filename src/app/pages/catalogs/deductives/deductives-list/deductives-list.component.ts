@@ -47,14 +47,14 @@ export class DeductivesListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'contractNumber' ||
-            filter.field == 'weightedDeduction' ||
-            filter.field == 'startingRankPercentage' ||
-            filter.field == 'finalRankPercentage' ||
-            filter.field == 'status' ||
-            filter.field == 'version'
-              ? (searchFilter = SearchFilter.EQ)
+            filter.field == 'id'
+              ? // filter.field == 'contractNumber' ||
+                // filter.field == 'weightedDeduction' ||
+                // filter.field == 'startingRankPercentage' ||
+                // filter.field == 'finalRankPercentage' ||
+                // filter.field == 'status' ||
+                // filter.field == 'version'
+                (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
@@ -77,12 +77,11 @@ export class DeductivesListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    console.log('params:', params);
     this.deductiveService.getAll(params).subscribe({
       next: response => {
         this.deductives = response.data;
         this.totalItems = response.count || 0;
-        this.data.load(response.data);
+        this.data.load(this.deductives);
         this.data.refresh();
         this.loading = false;
       },
@@ -116,7 +115,8 @@ export class DeductivesListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.deductiveService.remove(id).subscribe({
       next: () => {
-        this.getDeductives(), this.alert('success', 'Deductiva', 'Borrado');
+        this.getDeductives(),
+          this.alert('success', 'Deductiva', 'Borrada Correctamente');
       },
       error: err => {
         this.alert(

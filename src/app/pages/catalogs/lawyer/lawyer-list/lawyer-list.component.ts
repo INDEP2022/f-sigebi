@@ -138,8 +138,6 @@ export class LawyerListComponent extends BasePage implements OnInit {
         //this.lawyers = response.data;
         this.data.load(response.data);
         this.data.refresh();
-        console.log(this.data)
-        this.totalItems = response.count;
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -178,7 +176,8 @@ export class LawyerListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.lawyerService.remove(id).subscribe({
       next: () => {
-        this.getLawyers(), this.alert('success', 'Abogado', 'Borrado');
+        this.getLawyers(),
+          this.alert('success', 'Abogado', 'Borrado Correctemente');
       },
     });
   }

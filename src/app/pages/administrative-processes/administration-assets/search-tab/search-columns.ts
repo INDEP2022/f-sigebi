@@ -1,3 +1,5 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const SEARCH_COLUMNS = {
   wheelNumber: {
     title: 'No. Volante',
@@ -6,18 +8,26 @@ export const SEARCH_COLUMNS = {
   },
   receiptDate: {
     title: 'Fecha Recepción',
-    type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return formatearFecha(new Date(value));
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('-') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
     },
   },
   captureDate: {
     title: 'Fecha Captura',
-    type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return formatearFecha(new Date(value));
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('-') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
     },
   },
   indiciadoNumber: {

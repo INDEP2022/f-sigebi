@@ -50,11 +50,19 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
     this.dateDocumentsModalForm = this.fb.group({
       expedientNumber: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       stateNumber: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       key: [null, [Validators.required]],
       typeDictum: [
@@ -69,8 +77,8 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
       insertionDate: [null, [Validators.required]],
       userInsertion: [null],
       numRegister: [null],
-      officialNumber: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
-      notificationDate: [null,],
+      officialNumber: [null],
+      notificationDate: [null],
       secureKey: [null],
     });
 
@@ -139,7 +147,6 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
           'dd-mm-yyyy'
         ),
       },
-
     });
 
     console.log('PAYLOAD', newDateDocument);
