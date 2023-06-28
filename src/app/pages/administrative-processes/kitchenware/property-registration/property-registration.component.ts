@@ -99,13 +99,11 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
-              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
               this.columnFilters = filters;
             } else {
               delete this.columnFilters;
             }
           });
-          console.log(filters);
           this.params = this.pageFilter(this.params);
           this.searchGoodMenage(this.idGoodValue);
         }
@@ -148,7 +146,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.totalItems = 0;
     this.textButton = 'Agregar menaje';
     this.showSearchButton = false;
-
     const numberFile = Number(event);
     this.expedientServices.getById(numberFile).subscribe({
       next: response => {
@@ -198,7 +195,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
           this.goodSelect.enable();
           this.goods = new DefaultSelect(response.data, response.count);
           this.loading = false;
-          console.log(this.goods);
         },
         error: err => {
           this.loading = false;
@@ -226,7 +222,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
 
     const paramsF = new FilterParams();
     if (this.columnFilters !== undefined) {
-      console.log('hola', this.columnFilters);
       for (let data of this.columnFilters) {
         if (data.search !== '') {
           paramsF.addFilter(
@@ -239,9 +234,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     }
     paramsF.addFilter('noGood', idGood);
     paramsF.page = this.params.value.page;
-    console.log(paramsF.page);
     paramsF.limit = this.params.value.limit;
-    console.log(paramsF.limit);
 
     //Son los menajes que aparecen listados en la tabla
     this.menageServices.getMenaje(paramsF.getParams()).subscribe({
