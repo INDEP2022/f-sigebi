@@ -8,7 +8,7 @@
       <div class="row">
         <form-field
           [control]="form.get('numberProceedings')"
-          label="No Expediente"
+          label="No. Expediente"
           class="col-md-3">
           <input
             class="form-control"
@@ -19,7 +19,7 @@
         </form-field>
         <form-field
           [control]="form.get('flyerNumber')"
-          label="No Volante"
+          label="No. Volante"
           class="col-md-3">
           <input
             class="form-control"
@@ -28,14 +28,17 @@
             min="0"
             oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
         </form-field>
+
         <!-- Separador -->
-        <form-field [control]="form.get('separador')" class="col-md-4">
+        <form-field [control]="form.get('keySeparator')" class="col-md-4">
           <ngx-select
-            [form]="form"
-            control="separador"
-            bindLabel="description"
             [data]="selectSeparator"
-            label="Separador">
+            [form]="form"
+            bindLabel="key"
+            label="Separador"
+            control="keySeparator"
+            (fetchItems)="onDocumentsSeparatorInputChange($event)"
+            (change)="onOptionsSelectedSeparator($event)">
           </ngx-select>
         </form-field>
 
@@ -61,7 +64,7 @@
             label="Tipo de documento"
             control="keyTypeDocument"
             (fetchItems)="onTipoDocumentoInputChange($event)"
-            (change)="onOptionsSelected($event)">
+            (change)="onOptionsSelectedTypeDocument($event)">
           </ngx-select>
         </form-field>
 
@@ -88,22 +91,6 @@
             formControlName="preliminaryInquiry"
             maxlength="100" />
         </form-field>
-
-        <!-- 
-
-        <form-field
-          [control]="form.get('numberProceedings')"
-          label="No Expediente"
-          class="col-md-3">
-          <input
-            class="form-control"
-            formControlName="numberProceedings"
-            type="number"
-            min="0"
-            oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
-        </form-field>
-
-         -->
 
         <form-field
           [control]="form.get('criminalCase')"
@@ -167,38 +154,40 @@
       </div>
       <hr />
 
-      <div class="row">
-        <div class="col-md-12 d-flex justify-content-end">
+      <div class="row" style="margin-bottom: 30px">
+        <div class="col-md-10 d-flex justify-content-between">
+          <div class="d-flex align-items-center">
+            <span class="text-success mr-5"
+              ><i class="fa fa-square"></i> Documento digitalizado</span
+            >
+            <span class="text-danger"
+              ><i class="fa fa-square"></i> Documento pendiente de
+              digitalizar</span
+            >
+          </div>
+        </div>
+        <div class="col-md-2 d-flex justify-content-end">
           <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
       </div>
 
-      <div class="row pt-3">
-        <div class="row">
-          <div class="col-md-12 d-flex justify-content-between">
-            <div>
-              <span class="text-success mr-5"
-                ><i class="fa fa-square"></i> Documento digitalizado</span
-              >
-              <span class="text-danger"
-                ><i class="fa fa-square"></i> Documento pendiente de
-                digitalizar</span
-              >
-            </div>
-            <div class="justify-content-end">
-              <small class="text-secondary"
-                >(Doble click en la imagen para visualizar)</small
-              >
-            </div>
-          </div>
-        </div>
+      <div class="d-flex justify-content-end">
+        <small class="text-secondary"
+          >(Doble click en la imagen para visualizar)</small
+        >
+      </div>
 
-        <!-- Tabla con los links de imágenes para mostrar -->
+      <div class="row pt-3">
         <div class="row m-0 p-0">
           <div class="col-md-12">
-            <div class="table-responsive">
-              <ng2-smart-table [settings]="settings" [source]="data">
-              </ng2-smart-table>
+            <div [class]="loading ? 'table-loading' : ''">
+              <div class="table-responsive">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings"
+                  [source]="data">
+                </ng2-smart-table>
+              </div>
             </div>
           </div>
         </div>
