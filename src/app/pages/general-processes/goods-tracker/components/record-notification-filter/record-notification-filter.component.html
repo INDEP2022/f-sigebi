@@ -8,10 +8,9 @@
         class="form-control"
         formControlName="expedientNum"
         [items]="[]"
+        addTagText="Agregar Elemento"
         [addTag]="true"
-        [multiple]="true"
-        [selectOnTab]="true"
-        [isOpen]="false">
+        [multiple]="true">
       </ng-select>
     </form-field>
 
@@ -23,16 +22,15 @@
         class="form-control"
         formControlName="flyerNum"
         [items]="[]"
+        addTagText="Agregar Elemento"
         [addTag]="true"
         (change)="flyerChange($event)"
-        [multiple]="true"
-        [selectOnTab]="true"
-        [isOpen]="false">
+        [multiple]="true">
       </ng-select>
       <!-- <input type="text" formControlName="flyerNum" class="form-control" /> -->
     </form-field>
 
-    <form-field [control]="form.get('judgeNum')" class="col-md-3">
+    <form-field [control]="form.get('judgeNum')" class="col-md-6">
       <!-- <input type="text" formControlName="judgeNum" class="form-control" /> -->
       <ngx-select
         [form]="form"
@@ -71,7 +69,7 @@
     <form-field
       [control]="form.get('officeDate')"
       label="Fecha Oficio Ext&#46;"
-      class="col-md-3">
+      class="col-md-2">
       <input
         type="text"
         (ngModelChange)="fecChange()"
@@ -89,6 +87,17 @@
         formControlName="protection"
         class="form-control"
         (change)="protectionChange()" />
+    </form-field>
+
+    <form-field
+      [control]="form.get('criminalCase')"
+      label="Toca Penal"
+      class="col-md-4">
+      <input
+        type="text"
+        formControlName="criminalCase"
+        (change)="criminalCaseChange()"
+        class="form-control" />
     </form-field>
   </div>
 
@@ -113,17 +122,6 @@
         (fetchItems)="getMinPubs($event)"
         (change)="minpubChange()"
         label="Ministerio P&uacute;blico"></ngx-select>
-    </form-field>
-
-    <form-field
-      [control]="form.get('criminalCase')"
-      label="Toca Penal"
-      class="col-md-4">
-      <input
-        type="text"
-        formControlName="criminalCase"
-        (change)="criminalCaseChange()"
-        class="form-control" />
     </form-field>
   </div>
 

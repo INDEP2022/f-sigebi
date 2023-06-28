@@ -53,6 +53,9 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
   async searchGoods(params: any) {
     this.params.removeAllFilters();
     const form = this.form.value;
+    const { valueFrom, valueTo } = form;
+    delete form.valueFrom;
+    delete form.valueTo;
     for (const [key, value] of Object.entries(form)) {
       let operator = this.getOperator(key);
       const _val = this.getValue(value, key);
@@ -62,6 +65,17 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
       const _key = this.getKeyParam(key);
       if (_val && _key) {
         this.params.addFilter(_key, _val, operator);
+      }
+    }
+    const k = 'appraisalValue';
+    if (valueFrom && valueTo) {
+      this.params.addFilter(k, `${valueFrom},${valueTo}`, SearchFilter.BTW);
+    } else {
+      if (valueFrom) {
+        this.params.addFilter(k, valueFrom, SearchFilter.GTE);
+      }
+      if (valueTo) {
+        this.params.addFilter(k, valueTo, SearchFilter.LTE);
       }
     }
     this.getGoods();
