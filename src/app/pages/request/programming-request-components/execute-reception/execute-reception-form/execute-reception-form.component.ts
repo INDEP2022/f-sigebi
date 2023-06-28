@@ -1635,48 +1635,85 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       proceess: 'guard',
       programming: this.programming,
       callback: (receiptGuards: any) => {
-        this.openReport(receiptGuards);
+        this.openReport(receiptGuards, 185);
       },
     };
 
     this.modalService.show(GenerateReceiptGuardFormComponent, config);
   }
 
-  openReport(receiptGuards: any) {
-    const idTypeDoc = 185;
-    let config: ModalOptions = {
-      initialState: {
-        idTypeDoc,
-        programming: this.programming,
-        receiptGuards: receiptGuards,
-        callback: (next: boolean) => {
-          if (next) {
-            console.log('Modal cerrado');
-            this.uploadData();
-          }
+  openReport(receiptGuards: any, typeDoc: number) {
+    if (typeDoc == 185) {
+      const idTypeDoc = 185;
+      let config: ModalOptions = {
+        initialState: {
+          idTypeDoc,
+          programming: this.programming,
+          receiptGuards: receiptGuards,
+          callback: (next: boolean) => {
+            if (next) {
+              console.log('Modal cerrado');
+              this.uploadData(receiptGuards, idTypeDoc);
+            }
+          },
         },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(ShowReportComponentComponent, config);
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(ShowReportComponentComponent, config);
+    } else if (typeDoc == 186) {
+      const idTypeDoc = 186;
+      let config: ModalOptions = {
+        initialState: {
+          idTypeDoc,
+          programming: this.programming,
+          receiptGuards: receiptGuards,
+          callback: (next: boolean) => {
+            if (next) {
+              console.log('Modal cerrado');
+              this.uploadData(receiptGuards, idTypeDoc);
+            }
+          },
+        },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(ShowReportComponentComponent, config);
+    }
   }
 
-  uploadData(): void {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-    config.initialState = {
-      receiptGuards: this.receiptGuards,
-      guardReception: this.goodsReception,
-      typeDoc: 185,
-      programming: this.programming,
-      callback: (data: boolean) => {
-        if (data) {
-          this.getReceiptsGuard();
-        }
-      },
-    };
+  uploadData(receiptGuards: any, idTypeDoc: number): void {
+    if (idTypeDoc == 185) {
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      config.initialState = {
+        receiptGuards: receiptGuards,
+        guardReception: this.goodsReception,
+        typeDoc: 185,
+        programming: this.programming,
+        callback: (data: boolean) => {
+          if (data) {
+            this.getReceiptsGuard();
+          }
+        },
+      };
 
-    this.modalService.show(UploadReportReceiptComponent, config);
+      this.modalService.show(UploadReportReceiptComponent, config);
+    } else if (idTypeDoc == 186) {
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      config.initialState = {
+        receiptGuards: receiptGuards,
+        guardReception: this.goodsReception,
+        typeDoc: 186,
+        programming: this.programming,
+        callback: (data: boolean) => {
+          if (data) {
+            this.getReceiptsGuard();
+          }
+        },
+      };
+
+      this.modalService.show(UploadReportReceiptComponent, config);
+    }
   }
 
   generateReceiptWarehouse(receipt: IReceipt) {
@@ -1684,10 +1721,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       receiptId,
-      proceess: 'warehouse',
       receiptGuards: receipt,
+      proceess: 'warehouse',
       programming: this.programming,
-      callBack: (data: boolean) => {},
+      callback: (receiptGuards: any) => {
+        this.openReport(receiptGuards, 186);
+      },
     };
 
     this.modalService.show(GenerateReceiptGuardFormComponent, config);
@@ -1791,6 +1830,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         receiptId,
         keyDoc,
         receipt: _receipt,
+        programming: this.programming,
         callback: (next: boolean) => {
           if (next) {
             this.uplodadReceiptDelivery();
