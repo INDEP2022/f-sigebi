@@ -35,4 +35,8 @@ export class IncidentMaintenanceService extends HttpService {
       model
     );
   }
+
+  getTmpErrores(params: any) {
+    return this.get<IListResponse<any>>(GeneralProcEndpoints.TmpErrors, params);
+  }
 }

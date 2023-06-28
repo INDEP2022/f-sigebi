@@ -99,8 +99,8 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
     } else {
       this.alertInfo(
         'info',
-        'Acción Invalida',
-        'Se debe seleccionar un bien con status Abierto'
+        'Acción Inválida',
+        'Se debe seleccionar un recibo con estatus abierto'
       ).then();
     }
   }
@@ -183,8 +183,8 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
     if (this.receipts[0]?.statusReceipt == 'ABIERTO') {
       this.alertInfo(
         'info',
-        'Acción Invalida',
-        'Aun se encuentran recibos abiertos'
+        'Acción Inválida',
+        'Aún se encuentran recibos abiertos'
       ).then();
     } else {
       const form: Object = {
