@@ -32,6 +32,7 @@ export enum GoodEndpoints {
   GetAllGoodQuery = 'good/getAllGoodQuery',
   PAValidaCambioEstatus = 'good/testValid',
   GetMassiveSearch = 'good/getMassiveSearch',
+  GoodsMotivesrev2 = 'goods-motivesrev',
 }
 
 export enum GoodProcessPoints {

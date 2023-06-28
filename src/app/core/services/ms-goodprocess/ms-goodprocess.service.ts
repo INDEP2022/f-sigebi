@@ -127,4 +127,8 @@ export class GoodprocessService extends HttpService {
   GetGoodProceedings(params: ListParams) {
     return this.get(`${GoodprocessEndpoints.GetGoodProceedings}`, params);
   }
+
+  getAppliesControl(params: any) {
+    return this.post(`${GoodprocessEndpoints.AppliesControl}`, params);
+  }
 }
