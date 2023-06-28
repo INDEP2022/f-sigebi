@@ -40,6 +40,9 @@ export const WAREHOUSE_COLUMNS = {
     valuePrepareFunction: (value: IStateOfRepublic) => {
       return value?.descCondition;
     },
+    filterFunction: (cell?: any, search?: string) => {
+      return search != null ? search : '';
+    },
     type: 'string',
     sort: false,
   },
@@ -47,6 +50,9 @@ export const WAREHOUSE_COLUMNS = {
     title: 'Ciudad',
     valuePrepareFunction: (value: ICity) => {
       return value?.nameCity;
+    },
+    filterFunction: (cell?: any, search?: string) => {
+      return search != null ? search : '';
     },
     type: 'string',
     sort: false,
@@ -56,6 +62,9 @@ export const WAREHOUSE_COLUMNS = {
     valuePrepareFunction: (value: IMunicipality) => {
       return value?.nameMunicipality;
     },
+    filterFunction: (cell?: any, search?: string) => {
+      return search != null ? search : '';
+    },
     type: 'string',
     sort: false,
   },
@@ -63,6 +72,9 @@ export const WAREHOUSE_COLUMNS = {
     title: 'Localidad',
     valuePrepareFunction: (value: ILocality) => {
       return value?.nameLocation;
+    },
+    filterFunction: (cell?: any, search?: string) => {
+      return search != null ? search : '';
     },
     type: 'string',
     sort: false,

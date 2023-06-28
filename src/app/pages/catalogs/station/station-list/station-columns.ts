@@ -17,4 +17,34 @@ export const STATION_COLUMS = {
       return value != null ? value.nameTransferent : '';
     },
   },
+  status: {
+    title: 'Estado',
+    type: 'html',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'Activo';
+      if (value == '0') return 'Inactivo';
+      return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: '1', title: 'Activo' },
+          { value: '0', title: 'Inactivo' },
+        ],
+      },
+    },
+  },
+  keyState: {
+    title: 'Estado Clave',
+    type: 'string',
+    sort: false,
+  },
+  version: {
+    title: 'Version',
+    type: 'string',
+    sort: false,
+  },
 };

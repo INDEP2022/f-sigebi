@@ -17,12 +17,21 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-2 mt-3">
-          <form-field [control]="form.get('id')" label="No Juzgado">
+          <form-field [control]="form.get('id')" label="No. Juzgado">
             <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
-        <div class="col-md-6">
-          <app-circuit-shared [form]="form"></app-circuit-shared>
+        <div class="col-md-6 mt-3">
+          <ngx-select
+            [form]="form"
+            (fetchItems)="getCircuit($event)"
+            [data]="circuit"
+            value="otKey"
+            bindLabel="value"
+            label="Circuito"
+            control="circuitCVE">
+          </ngx-select>
+          <!--<app-circuit-shared [form]="form"></app-circuit-shared>-->
         </div>
         <div class="col-md-4 mt-3">
           <form-field
@@ -47,7 +56,7 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="form.get('numExterior')" label="No Exterior">
+          <form-field [control]="form.get('numExterior')" label="No. Exterior">
             <input
               type="text"
               class="form-control"
@@ -55,7 +64,7 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="form.get('numInside')" label="No Interior">
+          <form-field [control]="form.get('numInside')" label="No. Interior">
             <input
               type="text"
               class="form-control"
@@ -96,22 +105,28 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-12 text-center">
-          <confirm-button
-            [type]="'button'"
-            [btnSmall]="true"
-            [disabled]="!form.valid"
-            [loading]="loadingForm"
-            (confirm)="confirm()"></confirm-button>
-          <button
-            class="btn btn-primary active btn-sm ml-3"
-            (click)="openModalCity()"
-            [disabled]="!isPresent">
-            Agregar ciudad
-          </button>
-          <button class="btn btn-primary active btn-sm ml-3" (click)="clean()">
-            Limpiar
-          </button>
+        <div class="col-12 d-flex justify-content-center">
+          <div class="m-2">
+            <confirm-button
+              [disabled]="!form.valid"
+              [loading]="loadingForm"
+              (confirm)="confirm()"></confirm-button>
+          </div>
+          <div class="m-2">
+            <button
+              class="btn btn-primary active btn-md ml-2"
+              (click)="openModalCity()"
+              [disabled]="!isPresent">
+              Agregar ciudad
+            </button>
+          </div>
+          <div class="m-2">
+            <button
+              class="btn btn-primary active btn-md ml-2"
+              (click)="clean()">
+              Limpiar
+            </button>
+          </div>
         </div>
       </div>
     </form>

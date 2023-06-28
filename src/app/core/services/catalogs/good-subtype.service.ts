@@ -29,6 +29,11 @@ export class GoodSubtypeService
     return this.goodSubtypeRepository.getAllPaginated(this.route, params);
   }
 
+  getAllDetails(params?: ListParams): Observable<IListResponse<IGoodSubType>> {
+    const route = `${this.route}/get-all`;
+    return this.goodSubtypeRepository.getAllPaginated(route, params);
+  }
+
   getByIds(ids: Partial<IGoodSubType>): Observable<IGoodSubType> {
     return this.goodSubtypeRepository.getByIds(this.route, ids);
   }

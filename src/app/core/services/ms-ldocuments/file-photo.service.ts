@@ -13,6 +13,7 @@ import { IListResponseMessage } from '../../interfaces/list-response.interface';
 export class FilePhotoService extends HttpService {
   private readonly _url = environment.API_URL;
   private readonly _prefix = environment.URL_PREFIX;
+  consecNumber = 1;
   constructor() {
     super();
     this.microservice = IDocumentEndpoints.Base;
@@ -38,7 +39,12 @@ export class FilePhotoService extends HttpService {
     return this.getAll(goodNumber).pipe(
       map(response => {
         if (response && response.length > 0)
-          return response.map(item => this.getById(goodNumber, item));
+          return response.map(item =>
+            this.getById(
+              goodNumber,
+              +item.substring(item.indexOf('F'), item.length)
+            )
+          );
         else {
           return [];
         }
@@ -47,15 +53,18 @@ export class FilePhotoService extends HttpService {
     );
   }
 
-  getById(goodNumber: string, name: string) {
+  getById(goodNumber: string, consecNumber: number) {
     return this.post<string>(IDocumentEndpoints.filePhoto, {
       goodNumber,
-      name,
+      consecNumber,
     });
   }
 
-  deletePhoto(goodNumber: string, name: string) {
-    return this.delete(IDocumentEndpoints.filePhoto, { goodNumber, name });
+  deletePhoto(goodNumber: string, consecNumber: number) {
+    return this.delete(IDocumentEndpoints.deletePhoto, {
+      goodNumber,
+      consecNumber,
+    });
   }
 
   uploadFile(identificator: any, file: File, fileField: string = 'file') {
@@ -64,7 +73,7 @@ export class FilePhotoService extends HttpService {
     const formData = new FormData();
     formData.append(fileField, file, `FU_${uuidv4()}.${ext}`);
     formData.append('goodNumber', `${identificator}`);
-    formData.append('consecNumber', '2');
+    formData.append('consecNumber', this.consecNumber + '');
     formData.append('recordNumber', '305315076');
     formData.append('photoDate', new Date().toISOString());
     formData.append('photoDateHc', new Date().toISOString());

@@ -21,6 +21,9 @@ export const INDICATORSOFPERFORMANCE_COLUMNS = {
     valuePrepareFunction: (value: IProcedureArea) => {
       return value != null ? value.description : '';
     },
+    filterFunction: (cell?: any, search?: string) => {
+      return search != null ? search : '';
+    },
     width: '10%',
     sort: false,
   },

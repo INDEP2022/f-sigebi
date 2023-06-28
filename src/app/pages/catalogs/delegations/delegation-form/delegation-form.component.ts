@@ -38,16 +38,9 @@ export class DelegationFormComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
-    if (this.delegation && this.delegation.idZoneGeographic !== undefined) {
-      const { id }: any = this.delegation.idZoneGeographic;
-      this.delegation.idZoneGeographic = id;
-    }
 
     this.delegationForm = this.fb.group({
-      id: [
-        null,
-        [Validators.required, Validators.min(0), Validators.maxLength(80)],
-      ],
+      id: [null],
       description: [null, [Validators.required, Validators.maxLength(80)]],
       diffHours: [null, [Validators.required, Validators.maxLength(80)]],
       zoneVigilanceKey: [null, [Validators.required, Validators.maxLength(80)]],
@@ -57,7 +50,7 @@ export class DelegationFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.min(0), Validators.maxLength(80)],
       ],
-      cveState: [null, [Validators.required]],
+      stateKey: [null, [Validators.required]],
       addressOffice: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -91,9 +84,14 @@ export class DelegationFormComponent extends BasePage implements OnInit {
 
     this.delegationForm.get('etapaEdo').disable();
     this.delegationForm.patchValue(this.delegation);
+    this.getStates(new ListParams, this.delegation.stateKey);
+    console.log(this.delegation);
   }
 
-  getStates(params: ListParams) {
+  getStates(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = id;
+    }
     this.delegationService.getStates(params).subscribe(data => {
       this.states = new DefaultSelect(data.data, data.count);
     });
@@ -106,20 +104,16 @@ export class DelegationFormComponent extends BasePage implements OnInit {
     }*/
     this.delegationService.getZones(params).subscribe(item => {
       this.zones = new DefaultSelect(item.data, item.count);
-      if (Array.isArray(this.zones.data)) {
-        this.zones.data = this.zones.data.map(dataItem => {
-          return {
-            ...dataItem,
-            idZoneGeographic: dataItem.id,
-          };
-        });
-      }
+      // if (Array.isArray(this.zones.data)) {
+      //   this.zones.data = this.zones.data.map(dataItem => {
+      //     return {
+      //       ...dataItem,
+      //       idZoneGeographic: dataItem.id,
+      //     };
+      //   });
+      // }
     });
   }
-
-  stateChange(state: IStateOfRepublic) {}
-
-  zoneChange(zone: IZoneGeographic) {}
 
   close() {
     this.modalRef.hide();
@@ -149,7 +143,8 @@ export class DelegationFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
