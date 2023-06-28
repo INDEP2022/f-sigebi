@@ -42,6 +42,7 @@ export class GeneralDataGoodsComponent
   goodChange: number = 0;
   service = inject(ChangeOfGoodCharacteristicService);
   viewAct: boolean = false;
+  disableUpdate: boolean = false;
 
   get dataAtribute() {
     return this.service.data;
@@ -117,8 +118,14 @@ export class GeneralDataGoodsComponent
     console.log(body);
     this.goodService.update(body).subscribe({
       next: resp => {
+        this.viewAct = !this.viewAct;
+        this.disableUpdate = !this.disableUpdate;
+        console.log(resp);
+        this.good = resp;
         this.alert('success', 'Datos del bien actualizados', '');
-        this.viewAct = true;
+        setTimeout(() => {
+          this.goodChange++;
+        }, 100);
       },
       error: err => {
         this.alert('error', 'Error al actualizar el bien', '');
@@ -158,6 +165,7 @@ export class GeneralDataGoodsComponent
   }
   update() {
     this.viewAct = !this.viewAct;
+    this.disableUpdate = !this.disableUpdate;
     setTimeout(() => {
       this.goodChange++;
     }, 100);

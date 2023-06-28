@@ -65,11 +65,14 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
     console.log(this.params.getValue());
     this.menageServices.getMenaje(this.params.getValue()).subscribe({
       next: response => {
-        this.menajes = response.data.map((menage: any) => {
-          return menage.menajeDescription;
-        });
-        this.totalItems = response.count;
         this.loading = false;
+        console.log(response);
+        if (response.count > 0) {
+          this.menajes = response.data.map((menage: any) => {
+            return menage.menajeDescription;
+          });
+          this.totalItems = response.count;
+        }
       },
       error: err => {
         this.loading = false;
