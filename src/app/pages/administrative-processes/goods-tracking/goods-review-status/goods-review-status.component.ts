@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
@@ -46,6 +46,11 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   goodsExcel: any;
   selectedGender: string = 'all';
   jsonToCsv: any[] = [];
+  rowSelected: boolean = false;
+  selectedRow: any = null;
+  selectOnClick: boolean = false;
+  permitSelect = true;
+  @Output() onSelect = new EventEmitter<any>();
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -58,7 +63,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     private goodprocessService: GoodprocessService,
     private readonly historyGoodService: HistoryGoodService,
     private delegationService: DelegationService,
-    private dynamicCatalogsService: DynamicCatalogsService
+    private dynamicCatalogsService: DynamicCatalogsService,
+    private modalRef: BsModalRef
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -509,5 +515,168 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   async returnJsonToCsv() {
     return this.data.getAll();
+  }
+
+  selectRow(row: any) {
+    console.log(row);
+    this.selectedRow = row.data;
+    this.rowSelected = true;
+  }
+
+  confirm() {
+    if (!this.rowSelected) return;
+    this.onSelect.emit(this.selectRow);
+    this.modalRef.hide();
+  }
+
+  async attention() {
+    if (!this.selectedRow) {
+      this.alert('error', 'No se ha seleccionado ninguna fila', 'Error');
+      return;
+    }
+
+    let EXISTE: number = 0;
+    let ATENCION = 1;
+    let ACTUALIZA = 0;
+    let vl_ID_EVENTO = 0;
+    let ESTATUSB: number;
+    let ESTATUSF: string;
+
+    this.alertQuestion(
+      'info',
+      '¿Está seguro de dar por atendidos los bienes del archivo?',
+      ''
+    ).then(async question => {
+      if (question.isConfirmed) {
+        EXISTE = 0;
+        ATENCION = 1;
+        ACTUALIZA = 0;
+        vl_ID_EVENTO = 0;
+
+        let obj = {
+          goodNumber: this.selectedRow.goodId,
+          attended: 0,
+          manager: this.selectedRow.manager,
+        };
+        const good: any = await this.getGoodReturn(obj);
+        console.log('good', good);
+
+        if (good != null) {
+          EXISTE = good.goodNumber.id;
+          vl_ID_EVENTO = good.eventId.id;
+          ESTATUSB = good.status;
+        } else {
+          this.alert(
+            'warning',
+            `Verifique las condiciones de atención de proceso REV del bien: ${this.selectedRow.goodNumber}`,
+            ''
+          );
+          return;
+        }
+
+        if (EXISTE > 0) {
+          let obj_: any = {
+            goodNumber: this.selectedRow.goodId,
+            eventId: good.eventId.id,
+            goodType: good.goodType,
+            status: good.status,
+            manager: this.selectedRow.manager,
+            delegation: good.delegation,
+            attended: 1,
+          };
+
+          const updateGoodMotivRev = await this.updateGoodMotivosRev(obj_);
+
+          if (updateGoodMotivRev == true) {
+            ACTUALIZA = 1;
+          } else {
+            this.alert(
+              'warning',
+              `El bien: ${this.selectedRow.goodId} no se pudo atender en MOTIVOSREV`,
+              ''
+            );
+          }
+
+          let objGood: any = {
+            goodNumber: this.selectedRow.goodId,
+            attended: 0,
+          };
+          const getGoodAttended: any = await this.getGoodAndAttendedReturn(
+            objGood
+          );
+          if (getGoodAttended != null) {
+            ATENCION = getGoodAttended;
+          } else {
+            ATENCION = 0;
+          }
+
+          if (ATENCION == 0 && ACTUALIZA == 1) {
+            let objScreen = {
+              goodNumber: this.selectedRow.goodId,
+              status: ESTATUSB,
+            };
+            const screenXStatus: any = await this.getScreenXStatus(objScreen);
+
+            if (screenXStatus != null) {
+              ESTATUSF = screenXStatus;
+            } else {
+              this.alert(
+                'warning',
+                `No se identificó el estatus final para el bien: ${this.selectedRow.goodId}`,
+                ''
+              );
+              ACTUALIZA = 0;
+            }
+
+            let objUpdateGood: any = {
+              id: this.selectedRow.goodId,
+              goodId: this.selectedRow.goodId,
+              status: ESTATUSF,
+            };
+            const updateGood: any = await this.updateGoodStatus(objUpdateGood);
+
+            if (updateGood == null) {
+              ACTUALIZA = 0;
+              this.alert(
+                'error',
+                `Error al actualizar el estatus del bien: ${this.selectedRow.goodId}`,
+                ''
+              );
+            }
+
+            if (ACTUALIZA == 1) {
+              var currentDate = new Date();
+              var futureDate = new Date(currentDate.getTime() + 5 * 1000); // A
+
+              const historyGood: IHistoryGood = {
+                propertyNum: this.selectedRow.goodId,
+                status: ESTATUSF,
+                changeDate: futureDate,
+                userChange: this.token.decodeToken().preferred_username,
+                statusChangeProgram: 'FMATENCBIENESREV',
+                reasonForChange: 'POR ESTATUS REV MASIVO',
+                registryNum: null,
+                extDomProcess: null,
+              };
+              const insertHistoric: any = await this.putInsertHistoric(
+                historyGood
+              );
+            } else {
+              let obj__: any = {
+                goodNumber: this.selectedRow.goodId,
+                eventId: vl_ID_EVENTO,
+                goodType: good.goodType,
+                status: good.status,
+                manager: this.selectedRow.manager,
+                delegation: good.delegation,
+                attended: 0,
+              };
+
+              const updateGoodMotivRev = await this.updateGoodMotivosRev(obj__);
+            }
+          }
+        }
+      }
+    });
   }
 }
