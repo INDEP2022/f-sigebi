@@ -62,6 +62,7 @@ export class HistoricalGoodSituationComponent
       .subscribe();
     this.settings.columns = HISTORICAL_GOOD_SITUATION_COLUMNS;
     this.settings.actions = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {

@@ -29,7 +29,6 @@
             oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
         </form-field>
 
-        <!-- Separador -->
         <form-field [control]="form.get('keySeparator')" class="col-md-4">
           <ngx-select
             [data]="selectSeparator"
@@ -50,11 +49,11 @@
             type="text"
             class="form-control"
             formControlName="significantDate"
-            bsDatepicker />
+            bsDatepicker
+            [bsConfig]="{ dateInputFormat: 'MM/YYYY' }" />
         </form-field>
       </div>
 
-      <!-- Tipo de documento -->
       <div class="row pt-3">
         <form-field [control]="form.get('keyTypeDocument')" class="col-md-3">
           <ngx-select
