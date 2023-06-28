@@ -5,8 +5,13 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ConceptMovisBankService } from 'src/app/core/services/catalogs/concept-movis-bank.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -31,6 +36,10 @@ export class IncomePerAssetComponent
   @Input() goodId: number;
   assetLoading: boolean = this.loading;
   depositLoading: boolean = this.loading;
+  dataDeposit: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+  dataAsset: LocalDataSource = new LocalDataSource();
+  columnFiltersAsset: any = [];
 
   constructor(
     private readonly accountmvmntServices: AccountMovementService,
@@ -52,8 +61,17 @@ export class IncomePerAssetComponent
       },
       depositDate: {
         title: 'Fecha Depósito',
-        type: 'string',
         sort: false,
+        type: 'html',
+        valuePrepareFunction: (text: string) => {
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+          }`;
+        },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
+        },
       },
       fol: {
         title: 'Folio',
@@ -82,8 +100,17 @@ export class IncomePerAssetComponent
       },
       transferDate: {
         title: 'Fecha Transferencia',
-        type: 'string',
         sort: false,
+        type: 'html',
+        valuePrepareFunction: (text: string) => {
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+          }`;
+        },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
+        },
       },
     };
     this.depositSettings.actions = false;
@@ -101,8 +128,17 @@ export class IncomePerAssetComponent
       },
       depositDate: {
         title: 'Fecha Depósito',
-        type: 'string',
         sort: false,
+        type: 'html',
+        valuePrepareFunction: (text: string) => {
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+          }`;
+        },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
+        },
       },
       fol: {
         title: 'Folio',
@@ -130,10 +166,90 @@ export class IncomePerAssetComponent
   }
 
   ngOnInit(): void {
+    this.dataDeposit
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'bank':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'depositDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log('this.param:', this.depositParams);
+              this.depositParams.value.page = 1;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.depositParams = this.pageFilter(this.depositParams);
+          this.searchDepositary(this.goodId);
+        }
+      });
     this.depositParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.searchDepositary(this.goodId));
 
+    this.dataAsset
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'bank':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'depositDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'transferDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFiltersAsset[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+              console.log('this.param:', this.assetParams);
+              this.assetParams.value.page = 1;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.assetParams = this.pageFilter(this.assetParams);
+          this.searchIncomeFromTheAsset(this.goodId);
+        }
+      });
     this.assetParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.searchIncomeFromTheAsset(this.goodId));
@@ -150,18 +266,22 @@ export class IncomePerAssetComponent
             return {
               bank: responseAccount.data[0].cve_banco,
               account: responseAccount.data[0].cve_cuenta,
-              depositDate: this.formatearFecha(
-                new Date(deposit.fec_movimiento)
-              ),
+              depositDate: deposit.fec_movimiento,
               fol: deposit.folio_ficha,
               currency: responseAccount.data[0].cve_moneda,
               amount: deposit.deposito,
             };
           })
         );
+        console.log('numero de registros ----->', this.depositList.length);
+        console.log('numero de registros ----->', this.depositList);
+        this.dataDeposit.load(this.depositList);
+        this.dataDeposit.refresh();
         this.depositLoading = false;
       })
       .catch(err => {
+        this.dataDeposit.load([]);
+        this.dataDeposit.refresh();
         this.depositLoading = false;
       });
   }
@@ -169,17 +289,19 @@ export class IncomePerAssetComponent
   searchDepositaryIsNull() {
     return new Promise((res, _rej) => {
       this.depositLoading = true;
-      this.accountmvmntServices
-        .getAccountAovementsIsNull(this.depositParams.getValue())
-        .subscribe({
-          next: response => {
-            this.depositTotalItems = response.count;
-            res(response.data);
-          },
-          error: err => {
-            res('Error');
-          },
-        });
+      let params = {
+        ...this.depositParams.getValue(),
+        ...this.columnFilters,
+      };
+      this.accountmvmntServices.getAccountAovementsIsNull(params).subscribe({
+        next: response => {
+          this.depositTotalItems = response.count;
+          res(response.data);
+        },
+        error: err => {
+          res('Error');
+        },
+      });
     });
   }
 
@@ -207,23 +329,23 @@ export class IncomePerAssetComponent
             return {
               bank: responseAccount.data[0].cve_banco,
               account: responseAccount.data[0].cve_cuenta,
-              depositDate: this.formatearFecha(
-                new Date(deposit.fec_movimiento)
-              ),
+              depositDate: deposit.fec_movimiento,
               fol: deposit.folio_ficha,
               currency: responseAccount.data[0].cve_moneda,
               amount: deposit.deposito,
               concept: deposit.cve_concepto,
               description: 'TRASPASO COBRO DE CHEQUE',
-              transferDate: this.formatearFecha(
-                new Date(deposit.fec_calculo_intereses)
-              ),
+              transferDate: deposit.fec_calculo_intereses,
             };
           })
         );
+        this.dataAsset.load(this.assetList);
+        this.dataAsset.refresh();
         this.assetLoading = false;
       })
       .catch(err => {
+        this.dataAsset.load([]);
+        this.dataAsset.refresh();
         this.assetLoading = false;
       });
   }

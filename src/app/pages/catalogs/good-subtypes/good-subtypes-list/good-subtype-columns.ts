@@ -11,16 +11,24 @@ export const GOOD_SUBTYPES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  idTypeGood: {
+  typeGoodDetails: {
     title: 'Nombre Tipo',
     type: 'string',
+    sort: false,
     valuePrepareFunction: (goodType: IGoodType) => {
       return goodType.nameGoodType;
     },
-    sort: false,
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.nameGoodType;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   noPhotography: {
-    title: 'Nº fotografías',
+    title: 'No. Fotografías',
     type: 'string',
     sort: false,
   },
@@ -29,8 +37,8 @@ export const GOOD_SUBTYPES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  noRegister: {
-    title: 'Nº registro',
+  /*noRegister: {
+    title: 'No. Registro',
     type: 'number',
     sort: false,
   },
@@ -38,5 +46,5 @@ export const GOOD_SUBTYPES_COLUMNS = {
     title: 'Versión',
     type: 'number',
     sort: false,
-  },
+  },*/
 };

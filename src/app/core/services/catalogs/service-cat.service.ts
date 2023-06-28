@@ -26,7 +26,7 @@ export class ServiceCatService implements ICrudMethods<IServiceCat> {
   }
 
   update(id: string | number, model: IServiceCat): Observable<Object> {
-    return this.serviceCatRepository.update(this.route, id, model);
+    return this.serviceCatRepository.newUpdateId(`${this.route}`, id, model);
   }
 
   delete(id: string | number): Observable<Object> {

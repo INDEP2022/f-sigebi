@@ -5,6 +5,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import {
   IReceipt,
   IReceiptwitness,
@@ -28,6 +29,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
   idProgramming: number = 0;
   loadingWitness: boolean = false;
   keyDoc: string = '';
+  programming: Iprogramming;
   closeModal: boolean = false;
   constructor(
     private modalRef: BsModalRef,
@@ -240,9 +242,8 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
                   });
               });
 
-              console.log('firmEntF', firmEnt);
               if (firmEnt == 1) {
-                await this.createSign(
+                const createDelivery = await this.createSign(
                   this.idProgramming,
                   103,
                   'RECIBOS',
@@ -250,53 +251,55 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
                   this.proceeding.nameDelivery,
                   this.proceeding.chargeDelivery
                 );
-              }
 
-              if (firmReceip == 1) {
-                const createReceipt = await this.createSign(
-                  this.idProgramming,
-                  103,
-                  'RECIBOS',
-                  'FIRMA_ELECTRONICA_REC',
-                  this.proceeding.nameReceipt,
-                  this.proceeding.chargeReceipt
-                );
-                if (createReceipt) {
-                  if (this.paragraphs.count() > 0) {
-                    this.paragraphs.getElements().then(item => {
-                      item.map(async (data: IReceiptwitness) => {
-                        const createReceiptWitness = await this.createSign(
-                          this.idProgramming,
-                          103,
-                          'RECIBOS_TESTIGOS',
-                          'FIRMA_ELECTRONICA',
-                          data.nameWitness,
-                          data.chargeWitness
-                        );
-                        if (createReceiptWitness) {
-                          this.modalRef.content.callback(
-                            this.proceeding,
-                            this.idProgramming
-                          );
-                          this.close();
-                          this.loading = false;
-                        }
-                      });
-                    });
-                  } else {
-                    this.modalRef.content.callback(
-                      this.proceeding,
-                      this.idProgramming
+                if (createDelivery) {
+                  if (firmReceip == 1) {
+                    const createReceipt = await this.createSign(
+                      this.idProgramming,
+                      103,
+                      'RECIBOS',
+                      'FIRMA_ELECTRONICA_REC',
+                      this.proceeding.nameReceipt,
+                      this.proceeding.chargeReceipt
                     );
-                    this.close();
-                    this.loading = false;
+                    if (createReceipt) {
+                      if (this.paragraphs.count() > 0) {
+                        this.paragraphs.getElements().then(item => {
+                          item.map(async (data: IReceiptwitness) => {
+                            const createReceiptWitness = await this.createSign(
+                              this.idProgramming,
+                              103,
+                              'RECIBOS_TESTIGOS',
+                              'FIRMA_ELECTRONICA',
+                              data.nameWitness,
+                              data.chargeWitness
+                            );
+                            if (createReceiptWitness) {
+                              this.modalRef.content.callback(
+                                this.proceeding,
+                                this.idProgramming
+                              );
+                              this.close();
+                              this.loading = false;
+                            }
+                          });
+                        });
+                      } else {
+                        this.modalRef.content.callback(
+                          this.proceeding,
+                          this.idProgramming
+                        );
+                        this.close();
+                        this.loading = false;
+                      }
+                    }
                   }
                 }
               }
             },
             error: async error => {
               if (firmEnt == 1) {
-                await this.createSign(
+                const createDelivery = await this.createSign(
                   this.idProgramming,
                   103,
                   'RECIBOS',
@@ -304,47 +307,48 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
                   this.proceeding.nameDelivery,
                   this.proceeding.chargeDelivery
                 );
-              }
 
-              console.log('firmReceip', firmReceip);
-              if (firmReceip == 1) {
-                const createReceipt = await this.createSign(
-                  this.idProgramming,
-                  103,
-                  'RECIBOS',
-                  'FIRMA_ELECTRONICA_REC',
-                  this.proceeding.nameReceipt,
-                  this.proceeding.chargeReceipt
-                );
-                if (createReceipt) {
-                  if (this.paragraphs.count() > 0) {
-                    this.paragraphs.getElements().then(item => {
-                      item.map(async (data: IReceiptwitness) => {
-                        const createReceiptWitness = await this.createSign(
-                          this.idProgramming,
-                          103,
-                          'RECIBOS_TESTIGOS',
-                          'FIRMA_ELECTRONICA',
-                          data.nameWitness,
-                          data.chargeWitness
-                        );
-                        if (createReceiptWitness) {
-                          this.modalRef.content.callback(
-                            this.proceeding,
-                            this.idProgramming
-                          );
-                          this.close();
-                          this.loading = false;
-                        }
-                      });
-                    });
-                  } else {
-                    this.modalRef.content.callback(
-                      this.proceeding,
-                      this.idProgramming
+                if (createDelivery) {
+                  if (firmReceip == 1) {
+                    const createReceipt = await this.createSign(
+                      this.idProgramming,
+                      103,
+                      'RECIBOS',
+                      'FIRMA_ELECTRONICA_REC',
+                      this.proceeding.nameReceipt,
+                      this.proceeding.chargeReceipt
                     );
-                    this.close();
-                    this.loading = false;
+                    if (createReceipt) {
+                      if (this.paragraphs.count() > 0) {
+                        this.paragraphs.getElements().then(item => {
+                          item.map(async (data: IReceiptwitness) => {
+                            const createReceiptWitness = await this.createSign(
+                              this.idProgramming,
+                              103,
+                              'RECIBOS_TESTIGOS',
+                              'FIRMA_ELECTRONICA',
+                              data.nameWitness,
+                              data.chargeWitness
+                            );
+                            if (createReceiptWitness) {
+                              this.modalRef.content.callback(
+                                this.proceeding,
+                                this.idProgramming
+                              );
+                              this.close();
+                              this.loading = false;
+                            }
+                          });
+                        });
+                      } else {
+                        this.modalRef.content.callback(
+                          this.proceeding,
+                          this.idProgramming
+                        );
+                        this.close();
+                        this.loading = false;
+                      }
+                    }
                   }
                 }
               }

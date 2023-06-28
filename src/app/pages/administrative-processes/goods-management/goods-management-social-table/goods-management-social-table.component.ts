@@ -1,9 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { map, takeUntil } from 'rxjs';
-import { IViewTmpTracker } from 'src/app/core/models/ms-good-tracker/vtempTracker.model';
+import { ITVGoodsTracker } from 'src/app/core/models/ms-good-tracker/vtempTracker.model';
 import { GoodViewTrackerService } from 'src/app/core/services/ms-good-tracker/good-v-tracker.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { COLUMNS } from './columns';
+import { GoodsManagementSocialNotLoadGoodsComponent } from './goods-management-social-not-load-goods/goods-management-social-not-load-goods.component';
 
 @Component({
   selector: 'app-goods-management-social-table',
@@ -11,10 +13,11 @@ import { COLUMNS } from './columns';
   styleUrls: ['./goods-management-social-table.component.scss'],
 })
 export class GoodsManagementSocialTable
-  extends BasePageWidhtDinamicFiltersExtra<IViewTmpTracker>
+  extends BasePageWidhtDinamicFiltersExtra<ITVGoodsTracker>
   implements OnInit
 {
   private _selectedGoods: number[];
+  notLoadedGoods: { good: number }[] = [];
   @Input() identifier: number;
   @Input()
   get selectedGoods(): number[] {
@@ -28,11 +31,15 @@ export class GoodsManagementSocialTable
   }
   @Input() set clear(value: number) {
     if (value > 0) {
+      this.notLoadedGoods = [];
       this.dataNotFound();
     }
   }
   @Input() option: string;
-  constructor(private goodTrackerService: GoodViewTrackerService) {
+  constructor(
+    private modalService: BsModalService,
+    private goodTrackerService: GoodViewTrackerService
+  ) {
     super();
     this.service = this.goodTrackerService;
     this.haveInitialCharge = false;
@@ -49,19 +56,31 @@ export class GoodsManagementSocialTable
     this.settings = $event;
   }
 
-  optionString() {
-    switch (+this.option) {
-      case 1:
+  optionString(cabinetSocial: string) {
+    switch (cabinetSocial) {
+      case '1':
         return 'Susceptible';
-      case 2:
+      case '2':
         return 'Asignado';
-      case 3:
+      case '3':
         return 'Entregado';
-      case 4:
+      case '4':
         return 'Liberar';
       default:
-        return '';
+        return 'Sin Asignar';
     }
+  }
+
+  showNotLoads() {
+    let config: ModalOptions = {
+      initialState: {
+        data: this.notLoadedGoods,
+        totalItems: this.notLoadedGoods.length,
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(GoodsManagementSocialNotLoadGoodsComponent, config);
   }
 
   override getData() {
@@ -82,7 +101,7 @@ export class GoodsManagementSocialTable
               data: response.data.map(row => {
                 return {
                   ...row,
-                  officeProc: this.optionString(),
+                  officeProc: this.optionString(row.cabinetSocial),
                 };
               }),
             };
@@ -92,16 +111,29 @@ export class GoodsManagementSocialTable
           next: (response: any) => {
             if (response) {
               this.totalItems = response.count || 0;
+              this.notLoadedGoods = [];
+              this.selectedGoods.forEach(x => {
+                if (
+                  !response.data
+                    .map((item: any) => item.goodNumber)
+                    .toString()
+                    .includes(x)
+                ) {
+                  this.notLoadedGoods.push({ good: x });
+                }
+              });
               this.data.load(response.data);
               this.data.refresh();
               this.loading = false;
             }
           },
           error: err => {
+            this.notLoadedGoods = [];
             this.dataNotFound();
           },
         });
     } else {
+      this.notLoadedGoods = [];
       this.dataNotFound();
     }
   }

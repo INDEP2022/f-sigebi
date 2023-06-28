@@ -54,12 +54,17 @@
           <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
         <button
+          class="btn btn-danger btn-sm active mr-3"
+          (click)="clear(); isSearch = false">
+          Limpiar <i class="fas fa-eraser"></i>
+        </button>
+        <!-- <button
           type="button"
           class="btn btn-primary active btn-sm"
           (click)="clear(); isSearch = false">
           Limpiar
           <i class="fa fa-trash"></i>
-        </button>
+        </button> -->
       </div>
     </div>
     <form [formGroup]="formNotification" class="form-material mt-2">
@@ -102,7 +107,7 @@
             formControlName="receiptDate"
             class="form-control"
             bsDatepicker
-            [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"
+            [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
             [maxDate]="today" />
         </form-field>
 
@@ -207,12 +212,14 @@
                 Nueva Solicitud<i class="bx bx-plus bx-sm float-icon"></i>
               </button>
               <button
-                type="button"
-                class="btn btn-primary active btn-sm"
+                class="btn btn-danger btn-sm active mr-3"
                 (click)="clearDocument()">
+                Limpiar <i class="fas fa-eraser"></i>
+              </button>
+              <!-- <button type="button" class="btn btn-primary active btn-sm" (click)="clearDocument()">
                 Limpiar
                 <i class="fa fa-trash"></i>
-              </button>
+              </button> -->
             </div>
           </div>
         </div>

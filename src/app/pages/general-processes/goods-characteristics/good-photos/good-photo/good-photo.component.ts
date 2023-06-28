@@ -51,8 +51,10 @@ export class GoodPhotoComponent extends BasePage implements OnInit {
 
   private filenameChange() {
     this.loading = true;
+    let index = this.filename.indexOf('F');
+    console.log(index);
     this.subscription = this.service
-      .getById(this.goodNumber, this.filename)
+      .getById(this.goodNumber, +this.filename.substring(index + 1, index + 5))
       .subscribe({
         next: base64 => {
           this.loading = false;
@@ -61,11 +63,7 @@ export class GoodPhotoComponent extends BasePage implements OnInit {
           console.log(this.error);
         },
         error: error => {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Ocurrio un error al obtener el documento'
-          );
+          // this.alert('error', 'Fotos', 'Ocurrio un error al cargar la foto');
           this.loading = false;
           this.error = true;
           console.log(this.error);

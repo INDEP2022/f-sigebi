@@ -68,10 +68,12 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
             type: this.store.tpstore,
             responsibleDelegation: this.store.wildebeestDelegationregion,
           };
-
+          this.close();
+          console.log('cerro1');
           console.log('warehouseForm', warehouseForm);
           this.warehouseService.create(warehouseForm).subscribe({
             next: async response => {
+              console.log('cerro2');
               const openTaskPerform = await this.openTaskPerform();
               if (openTaskPerform == true) {
                 this.onLoadToast(
@@ -79,8 +81,10 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
                   'Acción correcta',
                   'Alta de almacén confirmada correctamente'
                 );
+                console.log('cerro3');
                 this.close();
                 this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+                console.log('cerro4');
               }
             },
             error: error => {},

@@ -13,10 +13,9 @@ import { ComerTpEventosService } from '../../../../../core/services/ms-event/com
 })
 export class EventTypesFornComponent extends BasePage implements OnInit {
   status: string = 'Nuevo';
-  title: string = 'TIPO DE EVENTO';
+  title: string = 'Tipo de evento';
   edit: boolean = false;
-  newId: number = 1;
-
+  comerTpEvent: IComerTpEvent;
   form: FormGroup = new FormGroup({});
   eventType: IComerTpEvent;
 
@@ -32,28 +31,54 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    console.log(this.newId);
   }
 
   prepareForm(): void {
     this.form = this.fb.group({
-      id: [this.newId, [Validators.required, Validators.max(99)]],
+      id: [null, [Validators.required, Validators.maxLength(2)]],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       descReceipt: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
-      typeDispId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      typeFailedpId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      typeDispId: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(2),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      typeFailedpId: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(2),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      use: [
+        null,
+        [Validators.maxLength(240), Validators.pattern(STRING_PATTERN)],
+      ],
     });
 
-    if (this.edit) {
+    if (this.comerTpEvent != null) {
       //console.log(this.brand)
-      this.status = 'Actualizar';
-      this.form.patchValue(this.eventType);
+      this.edit = true;
+      this.form.patchValue(this.comerTpEvent);
+      this.form.get('id').disable();
     }
   }
 
@@ -67,7 +92,7 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
 
   create(): void {
     this.loading = true;
-    this.tpEventService.create(this.form.value).subscribe({
+    this.tpEventService.createTevents(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => {
         this.showError(error);
@@ -78,21 +103,30 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
 
   handleSuccess(): void {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.refresh.emit(true);
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 
   update(): void {
     this.loading = true;
-    this.tpEventService.update(this.eventType.id, this.form.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => {
-        this.showError(error);
-        this.loading = false;
-      },
-    });
+    const id = this.form.controls['id'].value;
+    const typeDispId = this.form.controls['typeDispId'].value;
+    const typeFailedpId = this.form.controls['typeFailedpId'].value;
+    this.form.controls['id'].setValue(parseInt(id));
+    this.form.controls['typeDispId'].setValue(parseInt(typeDispId));
+    this.form.controls['typeFailedpId'].setValue(parseInt(typeFailedpId));
+    this.tpEventService
+      .updateTevents(this.comerTpEvent.id, this.form.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => {
+          this.showError(error);
+          this.loading = false;
+        },
+      });
   }
 
   showError(error?: any): void {
@@ -105,4 +139,15 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
     );
     error ? console.log(error) : null;
   }
+
+  /* showAlert(error?: any): void {
+    let action: string;
+    this.edit ? (action = 'agregar') : 'editar';
+    this.onLoadToast(
+      'warning',
+      `¡El id ingresado ya existe!`,
+      'Intente nuevamente con otro Id'
+    );
+    error ? console.log(error) : null;
+  }*/
 }

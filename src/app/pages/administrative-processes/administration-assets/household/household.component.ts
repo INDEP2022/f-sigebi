@@ -5,8 +5,12 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
@@ -24,6 +28,8 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
   @Input() goodId: number;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  columnFilter: any = [];
+  dataLoand: LocalDataSource = new LocalDataSource();
 
   constructor(
     private readonly goodServices: GoodService,
@@ -53,6 +59,31 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    this.dataLoand
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            searchFilter = SearchFilter.ILIKE;
+            if (filter.search !== '') {
+              this.columnFilter[field] = `${searchFilter}:${filter.search}`;
+              console.log('this.param:', this.params);
+              this.params.value.page = 1;
+            } else {
+              delete this.columnFilter[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.searchGoodMenage(this.goodId);
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.searchGoodMenage(this.goodId));
@@ -62,16 +93,27 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
     //this.menajes = [];
     this.loading = true;
     this.params.getValue()['filter.noGood'] = `$eq:${idGood}`;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilter,
+    };
     console.log(this.params.getValue());
-    this.menageServices.getMenaje(this.params.getValue()).subscribe({
+    this.menageServices.getMenaje(params).subscribe({
       next: response => {
-        this.menajes = response.data.map((menage: any) => {
-          return menage.menajeDescription;
-        });
-        this.totalItems = response.count;
         this.loading = false;
+        console.log(response);
+        if (response.count > 0) {
+          this.menajes = response.data.map((menage: any) => {
+            return menage.menajeDescription;
+          });
+          this.dataLoand.load(this.menajes);
+          this.dataLoand.refresh();
+          this.totalItems = response.count;
+        }
       },
       error: err => {
+        this.dataLoand.load([]);
+        this.dataLoand.refresh();
         this.loading = false;
         console.log(err);
       },

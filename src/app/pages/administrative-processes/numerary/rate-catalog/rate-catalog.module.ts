@@ -6,11 +6,12 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { ModalForm } from './modal-form/modal-form.component';
 import { RateCatalogRoutingModule } from './rate-catalog-routing.module';
 import { RateCatalogComponent } from './rate-catalog/rate-catalog.component';
 
 @NgModule({
-  declarations: [RateCatalogComponent],
+  declarations: [RateCatalogComponent, ModalForm],
   imports: [
     CommonModule,
     RateCatalogRoutingModule,

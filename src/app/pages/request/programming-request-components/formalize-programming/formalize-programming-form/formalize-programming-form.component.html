@@ -60,11 +60,19 @@
       <div class="row pt-3">
         <div class="col-md-4">
           <div class="form-group">
+            <label class="text-right mr-2">Estado&#58;</label>
+            <span class="fs-4"> {{ stateName }} </span>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
             <label class="text-right mr-2">Emisora&#58;</label>
             <span class="fs-4"> {{ stationName }} </span>
           </div>
         </div>
-        <div class="col-md-8">
+
+        <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Dirección&#58;</label>
             <span class="fs-4"> {{ programming?.address }} </span>
@@ -181,7 +189,6 @@
                           type="text"
                           class="form-control"
                           maxlength="100"
-                          [readonly]="true"
                           formControlName="observationProceedings" />
                       </form-field>
                     </td>

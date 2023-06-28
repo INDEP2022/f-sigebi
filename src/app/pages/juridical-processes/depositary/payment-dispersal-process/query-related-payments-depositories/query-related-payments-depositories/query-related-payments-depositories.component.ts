@@ -214,7 +214,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
     this.formBienDetalle = this.fb.group({
       idBien: [
         { value: '', disabled: false },
-        [Validators.required, Validators.maxLength(11)],
+        [Validators.maxLength(11), Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ], //*
       descripcion: [
         { value: '', disabled: false },
@@ -449,7 +449,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
       .setValue(this.depositaryAppointment.contractKey);
     let fecha = this.datePipe.transform(
       this.depositaryAppointment.contractStartDate,
-      'dd-MMM-yyyy'
+      'dd/MM/yyyy'
     );
     this.form.get('fecha').setValue(fecha);
   }

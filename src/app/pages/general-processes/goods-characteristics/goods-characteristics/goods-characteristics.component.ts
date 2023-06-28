@@ -61,6 +61,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   formLoading = false;
   showConciliado = false;
   LVALIDA = true;
+  showAvaluo = true;
   filterParams = new FilterParams();
   newLimit = new FormControl(1);
   totalItems = 0;
@@ -278,7 +279,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.activatedRoute.queryParams.subscribe({
       next: param => {
         // console.log(param);
-        debugger;
+        // debugger;
         this.origin = param['origin'] ?? null;
         this.origin1 = param['origin1'] ?? null;
         if (
@@ -315,10 +316,12 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     if (localStorage.getItem('selectedBad')) {
       setTimeout(() => {
         this.selectTab(0, 1);
+        this.enabledFotos();
       }, 1000);
     } else {
       setTimeout(() => {
         this.selectTab(1, 0);
+        this.disabledFotos();
       }, 1000);
     }
   }
@@ -329,11 +332,18 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     if (this.staticTabs?.tabs[tabActive]) {
       this.staticTabs.tabs[tabDisabled].disabled = true;
       this.staticTabs.tabs[tabActive].active = true;
-      if (tabDisabled === 0) {
-        this.staticTabs.tabs[2].active = true;
-      } else {
-        this.staticTabs.tabs[2].disabled = true;
-      }
+    }
+  }
+
+  private disabledFotos() {
+    if (this.staticTabs) {
+      this.staticTabs.tabs[2].disabled = true;
+    }
+  }
+
+  private enabledFotos() {
+    if (this.staticTabs) {
+      this.staticTabs.tabs[2].disabled = false;
     }
   }
 
@@ -365,7 +375,6 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       latitud: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       longitud: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       avaluo: ['0'],
-      img: [null],
     });
   }
 
@@ -406,7 +415,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       if (row.required && !row.value) {
         this.alert(
           'error',
-          'Bien ' + this.numberGood.value,
+          'Características del bien ' + this.numberGood.value,
           'Complete el atributo ' + row.attribute
         );
         // this.onLoadToast(
@@ -477,8 +486,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         next: response => {
           this.alert(
             'success',
-            'Bien ' + this.numberGood.value,
-            'Actualizado correctamente'
+            'Características del bien ' + this.numberGood.value,
+            'Actualizadas correctamente'
           );
 
           // this.onLoadToast(
@@ -932,7 +941,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   async searchGood(byPage = false) {
     // const numberGood = Number(this.numberGood.value);
-    debugger;
+    // debugger;
     this.loading = true;
 
     if (this.fillParams(byPage)) {
@@ -1043,7 +1052,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         this.totalItems = 0;
         this.loading = false;
         this.goodChange++;
-        this.alertInfo('error', 'Error', 'No existen bienes');
+        this.alert('error', 'Error', 'No existen bienes');
         // this.service.goodChange.next(false);
         // this.onLoadToast('error', 'ERROR', 'No existen bienes');
       }
@@ -1132,6 +1141,9 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           this.good.val14 = 'S';
         }
       }
+    } else {
+      this.goodAppraisal2.setValue(true);
+      this.showAvaluo = false;
     }
   }
 
@@ -1175,6 +1187,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       this.disabledTable = true;
       this.disabledNoClasifBien = true;
     }
+    // this.disabledBienes = false;
   }
 
   async pupInsertGeoreferencia() {

@@ -134,11 +134,13 @@ export class ParameterFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    this.onLoadToast(
+    /*this.onLoadToast(
       'success',
       'Parámetro',
       `Ha sido ${this.edit ? 'actualizado' : 'creado'} correctamente`
-    );
+    );*/
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalService.content.callback(true);
     this.modalService.hide();
