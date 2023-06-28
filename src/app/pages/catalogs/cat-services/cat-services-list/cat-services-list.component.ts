@@ -19,8 +19,8 @@ import { SERVICES_COLUMS } from './cat-service-columns';
   styles: [],
 })
 export class CatServicesListComponent extends BasePage implements OnInit {
-  attribGoodBad: LocalDataSource = new LocalDataSource();
-  paragraphs: IServiceCat[] = [];
+  data: LocalDataSource = new LocalDataSource();
+  services: IServiceCat[] = [];
   columnFilters: any = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -30,8 +30,6 @@ export class CatServicesListComponent extends BasePage implements OnInit {
     private modalService: BsModalService
   ) {
     super();
-    //this.settings.columns = SERVICES_COLUMS;
-    this.settings.actions.delete = true;
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
@@ -47,7 +45,7 @@ export class CatServicesListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.attribGoodBad
+    this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
@@ -65,6 +63,7 @@ export class CatServicesListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });
@@ -82,12 +81,10 @@ export class CatServicesListComponent extends BasePage implements OnInit {
     };
     this.catserviceService.getAll(params).subscribe({
       next: response => {
+        this.services = response.data;
         this.totalItems = response.count || 0;
-        this.attribGoodBad.load(response.data);
-        this.attribGoodBad.refresh();
-
-        /*this.paragraphs = response.data;
-        this.totalItems = response.count;*/
+        this.data.load(response.data);
+        this.data.refresh();
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -124,7 +121,9 @@ export class CatServicesListComponent extends BasePage implements OnInit {
   deleteReg(id: string | number) {
     this.catserviceService.delete(id).subscribe({
       next: response => {
-        this.alert('success', 'Servicio', 'Borrado'), this.getExample();
+        this.getExample(),
+          this.alert('success', 'Servicio', 'Borrado'),
+          this.getExample();
       },
       error: err => {
         this.alert(

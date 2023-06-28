@@ -14,7 +14,7 @@ export const GENERICS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  userCreation: {
+  /*userCreation: {
     title: 'Creado por',
     type: 'string',
     sort: false,
@@ -23,7 +23,7 @@ export const GENERICS_COLUMNS = {
     title: 'Modificado por',
     type: 'string',
     sort: false,
-  },
+  },*/
   version: {
     title: 'Versión',
     type: 'number',

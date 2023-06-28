@@ -21,7 +21,7 @@ export class ModalNumeraryParameterizationComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Parametro Numerico';
+  title: string = 'Parametrización de numerario';
   edit: boolean = false;
   form: ModelForm<ICategorizationAutomNumerary>;
   categories = new DefaultSelect<INumeraryCategories>();
@@ -63,8 +63,10 @@ export class ModalNumeraryParameterizationComponent
     });
     if (this.allotment != null) {
       this.edit = true;
-      this.form.get('typeProceeding').disable();
       this.form.patchValue(this.allotment);
+      let value = this.allotment.typeProceeding;
+      this.form.controls['typeProceeding'].setValue(value);
+      //this.form.get('typeProceeding').disable();
     }
   }
   confirm() {
@@ -82,7 +84,7 @@ export class ModalNumeraryParameterizationComponent
   update() {
     this.loading = true;
     this.numeraryParameterizationAutomService
-      .update6(this.form.value)
+      .update(this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -101,7 +103,8 @@ export class ModalNumeraryParameterizationComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

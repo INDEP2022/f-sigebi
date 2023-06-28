@@ -11,11 +11,11 @@ export const REGIONAL_DELEGATIONS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  registerNumber: {
-    title: 'Número de registro',
-    type: 'number',
-    sort: false,
-  },
+  // registerNumber: {
+  //   title: 'Número de registro',
+  //   type: 'number',
+  //   sort: false,
+  // },
   zoneGeographic: {
     title: 'Zona geográfica',
     type: 'string',

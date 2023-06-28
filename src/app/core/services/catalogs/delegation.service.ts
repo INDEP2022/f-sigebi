@@ -22,7 +22,7 @@ export class DelegationService
   private readonly statesRoute = ENDPOINT_LINKS.StateOfRepublic;
   private readonly zonesRoute = ENDPOINT_LINKS.ZoneGeographic;
   constructor(
-    private delegationRepository: Repository<IDelegation>,
+    private delegationRepository: Repository<any>,
 
     private statesRepository: Repository<IStateOfRepublic>,
     private zonesRepository: Repository<IZoneGeographic>
@@ -31,8 +31,12 @@ export class DelegationService
     this.microservice = DelegationsEndpoints.BasePage;
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<IDelegation>> {
+  getAll(params?: ListParams | string): Observable<IListResponse<any>> {
     return this.delegationRepository.getAll(this.route, params);
+  }
+
+  getAllPaginated(params?: ListParams): Observable<IListResponse<IDelegation>> {
+    return this.delegationRepository.getAllPaginated(this.route, params);
   }
 
   getAppsAll(): Observable<IListResponse<IDelegation>> {
@@ -51,6 +55,14 @@ export class DelegationService
 
   getById(id: string | number): Observable<IDelegation> {
     return this.delegationRepository.newGetById(this.route, id);
+  }
+
+  getByIdEtapaEdo(
+    id: string | number,
+    etapaEdo: string
+  ): Observable<IDelegation> {
+    const route = `${DelegationsEndpoints.Delegation}/id/${id}/etapaEdo/${etapaEdo}`;
+    return this.get(route);
   }
 
   create(model: IDelegation): Observable<IDelegation> {

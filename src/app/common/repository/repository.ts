@@ -439,6 +439,12 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.put(`${fullRoute}/id/${id}`, formData);
   }
 
+  updateTypeRelevant2(route: string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+
+    return this.httpClient.put(`${fullRoute}`, formData);
+  }
+
   updateCatalogPhotographMedia(
     route: string,
     id: number | string,
@@ -481,5 +487,17 @@ export class Repository<T> implements IRepository<T> {
     // console.log(`${fullRoute}/delete/${situation}/${status}`);
 
     return this.httpClient.delete(`${fullRoute}/delete/${situation}/${status}`);
+  }
+
+  update8(
+    route: string,
+    id: number | string,
+    id1: number | string,
+    id2: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    // console.log(fullRoute);
+    return this.httpClient.put(`${fullRoute}/${id}/${id1}/${id2}`, formData);
   }
 }

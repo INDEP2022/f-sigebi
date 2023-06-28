@@ -588,7 +588,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
               this.alert(
                 'success',
                 'REPORTE DE DIGITALIZACIÓN',
-                `Generado folio: ${this.idFolio}`
+                `Solicitud generada correctamente con folio: ${this.idFolio}`
               );
               const blob = new Blob([response], { type: 'application/pdf' });
               const url = URL.createObjectURL(blob);

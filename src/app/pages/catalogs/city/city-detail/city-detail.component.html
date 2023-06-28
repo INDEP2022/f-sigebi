@@ -24,6 +24,7 @@
               (fetchItems)="getStates($event)"
               (change)="selectState($event)"
               control="state"
+              value="id"
               bindLabel="descCondition"
               label="Entidad Federativa">
             </ngx-select>
@@ -37,6 +38,7 @@
               [form]="cityForm"
               control="noDelegation"
               [data]="delegations"
+              value="id"
               bindLabel="description"
               label="Delegací&oacute;n"
               (fetchItems)="getDelegations($event)"
@@ -50,6 +52,7 @@
               [form]="cityForm"
               control="noSubDelegation"
               [data]="subDelegations"
+              value="id"
               bindLabel="description"
               label="Subdelegaci&oacute;n"
               (fetchItems)="getSubDelegations($event)">

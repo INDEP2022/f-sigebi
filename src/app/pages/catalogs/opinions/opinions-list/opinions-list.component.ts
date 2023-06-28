@@ -1,17 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-
-import { LocalDataSource } from 'ng2-smart-table';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+
+import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IOpinion } from 'src/app/core/models/catalogs/opinion.model';
 import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { OpinionFormComponent } from '../opinion-form/opinion-form.component';
 import { OPINION_COLUMNS } from './opinion-columns';
 
@@ -49,10 +48,7 @@ export class OpinionsListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'description' ||
-            filter.field == 'dict_ofi' ||
-            filter.field == 'areaProcess'
+            filter.field == 'id' || filter.field == 'dict_ofi'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -102,18 +98,26 @@ export class OpinionsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(opinion.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.opinionService.removeCatalogOpinions(id).subscribe({
-      next: () => this.getDeductives(),
+      next: () => {
+        this.getDeductives(), this.alert('success', 'Dictamen', 'Borrado');
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Dictámen',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

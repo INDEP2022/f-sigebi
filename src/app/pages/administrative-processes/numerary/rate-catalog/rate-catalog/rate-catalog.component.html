@@ -1,6 +1,6 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Tasas para interes</h5>
+    <h5 class="title">Tasas para interés</h5>
   </div>
   <div body>
     <div class="d-flex justify-content-end">
@@ -13,13 +13,13 @@
           Guardar
           <i aria-hidden="true" class="fa fa-save"></i>
         </button>
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="clear()">
+        <button class="btn btn-danger btn-sm active mr-3" (click)="clear()">
+          Limpiar <i class="fas fa-eraser"></i>
+        </button>
+        <!-- <button type="button" class="btn btn-primary btn-sm active" (click)="clear()">
           Limpiar
           <i aria-hidden="true" class="fa fa-trash"></i>
-        </button>
+        </button> -->
       </div>
     </div>
 

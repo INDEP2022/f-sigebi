@@ -84,7 +84,14 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   }
 
   generateFoli() {
-    this.goods.forEach((good, index) => {
+    let arr = [];
+    for (let i = 0; i < this.goods.length; i++) {
+      if (this.goods[i].approved == true) {
+        arr.push(this.goods[i]);
+      }
+    }
+    console.log('approved', arr);
+    arr.forEach((good, index) => {
       if (index !== 0) {
         if (good.approved == true) {
           const documents: IDocuments = {
@@ -159,6 +166,11 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
     }
     if (this.goods.length === 0) {
       this.alert('warning', 'Debe cargar al menos un Bien', '');
+      return;
+    }
+
+    if (this.good == null) {
+      this.alert('warning', 'Debe cargar al menos un bien válido', '');
       return;
     }
     this.alertQuestion(

@@ -99,11 +99,13 @@ export class ModalCatAppraisersComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    this.onLoadToast(
+    /*this.onLoadToast(
       'success',
       `Se ha ${this.edit ? 'actualizado' : 'guardado'} correctamente`,
       ''
-    );
+    );*/
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

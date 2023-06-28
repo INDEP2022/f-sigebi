@@ -2710,6 +2710,7 @@ export class RelatedDocumentsRelationComponent
       this.alert('warning', '', 'Debe especificar la CIUDAD');
       return;
     }
+
     this.isDisabledBtnPrint = true;
 
     try {
