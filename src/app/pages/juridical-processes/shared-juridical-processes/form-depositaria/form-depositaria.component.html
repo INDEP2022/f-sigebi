@@ -50,17 +50,27 @@
                 formControlName="descripcion"></textarea>
             </form-field>
             <form-field
-              class="col-sm-12 col-12 col-md-8 p-2"
+              class="col-sm-12 col-12 col-md-3 p-2"
               [control]="form.get('nombramiento')"
               label="Nombramiento">
               <input
                 class="form-control"
                 formControlName="nombramiento"
-                maxlength="6"
+                maxlength="10"
                 [readonly]="true" />
             </form-field>
             <form-field
-              class="col-sm-12 col-12 col-md-4 p-2"
+              class="col-sm-12 col-12 col-md-6 p-2"
+              [control]="form.get('nombramientoDescription')"
+              label="Nombramiento Descripci&oacute;n">
+              <textarea
+                class="form-control"
+                formControlName="nombramientoDescription"
+                maxlength="200"
+                [readonly]="true"></textarea>
+            </form-field>
+            <form-field
+              class="col-sm-12 col-12 col-md-3 p-2"
               [control]="form.get('fecha')"
               label="Fecha">
               <input
