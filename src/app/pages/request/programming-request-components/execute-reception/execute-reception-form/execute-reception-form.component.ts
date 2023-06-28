@@ -132,6 +132,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   receiptGuardGood: IRecepitGuard;
   receiptData: IReceipt;
   goodData: IGood;
+  transfersDestinity: any[] = [];
   settingsGuardGoods = {
     ...this.settings,
     actions: false,
@@ -332,7 +333,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       saeMeasureUnit: [null],
       saePhysicalState: [null],
       stateConservationSae: [null],
+      destiny: [null],
       selectColumn: [null],
+      transferentDestiny: [null],
     });
   }
 
@@ -610,7 +613,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             _data.push(response.data[0]);
 
             this.goodsTransportable.clear();
-            _data.forEach(item => {
+            _data.forEach(async item => {
               if (item.physicalStatus == 1) {
                 item.physicalStatusName = 'BUENO';
               } else if (item.physicalStatus == 2) {
@@ -621,6 +624,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               } else if (item.stateConservation == 2) {
                 item.stateConservationName = 'MALO';
               }
+
+              const destinyIndep = await this.getDestinyIndep(item.saeDestiny);
+
               this.goodData = item;
               const form = this.fb.group({
                 id: [item?.id],
@@ -640,6 +646,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 stateConservationName: [item?.stateConservationName],
                 stateConservationSae: [item?.stateConservationSae],
                 regionalDelegationNumber: [item?.regionalDelegationNumber],
+                destiny: [item?.destiny],
+                transferentDestiny: [item?.saeDestiny],
               });
               this.goodsTransportable.push(form);
               this.formLoadingTrans = false;
@@ -653,6 +661,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.formLoadingTrans = false;
     }
+  }
+
+  getDestinyIndep(saeDestiny: number) {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.name'] = 'Destino';
+    this.genericService.getAll(params.getValue()).subscribe({
+      next: response => {
+        this.transfersDestinity = response.data;
+      },
+      error: error => {
+        console.log('error', error);
+      },
+    });
   }
 
   filterStatusReception(data: IGoodProgramming[]) {
@@ -1271,9 +1292,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   error: error => {},
                 });
             },
-            error: error => {
-              console.log('update good error', error);
-            },
+            error: error => {},
           });
         });
       });
@@ -1615,10 +1634,49 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       receiptGuards: receipt,
       proceess: 'guard',
       programming: this.programming,
-      callBack: (data: boolean) => {},
+      callback: (receiptGuards: any) => {
+        this.openReport(receiptGuards);
+      },
     };
 
     this.modalService.show(GenerateReceiptGuardFormComponent, config);
+  }
+
+  openReport(receiptGuards: any) {
+    const idTypeDoc = 185;
+    let config: ModalOptions = {
+      initialState: {
+        idTypeDoc,
+        programming: this.programming,
+        receiptGuards: receiptGuards,
+        callback: (next: boolean) => {
+          if (next) {
+            console.log('Modal cerrado');
+            this.uploadData();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowReportComponentComponent, config);
+  }
+
+  uploadData(): void {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      receiptGuards: this.receiptGuards,
+      guardReception: this.goodsReception,
+      typeDoc: 185,
+      programming: this.programming,
+      callback: (data: boolean) => {
+        if (data) {
+          this.getReceiptsGuard();
+        }
+      },
+    };
+
+    this.modalService.show(UploadReportReceiptComponent, config);
   }
 
   generateReceiptWarehouse(receipt: IReceipt) {
@@ -2030,7 +2088,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               actId: receipt.actId,
               programmingId: receipt.programmingId,
             };
-            console.log('formData', formData);
             this.receptionGoodService.deleteReceipt(formData).subscribe({
               next: response => {
                 this.getReceipts();
