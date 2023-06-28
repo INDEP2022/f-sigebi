@@ -27,7 +27,7 @@
       <input type="number" formControlName="clasifNum" class="form-control" />
     </form-field>
 
-    <form-field
+    <!-- <form-field
       [control]="form.get('alternativeClasifNum')"
       label="Clasificaci&oacute;n Alterna del Bien"
       class="col-md-4">
@@ -35,11 +35,11 @@
         type="text"
         formControlName="alternativeClasifNum"
         class="form-control" />
-    </form-field>
+    </form-field> -->
   </div>
 
   <div class="row pt-3">
-    <form-field [control]="form.get('types')" class="col-md-3">
+    <form-field [control]="form.get('types')" class="col-md-6">
       <ngx-select
         [form]="form"
         [searchOnInit]="true"
@@ -53,7 +53,7 @@
         (change)="typesChange($event)"></ngx-select>
     </form-field>
 
-    <form-field [control]="form.get('subtypes')" class="col-md-3">
+    <form-field [control]="form.get('subtypes')" class="col-md-6">
       <ngx-select
         [form]="form"
         [multiple]="true"
@@ -65,8 +65,10 @@
         (fetchItems)="getSubtypes($event)"
         (change)="subtypesChange($event)"></ngx-select>
     </form-field>
+  </div>
 
-    <form-field [control]="form.get('ssubtypes')" class="col-md-3">
+  <div class="row pt-3">
+    <form-field [control]="form.get('ssubtypes')" class="col-md-6">
       <ngx-select
         [form]="form"
         [multiple]="true"
@@ -79,7 +81,7 @@
         (change)="ssubtypesChange($event)"></ngx-select>
     </form-field>
 
-    <form-field [control]="form.get('sssubtypes')" class="col-md-3">
+    <form-field [control]="form.get('sssubtypes')" class="col-md-6">
       <ngx-select
         [form]="form"
         [multiple]="true"
