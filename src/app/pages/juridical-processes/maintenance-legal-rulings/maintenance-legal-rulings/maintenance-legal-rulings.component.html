@@ -15,6 +15,7 @@
 
   <div body>
     <app-goods
+      [dictation]="dictation"
       (loadingDialog)="loadGood($event)"
       [loadingData]="loading1"
       [data]="dataDictationXGood1"></app-goods>
@@ -28,6 +29,7 @@
 
   <div body>
     <app-documentation-goods
+      [dictation]="dictation"
       (loadingDialog)="loadDocumentGood($event)"
       [data]="dataDocumentDictumStateM"
       [loadingData]="loading2"></app-documentation-goods>
