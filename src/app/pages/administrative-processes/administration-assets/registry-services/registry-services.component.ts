@@ -19,7 +19,8 @@ import { RegisterServiceComponent } from './register-service/register-service.co
 })
 export class RegistryServicesComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   @Input() goodId: number;
   list: any[] = [];
   totalItems: number = 0;

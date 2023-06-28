@@ -6,21 +6,38 @@
     <form class="form-material" [formGroup]="delegationForm">
       <div class="row">
         <div class="col-md-12">
-          <form-field label="Descripción" [control]="delegationForm.get('description')">
-            <input type="text" class="form-control" formControlName="description" />
+          <form-field
+            label="Descripción"
+            [control]="delegationForm.get('description')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
           </form-field>
         </div>
       </div>
       <div class="row">
         <div class="col-md-6">
-          <form-field label="Etapa Edo" [control]="delegationForm.get('etapaEdo')">
-            <input type="text" class="form-control" formControlName="etapaEdo" />
+          <form-field
+            label="Etapa Edo"
+            [control]="delegationForm.get('etapaEdo')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="etapaEdo" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field [control]="delegationForm.get('idZoneGeographic')">
-            <ngx-select [searchOnInit]="true" [form]="delegationForm" [data]="idZ" (fetchItems)="getZones($event)"
-              value='id' control="idZoneGeographic" bindLabel="description" label="Zona Geográfica">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="delegationForm"
+              [data]="idZ"
+              (fetchItems)="getZones($event)"
+              value="id"
+              control="idZoneGeographic"
+              bindLabel="description"
+              label="Zona Geográfica">
             </ngx-select>
           </form-field>
         </div>
@@ -30,7 +47,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [type]="'button'" [disabled]="delegationForm.invalid" (confirm)="confirm()"></confirm-button>
+        <confirm-button
+          [type]="'button'"
+          [disabled]="delegationForm.invalid"
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
