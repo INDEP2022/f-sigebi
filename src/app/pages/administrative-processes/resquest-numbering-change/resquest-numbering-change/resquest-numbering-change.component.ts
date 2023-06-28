@@ -633,7 +633,7 @@ export class ResquestNumberingChangeComponent
           applicationChangeCashNumber: this.idSolicitud,
           ProceedingsNumber: this.dataGood[index].fileNumber,
           situationlegal: situacionJuridica,
-          reasonApplication: 'TEST',
+          reasonApplication: motivo,
         };
         console.log('PAYLOAD', payload);
         this.loading = true;
