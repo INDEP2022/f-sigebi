@@ -940,4 +940,6 @@ export class JpDMcCMaintenanceOfCoveragesComponent
   manttoEmail() {
     this.router.navigateByUrl(`pages/parameterization/mail`);
   }
+
+
 }
