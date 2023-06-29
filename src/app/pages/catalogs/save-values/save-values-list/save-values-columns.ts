@@ -22,10 +22,4 @@ export const SAVE_VALUES_COLUMNS = {
     type: 'string',
     sort: false,
   },
-
-  noRegistration: {
-    title: 'Número de registro',
-    type: 'string',
-    sort: false,
-  },
 };

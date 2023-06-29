@@ -40,6 +40,7 @@ export class LegendsListComponent extends BasePage implements OnInit {
       actions: {
         ...this.settings.actions,
         delete: true,
+        edit: true,
         add: false,
       },
     };

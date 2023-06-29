@@ -1,6 +1,9 @@
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { TrackerValues } from 'src/app/pages/general-processes/goods-tracker/utils/constants/filter-match';
-import { ESTATE_COLUMNS_VIEW } from '../../acept-programming/columns/estate-columns';
+import {
+  ESTATE_COLUMNS_1,
+  ESTATE_COLUMNS_VIEW,
+} from '../../acept-programming/columns/estate-columns';
 import { USER_COLUMNS_SHOW } from '../../acept-programming/columns/users-columns';
 
 export const SettingUserTable = {
@@ -26,7 +29,7 @@ export const settingTransGoods = {
     ...TABLE_SETTINGS.delete,
     confirmDelete: true,
   },
-  columns: ESTATE_COLUMNS_VIEW,
+  columns: ESTATE_COLUMNS_1,
 };
 
 export const settingGuard = {

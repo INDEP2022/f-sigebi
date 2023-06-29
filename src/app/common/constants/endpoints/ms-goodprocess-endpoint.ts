@@ -14,5 +14,7 @@ export enum GoodprocessEndpoints {
   GetGoodScreenSend = '/application/get-good-status-screen',
   GetDistinctTypes = 'application/get-distinct-types',
   UpdateGoodStatus = 'update-good-status/updateManagementJob',
+  GetGoodType = 'v-good-type',
   GetGoodProceedings = 'application/get-good-proceedings',
+  AppliesControl = 'update-good-status/appliesControl',
 }

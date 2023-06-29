@@ -684,7 +684,6 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       });
     });
   }
-
   getDocument() {
     let params = new ListParams();
     params['filter.flyerNumber'] = `$eq:${this.pathParams.volante}`;
@@ -790,7 +789,6 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       body['expedientNumber'] = this.pathParams.expediente;
       body['chSele'] = true;
       body['chChange'] = false;
-
       result = await this.applyForAllGood(body);
     }
     debugger;
@@ -1070,7 +1068,6 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       initialState: {
         notification: notification,
         processNumber: processNumber,
-
         /*callback: (next: boolean) => {
           if (next) this.getExample();
         },*/

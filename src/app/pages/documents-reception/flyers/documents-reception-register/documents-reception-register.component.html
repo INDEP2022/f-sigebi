@@ -473,6 +473,27 @@
               </button>
             </div>
 
+            <!-- city -->
+            <form-field
+              class="col-md-6"
+              [control]="documentsReceptionForm.get('entFedKey')">
+              <ngx-select
+                [form]="documentsReceptionForm"
+                [data]="federalEntities"
+                (fetchItems)="getFederalEntities($event)"
+                bindLabel="otKeyAndValue"
+                control="entFedKey"
+                label="Ent. Fed"
+                [searchOnInit]="true"
+                termMaxLength="80"
+                [showTooltip]="true"
+                (change)="entFedChange($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-5">
+            <!-- Ent Fed -->
             <form-field
               class="col-md-6"
               [control]="documentsReceptionForm.get('cityNumber')">
@@ -488,25 +509,6 @@
                 termMaxLength="60"
                 [showTooltip]="true"
                 [readonly]="cityLoading">
-              </ngx-select>
-            </form-field>
-          </div>
-
-          <div class="row pt-5">
-            <form-field
-              class="col-md-6"
-              [control]="documentsReceptionForm.get('entFedKey')">
-              <ngx-select
-                [form]="documentsReceptionForm"
-                [data]="federalEntities"
-                (fetchItems)="getFederalEntities($event)"
-                bindLabel="otKeyAndValue"
-                control="entFedKey"
-                label="Ent. Fed"
-                [searchOnInit]="true"
-                termMaxLength="80"
-                [showTooltip]="true"
-                (change)="entFedChange($event)">
               </ngx-select>
             </form-field>
 

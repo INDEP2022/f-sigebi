@@ -43,6 +43,7 @@ export class ScanningFoilComponent
   @Input() folio: string = null;
   @Input() documents: IDocuments = null;
   @Input() processNumber: number = null;
+
   //Reactive Forms
   form: FormGroup;
   user: any;

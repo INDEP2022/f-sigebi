@@ -5,13 +5,45 @@ export const NUMERARY_PARAMETERIZATION_COLUMNS = {
     sort: false,
   },
   initialCategory: {
-    title: 'Categoria Inicial',
+    title: 'Categoría Inicial',
     type: 'string',
     sort: false,
   },
-  finalCategory: {
-    title: 'Categoria Final',
+  initialCategoryDetails: {
+    title: 'Desc. Categoría Inicial',
     type: 'string',
+    valuePrepareFunction: (value: any) => {
+      return value.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    sort: false,
+  },
+  finalCategory: {
+    title: 'Categoría Final',
+    type: 'string',
+    sort: false,
+  },
+  finalCategoryDetails: {
+    title: 'Desc. Categoría Final',
+    type: 'string',
+    valuePrepareFunction: (value: any) => {
+      return value.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
     sort: false,
   },
 };

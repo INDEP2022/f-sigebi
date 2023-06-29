@@ -184,6 +184,7 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
     if (this.goodClasifNeedsValidate(goodClassNumber, initialStatus)) {
       if (Number(appraisedValue) <= 1) {
         this.handleErrorGoHome(LIMIT_REACHED);
+        //Aumentar Rediccionamiento a la vista enterior
       }
       this.controls.isNume.setValue(true);
       this.controls.original.setValue(appraisedValue);

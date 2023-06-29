@@ -31,13 +31,18 @@ export const APPRAISALINSTITUTIONS_COLUMNS = {
     title: 'Delegación Municipio',
     sort: false,
   },
-  cve_entfed: {
+  cveEntfed: {
     title: 'Entidad Federativa',
     sort: false,
   },
   represent: {
     title: 'Representante',
     sort: false,
+  },
+  observations: {
+    title: 'Observación',
+    sort: false,
+    type: 'string',
   },
   curp: {
     title: 'CURP',

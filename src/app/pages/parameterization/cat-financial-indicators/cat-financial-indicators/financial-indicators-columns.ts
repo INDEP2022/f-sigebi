@@ -15,7 +15,7 @@ export const FINANCIAL_INDICATORS_COLUMNS = {
     },
   },
   formula: {
-    title: 'Formula',
+    title: 'Fórmula',
     sort: false,
   },
 };

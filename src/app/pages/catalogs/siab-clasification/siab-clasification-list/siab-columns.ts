@@ -4,53 +4,44 @@ export const SIAB_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  typeId: {
+  /*typeId: {
     title: 'Tipo',
     type: 'number',
     sort: false,
-  },
+  },*/
   typeDescription: {
-    title: 'Descripción',
+    title: 'Descripción del tipo',
     type: 'string',
     sort: false,
   },
+  /*
   subtypeId: {
     title: 'Subtipo',
     type: 'number',
     sort: false,
-  },
+  },*/
   subtypeDescription: {
     title: 'Descripción del subtipo',
     type: 'string',
     sort: false,
-  },
+  } /*
   ssubtypeId: {
-    title: 'Sub subtipo',
+    title: 'Ssubtipo',
     type: 'number',
     sort: false,
-  },
+  },*/,
   ssubtypeDescription: {
-    title: 'Descripción del Sub subtipo',
+    title: 'Descripción del Ssubtipo',
     type: 'string',
     sort: false,
   },
-  sssubtypeId: {
+  /*sssubtypeId: {
     title: 'Sssubtipo',
     type: 'number',
     sort: false,
-  },
+  },*/
   sssubtypeDescription: {
     title: 'Descripción del Sssubtipo',
-    type: 'string',
-    sort: false,
-  },
-  creationUser: {
-    title: 'Creado por',
-    type: 'string',
-    sort: false,
-  },
-  editionUser: {
-    title: 'Modificado por',
     type: 'string',
     sort: false,
   },

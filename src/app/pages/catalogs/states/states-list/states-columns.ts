@@ -6,7 +6,7 @@ export const STATES_COLUMNS = {
   },
   codeCondition: {
     title: 'Código',
-    type: 's tring',
+    type: 'string',
     sort: false,
   },
   descCondition: {

@@ -1,6 +1,6 @@
 export const DELEGATION_COLUMS = {
   id: {
-    title: 'Id',
+    title: 'Código',
     type: 'number',
     sort: false,
   },
@@ -16,6 +16,11 @@ export const DELEGATION_COLUMS = {
   },
   zoneContractKey: {
     title: 'Z. Contrato',
+    type: 'number',
+    sort: false,
+  },
+  idZoneGeographic: {
+    title: 'Geographic',
     type: 'number',
     sort: false,
   },

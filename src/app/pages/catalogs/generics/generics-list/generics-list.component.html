@@ -2,9 +2,7 @@
   <div class="ch-content" header>
     <h5 class="title">lista genéricos</h5>
     <div class="col-md-5 buttons">
-      <div class="pt-1">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
-      </div>
+      <app-columns-select [(settings)]="settings"></app-columns-select>
       <div>
         <button
           (click)="openForm()"
@@ -16,18 +14,16 @@
   </div>
 
   <div body>
-    <div class="row pt-4">
-      <div class="col-md-12">
-        <div class="table-responsive">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="data"
-              (edit)="openForm($event.data)"
-              (delete)="delete($event.data)">
-            </ng2-smart-table>
-          </div>
+    <div class="row pt-4 table-container">
+      <div class="col-md-12 table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="openForm($event.data)"
+            (delete)="delete($event.data)">
+          </ng2-smart-table>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -56,5 +56,9 @@ export class GoodSsubtypeService
   getByManyIds(body: any, params?: ListParams) {
     const route = 'good-ssubtype/search-by-type';
     return this.post<IListResponse<IGoodSsubType>>(route, body, params);
+  }
+
+  getAllFilter(params: _Params) {
+    return this.get('good-ssubtype', params);
   }
 }
