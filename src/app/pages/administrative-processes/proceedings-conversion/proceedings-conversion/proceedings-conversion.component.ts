@@ -896,7 +896,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   Generar() {
     this.isLoading = true;
-
+    this.updateConversion();
     let params = {
       id_conv: this.conversion,
       id_bien: this.goodFatherNumber,
@@ -1134,23 +1134,19 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.dataTemporal.load(data);
     this.dataTemporal.refresh();
   }
-  updateConversion(id: string | number, conversion: IConvertiongood) {
-    this.alertQuestion('warning', 'Actualizar', 'Desea actualizar?').then(
-      question => {
-        if (question.isConfirmed) {
-          this.convertiongoodService
-            .update(this.conversion, conversion)
-            .subscribe({
-              next: data =>
-                this.alert('success', 'conversión actualizada con éxito', ''),
-              error: error => {
-                this.onLoadToast('error', 'Mes y año tiie duplicado', '');
-                this.loading = false;
-              },
-            });
-        }
-      }
-    );
+  updateConversion() {
+    this.convertiongoodService
+      .update(this.conversion, this.proceedingsConversionForm.value)
+      .subscribe({
+        next: data => {
+          console.log(data);
+        },
+        error: error => {
+          this.loading = false;
+          this.onLoadToast('error', 'No se actualizaron los datos', '');
+        },
+        // this.alert('success', 'conversión actualizada con éxito', ''),
+      });
   }
 
   selectProceedings(event: any) {
