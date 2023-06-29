@@ -1,87 +1,3 @@
-<!-- <app-card [header]="true" [footer]="true">
-  <div class="ch-content" header>
-    <h5 class="title">CUENTAS ASEGURADAS POR EXPEDIENTE</h5>
-  </div>
-  <div body>
-    <div class="row mt-3 mb-3">
-      <form action="" class="form-material" [formGroup]="form">
-              <app-delegation-shared [form]="form"></app-delegation-shared>
-        <div class="row mt-4">
-          <div class="col-md-6">
-        
-            <app-currency-shared
-              [form]="form"
-              currencyField="currency"></app-currency-shared>
-          </div>
-          <div class="col-md-6">
-          
-            <app-banks-shared [form]="form"></app-banks-shared>
-          </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-md-6">
-            <form-field
-              [control]="form.get('depositFrom')"
-              label="Deposito del:">
-              <input
-                [maxDate]="maxDate"
-                formControlName="depositFrom"
-                class="form-control"
-                bsDatepicker />
-            </form-field>
-          </div>
-          <div class="col-md-6">
-            <form-field [control]="form.get('depositTo')" label="Al:">
-              <input
-                [maxDate]="maxDate"
-                formControlName="depositTo"
-                class="form-control"
-                [minDate]="form.get('depositFrom').value"
-                bsDatepicker />
-            </form-field>
-          </div>
-        </div>
-
-        <div class="row mt-4">
-          <div class="col-md-6">
-            <form-field
-              [control]="form.get('fileFrom')"
-              label="Expediente del:">
-              <input
-                [maxDate]="maxDate"
-                formControlName="fileFrom"
-                class="form-control"
-                bsDatepicker />
-            </form-field>
-          </div>
-          <div class="col-md-6">
-            <form-field [control]="form.get('fileTo')" label="Al:">
-              <input
-                formControlName="fileTo"
-                class="form-control"
-                [maxDate]="maxDate"
-                [minDate]="form.get('fileFrom').value"
-                bsDatepicker />
-            </form-field>
-          </div>
-        </div>
-      </form>
-      <div class="d-flex justify-content-center">
-        <div class="m-3">
-          <div>
-            <button
-              (click)="print()"
-              type="button"
-              class="btn btn-sm btn-primary active m-3">
-              IMPRIMIR
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</app-card> -->
-
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">REPORTE DE CUENTAS CONCILIADAS POR EXPEDIENTE</h5>
@@ -102,7 +18,7 @@
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('to')" label="Al:">
+            <form-field [control]="form.get('to')" label="al:">
               <input
                 [maxDate]="maxDate"
                 formControlName="to"
@@ -125,7 +41,7 @@
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('fileTo')" label="Al Expediente:">
+            <form-field [control]="form.get('fileTo')" label="al Expediente:">
               <input
                 type="number"
                 formControlName="fileTo"

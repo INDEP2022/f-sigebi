@@ -1,9 +1,16 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
+import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, map, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -22,6 +29,7 @@ import { ICopiesJobManagementDto } from 'src/app/core/models/ms-officemanagement
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { previewData } from 'src/app/pages/documents-reception/goods-bulk-load/interfaces/goods-bulk-load-table';
 
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
@@ -37,13 +45,11 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { FlyersService } from 'src/app/pages/documents-reception/flyers/services/flyers.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ScanningFoilComponent } from '../../payment-claim-process/scanning-foil/scanning-foil.component';
-import {
-  GooByExpediente,
-  IDataGoodsTable,
-} from '../proceedings-conversion-column';
+import { IDataGoodsTable } from '../proceedings-conversion-column';
 import { ProceedingsConversionModalComponent } from '../proceedings-conversion-modal/proceedings-conversion-modal.component';
 import { ActasConvertionCommunicationService } from '../services/proceedings-conversionn';
 import {
+  APPLY_DATA_COLUMNS,
   GOODSEXPEDIENT_COLUMNS_GOODS,
   PROCEEDINGSCONVERSIONS_COLUMNS,
 } from './proceedings-conversion-columns';
@@ -72,34 +78,13 @@ export interface IGoodJobManagement {
 @Component({
   selector: 'app-proceedings-conversion',
   templateUrl: './proceedings-conversion.component.html',
-  styles: [
-    `
-      :host ::ng-deep form-radio .form-group {
-        margin: 0;
-        padding-bottom: 0;
-        padding-top: 2;
-      }
-      .disabled[disabled] {
-        color: red;
-      }
-      .disabled-input {
-        color: #939393;
-        pointer-events: none;
-      }
-      #bienesJuridicos table:not(.normal-hover) tbody tr:hover {
-        color: black !important;
-        font-weight: bold;
-      }
-      .custom-background {
-        background-color: #fff;
-      }
-    `,
-  ],
+  styles: [],
 })
 export class ProceedingsConversionComponent extends BasePage implements OnInit {
   // proceedingsConversionForm: ModelForm<any>;
-  settings2 = { ...this.settings, actions: false };
+  settings2;
   procs: any;
+  totalItems2: number = 0;
   fCreate: string = '';
   typeConv: number | string = 0;
   actaO: number | string;
@@ -111,12 +96,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   delete = false;
   dataA: any = 0;
   dataD: any = 0;
+  time: string = '';
   confirmSearch: boolean = false;
   preAver = '';
   criCase = '';
   test: any;
   goodsByFather: IGood[] = [];
-  validPermisos = false;
+  validPermisos: boolean = true;
   searchMode: boolean = false;
   isLoading = false;
   statusConv: string | number = '';
@@ -146,6 +132,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   cveActa: string = '';
   fileNumber: number = 0;
   conversion: number = 0;
+  datos: any[] = [];
   goodFatherNumber: string | number = 0;
   isLoadingGood = false;
   dataTableGoods: IGoodAndAvailable[] = [];
@@ -169,12 +156,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   dataTableGoodsConvertion: IConvertiongood[] = [];
   copyActa: any[] = [];
   dataGoodFilter: IGood[] = [];
-  dataGood: GooByExpediente[] = [];
+  dataGood: IDataGoodsTable[] = [];
   dataTableGoodsJobManagement: IGoodJobManagement[] = [];
   @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
   @ViewChild('tableDocs') tableDocs: Ng2SmartTableComponent;
   @ViewChild('modal') modal: ProceedingsConversionModalComponent;
   @ViewChild('hijoRef', { static: false }) hijoRef: ScanningFoilComponent;
+  @ViewChild('myInput') inputEl: ElementRef;
   dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
   dataGoodsSelected = new Map<number, IGoodAndAvailable>();
 
@@ -199,6 +187,14 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   nrSelecttypePerson: string | number;
   nrSelecttypePerson_I: string | number;
   witnessOic: string = '';
+  datePickerConfig: Partial<BsDatepickerConfig> = {
+    minMode: 'month',
+    adaptivePosition: true,
+    dateInputFormat: 'hh:mm',
+  };
+  acordionDetail: boolean = false;
+  dataTableGood: LocalDataSource = new LocalDataSource();
+
   constructor(
     private authService: AuthService,
     protected flyerService: FlyersService,
@@ -225,13 +221,28 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   ) {
     super();
     this.procs = new LocalDataSource();
+    this.validPermisos = !this.validPermisos;
+    // this.settings = {
+    //   ...this.settings,
+    //   hideSubHeader: false,
+    //   actions: false,
+    //   columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
+    // };
+    // this.settings2.columns = PROCEEDINGSCONVERSIONS_COLUMNS;
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
       actions: false,
+      selectMode: 'multi',
       columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
     };
-    this.settings2.columns = PROCEEDINGSCONVERSIONS_COLUMNS;
+    this.settings2 = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      selectMode: 'multi',
+      columns: { ...PROCEEDINGSCONVERSIONS_COLUMNS },
+    };
   }
 
   ngOnInit(): void {
@@ -286,60 +297,44 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     // );
     // console.log(this.userTracker);
     this.proceedingsConversionForm = this.fb.group({
-      idConversion: [null, Validators.required],
-      goodFatherNumber: [null, Validators.required],
-      noExpedient: [null, Validators.required],
-      acta: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      preliminaryInquiry: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
-      criminalCase: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
-      cveActaConv: [null, Validators.required],
-      statusConv: [null, Validators.required],
-      trans: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      conv: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      admin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      fConversions: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      hourConv: [null, Validators.required],
-      fCreate: [null, Validators.required],
+      idConversion: [null],
+      goodFatherNumber: [null],
+      noExpedient: [null],
+      acta: [null, [Validators.pattern(STRING_PATTERN)]],
+      preliminaryInquiry: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      criminalCase: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      cveActaConv: [null],
+      statusConv: [null],
+      trans: [null, [Validators.pattern(STRING_PATTERN)]],
+      conv: [null, [Validators.pattern(STRING_PATTERN)]],
+      admin: [null, [Validators.pattern(STRING_PATTERN)]],
+      fConversions: [null, [Validators.pattern(STRING_PATTERN)]],
+      hourConv: [null],
+      fCreate: [null],
 
-      respConv: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      respCharge: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      folioUniversalAsoc: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      userSend: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      areaSend: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      dateSent: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      respConv: [null, [Validators.pattern(STRING_PATTERN)]],
+      respCharge: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioUniversalAsoc: [null, [Validators.pattern(STRING_PATTERN)]],
+      testigoTwo: [null, [Validators.pattern(STRING_PATTERN)]],
+      testigoTree: [null, [Validators.pattern(STRING_PATTERN)]],
+      testigoOIC: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
   private actaForm() {
     this.actaRecepttionForm = this.fb.group({
       acta: [null],
+      type: [null],
+      claveTrans: [null],
+      administra: [null],
+      cveReceived: [null],
+      consec: [null],
+      anio: [null],
+      mes: [null],
+      cveActa: [null],
+      direccion: [null],
+      observaciones: [null],
+      responsable: [null],
     });
   }
 
@@ -471,6 +466,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           console.log(this.cveActa);
           this.userRes = res.fileNumber.usrResponsibleFile;
           this.proceedingsConversionForm.get('acta').setValue(this.cveActa);
+          this.time = new Date().toISOString().slice(0, 16);
           this.getExpedient(this.fileNumber);
           this.getGoods(this.conversion);
           subscription.unsubscribe();
@@ -597,7 +593,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       next: (data: any) => {
         this.expedient = data;
         console.log(this.expedient);
-        // this.getGoodsByStatus(this.fileNumber);
+        this.getGoodsByStatus(this.fileNumber);
       },
       error: () => console.error('expediente nulo'),
     });
@@ -605,12 +601,21 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   getGoodsByStatus(id: number) {
     this.loading = true;
-    this.convertiongoodService.getAllGoods(id).subscribe({
-      next: (data: any) => {
-        this.dataGood = data;
-        console.log(this.goodsByFather);
+    this.goodService.getByExpedient(id).subscribe({
+      next: data => {
+        console.log(data);
+
+        // this.dataGood = data;
+        this.dataTableGood.load(data.data);
+        this.dataTableGood.refresh();
+        this.totalItems = data.count;
+        console.log(this.dataGood);
       },
-      error: () => console.error('no hay bienes en éste expediente'),
+      error: error => {
+        console.log(error);
+        this.dataTableGood.load([]);
+        this.dataTableGood.refresh();
+      },
     });
   }
 
@@ -939,80 +944,27 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       provider,
     };
-    this.modalService.show(ProceedingsConversionModalComponent, modalConfig);
-  }
 
-  readExcel(binaryExcel: string | ArrayBuffer | any, filter: any) {
-    try {
-      this.loading = true;
-      // this.idsNotExist = [];
-      // this.showError = false;
-      // this.showStatus = false;
-      this.dataGoodTable.load([]);
-      this.goods = [];
-      let params = {
-        ...this.params.getValue(),
-        ...this.columnFilters,
-      };
+    let modalRef = this.modalService.show(
+      ProceedingsConversionModalComponent,
+      modalConfig
+    );
+    modalRef.content.onSave.subscribe((next: any) => {
+      console.log(next);
+      this.paramsScreen.PAR_IDCONV = next.id;
+      console.log(this.paramsScreen.PAR_IDCONV);
 
-      this.massiveGoodService.getFProRecPag2CSV(params, binaryExcel).subscribe(
-        (response: any) => {
-          console.log('SI112', response.message);
-          this.totalItems = response.countA + response.countD;
-
-          let result = response.data.map(async (good: any) => {
-            // if (good.approved) {
-            //   if (this.document == null) {
-            //   }
-            //   this.disabledImport = false;
-            //   if (!this.form.value.justification) {
-            //     this.form.get('justification').setValue(good.causenumberchange);
-            //   }
-            // }
-          });
-
-          Promise.all(result).then((resp: any) => {
-            this.goods = response.data;
-            this.dataGoodTable.load(this.goods);
-            this.dataGoodTable.refresh();
-            // this.addStatus();
-            this.dataA = response.countA;
-            this.dataD = response.countD;
-
-            this.test = binaryExcel;
-            let file = response.file.base64File;
-
-            this.cargarData(file);
-
-            this.proceedingsConversionForm.enable();
-
-            console.log('BINARY EXCEL', response);
-
-            this.loading = false;
-          });
-        },
-        error => {
-          this.dataGoodTable.load([]);
-          // this.totalItems = 0;
-          this.loading = false;
-          if (filter != 'no') {
-            this.alert('error', 'No hay datos disponibles', '');
-          }
-          // this.onLoadToast('warning', 'No hay datos disponibles', '');
-        }
-      );
-
-      return;
-    } catch (error) {
-      this.dataGoodTable.load([]);
-      this.loading = false;
-      this.alert('error', 'Ocurrió un error al leer el archivo', '');
-    }
+      this.initForm();
+    });
   }
 
   getDetail() {
+    this.acordionDetail = true;
     const value = this.conversion;
     this.actasConvertionCommunicationService.enviarDatos(value);
+  }
+  closeDetail() {
+    this.acordionDetail = false;
   }
 
   cargarData(binaryExcel: any) {
@@ -1029,16 +981,64 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
 
   onFileChange(event: Event) {
-    console.log('Entro');
+    // if (this.tipoCarga == FGR_OPCION) {
+    //   return;
+    // } else {
+
+    // }
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
-    this.alert('success', 'Archivo subido exitosamente', '');
-    this.readExcel(files[0], 'si');
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => this.readExcel(fileReader.result);
+  }
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      let preloadFile = this.excelService.getData<previewData | any>(
+        binaryExcel
+      );
+      this.datos = [];
+      preloadFile.forEach((data: any, count: number) => {
+        // PRUEBA
+        // if (count < 1) {
+        let objReplace: any = {};
+        for (const key in data) {
+          if (Object.prototype.hasOwnProperty.call(data, key)) {
+            if (key) {
+              objReplace[key.toLowerCase()] = data[key];
+            }
+          }
+          // }
+        }
+        if (objReplace) {
+          this.datos.push(objReplace);
+        }
+      });
+      let obj: any = {};
+      let object: any = this.datos[0];
+      for (const key in object) {
+        if (Object.prototype.hasOwnProperty.call(object, key)) {
+          if (key) {
+            obj[key] = APPLY_DATA_COLUMNS(key);
+            // obj[key] = {
+            //   title: key.toLocaleUpperCase(),
+            //   type: 'string',
+            //   sort: false,
+            // };
+          }
+        }
+      }
+      const _settings = { columns: obj, actions: false };
+      this.settings = { ...this.settings, ..._settings };
+    } catch (error) {
+      this.alert('error', 'Ocurrió un error al leer el archivo', 'Error');
+    }
   }
   selectProceedings(event: any) {}
   selectGoods(event: any) {}
   rowSelected2(event: any) {}
   deleteGoodActa(event: any) {}
+  toggleDisabled() {}
 }
 
 export interface IParamsProceedingsParamsActasConvertion {

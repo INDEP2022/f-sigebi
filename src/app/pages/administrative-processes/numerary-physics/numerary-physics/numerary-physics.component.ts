@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -9,29 +9,33 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { IMoneda } from 'src/app/core/models/catalogs/tval-Table5.model';
 import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-
 @Component({
   selector: 'app-numerary-physics',
   templateUrl: './numerary-physics.component.html',
   styles: [],
 })
-export class NumeraryPhysicsComponent implements OnInit {
+export class NumeraryPhysicsComponent extends BasePage implements OnInit {
   form: FormGroup;
   isLoading = false;
   maxDate = new Date();
   currencies = new DefaultSelect<IMoneda>([], 0);
   fromF: string = '';
   toT: string = '';
+  @Input() goodTypeShow: boolean = true;
   import: number = 0;
+  @Input() typeField: string = 'type';
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
-
+  @Input() types = new DefaultSelect<Partial<IGoodType>>();
   @Output() submit = new EventEmitter();
+
   constructor(
     private fb: FormBuilder,
     private tableServ: TvalTable5Service,
@@ -39,7 +43,9 @@ export class NumeraryPhysicsComponent implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -52,6 +58,16 @@ export class NumeraryPhysicsComponent implements OnInit {
       to: [null, Validators.required],
       type: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
     });
+  }
+  getTypes(params: ListParams, id: any = null) {
+    const _params: any = params;
+    if (id) {
+      params['filter.id'] = id;
+    } else {
+      _params['filter.nameGoodType'] = `$ilike:${params.text}`;
+    }
+    delete _params.search;
+    delete _params.text;
   }
 
   Generar() {
@@ -129,5 +145,9 @@ export class NumeraryPhysicsComponent implements OnInit {
 
   cleanForm() {
     this.form.reset();
+  }
+
+  get type() {
+    return this.form.get(this.typeField);
   }
 }

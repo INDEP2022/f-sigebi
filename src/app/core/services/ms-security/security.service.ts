@@ -100,4 +100,13 @@ export class SecurityService extends HttpService {
       params
     );
   }
+  getSegEmailUser(body: any) {
+    const route = SecurityEndpoints.SegEmailUser;
+    return this.post(route, body);
+  }
+
+  getSegCopyEmailUser(body: any) {
+    const route = SecurityEndpoints.SegCopyEmail;
+    return this.post(route, body);
+  }
 }
