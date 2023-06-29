@@ -538,7 +538,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
-            this.onLoadToast(
+            this.alert(
               'success',
               'Documento Guardado',
               'El documento se guardó correctamente'

@@ -1,13 +1,33 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">ATENCIÓN DE BIENES EN ESTATUS REV</h5>
+    <div class="justify-content-end">
+      <h6 style="margin-top: 8px; margin-bottom: 0px" class="title">
+        RESPONSABLE:
+        <strong
+          style="
+            font-weight: bold;
+            font-size: 25px;
+            margin-left: 10px;
+            margin-right: 10px;
+          ">
+          {{ responsable }}</strong
+        >
+      </h6>
+    </div>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
+      <!-- <div class="row">
+        <h6 class="title">RESPONSABLE: <strong style="font-weight: bold; font-size: 25px;"> {{responsable}}</strong>
+        </h6> <span>
+
+        </span>
+      </div> -->
       <div class="row mb-3 mt-3">
         <!--Package type-->
         <div
-          class="col-lg-5 col-md-12 col-sm-12 col-12 align-self-center mb-3 mt-3">
+          class="col-lg-6 col-md-12 col-sm-12 col-12 align-self-center mb-3 mt-3">
           <div class="row justify-content-between">
             <div class="col-lg-4 col-md-4 col-sm-4 col-6">
               <form-radio label="Muebles">
@@ -56,7 +76,7 @@
             class="btn btn-success btn-sm w-100"
             type="button"
             (click)="file.click()">
-            Atención Masiva
+            Atención Masiva <i class="bx bx-upload float-icon"></i>
           </button>
           <input
             type="file"
@@ -94,6 +114,7 @@
           [track]="'all'"
           [ngStyle]="{ height: loading ? '0px' : '500px' }">
           <ng2-smart-table
+            (click)="onDblClick($event)"
             [attr.class]="'table-bordered table-responsive'"
             class="table-responsive"
             [settings]="settings"

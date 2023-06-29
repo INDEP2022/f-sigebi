@@ -43,11 +43,12 @@ export interface IRecepitGuard {
   chargeSeg?: string;
   officialSae?: string;
   chargeSae?: string;
-  guard: number;
-  idGood: number;
-  receiptGuardId: number;
-  version: number;
-  statusReceiptGuard: string;
+  guard?: number;
+  idGood?: number;
+  goodId?: number;
+  receiptGuardId?: number;
+  version?: number;
+  statusReceiptGuard?: string;
 }
 
 export interface IReceipyGuardDocument {

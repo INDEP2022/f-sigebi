@@ -12,6 +12,7 @@ import { CustomdbclickdepositComponent } from './customdbclickdeposit/customdbcl
 import { DepositTokensModalComponent } from './deposit-tokens-modal/deposit-tokens-modal.component';
 import { DepositTokensRoutingModule } from './deposit-tokens-routing.module';
 import { DepositTokensComponent } from './deposit-tokens/deposit-tokens.component';
+import { CustomDateFilterComponent_ } from './deposit-tokens/searchDate';
 import { ListGoodsComponent } from './list-goods/list-goods.component';
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { ListGoodsComponent } from './list-goods/list-goods.component';
     ListGoodsComponent,
     AddMovementComponent,
     CustomdbclickdepositComponent,
+    CustomDateFilterComponent_,
   ],
   imports: [
     CommonModule,
