@@ -87,6 +87,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   goodsWarehouseForm: FormGroup = new FormGroup({});
   goodsReprogForm: FormGroup = new FormGroup({});
   goodsCancelationForm: FormGroup = new FormGroup({});
+  searchGoodForm: FormGroup = new FormGroup({});
   buildForm: FormGroup = new FormGroup({});
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsgeneric = new BehaviorSubject<ListParams>(new ListParams());
@@ -314,6 +315,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.prepareSearchForm();
     this.prepareReceptionForm();
     this.prepareGuardForm();
     this.prepareWarehouseForm();
@@ -346,6 +348,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       selectColumn: [null],
       observations: [null],
       transferentDestiny: [null],
+    });
+  }
+
+  prepareSearchForm() {
+    this.searchGoodForm = this.fb.group({
+      goodId: [null],
     });
   }
 
@@ -1930,6 +1938,72 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
   }
 
+  searchGood() {
+    const goodsTransportable = this.goodsTransportable.value;
+    const goodsTransportableCopy = this.goodsTransportable.value;
+
+    const filterGood = goodsTransportableCopy.filter((item: any) => {
+      return item.id == this.searchGoodForm.get('goodId').value;
+    });
+
+    if (filterGood.length > 0) {
+      const _data: any[] = [];
+      filterGood.forEach((item: IGood) => {
+        this.params.getValue()['filter.id'] = item.goodId;
+        this.goodService.getAll(this.params.getValue()).subscribe({
+          next: response => {
+            _data.push(response.data[0]);
+            this.goodsTransportable.clear();
+            _data.forEach(async item => {
+              if (item.physicalStatus == 1) {
+                item.physicalStatusName = 'BUENO';
+              } else if (item.physicalStatus == 2) {
+                item.physicalStatusName = 'MALO';
+              }
+              if (item.stateConservation == 1) {
+                item.stateConservationName = 'BUENO';
+              } else if (item.stateConservation == 2) {
+                item.stateConservationName = 'MALO';
+              }
+
+              await this.getDestinyIndep(item.saeDestiny);
+
+              this.goodData = item;
+              const form = this.fb.group({
+                id: [item?.id],
+                goodId: [item?.goodId],
+                uniqueKey: [item?.uniqueKey],
+                fileNumber: [item?.fileNumber],
+                goodDescription: [item?.goodDescription],
+                quantity: [item?.quantity],
+                unitMeasure: [item?.unitMeasure],
+                descriptionGoodSae: [item?.descriptionGoodSae],
+                quantitySae: [item?.quantitySae],
+                saeMeasureUnit: [item?.saeMeasureUnit],
+                physicalStatus: [item?.physicalStatus],
+                physicalStatusName: [item?.physicalStatusName],
+                saePhysicalState: [item?.saePhysicalState],
+                stateConservation: [item?.stateConservation],
+                stateConservationName: [item?.stateConservationName],
+                stateConservationSae: [item?.stateConservationSae],
+                regionalDelegationNumber: [item?.regionalDelegationNumber],
+                destiny: [item?.destiny],
+                transferentDestiny: [item?.saeDestiny],
+                observations: [item?.observations],
+              });
+              this.goodsTransportable.push(form);
+              this.formLoadingTrans = false;
+              this.showTransportable = true;
+            });
+          },
+          error: error => {
+            this.formLoadingTrans = false;
+          },
+        });
+      });
+    }
+  }
+
   changeStatusGoodProg(good: IGood) {
     return new Promise(async (resolve, reject) => {
       this.goodsReprog.clear();
@@ -1952,6 +2026,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
       }
     });
+  }
+
+  cancel() {
+    this.goodsTransportable.clear();
+    this.getInfoGoodsProgramming();
   }
 
   changeStatusGoodWarehouse(good: IGood) {
