@@ -15,6 +15,7 @@ import {
   OperatorValues,
   TrackerValues,
 } from '../utils/constants/filter-match';
+import { GoodTrackerMap } from '../utils/good-tracker-map';
 import { GOODS_TRACKER_CRITERIAS } from '../utils/goods-tracker-criterias.enum';
 import { GoodTrackerForm } from '../utils/goods-tracker-form';
 
@@ -27,12 +28,17 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
   @ViewChild('scrollTable') scrollTable: ElementRef<HTMLDivElement>;
   filterCriterias = GOODS_TRACKER_CRITERIAS;
   form = this.fb.group(new GoodTrackerForm());
+  formCheckbox = this.fb.group({
+    goodIrre: [false],
+    lookPhoto: [false],
+  });
   showTable: boolean = false;
   params = new FilterParams();
   totalItems: number = 0;
   _params = new BehaviorSubject(new ListParams());
   goods: ITrackedGood[] = [];
   subloading: boolean = false;
+  filters = new GoodTrackerMap();
 
   constructor(
     private fb: FormBuilder,
@@ -52,43 +58,20 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
 
   async searchGoods(params: any) {
     this.params.removeAllFilters();
-
-    /*lo nuevo mio */
-    const { photoDate } = this.form.value;
-
-    if (photoDate) {
-      const format = photoDate.split('/').reverse().join('-');
-      this.form.controls.photoDate.patchValue(format);
-    }
-    /*fin de lo mio */
-
     const form = this.form.value;
-    console.log(this.form.value);
-    const { valueFrom, valueTo } = form;
-    delete form.valueFrom;
-    delete form.valueTo;
-
-    for (const [key, value] of Object.entries(form)) {
-      let operator = this.getOperator(key);
-      const _val = this.getValue(value, key);
-      if (Array.isArray(value) && value.length > 0) {
-        operator = SearchFilter.IN;
+    const filledFields = Object.values(form).filter(value => {
+      if (Array.isArray(value)) {
+        return value.length > 0;
       }
-      const _key = this.getKeyParam(key);
-      if (_val && _key) {
-        this.params.addFilter(_key, _val, operator);
-      }
-    }
-    const k = 'appraisalValue';
-    if (valueFrom && valueTo) {
-      this.params.addFilter(k, `${valueFrom},${valueTo}`, SearchFilter.BTW);
-    } else {
-      if (valueFrom) {
-        this.params.addFilter(k, valueFrom, SearchFilter.GTE);
-      }
-      if (valueTo) {
-        this.params.addFilter(k, valueTo, SearchFilter.LTE);
-      }
+      return value ? true : false;
+    });
+    if (!filledFields.length) {
+      this.alert(
+        'warning',
+        'Atención',
+        'Debe ingresar almenos un parámetro de búsqueda'
+      );
+      return;
     }
     this.getGoods();
     this.showTable = true;
@@ -125,19 +108,49 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
 
   getGoods() {
     this.loading = true;
+    this.filters = new GoodTrackerMap();
+    this.mapFilters();
     this.scrollTable.nativeElement.scrollIntoView();
-    this.goodTrackerService.getAll(this.params.getParams()).subscribe({
-      next: res => {
-        this.loading = false;
-        this.goods = res.data;
-        this.totalItems = res.count;
-      },
-      error: () => {
-        this.goods = [];
-        this.totalItems = 0;
-        this.loading = false;
-      },
-    });
+    this.goodTrackerService
+      .trackGoods(this.filters, this._params.getValue())
+      .subscribe({
+        next: res => {
+          this.loading = false;
+          this.goods = res.data;
+          this.totalItems = res.count;
+        },
+        error: () => {
+          this.goods = [];
+          this.totalItems = 0;
+          this.loading = false;
+        },
+      });
+  }
+
+  mapFilters() {
+    const form = this.form.getRawValue();
+    const { types, subtypes, ssubtypes, sssubtypes } = form;
+    console.log({ types, subtypes, ssubtypes, sssubtypes });
+
+    if (types.length) {
+      this.filters.clasifGood.selecType = 'S';
+      // this.filters.clasifGood.typeNumber = types;
+    }
+    if (subtypes.length) {
+      this.filters.clasifGood.selecStype = 'S';
+      // this.filters.clasifGood.typeNumber = types;
+    }
+
+    if (ssubtypes.length) {
+      this.filters.clasifGood.selecSstype = 'S';
+      // this.filters.clasifGood.typeNumber = types;
+    }
+
+    if (sssubtypes.length) {
+      this.filters.clasifGood.selecSsstype = 'S';
+      // this.filters.clasifGood.typeNumber = types;
+    }
+    this.filters.clasifGood.clasifGoodNumber = form.clasifNum;
   }
 
   getAll() {

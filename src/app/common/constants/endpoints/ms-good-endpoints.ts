@@ -74,3 +74,7 @@ export enum GoodFinderEndpoint {
   /* Good Data Aset */
   GoodDataAsetBase = 'gooddataset',
 }
+
+export enum GoodActaConvertion {
+  GoodActaConvertion = 'minute-conversions',
+}

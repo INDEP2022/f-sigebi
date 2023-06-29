@@ -29,7 +29,6 @@ import { ICopiesJobManagementDto } from 'src/app/core/models/ms-officemanagement
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
-import { previewData } from 'src/app/pages/documents-reception/goods-bulk-load/interfaces/goods-bulk-load-table';
 
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
@@ -39,19 +38,25 @@ import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.s
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { FlyersService } from 'src/app/pages/documents-reception/flyers/services/flyers.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ScanningFoilComponent } from '../../payment-claim-process/scanning-foil/scanning-foil.component';
-import { IDataGoodsTable } from '../proceedings-conversion-column';
+import {
+  GooByExpediente,
+  IDataGoodsTable,
+} from '../proceedings-conversion-column';
 import { ProceedingsConversionModalComponent } from '../proceedings-conversion-modal/proceedings-conversion-modal.component';
 import { ActasConvertionCommunicationService } from '../services/proceedings-conversionn';
+
+import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import {
-  APPLY_DATA_COLUMNS,
+  COPY,
   GOODSEXPEDIENT_COLUMNS_GOODS,
-  PROCEEDINGSCONVERSIONS_COLUMNS,
+  IGoodStatus,
 } from './proceedings-conversion-columns';
 
 export type IGoodAndAvailable = IGood & {
@@ -78,7 +83,34 @@ export interface IGoodJobManagement {
 @Component({
   selector: 'app-proceedings-conversion',
   templateUrl: './proceedings-conversion.component.html',
-  styles: [],
+  styles: [
+    `
+      :host ::ng-deep form-radio .form-group {
+        margin: 0;
+        padding-bottom: 0;
+        padding-top: 0;
+      }
+      .disabled[disabled] {
+        color: red;
+      }
+      .disabled-input {
+        color: #939393;
+        pointer-events: none;
+      }
+      #bienesJuridicos table:not(.normal-hover) tbody tr:hover {
+        color: black !important;
+        font-weight: bold;
+      }
+      .row-verde {
+        background-color: green;
+        font-weight: bold;
+      }
+      .row-negro {
+        background-color: black;
+        font-weight: bold;
+      }
+    `,
+  ],
 })
 export class ProceedingsConversionComponent extends BasePage implements OnInit {
   // proceedingsConversionForm: ModelForm<any>;
@@ -101,6 +133,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   preAver = '';
   criCase = '';
   test: any;
+  bienes: IGood[] = [];
+  statusGoodName: string = '';
+  dataTemporal: LocalDataSource = new LocalDataSource();
   goodsByFather: IGood[] = [];
   validPermisos: boolean = true;
   searchMode: boolean = false;
@@ -109,6 +144,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   read = false;
   isLoadingSender = false;
   isCreate = false;
+  statusGood: IGoodStatus;
   selectedRow: IConvertiongood;
   origin = '';
   totalItemsActas: number = 0;
@@ -121,6 +157,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   proceedingsConversionForm: FormGroup;
   actaRecepttionForm: FormGroup;
   actaGoodForm: FormGroup;
+  dataActa: LocalDataSource = new LocalDataSource();
   dataGoodTable: LocalDataSource = new LocalDataSource();
   paramsGoodsType: number = 0;
   loadingGoods = false;
@@ -131,6 +168,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   isAllDisabled = false;
   cveActa: string = '';
   fileNumber: number = 0;
+  rececption: IProceedingDeliveryReception;
   conversion: number = 0;
   datos: any[] = [];
   goodFatherNumber: string | number = 0;
@@ -156,7 +194,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   dataTableGoodsConvertion: IConvertiongood[] = [];
   copyActa: any[] = [];
   dataGoodFilter: IGood[] = [];
-  dataGood: IDataGoodsTable[] = [];
+  dataGood: GooByExpediente[] = [];
   dataTableGoodsJobManagement: IGoodJobManagement[] = [];
   @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
   @ViewChild('tableDocs') tableDocs: Ng2SmartTableComponent;
@@ -179,6 +217,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     PAR_IDCONV: '',
     origin: '',
   };
+  converGood: IConvertiongood;
   formData: Partial<IConvertiongood> = null;
   senders = new DefaultSelect();
   disabled: boolean = true;
@@ -217,7 +256,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     protected goodprocessService: GoodProcessService,
     protected serviceOficces: GoodsJobManagementService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService
   ) {
     super();
     this.procs = new LocalDataSource();
@@ -241,7 +281,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       actions: false,
       selectMode: 'multi',
-      columns: { ...PROCEEDINGSCONVERSIONS_COLUMNS },
+      columns: { ...COPY },
     };
   }
 
@@ -323,7 +363,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   private actaForm() {
     this.actaRecepttionForm = this.fb.group({
-      acta: [null],
+      acta: [this.cveActa],
       type: [null],
       claveTrans: [null],
       administra: [null],
@@ -465,10 +505,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.cveActa = res.minutesErNumber;
           console.log(this.cveActa);
           this.userRes = res.fileNumber.usrResponsibleFile;
-          this.proceedingsConversionForm.get('acta').setValue(this.cveActa);
           this.time = new Date().toISOString().slice(0, 16);
           this.getExpedient(this.fileNumber);
           this.getGoods(this.conversion);
+          this.getActasReception(this.cveActa);
           subscription.unsubscribe();
         },
         error: error => {
@@ -599,14 +639,44 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     });
   }
 
+  // getGoodsByStatus(id: number) {
+  //   this.loading = true;
+  //   this.goodService.getByExpedient(id).subscribe({
+  //     next: data => {
+  //       console.log(data);
+
+  //       // this.dataGood = data;
+  //       this.dataTableGood.load(data.data);
+  //       this.dataTableGood.refresh();
+  //       this.totalItems = data.count;
+  //       console.log(this.dataGood);
+  //     },
+  //     error: error => {
+  //       console.log(error);
+  //       this.dataTableGood.load([]);
+  //       this.dataTableGood.refresh();
+  //     },
+  //   });
+  // }
   getGoodsByStatus(id: number) {
     this.loading = true;
     this.goodService.getByExpedient(id).subscribe({
       next: data => {
         console.log(data);
-
-        // this.dataGood = data;
+        this.bienes = data;
         this.dataTableGood.load(data.data);
+        this.loading = false;
+        // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
+        this.settings.columns = {
+          rowClassFunction: (row: any) => {
+            if (row.status === 'disponible') {
+              return 'row-verde'; // clase CSS para filas disponibles
+            } else {
+              return 'row-negro'; // clase CSS para filas no disponibles
+            }
+          },
+        };
+
         this.dataTableGood.refresh();
         this.totalItems = data.count;
         console.log(this.dataGood);
@@ -778,15 +848,12 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   reviewGoodData(dataGoodRes: IDataGoodsTable, count: number, total: number) {
     // this.getGoodStatusDescription(dataGoodRes, count, total);
   }
-  async cerrarActa() {
-    if (this.delete == true) {
-      const object = {
-        idConversion: this.conversion,
-      };
-    }
+  async cerrarActa(father: string | number) {
     if (this.conversion == null) {
       this.alert('warning', 'No existe acta para cerrar', '');
+      return;
     }
+
     const toolbar_user = this.authService.decodeToken().preferred_username;
     const cadena = this.cveActa ? this.cveActa.indexOf('?') : 0;
     console.log('cadena', cadena);
@@ -800,7 +867,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           'Desea eliminar este registro?'
         ).then(question => {
           if (question.isConfirmed) {
-            this.convertiongoodService.remove(this.conversion).subscribe({
+            this.expedientService.getDeleteTeacher(father).subscribe({
               next: data => {
                 this.loading = false;
                 this.alert('success', 'Acta eliminada', '');
@@ -834,7 +901,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   Generar() {
     this.isLoading = true;
-
+    this.updateConversion();
     let params = {
       id_conv: this.conversion,
       id_bien: this.goodFatherNumber,
@@ -937,6 +1004,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   selectData(data: IConvertiongood) {
     this.selectedRow = data;
+    console.log(this.selectedRow);
     this.changeDetectorRef.detectChanges();
   }
   searchProcs(provider?: IConvertiongood) {
@@ -971,73 +1039,93 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.hijoRef.cargarData(binaryExcel);
   }
 
-  file: File | undefined;
-  fileUrl: any;
-  async getFile() {
-    const base64Data = localStorage.getItem('goodData');
-    const csvData = atob(base64Data);
-
-    return csvData ? csvData : null;
+  cargueMasive() {
+    this.massiveGoodService.cargueMassiveGoodConversion().subscribe({
+      next: (data: any) => {
+        this.alert(
+          'success',
+          'Carga masiva completada con éxito',
+          `Expediente : ${this.fileNumber}`
+        );
+        console.log(data);
+      },
+      error: error => {
+        console.error(error);
+      },
+    });
   }
 
-  onFileChange(event: Event) {
-    // if (this.tipoCarga == FGR_OPCION) {
-    //   return;
-    // } else {
-
-    // }
-    const files = (event.target as HTMLInputElement).files;
-    if (files.length != 1) throw 'No files selected, or more than of allowed';
-    const fileReader = new FileReader();
-    fileReader.readAsBinaryString(files[0]);
-    fileReader.onload = () => this.readExcel(fileReader.result);
+  getActasReception(cve: string) {
+    this.loading = true;
+    this.proceedingsDeliveryReceptionService.getAllByActa(cve).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.dataActa.load(data);
+        this.dataActa.refresh();
+      },
+      error: error => {
+        console.error(error);
+      },
+    });
   }
-  readExcel(binaryExcel: string | ArrayBuffer) {
-    try {
-      let preloadFile = this.excelService.getData<previewData | any>(
-        binaryExcel
-      );
-      this.datos = [];
-      preloadFile.forEach((data: any, count: number) => {
-        // PRUEBA
-        // if (count < 1) {
-        let objReplace: any = {};
-        for (const key in data) {
-          if (Object.prototype.hasOwnProperty.call(data, key)) {
-            if (key) {
-              objReplace[key.toLowerCase()] = data[key];
-            }
-          }
-          // }
-        }
-        if (objReplace) {
-          this.datos.push(objReplace);
-        }
+
+  getDataTemporal(event: any) {
+    this.loading = true;
+    this.changeStatus(this.statusGoodName);
+    this.bienes.push(event);
+    this.dataTemporal.load(this.bienes);
+    this.dataTemporal.refresh();
+    this.loading = false;
+  }
+  updateConversion() {
+    this.convertiongoodService
+      .update(this.conversion, this.proceedingsConversionForm.value)
+      .subscribe({
+        next: data => {
+          console.log(data);
+        },
+        error: error => {
+          this.loading = false;
+          this.onLoadToast('error', 'No se actualizaron los datos', '');
+        },
+        // this.alert('success', 'conversión actualizada con éxito', ''),
       });
-      let obj: any = {};
-      let object: any = this.datos[0];
-      for (const key in object) {
-        if (Object.prototype.hasOwnProperty.call(object, key)) {
-          if (key) {
-            obj[key] = APPLY_DATA_COLUMNS(key);
-            // obj[key] = {
-            //   title: key.toLocaleUpperCase(),
-            //   type: 'string',
-            //   sort: false,
-            // };
-          }
-        }
-      }
-      const _settings = { columns: obj, actions: false };
-      this.settings = { ...this.settings, ..._settings };
-    } catch (error) {
-      this.alert('error', 'Ocurrió un error al leer el archivo', 'Error');
-    }
   }
-  selectProceedings(event: any) {}
-  selectGoods(event: any) {}
-  rowSelected2(event: any) {}
-  deleteGoodActa(event: any) {}
+  changeStatus(good: string) {
+    this.goodprocessService.updateGoodXGoodNumber(good).subscribe({
+      next: (data: any) => {
+        console.log(data);
+      },
+      error: error => {
+        error;
+      },
+    });
+  }
+
+  getByIdGood(id: number | string) {
+    this.goodService.getById(id).subscribe({
+      next: (data: IGoodStatus) => {
+        this.statusGoodName = data.goodStatus;
+        console.log(this.statusGoodName);
+      },
+      error: error => {
+        console.error('no existe el bien');
+      },
+    });
+  }
+
+  selectProceedings(event: any) {
+    console.log(event);
+  }
+  selectGoods(event: any) {
+    console.log(event);
+  }
+  rowSelected2(event: any) {
+    console.log(event);
+  }
+  deleteGoodActa(event: any) {
+    console.log(event);
+  }
   toggleDisabled() {}
 }
 

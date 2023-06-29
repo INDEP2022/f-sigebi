@@ -1,8 +1,10 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -13,6 +15,7 @@ import { IHistoryGood } from 'src/app/core/models/administrative-processes/histo
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
+import { RevisionReasonService } from 'src/app/core/services/catalogs/revision-reason.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodsReview } from 'src/app/core/services/ms-good/goods-review.service';
@@ -22,6 +25,7 @@ import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IGoodsReview } from '../../../../core/models/ms-good/goods-review.model';
+import { ListNoAttendedComponent } from '../list-no-attended/list-no-attended.component';
 import { COLUMNS } from './columns';
 //import { async } from '../../../../common/helpers/helpers';
 
@@ -65,7 +69,9 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     private readonly historyGoodService: HistoryGoodService,
     private delegationService: DelegationService,
     private dynamicCatalogsService: DynamicCatalogsService,
-    private modalRef: BsModalRef
+    private modalRef: BsModalRef,
+    private revisionReasonService: RevisionReasonService,
+    private router: Router
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -76,7 +82,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -135,12 +141,12 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
         }
       });
 
-    this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      this.getMotives();
+    this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(async () => {
+      await this.getDataPupInicializaForma();
+      await this.getMotives();
     });
 
     this.prepareForm();
-    this.getDataPupInicializaForma();
   }
 
   handleGenderChange() {
@@ -156,10 +162,31 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
 
-    if (this.selectedGender == 'movables') {
-      params['filter.goodType'] = `$eq:M`;
-    } else if (this.selectedGender == 'immovables') {
-      params['filter.goodType'] = `$eq:I`;
+    if (this.responsable != 'REGIONALES') {
+      if (this.selectedGender == 'all') {
+        params['filter.attended'] = `$eq:0`;
+        params['filter.manager'] = `$eq:${this.responsable}`;
+        params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+      } else if (this.selectedGender == 'immovables') {
+        params['filter.goodType'] = `$eq:I`;
+        params['filter.attended'] = `$eq:0`;
+        params['filter.manager'] = `$eq:${this.responsable}`;
+        params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+      } else if (this.selectedGender == 'movables') {
+        params['filter.goodType'] = `$eq:M`;
+        params['filter.manager'] = `$eq:${this.responsable}`;
+        params['filter.attended'] = `$eq:0`;
+        params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+      }
+    } else {
+      if (this.responsable == 'REGIONALES' && this.delegationNumber == 0) {
+        params['filter.attended'] = `$eq:0`;
+        params['filter.manager'] = `$eq:REGIONALES`;
+      } else {
+        params['filter.attended'] = `$eq:0`;
+        params['filter.manager'] = `$eq:REGIONALES`;
+        params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+      }
     }
 
     this.goodsMotivesrev.getAll(params).subscribe({
@@ -203,6 +230,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.delegationService.getAll(params).subscribe({
         next: response => {
+          console.log('ressss', response);
           // this.loading = false;
           resolve(response.data[0]);
         },
@@ -284,7 +312,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         // TEXT_IO.GET_LINE(LFIARCHIVO, LST_CADENA);
         // V_NO_BIEN:= GETWORDCSV(LST_CADENA, 1);
-
+        let ArrayNoAtendidos: any = [];
         for (let i = 0; i < excelImport.length; i++) {
           if (excelImport[i].goodNumber != null) {
             EXISTE = 0;
@@ -305,11 +333,16 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
               vl_ID_EVENTO = good.eventId.id;
               ESTATUSB = good.status;
             } else {
-              this.alert(
-                'warning',
-                `Verifique las condiciones de atención de proceso REV del bien: ${excelImport[i].goodNumber}`,
-                ''
-              );
+              let obj = {
+                goodNumber: excelImport[i].goodNumber,
+                message: 'Verifique las condiciones de atención de proceso REV',
+              };
+              ArrayNoAtendidos.push(obj);
+              // this.alert(
+              //   'warning',
+              //   `Verifique las condiciones de atención de proceso REV del bien: ${excelImport[i].goodNumber}`,
+              //   ''
+              // );
             }
 
             if (EXISTE > 0) {
@@ -323,16 +356,23 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
                 attended: 1,
               };
 
-              const updateGoodMotivRev = await this.updateGoodMotivosRev(obj_);
+              const updateGoodMotivRev: any = await this.updateGoodMotivosRev(
+                obj_
+              );
 
-              if (updateGoodMotivRev == true) {
+              if (updateGoodMotivRev === true) {
                 ACTUALIZA = 1;
               } else {
-                this.alert(
-                  'warning',
-                  `El bien: ${excelImport[i].goodNumber} no se pudo atender en MOTIVOSREV`,
-                  ''
-                );
+                let obj = {
+                  goodNumber: excelImport[i].goodNumber,
+                  message: `El bien: ${excelImport[i].goodNumber} no se pudo atender en MOTIVOSREV`,
+                };
+                ArrayNoAtendidos.push(obj);
+                // this.alert(
+                //   'warning',
+                //   `El bien: ${excelImport[i].goodNumber} no se pudo atender en MOTIVOSREV`,
+                //   ''
+                // );
               }
 
               let objGood: any = {
@@ -361,11 +401,17 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
                 if (screenXStatus != null) {
                   ESTATUSF = screenXStatus;
                 } else {
-                  this.alert(
-                    'warning',
-                    `No se identificó el estatus final para el bien: ${excelImport[i].goodNumber}`,
-                    ''
-                  );
+                  let obj = {
+                    goodNumber: excelImport[i].goodNumber,
+                    message: `No se identificó el estatus final para el bien: ${excelImport[i].goodNumber}`,
+                  };
+                  ArrayNoAtendidos.push(obj);
+
+                  // this.alert(
+                  //   'warning',
+                  //   `No se identificó el estatus final para el bien: ${excelImport[i].goodNumber}`,
+                  //   ''
+                  // );
                   ACTUALIZA = 0;
                 }
 
@@ -380,11 +426,18 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
                 if (updateGood == null) {
                   ACTUALIZA = 0;
-                  this.alert(
-                    'error',
-                    `Error al actualizar el estatus del bien: ${excelImport[i].goodNumber}`,
-                    ''
-                  );
+
+                  let obj = {
+                    goodNumber: excelImport[i].goodNumber,
+                    message: `Error al actualizar el estatus del bien: ${excelImport[i].goodNumber}`,
+                  };
+                  ArrayNoAtendidos.push(obj);
+
+                  // this.alert(
+                  //   'error',
+                  //   `Error al actualizar el estatus del bien: ${excelImport[i].goodNumber}`,
+                  //   ''
+                  // );
                 }
 
                 if (ACTUALIZA == 1) {
@@ -415,16 +468,47 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
                     attended: 0,
                   };
 
-                  const updateGoodMotivRev = await this.updateGoodMotivosRev(
-                    obj__
-                  );
+                  const updateGoodMotivRev: any =
+                    await this.updateGoodMotivosRev(obj__);
                 }
               }
             }
           }
         }
-
-        await this.getMotives();
+        Promise.all(ArrayNoAtendidos).then(async resp => {
+          console.log('ArrayNoAtendidos', ArrayNoAtendidos);
+          if (ArrayNoAtendidos.length > 0) {
+            if (ArrayNoAtendidos.length == excelImport.length) {
+              this.alertQuestion(
+                'question',
+                'Los bienes del archivo no se pudieron atender',
+                '¿Quiere visualizarlos?'
+              ).then(async question => {
+                if (question.isConfirmed) {
+                  this.openForm(ArrayNoAtendidos);
+                }
+              });
+            } else {
+              this.alertQuestion(
+                'question',
+                'Hay bienes que no se pudieron atender',
+                '¿Quiere visualizarlos?'
+              ).then(async question => {
+                if (question.isConfirmed) {
+                  this.openForm(ArrayNoAtendidos);
+                }
+              });
+              await this.getMotives();
+            }
+          } else {
+            this.alert(
+              'success',
+              'Todos los bienes del archivo fueron atendidos',
+              ''
+            );
+            await this.getMotives();
+          }
+        });
       }
     });
   }
@@ -641,6 +725,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
         };
 
         const updateGoodMotivRev = await this.updateGoodMotivosRev(obj_);
+
         if (updateGoodMotivRev == true) {
         } else {
           this.alert(
@@ -734,5 +819,258 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
         // -------------------------------------------------------------------------------------------------- //
       }
     });
+  }
+  clickTimer: any;
+  async onDblClick(event: any) {
+    console.log('DB', event);
+    if (this.clickTimer) {
+      clearTimeout(this.clickTimer);
+      this.clickTimer = null;
+      await this.onCellDoubleClick();
+    } else {
+      this.clickTimer = setTimeout(() => {
+        this.clickTimer = null;
+      }, 300);
+    }
+    const rowData = event.data;
+    // Acciones de doble clic en la fila
+  }
+  async onCellDoubleClick() {
+    // this.alert("success", "función de doble click activa", "")
+    let V_PANTALLA: any,
+      V_RESPONSABLE: any,
+      V_PARAMETRO: any,
+      V_DESCMOTIVO: any = null;
+    let V_EXPEDIENTE: any,
+      LV_FEC_INSERT: any = null;
+    let LV_ADMINISTRA: any,
+      LV_RESPONSABLE: any = null;
+    let LV_DESC1: any,
+      LV_DESC: any = null;
+    let motivoTest = 'MotivoTEST';
+    let obj = {
+      initialStatus: this.selectedRow.status,
+      goodType: this.selectedRow.goodType,
+      // descriptionCause: motivoTest ¿DE DÓNDE SALE ESTE MOTIVO?
+    };
+    const getCatMotivosRev_: any = await this.getCatMotivosRev(obj);
+
+    let objGood = {
+      goodId: this.selectedRow.goodNumber,
+    };
+    if (getCatMotivosRev_ === null) {
+      V_PANTALLA = null;
+      V_RESPONSABLE = null;
+      this.alert('warning', `${motivoTest} no es un motivo válido`, '');
+      return;
+    } else {
+      V_PANTALLA = getCatMotivosRev_.screen;
+      V_RESPONSABLE = getCatMotivosRev_.managerArea;
+      V_PARAMETRO = getCatMotivosRev_.parameter;
+      V_DESCMOTIVO = getCatMotivosRev_.descriptionCause;
+    }
+
+    const getGood_: any = await this.getGood(obj);
+    if (getGood_ === null) {
+      V_EXPEDIENTE = null;
+    } else {
+      V_EXPEDIENTE = getGood_.fileNumber;
+      LV_FEC_INSERT = getGood_.insertRegDate;
+    }
+
+    if (V_RESPONSABLE.includes(this.responsable)) {
+      V_RESPONSABLE = this.responsable;
+      // Tu código aquí
+    }
+
+    // Esperando endpoints
+    // LV_ADMINISTRA:= FA_COORD_ADMIN(: BLK_BIENES_MOTIVOSREV.NO_BIEN, V_EXPEDIENTE, LV_FEC_INSERT);
+    // LV_RESPONSABLE:= FA_DEL_RESPONSABLE(: BLK_BIENES_MOTIVOSREV.NO_BIEN);
+
+    // ADMINISTRA //
+    const getDelegationDB_1: any = await this.getDelegationDB(LV_ADMINISTRA);
+    if (getDelegationDB_1 != null) {
+      LV_DESC = getDelegationDB_1.description;
+    }
+    // RESPONSABLE //
+    const getDelegationDB_2: any = await this.getDelegationDB(LV_RESPONSABLE);
+
+    if (getDelegationDB_2 != null) {
+      LV_DESC1 = getDelegationDB_2.description;
+    }
+
+    if (this.responsable == 'REGIONALES') {
+      this.alertQuestion(
+        'question',
+        `El bien es administrado por: ${LV_DESC} , y ${LV_DESC1} como responsable.`,
+        '¿Desea atender el bien?'
+      ).then(async question => {
+        if (question.isConfirmed) {
+          if (this.delegationNumber == 0 || this.responsable == 'REGIONALES') {
+            if (V_PANTALLA != null) {
+              if (V_DESCMOTIVO == 'AMPARO') {
+                await this.pupLanzaForma(V_PANTALLA, V_PARAMETRO, V_EXPEDIENTE);
+              } else {
+                await this.pupLanzaForma(
+                  V_PANTALLA,
+                  V_PARAMETRO,
+                  this.selectedRow.goodNumber
+                );
+              }
+            } else {
+              this.alert('warning', 'No se encontró la pantalla', '');
+            }
+          } else if (
+            this.delegationNumber == LV_RESPONSABLE ||
+            this.delegationNumber == LV_ADMINISTRA
+          ) {
+            if (V_PANTALLA != null) {
+              if (V_DESCMOTIVO == 'AMPARO') {
+                await this.pupLanzaForma(V_PANTALLA, V_PARAMETRO, V_EXPEDIENTE);
+              } else {
+                await this.pupLanzaForma(
+                  V_PANTALLA,
+                  V_PARAMETRO,
+                  this.selectedRow.goodNumber
+                );
+              }
+            } else {
+              this.alert('warning', 'No se encontró la pantalla', '');
+            }
+          }
+        }
+      });
+    } else if (this.responsable != 'REGIONALES') {
+      if (V_PANTALLA != null) {
+        if (V_DESCMOTIVO == 'AMPARO') {
+          await this.pupLanzaForma(V_PANTALLA, V_PARAMETRO, V_EXPEDIENTE);
+        } else {
+          await this.pupLanzaForma(
+            V_PANTALLA,
+            V_PARAMETRO,
+            this.selectedRow.goodNumber
+          );
+        }
+      } else {
+        this.alert('warning', 'No se encontró la pantalla', '');
+      }
+    } else {
+      this.alert(
+        'warning',
+        `No puede atender este bien, ya que usted no corresponde al área responsable: ${V_RESPONSABLE}`,
+        ''
+      );
+    }
+  }
+
+  async getCatMotivosRev(data: any) {
+    const params = new ListParams();
+    params['filter.initialStatus'] = `$eq:${data.initialStatus}`;
+    params['filter.goodType'] = `$eq:${data.goodType}`;
+    return new Promise((resolve, reject) => {
+      this.revisionReasonService.getAll(params).subscribe({
+        next: (resp: any) => {
+          console.log('resp', resp);
+          const data = resp.data[0];
+          resolve(data);
+          // this.loading = false;
+        },
+        error: error => {
+          // this.loading = false;
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  // GET - GOOD
+  async getGood(id: any) {
+    return new Promise((resolve, reject) => {
+      this.goodService.getGoodById(id).subscribe({
+        next: response => {
+          console.log('res', response);
+          resolve(response);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  // CAT_DELEGACIONES
+  async getDelegationDB(id: any) {
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    params['filter.phaseEdo'] = `$eq:2`;
+    return new Promise((resolve, reject) => {
+      this.delegationService.getAll(params).subscribe({
+        next: response => {
+          // this.loading = false;
+          resolve(response.data[0]);
+        },
+        error: err => {
+          resolve(null);
+          // this.loading = false;
+          console.log(err);
+        },
+      });
+    });
+  }
+
+  // PUP_LANZA_FORMA
+  async pupLanzaForma(screen: any, parameter: any, no_bien: any) {
+    if (screen == 'FACTJURBIENESXAMP') {
+      this.router.navigate(
+        [`/pages/juridical/depositary/assignment-protected-assets`],
+        {
+          queryParams: {
+            origin: 'FMATENCBIENESREV',
+            P_PARAM_PANT: parameter,
+            P_BIEN: no_bien,
+          },
+        }
+      );
+    } else if (screen == 'FACTDIRDATOSBIEN') {
+      this.router.navigate([`/pages/general-processes/goods-characteristics`], {
+        queryParams: {
+          origin: 'FMATENCBIENESREV',
+          P_PARAM_PANT: parameter,
+          P_BIEN: no_bien,
+        },
+      });
+    } else if (screen == 'FIMGFOTBIEADD') {
+      // No hay url
+      return;
+      this.router.navigate([`/pages/general-processes/scan-documents`], {
+        queryParams: {
+          origin: 'FMATENCBIENESREV',
+          P_PARAM_PANT: parameter,
+          P_BIEN: no_bien,
+        },
+      });
+    } else if (screen == 'FCAMNOCLASIFBIEN') {
+      this.router.navigate(
+        [`/pages/administrative-processes/change-of-good-classification`],
+        {
+          queryParams: {
+            origin: 'FMATENCBIENESREV',
+            P_PARAM_PANT: parameter,
+            P_BIEN: no_bien,
+          },
+        }
+      );
+    } else {
+      this.alert('warning', 'No se localizó la URL de la forma', '');
+    }
+  }
+
+  openForm(data?: any) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      data,
+      callback: (next: boolean) => {},
+    };
+    this.modalService.show(ListNoAttendedComponent, modalConfig);
   }
 }
