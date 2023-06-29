@@ -15,4 +15,6 @@ export enum SecurityEndpoints {
   IdDelegationDelegationForwards = 'application/idDelegationDelegationForwards',
   IdDelegationDelegationAddressee = 'application/idDelegationDelegationAddressee',
   QueryIdenti = 'application/queryIdenti',
+  SegEmailUser = 'application/segUserEmail2',
+  SegCopyEmail = 'application/getgencopia',
 }

@@ -42,6 +42,7 @@ export class ScanningFoilComponent
   @Input() screenKey3: string = '';
   @Input() folio: string = null;
   @Input() documents: IDocuments = null;
+  @Input() processNumber: number = null;
   //Reactive Forms
   form: FormGroup;
   user: any;
@@ -171,6 +172,7 @@ export class ScanningFoilComponent
       .pipe(map(x => x.data[0]))
       .subscribe({
         next: (res: any) => {
+          console.log('access_x_aresas', res);
           this.dataUserLogged = res;
         },
         error: error => {
@@ -217,8 +219,8 @@ export class ScanningFoilComponent
 
   openScannerPage() {
     if (
-      this.notifications.expedientNumber /* &&
-      this.form.controls['scanningFoli'].value*/
+      this.notifications.expedientNumber &&
+      this.form.controls['scanningFoli'].value
     ) {
       this.alertQuestion(
         'info',
@@ -235,6 +237,7 @@ export class ScanningFoilComponent
               wheelNumber: this.notifications.wheelNumber,
               expedientNumber: this.notifications.expedientNumber,
               folio: this.form.get('scanningFoli').value,
+              processNumber: this.processNumber,
             },
           });
         }
@@ -267,6 +270,10 @@ export class ScanningFoilComponent
   }
 
   insertListImg() {
+    if (
+      this.notifications.expedientNumber != this.documents.registrationNumber
+    ) {
+    }
     this.getDocumentsByFlyer(this.notifications.wheelNumber);
   }
 
