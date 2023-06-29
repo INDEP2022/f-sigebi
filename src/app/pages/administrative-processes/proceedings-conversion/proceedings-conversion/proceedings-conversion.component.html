@@ -395,75 +395,63 @@
                     </form>
                     <div class="row"></div>
                     <form [formGroup]="actaGoodForm" class="form-material">
-                      <div class="row w-100">
-                        <div
-                          class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
+                      <div class="row mt-12 d-flex justify-content-center">
+                        <div class="col-md-12">
                           <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
-                          <div
-                            [class]="isLoadingGood ? 'table-loading' : ''"
-                            class="overflow-auto">
-                            <ng2-smart-table
-                              [attr.class]="'table-bordered my-table'"
-                              [settings]="settings"
-                              [source]="dataTableGood"
-                              (userRowSelect)="selectData($event)">
-                            </ng2-smart-table>
-                          </div>
-                          <span class="badge m-2 badge-pill bg-success"
-                            >&#42;&#42;Disponibles</span
-                          >
-                          <span class="badge m-2 badge-pill bg-dark"
-                            >&#42;&#42;No Disponibles</span
-                          >
-                          <br />
-                          <app-pagination
-                            [totalItems]="totalItems"></app-pagination>
-                        </div>
-
-                        <div
-                          class="col-sm-12 col-12 col-md-2 col-lg-2 p-2 text-center">
-                          <div
-                            class="d-flex justify-content-center align-items-center h-100">
-                            <div>
-                              <button
-                                (click)="getDataTemporal($event)"
-                                [disabled]="isAllDisabled"
-                                class="btn btn-secondary btn-sm bg-success active m-3 p-3"
-                                type="button">
-                                <!-- Mover uno -->
-                                <i class="bx bxs-right-arrow-circle bx-md"></i>
-                              </button>
-                              <br />
-                              <!-- <button (click)="deleteGoodActa($event)" [disabled]="isAllDisabled"
-                                class="btn btn-secondary btn-sm active bg-danger m-3 p-3" type="button">
-                               Mover uno
-                              <i class="bx bxs-left-arrow-circle bx-md"></i>
-                              </button> -->
+                          <ng-scrollbar
+                            track="horizontal"
+                            [autoHeightDisabled]="false">
+                            <div
+                              [class]="loading ? 'table-loading' : ''"
+                              class="overflow-auto">
+                              <ng2-smart-table
+                                [attr.class]="'table-bordered my-table'"
+                                [settings]="settings"
+                                [source]="dataTableGood"
+                                (userRowSelect)="selectData($event)">
+                              </ng2-smart-table>
+                              <app-pagination
+                                [totalItems]="totalItems"></app-pagination>
                             </div>
+                          </ng-scrollbar>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                          <div class="text-center">
+                            <button
+                              (click)="getDataTemporal($event)"
+                              [disabled]="isAllDisabled"
+                              class="btn btn-secondary btn-sm bg-success active m-3 p-3"
+                              type="button">
+                              Agregar <i class="fa fa-plus bx-md"></i>
+                            </button>
+                            <br />
+                            <!-- <button (click)="deleteGoodActa($event)" [disabled]="isAllDisabled" class="btn btn-secondary btn-sm active bg-danger m-3 p-3" type="button">
+                            Mover uno
+                            <i class="bx bxs-left-arrow-circle bx-md"></i>
+                          </button> -->
                           </div>
                         </div>
-                        <div
-                          class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
+                        <div class="col-md-12">
                           <h6>BIENES RELACIONADOS CON EL ACTA</h6>
-                          <div
-                            [class]="isLoadingGood ? 'table-loading' : ''"
-                            class="overflow-auto">
-                            <ng2-smart-table
-                              [attr.class]="'table-bordered my-table'"
-                              [settings]="settings2"
-                              [source]="dataTemporal"
-                              (userRowSelect)="rowSelected2($event)">
-                            </ng2-smart-table>
-                          </div>
-                          <br />
-                          <app-pagination
-                            [totalItems]="totalItems2"></app-pagination>
+                          <ng-scrollbar
+                            track="horizontal"
+                            [autoHeightDisabled]="false">
+                            <div
+                              [class]="loading ? 'table-loading' : ''"
+                              class="overflow-auto">
+                              <ng2-smart-table
+                                [attr.class]="'table-bordered my-table'"
+                                [settings]="settings2"
+                                [source]="dataTemporal"
+                                (userRowSelect)="rowSelected2($event)">
+                              </ng2-smart-table>
+                              <app-pagination
+                                [totalItems]="totalItems2"></app-pagination>
+                            </div>
+                          </ng-scrollbar>
                         </div>
                       </div>
                     </form>
-                    <!-- <div>
-                      <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
-                  </div>-->
                   </div>
                 </app-card>
               </div>
@@ -488,13 +476,9 @@
                     Carga Masiva
                     <i class="fa fa-upload bx-sm float-icon"></i>
                   </button>
-                  <input
-                    type="file"
-                    name="file"
-                    #file
-                    class="d-none"
+                  <!-- <input type="file" name="file" #file class="d-none"
                     accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                    (change)="onFileChange($event)" />
+                    (change)="onFileChange($event)" /> -->
                 </div>
                 <div class="m-3">
                   <button

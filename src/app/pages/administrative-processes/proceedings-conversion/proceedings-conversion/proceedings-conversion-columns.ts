@@ -14,18 +14,15 @@ export const PROCEEDINGSCONVERSION_COLUMNS = {
     width: '10%',
     sort: false,
   },
-  proceedings: {
-    title: 'Acta',
+  goodStatus: {
+    title: 'Estatus',
     width: '10%',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.fileNumber.minutesErNumber;
-    },
   },
   rowClassFunction: (row: any) => {
-    if (row.status === 'disponible') {
+    if (row.goodStatus === 'disponible') {
       return 'row-verde';
-    } else if (row.status === 'no disponible') {
+    } else if (row.goodStatus === 'no disponible') {
       return 'row-negro'; // Clase CSS para filas inactivas
     } else {
       return 'row-verde'; // Clase CSS para filas activas
@@ -33,37 +30,34 @@ export const PROCEEDINGSCONVERSION_COLUMNS = {
   },
 };
 export const COPY = {
-  notGood: {
+  goodId: {
     title: 'No Bien',
     width: '10%',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.notGood;
-    },
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.goodId;
+    // },
   },
   description: {
     title: 'Descripcion',
     width: '20%',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.description;
-    },
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.description;
+    // },
   },
   amount: {
     title: 'Cantidad',
     width: '10%',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.amount;
-    },
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.amount;
+    // },
   },
-  proceedings: {
-    title: 'Acta',
+  goodStatus: {
+    title: 'Estatus',
     width: '10%',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.fileNumber.minutesErNumber;
-    },
   },
 };
 export const PROCEEDINGSCONVERSIONS_COLUMNS = {
@@ -251,3 +245,9 @@ const WHEEL_DATA_COLUMNS = [
 
 export const OFFICE_COLOR_DATA_COLUMN = 'bg-info text-light';
 const OFFICE_DATA_COLUMNS = ['nooficio', 'fgrnobien', 'FGRNOBIEN', 'fecoficio'];
+
+export class IGoodStatus {
+  goodClassNumber: string | number;
+  goodStatus: string;
+  goodId: string | number;
+}

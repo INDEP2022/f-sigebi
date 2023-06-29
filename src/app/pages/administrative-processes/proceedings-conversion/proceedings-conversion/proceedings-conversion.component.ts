@@ -29,7 +29,6 @@ import { ICopiesJobManagementDto } from 'src/app/core/models/ms-officemanagement
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
-import { previewData } from 'src/app/pages/documents-reception/goods-bulk-load/interfaces/goods-bulk-load-table';
 
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
@@ -52,9 +51,9 @@ import { ActasConvertionCommunicationService } from '../services/proceedings-con
 
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import {
-  APPLY_DATA_COLUMNS,
   COPY,
   GOODSEXPEDIENT_COLUMNS_GOODS,
+  IGoodStatus,
 } from './proceedings-conversion-columns';
 
 export type IGoodAndAvailable = IGood & {
@@ -131,6 +130,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   preAver = '';
   criCase = '';
   test: any;
+  bienes: IGood[] = [];
+  statusGoodName: string = '';
   dataTemporal: LocalDataSource = new LocalDataSource();
   goodsByFather: IGood[] = [];
   validPermisos: boolean = true;
@@ -140,6 +141,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   read = false;
   isLoadingSender = false;
   isCreate = false;
+  statusGood: IGoodStatus;
   selectedRow: IConvertiongood;
   origin = '';
   totalItemsActas: number = 0;
@@ -658,9 +660,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.goodService.getByExpedient(id).subscribe({
       next: data => {
         console.log(data);
-
+        this.bienes = data;
         this.dataTableGood.load(data.data);
-
+        this.loading = false;
         // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
         this.settings.columns = {
           rowClassFunction: (row: any) => {
@@ -1040,7 +1042,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Carga masiva completada con éxito',
-          `Conversion : ${this.conversion}`
+          `Expediente : ${this.fileNumber}`
         );
         console.log(data);
       },
@@ -1064,75 +1066,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     });
   }
 
-  file: File | undefined;
-  fileUrl: any;
-  async getFile() {
-    const base64Data = localStorage.getItem('goodData');
-    const csvData = atob(base64Data);
-
-    return csvData ? csvData : null;
-  }
-
-  onFileChange(event: Event) {
-    // if (this.tipoCarga == FGR_OPCION) {
-    //   return;
-    // } else {
-
-    // }
-    const files = (event.target as HTMLInputElement).files;
-    if (files.length != 1) throw 'No files selected, or more than of allowed';
-    const fileReader = new FileReader();
-    fileReader.readAsBinaryString(files[0]);
-    fileReader.onload = () => this.readExcel(fileReader.result);
-  }
-  readExcel(binaryExcel: string | ArrayBuffer) {
-    try {
-      let preloadFile = this.excelService.getData<previewData | any>(
-        binaryExcel
-      );
-      this.datos = [];
-      preloadFile.forEach((data: any, count: number) => {
-        // PRUEBA
-        // if (count < 1) {
-        let objReplace: any = {};
-        for (const key in data) {
-          if (Object.prototype.hasOwnProperty.call(data, key)) {
-            if (key) {
-              objReplace[key.toLowerCase()] = data[key];
-            }
-          }
-          // }
-        }
-        if (objReplace) {
-          this.datos.push(objReplace);
-        }
-      });
-      let obj: any = {};
-      let object: any = this.datos[0];
-      for (const key in object) {
-        if (Object.prototype.hasOwnProperty.call(object, key)) {
-          if (key) {
-            obj[key] = APPLY_DATA_COLUMNS(key);
-            // obj[key] = {
-            //   title: key.toLocaleUpperCase(),
-            //   type: 'string',
-            //   sort: false,
-            // };
-          }
-        }
-      }
-      const _settings = { columns: obj, actions: false };
-      this.settings = { ...this.settings, ..._settings };
-    } catch (error) {
-      this.alert('error', 'Ocurrió un error al leer el archivo', 'Error');
-    }
-  }
-
   getDataTemporal(event: any) {
-    let data = [];
-    data.push(event);
-    this.dataTemporal.load(data);
+    this.loading = true;
+    this.changeStatus(this.statusGoodName);
+    this.bienes.push(event);
+    this.dataTemporal.load(this.bienes);
     this.dataTemporal.refresh();
+    this.loading = false;
   }
   updateConversion() {
     this.convertiongoodService
@@ -1147,6 +1087,28 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         },
         // this.alert('success', 'conversión actualizada con éxito', ''),
       });
+  }
+  changeStatus(good: string) {
+    this.goodprocessService.updateGoodXGoodNumber(good).subscribe({
+      next: (data: any) => {
+        console.log(data);
+      },
+      error: error => {
+        error;
+      },
+    });
+  }
+
+  getByIdGood(id: number | string) {
+    this.goodService.getById(id).subscribe({
+      next: (data: IGoodStatus) => {
+        this.statusGoodName = data.goodStatus;
+        console.log(this.statusGoodName);
+      },
+      error: error => {
+        console.error('no existe el bien');
+      },
+    });
   }
 
   selectProceedings(event: any) {
