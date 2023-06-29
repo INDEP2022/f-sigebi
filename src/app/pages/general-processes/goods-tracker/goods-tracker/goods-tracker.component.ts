@@ -27,6 +27,10 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
   @ViewChild('scrollTable') scrollTable: ElementRef<HTMLDivElement>;
   filterCriterias = GOODS_TRACKER_CRITERIAS;
   form = this.fb.group(new GoodTrackerForm());
+  formCheckbox = this.fb.group({
+    goodIrre: [false],
+    lookPhoto: [false],
+  });
   showTable: boolean = false;
   params = new FilterParams();
   totalItems: number = 0;

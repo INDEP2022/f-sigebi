@@ -646,12 +646,15 @@ export class ScanRequestComponent extends BasePage implements OnInit {
             tap(response => {
               this.alert(
                 'success',
-                'REPORTE DE DIGITALIZACIÓN',
+                `${
+                  imp
+                    ? 'REPORTE DE DIGITALIZACIÓN'
+                    : 'SOLICITUD Y REPORTE DE DIGITALIZACIÓN'
+                }`,
                 `${
                   imp
                     ? 'Generado correctamente'
-                    : 'Solicitud generada correctamente con folio: ' +
-                      this.idFolio
+                    : 'Generado correctamente con folio: ' + this.idFolio
                 }`
               );
               const blob = new Blob([response], { type: 'application/pdf' });
