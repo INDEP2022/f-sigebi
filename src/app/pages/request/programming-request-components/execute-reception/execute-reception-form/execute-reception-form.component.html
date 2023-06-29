@@ -313,7 +313,9 @@
                 </tr>
               </thead>
               <tbody>
-                <ng-container formArrayName="goodsTransportable">
+                <ng-container
+                  formArrayName="goodsTransportable"
+                  *ngIf="showTransportable">
                   <tr
                     *ngFor="
                       let good of goodsTransportable.controls;
@@ -477,6 +479,28 @@
                     </ng-container>
                   </tr>
                 </ng-container>
+
+                <tr *ngIf="!showTransportable">
+                  <td scope="row" class="align-baseline"></td>
+                  <td class="align-baseline"></td>
+                  <td class="align-baseline"></td>
+                  <td class="align-baseline"></td>
+                  <td></td>
+                  <td class="text-left align-baseline"></td>
+                  <td></td>
+                  <td class="text-left align-baseline"></td>
+                  <td></td>
+                  <td class="text-left align-baseline"></td>
+                  <td></td>
+
+                  <td class="text-left align-baseline"></td>
+                  <td class="text-center align-baseline"></td>
+                  <td class="text-center align-baseline"></td>
+                  <td class="text-center align-baseline"></td>
+                  <td class="text-center align-baseline"></td>
+                  <td class="text-center align-baseline"></td>
+                  <td class="text-center align-baseline text-nowrap"></td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -623,7 +647,9 @@
                             </tr>
                           </thead>
                           <tbody>
-                            <ng-container formArrayName="goodsReception">
+                            <ng-container
+                              formArrayName="goodsReception"
+                              *ngIf="showReception">
                               <tr
                                 *ngFor="
                                   let good of goodsReception.controls;
@@ -795,6 +821,29 @@
                                 </ng-container>
                               </tr>
                             </ng-container>
+
+                            <tr *ngIf="!showReception">
+                              <th scope="row" class="align-baseline"></th>
+                              <th class="align-baseline"></th>
+                              <td class="align-baseline"></td>
+                              <td class="align-baseline"></td>
+                              <td></td>
+                              <td class="text-left align-baseline"></td>
+                              <td></td>
+                              <td class="text-left align-baseline"></td>
+                              <td></td>
+                              <td class="text-left align-baseline"></td>
+                              <td></td>
+
+                              <td class="text-left align-baseline"></td>
+                              <td class="text-center align-baseline"></td>
+                              <td class="text-center align-baseline"></td>
+                              <td class="text-center align-baseline"></td>
+                              <td class="text-center align-baseline"></td>
+                              <td class="text-center align-baseline"></td>
+                              <td
+                                class="text-center align-baseline text-nowrap"></td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
@@ -886,19 +935,12 @@
                           <th scope="col" class="text-nowrap text-center">
                             Acciones
                           </th>
-                          <th scope="col">Cantidad Transferente</th>
-                          <th scope="col">Cantidad INDEP</th>
-                          <th scope="col">Unidad Medida Transferente</th>
-                          <th scope="col">Unidad Medida INDEP</th>
-                          <th scope="col">Estado F&iacute;sico Transferente</th>
-                          <th scope="col">Estado F&iacute;sico INDEP</th>
-                          <th scope="col">Conservaci&oacute;n Transferente</th>
-                          <th scope="col">Estado Conservaci&oacute;n INDEP</th>
-                          <th scope="col">Acciones</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <ng-container formArrayName="goodsGuard">
+                        <ng-container
+                          formArrayName="goodsGuard"
+                          *ngIf="showGuard">
                           <tr
                             *ngFor="
                               let good of goodsGuards.controls;
@@ -1045,6 +1087,26 @@
                             </ng-container>
                           </tr>
                         </ng-container>
+
+                        <tr *ngIf="showGuard">
+                          <td scope="row" class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+
+                          <td class="text-left align-baseline"></td>
+                          <td class="text-center align-baseline"></td>
+                          <td
+                            class="text-center align-baseline"
+                            class="text-nowrap"></td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -1163,7 +1225,9 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <ng-container formArrayName="goodsWarehouse">
+                        <ng-container
+                          formArrayName="goodsWarehouse"
+                          *ngIf="showWarehouse">
                           <tr
                             *ngFor="
                               let good of goodsWarehouse.controls;
@@ -1314,6 +1378,25 @@
                             </ng-container>
                           </tr>
                         </ng-container>
+
+                        <tr *ngIf="!showWarehouse">
+                          <td scope="row" class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+
+                          <td class="text-left align-baseline"></td>
+                          <td class="text-center align-baseline"></td>
+                          <td
+                            class="text-center align-baseline text-nowrap"></td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -1437,7 +1520,9 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <ng-container formArrayName="goodsReprog">
+                          <ng-container
+                            formArrayName="goodsReprog"
+                            *ngIf="showReprog">
                             <tr
                               *ngFor="
                                 let good of goodsReprog.controls;
@@ -1589,6 +1674,24 @@
                               </ng-container>
                             </tr>
                           </ng-container>
+
+                          <tr *ngIf="!showReprog">
+                            <td scope="row" class="align-baseline"></td>
+                            <td class="align-baseline"></td>
+                            <td class="align-baseline"></td>
+                            <td class="align-baseline"></td>
+                            <td></td>
+                            <td class="text-left align-baseline"></td>
+                            <td></td>
+                            <td class="text-left align-baseline"></td>
+                            <td></td>
+                            <td class="text-left align-baseline"></td>
+                            <td></td>
+
+                            <td class="text-left align-baseline"></td>
+                            <td class="text-center align-baseline"></td>
+                            <td class="text-center align-baseline"></td>
+                          </tr>
                         </tbody>
                       </table>
                     </div>
@@ -1679,7 +1782,9 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <ng-container formArrayName="goodsCancelation">
+                        <ng-container
+                          formArrayName="goodsCancelation"
+                          *ngIf="showCancel">
                           <tr
                             *ngFor="
                               let good of goodsCancelation.controls;
@@ -1830,6 +1935,25 @@
                             </ng-container>
                           </tr>
                         </ng-container>
+
+                        <tr *ngIf="!showCancel">
+                          <td scope="row" class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+
+                          <td class="text-left align-baseline"></td>
+                          <td class="text-center align-baseline"></td>
+                          <td
+                            class="text-center align-baseline text-nowrap"></td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
