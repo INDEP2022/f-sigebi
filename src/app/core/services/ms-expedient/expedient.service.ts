@@ -12,7 +12,7 @@ import { IIntegratedExpedient } from '../../models/ms-expedient/integrated-exped
 })
 export class ExpedientService extends HttpService {
   private readonly route = ExpedientEndpoints;
-  private readonly endpoint: string = ExpedientEndpoints.BasePath;
+  private readonly endpoint: string = ExpedientEndpoints.DeleteActaConversions;
   private readonly find: string = ExpedientEndpoints.FindExpedient;
   constructor(private expedientRepository: ExpedientRepository<IExpedient>) {
     super();
@@ -52,6 +52,9 @@ export class ExpedientService extends HttpService {
       this.route.GetIntegratedExpedients,
       params
     );
+  }
+  getDeleteTeacher(id: number | string) {
+    return this.get(`${this.endpoint}/${id}`);
   }
 
   getExpedientList(params?: string): Observable<IListResponse<IExpedient>> {

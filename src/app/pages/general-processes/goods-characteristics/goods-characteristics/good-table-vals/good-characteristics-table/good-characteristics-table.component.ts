@@ -404,7 +404,13 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.onSelect.subscribe(data => {
+      console.log(this.loadInventary);
+      if (this.loadInventary) {
+        this['data'] = this['dataInventary'];
+      }
+      console.log(this);
       if (data) callback(data, this);
+      // console.log(this['data']=this['dataInventary']);
     });
   }
 
