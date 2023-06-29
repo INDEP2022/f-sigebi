@@ -1,4 +1,6 @@
-<div class="row" (dblclick)="openDocumentsViewer()">
+<div
+  class="row"
+  (dblclick)="dobleClickAction === 1 ? openDocumentsViewer() : openHistoric()">
   <div class="col-md-12 p-0">
     <img
       *ngIf="!isDocument"

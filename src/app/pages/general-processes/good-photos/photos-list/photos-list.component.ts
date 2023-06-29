@@ -35,6 +35,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
       this.getData();
     }
   }
+  dobleClickAction: number = 1;
   private _goodNumber: string | number;
   userPermisions = true;
   lastConsecutive: number = 1;

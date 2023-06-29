@@ -96,14 +96,17 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
                   good.val35 = null;
                 }
               }
+              if (good.no_tipo) {
+              }
               // validar si existe tipo con goodClassNumber
               let v_val_entfed;
               this.val_atributos_inmuebles++;
-              if (this.v_bien_inm) {
+              if (good.no_tipo && good.no_tipo + '' === '6') {
                 if (
                   item.attribute === 'ESTADO' &&
                   this.val_atributos_inmuebles > 4
                 ) {
+                  // v_val_entfed = ;
                 }
               }
               return {
