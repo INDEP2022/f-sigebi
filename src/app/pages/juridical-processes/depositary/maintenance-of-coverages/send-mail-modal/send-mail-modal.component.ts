@@ -39,7 +39,7 @@ export class SendMailModalComponent extends BasePage implements OnInit {
   title: string = 'Enviar Correo';
   form: FormGroup;
   optionsSelected = new DefaultSelect();
-  subject: 'Aviso de amparo';
+  subject: string = null;
   preview: any = null;
   for: string = null;
   message: string = '';
@@ -61,10 +61,10 @@ export class SendMailModalComponent extends BasePage implements OnInit {
 
   initialForm() {
     this.form = this.fb.group({
-      for: [null],
-      cc: [null],
+      for: [this.for],
+      cc: [this.cc],
       subject: [this.subject],
-      message: [null],
+      message: [this.message],
       selMen: [null],
     });
   }
@@ -119,7 +119,22 @@ export class SendMailModalComponent extends BasePage implements OnInit {
   }
 
   async send() {
-    if (!this.form.get('for').value && !this.form.get('message').value) {
+    if (
+      this.form.get('for').value == '' ||
+      this.form.get('for').value == null
+    ) {
+      this.onLoadToast(
+        'error',
+        'Los campos Para/Mensaje no pueden estar vacios',
+        ''
+      );
+      return;
+    }
+
+    if (
+      this.form.get('message').value == '' ||
+      this.form.get('message').value == null
+    ) {
       this.onLoadToast(
         'error',
         'Los campos Para/Mensaje no pueden estar vacios',
@@ -130,7 +145,7 @@ export class SendMailModalComponent extends BasePage implements OnInit {
     let selecMsg = this.form.get('selMen').value;
     let para = this.form.get('for').value.split(',');
     let cc =
-      this.form.get('cc').value != null
+      this.form.get('cc').value != null || this.form.get('cc').value != ''
         ? this.form.get('cc').value.split(',')
         : [];
     let asunto = this.form.get('subject').value;
