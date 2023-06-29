@@ -5,12 +5,13 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { BasePage } from 'src/app/core/shared';
 @Component({
   selector: 'app-print-massive-account',
   templateUrl: './print-massive-account.component.html',
   styles: [],
 })
-export class PrintMassiveAccountComponent implements OnInit {
+export class PrintMassiveAccountComponent extends BasePage implements OnInit {
   form: FormGroup;
   depositD: string = '';
   depositT: string = '';
@@ -26,7 +27,9 @@ export class PrintMassiveAccountComponent implements OnInit {
     private siabService: SiabService,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -34,8 +37,7 @@ export class PrintMassiveAccountComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      file: [null, Validators.required, Validators.maxLength(11)],
-
+      file: [null, Validators.required],
       depositDate: [null, Validators.required],
       depositDateTo: [null, Validators.required],
 
@@ -45,6 +47,7 @@ export class PrintMassiveAccountComponent implements OnInit {
       receptionDate: [null, Validators.required],
       receptionDateTo: [null, Validators.required],
     });
+    console.log('formmm', this.form);
   }
   Generar() {
     this.depositD = this.datePipe.transform(
@@ -123,5 +126,28 @@ export class PrintMassiveAccountComponent implements OnInit {
 
   cleanForm() {
     this.form.reset();
+    // this.deshabilitarFechasFinales();
+  }
+
+  onChange(tipo: any) {
+    console.log('tipo', tipo);
+    if (tipo == 1) {
+      console.log('tipo', tipo);
+
+      this.form.controls['depositDateTo'].enable();
+    }
+
+    if (tipo == 2) {
+      console.log('tipo', this.form);
+      // this.form.updateValueAndValidity();
+
+      this.form.controls['transferenceDateTo'].enable();
+    }
+
+    if (tipo == 3) {
+      console.log('tipo', tipo);
+
+      this.form.controls['receptionDateTo'].enable();
+    }
   }
 }

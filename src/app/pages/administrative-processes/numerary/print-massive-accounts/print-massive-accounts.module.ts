@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../../../../shared/shared.module';
 import { PrintMassiveAccountComponent } from './print-massive-account/print-massive-account.component';
 import { PrintMassiveAccountsRoutingModule } from './print-massive-accounts-routing.module';
+import { DateInitialFinishComponent } from 'src/app/@standalone/shared-forms/date-initial-finish/date-initial-finish.component';
 
 @NgModule({
   declarations: [PrintMassiveAccountComponent],
@@ -13,6 +14,7 @@ import { PrintMassiveAccountsRoutingModule } from './print-massive-accounts-rout
     PrintMassiveAccountsRoutingModule,
     SharedModule,
     ReactiveFormsModule,
+    DateInitialFinishComponent,
   ],
 })
 export class PrintMassiveAccountsModule {}
