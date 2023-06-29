@@ -113,6 +113,7 @@ export class ProceedingsConversionModalComponent
     });
   }
   onUserRowSelect(row: any): void {
+    this.loading = true;
     if (row.isSelected) {
       this.selectedRow = row.data;
     } else {
