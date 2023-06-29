@@ -298,7 +298,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
             console.log('BINARY EXCEL', response);
 
             if (filter == 'si') {
-              this.alert('success', 'Archivo subido exitosamente', 'Cargado');
+              this.alert('success', 'Archivo subido correctamente', 'Cargado');
             }
 
             this.loading = false;
@@ -312,7 +312,8 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           if (filter != 'no') {
             this.alert(
               'error',
-              'No existen registros disponibles para el proceso de reclamación de pago en el archivo cargado',
+              'No hay registros para la reclamación de pago en el archivo cargado.',
+              // 'No existen registros disponibles para el proceso de reclamación de pago en el archivo cargado',
               ''
             );
           }
@@ -579,7 +580,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.document = null;
         this.alert(
           'success',
-          'Se ha actualizado el motivo de cambio de los bienes seleccionados y eliminado el folio anterior',
+          'Motivo de cambio actualizado y folio anterior eliminado.',
           'Actualizado'
         );
       },

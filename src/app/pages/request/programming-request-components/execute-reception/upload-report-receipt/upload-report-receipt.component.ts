@@ -127,20 +127,30 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
 
   selectFile(event?: any) {
     this.selectedFile = event.target.files[0];
-    if (this.selectedFile?.size > 10000000) {
+    if (this.selectedFile?.size > 100000000) {
       this.validateSizePDF = true;
-      this.onLoadToast(
-        'warning',
-        'Error',
-        'Se debe cargar un documentos menor a 10MB'
-      );
-      this.form.get('file').reset;
+      this.alertInfo(
+        'info',
+        'Acción Inválida',
+        'Se debe cargar un documentos menor a 100MB'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.form.get('file').reset;
+        }
+      });
     }
 
     const extension = this.selectedFile?.name.split('.').pop();
     if (extension != 'pdf') {
-      this.onLoadToast('warning', 'Error', 'Se debe cargar un documento PDF');
-      this.form.get('file').setValue(null);
+      this.alertInfo(
+        'info',
+        'Acción Inválida',
+        'Se debe cargar un documentos menor a 100MB'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.form.get('file').reset;
+        }
+      });
     }
   }
 
@@ -193,7 +203,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
               this.alertInfo(
                 'success',
                 'Acción correcta',
-                'Documento Adjuntado correctamente'
+                'Documento adjuntado correctamente'
               ).then(question => {
                 if (question.isConfirmed) {
                   this.modalRef.content.callback(true);
