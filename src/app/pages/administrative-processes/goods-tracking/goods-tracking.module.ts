@@ -11,8 +11,9 @@ import { GoodsTrackingRoutingModule } from './goods-tracking-routing.module';
 //Components
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { GoodsReviewStatusComponent } from './goods-review-status/goods-review-status.component';
+import { ListNoAttendedComponent } from './list-no-attended/list-no-attended.component';
 @NgModule({
-  declarations: [GoodsReviewStatusComponent],
+  declarations: [GoodsReviewStatusComponent, ListNoAttendedComponent],
   imports: [
     CommonModule,
     GoodsTrackingRoutingModule,

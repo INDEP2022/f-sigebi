@@ -14,8 +14,48 @@ export const PROCEEDINGSCONVERSION_COLUMNS = {
     width: '10%',
     sort: false,
   },
-  proceedings: {
-    title: 'Acta',
+  goodStatus: {
+    title: 'Estatus',
+    width: '10%',
+    sort: false,
+  },
+  rowClassFunction: (row: any) => {
+    if (row.goodStatus === 'disponible') {
+      return 'row-verde';
+    } else if (row.goodStatus === 'no disponible') {
+      return 'row-negro'; // Clase CSS para filas inactivas
+    } else {
+      return 'row-verde'; // Clase CSS para filas activas
+    }
+  },
+};
+export const COPY = {
+  goodId: {
+    title: 'No Bien',
+    width: '10%',
+    sort: false,
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.goodId;
+    // },
+  },
+  description: {
+    title: 'Descripcion',
+    width: '20%',
+    sort: false,
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.description;
+    // },
+  },
+  amount: {
+    title: 'Cantidad',
+    width: '10%',
+    sort: false,
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.amount;
+    // },
+  },
+  goodStatus: {
+    title: 'Estatus',
     width: '10%',
     sort: false,
   },
@@ -205,3 +245,9 @@ const WHEEL_DATA_COLUMNS = [
 
 export const OFFICE_COLOR_DATA_COLUMN = 'bg-info text-light';
 const OFFICE_DATA_COLUMNS = ['nooficio', 'fgrnobien', 'FGRNOBIEN', 'fecoficio'];
+
+export class IGoodStatus {
+  goodClassNumber: string | number;
+  goodStatus: string;
+  goodId: string | number;
+}

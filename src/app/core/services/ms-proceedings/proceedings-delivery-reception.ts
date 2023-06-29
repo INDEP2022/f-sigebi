@@ -15,6 +15,7 @@ import {
 })
 export class ProceedingsDeliveryReceptionService extends HttpService {
   private readonly endpoint = ProceedingsEndpoints.ProceedingsDeliveryReception;
+  private readonly filter = `?filter.previewFind=`;
   constructor() {
     super();
     this.microservice = ProceedingsEndpoints.BasePath;
@@ -65,5 +66,13 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     // return this.get<IListResponse<IValidations>>(partials, params).pipe(
     //   tap(() => (this.microservice = ''))
     // );
+  }
+
+  getAllByActa(
+    cve: string
+  ): Observable<IListResponse<IProccedingsDeliveryReception>> {
+    return this.get<IListResponse<IValidations>>(
+      `${this.endpoint}${this.filter}${cve}`
+    );
   }
 }

@@ -3,7 +3,10 @@
     <!-- <h5 class="title">Caracter&Iacute;sticas del bien</h5> -->
     <div class="row w-100">
       <div class="col-12 col-sm-12 col-md-8">
-        <h5 class="title">
+        <h5
+          class="title"
+          [class]="actualGoodNumber ? 'pointer' : ''"
+          (click)="goToHistoric()">
           Caracter&Iacute;sticas del bien
           <ng-container *ngIf="numberGood">{{ actualGoodNumber }}</ng-container>
         </h5>
