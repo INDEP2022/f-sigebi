@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">REGISTRO DE FICHAS DE DEPOSITO</h5>
+    <h5 class="title">REGISTRO DE FICHAS DE DEPÓSITO</h5>
   </div>
   <div body>
     <div class="row">
@@ -15,6 +15,7 @@
             <div class="row">
               <div class="col-6 d-flex justify-content-end">
                 <app-columns-select
+                  [defaultColumns]="10"
                   [(settings)]="settings"></app-columns-select>
               </div>
               <div class="col-6">
@@ -54,29 +55,44 @@
             </ng2-smart-table>
           </ng-scrollbar>
         </div>
-        <app-pagination
-          *ngIf="showPagination"
-          [params]="paramsList"
-          [totalItems]="totalItems">
-        </app-pagination>
+        <div class="row">
+          <div class="col-md-4 mt-3">
+            <i class="fa fa-square" style="color: #e2c103"></i
+            ><span style="font-weight: 500">
+              Movimientos con bienes conciliados &nbsp;&nbsp;
+            </span>
+          </div>
+          <div class="col-8">
+            <app-pagination
+              *ngIf="showPagination"
+              [params]="paramsList"
+              [totalItems]="totalItems">
+            </app-pagination>
+          </div>
+        </div>
       </div>
     </div>
     <form class="form-material mt-4" [formGroup]="form">
       <div class="row">
         <div class="col-md-6 mt-3">
-          <span class="text-yellow mr-5"
-            ><i class="fa fa-square"></i> Ficha asociada
-          </span>
+          <!-- <i class="fa fa-square" style="color: #e2c103;"></i><span style="font-weight: 500;">
+            Movimientos con bienes conciliados &nbsp;&nbsp;
+          </span> -->
+
+          <!-- <span class="text-yellow mr-5"><i class="fa fa-square" style="color: #e2c103;"></i> Ficha asociada
+          </span> -->
         </div>
         <!-- <div class="col-md-5"></div> -->
         <div class="col-md-6 mt-3">
           <form-field
             [control]="form.get('descriptionGood')"
             label="Descripción del Bien">
-            <input
+            <textarea
+              cols="2"
+              rows="3"
               type="text"
               class="form-control"
-              formControlName="descriptionGood" />
+              formControlName="descriptionGood"></textarea>
           </form-field>
         </div>
       </div>
@@ -88,20 +104,12 @@
             <div class="row">
               <div class="col-md-12 mt-3 text-center">
                 <button
-                  (click)="exportar()"
-                  style="width: 70%"
-                  class="btn btn-success btn-sm">
-                  Exportar
-                  <i class="bx bx-download float-icon"></i>
-                </button>
-              </div>
-              <div class="col-md-12 mt-3 text-center">
-                <button
                   class="btn btn-success btn-sm"
                   style="width: 70%"
                   type="button"
                   (click)="file.click()">
                   Importar
+                  <i class="bx bx-upload float-icon"></i>
                 </button>
                 <input
                   type="file"
@@ -110,31 +118,24 @@
                   class="d-none"
                   accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                   (change)="onFileChange($event)" />
-                <!-- <button
-                  class="btn btn-success btn-sm"
-                  style="width: 70%"
-                  class="btn btn-primary btn-sm active"
-                  type="button"
-                  (click)="file.click()">
-                  Importar
-                </button>
-                <input
-                  name="file"
-                  #file
-                  class="d-none"
-                  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                  (change)="onFileChange($event)" /> -->
-                <!-- </div> -->
-                <!-- <button (click)="importar()" style="width: 70%" class="btn btn-primary btn-sm active">
-                  Importar
-                </button> -->
               </div>
+              <div class="col-md-12 mt-3 text-center">
+                <button
+                  (click)="exportar()"
+                  style="width: 70%"
+                  class="btn btn-success btn-sm">
+                  Exportar
+                  <i class="bx bx-download float-icon"></i>
+                </button>
+              </div>
+
               <div class="col-md-12 mt-3 text-center">
                 <button
                   (click)="actualizarFunc()"
                   style="width: 70%"
                   class="btn btn-primary btn-sm active">
                   Actualizar
+                  <i class="fas fa-sync-alt"> </i>
                 </button>
               </div>
               <div class="col-md-12 mt-3 text-center">

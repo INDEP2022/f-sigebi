@@ -75,6 +75,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: {
+        columnTitle: 'Acciones',
         delete: true,
         edit: false,
         add: false,
@@ -233,7 +234,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-
+    console.log('params1', params);
     if (params['filter.motionDate']) {
       params['motionDate'] = params['filter.motionDate'];
       delete params['filter.motionDate'];
@@ -264,7 +265,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       delete params['filter.es_parcializacion'];
     }
 
-    console.log('params', params);
+    console.log('params2', params);
     this.accountMovementService.getAccount2(params).subscribe({
       next: async (response: any) => {
         let result = response.data.map(async (item: any) => {
