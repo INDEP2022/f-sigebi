@@ -626,7 +626,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       .subscribe({
         next: () => {
           console.log('data', dataEmail);
-          this.onLoadToast(
+          this.alert(
             'success',
             'Notificación',
             'Se envio el correo electrónico a los usuarios correctamente'

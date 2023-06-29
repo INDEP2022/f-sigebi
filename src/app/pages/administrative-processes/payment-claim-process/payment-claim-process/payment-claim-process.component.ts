@@ -151,7 +151,8 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
             search[filter.field]();
 
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              this.columnFilters[field] = `${filter.search}`;
+              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
@@ -241,6 +242,20 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         ...this.columnFilters,
       };
 
+      if (params['filter.id']) {
+        params['id'] = params['filter.id'];
+        delete params['filter.id'];
+      }
+
+      if (params['filter.status']) {
+        params['status'] = params['filter.status'];
+        delete params['filter.status'];
+      }
+      if (params['filter.description']) {
+        params['description'] = params['filter.description'];
+        delete params['filter.description'];
+      }
+
       // console.log("this.document1", this.document)
       // this.cambiarValor()
       // console.log('SU');
@@ -298,7 +313,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
             console.log('BINARY EXCEL', response);
 
             if (filter == 'si') {
-              this.alert('success', 'Archivo subido correctamente', 'Cargado');
+              this.alert('success', 'Archivo subido correctamente', '');
             }
 
             this.loading = false;
@@ -581,7 +596,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Motivo de cambio actualizado y folio anterior eliminado.',
-          'Actualizado'
+          ''
         );
       },
       error: err => {
@@ -590,16 +605,12 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           this.cambiarValor();
           this.document = null;
           this.valDocument = false;
-          this.alert(
-            'success',
-            'Se ha eliminado correctamente el folio',
-            'Elimiado'
-          );
+          this.alert('success', 'Se ha eliminado correctamente el folio', '');
         } else {
           this.alert(
             'error',
             'Se ha generado un error al eliminar el Folio',
-            'Elimiado'
+            ''
           );
         }
         console.log(err);

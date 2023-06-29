@@ -103,7 +103,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
                 }
                 let v_val_entfed;
                 this.val_atributos_inmuebles++;
-                if (this.v_bien_inm) {
+                if (good.no_tipo && good.no_tipo + '' === '6') {
                   if (
                     item.attribute === 'ESTADO' &&
                     this.val_atributos_inmuebles > 4
