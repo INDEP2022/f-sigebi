@@ -5,6 +5,7 @@ import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -47,7 +48,8 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
     private readonly goodServices: GoodService,
     private readonly historyGoodService: HistoryGoodService,
     private readonly documnetServices: DocumentsService,
-    private token: AuthService
+    private token: AuthService,
+    private readonly expedientService: ExpedientService
   ) {
     super();
   }
@@ -95,29 +97,44 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
     //5457725
     console.log('XXXXXXXXXXXXXXXXX');
     if (this.numberGood.value === null || this.numberGood.value === '') {
-      this.alert('info', 'Infomación', 'Ingrese No. de Bien');
+      this.alert('warning', 'Regularización jurídica', 'Ingrese No. de Bien');
       return;
     }
     this.goodServices.getById(this.numberGood.value).subscribe({
-      next: (response: any) => {
+      next: async (response: any) => {
         console.log(response.data[0]);
         if (
           response.data[0].status === 'REJ' ||
           response.data[0].status === 'ADM'
         ) {
-          this.good = response.data[0];
-          this.goodServices.good$.emit(this.good);
-          this.numberFile = this.good.fileNumber;
-          this.setGood();
-          if (!this.redicrectScan) {
-            this.alert('success', 'Éxitoso', 'Bien cargado correctamente');
+          const valid: boolean = await this.validExpedient(
+            response.data[0].fileNumber
+          );
+          if (valid) {
+            this.good = response.data[0];
+            this.goodServices.good$.emit(this.good);
+            this.numberFile = this.good.fileNumber;
+            this.setGood();
+            if (!this.redicrectScan) {
+              this.alert(
+                'success',
+                'Regularización jurídica',
+                'Bien cargado correctamente'
+              );
+            }
+          } else {
+            this.alert(
+              'warning',
+              'Regularización jurídica',
+              `El expediente ${response.data[0].fileNumber} que esta asociado a este bien no existe.`
+            );
           }
         } else {
           if (!this.redicrectScan) {
             this.alert(
-              'info',
-              'Información',
-              `El estatus del bien ${this.numberGood.value} es incorrecto. Los estatus validos son  ADM o REJ.'`
+              'warning',
+              'Regularización jurídica',
+              `El estatus del bien ${this.numberGood.value} es incorrecto. Los estatus validos son  ADM o REJ.`
             );
           }
         }
@@ -144,8 +161,8 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
       this.numberFoli === ''
     ) {
       this.alert(
-        'info',
-        'Información',
+        'warning',
+        'Regularización jurídica',
         `No puede cambiar el estatus al bien ${this.good.id} porque aun no se ha generado un folio`
       );
       return;
@@ -165,7 +182,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
           this.postHistoryGood();
         },
         error: error => {
-          this.alert('error', 'ERROR', error.error.message);
+          this.alert('error', 'Ha ocurrido un error', error.error.message);
         },
       });
     }
@@ -190,8 +207,8 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
             console.log(err);
             res(valid);
             this.alert(
-              'info',
-              'Información',
+              'warning',
+              'Regularización jurídica',
               `No puede cambiar el estatus al bien ${this.good.id} porque aun no tiene documentos escaneados`
             );
           },
@@ -215,8 +232,8 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
       next: response => {
         this.alert(
           'success',
-          'Actualizado',
-          `Justificación de la Regularización jurídica del bien ${this.good.id} actualizado con éxito.`
+          'Regularización jurídica',
+          `Justificación de la Regularización jurídica del bien ${this.good.id} actualizada con éxito.`
         );
         this.clean();
       },
@@ -253,5 +270,14 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
           : this.numberFoli
       )
     );
+  }
+
+  validExpedient(fileNumber: number | string) {
+    return new Promise<boolean>((res, rej) => {
+      this.expedientService.getById(fileNumber).subscribe({
+        next: resp => res(true),
+        error: err => res(false),
+      });
+    });
   }
 }

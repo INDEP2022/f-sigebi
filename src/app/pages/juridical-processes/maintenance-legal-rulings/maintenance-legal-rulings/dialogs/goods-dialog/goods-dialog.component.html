@@ -6,8 +6,10 @@
     <form class="form-material" [formGroup]="dictationXGoodForm">
       <div class="row">
         <div class="col-md-12 mt-4">
-          <form-field [control]="dictationXGoodForm.get('ofDictNumber')">
-            <ngx-select
+          <form-field
+            label="No. Dictaminación"
+            [control]="dictationXGoodForm.get('ofDictNumber')">
+            <!-- <ngx-select
               (fetchItems)="getDictNumbers($event)"
               [data]="selectDictNumber"
               [form]="dictationXGoodForm"
@@ -15,7 +17,14 @@
               bindLabel="id"
               label="No. Dictaminación"
               control="ofDictNumber">
-            </ngx-select>
+            </ngx-select> -->
+            <input
+              type="number"
+              readonly
+              class="form-control"
+              min="1"
+              maxlength="15"
+              formControlName="ofDictNumber" />
           </form-field>
         </div>
 
@@ -24,7 +33,7 @@
             label="Tipo"
             [control]="dictationXGoodForm.get('typeDict')">
             <input
-              required
+              readonly
               type="text"
               class="form-control"
               maxlength="15"
@@ -33,8 +42,10 @@
         </div>
 
         <div class="col-md-12 mt-4">
-          <form-field [control]="dictationXGoodForm.get('proceedingsNumber')">
-            <ngx-select
+          <form-field
+            label="No. Expediente"
+            [control]="dictationXGoodForm.get('proceedingsNumber')">
+            <!-- <ngx-select
               (fetchItems)="getExpedients($event)"
               [data]="selectExpedient"
               [form]="dictationXGoodForm"
@@ -42,13 +53,19 @@
               bindLabel="id"
               label="No. Expediente"
               control="proceedingsNumber">
-            </ngx-select>
+            </ngx-select> -->
+            <input
+              type="number"
+              class="form-control"
+              min="1"
+              maxlength="15"
+              formControlName="proceedingsNumber" />
           </form-field>
         </div>
 
         <div class="col-md-12 mt-4">
-          <form-field [control]="dictationXGoodForm.get('id')">
-            <ngx-select
+          <form-field label="No. Bien" [control]="dictationXGoodForm.get('id')">
+            <!-- <ngx-select
               (fetchItems)="getGoods($event)"
               [data]="selectGood"
               [form]="dictationXGoodForm"
@@ -56,7 +73,13 @@
               bindLabel="id"
               label="No. Bien"
               control="id">
-            </ngx-select>
+            </ngx-select> -->
+            <input
+              type="number"
+              class="form-control"
+              min="1"
+              maxlength="15"
+              formControlName="id" />
           </form-field>
         </div>
 

@@ -235,7 +235,6 @@ export class GoodService extends HttpService {
     // if (params) {
     //   params['expedient'] = expedient;
     // }
-
     const route = `${GoodEndpoints.SearchByExpedient}?expedient=${expedient}`;
     return this.get<IListResponse<IGood>>(route, params);
   }
@@ -429,5 +428,8 @@ export class GoodService extends HttpService {
     const URL = `${environment.API_URL}/convertiongood/api/v1/${GoodActaConvertion.GoodActaConvertion}`;
 
     return this.http.post<any>(URL, payload).pipe(map(res => res));
+  }
+  updateGoodsRev(params?: any): Observable<IListResponse<any>> {
+    return this.put(GoodEndpoints.GoodsMotivesrev2, params);
   }
 }

@@ -96,7 +96,6 @@
                 </button>
               </div>
               <div class="col-md-12 mt-3 text-center">
-                <!-- <div class="m-3"> -->
                 <button
                   class="btn btn-success btn-sm"
                   style="width: 70%"
@@ -111,6 +110,20 @@
                   class="d-none"
                   accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                   (change)="onFileChange($event)" />
+                <!-- <button
+                  class="btn btn-success btn-sm"
+                  style="width: 70%"
+                  class="btn btn-primary btn-sm active"
+                  type="button"
+                  (click)="file.click()">
+                  Importar
+                </button>
+                <input
+                  name="file"
+                  #file
+                  class="d-none"
+                  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                  (change)="onFileChange($event)" /> -->
                 <!-- </div> -->
                 <!-- <button (click)="importar()" style="width: 70%" class="btn btn-primary btn-sm active">
                   Importar

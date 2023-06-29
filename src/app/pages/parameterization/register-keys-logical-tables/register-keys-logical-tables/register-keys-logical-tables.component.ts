@@ -28,7 +28,6 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITable } from 'src/app/core/models/catalogs/dinamic-tables.model';
 import { ITdescCve } from 'src/app/core/models/ms-parametergood/tdesccve-model';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import Swal from 'sweetalert2';
 import { RegisterKeyOneModalComponent } from '../register-key-one-modal/register-key-one-modal.component';
 
 @Component({
@@ -73,6 +72,10 @@ export class RegisterKeysLogicalTablesComponent
   tableValue: ITable;
 
   showTables: boolean = true;
+
+  idSelectTable: string;
+
+  countTable: number = 0;
 
   constructor(
     private modalService: BsModalService,
@@ -220,6 +223,7 @@ export class RegisterKeysLogicalTablesComponent
 
   //Evento cuando se selecciona un item del select
   onValuesChange(tablesChange: ITable) {
+    this.idSelectTable = tablesChange.table;
     this.form.controls['description'].setValue(tablesChange.description);
     this.form.controls['tableType'].setValue(tablesChange.tableType);
     this.form.controls['table'].setValue(tablesChange.table);
@@ -260,6 +264,8 @@ export class RegisterKeysLogicalTablesComponent
 
   //Trae descripción de claves por tabla seleccionada
   getKeys(id?: string | number): void {
+    this.tdescCve = [];
+    this.countTable = 0;
     let _id = this.form.controls['table'].value;
     this.loading2 = true;
     this.tdescCveService
@@ -275,6 +281,7 @@ export class RegisterKeysLogicalTablesComponent
       .subscribe({
         next: response => {
           this.tdescCve = response.data;
+          this.countTable = response.count;
           this.totalItems2 = response.count;
           this.loading2 = false;
         },
@@ -285,10 +292,12 @@ export class RegisterKeysLogicalTablesComponent
   //Para editar la descripción de atributos con 5 clave
   openForm(tdescCve?: ITdescCve) {
     const idCve = { ...this.descriptionCve };
+    const selectTabla = this.idSelectTable;
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       tdescCve,
       idCve,
+      selectTabla,
       callback: (next: boolean) => {
         if (next) this.getKeys(idCve.table);
       },
@@ -302,10 +311,12 @@ export class RegisterKeysLogicalTablesComponent
   //Para editar la descripción de atributos con 1 clave
   openForm2(tdescCve?: ITdescCve) {
     const idCve = { ...this.descriptionCve };
+    const selectTabla = this.idSelectTable;
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       tdescCve,
       idCve,
+      selectTabla,
       callback: (next: boolean) => {
         if (next) this.getKeys(idCve.table);
       },
@@ -343,9 +354,20 @@ export class RegisterKeysLogicalTablesComponent
   delete(id: number) {
     const idCve = { ...this.descriptionCve };
     this.tdescCveService.remove(id).subscribe({
-      next: () => (
-        Swal.fire('Borrado', '', 'success'), this.getKeys(idCve.table)
-      ),
+      next: () => {
+        const idCve = { ...this.descriptionCve };
+        this.params2
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getKeys(idCve.table));
+        this.alert('success', 'Clave para tabla lógica', 'Borrado');
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Clave para tabla lógica',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 

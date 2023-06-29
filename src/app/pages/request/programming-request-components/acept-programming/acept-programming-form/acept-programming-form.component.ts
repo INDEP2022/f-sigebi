@@ -91,13 +91,16 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     },
     columns: ESTATE_COLUMNS_VIEW,
   };
-
+  paramsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
+  // namewarehouse1: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsStation = new BehaviorSubject<ListParams>(new ListParams());
   paramsAuthority = new BehaviorSubject<ListParams>(new ListParams());
   goodsInfoTrans: any[] = [];
+  // goodsInfoTrans: IGoodProgramming[];
   goodsInfoGuard: any[] = [];
   goodsInfoWarehouse: any[] = [];
+  // goodsInfoWarehouse2: any[] = [];
   totalItems: number = 0;
   totalItemsTransportable: number = 0;
   totalItemsGuard: number = 0;
@@ -121,6 +124,11 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   authorityName: string = '';
   typeRelevantName: string = '';
   nameWarehouse: string = '';
+  // goodId: any;
+  // uniqueKey: any;
+  // goodDescription: any;
+  // quantity: any;
+  // unitMeasure: any;
   transGoods: any[] = [];
   guardGoods: any[] = [];
   warehouseGoods: any[] = [];
@@ -167,6 +175,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.showGoodProgramming());
+    // this.sendEmailUsers();
+    // this.show2GoodProgramming();
   }
 
   getProgrammingId() {
@@ -245,6 +255,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     return this.warehouseService
       .getById(this.programming.storeId)
       .subscribe(data => {
+        console.log('nombre', data.description);
         this.nameWarehouse = data.description;
         this.formLoading = false;
       });
@@ -367,7 +378,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     config.initialState = {
       callback: (next: boolean) => {
         if (next) {
-        
+
           //this.electronicSign();
         }
       },
@@ -426,8 +437,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             response.saePhysicalState = 'MALO';
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
-          // queda pendiente mostrar el alías del almacén //
-
           this.goodsInfoTrans.push(response);
           this.goodsTranportables.load(this.goodsInfoTrans);
           this.totalItemsTransportable = this.goodsTranportables.count();
@@ -441,7 +450,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     const goodsTrans = data.filter(items => {
       return items.status == 'EN_RESGUARDO_TMP';
     });
-
+    console.log('transportable22', data);
     goodsTrans.map(items => {
       this.goodService.getGoodByIds(items.goodId).subscribe({
         next: response => {
@@ -452,9 +461,12 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
           // queda pendiente mostrar el alías del almacén //
-
+          console.log('transportable', response);
           this.goodsInfoGuard.push(response);
+          console.log('transportable22', items);
+          console.log('datos de trans', this.goodsInfoGuard);
           this.goodsGuards.load(this.goodsInfoGuard);
+          console.log('transportable2', response.decriptionGoodSae);
           this.totalItemsGuard = this.goodsGuards.count();
           this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
         },
@@ -476,8 +488,14 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             response.saePhysicalState = 'MALO';
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
+
+          // response.decriptionGoodSae = 'Sin descripción';
+          // warehouseName
           // queda pendiente mostrar el alías del almacén //
+          console.log('response_!!!', response.storeId);
+          console.log('response', response);
           this.goodsInfoWarehouse.push(response);
+          console.log('warefilter', this.goodsInfoWarehouse);
           this.goodsWarehouse.load(this.goodsInfoWarehouse);
           this.totalItemsWarehouse = this.goodsWarehouse.count();
           this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
@@ -498,6 +516,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         }
       });
     } else {
+      // this.sendEmailUsers();
       this.alertInfo(
         'info',
         'Acción no permitida',
@@ -510,23 +529,27 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.infoUsers.map(user => {
       const emailsUsers = user.email;
       this.emails.push(emailsUsers);
+      console.log('correo', emailsUsers);
     });
 
     this.goodsInfoTrans.map(async good => {
-      const warehouse = await this.warehouseName(good.storeId);
+      const warehouse = await this.warehouseNameT(good.nameWarehouse);
+      console.log('infotrans', good);
       const guardObject = {
         goodId: good.goodId,
         uniqueKey: good.uniqueKey,
         goodDescription: good.goodDescription,
         quantity: good.quantity,
         unitMeasure: good.unitMeasure,
-        nameWarehouse: warehouse,
+        nameWarehouse: warehouse, //condicionar
       };
+      console.log('transdato', good.nameWarehouse);
+      // console.log('transdato nombre', warehouse);
       this.transGoods.push(guardObject);
     });
 
     this.goodsInfoGuard.map(async good => {
-      const warehouse = await this.warehouseName(good.storeId);
+      const warehouse = await this.warehouseNameT(good.nameWarehouse);
       const guardObject = {
         goodId: good.goodId,
         uniqueKey: good.uniqueKey,
@@ -535,11 +558,13 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         unitMeasure: good.unitMeasure,
         nameWarehouse: warehouse,
       };
+      console.log('guardsgood', good.nameWarehouse);
+      console.log('guardsgood nombre', warehouse);
       this.guardGoods.push(guardObject);
     });
 
     this.goodsInfoWarehouse.map(async good => {
-      const warehouse = await this.warehouseName(good.storeId);
+      const warehouse = await this.warehouseNameT(good.nameWarehouse);
       const warehouseObject = {
         goodId: good.goodId,
         uniqueKey: good.uniqueKey,
@@ -548,9 +573,25 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         unitMeasure: good.unitMeasure,
         nameWarehouse: warehouse,
       };
+      console.log('infowarehouse', good.nameWarehouse);
+      console.log('warehpous nombre', warehouse);
       this.warehouseGoods.push(warehouseObject);
     });
-
+    this.goodsInfoTrans.map(item => {
+      item.nameWarehouse = item.storeId;
+      delete item.storeId;
+      return item;
+    });
+    this.goodsInfoGuard.map(item => {
+      item.nameWarehouse = item.storeId;
+      delete item.storeId;
+      return item;
+    });
+    this.goodsInfoWarehouse.map(item => {
+      item.nameWarehouse = item.storeId;
+      delete item.storeId;
+      return item;
+    });
     const dataEmail = {
       folio: this.programming.folio,
       startDate: this.programming.startDate,
@@ -558,16 +599,33 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       city: this.programming.city,
       address: this.programming.address,
       usersProg: this.infoUsers,
-      goodsTrans: this.transGoods,
-      goodsResg: this.guardGoods,
-      goodsWarehouse: this.warehouseGoods,
+      goodsTrans: this.goodsInfoTrans,
+      goodsResg: this.goodsInfoGuard,
+      goodsWarehouse: this.goodsInfoWarehouse,
       emailSend: this.emails,
     };
-
+    // this.warehouseService
+    //   .getAllFilter(this.paramsWarehouse.getValue())
+    //   .subscribe(data => {
+    //     dataEmail.goodsWarehouse = dataEmail.goodsWarehouse.map(
+    //       (element1: any) => {
+    //         data.data.map(element2 => {
+    //           if (element1.nameWarehouse === element2.idWarehouse) {
+    //             element1.nameWarehouse = element2.description;
+    //           }
+    //         });
+    //         console.log('nombre zzzz', element1.nameWarehouse);
+    //         console.log('nombre zzzzxxxxx', element1);
+    //         return element1.nameWarehouse;
+    //       }
+    //     );
+    //   });
+    console.log('newdata', dataEmail);
     this.emailService
       .createEmailProgramming(JSON.stringify(dataEmail))
       .subscribe({
         next: () => {
+          console.log('data', dataEmail);
           this.onLoadToast(
             'success',
             'Notificación',
@@ -580,6 +638,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         error: error => {},
       });
   }
+  // this.nameWarehouse = data.description;
+  // this.formLoading = false;
 
   //Creamos la tarea de notificación al delegado regional//
   async createTaskNotification() {
@@ -692,16 +752,46 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     });
   }
 
-  warehouseName(idWarehouse: number) {
+  warehouseNameT(warehouse: any) {
     return new Promise((resolve, reject) => {
-      this.warehouseService.getById(idWarehouse).subscribe({
-        next: response => {
-          return resolve(response.description);
-        },
-        error: error => {},
-      });
+      // this.paramsWarehouse.getValue()['filter.idWarehouse'] =
+      //   this.nameWarehouse;
+
+      this.warehouseService
+        .getAllFilter(this.paramsWarehouse.getValue())
+        .subscribe({
+          next: response => {
+            response.data.map((item: any) => {
+              // if(this.nameWarehouse===item.idWarehouse){
+
+              // }
+              // this.nameWarehouse = response;
+              // console.log(
+              //   'response data',
+              //   this.nameWarehouse === item.idWarehouse
+              // );
+              return resolve(item.description);
+            });
+            // this.nameWarehouse == response.description;
+            console.log('el cambio por aca');
+          },
+          error: error => {},
+        });
     });
   }
+  //   this.paramsWarehouse.getValue()['filter.idWarehouse'] =
+  //   this.goodsInfoTrans[0].nameWarehouse;
+  // this.warehouseService
+  //   .getAllFilter(this.paramsWarehouse.getValue())
+  //   .subscribe(data => {
+  //     dataEmail.goodsTrans = dataEmail.goodsTrans.map((element1: any) => {
+  //       data.data.map(element2 => {
+  //         if (element1.nameWarehouse === element2.idWarehouse) {
+  //           element1.nameWarehouse = element2.description;
+  //         }
+  //       });
+  //       return element1;
+  //     });
 
   showGood(item: IGoodProgrammingSelect) {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };

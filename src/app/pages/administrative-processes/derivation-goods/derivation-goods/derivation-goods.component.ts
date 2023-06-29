@@ -115,6 +115,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
 
   cveActaConv: any;
   tipoValue: any;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -471,5 +472,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         actConvertion: this.form.value.actConvertion,
       },
     });
+    this.modalService.show(ActaConvertionFormComponent, config);
   }
 }

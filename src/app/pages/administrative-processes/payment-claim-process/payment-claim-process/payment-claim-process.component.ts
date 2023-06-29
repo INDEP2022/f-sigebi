@@ -83,6 +83,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   dataA: any = 0;
   dataD: any = 0;
+  paginadoNG: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -223,7 +224,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     console.log('Entro');
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
-    this.alert('success', 'Archivo subido exitosamente', 'Cargado');
+    // this.alert('success', 'Archivo subido exitosamente', 'Cargado');
     this.readExcel(files[0], 'si');
   }
 
@@ -243,6 +244,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       // console.log("this.document1", this.document)
       // this.cambiarValor()
       // console.log('SU');
+      this.form.get('justification').setValue('');
       this.massiveGoodService.getFProRecPag2CSV(params, binaryExcel).subscribe(
         (response: any) => {
           console.log('filter', filter);
@@ -263,6 +265,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           });
 
           Promise.all(result).then(async (resp: any) => {
+            this.paginadoNG = true;
             this.goods = response.data;
             this.data.load(this.goods);
 
@@ -275,6 +278,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
             }
             console.log('aaa', aaa);
             this.good = aaa;
+
             this.cambiarValor3(this.good);
             this.data.refresh();
             this.getDocument(this.goods);
@@ -286,19 +290,32 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
             this.cargarData(file);
 
-            this.form.enable();
-
+            if (this.good == null) {
+              this.form.disable();
+            } else {
+              this.form.enable();
+            }
             console.log('BINARY EXCEL', response);
+
+            if (filter == 'si') {
+              this.alert('success', 'Archivo subido correctamente', 'Cargado');
+            }
 
             this.loading = false;
           });
         },
         error => {
           this.data.load([]);
+          this.form.disable();
           // this.totalItems = 0;
           this.loading = false;
           if (filter != 'no') {
-            this.alert('error', 'No hay datos disponibles', '');
+            this.alert(
+              'error',
+              'No hay registros para la reclamación de pago en el archivo cargado.',
+              // 'No existen registros disponibles para el proceso de reclamación de pago en el archivo cargado',
+              ''
+            );
           }
           // this.onLoadToast('warning', 'No hay datos disponibles', '');
         }
@@ -379,21 +396,23 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   async change2() {
     this.goods.forEach(async good => {
       // good.status = good.status === 'PRP' ? 'ADM' : 'PRP';
-      let obj: any = {
-        id: good.id,
-        goodId: good.id,
-        status: good.status,
-        causeNumberChange: this.form.value.justification,
-      };
-      this.goodServices.update(obj).subscribe({
-        next: response => {
-          console.log(response);
-        },
-        error: err => {
-          this.loading = false;
-          this.idsNotExist.push({ id: good.id, reason: err.error.message });
-        },
-      });
+      if (good.approved == true) {
+        let obj: any = {
+          id: good.id,
+          goodId: good.id,
+          status: good.status,
+          causeNumberChange: this.form.value.justification,
+        };
+        this.goodServices.update(obj).subscribe({
+          next: response => {
+            console.log(response);
+          },
+          error: err => {
+            this.loading = false;
+            this.idsNotExist.push({ id: good.id, reason: err.error.message });
+          },
+        });
+      }
     });
     // this.onLoadToast(
     //   'success',
@@ -470,6 +489,10 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   }
 
   clean(event: any) {
+    this.paramsList.getValue().limit = 10;
+    this.paramsList.getValue().page = 1;
+    this.totalItems = 0;
+    this.paginadoNG = false;
     this.form.disable();
     this.goods = [];
     this.addStatus();
@@ -557,7 +580,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.document = null;
         this.alert(
           'success',
-          'Se ha actualizado el motivo de cambio de los bienes seleccionados y eliminado el folio anterior',
+          'Motivo de cambio actualizado y folio anterior eliminado.',
           'Actualizado'
         );
       },

@@ -4,7 +4,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { defineLocale } from 'ngx-bootstrap/chronos';
-import { BsDatepickerModule, BsLocaleService } from 'ngx-bootstrap/datepicker';
+import {
+  BsDatepickerConfig,
+  BsDatepickerModule,
+  BsLocaleService,
+} from 'ngx-bootstrap/datepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { esLocale } from 'ngx-bootstrap/locale';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
@@ -32,6 +36,7 @@ import { NumbersFilterDirective } from './directives/numbers-filter.directive';
 import { PermissionsDirective } from './directives/permissions.directive';
 /*Redux NgRX Global Vars Store*/
 import { CustomSelectWidthLoading } from '../@standalone/shared-forms/custom-select-loading/custom-select-loading.component';
+import { CustomDateFilterComponent } from '../@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { DatePickerDirective } from './directives/date-picker.directive';
 import { UppercaseDirective } from './directives/uppercase.directive';
 import { GlobalVarsModule } from './global-vars/global-vars.module';
@@ -62,6 +67,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     AutoSizeDirective,
     UppercaseDirective,
     DatePickerDirective,
+    CustomDateFilterComponent,
   ],
   imports: [
     CommonModule,
@@ -108,11 +114,18 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     AutoSizeDirective,
     UppercaseDirective,
     DatePickerDirective,
+    CustomDateFilterComponent,
   ],
+  providers: [{ provide: BsDatepickerConfig, useFactory: getDatepickerConfig }],
 })
 export class SharedModule {
   constructor(private localeService: BsLocaleService) {
     defineLocale('es', esLocale);
     this.localeService.use('es');
   }
+}
+export function getDatepickerConfig(): BsDatepickerConfig {
+  return Object.assign(new BsDatepickerConfig(), {
+    showWeekNumbers: false,
+  });
 }

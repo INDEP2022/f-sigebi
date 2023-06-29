@@ -29,8 +29,8 @@
             [settings]="settings"
             [source]="data"
             (delete)="showDeleteAlert($event.data)"
-            (createConfirm)="onAddConfirm($event)"
-            (editConfirm)="onSaveConfirm($event)"
+            (create)="onAddConfirm($event)"
+            (edit)="onSaveConfirm($event)"
             (userRowSelect)="selectRow($event.data)">
           </ng2-smart-table>
         </div>

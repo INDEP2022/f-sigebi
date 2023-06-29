@@ -1,20 +1,23 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
-import { DocumentsSeparatorsService } from 'src/app/core/services/ms-documents-separators/documents-separators.service';
+import { IDocumentsViewerFlyerNumber } from 'src/app/core/models/ms-documents/documents-viewer-flyerNumber.models';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GENERAL_DOCS_DOCUMENTS_VIEWER_COLUMNS } from './documents-viewer-columns';
+import { DocumentViewerFormComponent } from './documents-viewer-form/documents-viewer-form.component';
 
 @Component({
   selector: 'app-documents-viewer',
@@ -28,7 +31,7 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   form = this.fb.group({
     numberProceedings: [null],
     flyerNumber: [null],
-    separador: [null],
+    keySeparator: [null],
     significantDate: [null],
     keyTypeDocument: [null],
     descriptionDocument: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -43,25 +46,31 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters: any = [];
-  private typeDocumentInputChangeSubject = new Subject<string>();
+  aux: string;
+  dateInput: number | string;
+  dateInputString: string;
+  otro: any = [];
+  id: number | string;
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
 
   constructor(
     private fb: FormBuilder,
     private documentService: DocumentsService,
-    private documentSeparatorService: DocumentsSeparatorsService,
-    private datePipe: DatePipe
+    private modalService: BsModalService
   ) {
     super();
-    this.settings.actions = false;
     this.settings.columns = GENERAL_DOCS_DOCUMENTS_VIEWER_COLUMNS;
     this.settings.hideSubHeader = false;
+    this.settings.actions.edit = false;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
     this.settings.rowClassFunction = (row: { data: { scanStatus: string } }) =>
       row.data.scanStatus == 'ESCANEADO' ? 'digital' : 'pending';
   }
 
   ngOnInit(): void {
     this.loadDocumentsSeparator();
-    this.getDocuments(); //Aquí le indico que traiga todas las imágenes cuando se cargue la pantalla
+    this.getDocuments();
     this.loadDocumentsType();
     this.data
       .onChanged()
@@ -73,12 +82,11 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            /*switch para filtros por columna*/
             switch (filter.field) {
-              case 'numberProceedings': //Columna No Expediente
+              case 'numberProceedings':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'id': //Columna Folio universal
+              case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'cve_separador':
@@ -87,15 +95,14 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
               case 'keyTypeDocument':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'flyerNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
             if (filter.search !== '') {
-              console.log(this.columnFilters[field]); //Es el change del filtro de búsqueda
-              console.log(
-                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
-              ); //Es el datos a filtrar
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -109,54 +116,71 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
       .subscribe(() => this.getDocuments());
   }
 
-  //CAPTURA EL DATO A BUSCAR
-  onOptionsSelected(value: any) {
+  onOptionsSelectedTypeDocument(value: any) {
     this.selectTypeDoc = value.id;
   }
 
-  generateFilterParams(formGroup: FormGroup): string {
+  onOptionsSelectedSeparator(value: any) {
+    this.selectSeparator = value.key;
+  }
+
+  generateFilterParams(formGroup: FormGroup): any {
     const filterParams: string[] = [];
-    // Iterar sobre los controles del formulario
     Object.keys(formGroup.controls).forEach(controlName => {
       const controlValue = formGroup.get(controlName).value;
       if (controlValue !== null && controlValue !== undefined) {
         if (controlName === 'significantDate') {
-          //Fecha significativa
+          this.aux = controlName;
           const date = new Date(controlValue);
           const month = (date.getMonth() + 1).toString().padStart(2, '0');
           const year = date.getFullYear().toString();
           const formattedDate = `${month}/${year}`;
-          const param = `filter.${controlName}=$eq:${formattedDate}`;
+          this.dateInput = formattedDate;
+          const param = `filter.${controlName}=$ilike:${formattedDate}`;
           filterParams.push(param);
         } else if (controlName === 'keyTypeDocument') {
-          //Tipo de documento
+          this.aux = controlName;
           const keyTypeDocument = this.selectTypeDoc;
-          const param = `filter.${controlName}=$eq:${keyTypeDocument}`;
+          const keyTypeDocumentDate = JSON.stringify(keyTypeDocument);
+          this.dateInput = keyTypeDocumentDate;
+          const param = `filter.${controlName}=$ilike:${keyTypeDocument}`;
+          filterParams.push(param);
+        } else if (controlName === 'keySeparator') {
+          this.aux = controlName;
+          const keySeparator = this.selectSeparator;
+          const keykeySeparatorDate = JSON.stringify(keySeparator);
+          this.dateInput = keykeySeparatorDate;
+          const param = `filter.${controlName}=$ilike:${keySeparator}`;
           filterParams.push(param);
         } else if (controlName === 'preliminaryInquiry') {
-          //Causa penal
-          console.log('preliminaryInquiry');
+          this.aux = controlName;
+          const param = `filter.file.${controlName}=$ilike:${controlValue}`;
+          this.dateInput = controlValue;
+          filterParams.push(param);
         } else if (controlName === 'criminalCase') {
-          //Causa penal
-          console.log('criminalCase');
+          this.aux = controlName;
+          const param = `filter.file.${controlName}=$ilike:${controlValue}`;
+          this.dateInput = controlValue;
+          filterParams.push(param);
+        } else if (controlName === 'descriptionDocument') {
+          this.aux = controlName;
+          const param = `filter.${controlName}=$ilike:${controlValue}`;
+          this.dateInput = controlValue;
+          filterParams.push(param);
         } else if (controlValue === 'all') {
-          //Filtra imagenes por 'Todos'
           return;
         } else {
           const param = `filter.${controlName}=$eq:${controlValue}`;
-          console.log('params ', param);
+          this.aux = controlName;
+          this.dateInput = controlValue;
           filterParams.push(param);
         }
       }
     });
-    // Unir los parámetros con el carácter '&'
-    const paramsString = filterParams.join('&');
-    return paramsString;
+    return filterParams;
   }
 
-  //CARGA TODOS LOS DOCUMENTOS
   getDocuments() {
-    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -164,7 +188,6 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     this.documentService.getAll(params).subscribe(
       response => {
         this.documents = response.data;
-        console.log(this.documents);
         this.totalItems = response.count || 0;
         this.data.load(this.documents);
         this.loading = false;
@@ -173,20 +196,15 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     );
   }
 
-  //BUSCA POR INPUTCHANGE UN TIPO DE DOCUMENTO
   onTipoDocumentoInputChange(event: any) {
-    console.log('Tipo Documento Input Change', event);
     const inputValue = event.search.toUpperCase();
     const param = `filter.id=${inputValue}`;
     this.documentService.getDocumentsType(param).subscribe(response => {
-      // Actualiza los datos del ngx-select con la respuesta obtenida
       this.selectTypeDoc = new DefaultSelect(response.data, response.count);
-      console.log(this.selectTypeDoc);
     });
   }
 
-  //CARGA LOS TIPOS DE DOCUMENTOS
-  loadDocumentsType(parameter?: string) {
+  loadDocumentsType() {
     this.documentService
       .getDocumentsType()
       .pipe(
@@ -197,25 +215,89 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
       .subscribe();
   }
 
-  //CARGA LOS SEPARADORES
+  onDocumentsSeparatorInputChange(event: any) {
+    const inputValue = event.search.toUpperCase();
+    const param = `filter.key=${inputValue}`;
+    this.documentService.getDocumentsSeparator(param).subscribe(response => {
+      this.selectSeparator = new DefaultSelect(response.data, response.count);
+    });
+    this.loading = false;
+  }
+
   loadDocumentsSeparator() {
     this.documentService
       .getDocumentsSeparator()
       .pipe(
         map(res => {
-          console.log(res); // Trae todas las imágenes
           this.selectSeparator = new DefaultSelect(res.data, res.count);
         })
       )
       .subscribe();
   }
 
-  //ENVIA LA PETICION DE CONSULTA
+  modalImage(documentViewer: IDocumentsViewerFlyerNumber) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      ignoreBackdropClick: false,
+      documentViewer,
+      callback: (next: boolean) => {
+        if (next) this.getDocuments();
+      },
+    };
+    this.modalService.show(DocumentViewerFormComponent, modalConfig);
+  }
+
+  showDeleteAlert(documentViewerUpdate: IDocuments) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(documentViewerUpdate.id);
+      }
+    });
+  }
+
+  delete(id: string | number) {
+    this.documentService.remove(id).subscribe({
+      next: () => {
+        this.alert('success', 'Visualización de documentos', 'Borrado');
+        this.getDocuments();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Visualización de documentos',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
+    });
+  }
+
   onSubmit() {
     this.loading = true;
-    let params = this.generateFilterParams(this.form);
-    console.log(params);
-    this.documentService.getAll(params).subscribe(
+    if (this.generateFilterParams(this.form).length > 0) {
+      for (let i = 0; i < this.generateFilterParams(this.form).length; i++) {
+        let filter = '';
+        let content = '';
+        const indice = this.generateFilterParams(this.form)[i].indexOf('=');
+        if (indice !== -1) {
+          filter = this.generateFilterParams(this.form)[i].substring(0, indice);
+        }
+        const indice1 = this.generateFilterParams(this.form)[i].indexOf('=');
+        if (indice1 !== -1) {
+          content = this.generateFilterParams(this.form)[i].substring(
+            indice1 + 1
+          );
+        }
+        this.params.getValue()[filter] = content;
+      }
+    } else {
+      this.params = new BehaviorSubject<ListParams>(new ListParams());
+    }
+
+    this.documentService.getAll(this.params.getValue()).subscribe(
       response => {
         this.documents = response.data;
         this.totalItems = response.count || 0;
@@ -223,6 +305,50 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error => {
+        if (this.aux === 'numberProceedings') {
+          this.alert(
+            'error',
+            '',
+            `No existe el expediente No. ${this.dateInput}`
+          );
+          this.form.get('numberProceedings').reset();
+        } else if (this.aux === 'flyerNumber') {
+          this.alert('error', '', `No existe el volante No. ${this.dateInput}`);
+          this.form.get('flyerNumber').reset();
+        } else if (this.aux === 'separador') {
+          this.alert('error', '', `No existe el separador ${this.dateInput}`);
+          this.form.get('separador').reset();
+        } else if (this.aux === 'significantDate') {
+          this.alert(
+            'error',
+            '',
+            `No existe la fecha significativa ${this.dateInput}`
+          );
+          this.form.get('significantDate').reset();
+        } else if (this.aux === 'keyTypeDocument') {
+          this.alert(
+            'error',
+            '',
+            `No existe el tipo de documento ${this.dateInput}`
+          );
+          this.form.get('keyTypeDocument').reset();
+        } else if (this.aux === 'descriptionDocument') {
+          this.alert('error', '', `No existe la descripción del decumento`);
+          this.form.get('descriptionDocument').reset();
+        } else if (this.aux === 'preliminaryInquiry') {
+          this.alert(
+            'error',
+            '',
+            `No existe la averiguación previa ${this.dateInput}`
+          );
+          this.form.get('preliminaryInquiry').reset();
+        } else if (this.aux === 'criminalCase') {
+          this.alert('error', '', `No existe la causa penal ${this.dateInput}`);
+          this.form.get('criminalCase').reset();
+        } else if (this.aux === 'scanStatus') {
+          this.alert('error', '', `No existe el estatus seleccionado`);
+          this.form.get('scanStatus').reset();
+        }
         this.loading = false;
         this.data.load([]);
       }
@@ -233,8 +359,21 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     this.form.reset();
     this.form.patchValue({ scanStatus: 'all' });
     this.onSubmit();
+    this.loadDocumentsSeparator();
+    this.loadDocumentsType();
     this.loading = false;
     this.selectTypeDoc = new DefaultSelect([], 0);
     this.selectSeparator = new DefaultSelect([], 0);
   }
 }
+
+//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents --> Trae todas las imágenes
+//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.numberProceedings=$eq:33785 --> Búsqueda por No Expediente
+//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.flyerNumber=$eq:467963 --> Búsqueda por No Volante
+//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.keySeparator=$eq:MUEBLES --> Búsqueda por No Volante
+//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.significantDate=$eq:04/2023 --> Búsqueda por Fecha significativa
+//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.keyTypeDocument=$eq:CARGA --> Búsqueda por Tipo de documento
+//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.descriptionDocument=$eq:PRUEBA RAFAEL 2 --> Búsqueda por Descripción del documento
+//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.scanStatus=$eq:ESCANEADO --> Para buacar por 'scanStatus'
+//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.file.criminalCase=$eq:49/2002 --> Búsqueda por Causa penal
+//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.file.preliminaryInquiry=$eq:PGR/UEDO/134/2002 --> Búsqueda por Averiguación previa

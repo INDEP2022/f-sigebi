@@ -20,6 +20,7 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
   @Output() formDepositariaValues = new EventEmitter<any>();
   @Output() formValuesValidacion = new EventEmitter<any>();
   @Output() searchGoodNumber = new EventEmitter<number>();
+  @Output() cleanData = new EventEmitter<boolean>();
 
   @Output() eliminarDispersionPagos = new EventEmitter<any>();
   constructor() {
@@ -64,6 +65,10 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
   btnSearchGood() {
     console.log(this.form.get('noBien').value, this.form.value);
     this.searchGoodNumber.emit(this.form.get('noBien').value);
+  }
+
+  cleanScreenFields() {
+    this.cleanData.emit(true);
   }
 
   btnExit() {

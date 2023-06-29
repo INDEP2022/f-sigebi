@@ -13,6 +13,7 @@ import { IGood } from 'src/app/core/models/good/good.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
@@ -26,7 +27,7 @@ import { ReceptionGoodService } from 'src/app/core/services/reception/reception-
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ESTATE_COLUMNS_VIEW } from '../../acept-programming/columns/estate-columns';
 import {
-  RECEIPT_COLUMNS,
+  RECEIPT_COLUMNS_FORMALIZE,
   RECEIPT_GUARD_COLUMNS,
 } from '../../execute-reception/execute-reception-form/columns/minute-columns';
 import { TRANSPORTABLE_GOODS_FORMALIZE } from '../../execute-reception/execute-reception-form/columns/transportable-goods-columns';
@@ -113,7 +114,7 @@ export class FormalizeProgrammingFormComponent
   settingsReceipt = {
     ...this.settings,
     actions: false,
-    columns: RECEIPT_COLUMNS,
+    columns: RECEIPT_COLUMNS_FORMALIZE,
   };
 
   settingsReprog = {
@@ -172,6 +173,8 @@ export class FormalizeProgrammingFormComponent
   proceedings: LocalDataSource = new LocalDataSource();
   search: FormControl = new FormControl({});
   programming: Iprogramming;
+  stateName: string = '';
+
   settingsMinutes = { ...TABLE_SETTINGS };
   /*settingsMinutes = {
     ...this.settings,
@@ -209,6 +212,7 @@ export class FormalizeProgrammingFormComponent
     private programmingGoodService: ProgrammingGoodService,
     private receptionGoodService: ReceptionGoodService,
     private proceedingService: ProceedingsService,
+    private stateService: StateOfRepublicService,
     // private router: ActivatedRoute,
     private router: Router,
     private signatoriesService: SignatoriesService
@@ -285,7 +289,7 @@ export class FormalizeProgrammingFormComponent
           const form = this.fb.group({
             id: [item.id],
             statusProceeedings: [item.statusProceeedings],
-            idPrograming: [this.programming.id],
+            idPrograming: [this.programming?.id],
             observationProceedings: [item?.observationProceedings],
           });
           this.proceeding.push(form);
@@ -310,6 +314,7 @@ export class FormalizeProgrammingFormComponent
         this.idTransferent = data.tranferId;
         this.idStation = data.stationId;
         this.getRegionalDelegation(data);
+        this.getState(data);
         this.getTransferent(data);
         this.getStation(data);
         this.getAuthority();
@@ -329,6 +334,17 @@ export class FormalizeProgrammingFormComponent
         this.programming.regionalDelegationName = data.description;
       });
   }
+
+  getState(programming: Iprogramming) {
+    this.stateService.getById(programming.stateKey).subscribe({
+      next: response => {
+        console.log('estado', response);
+        this.stateName = response.descCondition;
+      },
+      error: error => {},
+    });
+  }
+
   getTransferent(data: Iprogramming) {
     this.transferentService.getById(data.tranferId).subscribe(data => {
       this.transferentName = data.nameTransferent;

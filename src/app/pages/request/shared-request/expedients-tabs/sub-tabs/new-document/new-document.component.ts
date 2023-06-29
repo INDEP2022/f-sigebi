@@ -24,7 +24,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styleUrls: ['./new-document.component.scss'],
 })
 export class NewDocumentComponent extends BasePage implements OnInit {
-  title: string = 'Información General';
+  title: string = 'Nuevo Documento';
   newDocForm: ModelForm<IRequest>;
   selectTypeDoc = new DefaultSelect<IRequest>();
   paramsDocTypes = new BehaviorSubject<ListParams>(new ListParams());
@@ -75,10 +75,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     }
     this.typedocuments(new ListParams());
     this.obtainDate();
-
-    console.log('programming', this.programming);
-    console.log('proceso', this.process);
-    console.log('typeDoc', this.typeDoc);
   }
 
   obtainDate() {
@@ -127,6 +123,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(70)],
       ],
       returnOpinionFolio: [null, [Validators.pattern(STRING_PATTERN)]],
+      noSiab: [null, [Validators.pattern(STRING_PATTERN)]],
 
       //Information adiotional
       bank: [
@@ -209,25 +206,35 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
   selectFile(event?: any) {
     this.selectedFile = event.target.files[0];
-    if (this.selectedFile?.size > 10000000) {
+    if (this.selectedFile?.size > 100000000) {
       this.validateSizePDF = true;
-      this.onLoadToast(
-        'warning',
-        'Se debe cargar un documentos menor a 10MB',
-        ''
-      );
-      this.newDocForm.get('docFile').reset;
+      this.alertInfo(
+        'info',
+        'Acción Inválida',
+        'Se debe cargar un documentos menor a 100MB'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.newDocForm.get('docFile').reset;
+        }
+      });
     }
     const extension = this.selectedFile?.name.split('.').pop();
     if (extension != 'pdf') {
-      this.onLoadToast('warning', 'Se debe cargar un documentos PDF', '');
-      this.newDocForm.get('docFile').setValue(null);
+      this.alertInfo(
+        'info',
+        'Acción Inválida',
+        'Se debe cargar un documentos PDF'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.newDocForm.get('docFile').reset;
+        }
+      });
     }
   }
 
   validatePDF() {
     if (this.validateSizePDF === true) {
-      this.alert('warning', 'Se debe cargar un documentos menor a 10MB', '');
+      //this.alert('warning', 'Se debe cargar un documentos menor a 10MB', '');
       this.validateSizePDF = false;
       this.newDocForm.get('docFile').setValue(null);
       this.newDocForm.get('docFile').reset;
@@ -239,8 +246,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   confirm() {
     if (this.typeDoc == 'good' && this.process == 'programming') {
       this.loading = true;
-      this.loader.load = true;
-
       const formData = {
         dInDate: new Date(),
         dDocAuthor: this.userLogName,
@@ -295,7 +300,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         xnoOficoNotificacion: this.newDocForm.get('noOfNotification').value,
         xnoRegistro: this.newDocForm.get('noRegistro').value,
       };
-      console.log('spiterman', formData);
       const extension = '.pdf';
       const docName = this.newDocForm.get('docTit').value;
 
@@ -309,11 +313,17 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
-            console.log('Doc good programming', resp);
-            this.modalRef.content.callback(true);
             this.loading = false;
-            this.loader.load = false;
-            this.modalRef.hide();
+            this.alertInfo(
+              'info',
+              'Información',
+              `Documento agregado exitosamente con el id. ${resp.dDocName}`
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.modalRef.content.callback(true);
+                this.modalRef.hide();
+              }
+            });
           },
           error: error => {},
         });
@@ -321,8 +331,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
     if (this.typeDoc == 'good' && this.process != 'programming') {
       this.loading = true;
-      this.loader.load = true;
-
       const formData = {
         dInDate: new Date(),
         dDocAuthor: this.userLogName,
@@ -390,10 +398,18 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
-            this.modalRef.content.callback(true);
-            this.loading = false;
-            this.loader.load = false;
-            this.modalRef.hide();
+            this.alertInfo(
+              'info',
+              'Información',
+              `Documento agregado exitosamente con el id. ${resp.dDocName}`
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.modalRef.content.callback(true);
+                this.loading = false;
+                this.loader.load = false;
+                this.modalRef.hide();
+              }
+            });
           },
           error: error => {},
         });
@@ -401,8 +417,6 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
     if (this.typeDoc == 'doc-request') {
       this.loading = true;
-      this.loader.load = true;
-
       const formData = {
         dDocAuthor: this.userLogName,
         dInDate: new Date(),
@@ -469,14 +483,18 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         .subscribe({
           next: resp => {
             this.loading = false;
-            this.loader.load = false;
-            this.onLoadToast('success', 'Documento guardado correctamente', '');
-            this.modalRef.content.callback(true);
-            this.close();
+            this.alertInfo(
+              'info',
+              'Información',
+              `Documento agregado exitosamente con el id. ${resp.dDocName}`
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.modalRef.content.callback(true);
+                this.modalRef.hide();
+              }
+            });
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
     }
 
@@ -546,10 +564,17 @@ export class NewDocumentComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
-            this.onLoadToast('success', 'Documento guardado correctamente', '');
             this.loading = false;
-            this.modalRef.content.callback(true);
-            this.close();
+            this.alertInfo(
+              'info',
+              'Información',
+              `Documento agregado exitosamente con el id. ${resp.dDocName}`
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.modalRef.content.callback(true);
+                this.modalRef.hide();
+              }
+            });
           },
           error: error => {},
         });

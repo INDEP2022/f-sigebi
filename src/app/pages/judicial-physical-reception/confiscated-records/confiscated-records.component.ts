@@ -433,6 +433,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     const btn = document.getElementById('expedient-number');
     this.render.removeClass(btn, 'enabled');
     this.render.addClass(btn, 'disabled');
+    this.loading = true;
     if (this.labelActa == 'Abrir acta') {
       this.fnOpenProceeding();
     } else if (this.labelActa == 'Cerrar acta') {
@@ -2664,29 +2665,35 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         'No se registraron bienes',
         'El Acta no contiene Bienes, no se podrá Cerrar.'
       );
+      this.loading = false;
     } else if (
       ['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)
     ) {
+      this.loading = false;
       this.alert('warning', 'El acta ya se encuentra cerrada', '');
     } else if (
       this.dataGoodAct['data'].find(
         (e: any) => e.indEdoFisico && e.good[`val${e.vNoColumna}`] == null
       )
     ) {
+      this.loading = false;
       this.alert(
         'warning',
         'Hay bienes con estado físico requerido sin establecer',
         ''
       );
     } else if (this.dataGoodAct['data'].find((e: any) => e.received != 'S')) {
+      this.loading = false;
       this.alert('warning', 'Hay bienes no marcados como recibido', '');
     } else if (validate) {
+      this.loading = false;
       this.alert(
         'warning',
         'Se debe especificar el Almacén y/o la Bóveda para cerrar el Acta, favor de ingresar',
         ''
       );
     } else if (this.form.get('folioEscaneo').value == null) {
+      this.loading = false;
       this.alert('warning', 'No se registro número de folio', '');
     } else {
       const paramsF = new FilterParams();
@@ -2713,6 +2720,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               );
               localStorage.setItem('numberExpedient', this.numberExpedient);
               this.getNulls();
+              this.loading = false;
             } else {
               if (this.scanStatus) {
                 const paramsF = new FilterParams();
@@ -2745,6 +2753,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                           format(fec_elab, 'MM-yyyy') !=
                             format(new Date(), 'MM-yyyy')
                         ) {
+                          this.loading = false;
                           this.alert(
                             'warning',
                             'Está fuera de tiempo para cerrar el acta',
@@ -2804,6 +2813,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                         'Acta cerrada',
                                         'El acta fue cerrada'
                                       );
+                                      this.loading = false;
                                       this.inputsInProceedingClose();
                                     },
                                     err => {
@@ -2813,6 +2823,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                         'Ocurrió un error',
                                         'Ocurrió un error inesperado que no permitió cerrar el acta'
                                       );
+                                      this.loading = false;
                                     }
                                   );
                               },
@@ -2833,15 +2844,18 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       console.log(err);
                       VAL_MOVIMIENTO = 0;
                       this.closeProceedingFn(this.idProceeding);
+                      this.loading = false;
                     }
                   );
               } else {
+                this.loading = false;
                 this.alert('warning', 'El folio no ha sido escaneado', '');
               }
             }
           });
         },
         err => {
+          this.loading = false;
           console.log(err);
         }
       );

@@ -65,7 +65,6 @@ Se da por concluida la presente acta, siendo las ____ horas del día ____ de ___
 \t\t\tC. _____________________\t\t\t\t\t\t\t\tC. _____________________\n\n\n\n
 Ultima página del Acta Administrativa de Validación y Conversión de Unidades de Medida de Bienes Muebles con Clave :CONVERSIONES_ACTAS.CVE_ACTA_CONV de fecha ___ de  _________ de 2008, constante de ____ fojas. - - - - - - - - - - - - -`;
   }
-
   close() {
     this.modalRef.hide();
   }

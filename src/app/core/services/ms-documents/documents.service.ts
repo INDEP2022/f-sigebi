@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { DocumentsEndpoints } from 'src/app/common/constants/endpoints/ms-documents-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { IDocumentsViewerFlyerNumber } from 'src/app/core/models/ms-documents/documents-viewer-flyerNumber.models';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IClarificationDocumentsImpro } from '../../models/ms-documents/clarification-documents-impro-model';
 import { SeparatorsDocuments } from '../../models/ms-documents/document-separators';
@@ -19,18 +20,19 @@ export class DocumentsService extends HttpService {
     this.microservice = DocumentsEndpoints.Documents;
   }
 
-  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents --> Trae todas las imágenes
-  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.scanStatus=$eq:ESCANEADO --> Para buacar por 'scanStatus'
-  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.numberProceedings=$eq:33785 --> Búsqueda por No Expediente
-  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.flyerNumber=$eq:467963 --> Búsqueda por No Volante
-  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.significantDate=$eq:04/2023 --> Búsqueda por Fecha significativa
-  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.descriptionDocument=$eq:PRUEBA RAFAEL 2 --> Búsqueda por Descripción del documento
-  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.criminalCase=$eq:49/2002 --> Búsqueda por Causa penal
-  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.preliminaryInquiry=$eq:PGR/UEDO/134/2002 --> Búsqueda por Averiguación previa
-  //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.keyTypeDocument=$eq:CARGA --> Búsqueda por Tipo de documento
   getAll(params?: ListParams | string): Observable<IListResponse<IDocuments>> {
     return this.get<IListResponse<IDocuments>>(
       DocumentsEndpoints.Documents,
+      params
+    );
+  }
+
+  getAllFlyerNumber(
+    flyerNumber: number,
+    params?: ListParams | string
+  ): Observable<IListResponse<IDocumentsViewerFlyerNumber>> {
+    return this.get<IListResponse<IDocumentsViewerFlyerNumber>>(
+      `${DocumentsEndpoints.Documents}?filter.flyerNumber=$eq:${flyerNumber}`,
       params
     );
   }
@@ -218,8 +220,10 @@ export class DocumentsService extends HttpService {
   }
 
   //http://sigebimsqa.indep.gob.mx/documents/api/v1/document-separator  --> description
-  getDocumentsSeparator(): Observable<IListResponse<SeparatorsDocuments>> {
+  getDocumentsSeparator(
+    $params?: any
+  ): Observable<IListResponse<SeparatorsDocuments>> {
     const route = `/${DocumentsEndpoints.DocumentsSeparator}`;
-    return this.get(route);
+    return this.get(route, $params);
   }
 }

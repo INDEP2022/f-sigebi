@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { GoodEndpoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
@@ -10,7 +10,6 @@ import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGood } from '../../models/good/good.model';
 import { IAttribGoodBad, IGoodSiab } from '../../models/ms-good/good';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -165,5 +164,15 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
       GoodEndpoints.AttribGoodBad,
       params
     );
+  }
+
+  getByExpedient(id: number) {
+    const URL = `${environment.API_URL}/good/api/v1/good/`;
+    const headers = new HttpHeaders();
+    let params = new HttpParams().append('filter.fileNumber', `$eq:${id}`);
+
+    return this.http
+      .get<any>(URL, { headers: headers, params: params })
+      .pipe(map(res => res));
   }
 }

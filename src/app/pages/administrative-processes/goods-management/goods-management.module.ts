@@ -9,6 +9,7 @@ import { GoodsManagementRoutingModule } from './goods-management-routing.module'
 //Components
 import { GoodsManagementSocialCabinetComponent } from './goods-management-social-cabinet/goods-management-social-cabinet.component';
 import { GoodsManagementSocialTableErrorsComponent } from './goods-management-social-table-errors/goods-management-social-table-errors.component';
+import { GoodsManagementSocialNotLoadGoodsComponent } from './goods-management-social-table/goods-management-social-not-load-goods/goods-management-social-not-load-goods.component';
 import { GoodsManagementSocialTable } from './goods-management-social-table/goods-management-social-table.component';
 
 @NgModule({
@@ -16,6 +17,7 @@ import { GoodsManagementSocialTable } from './goods-management-social-table/good
     GoodsManagementSocialCabinetComponent,
     GoodsManagementSocialTable,
     GoodsManagementSocialTableErrorsComponent,
+    GoodsManagementSocialNotLoadGoodsComponent,
   ],
   imports: [
     CommonModule,

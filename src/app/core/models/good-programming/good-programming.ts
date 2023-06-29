@@ -8,12 +8,15 @@ export interface IGoodProgramming {
   creationUser?: string;
   creationDate?: Date;
   modificationUser?: string;
+  aliasWarehouse?: string;
   modificationDate?: Date;
   storeId?: number;
-  municipality?: number;
+  townshipKey?: number;
   aliasStore?: number;
+  code?: number;
   postalCode?: number;
   suburb?: number;
+  settlementKey?: number;
   tranferId?: number;
   regionalDelegationNumber?: number;
   typeUser?: string;
@@ -119,6 +122,7 @@ export interface IGoodProgrammingSelect {
   transferFile: number;
   typeTransfer: string;
   unitMeasurement: string;
+  stockSiabNumber?: number;
 }
 
 export interface IGoodInfo {

@@ -75,9 +75,15 @@ export class GoodsManagementSocialCabinetComponent
         next: response => {
           this.processErrors++;
           this.disabledProcess = true;
+          this.selectedGoodstxt = [...this.selectedGoodstxt];
+          this.alert(
+            'success',
+            'Procesamiento Gabinete Social',
+            'Bienes procesados correctamente'
+          );
         },
         error: err => {
-          this.alert('error', 'ERROR', err);
+          this.alert('error', 'ERROR', 'Bienes no procesados correctamente');
         },
       });
   }
