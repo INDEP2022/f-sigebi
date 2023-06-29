@@ -20,6 +20,7 @@ import { AddMovementComponent } from '../add-movement/add-movement.component';
 import { CustomdbclickComponent } from '../customdbclick/customdbclick.component';
 import { CustomdbclickdepositComponent } from '../customdbclickdeposit/customdbclickdeposit.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
+import { CustomDateFilterComponent_ } from './searchDate';
 @Component({
   selector: 'app-deposit-tokens',
   templateUrl: './deposit-tokens.component.html',
@@ -62,6 +63,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
   dateMovemInicio: Date;
   dateMovemFin: Date;
   loadingBtn: boolean = false;
+  valorDate1: string = 'Fecha Transferencia';
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -99,8 +101,19 @@ export class DepositTokensComponent extends BasePage implements OnInit {
         },
         motionDate: {
           title: 'Fecha Depósito',
-          type: 'string',
+          // type: 'string',
           sort: false,
+          // width: '13%',
+          type: 'html',
+          valuePrepareFunction: (text: string) => {
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            }`;
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent_,
+          },
         },
         folio_ficha: {
           title: 'Folio',
@@ -109,8 +122,19 @@ export class DepositTokensComponent extends BasePage implements OnInit {
         },
         calculationInterestsDate: {
           title: 'Fecha Transferencia',
-          type: 'string',
+          // type: 'string',
           sort: false,
+          // width: '13%',
+          type: 'html',
+          valuePrepareFunction: (text: string) => {
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            }`;
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent_,
+          },
         },
         currency: {
           title: 'Moneda',
@@ -236,7 +260,16 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     };
     console.log('params1', params);
     if (params['filter.motionDate']) {
-      params['motionDate'] = params['filter.motionDate'];
+      var fecha = new Date(params['filter.motionDate']);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var año = fecha.getFullYear();
+      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var día = ('0' + fecha.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada = año + '-' + mes + '-' + día;
+      params['motionDate'] = fechaFormateada;
       delete params['filter.motionDate'];
     }
     if (params['filter.deposito']) {
@@ -244,8 +277,16 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       delete params['filter.deposito'];
     }
     if (params['filter.calculationInterestsDate']) {
-      params['calculationInterestsDate'] =
-        params['filter.calculationInterestsDate'];
+      var fecha = new Date(params['filter.calculationInterestsDate']);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var año = fecha.getFullYear();
+      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var día = ('0' + fecha.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada = año + '-' + mes + '-' + día;
+      params['calculationInterestsDate'] = fechaFormateada;
       delete params['filter.calculationInterestsDate'];
     }
     if (params['filter.no_bien']) {
