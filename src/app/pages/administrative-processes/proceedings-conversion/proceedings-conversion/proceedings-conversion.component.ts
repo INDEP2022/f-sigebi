@@ -45,7 +45,10 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { FlyersService } from 'src/app/pages/documents-reception/flyers/services/flyers.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ScanningFoilComponent } from '../../payment-claim-process/scanning-foil/scanning-foil.component';
-import { IDataGoodsTable } from '../proceedings-conversion-column';
+import {
+  GooByExpediente,
+  IDataGoodsTable,
+} from '../proceedings-conversion-column';
 import { ProceedingsConversionModalComponent } from '../proceedings-conversion-modal/proceedings-conversion-modal.component';
 import { ActasConvertionCommunicationService } from '../services/proceedings-conversionn';
 
@@ -191,7 +194,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   dataTableGoodsConvertion: IConvertiongood[] = [];
   copyActa: any[] = [];
   dataGoodFilter: IGood[] = [];
-  dataGood: IDataGoodsTable[] = [];
+  dataGood: GooByExpediente[] = [];
   dataTableGoodsJobManagement: IGoodJobManagement[] = [];
   @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
   @ViewChild('tableDocs') tableDocs: Ng2SmartTableComponent;
