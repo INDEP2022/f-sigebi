@@ -24,7 +24,7 @@
             formInitial="depositDate"
             formFin="depositDateTo"
             labelInicioName="Fecha de Depósito"
-            labelFinName="ALLLL"
+            labelFinName="al"
             (formEmit)="(form)">
           </app-date-initial-finish>
           <!-- <div class="col-md-6">
@@ -52,7 +52,17 @@
         </div>
 
         <div class="row mt-4">
-          <div class="col-md-6">
+          <app-date-initial-finish
+            *ngIf="form"
+            [form]="form"
+            [form2]="form"
+            formInitial="transferenceDate"
+            formFin="transferenceDateTo"
+            labelInicioName="Fecha de Transferencia:"
+            labelFinName="al"
+            (formEmit)="(form)">
+          </app-date-initial-finish>
+          <!-- <div class="col-md-6">
             <form-field
               [control]="form.get('transferenceDate')"
               label="Fecha de Transferencia:">
@@ -73,11 +83,21 @@
                 class="form-control"
                 bsDatepicker />
             </form-field>
-          </div>
+          </div> -->
         </div>
 
         <div class="row mt-4">
-          <div class="col-md-6">
+          <app-date-initial-finish
+            *ngIf="form"
+            [form]="form"
+            [form2]="form"
+            formInitial="receptionDate"
+            formFin="receptionDateTo"
+            labelInicioName="Fecha de Recepción Física:"
+            labelFinName="al"
+            (formEmit)="(form)">
+          </app-date-initial-finish>
+          <!-- <div class="col-md-6">
             <form-field
               [control]="form.get('receptionDate')"
               label="Fecha de Recepción Física:">
@@ -98,7 +118,7 @@
                 class="form-control"
                 bsDatepicker />
             </form-field>
-          </div>
+          </div> -->
         </div>
       </form>
 

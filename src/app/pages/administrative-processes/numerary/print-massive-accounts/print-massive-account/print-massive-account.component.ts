@@ -126,28 +126,13 @@ export class PrintMassiveAccountComponent extends BasePage implements OnInit {
 
   cleanForm() {
     this.form.reset();
-    // this.deshabilitarFechasFinales();
+    this.deshabilitarFechasFinales();
   }
 
-  onChange(tipo: any) {
-    console.log('tipo', tipo);
-    if (tipo == 1) {
-      console.log('tipo', tipo);
-
-      this.form.controls['depositDateTo'].enable();
-    }
-
-    if (tipo == 2) {
-      console.log('tipo', this.form);
-      // this.form.updateValueAndValidity();
-
-      this.form.controls['transferenceDateTo'].enable();
-    }
-
-    if (tipo == 3) {
-      console.log('tipo', tipo);
-
-      this.form.controls['receptionDateTo'].enable();
-    }
+  deshabilitarFechasFinales() {
+    this.form.controls['depositDateTo'].disable();
+    this.form.controls['transferenceDateTo'].disable();
+    this.form.controls['receptionDateTo'].disable();
+    this.form.updateValueAndValidity();
   }
 }

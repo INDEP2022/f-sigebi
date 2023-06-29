@@ -966,11 +966,6 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.acordionDetail = false;
   }
 
-  getDetail() {
-    const value = this.conversion;
-    this.actasConvertionCommunicationService.enviarDatos(value);
-  }
-
   cargarData(binaryExcel: any) {
     this.hijoRef.cargarData(binaryExcel);
   }
