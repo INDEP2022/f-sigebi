@@ -103,33 +103,57 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
                 }
                 let v_val_entfed;
                 this.val_atributos_inmuebles++;
-                if (this.v_bien_inm) {
+                if (good.no_tipo && good.no_tipo + '' === '6') {
                   if (
                     item.attribute === 'ESTADO' &&
                     this.val_atributos_inmuebles > 4
                   ) {
                   }
                 }
-                return {
-                  column,
-                  attribute: item.attribute,
-                  value:
-                    this.initValue === true
-                      ? this.inventary
-                        ? this.inventary[index].valueAttributeInventory
-                        : null
-                      : null,
-                  required: item.required === 'S',
-                  update: this.haveUpdate(item.update),
-                  requiredAva: item.attribute
-                    ? this.haveRequiredAva(item.attribute)
-                    : false,
-                  tableCd: item.tableCd,
-                  editing: false,
-                  length: item.length,
-                  dataType: item.dataType,
-                  numColumn: item.columnNumber,
-                };
+                console.log(this.inventary);
+                if (this.inventary) {
+                  return {
+                    column,
+                    attribute: item.attribute,
+                    value:
+                      this.initValue === true
+                        ? this.inventary[index]
+                          ? this.inventary[index].valueAttributeInventory
+                          : null
+                        : null,
+                    required: item.required === 'S',
+                    update: this.haveUpdate(item.update),
+                    requiredAva: item.attribute
+                      ? this.haveRequiredAva(item.attribute)
+                      : false,
+                    tableCd: item.tableCd,
+                    editing: false,
+                    length: item.length,
+                    dataType: item.dataType,
+                    numColumn: item.columnNumber,
+                  };
+                } else {
+                  return {
+                    column,
+                    attribute: item.attribute,
+                    value:
+                      this.initValue === true
+                        ? this.inventary
+                          ? this.inventary[index].valueAttributeInventory
+                          : null
+                        : null,
+                    required: item.required === 'S',
+                    update: this.haveUpdate(item.update),
+                    requiredAva: item.attribute
+                      ? this.haveRequiredAva(item.attribute)
+                      : false,
+                    tableCd: item.tableCd,
+                    editing: false,
+                    length: item.length,
+                    dataType: item.dataType,
+                    numColumn: item.columnNumber,
+                  };
+                }
               });
               console.log('Data', this.dataInventary);
               this.totalItems = this.dataInventary.length;
@@ -235,7 +259,13 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.onSelect.subscribe(data => {
+      console.log(this.loadInventary);
+      if (this.loadInventary) {
+        this['data'] = this['dataInventary'];
+      }
+      console.log(this);
       if (data) callback(data, this);
+      // console.log(this['data']=this['dataInventary']);
     });
   }
 
