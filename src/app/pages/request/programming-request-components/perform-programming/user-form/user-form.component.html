@@ -6,7 +6,7 @@
   </div>
   <div body>
     <form [formGroup]="userForm" class="form-material">
-      <form-field [control]="userForm.get('user')" label="Nombre usuario">
+      <form-field [control]="userForm.get('user')" label="Nombre Usuario">
         <input
           type="text"
           class="form-control"
@@ -17,7 +17,7 @@
         <form-field
           *ngIf="this.userData?.email"
           [control]="userForm.get('email')"
-          label="Correo electr&oacute;nico">
+          label="Correo Electr&oacute;nico">
           <input
             type="text"
             class="form-control"
@@ -29,7 +29,7 @@
         <form-field
           *ngIf="!this.userData?.email"
           [control]="userForm.get('email')"
-          label="Correo electr&oacute;nico">
+          label="Correo Electr&oacute;nico">
           <input
             type="text"
             class="form-control"
@@ -45,7 +45,7 @@
             [data]="chargesUsers"
             value="keyId"
             bindLabel="description"
-            label="Cargo usuario"
+            label="Cargo Usuario"
             (change)="chargeSelect($event)"
             (fetchItems)="getChargesUsers($event)"></ngx-select>
         </form-field>
