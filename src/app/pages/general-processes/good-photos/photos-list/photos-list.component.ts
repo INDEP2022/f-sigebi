@@ -1,20 +1,30 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { catchError, forkJoin, takeUntil, throwError } from 'rxjs';
+import {
+  catchError,
+  firstValueFrom,
+  forkJoin,
+  map,
+  of,
+  takeUntil,
+  throwError,
+} from 'rxjs';
 import { FileUploadModalComponent } from 'src/app/@standalone/modals/file-upload-modal/file-upload-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared';
-import { GoodsCharacteristicsService } from '../services/goods-characteristics.service';
 
 @Component({
-  selector: 'app-good-photos',
-  templateUrl: './good-photos.component.html',
-  styleUrls: ['./good-photos.component.scss'],
+  selector: 'app-photos-list',
+  templateUrl: './photos-list.component.html',
+  styleUrls: ['./photos-list.component.scss'],
 })
-export class GoodPhotosComponent extends BasePage implements OnInit {
-  @Input() showPhoto: boolean;
-  @Input() disabledBienes: boolean;
+export class PhotosListComponent extends BasePage implements OnInit {
+  @Input() disabled: boolean;
+  @Input() origin: number;
   @Input()
   get goodNumber() {
     return this._goodNumber;
@@ -25,26 +35,97 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
       this.getData();
     }
   }
+  private _goodNumber: string | number;
+  userPermisions = true;
   lastConsecutive: number = 1;
   filesToDelete: string[] = [];
-  private _goodNumber: string | number;
+  files: string[] = [];
   constructor(
-    private service: GoodsCharacteristicsService,
     private filePhotoService: FilePhotoService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private segAppService: SecurityService,
+    private dictationService: DictationService
   ) {
     super();
   }
 
-  get files() {
-    return this.service.files;
+  async ngOnInit() {
+    if (!this.origin) return;
+    if (this.origin > 0) {
+      this.getSegPantalla().subscribe({
+        next: response => {
+          if (response && response.length > 0) {
+            console.log('Entro');
+          } else {
+            this.validRastrer();
+          }
+        },
+        error: err => {
+          this.validRastrer();
+        },
+      });
+    } else {
+      const pufValida = await this.pufValidaUsuario();
+      if (pufValida === 1) {
+        this.userPermisions = true;
+      } else {
+        this.userPermisions = false;
+      }
+    }
   }
 
-  set files(value) {
-    this.service.files = value;
+  // private async
+
+  private async pufValidaUsuario() {
+    const filterParams = new FilterParams();
+    filterParams.addFilter('typeNumber', 'CARBIEN');
+    // filterParams.addFilter('user', 'DR_SIGEBI');
+    filterParams.addFilter(
+      'user',
+      localStorage.getItem('username').toUpperCase()
+    );
+    filterParams.addFilter('delete', 'S');
+    // filterParams.addFilter()
+    const rdicta = await firstValueFrom(
+      this.dictationService
+        .getRTdictaAarusr(filterParams.getParams())
+        .pipe(catchError(x => of({ count: 0 })))
+    );
+    if (rdicta && rdicta.count && rdicta.count > 0) {
+      return 1;
+    }
+    return 0;
   }
 
-  ngOnInit() {}
+  private validRastrer() {
+    if (localStorage.getItem('username').toUpperCase() !== 'SERA') {
+      this.userPermisions = false;
+    }
+  }
+
+  private getSegPantalla() {
+    const filterParams = new FilterParams();
+    filterParams.addFilter('screenKey', 'FIMGFOTBIEADD');
+    filterParams.addFilter(
+      'user',
+      localStorage.getItem('username').toUpperCase()
+    );
+    filterParams.addFilter('writingPermission', 'S');
+    return this.segAppService
+      .getScreenWidthParams(filterParams.getFilterParams())
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        map(x => (x.data ? x.data : []))
+      );
+  }
+
+  disabledDeletePhotos() {
+    return (
+      this.files.length < 1 ||
+      this.filesToDelete.length === 0 ||
+      !this.userPermisions
+    );
+  }
 
   selectFile(image: string, event: Event) {
     const target = event.target as HTMLInputElement;
@@ -63,7 +144,7 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          if (response) {
+          if (response && response.length > 0) {
             this.files = [...response];
             const last = response[response.length - 1];
             const index = last.indexOf('F');

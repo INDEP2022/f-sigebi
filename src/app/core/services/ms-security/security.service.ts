@@ -2,10 +2,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SecurityEndpoints } from 'src/app/common/constants/endpoints/ms-security-endpoints';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IListResponseMessage,
+} from '../../interfaces/list-response.interface';
 import {
   IAccesTrackingXArea,
   IPupUser,
+  ITrackingAcces,
   IUsersTracking,
 } from '../../models/ms-security/pup-user.model';
 
@@ -88,5 +92,12 @@ export class SecurityService extends HttpService {
   getScreenUser(screen: string, user: string) {
     const route = `${this.endpoint}${this.screen}${screen}${this.userName}${user}`;
     return this.get(route);
+  }
+
+  getScreenWidthParams(params: _Params) {
+    return this.get<IListResponseMessage<ITrackingAcces>>(
+      this.endpoint,
+      params
+    );
   }
 }

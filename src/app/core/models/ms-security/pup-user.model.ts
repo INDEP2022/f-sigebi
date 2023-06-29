@@ -50,3 +50,13 @@ export interface IAccesTrackingXArea {
   department1Number: number;
   lastAsset: number;
 }
+
+export interface ITrackingAcces {
+  screenKey: string;
+  user: IUsersTracking;
+  readingPermission: string;
+  writingPermission: string;
+  recordNumber: string;
+  modulowebId: string;
+  originNb: string;
+}
