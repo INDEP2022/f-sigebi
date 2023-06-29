@@ -39,6 +39,7 @@ import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.s
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -48,10 +49,12 @@ import { ScanningFoilComponent } from '../../payment-claim-process/scanning-foil
 import { IDataGoodsTable } from '../proceedings-conversion-column';
 import { ProceedingsConversionModalComponent } from '../proceedings-conversion-modal/proceedings-conversion-modal.component';
 import { ActasConvertionCommunicationService } from '../services/proceedings-conversionn';
+
+import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import {
   APPLY_DATA_COLUMNS,
+  COPY,
   GOODSEXPEDIENT_COLUMNS_GOODS,
-  PROCEEDINGSCONVERSIONS_COLUMNS,
 } from './proceedings-conversion-columns';
 
 export type IGoodAndAvailable = IGood & {
@@ -78,7 +81,34 @@ export interface IGoodJobManagement {
 @Component({
   selector: 'app-proceedings-conversion',
   templateUrl: './proceedings-conversion.component.html',
-  styles: [],
+  styles: [
+    `
+      :host ::ng-deep form-radio .form-group {
+        margin: 0;
+        padding-bottom: 0;
+        padding-top: 0;
+      }
+      .disabled[disabled] {
+        color: red;
+      }
+      .disabled-input {
+        color: #939393;
+        pointer-events: none;
+      }
+      #bienesJuridicos table:not(.normal-hover) tbody tr:hover {
+        color: black !important;
+        font-weight: bold;
+      }
+      .row-verde {
+        background-color: green;
+        font-weight: bold;
+      }
+      .row-negro {
+        background-color: black;
+        font-weight: bold;
+      }
+    `,
+  ],
 })
 export class ProceedingsConversionComponent extends BasePage implements OnInit {
   // proceedingsConversionForm: ModelForm<any>;
@@ -101,6 +131,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   preAver = '';
   criCase = '';
   test: any;
+  dataTemporal: LocalDataSource = new LocalDataSource();
   goodsByFather: IGood[] = [];
   validPermisos: boolean = true;
   searchMode: boolean = false;
@@ -121,6 +152,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   proceedingsConversionForm: FormGroup;
   actaRecepttionForm: FormGroup;
   actaGoodForm: FormGroup;
+  dataActa: LocalDataSource = new LocalDataSource();
   dataGoodTable: LocalDataSource = new LocalDataSource();
   paramsGoodsType: number = 0;
   loadingGoods = false;
@@ -131,6 +163,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   isAllDisabled = false;
   cveActa: string = '';
   fileNumber: number = 0;
+  rececption: IProceedingDeliveryReception;
   conversion: number = 0;
   datos: any[] = [];
   goodFatherNumber: string | number = 0;
@@ -179,6 +212,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     PAR_IDCONV: '',
     origin: '',
   };
+  converGood: IConvertiongood;
   formData: Partial<IConvertiongood> = null;
   senders = new DefaultSelect();
   disabled: boolean = true;
@@ -217,7 +251,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     protected goodprocessService: GoodProcessService,
     protected serviceOficces: GoodsJobManagementService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService
   ) {
     super();
     this.procs = new LocalDataSource();
@@ -241,7 +276,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       actions: false,
       selectMode: 'multi',
-      columns: { ...PROCEEDINGSCONVERSIONS_COLUMNS },
+      columns: { ...COPY },
     };
   }
 
@@ -323,7 +358,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   private actaForm() {
     this.actaRecepttionForm = this.fb.group({
-      acta: [null],
+      acta: [this.cveActa],
       type: [null],
       claveTrans: [null],
       administra: [null],
@@ -465,10 +500,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.cveActa = res.minutesErNumber;
           console.log(this.cveActa);
           this.userRes = res.fileNumber.usrResponsibleFile;
-          this.proceedingsConversionForm.get('acta').setValue(this.cveActa);
           this.time = new Date().toISOString().slice(0, 16);
           this.getExpedient(this.fileNumber);
           this.getGoods(this.conversion);
+          this.getActasReception(this.cveActa);
           subscription.unsubscribe();
         },
         error: error => {
@@ -599,14 +634,44 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     });
   }
 
+  // getGoodsByStatus(id: number) {
+  //   this.loading = true;
+  //   this.goodService.getByExpedient(id).subscribe({
+  //     next: data => {
+  //       console.log(data);
+
+  //       // this.dataGood = data;
+  //       this.dataTableGood.load(data.data);
+  //       this.dataTableGood.refresh();
+  //       this.totalItems = data.count;
+  //       console.log(this.dataGood);
+  //     },
+  //     error: error => {
+  //       console.log(error);
+  //       this.dataTableGood.load([]);
+  //       this.dataTableGood.refresh();
+  //     },
+  //   });
+  // }
   getGoodsByStatus(id: number) {
     this.loading = true;
     this.goodService.getByExpedient(id).subscribe({
       next: data => {
         console.log(data);
 
-        // this.dataGood = data;
         this.dataTableGood.load(data.data);
+
+        // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
+        this.settings.columns = {
+          rowClassFunction: (row: any) => {
+            if (row.status === 'disponible') {
+              return 'row-verde'; // clase CSS para filas disponibles
+            } else {
+              return 'row-negro'; // clase CSS para filas no disponibles
+            }
+          },
+        };
+
         this.dataTableGood.refresh();
         this.totalItems = data.count;
         console.log(this.dataGood);
@@ -778,15 +843,12 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   reviewGoodData(dataGoodRes: IDataGoodsTable, count: number, total: number) {
     // this.getGoodStatusDescription(dataGoodRes, count, total);
   }
-  async cerrarActa() {
-    if (this.delete == true) {
-      const object = {
-        idConversion: this.conversion,
-      };
-    }
+  async cerrarActa(father: string | number) {
     if (this.conversion == null) {
       this.alert('warning', 'No existe acta para cerrar', '');
+      return;
     }
+
     const toolbar_user = this.authService.decodeToken().preferred_username;
     const cadena = this.cveActa ? this.cveActa.indexOf('?') : 0;
     console.log('cadena', cadena);
@@ -800,7 +862,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           'Desea eliminar este registro?'
         ).then(question => {
           if (question.isConfirmed) {
-            this.convertiongoodService.remove(this.conversion).subscribe({
+            this.expedientService.getDeleteTeacher(father).subscribe({
               next: data => {
                 this.loading = false;
                 this.alert('success', 'Acta eliminada', '');
@@ -937,6 +999,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   selectData(data: IConvertiongood) {
     this.selectedRow = data;
+    console.log(this.selectedRow);
     this.changeDetectorRef.detectChanges();
   }
   searchProcs(provider?: IConvertiongood) {
@@ -969,6 +1032,36 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   cargarData(binaryExcel: any) {
     this.hijoRef.cargarData(binaryExcel);
+  }
+
+  cargueMasive() {
+    this.massiveGoodService.cargueMassiveGoodConversion().subscribe({
+      next: (data: any) => {
+        this.alert(
+          'success',
+          'Carga masiva completada con éxito',
+          `Conversion : ${this.conversion}`
+        );
+        console.log(data);
+      },
+      error: error => {
+        console.error(error);
+      },
+    });
+  }
+
+  getActasReception(cve: string) {
+    this.loading = true;
+    this.proceedingsDeliveryReceptionService.getAllByActa(cve).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.dataActa.load(data);
+        this.dataActa.refresh();
+      },
+      error: error => {
+        console.error(error);
+      },
+    });
   }
 
   file: File | undefined;
@@ -1034,10 +1127,44 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       this.alert('error', 'Ocurrió un error al leer el archivo', 'Error');
     }
   }
-  selectProceedings(event: any) {}
-  selectGoods(event: any) {}
-  rowSelected2(event: any) {}
-  deleteGoodActa(event: any) {}
+
+  getDataTemporal(event: any) {
+    let data = [];
+    data.push(event);
+    this.dataTemporal.load(data);
+    this.dataTemporal.refresh();
+  }
+  updateConversion(id: string | number, conversion: IConvertiongood) {
+    this.alertQuestion('warning', 'Actualizar', 'Desea actualizar?').then(
+      question => {
+        if (question.isConfirmed) {
+          this.convertiongoodService
+            .update(this.conversion, conversion)
+            .subscribe({
+              next: data =>
+                this.alert('success', 'conversión actualizada con éxito', ''),
+              error: error => {
+                this.onLoadToast('error', 'Mes y año tiie duplicado', '');
+                this.loading = false;
+              },
+            });
+        }
+      }
+    );
+  }
+
+  selectProceedings(event: any) {
+    console.log(event);
+  }
+  selectGoods(event: any) {
+    console.log(event);
+  }
+  rowSelected2(event: any) {
+    console.log(event);
+  }
+  deleteGoodActa(event: any) {
+    console.log(event);
+  }
   toggleDisabled() {}
 }
 

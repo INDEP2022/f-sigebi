@@ -18,6 +18,52 @@ export const PROCEEDINGSCONVERSION_COLUMNS = {
     title: 'Acta',
     width: '10%',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.fileNumber.minutesErNumber;
+    },
+  },
+  rowClassFunction: (row: any) => {
+    if (row.status === 'disponible') {
+      return 'row-verde';
+    } else if (row.status === 'no disponible') {
+      return 'row-negro'; // Clase CSS para filas inactivas
+    } else {
+      return 'row-verde'; // Clase CSS para filas activas
+    }
+  },
+};
+export const COPY = {
+  notGood: {
+    title: 'No Bien',
+    width: '10%',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.notGood;
+    },
+  },
+  description: {
+    title: 'Descripcion',
+    width: '20%',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.description;
+    },
+  },
+  amount: {
+    title: 'Cantidad',
+    width: '10%',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.amount;
+    },
+  },
+  proceedings: {
+    title: 'Acta',
+    width: '10%',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.fileNumber.minutesErNumber;
+    },
   },
 };
 export const PROCEEDINGSCONVERSIONS_COLUMNS = {

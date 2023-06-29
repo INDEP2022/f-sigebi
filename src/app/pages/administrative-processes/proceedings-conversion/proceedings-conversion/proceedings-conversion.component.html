@@ -271,7 +271,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-3">
+                                  <div class="col-md-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -283,12 +283,12 @@
                                         <select
                                           class="form-control"
                                           formControlName="type">
-                                          <option value="2">Conversion</option>
+                                          <option value="2">2</option>
                                         </select>
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-3">
+                                  <div class="col-md-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -305,7 +305,7 @@
                                     </div>
                                   </div>
 
-                                  <div class="col-md-3">
+                                  <div class="col-md-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -321,7 +321,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-3">
+                                  <div class="col-md-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -337,7 +337,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-3">
+                                  <div class="col-md-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -353,7 +353,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-3">
+                                  <div class="col-md-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -369,19 +369,20 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-3">
+                                  <div class="col-md-12">
                                     <div>
                                       <form-field
+                                        class="form-control"
                                         [control]="
                                           actaRecepttionForm.get('direccion')
                                         "
-                                        label="Direccion">
-                                        <input
-                                          #inputValue
-                                          type="text"
+                                        label="Dirección">
+                                        <textarea
+                                          maxlength="4000"
                                           class="form-control"
                                           formControlName="direccion"
-                                          [disabled]="validPermisos" />
+                                          rows="5"
+                                          [disabled]="validPermisos"></textarea>
                                       </form-field>
                                     </div>
                                   </div>
@@ -405,7 +406,7 @@
                               [attr.class]="'table-bordered my-table'"
                               [settings]="settings"
                               [source]="dataTableGood"
-                              (userRowSelect)="selectGoods($event)">
+                              (userRowSelect)="selectData($event)">
                             </ng2-smart-table>
                           </div>
                           <span class="badge m-2 badge-pill bg-success"
@@ -425,7 +426,7 @@
                             class="d-flex justify-content-center align-items-center h-100">
                             <div>
                               <button
-                                (click)="selectProceedings($event)"
+                                (click)="getDataTemporal($event)"
                                 [disabled]="isAllDisabled"
                                 class="btn btn-secondary btn-sm bg-success active m-3 p-3"
                                 type="button">
@@ -433,27 +434,30 @@
                                 <i class="bx bxs-right-arrow-circle bx-md"></i>
                               </button>
                               <br />
-                              <button
-                                (click)="deleteGoodActa($event)"
-                                [disabled]="isAllDisabled"
-                                class="btn btn-secondary btn-sm active bg-danger m-3 p-3"
-                                type="button">
-                                <!-- Mover uno -->
-                                <i class="bx bxs-left-arrow-circle bx-md"></i>
-                              </button>
+                              <!-- <button (click)="deleteGoodActa($event)" [disabled]="isAllDisabled"
+                                class="btn btn-secondary btn-sm active bg-danger m-3 p-3" type="button">
+                               Mover uno
+                              <i class="bx bxs-left-arrow-circle bx-md"></i>
+                              </button> -->
                             </div>
                           </div>
                         </div>
-
                         <div
                           class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-success">
                           <h6>BIENES RELACIONADOS CON EL ACTA</h6>
-                          <ng2-smart-table
-                            [attr.class]="'table-bordered'"
-                            [settings]="settings2"
-                            [source]="dataGoodTable"
-                            (userRowSelect)="rowSelected2($event)">
-                          </ng2-smart-table>
+                          <div
+                            [class]="isLoadingGood ? 'table-loading' : ''"
+                            class="overflow-auto">
+                            <ng2-smart-table
+                              [attr.class]="'table-bordered my-table'"
+                              [settings]="settings2"
+                              [source]="dataTemporal"
+                              (userRowSelect)="rowSelected2($event)">
+                            </ng2-smart-table>
+                          </div>
+                          <br />
+                          <app-pagination
+                            [totalItems]="totalItems2"></app-pagination>
                         </div>
                       </div>
                     </form>
@@ -480,7 +484,7 @@
                   <button
                     class="btn btn-success btn-sm ml-2"
                     type="button"
-                    (click)="file.click()">
+                    (click)="cargueMasive()">
                     Carga Masiva
                     <i class="fa fa-upload bx-sm float-icon"></i>
                   </button>
@@ -505,7 +509,7 @@
                   <button
                     type="button"
                     class="btn btn-danger active btn-sm"
-                    (click)="cerrarActa()">
+                    (click)="cerrarActa(goodFatherNumber)">
                     Cerrar Acta
                     <i class="fas fa-close bx-sm float-icon"></i>
                   </button>
