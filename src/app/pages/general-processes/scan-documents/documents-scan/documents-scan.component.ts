@@ -289,6 +289,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       initialState: {
         identificator: this.folio,
         accept: 'image/*,application/pdf',
+        nameButton: 'Subir archivos',
         callback: (refresh: boolean) => this.fileUploaderClose(refresh),
       },
     };
@@ -318,7 +319,12 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     const user = token?.preferred_username?.toUpperCase();
     const validUsers = [user, SERA_USER, DEVELOP_USER];
     if (this.filesToDelete.length < 1) {
-      this.onLoadToast(
+      // this.onLoadToast(
+      //   'warning',
+      //   'Advertencia',
+      //   'Debes seleccionar mínimo un archivo'
+      // );
+      this.alert(
         'warning',
         'Advertencia',
         'Debes seleccionar mínimo un archivo'
