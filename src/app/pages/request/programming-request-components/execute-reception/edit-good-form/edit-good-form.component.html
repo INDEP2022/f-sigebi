@@ -4,108 +4,126 @@
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
-      <div class="row">
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('observations')"
-            label="Observaciones">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="300"
-              formControlName="observations" />
-          </form-field>
+      <div *ngIf="tranType != 'A'">
+        <div class="row">
+          <div class="col-md-12">
+            <form-field
+              [control]="form.get('observations')"
+              label="Observaciones">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="300"
+                formControlName="observations" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-5">
+          <div class="col-md-12">
+            <form-field
+              [control]="form.get('goodDescription')"
+              label="Descripción del bien">
+              <input
+                type="text"
+                maxlength="100"
+                class="form-control"
+                formControlName="goodDescription" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-5">
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('goodId')"
+              label="ID Gesti&oacute;n bien">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="30"
+                formControlName="goodId" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('uniqueKey')"
+              label="Clave &uacute;nica">
+              <input
+                type="text"
+                maxlength="30"
+                class="form-control"
+                formControlName="uniqueKey" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-5">
+          <div class="col-md-6">
+            <form-field [control]="form.get('quantity')" label="Cantidad">
+              <input
+                type="number"
+                class="form-control"
+                maxlength="30"
+                formControlName="quantity" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('unitMeasure')">
+              <ngx-select
+                [form]="form"
+                control="unitMeasure"
+                [data]="unitMeasures"
+                [loading]="loading"
+                value="uomCode"
+                bindLabel="measureTlUnit"
+                (fetchItems)="getUnitMeasure($event)"
+                label="Selecciona la unidad de medida"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-5">
+          <div class="col-md-6">
+            <form-field [control]="form.get('physicalStatus')">
+              <ngx-select
+                [form]="form"
+                control="physicalStatus"
+                [data]="physicalStatus"
+                [loading]="loading"
+                value="keyId"
+                bindLabel="description"
+                label="Selecciona el estado f&iacute;sico"></ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('stateConservation')">
+              <ngx-select
+                [form]="form"
+                control="stateConservation"
+                [data]="stateConservations"
+                value="keyId"
+                bindLabel="description"
+                (fetchItems)="getStateConservation($event)"
+                label="Selecciona estado de conservaci&oacute;n"></ngx-select>
+            </form-field>
+          </div>
         </div>
       </div>
 
-      <div class="row pt-5">
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('goodDescription')"
-            label="Descripción del bien">
-            <input
-              type="text"
-              maxlength="100"
-              class="form-control"
-              formControlName="goodDescription" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-5">
-        <div class="col-md-6">
-          <form-field
-            [control]="form.get('goodId')"
-            label="ID Gesti&oacute;n bien">
-            <input
-              type="text"
-              class="form-control"
-              maxlength="30"
-              formControlName="goodId" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field
-            [control]="form.get('uniqueKey')"
-            label="Clave &uacute;nica">
-            <input
-              type="text"
-              maxlength="30"
-              class="form-control"
-              formControlName="uniqueKey" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-5">
-        <div class="col-md-6">
-          <form-field [control]="form.get('quantity')" label="Cantidad">
-            <input
-              type="number"
-              class="form-control"
-              maxlength="30"
-              formControlName="quantity" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('unitMeasure')">
-            <ngx-select
-              [form]="form"
-              control="unitMeasure"
-              [data]="unitMeasures"
-              [loading]="loading"
-              value="uomCode"
-              bindLabel="measureTlUnit"
-              (fetchItems)="getUnitMeasure($event)"
-              label="Selecciona la unidad de medida"></ngx-select>
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-5">
-        <div class="col-md-6">
-          <form-field [control]="form.get('physicalStatus')">
-            <ngx-select
-              [form]="form"
-              control="physicalStatus"
-              [data]="physicalStatus"
-              [loading]="loading"
-              value="keyId"
-              bindLabel="description"
-              label="Selecciona el estado f&iacute;sico"></ngx-select>
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('stateConservation')">
-            <ngx-select
-              [form]="form"
-              control="stateConservation"
-              [data]="stateConservations"
-              value="keyId"
-              bindLabel="description"
-              (fetchItems)="getStateConservation($event)"
-              label="Selecciona estado de conservaci&oacute;n"></ngx-select>
-          </form-field>
+      <div *ngIf="tranType == 'A'">
+        <div class="row pt-5">
+          <div class="col-md-12">
+            <form-field
+              [control]="form.get('observations')"
+              label="Observación">
+              <input
+                type="text"
+                maxlength="100"
+                class="form-control"
+                formControlName="observations" />
+            </form-field>
+          </div>
         </div>
       </div>
     </form>

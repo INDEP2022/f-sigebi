@@ -280,4 +280,14 @@ export class NotificationService extends HttpService {
   getCFlyer(fileNumber: number) {
     return this.get(`notification/cFlyer/${fileNumber}`);
   }
+
+  applyAllGoddMaintenanceCoverage(body: any) {
+    const route = 'application/updateUnitProgramAll';
+    return this.post(route, body);
+  }
+
+  applySomeGoddMaintenanceCoverage(body: any) {
+    const route = 'application/updateUnitProgram';
+    return this.post(route, body);
+  }
 }
