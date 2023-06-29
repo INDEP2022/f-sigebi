@@ -1,4 +1,4 @@
-<div class="row w-100">
+<div class="row">
   <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
     <form [formGroup]="form" class="container-fluid form-material">
       <div class="card">
@@ -50,17 +50,27 @@
                 formControlName="descripcion"></textarea>
             </form-field>
             <form-field
-              class="col-sm-12 col-12 col-md-8 p-2"
+              class="col-sm-12 col-12 col-md-3 p-2"
               [control]="form.get('nombramiento')"
               label="Nombramiento">
               <input
                 class="form-control"
                 formControlName="nombramiento"
-                maxlength="6"
+                maxlength="10"
                 [readonly]="true" />
             </form-field>
             <form-field
-              class="col-sm-12 col-12 col-md-4 p-2"
+              class="col-sm-12 col-12 col-md-6 p-2"
+              [control]="form.get('nombramientoDescription')"
+              label="Nombramiento Descripci&oacute;n">
+              <textarea
+                class="form-control"
+                formControlName="nombramientoDescription"
+                maxlength="200"
+                [readonly]="true"></textarea>
+            </form-field>
+            <form-field
+              class="col-sm-12 col-12 col-md-3 p-2"
               [control]="form.get('fecha')"
               label="Fecha">
               <input
@@ -80,6 +90,7 @@
                 class="btn btn-primary btn-sm active m-2"
                 (click)="btnEjecutar()">
                 Ejecutar Conciliaci&oacute;n de Pagos
+                <i class="fa fa-check" aria-hidden="true"></i>
               </button>
               <button
                 [disabled]="loading"
@@ -213,6 +224,7 @@
               class="btn btn-primary btn-sm active m-2"
               (click)="btnRecargaDepositario()">
               Recarga Depositario
+              <i class="fas fa-sync-alt" aria-hidden="true"></i>
             </button>
             <button
               [disabled]="loading"

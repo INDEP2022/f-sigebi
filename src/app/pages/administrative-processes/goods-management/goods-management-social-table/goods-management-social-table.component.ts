@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { map, takeUntil } from 'rxjs';
-import { IViewTmpTracker } from 'src/app/core/models/ms-good-tracker/vtempTracker.model';
+import { ITVGoodsTracker } from 'src/app/core/models/ms-good-tracker/vtempTracker.model';
 import { GoodViewTrackerService } from 'src/app/core/services/ms-good-tracker/good-v-tracker.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { COLUMNS } from './columns';
@@ -13,7 +13,7 @@ import { GoodsManagementSocialNotLoadGoodsComponent } from './goods-management-s
   styleUrls: ['./goods-management-social-table.component.scss'],
 })
 export class GoodsManagementSocialTable
-  extends BasePageWidhtDinamicFiltersExtra<IViewTmpTracker>
+  extends BasePageWidhtDinamicFiltersExtra<ITVGoodsTracker>
   implements OnInit
 {
   private _selectedGoods: number[];
@@ -56,18 +56,18 @@ export class GoodsManagementSocialTable
     this.settings = $event;
   }
 
-  optionString() {
-    switch (+this.option) {
-      case 1:
+  optionString(cabinetSocial: string) {
+    switch (cabinetSocial) {
+      case '1':
         return 'Susceptible';
-      case 2:
+      case '2':
         return 'Asignado';
-      case 3:
+      case '3':
         return 'Entregado';
-      case 4:
+      case '4':
         return 'Liberar';
       default:
-        return '';
+        return 'Sin Asignar';
     }
   }
 
@@ -101,7 +101,7 @@ export class GoodsManagementSocialTable
               data: response.data.map(row => {
                 return {
                   ...row,
-                  officeProc: this.optionString(),
+                  officeProc: this.optionString(row.cabinetSocial),
                 };
               }),
             };

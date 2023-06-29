@@ -215,6 +215,7 @@ const routes: Routes = [
           import('./goods-management/goods-management.module').then(
             m => m.GoodsManagementModule
           ),
+        data: { title: 'Gestión de Bienes Gabinete Social' },
       },
       {
         path: 'siab-sami-interaction',

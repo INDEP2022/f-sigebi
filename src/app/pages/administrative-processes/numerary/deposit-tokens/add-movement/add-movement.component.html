@@ -21,7 +21,7 @@
                     [form]="form"
                     [data]="banks"
                     (fetchItems)="getBanks($event)"
-                    bindLabel="cveBank"
+                    bindLabel="bankAndNumber"
                     control="bank"
                     label="Banco"
                     [searchOnInit]="false"
@@ -35,7 +35,8 @@
                   [control]="form.get('dateMovement')"
                   label="Fecha de Movimiento">
                   <input
-                    (change)="dateMovement($event)"
+                    (ngModelChange)="dateMovement($event)"
+                    [(ngModel)]="dateMovem"
                     bsDatepicker
                     [maxDate]="maxDate"
                     type="text"
@@ -46,12 +47,12 @@
               <div class="col-md-12 mt-3">
                 <form-field
                   [control]="form.get('dateCalculationInterests')"
-                  label="Cuenta">
+                  label="Fecha Cálculo Interés">
                   <input
                     bsDatepicker
                     [minDate]="dateMovem"
                     readonly
-                    type="number"
+                    type="text"
                     class="form-control"
                     formControlName="dateCalculationInterests" />
                 </form-field>
@@ -67,7 +68,7 @@
                     [data]="categories"
                     (fetchItems)="getCategory($event)"
                     bindLabel="categoryAndDesc"
-                    control="bank"
+                    control="category"
                     label="Categoria"
                     [searchOnInit]="false"
                     [showTooltip]="true"
@@ -78,18 +79,12 @@
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('deposit')" label="Depósito">
                   <input
-                    readonly
-                    type="text"
+                    type="number"
                     class="form-control"
                     formControlName="deposit" />
                 </form-field>
               </div>
-              <div class="col-md-12 mt-3">
-                <!-- <form-field [control]="form.get('branch')" label="Sucursal">
-                                    <input readonly type="number" class="form-control" formControlName="branch" min="1"
-                                        pattern="^[0-9]+" />
-                                </form-field> -->
-              </div>
+              <div class="col-md-12 mt-3"></div>
             </div>
           </div>
         </div>
@@ -100,8 +95,8 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
-          [disabled]="!form.valid"
           type="button"
+          [disabled]="!form.valid"
           class="btn btn-primary active"
           (click)="saveRegister()">
           Guardar

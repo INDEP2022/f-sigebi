@@ -84,8 +84,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('this.idTypeDoc', this.idTypeDoc);
-    console.log('this.receiptGuards', this.receiptGuards);
     this.showReportByTypeDoc();
     this.getReceipt();
     this.params
@@ -117,7 +115,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       this.src = linkDoc;
     }
 
-    if (this.idTypeDoc == 185) {
+    if (this.idTypeDoc == 185 || this.idTypeDoc == 186) {
       let linkDoc: string = `${this.urlBaseReport}Recibo_Resguardo.jasper&ID_RECIBO_RESGUARDO=${this.receiptGuards.id}`;
       this.src = linkDoc;
     }
@@ -143,7 +141,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       .getSignatoriesFilter(learnedType, learnedId)
       .subscribe({
         next: response => {
-          console.log('gg', response);
           this.signatories = response.data;
           this.totalItems = response.count;
           this.loading = false;
@@ -189,7 +186,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
   signDocument() {
     //mostrar listado de reportes
-    if (this.idTypeDoc == 185) {
+    if (this.idTypeDoc == 185 || this.idTypeDoc == 186) {
       this.modalRef.content.callback(true);
       this.modalRef.hide();
     } else {
@@ -306,9 +303,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 next: response => {
                   this.msjCheck = true;
                 },
-                error: error => {
-                  //this.msjCheck = true;
-                },
+                error: error => {},
               });
           }
 
@@ -418,8 +413,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         }
 
         if (this.idTypeDoc == 103) {
+          this.close();
           this.modalRef.content.callback(true);
-          this.modalRef.hide();
         }
       }
     });

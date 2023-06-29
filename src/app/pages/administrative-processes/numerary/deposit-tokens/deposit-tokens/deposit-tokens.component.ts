@@ -20,6 +20,7 @@ import { AddMovementComponent } from '../add-movement/add-movement.component';
 import { CustomdbclickComponent } from '../customdbclick/customdbclick.component';
 import { CustomdbclickdepositComponent } from '../customdbclickdeposit/customdbclickdeposit.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
+import { CustomDateFilterComponent_ } from './searchDate';
 @Component({
   selector: 'app-deposit-tokens',
   templateUrl: './deposit-tokens.component.html',
@@ -62,6 +63,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
   dateMovemInicio: Date;
   dateMovemFin: Date;
   loadingBtn: boolean = false;
+  valorDate1: string = 'Fecha Transferencia';
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -75,6 +77,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: {
+        columnTitle: 'Acciones',
         delete: true,
         edit: false,
         add: false,
@@ -96,20 +99,42 @@ export class DepositTokensComponent extends BasePage implements OnInit {
           type: 'string',
           sort: false,
         },
-        fec_insercion_: {
+        motionDate: {
           title: 'Fecha Depósito',
-          type: 'string',
+          // type: 'string',
           sort: false,
+          // width: '13%',
+          type: 'html',
+          valuePrepareFunction: (text: string) => {
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            }`;
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent_,
+          },
         },
         folio_ficha: {
           title: 'Folio',
           type: 'string',
           sort: false,
         },
-        fec_calculo_intereses_: {
+        calculationInterestsDate: {
           title: 'Fecha Transferencia',
-          type: 'string',
+          // type: 'string',
           sort: false,
+          // width: '13%',
+          type: 'html',
+          valuePrepareFunction: (text: string) => {
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            }`;
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent_,
+          },
         },
         currency: {
           title: 'Moneda',
@@ -187,9 +212,10 @@ export class DepositTokensComponent extends BasePage implements OnInit {
             const search: any = {
               bank: () => (searchFilter = SearchFilter.ILIKE),
               cveAccount: () => (searchFilter = SearchFilter.EQ),
-              fec_insercion: () => (searchFilter = SearchFilter.ILIKE),
+              motionDate: () => (searchFilter = SearchFilter.ILIKE),
               folio_ficha: () => (searchFilter = SearchFilter.ILIKE),
-              fec_traspaso: () => (searchFilter = SearchFilter.ILIKE),
+              calculationInterestsDate: () =>
+                (searchFilter = SearchFilter.ILIKE),
               currency: () => (searchFilter = SearchFilter.ILIKE),
               deposito: () => (searchFilter = SearchFilter.EQ),
               no_expediente: () => (searchFilter = SearchFilter.EQ),
@@ -201,7 +227,16 @@ export class DepositTokensComponent extends BasePage implements OnInit {
             search[filter.field]();
 
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log('filter.search', filter.search);
+              if (filter.search == 'motionDate') {
+              }
+              this.columnFilters[field] = `${filter.search}`;
+              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+
+              console.log(
+                'this.columnFilters[field]',
+                this.columnFilters[field]
+              );
             } else {
               delete this.columnFilters[field];
             }
@@ -219,10 +254,59 @@ export class DepositTokensComponent extends BasePage implements OnInit {
 
   getAccount() {
     this.loading = true;
-    let params = {
+    let params: any = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
+    console.log('params1', params);
+    if (params['filter.motionDate']) {
+      var fecha = new Date(params['filter.motionDate']);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var año = fecha.getFullYear();
+      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var día = ('0' + fecha.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada = año + '-' + mes + '-' + día;
+      params['motionDate'] = fechaFormateada;
+      delete params['filter.motionDate'];
+    }
+    if (params['filter.deposito']) {
+      params['deposit'] = params['filter.deposito'];
+      delete params['filter.deposito'];
+    }
+    if (params['filter.calculationInterestsDate']) {
+      var fecha = new Date(params['filter.calculationInterestsDate']);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var año = fecha.getFullYear();
+      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var día = ('0' + fecha.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada = año + '-' + mes + '-' + día;
+      params['calculationInterestsDate'] = fechaFormateada;
+      delete params['filter.calculationInterestsDate'];
+    }
+    if (params['filter.no_bien']) {
+      params['goodNumber'] = params['filter.no_bien'];
+      delete params['filter.no_bien'];
+    }
+    if (params['filter.no_expediente']) {
+      params['proceedingsNumber'] = params['filter.no_expediente'];
+      delete params['filter.no_expediente'];
+    }
+    if (params['filter.categoria']) {
+      params['category'] = params['filter.categoria'];
+      delete params['filter.categoria'];
+    }
+    if (params['filter.es_parcializacion']) {
+      params['ispartialization'] = params['filter.es_parcializacion'];
+      delete params['filter.es_parcializacion'];
+    }
+
+    console.log('params2', params);
     this.accountMovementService.getAccount2(params).subscribe({
       next: async (response: any) => {
         let result = response.data.map(async (item: any) => {
@@ -231,10 +315,10 @@ export class DepositTokensComponent extends BasePage implements OnInit {
           item['currency'] = detailsBank ? detailsBank.cveCurrency : null;
           item['bank'] = detailsBank ? detailsBank.cveBank : null;
           item['cveAccount'] = detailsBank ? detailsBank.cveAccount : null;
-          item['fec_insercion_'] = item.fec_insercion
-            ? this.datePipe.transform(item.fec_insercion, 'dd/MM/yyyy')
+          item['motionDate'] = item.fec_movimiento
+            ? this.datePipe.transform(item.fec_movimiento, 'dd/MM/yyyy')
             : null;
-          item['fec_calculo_intereses_'] = item.fec_calculo_intereses
+          item['calculationInterestsDate'] = item.fec_calculo_intereses
             ? this.datePipe.transform(item.fec_calculo_intereses, 'dd/MM/yyyy')
             : null;
           item['bancoDetails'] = detailsBank ? detailsBank : null;

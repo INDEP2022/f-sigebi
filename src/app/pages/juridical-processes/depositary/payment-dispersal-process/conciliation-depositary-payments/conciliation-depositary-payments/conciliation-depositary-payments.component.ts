@@ -118,7 +118,14 @@ export class ConciliationDepositaryPaymentsComponent
           Validators.pattern(NUM_POSITIVE),
         ],
       ], //*
-      nombramiento: [{ value: '', disabled: false }, [Validators.maxLength(6)]], //*
+      nombramiento: [
+        { value: '', disabled: false },
+        [Validators.maxLength(10)],
+      ], //*
+      nombramientoDescription: [
+        { value: '', disabled: false },
+        [Validators.maxLength(200)],
+      ], //*
       fecha: [
         { value: this.actualDate, disabled: true },
         [Validators.maxLength(11)],
@@ -377,11 +384,10 @@ export class ConciliationDepositaryPaymentsComponent
             this.depositaryAppointment = res.data[0];
             this.form
               .get('nombramiento')
-              .setValue(
-                this.depositaryAppointment.appointmentNumber +
-                  ' --- ' +
-                  this.depositaryAppointment.contractKey
-              );
+              .setValue(this.depositaryAppointment.appointmentNumber);
+            this.form
+              .get('nombramientoDescription')
+              .setValue(this.depositaryAppointment.contractKey);
             this.formDepositario
               .get('idDepositario')
               .setValue(this.depositaryAppointment.personNumber.id);

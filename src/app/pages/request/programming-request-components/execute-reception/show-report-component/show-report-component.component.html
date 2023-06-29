@@ -52,7 +52,7 @@
     <div *ngIf="listSigns">
       <div class="row">
         <div class="d-flex">
-          <h5 class="mr-auto p-2">Listado de Firmates Electr&oacute;nicos</h5>
+          <h5 class="mr-auto p-2">Listado de Firmantes Electr&oacute;nicos</h5>
           <div class="p-2" *ngIf="showButtonFirm == true">
             <button class="btn btn-primary btn-sm active" (click)="sendSign()">
               <i class="bx bxs-right-arrow-square"></i>Enviar a Firmar
@@ -79,15 +79,6 @@
           <div class="col-md-12">
             <div class="table-responsive">
               <div [class]="loading ? 'table-loading' : ''">
-                <!--<ng2-smart-table
-                      [attr.class]="'table-bordered'"
-                      [settings]="settings"
-                      (edit)="uploadData($event.data)"
-                      (userRowSelect)="rowsSelected($event)"
-                      [source]="signatories"
-                      (rowSelect)="selectRow($event.data)">
-                    </ng2-smart-table> -->
-
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="settings"
