@@ -53,9 +53,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     if (this.typeDoc == 103) {
       this.getReceipts();
       this.getProceeding();
-      this.getGoodsReceipt();
-
-      console.log('guardReception');
     }
     this.getProgramming();
   }
@@ -63,20 +60,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       file: [null],
-    });
-  }
-
-  getGoodsReceipt() {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.programmationId'] = this.programming.id;
-    this.receptionService.getReceiptGood(params.getValue()).subscribe({
-      next: response => {
-        console.log('response', response); //Hace falta un filtro
-        response.data.map((item: IRecepitGuard) => {
-          this.goodId += item.idGood + ' ';
-        });
-      },
-      error: error => {},
     });
   }
 
@@ -109,8 +92,25 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     params.getValue()['filter.idPrograming'] = this.programming.id;
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
-        console.log('proc', response);
         this.proceeding = response.data[0];
+        this.getGoodsReceipt();
+      },
+      error: error => {},
+    });
+  }
+
+  getGoodsReceipt() {
+    let good: IRecepitGuard[] = [];
+    const formData = {
+      programmationId: this.programming.id,
+      actId: this.proceeding?.id,
+    };
+    this.receptionService.getReceiptGoodByIds(formData).subscribe({
+      next: response => {
+        good.push(response);
+        good.map((item: IRecepitGuard) => {
+          this.goodId += item.goodId + ' ';
+        });
       },
       error: error => {},
     });
@@ -216,10 +216,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     }
 
     if (this.typeDoc == 103) {
-      console.log('Soy un recibo de entrega listo para ser creado');
       const idProg = this.programming.id;
-      console.log('recibos', this.receipt);
-      console.log('actas', this.proceeding);
       //const idReceipt = this.
       const formData = {
         keyDoc:
@@ -241,8 +238,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         xTipoDocumento: 103,
       };
 
-      console.log('formData', formData);
-
       const extension = '.pdf';
       const docName = 'Recibo Resguardo';
 
@@ -256,15 +251,18 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: response => {
-            console.log('doc guardado', response);
             const updateReceipt = this.updateReceipt(response.dDocName);
             if (updateReceipt) {
-              const updateGood = this.onLoadToast(
+              this.alertInfo(
                 'success',
-                'Acción correcta',
-                'Documento Adjuntado correctamente'
-              );
-              this.close();
+                'Acción Correcta',
+                'Documento adjuntado correctamente'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.close();
+                  this.modalRef.content.callback(true);
+                }
+              });
             }
           },
         });
@@ -292,7 +290,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
 
   updateReceipt(docName: string) {
     return new Promise((resolve, reject) => {
-      console.log('receipt', this.receipt);
       const formData: any = {
         id: this.receipt.id,
         actId: this.receipt.actId,

@@ -84,8 +84,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('this.idTypeDoc', this.idTypeDoc);
-
     this.showReportByTypeDoc();
     this.getReceipt();
     this.params
@@ -143,7 +141,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       .getSignatoriesFilter(learnedType, learnedId)
       .subscribe({
         next: response => {
-          console.log('gg', response);
           this.signatories = response.data;
           this.totalItems = response.count;
           this.loading = false;
@@ -304,13 +301,9 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
               )
               .subscribe({
                 next: response => {
-                  console.log(response);
                   this.msjCheck = true;
                 },
-                error: error => {
-                  //console.log(error);
-                  //this.msjCheck = true;
-                },
+                error: error => {},
               });
           }
 
@@ -420,8 +413,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         }
 
         if (this.idTypeDoc == 103) {
+          this.close();
           this.modalRef.content.callback(true);
-          this.modalRef.hide();
         }
       }
     });
