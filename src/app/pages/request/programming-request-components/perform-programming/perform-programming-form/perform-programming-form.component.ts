@@ -1826,7 +1826,7 @@ export class PerformProgrammingFormComponent
             .subscribe({
               next: async () => {
                 this.loading = false;
-                this.onLoadToast(
+                this.alert(
                   'success',
                   'Acción correcta',
                   'Programacíón guardada correctamente'
