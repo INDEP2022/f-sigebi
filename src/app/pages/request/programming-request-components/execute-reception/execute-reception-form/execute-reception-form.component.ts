@@ -130,6 +130,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   formLoadingReprog: boolean = false;
   formLoadingTrans: boolean = false;
   formLoadingGuard: boolean = false;
+  showReception: boolean = false;
+  showTransportable: boolean = false;
+  showGuard: boolean = false;
+  showWarehouse: boolean = false;
+  showReprog: boolean = false;
+  showCancel: boolean = false;
   receiptGuardGood: IRecepitGuard;
   receiptData: IReceipt;
   goodData: IGood;
@@ -670,6 +676,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               });
               this.goodsTransportable.push(form);
               this.formLoadingTrans = false;
+              this.showTransportable = true;
             });
           },
           error: error => {
@@ -743,6 +750,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               transferentDestiny: [item?.saeDestiny],
             });
             this.goodsReception.push(form);
+            this.showReception = true;
           });
         },
         error: error => {
@@ -799,6 +807,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             });
             this.goodsGuards.push(form);
             this.headingGuard = `En Resguardo(${this.goodsGuards.length})`;
+            this.showGuard = true;
           });
         },
         error: error => {
@@ -807,59 +816,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         },
       });
     });
-    /*
-    const goodRes = data.filter(items => {
-      return items.status == 'EN_RESGUARDO_TMP';
-    });
-
-    goodRes.map(items => {
-      this.params.getValue()['filter.id'] = items.goodId;
-      this.goodService.getAll(this.params.getValue()).subscribe({
-        next: data => {
-          data.data.map(response => {
-            if (response.physicalStatus == 1) {
-              response.physicalStatusName = 'BUENO';
-            } else if (response.physicalStatus == 2) {
-              response.physicalStatusName = 'MALO';
-            }
-            if (response.stateConservation == 1) {
-              response.stateConservationName = 'BUENO';
-            } else if (response.stateConservation == 2) {
-              response.stateConservationName = 'MALO';
-            }
-            this.goodsGuards.clear();
-            this.goodData = response;
-
-            const form = this.fb.group({
-              id: [response?.id],
-              goodId: [response?.goodId],
-              uniqueKey: [response?.uniqueKey],
-              fileNumber: [response?.fileNumber],
-              goodDescription: [response?.goodDescription],
-              quantity: [response?.quantity],
-              unitMeasure: [response?.unitMeasure],
-              descriptionGoodSae: [response?.descriptionGoodSae],
-              quantitySae: [response?.quantitySae],
-              saeMeasureUnit: [response?.saeMeasureUnit],
-              physicalStatus: [response?.physicalStatus],
-              physicalStatusName: [response?.physicalStatusName],
-              saePhysicalState: [response?.saePhysicalState],
-              stateConservation: [response?.stateConservation],
-              stateConservationName: [response?.stateConservationName],
-              stateConservationSae: [response?.stateConservationSae],
-              regionalDelegationNumber: [response?.regionalDelegationNumber],
-            });
-            this.goodsGuards.push(form);
-            this.goodsGuards.updateValueAndValidity();
-            this.formLoading = false;
-            this.headingGuard = `En Resguardo(${this.goodsGuards.length})`;
-          });
-        },
-        error: error => {
-          this.formLoading = false;
-        },
-      });
-    }); */
   }
 
   filterStatusWarehouse(data: IGoodProgramming[]) {
@@ -908,6 +864,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             this.goodsWarehouse.updateValueAndValidity();
             this.formLoading = false;
             this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+            this.showWarehouse = true;
           });
         },
         error: error => {
@@ -968,6 +925,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
             this.formLoadingReprog = false;
             this.formLoadingTrans = false;
+            this.showReprog = true;
           });
         },
         error: error => {
@@ -978,55 +936,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         },
       });
     });
-    /*goodsReprog.map(items => {
-      this.params.getValue()['filter.id'] = items.goodId;
-      this.goodService.getAll(this.params.getValue()).subscribe({
-        next: data => {
-          this.goodsReprog.clear();
-          data.data.map(response => {
-            if (response.physicalStatus == 1) {
-              response.physicalStatusName = 'BUENO';
-            } else if (response.physicalStatus == 2) {
-              response.physicalStatusName = 'MALO';
-            }
-            if (response.stateConservation == 1) {
-              response.stateConservationName = 'BUENO';
-            } else if (response.stateConservation == 2) {
-              response.stateConservationName = 'MALO';
-            }
-
-            this.goodData = response;
-
-            const form = this.fb.group({
-              id: [response?.id],
-              goodId: [response?.goodId],
-              uniqueKey: [response?.uniqueKey],
-              fileNumber: [response?.fileNumber],
-              goodDescription: [response?.goodDescription],
-              quantity: [response?.quantity],
-              unitMeasure: [response?.unitMeasure],
-              descriptionGoodSae: [response?.descriptionGoodSae],
-              quantitySae: [response?.quantitySae],
-              saeMeasureUnit: [response?.saeMeasureUnit],
-              physicalStatus: [response?.physicalStatus],
-              physicalStatusName: [response?.physicalStatusName],
-              saePhysicalState: [response?.saePhysicalState],
-              stateConservation: [response?.stateConservation],
-              stateConservationName: [response?.stateConservationName],
-              stateConservationSae: [response?.stateConservationSae],
-              regionalDelegationNumber: [response?.regionalDelegationNumber],
-            });
-            this.goodsReprog.push(form);
-            this.goodsReprog.updateValueAndValidity();
-            this.formLoading = false;
-            this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
-          });
-        },
-        error: error => {
-          this.formLoading = false;
-        },
-      });
-    }); */
   }
 
   filterStatusCancelation(data: IGoodProgramming[]) {
@@ -1076,6 +985,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             this.goodsCancelation.updateValueAndValidity();
             this.formLoading = false;
             this.headingCancelation = `Cancelación(${this.goodsCancelation.length})`;
+            this.showCancel = true;
           });
         },
         error: error => {
