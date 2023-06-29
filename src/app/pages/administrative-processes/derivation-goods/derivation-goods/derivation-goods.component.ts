@@ -110,7 +110,9 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   dataGoods = new LocalDataSource();
   dataGoods2: any[] = [];
   conversionId: any;
-  goodFatherNumber: any;
+  goodFatherNumber$ = new BehaviorSubject<any>(undefined);
+  filterGood$ = new BehaviorSubject<any>(undefined);
+
   cveActaConv: any;
   tipoValue: any;
 
@@ -142,6 +144,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.numberDossier.setValue(data.fileNumber.id);
             this.numberGoodFather.setValue(data.goodFatherNumber);
             //
+            this.goodFatherNumber$.next(data.goodFatherNumber);
             console.log(data);
             this.wrongModal = false;
             this.tipo.setValue(data.typeConv);
@@ -367,7 +370,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   applyGood(event: any) {
-    if (
+    /* if (
       this.selectedRow.status === 'CVD' ||
       this.selectedRow.status === 'CAN'
     ) {
@@ -376,7 +379,51 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         `El Bien estatus del bien con id: ${this.numberGoodFather.value}`,
         `ya ha sido convertido`
       );
-    }
+    }*/
+    this.serviceGood.getGoods(this.goodFatherNumber$.getValue()).subscribe(
+      res => {
+        const data = res;
+        this.filterGood$.next(data);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+    console.log('NEWGOODS1', this.filterGood$.getValue().data);
+    let payload = this.filterGood$.getValue().data;
+    payload = payload.map((item: any) => {
+      delete item.almacen;
+      delete item.delegationNumber;
+      delete item.expediente;
+      delete item.menaje;
+      delete item.statusDetails;
+      delete item.subDelegationNumber;
+      return item;
+    });
+    delete payload.almacen;
+    console.log('NEWGOODS2', payload);
+    this.serviceGood.crateGood(payload[0]).subscribe(
+      res => {
+        this.alert('success', 'se ha agregado el Bien', `con el id: ${res.id}`);
+      },
+      err => {
+        this.alert(
+          'error',
+          'No se pudo cambiar el estatus del bien',
+          'Se presentó un error inesperado que no permitió el cambio de estatus del bien, por favor intentelo nuevamente'
+        );
+      }
+    );
+
+    this.serviceGood.getGoods(this.goodFatherNumber$.getValue()).subscribe(
+      res => {
+        const data = res;
+        this.filterGood$.next(data);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   onRowSelect(event: any) {
@@ -418,7 +465,13 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         }
       },
     };
-
+    this.loading = true;
+    this.modalService.show(ActaConvertionFormComponent, config);
+    this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
+      queryParams: {
+        actConvertion: this.form.value.actConvertion,
+      },
+    });
     this.modalService.show(ActaConvertionFormComponent, config);
   }
 }
