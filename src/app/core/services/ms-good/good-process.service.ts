@@ -150,4 +150,11 @@ export class GoodProcessService extends HttpService {
     const route = GoodProcessPoints.GetDescDep;
     return this.get(`${route}/${good}`);
   }
+
+  getLabelDesc(body: {
+    transferNumber: string | number;
+    clasifGooNumber: string | number;
+  }) {
+    return this.post('update-good-status/getLabelDescrip', body);
+  }
 }
