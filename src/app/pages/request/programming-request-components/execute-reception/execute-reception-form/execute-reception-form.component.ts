@@ -121,6 +121,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   headingCancelation: string = `Cancelación(0)`;
   idStation: any;
   transferentName: string = '';
+  tranType: string = '';
   stationName: string = '';
   authorityName: string = '';
   typeRelevantName: string = '';
@@ -290,7 +291,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private router: Router,
     private authService: AuthService,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private typeTransferentService: TransferenteService
   ) {
     super();
     this.settings = {
@@ -317,6 +319,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.getPhysicalStatus();
     this.getReceipts();
     this.getReceiptsGuard();
+    this.getTypeTransferent();
   }
 
   prepareForm() {
@@ -335,9 +338,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       stateConservationSae: [null],
       destiny: [null],
       selectColumn: [null],
+      observations: [null],
       transferentDestiny: [null],
     });
   }
+
+  getTypeTransferent() {}
 
   prepareReceptionForm() {
     this.receptionForm = this.fb.group({
@@ -353,7 +359,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       saeMeasureUnit: [null],
       saePhysicalState: [null],
       stateConservationSae: [null],
+      observations: [null],
       selectColumn: [null],
+      transferentDestiny: [null],
+      destiny: [null],
     });
   }
 
@@ -518,10 +527,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         this.getAuthority();
         this.getTypeRelevant();
         this.getwarehouse();
+        this.typeTransferent();
         this.getUsersProgramming();
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getInfoGoodsProgramming());
+      });
+  }
+
+  typeTransferent() {
+    this.transferentService
+      .getById(this.programming.tranferId)
+      .subscribe(data => {
+        this.tranType = data.typeTransferent;
       });
   }
 
@@ -625,7 +643,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 item.stateConservationName = 'MALO';
               }
 
-              const destinyIndep = await this.getDestinyIndep(item.saeDestiny);
+              await this.getDestinyIndep(item.saeDestiny);
 
               this.goodData = item;
               const form = this.fb.group({
@@ -648,6 +666,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 regionalDelegationNumber: [item?.regionalDelegationNumber],
                 destiny: [item?.destiny],
                 transferentDestiny: [item?.saeDestiny],
+                observations: [item?.observations],
               });
               this.goodsTransportable.push(form);
               this.formLoadingTrans = false;
@@ -719,6 +738,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               stateConservationName: [item?.stateConservationName],
               stateConservationSae: [item?.stateConservationSae],
               regionalDelegationNumber: [item?.regionalDelegationNumber],
+              observations: [item?.observations],
+              destiny: [item?.destiny],
+              transferentDestiny: [item?.saeDestiny],
             });
             this.goodsReception.push(form);
           });
@@ -1150,6 +1172,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       good,
+      tranType: this.tranType,
       callback: (next: boolean) => {
         if (next) this.getInfoGoodsProgramming();
       },
