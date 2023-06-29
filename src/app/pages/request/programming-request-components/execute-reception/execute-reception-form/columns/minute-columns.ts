@@ -12,7 +12,7 @@ export const RECEIPT_COLUMNS = {
   },
 
   statusReceipt: {
-    title: 'Estatus recibo',
+    title: 'Estatus Recibo',
     type: 'string',
     sort: false,
   },
@@ -20,7 +20,7 @@ export const RECEIPT_COLUMNS = {
 
 export const RECEIPT_GUARD_COLUMNS = {
   receiptDate: {
-    title: 'Fecha recibo',
+    title: 'Fecha Recibo',
     type: 'string',
     sort: false,
   },
@@ -38,14 +38,14 @@ export const RECEIPT_GUARD_COLUMNS = {
   },
 };
 export const RECEIPT_COLUMNS_FORMALIZE = {
-  receipt: {
+  id: {
     title: 'Recibo',
     type: 'text',
     sort: false,
   },
 
   statusReceipt: {
-    title: 'Estatus recibo',
+    title: 'Estatus Recibo',
     type: 'text',
     sort: false,
   },

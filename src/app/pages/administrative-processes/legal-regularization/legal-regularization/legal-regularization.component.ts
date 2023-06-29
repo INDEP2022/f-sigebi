@@ -95,7 +95,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
     //5457725
     console.log('XXXXXXXXXXXXXXXXX');
     if (this.numberGood.value === null || this.numberGood.value === '') {
-      this.alert('info', 'Regularización jurídica', 'Ingrese No. de Bien');
+      this.alert('warning', 'Regularización jurídica', 'Ingrese No. de Bien');
       return;
     }
     this.goodServices.getById(this.numberGood.value).subscribe({
@@ -119,7 +119,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
         } else {
           if (!this.redicrectScan) {
             this.alert(
-              'info',
+              'warning',
               'Regularización jurídica',
               `El estatus del bien ${this.numberGood.value} es incorrecto. Los estatus validos son  ADM o REJ.'`
             );
@@ -148,7 +148,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
       this.numberFoli === ''
     ) {
       this.alert(
-        'info',
+        'warning',
         'Regularización jurídica',
         `No puede cambiar el estatus al bien ${this.good.id} porque aun no se ha generado un folio`
       );
@@ -194,7 +194,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
             console.log(err);
             res(valid);
             this.alert(
-              'info',
+              'warning',
               'Regularización jurídica',
               `No puede cambiar el estatus al bien ${this.good.id} porque aun no tiene documentos escaneados`
             );
@@ -220,7 +220,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Regularización jurídica',
-          `Justificación de la Regularización jurídica del bien ${this.good.id} actualizado con éxito.`
+          `Justificación de la Regularización jurídica del bien ${this.good.id} actualizada con éxito.`
         );
         this.clean();
       },

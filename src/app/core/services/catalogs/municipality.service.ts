@@ -8,6 +8,7 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IMunicipality } from '../../models/catalogs/municipality.model';
+import { IStateOfRepublic } from '../../models/catalogs/state-of-republic.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -16,7 +17,11 @@ export class MunicipalityService
   implements ICrudMethods<IMunicipality>
 {
   private readonly route: string = ENDPOINT_LINKS.Municipality;
-  constructor(private municipalityRepository: Repository<IMunicipality>) {
+  private readonly statesRoute = ENDPOINT_LINKS.StateOfRepublic;
+  constructor(
+    private municipalityRepository: Repository<IMunicipality>,
+    private statesRepository: Repository<IStateOfRepublic>
+  ) {
     super();
     this.microservice = MunicipalityEndpoints.BasePage;
   }
@@ -27,6 +32,10 @@ export class MunicipalityService
 
   getById(id: string | number): Observable<IMunicipality> {
     return this.municipalityRepository.getById(this.route, id);
+  }
+
+  getStates(params: ListParams) {
+    return this.statesRepository.getAllPaginated(this.statesRoute, params);
   }
 
   create(model: IMunicipality): Observable<IMunicipality> {
@@ -40,8 +49,8 @@ export class MunicipalityService
     );
   }
 
-  update(id: string | number, model: IMunicipality): Observable<Object> {
-    return this.municipalityRepository.update(this.route, id, model);
+  update(model: any): Observable<Object> {
+    return this.municipalityRepository.newUpdate(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {

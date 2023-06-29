@@ -15,6 +15,7 @@ import {
 } from 'src/app/utils/file-upload/interfaces/file-event';
 
 export interface IServiceUpload {
+  [others: string]: any;
   uploadFile(
     campo: any,
     file: File,
@@ -49,25 +50,34 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
 
   testFiles(uploadEvent: IUploadEvent) {
     const { index, fileEvents } = uploadEvent;
+    console.log(uploadEvent);
     this.fileEvents = fileEvents;
     this.totalDocs = fileEvents.length;
     if (index) {
       this.uploadFile(fileEvents[index], uploadEvent);
     } else {
-      fileEvents.forEach(fileEvent => {
-        this.uploadFile(fileEvent, uploadEvent);
+      fileEvents.forEach((fileEvent, index) => {
+        this.uploadFile(fileEvent, uploadEvent, index);
       });
     }
   }
 
-  uploadFile(fileEvent: FileUploadEvent, uploadEvent: IUploadEvent) {
+  uploadFile(
+    fileEvent: FileUploadEvent,
+    uploadEvent: IUploadEvent,
+    consecNumber = 0
+  ) {
     fileEvent.status = FILE_UPLOAD_STATUSES.LOADING;
     // if (!this.uploadFiles) {
     //   setTimeout(async () => {
     //     await this.finishUpload(fileEvent, uploadEvent);
     //   }, 500);
     // }
+    // console.log(index);
     this._blockErrors.blockAllErrors = true;
+    if (this.service['consecNumber']) {
+      this.service['consecNumber'] += consecNumber;
+    }
     this.service
       .uploadFile(this.identificator, fileEvent.file, 'file')
       .subscribe({
@@ -84,7 +94,7 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
           }
         },
         error: error => {
-          this.onLoadToast(
+          this.alert(
             'error',
             'Error',
             'Ocurrió un error al subir el documento'

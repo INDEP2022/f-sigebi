@@ -12,14 +12,21 @@
             <input
               type="text"
               class="form-control"
-              formControlName="nombre_clasificacion" />
+              formControlName="nombre_clasificacion"
+              oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30);" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-4">
         <div class="col-md-3">
           <form-field
             [control]="satClassificationForm.get('version')"
             label="Versi&oacute;n">
-            <input type="text" class="form-control" formControlName="version" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="version"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
       </div>

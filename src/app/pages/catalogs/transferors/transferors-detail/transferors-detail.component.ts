@@ -3,7 +3,10 @@ import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
+import { TransferentesSaeService } from 'src/app/core/services/catalogs/transferentes-sae.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-transferors-detail',
@@ -11,13 +14,21 @@ import { BasePage } from 'src/app/core/shared/base-page';
   styles: [],
 })
 export class TransferorsDetailComponent extends BasePage implements OnInit {
-  title: string = 'Transferente por estado';
+  title: string = 'Estado por transferente';
   edit: boolean = false;
 
   transferorsStateForm: ModelForm<ITransferente>;
+
   transferorsState: ITransferente;
 
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
+  states = new DefaultSelect();
+
+  constructor(
+    private fb: FormBuilder,
+    private modalRef: BsModalRef,
+    private stateOfRepublicService: StateOfRepublicService,
+    private transferentesSaeService: TransferentesSaeService
+  ) {
     super();
   }
 
@@ -27,10 +38,10 @@ export class TransferorsDetailComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.transferorsStateForm = this.fb.group({
-      id: [null, []],
-      keyTransferent: [null, []],
-      nameTransferent: [null, []],
-      typeTransferent: [null, []],
+      idTransferee: [null, []],
+      stateKey: [null, []],
+      nameTransferee: [null, []],
+      version: [null],
     });
     if (this.transferorsState != null) {
       this.edit = true;
@@ -39,6 +50,38 @@ export class TransferorsDetailComponent extends BasePage implements OnInit {
   }
 
   close() {
+    this.modalRef.hide();
+  }
+
+  confirm() {
+    this.edit ? this.update() : this.create();
+  }
+
+  create() {
+    this.loading = true;
+    this.transferentesSaeService
+      .createStateForTransferent(this.transferorsStateForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+  }
+
+  update() {
+    this.loading = true;
+    this.transferentesSaeService
+      .updateStateForTransferent(this.transferorsStateForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+  }
+
+  handleSuccess() {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.loading = false;
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 }

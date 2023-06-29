@@ -1,12 +1,25 @@
 <div class="ch-content">
   <h5 class="title">Previsualización de Datos</h5>
-  <div class="row justify-content-end mr-1">
-    <div class="col-12">
-      <app-columns-select
-        (settingsChange)="settingsChange($event)"
-        [settings]="settings"
-        class="row justify-content-end"></app-columns-select>
-    </div>
+  <div *ngIf="selectedGoods" style="font-weight: 500">
+    Cargados {{ totalItems }} de {{ selectedGoods.length }}
+  </div>
+  <div style="display: flex">
+    <app-columns-select
+      (settingsChange)="settingsChange($event)"
+      [settings]="settings"
+      class="row justify-content-end"></app-columns-select>
+    <button
+      class="btn btn-primary btn-sm active ml-3"
+      type="button"
+      [disabled]="
+        !selectedGoods ||
+        selectedGoods.length === totalItems ||
+        notLoadedGoods.length === 0
+      "
+      (click)="showNotLoads()">
+      No Cargados
+      <i class="fa fa-info-circle"></i>
+    </button>
   </div>
 </div>
 <div class="row pt-4">

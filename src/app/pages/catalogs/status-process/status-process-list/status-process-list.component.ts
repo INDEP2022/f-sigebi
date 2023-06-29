@@ -24,6 +24,7 @@ export class StatusProcessListComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters: any = [];
   data: LocalDataSource = new LocalDataSource();
+  order: any = [];
 
   constructor(
     private statusProcessService: StatusProcessService,
@@ -82,6 +83,7 @@ export class StatusProcessListComponent extends BasePage implements OnInit {
       next: response => {
         this.paragraphs = response.data;
         this.totalItems = response.count;
+        this.order = response.data;
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;

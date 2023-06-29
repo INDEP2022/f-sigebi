@@ -98,6 +98,8 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       let municipality = this.warehouse.municipalityCode;
       let locality = this.warehouse.localityCode;
       this.warehouseForm.patchValue(this.warehouse);
+      console.log('state.descCondition', state.descCondition);
+
       this.warehouseForm.controls['stateCode'].setValue(state.descCondition);
       this.warehouseForm.controls['stateCodeID'].setValue(state.id);
       this.warehouseForm.controls['cityCode'].setValue(city.nameCity);
@@ -123,6 +125,7 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
       } else {
         this.getMunicipalitie(city);
       }
+      console.log('stateCode.descCondition', stateCode.descCondition);
       this.states = new DefaultSelect([stateCode.descCondition], 1);
       this.cities = new DefaultSelect([cityCode.nameCity], 1);
 
@@ -226,6 +229,25 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
     this.warehouseForm.controls['localityCode'].setValue(null);
     this.getCities(new ListParams(), data.id);
   }
+
+  getCitiesParams(params: ListParams) {
+    let estadoId = this.warehouseForm.get('stateCode').value;
+    if (estadoId) {
+      this.getCities(params, estadoId);
+    } else {
+      this.getCities(params);
+    }
+  }
+
+  getMunicipalitiesParams(params: ListParams, id?: string) {
+    let estadoId = this.warehouseForm.get('stateCode').value;
+    if (estadoId) {
+      this.getMunicipalities(params, estadoId);
+    } else {
+      this.getMunicipalities(params);
+    }
+  }
+
   getCities(params: ListParams, id?: string) {
     if (id) {
       params['filter.state'] = `$eq:${id}`;
@@ -249,14 +271,19 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
     });
   }
   getLocalitie(data: any) {
-    console.log(data.stateKey);
+    console.log(data);
     this.warehouseForm.controls['localityCode'].setValue(null);
-    this.getLocalities(new ListParams(), data.stateKey);
+    this.getLocalities(new ListParams(), data.stateKey, data.idMunicipality);
   }
-  getLocalities(params: ListParams, id?: string) {
-    if (id) {
-      params['filter.municipalityId'] = `$eq:${id}`;
+  getLocalities(params: ListParams, id?: string, idMunicipality?: string) {
+    if (idMunicipality) {
+      params['filter.municipalityId'] = `$eq:${idMunicipality}`;
+      params['filter.stateKey'] = `$eq:${id}`;
     }
+    /*
+    if (id) {
+      params['filter.stateKey'] = `$eq:${id}`;
+    }*/
     this.localityService.getAll(params).subscribe(data => {
       this.localities = new DefaultSelect(data.data, data.count);
     });
