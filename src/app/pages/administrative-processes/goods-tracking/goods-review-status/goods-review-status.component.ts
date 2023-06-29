@@ -616,7 +616,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
     this.alertQuestion(
       'info',
-      '¿Está seguro de dar por atendidos los bienes del archivo?',
+      '¿Está seguro de dar por atendido el bien seleccionado?',
       ''
     ).then(async question => {
       if (question.isConfirmed) {
@@ -701,8 +701,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             }
 
             let objUpdateGood: any = {
-              id: this.selectedRow.goodNumber,
-              goodNumber: this.selectedRow.goodNumber,
+              id: good.goodNumber.id,
+              goodNumber: this.selectedRow.goodNumber.id,
               status: ESTATUSF,
             };
             const updateGood: any = await this.updateGoodStatus(objUpdateGood);
@@ -732,6 +732,11 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
               };
               const insertHistoric: any = await this.putInsertHistoric(
                 historyGood
+              );
+              this.alert(
+                'success',
+                `actualizado el estatus del bien: ${this.selectedRow.goodNumber}`,
+                ''
               );
             } else {
               let obj__: any = {
