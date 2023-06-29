@@ -24,11 +24,16 @@ export class RecordAccountStatementsComponent
 
   constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
-    this.settings = {
-      ...this.settings,
-      actions: false,
-      columns: RECORDS_ACCOUNT_STATEMENTS_COLUMNS,
-    };
+    this.settings.columns = RECORDS_ACCOUNT_STATEMENTS_COLUMNS;
+    this.settings.hideSubHeader = false;
+    this.settings.actions.add = false;
+    this.settings.actions.delete = true;
+    this.settings.actions.edit = false;
+    // this.settings = {
+    //   ...this.settings,
+    //   actions: false,
+    //   columns: RECORDS_ACCOUNT_STATEMENTS_COLUMNS,
+    // };
   }
 
   ngOnInit(): void {
