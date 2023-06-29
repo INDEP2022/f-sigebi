@@ -306,48 +306,41 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
       },
       error => {
         if (this.aux === 'numberProceedings') {
-          this.alert(
-            'error',
-            '',
-            `No existe el expediente No. ${this.dateInput}`
-          );
+          this.alert('warning', 'No se encontró el expediente', ``);
           this.form.get('numberProceedings').reset();
+          this.onSubmit();
         } else if (this.aux === 'flyerNumber') {
-          this.alert('error', '', `No existe el volante No. ${this.dateInput}`);
+          this.alert('warning', 'No se encontró el volante', ``);
           this.form.get('flyerNumber').reset();
+          this.onSubmit();
         } else if (this.aux === 'separador') {
-          this.alert('error', '', `No existe el separador ${this.dateInput}`);
+          this.alert('warning', 'No se encontró el separador', ``);
           this.form.get('separador').reset();
+          this.onSubmit();
         } else if (this.aux === 'significantDate') {
-          this.alert(
-            'error',
-            '',
-            `No existe la fecha significativa ${this.dateInput}`
-          );
+          this.alert('warning', 'No se encontró la fecha significativa', ``);
           this.form.get('significantDate').reset();
+          this.onSubmit();
         } else if (this.aux === 'keyTypeDocument') {
-          this.alert(
-            'error',
-            '',
-            `No existe el tipo de documento ${this.dateInput}`
-          );
+          this.alert('warning', 'No se encontró el tipo de documento', ``);
           this.form.get('keyTypeDocument').reset();
+          this.onSubmit();
         } else if (this.aux === 'descriptionDocument') {
-          this.alert('error', '', `No existe la descripción del decumento`);
+          this.alert('warning', 'No se encontró la descripción', ``);
           this.form.get('descriptionDocument').reset();
+          this.onSubmit();
         } else if (this.aux === 'preliminaryInquiry') {
-          this.alert(
-            'error',
-            '',
-            `No existe la averiguación previa ${this.dateInput}`
-          );
+          this.alert('warning', 'No se encontró la averiguación previa', ``);
           this.form.get('preliminaryInquiry').reset();
+          this.onSubmit();
         } else if (this.aux === 'criminalCase') {
-          this.alert('error', '', `No existe la causa penal ${this.dateInput}`);
+          this.alert('warning', 'No se encontró la causa penal', ``);
           this.form.get('criminalCase').reset();
+          this.onSubmit();
         } else if (this.aux === 'scanStatus') {
-          this.alert('error', '', `No existe el estatus seleccionado`);
+          this.alert('warning', 'No se encontró el estatus', ``);
           this.form.get('scanStatus').reset();
+          this.onSubmit();
         }
         this.loading = false;
         this.data.load([]);
