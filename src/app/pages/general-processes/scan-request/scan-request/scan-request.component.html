@@ -223,7 +223,9 @@
             </div>
           </div>
         </div>
-        <app-call-scan-document></app-call-scan-document>
+        <app-document-type-shared
+          [form]="form"
+          class="col-md-4"></app-document-type-shared>
 
         <form-field
           [control]="form.get('natureDocument')"
@@ -309,46 +311,18 @@
             <input type="text" formControlName="id" class="form-control mt-3" />
           </form-field>
         </div>
-
-        <div class="col-md-1"></div>
-        <div class="col">
+        <div class="col-md-3">
           <button
             type="button"
-            data-toggle="tooltip"
-            class="btn btn-secondary btn-sm active mr-1"
-            (click)="printScanFile()"
-            title="Imprimir Solicitud de Escaneo">
-            <i class="bx bxs-printer"></i>
+            (click)="proccesReport()"
+            class="btn btn-primary active btn-sm">
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
           </button>
-          <button
-            type="button"
-            data-toggle="tooltip"
+          <!-- <button
             class="btn btn-secondary btn-sm active"
-            (click)="seeImages()"
-            title="Consulta de imágenes escaneadas">
-            <i class="bx bxs-file-find"></i>
-          </button>
-        </div>
-
-        <div body>
-          <div class="row pt-4">
-            <div class="col-md-12">
-              <form-loader *ngIf="loading"></form-loader>
-              <ng-scrollbar
-                [track]="'all'"
-                [ngStyle]="{ height: loading ? '0px' : '300px' }">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered table-responsive'"
-                  class="table-responsive"
-                  [settings]="settings"
-                  [source]="data"
-                  (edit)="getDocumentByFolio($event.data)">
-                </ng2-smart-table>
-              </ng-scrollbar>
-            </div>
-          </div>
-          <app-pagination [params]="paramsList" [totalItems]="totalItems">
-          </app-pagination>
+            (click)="proccesReport()">
+            <i class="fas fa-print"></i>
+          </button> -->
         </div>
       </div>
     </form>
