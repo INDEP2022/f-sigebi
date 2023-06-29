@@ -4,10 +4,20 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="storeHouseForm">
-      <div class="row mt-4">
+      <div class="row">
         <div class="col-md-6">
           <form-field [control]="storeHouseForm.get('id')" label="No.Bodega">
             <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="storeHouseForm.get('idEntity')"
+            label="Entidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idEntity" />
           </form-field>
         </div>
       </div>
@@ -28,10 +38,11 @@
               [data]="municipalities"
               bindLabel="description"
               label="Municipio"
-              value="idMunicipality"
+              value="nameMunicipality"
               (fetchItems)="getMunicipalities($event)"
               (change)="getLocalitie($event)"
-              control="municipality"></ngx-select>
+              control="municipality"
+              [readonly]="false"></ngx-select>
           </form-field>
         </div>
         <div class="col-md-6">
@@ -40,15 +51,15 @@
               [form]="storeHouseForm"
               [data]="localities"
               label="Localidad"
-              bindLabel="nameLocation"
-              value="id"
+              bindLabel="description"
+              value="nameLocation"
               (fetchItems)="getLocalities($event)"
               control="locality"></ngx-select>
           </form-field>
         </div>
       </div>
       <div class="row mt-4">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <form-field
             [control]="storeHouseForm.get('description')"
             label="Descripci&oacute;n">
@@ -58,7 +69,9 @@
               formControlName="description"></textarea>
           </form-field>
         </div>
-        <div class="col-md-6">
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-12">
           <form-field
             [control]="storeHouseForm.get('ubication')"
             label="Ubicaci&oacute;n">
@@ -76,7 +89,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!storeHouseForm.valid"
+          [disabled]="storeHouseForm.invalid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

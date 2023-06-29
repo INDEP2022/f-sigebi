@@ -47,13 +47,35 @@ export class RackListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'idWarehouse' ||
-            filter.field == 'idBatch' ||
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'warehouseDetails':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
+                break;
+              case 'batchDetails':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'status':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            /*filter.field == 'id' ||
+              filter.field == 'warehuseDetails' ||
+              filter.field == 'batchDetails' ||
             filter.field == 'description' ||
             filter.field == 'status'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -75,7 +97,7 @@ export class RackListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.rackService.getAll(params).subscribe({
+    this.rackService.getAllFilter(params).subscribe({
       next: response => {
         this.racks = response.data;
         this.totalItems = response.count || 0;
@@ -94,6 +116,7 @@ export class RackListComponent extends BasePage implements OnInit {
       callback: (next: boolean) => {
         if (next) this.getExample();
       },
+      class: 'modal-lg modal-dialog-centered',
     };
     this.BsModalService.show(RackFormComponent, modalConfig);
   }

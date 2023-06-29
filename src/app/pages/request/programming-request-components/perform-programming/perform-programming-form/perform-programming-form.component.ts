@@ -78,6 +78,7 @@ export class PerformProgrammingFormComponent
   extends BasePage
   implements OnInit
 {
+  // form: FormGroup = new FormGroup({});
   goodsInfoTrans: any[] = [];
   goodsInfoGuard: any[] = [];
   goodsInfoWarehouse: any[] = [];
@@ -1536,8 +1537,9 @@ export class PerformProgrammingFormComponent
                 const createProgGood = await this.addGoodsWarehouse();
 
                 if (createProgGood) {
-                  const updateGood: any =
-                    await this.changeStatusGoodWarehouse();
+                  const updateGood: any = await this.changeStatusGoodWarehouse(
+                    data
+                  );
 
                   if (updateGood) {
                     const showGoods: any = await this.getFilterGood(
@@ -1594,7 +1596,7 @@ export class PerformProgrammingFormComponent
 
   //Cambio de status en la programación//
 
-  async changeStatusGoodWarehouse() {
+  async changeStatusGoodWarehouse(warehouse: number) {
     return new Promise(async (resolve, reject) => {
       this.goodSelect.map(item => {
         const formData: Object = {
@@ -1602,6 +1604,7 @@ export class PerformProgrammingFormComponent
           goodId: item.googId,
           goodStatus: 'EN_ALMACEN_TMP',
           programmationStatus: 'EN_ALMACEN_TMP',
+          storeId: warehouse,
         };
         this.goodService.updateByBody(formData).subscribe({
           next: () => {

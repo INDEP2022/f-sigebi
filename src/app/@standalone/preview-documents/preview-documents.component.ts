@@ -85,6 +85,7 @@ export class PreviewDocumentsComponent extends BasePage implements OnInit {
     super();
   }
   ngOnInit() {
+    this.loading = true;
     const merged = this.mergeConfig(DEFAULT_CONFIG, this.moduleConfig);
     this.config = this.mergeConfig(merged, this.config);
     this.triggerConfigBinding();

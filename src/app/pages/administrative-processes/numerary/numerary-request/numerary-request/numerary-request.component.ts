@@ -62,6 +62,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
         delete: true,
         edit: false,
         columnTitle: 'Acciones',
+        position: 'right',
       },
       columns: REQUEST_NUMERARY_COLUMNS,
       rowClassFunction: (row: any) => {
@@ -572,7 +573,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
 
     this.numEncServ.update(body).subscribe({
       next: async resp => {
-        this.alert('success', 'Solicitud', 'Ha sido actualizada exitosamente');
+        this.alert('success', 'Solicitud', 'Ha sido actualizada');
       },
       error: () => {
         this.alert(
@@ -617,12 +618,11 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
           const index = this.data1.findIndex(
             (data: any) => data.goodNumber == goodNumber
           );
-          console.log(index);
           this.data1.splice(index, 1);
           this.data1 = [...this.data1];
           this.registers = this.data1.length;
           this.totalItems2 = this.data1.length;
-          this.alert('success', 'Bien', 'Ha sido borrado exitosamente');
+          this.alert('success', 'Bien', 'Ha sido eliminado');
         } else {
           await this.deleteGoodDet(removeData);
           this.filterParams2.getValue().removeAllFilters();
@@ -649,7 +649,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
         this.form.get('solnumId').patchValue(resp.solnumId);
         const { solnumId } = this.form.value;
 
-        this.alert('success', 'Solicitud', 'Creada exitosamente');
+        this.alert('success', 'Solicitud', 'Ha sido creada correctamente');
 
         this.data1.map(async good => {
           good.solnumId = solnumId;
@@ -677,7 +677,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.numDetService.remove(body).subscribe({
         next: () => {
-          this.alert('success', 'Bien', 'Ha sido borrado exitosamente');
+          this.alert('success', 'Bien', 'Ha sido eliminado');
           resolve(true);
         },
         error: () => {
@@ -800,11 +800,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
       if (ans.isConfirmed) {
         this.numEncServ.remove(solnumId).subscribe({
           next: () => {
-            this.alert(
-              'success',
-              'Solicitud',
-              'Ha sido eliminada exitosamente'
-            );
+            this.alert('success', 'Solicitud', 'Ha sido eliminada');
             this.clearSearch();
           },
           error: error => {

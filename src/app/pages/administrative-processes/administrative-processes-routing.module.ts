@@ -122,7 +122,7 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./change-of-status-sti/change-of-status-sti.module'))
             .ChangeOfStatusStiModule,
-        data: { title: 'Cambio de estatus sti' },
+        data: { title: 'Cambio de estatus STI' },
       },
       {
         path: 'payment-claim-process',
@@ -215,6 +215,7 @@ const routes: Routes = [
           import('./goods-management/goods-management.module').then(
             m => m.GoodsManagementModule
           ),
+        data: { title: 'Gestión de Bienes Gabinete Social' },
       },
       {
         path: 'siab-sami-interaction',

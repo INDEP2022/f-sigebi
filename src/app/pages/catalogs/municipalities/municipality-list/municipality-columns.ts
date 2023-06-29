@@ -4,19 +4,27 @@ export const MUNICIPALITIES_COLUMNS = {
     type: 'number',
     sort: false,
   },
+  idMunicipality: {
+    title: 'Código Municipio',
+    type: 'number',
+    sort: false,
+  },
   nameMunicipality: {
-    title: 'Nombre De Municipalidad',
+    title: 'Nombre De Municipio',
     type: 'string',
     sort: false,
   },
-  creationUser: {
-    title: 'Creado por',
+  description: {
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  editionUser: {
-    title: 'Modificado por',
+  state: {
+    title: 'Estado',
     type: 'string',
+    valuePrepareFunction: (value: any) => {
+      return value.descCondition;
+    },
     sort: false,
   },
   version: {

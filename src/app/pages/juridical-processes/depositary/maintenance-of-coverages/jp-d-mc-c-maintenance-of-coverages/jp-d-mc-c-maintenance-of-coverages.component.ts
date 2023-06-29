@@ -6,9 +6,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, map, of, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IDocuments } from 'src/app/core/models/ms-documents/documents';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
@@ -20,15 +23,20 @@ import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { HistoryProtectionService } from 'src/app/core/services/ms-history-protection/history-protection.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { MaintenanceOfCoveragesService } from '../maintenace-of-coverages-services/maintenance-of-coverages.service';
+import { ReservedModalComponent } from '../reserved-modal/reserved-modal.component';
+import { SendMailModalComponent } from '../send-mail-modal/send-mail-modal.component';
 import { SendingOfEMailsComponent } from '../sending-of-e-mails/sending-of-e-mails.component';
 import { COLUMNS } from './columns';
 
 export interface PathParams {
+  tramite: number;
   volante: number;
   expediente: number;
 }
@@ -48,14 +56,17 @@ export class JpDMcCMaintenanceOfCoveragesComponent
   data: any[] = [];
   form: FormGroup; //formulario notificaciones
   pathParams: PathParams = {
+    tramite: null,
     volante: null,
     expediente: null,
   };
   blkControlForm: any = {
-    folioUniversal: null,
+    folioUniversal: 0,
     rel_est_si: null,
     rel_est_no: null,
   };
+  documents: IDocuments;
+  folioUniv: number = 0;
   receiptDateValue: Date;
   externalOfficeDateValue: Date;
   affairSelect = new DefaultSelect();
@@ -71,6 +82,8 @@ export class JpDMcCMaintenanceOfCoveragesComponent
 
   listGoodSelected: any = [];
   selectAll: boolean = false;
+  userAuth: any = null;
+  screenKey: string = 'FADMAMPAROS';
 
   notificationServices = inject(NotificationService);
   route = inject(ActivatedRoute);
@@ -88,6 +101,10 @@ export class JpDMcCMaintenanceOfCoveragesComponent
   goodService = inject(GoodService);
   historyProtection = inject(HistoryProtectionService);
   maintenanceOfCoferageService = inject(MaintenanceOfCoveragesService);
+  documentsService = inject(DocumentsService);
+  bsModalRef = inject(BsModalRef);
+  authService = inject(AuthService);
+  securityService = inject(SecurityService);
 
   get wheelNumber() {
     return this.form.get('wheelNumber');
@@ -190,14 +207,19 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     this.settings.columns = COLUMNS;
     this.settings.actions = false;
 
-    COLUMNS.selected = {
-      ...COLUMNS.selected,
+    COLUMNS.chSele = {
+      ...COLUMNS.chSele,
       onComponentInitFunction: this.onCLickCheckBox.bind(this),
     };
   }
 
   ngOnInit(): void {
     this.buildForm();
+    this.userAuth = this.authService.decodeToken();
+    //no_tramite
+    this.pathParams.tramite = Number(
+      this.route.snapshot.queryParamMap.get('processNumber')
+    );
     //volante
     this.pathParams.volante = Number(
       this.route.snapshot.queryParamMap.get('wheelNumber')
@@ -208,6 +230,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     );
     this.getNotifications();
     this.getFolioUniv();
+    this.getDocument();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       const expediente = this.pathParams.expediente;
       if (expediente) {
@@ -258,6 +281,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       //broadcasterDescription: [null, [Validators.required]],
       autorityNumber: [null],
       //authorityDescription: [null, [Validators.required]],
+      reserved: [null],
     });
   }
 
@@ -606,20 +630,20 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       )
       .subscribe({
         next: resp => {
-          resp.data.map(item => {
-            const result: any = this.setFolioUnivAndSelects(item);
-            item.selected = result.block;
-            item.cambio_ch = result.block;
+          resp.data.map(async item => {
+            const result: any = await this.setFolioUnivAndSelects(item);
+            item.chSele = result.block;
+            item.chChange = result.block;
             item.folio_universal = result.folio;
-            this.blkControlForm.folioUniversal = result.folio;
+            //this.blkControlForm.folioUniversal = result.folio;
             if (result.block == true) {
               this.listGoodSelected.push(item);
             }
           });
           if (this.selectAll == true) {
-            this.listGoodSelected = [];
+            //this.listGoodSelected = [];
             resp.data.map((item: any) => {
-              item.selected = true;
+              item.chSele = true;
             });
           }
 
@@ -635,14 +659,16 @@ export class JpDMcCMaintenanceOfCoveragesComponent
   }
 
   async setFolioUnivAndSelects(good: any) {
-    const folio = await this.getGoodFolio(good.id);
-    console.log('folio', folio);
-    let result = { block: false, folio: folio };
-    if (good.labelNumber == 6) {
-      result.block = true;
-      result.folio = folio;
-    }
-    return result;
+    return new Promise(async (resolve, reject) => {
+      const folio = await this.getGoodFolio(good.id);
+      console.log('folio ', folio, '// etiqueta:', good.labelNumber);
+      let result = { block: false, folio: folio };
+      if (good.labelNumber == 6) {
+        result.block = true;
+        result.folio = folio;
+      }
+      resolve(result);
+    });
   }
 
   getGoodFolio(id: number) {
@@ -658,21 +684,49 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       });
     });
   }
+  getDocument() {
+    let params = new ListParams();
+    params['filter.flyerNumber'] = `$eq:${this.pathParams.volante}`;
+    params['filter.numberProceedings'] = `$eq:${this.pathParams.expediente}`;
+    params[
+      'filter.descriptionDocument'
+    ] = `$eq:AMPARO EXPEDIENTE ${this.pathParams.expediente}`;
+    this.documentsService
+      .getAll(params)
+      .pipe(
+        map(x => x.data[0]),
+        catchError((error, _a) => {
+          return of({ data: [], count: 0 });
+        })
+      )
+      .subscribe({
+        next: (resp: any) => {
+          this.blkControlForm.folioUniversal = resp.id || 0;
+          this.folioUniv = resp.id || 0;
+          this.documents = resp as IDocuments;
+        },
+      });
+  }
 
   onCLickCheckBox(event: any) {
     event.toggle.subscribe((data: any) => {
       const index = this.listGoodSelected.indexOf(data.row);
       if (index == -1 && data.toggle == true) {
+        data.row.chSele = data.toggle;
         this.listGoodSelected.push(data.row);
       } else if (index != -1 && data.toggle == false) {
-        this.listGoodSelected.splice(index, 1);
+        if (data.row.chChange == true) {
+          this.listGoodSelected[index].chSele = false;
+        }
+        if (data.row.chChange == false || data.row.chChange == undefined) {
+          this.listGoodSelected.splice(index, 1);
+        }
       }
       console.log(this.listGoodSelected);
     });
   }
 
   changeSelectAll(event: any) {
-    console.log(event.checked);
     this.selectAll = event.checked;
     this.listGoodSelected = [];
     this.getGoodTable(new ListParams());
@@ -686,20 +740,16 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     //let exist = resp.data.filter(x => x.idAuthority == authority.idAuthority);
   }
 
-  apply() {
+  async apply() {
+    let v_ind_no: boolean = false;
+    let v_ind_si: boolean = false;
+    let v_rel_est_si: string = null;
+    let v_rel_est_no: string = null;
+    let v_rel_si: string = null;
+    let v_rel_no: string = null;
+
     const notifications = this.form.value;
-    //folio en duro
-    const folio: any = 3600189; //this.blkControlForm.folioUniversal
-    let vc_pantalla = '';
-    let v_cuantos = 0;
-    let v_ind_si = false;
-    let v_ind_no = false;
-    let v_rel_si = null;
-    let v_rel_no = null;
-    let v_ban = false;
-    let v_no_etiqueta = '';
-    let v_ban_esc = true;
-    let v_val_esc = 0;
+    const folio: any = Number(this.blkControlForm.folioUniversal);
 
     if (!notifications.wheelNumber) {
       this.alert('error', 'Error', 'Se debe ingresar un Volante/Expediente.');
@@ -715,6 +765,11 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       return;
     }
 
+    if (this.selectAll == false && this.listGoodSelected.length == 0) {
+      this.onLoadToast('info', 'No hay ni un bien seleccionado');
+      return;
+    }
+
     if (this.data.length == 0 || this.data[0].id == null) {
       this.alert(
         'error',
@@ -723,15 +778,350 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       );
       return;
     }
+    let result: any = null;
+    if (this.selectAll == true) {
+      const body: any = {};
+      body['flierNumber'] = this.pathParams.volante;
+      body['folioUniversal'] = folio;
+      body['affairKey'] = Number(this.form.get('affairKey').value);
+      body['user'] = this.userAuth.username;
+      body['transactNumber'] = this.pathParams.tramite;
+      body['expedientNumber'] = this.pathParams.expediente;
+      body['chSele'] = true;
+      body['chChange'] = false;
+      result = await this.applyForAllGood(body);
+    }
+    debugger;
+    if (this.listGoodSelected.length > 0) {
+      const listGoods = await this.returnGoodFormat(this.listGoodSelected);
+      const body: any = {};
+      body['screenKey'] = this.screenKey;
+      body['flyerNumber'] = this.pathParams.volante;
+      body['folioUniversal'] = folio;
+      body['affairKey'] = Number(this.form.get('affairKey').value);
+      body['user'] = this.userAuth.username;
+      body['transactNumber'] = this.pathParams.tramite;
+      body['goodArray'] = listGoods;
 
-    /*this.data.map((item:any)=>{
-      if(data)
-    })*/
+      result = await this.applyForSomeGood(body);
+    }
+    v_ind_no = result.V_IND_NO;
+    v_ind_si = result.V_IND_SI;
+    v_rel_est_si = result.V_REL_EST_SI;
+    v_rel_est_no = result.V_REL_EST_NO;
+    v_rel_si = result.V_REL_SI;
+    v_rel_no = result.V_REL_NO;
+
+    //body para traer los correos
+    const emails = {
+      delegationNumber: this.userAuth.department,
+      vcScreen: 'FADMAMPAROS',
+      pRelStaus: v_ind_si == true ? v_rel_est_si : v_rel_est_no,
+    };
+    const copy = {
+      pantalla: 'FADMAMPAROS',
+    };
+    if (v_ind_si == true) {
+      const correo: any = await this.getGenRelEmail(emails);
+      const copie: any = await this.getGenRelCopy(copy);
+      //pup_ini_correo
+      const subject = 'Aviso de Bienes amparados';
+      this.openEmail(
+        SendMailModalComponent,
+        this.form.value,
+        subject,
+        v_rel_si,
+        correo,
+        copie
+      );
+    }
+    if (v_ind_no == true) {
+      const correo: any = await this.getGenRelEmail(emails);
+      const copie: any = await this.getGenRelCopy(copy);
+      //pup_ini_correo
+      const subject = 'Aviso de Bienes liberados de amparado';
+      this.openEmail(
+        SendMailModalComponent,
+        this.form.value,
+        subject,
+        v_rel_no,
+        correo,
+        copie
+      );
+    }
   }
 
-  manttoEmail(){
-    this.router.navigateByUrl(
-        `pages/parameterization/mail`
+  applyForAllGood(body: any) {
+    return new Promise((resolve, reject) => {
+      this.notificationServices
+        .applyAllGoddMaintenanceCoverage(body)
+        .subscribe({
+          next: resp => {
+            console.log(resp);
+            resolve(resp);
+          },
+          error: error => {
+            this.onLoadToast('error', 'Ocurrio un error en el proceso', '');
+            reject(error);
+          },
+        });
+    });
+  }
+
+  applyForSomeGood(body: any) {
+    return new Promise((resolve, reject) => {
+      this.notificationServices
+        .applySomeGoddMaintenanceCoverage(body)
+        .subscribe({
+          next: resp => {
+            console.log(resp);
+            resolve(resp);
+          },
+          error: error => {
+            this.onLoadToast('error', 'Ocurrio un error en el proceso', '');
+            reject(error);
+          },
+        });
+    });
+  }
+
+  returnGoodFormat(listValue: any) {
+    return new Promise((resolve, reject) => {
+      let newList: any = [];
+      listValue.map((item: any) => {
+        newList.push({
+          goodNumber: item.id,
+          description: item.description,
+          status: item.status,
+          labelNumber: item.labelNumber,
+          chSele: item.chSele,
+          chChange: item.chChange,
+        });
+      });
+      resolve(newList);
+    });
+  }
+
+  getGenRelEmail(body: any) {
+    return new Promise((resolve, reject) => {
+      const newList: any = [];
+      this.securityService
+        .getSegEmailUser(body)
+        .pipe(
+          catchError(e => {
+            if (e.status == 400) {
+              return of({ data: [], count: 0 });
+            }
+            throw e;
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resp.data.map((item: any) => {
+              newList.push(item.email);
+            });
+            resolve(newList.join(','));
+          },
+        });
+    });
+  }
+
+  getGenRelCopy(body: any) {
+    return new Promise((resolve, reject) => {
+      const newList: any = [];
+      this.securityService
+        .getSegCopyEmailUser(body)
+        .pipe(
+          catchError(e => {
+            if (e.status == 400) {
+              return of({ data: [], count: 0 });
+            }
+            throw e;
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resp.data.map((item: any) => {
+              newList.push(item.email);
+            });
+            resolve(newList.join(','));
+          },
+        });
+    });
+  }
+
+  async knowledge() {
+    let v_val_esc: any = 0;
+    let v_ban: boolean = false;
+    console.log(this.folioUniv);
+    if (this.form.controls['wheelNumber'].value == null) {
+      this.alert('error', 'Se debe ingresar un Volante/Expediente.', '');
+      return;
+    }
+
+    if (this.data.length > 0) {
+      const CAMBIO_CH = await this.getGoodByLabel();
+      v_ban = CAMBIO_CH != 0 ? true : false;
+    }
+
+    if (v_ban == true) {
+      this.alert(
+        'error',
+        'Se tiene al menos 1 bien amparado, no puede concluir por este medio.',
+        ''
       );
+      return;
+    }
+
+    const affair = Number(this.form.get('affairKey').value);
+    const folio =
+      this.blkControlForm.folioUniversal == 0 ||
+      this.blkControlForm.folioUniversal == undefined
+        ? 0
+        : this.blkControlForm.folioUniversal;
+    if (folio == 0 && (affair == 13 || affair == 14)) {
+      this.alert('error', 'Se debe ingresar el Folio de escaneo.', '');
+      return;
+    }
+
+    v_val_esc = await this.getQuantityDocuments();
+    console.log(v_val_esc);
+
+    if (v_val_esc == 0 && (affair == 13 || affair == 14)) {
+      this.alert(
+        'error',
+        'No se puede actualizar por falta de escaneo de documentos...',
+        ''
+      );
+      return;
+    }
+
+    this.bsModalRef = this.openCustonModal(
+      ReservedModalComponent,
+      this.form.value,
+      this.pathParams.tramite
+    );
+
+    this.bsModalRef.content.event.subscribe((res: any) => {
+      console.log(res);
+      this.form.get('reserved').setValue(res);
+    });
+
+    /* this.bsModalRef.content.event.subscribe((res: any) => {
+      console.log(res);
+    }); */
+  }
+
+  getGoodByLabel() {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.flyerNumber'] = `$eq:${this.pathParams.volante}`;
+      params['filter.labelNumber'] = `$eq:6`;
+      //params['filter.numberProceedings'] = `$eq:${this.pathParams.expediente}`;
+      this.goodService
+        .getAll(params)
+        .pipe(
+          catchError(e => {
+            if (e.status == 400) {
+              return of({ data: [], count: 0 });
+            }
+            throw e;
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resolve(resp.count);
+          },
+        });
+    });
+  }
+
+  getQuantityDocuments() {
+    return new Promise((resolve, reject) => {
+      let params = new ListParams();
+      params['filter.id'] = `$eq:${this.folioUniv}`;
+      params['filter.scanStatus'] = `$eq:ESCANEADO`;
+      this.documentsService
+        .getAll(params)
+        .pipe(
+          catchError((e, _a) => {
+            console.log('error contando cant. documentos', e);
+            let result: any = null;
+            if (e.status == 400) {
+              return of({ data: [], count: 0 });
+            } else {
+              throw e;
+            }
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resolve(resp.count);
+          },
+        });
+    });
+  }
+
+  openCustonModal(component: any, notification?: any, processNumber?: number) {
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        notification: notification,
+        processNumber: processNumber,
+        /*callback: (next: boolean) => {
+          if (next) this.getExample();
+        },*/
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+
+    return this.modalService.show(component, config);
+  }
+
+  openEmail(
+    component: any,
+    notification?: any,
+    subject?: string,
+    preview?: any,
+    para?: any,
+    message?: string,
+    cc?: any
+  ) {
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        notification: notification,
+        subject: subject,
+        preview: preview,
+        for: para,
+        message: message,
+        cc: cc,
+
+        /*callback: (next: boolean) => {
+          if (next) this.getExample();
+        },*/
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+
+    return this.modalService.show(component, config);
+  }
+
+  sendEmail() {
+    this.openEmail(
+      SendMailModalComponent,
+      this.form.value,
+      'Aviso de amparo',
+      null,
+      null,
+      null,
+      null
+    );
+  }
+
+  manttoEmail() {
+    this.router.navigateByUrl(`pages/parameterization/mail`);
   }
 }

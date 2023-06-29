@@ -1,8 +1,11 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-modal-c-p-mta-c-maximum-times-for-abandonment',
@@ -13,17 +16,17 @@ export class ModalCPMtaCMaximumTimesForAbandonmentComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'TIPO DE SINIESTRO';
+  goodTypeForm: FormGroup = new FormGroup({});
+  title: string = 'Tipo Bien';
   edit: boolean = false;
-  form: FormGroup = new FormGroup({});
-  allotment: any;
-  lengthData = 0;
+  goodType: IGoodType;
+  items = new DefaultSelect<IGoodType>();
   @Output() refresh = new EventEmitter<true>();
 
   constructor(
-    private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private goodTypeServ: GoodTypeService
+    private fb: FormBuilder,
+    private goodTypeService: GoodTypeService
   ) {
     super();
   }
@@ -32,59 +35,78 @@ export class ModalCPMtaCMaximumTimesForAbandonmentComponent
     this.prepareForm();
   }
 
-  private prepareForm() {
-    this.form = this.fb.group({
-      keyClaims: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+  private prepareForm(): void {
+    this.goodTypeForm = this.fb.group({
+      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      nameGoodType: [null, [Validators.required, Validators.maxLength(70)]],
+      maxAsseguranceTime: [
+        null,
+        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      maxFractionTime: [
+        null,
+        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      maxExtensionTime: [
+        null,
+        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      maxStatementTime: [
+        null,
+        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      maxLimitTime1: [
+        null,
+        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      maxLimitTime2: [
+        null,
+        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      maxLimitTime3: [
+        null,
+        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      noRegister: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      version: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
-    if (this.allotment != null) {
+    if (this.goodType != null) {
       this.edit = true;
-      console.log(this.allotment);
-      this.form.patchValue(this.allotment);
+      this.goodTypeForm.patchValue(this.goodType);
     }
   }
 
-  PutClaim() {
-    const body = {
-      id: this.allotment.id,
-      description: this.form.get('description').value,
-      flag: this.form.get('keyClaims').value,
-    };
-
-    // this.goodTypeServ.update(this.allotment.id, body).subscribe({
-    //   next: (resp: any) => {
-    //     if (resp) {
-    //       this.handleSuccess(), this.refresh.emit(true);
-    //       this.close();
-    //     }
-    //   },
-    // });
+  close() {
+    this.modalRef.hide();
   }
 
-  postClaim() {
-    const body = {
-      id: String(this.lengthData),
-      description: this.form.get('description').value,
-      flag: this.form.get('keyClaims').value,
-    };
-
-    // this.goodTypeServ.create(body).subscribe({
-    //   next: (resp: any) => {
-    //     if (resp) {
-    //       this.handleSuccess(), this.refresh.emit(true);
-    //       this.close();
-    //     }
-    //   },
-    // });
+  confirm() {
+    this.edit ? this.update() : this.create();
   }
+
+  create() {
+    this.loading = true;
+    this.goodTypeService.create(this.goodTypeForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
+  }
+
+  update() {
+    this.loading = true;
+    this.goodTypeService
+      .update(this.goodType.id, this.goodTypeForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+  }
+
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    // this.modalRef.content.callback(true);
-    this.modalRef.hide();
-  }
-  close() {
+    this.refresh.emit(true);
     this.modalRef.hide();
   }
 }

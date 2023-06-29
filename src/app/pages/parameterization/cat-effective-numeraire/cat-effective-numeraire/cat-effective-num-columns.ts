@@ -1,6 +1,6 @@
 export const CAT_EFFECTIVE_NUM_COLUMNS = {
   id: {
-    title: 'Categoria',
+    title: 'Categoría',
     sort: false,
   },
   description: {

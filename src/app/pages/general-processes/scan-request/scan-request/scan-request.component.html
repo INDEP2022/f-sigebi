@@ -54,12 +54,17 @@
           <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
         <button
+          class="btn btn-danger btn-sm active mr-3"
+          (click)="clear(); isSearch = false">
+          Limpiar <i class="fas fa-eraser"></i>
+        </button>
+        <!-- <button
           type="button"
           class="btn btn-primary active btn-sm"
           (click)="clear(); isSearch = false">
           Limpiar
           <i class="fa fa-trash"></i>
-        </button>
+        </button> -->
       </div>
     </div>
     <form [formGroup]="formNotification" class="form-material mt-2">
@@ -102,7 +107,7 @@
             formControlName="receiptDate"
             class="form-control"
             bsDatepicker
-            [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"
+            [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
             [maxDate]="today" />
         </form-field>
 
@@ -207,18 +212,22 @@
                 Nueva Solicitud<i class="bx bx-plus bx-sm float-icon"></i>
               </button>
               <button
-                type="button"
-                class="btn btn-primary active btn-sm"
+                class="btn btn-danger btn-sm active mr-3"
                 (click)="clearDocument()">
+                Limpiar <i class="fas fa-eraser"></i>
+              </button>
+              <!-- <button type="button" class="btn btn-primary active btn-sm" (click)="clearDocument()">
                 Limpiar
                 <i class="fa fa-trash"></i>
-              </button>
+              </button> -->
             </div>
           </div>
         </div>
+
         <app-document-type-shared
           [form]="form"
           class="col-md-4"></app-document-type-shared>
+        <!-- <app-call-scan-document></app-call-scan-document> -->
 
         <form-field
           [control]="form.get('natureDocument')"
@@ -304,19 +313,35 @@
             <input type="text" formControlName="id" class="form-control mt-3" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <!-- 
+        <div class="col-md-1"></div> -->
+        <div class="col">
           <button
             type="button"
-            (click)="proccesReport()"
+            (click)="proccesReport(true)"
             class="btn btn-primary active btn-sm">
             Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
           </button>
-          <!-- <button
-            class="btn btn-secondary btn-sm active"
-            (click)="proccesReport()">
-            <i class="fas fa-print"></i>
+          <!-- <button type="button" data-toggle="tooltip" class="btn btn-secondary btn-sm active" (click)="seeImages()"
+            title="Consulta de imágenes escaneadas">
+            <i class="bx bxs-file-find"></i>
           </button> -->
         </div>
+
+        <!-- <div body>
+          <div class="row pt-4">
+            <div class="col-md-12">
+              <form-loader *ngIf="loading"></form-loader>
+              <ng-scrollbar [track]="'all'" [ngStyle]="{ height: loading ? '0px' : '300px' }">
+                <ng2-smart-table [attr.class]="'table-bordered table-responsive'" class="table-responsive"
+                  [settings]="settings" [source]="data" (edit)="getDocumentByFolio($event.data)">
+                </ng2-smart-table>
+              </ng-scrollbar>
+            </div>
+          </div>
+          <app-pagination [params]="paramsList" [totalItems]="totalItems">
+          </app-pagination>
+        </div> -->
       </div>
     </form>
   </div>

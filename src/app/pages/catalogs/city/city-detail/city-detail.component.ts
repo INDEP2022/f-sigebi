@@ -21,7 +21,7 @@ import { CityService } from '../../../../core/services/catalogs/city.service';
 })
 export class CityDetailComponent extends BasePage implements OnInit {
   cityForm: ModelForm<ICity>;
-  city: ICity;
+  city: any;
   title: string = 'Ciudad';
   edit: boolean = false;
 
@@ -73,12 +73,19 @@ export class CityDetailComponent extends BasePage implements OnInit {
     if (this.edit) {
       this.delegation.enable();
       this.subDelegation.enable();
-
-      this.selectedState = this.state.value;
-      this.selectedDelegation = this.delegation.value;
-
+      console.log(this.city);
+      this.selectedState = this.city.delegationDetail;
+      this.selectedDelegation = this.city.SubDelegationDetail;
+      this.cityForm.controls['noDelegation'].setValue(this.selectedState.id);
+      this.cityForm.controls['noSubDelegation'].setValue(
+        this.selectedDelegation.id
+      );
       this.getDelegations(new ListParams());
       this.getSubDelegations(new ListParams());
+      this.getStates(new ListParams());
+    } else {
+      this.getDelegations(new ListParams());
+      this.getStates(new ListParams());
     }
   }
 
@@ -136,7 +143,11 @@ export class CityDetailComponent extends BasePage implements OnInit {
       idCity: [null, []],
       nameCity: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(60),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       state: [null, [Validators.required]],
       noDelegation: [
@@ -149,7 +160,11 @@ export class CityDetailComponent extends BasePage implements OnInit {
       ],
       legendOffice: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(150),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
     });
     if (this.city != null) {
@@ -170,7 +185,7 @@ export class CityDetailComponent extends BasePage implements OnInit {
       this.edit = true;
       this.idState = this.city.state as IState;
       this.cityForm.patchValue(formCity);
-      this.getSubDelegations(new ListParams(), formCity.subDelegation.id);
+      //this.getSubDelegations(new ListParams(), formCity.subDelegation.id);
     }
   }
 
@@ -188,7 +203,6 @@ export class CityDetailComponent extends BasePage implements OnInit {
         value: newCity.noSubDelegation.id,
       },
     });
-
     this.edit ? this.update(newCity) : this.create(newCity);
   }
 
@@ -213,8 +227,9 @@ export class CityDetailComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

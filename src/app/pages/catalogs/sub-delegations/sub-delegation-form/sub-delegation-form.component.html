@@ -5,6 +5,50 @@
   <div body>
     <form class="form-material" [formGroup]="subdelegationForm">
       <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="subdelegationForm.get('id')" label="Código">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="id"
+              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="subdelegationForm.get('delegationNumber')">
+            <ngx-select
+              [form]="subdelegationForm"
+              control="delegationNumber"
+              value="id"
+              bindLabel="description"
+              [data]="delegations"
+              (fetchItems)="getDelegations($event)"
+              label="N&uacute;mero de delegaci&oacute;n"
+              (change)="onChange($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="subdelegationForm.get('dateDailyCon')"
+            label="Fecha">
+            <input
+              class="form-control"
+              ngModel
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD',
+                displayOneMonthRange: true
+              }"
+              formControlName="dateDailyCon" />
+          </form-field>
+          <!-- <form-field [control]="subdelegationForm.get('dateDailyCon')" label="">
+            <input class="form-control" type="Date" formControlName="dateDailyCon" />
+          </form-field> -->
+        </div>
+
         <div class="col-md-12">
           <form-field
             [control]="subdelegationForm.get('description')"
@@ -15,16 +59,6 @@
               formControlName="description">
             </textarea>
           </form-field>
-        </div>
-
-        <div class="col-md-12">
-          <ngx-select
-            [form]="subdelegationForm"
-            control="numDelegation"
-            (fetchItems)="getSubDelegations($event)"
-            [data]="delegations"
-            label="Descripci&oacute;n"
-            value="id"></ngx-select>
         </div>
 
         <div class="col-md-4">
@@ -40,23 +74,12 @@
 
         <div class="col-md-4">
           <form-field
-            [control]="subdelegationForm.get('numDailyCon')"
+            [control]="subdelegationForm.get('dailyConNumber')"
             label="No&#46; consecutivo diario">
             <input
               class="form-control"
               type="number"
-              formControlName="numDailyCon" />
-          </form-field>
-        </div>
-
-        <div class="col-md-4">
-          <form-field
-            [control]="subdelegationForm.get('numRegister')"
-            label="N&uacute;mero de registro">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="numRegister" />
+              formControlName="dailyConNumber" />
           </form-field>
         </div>
       </div>

@@ -1,17 +1,20 @@
 export const GOOD_SITUATION_COLUMS = {
   situation: {
-    title: 'Id',
+    title: 'Situación',
     type: 'string',
     sort: false,
+    width: '15%',
   },
   descSituation: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
+    width: '60%',
   },
   status: {
     title: 'Estado',
     type: 'string',
     sort: false,
+    width: '15%',
   },
 };

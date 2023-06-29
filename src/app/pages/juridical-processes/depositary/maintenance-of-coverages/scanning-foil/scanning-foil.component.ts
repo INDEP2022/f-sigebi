@@ -1,18 +1,30 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { format } from 'date-fns';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { BehaviorSubject, throwError } from 'rxjs';
+import { catchError, map, takeUntil } from 'rxjs/operators';
+import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared';
+import { RELATED_FOLIO_COLUMNS } from '../../legal-opinions-office/legal-opinions-office/columns';
+import { ModalScanningFoilTableComponent } from '../../legal-opinions-office/modal-scanning-foil/modal-scanning-foil.component';
 import { MaintenanceOfCoveragesService } from '../maintenace-of-coverages-services/maintenance-of-coverages.service';
 
 @Component({
@@ -20,11 +32,18 @@ import { MaintenanceOfCoveragesService } from '../maintenace-of-coverages-servic
   templateUrl: './scanning-foil.component.html',
   styles: [``],
 })
-export class ScanningFoilComponent extends BasePage implements OnInit {
+export class ScanningFoilComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   @Input() notifications?: any;
   @Input() screenKey: string = '';
   @Input() screenKey2: string = '';
   @Input() screenKey3: string = '';
+  @Input() folio: string = null;
+  @Input() documents: IDocuments = null;
+  @Input() processNumber: number = null;
+
   //Reactive Forms
   form: FormGroup;
   user: any;
@@ -38,6 +57,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   modalService = inject(BsModalService);
   router = inject(Router);
   maintenanceOfCoveragesHelperService = inject(MaintenanceOfCoveragesService);
+  documentsService = inject(DocumentsService);
 
   get scanningFoli() {
     return this.form.get('scanningFoli');
@@ -46,10 +66,18 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   constructor(private fb: FormBuilder) {
     super();
     this.user = this.authServeice.decodeToken();
+    console.log(this.user);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.folio) {
+      this.form.get('scanningFoli').setValue(this.folio);
+    }
   }
 
   ngOnInit(): void {
     this.buildForm();
+
     if (this.user.preferred_username) {
       this.getUserDataLogged(this.user.preferred_username);
     }
@@ -145,6 +173,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       .pipe(map(x => x.data[0]))
       .subscribe({
         next: (res: any) => {
+          console.log('access_x_aresas', res);
           this.dataUserLogged = res;
         },
         error: error => {
@@ -191,8 +220,8 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
 
   openScannerPage() {
     if (
-      this.notifications.expedientNumber /* &&
-      this.form.controls['scanningFoli'].value*/
+      this.notifications.expedientNumber &&
+      this.form.controls['scanningFoli'].value
     ) {
       this.alertQuestion(
         'info',
@@ -208,11 +237,100 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
               origin: 'FADMAMPAROS', //this.screenKey,
               wheelNumber: this.notifications.wheelNumber,
               expedientNumber: this.notifications.expedientNumber,
-              folio: 11, //this.form.get('scanningFoli').value,
+              folio: this.form.get('scanningFoli').value,
+              processNumber: this.processNumber,
             },
           });
         }
       });
     }
+  }
+
+  showMessageDigitalization() {
+    if (this.form.get('scanningFoli').value) {
+      this.alertInfo(
+        'success',
+        'El folio universal generado es: "' +
+          this.form.get('scanningFoli').value +
+          '"',
+        ''
+      );
+    } else {
+      this.alertInfo('warning', 'No tiene Folio de Escaneo para Imprimir', '');
+    }
+  }
+
+  showScannerFoil() {
+    const folio = this.form.get('scanningFoli').value;
+    if (!folio) {
+      this.alertInfo('info', 'No tiene folio de escaneo para visualizar.', '');
+      return;
+    }
+
+    this.insertListImg();
+  }
+
+  insertListImg() {
+    if (
+      this.notifications.expedientNumber != this.documents.registrationNumber
+    ) {
+    }
+    this.getDocumentsByFlyer(this.notifications.wheelNumber);
+  }
+
+  getDocumentsByFlyer(flyerNum: string | number) {
+    const title = 'Folios relacionados al Volante';
+    const modalRef = this.openDocumentsModal(flyerNum, title);
+    modalRef.content.selected
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(document => this.getPicturesFromFolio(document));
+  }
+
+  openDocumentsModal(flyerNum: string | number, title: string) {
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', flyerNum);
+    const $params = new BehaviorSubject(params);
+    const $obs = this.documentsService.getAllFilter;
+    const service = this.documentsService;
+    const columns = RELATED_FOLIO_COLUMNS;
+    // const body = {
+    //   proceedingsNum: this.dictationData.expedientNumber,
+    //   flierNum: this.dictationData.wheelNumber,
+    // };
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        $obs,
+        service,
+        columns,
+        title,
+        $params,
+        proceedingsNumber: this.notifications.expedientNumber,
+        wheelNumber: this.notifications.wheelNumber,
+        showConfirmButton: true,
+      },
+    };
+    return this.modalService.show(
+      ModalScanningFoilTableComponent<IDocuments>,
+      config
+    );
+  }
+
+  getPicturesFromFolio(document: IDocuments) {
+    let folio = document.id;
+    /*if (document.id != this.dictationData.folioUniversal) {
+      folio = this.dictationData.folioUniversal;
+    }*/
+    if (document.associateUniversalFolio) {
+      folio = document.associateUniversalFolio;
+    }
+    const config = {
+      ...MODAL_CONFIG,
+      ignoreBackdropClick: false,
+      initialState: {
+        folio,
+      },
+    };
+    this.modalService.show(DocumentsViewerByFolioComponent, config);
   }
 }

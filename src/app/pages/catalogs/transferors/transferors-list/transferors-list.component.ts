@@ -16,6 +16,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { StateModalComponent } from '../state-modal/state-modal.component';
 import { TransferorsDetailComponent } from '../transferors-detail/transferors-detail.component';
 import { STATE_COLUMS, TRANSFERENT_STATE_COLUMNS } from './columns';
+//import { transferorsState } from '../transferors-detail/'
 
 @Component({
   selector: 'app-transferors-list',
@@ -40,7 +41,7 @@ export class TransferorsListComponent extends BasePage implements OnInit {
   loading2 = this.loading;
   loading3 = this.loading;
 
-  settings2;
+  settings2: any;
 
   rowSelected: boolean = false;
   selectedRow: any = null;
@@ -50,19 +51,11 @@ export class TransferorsListComponent extends BasePage implements OnInit {
     private transferenteSaeService: TransferentesSaeService
   ) {
     super();
+    this.settings.columns = TRANSFERENT_STATE_COLUMNS;
+    this.settings.actions.delete = false;
     this.settings.actions.add = false;
-    this.settings = {
-      ...this.settings,
-      hideSubHeader: false,
-      actions: false,
-      /*actions: {
-        columnTitle: 'Acciones',
-        edit: true,
-        delete: false,
-        position: 'right',
-      },*/
-      columns: { ...TRANSFERENT_STATE_COLUMNS },
-    };
+    this.settings.actions.edit = false;
+    this.settings.hideSubHeader = false;
 
     this.settings2 = {
       ...this.settings,
@@ -216,7 +209,7 @@ export class TransferorsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delet(data);

@@ -4,10 +4,13 @@ export const R_ASUNT_DIC_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  dictum: {
-    title: 'Dictum',
+  dictumData: {
+    title: 'Dictamen',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.description : '';
+    },
   },
   flyerType: {
     title: 'Tipo Volante',
@@ -36,7 +39,7 @@ export const R_ASUNT_DIC_COLUMNS = {
   },
   e: {
     title: 'E',
-    type: 'string',
+    type: 'html',
     sort: false,
   },
   // registryNumber: {
