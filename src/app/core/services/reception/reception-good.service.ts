@@ -45,6 +45,10 @@ export class ReceptionGoodService extends HttpService {
     return this.get(this.ReceiptGood, params);
   }
 
+  getReceiptGoodByIds(formData: Object) {
+    return this.post(`${this.ReceiptGood}/find-by-ids`, formData);
+  }
+
   createReceiptGood(formData: Object) {
     return this.post(this.ReceiptGood, formData);
   }

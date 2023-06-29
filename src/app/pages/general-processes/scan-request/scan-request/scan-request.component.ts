@@ -154,12 +154,12 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       this.isParamFolio = true;
       this.getDocumentByFolio(param2);
     }
-    console.log(this.numberFoli);
+    // console.log(this.numberFoli);
 
-    this.createForm();
-    this.formNotification.get('').setValue(this.numberFoli);
-    this.form.disable();
-    this.getDataUser();
+    // this.createForm();
+    // this.formNotification.get('').setValue(this.numberFoli);
+    // this.form.disable();
+    // this.getDataUser();
   }
 
   back() {
@@ -176,30 +176,30 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       location[this.origin]();
     }
   }
-  getNotfications() {
-    this.loading = true;
-    let params = {
-      ...this.paramsList.getValue(),
-      ...this.columnFilters,
-    };
+  // getNotfications() {
+  //   this.loading = true;
+  //   let params = {
+  //     ...this.paramsList.getValue(),
+  //     ...this.columnFilters,
+  //   };
 
-    //Usar extends HttpService en los servicios para usar ListParams | string por si el service usa FiltersParams
-    this.docService.getAll(params).subscribe({
-      next: resp => {
-        this.totalItems = resp.count;
-        this.dataDocs = resp;
-        this.data.load(resp.data);
-        this.data.refresh();
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-        this.totalItems = 0;
-        this.data.load([]);
-        this.data.refresh();
-      },
-    });
-  }
+  //   //Usar extends HttpService en los servicios para usar ListParams | string por si el service usa FiltersParams
+  //   this.docService.getAll(params).subscribe({
+  //     next: resp => {
+  //       this.totalItems = resp.count;
+  //       this.dataDocs = resp;
+  //       this.data.load(resp.data);
+  //       this.data.refresh();
+  //       this.loading = false;
+  //     },
+  //     error: () => {
+  //       this.loading = false;
+  //       this.totalItems = 0;
+  //       this.data.load([]);
+  //       this.data.refresh();
+  //     },
+  //   });
+  // }
 
   createFilter() {
     const {
@@ -303,38 +303,38 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     this.getNotfications();
   }
 
-  // getNotfications() {
-  //   this.notificationServ
-  //     .getAllFilter(this.filterParams.getValue().getParams())
-  //     .subscribe({
-  //       next: resp => {
-  //         this.isSearch = true;
-  //         this.notify = resp;
-  //         this.noVolante = resp.data[0].wheelNumber;
-  //         this.formNotification.patchValue(resp.data[0]);
-  //         const date = resp.data[0].receiptDate
-  //           ? resp.data[0].receiptDate
-  //             .toString()
-  //             .split('T')[0]
-  //             .split('-')
-  //             .reverse()
-  //             .join('/')
-  //           : '';
-  //         this.formNotification.controls['receiptDate'].patchValue(date);
-  //         this.count = resp.count;
-  //         this.searchDocuments(
-  //           this.formNotification.get('expedientNumber').value,
-  //           this.formNotification.get('wheelNumber').value
-  //         );
-  //       },
-  //       error: err => {
-  //         this.isSearch = false;
-  //         this.loading = false;
-  //         this.form.reset();
-  //         this.alert('error', 'ERROR', err.error.message);
-  //       },
-  //     });
-  // }
+  getNotfications() {
+    this.notificationServ
+      .getAllFilter(this.filterParams.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          this.isSearch = true;
+          this.notify = resp;
+          this.noVolante = resp.data[0].wheelNumber;
+          this.formNotification.patchValue(resp.data[0]);
+          const date = resp.data[0].receiptDate
+            ? resp.data[0].receiptDate
+                .toString()
+                .split('T')[0]
+                .split('-')
+                .reverse()
+                .join('/')
+            : '';
+          this.formNotification.controls['receiptDate'].patchValue(date);
+          this.count = resp.count;
+          this.searchDocuments(
+            this.formNotification.get('expedientNumber').value,
+            this.formNotification.get('wheelNumber').value
+          );
+        },
+        error: err => {
+          this.isSearch = false;
+          this.loading = false;
+          this.form.reset();
+          this.alert('error', 'ERROR', err.error.message);
+        },
+      });
+  }
 
   notificationList() {
     let config: ModalOptions = {
@@ -460,7 +460,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           this.form.get('id').disable();
           this.countDoc++;
           const time = setTimeout(() => {
-            this.proccesReport();
+            this.proccesReport(false);
             clearTimeout(time);
             if (this.origin == 'FACTJURREGDESTLEG') {
               const params = new ListParams();
@@ -637,7 +637,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     });
   }
 
-  proccesReport() {
+  proccesReport(imp: boolean) {
     if (this.idFolio) {
       const msg = setTimeout(() => {
         this.jasperService
@@ -647,7 +647,12 @@ export class ScanRequestComponent extends BasePage implements OnInit {
               this.alert(
                 'success',
                 'REPORTE DE DIGITALIZACIÓN',
-                `Solicitud generada correctamente con folio: ${this.idFolio}`
+                `${
+                  imp
+                    ? 'Generado correctamente'
+                    : 'Solicitud generada correctamente con folio: ' +
+                      this.idFolio
+                }`
               );
               const blob = new Blob([response], { type: 'application/pdf' });
               const url = URL.createObjectURL(blob);
@@ -703,11 +708,11 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   callScan() {
     if (this.idFolio) {
-      this.router.navigate(['/pages/general-processes/scan-request/scan'], {
+      this.router.navigate(['pages/general-processes/scan-documents'], {
         queryParams: {
           folio: this.idFolio,
           volante: this.noVolante,
-          origin: 'FIMGDOCEXPADD',
+          origin: 'FACTGENSOLICDIGIT',
           requestOrigin: this.origin ?? '',
         },
       });
