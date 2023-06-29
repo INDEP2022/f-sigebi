@@ -46,8 +46,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    console.log('this.typeDoc', this.typeDoc);
-    if (this.typeDoc == 185) {
+    if (this.typeDoc == 185 || this.typeDoc == 186) {
       this.getGoodsRelReceipt();
     }
 
@@ -128,35 +127,46 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
 
   selectFile(event?: any) {
     this.selectedFile = event.target.files[0];
-    if (this.selectedFile?.size > 10000000) {
+    if (this.selectedFile?.size > 100000000) {
       this.validateSizePDF = true;
-      this.onLoadToast(
-        'warning',
-        'Error',
-        'Se debe cargar un documentos menor a 10MB'
-      );
-      this.form.get('file').reset;
+      this.alertInfo(
+        'info',
+        'Acción Inválida',
+        'Se debe cargar un documentos menor a 100MB'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.form.get('file').reset;
+        }
+      });
     }
 
     const extension = this.selectedFile?.name.split('.').pop();
     if (extension != 'pdf') {
-      this.onLoadToast('warning', 'Error', 'Se debe cargar un documento PDF');
-      this.form.get('file').setValue(null);
+      this.alertInfo(
+        'info',
+        'Acción Inválida',
+        'Se debe cargar un documentos menor a 100MB'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.form.get('file').reset;
+        }
+      });
     }
   }
 
   saveDocument() {
-    if (this.typeDoc == 185) {
-      console.log('document', this.form.value);
-      console.log('goodsId', this.goodId);
-      console.log('programming', this.programming);
-      console.log('typeDoc', this.typeDoc);
-
+    if (this.typeDoc == 185 || this.typeDoc == 186) {
+      let docTitle: string = '';
+      if (this.typeDoc == 185) {
+        docTitle = 'ReciboResguardo';
+      } else if (this.typeDoc == 186) {
+        docTitle = 'ReciboAlmacen';
+      }
       const formData = {
         keyDoc: this.receiptGuards.id,
         autografos: true,
         electronicos: false,
-        dDocTitle: 'ReciboResguardo',
+        dDocTitle: docTitle,
         dSecurityGroup: 'Public',
         xidTransferente: this.programming.tranferId,
         xidBien: this.goodId,
@@ -169,7 +179,12 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       };
 
       const extension = '.pdf';
-      const docName = 'Recibo Resguardo';
+      let docName: string = '';
+      if (this.typeDoc == 185) {
+        docName = 'Recibo Resguardo';
+      } else if (this.typeDoc == 186) {
+        docName = 'Recibo Almacen';
+      }
 
       this.wContentService
         .addDocumentToContent(
@@ -181,66 +196,23 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: async response => {
-            console.log('doc guardado', response);
             const updateReceiptGuard = this.updateReceiptGuard(
               response.dDocName
             );
             if (updateReceiptGuard) {
-              this.onLoadToast(
+              this.alertInfo(
                 'success',
                 'Acción correcta',
-                'Documento Adjuntado correctamente'
-              );
-              this.close();
+                'Documento adjuntado correctamente'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.modalRef.content.callback(true);
+                  this.close();
+                }
+              });
             }
           },
         });
-
-      if (this.typeDoc == 185) {
-        const formData = {
-          keyDoc: this.receiptGuards.id,
-          autografos: true,
-          electronicos: false,
-          dDocTitle: 'ReciboAlmacen',
-          dSecurityGroup: 'Public',
-          xidTransferente: this.programming.tranferId,
-          xidBien: this.goodId,
-          xNivelRegistroNSBDB: 'Bien',
-          xTipoDocumento: this.typeDoc,
-          xNoProgramacion: this.programming.id,
-          xNombreProceso: 'Ejecutar Recepción',
-          xDelegacionRegional: this.programming.regionalDelegationNumber,
-          xFolioProgramacion: this.programming.folio,
-        };
-
-        const extension = '.pdf';
-        const docName = 'Recibo Resguardo';
-
-        this.wContentService
-          .addDocumentToContent(
-            docName,
-            extension,
-            JSON.stringify(formData),
-            this.selectedFile,
-            extension
-          )
-          .subscribe({
-            next: async response => {
-              console.log('doc guardado', response);
-              const updateReceiptGuard = this.updateReceiptGuard(
-                response.dDocName
-              );
-              if (updateReceiptGuard) {
-                this.onLoadToast(
-                  'success',
-                  'Acción correcta',
-                  'Documento Adjuntado correctamente'
-                );
-                this.close();
-              }
-            },
-          });
-      }
     }
 
     if (this.typeDoc == 103) {

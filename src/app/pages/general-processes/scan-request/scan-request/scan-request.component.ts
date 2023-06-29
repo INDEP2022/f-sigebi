@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,8 +12,10 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { IGood } from 'src/app/core/models/good/good.model';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
+import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
 import {
@@ -23,11 +25,11 @@ import {
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ListDocumentsComponent } from '../list-documents/list-documents.component';
 import { ListNotificationsComponent } from '../list-notifications/list-notifications.component';
-
 @Component({
   selector: 'app-scan-request',
   templateUrl: './scan-request.component.html',
@@ -58,13 +60,35 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   origin: string = null;
   today: Date = new Date();
   loadingDoc: boolean = false;
+  document: any;
+  generateFo: boolean = true;
+  data: any;
   isSearch: boolean = false;
   paramsDepositaryAppointment: any = {
     P_NB: null,
     P_FOLIO: null,
     P_ND: null,
   };
+  user: ISegUsers;
+  @Input() numberFoli: string | number = '';
+  @Input() cveScreen: string | number = '';
+  @Input() reportPrint: string = '';
+  @Input() refresh: boolean = false;
+  @Input() good: IGood;
+  @Output() documentEmmit = new EventEmitter<IDocuments>();
+  @Output() change = new EventEmitter<any>();
+  dataDocs: IListResponse<any /*Modelado de datos*/> =
+    {} as IListResponse<any /*Modelado de datos*/>;
 
+  //Declaraciones para ocupar filtrado
+  columnFilters: any = [];
+  paramsList = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
+  // filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  loadingText = 'Cargando ...';
+  get scanningFoli() {
+    return this.form.get('scanningFoli');
+  }
   constructor(
     private fb: FormBuilder,
     private notificationServ: NotificationService,
@@ -72,12 +96,16 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     private jasperService: SiabService,
     private modalService: BsModalService,
     private datePipe: DatePipe,
+    private siabService: SiabService,
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
+    private docService: DocumentsService,
+    private readonly documnetServices: DocumentsService,
     private authService: AuthService,
     private receptionService: DocReceptionRegisterService,
     private router: Router,
-    private msDepositaryService: MsDepositaryService
+    private msDepositaryService: MsDepositaryService,
+    private readonly userServices: UsersService
   ) {
     super();
     this.route.queryParams
@@ -126,7 +154,14 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       this.isParamFolio = true;
       this.getDocumentByFolio(param2);
     }
+    // console.log(this.numberFoli);
+
+    // this.createForm();
+    // this.formNotification.get('').setValue(this.numberFoli);
+    // this.form.disable();
+    // this.getDataUser();
   }
+
   back() {
     if (this.origin == 'FACTJURREGDESTLEG') {
       this.router.navigate([
@@ -141,6 +176,30 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       location[this.origin]();
     }
   }
+  // getNotfications() {
+  //   this.loading = true;
+  //   let params = {
+  //     ...this.paramsList.getValue(),
+  //     ...this.columnFilters,
+  //   };
+
+  //   //Usar extends HttpService en los servicios para usar ListParams | string por si el service usa FiltersParams
+  //   this.docService.getAll(params).subscribe({
+  //     next: resp => {
+  //       this.totalItems = resp.count;
+  //       this.dataDocs = resp;
+  //       this.data.load(resp.data);
+  //       this.data.refresh();
+  //       this.loading = false;
+  //     },
+  //     error: () => {
+  //       this.loading = false;
+  //       this.totalItems = 0;
+  //       this.data.load([]);
+  //       this.data.refresh();
+  //     },
+  //   });
+  // }
 
   createFilter() {
     const {
@@ -401,7 +460,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           this.form.get('id').disable();
           this.countDoc++;
           const time = setTimeout(() => {
-            this.proccesReport();
+            this.proccesReport(false);
             clearTimeout(time);
             if (this.origin == 'FACTJURREGDESTLEG') {
               const params = new ListParams();
@@ -578,7 +637,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     });
   }
 
-  proccesReport() {
+  proccesReport(imp: boolean) {
     if (this.idFolio) {
       const msg = setTimeout(() => {
         this.jasperService
@@ -588,7 +647,12 @@ export class ScanRequestComponent extends BasePage implements OnInit {
               this.alert(
                 'success',
                 'REPORTE DE DIGITALIZACIÓN',
-                `Solicitud generada correctamente con folio: ${this.idFolio}`
+                `${
+                  imp
+                    ? 'Generado correctamente'
+                    : 'Solicitud generada correctamente con folio: ' +
+                      this.idFolio
+                }`
               );
               const blob = new Blob([response], { type: 'application/pdf' });
               const url = URL.createObjectURL(blob);
@@ -655,6 +719,266 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     } else {
       this.alert('error', 'ERROR', 'No existe un folio para escanear');
     }
+  }
+
+  getDataUser() {
+    const params = new FilterParams();
+    const token = this.authService.decodeToken();
+    params.addFilter('user', token.preferred_username);
+
+    console.log(params);
+
+    this.userServices
+      .getAllSegUsers(this.filterParams.getValue().getParams())
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.user = response.data[0];
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
+  }
+  printScanFile() {
+    if (this.good === undefined) {
+      this.alert(
+        'info',
+        'Solicitud de scaneo',
+        'No existe folio de escaneo',
+        ''
+      );
+      return;
+    }
+    if (this.form.get('scanningFoli').value !== '') {
+      const params = {
+        pn_folio: this.form.get('scanningFoli').value,
+      };
+      this.downloadReport(this.reportPrint, params);
+    } else {
+      this.alert(
+        'info',
+        'Solicitud de scaneo',
+        'No existe folio de escaneo',
+        ''
+      );
+    }
+  }
+
+  scan() {
+    if (this.good === undefined) {
+      this.alert(
+        'info',
+        'Regularización jurídica',
+        'No existe folio de escaneo',
+        ''
+      );
+      return;
+    }
+    console.log(this.form.get('scanningFoli').value);
+    if (this.form.get('scanningFoli').value !== '') {
+      this.alertQuestion(
+        'question',
+        'Se abrirá la pantalla de escaneo para el folio de escaneo del bien consultado',
+        '¿Deseas continuar?',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.goToScan();
+        }
+      });
+    } else {
+      this.alert(
+        'info',
+        'Regularización jurídica',
+        'No existe folio de escaneo',
+        ''
+      );
+    }
+  }
+  generateFoli() {
+    console.log(
+      this.scanningFoli.value != null,
+      this.good,
+      this.scanningFoli.value
+    );
+    if (this.good === null || this.good === undefined) {
+      this.alert('info', 'Regularización jurídica', 'Debe cargar un bien', '');
+      return;
+    }
+    if (this.document !== undefined) {
+      this.alert(
+        'info',
+        'Regularización jurídica',
+        'El número de bien para este proceso ya tiene folio de escaneo.'
+      );
+      return;
+    }
+    const documents: IDocuments = {
+      numberProceedings: this.good.fileNumber,
+      keySeparator: '60',
+      keyTypeDocument: 'ENTRE',
+      natureDocument: 'ORIGINAL',
+      descriptionDocument: 'REGULARIZACION JURIDICA',
+      significantDate: this.significantDate(),
+      scanStatus: 'SOLICITADO',
+      userRequestsScan: this.user.usuario.user,
+      scanRequestDate: new Date(),
+      associateUniversalFolio: null,
+      flyerNumber: Number(this.good.fileNumber),
+      goodNumber: Number(this.good.id),
+      numberDelegationRequested: this.user.usuario.delegationNumber,
+      numberDepartmentRequest: this.user.usuario.departamentNumber,
+      numberSubdelegationRequests: this.user.usuario.subdelegationNumber,
+    };
+    console.log(documents);
+    this.documnetServices.create(documents).subscribe({
+      next: response => {
+        this.document = response;
+        console.log(response);
+        this.scanningFoli.setValue(response.id);
+        this.documentEmmit.emit(response);
+        /* this.onLoadToast(
+          'success',
+          'Generado correctamente',
+          `Se generó el Folio No ${response.id}`
+        ); */
+        this.generateFo = false;
+        const params = {
+          pn_folio: this.form.get('scanningFoli').value,
+        };
+        this.downloadReport(this.reportPrint, params);
+      },
+      error: err => {
+        console.error(err);
+        this.alert('error', 'Ha ocurrido un error', err.error.message);
+      },
+    });
+  }
+  significantDate() {
+    let date = new Date();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    return month < 10 ? `0${month}/${year}` : `${month}/${year}`;
+  }
+  generate() {
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+  }
+  downloadReport(reportName: string, params: any) {
+    this.loadingText = 'Generando reporte ...';
+    this.siabService.fetchReport(reportName, params).subscribe({
+      next: response => {
+        this.loading = false;
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+  }
+  seeImages() {
+    if (this.good === undefined) {
+      this.alert(
+        'info',
+        'Regularización jurídica',
+        'No existe folio de escaneo',
+        ''
+      );
+      return;
+    }
+    if (this.document !== undefined) {
+      this.change.emit('Se hizo el change');
+      localStorage.setItem('documentLegal', JSON.stringify(this.document));
+    }
+    if (this.form.get('scanningFoli').value !== '') {
+      this.documnetServices
+        .getByFolio(this.form.get('scanningFoli').value)
+        .subscribe(res => {
+          const data = JSON.parse(JSON.stringify(res));
+          const scanStatus = data.data[0]['scanStatus'];
+          const idMedium = data.data[0]['mediumId'];
+
+          if (scanStatus === 'ESCANEADO') {
+            this.goToScan();
+          } else {
+            this.alert(
+              'warning',
+              'Regularización jurídica',
+              'No existe documentación para este folio',
+              ''
+            );
+          }
+        });
+    } else {
+      this.alert(
+        'warning',
+        'Regularización jurídica',
+        'No tiene folio de escaneo para visualizar.',
+        ''
+      );
+    }
+  }
+  validFoli() {
+    console.log('Entro');
+    if (this.good !== undefined) {
+      this.documnetServices.getByGood(this.good.id).subscribe({
+        next: response => {
+          if (response.count === 0) return;
+          console.log(response);
+          this.document = response.data[0];
+          this.scanningFoli.setValue(this.document.id);
+          this.documentEmmit.emit(this.document);
+        },
+      });
+    }
+  }
+
+  goToScan() {
+    this.change.emit('Se hizo el change');
+    if (this.document !== undefined) {
+      this.change.emit('Se hizo el change');
+      localStorage.setItem('documentLegal', JSON.stringify(this.document));
+    }
+    console.log(this.cveScreen);
+    this.router.navigate([`/pages/general-processes/scan-documents`], {
+      queryParams: {
+        origin: this.cveScreen,
+        folio: this.form.get('scanningFoli').value,
+      },
+    });
+  }
+
+  savedLocal(event: any) {
+    console.log(event);
+    const model = {
+      numberGood: event.numberGood.value,
+      status: event.status.value,
+      description: event.description.value,
+      justifier: event.justifier.value,
+    };
+    localStorage.setItem('savedForm', JSON.stringify(model));
+    localStorage.setItem(
+      'numberFoli',
+      JSON.stringify(
+        this.numberFoli === '' || this.numberFoli === null
+          ? this.document.id
+          : this.numberFoli
+      )
+    );
   }
 
   getDocumentByFolio(folio: number) {

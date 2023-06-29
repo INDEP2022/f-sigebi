@@ -96,7 +96,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
           type: 'string',
           sort: false,
         },
-        fec_insercion_: {
+        motionDate: {
           title: 'Fecha Depósito',
           type: 'string',
           sort: false,
@@ -106,7 +106,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
           type: 'string',
           sort: false,
         },
-        fec_calculo_intereses_: {
+        calculationInterestsDate: {
           title: 'Fecha Transferencia',
           type: 'string',
           sort: false,
@@ -187,9 +187,10 @@ export class DepositTokensComponent extends BasePage implements OnInit {
             const search: any = {
               bank: () => (searchFilter = SearchFilter.ILIKE),
               cveAccount: () => (searchFilter = SearchFilter.EQ),
-              fec_insercion: () => (searchFilter = SearchFilter.ILIKE),
+              motionDate: () => (searchFilter = SearchFilter.ILIKE),
               folio_ficha: () => (searchFilter = SearchFilter.ILIKE),
-              fec_traspaso: () => (searchFilter = SearchFilter.ILIKE),
+              calculationInterestsDate: () =>
+                (searchFilter = SearchFilter.ILIKE),
               currency: () => (searchFilter = SearchFilter.ILIKE),
               deposito: () => (searchFilter = SearchFilter.EQ),
               no_expediente: () => (searchFilter = SearchFilter.EQ),
@@ -201,7 +202,16 @@ export class DepositTokensComponent extends BasePage implements OnInit {
             search[filter.field]();
 
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log('filter.search', filter.search);
+              if (filter.search == 'motionDate') {
+              }
+              this.columnFilters[field] = `${filter.search}`;
+              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+
+              console.log(
+                'this.columnFilters[field]',
+                this.columnFilters[field]
+              );
             } else {
               delete this.columnFilters[field];
             }
@@ -219,10 +229,42 @@ export class DepositTokensComponent extends BasePage implements OnInit {
 
   getAccount() {
     this.loading = true;
-    let params = {
+    let params: any = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
+
+    if (params['filter.motionDate']) {
+      params['motionDate'] = params['filter.motionDate'];
+      delete params['filter.motionDate'];
+    }
+    if (params['filter.deposito']) {
+      params['deposit'] = params['filter.deposito'];
+      delete params['filter.deposito'];
+    }
+    if (params['filter.calculationInterestsDate']) {
+      params['calculationInterestsDate'] =
+        params['filter.calculationInterestsDate'];
+      delete params['filter.calculationInterestsDate'];
+    }
+    if (params['filter.no_bien']) {
+      params['goodNumber'] = params['filter.no_bien'];
+      delete params['filter.no_bien'];
+    }
+    if (params['filter.no_expediente']) {
+      params['proceedingsNumber'] = params['filter.no_expediente'];
+      delete params['filter.no_expediente'];
+    }
+    if (params['filter.categoria']) {
+      params['category'] = params['filter.categoria'];
+      delete params['filter.categoria'];
+    }
+    if (params['filter.es_parcializacion']) {
+      params['ispartialization'] = params['filter.es_parcializacion'];
+      delete params['filter.es_parcializacion'];
+    }
+
+    console.log('params', params);
     this.accountMovementService.getAccount2(params).subscribe({
       next: async (response: any) => {
         let result = response.data.map(async (item: any) => {
@@ -231,10 +273,10 @@ export class DepositTokensComponent extends BasePage implements OnInit {
           item['currency'] = detailsBank ? detailsBank.cveCurrency : null;
           item['bank'] = detailsBank ? detailsBank.cveBank : null;
           item['cveAccount'] = detailsBank ? detailsBank.cveAccount : null;
-          item['fec_insercion_'] = item.fec_insercion
-            ? this.datePipe.transform(item.fec_insercion, 'dd/MM/yyyy')
+          item['motionDate'] = item.fec_movimiento
+            ? this.datePipe.transform(item.fec_movimiento, 'dd/MM/yyyy')
             : null;
-          item['fec_calculo_intereses_'] = item.fec_calculo_intereses
+          item['calculationInterestsDate'] = item.fec_calculo_intereses
             ? this.datePipe.transform(item.fec_calculo_intereses, 'dd/MM/yyyy')
             : null;
           item['bancoDetails'] = detailsBank ? detailsBank : null;
