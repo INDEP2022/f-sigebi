@@ -126,7 +126,10 @@ export class MinpubListComponent extends BasePage implements OnInit {
   //método para borrar transferente
   delete(id: number) {
     this.minpubService.remove(id).subscribe({
-      next: () => this.getExample(),
+      next: () => {
+        this.getExample();
+        this.alert('success', 'Minpub', 'Borrado Correctamente');
+      },
     });
   }
 }

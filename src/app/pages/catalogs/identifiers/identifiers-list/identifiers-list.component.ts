@@ -118,7 +118,7 @@ export class IdentifiersListComponent extends BasePage implements OnInit {
   delete(identifier: IIdentifier) {
     this.identifierService.remove(identifier.id).subscribe(
       res => {
-        this.alert('success', 'Identificador', 'Borrado.');
+        this.alert('success', 'Identificador', 'Borrado Correctamente');
         this.getIdentifiers();
       },
       err => {

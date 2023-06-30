@@ -221,7 +221,11 @@ export class TransferorsListComponent extends BasePage implements OnInit {
       .remove(data.idTransferee, data.stateKey)
       .subscribe({
         next: () => {
-          this.alert('success', 'Borrado', '');
+          this.alert(
+            'success',
+            'Estado por transferente',
+            'Borrado Correctamente'
+          );
           this.getStateByTransferent();
         },
         error: err => {
