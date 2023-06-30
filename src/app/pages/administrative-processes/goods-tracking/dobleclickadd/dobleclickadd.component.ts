@@ -229,6 +229,7 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
               }
             } else {
               this.alert('warning', 'No se encontró la pantalla', '');
+              return;
             }
           } else if (
             this.delegationNumber == LV_RESPONSABLE ||
@@ -246,13 +247,14 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
               }
             } else {
               this.alert('warning', 'No se encontró la pantalla', '');
+              return;
             }
           }
         }
       });
     } else if (this.responsable != 'REGIONALES') {
       if (V_PANTALLA != null) {
-        if (V_DESCMOTIVO == 'AMPARO') {
+        if (V_DESCMOTIVO === 'AMPARO') {
           await this.pupLanzaForma(V_PANTALLA, V_PARAMETRO, V_EXPEDIENTE);
         } else {
           await this.pupLanzaForma(
@@ -263,6 +265,7 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
         }
       } else {
         this.alert('warning', 'No se encontró la pantalla', '');
+        return;
       }
     } else {
       this.alert(
@@ -270,6 +273,7 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
         `No puede atender este bien, ya que usted no corresponde al área responsable: ${V_RESPONSABLE}`,
         ''
       );
+      return;
     }
   }
 

@@ -27,7 +27,7 @@
       <div class="row mb-3 mt-3">
         <!--Package type-->
         <div
-          class="col-lg-6 col-md-12 col-sm-12 col-12 align-self-center mb-3 mt-3">
+          class="col-lg-5 col-md-12 col-sm-12 col-12 align-self-center mb-3 mt-3">
           <div class="row justify-content-between">
             <div class="col-lg-4 col-md-4 col-sm-4 col-6">
               <form-radio label="Muebles">
@@ -63,34 +63,34 @@
         </div>
         <!--Actions-->
         <div
-          class="col-lg-2 col-md-4 col-sm-12 col-12 align-self-baseline mb-3 mt-3">
-          <button
-            (click)="attention()"
-            class="btn btn-primary btn-sm active w-100">
-            Atender
-          </button>
-        </div>
-        <div
-          class="col-lg-2 col-md-4 col-sm-12 col-12 align-self-baseline mb-3 mt-3">
-          <button
-            class="btn btn-success btn-sm w-100"
-            type="button"
-            (click)="file.click()">
-            Atención Masiva <i class="bx bx-upload float-icon"></i>
-          </button>
-          <input
-            type="file"
-            name="file"
-            #file
-            class="d-none"
-            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-            (change)="onFileChange($event)" />
-        </div>
-        <div
-          class="col-lg-2 col-md-4 col-sm-12 col-12 mb-3 mt-3 align-self-baseline mb-3 mt-3">
-          <button (click)="exportar()" class="btn btn-success btn-sm w-100">
-            Exportar CSV <i class="bx bx-download float-icon"></i>
-          </button>
+          class="col-lg-7 col-md-12 col-sm-12 col-12 align-self-center mb-3 mt-3">
+          <div class="col-lg-3 col-md-2 col-sm-4 col-12">
+            <button
+              (click)="attention()"
+              class="btn btn-primary btn-sm active w-100">
+              Atender
+            </button>
+          </div>
+          <div class="col-lg-5 col-md-5 col-sm-4 col-12">
+            <button
+              class="btn btn-success btn-sm w-100"
+              type="button"
+              (click)="file.click()">
+              Atención Masiva <i class="bx bx-upload float-icon"></i>
+            </button>
+            <input
+              type="file"
+              name="file"
+              #file
+              class="d-none"
+              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              (change)="onFileChange($event)" />
+          </div>
+          <div class="col-lg-4 col-md-5 col-sm-4 col-12">
+            <button (click)="exportar()" class="btn btn-success btn-sm w-100">
+              Exportar CSV <i class="bx bx-download float-icon"></i>
+            </button>
+          </div>
         </div>
       </div>
     </form>
@@ -130,7 +130,7 @@
 
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-6 mt-3">
+        <!-- <div class="col-md-6 mt-3">
           <form-field [control]="form.get('responsable')" label="Responsable">
             <input
               readonly
@@ -138,7 +138,7 @@
               class="form-control"
               formControlName="responsable" />
           </form-field>
-        </div>
+        </div> -->
       </div>
     </form>
   </div>

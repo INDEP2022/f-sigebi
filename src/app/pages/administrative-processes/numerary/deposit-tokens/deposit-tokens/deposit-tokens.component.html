@@ -4,22 +4,14 @@
   </div>
   <div body>
     <div class="row">
-      <div class="col-md-5"></div>
-      <div class="col-md-7 text-end">
+      <div class="col-md-4"></div>
+      <div class="col-md-8 text-end">
         <div class="row">
-          <div class="col-5">
-            <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
-          </div>
-
-          <div class="col-7 text-end">
+          <div class="col-12 text-end">
             <div class="row">
-              <div class="col-6 d-flex justify-content-end">
-                <app-columns-select
-                  style="margin-right: -45px"
-                  [defaultColumns]="10"
-                  [(settings)]="settings"></app-columns-select>
-              </div>
-              <div class="col-6">
+              <div class="col-10 justify-content-end">
+                <!-- <app-columns-select style="margin-right: -45px" [defaultColumns]="10"
+                  [(settings)]="settings"></app-columns-select> -->
                 <button
                   (click)="addMovement()"
                   type="button"
@@ -33,6 +25,11 @@
                   (click)="openForm()">
                   Movimientos
                 </button>
+              </div>
+              <div class="col-2 d-flex justify-content-end align-items-end">
+                <app-columns-select
+                  [defaultColumns]="10"
+                  [(settings)]="settings"></app-columns-select>
               </div>
             </div>
           </div>
