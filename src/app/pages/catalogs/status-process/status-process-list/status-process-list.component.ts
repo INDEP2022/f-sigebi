@@ -125,7 +125,8 @@ export class StatusProcessListComponent extends BasePage implements OnInit {
     };
     this.statusProcessService.remove2(data).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Estatus Proceso', 'Borrado');
+        this.getExample(),
+          this.alert('success', 'Estatus proceso', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

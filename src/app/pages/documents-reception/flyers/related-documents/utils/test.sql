@@ -404,6 +404,7 @@ end;
  		EXCEPTION
          	WHEN OTHERS THEN
          	LIP_MENSAJE(SQLERRM,'A');
+<<<<<<< HEAD
 END;
 
 
@@ -450,4 +451,6 @@ BEGIN
    		END IF;
    END IF;
    GO_BLOCK('BLK_BIEN_GEN_MASIV');
+=======
+>>>>>>> 8d2da9fd591dca2f4ed963e274ef8b73562c9bf1
 END;

@@ -128,12 +128,12 @@ export class PaymentConceptListComponent extends BasePage implements OnInit {
     this.paymentService.remove(id).subscribe({
       next: () => {
         this.getPaymentConcepts(),
-          this.alert('success', 'Concepto de Pago', 'Borrado');
+          this.alert('success', 'Concepto de pago', 'Borrado Correctamente');
       },
       error: err => {
         this.alert(
           'warning',
-          'Dictámen',
+          'Concepto de pago',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },
