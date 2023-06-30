@@ -24,7 +24,7 @@ const NO_IMAGE_FOUND = 'assets/images/documents-icons/not-found.jpg';
 export class PhotoComponent extends BasePage implements OnInit {
   @Input() filename: string = '';
   @Input() goodNumber: string = null;
-  @Input() dobleClickAction: number = 1;
+  @Input() typedblClickAction: number = 1;
   @ViewChild('container', { static: true })
   imgSrc: string | SafeResourceUrl = null;
   imgDocument: string;
@@ -121,7 +121,7 @@ export class PhotoComponent extends BasePage implements OnInit {
     );
   }
 
-  openHistoric() {}
+  editPhoto() {}
 
   openDocumentsViewer() {
     console.log(this.error);

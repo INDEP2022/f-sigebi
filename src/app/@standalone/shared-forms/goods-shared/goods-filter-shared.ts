@@ -103,14 +103,14 @@ export class GoodsFilterSharedComponent
         this.goods = new DefaultSelect(this.data, data.count);
       },
       error: err => {
-        this.goods = new DefaultSelect([], 0);
+        this.goods = new DefaultSelect([], 0, true);
         let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-          this.onLoadToast('error', 'Error', error);
-        }
-        this.onLoadToast(
-          'info',
+        // if (err.status === 0) {
+        //   error = 'Revise su conexión de Internet.';
+        //   this.onLoadToast('error', 'Error', error);
+        // }
+        this.alert(
+          'warning',
           'Información',
           'No hay bienes que mostrar con los filtros seleccionado'
         );

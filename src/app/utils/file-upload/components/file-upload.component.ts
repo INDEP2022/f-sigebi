@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ModalOptions } from 'ngx-bootstrap/modal';
 import { NgxDropzoneChangeEvent } from 'ngx-dropzone';
+import { BasePage } from 'src/app/core/shared';
 import {
   FileUploadEvent,
   FILE_UPLOAD_STATUSES,
 } from '../interfaces/file-event';
 import { FileUploadService } from '../service/file-upload.service';
-import { BasePage } from 'src/app/core/shared';
-import { ModalOptions } from 'ngx-bootstrap/modal';
 
 export interface IUploadEvent {
   fileEvents: FileUploadEvent[];
@@ -24,6 +24,7 @@ export class FileUploadComponent extends BasePage implements OnInit {
   fileEvents: FileUploadEvent[] = [];
   config: any;
   statuses = FILE_UPLOAD_STATUSES;
+  @Input() uploadLoading = false;
   constructor(
     private fileUploadService: FileUploadService,
     public options: ModalOptions

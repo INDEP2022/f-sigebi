@@ -14,6 +14,7 @@ export const GP_GOODS_COLUMNS = {
   numberPhotos: {
     title: 'No. Fotos',
     sort: false,
+    valuePrepareFunction: (value: string | number) => Number(value),
   },
   fileNumber: {
     title: 'No. Expediente',
