@@ -1017,7 +1017,6 @@ export class ClassifyAssetsTabComponent
               this.fractionCode = fraction.fractionCode;
 
               if (this.fractionCode.length === 8) {
-                console.log('<<<<<<<<<<<<<>>>>>>>>>>>>>', fraction);
                 this.setNoClasifyGood(fraction);
                 this.setUnidLigieMeasure(fraction);
                 this.setFractionId(data, fraction.fractionCode, 'Seccion');
