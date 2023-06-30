@@ -5,6 +5,7 @@ import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
+import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { SelectFractionComponent } from 'src/app/@standalone/modals/select-fraction/select-fraction.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
@@ -44,6 +45,7 @@ import { trackedGoodsReducer } from './store/goods-tracker.reducer';
     PreviewDocumentsComponent,
     CarouselModule,
     AccordionModule,
+    DocumentsViewerByFolioComponent,
     SelectFractionComponent,
     StoreModule.forFeature('trackedGoods', trackedGoodsReducer),
   ],

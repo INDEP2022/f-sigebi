@@ -118,7 +118,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     const exists = this.selectedGooods.find(
       good => good.goodNumber == _good.goodNumber
     );
-    return !exists ? false : true;
+    return exists ? true : false;
   }
 
   private isValidOrigin() {

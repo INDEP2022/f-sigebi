@@ -51,6 +51,9 @@ export class DocumentsViewerByFolioComponent
       catchError(error => {
         if (error.status < 500) {
           this.alert('error', 'Error', 'No hay documentos digitalizados');
+          setTimeout(() => {
+            this.modalRef.hide();
+          }, 0);
         }
         if (error.status >= 500) {
           this.alert(
