@@ -53,6 +53,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   programming: Iprogramming;
   nomReport: string = '';
   actId: number = 0;
+  formLoading: boolean = false;
   receiptGuards: any;
   constructor(
     private sanitizer: DomSanitizer,
@@ -84,6 +85,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.formLoading = true;
     this.showReportByTypeDoc();
     this.getReceipt();
     this.params
@@ -99,11 +101,13 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     if (this.idTypeDoc == 103) {
       let linkDoc: string = `${this.urlBaseReport}Recibo_Entrega.jasper&ID_PROG=${this.idProg}&ID_RECIBO=${this.receipt.id}&ID_ACTA=${this.receipt.actId}`;
       this.src = linkDoc;
+      this.formLoading = false;
     }
 
     if (this.idTypeDoc == 221) {
       let linkDoc: string = `${this.urlBaseReport}oficio_programacion_recepcion.jasper&ID_PROGRAMACION=${this.idProg}`;
       this.src = linkDoc;
+      this.formLoading = false;
     }
 
     if (
@@ -113,11 +117,13 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     ) {
       let linkDoc: string = `${this.urlBaseReport}${this.nomReport}&ID_ACTA=${this.actId}&ID_PROGRAMACION=${this.idProg}`;
       this.src = linkDoc;
+      this.formLoading = false;
     }
 
     if (this.idTypeDoc == 185 || this.idTypeDoc == 186) {
       let linkDoc: string = `${this.urlBaseReport}Recibo_Resguardo.jasper&ID_RECIBO_RESGUARDO=${this.receiptGuards.id}`;
       this.src = linkDoc;
+      this.formLoading = false;
     }
   }
 
