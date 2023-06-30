@@ -1,4 +1,4 @@
-<div class="row m-0">
+<div class="photoGoods mt-3 mb-3">
   <div class="col-md-4 p-0">
     <button
       class="btn btn-primary btn-sm active"
@@ -8,29 +8,55 @@
       Subir Fotos
       <i class="fa fa-upload"></i>
     </button>
-    <!-- <form-field [control]="form.get('img')" label="">
-                    <input
-                      class="form-control mb-3 mt-3"
-                      type="file"
-                      id="formFile"
-                      accept="image/png,image/jpeg"
-                      formControlName="img"
-                      (change)="onFileChange($event)" />
-                  </form-field> -->
   </div>
+  <!-- <div class="col-md-4 p-0" style="text-align: center">
+    <button
+      class="btn btn-primary btn-sm active"
+      type="button"
+      [disabled]="disabled"
+      (click)="showHistoric()">
+      Histórico
+      <i class="fa fa-list"></i>
+    </button>
+  </div> -->
 
-  <div class="col-md-4 p-0 d-flex justify-content-between">
+  <div class="col-md-4 p-0">
+    <form class="form-material" [formGroup]="form">
+      <form-field
+        [control]="form.get('typedblClickAction')"
+        label="Acciones de doble click">
+        <ng-select
+          class="form-control"
+          formControlName="typedblClickAction"
+          [clearable]="false"
+          [searchable]="false"
+          [readonly]="files.length < 1">
+          <ng-option [value]="1">Visualizar</ng-option>
+          <ng-option [value]="2">Editar</ng-option>
+        </ng-select>
+      </form-field>
+    </form>
+  </div>
+  <div class="col-md-4 p-0 action-buttons">
+    <!-- <button
+      type="button"
+      [disabled]="disabledDeletePhotos()"
+      class="btn btn-danger btn-sm active"
+      (click)="confirmDelete()">
+      Borrar fotos seleccionadas
+      <i class="fa fa-eraser"></i>
+    </button> -->
     <div class="buttons">
       <div class="btn-group" dropdown>
         <button
           id="button-basic"
-          [disabled]="files.length < 1"
           dropdownToggle
-          type="button"
           class="btn btn-primary dropdown-toggle btn-sm active"
+          [class]="disabled ? 'disabled' : ''"
+          type="button"
           aria-controls="dropdown-basic">
           <div class="d-flex align-items-center">
-            Acciones de doble click<span class="caret ml-2"></span>
+            Acciones <span class="caret ml-2"></span>
           </div>
         </button>
         <ul
@@ -40,29 +66,26 @@
           role="menu"
           aria-labelledby="button-basic">
           <li role="menuitem">
-            <a class="dropdown-item" (click)="dobleClickAction = 1"
-              >Visualizar</a
+            <a class="dropdown-item" (click)="showHistoric()">Histórico</a>
+          </li>
+          <li
+            role="menuitem"
+            [class]="disabledDeletePhotos() ? 'disabledDelete' : ''"
+            [tooltip]="errorMessage">
+            <a class="dropdown-item" (click)="confirmDelete()"
+              >Borrar Seleccionados</a
             >
           </li>
-          <li role="menuitem">
-            <a class="dropdown-item" (click)="dobleClickAction = 2"
-              >Histórico</a
-            >
+          <li class="divider dropdown-divider"></li>
+          <li
+            role="menuitem"
+            [class]="disabledDeleteAllPhotos() ? 'disabledDelete' : ''"
+            [tooltip]="errorMessage">
+            <a class="dropdown-item">Eliminar Todas</a>
           </li>
         </ul>
       </div>
     </div>
-  </div>
-
-  <div class="col-md-4 p-0" style="text-align: right">
-    <button
-      type="button"
-      [disabled]="disabledDeletePhotos()"
-      class="btn btn-danger btn-sm active"
-      (click)="confirmDelete()">
-      Borrar fotos seleccionadas
-      <i class="fa fa-eraser"></i>
-    </button>
   </div>
 </div>
 <div class="row m-0">
@@ -81,7 +104,7 @@
           <div class="row">
             <div class="col-md-12">
               <app-photo
-                [dobleClickAction]="dobleClickAction"
+                [typedblClickAction]="typedblClickAction"
                 [filename]="image"
                 [goodNumber]="goodNumber + ''"></app-photo>
             </div>

@@ -190,7 +190,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
 
       this.ids = this.excelService.getData(binaryExcel);
       if (this.ids[0].No_bien === undefined) {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Ocurrio un error al leer el archivo',
           'El archivo no cuenta con la estructura requerida'
@@ -419,7 +419,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
         },
       });
     });
-    this.onLoadToast(
+    this.alert(
       'success',
       'Actualizado',
       'Se ha cambiado el status de los bienes seleccionados'

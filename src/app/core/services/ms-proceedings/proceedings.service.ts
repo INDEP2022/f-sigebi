@@ -4,6 +4,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import {
   IListResponse,
+  IListResponseMessage,
   IResponse,
 } from '../../interfaces/list-response.interface';
 import {
@@ -98,6 +99,12 @@ export class ProceedingsService extends HttpService {
     return this.get<IListResponse<IProceedings>>(
       `${this.route}/getAll`,
       params
+    );
+  }
+
+  getExistProceedings(numberGood: string) {
+    return this.get<IListResponseMessage<{ existe: number }>>(
+      ProceedingsEndpoints.ExistProceedings + '/' + numberGood
     );
   }
 
