@@ -28,8 +28,7 @@ import { ATRIBUT_ACT_COLUMNS } from './columns';
 })
 export class GeneralDataGoodsComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   @Input() goodId: number;
   generalDataForm: ModelForm<any>;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -171,19 +170,17 @@ export class GeneralDataGoodsComponent
     this.goodService.getById(this.goodId).subscribe({
       next: (response: any) => {
         this.classificationOfGoods = Number(response.data[0].goodClassNumber);
+
         this.good = response.data[0];
         this.generalDataForm.get('cantidad').patchValue(this.good.quantitySae);
+        console.log(this.good.judicialDate);
         this.generalDataForm
           .get('fechaFe')
           .patchValue(
-            this.good.judicialDate === undefined
-              ? null
-              : this.formatearFecha(this.good.judicialDate.toString())
+            this.good.judicialDate != null
+              ? this.formatearFecha(this.good.judicialDate.toString())
+              : null
           );
-        console.error(
-          '******* Esta es la fecha ********',
-          this.formatearFecha(this.good.judicialDate.toString())
-        );
 
         this.generalDataForm
           .get('observacion')

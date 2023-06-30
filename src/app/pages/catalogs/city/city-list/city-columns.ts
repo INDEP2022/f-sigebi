@@ -20,9 +20,12 @@ export const CITY_COLUMNS = {
     valuePrepareFunction: (value: IState) => {
       return value?.descCondition;
     },
-    filterFunction(cell?: any, search?: string): boolean {
+    filterFunction(cell: any, search: string): boolean {
       let column = cell.descCondition;
-      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+      if (
+        column?.toUpperCase().includes(search.toUpperCase()) ||
+        search === ''
+      ) {
         return true;
       } else {
         return false;
@@ -36,9 +39,12 @@ export const CITY_COLUMNS = {
     valuePrepareFunction: (value: IDelegation) => {
       return value?.description;
     },
-    filterFunction(cell?: any, search?: string): boolean {
+    filterFunction(cell: any, search: string): boolean {
       let column = cell.description;
-      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+      if (
+        column?.toUpperCase().includes(search.toUpperCase()) ||
+        search === ''
+      ) {
         return true;
       } else {
         return false;
@@ -57,9 +63,12 @@ export const CITY_COLUMNS = {
     valuePrepareFunction: (value: ISubdelegation) => {
       return value?.description;
     },
-    filterFunction(cell?: any, search?: string): boolean {
+    filterFunction(cell: any, search: string): boolean {
       let column = cell.description;
-      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+      if (
+        column?.toUpperCase().includes(search.toUpperCase()) ||
+        search === ''
+      ) {
         return true;
       } else {
         return false;

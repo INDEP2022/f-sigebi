@@ -1,0 +1,23 @@
+<ng-container>
+  <div class="col-md-6" [formGroup]="form" *ngIf="form">
+    <form-field [control]="form.get(formInitial)" [label]="labelInicioName">
+      <input
+        [maxDate]="maxDate"
+        class="form-control"
+        [formControlName]="formInitial"
+        (bsValueChange)="onChange($event, formInitial, formFin)"
+        bsDatepicker />
+    </form-field>
+  </div>
+  <div class="col-md-6" [formGroup]="form2" *ngIf="form2">
+    <form-field [control]="form2.get(formFin)" [label]="labelFinName">
+      <input
+        [maxDate]="maxDate"
+        class="form-control"
+        [formControlName]="formFin"
+        (bsValueChange)="onChangeFin($event, formFin)"
+        [minDate]="form.get(formInitial).value"
+        bsDatepicker />
+    </form-field>
+  </div>
+</ng-container>

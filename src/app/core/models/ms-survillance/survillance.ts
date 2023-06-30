@@ -24,7 +24,8 @@ export interface IVigBinnacle {
   usrRequest: string;
   usrRun: string;
   usrAuthorize: string;
-  delegationNumber: number;
+  delegationNumber: IDelegation | number;
+  delegation: IDelegation;
   sendId: number;
   bodyId: number;
 }

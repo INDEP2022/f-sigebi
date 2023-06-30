@@ -25,6 +25,7 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
   currencies = new DefaultSelect<IMoneda>([], 0);
   fromF: string = '';
   toT: string = '';
+  valorDelCampo: string = 'cccccccc';
   import: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
