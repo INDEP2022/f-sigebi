@@ -13,13 +13,12 @@ import {
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { GoodsComponent } from '../goods/goods.component';
 import { PwComponent } from '../pw/pw.component';
 import { ActaConvertionFormComponent } from './acta-convertion-form/acta-convertion.component'; // Importa el componente de tu modal
-import { IGood } from 'src/app/core/models/good/good.model';
-import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 //import { MatDialog } from '@angular/material/dialog';
 
 @Component({
@@ -47,6 +46,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   selectedRow: any;
   goodData: any;
 
+  bkConversionsCveActaCon: any;
   get idConversion() {
     return this.form.get('idConversion');
   }
@@ -130,6 +130,11 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     private historyGoodProcess: HistoryGoodService
   ) {
     super();
+    this.route.queryParams.subscribe(params => {
+      if (params['newActConvertion']) {
+        this.actConvertion.setValue(params['newActConvertion']);
+      }
+    });
   }
   ngOnInit(): void {
     this.buildForm();
@@ -141,15 +146,11 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         ...MODAL_CONFIG,
         callback: (data: any) => {
           if (data != null) {
-            //Se setea el valor de no_bien
             this.no_bien_blk_tipo_bien = data.goodFatherNumber;
-            //Se seta los valores de idConversion
             this.idConversion.setValue(data.id);
             this.numberDossier.setValue(data.fileNumber.id);
             this.numberGoodFather.setValue(data.goodFatherNumber);
-            //
             this.goodFatherNumber$.next(data.goodFatherNumber);
-            console.log(data);
             this.wrongModal = false;
             this.tipo.setValue(data.typeConv);
             this.actConvertion.setValue(data.cveActaConv);
@@ -251,12 +252,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     );
   }
 
-  // Define una variable para almacenar el último id de conversión consultado
   lastIdConversion: any = null;
 
   async searchGoodSon(e: any) {
     this.form.valueChanges.subscribe(async value => {
-      // Comprueba si el id de conversión ha cambiado
       if (this.lastIdConversion !== value.idConversion) {
         try {
           const conversionData = await this.convertiongoodService
@@ -297,8 +296,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.flagCargaImagenes = true;
             this.flagFinConversion = true;
           }
-
-          // Actualiza el último id de conversión consultado
           this.lastIdConversion = value.idConversion;
         } catch (err) {
           console.error(err);
@@ -512,7 +509,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         console.log(err);
       }
     );
-    console.log('NEWGOODS1', this.filterGood$.getValue().data);
     let payload = this.filterGood$.getValue().data;
     payload = payload.map((item: any) => {
       delete item.almacen;
@@ -524,7 +520,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       return item;
     });
     delete payload.almacen;
-    console.log('NEWGOODS2', payload);
     this.serviceGood.crateGood(payload[0]).subscribe(
       res => {
         this.alert('success', 'se ha agregado el Bien', `con el id: ${res.id}`);
@@ -593,6 +588,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
       queryParams: {
         actConvertion: this.form.value.actConvertion,
+        tipoConv: this.form.value.tipo,
+        pGoodFatherNumber: this.form.value.numberGoodFather,
       },
     });
     this.modalService.show(ActaConvertionFormComponent, config);
