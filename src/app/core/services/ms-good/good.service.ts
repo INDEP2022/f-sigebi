@@ -188,7 +188,7 @@ export class GoodService extends HttpService {
   }
 
   //
-  update(good: IGood) {
+  update(good: IGood | any) {
     const route = `${GoodEndpoints.Good}`;
     return this.put(route, good);
   }
@@ -415,8 +415,8 @@ export class GoodService extends HttpService {
     return this.get('good/get-facta-dbo-ficio-gestrel', body);
   }
 
-  getActasConversion() {
-    const URL = `${environment.API_URL}/convertiongood/api/v1/${GoodActaConvertion.GoodActaConvertion}`;
+  getActasConversion(actaConvertion: any) {
+    const URL = `${environment.API_URL}/convertiongood/api/v1/${GoodActaConvertion.GoodActaConvertion}?filter.cveActaConvId=$like:${actaConvertion}`;
 
     const headers = new HttpHeaders();
 
@@ -430,5 +430,11 @@ export class GoodService extends HttpService {
   }
   updateGoodsRev(params?: any): Observable<IListResponse<any>> {
     return this.put(GoodEndpoints.GoodsMotivesrev2, params);
+  }
+
+  generateWeaponKey(payload: any) {
+    const URL = `${environment.API_URL}/parametergood/api/v1/application/pup-weapon-key`;
+
+    return this.http.post<any>(URL, payload).pipe(map(res => res));
   }
 }
