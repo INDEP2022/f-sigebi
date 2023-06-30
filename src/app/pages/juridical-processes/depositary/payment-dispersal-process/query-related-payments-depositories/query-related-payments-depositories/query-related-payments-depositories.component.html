@@ -225,7 +225,7 @@
                           loadingSirsaeProcess ||
                           loadingGoodAccount
                         "
-                        class="btn btn-sm btn-success active"
+                        class="btn btn-sm btn-success active text-wrap w-100"
                         (click)="btnExportarExcel()">
                         Exportar a Excel
                         <i class="bx bx-download float-icon"></i>
@@ -254,10 +254,9 @@
                           loadingSirsaeProcess ||
                           loadingGoodAccount
                         "
-                        class="btn btn-primary btn-sm active"
-                        tooltip="Enviar a SIRSAE"
-                        containerClass="tooltip-style"
+                        class="btn btn-primary btn-sm active text-wrap w-100"
                         (click)="btnEnviarSIRSAE()">
+                        Enviar a SIRSAE
                         <i class="bx bx-send"></i>
                       </button>
                       <!-- <button
@@ -284,7 +283,7 @@
                           loadingSirsaeProcess ||
                           loadingGoodAccount
                         "
-                        class="btn btn-primary active btn-sm"
+                        class="btn btn-primary active btn-sm text-wrap w-100"
                         (click)="btnImprimir()">
                         Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
                       </button>
@@ -312,9 +311,10 @@
                           loadingSirsaeProcess ||
                           loadingGoodAccount
                         "
-                        class="btn btn-warning active btn-sm"
+                        class="btn btn-warning active btn-sm text-wrap w-100"
                         (click)="btnActualizarPago()">
                         Actualizar Pago
+                        <i class="fas fa-sync-alt" aria-hidden="true"></i>
                       </button>
                     </div>
                   </div>
@@ -337,7 +337,7 @@
       </div>
       <div
         class="col-md-12 alert alert-success"
-        *ngIf="errorsSirsae.length > 0 && !loadingSirsaeProcess">
+        *ngIf="errorSirSae > 0 && !loadingSirsaeProcess">
         Se T&eacute;rmino el Proceso de Env&oacute; SIRSAE, a continuación puede
         descargar un resumen del Proceso. Se procesaron
         <strong>
