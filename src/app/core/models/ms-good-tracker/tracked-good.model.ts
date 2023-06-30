@@ -162,4 +162,5 @@ export interface ITrackedGood {
   numeraryNoEnt?: any;
   transfereeNumber: string;
   socialCabite?: any;
+  select?: boolean;
 }

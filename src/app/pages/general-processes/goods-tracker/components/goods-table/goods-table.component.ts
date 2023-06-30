@@ -1,5 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -12,6 +13,7 @@ import {
   switchMap,
   take,
   takeUntil,
+  tap,
   throwError,
 } from 'rxjs';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
@@ -19,7 +21,9 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
+import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
@@ -43,6 +47,9 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   @Input() totalItems: number = 0;
   @Input() params: BehaviorSubject<ListParams>;
   @Input() override loading: boolean = false;
+  @Input() formData: FormGroup;
+  @Input() fomrCheck: FormGroup;
+
   private selectedGooods: ITrackedGood[] = [];
   origin: string = null;
   ngGlobal: any = null;
@@ -57,7 +64,9 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     private router: Router,
     private location: Location,
     private goodTrackerService: GoodTrackerService,
-    private globalVarService: GlobalVarsService
+    private globalVarService: GlobalVarsService,
+    private jasperServ: SiabService,
+    private goodPartService: GoodPartializeService
   ) {
     super();
     this.settings.actions = false;
@@ -215,10 +224,8 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       .subscribe({
         next: identificator => {
           this.includeLoading = false;
-          this.globalVarService.updateGlobalVars({
-            ...this.ngGlobal,
-            REL_BIENES: identificator,
-          });
+          this.ngGlobal.REL_BIENES = identificator;
+          this.globalVarService.updateGlobalVars(this.ngGlobal);
           this.backTo();
         },
         error: error => {
@@ -243,5 +250,131 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       }),
       map((response: any) => response.nextval)
     );
+  }
+
+  async viewImgDataSheet() {
+    let lst_good: string = '';
+
+    const { lookPhoto } = this.fomrCheck.value;
+
+    if (lookPhoto) {
+      this.alert('warning', 'De doble click sobre la foto', '');
+    } else {
+      await this.getTem();
+
+      this.goods.map(async good => {
+        if (good.select) {
+          lst_good = lst_good + `${good.goodNumber},`;
+          this.insertListPhoto(Number(good.goodNumber));
+          if (lst_good.length > 3600) {
+            lst_good = lst_good.substring(0, lst_good.length - 1);
+            this.insertListPhoto(Number(good.goodNumber));
+            lst_good = '';
+          }
+        }
+      });
+
+      if (lst_good.length > 0) {
+        lst_good = lst_good.substring(0, lst_good.length - 1);
+        this.insertListPhoto(Number(lst_good));
+        this.callReport(null, this.ngGlobal);
+      } else {
+        if (this.goods.length > 0) {
+          this.insertListPhoto(Number(this.goods[0].goodNumber));
+          this.callReport(Number(this.goods[0].goodNumber), null);
+        } else {
+          this.alert('error', 'Error', 'Se requiere de almenos un bien');
+        }
+      }
+    }
+  }
+
+  async getTem() {
+    return new Promise((resolve, reject) => {
+      this.getTmpNextVal().subscribe({
+        next: resp => {
+          this.ngGlobal.REL_BIENES = resp;
+          this.globalVarService.updateGlobalVars(this.ngGlobal);
+          resolve(resp);
+        },
+        error: () => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  insertListPhoto(goodNumber: number) {}
+
+  async callReport(lnu_good: number, lnu_identificador: number) {
+    if (!lnu_identificador) {
+      this.jasperServ
+        .fetchReport('FICHATECNICA', {
+          P_NO_BIEN: lnu_good,
+          P_IDENTIFICADOR: lnu_identificador,
+        })
+        .pipe(
+          tap(response => {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              },
+              class: 'modal-lg modal-dialog-centered',
+              ignoreBackdropClick: true,
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          })
+        )
+        .subscribe();
+    } else {
+      const v_parcialization = await this.getPadre(lnu_good);
+
+      if (!v_parcialization) return;
+
+      this.jasperServ
+        .fetchReport('RCEDINFCONNUMERARIO', {
+          P_NO_BIEN: lnu_good,
+          P_IDENTIFICADOR: v_parcialization,
+        })
+        .pipe(
+          tap(response => {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              },
+              class: 'modal-lg modal-dialog-centered',
+              ignoreBackdropClick: true,
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          })
+        )
+        .subscribe();
+    }
+  }
+
+  async getPadre(good: number) {
+    return new Promise((resolve, reject) => {
+      this.goodPartService.getByGoodNumber(good).subscribe({
+        next: resp => {
+          console.log(resp);
+          resolve(null);
+        },
+        error: () => {
+          resolve(null);
+        },
+      });
+    });
   }
 }

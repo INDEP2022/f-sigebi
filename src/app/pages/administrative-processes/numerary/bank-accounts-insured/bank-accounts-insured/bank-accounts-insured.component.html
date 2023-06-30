@@ -10,7 +10,7 @@
           <div class="col-md-6 pt-3">
             <form-field [control]="form.get('currency')">
               <ngx-select
-                (fetchItems)="getRegCurrency()"
+                (fetchItems)="getRegCurrency($event)"
                 [data]="currencies"
                 [form]="form"
                 value="nmtabla"
@@ -21,7 +21,9 @@
             </form-field>
           </div>
           <div class="col-md-6">
-            <app-banks-shared [form]="form"></app-banks-shared>
+            <app-banks-shared
+              [form]="form"
+              labelName="Banco"></app-banks-shared>
           </div>
         </div>
         <div class="row mt-4">
