@@ -188,7 +188,7 @@ export class GoodService extends HttpService {
   }
 
   //
-  update(good: IGood) {
+  update(good: IGood | any) {
     const route = `${GoodEndpoints.Good}`;
     return this.put(route, good);
   }
