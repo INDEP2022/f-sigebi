@@ -143,7 +143,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
         this.endProcess = true;
       },
       error: error => {
-        this.onLoadToast('error', 'Error', 'Este bien no existe');
+        this.alert('error', 'Error', 'Este bien no existe');
       },
     });
   }
@@ -206,7 +206,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
           error: error => {
             this.loading = false;
             console.error(error);
-            this.onLoadToast(
+            this.alert(
               'error',
               'Error',
               'Error al cambiar el estatus del bien'
