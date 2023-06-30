@@ -83,6 +83,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   }
 
   async ngOnInit() {
+    this.loading = true;
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -1072,5 +1073,10 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       callback: (next: boolean) => {},
     };
     this.modalService.show(ListNoAttendedComponent, modalConfig);
+  }
+
+  miFuncion() {
+    this.getMotives();
+    // console.log('Función ejecutada desde el componente hijo');
   }
 }

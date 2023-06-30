@@ -99,4 +99,13 @@ export class SecurityService extends HttpService {
     const route = SecurityEndpoints.SegCopyEmail;
     return this.post(route, body);
   }
+
+  getFaCoordAdmin(body: any) {
+    const route = SecurityEndpoints.FaCoordAdmin;
+    return this.post(route, body);
+  }
+  getFaDelResponsable(id: any) {
+    const route = SecurityEndpoints.FaDelResponsable;
+    return this.get(`${route}?noBien=${id}`);
+  }
 }
