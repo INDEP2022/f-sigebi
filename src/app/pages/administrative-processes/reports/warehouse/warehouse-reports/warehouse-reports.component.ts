@@ -11,7 +11,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class WarehouseReportsComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
-
+  maxDate = new Date();
+  maxDateInicial = new Date();
   constructor(private fb: FormBuilder) {
     super();
   }

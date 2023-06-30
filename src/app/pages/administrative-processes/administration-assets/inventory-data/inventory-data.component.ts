@@ -64,7 +64,7 @@ export class InventoryDataComponent
   columnFilter: any = [];
   inventoryDataForm: ModelForm<any>;
   generateAtri: boolean = false;
-  textButon: string = 'Generar';
+  textButon: string = 'Generar inventario';
 
   get dataInventory() {
     return this.service.dataInventary;
@@ -226,7 +226,7 @@ export class InventoryDataComponent
         if (date.length > 0) {
           this.inventorySelect = null;
           this.generateAtri = false;
-          this.textButon = 'Generar';
+          this.textButon = 'Generar inventario';
           this.viewAct = !this.viewAct;
           this.viewAct = !this.viewAct;
           this.generateAtri = false;
@@ -360,7 +360,7 @@ export class InventoryDataComponent
     this.getAtribute();
     this.disableGetAtribute = false;
     this.generateAtri = true;
-    this.textButon = 'Actualizar';
+    this.textButon = 'Actualizar atributos';
   }
 
   async add() {
@@ -377,7 +377,7 @@ export class InventoryDataComponent
         this.alert(
           'success',
           'Datos inventario',
-          'Se ha actualizado correctamente los atributos.'
+          'Se ha realizado la actualización correctamente'
         );
       } else {
         const inventoryNumber: number = await this.createInventory();
@@ -509,8 +509,8 @@ export class InventoryDataComponent
     if (vb_hay_inv_anterior) {
       const response = await this.alertQuestion(
         'question',
-        '¿Datos inventario',
-        'Desea traer los valores del inventario anterior?'
+        'Datos inventario',
+        '¿Desea traer los valores del inventario anterior?'
       );
       if (response.isConfirmed) {
         const atributes: any[] = await this.getAtributeBack(
@@ -530,6 +530,11 @@ export class InventoryDataComponent
           this.goodChange++;
         }, 100);
       }
+    } else {
+      this.viewAct = false;
+      setTimeout(() => {
+        this.goodChange++;
+      }, 100);
     }
   }
 

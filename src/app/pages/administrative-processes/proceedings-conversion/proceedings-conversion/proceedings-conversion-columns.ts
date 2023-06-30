@@ -1,39 +1,18 @@
-export const PROCEEDINGSCONVERSION_COLUMNS = {
-  notGood: {
-    title: 'No Bien',
-    width: '10%',
+import { ProceedingsConversionComponent } from './proceedings-conversion.component';
+export const COPY = {
+  goodId: {
+    title: 'No. Bien',
+    type: 'number',
     sort: false,
   },
   description: {
     title: 'Descripcion',
-    width: '20%',
+    type: 'string',
     sort: false,
   },
-  amount: {
+  quantity: {
     title: 'Cantidad',
-    width: '10%',
-    sort: false,
-  },
-  proceedings: {
-    title: 'Acta',
-    width: '10%',
-    sort: false,
-  },
-};
-export const PROCEEDINGSCONVERSIONS_COLUMNS = {
-  notGood: {
-    title: 'No Bien',
-    width: '10%',
-    sort: false,
-  },
-  description: {
-    title: 'Descripcion',
-    width: '20%',
-    sort: false,
-  },
-  amount: {
-    title: 'Cantidad',
-    width: '10%',
+    type: 'string',
     sort: false,
   },
 };
@@ -59,7 +38,7 @@ export const GOODSEXPEDIENT_COLUMNS_GOODS = {
     type: 'custom',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return row.fileNumber.minutesErNumber;
+      return row.cveActa;
     },
   },
   // status: {
@@ -67,46 +46,14 @@ export const GOODSEXPEDIENT_COLUMNS_GOODS = {
   //   type: 'string',
   //   sort: false,
   // },
-  // desEstatus: {
-  //   title: 'Des. Estatus',
-  //   type: 'string',
-  //   sort: false,
-  //   hide: true,
-  // },
-};
-
-import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
-
-export const GOODS_BULK_LOAD_COLUMNS = {
-  noBien: {
-    title: 'No',
-    type: 'number',
-    sort: false,
-  },
-  description: {
-    title: 'Expediente',
-    type: 'string',
-    sort: false,
-  },
-  cantidad: {
-    title: 'Volante',
-    type: 'string',
-    sort: false,
-  },
-  ident: {
-    title: 'Bien',
-    type: 'string',
-    sort: false,
-  },
-  est: {
-    title: 'No especificado',
-    type: 'string',
-    sort: false,
-  },
-  proceso: {
-    title: 'No especificado',
-    type: 'string',
-    sort: false,
+  rowClassFunction: (row: any) => {
+    if (row.status === 'CNE') {
+      return 'row-verde';
+    } else if (row.status === 'RRE' || row.status === 'VXR') {
+      return 'row-negro';
+    } else {
+      return 'row-verde';
+    }
   },
 };
 
@@ -117,7 +64,7 @@ export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
       title: keyValueObj.toLocaleUpperCase(),
       type: 'custom',
       sort: false,
-      renderComponent: SeeMoreComponent,
+      renderComponent: ProceedingsConversionComponent,
       valuePrepareFunction: (value: string) => {
         if (value == 'null' || value == 'undefined') {
           return '';
@@ -136,7 +83,7 @@ export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
       title: keyValueObj.toLocaleUpperCase(),
       type: 'custom',
       sort: false,
-      renderComponent: SeeMoreComponent,
+      renderComponent: ProceedingsConversionComponent,
       valuePrepareFunction: (value: string) => {
         if (value == 'null' || value == 'undefined') {
           return '';
@@ -155,7 +102,7 @@ export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
       title: keyValueObj.toLocaleUpperCase(),
       type: 'custom',
       sort: false,
-      renderComponent: SeeMoreComponent,
+      renderComponent: ProceedingsConversionComponent,
       valuePrepareFunction: (value: string) => {
         if (value == 'null' || value == 'undefined') {
           return '';
@@ -175,7 +122,7 @@ export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
       type: 'string',
       sort: false,
       class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
-        ? WHEEL_COLOR_DATA_COLUMN
+        ? GOODSEXPEDIENT_COLUMNS_GOODS
         : OFFICE_DATA_COLUMNS.includes(keyValueObj)
         ? OFFICE_COLOR_DATA_COLUMN
         : GOOD_COLOR_DATA_COLUMN,
@@ -185,23 +132,18 @@ export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
 };
 export const GOOD_COLOR_DATA_COLUMN = ''; //'bg-secondary text-dark';
 export const WHEEL_COLOR_DATA_COLUMN = 'bg-success text-light';
-const WHEEL_DATA_COLUMNS = [
-  'tipovolante',
-  'remitente',
-  'identificador',
-  'asunto',
-  'exptrans',
-  // 'descripcion',
-  'ciudad',
-  'entfed',
-  'contribuyente',
-  'transferente',
-  'viarecepcion',
-  'areadestino',
-  'gestiondestino',
-  'observaciones',
-  'autoridad',
-];
+const WHEEL_DATA_COLUMNS = ['idConversion'];
 
 export const OFFICE_COLOR_DATA_COLUMN = 'bg-info text-light';
-const OFFICE_DATA_COLUMNS = ['nooficio', 'fgrnobien', 'FGRNOBIEN', 'fecoficio'];
+const OFFICE_DATA_COLUMNS = ['idConversion'];
+
+export class IGoodStatus {
+  goodClassNumber: string | number;
+  goodStatus: string;
+  goodId: string | number;
+}
+
+export class IConverGoodCreate {
+  goodNumber: number | string;
+  proceedingNumber: number;
+}

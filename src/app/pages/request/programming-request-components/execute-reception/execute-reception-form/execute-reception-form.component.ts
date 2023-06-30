@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -87,6 +88,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   goodsWarehouseForm: FormGroup = new FormGroup({});
   goodsReprogForm: FormGroup = new FormGroup({});
   goodsCancelationForm: FormGroup = new FormGroup({});
+  searchGoodForm: FormGroup = new FormGroup({});
   buildForm: FormGroup = new FormGroup({});
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsgeneric = new BehaviorSubject<ListParams>(new ListParams());
@@ -140,6 +142,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   receiptData: IReceipt;
   goodData: IGood;
   transfersDestinity: any[] = [];
+
+  delegationDes: string = '';
+  keyTransferent: string = '';
+
   settingsGuardGoods = {
     ...this.settings,
     actions: false,
@@ -298,7 +304,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     private router: Router,
     private authService: AuthService,
     private taskService: TaskService,
-    private typeTransferentService: TransferenteService
+    private typeTransferentService: TransferenteService,
+    private regionalDelegationService: RegionalDelegationService
   ) {
     super();
     this.settings = {
@@ -314,6 +321,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.prepareSearchForm();
     this.prepareReceptionForm();
     this.prepareGuardForm();
     this.prepareWarehouseForm();
@@ -346,6 +354,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       selectColumn: [null],
       observations: [null],
       transferentDestiny: [null],
+    });
+  }
+
+  prepareSearchForm() {
+    this.searchGoodForm = this.fb.group({
+      goodId: [null],
     });
   }
 
@@ -468,6 +482,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.programmingId'] = this.programmingId;
     this.receptionGoodService.getReceptions(params.getValue()).subscribe({
       next: response => {
+        console.log('receipt guard', response);
         this.receiptGuardGood = response.data[0];
 
         const filterWarehouse = response.data.map((item: any) => {
@@ -1135,7 +1150,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     if (this.selectGood.length > 0) {
       this.alertQuestion(
         'warning',
-        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        '¿Seguro que quiere asignar los bienes  a una acta?',
         '',
         'Aceptar'
       ).then(question => {
@@ -1157,7 +1172,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'warning',
         'Confirmación',
-        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        '¿Seguro que quiere asignar los bienes  a una acta?',
         'Aceptar'
       ).then(async question => {
         if (question.isConfirmed) {
@@ -1178,7 +1193,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'warning',
         'Confirmación',
-        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        '¿Seguro que quiere asignar los bienes  a una acta?',
         'Aceptar'
       ).then(async question => {
         if (question.isConfirmed) {
@@ -1273,7 +1288,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'warning',
         'Confirmación',
-        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        '¿Seguro que quiere asignar los bienes  a una acta?',
         'Aceptar'
       ).then(question => {
         if (question.isConfirmed) {
@@ -1317,23 +1332,40 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           }
         });
       } else {
-        let config = {
-          ...MODAL_CONFIG,
-          class: 'modal-lg modal-dialog-centered',
+        console.log('Crea un acta e asignala a recibos bienes');
+        const formData: IProceedings = {
+          minutesId: 1,
+          idPrograming: this.programming.id,
+          statusProceeedings: 'ABIERTO',
         };
-        config.initialState = {
-          programming: this.programming,
-          selectGoods: this.selectGood,
-          callback: (data: boolean) => {
-            if (data) {
-              this.goodsGuards.clear();
-              this.getReceiptsGuard();
-              this.getInfoGoodsProgramming();
+        this.proceedingService.createProceedings(formData).subscribe({
+          next: async response => {
+            const createKeyAct = await this.createKeyAct(response);
+
+            if (createKeyAct == true) {
+              const createReceiptGood: any =
+                await this.createReceiptGuardNewAct(response);
+              if (createReceiptGood) {
+                const createReceiptGoodGuard =
+                  await this.createReceiptGoodGuard(createReceiptGood);
+
+                if (createReceiptGoodGuard) {
+                  const updateProgrammingGood =
+                    await this.updateProgGoodGuardNewAct(response);
+
+                  if (updateProgrammingGood) {
+                    const updateGood = await this.updateGoodGuard();
+                    this.goodsGuards.clear();
+                    this.getReceiptsGuard();
+                    this.getInfoGoodsProgramming();
+                    this.formLoadingGuard = false;
+                  }
+                }
+              }
             }
           },
-        };
-
-        this.modalService.show(AssignReceiptFormComponent, config);
+          error: error => {},
+        });
       }
     } else if (type == 'almacen') {
       if (this.receipts.count() > 0) {
@@ -1379,6 +1411,66 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         this.modalService.show(AssignReceiptFormComponent, config);
       }
     }
+  }
+
+  createKeyAct(act: IProceedings) {
+    return new Promise((resolve, reject) => {
+      this.regionalDelegationService
+        .getById(this.programming.regionalDelegationNumber)
+        .subscribe(data => {
+          this.delegationDes = data.description;
+
+          this.transferentService
+            .getById(this.programming.tranferId)
+            .subscribe(data => {
+              this.keyTransferent = data.keyTransferent;
+              const month = moment(new Date()).format('MM');
+              const year = moment(new Date()).format('YY');
+              const keyProceeding =
+                this.delegationDes +
+                '-' +
+                this.keyTransferent +
+                '-' +
+                this.programming.id +
+                '-' +
+                `A${act.id}` +
+                '-' +
+                year +
+                '-' +
+                month;
+
+              const receiptform = {
+                id: act.id,
+                idPrograming: this.programming.id,
+                folioProceedings: keyProceeding,
+              };
+
+              this.proceedingService.updateProceeding(receiptform).subscribe({
+                next: () => {
+                  resolve(true);
+                },
+              });
+            });
+        });
+    });
+  }
+
+  createReceiptGuardNewAct(proceeding: IProceedings) {
+    return new Promise((resolve, reject) => {
+      const formData = {
+        programmingId: this.programmingId,
+        actId: proceeding.id,
+        typeReceipt: 'RESGUARDO',
+        statusReceiptGuard: 'ABIERTO',
+        receiptDate: new Date(),
+      };
+      this.receptionGoodService.createReception(formData).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {},
+      });
+    });
   }
 
   createReceiptGuard(receipt: IReceipt) {
@@ -1463,6 +1555,28 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         const formData: Object = {
           programmingId: this.programming.id,
           actaId: receipt.actId,
+          goodId: item.goodId,
+          status: 'EN_RESGUARDO',
+        };
+
+        this.programminGoodService.updateGoodProgramming(formData).subscribe({
+          next: response => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(false);
+          },
+        });
+      });
+    });
+  }
+
+  updateProgGoodGuardNewAct(proceeding: IProceedings) {
+    return new Promise((resolve, reject) => {
+      this.selectGood.map(item => {
+        const formData: Object = {
+          programmingId: this.programming.id,
+          actaId: proceeding.id,
           goodId: item.goodId,
           status: 'EN_RESGUARDO',
         };
@@ -1930,6 +2044,72 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
   }
 
+  searchGood() {
+    const goodsTransportable = this.goodsTransportable.value;
+    const goodsTransportableCopy = this.goodsTransportable.value;
+
+    const filterGood = goodsTransportableCopy.filter((item: any) => {
+      return item.id == this.searchGoodForm.get('goodId').value;
+    });
+
+    if (filterGood.length > 0) {
+      const _data: any[] = [];
+      filterGood.forEach((item: IGood) => {
+        this.params.getValue()['filter.id'] = item.goodId;
+        this.goodService.getAll(this.params.getValue()).subscribe({
+          next: response => {
+            _data.push(response.data[0]);
+            this.goodsTransportable.clear();
+            _data.forEach(async item => {
+              if (item.physicalStatus == 1) {
+                item.physicalStatusName = 'BUENO';
+              } else if (item.physicalStatus == 2) {
+                item.physicalStatusName = 'MALO';
+              }
+              if (item.stateConservation == 1) {
+                item.stateConservationName = 'BUENO';
+              } else if (item.stateConservation == 2) {
+                item.stateConservationName = 'MALO';
+              }
+
+              await this.getDestinyIndep(item.saeDestiny);
+
+              this.goodData = item;
+              const form = this.fb.group({
+                id: [item?.id],
+                goodId: [item?.goodId],
+                uniqueKey: [item?.uniqueKey],
+                fileNumber: [item?.fileNumber],
+                goodDescription: [item?.goodDescription],
+                quantity: [item?.quantity],
+                unitMeasure: [item?.unitMeasure],
+                descriptionGoodSae: [item?.descriptionGoodSae],
+                quantitySae: [item?.quantitySae],
+                saeMeasureUnit: [item?.saeMeasureUnit],
+                physicalStatus: [item?.physicalStatus],
+                physicalStatusName: [item?.physicalStatusName],
+                saePhysicalState: [item?.saePhysicalState],
+                stateConservation: [item?.stateConservation],
+                stateConservationName: [item?.stateConservationName],
+                stateConservationSae: [item?.stateConservationSae],
+                regionalDelegationNumber: [item?.regionalDelegationNumber],
+                destiny: [item?.destiny],
+                transferentDestiny: [item?.saeDestiny],
+                observations: [item?.observations],
+              });
+              this.goodsTransportable.push(form);
+              this.formLoadingTrans = false;
+              this.showTransportable = true;
+            });
+          },
+          error: error => {
+            this.formLoadingTrans = false;
+          },
+        });
+      });
+    }
+  }
+
   changeStatusGoodProg(good: IGood) {
     return new Promise(async (resolve, reject) => {
       this.goodsReprog.clear();
@@ -1952,6 +2132,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
       }
     });
+  }
+
+  cancel() {
+    this.goodsTransportable.clear();
+    this.searchGoodForm.reset();
+    this.getInfoGoodsProgramming();
   }
 
   changeStatusGoodWarehouse(good: IGood) {

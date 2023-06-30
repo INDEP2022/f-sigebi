@@ -112,6 +112,12 @@ export class DynamicTablesService extends HttpService {
     );
   }
 
+  pufValidaEntFed(valor: string) {
+    return this.get<number>(
+      DynamicCatalogEndpoint.pufValidaEntFed + '?entFed=' + valor
+    );
+  }
+
   getAllOtkeyCatWebObligModal(self?: DynamicTablesService, params?: _Params) {
     return self
       .post(

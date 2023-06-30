@@ -1,6 +1,6 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">COMPARATIVO DE INFORMACION FINANCIERA</h5>
+    <h5 class="title">COMPARATIVO DE INFORMACI&Oacute;N FINANCIERA</h5>
   </div>
   <div body>
     <div class="row mt-3 mb-3">
@@ -53,6 +53,7 @@
             <button
               type="button"
               class="btn btn-primary active btn-sm"
+              [disabled]="form.invalid"
               (click)="Generar()">
               Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
             </button>

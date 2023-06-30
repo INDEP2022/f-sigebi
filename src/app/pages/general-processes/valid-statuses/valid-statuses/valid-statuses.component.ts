@@ -45,6 +45,7 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
     super();
     this.settings.actions = false;
     this.settings.columns = VALID_STATUSES_COLUMNS;
+    this.settings.hideSubHeader = false;
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {

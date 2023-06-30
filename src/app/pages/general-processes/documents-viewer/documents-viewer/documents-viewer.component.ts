@@ -306,48 +306,41 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
       },
       error => {
         if (this.aux === 'numberProceedings') {
-          this.alert(
-            'error',
-            '',
-            `No existe el expediente No. ${this.dateInput}`
-          );
+          this.alert('warning', 'No se encontró el expediente', ``);
           this.form.get('numberProceedings').reset();
+          this.onSubmit();
         } else if (this.aux === 'flyerNumber') {
-          this.alert('error', '', `No existe el volante No. ${this.dateInput}`);
+          this.alert('warning', 'No se encontró el volante', ``);
           this.form.get('flyerNumber').reset();
+          this.onSubmit();
         } else if (this.aux === 'separador') {
-          this.alert('error', '', `No existe el separador ${this.dateInput}`);
+          this.alert('warning', 'No se encontró el separador', ``);
           this.form.get('separador').reset();
+          this.onSubmit();
         } else if (this.aux === 'significantDate') {
-          this.alert(
-            'error',
-            '',
-            `No existe la fecha significativa ${this.dateInput}`
-          );
+          this.alert('warning', 'No se encontró la fecha significativa', ``);
           this.form.get('significantDate').reset();
+          this.onSubmit();
         } else if (this.aux === 'keyTypeDocument') {
-          this.alert(
-            'error',
-            '',
-            `No existe el tipo de documento ${this.dateInput}`
-          );
+          this.alert('warning', 'No se encontró el tipo de documento', ``);
           this.form.get('keyTypeDocument').reset();
+          this.onSubmit();
         } else if (this.aux === 'descriptionDocument') {
-          this.alert('error', '', `No existe la descripción del decumento`);
+          this.alert('warning', 'No se encontró la descripción', ``);
           this.form.get('descriptionDocument').reset();
+          this.onSubmit();
         } else if (this.aux === 'preliminaryInquiry') {
-          this.alert(
-            'error',
-            '',
-            `No existe la averiguación previa ${this.dateInput}`
-          );
+          this.alert('warning', 'No se encontró la averiguación previa', ``);
           this.form.get('preliminaryInquiry').reset();
+          this.onSubmit();
         } else if (this.aux === 'criminalCase') {
-          this.alert('error', '', `No existe la causa penal ${this.dateInput}`);
+          this.alert('warning', 'No se encontró la causa penal', ``);
           this.form.get('criminalCase').reset();
+          this.onSubmit();
         } else if (this.aux === 'scanStatus') {
-          this.alert('error', '', `No existe el estatus seleccionado`);
+          this.alert('warning', 'No se encontró el estatus', ``);
           this.form.get('scanStatus').reset();
+          this.onSubmit();
         }
         this.loading = false;
         this.data.load([]);
@@ -377,3 +370,97 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
 //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.scanStatus=$eq:ESCANEADO --> Para buacar por 'scanStatus'
 //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.file.criminalCase=$eq:49/2002 --> Búsqueda por Causa penal
 //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.file.preliminaryInquiry=$eq:PGR/UEDO/134/2002 --> Búsqueda por Averiguación previa
+
+//   onSubmit() {
+//     this.loading = true;
+//     if (this.generateFilterParams(this.form).length > 0) {
+//       for (let i = 0; i < this.generateFilterParams(this.form).length; i++) {
+//         let filter = '';
+//         let content = '';
+//         const indice = this.generateFilterParams(this.form)[i].indexOf('=');
+//         if (indice !== -1) {
+//           filter = this.generateFilterParams(this.form)[i].substring(0, indice);
+//         }
+//         const indice1 = this.generateFilterParams(this.form)[i].indexOf('=');
+//         if (indice1 !== -1) {
+//           content = this.generateFilterParams(this.form)[i].substring(
+//             indice1 + 1
+//           );
+//         }
+//         this.params.getValue()[filter] = content;
+//       }
+//     } else {
+//       this.params = new BehaviorSubject<ListParams>(new ListParams());
+//     }
+
+// this.documentService.getAll(this.params.getValue()).subscribe({
+//   next: response => {
+//     this.documents = response.data;
+//     console.log(this.documents);
+//     this.totalItems = response.count || 0;
+//     this.data.load(this.documents);
+//     this.loading = false;
+//   },
+//   error: error => {
+//     let contador = 0;
+//     let errores = 0;
+//     if (this.aux === 'numberProceedings') {
+//       this.form.get('numberProceedings').reset();
+//       this.onSubmit();
+//       contador++;
+//       errores++;
+//     } else if (this.aux === 'flyerNumber') {
+//       this.form.get('flyerNumber').reset();
+//       this.onSubmit();
+//       contador++;
+//       errores++;
+//     } else if (this.aux === 'separador') {
+//       this.form.get('separador').reset();
+//       this.onSubmit();
+//       contador++;
+//       errores++;
+//     } else if (this.aux === 'significantDate') {
+//       this.form.get('significantDate').reset();
+//       this.onSubmit();
+//       contador++;
+//       errores++;
+//     } else if (this.aux === 'keyTypeDocument') {
+//       this.form.get('keyTypeDocument').reset();
+//       this.onSubmit();
+//       contador++;
+//       errores++;
+//     } else if (this.aux === 'descriptionDocument') {
+//       this.form.get('descriptionDocument').reset();
+//       this.onSubmit();
+//       contador++;
+//       errores++;
+//     } else if (this.aux === 'preliminaryInquiry') {
+//       this.form.get('preliminaryInquiry').reset();
+//       this.onSubmit();
+//       contador++;
+//       errores++;
+//     } else if (this.aux === 'criminalCase') {
+//       this.form.get('criminalCase').reset();
+//       this.onSubmit();
+//       contador++;
+//       errores++;
+//     } else if (this.aux === 'scanStatus') {
+//       this.form.get('scanStatus').reset();
+//       this.onSubmit();
+//       contador++;
+//       errores++;
+//     }
+
+//     if (contador === 0) {
+//       this.alert('warning', 'No se encontraron registros', '');
+//       this.cleandInfo();
+//     } else if (errores === 1) {
+//       this.alert('warning', 'uno', '');
+//     } else if (errores > 1) {
+//       this.alert('warning', 'dos', '');
+//     }
+
+//     this.loading = false;
+//     this.data.load([]);
+//   }
+// });

@@ -2,10 +2,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SecurityEndpoints } from 'src/app/common/constants/endpoints/ms-security-endpoints';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IListResponseMessage,
+} from '../../interfaces/list-response.interface';
 import {
   IAccesTrackingXArea,
   IPupUser,
+  ITrackingAcces,
   IUsersTracking,
 } from '../../models/ms-security/pup-user.model';
 
@@ -90,6 +94,12 @@ export class SecurityService extends HttpService {
     return this.get(route);
   }
 
+  getScreenWidthParams(params: _Params) {
+    return this.get<IListResponseMessage<ITrackingAcces>>(
+      this.endpoint,
+      params
+    );
+  }
   getSegEmailUser(body: any) {
     const route = SecurityEndpoints.SegEmailUser;
     return this.post(route, body);
@@ -98,5 +108,14 @@ export class SecurityService extends HttpService {
   getSegCopyEmailUser(body: any) {
     const route = SecurityEndpoints.SegCopyEmail;
     return this.post(route, body);
+  }
+
+  getFaCoordAdmin(body: any) {
+    const route = SecurityEndpoints.FaCoordAdmin;
+    return this.post(route, body);
+  }
+  getFaDelResponsable(id: any) {
+    const route = SecurityEndpoints.FaDelResponsable;
+    return this.get(`${route}?noBien=${id}`);
   }
 }

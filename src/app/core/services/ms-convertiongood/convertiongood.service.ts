@@ -4,6 +4,7 @@ import { map, Observable } from 'rxjs';
 import { ConvertiongoodEndpoints } from 'src/app/common/constants/endpoints/ms-convertiongood-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
+import { IConverGoodCreate } from 'src/app/pages/administrative-processes/proceedings-conversion/proceedings-conversion/proceedings-conversion-columns';
 import { IRSender } from 'src/app/pages/administrative-processes/proceedings-conversion/proceedings-conversion/proceedings-conversion.component';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IAssetConversion } from '../../models/ms-convertiongood/asset-conversion';
@@ -31,10 +32,10 @@ export class ConvertiongoodService extends HttpService {
   }
 
   create(good: IConvertiongood) {
-    return this.post(ConvertiongoodEndpoints.Convertion, good);
+    return this.post(ConvertiongoodEndpoints.AddActa, good);
   }
 
-  update(id: string | number, good: IConvertiongood) {
+  update(id: string | number, good: IConvertiongood | any) {
     const route = `${ConvertiongoodEndpoints.Convertion}/${id}`;
     return this.put(route, good);
   }
@@ -90,5 +91,13 @@ export class ConvertiongoodService extends HttpService {
     return this.http
       .get<any>(URL, { headers: headers, params: params })
       .pipe(map(res => res));
+  }
+  createActa(conversionActa: IConverGoodCreate) {
+    return this.post(ConvertiongoodEndpoints.Convertion, conversionActa);
+  }
+
+  updateActa(id: string | number, conversionActa: IConverGoodCreate) {
+    const route = `${ConvertiongoodEndpoints.ConvertionActa}/${id}`;
+    return this.put(route, conversionActa);
   }
 }

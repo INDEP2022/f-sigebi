@@ -229,13 +229,22 @@
         </div> -->
 
         <div class="col-lg-5 pt-4">
-          <search-bar placeholder="Número de gestión"> </search-bar>
+          <form [formGroup]="searchGoodForm">
+            <form-field [control]="searchGoodForm.get('goodId')">
+              <input
+                type="number"
+                class="form-control"
+                maxlength="50"
+                placeholder="Numero de Gestión"
+                formControlName="goodId" />
+            </form-field>
+          </form>
         </div>
         <div class="btn-toolbar justify-content-end">
-          <button class="btn btn-primary btn-sm active">
+          <button (click)="searchGood()" class="btn btn-primary btn-sm active">
             Buscar <i class="fas fa-search"></i>
           </button>
-          <button class="btn btn-danger btn-sm active">
+          <button (click)="cancel()" class="btn btn-danger btn-sm active">
             Limpiar <i class="fas fa-eraser"></i>
           </button>
         </div>
@@ -823,8 +832,6 @@
                             </ng-container>
 
                             <tr *ngIf="!showReception">
-                              <th scope="row" class="align-baseline"></th>
-                              <th class="align-baseline"></th>
                               <td class="align-baseline"></td>
                               <td class="align-baseline"></td>
                               <td></td>
@@ -836,6 +843,8 @@
                               <td></td>
 
                               <td class="text-left align-baseline"></td>
+                              <td class="text-center align-baseline"></td>
+                              <td class="text-center align-baseline"></td>
                               <td class="text-center align-baseline"></td>
                               <td class="text-center align-baseline"></td>
                               <td class="text-center align-baseline"></td>
@@ -1088,7 +1097,7 @@
                           </tr>
                         </ng-container>
 
-                        <tr *ngIf="showGuard">
+                        <tr *ngIf="!showGuard">
                           <td scope="row" class="align-baseline"></td>
                           <td class="align-baseline"></td>
                           <td class="align-baseline"></td>

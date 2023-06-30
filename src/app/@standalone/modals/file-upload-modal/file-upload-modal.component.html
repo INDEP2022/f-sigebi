@@ -7,7 +7,9 @@
       <div class="col-md-12">
         <file-upload
           (onUploadFiles)="testFiles($event)"
-          [accept]="accept"></file-upload>
+          [accept]="accept"
+          [info]="info"
+          [multiple]="multiple"></file-upload>
       </div>
     </div>
   </div>
@@ -15,7 +17,7 @@
   <div footer>
     <div class="row m-3">
       <div class="col-md-12 text-right">
-        <button class="btn btn-danger active btn-sm" (click)="close()">
+        <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
           Cerrar
         </button>
       </div>
