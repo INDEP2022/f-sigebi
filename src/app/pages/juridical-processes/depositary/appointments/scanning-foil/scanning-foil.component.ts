@@ -10,7 +10,10 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IAppointmentDepositary } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
+import {
+  IAppointmentDepositary,
+  IDepositaryAppointments_custom,
+} from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -33,7 +36,8 @@ export class ScanningFoilAppointmentComponent
   @Input() formScan: FormGroup;
   @Input() screenKey: string = '';
   @Input() goodId: number = null;
-  @Input() depositaryAppointment: IAppointmentDepositary;
+  // @Input() depositaryAppointment: IAppointmentDepositary;
+  @Input() depositaryAppointment: IDepositaryAppointments_custom;
   @Input() dictationData: IDictation;
   @Input() dataUserLogged: any;
   @Input() paramsScreen: any;
@@ -214,11 +218,11 @@ export class ScanningFoilAppointmentComponent
                         ''
                       );
                     } else {
-                      if (this.depositaryAppointment.amountIVA == null) {
-                        this.depositaryAppointment.amountIVA = '0';
+                      if (this.depositaryAppointment.amountvat == null) {
+                        this.depositaryAppointment.amountvat = 0;
                       }
-                      if (this.depositaryAppointment.iva == null) {
-                        this.depositaryAppointment.iva = '0';
+                      if (this.depositaryAppointment.vat == null) {
+                        this.depositaryAppointment.vat = 0;
                       }
                       // INSERTAR REGISTRO PARA EL DOCUMENTO
                       this.saveNewUniversalFolio_Replicate(data.data[0].min);
@@ -292,15 +296,15 @@ export class ScanningFoilAppointmentComponent
           this.alert('success', 'El folio universal generado es: ' + folio, '');
         }),
         switchMap(_document => {
-          this.depositaryAppointment.universalFolio = _document.id.toString();
+          this.depositaryAppointment.InvoiceUniversal = _document.id.toString();
           let body: any = {
-            appointmentNumber: this.depositaryAppointment.appointmentNumber,
-            amountIVA: this.depositaryAppointment.amountIVA,
+            appointmentNumber: this.depositaryAppointment.numberAppointment,
+            amountIVA: this.depositaryAppointment.amountvat,
             personNumber: this.depositaryAppointment.personNumber.id,
-            iva: this.depositaryAppointment.iva,
+            iva: this.depositaryAppointment.vat,
             universalFolio: Number(_document.id),
-            folioReturn: this.depositaryAppointment.folioReturn
-              ? Number(this.depositaryAppointment.folioReturn)
+            folioReturn: this.depositaryAppointment.InvoiceReturn
+              ? Number(this.depositaryAppointment.InvoiceReturn)
               : null,
           };
           this.formScan.get('scanningFoli').setValue(_document.id);

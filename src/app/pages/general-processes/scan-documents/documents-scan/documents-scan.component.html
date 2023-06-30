@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Escaneo y digitalizaci&oacute;n de documentos bbb</h5>
+    <h5 class="title">Escaneo y digitalizaci&oacute;n de documentos</h5>
   </div>
 
   <div body>
@@ -37,23 +37,25 @@
             formControlName="folio"
             class="form-control" />
         </form-field>
-        <div class="col-md-4 text-center">
-          <button
-            class="btn btn-primary btn-sm"
-            type="button"
-            (click)="openFileUploader()">
-            Subir Archivos
-            <i class="fa fa-upload"></i>
-          </button>
-        </div>
-        <div class="col-md-4 text-end">
-          <button
-            type="button"
-            class="btn btn-red btn-sm active m-3"
-            (click)="confirmDelete()">
-            Borrar im&aacute;genes seleccionadas
-            <i class="fa fa-trash" aria-hidden="true"></i>
-          </button>
+        <div class="col-md-8 d-flex justify-content-between text-center">
+          <div>
+            <button
+              class="btn btn-primary btn-sm active"
+              type="button"
+              (click)="openFileUploader()">
+              Subir Archivos
+              <i class="ml-2 fa fa-upload"></i>
+            </button>
+          </div>
+          <div>
+            <button
+              type="button"
+              class="btn btn-red btn-sm active"
+              (click)="confirmDelete()">
+              Eliminar
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+          </div>
         </div>
       </div>
 
