@@ -109,7 +109,7 @@ export class SiseProcessListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.siseProcessService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Proceso Sise', 'Borrado');
+        this.alert('success', 'Proceso sise', 'Borrado Correctamente');
         this.getExample();
       },
       error: error => {

@@ -1,6 +1,5 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <!-- <h5 class="title">Caracter&Iacute;sticas del bien</h5> -->
     <div class="row w-100">
       <div class="col-12 col-sm-12 col-md-8">
         <h5
@@ -444,11 +443,14 @@
               </div>
             </tab>
             <tab heading="Fotos">
-              <app-good-photos
+              <app-photos-tabs
+                [goodNumber]="actualGoodNumber + ''"
+                [disabled]="disabledBienes"></app-photos-tabs>
+              <!-- <app-good-photos
                 *ngIf="actualGoodNumber"
                 [showPhoto]="showPhoto"
                 [disabledBienes]="disabledBienes"
-                [goodNumber]="actualGoodNumber"></app-good-photos>
+                [goodNumber]="actualGoodNumber"></app-good-photos> -->
             </tab>
           </tabset>
         </form>

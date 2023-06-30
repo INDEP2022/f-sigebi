@@ -114,7 +114,8 @@ export class PhotographMediaListComponent extends BasePage implements OnInit {
   ShowDeleteAlert(id: number) {
     this.photographMediaService.removeCatalogPhotographMedia(id).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Medio Fotografía', 'Borrado');
+        this.getExample(),
+          this.alert('success', 'Medio fotografía', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

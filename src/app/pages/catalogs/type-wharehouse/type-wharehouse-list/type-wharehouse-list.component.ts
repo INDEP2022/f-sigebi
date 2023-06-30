@@ -126,7 +126,7 @@ export class TypeWharehouseListComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.typeWarehouseService.remove(typeWarehouse.id).subscribe({
           next: response => {
-            this.alert('success', 'Almacén', 'Borrado');
+            this.alert('success', 'Almacén', 'Borrado Correctamente');
             this.getExample();
           },
           error: err => {

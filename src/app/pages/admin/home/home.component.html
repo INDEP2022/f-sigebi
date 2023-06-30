@@ -24,7 +24,6 @@
         <h4>Información del usuario logeado</h4>
       </div>
     </div>
-
     <div class="row">
       <div class="col-md-6" style="height: 250px; overflow-y: auto">
         <pre>{{ token | json }}</pre>
@@ -32,7 +31,6 @@
     </div>
 
     <hr class="row" />
-
     <div class="row">
       <div class="col-md-12">
         <h4>Botones</h4>
@@ -262,29 +260,52 @@ imports: [
     <div class="row">
       <h5>Ejemplo de formulario tipado</h5>
       <form [formGroup]="userExample" class="form-material">
-        <form-field
-          [control]="userExample.get('username')"
-          label="Input Usuario">
-          <input type="text" class="form-control" formControlName="username" />
-        </form-field>
-        <ng-container formGroupName="person">
+        <div class="row pt-3">
+          <div class="col-md-3">
+            <form-field
+              label="Formato de Moneda"
+              [control]="userExample.get('currency')">
+              <input
+                currencyMask
+                type="Formato Moneda"
+                class="form-control"
+                formControlName="currency" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
           <form-field
-            [control]="personForm.get('name')"
-            label="Input Nombre Persona">
-            <input type="text" class="form-control" formControlName="name" />
-          </form-field>
-          <form-field
-            [control]="personForm.get('birthdate')"
-            label="Input Fecha Persona">
+            [control]="userExample.get('username')"
+            label="Input Usuario">
             <input
               type="text"
               class="form-control"
-              formControlName="birthdate"
-              bsDatepicker />
+              formControlName="username" />
           </form-field>
+        </div>
+        <ng-container formGroupName="person">
+          <div class="row pt-3">
+            <form-field
+              [control]="personForm.get('name')"
+              label="Input Nombre Persona">
+              <input type="text" class="form-control" formControlName="name" />
+            </form-field>
+          </div>
+          <div class="row pt-3">
+            <form-field
+              [control]="personForm.get('birthdate')"
+              label="Input Fecha Persona">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="birthdate"
+                bsDatepicker />
+            </form-field>
+          </div>
         </ng-container>
         <div>
-          <button class="btn btn-primary" (click)="addRole()">
+          <button class="btn btn-primary active btn-sm" (click)="addRole()">
             Agregar Rol
           </button>
         </div>
@@ -297,7 +318,9 @@ imports: [
               <input type="text" class="form-control" formControlName="role" />
             </form-field>
             <div>
-              <button class="btn btn-danger" (click)="removeRole(i)">
+              <button
+                class="btn btn-danger active btn-sm"
+                (click)="removeRole(i)">
                 Eliminar Role
               </button>
             </div>

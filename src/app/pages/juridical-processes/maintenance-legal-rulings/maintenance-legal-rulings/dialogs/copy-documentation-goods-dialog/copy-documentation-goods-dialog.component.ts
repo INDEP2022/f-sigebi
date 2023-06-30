@@ -20,6 +20,8 @@ export class CopyDocumentationGoodsDialogComponent
 {
   copiesOfficialForm: ModelForm<ICopiesOfficialOpinion>;
   copiesOfficial: ICopiesOfficialOpinion;
+  dataCreate: { numberOfDicta: number; typeDictamination: number } | null =
+    null;
 
   title: string = 'Copia de Oficio';
   edit: boolean = false;
@@ -57,6 +59,10 @@ export class CopyDocumentationGoodsDialogComponent
       personExtInt: ['', Validators.required],
       id: [null],
     });
+
+    if (this.dataCreate) {
+      this.copiesOfficialForm.patchValue(this.dataCreate);
+    }
 
     if (this.copiesOfficial != null) {
       this.edit = true;

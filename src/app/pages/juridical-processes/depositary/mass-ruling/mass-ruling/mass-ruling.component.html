@@ -26,7 +26,7 @@
               <input class="form-control" formControlName="expedientNumber" />
             </form-field>
           </div>
-          <div class="col-sm-12 col-12 col-md-2 p-2 mb-2">
+          <div class="col p-2 mb-2">
             <button
               type="submit"
               [disabled]="
@@ -108,7 +108,7 @@
             <div class="form-group mr-2">
               <button
                 type="button"
-                [disabled]="!form.value.delete && isDisabledBtnGoodDictation"
+                [disabled]="!form.value.delete"
                 class="btn btn-primary active btn-sm text-wrap"
                 (click)="onClickGoodDictation()">
                 Bienes del Dictamen
@@ -151,7 +151,7 @@
               path="massivegood/api/v1/application/getIdentifierCount">
               <ng-template let-item>
                 {{ item.identificador }} -
-                {{ item?.fec_cargamasiv | date : 'shortDate' }} -
+                {{ item?.fec_cargamasiv | date: 'shortDate' }} -
                 {{ item?.count }}
               </ng-template>
             </ng-custom-select>
@@ -162,7 +162,7 @@
                 [disabled]="formCargaMasiva.invalid"
                 type="button"
                 (click)="onClickLoadByIdentifier()"
-                class="btn btn-primary active btn-sm text-wrap">
+                class="btn btn-primary active btn-sm">
                 Cargar de Identificador
               </button>
             </div>

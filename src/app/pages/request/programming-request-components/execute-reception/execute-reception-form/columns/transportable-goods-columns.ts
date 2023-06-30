@@ -29,7 +29,7 @@ export const TRANSPORTABLE_GOODS = {
   },
 
   transferenceQuantity: {
-    title: 'Cantidad transferente',
+    title: 'Cantidad Transferente',
     type: 'string',
     sort: false,
   },
@@ -97,7 +97,7 @@ export const TRANSPORTABLE_GOODS_FORMALIZE = {
   },
 
   goodDescription: {
-    title: 'Descripción transferente',
+    title: 'Descripción Transferente',
     sort: false,
   },
 
@@ -108,7 +108,7 @@ export const TRANSPORTABLE_GOODS_FORMALIZE = {
   },
 
   quantity: {
-    title: 'Cantidad transferente',
+    title: 'Cantidad Transferente',
     type: 'string',
     sort: false,
   },

@@ -262,15 +262,11 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   delete(id: string | number) {
     this.documentService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Visualización de documentos', 'Borrado');
+        this.alert('success', 'Expediente eliminado', '');
         this.getDocuments();
       },
       error: error => {
-        this.alert(
-          'warning',
-          'Visualización de documentos',
-          'No se puede eliminar el objeto debido a una relación con otra tabla.'
-        );
+        this.alert('warning', 'No es posible eliminar el expediente', '');
       },
     });
   }
@@ -305,45 +301,84 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error => {
-        if (this.aux === 'numberProceedings') {
-          this.alert('warning', 'No se encontró el expediente', ``);
-          this.form.get('numberProceedings').reset();
-          this.onSubmit();
-        } else if (this.aux === 'flyerNumber') {
-          this.alert('warning', 'No se encontró el volante', ``);
-          this.form.get('flyerNumber').reset();
-          this.onSubmit();
-        } else if (this.aux === 'separador') {
-          this.alert('warning', 'No se encontró el separador', ``);
-          this.form.get('separador').reset();
-          this.onSubmit();
-        } else if (this.aux === 'significantDate') {
-          this.alert('warning', 'No se encontró la fecha significativa', ``);
-          this.form.get('significantDate').reset();
-          this.onSubmit();
-        } else if (this.aux === 'keyTypeDocument') {
-          this.alert('warning', 'No se encontró el tipo de documento', ``);
-          this.form.get('keyTypeDocument').reset();
-          this.onSubmit();
-        } else if (this.aux === 'descriptionDocument') {
-          this.alert('warning', 'No se encontró la descripción', ``);
-          this.form.get('descriptionDocument').reset();
-          this.onSubmit();
-        } else if (this.aux === 'preliminaryInquiry') {
-          this.alert('warning', 'No se encontró la averiguación previa', ``);
-          this.form.get('preliminaryInquiry').reset();
-          this.onSubmit();
-        } else if (this.aux === 'criminalCase') {
-          this.alert('warning', 'No se encontró la causa penal', ``);
-          this.form.get('criminalCase').reset();
-          this.onSubmit();
-        } else if (this.aux === 'scanStatus') {
-          this.alert('warning', 'No se encontró el estatus', ``);
-          this.form.get('scanStatus').reset();
-          this.onSubmit();
+        let contador = 0;
+        const errors: { [key: string]: string } = {};
+
+        Object.keys(this.form.controls).forEach(controlName => {
+          if (this.aux === controlName) {
+            let errorMessage = '';
+            switch (controlName) {
+              case 'numberProceedings':
+                errorMessage = 'No. de expediente no encontrado';
+                this.form.get('numberProceedings').reset();
+                this.onSubmit();
+                break;
+              case 'flyerNumber':
+                errorMessage = 'No. de volante no encontrado';
+                this.form.get('flyerNumber').reset();
+                this.onSubmit();
+                break;
+              case 'separador':
+                errorMessage = 'Separador no encontrado';
+                this.form.get('separador').reset();
+                this.onSubmit();
+                break;
+              case 'significantDate':
+                errorMessage = 'Fecha significativa no encontrada';
+                this.form.get('significantDate').reset();
+                this.onSubmit();
+                break;
+              case 'keyTypeDocument':
+                errorMessage = 'Tipo de documento no existe';
+                this.form.get('keyTypeDocument').reset();
+                this.onSubmit();
+                break;
+              case 'descriptionDocument':
+                errorMessage = 'Descripción no encontrada';
+                this.form.get('descriptionDocument').reset();
+                this.onSubmit();
+                break;
+              case 'preliminaryInquiry':
+                errorMessage = 'Averiguación previa no encontrada';
+                this.form.get('preliminaryInquiry').reset();
+                this.onSubmit();
+                break;
+              case 'criminalCase':
+                errorMessage = 'Causa penal no encontrada';
+                this.form.get('criminalCase').reset();
+                this.onSubmit();
+                break;
+              case 'scanStatus':
+                errorMessage = 'Estatus de digitalización no encontrado';
+                this.form.get('scanStatus').reset();
+                this.onSubmit();
+                break;
+            }
+
+            if (errorMessage !== '') {
+              errors[controlName] = errorMessage;
+              contador++;
+            }
+          }
+          this.loading = false;
+          // this.data.load([]);
+          // this.totalItems =  0;
+          this.params = new BehaviorSubject<ListParams>(new ListParams());
+        });
+
+        if (contador === 0) {
+          this.alert('warning', 'No se encontraron registros', '');
+          this.cleandInfo();
+        } else {
+          Object.keys(errors).forEach(controlName => {
+            const errorMessage = errors[controlName];
+            this.alert(
+              'warning',
+              errorMessage,
+              `Si en el formulario quedó un filtro, presiona de nuevo en "Consultar"`
+            );
+          });
         }
-        this.loading = false;
-        this.data.load([]);
       }
     );
   }
@@ -359,14 +394,3 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     this.selectSeparator = new DefaultSelect([], 0);
   }
 }
-
-//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents --> Trae todas las imágenes
-//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.numberProceedings=$eq:33785 --> Búsqueda por No Expediente
-//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.flyerNumber=$eq:467963 --> Búsqueda por No Volante
-//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.keySeparator=$eq:MUEBLES --> Búsqueda por No Volante
-//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.significantDate=$eq:04/2023 --> Búsqueda por Fecha significativa
-//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.keyTypeDocument=$eq:CARGA --> Búsqueda por Tipo de documento
-//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.descriptionDocument=$eq:PRUEBA RAFAEL 2 --> Búsqueda por Descripción del documento
-//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.scanStatus=$eq:ESCANEADO --> Para buacar por 'scanStatus'
-//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.file.criminalCase=$eq:49/2002 --> Búsqueda por Causa penal
-//http://sigebimsqa.indep.gob.mx/documents/api/v1/documents?filter.file.preliminaryInquiry=$eq:PGR/UEDO/134/2002 --> Búsqueda por Averiguación previa
