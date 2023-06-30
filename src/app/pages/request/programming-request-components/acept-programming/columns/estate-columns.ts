@@ -42,8 +42,13 @@ export const ESTATE_COLUMNS = {
 
   physicalState: {
     title: 'Estado Físico Transferente',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+      return value;
+    },
   },
 
   esReprogramming: {
@@ -144,20 +149,35 @@ export const ESTATE_COLUMNS_VIEW = {
 
   saePhysicalState: {
     title: 'Estado físico INDEP',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+      return value;
+    },
   },
 
-  stateConservationName: {
+  stateConservation: {
     title: 'Estado de conservación',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+      return value;
+    },
   },
 
   stateConservationSae: {
     title: 'Estado de conservación INDEP',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+      return value;
+    },
   },
 
   observations: {
@@ -259,20 +279,35 @@ export const ESTATE_COLUMNS_1 = {
 
   saePhysicalState: {
     title: 'Estado físico INDEP',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+      return value;
+    },
   },
 
-  stateConservationName: {
+  stateConservation: {
     title: 'Estado de conservación',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+      return value;
+    },
   },
 
   stateConservationSae: {
     title: 'Estado de conservación INDEP',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+      return value;
+    },
   },
 
   observations: {

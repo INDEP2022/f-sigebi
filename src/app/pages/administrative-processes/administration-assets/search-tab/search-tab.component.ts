@@ -85,6 +85,15 @@ export class SearchTabComponent extends BasePage implements OnInit {
                 filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'indiciadoNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'expedientNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'affairKey':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;

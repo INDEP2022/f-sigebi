@@ -114,6 +114,7 @@
           [track]="'all'"
           [ngStyle]="{ height: loading ? '0px' : '500px' }">
           <ng2-smart-table
+            (click)="onDblClick($event)"
             [attr.class]="'table-bordered table-responsive'"
             class="table-responsive"
             [settings]="settings"
