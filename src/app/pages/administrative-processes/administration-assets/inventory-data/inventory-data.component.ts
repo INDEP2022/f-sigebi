@@ -528,6 +528,11 @@ export class InventoryDataComponent
           this.goodChange++;
         }, 100);
       }
+    } else {
+      this.viewAct = false;
+      setTimeout(() => {
+        this.goodChange++;
+      }, 100);
     }
   }
 

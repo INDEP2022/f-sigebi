@@ -94,7 +94,10 @@
       <div class="d-flex justify-content-center">
         <div class="m-3">
           <div>
-            <button type="button" class="btn btn-sm btn-primary active m-3">
+            <button
+              type="button"
+              class="btn btn-sm btn-primary active m-3"
+              (click)="selectRequest()">
               SELECCIONA SOLICITUDES
             </button>
             <button type="button" class="btn btn-sm btn-primary active m-3">
@@ -118,7 +121,7 @@
     </div>
     <div class="row pt-4">
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
+        <div [class]="loading1 ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
@@ -131,7 +134,7 @@
     </div>
     <div class="row pt-4">
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
+        <div [class]="loading2 ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings1"
@@ -139,12 +142,26 @@
           </ng2-smart-table>
         </div>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems">
+      <app-pagination [params]="params1" [totalItems]="totalItems1">
       </app-pagination>
+      <div class="row">
+        <form action="" class="form-material" [formGroup]="formSumComission">
+          <div class="col-md-4">
+            <form-field
+              [control]="formSumComission.get('sumCommision')"
+              label="Comisión Bancaria">
+              <input
+                type="text"
+                formControlName="sumCommision"
+                class="form-control" />
+            </form-field>
+          </div>
+        </form>
+      </div>
     </div>
     <div class="row pt-4">
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
+        <div [class]="loading3 ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
@@ -152,7 +169,7 @@
           </ng2-smart-table>
         </div>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems">
+      <app-pagination [params]="params2" [totalItems]="totalItems2">
       </app-pagination>
     </div>
   </div>
