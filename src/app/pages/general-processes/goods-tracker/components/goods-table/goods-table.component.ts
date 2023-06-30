@@ -191,7 +191,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
           this.router.navigate(['pages/general-processes/good-photos'], {
             queryParams: {
               photo: 'S',
-              origin: 'FACTGENSOLICDIGIT',
+              origin: 'FCONGENRASTREADOR',
             },
           });
         } else {
@@ -201,7 +201,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
               this.router.navigate(['pages/general-processes/good-photos'], {
                 queryParams: {
                   numberGood: good[0].goodNumber,
-                  origin: 'FACTGENSOLICDIGIT',
+                  origin: 'FCONGENRASTREADOR',
                 },
               });
             }
@@ -222,7 +222,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
           this.router.navigate(['pages/general-processes/good-photos'], {
             queryParams: {
               numberGood: good[0].goodNumber,
-              origin: 'FACTGENSOLICDIGIT',
+              origin: 'FCONGENRASTREADOR',
             },
           });
         }
