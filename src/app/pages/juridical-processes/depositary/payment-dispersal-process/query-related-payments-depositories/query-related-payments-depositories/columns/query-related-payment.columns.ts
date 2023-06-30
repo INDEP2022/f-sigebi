@@ -44,7 +44,7 @@ export const PAY_BANK_COLUMNS = {
     editable: false,
   },
   system_val_date: {
-    title: 'Fecha IO',
+    title: 'Fecha OI',
     sort: false,
     editable: false,
     valuePrepareFunction: (value: string) => {

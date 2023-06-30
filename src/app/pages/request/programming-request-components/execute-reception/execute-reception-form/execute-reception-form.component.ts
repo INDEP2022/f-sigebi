@@ -1143,7 +1143,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     if (this.selectGood.length > 0) {
       this.alertQuestion(
         'warning',
-        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        '¿Seguro que quiere asignar los bienes  a una acta?',
         '',
         'Aceptar'
       ).then(question => {
@@ -1165,7 +1165,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'warning',
         'Confirmación',
-        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        '¿Seguro que quiere asignar los bienes  a una acta?',
         'Aceptar'
       ).then(async question => {
         if (question.isConfirmed) {
@@ -1186,7 +1186,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'warning',
         'Confirmación',
-        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        '¿Seguro que quiere asignar los bienes  a una acta?',
         'Aceptar'
       ).then(async question => {
         if (question.isConfirmed) {
@@ -1281,7 +1281,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'warning',
         'Confirmación',
-        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        '¿Seguro que quiere asignar los bienes  a una acta?',
         'Aceptar'
       ).then(question => {
         if (question.isConfirmed) {
@@ -2030,6 +2030,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   cancel() {
     this.goodsTransportable.clear();
+    this.searchGoodForm.reset();
     this.getInfoGoodsProgramming();
   }
 
