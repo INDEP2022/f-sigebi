@@ -1,23 +1,17 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">REGISTRO DE FICHAS DE DEPOSITO</h5>
+    <h5 class="title">REGISTRO DE FICHAS DE DEPÓSITO</h5>
   </div>
   <div body>
     <div class="row">
-      <div class="col-md-5"></div>
-      <div class="col-md-7 text-end">
+      <div class="col-md-4"></div>
+      <div class="col-md-8 text-end">
         <div class="row">
-          <div class="col-5">
-            <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
-          </div>
-
-          <div class="col-7 text-end">
+          <div class="col-12 text-end">
             <div class="row">
-              <div class="col-6 d-flex justify-content-end">
-                <app-columns-select
-                  [(settings)]="settings"></app-columns-select>
-              </div>
-              <div class="col-6">
+              <div class="col-10 justify-content-end">
+                <!-- <app-columns-select style="margin-right: -45px" [defaultColumns]="10"
+                  [(settings)]="settings"></app-columns-select> -->
                 <button
                   (click)="addMovement()"
                   type="button"
@@ -32,46 +26,71 @@
                   Movimientos
                 </button>
               </div>
+              <div class="col-2 d-flex justify-content-end align-items-end">
+                <app-columns-select
+                  [defaultColumns]="10"
+                  [(settings)]="settings"></app-columns-select>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div class="row mt-4">
+      <form-loader *ngIf="loading"></form-loader>
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            id="fichas"
-            (delete)="showDeleteAlert($event.data)"
-            (userRowSelect)="onCustomAction($event)"
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data1">
-          </ng2-smart-table>
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading ? '0px' : '500px' }">
+            <ng2-smart-table
+              id="fichas"
+              (delete)="showDeleteAlert($event.data)"
+              (userRowSelect)="onCustomAction($event)"
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data1">
+            </ng2-smart-table>
+          </ng-scrollbar>
         </div>
-        <app-pagination
-          *ngIf="showPagination"
-          [params]="paramsList"
-          [totalItems]="totalItems">
-        </app-pagination>
+        <div class="row">
+          <div class="col-md-4 mt-3">
+            <i class="fa fa-square" style="color: #e2c103"></i
+            ><span style="font-weight: 500">
+              Movimientos con bienes conciliados &nbsp;&nbsp;
+            </span>
+          </div>
+          <div class="col-8">
+            <app-pagination
+              *ngIf="showPagination"
+              [params]="paramsList"
+              [totalItems]="totalItems">
+            </app-pagination>
+          </div>
+        </div>
       </div>
     </div>
     <form class="form-material mt-4" [formGroup]="form">
       <div class="row">
         <div class="col-md-6 mt-3">
-          <span class="text-yellow mr-5"
-            ><i class="fa fa-square"></i> Ficha asociada
-          </span>
+          <!-- <i class="fa fa-square" style="color: #e2c103;"></i><span style="font-weight: 500;">
+            Movimientos con bienes conciliados &nbsp;&nbsp;
+          </span> -->
+
+          <!-- <span class="text-yellow mr-5"><i class="fa fa-square" style="color: #e2c103;"></i> Ficha asociada
+          </span> -->
         </div>
         <!-- <div class="col-md-5"></div> -->
         <div class="col-md-6 mt-3">
           <form-field
             [control]="form.get('descriptionGood')"
             label="Descripción del Bien">
-            <input
+            <textarea
+              cols="2"
+              rows="3"
               type="text"
               class="form-control"
-              formControlName="descriptionGood" />
+              formControlName="descriptionGood"></textarea>
           </form-field>
         </div>
       </div>
@@ -83,6 +102,23 @@
             <div class="row">
               <div class="col-md-12 mt-3 text-center">
                 <button
+                  class="btn btn-success btn-sm"
+                  style="width: 70%"
+                  type="button"
+                  (click)="file.click()">
+                  Importar
+                  <i class="bx bx-upload float-icon"></i>
+                </button>
+                <input
+                  type="file"
+                  name="file"
+                  #file
+                  class="d-none"
+                  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                  (change)="onFileChange($event)" />
+              </div>
+              <div class="col-md-12 mt-3 text-center">
+                <button
                   (click)="exportar()"
                   style="width: 70%"
                   class="btn btn-success btn-sm">
@@ -90,32 +126,14 @@
                   <i class="bx bx-download float-icon"></i>
                 </button>
               </div>
-              <div class="col-md-12 mt-3 text-center">
-                <button
-                  class="btn btn-success btn-sm"
-                  style="width: 70%"
-                  class="btn btn-primary btn-sm active"
-                  type="button"
-                  (click)="file.click()">
-                  Importar
-                </button>
-                <input
-                  name="file"
-                  #file
-                  class="d-none"
-                  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                  (change)="onFileChange($event)" />
-                <!-- </div> -->
-                <!-- <button (click)="importar()" style="width: 70%" class="btn btn-primary btn-sm active">
-                  Importar
-                </button> -->
-              </div>
+
               <div class="col-md-12 mt-3 text-center">
                 <button
                   (click)="actualizarFunc()"
                   style="width: 70%"
                   class="btn btn-primary btn-sm active">
                   Actualizar
+                  <i class="fas fa-sync-alt"> </i>
                 </button>
               </div>
               <div class="col-md-12 mt-3 text-center">
@@ -184,14 +202,14 @@
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field
-                  [control]="form.get('accountType')"
-                  label="Tipo de cuenta">
+                <form-field [control]="form.get('balanceOf')" label="Saldo de">
                   <input
-                    readonly
+                    [(ngModel)]="dateMovemInicio"
+                    (ngModelChange)="dateMovementInicio($event)"
+                    bsDatepicker
                     type="text"
                     class="form-control"
-                    formControlName="accountType" />
+                    formControlName="balanceOf" />
                 </form-field>
               </div>
             </div>
@@ -210,20 +228,54 @@
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('balanceOf')" label="Saldo de">
+                <form-field
+                  [control]="form.get('accountType')"
+                  label="Tipo de cuenta">
                   <input
+                    readonly
                     type="text"
                     class="form-control"
-                    formControlName="balanceOf" />
+                    formControlName="accountType" />
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
                 <form-field [control]="form.get('balanceAt')" label="Saldo al">
                   <input
+                    [(ngModel)]="dateMovemFin"
+                    [minDate]="dateMovemInicio"
+                    (ngModelChange)="dateMovementFin($event)"
+                    bsDatepicker
                     type="text"
                     class="form-control"
                     formControlName="balanceAt" />
                 </form-field>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 mt-4">
+            <div class="row">
+              <div class="col-md-6 mt-3"></div>
+              <div class="col-md-4 mt-3">
+                <form-field [control]="form.get('di_saldo')" label="Saldo">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    formControlName="di_saldo" />
+                </form-field>
+              </div>
+              <div class="col-md-2 mt-4 text-center">
+                <button
+                  [ngClass]="{ loading: loadingBtn }"
+                  [disabled]="
+                    !dataMovements || !dateMovemFin || !dateMovemInicio
+                  "
+                  (click)="calcularSaldo()"
+                  style="width: 80%"
+                  class="btn btn-primary btn-sm active">
+                  Calcular
+                </button>
               </div>
             </div>
           </div>

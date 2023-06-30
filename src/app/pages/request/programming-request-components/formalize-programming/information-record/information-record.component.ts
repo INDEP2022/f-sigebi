@@ -43,6 +43,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
   receipts: LocalDataSource = new LocalDataSource();
   proceeding: IProceedings;
   tranType: string = '';
+
   urlBaseReport = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=`;
   constructor(
     private modalRef: BsModalRef,
@@ -63,23 +64,19 @@ export class InformationRecordComponent extends BasePage implements OnInit {
   ) {
     super();
     this.obtenerHoraActual();
-    this.programmingId = Number(
-      this.activatedRoute.snapshot.paramMap.get('id')
-    );
   }
 
   ngOnInit(): void {
     console.log('proceeding', this.proceeding);
     this.prepareDevileryForm();
+    this.typeTrans();
     this.getIdentification(new ListParams());
-    this.typeTransferent();
   }
 
-  typeTransferent() {
+  typeTrans() {
     this.transferentService
       .getById(this.programming.tranferId)
       .subscribe(data => {
-        console.log('transferent', data);
         this.tranType = data.typeTransferent;
       });
   }
@@ -95,6 +92,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
   prepareDevileryForm() {
     this.infoForm = this.fb.group({
       id: [this.proceeding.id],
+      idPrograming: [null],
       nameWorker1: [null, [Validators.pattern(STRING_PATTERN)]],
       electronicSignatureWorker1: [null],
       positionWorker1: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -143,11 +141,14 @@ export class InformationRecordComponent extends BasePage implements OnInit {
       creationDate: [null, [Validators.pattern(STRING_PATTERN)]],
       emailUvfv: [null, [Validators.pattern(EMAIL_PATTERN)]],
       otherFacts: [null],
+      bases: [null],
+      evet: [null],
+      startTime: [null],
     });
 
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.id'] = this.proceeding.id;
-    params.getValue()['filter.idProgramming'] = this.proceeding.programmingId;
+    params.getValue()['filter.idProgramming'] = this.programming.id;
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
         console.log('acta', response);
@@ -158,33 +159,44 @@ export class InformationRecordComponent extends BasePage implements OnInit {
   }
   confirm() {
     this.loading = true;
-    this.infoForm.value.idPrograming = Number(this.programming.id);
-    this.infoForm.value.electronicSignatureWorker1 = this.infoForm.value
-      .electronicSignatureWorker1
-      ? 1
-      : 0;
-    this.infoForm.value.electronicSignatureWorker2 = this.infoForm.value
-      .electronicSignatureWorker2
-      ? 1
-      : 0;
-    this.infoForm.value.electronicSignatureWitness1 = this.infoForm.value
-      .electronicSignatureWitness1
-      ? 1
-      : 0;
-    this.infoForm.value.electronicSignatureWitness2 = this.infoForm.value
-      .electronicSignatureWitness2
-      ? 1
-      : 0;
-    this.infoForm.value.electronicSignatureOic = this.infoForm.value
-      .electronicSignatureOic
-      ? 1
-      : 0;
+    if (this.infoForm.get('electronicSignatureWorker1').value == 1) {
+      this.infoForm.get('electronicSignatureWorker1').setValue(1);
+    } else {
+      this.infoForm.get('electronicSignatureWorker1').setValue(0);
+    }
+
+    if (this.infoForm.get('electronicSignatureWorker2').value == 1) {
+      this.infoForm.get('electronicSignatureWorker2').setValue(1);
+    } else {
+      this.infoForm.get('electronicSignatureWorker2').setValue(0);
+    }
+
+    if (this.infoForm.get('electronicSignatureWitness1').value == 1) {
+      this.infoForm.get('electronicSignatureWitness1').setValue(1);
+    } else {
+      this.infoForm.get('electronicSignatureWitness1').setValue(0);
+    }
+
+    if (this.infoForm.get('electronicSignatureWitness2').value == 1) {
+      this.infoForm.get('electronicSignatureWitness2').setValue(1);
+    } else {
+      this.infoForm.get('electronicSignatureWitness2').setValue(0);
+    }
+
+    if (this.infoForm.get('electronicSignatureOic').value == 1) {
+      this.infoForm.get('electronicSignatureOic').setValue(1);
+    } else {
+      this.infoForm.get('electronicSignatureOic').setValue(0);
+    }
+
+    this.infoForm.get('startTime').setValue(this.horaActual);
+    this.infoForm.get('idPrograming').setValue(this.programming.id);
 
     console.log('this.infoForm.value', this.infoForm.value);
-
     this.proceedingService.updateProceeding(this.infoForm.value).subscribe({
       next: response => {
         this.loading = false;
+        this.close();
         this.modalRef.content.callback(this.proceeding, this.tranType);
         //this.processInfoProceeding();
       },

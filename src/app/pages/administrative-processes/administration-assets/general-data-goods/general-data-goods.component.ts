@@ -42,6 +42,7 @@ export class GeneralDataGoodsComponent
   goodChange: number = 0;
   service = inject(ChangeOfGoodCharacteristicService);
   viewAct: boolean = false;
+  disableUpdate: boolean = false;
 
   get dataAtribute() {
     return this.service.data;
@@ -100,11 +101,15 @@ export class GeneralDataGoodsComponent
   ngOnInit(): void {
     this.prepareForm();
   }
+
   updateGood() {
-    console.log('Actualizando');
-    ////// aqui le seteo los valores
+    const patron: RegExp =
+      /^(0[1-9]|1[0-9]|2[0-9]|3[01])\/(0[1-9]|1[0-2])\/((19|20)\d\d)$/;
     let body: any = {};
     this.dataAtribute.forEach((row: any) => {
+      if (patron.test(row.value)) {
+        row.value = this.convertirFecha(row.value);
+      }
       console.log(row.value);
       body[row.column] = row.value;
     });
@@ -117,25 +122,67 @@ export class GeneralDataGoodsComponent
     console.log(body);
     this.goodService.update(body).subscribe({
       next: resp => {
+        this.viewAct = !this.viewAct;
+        this.disableUpdate = !this.disableUpdate;
+        console.log(resp);
+        this.good = resp;
         this.alert('success', 'Datos del bien actualizados', '');
-        this.viewAct = true;
+        setTimeout(() => {
+          this.goodChange++;
+        }, 100);
       },
       error: err => {
         this.alert('error', 'Error al actualizar el bien', '');
       },
     });
   }
+
+  convertirFecha(fechaOriginal: string): string {
+    const [dia, mes, anio] = fechaOriginal.split('/');
+    const fechaObjeto: Date = new Date(`${mes}/${dia}/${anio}`);
+    const anioFormateado: string = fechaObjeto.getFullYear().toString();
+    const mesFormateado: string = (fechaObjeto.getMonth() + 1)
+      .toString()
+      .padStart(2, '0');
+    const diaFormateado: string = fechaObjeto
+      .getDate()
+      .toString()
+      .padStart(2, '0');
+    const fechaFormateada: string = `${anioFormateado}-${mesFormateado}-${diaFormateado}`;
+    return fechaFormateada;
+  }
+
+  formatearFecha(fecha: string): string {
+    const [anio, mes, dia] = fecha.split('-');
+    const fechaObjeto: Date = new Date(`${mes}/${dia}/${anio}`);
+    const anioFormateado: string = fechaObjeto.getFullYear().toString();
+    const mesFormateado: string = (fechaObjeto.getMonth() + 1)
+      .toString()
+      .padStart(2, '0');
+    const diaFormateado: string = fechaObjeto
+      .getDate()
+      .toString()
+      .padStart(2, '0');
+    const fechaFormateada: string = `${diaFormateado}/${mesFormateado}/${anioFormateado}`;
+    return fechaFormateada;
+  }
+
   private getGood() {
     this.goodService.getById(this.goodId).subscribe({
       next: (response: any) => {
         this.classificationOfGoods = Number(response.data[0].goodClassNumber);
+
         this.good = response.data[0];
         this.generalDataForm.get('cantidad').patchValue(this.good.quantitySae);
+        console.log(this.good.judicialDate);
         this.generalDataForm
           .get('fechaFe')
           .patchValue(
-            this.good.judicialDate === undefined ? null : this.good.judicialDate
+            this.good.judicialDate != null
+              ? this.formatearFecha(this.good.judicialDate.toString())
+              : null
           );
+
         this.generalDataForm
           .get('observacion')
           .patchValue(this.good.observations);
@@ -158,6 +205,7 @@ export class GeneralDataGoodsComponent
   }
   update() {
     this.viewAct = !this.viewAct;
+    this.disableUpdate = !this.disableUpdate;
     setTimeout(() => {
       this.goodChange++;
     }, 100);

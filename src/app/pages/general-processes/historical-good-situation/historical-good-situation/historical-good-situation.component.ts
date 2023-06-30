@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -48,7 +49,8 @@ export class HistoricalGoodSituationComponent
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private historyGoodServie: HistoryGoodService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private location: Location
   ) {
     super();
     this.activatedRoute.queryParams
@@ -62,6 +64,7 @@ export class HistoricalGoodSituationComponent
       .subscribe();
     this.settings.columns = HISTORICAL_GOOD_SITUATION_COLUMNS;
     this.settings.actions = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -97,6 +100,10 @@ export class HistoricalGoodSituationComponent
       .subscribe();
     this.global.estHist = null;
     this.global.fecCam = null;
+  }
+
+  goBack() {
+    this.location.back();
   }
 
   getHistory(_params?: FilterParams) {

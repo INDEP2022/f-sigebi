@@ -130,7 +130,10 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
                   numberGood: can[i].no_bien,
                   numberProceedings: can[i].no_expediente,
                 };
-                this.updateAccountMovement(obj);
+                const validUpdate = await this.updateAccountMovement(obj);
+                if (validUpdate) {
+                  return;
+                }
               }
             }
           }
@@ -208,19 +211,23 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
   }
 
   async updateAccountMovement(data: any) {
-    this.accountMovementService.update(data).subscribe({
-      next: async (response: any) => {
-        this.alert('success', `Datos actualizados correctamente`, '');
+    return new Promise((resolve, reject) => {
+      this.accountMovementService.update(data).subscribe({
+        next: async (response: any) => {
+          this.alert('success', `Datos actualizados correctamente`, '');
 
-        // this.modalRef.content.callback(true);
-        // this.close();
-        this.ejecutarFuncion();
-        this.loading = false;
-      },
-      error: err => {
-        this.alert('error', `Error al actualizar los datos`, '');
-        this.loading = false;
-      },
+          // this.modalRef.content.callback(true);
+          // this.close();
+          this.ejecutarFuncion();
+          this.loading = false;
+          resolve(true);
+        },
+        error: err => {
+          this.alert('error', `Error al actualizar los datos`, '');
+          this.loading = false;
+          resolve(false);
+        },
+      });
     });
   }
 }

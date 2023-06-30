@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {
@@ -33,13 +34,13 @@ export class DataFilterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private goodLabelService: LabelOkeyService,
-    private statusGoodService: StatusGoodService
+    private statusGoodService: StatusGoodService,
+    private datePipe: DatePipe
   ) {}
 
   ngOnInit(): void {}
 
   search() {
-    console.log(this.form.controls.process.value);
     this.onSubmit.emit(this.form.value);
   }
 

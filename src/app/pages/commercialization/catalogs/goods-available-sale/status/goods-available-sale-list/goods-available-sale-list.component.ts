@@ -7,17 +7,21 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { BasePage } from 'src/app/core/shared';
 import { ServiceGetAll } from 'src/app/core/shared/base-page-dinamic-filters';
 import { data } from './data';
 import { GOODS_AVAILABLE_SALE_COLUMNS } from './goods-available-sale-columns';
-import { BasePage } from 'src/app/core/shared';
+//import { BasePage } from 'src/app/core/shared';
 
 @Component({
   selector: 'goods-available-sale-list',
   templateUrl: './goods-available-sale-list.component.html',
   styles: [],
 })
-export class GoodsAvailableSaleListComponent2 extends BasePage implements OnInit {
+export class GoodsAvailableSaleListComponent2
+  extends BasePage
+  implements OnInit
+{
   [x: string]: any;
   comercializationGoods: any[] = [];
   goodsAFSD = data;

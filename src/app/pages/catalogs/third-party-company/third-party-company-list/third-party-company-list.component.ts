@@ -112,7 +112,7 @@ export class ThirdPartyCompanyListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.thirdPartyCompanyService.removeThirdPartyCompany(id).subscribe(
       res => {
-        this.alert('success', 'Empresa de Tercero', 'Borrado.');
+        this.alert('success', 'Empresa de tercero', 'Borrada Correctamente');
         this.getDeductives();
       },
       err => {

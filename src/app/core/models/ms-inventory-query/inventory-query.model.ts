@@ -21,3 +21,11 @@ export interface IInventoryGood {
   cvetypeInventory?: string;
   registerNumber?: number;
 }
+
+export interface ILineaInventory {
+  inventoryNumber: number;
+  typeInventoryNumber: number;
+  goodNumber: number;
+  valueAttributeInventory: string;
+  registerNumber?: number;
+}

@@ -87,6 +87,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   goodsWarehouseForm: FormGroup = new FormGroup({});
   goodsReprogForm: FormGroup = new FormGroup({});
   goodsCancelationForm: FormGroup = new FormGroup({});
+  searchGoodForm: FormGroup = new FormGroup({});
   buildForm: FormGroup = new FormGroup({});
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsgeneric = new BehaviorSubject<ListParams>(new ListParams());
@@ -121,6 +122,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   headingCancelation: string = `Cancelación(0)`;
   idStation: any;
   transferentName: string = '';
+  tranType: string = '';
   stationName: string = '';
   authorityName: string = '';
   typeRelevantName: string = '';
@@ -129,9 +131,16 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   formLoadingReprog: boolean = false;
   formLoadingTrans: boolean = false;
   formLoadingGuard: boolean = false;
+  showReception: boolean = false;
+  showTransportable: boolean = false;
+  showGuard: boolean = false;
+  showWarehouse: boolean = false;
+  showReprog: boolean = false;
+  showCancel: boolean = false;
   receiptGuardGood: IRecepitGuard;
   receiptData: IReceipt;
   goodData: IGood;
+  transfersDestinity: any[] = [];
   settingsGuardGoods = {
     ...this.settings,
     actions: false,
@@ -177,18 +186,18 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     actions: {
       delete: true,
       edit: true,
-      columnTitle: 'Generar recibo resguardo',
+      columnTitle: 'Generar Recibo Resguardo',
       position: 'right',
     },
 
     edit: {
       editButtonContent:
-        '<i class="fa fa-eye text-primary mx-2" > Ver bienes</i>',
+        '<i class="fa fa-eye text-primary mx-2" > Ver Bienes</i>',
     },
 
     delete: {
       deleteButtonContent:
-        '<i class="fa fa-file text-info mx-2"> Generar recibo</i>',
+        '<i class="fa fa-file text-info mx-2"> Generar Recibo Resguardo</i>',
     },
 
     columns: RECEIPT_GUARD_COLUMNS,
@@ -289,7 +298,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private router: Router,
     private authService: AuthService,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private typeTransferentService: TransferenteService
   ) {
     super();
     this.settings = {
@@ -305,6 +315,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.prepareSearchForm();
     this.prepareReceptionForm();
     this.prepareGuardForm();
     this.prepareWarehouseForm();
@@ -316,6 +327,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.getPhysicalStatus();
     this.getReceipts();
     this.getReceiptsGuard();
+    this.getTypeTransferent();
   }
 
   prepareForm() {
@@ -332,9 +344,20 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       saeMeasureUnit: [null],
       saePhysicalState: [null],
       stateConservationSae: [null],
+      destiny: [null],
       selectColumn: [null],
+      observations: [null],
+      transferentDestiny: [null],
     });
   }
+
+  prepareSearchForm() {
+    this.searchGoodForm = this.fb.group({
+      goodId: [null],
+    });
+  }
+
+  getTypeTransferent() {}
 
   prepareReceptionForm() {
     this.receptionForm = this.fb.group({
@@ -350,7 +373,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       saeMeasureUnit: [null],
       saePhysicalState: [null],
       stateConservationSae: [null],
+      observations: [null],
       selectColumn: [null],
+      transferentDestiny: [null],
+      destiny: [null],
     });
   }
 
@@ -515,10 +541,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         this.getAuthority();
         this.getTypeRelevant();
         this.getwarehouse();
+        this.typeTransferent();
         this.getUsersProgramming();
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getInfoGoodsProgramming());
+      });
+  }
+
+  typeTransferent() {
+    this.transferentService
+      .getById(this.programming.tranferId)
+      .subscribe(data => {
+        this.tranType = data.typeTransferent;
       });
   }
 
@@ -610,7 +645,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             _data.push(response.data[0]);
 
             this.goodsTransportable.clear();
-            _data.forEach(item => {
+            _data.forEach(async item => {
               if (item.physicalStatus == 1) {
                 item.physicalStatusName = 'BUENO';
               } else if (item.physicalStatus == 2) {
@@ -621,6 +656,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               } else if (item.stateConservation == 2) {
                 item.stateConservationName = 'MALO';
               }
+
+              await this.getDestinyIndep(item.saeDestiny);
+
               this.goodData = item;
               const form = this.fb.group({
                 id: [item?.id],
@@ -640,9 +678,13 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 stateConservationName: [item?.stateConservationName],
                 stateConservationSae: [item?.stateConservationSae],
                 regionalDelegationNumber: [item?.regionalDelegationNumber],
+                destiny: [item?.destiny],
+                transferentDestiny: [item?.saeDestiny],
+                observations: [item?.observations],
               });
               this.goodsTransportable.push(form);
               this.formLoadingTrans = false;
+              this.showTransportable = true;
             });
           },
           error: error => {
@@ -653,6 +695,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.formLoadingTrans = false;
     }
+  }
+
+  getDestinyIndep(saeDestiny: number) {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.name'] = 'Destino';
+    this.genericService.getAll(params.getValue()).subscribe({
+      next: response => {
+        this.transfersDestinity = response.data;
+      },
+      error: error => {
+        console.log('error', error);
+      },
+    });
   }
 
   filterStatusReception(data: IGoodProgramming[]) {
@@ -698,8 +753,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               stateConservationName: [item?.stateConservationName],
               stateConservationSae: [item?.stateConservationSae],
               regionalDelegationNumber: [item?.regionalDelegationNumber],
+              observations: [item?.observations],
+              destiny: [item?.destiny],
+              transferentDestiny: [item?.saeDestiny],
             });
             this.goodsReception.push(form);
+            this.showReception = true;
           });
         },
         error: error => {
@@ -756,6 +815,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             });
             this.goodsGuards.push(form);
             this.headingGuard = `En Resguardo(${this.goodsGuards.length})`;
+            this.showGuard = true;
           });
         },
         error: error => {
@@ -764,59 +824,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         },
       });
     });
-    /*
-    const goodRes = data.filter(items => {
-      return items.status == 'EN_RESGUARDO_TMP';
-    });
-
-    goodRes.map(items => {
-      this.params.getValue()['filter.id'] = items.goodId;
-      this.goodService.getAll(this.params.getValue()).subscribe({
-        next: data => {
-          data.data.map(response => {
-            if (response.physicalStatus == 1) {
-              response.physicalStatusName = 'BUENO';
-            } else if (response.physicalStatus == 2) {
-              response.physicalStatusName = 'MALO';
-            }
-            if (response.stateConservation == 1) {
-              response.stateConservationName = 'BUENO';
-            } else if (response.stateConservation == 2) {
-              response.stateConservationName = 'MALO';
-            }
-            this.goodsGuards.clear();
-            this.goodData = response;
-
-            const form = this.fb.group({
-              id: [response?.id],
-              goodId: [response?.goodId],
-              uniqueKey: [response?.uniqueKey],
-              fileNumber: [response?.fileNumber],
-              goodDescription: [response?.goodDescription],
-              quantity: [response?.quantity],
-              unitMeasure: [response?.unitMeasure],
-              descriptionGoodSae: [response?.descriptionGoodSae],
-              quantitySae: [response?.quantitySae],
-              saeMeasureUnit: [response?.saeMeasureUnit],
-              physicalStatus: [response?.physicalStatus],
-              physicalStatusName: [response?.physicalStatusName],
-              saePhysicalState: [response?.saePhysicalState],
-              stateConservation: [response?.stateConservation],
-              stateConservationName: [response?.stateConservationName],
-              stateConservationSae: [response?.stateConservationSae],
-              regionalDelegationNumber: [response?.regionalDelegationNumber],
-            });
-            this.goodsGuards.push(form);
-            this.goodsGuards.updateValueAndValidity();
-            this.formLoading = false;
-            this.headingGuard = `En Resguardo(${this.goodsGuards.length})`;
-          });
-        },
-        error: error => {
-          this.formLoading = false;
-        },
-      });
-    }); */
   }
 
   filterStatusWarehouse(data: IGoodProgramming[]) {
@@ -865,6 +872,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             this.goodsWarehouse.updateValueAndValidity();
             this.formLoading = false;
             this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+            this.showWarehouse = true;
           });
         },
         error: error => {
@@ -925,6 +933,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
             this.formLoadingReprog = false;
             this.formLoadingTrans = false;
+            this.showReprog = true;
           });
         },
         error: error => {
@@ -935,55 +944,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         },
       });
     });
-    /*goodsReprog.map(items => {
-      this.params.getValue()['filter.id'] = items.goodId;
-      this.goodService.getAll(this.params.getValue()).subscribe({
-        next: data => {
-          this.goodsReprog.clear();
-          data.data.map(response => {
-            if (response.physicalStatus == 1) {
-              response.physicalStatusName = 'BUENO';
-            } else if (response.physicalStatus == 2) {
-              response.physicalStatusName = 'MALO';
-            }
-            if (response.stateConservation == 1) {
-              response.stateConservationName = 'BUENO';
-            } else if (response.stateConservation == 2) {
-              response.stateConservationName = 'MALO';
-            }
-
-            this.goodData = response;
-
-            const form = this.fb.group({
-              id: [response?.id],
-              goodId: [response?.goodId],
-              uniqueKey: [response?.uniqueKey],
-              fileNumber: [response?.fileNumber],
-              goodDescription: [response?.goodDescription],
-              quantity: [response?.quantity],
-              unitMeasure: [response?.unitMeasure],
-              descriptionGoodSae: [response?.descriptionGoodSae],
-              quantitySae: [response?.quantitySae],
-              saeMeasureUnit: [response?.saeMeasureUnit],
-              physicalStatus: [response?.physicalStatus],
-              physicalStatusName: [response?.physicalStatusName],
-              saePhysicalState: [response?.saePhysicalState],
-              stateConservation: [response?.stateConservation],
-              stateConservationName: [response?.stateConservationName],
-              stateConservationSae: [response?.stateConservationSae],
-              regionalDelegationNumber: [response?.regionalDelegationNumber],
-            });
-            this.goodsReprog.push(form);
-            this.goodsReprog.updateValueAndValidity();
-            this.formLoading = false;
-            this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
-          });
-        },
-        error: error => {
-          this.formLoading = false;
-        },
-      });
-    }); */
   }
 
   filterStatusCancelation(data: IGoodProgramming[]) {
@@ -1033,6 +993,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             this.goodsCancelation.updateValueAndValidity();
             this.formLoading = false;
             this.headingCancelation = `Cancelación(${this.goodsCancelation.length})`;
+            this.showCancel = true;
           });
         },
         error: error => {
@@ -1129,6 +1090,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       good,
+      tranType: this.tranType,
       callback: (next: boolean) => {
         if (next) this.getInfoGoodsProgramming();
       },
@@ -1181,7 +1143,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     if (this.selectGood.length > 0) {
       this.alertQuestion(
         'warning',
-        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        '¿Seguro que quiere asignar los bienes  a una acta?',
         '',
         'Aceptar'
       ).then(question => {
@@ -1192,7 +1154,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.onLoadToast(
         'warning',
-        'Acción invalida',
+        'Acción inválida',
         'Se necesita tener un bien seleccionado'
       );
     }
@@ -1203,7 +1165,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'warning',
         'Confirmación',
-        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        '¿Seguro que quiere asignar los bienes  a una acta?',
         'Aceptar'
       ).then(async question => {
         if (question.isConfirmed) {
@@ -1213,7 +1175,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.onLoadToast(
         'warning',
-        'Acción invalida',
+        'Acción inválida',
         'Se necesita tener un bien seleccionado'
       );
     }
@@ -1224,7 +1186,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'warning',
         'Confirmación',
-        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        '¿Seguro que quiere asignar los bienes  a una acta?',
         'Aceptar'
       ).then(async question => {
         if (question.isConfirmed) {
@@ -1234,7 +1196,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.onLoadToast(
         'warning',
-        'Acción invalida',
+        'Acción inválida',
         'Se necesita tener un bien seleccionado'
       );
     }
@@ -1271,9 +1233,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   error: error => {},
                 });
             },
-            error: error => {
-              console.log('update good error', error);
-            },
+            error: error => {},
           });
         });
       });
@@ -1321,7 +1281,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'warning',
         'Confirmación',
-        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        '¿Seguro que quiere asignar los bienes  a una acta?',
         'Aceptar'
       ).then(question => {
         if (question.isConfirmed) {
@@ -1331,7 +1291,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       this.onLoadToast(
         'warning',
-        'Acción invalida',
+        'Acción inválida',
         'Se necesita tener un bien seleccionado'
       );
     }
@@ -1615,10 +1575,84 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       receiptGuards: receipt,
       proceess: 'guard',
       programming: this.programming,
-      callBack: (data: boolean) => {},
+      callback: (receiptGuards: any) => {
+        this.openReport(receiptGuards, 185);
+      },
     };
 
     this.modalService.show(GenerateReceiptGuardFormComponent, config);
+  }
+
+  openReport(receiptGuards: any, typeDoc: number) {
+    if (typeDoc == 185) {
+      const idTypeDoc = 185;
+      let config: ModalOptions = {
+        initialState: {
+          idTypeDoc,
+          programming: this.programming,
+          receiptGuards: receiptGuards,
+          callback: (next: boolean) => {
+            if (next) {
+              this.uploadData(receiptGuards, idTypeDoc);
+            }
+          },
+        },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(ShowReportComponentComponent, config);
+    } else if (typeDoc == 186) {
+      const idTypeDoc = 186;
+      let config: ModalOptions = {
+        initialState: {
+          idTypeDoc,
+          programming: this.programming,
+          receiptGuards: receiptGuards,
+          callback: (next: boolean) => {
+            if (next) {
+              this.uploadData(receiptGuards, idTypeDoc);
+            }
+          },
+        },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(ShowReportComponentComponent, config);
+    }
+  }
+
+  uploadData(receiptGuards: any, idTypeDoc: number): void {
+    if (idTypeDoc == 185) {
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      config.initialState = {
+        receiptGuards: receiptGuards,
+        guardReception: this.goodsReception,
+        typeDoc: 185,
+        programming: this.programming,
+        callback: (data: boolean) => {
+          if (data) {
+            this.getReceiptsGuard();
+          }
+        },
+      };
+
+      this.modalService.show(UploadReportReceiptComponent, config);
+    } else if (idTypeDoc == 186) {
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      config.initialState = {
+        receiptGuards: receiptGuards,
+        guardReception: this.goodsReception,
+        typeDoc: 186,
+        programming: this.programming,
+        callback: (data: boolean) => {
+          if (data) {
+            this.getReceiptsGuard();
+          }
+        },
+      };
+
+      this.modalService.show(UploadReportReceiptComponent, config);
+    }
   }
 
   generateReceiptWarehouse(receipt: IReceipt) {
@@ -1626,10 +1660,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       receiptId,
-      proceess: 'warehouse',
       receiptGuards: receipt,
+      proceess: 'warehouse',
       programming: this.programming,
-      callBack: (data: boolean) => {},
+      callback: (receiptGuards: any) => {
+        this.openReport(receiptGuards, 186);
+      },
     };
 
     this.modalService.show(GenerateReceiptGuardFormComponent, config);
@@ -1673,11 +1709,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       };
       this.modalService.show(ShowDocumentsGoodComponent, config);
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción invalida',
+        'Acción inválida',
         'Necesitas tener un bien seleccionado'
-      );
+      ).then();
     }
   }
 
@@ -1697,11 +1733,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       };
       this.modalService.show(PhotographyFormComponent, config);
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción invalida',
+        'Acción inválida',
         'Necesitas tener un bien seleccionado'
-      );
+      ).then();
     }
   }
 
@@ -1710,6 +1746,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     config.initialState = {
       proceeding: data,
       idProgramming: this.programmingId,
+      programming: this.programming,
       callback: (receipt: IProceedings, keyDoc: string) => {
         if (receipt && keyDoc) {
           this.openReportReceipt(receipt, keyDoc);
@@ -1732,6 +1769,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         receiptId,
         keyDoc,
         receipt: _receipt,
+        programming: this.programming,
         callback: (next: boolean) => {
           if (next) {
             this.uplodadReceiptDelivery();
@@ -1778,11 +1816,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
       this.modalService.show(AssignReceiptFormComponent, config);
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción no permitida',
-        'Se necesita tener un bien seleccionado'
-      );
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      ).then();
     }
   }
 
@@ -1820,11 +1858,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         });
       });
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción no permitida',
-        'Se necesita tener un bien seleccionado'
-      );
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      ).then();
     }
   }
 
@@ -1845,11 +1883,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         });
       });
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción no permitida',
-        'Se necesita tener un bien seleccionado'
-      );
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      ).then();
     }
   }
 
@@ -1900,6 +1938,72 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
   }
 
+  searchGood() {
+    const goodsTransportable = this.goodsTransportable.value;
+    const goodsTransportableCopy = this.goodsTransportable.value;
+
+    const filterGood = goodsTransportableCopy.filter((item: any) => {
+      return item.id == this.searchGoodForm.get('goodId').value;
+    });
+
+    if (filterGood.length > 0) {
+      const _data: any[] = [];
+      filterGood.forEach((item: IGood) => {
+        this.params.getValue()['filter.id'] = item.goodId;
+        this.goodService.getAll(this.params.getValue()).subscribe({
+          next: response => {
+            _data.push(response.data[0]);
+            this.goodsTransportable.clear();
+            _data.forEach(async item => {
+              if (item.physicalStatus == 1) {
+                item.physicalStatusName = 'BUENO';
+              } else if (item.physicalStatus == 2) {
+                item.physicalStatusName = 'MALO';
+              }
+              if (item.stateConservation == 1) {
+                item.stateConservationName = 'BUENO';
+              } else if (item.stateConservation == 2) {
+                item.stateConservationName = 'MALO';
+              }
+
+              await this.getDestinyIndep(item.saeDestiny);
+
+              this.goodData = item;
+              const form = this.fb.group({
+                id: [item?.id],
+                goodId: [item?.goodId],
+                uniqueKey: [item?.uniqueKey],
+                fileNumber: [item?.fileNumber],
+                goodDescription: [item?.goodDescription],
+                quantity: [item?.quantity],
+                unitMeasure: [item?.unitMeasure],
+                descriptionGoodSae: [item?.descriptionGoodSae],
+                quantitySae: [item?.quantitySae],
+                saeMeasureUnit: [item?.saeMeasureUnit],
+                physicalStatus: [item?.physicalStatus],
+                physicalStatusName: [item?.physicalStatusName],
+                saePhysicalState: [item?.saePhysicalState],
+                stateConservation: [item?.stateConservation],
+                stateConservationName: [item?.stateConservationName],
+                stateConservationSae: [item?.stateConservationSae],
+                regionalDelegationNumber: [item?.regionalDelegationNumber],
+                destiny: [item?.destiny],
+                transferentDestiny: [item?.saeDestiny],
+                observations: [item?.observations],
+              });
+              this.goodsTransportable.push(form);
+              this.formLoadingTrans = false;
+              this.showTransportable = true;
+            });
+          },
+          error: error => {
+            this.formLoadingTrans = false;
+          },
+        });
+      });
+    }
+  }
+
   changeStatusGoodProg(good: IGood) {
     return new Promise(async (resolve, reject) => {
       this.goodsReprog.clear();
@@ -1922,6 +2026,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
       }
     });
+  }
+
+  cancel() {
+    this.goodsTransportable.clear();
+    this.searchGoodForm.reset();
+    this.getInfoGoodsProgramming();
   }
 
   changeStatusGoodWarehouse(good: IGood) {
@@ -2014,21 +2124,28 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   delete(receipt: IReceipt) {
     this.alertQuestion(
       'question',
-      'confirmación',
+      'Confirmación',
       '¿Desea eliminar el recibo?'
     ).then(question => {
       if (question.isConfirmed) {
-        const formData: Object = {
-          id: receipt.id,
-          actId: receipt.actId,
-          programmingId: receipt.programmingId,
+        const formProce = {
+          id: receipt.actId,
         };
 
-        this.receptionGoodService.deleteReceipt(formData).subscribe({
+        this.proceedingService.deleteProceeding(formProce).subscribe({
           next: response => {
-            this.getReceipts();
+            const formData: Object = {
+              id: receipt.id,
+              actId: receipt.actId,
+              programmingId: receipt.programmingId,
+            };
+            this.receptionGoodService.deleteReceipt(formData).subscribe({
+              next: response => {
+                this.getReceipts();
+              },
+              error: error => {},
+            });
           },
-          error: error => {},
         });
       }
     });
@@ -2050,11 +2167,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         });
       });
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción invalida',
-        'Se debe seleccionar un bien'
-      );
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      ).then();
     }
   }
 
@@ -2074,11 +2191,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         });
       });
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción invalida',
-        'Se debe seleccionar un bien'
-      );
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      ).then();
     }
   }
 
@@ -2098,11 +2215,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         });
       });
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción invalida',
-        'Se debe seleccionar un bien'
-      );
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      ).then();
     }
   }
 
@@ -2124,11 +2241,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         });
       });
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción invalida',
-        'Se debe seleccionar un bien'
-      );
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      ).then();
     }
   }
 
@@ -2150,11 +2267,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         });
       });
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'info',
-        'Acción invalida',
-        'Se debe seleccionar un bien'
-      );
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      ).then();
     }
   }
 
@@ -2234,127 +2351,112 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     let banError: boolean = false;
     this.receipts.getElements().then(data => {
       data.map((receipt: IReceipt) => {
-        if (receipt?.statusReceipt == 'ABIERTO') {
+        if (receipt?.statusReceipt == 'ABIERTO' && !banError) {
           message += 'Es necesario tener todos los recibos cerrados';
           banError = true;
         }
       });
-      const params = new BehaviorSubject<ListParams>(new ListParams());
-      params.getValue()['filter.programmingId'] = this.programmingId;
-      this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
-        next: response => {
-          this.goodsProgramming = response.data;
-          //Filtramos bienes tranportables
-          const goodsTransportable = this.goodsProgramming.filter(good => {
-            return good.status == 'EN_TRANSPORTABLE';
-          });
-
-          if (goodsTransportable.length > 0 && banError == false) {
-            message +=
-              'Es necesario no tener bienes en el apartado Transportables';
-            banError = true;
-          }
-
-          const goodsGuard = this.goodsProgramming.filter(good => {
-            return good.status == 'EN_RESGUARDO_TMP';
-          });
-
-          if (goodsGuard.length > 0 && banError == false) {
-            message +=
-              'Es necesario tener todos los bienes asignados a una acta';
-            banError = true;
-          }
-
-          const goodsWarehouse = this.goodsProgramming.filter(good => {
-            return good.status == 'EN_ALMACEN_TMP';
-          });
-
-          if (goodsWarehouse.length > 0 && banError == false) {
-            message +=
-              'Es necesario tener todos los bienes asignados a una acta';
-            banError = true;
-          }
-
-          const goodsReprog = this.goodsProgramming.filter(good => {
-            return good.status == 'EN_PROGRAMACION_TMP';
-          });
-
-          if (goodsReprog.length > 0 && banError == false) {
-            message +=
-              'Es necesario tener todos los bienes asignados a una acta';
-            banError = true;
-          }
-
-          const goodsCancel = this.goodsProgramming.filter(good => {
-            return good.status == 'CANCELADO_TMP';
-          });
-
-          if (goodsCancel.length > 0 && banError == false) {
-            message +=
-              'Es necesario tener todos los bienes asignados a una acta';
-            banError = true;
-          }
-        },
-        error: error => {},
-      });
     });
 
-    if (!banError) {
-      this.receiptGuards.getElements().then(receiptGuard => {
-        if (receiptGuard[0].contentId == null) {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.programmingId;
+    this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+      next: async response => {
+        this.goodsProgramming = response.data;
+        //Filtramos bienes tranportables
+        const goodsTransportable = this.goodsProgramming.filter(good => {
+          return good.status == 'EN_TRANSPORTABLE';
+        });
+        if (goodsTransportable.length > 0 && !banError) {
+          message +=
+            'Es necesario no tener bienes en el apartado Transportables';
           banError = true;
-          message += 'No se han generado todos los recibo de resguado';
         }
-      });
 
-      this.receiptWarehouse.getElements().then(receiptWarehouse => {
-        if (receiptWarehouse[0].contentId == null) {
+        const goodsGuard = this.goodsProgramming.filter(good => {
+          return good.status == 'EN_RESGUARDO_TMP';
+        });
+
+        if (goodsGuard.length > 0 && !banError) {
+          message += 'Es necesario tener todos los bienes asignados a una acta';
           banError = true;
-          message += 'No se han generado todos los recibo de resguado almacén';
         }
-      });
-    }
 
-    if (banError) {
-      this.onLoadToast('warning', 'Atención', `${message}`);
-    } else {
-      this.alertQuestion(
-        'question',
-        'Confirmación',
-        '¿Desea terminar la ejecución de recepción?'
-      ).then(question => {
-        if (question.isConfirmed) {
-          const formData: Object = {
-            termEjecutionDate: new Date(),
-          };
-          this.programmingService
-            .updateProgramming(this.programmingId, formData)
-            .subscribe({
-              next: async () => {
-                //Cierra la tarea//
-                const _task = JSON.parse(localStorage.getItem('Task'));
-                const user: any = this.authService.decodeToken();
-                let body: any = {};
-                body['idTask'] = _task.id;
-                body['userProcess'] = user.username;
-                body['type'] = 'SOLICITUD_PROGRAMACION';
-                body['subtype'] = 'Ejecutar_Recepcion';
-                body['ssubtype'] = 'ACCEPT';
+        const goodsWarehouse = this.goodsProgramming.filter(good => {
+          return good.status == 'EN_ALMACEN_TMP';
+        });
 
-                const closeTask = await this.closeTaskExecuteRecepcion(body);
-                if (closeTask) {
-                  this.onLoadToast(
-                    'success',
-                    'Acción correcta',
-                    'Se cerro la tarea ejecutar recepción correctamente'
-                  );
-                  this.router.navigate(['pages/siab-web/sami/consult-tasks']);
-                }
-              },
-            });
+        if (goodsWarehouse.length > 0 && !banError) {
+          message += 'Es necesario tener todos los bienes asignados a una acta';
+          banError = true;
         }
-      });
-    }
+
+        const goodsReprog = this.goodsProgramming.filter(good => {
+          return good.status == 'EN_PROGRAMACION_TMP';
+        });
+
+        if (goodsReprog.length > 0 && !banError) {
+          message += 'Es necesario tener todos los bienes asignados a una acta';
+          banError = true;
+        }
+
+        const goodsCancel = this.goodsProgramming.filter(good => {
+          return good.status == 'CANCELADO_TMP';
+        });
+
+        if (goodsCancel.length > 0 && !banError) {
+          message += 'Es necesario tener todos los bienes asignados a una acta';
+          banError = true;
+        }
+
+        if (banError) {
+          this.alertInfo('warning', 'Error', `${message}`).then();
+        } else if (!banError) {
+          this.alertQuestion(
+            'question',
+            'Confirmación',
+            '¿Desea terminar la ejecución de recepción?'
+          ).then(question => {
+            if (question.isConfirmed) {
+              const formData: Object = {
+                termEjecutionDate: new Date(),
+              };
+              this.programmingService
+                .updateProgramming(this.programmingId, formData)
+                .subscribe({
+                  next: async () => {
+                    //Cierra la tarea//
+                    const _task = JSON.parse(localStorage.getItem('Task'));
+                    const user: any = this.authService.decodeToken();
+                    let body: any = {};
+                    body['idTask'] = _task.id;
+                    body['userProcess'] = user.username;
+                    body['type'] = 'SOLICITUD_PROGRAMACION';
+                    body['subtype'] = 'Ejecutar_Recepcion';
+                    body['ssubtype'] = 'ACCEPT';
+
+                    const closeTask = await this.closeTaskExecuteRecepcion(
+                      body
+                    );
+                    if (closeTask) {
+                      this.alertInfo(
+                        'success',
+                        'Acción correcta',
+                        'Se cerro la tarea ejecutar recepción correctamente'
+                      ).then();
+
+                      this.router.navigate([
+                        'pages/siab-web/sami/consult-tasks',
+                      ]);
+                    }
+                  },
+                });
+            }
+          });
+        }
+      },
+      error: error => {},
+    });
   }
 
   closeTaskExecuteRecepcion(body: any) {
@@ -2364,7 +2466,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           resolve(resp);
         },
         error: error => {
-          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          this.alertInfo('error', 'Error', 'No se pudo crear la tarea').then();
           reject(false);
         },
       });

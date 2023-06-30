@@ -23,7 +23,7 @@ import {
 } from 'src/app/core/shared/patterns';
 
 import { LocalDataSource } from 'ng2-smart-table';
-import { COLUMNS, goodCheck } from './columns';
+import { clearGoodCheck, COLUMNS, goodCheck } from './columns';
 
 @Component({
   selector: 'app-change-of-status-sti',
@@ -125,54 +125,65 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     this.settings = $event;
   }
 
-  accept() {
+  async changeStatusGood() {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const updatePromises = goodCheck.map(async item => {
+          const good = item.row;
+          const updateGood = {
+            id: Number(good.id),
+            goodId: Number(good.id),
+            status: this.goodStatus.value,
+            observations: `${good.observations}. ${this.description.value}`,
+            userModification: this.token.decodeToken().preferred_username,
+          };
+
+          const response = await this.goodServices
+            .update(updateGood)
+            .toPromise();
+          console.log(response);
+          this.postHistoryGood(good);
+          this.form.get('description').reset();
+        });
+
+        await Promise.all(updatePromises);
+
+        resolve({ resp: 'finish updated' });
+      } catch (error) {
+        reject({ resp: 'updated error' });
+      }
+    });
+  }
+
+  async accept() {
+    console.log('Se activo');
     if (goodCheck.length == 0) {
-      this.onLoadToast(
-        'info',
-        'Información',
-        'Debe seleccionar al menos un Bien'
-      );
+      this.alert('warning', 'Información', 'Debe seleccionar al menos un Bien');
       return;
-    }
-    if (this.description.value == null) {
-      this.onLoadToast(
-        'info',
+    } else if (this.description.value == null) {
+      this.alert(
+        'warning',
         'Campos requerido',
         'La descripcion es obligatoria'
       );
       return;
-    }
-    try {
-      goodCheck.forEach(item => {
-        const good: IGood = item.row;
-        const updateGood: IGood = {
-          id: Number(good.id),
-          goodId: Number(good.id),
-          status: this.goodStatus.value,
-          observations: `${good.observations}. ${this.description.value}`,
-          userModification: this.token.decodeToken().preferred_username,
-        };
-
-        this.goodServices.update(updateGood).subscribe({
-          next: response => {
-            console.log(response);
-            this.postHistoryGood(good);
-            this.form.get('description').reset();
-          },
-          error: error => (this.loading = false),
-        });
-      });
-      this.alert(
-        'success',
-        'Actualizado',
-        'Se ha cambiado el Estatus de los bienes seleccionados'
-      );
-    } catch (error) {
-      this.alert(
-        'error',
-        'ERROR',
-        'Ha ocurrido un error en el proceso de cambio'
-      );
+    } else {
+      const resp = await this.changeStatusGood();
+      if (JSON.parse(JSON.stringify(resp)).resp == 'finish updated') {
+        this.searchByFilter();
+        this.alert(
+          'success',
+          'Se cambio el estatus a los Bienes seleccionados',
+          ''
+        );
+      } else {
+        this.searchByFilter();
+        this.alert(
+          'error',
+          'Hubo un error inesperado al actualizar el estatus a los Bienes',
+          ''
+        );
+      }
     }
   }
 
@@ -207,9 +218,12 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
       res => {
         this.goods.load(res.data);
         this.loading = false;
+        this.totalItems = res.count;
       },
       err => {
         console.log(err);
+        this.goods.load([]);
+        this.totalItems = 0;
         this.loading = false;
       }
     );
@@ -218,6 +232,7 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
   listGoods() {
     this.loading = true;
     this.busco = true;
+    clearGoodCheck();
     this.form.get('description').reset();
     this.goodServices
       .getByExpedientAndStatus(
@@ -229,20 +244,20 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
         next: (response: any) => {
           console.log(response);
           if (response.length == 0) {
-            this.onLoadToast(
-              'info',
-              'Información',
-              'No hay bienes con status STI'
+            this.alert(
+              'warning',
+              `El expediente ${this.numberFile.value} no cuenta con Bienes con estatus STI`,
+              ''
             );
             this.goods.load([]);
             this.loading = false;
-            return;
+          } else {
+            this.goods.load(response.data);
+            this.totalItems = response.count;
+            this.enableToDelete = true;
+            this.loading = false;
+            this.currentDate.disable();
           }
-          this.goods.load(response.data);
-          this.totalItems = response.count;
-          this.enableToDelete = true;
-          this.loading = false;
-          this.currentDate.disable();
         },
         error: error => {
           this.alert(
@@ -274,7 +289,9 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
     };
     this.historyGoodService.create(historyGood).subscribe({
       next: response => {
-        this.listGoods();
+        if (goodCheck.length != this.goods['data'].length) {
+          /* this.listGoods(); */
+        }
       },
       error: error => {
         this.loading = false;

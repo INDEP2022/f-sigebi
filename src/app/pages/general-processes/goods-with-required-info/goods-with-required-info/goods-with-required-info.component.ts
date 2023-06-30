@@ -7,7 +7,6 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IAttribGoodBad } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IParamsLegalOpinionsOffice } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/legal-opinions-office.component';
@@ -21,8 +20,6 @@ import { GOODS_WITH_REQUIRED_INFO_COLUMNS } from './goods-with-required-info-col
 export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
   attribGoodBad: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
-  atribGood: IAttribGoodBad;
-  atribGoodS: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   @Output() customEvent = new EventEmitter<string>();
@@ -60,13 +57,13 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
       ...this.settings,
       hideSubHeader: false,
       actions: {
-        columnTitle: 'Acciones',
         edit: false,
         delete: false,
         add: false,
         position: 'right',
       },
       columns: { ...GOODS_WITH_REQUIRED_INFO_COLUMNS },
+      noDataMessage: 'No se encontrarón registros',
     };
   }
 
@@ -130,10 +127,10 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
     if (this.paramsCurrentScreen.NO_INDICADOR) {
       params['filter.pair2'] = this.paramsCurrentScreen.NO_INDICADOR;
     }
-    this.goodService.getAttribGoodBadFilter(params).subscribe({
+    this.goodService.getAttribGoodBadAll(params).subscribe({
       next: resp => {
         console.log(resp);
-        this.totalItems = resp.count;
+        this.totalItems = resp.count || 0;
         this.attribGoodBad.load(resp.data);
         this.attribGoodBad.refresh();
         this.loading = false;
@@ -146,13 +143,12 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
   }
 
   openGood(data: any): void {
-    console.log(data);
     //console.log(localStorage.setItem(`Task`, JSON.stringify(data)));
     // localStorage.setItem(`Task`, JSON.stringify(data));
     localStorage.setItem(
       'selectedBad',
       JSON.stringify({
-        id: data.id.goodId,
+        id: data.id,
         motive: data.motive,
         pair1: data.pair1,
         pair2: data.pair2,
@@ -178,7 +174,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
           origin1: this.origin,
           origin2: this.origin2,
           origin3: this.origin3,
-          noBien: data.id.goodId,
+          noBien: data.id,
           TIPO_PROC: this.paramsCurrentScreen.TIPO_PROC,
           NO_INDICADOR: this.paramsCurrentScreen.NO_INDICADOR,
         },

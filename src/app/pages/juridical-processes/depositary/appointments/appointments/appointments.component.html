@@ -13,7 +13,14 @@
         class="btn btn-primary btn-sm active"
         (click)="saveDataForm()">
         Guardar
-        <i aria-hidden="true" class="fa fa-save"></i>
+        <i aria-hidden="true" class="fa fa-save"></i></button
+      ><button
+        type="button"
+        (click)="newDepositary()"
+        tooltip="Agregar"
+        containerClass="tooltip-style"
+        class="btn btn-info btn-sm active ml-2 mr-2">
+        <i class="bx bx-plus bx-sm float-icon"></i>
       </button>
     </div>
   </div>
@@ -30,6 +37,7 @@
                 <input
                   type="number"
                   class="form-control"
+                  maxlength="11"
                   formControlName="noBien" />
               </form-field>
             </div>
@@ -210,6 +218,7 @@
             bindLabel="nameDesc"
             label="Tipo de Depositar&iacute;a"
             value="otkey"
+            (change)="getDepositaryTypeChange($event)"
             (fetchItems)="getDepositaryType($event)"
             [form]="form"
             [showTooltip]="true"

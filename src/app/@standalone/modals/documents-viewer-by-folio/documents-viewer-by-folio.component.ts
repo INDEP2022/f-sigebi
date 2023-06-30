@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { catchError, map, throwError } from 'rxjs';
 import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
@@ -33,7 +34,10 @@ export class DocumentsViewerByFolioComponent
     filename: string;
   }[] = [];
   index = 0;
-  constructor(private fileBrowserService: FileBrowserService) {
+  constructor(
+    private fileBrowserService: FileBrowserService,
+    private modalRef: BsModalRef
+  ) {
     super();
   }
 
@@ -47,14 +51,15 @@ export class DocumentsViewerByFolioComponent
     return this.fileBrowserService.getFilenamesFromFolio(this.folio).pipe(
       catchError(error => {
         if (error.status < 500) {
-          this.alert('error', 'Error', 'No tiene documentos digitalizados');
+          this.alert('error', '', 'No hay documentos digitalizados');
         }
         if (error.status >= 500) {
-          this.onLoadToast(
+          this.alert(
             'error',
-            'Error',
+            '',
             'Ocurrio un problema al obtener los archivos'
           );
+          this.modalRef.hide();
         }
         return throwError(() => error);
       }),
@@ -67,6 +72,10 @@ export class DocumentsViewerByFolioComponent
         })
       )
     );
+  }
+
+  close() {
+    this.modalRef.hide();
   }
 
   getDocumentByFolioAndName(name: string) {

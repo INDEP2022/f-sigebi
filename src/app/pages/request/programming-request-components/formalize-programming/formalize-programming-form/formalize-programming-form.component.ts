@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodProgramming } from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
@@ -12,6 +13,7 @@ import { IGood } from 'src/app/core/models/good/good.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
@@ -25,12 +27,11 @@ import { ReceptionGoodService } from 'src/app/core/services/reception/reception-
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ESTATE_COLUMNS_VIEW } from '../../acept-programming/columns/estate-columns';
 import {
-  RECEIPT_COLUMNS,
+  RECEIPT_COLUMNS_FORMALIZE,
   RECEIPT_GUARD_COLUMNS,
 } from '../../execute-reception/execute-reception-form/columns/minute-columns';
 import { TRANSPORTABLE_GOODS_FORMALIZE } from '../../execute-reception/execute-reception-form/columns/transportable-goods-columns';
 import { ShowReportComponentComponent } from '../../execute-reception/show-report-component/show-report-component.component';
-import { MINUTES_COLUMNS } from '../columns/minutes-columns';
 import { InformationRecordComponent } from '../information-record/information-record.component';
 
 @Component({
@@ -45,14 +46,7 @@ export class FormalizeProgrammingFormComponent
   observationProceedings: string;
   isDropup = true;
   goods: any[] = [];
-  // receiptGuards: IReception[] = [];
-  // goodsGuard: IGood[] = [];
-  // goodsRepro: IGood[] = [];
-  // goodsWareh: IGood[] = [];
-  // goodsSelect: IGood[] = [];
-  // stateConservation: IStateConservation[] = [];
-  // statusPhysical: IPhysicalStatus[] = [];
-  // measureUnits: IMeasureUnit[] = [];
+  proceedingForm: FormGroup = new FormGroup({});
   executeForm: FormGroup = new FormGroup({});
   receptionForm: FormGroup = new FormGroup({});
   goodsGuardForm: FormGroup = new FormGroup({});
@@ -97,12 +91,15 @@ export class FormalizeProgrammingFormComponent
   headingCancelation: string = `Cancelación(0)`;
   idStation: any;
   transferentName: string = '';
+  typeTransferent: string = '';
   stationName: string = '';
   authorityName: string = '';
   typeRelevantName: string = '';
   formLoading: boolean = false;
   goodData: IGood;
   actId: number = 0;
+  observation: string = '';
+  proceedingData: IProceedings;
   settingsGuardGoods = {
     ...this.settings,
     actions: false,
@@ -118,7 +115,7 @@ export class FormalizeProgrammingFormComponent
   settingsReceipt = {
     ...this.settings,
     actions: false,
-    columns: RECEIPT_COLUMNS,
+    columns: RECEIPT_COLUMNS_FORMALIZE,
   };
 
   settingsReprog = {
@@ -177,13 +174,17 @@ export class FormalizeProgrammingFormComponent
   proceedings: LocalDataSource = new LocalDataSource();
   search: FormControl = new FormControl({});
   programming: Iprogramming;
+  stateName: string = '';
 
-  settingsMinutes = {
+  settingsMinutes = { ...TABLE_SETTINGS };
+  /*settingsMinutes = {
     ...this.settings,
     columns: MINUTES_COLUMNS,
-    edit: { editButtonContent: '<i class="fa fa-book text-warning mx-2"></i>' },
-    actions: { columnTitle: 'Generar / cerrar acta', position: 'right' },
-  };
+
+    //edit: { editButtonContent: '<i class="fa fa-book text-warning mx-2"></i>' },
+    
+    //actions: { columnTitle: 'Generar / cerrar acta', position: 'right' }, 
+  }; */
 
   settingsRecepGoods = {
     ...this.settings,
@@ -212,6 +213,7 @@ export class FormalizeProgrammingFormComponent
     private programmingGoodService: ProgrammingGoodService,
     private receptionGoodService: ReceptionGoodService,
     private proceedingService: ProceedingsService,
+    private stateService: StateOfRepublicService,
     // private router: ActivatedRoute,
     private router: Router,
     private signatoriesService: SignatoriesService
@@ -219,11 +221,6 @@ export class FormalizeProgrammingFormComponent
     super();
     this.settings.columns = TRANSPORTABLE_GOODS_FORMALIZE;
 
-    // this.settings = {
-    //   ...this.settings,
-    //   actions: false,
-    //   columns: USER_COLUMNS_SHOW,
-    // };
     this.programmingId = this.activatedRoute.snapshot.paramMap.get(
       'id'
     ) as unknown as number;
@@ -232,7 +229,7 @@ export class FormalizeProgrammingFormComponent
   ngOnInit(): void {
     this.formLoading = true;
     this.getProgrammingData();
-
+    this.prepareFormProceeding();
     this.paramsReceipts
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getReceipts());
@@ -251,10 +248,21 @@ export class FormalizeProgrammingFormComponent
       { queryParams: { programingId: this.programmingId } }
     ); */
   }
-  saveButton() {
-    const observationProceedings = this.observationProceedings;
-    console.log('datoobersea', observationProceedings);
+
+  prepareFormProceeding() {
+    this.proceedingForm = this.fb.group({
+      proceeding: this.fb.array([]),
+      id: [null],
+      statusProceeedings: [null],
+      idPrograming: [this.programmingId],
+      observationProceedings: [null],
+    });
   }
+
+  get proceeding() {
+    return this.proceedingForm.get('proceeding') as FormArray;
+  }
+
   getReceipts() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.programmingId;
@@ -276,7 +284,19 @@ export class FormalizeProgrammingFormComponent
       next: response => {
         console.log('response', response);
         this.actId = response.data[0].id;
-        this.proceedings.load(response.data);
+        this.proceeding.clear();
+        response.data.forEach(item => {
+          this.observation = item?.observationProceedings;
+          const form = this.fb.group({
+            id: [item.id],
+            statusProceeedings: [item.statusProceeedings],
+            idPrograming: [this.programming?.id],
+            observationProceedings: [item?.observationProceedings],
+          });
+          this.proceeding.push(form);
+        });
+        //this.proceedings.load(response.data);
+
         this.totalItemsProceedings = response.count;
       },
       error: error => {
@@ -295,6 +315,7 @@ export class FormalizeProgrammingFormComponent
         this.idTransferent = data.tranferId;
         this.idStation = data.stationId;
         this.getRegionalDelegation(data);
+        this.getState(data);
         this.getTransferent(data);
         this.getStation(data);
         this.getAuthority();
@@ -314,9 +335,21 @@ export class FormalizeProgrammingFormComponent
         this.programming.regionalDelegationName = data.description;
       });
   }
+
+  getState(programming: Iprogramming) {
+    this.stateService.getById(programming.stateKey).subscribe({
+      next: response => {
+        console.log('estado', response);
+        this.stateName = response.descCondition;
+      },
+      error: error => {},
+    });
+  }
+
   getTransferent(data: Iprogramming) {
     this.transferentService.getById(data.tranferId).subscribe(data => {
       this.transferentName = data.nameTransferent;
+      this.typeTransferent = data.typeTransferent;
     });
   }
   getStation(data: Iprogramming) {
@@ -535,23 +568,70 @@ export class FormalizeProgrammingFormComponent
   }
 
   generateMinute(proceeding: IProceedings) {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    console.log('proceeding', proceeding);
+    this.proceedingService.updateProceeding(proceeding).subscribe({
+      next: response => {
+        let config = {
+          ...MODAL_CONFIG,
+          class: 'modal-lg modal-dialog-centered',
+        };
 
-    config.initialState = {
-      proceeding,
-      programming: this.programming,
-      callback: (proceeding: IProceedings, tranType: string) => {
-        if (proceeding && tranType) {
-          this.processInfoProceeding(proceeding, tranType);
-        }
+        config.initialState = {
+          proceeding,
+          programming: this.programming,
+          typeTransferent: this.typeTransferent,
+          callback: (proceeding: IProceedings, tranType: string) => {
+            if (proceeding && tranType) {
+              this.processInfoProceeding(proceeding, tranType);
+              //this.getProccedings();
+            }
+          },
+        };
+
+        this.modalService.show(InformationRecordComponent, config);
       },
-    };
-
-    this.modalService.show(InformationRecordComponent, config);
+      error: error => {},
+    });
   }
 
   saveInfoProceeding() {
-    ///
+    if (this.proceeding.value[0].observationProceedings) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea guardar la información?'
+      ).then(question => {
+        if (question) {
+          const formData = {
+            id: this.proceeding.value[0].id,
+            idPrograming: this.programming.id,
+            observationProceedings:
+              this.proceeding.value[0].observationProceedings,
+          };
+          console.log('formData', formData);
+          this.proceedingService.updateProceeding(formData).subscribe({
+            next: () => {
+              this.alertInfo(
+                'success',
+                'Acción Correcta',
+                'Información Guardada Correctamente'
+              ).then(info => {
+                if (info.isConfirmed) {
+                  this.getProccedings();
+                }
+              });
+            },
+            error: error => {},
+          });
+        }
+      });
+    } else {
+      this.onLoadToast(
+        'warning',
+        'Acción invalida',
+        'No hay información para guardar'
+      );
+    }
   }
 
   processInfoProceeding(proceeding: IProceedings, tranType: string) {
@@ -785,8 +865,6 @@ export class FormalizeProgrammingFormComponent
                   }
                 }
               }
-              console.log('response', response);
-              console.log('uvfv', uvfv);
             },
             error: async error => {
               console.log('No hay Firmantes');
@@ -951,11 +1029,12 @@ export class FormalizeProgrammingFormComponent
       initialState: {
         idTypeDoc,
         idProg,
+        programming: this.programming,
         nomReport: nomReport,
         actId: actId,
         callback: (next: boolean) => {
           if (next) {
-            //this.uplodadReceiptDelivery();
+            ///this.uplodadReceiptDelivery();
           }
         },
       },

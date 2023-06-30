@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
-import Swal from 'sweetalert2';
 import { COLUMNS } from './columns';
 //Provisional Data
 import { data } from './data';
@@ -13,7 +12,8 @@ import { data } from './data';
 })
 export class StatusComponent
   extends BasePageWidhtDinamicFilters
-  implements OnInit {
+  implements OnInit
+{
   comercializationGoods: any[] = [];
   goodsAFSD = data;
   rowSelected: boolean = false;
@@ -57,7 +57,6 @@ export class StatusComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(body);
-
       }
     });
   }

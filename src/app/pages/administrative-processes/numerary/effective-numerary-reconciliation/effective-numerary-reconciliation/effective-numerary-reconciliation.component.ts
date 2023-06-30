@@ -25,6 +25,7 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
   currencies = new DefaultSelect<IMoneda>([], 0);
   fromF: string = '';
   toT: string = '';
+  valorDelCampo: string = 'cccccccc';
   import: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -37,7 +38,7 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -95,7 +96,7 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => { },
+              callback: (data: any) => {},
             }, //pasar datos por aca
             class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
             ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -110,7 +111,7 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => { },
+              callback: (data: any) => {},
             }, //pasar datos por aca
             class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
             ignoreBackdropClick: true, //ignora el click fuera del modal

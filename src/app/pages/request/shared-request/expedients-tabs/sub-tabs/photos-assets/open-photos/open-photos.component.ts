@@ -81,7 +81,12 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
           this.totalItems = _data.length;
           this.loading = false;
         } else {
-          this.onLoadToast('info', 'No hay fotos agregadadas a este bien', '');
+          this.alert(
+            'warning',
+            'Ver fotos',
+            'No hay fotos agregadadas a este bien',
+            ''
+          );
           this.loading = false;
         }
       });
@@ -123,7 +128,7 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
         this.paragraphs.load(_data);
         this.totalItems = this.paragraphs.count();
       } else {
-        this.onLoadToast('info', 'No hay fotos agregadadas a este bien', '');
+        this.onLoadToast('warning', 'No hay fotos agregadadas a este bien', '');
       }
     });
   }

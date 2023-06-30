@@ -91,13 +91,16 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     },
     columns: ESTATE_COLUMNS_VIEW,
   };
-
+  paramsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
+  // namewarehouse1: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsStation = new BehaviorSubject<ListParams>(new ListParams());
   paramsAuthority = new BehaviorSubject<ListParams>(new ListParams());
   goodsInfoTrans: any[] = [];
+  // goodsInfoTrans: IGoodProgramming[];
   goodsInfoGuard: any[] = [];
   goodsInfoWarehouse: any[] = [];
+  // goodsInfoWarehouse2: any[] = [];
   totalItems: number = 0;
   totalItemsTransportable: number = 0;
   totalItemsGuard: number = 0;
@@ -121,6 +124,11 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   authorityName: string = '';
   typeRelevantName: string = '';
   nameWarehouse: string = '';
+  // goodId: any;
+  // uniqueKey: any;
+  // goodDescription: any;
+  // quantity: any;
+  // unitMeasure: any;
   transGoods: any[] = [];
   guardGoods: any[] = [];
   warehouseGoods: any[] = [];
@@ -167,6 +175,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.showGoodProgramming());
+    // this.sendEmailUsers();
+    // this.show2GoodProgramming();
   }
 
   getProgrammingId() {
@@ -245,6 +255,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     return this.warehouseService
       .getById(this.programming.storeId)
       .subscribe(data => {
+        console.log('nombre', data.description);
         this.nameWarehouse = data.description;
         this.formLoading = false;
       });
@@ -367,7 +378,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     config.initialState = {
       callback: (next: boolean) => {
         if (next) {
-        
+
           //this.electronicSign();
         }
       },
@@ -426,8 +437,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             response.saePhysicalState = 'MALO';
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
-          // queda pendiente mostrar el alías del almacén //
-
+          console.log('response_t', response.storeId);
+          console.log('response_tgoodis', response.goodId);
           this.goodsInfoTrans.push(response);
           this.goodsTranportables.load(this.goodsInfoTrans);
           this.totalItemsTransportable = this.goodsTranportables.count();
@@ -441,7 +452,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     const goodsTrans = data.filter(items => {
       return items.status == 'EN_RESGUARDO_TMP';
     });
-
+    console.log('transportable22', data);
     goodsTrans.map(items => {
       this.goodService.getGoodByIds(items.goodId).subscribe({
         next: response => {
@@ -452,7 +463,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
           // queda pendiente mostrar el alías del almacén //
-
+          console.log('response_g', response.storeId);
+          console.log('response_guard', response.goodId);
           this.goodsInfoGuard.push(response);
           this.goodsGuards.load(this.goodsInfoGuard);
           this.totalItemsGuard = this.goodsGuards.count();
@@ -476,8 +488,13 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             response.saePhysicalState = 'MALO';
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
+
+          // response.decriptionGoodSae = 'Sin descripción';
+          // warehouseName
           // queda pendiente mostrar el alías del almacén //
+          console.log('response_!!!', response.storeId);
           this.goodsInfoWarehouse.push(response);
+          console.log('warefilter', this.goodsInfoWarehouse);
           this.goodsWarehouse.load(this.goodsInfoWarehouse);
           this.totalItemsWarehouse = this.goodsWarehouse.count();
           this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
@@ -493,11 +510,12 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         'Aprobar Programación',
         `¿Esta seguro de aprobar la programación con folio: ${this.programmingId}`
       ).then(question => {
-        if (question.isConfirmed) {
-          this.sendEmailUsers();
-        }
+       if(question.isConfirmed){
+         this.sendEmailUsers();
+       }
       });
     } else {
+      // this.sendEmailUsers();
       this.alertInfo(
         'info',
         'Acción no permitida',
@@ -510,47 +528,72 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.infoUsers.map(user => {
       const emailsUsers = user.email;
       this.emails.push(emailsUsers);
+      console.log('correo', emailsUsers);
     });
 
     this.goodsInfoTrans.map(async good => {
-      const warehouse = await this.warehouseName(good.storeId);
-      const guardObject = {
+      const warehouse = await this.warehouseNameT(good.storeId);
+      console.log('infotrans', good);
+      const transObject = {
         goodId: good.goodId,
         uniqueKey: good.uniqueKey,
         goodDescription: good.goodDescription,
         quantity: good.quantity,
         unitMeasure: good.unitMeasure,
-        nameWarehouse: warehouse,
+        storeId: good.storeId, //condicionar
       };
-      this.transGoods.push(guardObject);
+      console.log('transdato', good.storeId);
+      console.log('transdato nombre', warehouse);
+      console.log('transdato obj', transObject);
+      this.transGoods.push(transObject);
     });
 
     this.goodsInfoGuard.map(async good => {
-      const warehouse = await this.warehouseName(good.storeId);
+      const warehouse = await this.warehouseNameT(good.storeId);
       const guardObject = {
         goodId: good.goodId,
         uniqueKey: good.uniqueKey,
         goodDescription: good.goodDescription,
         quantity: good.quantity,
         unitMeasure: good.unitMeasure,
-        nameWarehouse: warehouse,
+        storeId: good.storeId,
       };
+      console.log('guardsgood', good.storeId);
+      console.log('guardsgood nombre', warehouse);
+      console.log('guardsgood obf', guardObject);
       this.guardGoods.push(guardObject);
     });
 
     this.goodsInfoWarehouse.map(async good => {
-      const warehouse = await this.warehouseName(good.storeId);
+      const warehouse = await this.warehouseNameT(good.storeId);
       const warehouseObject = {
         goodId: good.goodId,
         uniqueKey: good.uniqueKey,
         goodDescription: good.goodDescription,
         quantity: good.quantity,
         unitMeasure: good.unitMeasure,
-        nameWarehouse: warehouse,
+        storeId: good.storeId,
       };
+      console.log('infowarehouse', good.storeId);
+      console.log('infowarehouse name', warehouse);
+      console.log('warehpous nombre', warehouseObject);
       this.warehouseGoods.push(warehouseObject);
     });
-
+    // this.goodsInfoTrans.map(item => {
+    //   item.nameWarehouse = item.storeId;
+    //   delete item.storeId;
+    //   return item;
+    // });
+    // this.goodsInfoGuard.map(item => {
+    //   item.nameWarehouse = item.storeId;
+    //   delete item.storeId;
+    //   return item;
+    // });
+    // this.goodsInfoWarehouse.map(item => {
+    //   item.nameWarehouse = item.storeId;
+    //   delete item.storeId;
+    //   return item;
+    // });
     const dataEmail = {
       folio: this.programming.folio,
       startDate: this.programming.startDate,
@@ -563,12 +606,28 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       goodsWarehouse: this.warehouseGoods,
       emailSend: this.emails,
     };
-
+    // this.warehouseService
+    //   .getAllFilter(this.paramsWarehouse.getValue())
+    //   .subscribe(data => {
+    //     dataEmail.goodsWarehouse = dataEmail.goodsWarehouse.map(
+    //       (element1: any) => {
+    //         data.data.map(element2 => {
+    //           if (element1.nameWarehouse === element2.idWarehouse) {
+    //             element1.nameWarehouse = element2.description;
+    //           }
+    //         });
+    //         console.log('nombre zzzz', element1.nameWarehouse);
+    //         console.log('nombre zzzzxxxxx', element1);
+    //         return element1.nameWarehouse;
+    //       }
+    //     );
+    //   });
+    console.log('newdata', dataEmail);
     this.emailService
       .createEmailProgramming(JSON.stringify(dataEmail))
       .subscribe({
         next: () => {
-          this.onLoadToast(
+          this.alert(
             'success',
             'Notificación',
             'Se envio el correo electrónico a los usuarios correctamente'
@@ -580,6 +639,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         error: error => {},
       });
   }
+  // this.nameWarehouse = data.description;
+  // this.formLoading = false;
 
   //Creamos la tarea de notificación al delegado regional//
   async createTaskNotification() {
@@ -692,7 +753,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     });
   }
 
-  warehouseName(idWarehouse: number) {
+  warehouseNameT(idWarehouse: any) {
     return new Promise((resolve, reject) => {
       this.warehouseService.getById(idWarehouse).subscribe({
         next: response => {
@@ -702,6 +763,19 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       });
     });
   }
+  //   this.paramsWarehouse.getValue()['filter.idWarehouse'] =
+  //   this.goodsInfoTrans[0].nameWarehouse;
+  // this.warehouseService
+  //   .getAllFilter(this.paramsWarehouse.getValue())
+  //   .subscribe(data => {
+  //     dataEmail.goodsTrans = dataEmail.goodsTrans.map((element1: any) => {
+  //       data.data.map(element2 => {
+  //         if (element1.nameWarehouse === element2.idWarehouse) {
+  //           element1.nameWarehouse = element2.description;
+  //         }
+  //       });
+  //       return element1;
+  //     });
 
   showGood(item: IGoodProgrammingSelect) {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };

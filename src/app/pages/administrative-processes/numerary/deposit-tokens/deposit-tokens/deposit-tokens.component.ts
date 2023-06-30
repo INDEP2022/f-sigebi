@@ -18,11 +18,35 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { AddMovementComponent } from '../add-movement/add-movement.component';
 import { CustomdbclickComponent } from '../customdbclick/customdbclick.component';
+import { CustomdbclickdepositComponent } from '../customdbclickdeposit/customdbclickdeposit.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
+import { CustomDateFilterComponent_ } from './searchDate';
 @Component({
   selector: 'app-deposit-tokens',
   templateUrl: './deposit-tokens.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class DepositTokensComponent extends BasePage implements OnInit {
   form: FormGroup;
@@ -36,6 +60,10 @@ export class DepositTokensComponent extends BasePage implements OnInit {
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   jsonToCsv: any[] = [];
   showPagination: boolean = true;
+  dateMovemInicio: Date;
+  dateMovemFin: Date;
+  loadingBtn: boolean = false;
+  valorDate1: string = 'Fecha Transferencia';
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -49,6 +77,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: {
+        columnTitle: 'Acciones',
         delete: true,
         edit: false,
         add: false,
@@ -70,20 +99,42 @@ export class DepositTokensComponent extends BasePage implements OnInit {
           type: 'string',
           sort: false,
         },
-        fec_insercion_: {
+        motionDate: {
           title: 'Fecha Depósito',
-          type: 'string',
+          // type: 'string',
           sort: false,
+          // width: '13%',
+          type: 'html',
+          valuePrepareFunction: (text: string) => {
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            }`;
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent_,
+          },
         },
         folio_ficha: {
           title: 'Folio',
           type: 'string',
           sort: false,
         },
-        fec_traspaso_: {
+        calculationInterestsDate: {
           title: 'Fecha Transferencia',
-          type: 'string',
+          // type: 'string',
           sort: false,
+          // width: '13%',
+          type: 'html',
+          valuePrepareFunction: (text: string) => {
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            }`;
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent_,
+          },
         },
         currency: {
           title: 'Moneda',
@@ -92,8 +143,14 @@ export class DepositTokensComponent extends BasePage implements OnInit {
         },
         deposito: {
           title: 'Depósito',
-          type: 'string',
+          type: 'custom',
           sort: false,
+          renderComponent: CustomdbclickdepositComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.funcionEjecutada.subscribe(() => {
+              this.miFuncion();
+            });
+          },
         },
         no_expediente: {
           title: 'Expediente',
@@ -154,12 +211,13 @@ export class DepositTokensComponent extends BasePage implements OnInit {
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               bank: () => (searchFilter = SearchFilter.ILIKE),
-              cveAccount: () => (searchFilter = SearchFilter.ILIKE),
-              fec_insercion: () => (searchFilter = SearchFilter.ILIKE),
-              invoice: () => (searchFilter = SearchFilter.ILIKE),
-              fec_traspaso: () => (searchFilter = SearchFilter.ILIKE),
+              cveAccount: () => (searchFilter = SearchFilter.EQ),
+              motionDate: () => (searchFilter = SearchFilter.ILIKE),
+              folio_ficha: () => (searchFilter = SearchFilter.ILIKE),
+              calculationInterestsDate: () =>
+                (searchFilter = SearchFilter.ILIKE),
               currency: () => (searchFilter = SearchFilter.ILIKE),
-              deposito: () => (searchFilter = SearchFilter.ILIKE),
+              deposito: () => (searchFilter = SearchFilter.EQ),
               no_expediente: () => (searchFilter = SearchFilter.EQ),
               no_bien: () => (searchFilter = SearchFilter.EQ),
               categoria: () => (searchFilter = SearchFilter.ILIKE),
@@ -169,7 +227,16 @@ export class DepositTokensComponent extends BasePage implements OnInit {
             search[filter.field]();
 
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log('filter.search', filter.search);
+              if (filter.search == 'motionDate') {
+              }
+              this.columnFilters[field] = `${filter.search}`;
+              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+
+              console.log(
+                'this.columnFilters[field]',
+                this.columnFilters[field]
+              );
             } else {
               delete this.columnFilters[field];
             }
@@ -187,10 +254,59 @@ export class DepositTokensComponent extends BasePage implements OnInit {
 
   getAccount() {
     this.loading = true;
-    let params = {
+    let params: any = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
+    console.log('params1', params);
+    if (params['filter.motionDate']) {
+      var fecha = new Date(params['filter.motionDate']);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var año = fecha.getFullYear();
+      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var día = ('0' + fecha.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada = año + '-' + mes + '-' + día;
+      params['motionDate'] = fechaFormateada;
+      delete params['filter.motionDate'];
+    }
+    if (params['filter.deposito']) {
+      params['deposit'] = params['filter.deposito'];
+      delete params['filter.deposito'];
+    }
+    if (params['filter.calculationInterestsDate']) {
+      var fecha = new Date(params['filter.calculationInterestsDate']);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var año = fecha.getFullYear();
+      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var día = ('0' + fecha.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada = año + '-' + mes + '-' + día;
+      params['calculationInterestsDate'] = fechaFormateada;
+      delete params['filter.calculationInterestsDate'];
+    }
+    if (params['filter.no_bien']) {
+      params['goodNumber'] = params['filter.no_bien'];
+      delete params['filter.no_bien'];
+    }
+    if (params['filter.no_expediente']) {
+      params['proceedingsNumber'] = params['filter.no_expediente'];
+      delete params['filter.no_expediente'];
+    }
+    if (params['filter.categoria']) {
+      params['category'] = params['filter.categoria'];
+      delete params['filter.categoria'];
+    }
+    if (params['filter.es_parcializacion']) {
+      params['ispartialization'] = params['filter.es_parcializacion'];
+      delete params['filter.es_parcializacion'];
+    }
+
+    console.log('params2', params);
     this.accountMovementService.getAccount2(params).subscribe({
       next: async (response: any) => {
         let result = response.data.map(async (item: any) => {
@@ -199,11 +315,11 @@ export class DepositTokensComponent extends BasePage implements OnInit {
           item['currency'] = detailsBank ? detailsBank.cveCurrency : null;
           item['bank'] = detailsBank ? detailsBank.cveBank : null;
           item['cveAccount'] = detailsBank ? detailsBank.cveAccount : null;
-          item['fec_insercion_'] = item.fec_insercion
-            ? this.datePipe.transform(item.fec_insercion, 'dd/MM/yyyy')
+          item['motionDate'] = item.fec_movimiento
+            ? this.datePipe.transform(item.fec_movimiento, 'dd/MM/yyyy')
             : null;
-          item['fec_traspaso_'] = item.fec_traspaso
-            ? this.datePipe.transform(item.fec_traspaso, 'dd/MM/yyyy')
+          item['calculationInterestsDate'] = item.fec_calculo_intereses
+            ? this.datePipe.transform(item.fec_calculo_intereses, 'dd/MM/yyyy')
             : null;
           item['bancoDetails'] = detailsBank ? detailsBank : null;
         });
@@ -253,6 +369,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       square: [null, Validators.nullValidator],
       description: [null, Validators.nullValidator],
       branch: [null, Validators.nullValidator],
+      di_saldo: [null, Validators.nullValidator],
       balanceOf: [null, Validators.nullValidator],
       balanceAt: [null, Validators.nullValidator],
     });
@@ -299,6 +416,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     this.form.get('balanceOf').setValue('');
     this.form.get('description').setValue('');
     this.form.get('balanceAt').setValue('');
+    this.form.get('di_saldo').setValue('');
   }
 
   // BUTTONS FUNCTIONS //
@@ -327,6 +445,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
               `El bien ${this.dataMovements.no_bien} ha sido desconciliado`,
               ''
             );
+            this.form.get('descriptionGood').setValue('');
           },
           error: err => {
             this.alert('error', `Error al desconciliar`, err.error.message);
@@ -341,10 +460,12 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     this.showPagination = true;
     this.paramsList.getValue().limit = 10;
     this.paramsList.getValue().page = 1;
+    this.form.get('descriptionGood').setValue('');
     this.getAccount();
     if (this.dataMovements) {
       if (this.dataMovements.bank) {
         this.cleanDataBank();
+        this.dataMovements = null;
       }
     }
   }
@@ -464,28 +585,6 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     this.modalService.show(AddMovementComponent, modalConfig);
   }
 
-  // DECLARE
-  //   vb_hay_hijos BOOLEAN:= FALSE;
-  //   BEGIN
-  //   IF: blk_mov.no_bien IS NOT NULL THEN
-  //   LIP_MENSAJE('No puede eliminar un movimiento que ya esta asociado a un expediente-bien','S');
-  //   ELSE
-  //     --Determina si no tiene asociado alguna devolucion
-  //     FOR reg IN(SELECT 1
-  //                 FROM   cheques_devolucion
-  //                 WHERE  no_movimiento_origen_deposito = : blk_mov.no_movimiento)
-  // LOOP
-  // vb_hay_hijos:= TRUE;
-  // EXIT;
-  //     END LOOP;
-  //     IF vb_hay_hijos THEN
-  //        LIP_MENSAJE('No se puede eliminar una ficha mientras tenga devoluciones registradaa', 'C');
-  //       ELSE
-  //        DELETE_RECORD;
-  //     END IF;
-  //   END IF;
-  // END;
-
   async showDeleteAlert(data: any) {
     console.log(data);
     let vb_hay_hijos: boolean = false;
@@ -520,6 +619,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
             };
             this.accountMovementService.eliminarMovementAccount(obj).subscribe({
               next: response => {
+                this.getAccount();
                 this.alert('success', 'Movimiento Eliminado Correctamente', '');
                 console.log('res', response);
               },
@@ -545,5 +645,40 @@ export class DepositTokensComponent extends BasePage implements OnInit {
         },
       });
     });
+  }
+
+  dateMovementInicio(event: any) {
+    console.log('ev', event);
+    console.log('dateMovem', this.dateMovemInicio);
+    this.form.get('balanceAt').setValue('');
+    // this.dateMovem = event.target.value;
+  }
+
+  dateMovementFin(event: any) {
+    console.log('ev', event);
+    console.log('dateMovem', this.dateMovemInicio);
+    // this.calcularSaldo()
+    // this.dateMovem = event.target.value;
+  }
+
+  calcularSaldo() {
+    if (this.dataMovements) {
+      let obj = {
+        no_cuenta: this.dataMovements.no_cuenta,
+        ti_fecha_calculo: this.dateMovemInicio,
+        ti_fecha_calculo_fin: this.dateMovemFin,
+      };
+      this.loadingBtn = true;
+      this.accountMovementService.getReturnSaldo(obj).subscribe({
+        next: async (response: any) => {
+          this.form.get('di_saldo').setValue(response.data[0].di_saldo);
+          this.loadingBtn = false;
+        },
+        error: err => {
+          this.form.get('di_saldo').setValue('');
+          this.loadingBtn = false;
+        },
+      });
+    }
   }
 }

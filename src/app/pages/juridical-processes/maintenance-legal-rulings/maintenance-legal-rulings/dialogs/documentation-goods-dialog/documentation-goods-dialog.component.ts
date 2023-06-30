@@ -28,6 +28,7 @@ export class DocumentationGoodsDialogComponent
   selectExpedient = new DefaultSelect();
   selectGood = new DefaultSelect();
   selectDictNumber = new DefaultSelect();
+  dataCreate: { officialNumber: number; typeDictum: number } | null = null;
 
   constructor(
     private modalRef: BsModalRef,
@@ -82,6 +83,10 @@ export class DocumentationGoodsDialogComponent
       notificationDate: [null],
       secureKey: [null],
     });
+
+    if (this.dataCreate) {
+      this.documentsDictumXStateMForm.patchValue(this.dataCreate);
+    }
 
     if (this.documentsDictumXStateM != null) {
       console.log(this.documentsDictumXStateM);

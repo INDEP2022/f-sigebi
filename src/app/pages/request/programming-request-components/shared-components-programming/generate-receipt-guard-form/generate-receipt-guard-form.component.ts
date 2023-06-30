@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -12,6 +12,7 @@ import {
 } from 'src/app/core/models/receipt/receipt.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -42,7 +43,8 @@ export class GenerateReceiptGuardFormComponent
     private receptionGoodService: ReceptionGoodService,
     private authService: AuthService,
     private wContentService: WContentService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private signatoriesService: SignatoriesService
   ) {
     super();
   }
@@ -55,21 +57,21 @@ export class GenerateReceiptGuardFormComponent
   prepareForm() {
     this.form = this.fb.group({
       id: [this.receiptId],
-      nameWitnessOne: [null],
-      catIdWitnessOne: [null],
-      noIdWitnessOne: [null],
+      nameWitnessOne: [null, [Validators.required]],
+      catIdWitnessOne: [null, [Validators.required]],
+      noIdWitnessOne: [null, [Validators.required]],
       expIdWitnessIne: [null],
-      nameWitnessTwo: [null],
-      catIdWitnessTwo: [null],
-      noIdWitnessTwo: [null],
+      nameWitnessTwo: [null, [Validators.required]],
+      catIdWitnessTwo: [null, [Validators.required]],
+      noIdWitnessTwo: [null, [Validators.required]],
       expIdWitnessTwo: [null],
-      officialSeg: [null],
-      chargeSeg: [null],
-      catIdFuncSeg: [null],
-      noIdFuncSeg: [null],
+      officialSeg: [null, [Validators.required]],
+      chargeSeg: [null, [Validators.required]],
+      catIdFuncSeg: [null, [Validators.required]],
+      noIdFuncSeg: [null, [Validators.required]],
       expIdFuncSeg: [null],
-      officialSae: [null],
-      chargeSae: [null],
+      officialSae: [null, [Validators.required]],
+      chargeSae: [null, [Validators.required]],
       contractNumber: [null],
       vigencia: [null],
     });
@@ -88,8 +90,9 @@ export class GenerateReceiptGuardFormComponent
       .updateReceiptGuard(this.receiptId, this.form.value)
       .subscribe({
         next: async response => {
-          console.log('actualizo recibo', response);
-          this.openReport(response);
+          this.modalRef.content.callback(this.receiptGuards);
+          this.modalRef.hide();
+          //this.openReport(response);
         },
         error: error => {
           console.log();
@@ -106,6 +109,7 @@ export class GenerateReceiptGuardFormComponent
           idTypeDoc,
           idReportAclara,
           process: this.proceess,
+          programming: this.programming,
           receiptGuards: this.receiptGuards,
           callback: (next: boolean) => {
             if (next) {
@@ -121,16 +125,14 @@ export class GenerateReceiptGuardFormComponent
       };
       this.modalService.show(PrintReportModalComponent, config);
     } else {
-      const idTypeDoc = 185;
+      /*const idTypeDoc = 185;
       let config: ModalOptions = {
         initialState: {
           idTypeDoc,
-          idReportAclara,
-          process: this.proceess,
+          programming: this.programming,
           receiptGuards: this.receiptGuards,
           callback: (next: boolean) => {
             if (next) {
-              console.log('Modal cerrado');
               //this.changeStatusAnswered();
             } else {
               console.log('Modal no cerrado');
@@ -140,7 +142,7 @@ export class GenerateReceiptGuardFormComponent
         class: 'modal-lg modal-dialog-centered',
         ignoreBackdropClick: true,
       };
-      this.modalService.show(PrintReportModalComponent, config);
+      this.modalService.show(ShowReportComponentComponent, config); */
     }
   }
 

@@ -54,19 +54,16 @@ export class AddMovementComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      bank: [null, [Validators.nullValidator, Validators.required]],
-      account: [null, Validators.nullValidator],
-      accountType: [null, Validators.nullValidator],
-      deposit: [null, [Validators.nullValidator, Validators.required]],
-      square: [null, Validators.nullValidator],
-      dateCalculationInterests: [
-        null,
-        [Validators.nullValidator, Validators.required],
-      ],
-      dateMovement: [null, [Validators.nullValidator, Validators.required]],
-      category: [null, [Validators.nullValidator, Validators.required]],
-      balanceOf: [null, Validators.nullValidator],
-      balanceAt: [null, Validators.nullValidator],
+      bank: [null, [Validators.required]],
+      // account: [null, Validators.nullValidator],
+      // accountType: [null, Validators.nullValidator],
+      deposit: [null, [Validators.required]],
+      // square: [null, Validators.nullValidator],
+      dateCalculationInterests: [null, [Validators.required]],
+      dateMovement: [null, [Validators.required]],
+      category: [null, [Validators.required]],
+      // balanceOf: [null, Validators.nullValidator],
+      // balanceAt: [null, Validators.nullValidator],
     });
   }
 
@@ -148,7 +145,7 @@ export class AddMovementComponent extends BasePage implements OnInit {
         console.log('response', response);
         this.modalRef.content.callback(true);
         this.close();
-        this.alert('success', 'Movimiento creado exitosamente', '');
+        this.alert('success', 'Movimiento creado correctamente', '');
       },
       error: err => {
         this.alert(
@@ -166,18 +163,22 @@ export class AddMovementComponent extends BasePage implements OnInit {
     params.page = lparams.page;
     params.limit = lparams.limit;
 
+    let params__ = '';
     if (lparams?.text.length > 0)
       if (!isNaN(parseInt(lparams?.text))) {
         console.log('SI');
-        params.addFilter('cve_cuenta', lparams.text, SearchFilter.EQ);
+        params__ = `?filter.no_cuenta=${lparams.text}`;
+        // params.addFilter('no_cuenta', lparams.text);
       } else {
         console.log('NO');
-        params.addFilter('cve_banco', lparams.text, SearchFilter.ILIKE);
+
+        params__ = `?filter.cve_banco=${lparams.text}`;
+        // params.addFilter('cve_banco', lparams.text);
       }
 
     // this.hideError();
     return new Promise((resolve, reject) => {
-      this.accountMovementService.getDataBank(params.getParams()).subscribe({
+      this.accountMovementService.getDataBank(params__).subscribe({
         next: response => {
           let result = response.data.map(item => {
             item['bankAndNumber'] =

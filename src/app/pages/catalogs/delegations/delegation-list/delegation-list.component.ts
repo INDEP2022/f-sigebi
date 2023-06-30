@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 
 import { LocalDataSource } from 'ng2-smart-table';
 import {
@@ -128,7 +127,8 @@ export class DelegationListComponent extends BasePage implements OnInit {
   delete1(id: number, edo: string) {
     this.delegationService.remove2(id, edo).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Delegaciones', 'Borrado');
+        this.getExample(),
+          this.alert('success', 'Delegación', 'Borrado Correctamente');
       },
       error: err => {
         this.alert(

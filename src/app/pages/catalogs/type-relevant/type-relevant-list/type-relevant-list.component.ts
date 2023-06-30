@@ -113,7 +113,8 @@ export class TypeRelevantListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.typeRelevantService.remove(id).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Tipo Relevante', 'Borrado');
+        this.getExample(),
+          this.alert('success', 'Tipo relevante', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

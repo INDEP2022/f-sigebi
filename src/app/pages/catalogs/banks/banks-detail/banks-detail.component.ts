@@ -14,7 +14,7 @@ import { BankService } from '../../../../core/services/catalogs/bank.service';
   styles: [],
 })
 export class BanksDetailComponent extends BasePage implements OnInit {
-  title: 'BANCO';
+  title: 'Banco';
   status: string = 'Nuevo';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});

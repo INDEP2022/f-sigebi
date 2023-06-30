@@ -120,7 +120,8 @@ export class TypeOrderServiceListComponent extends BasePage implements OnInit {
   remove(id?: number) {
     this.typeServicesService.remove(id).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Orden Servicio', 'Borrado');
+        this.getExample(),
+          this.alert('success', 'Orden servicio', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

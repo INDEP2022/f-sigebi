@@ -34,7 +34,7 @@ export class ConvertiongoodService extends HttpService {
     return this.post(ConvertiongoodEndpoints.Convertion, good);
   }
 
-  update(id: string | number, good: IConvertiongood) {
+  update(id: string | number, good: IConvertiongood | any) {
     const route = `${ConvertiongoodEndpoints.Convertion}/${id}`;
     return this.put(route, good);
   }
@@ -80,5 +80,15 @@ export class ConvertiongoodService extends HttpService {
       responseType: 'arraybuffer',
     };
     return this.httpClient.get(`${ConvertiongoodEndpoints.ActsConvertion}`);
+  }
+
+  getAllGoods(id: number) {
+    const URL = `${environment.API_URL}/convertiongood/api/v1/${ConvertiongoodEndpoints.ActsConvertion}`;
+    const headers = new HttpHeaders();
+    let params = new HttpParams().append('filter.conversionId', `$eq:${id}`);
+
+    return this.http
+      .get<any>(URL, { headers: headers, params: params })
+      .pipe(map(res => res));
   }
 }

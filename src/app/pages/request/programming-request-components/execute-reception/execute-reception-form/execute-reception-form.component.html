@@ -10,7 +10,7 @@
         <button
           (click)="aprobateReception()"
           class="btn btn-primary btn-sm active">
-          Aprobar
+          Terminar Ejecución
         </button>
         <button (click)="close()" class="btn btn-danger btn-sm active">
           Cancelar
@@ -229,13 +229,22 @@
         </div> -->
 
         <div class="col-lg-5 pt-4">
-          <search-bar placeholder="Número de gestión"> </search-bar>
+          <form [formGroup]="searchGoodForm">
+            <form-field [control]="searchGoodForm.get('goodId')">
+              <input
+                type="number"
+                class="form-control"
+                maxlength="50"
+                placeholder="Numero de Gestión"
+                formControlName="goodId" />
+            </form-field>
+          </form>
         </div>
         <div class="btn-toolbar justify-content-end">
-          <button class="btn btn-primary btn-sm active">
+          <button (click)="searchGood()" class="btn btn-primary btn-sm active">
             Buscar <i class="fas fa-search"></i>
           </button>
-          <button class="btn btn-danger btn-sm active">
+          <button (click)="cancel()" class="btn btn-danger btn-sm active">
             Limpiar <i class="fas fa-eraser"></i>
           </button>
         </div>
@@ -272,9 +281,6 @@
         <form [formGroup]="executeForm">
           <div class="table-responsive">
             <table class="table table-bordered">
-              <col style="width: 60%" />
-              <col style="width: 80%" />
-              <col style="width: 60%" />
               <thead>
                 <tr>
                   <th scope="col" class="text-center">
@@ -283,24 +289,42 @@
                       class="form-control ng-pristine ng-valid ng-touched"
                       ng-reflect-model="true" />
                   </th>
-                  <th scope="col">No. Gesti&oacute;n</th>
-                  <th scope="col">Clave &Uacute;nica</th>
-                  <th scope="col">Expediente</th>
+                  <th scope="col" class="text-nowrap">No. Gesti&oacute;n</th>
+                  <th scope="col" class="text-nowrap">Clave &Uacute;nica</th>
+                  <th scope="col" class="text-nowrap">Expediente</th>
                   <th scope="col">Descripci&oacute;n Transferente</th>
-                  <th scope="col">Descripci&oacute;n INDEP</th>
-                  <th scope="col">Cantidad Transferente</th>
-                  <th scope="col">Cantidad INDEP</th>
-                  <th scope="col">Unidad Medida Transferente</th>
-                  <th scope="col">Unidad Medida INDEP</th>
-                  <th scope="col">Estado F&iacute;sico Transferente</th>
-                  <th scope="col">Estado F&iacute;sico INDEP</th>
-                  <th scope="col">Conservaci&oacute;n Transferente</th>
-                  <th scope="col">Estado Conservaci&oacute;n INDEP</th>
-                  <th scope="col">Acciones</th>
+                  <th scope="col" class="text-nowrap">
+                    Descripci&oacute;n INDEP
+                  </th>
+                  <th scope="col" class="text-nowrap">Cantidad Transferente</th>
+                  <th scope="col" class="text-nowrap">Cantidad INDEP</th>
+                  <th scope="col" class="text-nowrap">
+                    Unidad Medida Transferente
+                  </th>
+                  <th scope="col" class="text-nowrap">Unidad Medida INDEP</th>
+                  <th scope="col" class="text-nowrap">
+                    Estado F&iacute;sico Transferente
+                  </th>
+                  <th scope="col" class="text-nowrap">
+                    Estado F&iacute;sico INDEP
+                  </th>
+                  <th scope="col" class="text-nowrap">
+                    Conservaci&oacute;n Transferente
+                  </th>
+                  <th scope="col" class="text-nowrap">
+                    Estado Conservaci&oacute;n INDEP
+                  </th>
+                  <th scope="col" class="text-nowrap">Observación</th>
+                  <th scope="col" class="text-nowrap">Destino Ligie</th>
+                  <th scope="col" class="text-nowrap">Destino Transferente</th>
+                  <th scope="col" class="text-nowrap">Destino INDEP</th>
+                  <th scope="col" class="text-nowrap text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                <ng-container formArrayName="goodsTransportable">
+                <ng-container
+                  formArrayName="goodsTransportable"
+                  *ngIf="showTransportable">
                   <tr
                     *ngFor="
                       let good of goodsTransportable.controls;
@@ -410,6 +434,30 @@
                         </select>
                       </td>
                       <td class="text-center align-baseline">
+                        {{ good.get('observations')?.value }}
+                      </td>
+                      <td class="text-center align-baseline"></td>
+                      <td class="text-center align-baseline">
+                        {{ good.get('destiny').value }}
+                      </td>
+                      <td class="text-center align-baseline">
+                        <select
+                          [value]="executeForm.get('transferentDestiny').value"
+                          class="form-select"
+                          style="
+                            width: 150px;
+                            height: 40px;
+                            font-size: 13px !important;
+                          "
+                          formControlName="transferentDestiny">
+                          <option
+                            *ngFor="let transfer of transfersDestinity"
+                            [value]="transfer.keyId">
+                            {{ transfer.description }}
+                          </option>
+                        </select>
+                      </td>
+                      <td class="text-center align-baseline text-nowrap">
                         <a class="text-center">
                           <i
                             (click)="showGood(good.value)"
@@ -440,6 +488,28 @@
                     </ng-container>
                   </tr>
                 </ng-container>
+
+                <tr *ngIf="!showTransportable">
+                  <td scope="row" class="align-baseline"></td>
+                  <td class="align-baseline"></td>
+                  <td class="align-baseline"></td>
+                  <td class="align-baseline"></td>
+                  <td></td>
+                  <td class="text-left align-baseline"></td>
+                  <td></td>
+                  <td class="text-left align-baseline"></td>
+                  <td></td>
+                  <td class="text-left align-baseline"></td>
+                  <td></td>
+
+                  <td class="text-left align-baseline"></td>
+                  <td class="text-center align-baseline"></td>
+                  <td class="text-center align-baseline"></td>
+                  <td class="text-center align-baseline"></td>
+                  <td class="text-center align-baseline"></td>
+                  <td class="text-center align-baseline"></td>
+                  <td class="text-center align-baseline text-nowrap"></td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -520,9 +590,6 @@
                     <form [formGroup]="receptionForm">
                       <div class="table-responsive">
                         <table class="table table-bordered">
-                          <col style="width: 60%" />
-                          <col style="width: 80%" />
-                          <col style="width: 60%" />
                           <thead>
                             <tr>
                               <th scope="col" class="text-center">
@@ -531,32 +598,67 @@
                                   class="form-control ng-pristine ng-valid ng-touched"
                                   ng-reflect-model="true" />
                               </th>
-                              <th scope="col">No. Gesti&oacute;n</th>
-                              <th scope="col">Clave &Uacute;nica</th>
-                              <th scope="col">Expediente</th>
+                              <th scope="col" class="text-nowrap">
+                                No. Gesti&oacute;n
+                              </th>
+                              <th scope="col" class="text-nowrap">
+                                Clave &Uacute;nica
+                              </th>
+                              <th scope="col" class="text-nowrap">
+                                Expediente
+                              </th>
                               <th scope="col">
                                 Descripci&oacute;n Transferente
                               </th>
-                              <th scope="col">Descripci&oacute;n INDEP</th>
-                              <th scope="col">Cantidad Transferente</th>
-                              <th scope="col">Cantidad INDEP</th>
-                              <th scope="col">Unidad Medida Transferente</th>
-                              <th scope="col">Unidad Medida INDEP</th>
-                              <th scope="col">
+                              <th scope="col" class="text-nowrap">
+                                Descripci&oacute;n INDEP
+                              </th>
+                              <th scope="col" class="text-nowrap">
+                                Cantidad Transferente
+                              </th>
+                              <th scope="col" class="text-nowrap">
+                                Cantidad INDEP
+                              </th>
+                              <th scope="col" class="text-nowrap">
+                                Unidad Medida Transferente
+                              </th>
+                              <th scope="col" class="text-nowrap">
+                                Unidad Medida INDEP
+                              </th>
+                              <th scope="col" class="text-nowrap">
                                 Estado F&iacute;sico Transferente
                               </th>
-                              <th scope="col">Estado F&iacute;sico INDEP</th>
-                              <th scope="col">
+                              <th scope="col" class="text-nowrap">
+                                Estado F&iacute;sico INDEP
+                              </th>
+                              <th scope="col" class="text-nowrap">
                                 Conservaci&oacute;n Transferente
                               </th>
-                              <th scope="col">
+                              <th scope="col" class="text-nowrap">
                                 Estado Conservaci&oacute;n INDEP
                               </th>
-                              <th scope="col">Acciones</th>
+                              <th scope="col" class="text-nowrap">
+                                Observación
+                              </th>
+                              <th scope="col" class="text-nowrap">
+                                Destino Ligie
+                              </th>
+                              <th scope="col" class="text-nowrap">
+                                Destino Transferente
+                              </th>
+                              <th scope="col" class="text-nowrap">
+                                Destino INDEP
+                              </th>
+
+                              <th scope="col" class="text-nowrap text-center">
+                                Etiqueta
+                              </th>
                             </tr>
                           </thead>
                           <tbody>
-                            <ng-container formArrayName="goodsReception">
+                            <ng-container
+                              formArrayName="goodsReception"
+                              *ngIf="showReception">
                               <tr
                                 *ngFor="
                                   let good of goodsReception.controls;
@@ -686,30 +788,71 @@
                                     </select>
                                   </td>
                                   <td class="text-center align-baseline">
+                                    {{ good.get('observations')?.value }}
+                                  </td>
+                                  <td class="text-center align-baseline"></td>
+                                  <td class="text-center align-baseline">
+                                    {{ good.get('destiny').value }}
+                                  </td>
+                                  <td class="text-center align-baseline">
+                                    <select
+                                      [value]="
+                                        executeForm.get('transferentDestiny')
+                                          .value
+                                      "
+                                      class="form-select"
+                                      style="
+                                        width: 150px;
+                                        height: 40px;
+                                        font-size: 13px !important;
+                                      "
+                                      formControlName="transferentDestiny">
+                                      <option
+                                        *ngFor="
+                                          let transfer of transfersDestinity
+                                        "
+                                        [value]="transfer.keyId">
+                                        {{ transfer.description }}
+                                      </option>
+                                    </select>
+                                  </td>
+                                  <td
+                                    class="text-center align-baseline text-nowrap">
                                     <a class="text-center">
                                       <i
                                         (click)="showGood(good.value)"
                                         class="fa fa-file mr-2"
-                                        style="cursor: pointer"></i
-                                    ></a>
-
-                                    <a class="text-center">
-                                      <i
-                                        (click)="editGood(good.value)"
-                                        class="fa fa-pencil-alt mr-2"
-                                        style="cursor: pointer"></i
-                                    ></a>
-
-                                    <a class="text-center">
-                                      <i
-                                        (click)="updateInfo(good.value)"
-                                        class="fa fa-retweet mr-2"
-                                        style="cursor: pointer"></i
-                                    ></a>
+                                        style="cursor: pointer">
+                                        Ver Etiqueta</i
+                                      >
+                                    </a>
                                   </td>
                                 </ng-container>
                               </tr>
                             </ng-container>
+
+                            <tr *ngIf="!showReception">
+                              <td class="align-baseline"></td>
+                              <td class="align-baseline"></td>
+                              <td></td>
+                              <td class="text-left align-baseline"></td>
+                              <td></td>
+                              <td class="text-left align-baseline"></td>
+                              <td></td>
+                              <td class="text-left align-baseline"></td>
+                              <td></td>
+
+                              <td class="text-left align-baseline"></td>
+                              <td class="text-center align-baseline"></td>
+                              <td class="text-center align-baseline"></td>
+                              <td class="text-center align-baseline"></td>
+                              <td class="text-center align-baseline"></td>
+                              <td class="text-center align-baseline"></td>
+                              <td class="text-center align-baseline"></td>
+                              <td class="text-center align-baseline"></td>
+                              <td
+                                class="text-center align-baseline text-nowrap"></td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
@@ -751,9 +894,10 @@
                 <form [formGroup]="goodsGuardForm">
                   <div class="table-responsive">
                     <table class="table table-bordered">
-                      <col style="width: 60%" />
-                      <col style="width: 80%" />
-                      <col style="width: 60%" />
+                      <col style="width: 90%" />
+                      <col style="width: 120%" />
+                      <col style="width: 90%" />
+
                       <thead>
                         <tr>
                           <th scope="col" class="text-center">
@@ -762,24 +906,50 @@
                               class="form-control ng-pristine ng-valid ng-touched"
                               ng-reflect-model="true" />
                           </th>
-                          <th scope="col">No. Gesti&oacute;n</th>
-                          <th scope="col">Clave &Uacute;nica</th>
-                          <th scope="col">Expediente</th>
+                          <th scope="col" class="text-nowrap">
+                            No. Gesti&oacute;n
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Clave &Uacute;nica
+                          </th>
+                          <th scope="col" class="text-nowrap">Expediente</th>
                           <th scope="col">Descripci&oacute;n Transferente</th>
-                          <th scope="col">Descripci&oacute;n INDEP</th>
-                          <th scope="col">Cantidad Transferente</th>
-                          <th scope="col">Cantidad INDEP</th>
-                          <th scope="col">Unidad Medida Transferente</th>
-                          <th scope="col">Unidad Medida INDEP</th>
-                          <th scope="col">Estado F&iacute;sico Transferente</th>
-                          <th scope="col">Estado F&iacute;sico INDEP</th>
-                          <th scope="col">Conservaci&oacute;n Transferente</th>
-                          <th scope="col">Estado Conservaci&oacute;n INDEP</th>
-                          <th scope="col">Acciones</th>
+                          <th scope="col" style="width: 90%">
+                            Descripci&oacute;n INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Cantidad Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Cantidad INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Unidad Medida Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Unidad Medida INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado F&iacute;sico Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado F&iacute;sico INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Conservaci&oacute;n Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado Conservaci&oacute;n INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap text-center">
+                            Acciones
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
-                        <ng-container formArrayName="goodsGuard">
+                        <ng-container
+                          formArrayName="goodsGuard"
+                          *ngIf="showGuard">
                           <tr
                             *ngFor="
                               let good of goodsGuards.controls;
@@ -899,7 +1069,9 @@
                                   </option>
                                 </select>
                               </td>
-                              <td class="text-center align-baseline">
+                              <td
+                                class="text-center align-baseline"
+                                class="text-nowrap">
                                 <a class="text-center">
                                   <i
                                     (click)="showGood(good.value)"
@@ -924,6 +1096,26 @@
                             </ng-container>
                           </tr>
                         </ng-container>
+
+                        <tr *ngIf="!showGuard">
+                          <td scope="row" class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+
+                          <td class="text-left align-baseline"></td>
+                          <td class="text-center align-baseline"></td>
+                          <td
+                            class="text-center align-baseline"
+                            class="text-nowrap"></td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -1001,24 +1193,50 @@
                               class="form-control ng-pristine ng-valid ng-touched"
                               ng-reflect-model="true" />
                           </th>
-                          <th scope="col">No. Gesti&oacute;n</th>
-                          <th scope="col">Clave &Uacute;nica</th>
-                          <th scope="col">Expediente</th>
+                          <th scope="col" class="text-nowrap">
+                            No. Gesti&oacute;n
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Clave &Uacute;nica
+                          </th>
+                          <th scope="col" class="text-nowrap">Expediente</th>
                           <th scope="col">Descripci&oacute;n Transferente</th>
-                          <th scope="col">Descripci&oacute;n INDEP</th>
-                          <th scope="col">Cantidad Transferente</th>
-                          <th scope="col">Cantidad INDEP</th>
-                          <th scope="col">Unidad Medida Transferente</th>
-                          <th scope="col">Unidad Medida INDEP</th>
-                          <th scope="col">Estado F&iacute;sico Transferente</th>
-                          <th scope="col">Estado F&iacute;sico INDEP</th>
-                          <th scope="col">Conservaci&oacute;n Transferente</th>
-                          <th scope="col">Estado Conservaci&oacute;n INDEP</th>
-                          <th scope="col">Acciones</th>
+                          <th scope="col" class="text-nowrap">
+                            Descripci&oacute;n INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Cantidad Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Cantidad INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Unidad Medida Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Unidad Medida INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado F&iacute;sico Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado F&iacute;sico INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Conservaci&oacute;n Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado Conservaci&oacute;n INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap text-center">
+                            Acciones
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
-                        <ng-container formArrayName="goodsWarehouse">
+                        <ng-container
+                          formArrayName="goodsWarehouse"
+                          *ngIf="showWarehouse">
                           <tr
                             *ngFor="
                               let good of goodsWarehouse.controls;
@@ -1143,7 +1361,8 @@
                                   </option>
                                 </select>
                               </td>
-                              <td class="text-center align-baseline">
+                              <td
+                                class="text-center align-baseline text-nowrap">
                                 <a class="text-center">
                                   <i
                                     (click)="showGood(good.value)"
@@ -1168,6 +1387,25 @@
                             </ng-container>
                           </tr>
                         </ng-container>
+
+                        <tr *ngIf="!showWarehouse">
+                          <td scope="row" class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+
+                          <td class="text-left align-baseline"></td>
+                          <td class="text-center align-baseline"></td>
+                          <td
+                            class="text-center align-baseline text-nowrap"></td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -1242,9 +1480,6 @@
                   <form [formGroup]="goodsReprogForm">
                     <div class="table-responsive">
                       <table class="table table-bordered">
-                        <col style="width: 60%" />
-                        <col style="width: 80%" />
-                        <col style="width: 60%" />
                         <thead>
                           <tr>
                             <th scope="col" class="text-center">
@@ -1253,30 +1488,50 @@
                                 class="form-control ng-pristine ng-valid ng-touched"
                                 ng-reflect-model="true" />
                             </th>
-                            <th scope="col">No. Gesti&oacute;n</th>
-                            <th scope="col">Clave &Uacute;nica</th>
-                            <th scope="col">Expediente</th>
+                            <th scope="col" class="text-nowrap">
+                              No. Gesti&oacute;n
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Clave &Uacute;nica
+                            </th>
+                            <th scope="col" class="text-nowrap">Expediente</th>
                             <th scope="col">Descripci&oacute;n Transferente</th>
-                            <th scope="col">Descripci&oacute;n INDEP</th>
-                            <th scope="col">Cantidad Transferente</th>
-                            <th scope="col">Cantidad INDEP</th>
-                            <th scope="col">Unidad Medida Transferente</th>
-                            <th scope="col">Unidad Medida INDEP</th>
-                            <th scope="col">
+                            <th scope="col" class="text-nowrap">
+                              Descripci&oacute;n INDEP
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Cantidad Transferente
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Cantidad INDEP
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Unidad Medida Transferente
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Unidad Medida INDEP
+                            </th>
+                            <th scope="col" class="text-nowrap">
                               Estado F&iacute;sico Transferente
                             </th>
-                            <th scope="col">Estado F&iacute;sico INDEP</th>
-                            <th scope="col">
+                            <th scope="col" class="text-nowrap">
+                              Estado F&iacute;sico INDEP
+                            </th>
+                            <th scope="col" class="text-nowrap">
                               Conservaci&oacute;n Transferente
                             </th>
-                            <th scope="col">
+                            <th scope="col" class="text-nowrap">
                               Estado Conservaci&oacute;n INDEP
                             </th>
-                            <th scope="col">Acciones</th>
+                            <th scope="col" class="text-nowrap text-center">
+                              Acciones
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
-                          <ng-container formArrayName="goodsReprog">
+                          <ng-container
+                            formArrayName="goodsReprog"
+                            *ngIf="showReprog">
                             <tr
                               *ngFor="
                                 let good of goodsReprog.controls;
@@ -1428,6 +1683,24 @@
                               </ng-container>
                             </tr>
                           </ng-container>
+
+                          <tr *ngIf="!showReprog">
+                            <td scope="row" class="align-baseline"></td>
+                            <td class="align-baseline"></td>
+                            <td class="align-baseline"></td>
+                            <td class="align-baseline"></td>
+                            <td></td>
+                            <td class="text-left align-baseline"></td>
+                            <td></td>
+                            <td class="text-left align-baseline"></td>
+                            <td></td>
+                            <td class="text-left align-baseline"></td>
+                            <td></td>
+
+                            <td class="text-left align-baseline"></td>
+                            <td class="text-center align-baseline"></td>
+                            <td class="text-center align-baseline"></td>
+                          </tr>
                         </tbody>
                       </table>
                     </div>
@@ -1479,24 +1752,48 @@
                               class="form-control ng-pristine ng-valid ng-touched"
                               ng-reflect-model="true" />
                           </th>
-                          <th scope="col">No. Gesti&oacute;n</th>
-                          <th scope="col">Clave &Uacute;nica</th>
-                          <th scope="col">Expediente</th>
+                          <th scope="col" class="text-nowrap">
+                            No. Gesti&oacute;n
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Clave &Uacute;nica
+                          </th>
+                          <th scope="col" class="text-nowrap">Expediente</th>
                           <th scope="col">Descripci&oacute;n Transferente</th>
                           <th scope="col">Descripci&oacute;n INDEP</th>
-                          <th scope="col">Cantidad Transferente</th>
-                          <th scope="col">Cantidad INDEP</th>
-                          <th scope="col">Unidad Medida Transferente</th>
-                          <th scope="col">Unidad Medida INDEP</th>
-                          <th scope="col">Estado F&iacute;sico Transferente</th>
-                          <th scope="col">Estado F&iacute;sico INDEP</th>
-                          <th scope="col">Conservaci&oacute;n Transferente</th>
-                          <th scope="col">Estado Conservaci&oacute;n INDEP</th>
-                          <th scope="col">Acciones</th>
+                          <th scope="col" class="text-nowrap">
+                            Cantidad Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Cantidad INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Unidad Medida Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Unidad Medida INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado F&iacute;sico Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado F&iacute;sico INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Conservaci&oacute;n Transferente
+                          </th>
+                          <th scope="col" class="text-nowrap">
+                            Estado Conservaci&oacute;n INDEP
+                          </th>
+                          <th scope="col" class="text-nowrap text-center">
+                            Acciones
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
-                        <ng-container formArrayName="goodsCancelation">
+                        <ng-container
+                          formArrayName="goodsCancelation"
+                          *ngIf="showCancel">
                           <tr
                             *ngFor="
                               let good of goodsCancelation.controls;
@@ -1621,7 +1918,8 @@
                                   </option>
                                 </select>
                               </td>
-                              <td class="text-center align-baseline">
+                              <td
+                                class="text-center align-baseline text-nowrap">
                                 <a class="text-center">
                                   <i
                                     (click)="showGood(good.value)"
@@ -1646,6 +1944,25 @@
                             </ng-container>
                           </tr>
                         </ng-container>
+
+                        <tr *ngIf="!showCancel">
+                          <td scope="row" class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td class="align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+                          <td class="text-left align-baseline"></td>
+                          <td></td>
+
+                          <td class="text-left align-baseline"></td>
+                          <td class="text-center align-baseline"></td>
+                          <td
+                            class="text-center align-baseline text-nowrap"></td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>

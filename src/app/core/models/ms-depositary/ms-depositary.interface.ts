@@ -115,51 +115,97 @@ export interface IPaymendtDepParamsDep {
 }
 
 export interface IDepositaryAppointments {
-  appointmentNum: string | number;
-  nameProvDete: string | number;
+  appointmentNum: number;
+  nameProvDete: Date;
   revocationDate: Date;
   revocation: string;
   contractKey: string;
   startContractDate: Date;
   endContractDate: Date;
-  amount: number | string;
+  amount: number;
   nameTypeKey: string;
   administratorTypeKey: string;
   assignmentDate: Date;
   appointmentDate: Date;
-  cardAppointmentId: number;
+  cardAppointmentId: string;
   typeDepositary: string;
   observations: string;
   jobRevocationNum: string;
-  amountConsideration: string;
-  amountFee: string;
-  jobProvisionalNum: number;
+  amountConsideration: number;
+  amountFee: number;
+  jobProvisionalNum: string;
   exhibit: string;
   jobBoardgovtDate: Date;
-  jobBoardgovtNum: number;
+  jobBoardgovtNum: string;
   shipmentDirgralDate: Date;
   replyDirgralDate: Date;
-  jobShiftNum: number;
+  jobShiftNum: string;
   shiftDate: Date;
   returnDate: Date;
-  jobReplyNum: number;
+  jobReplyNum: string;
   agreementAppointment: string;
   cardAppointmentIdBoardgovt: string;
-  jobAnswerDirgralNum: number | string;
+  jobAnswerDirgralNum: string;
   authorityorderAssignment: string;
   responsible: string;
   representativeSera: string;
-  goodNum: string | number;
-  registryNum: string | number;
+  goodNum: number;
+  registryNum: number;
   validity: string;
-  amountVat: string;
-  folioUniversal: string;
-  folioReturn: string;
-  personNum: string | number;
+  amountVat: number;
+  folioUniversal: number;
+  folioReturn: number;
+  personNum: number;
   reference: string;
-  vat: string;
+  vat: number;
   withHousehold: string;
   nbOrigin: string;
+
+  // appointmentNum: string | number;
+  // nameProvDete: string | number;
+  // revocationDate: Date;
+  // revocation: string;
+  // contractKey: string;
+  // startContractDate: Date;
+  // endContractDate: Date;
+  // amount: number | string;
+  // nameTypeKey: string;
+  // administratorTypeKey: string;
+  // assignmentDate: Date;
+  // appointmentDate: Date;
+  // cardAppointmentId: number;
+  // typeDepositary: string;
+  // observations: string;
+  // jobRevocationNum: string;
+  // amountConsideration: string;
+  // amountFee: string;
+  // jobProvisionalNum: number;
+  // exhibit: string;
+  // jobBoardgovtDate: Date;
+  // jobBoardgovtNum: number;
+  // shipmentDirgralDate: Date;
+  // replyDirgralDate: Date;
+  // jobShiftNum: number;
+  // shiftDate: Date;
+  // returnDate: Date;
+  // jobReplyNum: number;
+  // agreementAppointment: string;
+  // cardAppointmentIdBoardgovt: string;
+  // jobAnswerDirgralNum: number | string;
+  // authorityorderAssignment: string;
+  // responsible: string;
+  // representativeSera: string;
+  // goodNum: string | number;
+  // registryNum: string | number;
+  // validity: string;
+  // amountVat: string;
+  // folioUniversal: string;
+  // folioReturn: string;
+  // personNum: string | number;
+  // reference: string;
+  // vat: string;
+  // withHousehold: string;
+  // nbOrigin: string;
 }
 
 export interface IDepositaryPaymentDet {
@@ -189,3 +235,102 @@ export interface IInfoDepositary {
   registryNum?: number;
   nbOrigin?: null;
 }
+
+export interface IDepositaryAppointments_custom {
+  InvoiceReturn: string;
+  InvoiceUniversal: string;
+  agreementAppointment: number;
+  amount: number;
+  amountFee: string;
+  amountconsideration: string;
+  amountvat: number;
+  authorityorderAssignment: number;
+  cveContract: string;
+  cveGuyAdministrator: string;
+  cveGuyname: string;
+  dateAppointment: number;
+  dateAssignment: number;
+  dateEndContract: number;
+  dateJobBoardgovt: number;
+  dateReplyDirgral: number;
+  dateReturn: number;
+  dateRevocation: number;
+  dateShift: number;
+  dateShipmentDirgral: number;
+  datenameProv: number;
+  datestartContract: number;
+  exhibit: number;
+  good: IGood;
+  guydepositary: number;
+  identificationcardAppointment: number;
+  identificationcardAppointmentBoardgovt: number;
+  nbOrigin: number;
+  numberAppointment: string;
+  numberGood: string;
+  numberJobAnswerDirgral: number;
+  numberJobBoardgovt: number;
+  numberJobProvisional: number;
+  numberJobReply: number;
+  numberJobRevocation: number;
+  numberJobShift: number;
+  numberPerson: string;
+  numberRecord: string;
+  observations: number;
+  personNumber: IPerson;
+  reference: number;
+  representativeBe: string;
+  responsible: string;
+  revocation: string;
+  user: ISegUsers;
+  validity: number;
+  vat: number;
+  withHousehold: number;
+}
+
+// {
+//   appointmentNum: number; // no_nombramiento
+//   nameProvDete: Date; // fec_nomb_prov
+//   revocationDate: Date; // fec_revocacion
+//   revocation: string; // revocacion
+//   contractKey: string; // cve_contrato
+//   startContractDate: Date; // fec_ini_contrato
+//   endContractDate: Date; // fec_fin_contrato
+//   amount: number; // cantidad
+//   nameTypeKey: string; // cve_tipo_nomb
+//   administratorTypeKey: string; // cve_tipo_administrador
+//   assignmentDate: Date; // fec_asignacion
+//   appointmentDate: Date; // fec_nombramiento
+//   cardAppointmentId: string; // cedula_nombramiento
+//   typeDepositary: string; // tipo_depositaria
+//   observations: string; // observaciones
+//   jobRevocationNum: string; // no_oficio_revocacion
+//   amountConsideration: number; // importe_contraprestacion
+//   amountFee: number; // importe_honorarios
+//   jobProvisionalNum: string; // no_oficio_provisional
+//   exhibit: string; // anexo
+//   jobBoardgovtDate: Date; // fec_oficio_junta_gob
+//   jobBoardgovtNum: string; // no_oficio_junta_gob
+//   shipmentDirgralDate: Date; // fec_envio_dir_gral
+//   replyDirgralDate: Date; // fec_contestacion_dir_gral
+//   jobShiftNum: string; // no_oficio_turno
+//   shiftDate: Date; // fec_turno
+//   returnDate: Date; // fec_retorno
+//   jobReplyNum: string; // no_oficio_contestacion
+//   agreementAppointment: string; // acuerdo_nombramiento
+//   cardAppointmentIdBoardgovt: string; // cedula_nombramiento_junta_gob
+//   jobAnswerDirgralNum: string; // no_oficio_contesta_dir_gral
+//   authorityorderAssignment: string; // autoridad_ordena_asignacion
+//   responsible: string; // responsable
+//   representativeSera: string; // representante_sera
+//   goodNum: IGood; // no_bien
+//   registryNum: number; // no_registro
+//   validity: string; // vigencia
+//   amountVat: number; // importe_iva
+//   folioUniversal: number; // folio_universal
+//   folioReturn: number; // folio_regreso
+//   personNum: IPerson; // no_persona
+//   reference: string; // referencia
+//   vat: number; // iva
+//   withHousehold: string; // con_menaje
+//   nbOrigin: string; // nb_origen
+// }

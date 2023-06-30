@@ -97,13 +97,11 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
-              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
               this.columnFilters = filters;
             } else {
               delete this.columnFilters;
             }
           });
-          console.log(filters);
           this.params = this.pageFilter(this.params);
           this.searchGoodMenage(this.idGoodValue);
         }
@@ -146,7 +144,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.totalItems = 0;
     this.textButton = 'Agregar menaje';
     this.showSearchButton = false;
-
     const numberFile = Number(event);
     this.expedientServices.getById(numberFile).subscribe({
       next: response => {
@@ -164,7 +161,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   //TODO - Este es el bien que se escoge en el select
   uploadTableMenaje(good: IGood) {
     if (good) {
-      console.log(good);
       this.loading = false;
       this.enableAddgood = false;
       this.formGood.enable();
@@ -196,10 +192,10 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
           this.goodSelect.enable();
           this.goods = new DefaultSelect(response.data, response.count);
           this.loading = false;
-          console.log(this.goods);
         },
         error: err => {
           this.loading = false;
+          this.alert('error', 'Expediente sin bienes asociados', ``);
         },
       });
   }
@@ -224,7 +220,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
 
     const paramsF = new FilterParams();
     if (this.columnFilters !== undefined) {
-      console.log('hola', this.columnFilters);
       for (let data of this.columnFilters) {
         if (data.search !== '') {
           paramsF.addFilter(
@@ -237,41 +232,42 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     }
     paramsF.addFilter('noGood', idGood);
     paramsF.page = this.params.value.page;
-    console.log(paramsF.page);
     paramsF.limit = this.params.value.limit;
-    console.log(paramsF.limit);
 
     //Son los menajes que aparecen listados en la tabla
     this.menageServices.getMenaje(paramsF.getParams()).subscribe({
       next: response => {
         this.idGoodValue = idGood;
-        this.menajes.load(
-          response.data.map(menaje => {
-            if (menaje.menajeDescription === null) {
-              return {
-                noGoodMenaje: menaje.noGoodMenaje,
-                id: menaje.noGoodMenaje as number,
-                description: '' as string,
-              } as IGood;
-            } else {
-              return {
-                noGoodMenaje: menaje.noGoodMenaje,
-                id: menaje.menajeDescription.id as number,
-                description: menaje.menajeDescription.description as string,
-              } as IGood;
-            }
-          })
-        );
-        this.totalItems = 0;
-        this.totalItems = response.count;
-        this.loading = false;
+        if (response.count > 0) {
+          this.menajes.load(
+            response.data.map((menaje: any) => {
+              if (menaje.menajeDescription === null) {
+                return {
+                  noGoodMenaje: menaje.noGoodMenaje,
+                  id: menaje.noGoodMenaje as number,
+                  description: '' as string,
+                } as IGood;
+              } else {
+                return {
+                  noGoodMenaje: menaje.noGoodMenaje,
+                  id: menaje.menajeDescription.id as number,
+                  description: menaje.menajeDescription.description as string,
+                } as IGood;
+              }
+            })
+          );
+          this.totalItems = 0;
+          this.totalItems = response.count;
+          this.loading = false;
+        } else {
+          this.alert('error', 'Bien sin menajes asociados', ``);
+          this.loading = false;
+          this.totalItems = 0;
+          this.searchGoods(this.idExpedientSearch);
+        }
       },
       error: err => {
-        this.alert(
-          'error',
-          'ERROR',
-          `El bien No. ${idGood} no tiene menajes asociados`
-        );
+        this.alert('error', 'Bien sin menajes asociados', ``);
         this.loading = false;
         this.totalItems = 0;
         this.searchGoods(this.idExpedientSearch);
@@ -292,18 +288,14 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.menageServices.create(menaje).subscribe({
       next: respose => {
         this.searchGoodMenage(this.numberGoodSelect);
-        this.alert(
-          'success',
-          'Exitoso',
-          `Menaje asociado correctamente al bien No. ${idGood}`
-        );
+        this.alert('success', 'Menaje asociado', ``);
         this.textButton = 'Agregar menaje';
         this.showSearchButton = false;
         this.addGood = false;
         this.loading = false;
       },
       error: err => {
-        this.onLoadToast('error', 'ERROR', err.error.message);
+        this.alert('error', 'El menaje ya fue asociado', '');
       },
     });
   }
@@ -324,14 +316,10 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.menageServices.remove(idGood).subscribe({
       next: responde => {
         this.searchGoodMenage(this.numberGoodSelect);
-        this.alert('success', 'Éxito', `Se elimino el menaje No. ${idGood}`);
+        this.alert('success', 'Menaje eliminado', '');
       },
       error: err => {
-        this.alert(
-          'error',
-          'ERROR',
-          `No se pudo eliminar el menaje No. ${idGood}`
-        );
+        this.alert('error', 'No es posible eliminar el menaje', ``);
       },
     });
   }

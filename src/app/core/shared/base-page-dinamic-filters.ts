@@ -57,6 +57,7 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
       )
       .subscribe(change => {
         if (change.action === 'filter') {
+          let haveFilter = false;
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
@@ -70,13 +71,21 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
             //   searchFilter = SearchFilter.ILIKE;
             // }
             field = `filter.${filter.field}`;
+            // let search = filter.search;
+            // if (isNaN(+search)) {
+            //   search = search + ''.toUpperCase();
+            // }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              haveFilter = true;
             } else {
               delete this.columnFilters[field];
             }
             console.log(this.columnFilters);
           });
+          if (haveFilter) {
+            this.params.value.page = 1;
+          }
           this.getData();
         }
       });

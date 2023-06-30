@@ -1,7 +1,6 @@
 <div class="row" *ngIf="!disabledBienes">
   <div class="col p-0">
     <button
-      *ngIf="files.length === 0"
       class="btn btn-primary btn-sm active"
       type="button"
       (click)="openFileUploader()">
@@ -18,18 +17,18 @@
                       (change)="onFileChange($event)" />
                   </form-field> -->
   </div>
-  <!-- <div class="col p-0">
+  <div class="col p-0" style="text-align: right">
     <button
       type="button"
-      [disabled]="files.length < 2 || filesToDelete.length === 0"
       class="btn btn-danger btn-sm active"
       (click)="confirmDelete()">
       Borrar fotos seleccionadas
+      <i class="fa fa-eraser"></i>
     </button>
-  </div> -->
+  </div>
 </div>
 <div class="row">
-  <small class="text-info mt-3 mb-2" *ngIf="files.length > 0"
+  <small class="text-info mt-3 mb-2 info-foto" *ngIf="files.length > 0"
     >Da doble click a la foto para visualizarlo</small
   >
   <div class="row docs-scroll">
