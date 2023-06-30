@@ -510,15 +510,12 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         'Aprobar Programación',
         `¿Esta seguro de aprobar la programación con folio: ${this.programmingId}`
       ).then(question => {
-        if (question.isConfirmed) {
-          // this.sendEmailUsers();
-          this.createTaskNotification();
-          this.createTaskExecuteProgramming();
-          this.createTaskFormalize();
-        }
+       if(question.isConfirmed){
+         this.sendEmailUsers();
+       }
       });
     } else {
-      //this.sendEmailUsers();
+      // this.sendEmailUsers();
       this.alertInfo(
         'info',
         'Acción no permitida',
