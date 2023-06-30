@@ -271,19 +271,21 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     super();
     this.procs = new LocalDataSource();
     this.validPermisos = !this.validPermisos;
-    // this.settings = {
-    //   ...this.settings,
-    //   hideSubHeader: false,
-    //   actions: false,
-    //   columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
-    // };
-    // this.settings2.columns = PROCEEDINGSCONVERSIONS_COLUMNS;
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
       actions: false,
       selectMode: 'multi',
       columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
+      rowClassFunction: (row: any) => {
+        if (row.data.status === 'CNE') {
+          return 'bg-success text-white';
+        } else if (row.data.status === 'RRE' || row.data.status === 'VXR') {
+          return 'bg-dark text-white';
+        } else {
+          return 'bg-success text-white';
+        }
+      },
     };
     this.settings2 = {
       ...this.settings,
@@ -318,9 +320,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'goodId' ||
-            filter.field == 'description' ||
-            filter.field == 'quantity' ||
-            filter.field == 'acta'
+              filter.field == 'description' ||
+              filter.field == 'quantity' ||
+              filter.field == 'acta'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -542,7 +544,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     });
   }
 
-  openDialogSelectedManagement() {}
+  openDialogSelectedManagement() { }
 
   async getSenderByDetail(params: ListParams) {
     params.take = 20;
@@ -593,7 +595,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       }
     );
   }
-  closeActa() {}
+  closeActa() { }
 
   refreshTableCopies() {
     this.initForm();
@@ -623,20 +625,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.loading = true;
     this.goodService.getByExpedient(id).subscribe({
       next: data => {
+        console.log(data);
         this.bienes = data;
         this.dataTableGood.load(data.data);
         this.loading = false;
-        // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
-        this.settings.columns = {
-          rowClassFunction: (row: any) => {
-            if (row.status == 'disponible') {
-              return 'row-verde'; // clase CSS para filas disponibles
-            } else {
-              return 'row-negro'; // clase CSS para filas no disponibles
-            }
-          },
-        };
-        this.loading = true;
         this.dataTableGood.refresh();
         this.totalItems = data.count;
         console.log(this.dataGood);
@@ -657,18 +649,6 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         this.dataTableGoodsConvertion.load(data.data);
         this.dataTableGoodsConvertion.refresh();
         this.loading = false;
-        // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
-        this.settings.columns = {
-          rowClassFunction: (row: any) => {
-            if (row.status == 'disponible') {
-              return 'row-verde'; // clase CSS para filas disponibles
-            } else {
-              return 'row-negro'; // clase CSS para filas no disponibles
-            }
-          },
-        };
-        this.loading = false;
-        this.dataTableGoodsConvertion.refresh();
         this.totalItems = data.count;
         console.log(this.dataTableGoodsConvertion);
       },
@@ -807,7 +787,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => {},
+                callback: (data: any) => { },
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -822,7 +802,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => {},
+                callback: (data: any) => { },
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -844,7 +824,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => {},
+                callback: (data: any) => { },
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -859,7 +839,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => {},
+                callback: (data: any) => { },
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -1086,7 +1066,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   deleteGoodActa(event: any) {
     console.log(event);
   }
-  toggleDisabled() {}
+  toggleDisabled() { }
 }
 
 export interface IParamsProceedingsParamsActasConvertion {
