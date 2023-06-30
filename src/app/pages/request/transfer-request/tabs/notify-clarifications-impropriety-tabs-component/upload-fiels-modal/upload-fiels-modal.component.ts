@@ -133,7 +133,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
         },
       });
     } else {
-      this.onLoadToast(
+      this.alert(
         'error',
         'No es un archivo con formato valido.',
         'Favor de verificar'
@@ -159,7 +159,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
         },
       });
     } else {
-      this.onLoadToast(
+      this.alert(
         'error',
         'No es un archivo con formato valido.',
         'Favor de verificar'
@@ -243,7 +243,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', 'Carga de archivos', `${message} Correctamente`);
+    this.alert('success', 'Carga de archivos', `${message} correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
