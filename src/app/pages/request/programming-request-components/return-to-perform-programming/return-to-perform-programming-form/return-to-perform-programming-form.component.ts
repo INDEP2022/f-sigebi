@@ -507,11 +507,7 @@ export class ReturnToPerformProgrammingFormComponent
           this.totalItems = this.estatesList.count();
           this.loadingGoods = false;
         } else {
-          this.onLoadToast(
-            'warning',
-            'No hay bienes disponibles para programar',
-            ''
-          );
+          this.alert('warning', 'No hay bienes disponibles para programar', '');
         }
       });
   }
