@@ -27,6 +27,7 @@ export class FileUploadComponent extends BasePage implements OnInit {
   fileEvents: FileUploadEvent[] = [];
   config: any;
   statuses = FILE_UPLOAD_STATUSES;
+  @Input() uploadLoading = false;
   constructor(
     private fileUploadService: FileUploadService,
     public options: ModalOptions

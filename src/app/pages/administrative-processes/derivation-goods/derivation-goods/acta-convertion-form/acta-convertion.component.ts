@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
@@ -29,17 +29,22 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   parrafo2: string = '';
   parrafo3: string = '';
   actConvertion: string = '';
+  tipoConv: any;
+  pGoodFatherNumber: any;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private delegationService: DelegationService,
     private serviceGood: GoodService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     super();
-    /* this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe(params => {
       this.actConvertion = params['actConvertion'] || null;
-    });*/
+      this.tipoConv = params['tipoConv'] || null;
+      this.pGoodFatherNumber = params['pGoodFatherNumber'] || null;
+    });
   }
 
   ngOnInit(): void {
@@ -68,191 +73,197 @@ Ultima página del Acta Administrativa de Validación y Conversión de Unidades 
   close() {
     this.modalRef.hide();
   }
-
+  payload: any;
   handleSubmitNewItem() {
-    /*if (this.actConvertion === this.CVE_ACTA_CONV) {
+    for (let i = 0; i < this.items.length; i++) {
+      if (this.items[i].cveActaConvId === 'CONV/RT/ALAF/GDL/GDL/00018/10/11') {
+        this.selectedItems = this.items[i].cveActaConvId;
+        this.selectedIndex = i;
+      }
+    }
+    let parts: any = this.selectItem2.split('/');
+    const DATAselectItem2 = parts.join('/');
+    const str = this.updateString(DATAselectItem2);
+    this.selectItem2 = str;
+    this.items.push({ cveActaConvId: this.selectItem2 });
 
-    }*/
-    const payload = this.selectedItems[0];
-    payload.paragraph1 = this.parrafo1;
-    payload.paragraph2 = this.parrafo2;
-    payload.paragraph3 = this.parrafo3;
-    payload.universalFolio = Number(payload.universalFolio);
-    payload.noRegister =
-      Math.floor(Math.random() * (99999999 - 10000000 + 1)) + 10000000;
-
-    const newStr = payload.cveActaConvId.slice(0, -5);
-    const today = new Date();
-    const day = String(today.getDate()).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // Enero es 0!
-    const year = today.getFullYear().toString().substr(-2);
-
-    const formattedDate = day + '/' + month + '/' + year;
-
-    const cveActaConvId = `${newStr}${formattedDate}`;
-    payload.cveActaConvId = cveActaConvId;
-    this.serviceGood
-      .createActaConversion(payload)
-      .subscribe(_ => this.fetchItems());
-  }
-
-  fetchItems() {
-    this.serviceGood.getActasConversion().subscribe((item: any) => {
-      this.items = item.data;
-    });
-  }
-
-  /*create() {
-    this.loading = true;
-    this.delegationService.create(this.delegationForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }*/
-
-  onCheckboxChange(event: any, item: any) {
-    if (event.target.checked) {
-      this.selectedItems.push(item);
-    } else {
-      for (var i = 0; i < this.selectedItems.length; i++) {
-        if (this.selectedItems[i].id === item.id) {
-          this.selectedItems.splice(i, 1);
+    if (this.items[this.items.length - 1]) {
+      const payload: any = {
+        cveActaConvId: this.selectItem2,
+        typeActa: null,
+        broadcaster: null,
+        administeredBy: null,
+        run: null,
+        universalFolio: null,
+        paragraph1: null,
+        paragraph2: null,
+        paragraph3: null,
+      };
+      this.serviceGood
+        .createActaConversion(payload)
+        .subscribe(_ => this.fetchItems());
+      this.router.navigate(
+        ['/pages/administrative-processes/derivation-goods'],
+        {
+          queryParams: {
+            newActConvertion: this.selectItem2,
+          },
         }
+      );
+    }
+    console.log('NOS QUIEDAMOS ACA');
+    if (this.actConvertion) {
+      /*this.alert(
+          'error',
+          'La Conversison No tiene un CVE_ACTA_CONV',
+          'Genere Un CVE_ACTA_CONV'
+        );*/
+      if (this.items[this.items.length - 1].parrafo1) {
+        this.alertQuestion(
+          'question',
+          `¿El proceso reinicializa los párrafos, se continua?`,
+          ''
+        ).then(q => {
+          if (q.isConfirmed) {
+            /*FALTA END POINT PARA ACTUALIZAR LOS PARRAFOS DEL LA CONVERSIO NDE ACTA */
+            //http://sigebimsdev.indep.gob.mx/catalog/api/v1/apps/pupInsertParaph
+            //END POINT NO ESTA ACTUALIZANDO NADA
+            /*this.serviceGood
+                      .updateGoodStatus(this.numberGoodFather.value, 'CAN')
+                      .subscribe(
+                        res => {
+                          this.alert(
+                            'success',
+                            'Se cambio el estatus del Bien',
+                            `El Bien estatus del bien con id: ${this.numberGoodFather.value}, fue cambiado a CAN`
+                          );
+                        },
+                        err => {
+                          this.alert(
+                            'error',
+                            'No se pudo cambiar el estatus del bien',
+                            'Se presentó un error inesperado que no permitió el cambio de estatus del bien, por favor intentelo nuevamente'
+                          );
+                        }
+                      );*/
+          }
+        });
+        this.items = [];
+        /*LLAMAR AL END POINT OTRA VES PERO ESTA VES FILTRAR  CON UN LIKE BLK_CACTAS.CVE_ACTA_CONV EN EL LISTADO DE CONVERSIONES ACTAS */
+        this.flagNewActa = true;
+        this.flagAsignaActa = true;
       }
     }
   }
 
-  imprimirFolioEscaneo() {
-    // if (this.dictamen) {
-    /* if (this.dictamen.folioUniversal == null) {
-      this.alert('warning', 'No tiene folio de escaneo para imprimir.', '');
-      return;
-    } else {
-      let params = {
-        pn_folio: this.dictamen.folioUniversal,
-      };
-      // let params = {
-      //   pn_folio: 3429518,
-      // };
-      this.siabService
-        .fetchReport('RGERGENSOLICDIGIT', params)
-        .subscribe(response => {
-          if (response !== null) {
-            const blob = new Blob([response], { type: 'application/pdf' });
-            const url = URL.createObjectURL(blob);
-            let config = {
-              initialState: {
-                documento: {
-                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                  type: 'pdf',
-                },
-                callback: (data: any) => {},
-              }, //pasar datos por aca
-              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-              ignoreBackdropClick: true, //ignora el click fuera del modal
-            };
-            this.onLoadToast('success', '', 'Reporte generado');
-            this.modalService.show(PreviewDocumentsComponent, config);
-          }
-        });
-    }*/
-    // } else {
-    //   this.alert(
-    //     'info',
-    //     'Debe seleccionar un dictamen y/o un oficio de dictamen',
-    //     ''
-    //   );
-    // }
-  }
-
-  visualizacionFolioEscaneo() {
-    // if (this.dictamen) {
-    /*if (this.dictamen.folioUniversal == null) {
-      this.alert('warning', 'No tiene folio de escaneo para visualizar.', '');
-      return;
-    } else {
-      this.goNextForm();
-    }*/
-    // } else {
-    //   this.alert(
-    //     'info',
-    //     'Debe seleccionar un dictamen y/o un oficio de dictamen',
-    //     ''
-    //   );
-    // }
-  }
-
-  imgSolicitud() {
-    // if (this.oficioDictamen && this.dictamen) {
-    /*  if (
-      this.oficioDictamen.statusOf == 'ENVIADO' &&
-      this.dictamen.passOfficeArmy != null
-    ) {
-      if (this.dictamen.folioUniversal != null) {
-        this.alert('warning', 'El acta ya tiene folio de escaneo', '');
-        return;
+  fetchItems() {
+    if (this.tipoConv === '2') {
+      if (this.actConvertion) {
+        this.selectItem2 = this.actConvertion;
+        this.items = [{ cveActaConvId: this.actConvertion }];
       } else {
-        this.alertQuestion(
-          'info',
-          'Se generará un nuevo folio de escaneo para la declaratoria',
-          '¿Deseas continuar?'
-        ).then(question => {
-          if (question.isConfirmed) {
-            this.generarFolioEscaneo();
-          }
+        /*VALIDAR CON BACK END DE QUE MANERA USAN EL FILTRO PARA ESTE END POINT POR cveActaConvId PADRE */
+        this.serviceGood
+          .getActasConversion(this.actConvertion)
+          .subscribe((item: any) => {
+            this.items = item.data;
+            // this.items = item.data.filter((item:any) => item.cveActaConvId === 'CONV/RT/ALAF/OFICINAS CENTRALES/TIJ/%/23/06');
+          });
+        const payload = {
+          pGoodFatherNumber: this.pGoodFatherNumber,
+          pDelegationNumber: 1,
+        };
+        this.serviceGood.generateWeaponKey(payload).subscribe((item: any) => {
+          this.selectItem2 = item;
         });
       }
-    } else {
-      this.alert(
-        'warning',
-        'No se puede generar el folio de escaneo en una declaratoria abierta',
-        ''
+    }
+  }
+  selectedIndex: number | null = null;
+  selectItem: string = '';
+  selectItem2: string = '';
+
+  onCheckboxChange(event: any, index: number) {
+    this.flagAsignaActa = event.target.checked ? false : true;
+    if (event.target.checked) {
+      this.selectedIndex = index;
+      this.selectedItems = [this.items[index]];
+      this.selectItem = this.selectedItems[0].cveActaConvId;
+    } else if (this.selectedIndex === index) {
+      this.selectItem2 = '';
+      this.selectedIndex = null;
+      this.selectedItems = [];
+      this.selectItem = '';
+    }
+  }
+  flagNewActa: boolean = false;
+  flagAsignaActa: boolean = false;
+  disableAllChecks: boolean = false;
+
+  generateAsignarActa() {}
+
+  imprimirFolioEscaneo() {}
+
+  visualizacionFolioEscaneo() {}
+
+  imgSolicitud() {}
+
+  escanearFolioEscaneo() {}
+  /*GENERA NUEVA ACTA DE CONVERSIONiD */
+  generateNewCveActaConvIds(items: any) {
+    return items.map((item: any) => {
+      const itemParts = item.cveActaConvId.split('/');
+
+      const matchingItems = items.filter((otherItem: any) => {
+        const otherItemParts = otherItem.cveActaConvId.split('/');
+        return (
+          otherItemParts[4] === itemParts[4] &&
+          otherItemParts[6] === itemParts[6]
+        );
+      });
+
+      const maxNumber = Math.max(
+        ...matchingItems.map((matchingItem: any) => {
+          return parseInt(matchingItem.cveActaConvId.split('/')[5]);
+        })
       );
-    }*/
-    // } else {
-    // this.alert(
-    //   'info',
-    //   'Debe seleccionar un dictamen y/o un oficio de dictamen',
-    //   ''
-    // );
-    // }
+
+      const newNumber = isNaN(maxNumber) ? 1 : maxNumber + 1;
+      /*CODIGO GENERADO  */
+      const newNumberString = String(newNumber).padStart(5, '0');
+      this.selectItem2 = newNumberString;
+      if (this.selectItem2) {
+        this.router.navigate(
+          ['/pages/administrative-processes/derivation-goods'],
+          {
+            queryParams: {
+              bkConversionsCveActaCon: this.selectItem2,
+            },
+          }
+        );
+      }
+      itemParts[5] = newNumberString;
+
+      const newCveActaConvId = itemParts.join('/');
+
+      return { ...item, cveActaConvId: newCveActaConvId };
+    });
   }
 
-  escanearFolioEscaneo() {
-    // if (this.oficioDictamen && this.dictamen) {
-    /*if (
-      this.oficioDictamen.statusOf == 'ENVIADO' &&
-      this.dictamen.passOfficeArmy != null
-    ) {
-      if (this.folioEscaneoNg != '') {
-        this.alertQuestion(
-          'info',
-          'Se abrirá la pantalla de escaneo para el folio de escaneo de la declaratoria',
-          '¿Deseas continuar?',
-          'Continuar'
-        ).then(question => {
-          if (question.isConfirmed) {
-            // this.onLoadToast('success', 'Enviado a la siguiente forma', '');
+  /*V_CONSECUTIVO  */
 
-            this.goNextForm();
-          }
-        });
-      } else {
-        this.alert('error', 'No existe folio de escaneo a escanear', '');
-      }
+  updateString(str: any) {
+    let parts = str.split('/');
+
+    let num = parts[5];
+    if (!isNaN(num)) {
+      num = parseInt(num);
+      num = isNaN(num) ? 1 : num + 1;
     } else {
-      this.alert(
-        'error',
-        'No se puede escanear para una declaratoria que esté abierta',
-        ''
-      );
-    }*/
-    // } else {
-    //   this.alert(
-    //     'info',
-    //     'Debe seleccionar un dictamen y/o un oficio de dictamen',
-    //     ''
-    //   );
-    // }
+      num = 1;
+    }
+    let consecutivo = num.toString().padStart(5, '0');
+
+    return `${parts[0]}/${parts[1]}/${parts[2]}/${parts[3]}/${parts[4]}/${consecutivo}/${parts[6]}/${parts[7]}`;
   }
 }

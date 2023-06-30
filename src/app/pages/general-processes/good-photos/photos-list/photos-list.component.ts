@@ -196,7 +196,6 @@ export class PhotosListComponent extends BasePage implements OnInit {
                   this.userPermisions = true;
                 }
               }
-              this.userPermisions = true;
             }
           }
         },

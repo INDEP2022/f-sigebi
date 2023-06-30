@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GoodTrackerEndpoints } from 'src/app/common/constants/endpoints/ms-good-tracker-endpoints';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { GoodTrackerMap } from 'src/app/pages/general-processes/goods-tracker/utils/good-tracker-map';
 import {
   IListResponse,
   IListResponseMessage,
@@ -22,6 +23,14 @@ export class GoodTrackerService extends HttpService {
   getAll(params?: _Params): Observable<IListResponseMessage<ITrackedGood>> {
     return this.get<IListResponseMessage<ITrackedGood>>(
       'trackergood/apps/goodtrackertmp',
+      params
+    );
+  }
+
+  trackGoods(filters: GoodTrackerMap, params: _Params) {
+    return this.post<IListResponseMessage<ITrackedGood>>(
+      'trackergood/apps/pup-consult',
+      filters,
       params
     );
   }
