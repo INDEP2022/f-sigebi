@@ -554,7 +554,6 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     cve_moneda: string;
     cve_cuenta: string;
   }) {
-    console.log(account);
     this.selectedBank = account;
     this.formBlkControl.get('tiNewBank').setValue(account?.cve_banco);
     this.formBlkControl.get('diNewBank').setValue(account?.nombre);
@@ -597,6 +596,15 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
         'warning',
         'Advertencia',
         'Debe especificar el bien que se quiere cambiar a numerario'
+      );
+      return;
+    }
+
+    if (!this.formBlkControl.value.tiNewDate) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Debe especificar la fecha del deposito'
       );
       return;
     }
@@ -680,23 +688,23 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
     const body: any = {
       screenKey: this.NAME_CURRENT_FORM,
-      clasifGoodNumber: null,
-      spentPlus: null,
-      amounten: null,
+      // clasifGoodNumber: null,
+      // spentPlus: null,
+      // amounten: null,
       description: this.form.value.description,
-      amountevta: this.formGood.value.importSell,
+      amountevta: this.formGood.value.importSell || 1,
       typeConv: this.formBlkControl.value.typeConversion,
       spentId: spent?.spentId,
-      totalAmount: null,
+      // totalAmount: null,
       status: this.formGood.value.status,
       identificator: this.formGood.value.identifier,
       processExt: this.formGood.value.extDomProcess,
-      ivavta: this.formGood.value.taxSell,
-      commission: this.formGood.value.commission,
-      ivacom: this.formGood.value.taxCommission,
+      ivavta: this.formGood.value.taxSell || 0,
+      commission: this.formGood.value.commission || 0,
+      ivacom: this.formGood.value.taxCommission || 0,
       goodId: this.formGood.value.id,
-      delegationNumber: this.formGood.value.delegationNumber,
-      subDelegationNumber: this.formGood.value.subDelegationNumber,
+      delegationNumber: this.formGood.value.delegationNumber.id,
+      subDelegationNumber: this.formGood.value.subDelegationNumber.id,
       fileNumber: this.formGood.value.fileNumber,
       user: this.infoToken.preferred_username.toUpperCase(),
       bankNew: this.formBlkControl.value.tiNewBank,
@@ -721,7 +729,10 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     );
   }
 
-  saveInSerServerMassive(): void {}
+  isLoadingMassive: boolean = false;
+  saveInServerMassive(): void {
+    // this.sourcesMassive.c
+  }
 
   checkedMovBan = false;
   // validateForm(): Promise<boolean> {
@@ -825,11 +836,11 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   //     return Promise.resolve(false);
   //   });
   // }
+  isSearchDate = false;
 
   changeDeposit(event: IAccountMovement): void {
-    // this.form.controls['invoiceFile'].setValue(event?.InvoiceFile || null);
-    // this.form.controls['deposit'].setValue(event?.deposit || null);
     console.log(event);
+    this.isSearchDate = false;
     this.formBlkControl.get('tiNewDate').setValue(event?.dateMotion || null);
     this.formBlkControl.get('diDeposit').setValue(event?.deposit || null);
     this.formBlkControl.get('tiNewFile').setValue(event?.InvoiceFile || null);

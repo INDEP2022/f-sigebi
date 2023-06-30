@@ -405,3 +405,49 @@ end;
          	WHEN OTHERS THEN
          	LIP_MENSAJE(SQLERRM,'A');
 END;
+
+
+
+
+
+
+PROCEDURE PUP_VALIDA_MASIV IS
+BEGIN
+   IF LIF_MENSAJE_SI_NO('¿Seguro que desea cambiar los bienes a numerario?') = 'S' THEN   
+      GO_BLOCK('BLK_BIE_NUM_MASIV');
+      FIRST_RECORD;
+      LOOP
+         IF :BLK_BIE_NUM_MASIV.DISPONIBLE = 'S' THEN 	
+            IF :DI_MONEDA_NEW IS NULL AND PUP_VALIDANUME(:BLK_BIE_NUM_MASIV.NO_BIEN)= 'S' THEN
+               LIP_MENSAJE('Debe especificar el tipo de moneda.','S');
+               RAISE FORM_TRIGGER_FAILURE;
+            END IF;																																		---CAMBIO DIVISAS
+
+            IF (PUP_VALIDANUME(:BLK_BIE_NUM_MASIV.NO_BIEN)= 'S' AND :BLK_CONTROL.TIPO_CONV not in ('CNE','BBB')) OR 
+               (PUP_VALIDANUME(:BLK_BIE_NUM_MASIV.NO_BIEN)= 'N' AND :BLK_CONTROL.TIPO_CONV = 'CNE') THEN
+	             LIP_MENSAJE('El tipo de conversión seleccionado no es permitido para este bien: '||:BLK_BIE_NUM_MASIV.NO_BIEN,'S');
+               RAISE FORM_TRIGGER_FAILURE;
+            END IF;																																			---CAMBIO DIVISAS
+
+            IF :BLK_BIE_NUM_MASIV.PRECIO_VENTA IS NULL OR :BLK_BIE_NUM_MASIV.PRECIO_VENTA = 0 THEN 
+         	     IF LIF_MENSAJE_SI_NO('El nuevo bien para el bien '||:BLK_BIE_NUM_MASIV.NO_BIEN||' se generara con un precio de venta de 1. ¿Desea continuar?') = 'N' THEN
+		              LIP_MENSAJE('Agregue el precio de venta del bien '||:BLK_BIE_NUM_MASIV.NO_BIEN||' o elimine el registro...','C');   	        
+		              RAISE FORM_TRIGGER_FAILURE;
+	             END IF;      
+            END IF;
+            PUP_CREA_BIEN_MASIV(:BLK_BIE_NUM_MASIV.NO_BIEN);            
+         END IF;
+      GO_BLOCK('BLK_BIE_NUM_MASIV');
+      EXIT WHEN :SYSTEM.LAST_RECORD = 'TRUE';
+      NEXT_RECORD;      
+      END LOOP;
+--LIP_MENSAJE('FINAL :GLOBAL.P_BIEN_TRANS: '||:GLOBAL.P_BIEN_TRANS,'A');      
+			IF :GLOBAL.P_BIEN_TRANS > 0 THEN
+		   	LIP_MENSAJE('Proceso Terminado, no se generaron bienes hijos por ser de tipo Transferente','A');
+		   	:GLOBAL.P_BIEN_TRANS := 0;		
+		  ELSE
+		  	LIP_MENSAJE('Proceso Terminado, verifique el detalle de los bienes generados','A');	
+   		END IF;
+   END IF;
+   GO_BLOCK('BLK_BIEN_GEN_MASIV');
+END;

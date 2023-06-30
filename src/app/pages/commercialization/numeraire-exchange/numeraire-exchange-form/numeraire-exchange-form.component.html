@@ -381,8 +381,8 @@
                           placeholder="Buscador de bancos"
                           class="form-control"
                           paramSearch="filter.nombre"
-                          value="cve_banco"
                           formControlName="tiNewBank"
+                          value="cve_cuenta"
                           path="accountmvmnt/api/v1/aplication/get-data-bank"
                           (valueChange)="selectAccount($event)">
                           <ng-template let-item
@@ -440,36 +440,57 @@
                 <hr class="mw-98" />
                 <div [ngClass]="{ disabled: !selectedBank }" class="row">
                   <div class="col-sm-12 col-md-3">
-                    <form-field
-                      [control]="formBlkControl.get('tiNewDate')"
-                      label="Fecha">
-                      <ng-custom-select
-                        [moreParams]="{
-                          'filter.isFileDeposit': 'S',
-                          'filter.numberGood': '$null',
-                          'filter.numberMotion':
-                            formBlkControl.value.diNumberAccountDeposit
-                        }"
-                        [paramSearch]="'filter.deposit'"
-                        [isLikeSearch]="false"
-                        placeholder="# de movimiento"
-                        (valueChange)="changeDeposit($event)"
-                        value="numberMotion"
-                        class="form-control"
-                        path="/accountmvmnt/api/v1/account-movements">
-                        <ng-template let-item>
-                          {{
-                            '#' +
-                              item.numberMotion +
-                              ' - ' +
-                              item.dateMotion +
-                              ' - ' +
-                              '$' +
-                              item.deposit
-                          }}
+                    <div class="d-flex">
+                      <form-field
+                        class="col"
+                        [control]="formBlkControl.get('tiNewDate')"
+                        label="Fecha">
+                        <ng-container
+                          *ngIf="isSearchDate; else templateInputDate">
+                          <ng-custom-select
+                            [moreParams]="{
+                              'filter.isFileDeposit': 'S',
+                              'filter.numberGood': '$null',
+                              'filter.numberMotion':
+                                formBlkControl.value.diNumberAccountDeposit
+                            }"
+                            [paramSearch]="'filter.deposit'"
+                            [isLikeSearch]="false"
+                            placeholder="Busca por # de movimiento"
+                            (valueChange)="changeDeposit($event)"
+                            value="numberMotion"
+                            class="form-control"
+                            path="/accountmvmnt/api/v1/account-movements">
+                            <ng-template let-item>
+                              {{
+                                '#' +
+                                  item.numberMotion +
+                                  ' - ' +
+                                  item.dateMotion +
+                                  ' - ' +
+                                  '$' +
+                                  item.deposit
+                              }}
+                            </ng-template>
+                          </ng-custom-select>
+                        </ng-container>
+                        <ng-template #templateInputDate>
+                          <input
+                            formControlName="tiNewDate"
+                            class="form-control"
+                            type="text"
+                            bsDatepicker />
                         </ng-template>
-                      </ng-custom-select>
-                    </form-field>
+                      </form-field>
+                      <button
+                        (click)="isSearchDate = !isSearchDate"
+                        class="btn btn-primary active btn-sm w-auto">
+                        <i
+                          class="bx bx-{{
+                            !isSearchDate ? 'search-alt' : 'x'
+                          }} bx-sm float-icon"></i>
+                      </button>
+                    </div>
                   </div>
                   <div class="col-md-4">
                     <form-field
@@ -479,8 +500,7 @@
                       <input
                         type="number"
                         class="form-control"
-                        formControlName="diNewFile"
-                        readonly />
+                        formControlName="diNewFile" />
                     </form-field>
                   </div>
                   <div class="col-md-3">
@@ -545,9 +565,10 @@
                   <div class="col-sm-6 col-md-4 d-flex justify-content-center">
                     <div>
                       <div class="col-12">
+                        <!-- [checked]="checkedMovBan"
+                        (change)="changeGenerateMvBan($event)" -->
                         <input
-                          [checked]="checkedMovBan"
-                          (change)="changeGenerateMvBan($event)"
+                          formControlName="checkMovementBank"
                           type="checkbox" />
                         Genera Mov. Bancarios
                       </div>
@@ -608,6 +629,14 @@
           </div>
           <app-pagination [params]="params" [totalItems]="totalItems">
           </app-pagination>
+          <div>
+            <button
+              [disabled]="isLoadingMassive || !sourcesMassive.count"
+              class="btn btn-primary active"
+              (click)="saveInServerMassive()">
+              Guardar
+            </button>
+          </div>
         </tab>
       </tabset>
     </div>
