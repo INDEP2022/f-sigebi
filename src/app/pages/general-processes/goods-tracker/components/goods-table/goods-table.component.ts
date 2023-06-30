@@ -35,7 +35,6 @@ import {
   GOOD_TRACKER_ORIGINS_TITLES,
 } from '../../utils/constants/origins';
 import { ActaHistoComponent } from '../acta-histo/acta-histo.component';
-import { ViewPhotosComponent } from '../view-photos/view-photos.component';
 import { GP_GOODS_COLUMNS } from './goods-columns';
 
 @Component({
@@ -182,8 +181,60 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   }
 
   viewPhotos() {
-    const modalConfig = MODAL_CONFIG;
-    this.modalService.show(ViewPhotosComponent, modalConfig);
+    if (this.ngGlobal.bienes_foto >= 2) {
+      this.alertQuestion(
+        'question',
+        '¿Desea visualizar las fotos de todos los bienes?',
+        ''
+      ).then(answ => {
+        if (answ.isConfirmed) {
+          this.router.navigate(['pages/general-processes/good-photos'], {
+            queryParams: {
+              photo: 'S',
+              origin: 'FCONGENRASTREADOR',
+            },
+          });
+        } else {
+          const good = this.goods.filter(good => good.select == true);
+          if (good.length) {
+            if (good[0].goodNumber) {
+              this.router.navigate(['pages/general-processes/good-photos'], {
+                queryParams: {
+                  numberGood: good[0].goodNumber,
+                  origin: 'FCONGENRASTREADOR',
+                },
+              });
+            }
+          } else {
+            this.alert(
+              'warning',
+              'Visualizar Fotos',
+              'Debe seleccionar un bien',
+              ''
+            );
+          }
+        }
+      });
+    } else {
+      const good = this.goods.filter(good => good.select == true);
+      if (good.length) {
+        if (good[0].goodNumber) {
+          this.router.navigate(['pages/general-processes/good-photos'], {
+            queryParams: {
+              numberGood: good[0].goodNumber,
+              origin: 'FCONGENRASTREADOR',
+            },
+          });
+        }
+      } else {
+        this.alert(
+          'warning',
+          'Visualizar Fotos',
+          'Debe seleccionar un bien',
+          ''
+        );
+      }
+    }
   }
 
   backToText() {

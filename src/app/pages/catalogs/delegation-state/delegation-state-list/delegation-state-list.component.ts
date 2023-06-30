@@ -162,12 +162,12 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getData());
-        this.alert('success', 'Delegación estado', 'Borrado');
+        this.alert('success', 'Delegación estado', 'Borrado Correctamente');
       },
       error: err => {
         this.alert(
           'warning',
-          'Sub-tipo',
+          'Delegación estado',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },

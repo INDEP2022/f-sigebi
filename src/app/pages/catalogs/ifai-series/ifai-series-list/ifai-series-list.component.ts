@@ -115,7 +115,7 @@ export class IfaiSeriesListComponent extends BasePage implements OnInit {
   remove(id: string) {
     this.ifaiSerieService.remove(id).subscribe(
       res => {
-        this.alert('success', 'Series IFAI', 'Borrado.');
+        this.alert('success', 'Series IFAI', 'Borrado Correctamente');
         this.getExample();
       },
       err => {
