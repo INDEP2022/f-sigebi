@@ -512,10 +512,13 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       ).then(question => {
         if (question.isConfirmed) {
           // this.sendEmailUsers();
+          this.createTaskNotification();
+          this.createTaskExecuteProgramming();
+          this.createTaskFormalize();
         }
       });
     } else {
-      this.sendEmailUsers();
+      //this.sendEmailUsers();
       this.alertInfo(
         'info',
         'Acción no permitida',
