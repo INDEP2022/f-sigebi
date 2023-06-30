@@ -1,12 +1,65 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Estado de cuenta (Depósito)</h5>
+    <div class="mr-2">
+      <div class="d-inline mr-2" *ngIf="!searchMode && !loading">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="enableSearchMode()">
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="d-inline mx-2" *ngIf="searchMode && !loading">
+        <div class="btn-group">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            (click)="confirmSearch()">
+            <i class="bx bx-check bx-sm float-icon"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            (click)="cancelSearch()">
+            <i class="bx bx-x bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
   <div body>
-    <h5 class="title">Datos del Depósito</h5>
-    <div class="row mt-3 mb-3">
+    <div class="row">
+      <div class="col-md-12">
+        <h5 class="title">
+          <i class="fa fa-filter" aria-hidden="true"></i> Filtrar por:
+        </h5>
+      </div>
+    </div>
+    <div class="row mt-2 mb-1">
       <form action="" class="form-material" [formGroup]="form">
-        <div class="row mt-4">
+        <div class="row pt-5">
+          <div class="col-md-3">
+            <form-field [control]="form.get('goodId')" label="No. Bien">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="goodId" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('fileNumber')"
+              label="No. Expediente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="fileNumber" />
+            </form-field>
+          </div>
+        </div>
+        <h5 class="title">Datos del Depósito</h5>
+        <div class="row pt-4 mt-4">
           <div class="col-md-3">
             <form-field [control]="form.get('account')" label="Cuenta">
               <input
@@ -45,7 +98,6 @@
               <input
                 type="text"
                 formControlName="depositDate"
-                placeholder="Fecha"
                 class="form-control"
                 bsDatepicker />
             </form-field>
@@ -57,7 +109,6 @@
               <input
                 type="text"
                 formControlName="transfDate"
-                placeholder="Fecha"
                 class="form-control"
                 bsDatepicker />
             </form-field>
@@ -67,19 +118,22 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="proceedings"
-                min="1"
-                pattern="^[0-9]+" />
+                formControlName="proceedings" />
             </form-field>
           </div>
           <div class="col-md-3">
             <form-field [control]="form.get('good')" label="Bien">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="good"
-                min="1"
-                pattern="^[0-9]+" />
+              <!--<ngx-select
+                label="Bien"
+                [form]="form"
+                control="good"
+                [data]="goodSelect"
+                value="id"
+                bindLabel="description"
+                label="Bien"
+                (fetchItems)="getGood($event)"
+                (change)="changeGood($event)"></ngx-select>-->
+              <input type="text" class="form-control" formControlName="good" />
             </form-field>
           </div>
         </div>
@@ -132,7 +186,6 @@
               <input
                 type="text"
                 formControlName="transferDate"
-                placeholder="Fecha"
                 class="form-control"
                 bsDatepicker />
             </form-field>
@@ -144,7 +197,6 @@
               <input
                 type="text"
                 formControlName="cutoffDate"
-                placeholder="Fecha"
                 class="form-control"
                 bsDatepicker />
             </form-field>

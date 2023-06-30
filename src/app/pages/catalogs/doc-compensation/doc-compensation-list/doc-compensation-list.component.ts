@@ -114,7 +114,11 @@ export class DocCompensationListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.docCompensationService.removeCatalogDocCompensation(id).subscribe({
       next: response => {
-        this.alert('success', 'Documento Resarcimiento', 'Borrado'),
+        this.alert(
+          'success',
+          'Documento resarcimiento',
+          'Borrado Correctamente'
+        ),
           this.getDocCompensation();
       },
       error: err => {

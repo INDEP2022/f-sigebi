@@ -11,6 +11,7 @@ import { BasePage } from 'src/app/core/shared';
 import { ServiceGetAll } from 'src/app/core/shared/base-page-dinamic-filters';
 import { data } from './data';
 import { GOODS_AVAILABLE_SALE_COLUMNS } from './goods-available-sale-columns';
+//import { BasePage } from 'src/app/core/shared';
 
 @Component({
   selector: 'goods-available-sale-list',

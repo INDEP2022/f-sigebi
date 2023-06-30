@@ -139,7 +139,7 @@ export class DetailDelegationListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.detailDelegationService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Detalle Delegación', 'Borrado');
+        this.alert('success', 'Detalle delegación', 'Borrado Correctamente');
         this.getDetailDelegation();
       },
       error: error => {

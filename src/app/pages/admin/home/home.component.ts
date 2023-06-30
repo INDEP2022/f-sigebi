@@ -48,6 +48,7 @@ interface IUser {
   username: string;
   person: IPerson;
   roles: IRole[];
+  currency: string;
 }
 
 interface IRole {
@@ -177,6 +178,7 @@ export class HomeComponent extends BasePage implements OnInit {
       person: this.personForm,
       roles: this.fb.array([this.roleForm]),
       username: [''],
+      currency: [null, []],
     });
   }
 
@@ -329,6 +331,16 @@ export class HomeComponent extends BasePage implements OnInit {
           noTransferente: null,
           gNoVolante: null,
           varDic: null,
+          bienes_foto: 0,
+          EXPEDIENTE: null,
+          TIPO_DIC: null,
+          VOLANTE: null,
+          CONSULTA: null,
+          TIPO_VO: null,
+          P_GEST_OK: null,
+          P_NO_TRAMITE: null,
+          IMP_OF: null,
+          REL_BIENES: null,
         };
 
         this.globalVarsService.updateGlobalVars(newState);

@@ -124,7 +124,8 @@ export class SubDelegationListComponent extends BasePage implements OnInit {
   delete1(data: any) {
     this.subdelegationService.remove(data).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Sub Delegaciones', 'Borrado');
+        this.getExample(),
+          this.alert('success', 'Sub delegacion', 'Borrado Correctamente');
       },
       error: err => {
         this.alert(

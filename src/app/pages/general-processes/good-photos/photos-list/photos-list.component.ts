@@ -36,6 +36,8 @@ export class PhotosListComponent extends BasePage implements OnInit {
     this._goodNumber = value;
     if (value) {
       this.getData();
+    } else {
+      this.files = [];
     }
   }
   private _goodNumber: string | number;
@@ -116,7 +118,12 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   showHistoric() {
-    const modalConfig = MODAL_CONFIG;
+    const modalConfig = {
+      ...MODAL_CONFIG,
+      initialState: {
+        goodNumber: this.goodNumber + '',
+      },
+    };
     this.modalService.show(PhotosHistoricComponent, modalConfig);
   }
 
@@ -161,6 +168,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   private async getData() {
+    this.files = [];
     this.lastConsecutive = 1;
     this.filePhotoService
       .getAll(this.goodNumber + '')
@@ -231,6 +239,10 @@ export class PhotosListComponent extends BasePage implements OnInit {
         this.filesToDelete = [];
         this.getData();
       },
+      error: err => {
+        this.filesToDelete = [];
+        this.getData();
+      },
     });
   }
 
@@ -258,6 +270,8 @@ export class PhotosListComponent extends BasePage implements OnInit {
         uploadFiles: false,
         service: this.filePhotoService,
         identificator: this.goodNumber + '',
+        titleFinishUpload: 'Imagenes cargadas correctamente',
+        questionFinishUpload: '¿Desea subir más imagenes?',
         callback: (refresh: boolean) => {
           console.log(refresh);
           this.fileUploaderClose(refresh);
@@ -265,6 +279,12 @@ export class PhotosListComponent extends BasePage implements OnInit {
       },
     };
     this.modalService.show(FileUploadModalComponent, config);
+  }
+
+  refresh(reload: boolean) {
+    if (reload) {
+      this.getData();
+    }
   }
 
   fileUploaderClose(refresh: boolean) {

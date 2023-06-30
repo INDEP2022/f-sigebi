@@ -119,7 +119,8 @@ export class FractionsListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.fractionService.remove(id).subscribe({
       next: response => {
-        this.alert('success', 'Fraccion', 'Borrado'), this.getFractions();
+        this.alert('success', 'Fracción', 'Borrado Correctamente'),
+          this.getFractions();
       },
       error: err => {
         this.alert(
