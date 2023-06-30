@@ -19,4 +19,6 @@ export enum ProceedingsEndpoints {
   UpdateActasEntregaRecepcion = 'aplication/update-actasEntregaRecepcion',
   UpdateActasRDelegation = 'aplication/minutesNumberXdelegation2',
   GoStatus = 'aplication/get-count-good',
+  ExistProceedings = 'aplication/getExistsproceedings',
+  GetUnion = 'aplication/getUnionTables',
 }
