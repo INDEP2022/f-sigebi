@@ -1,6 +1,6 @@
 export const ESTATE_COLUMNS = {
   googId: {
-    title: 'Nº gestión',
+    title: 'Nº Gestión',
     type: 'string',
     sort: false,
   },
@@ -23,19 +23,19 @@ export const ESTATE_COLUMNS = {
   },
 
   decriptionGoodSae: {
-    title: 'Descripción Bien SAE',
+    title: 'Descripción Bien INDEP',
     type: 'string',
     sort: false,
   },
 
   quantity: {
-    title: 'Cantidad transferente',
+    title: 'Cantidad Transferente',
     type: 'string',
     sort: false,
   },
 
   unitMeasurement: {
-    title: 'Unidad Transferente',
+    title: 'Unidad Medida Transferente',
     type: 'string',
     sort: false,
   },
@@ -58,7 +58,7 @@ export const ESTATE_COLUMNS = {
   },
 
   aliasWarehouse: {
-    title: 'Alias almacén',
+    title: 'Alias Almacén',
     type: 'string',
     sort: false,
   },
@@ -118,18 +118,6 @@ export const ESTATE_COLUMNS_VIEW = {
     sort: false,
   },
 
-  quantitySae: {
-    title: 'Cantidad INDEP',
-    type: 'string',
-    sort: false,
-  },
-
-  unitMeasure: {
-    title: 'Unidad de Medida Transferente',
-    type: 'string',
-    sort: false,
-  },
-
   saeMeasureUnit: {
     title: 'Unidad de medida INDEP',
     type: 'string',
@@ -180,6 +168,17 @@ export const ESTATE_COLUMNS_VIEW = {
     },
   },
 
+  quantitySae: {
+    title: 'Cantidad INDEP',
+    type: 'string',
+    sort: false,
+  },
+
+  unitMeasure: {
+    title: 'Unidad Medida Transferente',
+    type: 'string',
+    sort: false,
+  },
   observations: {
     title: 'Observación',
     type: 'string',
@@ -189,7 +188,7 @@ export const ESTATE_COLUMNS_VIEW = {
 
 export const ESTATE_COLUMNS_NOTIFY = {
   gestionNumber: {
-    title: 'Número gestión',
+    title: 'Nº Gestión',
     type: 'string',
     sort: false,
   },
@@ -212,13 +211,13 @@ export const ESTATE_COLUMNS_NOTIFY = {
   },
 
   transerAmount: {
-    title: 'Cantidad transferente',
+    title: 'Cantidad Transferente',
     type: 'string',
     sort: false,
   },
 
   transerUnit: {
-    title: 'Unidad transferente',
+    title: 'Unidad Transferente',
     type: 'string',
     sort: false,
   },
@@ -261,7 +260,7 @@ export const ESTATE_COLUMNS_1 = {
   },
 
   unitMeasure: {
-    title: 'Unidad de Medida Transferente',
+    title: 'Unidad Medida Transferente',
     type: 'string',
     sort: false,
   },

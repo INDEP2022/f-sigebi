@@ -316,6 +316,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   ngAfterViewInit() {
     const selectedBadString = localStorage.getItem('selectedBad');
+    const derivationGoodId = localStorage.getItem('derivationGoodId');
+
     const actualGoodNumberString = localStorage.getItem(
       'goodCharacteristicNumber'
     );
@@ -326,6 +328,12 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           this.enabledFotos();
         }, 1000);
       }
+    }
+    if (derivationGoodId) {
+      setTimeout(() => {
+        this.selectTab(0, 1);
+        this.enabledFotos();
+      }, 1000);
     } else {
       setTimeout(() => {
         this.selectTab(1, 0);
