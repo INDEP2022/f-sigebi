@@ -29,6 +29,7 @@ export class PersonListComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   origin: string = '';
   no_bien: number = null;
+  no_nom: number = null;
 
   constructor(
     private personService: PersonService,
@@ -60,6 +61,7 @@ export class PersonListComponent extends BasePage implements OnInit {
         this.origin = params['origin'] ?? null;
         if (this.origin == 'FACTJURREGDESTLEG') {
           this.no_bien = params['no_bien'] ?? null;
+          this.no_nom = params['p_nom'] ?? null;
         }
         console.log(params);
       });
@@ -243,9 +245,14 @@ export class PersonListComponent extends BasePage implements OnInit {
   }
   goBack() {
     if (this.origin == 'FACTJURREGDESTLEG') {
-      this.router.navigate([
-        '/pages/juridical/depositary/depositary-record/' + this.no_bien,
-      ]);
+      this.router.navigate(
+        ['/pages/juridical/depositary/depositary-record/' + this.no_bien],
+        {
+          queryParams: {
+            p_nom: this.no_nom,
+          },
+        }
+      );
     } else {
       this.alert(
         'warning',
