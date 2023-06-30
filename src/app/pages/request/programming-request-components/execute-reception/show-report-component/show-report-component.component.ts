@@ -463,7 +463,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
             );
 
             if (updateProgramming) {
-              this.onLoadToast(
+              this.alert(
                 'success',
                 'Documento Guardado',
                 'El documento se guardó correctamente'

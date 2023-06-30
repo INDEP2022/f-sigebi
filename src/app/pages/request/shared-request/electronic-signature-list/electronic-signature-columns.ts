@@ -12,7 +12,7 @@ export const ELECTRONIC_SGIGNATURE_COLUMNS = {
   },
 
   status: {
-    title: 'Estatus registro',
+    title: 'Estatus Registro',
     type: 'string',
     sort: false,
   },
