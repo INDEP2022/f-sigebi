@@ -9,25 +9,20 @@
         Inventario seleccionado:
         <strong>{{
           inventorySelect ? inventorySelect.inventoryNumber : ''
-        }}</strong>
+          }}</strong>
       </p>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
       <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          [settings]="settings"
-          [source]="dataLoand"
-          (rowSelect)="selectInventory($event)">
+        <ng2-smart-table [settings]="settings" [source]="dataLoand" (rowSelect)="selectInventory($event)">
         </ng2-smart-table>
       </div>
     </div>
   </div>
   <div class="row">
-    <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+    <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
   </div>
 </div>
 <div class="row">
@@ -40,24 +35,13 @@
           </form-field>
         </div> -->
         <div class="col-md-6">
-          <form-field
-            [control]="inventoryDataForm.get('fechaInventario')"
-            label="Fecha Inventario">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="fechaInventario"
-              bsDatepicker />
+          <form-field [control]="inventoryDataForm.get('fechaInventario')" label="Fecha Inventario">
+            <input type="text" class="form-control" formControlName="fechaInventario" bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field
-            [control]="inventoryDataForm.get('responsable')"
-            label="Responsable">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="responsable" />
+          <form-field [control]="inventoryDataForm.get('responsable')" label="Responsable">
+            <input type="text" class="form-control" formControlName="responsable" />
           </form-field>
         </div>
       </div>
@@ -81,10 +65,7 @@
       >
       Obtener Atributos
     </button> -->
-    <button
-      [disabled]="generateAtri"
-      class="btn btn-secondary btn-sm active mt-2"
-      (click)="generateAtribute()">
+    <button [disabled]="generateAtri" class="btn btn-secondary btn-sm active mt-2" (click)="generateAtribute()">
       Generar Atributos
     </button>
     <!-- [disabled]="disableGetAtribute" -->
@@ -92,30 +73,16 @@
   <div class="col">
     <div class="row" *ngIf="viewAct">
       <app-characteristics-legend></app-characteristics-legend>
-      <app-good-characteristics-table
-        [goodChange]="goodChange"
-        [clasification]="classificationOfGoods"
-        [settings]="atributActSettings"
-        [avaluo]="false"
-        [good]="good"
-        [disabled]="false"
-        [loadInventary]="loadInventary"
-        [inventary]="inventary"
-        [initValue]="true"
+      <app-good-characteristics-table [goodChange]="goodChange" [clasification]="classificationOfGoods"
+        [settings]="atributActSettings" [avaluo]="false" [good]="good" [disabled]="false"
+        [loadInventary]="loadInventary" [inventary]="inventary" [initValue]="true"
         [service]="service"></app-good-characteristics-table>
     </div>
     <div class="row" *ngIf="!viewAct">
       <app-characteristics-legend></app-characteristics-legend>
-      <app-good-characteristics-table
-        [goodChange]="goodChange"
-        [clasification]="classificationOfGoods"
-        [settings]="atributNewSettings"
-        [avaluo]="false"
-        [good]="good"
-        [disabled]="false"
-        [loadInventary]="loadInventary"
-        [inventary]="inventary"
-        [service]="service"
+      <app-good-characteristics-table [goodChange]="goodChange" [clasification]="classificationOfGoods"
+        [settings]="atributNewSettings" [avaluo]="false" [good]="good" [disabled]="false"
+        [loadInventary]="loadInventary" [inventary]="inventary" [service]="service"
         [initValue]="false"></app-good-characteristics-table>
     </div>
   </div>
