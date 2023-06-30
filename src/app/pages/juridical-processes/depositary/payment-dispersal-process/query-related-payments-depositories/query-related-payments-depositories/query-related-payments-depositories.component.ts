@@ -97,6 +97,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
   totalItemsSirsae: number = 0;
   currentItemSirsae: number = 0;
   currentPageSirsae: number = 0;
+  errorSirSae: number = 0;
   // Errores de Sirsae
   errorsSirsae: any[] = [];
   screenKey: string = 'FCONDEPODISPAGOS';
@@ -297,6 +298,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
     this.totalItemsSirsae = 0;
     this.currentItemSirsae = 0;
     this.currentPageSirsae = 1;
+    this.errorSirSae = 0;
   }
 
   btnImprimir(): any {
@@ -500,7 +502,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.totalItemsPayBanks = 0;
           this.dataTablePayBanks.refresh();
           this.loadingTablePayBanks = false;
-          this.alertQuestion(
+          this.alert(
             'warning',
             'Pagos Recibidos en el Banco',
             NOT_FOUND_PAYMENTS_BANK(err.error.message)
@@ -577,7 +579,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.totalItemsReceivedPays = 0;
           this.dataTableReceivedPays.refresh();
           this.loadingTableReceivedPays = false;
-          this.alertQuestion(
+          this.alert(
             'warning',
             'Composición de Pagos Recibidos',
             NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS(err.error.message)
@@ -671,6 +673,15 @@ export class QueryRelatedPaymentsDepositoriesComponent
         // );
         this.loadingSirsaeProcess = false;
         this.form.get('noBien').enable();
+        if (this.errorSirSae > 0) {
+          this.alert(
+            'warning',
+            'Ocurrió un error en el proceso, intente nuevamente',
+            'Se mostrará un excel con detalles de los errores por cada registro procesado'
+          );
+        } else {
+          this.alert('success', 'PROCESO TERMINADO ', '');
+        }
       }
     }
   }
@@ -706,11 +717,17 @@ export class QueryRelatedPaymentsDepositoriesComponent
         }
       },
       error: err => {
+        this.errorSirSae++;
         this.currentItemSirsae++;
         let obj: any = {};
         obj = dataComplete[count];
-        obj['errores'] = err.error.message;
-        obj['lstLot'] = err.error.message;
+        if (err.status == 500) {
+          obj['errores'] = 'Error al procesar este registro';
+          obj['lstLot'] = 'Realice el proceso nuevamente de envio SIRSAE';
+        } else {
+          obj['errores'] = err.error.message;
+          obj['lstLot'] = err.error.message;
+        }
         this.errorsSirsae.push(obj);
         if (dataLength == count + 1) {
           this.currentPageSirsae++;

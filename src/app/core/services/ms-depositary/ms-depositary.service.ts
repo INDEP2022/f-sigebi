@@ -7,6 +7,7 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IAppointmentDepositary,
   IDepositaryAppointments,
+  IDepositaryAppointments_custom,
   IDepositaryPaymentDet,
   IInfoDepositary,
   IPaymendtDepParamsDep,
@@ -178,8 +179,8 @@ export class MsDepositaryService extends HttpService {
 
   getAllFilteredFactJurRegDestLeg(
     params?: _Params
-  ): Observable<IListResponse<IAppointmentDepositary>> {
-    return this.get<IListResponse<IAppointmentDepositary>>(
+  ): Observable<IListResponse<IDepositaryAppointments_custom>> {
+    return this.get<IListResponse<IDepositaryAppointments_custom>>(
       DepositaryEndPoints.FactJurRegDestLeg,
       params
     );
