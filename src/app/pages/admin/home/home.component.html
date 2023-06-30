@@ -260,30 +260,47 @@ imports: [
     <div class="row">
       <h5>Ejemplo de formulario tipado</h5>
       <form [formGroup]="userExample" class="form-material">
-
         <div class="row pt-3">
           <div class="col-md-3">
-            <form-field label="Formato de Moneda" [control]="userExample.get('currency')">
-              <input currencyMask type="Formato Moneda" class="form-control" formControlName="currency" />
+            <form-field
+              label="Formato de Moneda"
+              [control]="userExample.get('currency')">
+              <input
+                currencyMask
+                type="Formato Moneda"
+                class="form-control"
+                formControlName="currency" />
             </form-field>
           </div>
         </div>
 
-
         <div class="row pt-3">
-          <form-field [control]="userExample.get('username')" label="Input Usuario">
-            <input type="text" class="form-control" formControlName="username" />
+          <form-field
+            [control]="userExample.get('username')"
+            label="Input Usuario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="username" />
           </form-field>
         </div>
         <ng-container formGroupName="person">
           <div class="row pt-3">
-            <form-field [control]="personForm.get('name')" label="Input Nombre Persona">
+            <form-field
+              [control]="personForm.get('name')"
+              label="Input Nombre Persona">
               <input type="text" class="form-control" formControlName="name" />
             </form-field>
           </div>
           <div class="row pt-3">
-            <form-field [control]="personForm.get('birthdate')" label="Input Fecha Persona">
-              <input type="text" class="form-control" formControlName="birthdate" bsDatepicker />
+            <form-field
+              [control]="personForm.get('birthdate')"
+              label="Input Fecha Persona">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="birthdate"
+                bsDatepicker />
             </form-field>
           </div>
         </ng-container>
