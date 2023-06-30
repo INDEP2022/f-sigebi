@@ -9,7 +9,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { IInstitutionClassification } from '../../../../core/models/catalogs/institution-classification.model';
 import { InstitutionClasificationService } from '../../../../core/services/catalogs/institution-classification.service';
 import { InstitutionClassificationDetailComponent } from '../institution-classification-detail/institution-classification-detail.component';
@@ -109,14 +108,21 @@ export class InstitutionClassificationListComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(institution.id);
-        Swal.fire('Borrado', '', 'success');
+        //Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.institutionService.remove(id).subscribe({
-      next: () => this.getInstitutions(),
+      next: () => {
+        this.getInstitutions();
+        this.alert(
+          'success',
+          'Clasificación de institución',
+          'Borrado Correctamente'
+        );
+      },
     });
   }
 }

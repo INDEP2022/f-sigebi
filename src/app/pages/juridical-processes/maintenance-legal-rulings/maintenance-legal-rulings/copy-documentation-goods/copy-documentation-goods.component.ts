@@ -13,6 +13,7 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ICopiesOfficialOpinion } from 'src/app/core/models/ms-dictation/copies-official-opinion.model';
+import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/catalogs/copies-official-opinion.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CopyDocumentationGoodsDialogComponent } from '../dialogs/copy-documentation-goods-dialog/copy-documentation-goods-dialog.component';
@@ -43,6 +44,7 @@ export class CopyDocumentationGoodsComponent
 
   dataTable: ICopiesOfficialOpinion[] = [];
 
+  @Input() dictation: IDictation;
   @Input() set loadingData(value: boolean) {
     this.loading = value;
   }
@@ -73,6 +75,12 @@ export class CopyDocumentationGoodsComponent
   openForm(copiesOfficial?: ICopiesOfficialOpinion) {
     let config: ModalOptions = {
       initialState: {
+        dataCreate: this.dictation
+          ? {
+              numberOfDicta: this.dictation.id,
+              typeDictamination: this.dictation.typeDict,
+            }
+          : null,
         copiesOfficial,
         callback: (next: boolean) => {
           if (next) this.loadingDialog.emit(true);

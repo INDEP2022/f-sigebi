@@ -13,6 +13,7 @@ import {
   ILvlPrograma,
   IValNumeOtro,
 } from '../../models/ms-good/good';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -156,5 +157,13 @@ export class GoodProcessService extends HttpService {
     clasifGooNumber: string | number;
   }) {
     return this.post('update-good-status/getLabelDescrip', body);
+  }
+
+  postExistsGoodxStatus(body: {
+    pVcScreem: string;
+    goodNumber: string;
+    proccesExtDom: string;
+  }): Observable<IListResponse<any>> {
+    return this.post('application/getExistsGoodxStatus', body);
   }
 }

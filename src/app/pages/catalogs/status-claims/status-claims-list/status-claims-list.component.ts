@@ -110,7 +110,8 @@ export class StatusClaimsListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.statusClaimsService.remove(id).subscribe({
       next: () => {
-        this.getStatus(), this.alert('success', 'Estado Siniestro', 'Borrado');
+        this.getStatus(),
+          this.alert('success', 'Estado siniestro', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

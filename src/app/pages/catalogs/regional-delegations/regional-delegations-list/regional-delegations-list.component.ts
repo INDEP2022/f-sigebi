@@ -137,7 +137,7 @@ export class RegionalDelegationsListComponent
   delete(id: number) {
     this.regionalDelegationService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Delegación Regional', 'Borrado');
+        this.alert('success', 'Delegación regional', 'Borrado Correctamente');
         this.getRegionalDelegations();
       },
       error: error => {

@@ -130,7 +130,7 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
     this.satClassificationService.remove(id).subscribe({
       next: () => {
         this.getSatClasifications(),
-          this.alert('success', 'Sat clasificación', 'Borrado');
+          this.alert('success', 'Sat clasificación', 'Borrado Correctamente');
       },
       error: err => {
         this.alert(
