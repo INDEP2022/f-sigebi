@@ -3,7 +3,7 @@ import { CurrencyPipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, catchError, forkJoin, map, of } from 'rxjs';
+import { BehaviorSubject, catchError, firstValueFrom, map, of } from 'rxjs';
 import { GoodEndpoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
 import {
   generateUrlOrPath,
@@ -17,7 +17,9 @@ import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.mo
 import { IAccountMovement } from 'src/app/core/models/ms-account-movements/account-movement.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -259,7 +261,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   ];
 
   readonly NAME_CURRENT_FORM = 'FACTADBCAMBIONUME';
-  // validNumerary: 'loading' | 'error' | 'valid' | 'notValid' = 'loading';
+  validNumerary: 'loading' | 'error' | 'valid' | 'notValid' = 'loading';
   infoToken: TokenInfoModel;
 
   constructor(
@@ -267,7 +269,9 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     private numeraryService: NumeraryService,
     private statusScreenService: ScreenStatusService,
     private goodService: GoodService,
-    private authService: AuthService
+    private authService: AuthService,
+    private massiveGoodService: MassiveGoodService,
+    private goodProcessService: GoodProcessService
   ) {
     super();
   }
@@ -391,7 +395,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   //   if (event) this.validateGood(event.goodId);
   // }
 
-  validateGood(good: number) {
+  async validateGood(good: number) {
     /*
     !data.goodArray &&
      !data.action &&
@@ -425,75 +429,58 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       bie.PROCESO_EXT_DOM = est.PROCESO_EXT_DOM and 
       bie.no_clasif_bien not in (SELECT NO_CLASIF_BIEN FROM SERA.CAT_SSSUBTIPO_BIEN WHERE NO_TIPO = 7 AND NO_SUBTIPO = 1)` : ''}
       */
-    const validate1 = this.statusScreenService
-      .getStatus({
-        whereIn: true,
-        screen: this.NAME_CURRENT_FORM,
-        count: false,
-        good,
-      })
-      .pipe(
-        map((res: any) => {
-          if (res.data && Array.isArray(res.data) && res.data.length > 0) {
-            try {
-              return { isAvailable: Boolean(parseInt(res.data[0].count)) };
-            } catch (error) {
-              return { isAvailable: false };
-            }
-          }
-          return { isAvailable: false };
-        }),
-        catchError(() => {
-          return of({ isAvailable: false });
-        })
-      );
-    const validate2 = this.statusScreenService
-      .getStatus({
-        whereIn: true,
-        good,
-        count: false,
-        screen: this.NAME_CURRENT_FORM,
-      })
-      .pipe(
-        map((res: any) => {
-          if (res.data && Array.isArray(res.data) && res.data.length > 0) {
-            return { isValidNumerary: true };
-          }
-          return { isValidNumerary: false };
-        }),
-        catchError(() => {
-          return of({ isValidNumerary: false });
-        })
-      );
+    // const validate1 = this.statusScreenService
+    //   .getStatus({
+    //     whereIn: true,
+    //     screen: this.NAME_CURRENT_FORM,
+    //     count: false,
+    //     good,
+    //   })
+    //   .pipe(
+    //     map((res: any) => {
+    //       if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+    //         try {
+    //           return { isAvailable: Boolean(parseInt(res.data[0].count)) };
+    //         } catch (error) {
+    //           return { isAvailable: false };
+    //         }
+    //       }
+    //       return { isAvailable: false };
+    //     }),
+    //     catchError(() => {
+    //       return of({ isAvailable: false });
+    //     })
+    //   );
+    const body = {
+      pVcScreem: this.NAME_CURRENT_FORM,
+      goodNumber: good as any,
+      proccesExtDom: this.formGood.value.extDomProcess,
+    };
 
-    forkJoin([validate1, validate2]).subscribe({
-      next: (res: any[]) => {
-        const isAvailable = res[0].isAvailable;
-        const isValidNumerary = res[1].isValidNumerary;
-        this.validNumerary = isValidNumerary ? 'valid' : 'notValid';
-        if (
-          (isValidNumerary && isAvailable) ||
-          (isValidNumerary && !isAvailable)
-        ) {
-          this.onLoadToast(
-            'info',
-            'Advertencia',
-            'El bien consultado también puede ser convertido a numerario por valores y divisas. \n Verifique su tipo de conversión antes de continuar con el proceso'
-          );
-        }
-        if (!isValidNumerary && !isAvailable) {
-          this.onLoadToast(
-            'warning',
-            'Advertencia',
-            'Estatus, identificador o clasificador inválido para cambio a numerario/valores y divisas'
-          );
-        }
-      },
-      error: error => {
-        this.validNumerary = 'error';
-        console.log(error);
-      },
-    });
+    const availableGood = await firstValueFrom(
+      this.goodProcessService.postExistsGoodxStatus(body).pipe(
+        map(res => (res.count > 0 ? true : false)),
+        catchError(() => of(false))
+      )
+    );
+    const validateNumerary = await this.pupValidNumerary();
+    if (
+      (validateNumerary && availableGood) ||
+      (validateNumerary && !availableGood)
+    ) {
+      this.onLoadToast(
+        'info',
+        'Advertencia',
+        'El bien consultado también puede ser convertido a numerario por valores y divisas. \n Verifique su tipo de conversión antes de continuar con el proceso'
+      );
+    }
+    if (!validateNumerary && !availableGood) {
+      this.onLoadToast(
+        'warning',
+        'Advertencia',
+        'Estatus, identificador o clasificador inválido para cambio a numerario/valores y divisas'
+      );
+    }
   }
 
   getFile(event: Event) {
@@ -544,6 +531,22 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     });
   }
 
+  async pupValidNumerary() {
+    const body = {
+      whereIn: true,
+      good: this.formGood.value.id,
+      count: false,
+      screen: this.NAME_CURRENT_FORM,
+    };
+    const numeraryAvailable = await firstValueFrom(
+      this.statusScreenService.getStatus(body).pipe(
+        map(res => (res.count > 0 ? true : false)),
+        catchError(() => of(false))
+      )
+    );
+    return numeraryAvailable;
+  }
+
   selectAccount(account: {
     cve_banco: string;
     nombre: string;
@@ -568,7 +571,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     // this.form.get('bankNew').setValue(account?.cveBank || null);
   }
 
-  saveInServer(): void {
+  async saveInServer(): Promise<void> {
     // this.validateForm().then(isValid => {
     //   console.log(isValid);
     //   console.log(this.form.value);
@@ -588,6 +591,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 	    RAISE FORM_TRIGGER_FAILURE;
       END IF;
     */
+    console.log(this.formBlkControl.value);
     if (!this.formGood.value.id) {
       this.alert(
         'warning',
@@ -616,10 +620,105 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        'No ha seleccionado debidamente del deposito que ampara el cambio a numerario'
+        'No ha seleccionado el tipo de conversión'
       );
       return;
     }
+    const validNumerary = await this.pupValidNumerary();
+    if (!this.formBlkControl.value.diNewCurrency && validNumerary) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Debe especificar el tipo de moneda'
+      );
+      return;
+    }
+    if (
+      (validNumerary &&
+        !['CNE', 'BBB'].includes(this.formBlkControl.value.typeConversion)) ||
+      (!validNumerary && this.formBlkControl.value.typeConversion == 'CNE')
+    ) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'El tipo de conversión seleccionado no es permitido para este bien.'
+      );
+      return;
+    }
+
+    if (!this.formGood.value.importSell) {
+      const questionResponse1 = await this.alertQuestion(
+        'question',
+        'Advertencia',
+        'El nuevo bien se generara con un precio de venta de 1. ¿Desea continuar?'
+      );
+      if (!questionResponse1.isConfirmed) {
+        return;
+      }
+      const questionResponse2 = await this.alertQuestion(
+        'question',
+        'Advertencia',
+        '¿Seguro que desea cambiar el bien a numerario?'
+      );
+      if (questionResponse2.isConfirmed) {
+        await this.pupCreateGood();
+      }
+    } else {
+      const questionResponse = await this.alertQuestion(
+        'question',
+        'Advertencia',
+        '¿Seguro que desea cambiar el bien a numerario?'
+      );
+      if (questionResponse.isConfirmed) {
+        await this.pupCreateGood();
+      }
+    }
+  }
+
+  async pupCreateGood(): Promise<any> {
+    const spent = this.getDataForTableExpenses();
+
+    const body: any = {
+      screenKey: this.NAME_CURRENT_FORM,
+      clasifGoodNumber: null,
+      spentPlus: null,
+      amounten: null,
+      description: this.form.value.description,
+      amountevta: this.formGood.value.importSell,
+      typeConv: this.formBlkControl.value.typeConversion,
+      spentId: spent?.spentId,
+      totalAmount: null,
+      status: this.formGood.value.status,
+      identificator: this.formGood.value.identifier,
+      processExt: this.formGood.value.extDomProcess,
+      ivavta: this.formGood.value.taxSell,
+      commission: this.formGood.value.commission,
+      ivacom: this.formGood.value.taxCommission,
+      goodId: this.formGood.value.id,
+      delegationNumber: this.formGood.value.delegationNumber,
+      subDelegationNumber: this.formGood.value.subDelegationNumber,
+      fileNumber: this.formGood.value.fileNumber,
+      user: this.infoToken.preferred_username.toUpperCase(),
+      bankNew: this.formBlkControl.value.tiNewBank,
+      moneyNew: this.formBlkControl.value.diNewCurrency,
+      accountNew: this.formBlkControl.value.diNewAccount,
+      comment: this.formBlkControl.value.comment,
+      expAssociated: this.formGood.value.associatedFileNumber,
+      dateNew: this.formBlkControl.value.tiNewDate,
+      token: this.formBlkControl.value.tiNewFile,
+    };
+    await firstValueFrom(
+      this.goodService.changeGoodToNumerary(body).pipe(
+        catchError(err => {
+          this.alert(
+            'error',
+            'Error',
+            'Ocurrió un error al cambiar el bien a numerario'
+          );
+          throw err;
+        })
+      )
+    );
   }
 
   saveInSerServerMassive(): void {}
