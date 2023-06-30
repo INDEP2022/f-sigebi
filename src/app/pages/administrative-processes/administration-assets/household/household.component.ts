@@ -71,7 +71,15 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
-            searchFilter = SearchFilter.ILIKE;
+
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilter[field] = `${searchFilter}:${filter.search}`;
               console.log('this.param:', this.params);
