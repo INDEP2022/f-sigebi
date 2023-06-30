@@ -7,8 +7,6 @@ import {
   FILE_UPLOAD_STATUSES,
 } from '../interfaces/file-event';
 import { FileUploadService } from '../service/file-upload.service';
-import { BasePage } from 'src/app/core/shared';
-import { ModalOptions } from 'ngx-bootstrap/modal';
 
 export interface IUploadEvent {
   fileEvents: FileUploadEvent[];
