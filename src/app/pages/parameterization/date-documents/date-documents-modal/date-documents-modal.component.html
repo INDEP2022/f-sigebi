@@ -72,6 +72,17 @@
       <div class="row pt-3">
         <div class="col-md-4">
           <form-field
+            [control]="dateDocumentsModalForm.get('insertionDate')"
+            label="Fecha insercion">
+            <input
+              type="text"
+              formControlName="insertionDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
             [control]="dateDocumentsModalForm.get('userReceipt')"
             label="Usuario insercion">
             <input

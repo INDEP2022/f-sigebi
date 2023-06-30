@@ -1,5 +1,7 @@
+import { Location } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import {
   catchError,
   debounceTime,
@@ -43,6 +45,7 @@ export class ChangeOfGoodClassificationComponent
   implements OnInit
 {
   //Reactive Forms
+  origin: number = null;
   usuarVal: string;
   form: FormGroup;
   status = new DefaultSelect<IStatusCode>();
@@ -121,6 +124,8 @@ export class ChangeOfGoodClassificationComponent
 
   constructor(
     private fb: FormBuilder,
+    private activatedRoute: ActivatedRoute,
+    private location: Location,
     private readonly goodServices: GoodService,
     private readonly classifyGoodServices: ClassifyGoodService,
     private readonly labeGoodServices: LabelGoodService,
@@ -195,6 +200,18 @@ export class ChangeOfGoodClassificationComponent
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams.subscribe({
+      next: param => {
+        if (param['numberGood']) {
+          this.numberGood.setValue(param['numberGood']);
+          this.origin = 1;
+          this.loadGood();
+        } else {
+          this.origin = 0;
+        }
+      },
+    });
+
     this.buildForm();
     this.buildFormNew();
     this.numberGood.valueChanges
@@ -224,6 +241,10 @@ export class ChangeOfGoodClassificationComponent
     this.form.disable();
     this.formNew.disable();
     this.numberGood.enable();
+  }
+
+  goBack() {
+    this.location.back();
   }
 
   clear() {

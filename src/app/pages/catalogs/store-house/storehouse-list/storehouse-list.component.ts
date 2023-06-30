@@ -120,7 +120,8 @@ export class StorehouseListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.storehouseService.remove(id).subscribe({
       next: () => {
-        this.getStorehouses(), this.alert('success', 'Bodega', 'Borrado');
+        this.getStorehouses(),
+          this.alert('success', 'Bodega', 'Borrada Correctamente');
       },
       error: err => {
         this.alert(
