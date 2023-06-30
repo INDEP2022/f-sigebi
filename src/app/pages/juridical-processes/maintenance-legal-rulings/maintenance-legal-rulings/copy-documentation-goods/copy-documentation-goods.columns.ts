@@ -1,8 +1,8 @@
 export const COPY_DOCUMENTATION_GOODS_COLUMNS = {
-  numberOfDicta: { title: 'No. dictaminación' },
-  typeDictamination: { title: 'Tipo Dictaminación' },
-  recipientCopy: { title: 'Destinatario Copia' },
-  copyDestinationNumber: { title: 'No. Destinatario Copia' },
-  personExtInt: { title: 'Persona Ext. Int.' },
-  namePersonExt: { title: 'Nombre Persona Ext.' },
+  numberOfDicta: { sort: false, title: 'No. dictaminación' },
+  typeDictamination: { sort: false, title: 'Tipo Dictaminación' },
+  recipientCopy: { sort: false, title: 'Destinatario Copia' },
+  copyDestinationNumber: { sort: false, title: 'No. Destinatario Copia' },
+  personExtInt: { sort: false, title: 'Persona Ext. Int.' },
+  namePersonExt: { sort: false, title: 'Nombre Persona Ext.' },
 };
