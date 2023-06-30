@@ -10,7 +10,7 @@ export const LIST_REPORTS_COLUMN = {
     sort: false,
   },
   validationocsp: {
-    title: 'Estatus registro',
+    title: 'Estatus Registro',
     type: 'html',
     sort: false,
     valuePrepareFunction: (value: string) => {

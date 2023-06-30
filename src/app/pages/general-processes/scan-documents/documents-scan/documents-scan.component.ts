@@ -183,6 +183,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.documentsParams.next(_params);
         this.loadImages(id).subscribe(
           response => {
+            console.log('response:', response);
             this.files = response;
             // this.noDocumentsFound = false;
           },
@@ -289,6 +290,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       initialState: {
         identificator: this.folio,
         accept: 'image/*,application/pdf',
+        nameButton: 'Subir archivos',
         callback: (refresh: boolean) => this.fileUploaderClose(refresh),
       },
     };
@@ -317,8 +319,14 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     const token = this.authService.decodeToken();
     const user = token?.preferred_username?.toUpperCase();
     const validUsers = [user, SERA_USER, DEVELOP_USER];
+
     if (this.filesToDelete.length < 1) {
-      this.onLoadToast(
+      // this.onLoadToast(
+      //   'warning',
+      //   'Advertencia',
+      //   'Debes seleccionar mínimo un archivo'
+      // );
+      this.alert(
         'warning',
         'Advertencia',
         'Debes seleccionar mínimo un archivo'
@@ -349,14 +357,13 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
 
   deleteSelectedFiles() {
     const obs = this.filesToDelete.map(filename => this.deleteFile(filename));
+    console.log('obs', obs);
+    // return;
     forkJoin(obs).subscribe({
       complete: () => {
         this.files = [];
-        this.onLoadToast(
-          'success',
-          'Se eliminaron los archivos correctamente',
-          ''
-        );
+        this.alert('success', 'Escaneo y  Digitaización', 'Borrado');
+
         this.filesToDelete = [];
         this.loadImages(this.folio).subscribe(() => {
           this.updateSheets();
