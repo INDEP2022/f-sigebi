@@ -48,6 +48,7 @@ interface IUser {
   username: string;
   person: IPerson;
   roles: IRole[];
+  currency: string
 }
 
 interface IRole {
@@ -172,11 +173,13 @@ export class HomeComponent extends BasePage implements OnInit {
       select: [null, [Validators.required]],
       radio: ['dog'],
       check: [false],
+      
     });
     this.userExample = this.fb.group({
       person: this.personForm,
       roles: this.fb.array([this.roleForm]),
       username: [''],
+      currency: [null, []]
     });
   }
 
