@@ -81,7 +81,7 @@ export class LegalSupportListComponent extends BasePage implements OnInit {
   remove(id: string) {
     this.legalSupportService.remove(id).subscribe(
       res => {
-        this.alert('success', 'Sustento Legal', 'Borrado.');
+        this.alert('success', 'Sustento legal', 'Borrado Correctamente');
         this.getExample();
       },
       err => {

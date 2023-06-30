@@ -5,3 +5,11 @@
   background-repeat: no-repeat;
   background-size: 150px 150px;
 }
+
+img {
+  display: block;
+  max-width: inherit;
+  width: auto;
+  height: 200px;
+  margin: auto;
+}

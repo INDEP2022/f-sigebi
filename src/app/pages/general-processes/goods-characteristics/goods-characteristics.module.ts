@@ -8,6 +8,7 @@ import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/dele
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { GoodsFilterSharedComponent } from '../../../@standalone/shared-forms/goods-shared/goods-filter-shared';
+import { GoodPhotosModule } from '../good-photos/good-photos.module';
 import { CharacteristicsLegendComponent } from './characteristics-legend/characteristics-legend.component';
 import { GoodPhotoComponent } from './good-photos/good-photo/good-photo.component';
 import { GoodPhotosComponent } from './good-photos/good-photos.component';
@@ -38,6 +39,7 @@ import { GoodsCharacteristicsComponent } from './goods-characteristics/goods-cha
     GoodsCharacteristicsRoutingModule,
     SharedModule,
     TabsModule,
+    GoodPhotosModule,
     GoodsTypesSharedComponent,
     DelegationSharedComponent,
     GoodsFilterSharedComponent,

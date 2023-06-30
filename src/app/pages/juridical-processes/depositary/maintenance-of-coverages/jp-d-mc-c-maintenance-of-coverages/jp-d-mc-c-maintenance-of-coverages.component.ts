@@ -27,6 +27,7 @@ import { DocumentsService } from 'src/app/core/services/ms-documents/documents.s
 import { HistoryProtectionService } from 'src/app/core/services/ms-history-protection/history-protection.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { MaintenanceOfCoveragesService } from '../maintenace-of-coverages-services/maintenance-of-coverages.service';
@@ -107,6 +108,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
   bsModalRef = inject(BsModalRef);
   authService = inject(AuthService);
   securityService = inject(SecurityService);
+  officeManagementService = inject(OfficeManagementService);
 
   get wheelNumber() {
     return this.form.get('wheelNumber');
@@ -232,6 +234,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     );
     this.getNotifications();
     this.getFolioUniv();
+    this.updateStatusProcess();
     this.getDocument();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       const expediente = this.pathParams.expediente;
@@ -1162,5 +1165,22 @@ export class JpDMcCMaintenanceOfCoveragesComponent
 
   manttoEmail() {
     this.router.navigateByUrl(`pages/parameterization/mail`);
+  }
+
+  updateStatusProcess() {
+    this.officeManagementService
+      .updateStatusProcess(this.pathParams.tramite)
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+        },
+        error: error => {
+          console.log('No se pudo actualizar el status', error);
+          this.onLoadToast(
+            'info',
+            'No se pudo actualizar el estatus del tramite'
+          );
+        },
+      });
   }
 }

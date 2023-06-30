@@ -113,7 +113,8 @@ export class DrawersListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.drawerService.delete(id).subscribe({
       next: response => {
-        this.alert('success', 'Gaveta', 'Borrado'), this.getDrawers();
+        this.alert('success', 'Gaveta', 'Borrada Correctamente'),
+          this.getDrawers();
       },
       error: err => {
         this.alert(

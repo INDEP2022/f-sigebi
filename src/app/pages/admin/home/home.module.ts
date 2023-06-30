@@ -15,6 +15,19 @@ import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
 import { ListDataComponent } from './list-data/list-data.component';
 import { ModalNestedComponent } from './modal-nest.component';
+import { NgxCurrencyModule } from 'ngx-currency';
+
+export const customCurrencyMaskConfig = {
+    align: "right",
+    allowNegative: true,
+    allowZero: false,
+    decimal: ".",
+    precision: 2,
+    prefix: "$",
+    suffix: "",
+    thousands: ",",
+    nullable: true
+};
 
 @NgModule({
   declarations: [
@@ -36,6 +49,7 @@ import { ModalNestedComponent } from './modal-nest.component';
     FileUploadModule,
     ClipboardModule,
     FormLoaderComponent,
+    NgxCurrencyModule.forRoot(customCurrencyMaskConfig)
   ],
 })
 export class HomeModule {}

@@ -159,7 +159,7 @@ export class MailModalComponent extends BasePage implements OnInit {
       this.edit = true;
       const formatFec = this.segUsers.firstTimeLoginDate;
       const fechaObjeto = new Date(formatFec);
-      const format = this.datePipe.transform(formatFec, 'yyyy-MM-dd');
+      const format = this.datePipe.transform(formatFec, 'yyyy/MM/dd');
       this.form.patchValue(this.segUsers);
       this.form.controls['firstTimeLoginDate'].setValue(format);
       /*this.form.controls['usuario'].setValue(

@@ -7,6 +7,8 @@ export interface IProceedings {
   id?: number;
   actId?: number;
   programmingId?: number;
+  idPrograming?: number;
+  minutesId?: number;
   proceedingsType?: string;
   proceedingsCve?: string;
   nameWorker1?: string;
