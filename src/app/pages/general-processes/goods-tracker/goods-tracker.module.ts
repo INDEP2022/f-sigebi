@@ -9,6 +9,7 @@ import { SelectFractionComponent } from 'src/app/@standalone/modals/select-fract
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { ActaHistoComponent } from './components/acta-histo/acta-histo.component';
 import { CertificatesFilterComponent } from './components/certificates-filter/certificates-filter.component';
 import { ClasificationFilterComponent } from './components/clasification-filter/clasification-filter.component';
 import { DataFilterComponent } from './components/data-filter/data-filter.component';
@@ -31,6 +32,7 @@ import { trackedGoodsReducer } from './store/goods-tracker.reducer';
     LocationFilterComponent,
     GoodsTableComponent,
     ViewPhotosComponent,
+    ActaHistoComponent,
   ],
   imports: [
     CommonModule,

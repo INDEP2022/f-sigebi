@@ -408,7 +408,7 @@
           </div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-6" *ngIf="tranType == 'CE'">
           <h5 style="font-size: 15px">UVFV</h5>
 
           <div class="pt-3">
@@ -487,6 +487,43 @@
         </div>
       </div>
 
+      <div class="row" *ngIf="tranType == 'A'">
+        <div class="col-md-6">
+          <h5 style="font-size: 15px">Funcionario 3</h5>
+          <div class="pt-3">
+            <form-field
+              [control]="infoForm.get('evet')"
+              label="Administrador Titular Jurídico y de Recepción">
+              <input
+                type="text-area"
+                class="form-control"
+                formControlName="evet" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="tranType == 'NO'">
+        <h5 style="font-size: 15px">Apartado 2</h5>
+        <div class="col-md-6">
+          <div class="pt-3">
+            <form-field [control]="infoForm.get('bases')" label="Bases">
+              <input type="text" class="form-control" formControlName="bases" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="pt-3">
+            <form-field [control]="infoForm.get('celebrates')" label="Celebra">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="celebrates" />
+            </form-field>
+          </div>
+        </div>
+      </div>
       <hr style="border: none; border-top: 1px solid black; margin: 10px 0" />
       <div class="row">
         <div class="col-md-6">
