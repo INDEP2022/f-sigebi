@@ -91,6 +91,7 @@ export class FormalizeProgrammingFormComponent
   headingCancelation: string = `Cancelación(0)`;
   idStation: any;
   transferentName: string = '';
+  typeTransferent: string = '';
   stationName: string = '';
   authorityName: string = '';
   typeRelevantName: string = '';
@@ -253,7 +254,7 @@ export class FormalizeProgrammingFormComponent
       proceeding: this.fb.array([]),
       id: [null],
       statusProceeedings: [null],
-      idPrograming: [null],
+      idPrograming: [this.programmingId],
       observationProceedings: [null],
     });
   }
@@ -348,6 +349,7 @@ export class FormalizeProgrammingFormComponent
   getTransferent(data: Iprogramming) {
     this.transferentService.getById(data.tranferId).subscribe(data => {
       this.transferentName = data.nameTransferent;
+      this.typeTransferent = data.typeTransferent;
     });
   }
   getStation(data: Iprogramming) {
@@ -577,10 +579,11 @@ export class FormalizeProgrammingFormComponent
         config.initialState = {
           proceeding,
           programming: this.programming,
+          typeTransferent: this.typeTransferent,
           callback: (proceeding: IProceedings, tranType: string) => {
             if (proceeding && tranType) {
               this.processInfoProceeding(proceeding, tranType);
-              this.getProccedings();
+              //this.getProccedings();
             }
           },
         };
@@ -862,8 +865,6 @@ export class FormalizeProgrammingFormComponent
                   }
                 }
               }
-              console.log('response', response);
-              console.log('uvfv', uvfv);
             },
             error: async error => {
               console.log('No hay Firmantes');
@@ -1028,11 +1029,12 @@ export class FormalizeProgrammingFormComponent
       initialState: {
         idTypeDoc,
         idProg,
+        programming: this.programming,
         nomReport: nomReport,
         actId: actId,
         callback: (next: boolean) => {
           if (next) {
-            //this.uplodadReceiptDelivery();
+            ///this.uplodadReceiptDelivery();
           }
         },
       },
