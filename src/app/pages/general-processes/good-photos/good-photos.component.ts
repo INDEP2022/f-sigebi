@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil } from 'rxjs';
 import { IGoodDesc } from 'src/app/core/models/ms-good/good-and-desc.model';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -22,7 +22,8 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private location: Location,
     private goodService: GoodService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public router: Router
   ) {
     super();
     this.form = this.fb.group({
@@ -55,6 +56,14 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
         }
       },
     });
+
+    const derivationGoodId = localStorage.getItem('derivationGoodId');
+    if (derivationGoodId) {
+      this.loading = true;
+      this.noBienControl.setValue(derivationGoodId);
+      this.origin = 1;
+      this.searchGood();
+    }
   }
 
   clear() {
@@ -91,6 +100,14 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   goBack() {
-    this.location.back();
+    const derivationGoodId = localStorage.getItem('derivationGoodId');
+    if (derivationGoodId) {
+      this.router.navigate([
+        `/pages/administrative-processes/derivation-goods`,
+      ]);
+      localStorage.setItem('derivationGoodId', '');
+    } else {
+      this.location.back();
+    }
   }
 }
