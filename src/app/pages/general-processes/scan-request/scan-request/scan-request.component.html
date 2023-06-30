@@ -2,23 +2,9 @@
   <div class="ch-content" header>
     <div class="d-flex justify-content-between">
       <h5 class="title">Solicitud de Digitalizaci&oacute;n</h5>
-      <!-- <div class="d-inline mr-2" *ngIf="isSearch">
-        <button type="button" (click)="isSearch = true; clear()" class="btn btn-primary active btn-sm">
-          <i class="bx bx-search-alt bx-sm float-icon"></i>
-        </button>
-        <button *ngIf="isParams" class="btn btn-primary active btn-sm ml-2" (click)="back()">
-          Regresar
-          <i class="fas fa-arrow-circle-left"></i>
-        </button>
-      </div> -->
+
       <div class="d-inline mr-2" *ngIf="isSearch">
         <div class="btn-group">
-          <!-- <button type="button" (click)="searchNotification(); isSearch = false" class="btn btn-primary btn-sm">
-            <i class="bx bx-check bx-sm float-icon"></i>
-          </button>
-          <button type="button" (click)="clear(); isSearch = false" class="btn btn-primary btn-sm">
-            <i class="bx bx-x bx-sm float-icon"></i>
-          </button> -->
           <button
             *ngIf="isParams"
             class="btn btn-primary active btn-sm ml-2"
@@ -173,17 +159,6 @@
             (ngModelChange)="limit(30, 'protectionKey', $event)" />
         </form-field>
       </div>
-
-      <!-- <div class="row">
-        <div class="col-12">
-          <div class="buttons text-end">
-            <button style="float: right" type="button" [disabled]="count <= 1" (click)="notificationList()"
-              tooltip="Lista Expedientes" containerClass="tooltip-style" class="btn btn-primary btn-sm active mr-3">
-              Lista Expedientes
-            </button>
-          </div>
-        </div>
-      </div> -->
     </form>
     <hr />
     <form [formGroup]="form" class="form-material">
@@ -216,10 +191,6 @@
                 (click)="clearDocument()">
                 Limpiar <i class="fas fa-eraser"></i>
               </button>
-              <!-- <button type="button" class="btn btn-primary active btn-sm" (click)="clearDocument()">
-                Limpiar
-                <i class="fa fa-trash"></i>
-              </button> -->
             </div>
           </div>
         </div>
@@ -227,7 +198,6 @@
         <app-document-type-shared
           [form]="form"
           class="col-md-4"></app-document-type-shared>
-        <!-- <app-call-scan-document></app-call-scan-document> -->
 
         <form-field
           [control]="form.get('natureDocument')"
@@ -279,30 +249,13 @@
           </confirm-button>
         </div>
       </div>
-      <!-- <div class="row">
-        <div class="col-12">
-          <div class="buttons text-end">
-            <button style="float: right" type="button" [disabled]="countDoc <= 1" (click)="documentsList()"
-              tooltip="Ver Lista Documentos" containerClass="tooltip-style" class="btn btn-primary btn-sm active mr-3">
-              Lista Documentos
-            </button>
-          </div>
-        </div>
-      </div> -->
+
       <hr />
       <div class="row align-items-baseline">
-        <div class="col-auto">
-          <!-- <button type="button" (click)="clearDocument()" tooltip="Nueva Solicitud" containerClass="tooltip-style"
-            class="btn btn-info btn-sm active ml-2 mr-2">
-            <i class="bx bx-plus bx-sm float-icon"></i>
-          </button> -->
-          <!-- <button class="btn btn-primary btn-sm active mr-2" (click)="clearDocument()">
-            Nueva Solicitud
-          </button> -->
-        </div>
+        <div class="col-auto"></div>
         <div class="col-auto">
           <button class="btn btn-info active btn-sm" (click)="callScan()">
-            Escanear
+            Escanear <i class="bx bx-file bx-sm float-icon"></i>
           </button>
         </div>
         <div class="col-md-auto">
@@ -313,8 +266,6 @@
             <input type="text" formControlName="id" class="form-control mt-3" />
           </form-field>
         </div>
-        <!-- 
-        <div class="col-md-1"></div> -->
         <div class="col">
           <button
             type="button"
@@ -322,26 +273,7 @@
             class="btn btn-primary active btn-sm">
             Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
           </button>
-          <!-- <button type="button" data-toggle="tooltip" class="btn btn-secondary btn-sm active" (click)="seeImages()"
-            title="Consulta de imágenes escaneadas">
-            <i class="bx bxs-file-find"></i>
-          </button> -->
         </div>
-
-        <!-- <div body>
-          <div class="row pt-4">
-            <div class="col-md-12">
-              <form-loader *ngIf="loading"></form-loader>
-              <ng-scrollbar [track]="'all'" [ngStyle]="{ height: loading ? '0px' : '300px' }">
-                <ng2-smart-table [attr.class]="'table-bordered table-responsive'" class="table-responsive"
-                  [settings]="settings" [source]="data" (edit)="getDocumentByFolio($event.data)">
-                </ng2-smart-table>
-              </ng-scrollbar>
-            </div>
-          </div>
-          <app-pagination [params]="paramsList" [totalItems]="totalItems">
-          </app-pagination>
-        </div> -->
       </div>
     </form>
   </div>

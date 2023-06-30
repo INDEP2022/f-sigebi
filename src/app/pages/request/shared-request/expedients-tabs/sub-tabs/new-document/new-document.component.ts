@@ -92,7 +92,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.newDocForm = this.fb.group({
       id: [null],
       docType: [null, [Validators.required]],
-      docFile: [null],
+      docFile: [null, [Validators.required]],
       docTit: [
         null,
         [

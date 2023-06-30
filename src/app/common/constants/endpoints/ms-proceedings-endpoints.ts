@@ -18,4 +18,6 @@ export enum ProceedingsEndpoints {
   blkBienPost = 'aplication/blkBiePosquery',
   UpdateActasEntregaRecepcion = 'aplication/update-actasEntregaRecepcion',
   UpdateActasRDelegation = 'aplication/minutesNumberXdelegation2',
+  ExistProceedings = 'aplication/getExistsproceedings',
+  GetUnion = 'aplication/getUnionTables',
 }
