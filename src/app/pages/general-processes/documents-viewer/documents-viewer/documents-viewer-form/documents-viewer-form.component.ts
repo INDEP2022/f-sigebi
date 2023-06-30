@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -39,10 +39,12 @@ export class DocumentViewerFormComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private documentService: DocumentsService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private renderer: Renderer2
   ) {
     super();
     this.settings.columns = RELATED_FOLIO_COLUMNS;
+    this.settings.hideSubHeader = false;
     this.settings.actions.edit = false;
     this.settings.actions.delete = false;
     this.settings.actions.add = false;
@@ -61,12 +63,11 @@ export class DocumentViewerFormComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            // filter.field == 'id' ||
-            // filter.field == 'description' ||
-            // filter.field == 'dict_ofi' ||
-            // filter.field == 'areaProcess'
-            // ? (searchFilter = SearchFilter.EQ)
-            // : (searchFilter = SearchFilter.ILIKE);
+            filter.field == 'id' ||
+            filter.field == 'sheets' ||
+            filter.field == 'descriptionDocument'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
