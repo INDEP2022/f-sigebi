@@ -94,17 +94,17 @@ export class GoodTrackerForm {
   subtypes = new FormControl<IGoodSubType[]>([]);
   ssubtypes = new FormControl<IGoodSsubType[]>([]);
   sssubtypes = new FormControl<string[]>([]);
-  goodNum = new FormControl<string>(null);
-  process = new FormControl<string>(null);
+  goodNum = new FormControl<string[]>([]);
+  process = new FormControl<string[]>([]);
   samiInventory = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),
   ]);
   targetIdentifier = new FormControl<string>(null);
-  status = new FormControl<string>(null);
+  status = new FormControl<string[]>([]);
   withPhoto = new FormControl<string>(null);
   menageFather = new FormControl<string>(null);
-  valueFrom = new FormControl<string>(null);
-  valueTo = new FormControl<string>(null);
+  valueFrom = new FormControl<number>(null);
+  valueTo = new FormControl<number>(null);
   photoDate = new FormControl<string>(null);
   identifier = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),

@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { format } from 'date-fns';
 import { BehaviorSubject, skip, takeUntil } from 'rxjs';
 import {
   FilterParams,
@@ -119,38 +120,113 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
           this.goods = res.data;
           this.totalItems = res.count;
         },
-        error: () => {
+        error: error => {
+          this.loading = false;
+          if (
+            error.error.message ==
+            'Debe colocar por lo menos un parámetro de búsqueda'
+          ) {
+            this.alert(
+              'warning',
+              'Atención',
+              'Debe ingresar almenos un parámetro de búsqueda'
+            );
+            return;
+          }
           this.goods = [];
           this.totalItems = 0;
-          this.loading = false;
         },
       });
   }
 
   mapFilters() {
     const form = this.form.getRawValue();
-    const { types, subtypes, ssubtypes, sssubtypes } = form;
-    console.log({ types, subtypes, ssubtypes, sssubtypes });
 
+    // Filtros clasificador
+    this.clasificationFilter();
+    // --Filtros de datos del bien
+    this.goodDataFilter();
+
+    const {
+      expedientNum,
+      flyerNum,
+      judgeNum,
+      flyerType,
+      officeDate,
+      protection,
+      criminalCase,
+      publicMin,
+    } = form;
+    this.filters.parval.proceedingsNumber = expedientNum.length
+      ? expedientNum
+      : null;
+    this.filters.notification.flierNumber = flyerNum.length ? flyerNum : null;
+  }
+
+  clasificationFilter() {
+    const form = this.form.getRawValue();
+    const { types, subtypes, ssubtypes, sssubtypes } = form;
     if (types.length) {
       this.filters.clasifGood.selecType = 'S';
-      // this.filters.clasifGood.typeNumber = types;
+      this.filters.clasifGood.typeNumber = types.map(type => type.id);
     }
     if (subtypes.length) {
       this.filters.clasifGood.selecStype = 'S';
-      // this.filters.clasifGood.typeNumber = types;
+      this.filters.clasifGood.subTypeNumber = subtypes.map(
+        subtype => subtype.id
+      );
     }
 
     if (ssubtypes.length) {
       this.filters.clasifGood.selecSstype = 'S';
-      // this.filters.clasifGood.typeNumber = types;
+      this.filters.clasifGood.ssubTypeNumber = ssubtypes.map(
+        ssubtype => ssubtype.id
+      );
     }
 
     if (sssubtypes.length) {
       this.filters.clasifGood.selecSsstype = 'S';
-      // this.filters.clasifGood.typeNumber = types;
+      this.filters.clasifGood.clasifGoodNumber = sssubtypes;
     }
-    this.filters.clasifGood.clasifGoodNumber = form.clasifNum;
+  }
+
+  goodDataFilter() {
+    const form = this.form.getRawValue();
+    const {
+      goodNum,
+      process,
+      targetIdentifier,
+      photoDate,
+      status,
+      withPhoto,
+      menageFather,
+      identifier,
+      valueFrom,
+      valueTo,
+      siabiInventory,
+      cisiInventory,
+      description,
+      attributes,
+      movableIventory,
+    } = form;
+
+    this.filters.parval.goodNumber = goodNum?.length ? goodNum : null;
+    this.filters.parval.proExtDom = process?.length ? process : null;
+    this.filters.parval.label = targetIdentifier;
+    this.filters.parval.photoDate = photoDate
+      ? format(new Date(photoDate), 'yyyy-MM-dd')
+      : null;
+    this.filters.parval.status = status.length ? status : null;
+    this.filters.parval.photography = withPhoto;
+    this.filters.parval.goodFatherMenageNumber = menageFather;
+    this.filters.parval.identifier = identifier;
+    this.filters.parval.tValueIni = valueFrom;
+    this.filters.parval.tValueFin = valueTo;
+    this.filters.parval.inventorySiabiId = siabiInventory;
+    this.filters.parval.propertyCisiId = cisiInventory;
+    this.filters.parval.tDescription = description;
+    this.filters.parval.tAttribute = attributes;
+    this.filters.parval.invCurrentSiabi = movableIventory;
   }
 
   getAll() {

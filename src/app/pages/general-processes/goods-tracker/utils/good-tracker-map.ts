@@ -3,7 +3,7 @@ interface IGoodTrackerMapClasif {
   selecSstype: 'S' | 'N';
   selecStype: 'S' | 'N';
   selecType: 'S' | 'N';
-  clasifGoodNumber: string | number;
+  clasifGoodNumber: string[] | number[];
   typeNumber: string[] | number[];
   subTypeNumber: string[] | number[];
   ssubTypeNumber: string[] | number[];
@@ -12,18 +12,18 @@ interface IGoodTrackerMapParval {
   status: string[] | number[];
   proExtDom: string[] | number[];
   label: string;
-  goodNumber: string;
+  goodNumber: string[] | number[];
   inventorySiabiId: string;
   invCurrentSiabi: string;
   propertyCisiId: string;
-  goodFatherMenageNumber: number;
+  goodFatherMenageNumber: number | string;
   tDescription: string;
   tAttribute: string;
   actKey: string;
   dictum: string;
   tValueIni: number;
   tValueFin: number;
-  proceedingsNumber: string;
+  proceedingsNumber: string[] | number[];
   identifier: string;
   photoDate: string;
   destinationDateIni: string;
@@ -42,7 +42,7 @@ interface IGoodTrackerMapParval {
 interface IGoodTrackerMapNotification {
   previousAscertainment: string;
   criminalCase: string;
-  flierNumber: string;
+  flierNumber: string[] | number[];
   flierType: string;
   judgedNumber: string;
   minpubNumber: number;
