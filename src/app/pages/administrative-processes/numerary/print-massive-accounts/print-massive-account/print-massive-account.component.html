@@ -17,13 +17,25 @@
         </div>
 
         <div class="row mt-4">
-          <div class="col-md-6">
+          <app-date-initial-finish
+            *ngIf="form"
+            [form]="form"
+            [form2]="form"
+            formInitial="depositDate"
+            formFin="depositDateTo"
+            labelInicioName="Fecha de Depósito"
+            labelFinName="al"
+            (formEmit)="(form)">
+          </app-date-initial-finish>
+          <!-- <div class="col-md-6">
             <form-field
               [control]="form.get('depositDate')"
               label="Fecha de Depósito:">
               <input
                 formControlName="depositDate"
                 class="form-control"
+                [maxDate]="maxDate"
+                (ngModelChange)="onChange(1)"
                 bsDatepicker />
             </form-field>
           </div>
@@ -36,17 +48,29 @@
                 class="form-control"
                 bsDatepicker />
             </form-field>
-          </div>
+          </div> -->
         </div>
 
         <div class="row mt-4">
-          <div class="col-md-6">
+          <app-date-initial-finish
+            *ngIf="form"
+            [form]="form"
+            [form2]="form"
+            formInitial="transferenceDate"
+            formFin="transferenceDateTo"
+            labelInicioName="Fecha de Transferencia:"
+            labelFinName="al"
+            (formEmit)="(form)">
+          </app-date-initial-finish>
+          <!-- <div class="col-md-6">
             <form-field
               [control]="form.get('transferenceDate')"
               label="Fecha de Transferencia:">
               <input
                 formControlName="transferenceDate"
                 class="form-control"
+                [maxDate]="maxDate"
+                (ngModelChange)="onChange(2)"
                 bsDatepicker />
             </form-field>
           </div>
@@ -59,17 +83,29 @@
                 class="form-control"
                 bsDatepicker />
             </form-field>
-          </div>
+          </div> -->
         </div>
 
         <div class="row mt-4">
-          <div class="col-md-6">
+          <app-date-initial-finish
+            *ngIf="form"
+            [form]="form"
+            [form2]="form"
+            formInitial="receptionDate"
+            formFin="receptionDateTo"
+            labelInicioName="Fecha de Recepción Física:"
+            labelFinName="al"
+            (formEmit)="(form)">
+          </app-date-initial-finish>
+          <!-- <div class="col-md-6">
             <form-field
               [control]="form.get('receptionDate')"
               label="Fecha de Recepción Física:">
               <input
                 formControlName="receptionDate"
                 class="form-control"
+                [maxDate]="maxDate"
+                (ngModelChange)="onChange(3)"
                 bsDatepicker />
             </form-field>
           </div>
@@ -82,7 +118,7 @@
                 class="form-control"
                 bsDatepicker />
             </form-field>
-          </div>
+          </div> -->
         </div>
       </form>
 
