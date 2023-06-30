@@ -131,7 +131,7 @@ export class IndicatedListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.indicatedService.remove(id).subscribe(
       res => {
-        this.alert('success', 'Indiciado', 'Borrado.');
+        this.alert('success', 'Indiciado', 'Borrado Correctamente');
         this.getIndicated();
       },
       err => {

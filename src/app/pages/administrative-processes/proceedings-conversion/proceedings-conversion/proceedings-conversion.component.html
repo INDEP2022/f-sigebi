@@ -21,12 +21,6 @@
           Regresar
           <i class="fas fa-arrow-circle-left"></i>
         </button>
-        <button
-          (click)="searchProcs()"
-          type="button"
-          class="btn btn-primary active btn-sm">
-          <i class="bx bx-list-plus bx-sm float-icon"></i>
-        </button>
       </div>
     </div>
   </div>
@@ -55,6 +49,16 @@
               </div> -->
             </div>
             <form [formGroup]="proceedingsConversionForm" class="form-material">
+              <div class="float-right">
+                <div class="col-md-3">
+                  <button
+                    (click)="searchProcs()"
+                    type="button"
+                    class="btn btn-primary active btn-sm">
+                    <i class="bx bx-list-plus bx-sm float-icon"></i>
+                  </button>
+                </div>
+              </div>
               <div class="form-material">
                 <!-- apppcatd **************************************************************-->
                 <app-card [header]="false" [footer]="true">
@@ -107,22 +111,30 @@
                                   </div>
                                   <div class="col-md-5">
                                     <div>
-                                      <label for="">Acta: </label>
-                                      {{ cveActa || '' }}
+                                      <label for=""
+                                        >No.Exp. del Trasnferente:
+                                      </label>
+                                      {{ trasnfer || '' }}
                                     </div>
                                   </div>
+                                  <div class="col-md-3">
+                                    <div>
+                                      <label for="">Hora de creación: </label>
+                                      {{ time | date : 'hh:mm' }}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="row p-3">
                                   <div class="col-md-3">
                                     <div>
                                       <label for="">Causal Penal: </label>
                                       {{ criCase || '' }}
                                     </div>
                                   </div>
-                                  <div class="col-md-3">
+                                  <div class="col-md-7">
                                     <div>
-                                      <label for=""
-                                        >No.Expediente del Trasnferente:
-                                      </label>
-                                      {{ criCase || '' }}
+                                      <label for="">Acta: </label>
+                                      {{ cveActa || '' }}
                                     </div>
                                   </div>
                                 </div>
@@ -137,7 +149,7 @@
                             <div class="col-md-12">
                               <div class="card">
                                 <div class="card-body">
-                                  <div class="col-md-3">
+                                  <!-- <div class="col-md-3">
                                     <div>
                                       <form-field
                                         [control]="
@@ -154,11 +166,11 @@
                                           class="form-control"
                                           bsDatepicker
                                           [bsConfig]="datePickerConfig"
-                                          [value]="time | date : 'hh:mm'"
+                                          [value]="time | date: 'hh:mm'"
                                           [disabled]="validPermisos" />
                                       </form-field>
                                     </div>
-                                  </div>
+                                  </div> -->
                                   <div class="col-md-3">
                                     <div>
                                       <form-field
@@ -192,7 +204,7 @@
                                           type="text"
                                           class="form-control"
                                           formControlName="testigoOIC"
-                                          pattern="^[0-9]+"
+                                          pattern="^[A-Z]+"
                                           [disabled]="validPermisos" />
                                       </form-field>
                                     </div>
@@ -211,7 +223,7 @@
                                           type="text"
                                           class="form-control"
                                           formControlName="testigoTwo"
-                                          pattern="^[0-9]+"
+                                          pattern="^[A-Z]+"
                                           [disabled]="validPermisos" />
                                       </form-field>
                                     </div>
@@ -230,7 +242,7 @@
                                           type="text"
                                           class="form-control"
                                           formControlName="testigoTree"
-                                          pattern="^[0-9]+"
+                                          pattern="^[A-Z]+"
                                           [disabled]="validPermisos" />
                                       </form-field>
                                     </div>
@@ -386,6 +398,15 @@
                                       </form-field>
                                     </div>
                                   </div>
+                                  <div class="m-3">
+                                    <button
+                                      type="button"
+                                      class="btn btn-primary active btn-sm"
+                                      (click)="getActasReception(conversion)">
+                                      <i
+                                        class="bx bx-search bx-sm float-icon"></i>
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -405,6 +426,7 @@
                               [class]="loading ? 'table-loading' : ''"
                               class="overflow-auto">
                               <ng2-smart-table
+                                id="bienes"
                                 [attr.class]="'table-bordered my-table'"
                                 [settings]="settings"
                                 [source]="dataTableGood"
@@ -418,17 +440,18 @@
                         <div class="d-flex justify-content-center">
                           <div class="text-center">
                             <button
-                              (click)="getDataTemporal($event)"
+                              (click)="create()"
                               [disabled]="isAllDisabled"
                               class="btn btn-secondary btn-sm bg-success active m-3 p-3"
                               type="button">
                               Agregar <i class="fa fa-plus bx-md"></i>
                             </button>
                             <br />
-                            <!-- <button (click)="deleteGoodActa($event)" [disabled]="isAllDisabled" class="btn btn-secondary btn-sm active bg-danger m-3 p-3" type="button">
-                            Mover uno
-                            <i class="bx bxs-left-arrow-circle bx-md"></i>
-                          </button> -->
+                            <!-- <button (click)="deleteGoodActa($event)" [disabled]="isAllDisabled"
+                              class="btn btn-secondary btn-sm active bg-danger m-3 p-3" type="button">
+                              Mover uno
+                              <i class="bx bxs-left-arrow-circle bx-md"></i>
+                            </button> -->
                           </div>
                         </div>
                         <div class="col-md-12">
@@ -442,8 +465,7 @@
                               <ng2-smart-table
                                 [attr.class]="'table-bordered my-table'"
                                 [settings]="settings2"
-                                [source]="dataTemporal"
-                                (userRowSelect)="rowSelected2($event)">
+                                [source]="dataTableGoodsConvertion">
                               </ng2-smart-table>
                               <app-pagination
                                 [totalItems]="totalItems2"></app-pagination>

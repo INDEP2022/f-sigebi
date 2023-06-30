@@ -115,7 +115,8 @@ export class PenaltyListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.penaltyService.remove(id).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Penalización', 'Borrado');
+        this.getExample(),
+          this.alert('success', 'Penalización', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

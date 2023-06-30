@@ -136,7 +136,7 @@ export class RackListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.rackService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Estantes', 'Borrado');
+        this.alert('success', 'Estante', 'Borrado Correctamente');
         this.getExample();
       },
       error: error => {

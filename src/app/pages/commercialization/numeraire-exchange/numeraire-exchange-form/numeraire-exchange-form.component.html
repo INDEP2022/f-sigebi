@@ -8,8 +8,8 @@
     <div class="md-tabs mt-n3">
       <tabset>
         <tab heading="Conversión Individual" id="tabIndividualConversion">
-          <form class="form-material mb-0" [formGroup]="form">
-            <div [formGroup]="form">
+          <form class="form-material mb-0">
+            <div>
               <!-- <div class="row mt-3 py-5 px-3 rounded-4 shadow" @OnGoodSelected>
                 <div class="ms-n2 mb-2">
                   <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
@@ -70,41 +70,64 @@
               </div> -->
             </div>
 
-            <div class="row py-5 rounded-4 shadow">
-              <div
-                [ngClass]="selectedGood ? 'col-md-4' : 'col-md-12'"
-                class="col-sm-12">
+            <div [formGroup]="formGood" class="row py-5 rounded-4 shadow">
+              <div class="col-md-4 col-12">
                 <i
                   class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
                 <h5 class="font-size-14 mb-2 d-inline">N° Bien</h5>
-                <!-- <app-goods-shared (good)="selectGood($event)" [form]="form">
-                </app-goods-shared> -->
-                <div>
-                  <form-field class="form-group" [control]="form.get('goodId')">
-                    <ng-custom-select
-                      [limit]="4"
-                      class="form-control"
-                      formControlName="goodId"
-                      paramSearch="filter.description"
-                      prefixSearch="$ilike"
-                      (valueChange)="changeGood($event)"
-                      value="goodId"
-                      [path]="pathGoods">
-                      <ng-template let-item>
-                        {{ item?.description }}
-                      </ng-template>
-                    </ng-custom-select>
-                  </form-field>
+                <div class="d-flex">
+                  <div>
+                    <form-field
+                      class="form-group"
+                      [control]="formGood.get('id')">
+                      <!-- <ng-custom-select
+                        [limit]="4"
+                        class="form-control"
+                        formControlName="goodId"
+                        paramSearch="filter.description"
+                        prefixSearch="$ilike"
+                        (valueChange)="changeGood($event)"
+                        value="goodId"
+                        [path]="pathGoods">
+                        <ng-template let-item>
+                          {{ item?.description }}
+                        </ng-template>
+                      </ng-custom-select> -->
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="id" />
+                    </form-field>
+                  </div>
+                  <!-- <button
+                    [disabled]="!formGood.get('id').value || isLoadingGood"
+                    class="btn btn-primary active btn-sm w-auto"
+                    (click)="searchGood()">
+                    Buscar
+                  </button> -->
+                  <button
+                    [disabled]="!formGood.get('id').value || isLoadingGood"
+                    (click)="searchGood()"
+                    class="btn btn-primary active btn-sm w-auto">
+                    Buscar
+                    <i class="bx bx-search-alt bx-sm float-icon"></i>
+                  </button>
                 </div>
               </div>
-              <ng-container *ngIf="selectedGood">
+              <ng-container>
                 <div class="col-sm-12 col-md-4">
                   <div>
-                    <i
+                    <!-- <i
                       class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
                     <h5 class="font-size-14 mb-2 d-inline">Siglas</h5>
                     <p class="text-muted">
                       {{ selectedGood?.originSignals }}
+                    </p> -->
+                    <i
+                      class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
+                    <h5 class="font-size-14 mb-2 d-inline">Identificador</h5>
+                    <p class="text-muted">
+                      {{ formGood.value.identifier }}
                     </p>
                   </div>
                 </div>
@@ -114,7 +137,8 @@
                       class="bx bx-detail text-success me-2 d-inline float-icon"></i>
                     <h5 class="font-size-14 mb-2 d-inline">Descripción</h5>
                     <p class="text-muted">
-                      {{ selectedGood?.description }}
+                      <!-- {{ selectedGood?.description }} -->
+                      {{ formGood.value.description }}
                     </p>
                   </div>
                 </div>
@@ -124,7 +148,8 @@
                       class="bx bx-dollar text-success me-2 d-inline float-icon"></i>
                     <h5 class="font-size-14 mb-2 d-inline">Importe Avalúo</h5>
                     <p class="text-muted">
-                      {{ selectedGood?.appraisedValue }}
+                      <!-- {{ selectedGood?.appraisedValue }} -->
+                      {{ formGood.value.appraisedValue }}
                     </p>
                   </div>
                 </div>
@@ -134,7 +159,8 @@
                       class="bx bx-check-circle text-success me-2 d-inline float-icon"></i>
                     <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
                     <p class="text-muted">
-                      {{ selectedGood?.status }}
+                      <!-- {{ selectedGood?.status }} -->
+                      {{ formGood.value.status }}
                     </p>
                   </div>
                 </div>
@@ -144,13 +170,14 @@
                       class="bx bx-table text-success me-2 d-inline float-icon"></i>
                     <h5 class="font-size-14 mb-2 d-inline">Ext. Dominio</h5>
                     <p class="text-muted">
-                      {{ selectedGood?.extDomProcess }}
+                      <!-- {{ selectedGood?.extDomProcess }} -->
+                      {{ formGood.value?.extDomProcess }}
                     </p>
                   </div>
                 </div>
               </ng-container>
             </div>
-            <ng-container *ngIf="selectedGood != null">
+            <ng-container>
               <!-- <div class="row mt-3 py-5 px-3 rounded-4 shadow" @OnGoodSelected>
                 <div class="ms-n2 mb-2">
                   <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
@@ -213,7 +240,10 @@
                 </div>
               </div> -->
 
-              <div class="row mt-3 py-5 px-3 rounded-4 shadow" @OnGoodSelected>
+              <div
+                [formGroup]="formGood"
+                class="row mt-3 py-5 px-3 rounded-4 shadow"
+                @OnGoodSelected>
                 <div class="ms-n2 mb-2">
                   <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
                   <h6 class="d-inline">Datos de venta</h6>
@@ -222,97 +252,85 @@
                 <div class="row mt-2">
                   <div class="col-sm-12 col-md-4">
                     <form-field
-                      [control]="form.get('amountevta')"
+                      [control]="formGood.get('importSell')"
                       label="Precio de Venta">
                       <input
-                        (keyup)="setIvaSell()"
-                        currencyFz
-                        type="text"
+                        type="number"
                         class="form-control px-3"
-                        formControlName="amountevta" />
+                        formControlName="importSell" />
                     </form-field>
                   </div>
                   <div class="col-sm-6 col-md-4">
-                    <div class="form-group form-static-label">
+                    <form-field
+                      [control]="formGood.get('percent1')"
+                      label="% IVA">
                       <input
-                        formControlName="ivavtaPercent"
-                        (keyup)="setIvaSell()"
+                        formControlName="percent1"
                         id="ivavtaPercent"
                         type="number"
                         class="form-control px-3"
                         max="100" />
-                      <span class="form-bar"></span>
-                      <label class="float-label" for="ivavtaPercent"
-                        >% IVA</label
-                      >
-                    </div>
+                    </form-field>
                   </div>
                   <div class="col-sm-6 col-md-4">
                     <form-field
-                      [control]="form.get('ivavta')"
+                      [control]="formGood.get('taxSell')"
                       label="Iva Venta">
                       <input
                         type="text"
-                        class="form-control px-3"
-                        formControlName="ivavta"
-                        readonly />
+                        readonly
+                        formControlName="taxSell"
+                        class="form-control px-3" />
                     </form-field>
                   </div>
                 </div>
                 <div class="row mt-5">
                   <div class="col-sm-6 col-md-3">
-                    <div class="form-group form-static-label">
+                    <form-field
+                      [control]="formGood.get('percent2')"
+                      label="% Comisión">
                       <input
-                        (keyup)="setCommission()"
-                        formControlName="commissionPercent"
+                        formControlName="percent2"
                         id="commissionPercent"
                         #commissionPercent
-                        type="text"
+                        type="number"
                         class="form-control px-3"
                         max="100" />
-                      <span class="form-bar"></span>
-                      <label class="float-label" for="commissionPercent"
-                        >% Comisión</label
-                      >
-                    </div>
-                  </div>
-                  <div class="col-sm-6 col-md-3">
-                    <form-field
-                      [control]="form.get('commission')"
-                      label="Comisión">
-                      <input
-                        (keyup)="setIvaCommission()"
-                        type="text"
-                        class="form-control px-3"
-                        formControlName="commission"
-                        readonly />
                     </form-field>
                   </div>
                   <div class="col-sm-6 col-md-3">
-                    <div class="form-group form-static-label">
+                    <form-field
+                      [control]="formGood.get('commission')"
+                      label="Comisión">
                       <input
-                        (keyup)="setIvaCommission()"
-                        formControlName="commissionTaxPercent"
+                        type="text"
+                        readonly
+                        formControlName="commission"
+                        class="form-control px-3" />
+                    </form-field>
+                  </div>
+                  <div class="col-sm-6 col-md-3">
+                    <form-field
+                      [control]="formGood.get('percent3')"
+                      label="% IVA Comisión">
+                      <input
+                        formControlName="percent3"
                         id="commissionTaxPercent"
                         #commissionTaxPercent
                         type="text"
                         class="form-control px-3"
                         max="100" />
-                      <span class="form-bar"></span>
-                      <label class="float-label" for="commissionTaxPercent"
-                        >% IVA Comisión</label
-                      >
-                    </div>
+                    </form-field>
                   </div>
                   <div class="col-sm-6 col-md-3">
                     <form-field
-                      [control]="form.get('ivacom')"
+                      [control]="formGood.get('taxCommission')"
                       label="IVA Comisión">
                       <input
                         readonly
                         text="text"
                         class="form-control px-3"
-                        formControlName="ivacom" />
+                        formControlName="taxCommission" />
                     </form-field>
                   </div>
                 </div>
@@ -351,7 +369,7 @@
                   <h6 class="d-inline">Datos de cuenta</h6>
                 </div>
                 <hr class="mw-98" />
-                <div class="row mb-0 d-block">
+                <div [formGroup]="formBlkControl" class="row mb-0 d-block">
                   <div
                     class="row d-flex justify-content-center align-content-center">
                     <div class="col-sm-12 col-md-6 mh-80">
@@ -362,16 +380,13 @@
                         <ng-custom-select
                           placeholder="Buscador de bancos"
                           class="form-control"
-                          paramSearch="filter.cveBank"
-                          prefixSearch="$ilike"
-                          [moreParams]="{
-                            'filter.accountType': '$eq:CONCENTRADORA'
-                          }"
-                          value="accountNumber"
-                          path="accountmvmnt/api/v1/bank-account"
+                          paramSearch="filter.nombre"
+                          value="cve_banco"
+                          formControlName="tiNewBank"
+                          path="accountmvmnt/api/v1/aplication/get-data-bank"
                           (valueChange)="selectAccount($event)">
                           <ng-template let-item
-                            >{{ item.accountNumber }} / {{ item.cveBank }}
+                            >{{ item.cve_banco }} - {{ item.nombre }}
                           </ng-template>
                         </ng-custom-select>
                       </div>
@@ -384,7 +399,7 @@
                           Descripci&oacute;n
                         </h5>
                         <p class="text-muted">
-                          {{ selectedBank?.banco?.name }}
+                          {{ formBlkControl.value.diNewBank }}
                         </p>
                       </div>
                       <div class="col-sm-6 col-md-6">
@@ -392,7 +407,7 @@
                           class="bx bx-detail text-success me-2 d-inline float-icon"></i>
                         <h5 class="font-size-14 mb-2 d-inline">Cuenta</h5>
                         <p class="text-muted">
-                          {{ this.form.get('accountNew')?.value }}
+                          {{ formBlkControl.value.diNewAccount }}
                         </p>
                       </div>
                       <div class="col-sm-6 col-md-6">
@@ -400,14 +415,18 @@
                           class="bx bx-detail text-success me-2 d-inline float-icon"></i>
                         <h5 class="font-size-14 mb-2 d-inline">Moneda</h5>
                         <p class="text-muted">
-                          {{ form.get('moneyNew')?.value }}
+                          {{ formBlkControl.value.diNewCurrency }}
                         </p>
                       </div>
                     </ng-container>
                   </div>
                 </div>
               </div>
-              <div class="row mt-3 py-5 px-3 rounded-4 shadow" @OnGoodSelected>
+
+              <div
+                [formGroup]="formBlkControl"
+                class="row mt-3 py-5 px-3 rounded-4 shadow"
+                @OnGoodSelected>
                 <div class="ms-n2 mb-2">
                   <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
                   <h6 class="d-inline">Datos de dep&oacute;sito</h6>
@@ -421,24 +440,31 @@
                 <hr class="mw-98" />
                 <div [ngClass]="{ disabled: !selectedBank }" class="row">
                   <div class="col-sm-12 col-md-3">
-                    <form-field [control]="form.get('dateNew')" label="Fecha">
+                    <form-field
+                      [control]="formBlkControl.get('tiNewDate')"
+                      label="Fecha">
                       <ng-custom-select
                         [moreParams]="{
                           'filter.isFileDeposit': 'S',
                           'filter.numberGood': '$null',
-                          'filter.numberAccount': selectedBank?.accountNumber
+                          'filter.numberMotion':
+                            formBlkControl.value.diNumberAccountDeposit
                         }"
+                        [paramSearch]="'filter.deposit'"
+                        [isLikeSearch]="false"
+                        placeholder="# de movimiento"
                         (valueChange)="changeDeposit($event)"
-                        value="dateMotion"
+                        value="numberMotion"
                         class="form-control"
-                        path="/accountmvmnt/api/v1/account-movements"
-                        formControlName="dateNew">
+                        path="/accountmvmnt/api/v1/account-movements">
                         <ng-template let-item>
                           {{
-                            item.numberMotion +
+                            '#' +
+                              item.numberMotion +
                               ' - ' +
                               item.dateMotion +
                               ' - ' +
+                              '$' +
                               item.deposit
                           }}
                         </ng-template>
@@ -448,39 +474,48 @@
                   <div class="col-md-4">
                     <form-field
                       class="form-group"
-                      [control]="form.get('invoiceFile')"
+                      [control]="formBlkControl.get('diNewFile')"
                       label="Referencia">
                       <input
                         type="number"
                         class="form-control"
-                        formControlName="invoiceFile"
+                        formControlName="diNewFile"
                         readonly />
                     </form-field>
                   </div>
                   <div class="col-md-3">
-                    <form-field [control]="form.get('deposit')" label="Importe">
+                    <form-field
+                      [control]="formBlkControl.get('diDeposit')"
+                      label="Importe">
                       <input
                         type="number"
                         class="form-control"
-                        formControlName="deposit"
+                        formControlName="diDeposit"
                         readonly />
                     </form-field>
                   </div>
                 </div>
               </div>
-              <div class="my-5">
+
+              <div
+                [hidden]="formBlkControl.value.typeConversion !== 'BBB'"
+                [formGroup]="formBlkControl"
+                class="my-5 pt-5">
                 <div class="col-12">
                   <form-field
                     class="form-group"
                     label="Comentario nuevo bien"
-                    [control]="form.get('description')">
+                    [control]="formBlkControl.get('comment')">
                     <textarea
                       class="form-control"
-                      formControlName="description"></textarea>
+                      formControlName="comment"></textarea>
                   </form-field>
                 </div>
               </div>
-              <div class="row mt-3 py-5 px-3 rounded-4 shadow" @OnGoodSelected>
+              <div
+                [formGroup]="formBlkControl"
+                class="row mt-3 py-5 px-3 rounded-4 shadow"
+                @OnGoodSelected>
                 <div class="ms-n2 mb-2">
                   <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
                   <h6 class="d-inline">Conversi&oacute;n</h6>
@@ -492,8 +527,11 @@
                       <form-field
                         class="form-group"
                         label="Tipo de conversión"
-                        [control]="form.get('typeConv')">
-                        <select class="form-control" formControlName="typeConv">
+                        [control]="formBlkControl.get('typeConversion')">
+                        <select
+                          (change)="changeTypeConversion($event)"
+                          class="form-control"
+                          formControlName="typeConversion">
                           <option
                             [value]="type.value"
                             *ngFor="let type of conversionTypes">

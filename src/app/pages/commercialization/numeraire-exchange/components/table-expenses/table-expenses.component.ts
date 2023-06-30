@@ -8,7 +8,6 @@ interface IExpense {
   id: string;
   register?: string;
   description: string;
-  descriptionName: string;
   import: number;
 }
 @Component({
@@ -28,17 +27,17 @@ export class TableExpensesComponent {
   form = new FormGroup({
     id: new FormControl('', [Validators.required]),
     description: new FormControl(null, [Validators.required]),
-    descriptionName: new FormControl({ disabled: true, value: null }, [
-      Validators.required,
-    ]),
-    import: new FormControl(0, [Validators.required]),
+    // descriptionName: new FormControl({ disabled: true, value: null }, [
+    //   Validators.required,
+    // ]),
+    import: new FormControl(1, [Validators.required]),
   });
 
   selectedExpenseType(spent: ISpentConcept): void {
-    this.form.patchValue({
-      descriptionName: spent.description,
-      id: spent.id,
-    });
+    this.form.patchValue(
+      // descriptionName: spent.description,
+      spent
+    );
   }
 
   addExpense(): void {
@@ -53,23 +52,16 @@ export class TableExpensesComponent {
     if (!this.validateNotRepeatExpense()) {
       return;
     }
-    const {
-      id,
-      description,
-      descriptionName,
-      import: importValue,
-    } = this.form.getRawValue();
+    const { id, description, import: importValue } = this.form.getRawValue();
 
     if (this.idExpense) {
       const expense = this.expenses.find(x => x.id == this.idExpense);
       expense.description = description;
-      expense.descriptionName = descriptionName;
       expense.import = importValue;
     } else {
       const expense: IExpense = {
         id,
         description,
-        descriptionName: descriptionName,
         import: importValue,
       };
       this.expenses.push(expense);
@@ -86,10 +78,13 @@ export class TableExpensesComponent {
     return this.expenses;
   }
 
+  initOptionExpenseConcept: IExpense;
   openCreateOrEditExpense(id?: any): void {
     if (id) {
       this.idExpense = id;
       const values = this.expenses.find(x => x.id == id);
+      this.initOptionExpenseConcept = values;
+      console.log(values);
       this.form.patchValue(values);
     }
     this.openDialogExpense();

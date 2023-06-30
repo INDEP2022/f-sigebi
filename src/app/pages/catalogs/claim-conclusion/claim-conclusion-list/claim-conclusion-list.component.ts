@@ -78,7 +78,11 @@ export class ClaimConclusionListComponent extends BasePage implements OnInit {
   deleteReg(id: string | number) {
     this.claimConclusionService.remove(id).subscribe({
       next: response => {
-        this.alert('success', 'Conclusión de Registro', 'Borrado'),
+        this.alert(
+          'success',
+          'Conclusión de registro',
+          'Borrado Correctamente'
+        ),
           this.getExample();
       },
       error: err => {
