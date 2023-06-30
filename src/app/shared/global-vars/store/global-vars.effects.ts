@@ -9,7 +9,7 @@ import * as GlobalVarsActions from './global-vars.actions';
 export class GlobalVarsEffects {
   loadGlobalVarss$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(GlobalVarsActions.loadGlobalVarss),
+      ofType(GlobalVarsActions.loadGlobalVars),
       /** An EMPTY observable only emits completion. Replace with your own observable API request */
       concatMap(() => EMPTY as Observable<{ type: string }>)
     );
