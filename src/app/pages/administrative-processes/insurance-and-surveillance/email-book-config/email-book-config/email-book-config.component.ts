@@ -2,9 +2,15 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, skip } from 'rxjs';
-import { showQuestion, showToast } from 'src/app/common/helpers/helpers';
+import {
+  showAlert,
+  showQuestion,
+  showToast,
+} from 'src/app/common/helpers/helpers';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IVigMailBook } from 'src/app/core/models/ms-email/email-model';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CreateOrEditEmailBookDialogComponent } from '../components/create-or-edit-email-book-dialog/create-or-edit-email-book-dialog.component';
@@ -26,7 +32,13 @@ export class EmailBookConfigComponent
   emailsBook = new LocalDataSource();
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  constructor(private emailService: EmailService) {
+  columnFilters: any = [];
+  columnsD: IDelegation[] = [];
+  parameterData: any[] = [];
+  constructor(
+    private emailService: EmailService,
+    private delegationService: DelegationService
+  ) {
     super();
     this.settings.columns = BOOK_EMAIL_COLUMNS;
     this.settings.actions.delete = true;
@@ -42,12 +54,19 @@ export class EmailBookConfigComponent
 
   ngAfterViewInit(): void {
     this.createOrEditEmailBookDialog.subject.subscribe(res => {
-      showToast({
+      /*showToast({
         text:
           res.action === 'create'
             ? 'Se ha creado el libro de correos correctamente'
             : 'Se ha editado el libro de correos correctamente',
         icon: 'success',
+      });*/
+      showAlert({
+        icon: 'success',
+        text:
+          res.action === 'create'
+            ? 'Se ha creado el libro de correos correctamente'
+            : 'Se ha editado el libro de correos correctamente',
       });
       if (
         res.newData.delegationNumber !==
@@ -92,13 +111,18 @@ export class EmailBookConfigComponent
       this.formControlRegionalDelegation.value;
     this.emailService.getVigMailBook(listParams).subscribe({
       next: res => {
+        this.parameterData = res.data;
+        this.totalItems = res.count || 0;
         this.emailsBook.load(res.data);
-        this.totalItems = res.count;
+        this.emailsBook.refresh();
         this.loading = false;
+        console.log(res);
       },
       error: () => {
         this.loading = false;
         this.emailsBook.load([]);
+        this.emailsBook.refresh();
+        this.totalItems = 0;
       },
     });
   }
@@ -120,9 +144,13 @@ export class EmailBookConfigComponent
     this.loading = true;
     this.emailService.deleteEmailBook(data.id).subscribe({
       next: () => {
-        showToast({
+        /*showToast({
           text: 'Registro eliminado correctamente',
           icon: 'success',
+        });*/
+        showAlert({
+          icon: 'success',
+          text: 'Registro eliminado correctamente',
         });
         this.emailsBook.remove(data);
         this.loading = false;
