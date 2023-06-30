@@ -2,7 +2,14 @@ import { CommonModule } from '@angular/common';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { Observable } from 'rxjs';
+import {
+  catchError,
+  concat,
+  debounceTime,
+  Observable,
+  tap,
+  throwError,
+} from 'rxjs';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -37,7 +44,12 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
   refresh: boolean = false;
   successCount: number = 0;
   totalDocs: number = 0;
+  multiple = true;
   fileEvents: FileUploadEvent[];
+  info = `Haz clic para seleccionar las imágenes o arrástralas
+      aquí`;
+  titleFinishUpload = 'Archivos cargados correctamente';
+  questionFinishUpload = '¿Desea subir más archivos?';
   service: IServiceUpload = inject(FileBrowserService);
   constructor(
     private modalRef: BsModalRef,
@@ -56,8 +68,31 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
     if (index) {
       this.uploadFile(fileEvents[index], uploadEvent);
     } else {
-      fileEvents.forEach((fileEvent, index) => {
-        this.uploadFile(fileEvent, uploadEvent, index);
+      const obs = fileEvents.map((fileEvent, index) =>
+        this.uploadFile(fileEvent, uploadEvent, index).pipe(debounceTime(1000))
+      );
+      this.loading = true;
+      concat(...obs).subscribe({
+        error: error => {
+          this.loading = false;
+        },
+        complete: async () => {
+          this.loading = false;
+          const result = await this.alertQuestion(
+            'question',
+            'Archivos cargados correctamente',
+            '¿Desea subir más archivos?'
+          );
+
+          if (!result.isConfirmed) {
+            this.close();
+          }
+          if (result.isConfirmed) {
+            this.totalDocs = 0;
+            this.successCount = 0;
+            uploadEvent.fileEvents.length = 0;
+          }
+        },
       });
     }
   }
@@ -75,14 +110,19 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
     // }
     // console.log(index);
     this._blockErrors.blockAllErrors = true;
-    if (this.service['consecNumber']) {
-      this.service['consecNumber'] += consecNumber;
-    }
-    this.service
+    return this.service
       .uploadFile(this.identificator, fileEvent.file, 'file')
-      .subscribe({
-        next: response => {
-          console.log(response);
+      .pipe(
+        catchError(error => {
+          this.alert(
+            'error',
+            'Error',
+            'Ocurrió un error al subir el documento'
+          );
+          fileEvent.status = FILE_UPLOAD_STATUSES.FAILED;
+          return throwError(() => error);
+        }),
+        tap(response => {
           if (response.type === HttpEventType.UploadProgress) {
             fileEvent.progress = Math.round(
               (100 * response.loaded) / response.total
@@ -92,42 +132,33 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
           if (fileEvent.progress == 100) {
             this.successCount = +1;
           }
-        },
-        error: error => {
-          this.alert(
-            'error',
-            'Error',
-            'Ocurrió un error al subir el documento'
-          );
-          fileEvent.status = FILE_UPLOAD_STATUSES.FAILED;
-        },
-        complete: async () => {
-          await this.finishUpload(fileEvent, uploadEvent);
-        },
-      });
+          fileEvent.status = FILE_UPLOAD_STATUSES.SUCCESS;
+          this.refresh = true;
+        })
+      );
   }
 
-  private async finishUpload(
-    fileEvent: FileUploadEvent,
-    uploadEvent: IUploadEvent
-  ) {
-    fileEvent.status = FILE_UPLOAD_STATUSES.SUCCESS;
-    this.refresh = true;
-    const result = await this.alertQuestion(
-      'question',
-      'Archivos cargados correctamente',
-      '¿Desea subir más archivos?'
-    );
+  // private async finishUpload(
+  //   fileEvent: FileUploadEvent,
+  //   uploadEvent: IUploadEvent
+  // ) {
+  //   fileEvent.status = FILE_UPLOAD_STATUSES.SUCCESS;
+  //   this.refresh = true;
+  //   const result = await this.alertQuestion(
+  //     'question',
+  //     this.titleFinishUpload,
+  //     this.questionFinishUpload
+  //   );
 
-    if (!result.isConfirmed) {
-      this.close();
-    }
-    if (result.isConfirmed) {
-      this.totalDocs = 0;
-      this.successCount = 0;
-      uploadEvent.fileEvents.length = 0;
-    }
-  }
+  //   if (!result.isConfirmed) {
+  //     this.close();
+  //   }
+  //   if (result.isConfirmed) {
+  //     this.totalDocs = 0;
+  //     this.successCount = 0;
+  //     uploadEvent.fileEvents.length = 0;
+  //   }
+  // }
 
   close() {
     this.modalRef.content.callback(this.refresh);

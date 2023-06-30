@@ -284,7 +284,7 @@ imports: [
           </form-field>
         </ng-container>
         <div>
-          <button class="btn btn-primary" (click)="addRole()">
+          <button class="btn btn-primary active btn-sm" (click)="addRole()">
             Agregar Rol
           </button>
         </div>
@@ -297,7 +297,9 @@ imports: [
               <input type="text" class="form-control" formControlName="role" />
             </form-field>
             <div>
-              <button class="btn btn-danger" (click)="removeRole(i)">
+              <button
+                class="btn btn-danger active btn-sm"
+                (click)="removeRole(i)">
                 Eliminar Role
               </button>
             </div>

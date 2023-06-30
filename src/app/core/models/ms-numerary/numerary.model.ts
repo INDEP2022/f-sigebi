@@ -1,3 +1,5 @@
+import { IGood } from '../ms-good/good';
+
 export interface INumerary {
   tasintId: number;
   month: number;
@@ -34,4 +36,30 @@ export interface IRequesNumeraryEnc {
   currency?: string;
   name?: string;
   desc_del?: string;
+}
+
+export interface IRequesNumeraryDet {
+  solnumId: number;
+  goodNumber: string | number;
+  currencyId: string | number;
+  allInterest: string | number;
+  allNumerary: string | number;
+  recordNumber: string | number;
+  commission: string | number;
+  allPayNumber: string | number;
+  allintPay: string | number;
+  goodFatherpartializationNumber: string | number;
+  dateCalculationInterests: Date | string;
+  good: IGood;
+}
+
+export interface IRequesNumeraryCal {
+  solnumId: string | number;
+  goodNumber: string | number;
+  year: string | number;
+  month: string | number;
+  amount: string | number;
+  interest: string | number;
+  recordNumber: string | number;
+  days: string | number;
 }

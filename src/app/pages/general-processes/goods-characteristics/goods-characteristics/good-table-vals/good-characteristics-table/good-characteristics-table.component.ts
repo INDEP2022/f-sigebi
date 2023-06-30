@@ -37,6 +37,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
   @Input() inventary: any;
   @Input() loadInventary: boolean = false;
   @Input() set goodChange(value: number) {
+    console.error('ESTE es el valor de Value', value);
     this._goodChange = value;
     if (value > 0) this.getData();
   }
@@ -72,6 +73,10 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
 
   private getData() {
     // console.log(this.clasification);
+    console.error(
+      'LLEGO A GET_DATA Y ESTE ES EL CLASIFICADOR:',
+      this.clasification
+    );
     this.loading = true;
     const filterParams = new FilterParams();
     filterParams.limit = 100;
@@ -84,6 +89,8 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
+          console.error('ATRIBUTOS DEL BIEN', response.data);
+
           this.val_atributos_inmuebles = 0;
 
           if (response.data && response.data.length > 0) {

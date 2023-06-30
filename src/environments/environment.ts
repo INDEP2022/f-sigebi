@@ -3,8 +3,8 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  API_URL: 'http://sigebimsqa.indep.gob.mx/', //'http://localhost:3000/api/v1/', // ********** SOLO CAMBIAR ESTA PARTE
+  production: true,
+  API_URL: 'http://sigebimsqa.indep.gob.mx/', //'http://localhost:3000/api/v1/',
   API_URL2: 'http://sigebimsqa.indep.gob.mx/', // ********** SOLO CAMBIAR ESTA PARTE
 
   URL_PREFIX: 'api/v1/',

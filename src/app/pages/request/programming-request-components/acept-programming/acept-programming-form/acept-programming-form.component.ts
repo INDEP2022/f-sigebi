@@ -437,6 +437,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             response.saePhysicalState = 'MALO';
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
+          console.log('response_t', response.storeId);
+          console.log('response_tgoodis', response.goodId);
           this.goodsInfoTrans.push(response);
           this.goodsTranportables.load(this.goodsInfoTrans);
           this.totalItemsTransportable = this.goodsTranportables.count();
@@ -461,12 +463,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
           // queda pendiente mostrar el alías del almacén //
-          console.log('transportable', response);
+          console.log('response_g', response.storeId);
+          console.log('response_guard', response.goodId);
           this.goodsInfoGuard.push(response);
-          console.log('transportable22', items);
-          console.log('datos de trans', this.goodsInfoGuard);
           this.goodsGuards.load(this.goodsInfoGuard);
-          console.log('transportable2', response.decriptionGoodSae);
           this.totalItemsGuard = this.goodsGuards.count();
           this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
         },
@@ -493,7 +493,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           // warehouseName
           // queda pendiente mostrar el alías del almacén //
           console.log('response_!!!', response.storeId);
-          console.log('response', response);
           this.goodsInfoWarehouse.push(response);
           console.log('warefilter', this.goodsInfoWarehouse);
           this.goodsWarehouse.load(this.goodsInfoWarehouse);
@@ -533,65 +532,68 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     });
 
     this.goodsInfoTrans.map(async good => {
-      const warehouse = await this.warehouseNameT(good.nameWarehouse);
+      const warehouse = await this.warehouseNameT(good.storeId);
       console.log('infotrans', good);
-      const guardObject = {
+      const transObject = {
         goodId: good.goodId,
         uniqueKey: good.uniqueKey,
         goodDescription: good.goodDescription,
         quantity: good.quantity,
         unitMeasure: good.unitMeasure,
-        nameWarehouse: warehouse, //condicionar
+        storeId: good.storeId, //condicionar
       };
-      console.log('transdato', good.nameWarehouse);
-      // console.log('transdato nombre', warehouse);
-      this.transGoods.push(guardObject);
+      console.log('transdato', good.storeId);
+      console.log('transdato nombre', warehouse);
+      console.log('transdato obj', transObject);
+      this.transGoods.push(transObject);
     });
 
     this.goodsInfoGuard.map(async good => {
-      const warehouse = await this.warehouseNameT(good.nameWarehouse);
+      const warehouse = await this.warehouseNameT(good.storeId);
       const guardObject = {
         goodId: good.goodId,
         uniqueKey: good.uniqueKey,
         goodDescription: good.goodDescription,
         quantity: good.quantity,
         unitMeasure: good.unitMeasure,
-        nameWarehouse: warehouse,
+        storeId: good.storeId,
       };
-      console.log('guardsgood', good.nameWarehouse);
+      console.log('guardsgood', good.storeId);
       console.log('guardsgood nombre', warehouse);
+      console.log('guardsgood obf', guardObject);
       this.guardGoods.push(guardObject);
     });
 
     this.goodsInfoWarehouse.map(async good => {
-      const warehouse = await this.warehouseNameT(good.nameWarehouse);
+      const warehouse = await this.warehouseNameT(good.storeId);
       const warehouseObject = {
         goodId: good.goodId,
         uniqueKey: good.uniqueKey,
         goodDescription: good.goodDescription,
         quantity: good.quantity,
         unitMeasure: good.unitMeasure,
-        nameWarehouse: warehouse,
+        storeId: good.storeId,
       };
-      console.log('infowarehouse', good.nameWarehouse);
-      console.log('warehpous nombre', warehouse);
+      console.log('infowarehouse', good.storeId);
+      console.log('infowarehouse name', warehouse);
+      console.log('warehpous nombre', warehouseObject);
       this.warehouseGoods.push(warehouseObject);
     });
-    this.goodsInfoTrans.map(item => {
-      item.nameWarehouse = item.storeId;
-      delete item.storeId;
-      return item;
-    });
-    this.goodsInfoGuard.map(item => {
-      item.nameWarehouse = item.storeId;
-      delete item.storeId;
-      return item;
-    });
-    this.goodsInfoWarehouse.map(item => {
-      item.nameWarehouse = item.storeId;
-      delete item.storeId;
-      return item;
-    });
+    // this.goodsInfoTrans.map(item => {
+    //   item.nameWarehouse = item.storeId;
+    //   delete item.storeId;
+    //   return item;
+    // });
+    // this.goodsInfoGuard.map(item => {
+    //   item.nameWarehouse = item.storeId;
+    //   delete item.storeId;
+    //   return item;
+    // });
+    // this.goodsInfoWarehouse.map(item => {
+    //   item.nameWarehouse = item.storeId;
+    //   delete item.storeId;
+    //   return item;
+    // });
     const dataEmail = {
       folio: this.programming.folio,
       startDate: this.programming.startDate,
@@ -599,9 +601,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       city: this.programming.city,
       address: this.programming.address,
       usersProg: this.infoUsers,
-      goodsTrans: this.goodsInfoTrans,
-      goodsResg: this.goodsInfoGuard,
-      goodsWarehouse: this.goodsInfoWarehouse,
+      goodsTrans: this.transGoods,
+      goodsResg: this.guardGoods,
+      goodsWarehouse: this.warehouseGoods,
       emailSend: this.emails,
     };
     // this.warehouseService
@@ -625,7 +627,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       .createEmailProgramming(JSON.stringify(dataEmail))
       .subscribe({
         next: () => {
-          console.log('data', dataEmail);
           this.alert(
             'success',
             'Notificación',
@@ -752,31 +753,14 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     });
   }
 
-  warehouseNameT(warehouse: any) {
+  warehouseNameT(idWarehouse: any) {
     return new Promise((resolve, reject) => {
-      // this.paramsWarehouse.getValue()['filter.idWarehouse'] =
-      //   this.nameWarehouse;
-
-      this.warehouseService
-        .getAllFilter(this.paramsWarehouse.getValue())
-        .subscribe({
-          next: response => {
-            response.data.map((item: any) => {
-              // if(this.nameWarehouse===item.idWarehouse){
-
-              // }
-              // this.nameWarehouse = response;
-              // console.log(
-              //   'response data',
-              //   this.nameWarehouse === item.idWarehouse
-              // );
-              return resolve(item.description);
-            });
-            // this.nameWarehouse == response.description;
-            console.log('el cambio por aca');
-          },
-          error: error => {},
-        });
+      this.warehouseService.getById(idWarehouse).subscribe({
+        next: response => {
+          return resolve(response.description);
+        },
+        error: error => {},
+      });
     });
   }
   //   this.paramsWarehouse.getValue()['filter.idWarehouse'] =
