@@ -5,22 +5,20 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
-  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { IDepositaryAppointments_custom } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { COLUMNS } from './columns';
+import { AppointmentsService } from '../services/appointments.service';
+import { COLUMNS_DATA } from './columns';
 
 @Component({
-  selector: 'app-list-data',
+  selector: 'app-list-data-appintment',
   templateUrl: './list-data.component.html',
   styles: [],
 })
 export class ListDataAppointmentComponent extends BasePage implements OnInit {
   @Input() plain = false;
-  dataDocs: IListResponse<any /*Modelado de datos*/> =
-    {} as IListResponse<any /*Modelado de datos*/>;
 
   //Declaraciones para ocupar filtrado
   data: LocalDataSource = new LocalDataSource();
@@ -28,94 +26,60 @@ export class ListDataAppointmentComponent extends BasePage implements OnInit {
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  @Input() noBien: number = null;
 
   constructor(
     private modalRef: BsModalRef,
-    private docService: DocumentsService
+    private docService: DocumentsService,
+    private appointmentsService: AppointmentsService
   ) {
     super();
-    this.settings.hideSubHeader = false;
-    this.settings.columns = COLUMNS;
+    this.settings.hideSubHeader = true;
+    this.settings.columns = COLUMNS_DATA;
     this.settings.actions.delete = false;
     this.settings.actions.add = false;
-    this.settings.hideSubHeader = false;
-    this.dataDocs.count = 0;
+    this.settings.actions.edit = false;
+    // this.settings.hideSubHeader = false;
+    // this.dataDocs.count = 0;
   }
 
   ngOnInit(): void {
-    //Convertir los filterParams en ListParams
-    const exist = this.filterParams.getValue().getFilterParams();
-
-    if (exist) {
-      const filters = exist.split('&');
-      filters.map(fil => {
-        const partsFilter = fil.split('=');
-        this.columnFilters[partsFilter[0]] = partsFilter[1];
-      });
-    }
-
-    //Filtrado por columnas
-    this.data
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        if (change.action === 'filter') {
-          let filters = change.filter.filters;
-          filters.map((filter: any) => {
-            let field = '';
-            //Default busqueda SearchFilter.ILIKE
-            let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
-
-            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
-            const search: any = {
-              id: () => (searchFilter = SearchFilter.EQ),
-              keyTypeDocument: () => (searchFilter = SearchFilter.ILIKE),
-              significantDate: () => (searchFilter = SearchFilter.EQ),
-            };
-
-            search[filter.field]();
-
-            if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-            } else {
-              delete this.columnFilters[field];
-            }
-          });
-          this.paramsList = this.pageFilter(this.paramsList);
-          //Su respectivo metodo de busqueda de datos
-          this.getNotfications();
-        }
-      });
-
-    //observador para el paginado
-    this.paramsList
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getNotfications());
+    setTimeout(() => {
+      console.log(this.paramsList);
+      if (this.paramsList) {
+        //observador para el paginado
+        this.paramsList
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getAppointments());
+      }
+    }, 300);
   }
 
-  formData(doc: any /*Modelado de datos */) {
+  formData(doc: IDepositaryAppointments_custom) {
     this.modalRef.content.callback(true, doc);
     this.modalRef.hide();
   }
 
-  getNotfications() {
+  getAppointments() {
     this.loading = true;
-    let params = {
-      ...this.paramsList.getValue(),
-      ...this.columnFilters,
-    };
+    const params = new ListParams();
+    params['filter.numberGood'] = '$eq:' + this.noBien;
+    // params['filter.numberGood'] = this.noBien;
+    params.limit = this.paramsList.value.limit;
+    params.page = this.paramsList.value.page;
+    console.log(params);
 
-    //Usar extends HttpService en los servicios para usar ListParams | string por si el service usa FiltersParams
-    this.docService.getAll(params).subscribe({
+    this.appointmentsService.getDataDepositaryAppointment(params).subscribe({
       next: resp => {
+        console.log(resp);
+
         this.totalItems = resp.count;
-        this.dataDocs = resp;
         this.data.load(resp.data);
         this.data.refresh();
         this.loading = false;
       },
-      error: () => {
+      error: error => {
+        console.log(error);
         this.loading = false;
         this.totalItems = 0;
         this.data.load([]);
@@ -125,6 +89,7 @@ export class ListDataAppointmentComponent extends BasePage implements OnInit {
   }
 
   close() {
+    this.modalRef.content.callback(false, null);
     this.modalRef.hide();
   }
 }
