@@ -20,6 +20,9 @@ export interface IUploadEvent {
 export class FileUploadComponent extends BasePage implements OnInit {
   @Input() accept: string = '*';
   nameButton: string = 'Subir imágen';
+  @Input() multiple = true;
+  @Input() info = `Haz clic para seleccionar las imágenes o arrástralas
+      aquí`;
   @Output() onUploadFiles = new EventEmitter<IUploadEvent>();
   fileEvents: FileUploadEvent[] = [];
   config: any;
@@ -39,6 +42,9 @@ export class FileUploadComponent extends BasePage implements OnInit {
   ngOnInit(): void {}
 
   async onSelect(event: NgxDropzoneChangeEvent) {
+    if (!this.multiple) {
+      this.fileEvents = [];
+    }
     const fileEvents = event.addedFiles.map(async file => {
       const ext = file.name.substring(file.name.lastIndexOf('.') + 1) ?? '';
       if (ext?.toLowerCase().includes('tif')) {

@@ -1,12 +1,10 @@
 <div class="row dropzone-container">
   <ngx-dropzone
     (change)="onSelect($event)"
+    [multiple]="multiple"
     [expandable]="true"
     [accept]="accept">
-    <ngx-dropzone-label
-      >Haz clic para seleccionar las imágenes o arrástralas
-      aquí</ngx-dropzone-label
-    >
+    <ngx-dropzone-label>{{ info }}</ngx-dropzone-label>
     <ngx-dropzone-preview
       ngProjectAs="ngx-dropzone-preview"
       [file]="fileEvent.file"

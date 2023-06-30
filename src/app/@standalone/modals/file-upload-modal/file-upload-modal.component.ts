@@ -37,7 +37,12 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
   refresh: boolean = false;
   successCount: number = 0;
   totalDocs: number = 0;
+  multiple = true;
   fileEvents: FileUploadEvent[];
+  info = `Haz clic para seleccionar las imágenes o arrástralas
+      aquí`;
+  titleFinishUpload = 'Archivos cargados correctamente';
+  questionFinishUpload = '¿Desea subir más archivos?';
   service: IServiceUpload = inject(FileBrowserService);
   constructor(
     private modalRef: BsModalRef,
@@ -75,9 +80,6 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
     // }
     // console.log(index);
     this._blockErrors.blockAllErrors = true;
-    if (this.service['consecNumber']) {
-      this.service['consecNumber'] += consecNumber;
-    }
     this.service
       .uploadFile(this.identificator, fileEvent.file, 'file')
       .subscribe({
@@ -115,8 +117,8 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
     this.refresh = true;
     const result = await this.alertQuestion(
       'question',
-      'Archivos cargados correctamente',
-      '¿Desea subir más archivos?'
+      this.titleFinishUpload,
+      this.questionFinishUpload
     );
 
     if (!result.isConfirmed) {
