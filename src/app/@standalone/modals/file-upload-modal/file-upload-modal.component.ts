@@ -110,26 +110,32 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
     // }
     // console.log(index);
     this._blockErrors.blockAllErrors = true;
-    this.service.uploadFile(this.identificator, fileEvent.file, 'file').pipe(
-      catchError(error => {
-        this.alert('error', 'Error', 'Ocurrió un error al subir el documento');
-        fileEvent.status = FILE_UPLOAD_STATUSES.FAILED;
-        return throwError(() => error);
-      }),
-      tap(response => {
-        if (response.type === HttpEventType.UploadProgress) {
-          fileEvent.progress = Math.round(
-            (100 * response.loaded) / response.total
+    return this.service
+      .uploadFile(this.identificator, fileEvent.file, 'file')
+      .pipe(
+        catchError(error => {
+          this.alert(
+            'error',
+            'Error',
+            'Ocurrió un error al subir el documento'
           );
-        }
-        console.log(fileEvent.progress);
-        if (fileEvent.progress == 100) {
-          this.successCount = +1;
-        }
-        fileEvent.status = FILE_UPLOAD_STATUSES.SUCCESS;
-        this.refresh = true;
-      })
-    );
+          fileEvent.status = FILE_UPLOAD_STATUSES.FAILED;
+          return throwError(() => error);
+        }),
+        tap(response => {
+          if (response.type === HttpEventType.UploadProgress) {
+            fileEvent.progress = Math.round(
+              (100 * response.loaded) / response.total
+            );
+          }
+          console.log(fileEvent.progress);
+          if (fileEvent.progress == 100) {
+            this.successCount = +1;
+          }
+          fileEvent.status = FILE_UPLOAD_STATUSES.SUCCESS;
+          this.refresh = true;
+        })
+      );
   }
 
   // private async finishUpload(
