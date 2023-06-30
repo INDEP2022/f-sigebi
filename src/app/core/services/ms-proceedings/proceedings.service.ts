@@ -153,4 +153,8 @@ export class ProceedingsService extends HttpService {
   deleteProceeding(model: Object) {
     return this.delete(this.route, model);
   }
+
+  getUnioTable(goodNumber: number, params?: string) {
+    return this.get(`${ProceedingsEndpoints.GetUnion}/${goodNumber}`, params);
+  }
 }

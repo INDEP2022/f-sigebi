@@ -24,6 +24,7 @@ import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.m
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
@@ -33,6 +34,7 @@ import {
   GOOD_TRACKER_ORIGINS,
   GOOD_TRACKER_ORIGINS_TITLES,
 } from '../../utils/constants/origins';
+import { ActaHistoComponent } from '../acta-histo/acta-histo.component';
 import { ViewPhotosComponent } from '../view-photos/view-photos.component';
 import { GP_GOODS_COLUMNS } from './goods-columns';
 
@@ -66,7 +68,8 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     private goodTrackerService: GoodTrackerService,
     private globalVarService: GlobalVarsService,
     private jasperServ: SiabService,
-    private goodPartService: GoodPartializeService
+    private goodPartService: GoodPartializeService,
+    private procedings: ProceedingsService
   ) {
     super();
     this.settings.actions = false;
@@ -335,7 +338,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     } else {
       const v_parcialization = await this.getPadre(lnu_good);
 
-      if (!v_parcialization) return;
+      // if (!v_parcialization) return;
 
       this.jasperServ
         .fetchReport('RCEDINFCONNUMERARIO', {
@@ -373,6 +376,43 @@ export class GoodsTableComponent extends BasePage implements OnInit {
         },
         error: () => {
           resolve(null);
+        },
+      });
+    });
+  }
+
+  async getHistory() {
+    const good = this.goods.filter(g => g.select == true)[0];
+
+    const histo = await this.getHistoryData(Number(good.goodNumber));
+
+    if (histo.length > 0) {
+      let config: ModalOptions = {
+        initialState: {
+          histo: histo,
+          callback: (data: any) => {},
+        },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(ActaHistoComponent, config);
+    } else {
+      this.alert(
+        'warning',
+        `Bien: ${good.goodNumber}`,
+        'No tiene actas, programaciones, suspensiones ni cancelaciones'
+      );
+    }
+  }
+
+  async getHistoryData(good: number) {
+    return new Promise<any[]>((resolve, reject) => {
+      this.procedings.getUnioTable(good).subscribe({
+        next: resp => {
+          resolve(resp.data);
+        },
+        error: () => {
+          resolve([]);
         },
       });
     });
