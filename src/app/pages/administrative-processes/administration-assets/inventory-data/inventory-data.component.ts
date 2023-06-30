@@ -41,8 +41,7 @@ import { RegisterModalComponent } from './register-modal/register-modal.componen
 })
 export class InventoryDataComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   list: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -91,9 +90,8 @@ export class InventoryDataComponent
         sort: false,
         type: 'html',
         valuePrepareFunction: (text: string) => {
-          return `${
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
-          }`;
+          return `${text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            }`;
         },
         filter: {
           type: 'custom',
@@ -452,11 +450,11 @@ export class InventoryDataComponent
     return new Promise<any[]>((res, rej) => {
       const params: ListParams = {};
       const dateNow = new Date();
-      params['filter.dateInventory'] = `$lte:${
-        dateNow.toISOString().split('T')[0]
-      }`;
+      params['filter.dateInventory'] = `$lte:${dateNow.toISOString().split('T')[0]
+        }`;
       this.inventoryService.getInventoryByGood(this.goodId, params).subscribe({
         next: resp => {
+          console.log(resp);
           res(resp.data);
         },
         error: err => {
@@ -491,7 +489,7 @@ export class InventoryDataComponent
     }
     //await this.getGood();
     const inventoryAntList: any[] = await this.getInvAnterior();
-
+    console.log(inventoryAntList);
     for (const reg of inventoryAntList) {
       vb_hay_inv_anterior = true;
       vn_inv_anterior = reg.inventoryNumber;
@@ -568,7 +566,7 @@ export class InventoryDataComponent
       next: resp => {
         console.log(resp);
       },
-      error: err => {},
+      error: err => { },
     });
   }
 
@@ -587,7 +585,7 @@ export class InventoryDataComponent
       next: resp => {
         console.log(resp);
       },
-      error: err => {},
+      error: err => { },
     });
   }
 }
