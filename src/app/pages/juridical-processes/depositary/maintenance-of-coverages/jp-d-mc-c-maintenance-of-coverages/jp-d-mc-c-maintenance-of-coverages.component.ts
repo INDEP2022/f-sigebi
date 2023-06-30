@@ -84,6 +84,8 @@ export class JpDMcCMaintenanceOfCoveragesComponent
   selectAll: boolean = false;
   userAuth: any = null;
   screenKey: string = 'FADMAMPAROS';
+  dwhere: string = '';
+  formLoading: boolean = true;
 
   notificationServices = inject(NotificationService);
   route = inject(ActivatedRoute);
@@ -476,7 +478,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     this.entFedService.getAll(params).subscribe({
       next: resp => {
         resp.data.map((item: any) => {
-          item['otWorthAndId'] = item.id + ' - ' + item.otWorth;
+          item['downloadStateAndId'] = item.id + ' - ' + item.downloadState;
         });
 
         this.entFedSelected = new DefaultSelect(resp.data, resp.count);
@@ -661,7 +663,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
   async setFolioUnivAndSelects(good: any) {
     return new Promise(async (resolve, reject) => {
       const folio = await this.getGoodFolio(good.id);
-      console.log('folio ', folio, '// etiqueta:', good.labelNumber);
+      //console.log('folio ', folio, '// etiqueta:', good.labelNumber);
       let result = { block: false, folio: folio };
       if (good.labelNumber == 6) {
         result.block = true;
@@ -782,16 +784,17 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     if (this.selectAll == true) {
       const body: any = {};
       body['flierNumber'] = this.pathParams.volante;
-      body['folioUniversal'] = folio;
+      body['folioUniversal'] = Number(this.blkControlForm.folioUniversal);
       body['affairKey'] = Number(this.form.get('affairKey').value);
       body['user'] = this.userAuth.username;
       body['transactNumber'] = this.pathParams.tramite;
       body['expedientNumber'] = this.pathParams.expediente;
       body['chSele'] = true;
       body['chChange'] = false;
-      result = await this.applyForAllGood(body);
+      const forAllResult = await this.applyForAllGood(body);
+      result = forAllResult;
     }
-    debugger;
+
     if (this.listGoodSelected.length > 0) {
       const listGoods = await this.returnGoodFormat(this.listGoodSelected);
       const body: any = {};
@@ -803,8 +806,14 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       body['transactNumber'] = this.pathParams.tramite;
       body['goodArray'] = listGoods;
 
-      result = await this.applyForSomeGood(body);
+      const forSome = await this.applyForSomeGood(body);
+      result = forSome;
     }
+    console.log('apply result', result);
+    delete notifications.reserved;
+    delete notifications.dictumKey;
+    const notfiResult = await this.updateNotification(notifications);
+
     v_ind_no = result.V_IND_NO;
     v_ind_si = result.V_IND_SI;
     v_rel_est_si = result.V_REL_EST_SI;
@@ -821,31 +830,38 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     const copy = {
       pantalla: 'FADMAMPAROS',
     };
+
     if (v_ind_si == true) {
       const correo: any = await this.getGenRelEmail(emails);
       const copie: any = await this.getGenRelCopy(copy);
+      this.dwhere = correo;
       //pup_ini_correo
+      const preview = this.concatPreview(v_rel_si);
       const subject = 'Aviso de Bienes amparados';
       this.openEmail(
         SendMailModalComponent,
         this.form.value,
         subject,
-        v_rel_si,
+        preview,
         correo,
+        '',
         copie
       );
     }
     if (v_ind_no == true) {
       const correo: any = await this.getGenRelEmail(emails);
       const copie: any = await this.getGenRelCopy(copy);
+      this.dwhere = correo;
       //pup_ini_correo
+      const preview = this.concatPreview(v_rel_no);
       const subject = 'Aviso de Bienes liberados de amparado';
       this.openEmail(
         SendMailModalComponent,
         this.form.value,
         subject,
-        v_rel_no,
+        preview,
         correo,
+        '',
         copie
       );
     }
@@ -857,7 +873,6 @@ export class JpDMcCMaintenanceOfCoveragesComponent
         .applyAllGoddMaintenanceCoverage(body)
         .subscribe({
           next: resp => {
-            console.log(resp);
             resolve(resp);
           },
           error: error => {
@@ -874,7 +889,6 @@ export class JpDMcCMaintenanceOfCoveragesComponent
         .applySomeGoddMaintenanceCoverage(body)
         .subscribe({
           next: resp => {
-            console.log(resp);
             resolve(resp);
           },
           error: error => {
@@ -948,6 +962,11 @@ export class JpDMcCMaintenanceOfCoveragesComponent
           },
         });
     });
+  }
+
+  concatPreview(v_rel_si: any) {
+    const value = v_rel_si.join('.\n');
+    return value.toLowerCase();
   }
 
   async knowledge() {
@@ -1109,6 +1128,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     return this.modalService.show(component, config);
   }
 
+  //llama al modal de abrir correo
   sendEmail() {
     this.openEmail(
       SendMailModalComponent,
@@ -1119,6 +1139,25 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       null,
       null
     );
+  }
+
+  updateNotification(body: any) {
+    return new Promise((resolve, reject) => {
+      body.cityNumber = Number(body.cityNumber);
+      const wheelNumber = this.pathParams.volante;
+      this.notificationServices.update(wheelNumber, body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          resolve(null);
+          this.onLoadToast(
+            'info',
+            'No se pudo guardar la información de la notificación'
+          );
+        },
+      });
+    });
   }
 
   manttoEmail() {

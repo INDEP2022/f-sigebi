@@ -93,6 +93,10 @@ export class RegistryServicesComponent
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
+              case 'serviceCode':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
               case 'courtDate':
                 filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
