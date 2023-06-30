@@ -43,14 +43,14 @@
 
         <form-field
           [control]="form.get('significantDate')"
-          label="Fecha significativa"
+          label="Fecha significativa (mm/aaaa)"
           class="col-md-2">
           <input
             type="text"
             class="form-control"
             formControlName="significantDate"
             bsDatepicker
-            [bsConfig]="{ dateInputFormat: 'MM/YYYY' }" />
+            [bsConfig]="{ dateInputFormat: 'MM/YYYY', minMode: 'month' }" />
         </form-field>
       </div>
 
@@ -156,10 +156,10 @@
       <div class="row" style="margin-bottom: 30px">
         <div class="col-md-10 d-flex justify-content-between">
           <div class="d-flex align-items-center">
-            <span class="text-success mr-5"
+            <span class="mr-5" style="color: #b38e5d"
               ><i class="fa fa-square"></i> Documento digitalizado</span
             >
-            <span class="text-danger"
+            <span style="color: #05668d"
               ><i class="fa fa-square"></i> Documento pendiente de
               digitalizar</span
             >
@@ -172,7 +172,8 @@
 
       <div class="d-flex justify-content-end">
         <small class="text-secondary"
-          >(Doble click en la imagen para visualizar)</small
+          >(Clic para visualizar la lista de folios relacionados al
+          expediente)</small
         >
       </div>
 
@@ -184,12 +185,15 @@
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="settings"
-                  [source]="data">
+                  [source]="data"
+                  (delete)="showDeleteAlert($event.data)"
+                  (userRowSelect)="modalImage($event.data)">
                 </ng2-smart-table>
               </div>
             </div>
           </div>
         </div>
+        <!-- (edit)="openForm($event.data)" -->
         <app-pagination
           [params]="params"
           [totalItems]="totalItems"></app-pagination>

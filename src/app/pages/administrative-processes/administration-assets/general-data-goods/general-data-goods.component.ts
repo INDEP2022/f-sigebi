@@ -176,15 +176,11 @@ export class GeneralDataGoodsComponent
         this.generalDataForm
           .get('fechaFe')
           .patchValue(
-            this.good.judicialDate === undefined
+            this.good.judicialDate === undefined ||
+              this.good.judicialDate === null
               ? null
               : this.formatearFecha(this.good.judicialDate.toString())
           );
-        console.error(
-          '******* Esta es la fecha ********',
-          this.formatearFecha(this.good.judicialDate.toString())
-        );
-
         this.generalDataForm
           .get('observacion')
           .patchValue(this.good.observations);

@@ -13,6 +13,7 @@ import {
   ILvlPrograma,
   IValNumeOtro,
 } from '../../models/ms-good/good';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -149,5 +150,20 @@ export class GoodProcessService extends HttpService {
   getDescDepBan(good: number) {
     const route = GoodProcessPoints.GetDescDep;
     return this.get(`${route}/${good}`);
+  }
+
+  getLabelDesc(body: {
+    transferNumber: string | number;
+    clasifGooNumber: string | number;
+  }) {
+    return this.post('update-good-status/getLabelDescrip', body);
+  }
+
+  postExistsGoodxStatus(body: {
+    pVcScreem: string;
+    goodNumber: string;
+    proccesExtDom: string;
+  }): Observable<IListResponse<any>> {
+    return this.post('application/getExistsGoodxStatus', body);
   }
 }

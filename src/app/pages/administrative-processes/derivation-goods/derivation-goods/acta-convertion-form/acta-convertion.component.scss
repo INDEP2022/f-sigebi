@@ -6,6 +6,16 @@
   overflow-y: auto;
 }
 
+.modal-content {
+  width: 700px !important;
+}
+
+.app-modal-wide {
+  max-width: 90%;
+  width: 700px !important;
+  /* Puedes ajustar este valor al ancho que desees */
+}
+
 .modal-body {
   padding: 200px 100px 20px;
 }
@@ -24,12 +34,13 @@
 }
 
 .custom-cell {
-  width: 70%;
-  /* Ajusta este valor según sea necesario */
   text-align: center;
 }
 
+.card-body-table {
+  //padding-right: 100px;
+  padding-top: 30px;
+}
 .app-modal-dialog {
   max-width: 90%;
-  /* Esto hará que el ancho del modal sea el 90% del ancho de la ventana. */
 }

@@ -14,6 +14,7 @@ import { IMassiveGood } from '../../models/ms-massivegood/massivegood.model';
 })
 export class MassiveGoodService extends HttpService {
   private readonly route = MassiveGoodEndpoints;
+
   constructor() {
     super();
     this.microservice = this.route.MassiveGood;
@@ -68,6 +69,11 @@ export class MassiveGoodService extends HttpService {
 
   deleteMassiveGoodComer(good: number) {
     return this.delete(`${this.route.DeleteMassiveGood}/${good}`);
+  }
+  cargueMassiveGoodConversion(
+    params?: ListParams
+  ): Observable<IListResponse<IMassiveGood>> {
+    return this.get<IListResponse<IMassiveGood>>(this.route.Massive, params);
   }
 
   getWheelNotificationsByExpedientNumber(goodNumber: string) {

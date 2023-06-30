@@ -22,7 +22,7 @@
         {{ expense.id }}
       </td>
       <td class="w-50">
-        {{ expense.descriptionName }}
+        {{ expense.description }}
       </td>
       <td>
         {{ expense.import }}
@@ -57,21 +57,22 @@
     </button>
   </div>
   <div class="modal-body form-material" [formGroup]="form">
-    <form-field class="form-group" [control]="form.get('id')" label="Id Gasto">
+    <!-- <form-field class="form-group" [control]="form.get('id')" label="Id Gasto">
       <input readonly type="text" formControlName="id" class="form-control" />
-    </form-field>
+    </form-field> -->
     <form-field
       class="form-group"
-      [control]="form.get('description')"
-      label="Descripción">
+      [control]="form.get('id')"
+      label="Id Gasto - Descripción">
       <ng-custom-select
         class="form-control"
-        formControlName="description"
         path="spent/api/v1/expense-concept"
         value="id"
+        formControlName="id"
+        [initOption]="initOptionExpenseConcept"
         (valueChange)="selectedExpenseType($event)">
         <ng-template let-item>
-          {{ item.description }}
+          {{ item.id }} - {{ item.description }}
         </ng-template>
       </ng-custom-select>
     </form-field>
@@ -82,9 +83,9 @@
   <div class="modal-footer">
     <button
       type="button"
-      class="btn btn-default btn-sm btn-success font-weight-bold shadow-none"
+      class="btn btn-default btn-sm btn-primary active font-weight-bold shadow-none"
       (click)="addExpense()">
-      Guardar
+      Agregar
       <i class="fas fa-paper-plane"></i>
     </button>
     <button

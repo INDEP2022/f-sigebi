@@ -97,6 +97,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
   totalItemsSirsae: number = 0;
   currentItemSirsae: number = 0;
   currentPageSirsae: number = 0;
+  errorSirSae: number = 0;
   // Errores de Sirsae
   errorsSirsae: any[] = [];
   screenKey: string = 'FCONDEPODISPAGOS';
@@ -221,7 +222,11 @@ export class QueryRelatedPaymentsDepositoriesComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1250)],
       ], //*
       cantidad: [{ value: '', disabled: false }, [Validators.maxLength(21)]], //*
-      estatus: [{ value: '', disabled: false }, [Validators.maxLength(300)]], //*
+      estatus: [{ value: '', disabled: false }, [Validators.maxLength(3)]], //*
+      estatusDescription: [
+        { value: '', disabled: false },
+        [Validators.maxLength(300)],
+      ], //*
     });
   }
 
@@ -293,6 +298,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
     this.totalItemsSirsae = 0;
     this.currentItemSirsae = 0;
     this.currentPageSirsae = 1;
+    this.errorSirSae = 0;
   }
 
   btnImprimir(): any {
@@ -337,6 +343,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
     this.router.navigate(['/pages/juridical/depositary/depository-fees'], {
       queryParams: {
         origin: this.screenKey,
+        p_bien: this.noBienReadOnly,
       },
     });
   }
@@ -417,10 +424,10 @@ export class QueryRelatedPaymentsDepositoriesComponent
       .subscribe({
         next: res => {
           if (res.data.length > 0) {
-            let status = this.formBienDetalle.get('estatus').value;
+            // let status = this.formBienDetalle.get('estatus').value;
             this.formBienDetalle
-              .get('estatus')
-              .setValue(status + ' --- ' + res.data[0].description);
+              .get('estatusDescription')
+              .setValue(res.data[0].description);
           }
         },
         error: err => {
@@ -495,7 +502,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.totalItemsPayBanks = 0;
           this.dataTablePayBanks.refresh();
           this.loadingTablePayBanks = false;
-          this.alertQuestion(
+          this.alert(
             'warning',
             'Pagos Recibidos en el Banco',
             NOT_FOUND_PAYMENTS_BANK(err.error.message)
@@ -572,7 +579,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.totalItemsReceivedPays = 0;
           this.dataTableReceivedPays.refresh();
           this.loadingTableReceivedPays = false;
-          this.alertQuestion(
+          this.alert(
             'warning',
             'Composición de Pagos Recibidos',
             NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS(err.error.message)
@@ -666,6 +673,15 @@ export class QueryRelatedPaymentsDepositoriesComponent
         // );
         this.loadingSirsaeProcess = false;
         this.form.get('noBien').enable();
+        if (this.errorSirSae > 0) {
+          this.alert(
+            'warning',
+            'Ocurrió un error en el proceso, intente nuevamente',
+            'Se mostrará un excel con detalles de los errores por cada registro procesado'
+          );
+        } else {
+          this.alert('success', 'PROCESO TERMINADO ', '');
+        }
       }
     }
   }
@@ -701,11 +717,17 @@ export class QueryRelatedPaymentsDepositoriesComponent
         }
       },
       error: err => {
+        this.errorSirSae++;
         this.currentItemSirsae++;
         let obj: any = {};
         obj = dataComplete[count];
-        obj['errores'] = err.error.message;
-        obj['lstLot'] = err.error.message;
+        if (err.status == 500) {
+          obj['errores'] = 'Error al procesar este registro';
+          obj['lstLot'] = 'Realice el proceso nuevamente de envio SIRSAE';
+        } else {
+          obj['errores'] = err.error.message;
+          obj['lstLot'] = err.error.message;
+        }
         this.errorsSirsae.push(obj);
         if (dataLength == count + 1) {
           this.currentPageSirsae++;

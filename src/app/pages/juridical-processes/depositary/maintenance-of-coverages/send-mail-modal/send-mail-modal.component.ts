@@ -39,7 +39,7 @@ export class SendMailModalComponent extends BasePage implements OnInit {
   title: string = 'Enviar Correo';
   form: FormGroup;
   optionsSelected = new DefaultSelect();
-  subject: 'Aviso de amparo';
+  subject: string = null;
   preview: any = null;
   for: string = null;
   message: string = '';
@@ -57,14 +57,15 @@ export class SendMailModalComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.initialForm();
     this.getSelecOptions();
+    console.log('cc:', this.cc);
   }
 
   initialForm() {
     this.form = this.fb.group({
-      for: [null],
-      cc: [null],
+      for: [this.for],
+      cc: [this.cc],
       subject: [this.subject],
-      message: [null],
+      message: [this.message],
       selMen: [null],
     });
   }
@@ -85,7 +86,8 @@ export class SendMailModalComponent extends BasePage implements OnInit {
       case 'p1':
         value = p1(
           this.notification.wheelNumber,
-          this.notification.expedientNumber
+          this.notification.expedientNumber,
+          this.preview
         );
         console.log(value);
         this.form.get('message').setValue(value);
@@ -93,21 +95,24 @@ export class SendMailModalComponent extends BasePage implements OnInit {
       case 'p2':
         value = p2(
           this.notification.wheelNumber,
-          this.notification.expedientNumber
+          this.notification.expedientNumber,
+          this.preview
         );
         this.form.get('message').setValue(value);
         break;
       case 'p3':
         value = p3(
           this.notification.wheelNumber,
-          this.notification.expedientNumber
+          this.notification.expedientNumber,
+          this.preview
         );
         this.form.get('message').setValue(value);
         break;
       case 'p4':
         value = p4(
           this.notification.wheelNumber,
-          this.notification.expedientNumber
+          this.notification.expedientNumber,
+          this.preview
         );
         this.form.get('message').setValue(value);
         break;
@@ -119,7 +124,22 @@ export class SendMailModalComponent extends BasePage implements OnInit {
   }
 
   async send() {
-    if (!this.form.get('for').value && !this.form.get('message').value) {
+    if (
+      this.form.get('for').value == '' ||
+      this.form.get('for').value == null
+    ) {
+      this.onLoadToast(
+        'error',
+        'Los campos Para/Mensaje no pueden estar vacios',
+        ''
+      );
+      return;
+    }
+
+    if (
+      this.form.get('message').value == '' ||
+      this.form.get('message').value == null
+    ) {
       this.onLoadToast(
         'error',
         'Los campos Para/Mensaje no pueden estar vacios',
@@ -130,35 +150,39 @@ export class SendMailModalComponent extends BasePage implements OnInit {
     let selecMsg = this.form.get('selMen').value;
     let para = this.form.get('for').value.split(',');
     let cc =
-      this.form.get('cc').value != null
+      this.form.get('cc').value != null || this.form.get('cc').value != ''
         ? this.form.get('cc').value.split(',')
         : [];
     let asunto = this.form.get('subject').value;
     let mensaje = '';
+    const newPreviewer = this.formatPreviewerforMail(this.preview);
     if (selecMsg == 'p1') {
       mensaje = s1(
         this.notification.wheelNumber,
-        this.notification.expedientNumber
+        this.notification.expedientNumber,
+        newPreviewer
       );
     } else if (selecMsg == 'p2') {
       mensaje = s2(
         this.notification.wheelNumber,
-        this.notification.expedientNumber
+        this.notification.expedientNumber,
+        newPreviewer
       );
     } else if (selecMsg == 'p3') {
       mensaje = s3(
         this.notification.wheelNumber,
-        this.notification.expedientNumber
+        this.notification.expedientNumber,
+        newPreviewer
       );
     } else if (selecMsg == 'p4') {
       mensaje = s4(
         this.notification.wheelNumber,
-        this.notification.expedientNumber
+        this.notification.expedientNumber,
+        this.preview
       );
     } else {
       mensaje = this.form.get('message').value;
     }
-
     const formData = new FormData();
     formData.append('emails_send', para);
     formData.append('template', mensaje);
@@ -191,12 +215,19 @@ export class SendMailModalComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'Ocurrio un error al enviar los mensaje',
-            ''
+            `${e.error?.message}`
           );
           console.log(e);
           reject('error');
         },
       });
     });
+  }
+
+  formatPreviewerforMail(preview: any) {
+    const value = this.preview.split('.\n');
+    const newValue = value.join('<br>');
+
+    return newValue;
   }
 }
