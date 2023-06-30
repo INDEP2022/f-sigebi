@@ -35,25 +35,16 @@ export const GOODSEXPEDIENT_COLUMNS_GOODS = {
   },
   acta: {
     title: 'Acta',
-    type: 'custom',
+    type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.cveActa;
     },
   },
-  // status: {
-  //   title: 'Estatus',
-  //   type: 'string',
-  //   sort: false,
-  // },
-  rowClassFunction: (row: any) => {
-    if (row.status === 'CNE') {
-      return 'row-verde';
-    } else if (row.status === 'RRE' || row.status === 'VXR') {
-      return 'row-negro';
-    } else {
-      return 'row-verde';
-    }
+  status: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
   },
 };
 
@@ -66,6 +57,7 @@ export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
       sort: false,
       renderComponent: ProceedingsConversionComponent,
       valuePrepareFunction: (value: string) => {
+        console.log(value)
         if (value == 'null' || value == 'undefined') {
           return '';
         }
@@ -75,8 +67,8 @@ export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
       class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
         ? WHEEL_COLOR_DATA_COLUMN
         : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-        ? OFFICE_COLOR_DATA_COLUMN
-        : GOOD_COLOR_DATA_COLUMN,
+          ? OFFICE_COLOR_DATA_COLUMN
+          : GOOD_COLOR_DATA_COLUMN,
     };
   } else if (keyValueObj == 'descbien') {
     objResponse = {
@@ -85,6 +77,8 @@ export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
       sort: false,
       renderComponent: ProceedingsConversionComponent,
       valuePrepareFunction: (value: string) => {
+        console.log(value)
+
         if (value == 'null' || value == 'undefined') {
           return '';
         }
@@ -94,8 +88,8 @@ export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
       class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
         ? WHEEL_COLOR_DATA_COLUMN
         : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-        ? OFFICE_COLOR_DATA_COLUMN
-        : GOOD_COLOR_DATA_COLUMN,
+          ? OFFICE_COLOR_DATA_COLUMN
+          : GOOD_COLOR_DATA_COLUMN,
     };
   } else if (keyValueObj == 'observaciones') {
     objResponse = {
@@ -104,6 +98,8 @@ export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
       sort: false,
       renderComponent: ProceedingsConversionComponent,
       valuePrepareFunction: (value: string) => {
+        console.log(value)
+
         if (value == 'null' || value == 'undefined') {
           return '';
         }
@@ -113,8 +109,8 @@ export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
       class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
         ? WHEEL_COLOR_DATA_COLUMN
         : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-        ? OFFICE_COLOR_DATA_COLUMN
-        : GOOD_COLOR_DATA_COLUMN,
+          ? OFFICE_COLOR_DATA_COLUMN
+          : GOOD_COLOR_DATA_COLUMN,
     };
   } else {
     objResponse = {
@@ -124,8 +120,8 @@ export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
       class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
         ? GOODSEXPEDIENT_COLUMNS_GOODS
         : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-        ? OFFICE_COLOR_DATA_COLUMN
-        : GOOD_COLOR_DATA_COLUMN,
+          ? OFFICE_COLOR_DATA_COLUMN
+          : GOOD_COLOR_DATA_COLUMN,
     };
   }
   return objResponse;

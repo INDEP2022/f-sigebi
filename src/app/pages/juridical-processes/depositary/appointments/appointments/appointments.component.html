@@ -15,6 +15,7 @@
         Guardar
         <i aria-hidden="true" class="fa fa-save"></i></button
       ><button
+        [disabled]="_saveDataDepositary"
         type="button"
         (click)="newDepositary()"
         tooltip="Agregar"
@@ -532,12 +533,23 @@
             termMaxLength="45"
             control="entidadFederativa"></ngx-select>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('giro')" label="Giro">
             <input
               class="form-control"
               formControlName="giro"
-              maxLength="45"
+              maxLength="15"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="form.get('giroDesc')"
+            label="Giro Descripci&oacute;n">
+            <input
+              class="form-control"
+              formControlName="giroDesc"
+              maxLength="30"
               [readonly]="true" />
           </form-field>
         </div>
