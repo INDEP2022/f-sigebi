@@ -76,9 +76,11 @@
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
           <button
-            type="button"
+            type="submit"
+            class="btn btn-primary btn-sm active"
+            tooltip="Enviar"
+            containerClass="tooltip-style"
             (click)="getDataTable()"
-            class="btn btn-info"
             [disabled]="!form.valid">
             Ejecutar
           </button>
@@ -135,14 +137,15 @@
           </form-field>
           <button
             type="button"
-            class="btn btn-primary btn-sm"
-            style="height: 80%; margin-left: 5vh"
+            class="btn btn-primary active btn-sm"
+            style="margin-left: 5vh"
             (click)="search()"
             [disabled]="
               formaplicationData.get('applicationChangeCashNumber').value ==
               null
             ">
-            <i class="bx bx-search bx-sm float-icon"></i>
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
       </div>
@@ -255,18 +258,18 @@
             <div class="m-3">
               <button
                 type="button"
-                class="btn btn-info"
+                class="btn btn-primary btn-sm active"
                 (click)="guardarSolicitud()"
                 [disabled]="!formaplicationData.valid"
                 style="margin: 1vh">
                 Guardar
+                <i aria-hidden="true" class="fa fa-save"></i>
               </button>
               <button
-                type="button"
-                class="btn btn-info"
+                class="btn btn-danger btn-sm active mr-3"
                 (click)="clean()"
                 style="margin: 1vh">
-                Limpiar
+                Limpiar <i class="fas fa-eraser"> </i>
               </button>
             </div>
           </div>
@@ -276,28 +279,36 @@
       <div class="row">
         <div class="col-md-1 col-sm-12 col-xs-12" style="display: grid">
           <button
-            type="button"
-            class="btn btn-primary btn-sm"
+            type="submit"
+            class="btn btn-primary btn-sm active"
+            tooltip="Enviar"
+            containerClass="tooltip-style"
             (click)="pasar()">
-            <i class="bx bx-chevron-right bx-sm float-icon"></i>
+            <i class="bx bx-chevron-right"></i>
           </button>
           <button
-            type="button"
-            class="btn btn-primary btn-sm"
+            type="submit"
+            class="btn btn-primary btn-sm active"
+            tooltip="Enviar"
+            containerClass="tooltip-style"
             (click)="pasarTodo()">
-            <i class="bx bx-chevrons-right bx-sm float-icon"></i>
+            <i class="bx bx-chevrons-right"></i>
           </button>
           <button
-            type="button"
-            class="btn btn-primary btn-sm"
+            type="submit"
+            class="btn btn-primary btn-sm active"
+            tooltip="Enviar"
+            containerClass="tooltip-style"
             (click)="quitarTodo()">
-            <i class="bx bx-chevrons-left bx-sm float-icon"></i>
+            <i class="bx bx-chevrons-left"></i>
           </button>
           <button
-            type="button"
-            class="btn btn-primary btn-sm"
+            type="submit"
+            class="btn btn-primary btn-sm active"
+            tooltip="Enviar"
+            containerClass="tooltip-style"
             (click)="quitar()">
-            <i class="bx bx-chevron-left bx-sm float-icon"></i>
+            <i class="bx bx-chevron-left"></i>
           </button>
         </div>
         <div class="col-md-11 col-sm-12 col-xs-12">
@@ -309,7 +320,7 @@
               (userRowSelect)="selectDataCamNum($event.data)">
             </ng2-smart-table>
             <app-pagination
-              [params]="params"
+              [params]="params1"
               [totalItems]="totalItems1"></app-pagination>
           </div>
         </div>
@@ -322,9 +333,9 @@
             <div class="m-3">
               <button
                 type="button"
-                class="btn btn-danger btn-sm active"
+                class="btn btn-primary active btn-sm"
                 (click)="printScanFile()">
-                Imprimir Cedula
+                Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
               </button>
             </div>
           </div>

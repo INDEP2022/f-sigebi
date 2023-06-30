@@ -371,7 +371,11 @@ export class PerformProgrammingFormComponent
       folio: [null],
     });
   }
-
+  checkInfoDate2() {
+    const startDateValue = this.performForm.get('startDate').value;
+    console.log('Valor de startDate:', startDateValue);
+    // Realiza cualquier operación adicional con el valor de startDateValue
+  }
   searchEstate() {
     this.estateForm = this.fb.group({
       akaWarehouse: [null],
@@ -564,7 +568,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -581,7 +585,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -602,7 +606,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -624,7 +628,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -641,7 +645,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -660,7 +664,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -679,7 +683,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -700,7 +704,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -722,7 +726,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -739,7 +743,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -756,7 +760,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -777,7 +781,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -799,7 +803,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -816,7 +820,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -832,7 +836,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -853,7 +857,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -875,7 +879,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -898,7 +902,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Acción invalida',
+          'Acción inválida',
           'No hay bienes disponibles para programar'
         );
         this.estatesList.load(filterData);
@@ -1685,7 +1689,7 @@ export class PerformProgrammingFormComponent
           this.programmingGoodService
             .deleteGoodProgramming(formData)
             .subscribe(() => {
-              this.onLoadToast(
+              this.alert(
                 'success',
                 'Correcto',
                 'Bien eliminado de transportable correctamente'
@@ -1735,7 +1739,7 @@ export class PerformProgrammingFormComponent
           this.programmingGoodService
             .deleteGoodProgramming(formData)
             .subscribe(() => {
-              this.onLoadToast(
+              this.alert(
                 'success',
                 'Correcto',
                 'Bien eliminado de resguardo correctamente'
@@ -1767,7 +1771,7 @@ export class PerformProgrammingFormComponent
           this.programmingGoodService
             .deleteGoodProgramming(formData)
             .subscribe(() => {
-              this.onLoadToast(
+              this.alert(
                 'success',
                 'Correcto',
                 'Bien eliminado de alamcén correctamente'
@@ -1826,7 +1830,7 @@ export class PerformProgrammingFormComponent
             .subscribe({
               next: async () => {
                 this.loading = false;
-                this.onLoadToast(
+                this.alert(
                   'success',
                   'Acción correcta',
                   'Programacíón guardada correctamente'
@@ -1949,7 +1953,7 @@ export class PerformProgrammingFormComponent
     }
 
     if (error > 0) {
-      this.onLoadToast('info', 'Error', `${message}`);
+      this.alert('info', 'Error', `${message}`);
     } else if (error == 0) {
       this.performForm
         .get('startDate')
