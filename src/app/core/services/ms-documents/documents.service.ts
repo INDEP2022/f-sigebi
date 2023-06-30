@@ -226,4 +226,8 @@ export class DocumentsService extends HttpService {
     const route = `/${DocumentsEndpoints.DocumentsSeparator}`;
     return this.get(route, $params);
   }
+
+  getFolio(body: { expedientNumber: string; goodNumber: string }) {
+    return this.post<IListResponse<IDocuments>>('application/get-folio', body);
+  }
 }

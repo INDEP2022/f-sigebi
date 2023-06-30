@@ -16,12 +16,12 @@ import {
   tap,
   throwError,
 } from 'rxjs';
-import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
@@ -65,6 +65,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     private store: Store,
     private router: Router,
     private location: Location,
+    private documentsService: DocumentsService,
     private goodTrackerService: GoodTrackerService,
     private globalVarService: GlobalVarsService,
     private jasperServ: SiabService,
@@ -160,8 +161,8 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   }
 
   viewImages() {
-    const modalConfig = MODAL_CONFIG;
-    this.modalService.show(DocumentsListComponent, modalConfig);
+    // const modalConfig = MODAL_CONFIG;
+    // this.modalService.show(DocumentsListComponent, modalConfig);
   }
 
   openPrevPdf() {
