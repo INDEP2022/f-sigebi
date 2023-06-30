@@ -308,54 +308,54 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           }
 
           if (this.idTypeDoc == 210) {
-            const idKeyDoc = this.programming.id + '-' + this.receipt.actId;
+            const idKeyDoc = this.programming.id + '-' + this.actId;
 
-            this.signatories.map(item => {
-              this.gelectronicFirmService
-                .firmDocument(idKeyDoc, 'actaSat', {})
-                .subscribe({
-                  next: response => {
-                    this.msjCheck = true;
-                  },
-                  error: error => {
-                    //this.msjCheck = true;
-                  },
-                });
-            });
+            this.gelectronicFirmService
+              .firmDocument(idKeyDoc, 'actaSat', {})
+              .subscribe({
+                next: response => {
+                  console.log('response', response);
+                  this.msjCheck = true;
+                },
+                error: error => {
+                  this.alertInfo(
+                    'error',
+                    'Acción Inválida',
+                    'No fue posible firmar el documento'
+                  ).then();
+                  //this.msjCheck = true;
+                },
+              });
           }
 
           if (this.idTypeDoc == 106) {
-            const idKeyDoc = this.programming.id + '-' + this.receipt.actId;
+            const idKeyDoc = this.programming.id + '-' + this.actId;
 
-            this.signatories.map(item => {
-              this.gelectronicFirmService
-                .firmDocument(idKeyDoc, 'actaAsegurados', {})
-                .subscribe({
-                  next: response => {
-                    this.msjCheck = true;
-                  },
-                  error: error => {
-                    this.msjCheck = true;
-                  },
-                });
-            });
+            this.gelectronicFirmService
+              .firmDocument(idKeyDoc, 'actaAsegurados', {})
+              .subscribe({
+                next: response => {
+                  this.msjCheck = true;
+                },
+                error: error => {
+                  this.msjCheck = true;
+                },
+              });
           }
 
           if (this.idTypeDoc == 107) {
-            const idKeyDoc = this.programming.id + '-' + this.receipt.actId;
+            const idKeyDoc = this.programming.id + '-' + this.actId;
 
-            this.signatories.map(item => {
-              this.gelectronicFirmService
-                .firmDocument(idKeyDoc, 'actasVoluntarias', {})
-                .subscribe({
-                  next: response => {
-                    this.msjCheck = true;
-                  },
-                  error: error => {
-                    this.msjCheck = true;
-                  },
-                });
-            });
+            this.gelectronicFirmService
+              .firmDocument(idKeyDoc, 'actasVoluntarias', {})
+              .subscribe({
+                next: response => {
+                  this.msjCheck = true;
+                },
+                error: error => {
+                  this.msjCheck = true;
+                },
+              });
           }
         }
       }
@@ -412,7 +412,12 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           this.validAttachDoc();
         }
 
-        if (this.idTypeDoc == 103) {
+        if (
+          this.idTypeDoc == 103 ||
+          this.idTypeDoc == 106 ||
+          this.idTypeDoc == 107 ||
+          this.idTypeDoc == 108
+        ) {
           this.close();
           this.modalRef.content.callback(true);
         }
