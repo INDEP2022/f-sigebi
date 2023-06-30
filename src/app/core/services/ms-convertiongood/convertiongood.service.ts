@@ -35,7 +35,7 @@ export class ConvertiongoodService extends HttpService {
     return this.post(ConvertiongoodEndpoints.AddActa, good);
   }
 
-  update(id: string | number, good: IConvertiongood) {
+  update(id: string | number, good: IConvertiongood | any) {
     const route = `${ConvertiongoodEndpoints.Convertion}/${id}`;
     return this.put(route, good);
   }

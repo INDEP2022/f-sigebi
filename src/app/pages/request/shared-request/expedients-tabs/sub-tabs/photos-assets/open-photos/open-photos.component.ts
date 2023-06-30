@@ -128,7 +128,7 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
         this.paragraphs.load(_data);
         this.totalItems = this.paragraphs.count();
       } else {
-        this.onLoadToast('info', 'No hay fotos agregadadas a este bien', '');
+        this.onLoadToast('warning', 'No hay fotos agregadadas a este bien', '');
       }
     });
   }
