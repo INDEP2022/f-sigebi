@@ -18,7 +18,6 @@ import { TiffViewerComponent } from '../../tiff-viewer/tiff-viewer.component';
       .buttons {
         color: black;
       }
-
       .body {
         margin-top: -40px !important;
       }
@@ -51,13 +50,13 @@ export class DocumentsViewerByFolioComponent
     return this.fileBrowserService.getFilenamesFromFolio(this.folio).pipe(
       catchError(error => {
         if (error.status < 500) {
-          this.alert('error', '', 'No hay documentos digitalizados');
+          this.alert('error', 'Error', 'No hay documentos digitalizados');
         }
         if (error.status >= 500) {
           this.alert(
             'error',
-            '',
-            'Ocurrio un problema al obtener los archivos'
+            'Error',
+            'Ocurrió un problema al obtener los archivos'
           );
           this.modalRef.hide();
         }

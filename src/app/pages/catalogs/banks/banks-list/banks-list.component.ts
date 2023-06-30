@@ -7,7 +7,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { IBank } from '../../../../core/models/catalogs/bank.model';
 import { BankService } from '../../../../core/services/catalogs/bank.service';
 import { BanksDetailComponent } from '../banks-detail/banks-detail.component';
@@ -133,8 +132,9 @@ export class BanksListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
+        this.alert('success', 'Banco', 'Borrado Correctamente');
         this.delete(bank.bankCode);
-        Swal.fire('Borrado', '', 'success');
+        //Swal.fire('Borrado', '', 'success');
       }
     });
   }

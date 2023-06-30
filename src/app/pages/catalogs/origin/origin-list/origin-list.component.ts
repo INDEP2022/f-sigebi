@@ -126,7 +126,7 @@ export class OriginListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.originService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Procedencias', 'Borrado');
+        this.alert('success', 'Procedencia', 'Borrada Correctamente');
         this.getExample();
       },
       error: error => {

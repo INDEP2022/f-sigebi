@@ -124,7 +124,7 @@ export class CourtListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.courtService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Juzgado', 'Borrado');
+        this.alert('success', 'Juzgado', 'Borrado Correctamente');
         this.getExample();
       },
       error: error => {

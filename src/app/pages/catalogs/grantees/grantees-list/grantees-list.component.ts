@@ -120,7 +120,8 @@ export class GranteesListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.granteeService.remove(id).subscribe({
       next: response => {
-        this.alert('success', 'Donatorio', 'Borrado'), this.getExample();
+        this.alert('success', 'Donatorio', 'Borrado Correctamente'),
+          this.getExample();
       },
       error: err => {
         this.alert(

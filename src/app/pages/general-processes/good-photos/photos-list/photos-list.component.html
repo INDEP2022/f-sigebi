@@ -65,9 +65,9 @@
           class="dropdown-menu dropdown-menu-right"
           role="menu"
           aria-labelledby="button-basic">
-          <li role="menuitem">
+          <!-- <li role="menuitem">
             <a class="dropdown-item" (click)="showHistoric()">Histórico</a>
-          </li>
+          </li> -->
           <li
             role="menuitem"
             [class]="disabledDeletePhotos() ? 'disabledDelete' : ''"
@@ -93,7 +93,7 @@
     >Da doble click a la foto para visualizarlo</small
   > -->
   <div class="row docs-scroll">
-    <div class="col-md-12">
+    <div class="col-md-12 p-0">
       <h6 class="text-center" *ngIf="files.length === 0">
         No hay fotos cargadas
       </h6>
@@ -104,6 +104,7 @@
           <div class="row">
             <div class="col-md-12">
               <app-photo
+                (refreshFiles)="refresh($event)"
                 [typedblClickAction]="typedblClickAction"
                 [filename]="image"
                 [goodNumber]="goodNumber + ''"></app-photo>

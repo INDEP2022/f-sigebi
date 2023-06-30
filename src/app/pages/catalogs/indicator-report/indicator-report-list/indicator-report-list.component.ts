@@ -109,7 +109,7 @@ export class IndicatorReportListComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.indicatorReportService.remove(indicatorReport.id).subscribe({
           next: response => {
-            this.alert('success', 'Indicador Reporte', 'Borrado');
+            this.alert('success', 'Indicador reporte', 'Borrado Correctamente');
             this.getExample();
           },
           error: err => {

@@ -120,7 +120,8 @@ export class BatchListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.batchService.remove(id).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Lotes', 'Borrado');
+        this.getExample(),
+          this.alert('success', 'Lote', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(
