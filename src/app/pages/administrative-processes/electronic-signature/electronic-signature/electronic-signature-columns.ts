@@ -1,4 +1,4 @@
-import { formatearFecha } from '../../administration-assets/search-tab/search-columns';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const ELECTRONICSIGNATURE_COLUMNS = {
   clave_oficio_armada: {
@@ -10,8 +10,13 @@ export const ELECTRONICSIGNATURE_COLUMNS = {
     title: 'Fecha Dictámen',
     width: '20%',
     sort: false,
-    valuePrepareFunction: (value: any) => {
-      return formatearFecha(new Date(value));
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('-') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
     },
   },
   tipo_dictaminacion: {

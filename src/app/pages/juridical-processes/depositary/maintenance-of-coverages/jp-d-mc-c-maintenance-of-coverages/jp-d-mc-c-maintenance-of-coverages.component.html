@@ -12,6 +12,9 @@
       </div>
     </div>
   </div>
+  <!--   <div class="row" *ngIf="formLoading == true">
+    <form-loader *ngIf="formLoading == true"></form-loader>
+  </div> -->
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
@@ -100,7 +103,7 @@
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('touchPenaltyKey')"
-            label="Cve Toca Penal">
+            label="Cve. Toca Penal">
             <input
               type="text"
               class="form-control"
@@ -130,12 +133,11 @@
           </form-field>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('criminalCase')" label="Caso Penal">
+          <form-field [control]="form.get('criminalCase')" label="Causa Penal">
             <input
               type="text"
               class="form-control"
-              formControlName="criminalCase"
-              bsDatepicker />
+              formControlName="criminalCase" />
           </form-field>
         </div>
       </div>
@@ -219,7 +221,7 @@
             <ngx-select
               [searchOnInit]="false"
               (fetchItems)="getEntity($event)"
-              bindLabel="otWorthAndId"
+              bindLabel="downloadStateAndId"
               [data]="entFedSelected"
               [form]="form"
               control="entFedKey"
@@ -363,7 +365,10 @@
       <div class="col-md-3 col-sm-12 col-xs-12">
         <div class="d-flex justify-content-center">
           <div class="m-3">
-            <button type="button" class="btn btn-success btn-sm active">
+            <button
+              type="button"
+              class="btn btn-success btn-sm active"
+              (click)="sendEmail()">
               Envio de correo
             </button>
           </div>
@@ -387,7 +392,18 @@
       <app-scanning-foil
         [notifications]="form.value"
         [folio]="blkControlForm.folioUniversal"
-        [documents]="documents"></app-scanning-foil>
+        [documents]="documents"
+        [processNumber]="pathParams.tramite"></app-scanning-foil>
+    </div>
+    <div class="form-group row" style="margin-top: 5rem">
+      <label for="staticEmail" class="col-sm-1 col-form-label">DWHERE</label>
+      <div class="col-sm-5">
+        <input
+          type="text"
+          class="form-control"
+          id="dwhere"
+          value="{{ dwhere }}" />
+      </div>
     </div>
   </div>
 </app-card>
