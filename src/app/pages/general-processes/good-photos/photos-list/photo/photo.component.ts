@@ -1,43 +1,28 @@
 import {
   Component,
-  Input,
+  EventEmitter,
   OnInit,
+  Output,
   SimpleChanges,
-  ViewChild,
 } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { takeUntil } from 'rxjs';
+import { FileUploadModalComponent } from 'src/app/@standalone/modals/file-upload-modal/file-upload-modal.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { FilePhotoEditService } from 'src/app/core/services/ms-ldocuments/file-photo-edit.service';
 import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
-import { BasePage } from 'src/app/core/shared';
-import { getMimeTypeFromBase64 } from 'src/app/utils/functions/get-mime-type';
-
-const Tiff = require('tiff.js');
-const LOADING_GIF = 'assets/images/loader-button.gif';
-const NO_IMAGE_FOUND = 'assets/images/documents-icons/not-found.jpg';
+import { NO_IMAGE_FOUND, PhotoClassComponent } from '../../models/photo-class';
 
 @Component({
   selector: 'app-photo',
   templateUrl: './photo.component.html',
   styleUrls: ['./photo.component.scss'],
 })
-export class PhotoComponent extends BasePage implements OnInit {
-  @Input() filename: string = '';
-  @Input() goodNumber: string = null;
-  @Input() typedblClickAction: number = 1;
-  @ViewChild('container', { static: true })
-  imgSrc: string | SafeResourceUrl = null;
-  imgDocument: string;
-  isDocument: boolean = false;
-  loadingGif = LOADING_GIF;
-  error: boolean = false;
-  documentLength: number = 0;
-  subscription: any;
-  private mimeType: string = null;
+export class PhotoComponent extends PhotoClassComponent implements OnInit {
+  @Output() refreshFiles = new EventEmitter<boolean>();
+  // subscription: any;
   constructor(
     private service: FilePhotoService,
-    private modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private editService: FilePhotoEditService
   ) {
     super();
   }
@@ -54,8 +39,9 @@ export class PhotoComponent extends BasePage implements OnInit {
     this.loading = true;
     let index = this.filename.indexOf('F');
     console.log(index);
-    this.subscription = this.service
+    this.service
       .getById(this.goodNumber, +this.filename.substring(index + 1, index + 5))
+      .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: base64 => {
           this.loading = false;
@@ -73,78 +59,30 @@ export class PhotoComponent extends BasePage implements OnInit {
       });
   }
 
-  private base64Change(base64: string) {
-    if (!base64) {
-      return;
-    }
-    const bytesSize = 4 * Math.ceil(base64.length / 3) * 0.5624896334383812;
-    this.documentLength = bytesSize / 1000;
-    const ext =
-      this.filename.substring(this.filename.lastIndexOf('.') + 1) ?? '';
-    // TODO: Checar cuando vengan pdf, img etc
-    this.imgSrc = ext.toLowerCase().includes('tif')
-      ? this.getUrlTiff(base64)
-      : this.getUrlDocument(base64);
-    // this.mimeType = getMimeTypeFromBase64(this.imgSrc as string, this.filename);
-  }
-
-  private getUrlTiff(base64: string) {
-    try {
-      const buffer = Buffer.from(base64, 'base64');
-      const tiff = new Tiff({ buffer });
-      const canvas: HTMLCanvasElement = tiff.toCanvas();
-      canvas.style.width = '100%';
-      console.log('llego aca', this.filename);
-      return this.sanitizer.bypassSecurityTrustResourceUrl(canvas.toDataURL());
-    } catch (error) {
-      this.error = true;
-      console.log(this.error);
-      return this.sanitizer.bypassSecurityTrustResourceUrl(NO_IMAGE_FOUND);
-    }
-  }
-
-  private getUrlDocument(base64: string) {
-    let mimeType;
-    mimeType = getMimeTypeFromBase64(base64, this.filename);
-    const ext =
-      this.filename.substring(this.filename.lastIndexOf('.') + 1) ?? '';
-    if (ext?.toLowerCase() == 'pdf') {
-      mimeType = 'application/pdf';
-      this.isDocument = true;
-      this.imgDocument = 'assets/images/documents-icons/pdf.png';
-    } else {
-      this.isDocument = false;
-    }
-    this.mimeType = mimeType;
-    return this.sanitizer.bypassSecurityTrustResourceUrl(
-      `data:${mimeType};base64, ${base64}`
+  editPhoto() {
+    const index = this.filename.indexOf('F');
+    this.editService.consecNumber = +this.filename.substring(
+      index + 1,
+      index + 5
     );
-  }
-
-  editPhoto() {}
-
-  openDocumentsViewer() {
-    console.log(this.error);
-    if (this.loading || this.error) {
-      return;
-    }
-    let config: ModalOptions = {
+    const config = {
+      ...MODAL_CONFIG,
       initialState: {
-        documento: {
-          urlDoc: this.imgSrc,
-          type: this.mimeType,
+        accept: 'image/*',
+        uploadFiles: false,
+        service: this.editService,
+        multiple: false,
+        info: `Haz clic para seleccionar la imágen o arrástrala
+      aquí`,
+        titleFinishUpload: 'Imagen cargada correctamente',
+        questionFinishUpload: '¿Desea seguir editando?',
+        identificator: this.goodNumber + '',
+        callback: (refresh: boolean) => {
+          console.log(refresh);
+          this.refreshFiles.emit(refresh);
         },
-        callback: (data: any) => {},
-      }, //pasar datos por aca
-      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-      ignoreBackdropClick: true, //ignora el click fuera del modal
+      },
     };
-    this.modalService.show(PreviewDocumentsComponent, config);
-  }
-
-  override ngOnDestroy() {
-    console.log('AQUI ESTAMOS');
-    this.subscription.unsubscribe();
-    // this.sub.unsubscribe();
+    this.modalService.show(FileUploadModalComponent, config);
   }
 }
