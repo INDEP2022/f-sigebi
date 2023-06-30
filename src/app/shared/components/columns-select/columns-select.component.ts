@@ -17,6 +17,10 @@ interface ISettings {
       #dropdown-basic {
         max-height: 200px;
         overflow-y: auto;
+        position: absolute !important;
+        inset: 100% auto auto 0px !important;
+        transform: translate3d(0px, 34px, 0px) !important;
+        margin-right: 0px !important;
       }
     `,
   ],

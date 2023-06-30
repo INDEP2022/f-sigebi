@@ -371,7 +371,11 @@ export class PerformProgrammingFormComponent
       folio: [null],
     });
   }
-
+  checkInfoDate2() {
+    const startDateValue = this.performForm.get('startDate').value;
+    console.log('Valor de startDate:', startDateValue);
+    // Realiza cualquier operación adicional con el valor de startDateValue
+  }
   searchEstate() {
     this.estateForm = this.fb.group({
       akaWarehouse: [null],
@@ -1826,7 +1830,7 @@ export class PerformProgrammingFormComponent
             .subscribe({
               next: async () => {
                 this.loading = false;
-                this.onLoadToast(
+                this.alert(
                   'success',
                   'Acción correcta',
                   'Programacíón guardada correctamente'

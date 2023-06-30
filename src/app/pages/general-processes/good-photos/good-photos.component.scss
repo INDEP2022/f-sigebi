@@ -1,0 +1,9 @@
+:host ::ng-deep form-field {
+  .form-control[readonly] {
+    background: white;
+    &:focus ~ .form-bar:after,
+    &:focus ~ .form-bar:before {
+      width: 0% !important;
+    }
+  }
+}

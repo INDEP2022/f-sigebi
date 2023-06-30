@@ -5,6 +5,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import {
   IReceipt,
   IReceiptwitness,
@@ -28,7 +29,10 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
   idProgramming: number = 0;
   loadingWitness: boolean = false;
   keyDoc: string = '';
+  programming: Iprogramming;
   closeModal: boolean = false;
+
+  dataReceipt: IReceipt;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -71,15 +75,15 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     });
 
     this.params.getValue()['filter.id'] = this.proceeding.id;
+    this.params.getValue()['filter.actId'] = this.proceeding.actId;
     this.params.getValue()['filter.programmingId'] =
       this.proceeding.programmingId;
     this.receptionGoodService.getReceipt(this.params.getValue()).subscribe({
       next: response => {
+        this.dataReceipt = response.data[0];
         this.generateReceiptForm.patchValue(response.data[0]);
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
   close() {
@@ -111,6 +115,8 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     this.loadingWitness = true;
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.idProgramming;
+    params.getValue()['filter.actId'] = this.proceeding.actId;
+    params.getValue()['filter.receiptId'] = this.proceeding.id;
     this.receptionGoodService.getReceiptsWitness(params.getValue()).subscribe({
       next: response => {
         const infoReceipt = response.data.map((item: IReceiptwitness) => {
@@ -160,20 +166,14 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
             .get('electronicSignatureReceipt')
             .setValue(0);
         }
-        console.log(
-          'this.generateReceiptForm.value',
-          this.generateReceiptForm.value
-        );
+
         this.receptionGoodService
           .updateReceipt(this.generateReceiptForm.value)
           .subscribe({
             next: response => {
-              console.log('recibo', response);
               this.checkSign();
             },
-            error: error => {
-              console.log('error', error);
-            },
+            error: error => {},
           });
       }
     });
@@ -246,8 +246,8 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
                   103,
                   'RECIBOS',
                   'FIRMA_ELECTRONICA_ENT',
-                  this.proceeding.nameDelivery,
-                  this.proceeding.chargeDelivery
+                  this.dataReceipt.nameDelivery,
+                  this.dataReceipt.chargeDelivery
                 );
 
                 if (createDelivery) {
@@ -257,8 +257,8 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
                       103,
                       'RECIBOS',
                       'FIRMA_ELECTRONICA_REC',
-                      this.proceeding.nameReceipt,
-                      this.proceeding.chargeReceipt
+                      this.dataReceipt.nameReceipt,
+                      this.dataReceipt.chargeReceipt
                     );
                     if (createReceipt) {
                       if (this.paragraphs.count() > 0) {
@@ -302,8 +302,8 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
                   103,
                   'RECIBOS',
                   'FIRMA_ELECTRONICA_ENT',
-                  this.proceeding.nameDelivery,
-                  this.proceeding.chargeDelivery
+                  this.dataReceipt.nameDelivery,
+                  this.dataReceipt.chargeDelivery
                 );
 
                 if (createDelivery) {
@@ -313,8 +313,8 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
                       103,
                       'RECIBOS',
                       'FIRMA_ELECTRONICA_REC',
-                      this.proceeding.nameReceipt,
-                      this.proceeding.chargeReceipt
+                      this.dataReceipt.nameReceipt,
+                      this.dataReceipt.chargeReceipt
                     );
                     if (createReceipt) {
                       if (this.paragraphs.count() > 0) {
@@ -373,15 +373,12 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
         name: name,
         post: position,
       };
-      console.log('formData', formData);
+
       this.signatoriesService.create(formData).subscribe({
         next: response => {
-          console.log('firmantes creados');
           resolve(true);
         },
-        error: error => {
-          console.log('error', error);
-        },
+        error: error => {},
       });
     });
   }
@@ -402,7 +399,15 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
 
         this.receptionGoodService.deleteReceiptWitness(formData).subscribe({
           next: response => {
-            this.showReceiptWitness();
+            this.alertInfo(
+              'info',
+              'Acción Correcta',
+              'Testigo eliminado correctamente'
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.showReceiptWitness();
+              }
+            });
           },
           error: error => {
             console.log('error', error);

@@ -22,7 +22,8 @@
                 class="form-control"
                 formControlName="account"
                 min="1"
-                pattern="^[0-9]+" />
+                pattern="^[0-9]+"
+                oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -30,17 +31,17 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="square" />
+                formControlName="square"
+                maxlength="30" />
             </form-field>
           </div>
           <div class="col-md-3">
             <form-field [control]="form.get('branch')" label="Sucursal">
               <input
-                type="number"
+                type="text"
                 class="form-control"
                 formControlName="branch"
-                min="1"
-                pattern="^[0-9]+" />
+                maxlength="30" />
             </form-field>
           </div>
         </div>
@@ -52,7 +53,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="accountType" />
+                formControlName="accountType"
+                maxlength="13" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -60,7 +62,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="currency" />
+                formControlName="currency"
+                maxlength="15" />
             </form-field>
           </div>
           <div class="col-md-3">

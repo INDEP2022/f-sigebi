@@ -21,6 +21,7 @@ import { AccountMovementService } from 'src/app/core/services/ms-account-movemen
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { TmpExpedientService } from 'src/app/core/services/ms-expedient/tmp-expedient.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
@@ -65,6 +66,7 @@ export class GoodsCaptureComponent
     menageService: MenageService,
     drDataService: DocumentsReceptionDataService,
     globalVarService: GlobalVarsService,
+    gpService: GoodProcessService,
     private tmpExpedientService: TmpExpedientService,
     private _expedienService: ExpedientService,
     private comerDetailsService: ComerDetailsService,
@@ -82,7 +84,8 @@ export class GoodsCaptureComponent
       router,
       menageService,
       drDataService,
-      globalVarService
+      globalVarService,
+      gpService
     );
   }
   ngAfterViewInit(): void {

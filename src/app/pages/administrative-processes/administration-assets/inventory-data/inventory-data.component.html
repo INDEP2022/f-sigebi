@@ -1,22 +1,15 @@
 <!-- <form class="form-material" [formGroup]="inventoryDataForm"> -->
 <div class="row">
   <div class="row">
-    <div class="d-flex justify-content-end">
-      <div class="m-3">
-        <button (click)="add()" class="btn btn-primary active btn-sm">
-          Nuevo
-        </button>
-      </div>
-    </div>
-  </div>
-  <div class="row">
     <div class="col-md-8">
       <p><strong>Seleccione un inventario</strong></p>
     </div>
     <div class="col-md-4" *ngIf="inventorySelect">
       <p>
         Inventario seleccionado:
-        <strong>{{ inventorySelect.inventoryNumber }}</strong>
+        <strong>{{
+          inventorySelect ? inventorySelect.inventoryNumber : ''
+        }}</strong>
       </p>
     </div>
   </div>
@@ -38,28 +31,96 @@
   </div>
 </div>
 <div class="row">
+  <form class="form-material" [formGroup]="inventoryDataForm">
+    <div class="container">
+      <div class="row">
+        <!-- <div class="col-md-4">
+          <form-field [control]="inventoryDataForm.get('noInventario')" label="No. Inventario">
+            <input type="number" class="form-control" formControlName="noInventario" />
+          </form-field>
+        </div> -->
+        <div class="col-md-6">
+          <form-field
+            [control]="inventoryDataForm.get('fechaInventario')"
+            label="Fecha Inventario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fechaInventario"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="inventoryDataForm.get('responsable')"
+            label="Responsable">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="responsable" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="row">
+  <div class="d-flex justify-content-end">
+    <div class="m-3">
+      <button (click)="add()" class="btn btn-primary active btn-sm">
+        {{ textButon }}
+      </button>
+    </div>
+  </div>
+</div>
+<div class="row">
   <div class="col-md-3">
-    <button
+    <!--  <button
       class="btn btn-primary btn-sm active"
       (click)="getAtribute()"
-      [disabled]="disableGetAtribute">
+      >
       Obtener Atributos
+    </button> -->
+    <button
+      [disabled]="generateAtri"
+      class="btn btn-secondary btn-sm active mt-2"
+      (click)="generateAtribute()">
+      Genarar Atributos
     </button>
+    <!-- [disabled]="disableGetAtribute" -->
   </div>
-  <div class="col" *ngIf="viewAct">
-    <div class="row">
+  <div class="col">
+    <div class="row" *ngIf="viewAct">
+      <app-characteristics-legend></app-characteristics-legend>
       <app-good-characteristics-table
         [goodChange]="goodChange"
         [clasification]="classificationOfGoods"
         [settings]="atributActSettings"
         [avaluo]="false"
         [good]="good"
-        [disabled]="true"
+        [disabled]="false"
+        [loadInventary]="loadInventary"
+        [inventary]="inventary"
+        [initValue]="true"
         [service]="service"></app-good-characteristics-table>
+    </div>
+    <div class="row" *ngIf="!viewAct">
+      <app-characteristics-legend></app-characteristics-legend>
+      <app-good-characteristics-table
+        [goodChange]="goodChange"
+        [clasification]="classificationOfGoods"
+        [settings]="atributNewSettings"
+        [avaluo]="false"
+        [good]="good"
+        [disabled]="false"
+        [loadInventary]="loadInventary"
+        [inventary]="inventary"
+        [service]="service"
+        [initValue]="false"></app-good-characteristics-table>
     </div>
   </div>
 </div>
-<div class="d-flex justify-content-center">
+<!-- <div class="d-flex justify-content-center">
   <div>
     <button
       class="btn btn-secondary btn-sm active"
@@ -67,5 +128,5 @@
       Inventario Autoridad Emisora
     </button>
   </div>
-</div>
+</div> -->
 <!-- </form> -->

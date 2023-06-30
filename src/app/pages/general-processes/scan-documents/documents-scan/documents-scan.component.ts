@@ -71,6 +71,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   no_bien: number = null;
   expedientNumber: number = null; //no_expediente
   wheelNumber: number = null; //no_volante
+  processNumber: number = null; //no_tramite
 
   constructor(
     private fb: FormBuilder,
@@ -90,9 +91,11 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.originFlyer = params['volante'] ?? '';
         this.origin = params['origin'] ?? null;
         this.requestOrigin = params['requestOrigin'] ?? null;
+        //mantenimiento amparo
         this.expedientNumber = params['expedientNumber'] ?? null;
         this.wheelNumber = params['wheelNumber'] ?? null;
-
+        this.processNumber = params['processNumber'] ?? null;
+        //fin
         console.log(params);
         if (this.origin == 'FACTJURDICTAMOFICIO') {
           for (const key in this.paramsScreen) {
@@ -286,6 +289,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       initialState: {
         identificator: this.folio,
         accept: 'image/*,application/pdf',
+        nameButton: 'Subir archivos',
         callback: (refresh: boolean) => this.fileUploaderClose(refresh),
       },
     };
@@ -315,7 +319,12 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     const user = token?.preferred_username?.toUpperCase();
     const validUsers = [user, SERA_USER, DEVELOP_USER];
     if (this.filesToDelete.length < 1) {
-      this.onLoadToast(
+      // this.onLoadToast(
+      //   'warning',
+      //   'Advertencia',
+      //   'Debes seleccionar mínimo un archivo'
+      // );
+      this.alert(
         'warning',
         'Advertencia',
         'Debes seleccionar mínimo un archivo'
@@ -493,7 +502,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     }
     if (this.origin == 'FADMAMPAROS') {
       this.router.navigateByUrl(
-        `pages/juridical/depositary/maintenance-of-coverages?wheelNumber=${this.wheelNumber}&proceedingsNumber=${this.expedientNumber}`
+        `pages/juridical/depositary/maintenance-of-coverages?processNumber=${this.processNumber}&wheelNumber=${this.wheelNumber}&proceedingsNumber=${this.expedientNumber}`
       );
     }
   }

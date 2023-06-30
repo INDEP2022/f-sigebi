@@ -5,6 +5,8 @@ import {
   FILE_UPLOAD_STATUSES,
 } from '../interfaces/file-event';
 import { FileUploadService } from '../service/file-upload.service';
+import { BasePage } from 'src/app/core/shared';
+import { ModalOptions } from 'ngx-bootstrap/modal';
 
 export interface IUploadEvent {
   fileEvents: FileUploadEvent[];
@@ -15,12 +17,24 @@ export interface IUploadEvent {
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.scss'],
 })
-export class FileUploadComponent implements OnInit {
+export class FileUploadComponent extends BasePage implements OnInit {
   @Input() accept: string = '*';
+  nameButton: string = 'Subir imágen';
   @Output() onUploadFiles = new EventEmitter<IUploadEvent>();
   fileEvents: FileUploadEvent[] = [];
+  config: any;
   statuses = FILE_UPLOAD_STATUSES;
-  constructor(private fileUploadService: FileUploadService) {}
+  constructor(
+    private fileUploadService: FileUploadService,
+    public options: ModalOptions
+  ) {
+    super();
+    console.log(this.options.initialState);
+    this.config = this.options.initialState;
+    if (this.config && this.config.nameButton != '') {
+      this.nameButton = this.config.nameButton;
+    }
+  }
 
   ngOnInit(): void {}
 
@@ -53,6 +67,10 @@ export class FileUploadComponent implements OnInit {
   }
 
   confirm() {
+    if (this.fileEvents.length < 1) {
+      this.alert('warning', 'Advertencia', 'Debes subir mínimo un archivo');
+      return;
+    }
     this.onUploadFiles.emit({
       fileEvents: this.fileEvents,
     });
