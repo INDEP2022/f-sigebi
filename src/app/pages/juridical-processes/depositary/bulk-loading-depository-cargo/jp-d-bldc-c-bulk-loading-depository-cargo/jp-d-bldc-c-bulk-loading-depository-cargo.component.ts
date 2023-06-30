@@ -8,6 +8,7 @@ import { MassiveDepositaryService } from 'src/app/core/services/ms-massivedeposi
 import { BasePage } from 'src/app/core/shared/base-page';
 import * as XLSX from 'xlsx';
 import { COLUMNS } from './columns';
+
 interface ExampleData {
   NO_BIEN: number;
   FEC_PAGO: string;
@@ -45,6 +46,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   data: ExampleData[];
   origin: string = '';
   no_bien: number = null;
+  no_nom: number = null;
 
   form: FormGroup = new FormGroup({});
   constructor(
@@ -67,6 +69,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         this.origin = params['origin'] ?? null;
         if (this.origin == 'FACTJURREGDESTLEG') {
           this.no_bien = params['no_bien'] ?? null;
+          this.no_nom = params['p_nom'] ?? null;
         }
         console.log(params);
       });
@@ -153,9 +156,14 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   }
   goBack() {
     if (this.origin == 'FACTJURREGDESTLEG') {
-      this.router.navigate([
-        '/pages/juridical/depositary/depositary-record/' + this.no_bien,
-      ]);
+      this.router.navigate(
+        ['/pages/juridical/depositary/depositary-record/' + this.no_bien],
+        {
+          queryParams: {
+            p_nom: this.no_nom,
+          },
+        }
+      );
     } else {
       this.alert(
         'warning',
