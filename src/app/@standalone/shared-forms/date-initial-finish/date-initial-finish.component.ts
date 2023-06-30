@@ -3,7 +3,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 //Services
-import { BankService } from 'src/app/core/services/catalogs/bank.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({

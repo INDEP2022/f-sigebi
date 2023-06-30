@@ -93,10 +93,11 @@ export class UploadDictamenElectronicModalComponent
       event.target.files[0];
       this.certiFile = certiToUpload;
     } else {
-      this.onLoadToast(
+      this.alert(
         'error',
-        'No es un archivo con formato valido.',
-        'Favor de verificar'
+        'Ha ocurrido un error',
+        'No es un archivo con formato valido. Favor de verificar',
+        ''
       );
       this.certiFile = null;
       this.cert.nativeElement.value = '';
@@ -112,10 +113,11 @@ export class UploadDictamenElectronicModalComponent
       event.target.files[0];
       this.keyCertiFile = keyCertiToUpload;
     } else {
-      this.onLoadToast(
+      this.alert(
         'error',
-        'No es un archivo con formato valido.',
-        'Favor de verificar'
+        'Ha ocurrido un error',
+        'No es un archivo con formato valido. Favor de verificar',
+        ''
       );
       this.keyCertiFile = null;
       this.keyI.nativeElement.value = '';
