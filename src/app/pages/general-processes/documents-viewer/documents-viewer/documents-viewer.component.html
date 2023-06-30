@@ -43,14 +43,14 @@
 
         <form-field
           [control]="form.get('significantDate')"
-          label="Fecha significativa"
+          label="Fecha significativa (mm/aaaa)"
           class="col-md-2">
           <input
             type="text"
             class="form-control"
             formControlName="significantDate"
             bsDatepicker
-            [bsConfig]="{ dateInputFormat: 'MM/YYYY' }" />
+            [bsConfig]="{ dateInputFormat: 'MM/YYYY', minMode: 'month' }" />
         </form-field>
       </div>
 
