@@ -1,6 +1,6 @@
-<app-modal class="modal-dialog modal-xl my-custom-modal">
+<app-modal>
   <div header>
-    <h5 class="modal-title">{{ 'Actas' }}</h5>
+    <h5 class="modal-title">{{ 'Actas Conversion' }}</h5>
   </div>
   <div body>
     <div class="row">
@@ -24,9 +24,9 @@
                       <input
                         class="form-check-input"
                         type="checkbox"
-                        value=""
-                        id="check{{ i }}"
-                        (change)="onCheckboxChange($event, item)" />
+                        [checked]="i === selectedIndex"
+                        (change)="onCheckboxChange($event, i)"
+                        [disabled]="disableAllChecks" />
                       <label class="form-check-label" for="check{{ i }}">
                       </label>
                     </div>
@@ -34,6 +34,11 @@
                 </tr>
               </tbody>
             </table>
+            <input
+              type="text"
+              [(ngModel)]="selectItem2"
+              class="form-control custom-cell"
+              placeholder="Clave Acta" />
           </div>
         </div>
       </div>
@@ -52,7 +57,8 @@
               text-align: center;
             "
             class="btn btn-primary btn-block"
-            (click)="handleSubmitNewItem()">
+            (click)="handleSubmitNewItem()"
+            [disabled]="flagNewActa">
             Genera Acta
           </button>
           <button
@@ -66,7 +72,9 @@
               text-overflow: ellipsis;
               text-align: center;
             "
-            class="btn btn-primary btn-block">
+            class="btn btn-primary btn-block"
+            (click)="generateAsignarActa()"
+            [disabled]="flagAsignaActa">
             Asigna Acta
           </button>
           <button
@@ -80,7 +88,8 @@
               text-overflow: ellipsis;
               text-align: center;
             "
-            class="btn btn-primary btn-block">
+            class="btn btn-primary btn-block"
+            (click)="close()">
             Regresar
           </button>
         </div>
