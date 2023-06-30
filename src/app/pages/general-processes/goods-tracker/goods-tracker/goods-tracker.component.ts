@@ -146,7 +146,74 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     this.clasificationFilter();
     // --Filtros de datos del bien
     this.goodDataFilter();
+    // Filtros de notificacion expediente y dictamen
+    this.expNotDicFilter();
+    // Filtros de actas
+    this.certificatesFilter();
 
+    const {
+      transfers,
+      transmitters,
+      autorities,
+      warehouse,
+      cordination,
+      autorityState,
+      goodState,
+    } = form;
+
+    const all = [...transfers, ...transmitters, ...autorities];
+    if (all.length) {
+      this.filters.global.gstSelecProced = 'S';
+    }
+    //     selecAuthority;
+    //     selecStation;
+    // selecTransferee
+  }
+
+  certificatesFilter() {
+    const form = this.form.getRawValue();
+    const {
+      receptionFrom,
+      receptionTo,
+      devolutionDateFrom,
+      devolutionDateTo,
+      statusChaangeTo,
+      statusChangeFrom,
+      certificate,
+      receptionStatus,
+      eventNum,
+      historicalProcess,
+    } = form;
+    this.filters.notification.receptionDate = receptionFrom
+      ? format(new Date(receptionFrom), 'yyyy-MM-dd')
+      : null;
+    this.filters.notification.receptionEndDate = receptionTo
+      ? format(new Date(receptionTo), 'yyyy-MM-dd')
+      : null;
+    this.filters.parval.destinationDateIni = devolutionDateFrom
+      ? format(new Date(devolutionDateFrom), 'yyyy-MM-dd')
+      : null;
+    this.filters.parval.destinationDateFin = devolutionDateTo
+      ? format(new Date(devolutionDateTo), 'yyyy-MM-dd')
+      : null;
+    this.filters.parval.changeDateIni = statusChangeFrom
+      ? format(new Date(statusChangeFrom), 'yyyy-MM-dd')
+      : null;
+    this.filters.parval.changeDateFin = statusChaangeTo
+      ? format(new Date(statusChaangeTo), 'yyyy-MM-dd')
+      : null;
+    this.filters.parval.actKey = certificate;
+    this.filters.parval.statusChange = receptionStatus
+      ? [receptionStatus]
+      : null;
+    this.filters.parval.alienationProcessNumber = eventNum;
+    this.filters.parval.processChange = historicalProcess
+      ? [historicalProcess]
+      : null;
+  }
+
+  expNotDicFilter() {
+    const form = this.form.getRawValue();
     const {
       expedientNum,
       flyerNum,
@@ -156,11 +223,29 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
       protection,
       criminalCase,
       publicMin,
+      extOfficeNum,
+      previusInvestigation,
+      dictum,
+      criminalCause,
+      indicatedName,
     } = form;
     this.filters.parval.proceedingsNumber = expedientNum.length
       ? expedientNum
       : null;
     this.filters.notification.flierNumber = flyerNum.length ? flyerNum : null;
+    this.filters.notification.judgedNumber = judgeNum;
+    this.filters.notification.flierType = flyerType;
+    this.filters.notification.externalOfficeDate = officeDate
+      ? format(new Date(officeDate), 'yyyy-MM-dd')
+      : null;
+    this.filters.notification.protectionKey = protection;
+    this.filters.notification.touchPenaltyKey = criminalCase;
+    this.filters.notification.minpubNumber = publicMin;
+    this.filters.notification.externalOfficeKey = extOfficeNum;
+    this.filters.notification.previousAscertainment = previusInvestigation;
+    this.filters.parval.dictum = dictum;
+    this.filters.notification.nameIndicated = indicatedName;
+    this.filters.notification.criminalCase = criminalCause;
   }
 
   clasificationFilter() {

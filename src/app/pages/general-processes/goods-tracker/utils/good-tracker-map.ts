@@ -45,14 +45,14 @@ interface IGoodTrackerMapNotification {
   flierNumber: string[] | number[];
   flierType: string;
   judgedNumber: string;
-  minpubNumber: number;
-  nameIndicated: number;
+  minpubNumber: string;
+  nameIndicated: string;
   externalOfficeDate: string;
   receptionDate: string;
   receptionEndDate: string;
-  protectionKey: number;
-  touchPenaltyKey: number;
-  externalOfficeKey: number;
+  protectionKey: string;
+  touchPenaltyKey: string;
+  externalOfficeKey: string;
 }
 interface IGoodTrackerMapGlobal {
   gstSelecProced: string;

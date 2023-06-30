@@ -154,7 +154,7 @@ export class GoodTrackerForm {
   criminalCause = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),
   ]);
-  receptionForm = new FormControl<string>(null);
+  receptionFrom = new FormControl<string>(null);
   receptionTo = new FormControl<string>(null);
   certificate = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),
@@ -164,6 +164,8 @@ export class GoodTrackerForm {
   ]);
   statusChangeFrom = new FormControl<string>(null);
   statusChaangeTo = new FormControl<string>(null);
+  devolutionDateFrom = new FormControl<string>(null);
+  devolutionDateTo = new FormControl<string>(null);
   eventNum = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),
   ]);
