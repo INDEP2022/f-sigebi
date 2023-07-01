@@ -103,7 +103,6 @@ export interface IGoodJobManagement {
         pointer-events: none;
       }
       #bienes table:not(.normal-hover) tbody tr:hover {
-      #bienes table:not(.normal-hover) tbody tr:hover {
         color: black !important;
         font-weight: bold;
       }
@@ -111,7 +110,6 @@ export interface IGoodJobManagement {
         background-color: green;
         font-weight: bold;
       }
-
 
       .row-negro {
         background-color: black;
@@ -133,6 +131,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   isHideSelection = true;
   userName: string = '';
   insert = false;
+  dataTableGoodsActa: LocalDataSource = new LocalDataSource();
   disabledImport: boolean = true;
   edit = false;
   updateRe = false;
@@ -665,6 +664,24 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       next: data => {
         this.dataTableGoodsConvertion.load(data.data);
         this.dataTableGoodsConvertion.refresh();
+        this.loading = false;
+        this.totalItems = data.count;
+        console.log(this.dataTableGoodsConvertion);
+      },
+      error: error => {
+        this.loading = false;
+        // console.log(error);
+        // this.dataTableGoodsConvertion.load([]);
+        // this.dataTableGoodsConvertion.refresh();
+      },
+    });
+  }
+
+  getByActa() {
+    this.convertiongoodService.getAllGoods(this.conversion).subscribe({
+      next: data => {
+        this.dataTableGoodsActa.load(data.data);
+        this.dataTableGoodsActa.refresh();
         this.loading = false;
         this.totalItems = data.count;
         console.log(this.dataTableGoodsConvertion);

@@ -214,22 +214,13 @@
                     <form
                       [formGroup]="actaRecepttionForm"
                       class="form-material">
-                      <div class="float-right">
-                        <button
-                          type="button"
-                          class="btn btn-primary active btn-sm"
-                          (click)="searchActas()">
-                          Buscar actas<i
-                            class="bx bx-search bx-sm float-icon"></i>
-                        </button>
-                      </div>
                       <div class="row">
                         <div class="col-md-12">
                           <div class="row">
                             <div class="col-md-12">
                               <div class="card">
                                 <div class="card-body">
-                                  <div class="col-md-3">
+                                  <div class="col-md-4">
                                     <div>
                                       <form-field
                                         [control]="
@@ -246,7 +237,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-2">
+                                  <div class="col-md-4">
                                     <div>
                                       <form-field
                                         [control]="
@@ -263,7 +254,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-2">
+                                  <div class="col-md-4">
                                     <div>
                                       <form-field
                                         [control]="
@@ -281,7 +272,7 @@
                                     </div>
                                   </div>
 
-                                  <div class="col-md-2">
+                                  <div class="col-md-4">
                                     <div>
                                       <form-field
                                         [control]="
@@ -298,7 +289,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-2">
+                                  <div class="col-md-4">
                                     <div>
                                       <form-field
                                         [control]="
@@ -318,7 +309,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-2">
+                                  <div class="col-md-4">
                                     <div>
                                       <form-field
                                         [control]="
@@ -335,7 +326,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-2">
+                                  <div class="col-md-4">
                                     <div>
                                       <form-field
                                         [control]="
@@ -351,7 +342,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-2">
+                                  <div class="col-md-4">
                                     <div>
                                       <form-field
                                         [control]="
@@ -367,24 +358,18 @@
                                       </form-field>
                                     </div>
                                   </div>
-
-                                  <div class="row mt-5">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('direccion')
-                                        "
-                                        label="Direccón">
-                                        <textarea
-                                          maxlength="2000"
-                                          [readonly]="validPermisos"
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="direccion"
-                                          rows="5"></textarea>
-                                      </form-field>
+                                  <div class="float-right">
+                                    <div class="col-md-2">
+                                      <button
+                                        type="button"
+                                        class="btn btn-primary active btn-sm"
+                                        (click)="searchActas()">
+                                        Buscar actas<i
+                                          class="bx bx-search bx-sm float-icon"></i>
+                                      </button>
                                     </div>
                                   </div>
+
                                   <div class="row mt-5">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
                                       <form-field
@@ -432,6 +417,23 @@
                                           type="text"
                                           class="form-control"
                                           formControlName="parrafo3"
+                                          rows="5"></textarea>
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="row mt-5">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('direccion')
+                                        "
+                                        label="Direccón">
+                                        <textarea
+                                          maxlength="2000"
+                                          [readonly]="validPermisos"
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="direccion"
                                           rows="5"></textarea>
                                       </form-field>
                                     </div>
@@ -496,7 +498,7 @@
                                 <ng2-smart-table
                                   [attr.class]="'table-bordered my-table'"
                                   [settings]="settings2"
-                                  [source]="dataTableGoodsConvertion">
+                                  [source]="dataTableGoodsActa">
                                 </ng2-smart-table>
                                 <app-pagination
                                   [totalItems]="totalItems2"></app-pagination>
