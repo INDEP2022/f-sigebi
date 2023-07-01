@@ -24,8 +24,7 @@ import { RegisterServiceComponent } from './register-service/register-service.co
 })
 export class RegistryServicesComponent
   extends BasePage
-  implements OnInit, OnChanges
-{
+  implements OnInit, OnChanges {
   @Input() goodId: number;
   list: any[] = [];
   totalItems: number = 0;
@@ -61,9 +60,8 @@ export class RegistryServicesComponent
         sort: false,
         type: 'html',
         valuePrepareFunction: (text: string) => {
-          return `${
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
-          }`;
+          return `${text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            }`;
         },
         filter: {
           type: 'custom',

@@ -20,7 +20,7 @@ import {
 })
 export class MinpubFormComponent extends BasePage implements OnInit {
   minpubForm: FormGroup = new FormGroup({});
-  title: string = 'MinPub';
+  title: string = 'Minpub';
   edit: boolean = false;
   minpub: IMinpub;
   minpubValue: ICity;

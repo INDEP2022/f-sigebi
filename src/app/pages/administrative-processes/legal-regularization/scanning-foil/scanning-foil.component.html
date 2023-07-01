@@ -3,23 +3,27 @@
     <div class="col-md-12">
       <div class="row">
         <div class="col-md-2"></div>
-        <div class="col">
-          <button
-            type="button"
-            data-toggle="tooltip"
-            class="btn btn-secondary btn-sm active mr-1"
-            (click)="generateFoli()"
-            title="Generar Folio de Escaneo y Solicitud">
-            <i class="bx bxs-file-find"></i>
-          </button>
-          <button
-            type="button"
-            data-toggle="tooltip"
-            class="btn btn-secondary btn-sm active"
-            (click)="scan()"
-            title="Escanear">
-            <i class="bx bxs-file"></i>
-          </button>
+        <div class="col d-flex justify-content-end">
+          <div>
+            <button
+              type="button"
+              data-toggle="tooltip"
+              class="btn btn-secondary btn-sm active mr-1"
+              (click)="generateFoli()"
+              title="Generar Folio de Escaneo y Solicitud">
+              <i class="bx bxs-file-find"></i>
+            </button>
+          </div>
+          <div>
+            <button
+              type="button"
+              data-toggle="tooltip"
+              class="btn btn-secondary btn-sm active"
+              (click)="scan()"
+              title="Escanear">
+              <i class="bx bxs-file"></i>
+            </button>
+          </div>
         </div>
         <div class="col-md-4">
           <form-field
@@ -33,7 +37,6 @@
               maxlength="15" />
           </form-field>
         </div>
-        <div class="col-md-1"></div>
         <div class="col">
           <button
             type="button"

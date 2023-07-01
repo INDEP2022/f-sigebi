@@ -327,6 +327,8 @@ export class QueryRelatedPaymentsDepositoriesComponent
         {
           queryParams: {
             origin: this.screenKey,
+            origin2: this.origin,
+            p_bien: this.noBienReadOnly,
           },
         }
       );
@@ -343,6 +345,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
     this.router.navigate(['/pages/juridical/depositary/depository-fees'], {
       queryParams: {
         origin: this.screenKey,
+        origin2: this.origin,
         p_bien: this.noBienReadOnly,
       },
     });

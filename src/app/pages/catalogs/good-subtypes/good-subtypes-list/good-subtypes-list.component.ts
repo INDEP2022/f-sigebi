@@ -137,7 +137,8 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
     };
     this.goodTypesService.removeByIds(ids).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Subtipo bien', 'Borrado');
+        this.getExample(),
+          this.alert('success', 'Subtipo bien', 'Borrado Correctemente');
       },
       error: err => {
         this.alert(

@@ -15,6 +15,7 @@ import {
 })
 export class ProceedingsDeliveryReceptionService extends HttpService {
   private readonly endpoint = ProceedingsEndpoints.ProceedingsDeliveryReception;
+  private readonly endpoint2 = ProceedingsEndpoints.GoStatus;
   private readonly filter = `?filter.previewFind=`;
   constructor() {
     super();
@@ -74,5 +75,8 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.get<IListResponse<IValidations>>(
       `${this.endpoint}${this.filter}${cve}`
     );
+  }
+  getStatusConversion(id: string | number) {
+    return this.get(`${this.endpoint2}/${id}`);
   }
 }

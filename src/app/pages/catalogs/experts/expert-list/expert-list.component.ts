@@ -122,11 +122,7 @@ export class ExpertListComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.procientService.remove(proficient.id).subscribe({
           next: data => {
-            this.alert(
-              'success',
-              'El elemento ha sido eliminado correctamente',
-              ''
-            );
+            this.alert('success', 'Perito', 'Borrado Correctamente');
             this.getExample();
           },
           error: error => {
