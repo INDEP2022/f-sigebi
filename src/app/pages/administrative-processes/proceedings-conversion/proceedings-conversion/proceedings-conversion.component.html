@@ -358,6 +358,7 @@
                                       </form-field>
                                     </div>
                                   </div>
+
                                   <div class="float-right">
                                     <div class="col-md-2">
                                       <button
@@ -369,74 +370,73 @@
                                       </button>
                                     </div>
                                   </div>
-
-                                  <div class="row mt-5">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('parrafo1')
-                                        "
-                                        label="P&aacute;rrafo 1">
-                                        <textarea
-                                          maxlength="2000"
-                                          [readonly]="validPermisos"
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="parrafo1"
-                                          rows="5"></textarea>
-                                      </form-field>
-                                    </div>
+                                </div>
+                                <div class="row mt-5">
+                                  <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <form-field
+                                      [control]="
+                                        actaRecepttionForm.get('direccion')
+                                      "
+                                      label="Direccón">
+                                      <textarea
+                                        maxlength="2000"
+                                        [readonly]="validPermisos"
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="direccion"
+                                        rows="5"></textarea>
+                                    </form-field>
                                   </div>
-                                  <div class="row mt-5">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('parrafo2')
-                                        "
-                                        label="P&aacute;rrafo 2">
-                                        <textarea
-                                          maxlength="4000"
-                                          [readonly]="validPermisos"
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="parrafo2"
-                                          rows="5"></textarea>
-                                      </form-field>
-                                    </div>
+                                </div>
+                                <div class="row mt-5">
+                                  <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <form-field
+                                      [control]="
+                                        actaRecepttionForm.get('parrafo1')
+                                      "
+                                      label="P&aacute;rrafo 1">
+                                      <textarea
+                                        maxlength="2000"
+                                        [readonly]="validPermisos"
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="parrafo1"
+                                        rows="5"></textarea>
+                                    </form-field>
                                   </div>
-                                  <div class="row mt-5">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('parrafo3')
-                                        "
-                                        label="P&aacute;rrafo 3">
-                                        <textarea
-                                          maxlength="4000"
-                                          [readonly]="validPermisos"
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="parrafo3"
-                                          rows="5"></textarea>
-                                      </form-field>
-                                    </div>
+                                </div>
+                                <div class="row mt-5">
+                                  <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <form-field
+                                      [control]="
+                                        actaRecepttionForm.get('parrafo2')
+                                      "
+                                      label="P&aacute;rrafo 2">
+                                      <textarea
+                                        maxlength="4000"
+                                        [readonly]="validPermisos"
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="parrafo2"
+                                        rows="5"></textarea>
+                                    </form-field>
                                   </div>
-                                  <div class="row mt-5">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('direccion')
-                                        "
-                                        label="Direccón">
-                                        <textarea
-                                          maxlength="2000"
-                                          [readonly]="validPermisos"
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="direccion"
-                                          rows="5"></textarea>
-                                      </form-field>
-                                    </div>
+                                </div>
+                                <div class="row mt-5">
+                                  <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <form-field
+                                      [control]="
+                                        actaRecepttionForm.get('parrafo3')
+                                      "
+                                      label="P&aacute;rrafo 3">
+                                      <textarea
+                                        maxlength="4000"
+                                        [readonly]="validPermisos"
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="parrafo3"
+                                        rows="5"></textarea>
+                                    </form-field>
                                   </div>
                                 </div>
                               </div>
@@ -450,7 +450,7 @@
                       <div class="col-md-3"></div>
                       <form [formGroup]="actaGoodForm" class="form-material">
                         <div class="row mt-12 d-flex justify-content-center">
-                          <div class="col-md-12">
+                          <div class="col-md-12 justify-content-center">
                             <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
                             <ng-scrollbar
                               track="horizontal"
@@ -475,9 +475,9 @@
                               <button
                                 (click)="create()"
                                 [disabled]="isAllDisabled"
-                                class="btn btn-secondary btn-sm bg-success active m-3 p-3"
+                                class="btn btn-success btn-sm active"
                                 type="button">
-                                Agregar <i class="fa fa-plus bx-md"></i>
+                                Agregar <i class="fa fa-plus float-icon"></i>
                               </button>
                               <br />
                               <!-- <button (click)="deleteGoodActa($event)" [disabled]="isAllDisabled"
@@ -523,7 +523,7 @@
                     <i class="fas fa-edit bx-sm float-icon"></i>
                   </button>
                 </div> -->
-                <div class="col-md-3">
+                <div class="m-3">
                   <button
                     *ngIf="dataTableGoodsConvertion"
                     [disabled]="validPermisos"
@@ -536,15 +536,12 @@
                 </div>
                 <div class="m-3">
                   <button
-                    class="btn btn-success btn-sm ml-2"
+                    class="btn btn-success btn-sm active"
                     type="button"
                     (click)="cargueMasive()">
                     Carga Masiva
                     <i class="fa fa-upload bx-sm float-icon"></i>
                   </button>
-                  <!-- <input type="file" name="file" #file class="d-none"
-                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                    (change)="onFileChange($event)" /> -->
                 </div>
                 <div class="m-3">
                   <button
