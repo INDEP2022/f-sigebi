@@ -119,7 +119,7 @@ export class TypeSinisterListComponent extends BasePage implements OnInit {
         //Ejecutar el servicio
         this.typeSinisterService.remove(typeSiniester.id).subscribe({
           next: response => {
-            this.alert('success', 'Tipo Siniestro', 'Borrado');
+            this.alert('success', 'Tipo Siniestro', 'Borrado Correctamente');
             this.getExample();
           },
           error: err => {

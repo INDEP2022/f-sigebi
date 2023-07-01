@@ -130,7 +130,11 @@ export class SatSubclassificationListComponent
     this.satSubclassificationService.remove(id).subscribe({
       next: () => {
         this.getSatSubClassification(),
-          this.alert('success', 'Sub Clasification', 'Borrado');
+          this.alert(
+            'success',
+            'Subclasificación SAT',
+            'Borrado Correctamente'
+          );
       },
       error: err => {
         this.alert(

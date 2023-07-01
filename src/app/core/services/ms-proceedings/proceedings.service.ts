@@ -108,7 +108,7 @@ export class ProceedingsService extends HttpService {
     );
   }
 
-  createProceedings(formData: any) {
+  createProceedings(formData: IProceedings) {
     return this.post(this.route, formData);
   }
 

@@ -40,6 +40,10 @@ export class AccountMovementService extends HttpService {
     return this.post('account-movements', movement);
   }
 
+  createAccount(movement: any) {
+    return this.post('account-movements/lovDeposits', movement);
+  }
+
   getAllAccountMovement(params: ListParams) {
     return this.get<IListResponse<any>>('aplication/accountmvmnt', params);
   }

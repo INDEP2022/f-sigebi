@@ -29,6 +29,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
   redicrectScan: boolean = false;
   viewFol: boolean = true;
   refresh: boolean = false;
+  disableButton: boolean = true;
 
   get numberGood() {
     return this.form.get('numberGood');
@@ -69,6 +70,16 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
       this.numberFoli = parseInt(JSON.parse(numberFoli), 10);
       this.loadGood();
     }
+    this.justifier.valueChanges.subscribe(data => {
+      console.log(data);
+      if (data) {
+        if (data.length > 0 && this.good) {
+          this.disableButton = false;
+        } else {
+          this.disableButton = true;
+        }
+      }
+    });
   }
 
   /**
@@ -85,10 +96,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
       ],
       status: [null, [Validators.pattern(STRING_PATTERN)]],
       description: [null, [Validators.pattern(STRING_PATTERN)]],
-      justifier: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      justifier: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -122,6 +130,13 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
                 'Bien cargado correctamente'
               );
             }
+            this.form
+              .get('justifier')
+              .setValidators([
+                Validators.required,
+                Validators.pattern(STRING_PATTERN),
+              ]);
+            //this.form.get('justifier').updateValueAndValidity();
           } else {
             this.alert(
               'warning',
@@ -233,9 +248,10 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Regularización jurídica',
-          `Justificación de la Regularización jurídica del bien ${this.good.id} actualizada con éxito.`
+          `Justificación de la Regularización jurídica del bien ${this.good.id} actualizada correctamente.`
         );
-        this.clean();
+        //this.clean();
+        this.loadGood();
       },
       error: error => {
         console.log(error);
@@ -245,6 +261,9 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
   }
 
   clean() {
+    this.justifier.clearValidators();
+    this.justifier.setValidators(Validators.pattern(STRING_PATTERN));
+    this.justifier.updateValueAndValidity();
     this.form.reset();
     this.numberFoli = null;
     localStorage.removeItem('savedForm');

@@ -16,7 +16,7 @@ export class InstitutionClassificationDetailComponent
   implements OnInit
 {
   officeForm: ModelForm<IInstitutionClassification>;
-  title: string = 'CLASIFICACIÓN DE INSTITUCIÓN';
+  title: string = 'Clasificación de institución';
   edit: boolean = false;
   form: IInstitutionClassification;
   institution: any;

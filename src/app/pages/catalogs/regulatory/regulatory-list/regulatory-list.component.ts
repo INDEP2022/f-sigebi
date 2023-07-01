@@ -139,7 +139,11 @@ export class RegulatoryListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.regulatoryService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Registro de regulación', 'Borrado');
+        this.alert(
+          'success',
+          'Registro de regulación',
+          'Borrado Correctamente'
+        );
         this.getExample();
       },
       error: error => {

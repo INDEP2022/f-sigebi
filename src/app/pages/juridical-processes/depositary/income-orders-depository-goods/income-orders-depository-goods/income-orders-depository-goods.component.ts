@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
@@ -91,6 +91,8 @@ export class IncomeOrdersDepositoryGoodsComponent
   users$ = new DefaultSelect<ISegUsers>();
   origin: string = null;
   depoAppointments: IDepositaryAppointments;
+  origin2: string = null;
+  noBienParams: number = null;
 
   constructor(
     private fb: FormBuilder,
@@ -109,6 +111,13 @@ export class IncomeOrdersDepositoryGoodsComponent
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.noBienParams = params['p_bien'] ? Number(params['p_bien']) : null;
+        this.origin = params['origin'] ?? null;
+        this.origin2 = params['origin2'] ?? null;
+      });
     // this.getUserDepositary();
     this.valorBien.SharingNumbien.subscribe({
       next: res => {

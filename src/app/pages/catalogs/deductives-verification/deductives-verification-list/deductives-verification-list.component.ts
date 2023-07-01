@@ -112,7 +112,12 @@ export class DeductivesVerificationListComponent
   delete(id: number) {
     this.deductiveVerificationService.remove(id).subscribe({
       next: () => {
-        this.getData(), this.alert('success', 'Registro Eliminado', 'Borrado');
+        this.getData(),
+          this.alert(
+            'success',
+            'Deductiva verificación',
+            'Borrada Correctamente'
+          );
       },
     });
   }
