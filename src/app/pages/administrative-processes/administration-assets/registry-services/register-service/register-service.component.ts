@@ -62,7 +62,7 @@ export class RegisterServiceComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
-        this.onLoadToast(
+        this.alert(
           'error',
           'Regitro de servicio',
           'No se pudo guardar el servicio'
