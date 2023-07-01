@@ -7,8 +7,8 @@ export const COLUMNS_DATA = {
     title: 'Cve. Contrato',
     sort: false,
   },
-  cveGuyname: {
-    title: 'Estatus',
+  datestartContract: {
+    title: 'Fecha Inicio Contrato',
     sort: false,
   },
   representativeBe: {
