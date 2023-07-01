@@ -268,7 +268,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
     delete: {
       deleteButtonContent:
-        '<i class="fa fa-file ml-4" text-primary aria-hidden="true"></i> Ver recibo',
+        '<i class="fa fa-eye ml-4" text-primary aria-hidden="true"></i> Ver recibo',
     },
 
     columns: RECEIPT_GUARD_COLUMNS,
