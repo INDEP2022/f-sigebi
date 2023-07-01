@@ -29,6 +29,7 @@ import { GoodService } from 'src/app/core/services/good/good.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
 import { MassiveConversionErrorsModalComponent } from '../massive-conversion-erros-list/massive-conversion-errors-modal/massive-conversion-errors-modal.component';
@@ -48,7 +49,7 @@ interface ValidaButton {
 export class MassiveConversionComponent extends BasePage implements OnInit {
   modalRef: BsModalRef;
   loadingText: string = '';
-
+  cvePackage: string = '';
   validaButton: ValidaButton = {
     PB_VALIDA: false,
     PB_AUTORIZA: false,
@@ -99,6 +100,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     private packageGoodService: PackageGoodService,
     private bsModalRef: BsModalRef,
     private router: Router,
+    private lotService: LotService,
     private goodService: GoodService,
     private documentService: DocumentsService,
     private sanitizer: DomSanitizer,
@@ -179,8 +181,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   add() {
     //this.openModal();
   }
-
-  generateFoli() {}
 
   goToGoodTracker() {
     this.bsModalRef.hide();
@@ -363,6 +363,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.validateButtons(statuspack);
     this.packageNumber = numberPackage;
     this.getGoods();
+    this.cvePackage = information.cvePackage;
     ////
     this.descPaq = {
       warehouseDesc: information.cat_almacenes.description,
@@ -787,6 +788,33 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     // } else if (err === 7) {
     //   err0 = 'El parámetro del Val24.';
     // }
+  }
+
+  generateFoli() {
+    if (this.form.get('scanFolio').value) {
+      Swal.fire('Error', 'Ya existe un folio', 'error');
+    } else {
+      let data = {
+        noPaquete: this.form.get('package').value,
+        tipoPaquete: this.form.get('packageType').value,
+        cvePaquete: this.cvePackage,
+        toolbarNoDelegacion: '',
+        toolbarNoSubdelegacion: '',
+        toolbarNoDepartamento: '',
+        usuario: 'DR_SIGEBI',
+      };
+
+      this.lotService.pubFmtoPackage(data).subscribe(
+        response => {
+          console.log('response', 'response');
+          this.form.get('scanFolio').setValue(response.data.LNU_FOLIO);
+          Swal.fire('Exito', 'Se genero el folio', 'success');
+        },
+        error => {
+          Swal.fire('Error', 'Error Al generar el folio', 'error');
+        }
+      );
+    }
   }
 
   cancelPackage() {
