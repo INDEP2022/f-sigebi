@@ -10,7 +10,23 @@
       <form-loader *ngIf="formLoading"></form-loader>
     </div>
     <div *ngIf="!formLoading">
-      <h5 class="title">Programaci&oacute;n</h5>
+      <div class="justify-content-end btn-toolbar">
+        <confirm-button
+          [loading]="loading"
+          [text]="'Formalizar'"
+          [loadingText]="'Formalizando'"
+          [btnSmall]="true"
+          (confirm)="confirm()"></confirm-button>
+
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+
+      <h5 class="title pt-4">Programaci&oacute;n</h5>
       <div class="row pt-2">
         <div class="col-md-4">
           <div class="form-group">
@@ -167,7 +183,7 @@
                     <td>
                       {{ proceeding.get('statusProceeedings').value }}
                     </td>
-                    <td *ngIf="observation == null">
+                    <td *ngIf="proceedingData.statusProceeedings == 'ABIERTO'">
                       <form-field
                         [control]="
                           proceedingForm.get('observationProceedings')
@@ -180,7 +196,7 @@
                       </form-field>
                     </td>
 
-                    <td *ngIf="observation">
+                    <td *ngIf="proceedingData.statusProceeedings == 'CERRADO'">
                       <form-field
                         [control]="
                           proceedingForm.get('observationProceedings')
@@ -189,6 +205,7 @@
                           type="text"
                           class="form-control"
                           maxlength="100"
+                          [readOnly]="true"
                           formControlName="observationProceedings" />
                       </form-field>
                     </td>
@@ -373,18 +390,6 @@
             </div> -->
           </tab>
         </tabset>
-      </div>
-      <div class="d-flex justify-content-center">
-        <div class="m-3">
-          <confirm-button
-            [loading]="loading"
-            (confirm)="confirm()"></confirm-button>
-        </div>
-        <div class="m-3">
-          <button type="button" class="btn btn-danger active" (click)="close()">
-            Cancelar
-          </button>
-        </div>
       </div>
     </div>
   </div>
