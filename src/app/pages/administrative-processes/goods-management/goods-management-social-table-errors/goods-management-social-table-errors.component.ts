@@ -3,6 +3,7 @@ import { takeUntil } from 'rxjs';
 import { ITmpValSocialLoadSocialCabinet } from 'src/app/core/models/ms-social-cabinet/tmp-val-load-social-cabinet';
 import { SocialCabinetService } from 'src/app/core/services/ms-social-cabinet/social-cabinet.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
+import { GoodsManagementService } from '../services/goods-management.service';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -25,13 +26,35 @@ export class GoodsManagementSocialTableErrorsComponent
       this.dataNotFound();
     }
   }
-
-  constructor(private socialCabinetService: SocialCabinetService) {
+  lastClickTime: number = 0;
+  constructor(
+    private socialCabinetService: SocialCabinetService,
+    private goodManagementeService: GoodsManagementService
+  ) {
     super();
     this.haveInitialCharge = false;
     this.service = this.socialCabinetService;
     this.ilikeFilters = ['valMessage'];
     this.settings = { ...this.settings, actions: null, columns: COLUMNS };
+  }
+
+  rowSelect(event: { selected: ITmpValSocialLoadSocialCabinet[] }) {
+    if (this.lastClickTime === 0) {
+      this.lastClickTime = new Date().getTime();
+    } else {
+      const change = new Date().getTime() - this.lastClickTime;
+      if (change < 400) {
+        this.saveSelected(event.selected ? event.selected[0] : null);
+      }
+      this.lastClickTime = 0;
+    }
+
+    console.log(event);
+  }
+
+  saveSelected(selected: ITmpValSocialLoadSocialCabinet) {
+    // this.goodManagementeService.selectedGood = selected.goodNumber;
+    this.goodManagementeService.selectedGoodSubject.next(selected.goodNumber);
   }
 
   override getData() {

@@ -26,6 +26,7 @@ export class GoodsManagementSocialCabinetComponent
   disabledProcess = true;
   identifier: number;
   user: string;
+  pageLoading = false;
   constructor(
     private fb: FormBuilder,
     private goodTrackerService: GoodTrackerService,
@@ -63,6 +64,7 @@ export class GoodsManagementSocialCabinetComponent
   showInfo() {}
 
   async processCabinetSocial() {
+    this.pageLoading = true;
     this.service
       .paValidSocialCabinet({
         pId: this.identifier,
@@ -73,16 +75,41 @@ export class GoodsManagementSocialCabinetComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
+          console.log(response);
           this.processErrors++;
-          this.disabledProcess = true;
+          // this.disabledProcess = true;
           this.selectedGoodstxt = [...this.selectedGoodstxt];
-          this.alert(
-            'success',
-            'Procesamiento Gabinete Social',
-            'Bienes procesados correctamente'
-          );
+          const message = response.message ? response.message[0] ?? '' : '';
+          // this.pageLoading = false;
+          // this.form.get('option').setValue(null);
+          // if (response.dataErrors.length > 0) {
+          //   this.alert(
+          //     'error',
+          //     'Procesamiento Gabinete Social',
+          //     response.dataErrors[0]
+          //   );
+          // } else {
+          //   this.alert(
+          //     'success',
+          //     'Procesamiento Gabinete Social',
+          //     'Bienes procesados'
+          //   );
+          // }
+          if (
+            message.includes('correctamente') ||
+            message.includes('procesado')
+          ) {
+            this.alert(
+              'success',
+              'Procesamiento Gabinete Social',
+              'Bienes procesados'
+            );
+          } else {
+            this.alert('error', 'Procesamiento Gabinete Social', message);
+          }
         },
         error: err => {
+          this.pageLoading = false;
           this.alert('error', 'ERROR', 'Bienes no procesados correctamente');
         },
       });
