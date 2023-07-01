@@ -625,4 +625,11 @@ export class DepositAccountStatementComponent
   getPayment() {}
 
   interestCheck() {}
+
+  detailCalculation() {
+    const cuenta_origen_deposito = 0;
+    if (cuenta_origen_deposito === null) {
+      this.alert('warning', 'Debe seleccionar un deposito primero', '');
+    }
+  }
 }
