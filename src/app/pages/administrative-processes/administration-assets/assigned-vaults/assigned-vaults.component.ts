@@ -63,7 +63,7 @@ export class AssignedVaultsComponent
         type: 'html',
         valuePrepareFunction: (text: string) => {
           return `${
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
           }`;
         },
         filter: {
@@ -78,7 +78,7 @@ export class AssignedVaultsComponent
         type: 'html',
         valuePrepareFunction: (text: string) => {
           return `${
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
           }`;
         },
         filter: {
@@ -103,7 +103,6 @@ export class AssignedVaultsComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = '';
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -128,7 +127,6 @@ export class AssignedVaultsComponent
 
             if (filter.search !== '') {
               this.columnFilter[field] = `${searchFilter}:${filter.search}`;
-              console.log('this.param:', this.params);
               this.params.value.page = 1;
             } else {
               delete this.columnFilter[field];
@@ -151,7 +149,6 @@ export class AssignedVaultsComponent
         if (this.good.vaultNumber !== null) {
           this.vaultService.getById(this.good.vaultNumber).subscribe({
             next: (respo: any) => {
-              console.log(respo);
               this.list = response.data.map((good: IGood) => {
                 return {
                   id: good.vaultNumber,
@@ -175,7 +172,6 @@ export class AssignedVaultsComponent
       },
       error: err => {
         this.loading = false;
-        console.log(err);
       },
     });
   }

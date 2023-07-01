@@ -1,8 +1,8 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs';
-import { PreviousRouteService } from 'src/app/common/services/previous-route.service';
 import { IGoodDesc } from 'src/app/core/models/ms-good/good-and-desc.model';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared';
@@ -20,10 +20,9 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   good: IGoodDesc;
   constructor(
     private activatedRoute: ActivatedRoute,
+    private location: Location,
     private goodService: GoodService,
-    private previousRouteService: PreviousRouteService,
-    private fb: FormBuilder,
-    private router: Router
+    private fb: FormBuilder
   ) {
     super();
     this.form = this.fb.group({
@@ -49,10 +48,7 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
       next: param => {
         if (param['numberGood']) {
           this.noBienControl = param['numberGood'];
-          console.log(window.history);
-          if (this.previousRouteService.getHistory().length > 1) {
-            this.origin = 1;
-          }
+          this.origin = 1;
           this.searchGood();
         } else {
           this.origin = 0;
@@ -68,11 +64,6 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   searchGood() {
-    this.router.navigate([], {
-      relativeTo: this.activatedRoute,
-      queryParams: { numberGood: this.noBienControl.value },
-      queryParamsHandling: 'merge', // remove to replace all query params by provided
-    });
     this.loading = true;
     this.goodService
       .getGoodAndDesc(this.noBienControl.value)
@@ -100,6 +91,6 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   goBack() {
-    this.previousRouteService.back();
+    this.location.back();
   }
 }
