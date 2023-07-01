@@ -80,7 +80,7 @@ export class GoodsManagementSocialCabinetComponent
           // this.disabledProcess = true;
           this.selectedGoodstxt = [...this.selectedGoodstxt];
           const message = response.message ? response.message[0] ?? '' : '';
-          // this.pageLoading = false;
+          this.pageLoading = false;
           // this.form.get('option').setValue(null);
           // if (response.dataErrors.length > 0) {
           //   this.alert(
