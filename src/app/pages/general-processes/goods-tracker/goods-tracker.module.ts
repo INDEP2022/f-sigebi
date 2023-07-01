@@ -14,6 +14,7 @@ import { ActaHistoComponent } from './components/acta-histo/acta-histo.component
 import { CertificatesFilterComponent } from './components/certificates-filter/certificates-filter.component';
 import { ClasificationFilterComponent } from './components/clasification-filter/clasification-filter.component';
 import { DataFilterComponent } from './components/data-filter/data-filter.component';
+import { GTrackerDocumentsComponent } from './components/g-tracker-documents/g-tracker-documents.component';
 import { GoodsTableComponent } from './components/goods-table/goods-table.component';
 import { LocationFilterComponent } from './components/location-filter/location-filter.component';
 import { RecordNotificationFilterComponent } from './components/record-notification-filter/record-notification-filter.component';
@@ -34,6 +35,7 @@ import { trackedGoodsReducer } from './store/goods-tracker.reducer';
     GoodsTableComponent,
     ViewPhotosComponent,
     ActaHistoComponent,
+    GTrackerDocumentsComponent,
   ],
   imports: [
     CommonModule,

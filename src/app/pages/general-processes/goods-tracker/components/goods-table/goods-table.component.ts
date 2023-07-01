@@ -8,8 +8,10 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
+  firstValueFrom,
   forkJoin,
   map,
+  of,
   switchMap,
   take,
   takeUntil,
@@ -35,6 +37,7 @@ import {
   GOOD_TRACKER_ORIGINS_TITLES,
 } from '../../utils/constants/origins';
 import { ActaHistoComponent } from '../acta-histo/acta-histo.component';
+import { GTrackerDocumentsComponent } from '../g-tracker-documents/g-tracker-documents.component';
 import { ViewPhotosComponent } from '../view-photos/view-photos.component';
 import { GP_GOODS_COLUMNS } from './goods-columns';
 
@@ -66,6 +69,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     private router: Router,
     private location: Location,
     private documentsService: DocumentsService,
+    private proceedingService: ProceedingsService,
     private goodTrackerService: GoodTrackerService,
     private globalVarService: GlobalVarsService,
     private jasperServ: SiabService,
@@ -160,9 +164,62 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       });
   }
 
-  viewImages() {
-    // const modalConfig = MODAL_CONFIG;
-    // this.modalService.show(DocumentsListComponent, modalConfig);
+  async viewImages() {
+    if (!this.selectedGooods.length) {
+      this.alert('error', 'Error', 'Primero selecciona un registro');
+      return;
+    }
+
+    if (this.selectedGooods.length > 1) {
+      await this.alertInfo(
+        'info',
+        'Más de un registro seleccionado',
+        'Se tomará el último registro seleccionado'
+      );
+    }
+    const selectedGood = this.selectedGooods.at(-1);
+    if (!selectedGood.fileNumber) {
+      this.alert('error', 'Error', 'Este trámite no tiene volante asignado');
+      return;
+    }
+
+    await this.getDocuments(selectedGood);
+  }
+
+  async getDocuments(trackedGood: ITrackedGood) {
+    let config = {
+      initialState: {
+        trackedGood: trackedGood,
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    const count = await this.countAct(trackedGood.goodNumber);
+    console.log({ count });
+    if (count > 0) {
+      this.modalService.show(GTrackerDocumentsComponent, config);
+    }
+  }
+
+  countAct(goodNumber: number | string) {
+    return firstValueFrom(
+      this.proceedingService.getCountActas(goodNumber).pipe(
+        catchError(error => {
+          return of({ data: [{ count: 0 }] });
+        }),
+        map(res => res.data[0].count ?? 0)
+      )
+    );
+  }
+
+  otDocuments() {}
+
+  async takeOneProcess(turnSelects: any) {
+    await this.alertInfo(
+      'info',
+      'Más de un trámite seleccionado',
+      'Se tomará el último registro seleccionado'
+    );
   }
 
   openPrevPdf() {

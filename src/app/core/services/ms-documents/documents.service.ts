@@ -227,7 +227,14 @@ export class DocumentsService extends HttpService {
     return this.get(route, $params);
   }
 
-  getFolio(body: { expedientNumber: string; goodNumber: string }) {
-    return this.post<IListResponse<IDocuments>>('application/get-folio', body);
+  getFolio(
+    body: { expedientNumber: string; goodNumber: string },
+    params?: _Params
+  ) {
+    return this.post<IListResponse<IDocuments>>(
+      'application/get-folio',
+      body,
+      params
+    );
   }
 }
