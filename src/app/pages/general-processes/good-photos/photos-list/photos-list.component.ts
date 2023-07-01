@@ -64,13 +64,6 @@ export class PhotosListComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       typedblClickAction: [1],
     });
-    this.service.deleteEvent.subscribe({
-      next: response => {
-        if (response) {
-          this.getData();
-        }
-      },
-    });
   }
 
   get typedblClickAction() {
