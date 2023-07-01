@@ -422,7 +422,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           this.idTypeDoc == 103 ||
           this.idTypeDoc == 106 ||
           this.idTypeDoc == 107 ||
-          this.idTypeDoc == 108
+          this.idTypeDoc == 108 ||
+          this.idTypeDoc == 210
         ) {
           this.close();
           this.modalRef.content.callback(true);

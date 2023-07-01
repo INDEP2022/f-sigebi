@@ -35,7 +35,6 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('good', this.tranType);
     this.prepareForm();
     this.getStateConservation(new ListParams());
     this.getUnitMeasure(new ListParams());
@@ -47,7 +46,11 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
       id: [null],
       observations: [
         null,
-        [Validators.maxLength(300), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(300),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       goodId: [
         null,
@@ -115,37 +118,49 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      const formData = {
-        id: this.form.get('id').value,
-        goodId: this.form.get('goodId').value,
-        observations: this.form.get('observations').value,
-      };
+      if (this.form.get('observations').value) {
+        const formData = {
+          id: this.form.get('id').value,
+          goodId: this.form.get('goodId').value,
+          observations: this.form.get('observations').value,
+        };
 
-      this.alertQuestion(
-        'question',
-        'Confirmación',
-        '¿Desea actualizar la información del bien?'
-      ).then(question => {
-        if (question.isConfirmed) {
-          this.goodService.updateByBody(formData).subscribe({
-            next: () => {
-              this.alertInfo(
-                'success',
-                'Acción Correcta',
-                'Bien modificado correctamente'
-              ).then(question => {
-                if (question.isConfirmed) {
-                  this.modalService.content.callback(true);
-                  this.modalRef.hide();
-                }
-              });
-            },
-            error: error => {
-              this.onLoadToast('error', 'Error', 'Error al actualizar el bien');
-            },
-          });
-        }
-      });
+        this.alertQuestion(
+          'question',
+          'Confirmación',
+          '¿Desea actualizar la información del bien?'
+        ).then(question => {
+          if (question.isConfirmed) {
+            this.goodService.updateByBody(formData).subscribe({
+              next: () => {
+                this.alertInfo(
+                  'success',
+                  'Acción Correcta',
+                  'Bien modificado correctamente'
+                ).then(question => {
+                  if (question.isConfirmed) {
+                    this.modalService.content.callback(true);
+                    this.modalRef.hide();
+                  }
+                });
+              },
+              error: error => {
+                this.onLoadToast(
+                  'error',
+                  'Error',
+                  'Error al actualizar el bien'
+                );
+              },
+            });
+          }
+        });
+      } else {
+        this.alertInfo(
+          'error',
+          'Acción Inválida',
+          'Se necesita llenar el campo observación'
+        );
+      }
     }
   }
 
