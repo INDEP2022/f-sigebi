@@ -1,3 +1,4 @@
+import { type FormGroup } from '@angular/forms';
 import { firstValueFrom, type BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { type DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
@@ -18,6 +19,8 @@ export abstract class MassRullingResponses extends BasePage {
   abstract dataTableErrors: { processId: any; description: string }[];
   abstract totalItemsErrors: number;
   abstract paramsErrors: BehaviorSubject<ListParams>;
+  abstract form: FormGroup;
+  abstract isDisableCreateDictation: boolean;
 
   async CountDictationGoodFile(armyOfficeKey: any) {
     const result = await firstValueFrom(
@@ -66,6 +69,10 @@ export abstract class MassRullingResponses extends BasePage {
           'Se ha realizado la operación con éxito'
         );
         // this.getTmpExpDesahogoB(new ListParams());
+        // this.form.get('id').setValue(null);
+        this.form.get('delete').enable();
+        this.form.get('delete').setValue(false);
+        this.isDisableCreateDictation = false;
         this.params.next(new ListParams());
         this.paramsErrors.next(new ListParams());
       },

@@ -3,13 +3,7 @@ import { FormControl } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { isArray } from 'ngx-bootstrap/chronos';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import {
-  BehaviorSubject,
-  catchError,
-  firstValueFrom,
-  of,
-  takeUntil,
-} from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
@@ -43,6 +37,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
   @Input() inventary: any;
   @Input() loadInventary: boolean = false;
   @Input() set goodChange(value: number) {
+    console.error('ESTE es el valor de Value', value);
     this._goodChange = value;
     if (value > 0) this.getData();
   }
@@ -76,285 +71,152 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     });
   }
 
-  private getRow(column: string, item: IAttribClassifGoods, good: any) {
-    return {
-      column,
-      attribute: item.attribute,
-      value: this.initValue === true ? this.getValue(good, item) : null,
-      required: item.required === 'S',
-      update: this.haveUpdate(item.update),
-      requiredAva: item.attribute
-        ? this.haveRequiredAva(item.attribute)
-        : false,
-      tableCd: item.tableCd,
-      editing: false,
-      length: item.length,
-      dataType: item.dataType,
-    };
-  }
-
-  private async getData() {
+  private getData() {
     // console.log(this.clasification);
+    console.error(
+      'LLEGO A GET_DATA Y ESTE ES EL CLASIFICADOR:',
+      this.clasification
+    );
     this.loading = true;
     const filterParams = new FilterParams();
     filterParams.limit = 120;
     filterParams.addFilter('classifGoodNumber', this.clasification);
     filterParams.addFilter('columnNumber', '51', SearchFilter.NOTIN);
     const good = this.good as any;
-    try {
-      const response = await firstValueFrom(
-        this.goodsqueryService
-          .getAtribuXClasif(filterParams.getParams())
-          .pipe(takeUntil(this.$unSubscribe))
-      );
-      if (response.data && response.data.length > 0) {
-        const newData = response.data.sort((a, b) => {
-          return a.columnNumber - b.columnNumber;
-        });
-        // console.log(newData);
-        if (this.loadInventary) {
-          this.dataInventary = newData.map((item, index) => {
-            const column = 'val' + item.columnNumber;
-            if (item.attribute === 'SITUACION JURIDICA') {
-              if (good[column]) {
-                good.val35 = secondFormatDate(new Date());
-              } else {
-                good.val35 = null;
-              }
-            }
-
-            return {
-              column,
-              attribute: item.attribute,
-              value:
-                this.initValue === true
-                  ? this.inventary
-                    ? this.inventary[index].valueAttributeInventory
-                    : null
-                  : null,
-              required: item.required === 'S',
-              update: this.haveUpdate(item.update),
-              requiredAva: item.attribute
-                ? this.haveRequiredAva(item.attribute)
-                : false,
-              tableCd: item.tableCd,
-              editing: false,
-              length: item.length,
-              dataType: item.dataType,
-              numColumn: item.columnNumber,
-            };
-          });
-          console.log('Data', this.dataInventary);
-          this.totalItems = this.dataInventary.length;
-          this.dataTemp = [...this.dataInventary];
-          this.getPaginated(this.params.value);
-          this.loading = false;
-        } else {
-          let nnewData: ICharacteristicValue[] = [];
-          await newData.forEach(async item => {
-            const column = 'val' + item.columnNumber;
-            if (item.attribute === 'SITUACION JURIDICA') {
-              if (good[column]) {
-                good.val35 = secondFormatDate(new Date());
-              } else {
-                good.val35 = null;
-              }
-            }
-            this.val_atributos_inmuebles++;
-            if (good.no_tipo && good.no_tipo + '' === '6') {
-              if (
-                item.attribute === 'ESTADO' &&
-                this.val_atributos_inmuebles > 4
-              ) {
-                const pufValidaEntFed = await firstValueFrom(
-                  this.dynamicTablesService
-                    .pufValidaEntFed(this.getValue(good, item))
-                    .pipe(
-                      takeUntil(this.$unSubscribe),
-                      catchError(x => of(0))
-                    )
-                );
-                if (pufValidaEntFed === 0) {
-                  this.alert(
-                    'error',
-                    'ERROR',
-                    'Verificar el campo Estado, ' +
-                      this.getValue(good, item) +
-                      ' valor incorrecto'
-                  );
-                  nnewData.push(this.getRow(column, item, good));
-                } else {
-                  nnewData.push(this.getRow(column, item, good));
-                }
-              } else {
-                nnewData.push(this.getRow(column, item, good));
-              }
-            } else {
-              nnewData.push(this.getRow(column, item, good));
-            }
-          });
-          this.data = nnewData;
-          // this.data = newData.map(item => {
-          //   const column = 'val' + item.columnNumber;
-          //   if (item.attribute === 'SITUACION JURIDICA') {
-          //     if (good[column]) {
-          //       good.val35 = secondFormatDate(new Date());
-          //     } else {
-          //       good.val35 = null;
-          //     }
-          //   }
-          //   // validar si existe tipo con goodClassNumber
-          //   let v_val_entfed;
-          //   this.val_atributos_inmuebles++;
-          //   if (good.no_tipo && good.no_tipo + '' === '6') {
-          //     if (
-          //       item.attribute === 'ESTADO' &&
-          //       this.val_atributos_inmuebles > 4
-          //     ) {
-          //       this.dynamicTablesService
-          //         .pufValidaEntFed(this.getValue(good, item))
-          //         .pipe(takeUntil(this.$unSubscribe))
-          //         .subscribe({
-          //           next: response => {
-          //             if (response === 0) {
-
-          //             } else {
-          //               return this.getRow(column, item, good);
-          //             }
-          //           },
-          //         });
-          //     } else {
-          //       return this.getRow(column, item, good);
-          //     }
-          //   } else {
-          //     return this.getRow(column, item, good);
-          //   }
-          // });
-          this.totalItems = this.data.length;
-          this.dataTemp = [...this.data];
-          this.getPaginated(this.params.value);
-          this.loading = false;
-          // console.log(this.data);
-        }
-      } else {
-        this.clearTable();
-      }
-    } catch (x) {
-      this.clearTable();
-    }
     // console.log(good);
-    // this.goodsqueryService
-    //   .getAtribuXClasif(filterParams.getParams())
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe({
-    //     next: response => {
-    //       this.val_atributos_inmuebles = 0;
+    this.goodsqueryService
+      .getAtribuXClasif(filterParams.getParams())
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          console.error('ATRIBUTOS DEL BIEN', response.data);
 
-    //       if (response.data && response.data.length > 0) {
-    //         const newData = response.data.sort((a, b) => {
-    //           return a.columnNumber - b.columnNumber;
-    //         });
-    //         // console.log(newData);
-    //         if (this.loadInventary) {
-    //           this.dataInventary = newData.map((item, index) => {
-    //             const column = 'val' + item.columnNumber;
-    //             if (item.attribute === 'SITUACION JURIDICA') {
-    //               if (good[column]) {
-    //                 good.val35 = secondFormatDate(new Date());
-    //               } else {
-    //                 good.val35 = null;
-    //               }
-    //             }
-    //             let v_val_entfed;
-    //             this.val_atributos_inmuebles++;
-    //             if (good.no_tipo && good.no_tipo + '' === '6') {
-    //               if (
-    //                 item.attribute === 'ESTADO' &&
-    //                 this.val_atributos_inmuebles > 4
-    //               ) {
-    //                 v_val_entfed = await firstValueFrom(
-    //                   this.dynamicTablesService.pufValidaEntFed(
-    //                     this.inventary[index].valueAttributeInventory
-    //                   )
-    //                 );
-    //               }
-    //             }
-    //             return {
-    //               column,
-    //               attribute: item.attribute,
-    //               value:
-    //                 this.initValue === true
-    //                   ? this.inventary
-    //                     ? this.inventary[index].valueAttributeInventory
-    //                     : null
-    //                   : null,
-    //               required: item.required === 'S',
-    //               update: this.haveUpdate(item.update),
-    //               requiredAva: item.attribute
-    //                 ? this.haveRequiredAva(item.attribute)
-    //                 : false,
-    //               tableCd: item.tableCd,
-    //               editing: false,
-    //               length: item.length,
-    //               dataType: item.dataType,
-    //               numColumn: item.columnNumber,
-    //             };
-    //           });
-    //           console.log('Data', this.dataInventary);
-    //           this.totalItems = this.dataInventary.length;
-    //           this.dataTemp = [...this.dataInventary];
-    //           this.getPaginated(this.params.value);
-    //           this.loading = false;
-    //         } else {
-    //           this.data = newData.map(item => {
-    //             const column = 'val' + item.columnNumber;
-    //             if (item.attribute === 'SITUACION JURIDICA') {
-    //               if (good[column]) {
-    //                 good.val35 = secondFormatDate(new Date());
-    //               } else {
-    //                 good.val35 = null;
-    //               }
-    //             }
-    //             // validar si existe tipo con goodClassNumber
-    //             let v_val_entfed;
-    //             this.val_atributos_inmuebles++;
-    //             if (this.v_bien_inm) {
-    //               if (
-    //                 item.attribute === 'ESTADO' &&
-    //                 this.val_atributos_inmuebles > 4
-    //               ) {
-    //               }
-    //             }
-    //             return {
-    //               column,
-    //               attribute: item.attribute,
-    //               value:
-    //                 this.initValue === true ? this.getValue(good, item) : null,
-    //               required: item.required === 'S',
-    //               update: this.haveUpdate(item.update),
-    //               requiredAva: item.attribute
-    //                 ? this.haveRequiredAva(item.attribute)
-    //                 : false,
-    //               tableCd: item.tableCd,
-    //               editing: false,
-    //               length: item.length,
-    //               dataType: item.dataType,
-    //             };
-    //           });
-    //           this.totalItems = this.data.length;
-    //           this.dataTemp = [...this.data];
-    //           this.getPaginated(this.params.value);
-    //           this.loading = false;
-    //           // console.log(this.data);
-    //         }
-    //       } else {
-    //         this.clearTable();
-    //       }
-    //     },
-    //     error: err => {
-    //       this.clearTable();
-    //     },
-    //   });
+          this.val_atributos_inmuebles = 0;
+
+          if (response.data && response.data.length > 0) {
+            const newData = response.data.sort((a, b) => {
+              return a.columnNumber - b.columnNumber;
+            });
+            // console.log(newData);
+            if (this.loadInventary) {
+              this.dataInventary = newData.map((item, index) => {
+                const column = 'val' + item.columnNumber;
+                if (item.attribute === 'SITUACION JURIDICA') {
+                  if (good[column]) {
+                    good.val35 = secondFormatDate(new Date());
+                  } else {
+                    good.val35 = null;
+                  }
+                }
+                let v_val_entfed;
+                this.val_atributos_inmuebles++;
+                if (good.no_tipo && good.no_tipo + '' === '6') {
+                  if (
+                    item.attribute === 'ESTADO' &&
+                    this.val_atributos_inmuebles > 4
+                  ) {
+                  }
+                }
+                console.log(this.inventary);
+                if (this.inventary) {
+                  return {
+                    column,
+                    attribute: item.attribute,
+                    value:
+                      this.initValue === true
+                        ? this.inventary[index]
+                          ? this.inventary[index].valueAttributeInventory
+                          : null
+                        : null,
+                    required: item.required === 'S',
+                    update: this.haveUpdate(item.update),
+                    requiredAva: item.attribute
+                      ? this.haveRequiredAva(item.attribute)
+                      : false,
+                    tableCd: item.tableCd,
+                    editing: false,
+                    length: item.length,
+                    dataType: item.dataType,
+                    numColumn: item.columnNumber,
+                  };
+                } else {
+                  return {
+                    column,
+                    attribute: item.attribute,
+                    value:
+                      this.initValue === true
+                        ? this.inventary
+                          ? this.inventary[index].valueAttributeInventory
+                          : null
+                        : null,
+                    required: item.required === 'S',
+                    update: this.haveUpdate(item.update),
+                    requiredAva: item.attribute
+                      ? this.haveRequiredAva(item.attribute)
+                      : false,
+                    tableCd: item.tableCd,
+                    editing: false,
+                    length: item.length,
+                    dataType: item.dataType,
+                    numColumn: item.columnNumber,
+                  };
+                }
+              });
+              console.log('Data', this.dataInventary);
+              this.totalItems = this.dataInventary.length;
+              this.dataTemp = [...this.dataInventary];
+              this.getPaginated(this.params.value);
+              this.loading = false;
+            } else {
+              this.data = newData.map(item => {
+                const column = 'val' + item.columnNumber;
+                if (item.attribute === 'SITUACION JURIDICA') {
+                  if (good[column]) {
+                    good.val35 = secondFormatDate(new Date());
+                  } else {
+                    good.val35 = null;
+                  }
+                }
+                // validar si existe tipo con goodClassNumber
+                let v_val_entfed;
+                this.val_atributos_inmuebles++;
+                if (this.v_bien_inm) {
+                  if (
+                    item.attribute === 'ESTADO' &&
+                    this.val_atributos_inmuebles > 4
+                  ) {
+                  }
+                }
+                return {
+                  column,
+                  attribute: item.attribute,
+                  value:
+                    this.initValue === true ? this.getValue(good, item) : null,
+                  required: item.required === 'S',
+                  update: this.haveUpdate(item.update),
+                  requiredAva: item.attribute
+                    ? this.haveRequiredAva(item.attribute)
+                    : false,
+                  tableCd: item.tableCd,
+                  editing: false,
+                  length: item.length,
+                  dataType: item.dataType,
+                };
+              });
+              this.totalItems = this.data.length;
+              this.dataTemp = [...this.data];
+              this.getPaginated(this.params.value);
+              this.loading = false;
+              // console.log(this.data);
+            }
+          } else {
+            this.clearTable();
+          }
+        },
+        error: err => {
+          this.clearTable();
+        },
+      });
   }
 
   private clearTable() {

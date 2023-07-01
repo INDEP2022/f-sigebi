@@ -122,7 +122,7 @@ export class CatServicesListComponent extends BasePage implements OnInit {
     this.catserviceService.delete(id).subscribe({
       next: response => {
         this.getExample(),
-          this.alert('success', 'Servicio', 'Borrado'),
+          this.alert('success', 'Servicio', 'Borrado Correctamente'),
           this.getExample();
       },
       error: err => {

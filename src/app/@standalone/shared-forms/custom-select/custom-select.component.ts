@@ -54,6 +54,7 @@ export class CustomSelectComponent
   @Input() pathData: string = 'data';
   @Input() value: string = 'id';
   @Input() paramSearch: string = 'text';
+  @Input() isLikeSearch: boolean = false;
   @Input() placeholder: string = '';
   @Input() prefixSearch: string = '';
   @Input() paramPageName: string = 'page';
@@ -123,7 +124,7 @@ export class CustomSelectComponent
     const params = {
       [this.paramPageName]: this.page,
       [this.paramLimitName]: this.limit || 10,
-      [this.paramSearch]: text,
+      [this.paramSearch]: this.isLikeSearch ? `ilike:${text}` : text,
       ...this.moreParams,
     };
     return this.http
