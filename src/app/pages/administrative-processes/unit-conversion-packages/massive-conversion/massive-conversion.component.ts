@@ -789,7 +789,33 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     // }
   }
 
-  cancelPackage() {}
+  cancelPackage() {
+    this.alertQuestion(
+      'warning',
+      'Cancelar',
+      '¿Desea cancelar este paquete?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        let data = {
+          goodNumber: this.form2.get('numberGood').value,
+          packageNumber: this.form.get('package').value,
+          user: 'DR_SIGEBI',
+          toolbarUsername: 'DR_SIGEBI',
+          statusPaq: this.form.get('packageStatus').value,
+          parentGoodNumber: this.form2.get('numberGood').value,
+          status: this.form2.get('status').value,
+        };
+        this.packageGoodService.pubCancelPackage(data).subscribe(
+          response => {
+            Swal.fire('Exito', 'Se cancelo el paquete', 'success');
+          },
+          error => {
+            Swal.fire('Error', 'Error Al cancelar el paquete', 'error');
+          }
+        );
+      }
+    });
+  }
 
   downloadReport() {
     let params: any = {};

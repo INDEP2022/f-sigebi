@@ -42,4 +42,9 @@ export class PackageGoodService extends HttpService {
     const route = `${PackageGoodEndpoints.prepDestinationPackage}`;
     return this.post(route, data);
   }
+
+  pubCancelPackage(value: any) {
+    const route = `${PackageGoodEndpoints.pubCancelPackage}`;
+    return this.post(route, value);
+  }
 }
