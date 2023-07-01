@@ -138,16 +138,16 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
     this.menageServices.remove(idGood).subscribe({
       next: responde => {
         //this.searchGoodMenage(this.numberGoodSelect);
-        this.onLoadToast(
+        this.alert(
           'success',
-          'Exito',
+          'Datos Menaje',
           `Se elimino el Menaje N° ${idGood}`
         );
       },
       error: err => {
-        this.onLoadToast(
+        this.alert(
           'error',
-          'ERROR',
+          'Ha ocurrido un error',
           `No se pudo eliminar el Menaje N° ${idGood}`
         );
       },

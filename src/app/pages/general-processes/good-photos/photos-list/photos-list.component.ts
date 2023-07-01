@@ -6,11 +6,13 @@ import { FileUploadModalComponent } from 'src/app/@standalone/modals/file-upload
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { FilePhotoSaveZipService } from 'src/app/core/services/ms-ldocuments/file-photo-save-zip.service';
 import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared';
 import { PhotosHistoricComponent } from '../photos-historic/photos-historic.component';
+import { GoodPhotosService } from '../services/good-photos.service';
 
 @Component({
   selector: 'app-photos-list',
@@ -46,11 +48,20 @@ export class PhotosListComponent extends BasePage implements OnInit {
     private segAppService: SecurityService,
     private dictationService: DictationService,
     private proceedingService: ProceedingsService,
+    private filePhotoSaveZipService: FilePhotoSaveZipService,
+    private service: GoodPhotosService,
     private fb: FormBuilder
   ) {
     super();
     this.form = this.fb.group({
       typedblClickAction: [1],
+    });
+    this.service.deleteEvent.subscribe({
+      next: response => {
+        if (response) {
+          this.getData();
+        }
+      },
     });
   }
 
@@ -169,6 +180,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
       .subscribe({
         next: async response => {
           if (response) {
+            console.log(response);
             this.files = [...response];
             if (response.length > 0) {
               const last = response[response.length - 1];
@@ -239,6 +251,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
           'Se eliminaron las fotos correctamente'
         );
         this.filesToDelete = [];
+        this.service.deleteEvent.next(true);
         this.getData();
       },
       error: err => {
@@ -248,6 +261,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
           this.errorImages.toString()
         );
         this.filesToDelete = [];
+        this.service.deleteEvent.next(true);
         this.getData();
       },
     });
@@ -278,6 +292,26 @@ export class PhotosListComponent extends BasePage implements OnInit {
         uploadFiles: false,
         service: this.filePhotoService,
         identificator: this.goodNumber + '',
+        titleFinishUpload: 'Imagenes cargadas correctamente',
+        questionFinishUpload: '¿Desea subir más imagenes?',
+        callback: (refresh: boolean) => {
+          console.log(refresh);
+          this.fileUploaderClose(refresh);
+        },
+      },
+    };
+    this.modalService.show(FileUploadModalComponent, config);
+  }
+
+  openZipUploader() {
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        accept: '.zip',
+        uploadFiles: false,
+        service: this.filePhotoSaveZipService,
+        identificator: this.goodNumber + '',
+        multiple: false,
         titleFinishUpload: 'Imagenes cargadas correctamente',
         questionFinishUpload: '¿Desea subir más imagenes?',
         callback: (refresh: boolean) => {

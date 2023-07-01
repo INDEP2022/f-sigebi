@@ -1,5 +1,8 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
+import {
+  FilePhotoService,
+  IHistoricalPhoto,
+} from 'src/app/core/services/ms-ldocuments/file-photo.service';
 
 @Component({
   selector: 'app-photos-historic',
@@ -44,7 +47,7 @@ export class PhotosHistoricComponent implements OnInit {
   //       'https://images.kavak.services/images/202518/INTERIOR-backSeatCopilot-1663797095691.jpeg?d=756x434',
   //   },
   // ];
-  files: string[] = [];
+  files: IHistoricalPhoto[] = [];
   @Input() goodNumber: string;
   slides: { image: string; usuarioElimina: string }[] = [];
   constructor(
@@ -55,7 +58,7 @@ export class PhotosHistoricComponent implements OnInit {
   ngOnInit() {}
 
   private getData() {
-    this.service.getAll(this.goodNumber).subscribe({
+    this.service.getAllHistoric(this.goodNumber).subscribe({
       next: response => {
         if (response) {
           this.files = [...response];

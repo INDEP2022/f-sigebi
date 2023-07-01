@@ -1,14 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IRequesNumeraryEnc } from 'src/app/core/models/ms-numerary/numerary.model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ModalRequestComponent } from './modal-request/modal-request.component';
 import {
   GOODS_COLUMNS,
   REQUESTS_COLUMNS,
@@ -49,6 +53,25 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     process: '',
   };
 
+  DATA: any[] = [
+    {
+      label: 'Tipo 1',
+      value: 'Tipo 1',
+    },
+    {
+      label: 'Tipo 1',
+      value: 'Tipo 1',
+    },
+    {
+      label: 'Tipo 1',
+      value: 'Tipo 1',
+    },
+  ];
+
+  dataSelect = new DefaultSelect<any>();
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+
   constructor(
     private fb: FormBuilder,
     private readonly numeraryService: NumeraryService,
@@ -67,18 +90,19 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.dataSelect = new DefaultSelect(this.DATA, this.DATA.length);
     this.prepareForm();
-    this.params
+    /* this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getRequestNumeEnc());
+      .subscribe(() => this.getRequestNumeEnc()); */
 
-    this.params1
+    /* this.params1
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getRequestNumeDet());
+      .subscribe(() => this.getRequestNumeDet()); */
 
-    this.params2
+    /* this.params2
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getRequestNumeCal());
+      .subscribe(() => this.getRequestNumeCal()); */
   }
 
   prepareForm() {
@@ -90,9 +114,6 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      devolution: [null, Validators.required],
-      decomiso: [null, Validators.required],
-      abandono: [null, Validators.required],
       totalInterests: [null, Validators.required],
       currency: [
         null,
@@ -125,13 +146,14 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       });
   }
 
-  getRequestNumeDet() {
+  getRequestNumeDet(idProcess: number) {
     this.loading2 = true;
+    this.params1.getValue()['filter.solnumId'] = `$eq:${idProcess}`;
     this.numeraryService
       .getNumeraryRequestNumeDet(this.params1.getValue())
       .subscribe({
         next: resp => {
-          console.log('DET....', resp.data[0].good.description);
+          console.log('DET....', resp.data);
           this.data2 = resp.data.map(item => {
             return {
               ...item,
@@ -181,11 +203,12 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       );
       return;
     }
-    if (this.form.get('currency').value === null) {
+    console.log(this.formBlkControl.get('tMoneda').value);
+    if (this.formBlkControl.get('tMoneda').value === null) {
       this.alert(
         'warning',
         'Cálculo de numerario',
-        'Debe especificar el tipo de proceso.'
+        'Debe especificar el tipo de moneda.'
       );
       return;
     }
@@ -196,6 +219,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     );
     if (response.isConfirmed) {
       //// abrir el modal
+      this.openModal();
     }
   }
 
@@ -293,6 +317,28 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
         },
       });
     });
+  }
+
+  openModal() {
+    let config: ModalOptions = {
+      initialState: {
+        callback: (next: any) => {
+          if (next) {
+            console.error('Aca esta la data', next);
+            this.data.load(next);
+            this.data.refresh();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ModalRequestComponent, config);
+  }
+
+  onChangeProcces(event: IRequesNumeraryEnc) {
+    console.log(event);
+    this.getRequestNumeDet(event.solnumId);
   }
 
   PUP_DESCALCULA() {}
