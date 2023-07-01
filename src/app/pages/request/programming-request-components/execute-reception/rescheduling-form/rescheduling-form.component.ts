@@ -59,39 +59,47 @@ export class ReschedulingFormComponent extends BasePage implements OnInit {
   getReasonSelect(reason: ListParams) {}
 
   confirm() {
-    this.goodSelect.map(item => {
-      const formData: Object = {
-        id: item.id,
-        goodId: item.goodId,
-        goodStatus: 'EN_PROGRAMACION_TMP',
-        programmationStatus: 'EN_PROGRAMACION_TMP',
-        reasonCancReprog: this.form.get('reason').value,
-        reprogrammationNumber: 1,
-      };
+    if (this.form.get('reason').value) {
+      this.goodSelect.map(item => {
+        const formData: Object = {
+          id: item.id,
+          goodId: item.goodId,
+          goodStatus: 'EN_PROGRAMACION_TMP',
+          programmationStatus: 'EN_PROGRAMACION_TMP',
+          reasonCancReprog: this.form.get('reason').value,
+          reprogrammationNumber: 1,
+        };
 
-      this.goodService.updateByBody(formData).subscribe({
-        next: response => {
-          console.log('response', response);
-          const formData: Object = {
-            programmingId: this.programming.id,
-            goodId: item.id,
-            status: 'EN_PROGRAMACION_TMP',
-          };
-          this.programmingGoodService
-            .updateGoodProgramming(formData)
-            .subscribe({
-              next: response => {
-                console.log('updeado', response);
-                this.modalRef.content.callback(true);
-                this.modalRef.hide();
-              },
-              error: error => {},
-            });
-        },
-        error: error => {
-          console.log('update good error', error);
-        },
+        this.goodService.updateByBody(formData).subscribe({
+          next: response => {
+            console.log('response', response);
+            const formData: Object = {
+              programmingId: this.programming.id,
+              goodId: item.id,
+              status: 'EN_PROGRAMACION_TMP',
+            };
+            this.programmingGoodService
+              .updateGoodProgramming(formData)
+              .subscribe({
+                next: response => {
+                  console.log('updeado', response);
+                  this.modalRef.content.callback(true);
+                  this.modalRef.hide();
+                },
+                error: error => {},
+              });
+          },
+          error: error => {
+            console.log('update good error', error);
+          },
+        });
       });
-    });
+    } else {
+      this.alertInfo(
+        'error',
+        'Acción Inválida',
+        'Se necesita un motivo de reprogramación'
+      ).then();
+    }
   }
 }

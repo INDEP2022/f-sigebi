@@ -61,13 +61,16 @@ export class OfficesListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'name':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'street':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'noExt':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'postalCode':
+                searchFilter = SearchFilter.ILIKE;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -83,6 +86,8 @@ export class OfficesListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
+
           this.getDeductives();
         }
       });
@@ -100,9 +105,9 @@ export class OfficesListComponent extends BasePage implements OnInit {
     this.officeService.getAllGet(params).subscribe({
       next: response => {
         this.offices = response.data;
-        this.data.load(this.offices);
+        this.totalItems = response.count || 0;
+        this.data.load(response.data);
         this.data.refresh();
-        this.totalItems = response.count;
         this.loading = false;
       },
       error: error => (this.loading = false),

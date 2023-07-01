@@ -69,7 +69,7 @@ export class WarehousesAssignedComponent
         type: 'html',
         valuePrepareFunction: (text: string) => {
           return `${
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
           }`;
         },
         filter: {
@@ -109,7 +109,6 @@ export class WarehousesAssignedComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = '';
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -134,7 +133,6 @@ export class WarehousesAssignedComponent
 
             if (filter.search !== '') {
               this.columnFilter[field] = `${searchFilter}:${filter.search}`;
-              console.log('this.param:', this.params);
               this.params.value.page = 1;
             } else {
               delete this.columnFilter[field];
@@ -157,7 +155,6 @@ export class WarehousesAssignedComponent
         if (this.good.storeNumber !== null) {
           this.warehouseService.getById(this.good.storeNumber).subscribe({
             next: (respo: any) => {
-              console.log('ALMACEESSSSss.......', this.good);
               this.list = response.data.map((good: any) => {
                 return {
                   id: good.storeNumber,
