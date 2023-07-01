@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { takeUntil } from 'rxjs';
 import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
+import { firstFormatDate } from 'src/app/shared/utils/date';
 import { NO_IMAGE_FOUND, PhotoClassComponent } from '../../models/photo-class';
 
 @Component({
@@ -13,6 +14,7 @@ export class PhotoHistoricComponent
   implements OnInit
 {
   @Input() userDeleted: string;
+  deletedDateString: string;
   @Input() deletedDate: Date;
   usuarioElimina: string =
     'Usuario eliminó moto1.jpg ' + 'Nombre: SIGEBIADMON Fecha: 29/06/2023';
@@ -25,6 +27,11 @@ export class PhotoHistoricComponent
   ngOnChanges(changes: SimpleChanges) {
     if (changes['filename']) {
       this.filenameChange();
+    }
+    if (changes['deletedDate']) {
+      this.deletedDateString = firstFormatDate(
+        changes['deletedDate'].currentValue
+      );
     }
   }
 

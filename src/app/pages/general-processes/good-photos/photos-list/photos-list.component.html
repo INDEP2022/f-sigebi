@@ -66,7 +66,9 @@
           role="menu"
           aria-labelledby="button-basic">
           <li role="menuitem">
-            <a class="dropdown-item" (click)="openFileUploader()">Subir Zip</a>
+            <a class="dropdown-item" (click)="openFileUploader()"
+              >Carga Masiva (ZIP)</a
+            >
           </li>
           <li
             role="menuitem"
@@ -81,7 +83,9 @@
             role="menuitem"
             [class]="disabledDeleteAllPhotos() ? 'disabledDelete' : ''"
             [tooltip]="errorMessage">
-            <a class="dropdown-item">Eliminar Todas</a>
+            <a class="dropdown-item" (click)="confirmDelete(true)"
+              >Eliminar Todas</a
+            >
           </li>
         </ul>
       </div>
