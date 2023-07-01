@@ -49,6 +49,7 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { FlyersService } from 'src/app/pages/documents-reception/flyers/services/flyers.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ScanningFoilComponent } from '../../payment-claim-process/scanning-foil/scanning-foil.component';
+
 import { FindActaGoodComponent } from '../find-acta-good/find-acta-good.component';
 import {
   GooByExpediente,
@@ -102,6 +103,7 @@ export interface IGoodJobManagement {
         pointer-events: none;
       }
       #bienes table:not(.normal-hover) tbody tr:hover {
+      #bienes table:not(.normal-hover) tbody tr:hover {
         color: black !important;
         font-weight: bold;
       }
@@ -109,6 +111,7 @@ export interface IGoodJobManagement {
         background-color: green;
         font-weight: bold;
       }
+
 
       .row-negro {
         background-color: black;
@@ -215,6 +218,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   @ViewChild('hijoRef', { static: false }) hijoRef: ScanningFoilComponent;
   @ViewChild('myInput') inputEl: ElementRef;
   @Output() onConfirm = new EventEmitter<any>();
+
   dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
   dataGoodsSelected = new Map<number, IGoodAndAvailable>();
 
@@ -277,24 +281,21 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     super();
     this.procs = new LocalDataSource();
     this.validPermisos = !this.validPermisos;
-    // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
-    this.settings.columns = {
-      rowClassFunction: (row: any) => {
-        if (row.status === 'CNE') {
-          return 'row-verde';
-        } else if (row.status === 'RRE' || row.status === 'VXR') {
-          return 'row-negro';
-        } else {
-          return 'row-verde';
-        }
-      },
-    };
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
       actions: false,
       selectMode: 'multi',
       columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
+      rowClassFunction: (row: any) => {
+        if (row.data.status === 'CNE') {
+          return 'bg-success text-white';
+        } else if (row.data.status === 'RRE' || row.data.status === 'VXR') {
+          return 'bg-dark text-white';
+        } else {
+          return 'bg-success text-white';
+        }
+      },
     };
     this.settings2 = {
       ...this.settings,
@@ -427,6 +428,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           ) {
             this.read = true;
             this.updateRe = true;
+            this.updateRe = true;
             this.delete = true;
             this.insert = true;
             console.log('readYes and writeYes');
@@ -527,6 +529,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.criCase = res.fileNumber.criminalCase;
           this.cveActa = res.minutesErNumber;
           this.userRes = res.fileNumber.usrResponsibleFile;
+          this.actaGoodForm.value.acta = this.cveActa;
           this.time = new Date().toISOString().slice(0, 16);
           this.getExpedient(this.fileNumber);
           // this.getAllConvertiones();
@@ -548,6 +551,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.proceedingsConversionForm.controls['txtSearch'].setValue('');
     // this.searchProcs();
   }
+
   goBack() {
     this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
       queryParams: {
@@ -744,6 +748,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
               next: data => {
                 this.loading = false;
                 this.alert('success', 'Acta cerrada', '');
+                this.alert('success', 'Acta cerrada', '');
                 this.initForm();
               },
               error: error => {
@@ -757,12 +762,14 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.alert(
             'warning',
             'El Usuario no está autorizado para cerrar acta',
+            'El Usuario no está autorizado para cerrar acta',
             ''
           );
         }
         if (this.delete == null) {
           this.alert(
             'warning',
+            'El Usuario no está autorizado para cerrar acta',
             'El Usuario no está autorizado para cerrar acta',
             ''
           );
@@ -775,10 +782,16 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   //   this.edit ? this.update() : this.create();
   // }
 
+  // confirm() {
+  //   this.edit ? this.update() : this.create();
+  // }
+
   Generar() {
     this.isLoading = true;
     // this.createConversion();
+    // this.createConversion();
     this.updateConversion();
+    this.edit ? this.update() : this.create();
     this.edit ? this.update() : this.create();
     let params = {
       id_conv: this.conversion,
@@ -879,6 +892,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.selectedRow = data;
     console.log(this.selectedRow);
     this.changeDetectorRef.detectChanges();
+    let params: IConverGoodCreate = {
+      goodNumber: this.conversion,
+      proceedingNumber: this.fileNumber,
+    };
+    console.log(params);
   }
   selectActa(data: IActasConversion) {
     this.selectedActa = data;
@@ -996,15 +1014,18 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   updateConversion() {
     this.loading = true;
+    this.loading = true;
     this.convertiongoodService
       .update(this.conversion, this.proceedingsConversionForm.value)
       .subscribe({
         next: data => {
           console.log(data);
           this.loading = false;
+          this.loading = false;
         },
         error: error => {
           this.loading = false;
+          // this.onLoadToast('error', 'No se actualizaron los datos', '');
           // this.onLoadToast('error', 'No se actualizaron los datos', '');
         },
         // this.alert('success', 'conversión actualizada con éxito', ''),
@@ -1017,9 +1038,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       next: (data: any) => {
         console.log(data);
         this.loading = false;
+        this.loading = false;
       },
       error: error => {
         error;
+        this.loading = false;
         this.loading = false;
       },
     });
