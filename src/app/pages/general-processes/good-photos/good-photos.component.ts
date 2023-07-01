@@ -1,5 +1,3 @@
-
-import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -117,7 +115,8 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
       ]);
       localStorage.setItem('derivationGoodId', '');
     } else {
-      this.location.back();
+      // this.location.back();
+      console.log('modificar');
     }
   }
 }
