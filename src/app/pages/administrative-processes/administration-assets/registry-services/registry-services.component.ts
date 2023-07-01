@@ -62,7 +62,7 @@ export class RegistryServicesComponent
         type: 'html',
         valuePrepareFunction: (text: string) => {
           return `${
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
           }`;
         },
         filter: {
@@ -87,7 +87,6 @@ export class RegistryServicesComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = '';
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -108,7 +107,6 @@ export class RegistryServicesComponent
 
             if (filter.search !== '') {
               this.columnFilter[field] = `${searchFilter}:${filter.search}`;
-              console.log('this.param:', this.params);
               this.params.value.page = 1;
             } else {
               delete this.columnFilter[field];
@@ -130,7 +128,6 @@ export class RegistryServicesComponent
       ...this.params.getValue(),
       ...this.columnFilter,
     };
-    console.log(this.params.getValue());
     this.serviceGoodService.getAll(params).subscribe({
       next: response => {
         this.list = response.data.map(service => {
@@ -150,7 +147,6 @@ export class RegistryServicesComponent
         this.dataLoand.load(this.list);
         this.dataLoand.refresh();
         this.loading = false;
-        console.log(err);
       },
     });
   }
