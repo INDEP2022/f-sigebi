@@ -115,7 +115,8 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
       ]);
       localStorage.setItem('derivationGoodId', '');
     } else {
-      this.location.back();
+      // this.location.back();
+      console.log('modificar');
     }
   }
 }
