@@ -28,7 +28,8 @@ import { ATRIBUT_ACT_COLUMNS } from './columns';
 })
 export class GeneralDataGoodsComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   @Input() goodId: number;
   generalDataForm: ModelForm<any>;
   params = new BehaviorSubject<FilterParams>(new FilterParams());

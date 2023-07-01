@@ -2471,8 +2471,8 @@ export class AppointmentsComponent
         startContractDate: this.form.value.fechaInicio,
         endContractDate: null,
         amount: null,
-        nameTypeKey: this.form.value.tipoNombramiento,
-        administratorTypeKey: this.form.value.estatus,
+        nameTypeKey: this.form.value.estatus,
+        administratorTypeKey: this.form.value.tipoNombramiento,
         assignmentDate: null,
         appointmentDate: new Date(),
         cardAppointmentId: null,
@@ -2495,7 +2495,9 @@ export class AppointmentsComponent
         cardAppointmentIdBoardgovt: null,
         jobAnswerDirgralNum: null,
         authorityorderAssignment: null,
-        responsible: this.form.value.depositaria,
+        responsible: this.form.value.depositaria
+          ? this.form.value.depositaria
+          : this.depositaryAppointment.personNumber.personName,
         representativeSera: this.form.value.representanteSAE,
         folioUniversal: null,
         nbOrigin: null,
@@ -2537,8 +2539,8 @@ export class AppointmentsComponent
         revocation: this.form.value.remocion == true ? 'S' : 'N',
         contractKey: this.form.value.noNombramiento,
         startContractDate: this.form.value.fechaInicio,
-        nameTypeKey: this.form.value.tipoNombramiento,
-        administratorTypeKey: this.form.value.estatus,
+        nameTypeKey: this.form.value.estatus,
+        administratorTypeKey: this.form.value.tipoNombramiento,
         typeDepositary: this.form.value.tipoDepositaria,
         observations: this.form.value.observaciones,
         jobRevocationNum: this.form.value.noOficio,
@@ -2547,7 +2549,9 @@ export class AppointmentsComponent
         exhibit: this.form.value.anexo,
         jobBoardgovtDate: this.form.value.fechaAcuerdo,
         jobBoardgovtNum: this.form.value.noAcuerdo,
-        responsible: this.form.value.depositaria,
+        responsible: this.form.value.depositaria
+          ? this.form.value.depositaria
+          : this.depositaryAppointment.personNumber.personName,
         representativeSera: this.form.value.representanteSAE,
         personNum: this.depositaryAppointment.personNumber.id,
         reference: this.form.value.referencia,
