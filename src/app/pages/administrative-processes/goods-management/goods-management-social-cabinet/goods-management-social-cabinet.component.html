@@ -3,6 +3,7 @@
     <h5 class="title">GESTIÓN DE BIENES GABINETE SOCIAL</h5>
   </div>
   <div body>
+    <form-loader *ngIf="pageLoading" [greater]="true"></form-loader>
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <!--Options-->
