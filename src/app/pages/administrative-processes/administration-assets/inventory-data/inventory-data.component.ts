@@ -6,20 +6,30 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import {
+  IInventoryGood,
+  ILineaInventory,
+} from 'src/app/core/models/ms-inventory-query/inventory-query.model';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { InventoryService } from 'src/app/core/services/ms-inventory-type/inventory.service';
 import { BasePage } from 'src/app/core/shared';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { getClassColour } from 'src/app/pages/general-processes/goods-characteristics/goods-characteristics/good-table-vals/good-table-vals.component';
+import { CharacteristicGoodCellComponent } from '../../change-of-good-classification/change-of-good-classification/characteristicGoodCell/characteristic-good-cell.component';
 import { ATRIBUT_ACT_COLUMNS } from '../general-data-goods/columns';
 import { ChangeOfGoodCharacteristicService } from '../general-data-goods/services/change-of-good-classification.service';
 import { RegisterModalComponent } from './register-modal/register-modal.component';
@@ -38,17 +48,27 @@ export class InventoryDataComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   params1 = new BehaviorSubject<FilterParams>(new FilterParams());
   data: any[] = [];
-  inventorySelect: any = {};
+  inventorySelect: any;
   disableGetAtribute: boolean = true;
   @Input() goodId: number;
   dataLoand: LocalDataSource = new LocalDataSource();
   atributActSettings: any;
+  atributNewSettings: any;
   good: IGood;
+  inventary: any;
   service = inject(ChangeOfGoodCharacteristicService);
   goodChange: number = 0;
   classificationOfGoods: number;
   viewAct: boolean = false;
+  loadInventary: boolean = false;
+  columnFilter: any = [];
+  inventoryDataForm: ModelForm<any>;
+  generateAtri: boolean = false;
+  textButon: string = 'Generar inventario';
 
+  get dataInventory() {
+    return this.service.dataInventary;
+  }
   constructor(
     private fb: FormBuilder,
     private readonly inventoryService: InventoryService,
@@ -68,10 +88,16 @@ export class InventoryDataComponent
       },
       dateInventory: {
         title: 'Fecha Inventario',
-        type: 'string',
         sort: false,
-        valuePrepareFunction: (value: any) => {
-          return this.formatearFecha(new Date(value));
+        type: 'html',
+        valuePrepareFunction: (text: string) => {
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+          }`;
+        },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
         },
       },
       responsible: {
@@ -82,9 +108,67 @@ export class InventoryDataComponent
     };
     this.atributActSettings = {
       ...this.settings,
-      actions: null,
       hideSubHeader: false,
-      columns: { ...ATRIBUT_ACT_COLUMNS },
+      actions: {
+        columnTitle: '',
+        position: 'right',
+        add: false,
+        edit: true,
+        delete: false,
+      },
+      edit: {
+        editButtonContent: '<span class="fa fa-eye text-success mx-2"></span>',
+      },
+      columns: {
+        ...ATRIBUT_ACT_COLUMNS,
+        value: {
+          ...ATRIBUT_ACT_COLUMNS.value,
+          type: 'custom',
+          valuePrepareFunction: (cell: any, row: any) => {
+            return { value: row, good: this.good };
+          },
+          renderComponent: CharacteristicGoodCellComponent,
+        },
+      },
+      rowClassFunction: (row: any) => {
+        return (
+          getClassColour(row.data, false) +
+          ' ' +
+          (row.data.tableCd ? '' : 'notTableCd')
+        );
+      },
+    };
+    this.atributNewSettings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: '',
+        position: 'right',
+        add: false,
+        edit: true,
+        delete: false,
+      },
+      edit: {
+        editButtonContent: '<span class="fa fa-eye text-success mx-2"></span>',
+      },
+      columns: {
+        ...ATRIBUT_ACT_COLUMNS,
+        value: {
+          ...ATRIBUT_ACT_COLUMNS.value,
+          type: 'custom',
+          valuePrepareFunction: (cell: any, row: any) => {
+            return { value: row, good: this.good };
+          },
+          renderComponent: CharacteristicGoodCellComponent,
+        },
+      },
+      rowClassFunction: (row: any) => {
+        return (
+          getClassColour(row.data, false) +
+          ' ' +
+          (row.data.tableCd ? '' : 'notTableCd')
+        );
+      },
     };
   }
 
@@ -95,29 +179,97 @@ export class InventoryDataComponent
   }
 
   ngOnInit(): void {
-    // this.prepareForm();
+    this.prepareForm();
+    this.dataLoand
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'inventoryNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'dateInventory':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilter[field] = `${searchFilter}:${filter.search}`;
+              console.log('this.param:', this.params);
+              this.params.value.page = 1;
+            } else {
+              delete this.columnFilter[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.inventoryForGood(this.goodId);
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.inventoryForGood(this.goodId));
+
+    this.inventoryDataForm.get('responsable').valueChanges.subscribe(date => {
+      if (date) {
+        if (date.length > 0) {
+          this.inventorySelect = null;
+          this.generateAtri = false;
+          this.textButon = 'Generar inventario';
+          this.viewAct = !this.viewAct;
+          this.viewAct = !this.viewAct;
+          this.generateAtri = false;
+        }
+      } else {
+        this.viewAct = !this.viewAct;
+        console.log('Se resetio nuevamente');
+      }
+    });
+  }
+
+  private prepareForm() {
+    this.inventoryDataForm = this.fb.group({
+      noInventario: [null, [Validators.required]],
+      fechaInventario: [new Date(), [Validators.required]],
+      responsable: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+    });
   }
 
   inventoryForGood(idGood: number) {
     this.loading = true;
-    this.inventoryService
-      .getInventoryByGood(idGood, this.params.getValue())
-      .subscribe({
-        next: response => {
-          this.data = response.data;
-          this.dataLoand.load(this.data);
-          this.dataLoand.refresh();
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error: err => {
-          this.loading = false;
-          console.log('AQUIIIIIIIIIIIIIIIIIII', err);
-        },
-      });
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilter,
+    };
+    this.inventoryService.getInventoryByGood(idGood, params).subscribe({
+      next: response => {
+        this.data = response.data;
+        this.dataLoand.load(this.data);
+        this.dataLoand.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: err => {
+        this.dataLoand.load([]);
+        this.dataLoand.refresh();
+        this.loading = false;
+        console.log('AQUIIIIIIIIIIIIIIIIIII', err);
+      },
+    });
   }
 
   formatearFecha(fecha: Date) {
@@ -140,69 +292,30 @@ export class InventoryDataComponent
   }
 
   async getAtribute() {
-    let vb_hay_inv_anterior: boolean = false;
-    let vn_inv_anterior: number | string;
+    this.loadInventary = true;
     this.viewAct = true;
-    //inventario_x_bien.no_inventario
-    if (this.inventorySelect.no_inventario === null) {
+    if (this.inventorySelect === null) {
       this.alert(
-        'info',
+        'warning',
         'Datos inventario',
-        'Debe generar un nuevo inventario antes de mostrar los atributos',
-        ''
-      );
-      return;
-    }
-
-    if (this.inventorySelect.fec_inventario === null) {
-      this.alert(
-        'info',
-        'Datos inventario',
-        'Debe registrar la fecha en la que se toma el inventario',
-        'S'
-      );
-      return;
-    }
-
-    if (this.inventorySelect.responsable === null) {
-      this.alert(
-        'info',
-        'Datos inventario',
-        'Es necesario que sea ingresado el nombre del responsable o borre el registro.',
-        'S'
+        'Debe seleccionar un inventario para obtener sus atributos.'
       );
       return;
     }
     await this.getGood();
-    /* for (const reg of this.data) {
-      vb_hay_inv_anterior = true;
-      vn_inv_anterior = reg.no_inventario;
-      break;
-    } */
-
-    /* const clasifi: any[] = await this.getClsifi(9999);
-
-    for (const reg of clasifi) {
-      console.log(reg);
-    } */
-
-    /* if (vb_hay_inv_anterior) {
-      const response = await this.alertQuestion('question','Traer valores anterior','Desea traer los valores del inventario anterior');
-      if(response.isConfirmed){
-        const atributes: any[] = await this.getAtributeBack(this.goodId,662);
-        if(atributes.length > 0){
-          atributes.forEach((order, _index) => {
-              if (order) {
-                this.list.push({
-                  atributo: order.attribute,
-                  valor: order.valueAttributeInventory,
-                });
-              }
-          });
-          console.log(this.list);
-        }
-      }
-    } */
+    console.log(this.inventorySelect);
+    const atributes: any[] = await this.getAtributeBack(
+      this.goodId,
+      this.inventorySelect.inventoryNumber
+    );
+    if (atributes.length > 0) {
+      this.inventary = atributes;
+    } else {
+      this.inventary = null;
+    }
+    setTimeout(() => {
+      this.goodChange++;
+    }, 100);
   }
 
   async getAtributeBack(goodId: number, inventoryNumber: number | string) {
@@ -210,8 +323,11 @@ export class InventoryDataComponent
       const params: ListParams = {};
       params['filter.goodNumber'] = `$eq:${goodId}`;
       params['filter.inventoryNumber'] = `$eq:${inventoryNumber}`;
+      params['sortBy'] = 'typeInventoryNumber:ASC';
+      params.limit = 120;
       this.inventoryService.getLinesInventory(params).subscribe({
         next: response => {
+          console.log('Estos son los anteriores', response.data);
           res(response.data);
         },
         error: _err => {
@@ -241,12 +357,61 @@ export class InventoryDataComponent
   selectInventory(event: any) {
     console.log(event);
     this.inventorySelect = event.data;
+    this.getAtribute();
     this.disableGetAtribute = false;
+    this.generateAtri = true;
+    this.textButon = 'Actualizar atributos';
   }
 
-  add() {
-    this.openModal();
+  async add() {
+    console.log(this.dataInventory);
+    if (this.dataInventory) {
+      if (this.inventorySelect) {
+        this.dataInventory.forEach((item: any) => {
+          this.updateInventary(
+            this.inventorySelect.inventoryNumber,
+            item.numColumn,
+            item.value
+          );
+        });
+        this.alert(
+          'success',
+          'Datos inventario',
+          'Se ha realizado la actualización correctamente'
+        );
+      } else {
+        const inventoryNumber: number = await this.createInventory();
+        if (inventoryNumber !== null) {
+          this.dataInventory.forEach((item: any) => {
+            this.createLineaInventory(
+              inventoryNumber,
+              item.numColumn,
+              item.value
+            );
+          });
+          this.alert(
+            'success',
+            'Datos inventario',
+            'Se ha guardado correctamente el inventario.'
+          );
+          this.inventoryDataForm.get('responsable').reset();
+        } else {
+          this.alert(
+            'error',
+            'Ha ocurrido un error',
+            'No se ha podido guardar el inventario.'
+          );
+        }
+      }
+    } else {
+      this.alert(
+        'warning',
+        'Datos inventario',
+        'Debe seleccionar un inventario o genear nuevos atributos'
+      );
+    }
   }
+
   openModal() {
     let config: ModalOptions = {
       initialState: {
@@ -271,11 +436,164 @@ export class InventoryDataComponent
         next: (response: any) => {
           this.classificationOfGoods = Number(response.data[0].goodClassNumber);
           this.good = response.data[0];
-          setTimeout(() => {
-            this.goodChange++;
-          }, 100);
+          if (!this.loadInventary) {
+            setTimeout(() => {
+              this.goodChange++;
+            }, 100);
+          }
+          res(this.good);
+        },
+        error: err => res(null),
+      });
+    });
+  }
+
+  getInvAnterior() {
+    return new Promise<any[]>((res, rej) => {
+      const params: ListParams = {};
+      const dateNow = new Date();
+      params['filter.dateInventory'] = `$lte:${
+        dateNow.toISOString().split('T')[0]
+      }`;
+      this.inventoryService.getInventoryByGood(this.goodId, params).subscribe({
+        next: resp => {
+          console.log(resp);
+          res(resp.data);
+        },
+        error: err => {
+          res([]);
         },
       });
+    });
+  }
+
+  async generateAtribute() {
+    let vb_hay_inv_anterior: boolean = false;
+    let vn_inv_anterior: number | string;
+    this.loadInventary = true;
+    this.viewAct = true;
+    //inventario_x_bien.no_inventario
+    if (this.inventoryDataForm.get('fechaInventario').value === null) {
+      this.alert(
+        'warning',
+        'Datos inventario',
+        'Debe registrar la fecha en la que se toma el inventario'
+      );
+      return;
+    }
+
+    if (this.inventoryDataForm.get('responsable').value === null) {
+      this.alert(
+        'warning',
+        'Datos inventario',
+        'Es necesario que sea ingresado el nombre del responsable'
+      );
+      return;
+    }
+    //await this.getGood();
+    const inventoryAntList: any[] = await this.getInvAnterior();
+    console.log(inventoryAntList);
+    for (const reg of inventoryAntList) {
+      vb_hay_inv_anterior = true;
+      vn_inv_anterior = reg.inventoryNumber;
+      break;
+    }
+    console.log('Inventario anterior', vn_inv_anterior);
+    console.log('Inventario anterior', vb_hay_inv_anterior);
+
+    await this.getGood();
+    /* const clasifi: any[] = await this.getClsifi(9999);
+    for (const reg of clasifi) {
+      console.log(reg);
+    } */
+
+    if (vb_hay_inv_anterior) {
+      const response = await this.alertQuestion(
+        'question',
+        'Datos inventario',
+        '¿Desea traer los valores del inventario anterior?'
+      );
+      if (response.isConfirmed) {
+        const atributes: any[] = await this.getAtributeBack(
+          this.goodId,
+          vn_inv_anterior
+        );
+        if (atributes.length > 0) {
+          this.inventary = atributes;
+        }
+        setTimeout(() => {
+          this.goodChange++;
+        }, 100);
+      } else {
+        console.log('Cancelo');
+        this.viewAct = false;
+        setTimeout(() => {
+          this.goodChange++;
+        }, 100);
+      }
+    } else {
+      this.viewAct = false;
+      setTimeout(() => {
+        this.goodChange++;
+      }, 100);
+    }
+  }
+
+  createInventory() {
+    return new Promise<number>((res, rej) => {
+      const model: IInventoryGood = {
+        goodNumber: this.goodId,
+        dateInventory: this.inventoryDataForm.get('fechaInventario').value,
+        responsible: this.inventoryDataForm.get('responsable').value,
+      };
+      this.inventoryService.create(model).subscribe({
+        next: resp => {
+          console.log(resp);
+          this.inventoryForGood(this.goodId);
+          res(Number(resp.inventoryNumber));
+        },
+        error: err => {
+          res(null);
+        },
+      });
+    });
+  }
+
+  createLineaInventory(
+    inventoryNumber: number,
+    typeInventoryNumber: number,
+    valueAttributeInventory: string
+  ) {
+    const model: ILineaInventory = {
+      goodNumber: this.goodId,
+      inventoryNumber,
+      typeInventoryNumber,
+      valueAttributeInventory,
+    };
+    this.inventoryService.createLinesInventory(model).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+      error: err => {},
+    });
+  }
+
+  updateInventary(
+    inventoryNumber: number,
+    typeInventoryNumber: number,
+    valueAttributeInventory: string
+  ) {
+    const model: ILineaInventory = {
+      goodNumber: this.goodId,
+      inventoryNumber,
+      typeInventoryNumber,
+      valueAttributeInventory,
+    };
+    this.inventoryService.updateLinesInventory(model).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+      error: err => {},
     });
   }
 }

@@ -1,79 +1,116 @@
-<app-modal class="modal-dialog modal-xl">
+<app-modal>
   <div header>
-    <h5 class="modal-title">{{ 'Actas' }}</h5>
+    <h5 class="modal-title">{{ 'Actas Conversion' }}</h5>
   </div>
   <div body>
-    <div class="card custom-card">
-      <div class="card-body">
-        <table class="table table-striped table-container">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th style="text-align: center" scope="col">Clave Acta</th>
-              <th scope="col">Sel</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of items; let i = index">
-              <th scope="row">{{ i + 1 }}</th>
-              <td class="custom-cell">{{ item.nombre }}</td>
-              <td>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value=""
-                    id="check{{ i }}"
-                    (change)="onCheckboxChange($event, item)" />
-                  <label class="form-check-label" for="check{{ i }}"> </label>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <div class="row">
+      <div class="col-md-9">
+        <div class="card custom-card">
+          <div class="card-body">
+            <table class="table table-striped table-container">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th style="text-align: center" scope="col">Clave Acta</th>
+                  <th scope="col">Sel</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of items; let i = index">
+                  <th scope="row">{{ i + 1 }}</th>
+                  <td class="custom-cell">{{ item.cveActaConvId }}</td>
+                  <td>
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        [checked]="i === selectedIndex"
+                        (change)="onCheckboxChange($event, i)"
+                        [disabled]="disableAllChecks" />
+                      <label class="form-check-label" for="check{{ i }}">
+                      </label>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <input
+              type="text"
+              [(ngModel)]="selectItem2"
+              class="form-control custom-cell"
+              placeholder="Clave Acta" />
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="card custom-card-buttons">
-      <div class="row align-items-center">
-        <div class="col-sm-12 col-md-3 text-center" style="display: flex">
+      <div class="col-md-3">
+        <!-- Columna para los botones -->
+        <div class="d-flex flex-column">
           <button
-            (click)="imgSolicitud()"
-            tooltip="Generar Folio de Escaneo y Solicitud"
-            containerClass="tooltip-style"
-            class="btn btn-secondary btn-sm active m-1">
-            <i class="bx bxs-file-find"></i>
+            type="button"
+            style="
+              font-size: 60%;
+              width: 100%;
+              height: 40px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: center;
+            "
+            class="btn btn-primary btn-block"
+            (click)="handleSubmitNewItem()"
+            [disabled]="flagNewActa">
+            Genera Acta
           </button>
           <button
-            (click)="escanearFolioEscaneo()"
-            tooltip="Escanear"
-            containerClass="tooltip-style"
-            class="btn btn-secondary btn-sm active m-1">
-            <i class="bx bxs-file"></i>
+            type="button"
+            style="
+              font-size: 60%;
+              width: 100%;
+              height: 40px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: center;
+            "
+            class="btn btn-primary btn-block"
+            (click)="generateAsignarActa()"
+            [disabled]="flagAsignaActa">
+            Asigna Acta
           </button>
           <button
-            (click)="imprimirFolioEscaneo()"
-            tooltip="imprimir Solicitud de Escaneo"
-            containerClass="tooltip-style"
-            class="btn btn-secondary btn-sm active m-1">
-            <i class="bx bxs-file-find"></i>
-          </button>
-          <button
-            (click)="visualizacionFolioEscaneo()"
-            tooltip="Consulta de imágenes escaneadas"
-            containerClass="tooltip-style"
-            class="btn btn-secondary btn-sm active m-1">
-            <i class="bx bxs-file"></i>
+            type="button"
+            style="
+              font-size: 60%;
+              width: 100%;
+              height: 40px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              text-align: center;
+            "
+            class="btn btn-primary btn-block"
+            (click)="close()">
+            Regresar
           </button>
         </div>
       </div>
     </div>
+
+    <app-scanning-foil
+      [good]=""
+      [numberFoli]=""
+      [cveScreen]=""
+      [reportPrint]=""
+      [refresh]="">
+    </app-scanning-foil>
     <div class="row text-center mb-3">
       <div class="col-md-6 col-sm-12">
         <button
           type="button"
           data-toggle="tooltop"
           title="Agregar Bien"
-          class="btn btn-info btn-sm active ml-2 mr-2 float-center">
+          class="btn btn-info btn-sm active ml-2 mr-2 float-center"
+          (click)="insertarParrafos()">
           <i class=""></i> Insertar Párrafos
         </button>
       </div>
@@ -92,15 +129,27 @@
       <div class="card-body">
         <div class="form-group">
           <label for="textarea1">Parrafo Inicial</label>
-          <textarea class="form-control" id="textarea1" rows="3"></textarea>
+          <textarea
+            [(ngModel)]="parrafo1"
+            class="form-control"
+            id="textarea1"
+            rows="3"></textarea>
         </div>
         <div class="form-group">
           <label for="textarea2">Parrafo Secundario</label>
-          <textarea class="form-control" id="textarea2" rows="3"></textarea>
+          <textarea
+            [(ngModel)]="parrafo2"
+            class="form-control"
+            id="textarea2"
+            rows="3"></textarea>
         </div>
         <div class="form-group">
           <label for="textarea3">Parrafo Final</label>
-          <textarea class="form-control" id="textarea3" rows="3"></textarea>
+          <textarea
+            [(ngModel)]="parrafo3"
+            class="form-control"
+            id="textarea3"
+            rows="3"></textarea>
         </div>
       </div>
     </div>

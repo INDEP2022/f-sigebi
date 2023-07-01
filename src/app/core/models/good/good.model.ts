@@ -26,6 +26,7 @@ export interface IGood {
   classificationGood?: any;
   remarksOrien?: any;
   physicalStatus?: number | string;
+  scheduledDateDecoDev?: string;
   destinyName?: string;
   goodId?: number;
   solIncripRegister?: any;

@@ -126,7 +126,7 @@ export class RegionalDelegationsListComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(reginalDelegation.id);
@@ -137,7 +137,7 @@ export class RegionalDelegationsListComponent
   delete(id: number) {
     this.regionalDelegationService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Delegación Regional', 'Borrado');
+        this.alert('success', 'Delegación regional', 'Borrado Correctamente');
         this.getRegionalDelegations();
       },
       error: error => {

@@ -117,8 +117,14 @@ export class BankAccountsInsuredComponent implements OnInit {
   }
 
   getRegCurrency(params?: ListParams) {
-    params['filter.cve_moneda'] = `$ilike:${params.text}`;
-    params['filter.desc_moneda'] = `$ilike:${params.text}`;
+    console.log('params', this.form);
+
+    var text = params!.text;
+    console.log('text', text);
+    if (text !== '' && text !== null) {
+      params['filter.cve_moneda'] = `$ilike:${text}`;
+      params['filter.desc_moneda'] = `$ilike:${text}`;
+    }
     this.tableServ
       .getReg4WidthFilters(this.filterParams.getValue().getParams())
       .subscribe({

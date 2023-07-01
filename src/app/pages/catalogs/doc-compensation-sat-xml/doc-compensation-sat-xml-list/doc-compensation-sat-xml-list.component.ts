@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDocCompensationSatXml } from 'src/app/core/models/catalogs/doc-compensation-sat-xml.model';
 import { DocCompensationSatXmlService } from 'src/app/core/services/catalogs/doc-compensation-sat-xml.service';
@@ -52,17 +53,14 @@ export class DocCompensationSatXmlListComponent
   }
 
   openForm(compensationSatXml?: IDocCompensationSatXml) {
-    let config: ModalOptions = {
-      initialState: {
-        compensationSatXml,
-        callback: (next: boolean) => {
-          if (next) this.getExample();
-        },
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      compensationSatXml,
+      callback: (next: boolean) => {
+        if (next) this.getExample();
       },
-      class: 'modal-md modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.modalService.show(DocCompensationSatXmlFormComponent, config);
+    this.modalService.show(DocCompensationSatXmlFormComponent, modalConfig);
   }
 
   showDeleteAlert(compensationSatXml: IDocCompensationSatXml) {
@@ -81,7 +79,11 @@ export class DocCompensationSatXmlListComponent
   delete(id: number) {
     this.docConpensation.remove(id).subscribe({
       next: response => {
-        this.alert('success', 'Documento Resarcimiento Xml', 'Borrado'),
+        this.alert(
+          'success',
+          'Documento resarcimiento SAT XML',
+          'Borrado Correctamente'
+        ),
           this.getExample();
       },
       error: err => {

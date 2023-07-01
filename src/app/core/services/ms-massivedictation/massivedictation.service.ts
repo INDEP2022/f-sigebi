@@ -12,11 +12,13 @@ export class MassiveDictationService extends HttpService {
     this.microservice = this.route.BasePath;
   }
 
-  deleteGoodOpinion(id: number) {
-    return this.delete(`${this.route.P_ELIMINA_BIENES_DICTAMENT}/${id}`);
+  deleteGoodOpinion(body: { goodIds?: string[]; identifier?: string }) {
+    return this.post(`${this.route.P_ELIMINA_BIENES_DICTAMENT}`, body);
   }
 
   deleteDictationMoreTax(id: string) {
-    return this.delete(`${this.route.P_ELIMINA_DICTA_MAS_IVA}/${id}`);
+    return this.delete(`${this.route.P_ELIMINA_DICTA_MAS_IVA}`, {
+      body: { id },
+    });
   }
 }

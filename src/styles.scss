@@ -461,6 +461,21 @@ ng-scrollbar.table-scrollbar {
   max-width: 280px !important;
 }
 
+.theme-green .bs-datepicker-head {
+  background-color: #9d2449;
+}
+
+.bs-datepicker-container {
+  padding: 0px;
+}
+
+.theme-green .bs-datepicker-body table td span.selected,
+.theme-green .bs-datepicker-body table td.selected span,
+.theme-green .bs-datepicker-body table td span[class*='select-']:after,
+.theme-green .bs-datepicker-body table td[class*='select-'] span:after {
+  background-color: #9d2449;
+}
+
 .disabled {
   pointer-events: none !important;
   opacity: 0.7 !important;
@@ -626,4 +641,40 @@ ng-scrollbar.table-scrollbar {
 
 custom-view-component {
   color: black;
+}
+
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container {
+  overflow-y: auto;
+  flex-wrap: nowrap;
+}
+
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* Track */
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 12px;
+}
+
+/* Handle */
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

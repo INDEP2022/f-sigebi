@@ -19,6 +19,8 @@ export class CPMtaCMaximumTimesForAbandonmentComponent
   extends BasePage
   implements OnInit
 {
+  totalItems: number = 0;
+
   contentData: IListResponse<IGoodType> = {} as IListResponse<IGoodType>;
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: any = [];
@@ -50,11 +52,14 @@ export class CPMtaCMaximumTimesForAbandonmentComponent
       .subscribe(() => this.getAllGoodTypes());
   }
 
+  openForm(goodType?: IGoodType) {
+    this.openModal({ goodType });
+  }
   openModal(context?: Partial<ModalCPMtaCMaximumTimesForAbandonmentComponent>) {
     const modalRef = this.modalService.show(
       ModalCPMtaCMaximumTimesForAbandonmentComponent,
       {
-        initialState: { ...context, lengthData: this.data.length + 1 },
+        initialState: { ...context },
         class: 'modal-lg modal-dialog-centered',
         ignoreBackdropClick: true,
       }
@@ -66,9 +71,6 @@ export class CPMtaCMaximumTimesForAbandonmentComponent
     });
   }
 
-  openForm(allotment?: any) {
-    this.openModal({ allotment });
-  }
   getAllGoodTypes() {
     this.goodTypeServ.getAll(this.params.getValue()).subscribe({
       next: (resp: any) => {
@@ -78,8 +80,11 @@ export class CPMtaCMaximumTimesForAbandonmentComponent
               nameGoodType: item.nameGoodType,
               id: item.id,
             });
-            this.dataTable.load(this.data);
+            this.dataTable.load(resp.data);
+            this.dataTable.refresh();
             this.contentData = resp;
+            this.totalItems = resp.count || 0;
+
             console.log(resp);
           });
         }

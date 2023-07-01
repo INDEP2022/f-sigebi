@@ -1,3 +1,5 @@
+import { DatePipe } from '@angular/common';
+
 export const PAY_BANK_COLUMNS = {
   payId: {
     title: 'No. Pago',
@@ -13,6 +15,12 @@ export const PAY_BANK_COLUMNS = {
     title: 'Fecha',
     sort: false,
     editable: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    },
   },
   reference: {
     title: 'Referencia',
@@ -36,9 +44,15 @@ export const PAY_BANK_COLUMNS = {
     editable: false,
   },
   system_val_date: {
-    title: 'Fecha IO',
+    title: 'Fecha OI',
     sort: false,
     editable: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    },
   },
 };
 
@@ -105,6 +119,12 @@ export const RECEIVED_PAYS_COLUMNS = {
     title: 'Fecha Proceso',
     sort: false,
     editable: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    },
   },
   status: {
     title: 'Estatus',

@@ -1,9 +1,22 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+
 export const GP_GOODS_COLUMNS = {
+  select: {
+    title: 'Selección',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction: (instance: CheckboxElementComponent) => {
+      instance.toggle.subscribe(resp => {
+        resp.row.select = resp.toggle;
+      });
+    },
+  },
   numberPhotos: {
     title: 'No. Fotos',
     sort: false,
+    valuePrepareFunction: (value: string | number) => Number(value),
   },
-  file: {
+  fileNumber: {
     title: 'No. Expediente',
     sort: false,
   },

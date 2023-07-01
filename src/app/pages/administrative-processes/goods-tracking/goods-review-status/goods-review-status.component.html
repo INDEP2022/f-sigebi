@@ -1,9 +1,29 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">ATENCIÓN DE BIENES EN ESTATUS REV</h5>
+    <div class="justify-content-end">
+      <h6 style="margin-top: 8px; margin-bottom: 0px" class="title">
+        RESPONSABLE:
+        <strong
+          style="
+            font-weight: bold;
+            font-size: 25px;
+            margin-left: 10px;
+            margin-right: 10px;
+          ">
+          {{ responsable }}</strong
+        >
+      </h6>
+    </div>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
+      <!-- <div class="row">
+        <h6 class="title">RESPONSABLE: <strong style="font-weight: bold; font-size: 25px;"> {{responsable}}</strong>
+        </h6> <span>
+
+        </span>
+      </div> -->
       <div class="row mb-3 mt-3">
         <!--Package type-->
         <div
@@ -11,12 +31,21 @@
           <div class="row justify-content-between">
             <div class="col-lg-4 col-md-4 col-sm-4 col-6">
               <form-radio label="Muebles">
-                <input type="radio" formControlName="option" value="movables" />
+                <input
+                  [readonly]="!responsable"
+                  type="radio"
+                  [(ngModel)]="selectedGender"
+                  (change)="handleGenderChange()"
+                  formControlName="option"
+                  value="movables" />
               </form-radio>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-6">
               <form-radio label="Inmuebles">
                 <input
+                  [readonly]="!responsable"
+                  [(ngModel)]="selectedGender"
+                  (change)="handleGenderChange()"
                   type="radio"
                   formControlName="option"
                   value="immovables" />
@@ -24,25 +53,52 @@
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-6">
               <form-radio label="Todos">
-                <input type="radio" formControlName="option" value="all" />
+                <input
+                  [readonly]="!responsable"
+                  [(ngModel)]="selectedGender"
+                  (change)="handleGenderChange()"
+                  type="radio"
+                  formControlName="option"
+                  value="all" />
               </form-radio>
             </div>
           </div>
         </div>
         <!--Actions-->
         <div
-          class="col-lg-2 col-md-4 col-sm-12 col-12 align-self-baseline mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">Atender</button>
-        </div>
-        <div
-          class="col-lg-2 col-md-4 col-sm-12 col-12 align-self-baseline mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">
-            Atención Masiva
-          </button>
-        </div>
-        <div
-          class="col-lg-2 col-md-4 col-sm-12 col-12 mb-3 mt-3 align-self-baseline mb-3 mt-3">
-          <button class="btn btn-success btn-sm active w-100">Exportar</button>
+          class="col-lg-7 col-md-12 col-sm-12 col-12 align-self-center mb-3 mt-3">
+          <div class="col-lg-3 col-md-2 col-sm-4 col-12">
+            <button
+              [disabled]="!responsable"
+              (click)="attention()"
+              class="btn btn-primary btn-sm active w-100">
+              Atender
+            </button>
+          </div>
+          <div class="col-lg-5 col-md-5 col-sm-4 col-12">
+            <button
+              [disabled]="!responsable"
+              class="btn btn-success btn-sm w-100"
+              type="button"
+              (click)="file.click()">
+              Atención Masiva <i class="bx bx-upload float-icon"></i>
+            </button>
+            <input
+              type="file"
+              name="file"
+              #file
+              class="d-none"
+              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              (change)="onFileChange($event)" />
+          </div>
+          <div class="col-lg-4 col-md-5 col-sm-4 col-12">
+            <button
+              [disabled]="!responsable"
+              (click)="exportar()"
+              class="btn btn-success btn-sm w-100">
+              Exportar CSV <i class="bx bx-download float-icon"></i>
+            </button>
+          </div>
         </div>
       </div>
     </form>
@@ -52,6 +108,7 @@
       <div class="row justify-content-end mr-1">
         <div class="col-12">
           <app-columns-select
+            [defaultColumns]="7"
             (settingsChange)="settingsChange($event)"
             [settings]="settings"
             class="row justify-content-end"></app-columns-select>
@@ -59,18 +116,37 @@
       </div>
     </div>
     <div class="row pt-4">
+      <form-loader *ngIf="loading"></form-loader>
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '500px' }">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
             [settings]="settings"
             [source]="data"
-            (delete)="delete($event.data)">
+            (userRowSelect)="selectRow($event)">
           </ng2-smart-table>
-        </div>
+        </ng-scrollbar>
       </div>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
+    <!-- (click)="onDblClick($event)" función de dobleclick-->
+    <app-pagination [params]="paramsList" [totalItems]="totalItems">
     </app-pagination>
+
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <!-- <div class="col-md-6 mt-3">
+          <form-field [control]="form.get('responsable')" label="Responsable">
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="responsable" />
+          </form-field>
+        </div> -->
+      </div>
+    </form>
   </div>
 </app-card>

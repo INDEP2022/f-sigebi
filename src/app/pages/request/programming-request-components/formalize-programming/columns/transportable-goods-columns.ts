@@ -1,12 +1,12 @@
 export const TRANSPORTABLE_GOODS = {
   id: {
-    title: 'No gestión',
+    title: 'Nº gestión',
     type: 'string',
     sort: false,
   },
 
   uniqueKey: {
-    title: 'Clave única',
+    title: 'Clave Única',
     type: 'string',
     sort: false,
   },
@@ -18,7 +18,7 @@ export const TRANSPORTABLE_GOODS = {
   },
 
   goodDescription: {
-    title: 'Descripción transferente',
+    title: 'Descripción Transferente',
     sort: false,
   },
 
@@ -29,7 +29,7 @@ export const TRANSPORTABLE_GOODS = {
   },
 
   transferenceQuantity: {
-    title: 'Cantidad transferente',
+    title: 'Cantidad Transferente',
     type: 'string',
     sort: false,
   },
@@ -79,13 +79,13 @@ export const TRANSPORTABLE_GOODS = {
 
 export const TRANSPORTABLE_GOODS_FORMALIZE = {
   goodId: {
-    title: 'Nº gestión',
+    title: 'Nº Gestión',
     type: 'string',
     sort: false,
   },
 
   uniqueKey: {
-    title: 'Clave única',
+    title: 'Clave Única',
     type: 'string',
     sort: false,
   },
@@ -108,7 +108,7 @@ export const TRANSPORTABLE_GOODS_FORMALIZE = {
   },
 
   quantity: {
-    title: 'Cantidad transferente',
+    title: 'Cantidad Transferente',
     type: 'string',
     sort: false,
   },
@@ -120,7 +120,7 @@ export const TRANSPORTABLE_GOODS_FORMALIZE = {
   },
 
   unitMeasure: {
-    title: 'Unidad Medida transferente',
+    title: 'Unidad Medida Transferente',
     type: 'string',
     sort: false,
   },
@@ -131,7 +131,7 @@ export const TRANSPORTABLE_GOODS_FORMALIZE = {
   },
 
   physicalStatusName: {
-    title: 'Estado Físico transferente',
+    title: 'Estado Físico Transferente',
     type: 'string',
     sort: false,
   },
@@ -143,7 +143,7 @@ export const TRANSPORTABLE_GOODS_FORMALIZE = {
   },
 
   stateConservationName: {
-    title: 'Conservación transferente',
+    title: 'Conservación Transferente',
     type: 'string',
     sort: false,
   },

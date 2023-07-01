@@ -71,12 +71,17 @@
             Nueva Solicitud <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
           <button
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="clearSearch(); isSearch = true">
+            Limpiar <i class="fas fa-eraser"></i>
+          </button>
+          <!-- <button
             type="button"
             class="btn btn-primary active btn-sm"
             (click)="clearSearch(); isSearch = true">
             Limpiar
             <i class="fa fa-trash"></i>
-          </button>
+          </button> -->
         </div>
       </div>
 
@@ -218,7 +223,7 @@
             type="button"
             class="btn btn-sm btn-success active m-3"
             (click)="callExc()">
-            IMPORTAR DE EXCEL
+            Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
           </button>
         </div>
       </div>

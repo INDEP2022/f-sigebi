@@ -5,6 +5,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import {
   IReceipt,
   IReceiptwitness,
@@ -28,7 +29,10 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
   idProgramming: number = 0;
   loadingWitness: boolean = false;
   keyDoc: string = '';
+  programming: Iprogramming;
   closeModal: boolean = false;
+
+  dataReceipt: IReceipt;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -71,15 +75,15 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     });
 
     this.params.getValue()['filter.id'] = this.proceeding.id;
+    this.params.getValue()['filter.actId'] = this.proceeding.actId;
     this.params.getValue()['filter.programmingId'] =
       this.proceeding.programmingId;
     this.receptionGoodService.getReceipt(this.params.getValue()).subscribe({
       next: response => {
+        this.dataReceipt = response.data[0];
         this.generateReceiptForm.patchValue(response.data[0]);
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
   close() {
@@ -111,6 +115,8 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     this.loadingWitness = true;
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.idProgramming;
+    params.getValue()['filter.actId'] = this.proceeding.actId;
+    params.getValue()['filter.receiptId'] = this.proceeding.id;
     this.receptionGoodService.getReceiptsWitness(params.getValue()).subscribe({
       next: response => {
         const infoReceipt = response.data.map((item: IReceiptwitness) => {
@@ -160,198 +166,153 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
             .get('electronicSignatureReceipt')
             .setValue(0);
         }
-        console.log(
-          'this.generateReceiptForm.value',
-          this.generateReceiptForm.value
-        );
+
         this.receptionGoodService
           .updateReceipt(this.generateReceiptForm.value)
           .subscribe({
-            next: response => {
-              console.log('recibo', response);
-              this.checkSign();
+            next: async response => {
+              const Signatures: any = await this.checkSign();
+              if (Signatures) {
+                this.formInfoSignature(Signatures);
+              }
+              //this.checkSign();
             },
-            error: error => {
-              console.log('error', error);
-            },
+            error: error => {},
           });
       }
     });
   }
 
   checkSign() {
-    this.loading = true;
-    let no_autograf: number = 0;
-    let no_electronicSig: number = 0;
-    let electronicSig: boolean = false;
-    let autograf: boolean = false;
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.id'] = this.proceeding.id;
-    params.getValue()['filter.programmingId'] = this.idProgramming;
-    this.receptionGoodService.getReceipt(params.getValue()).subscribe({
-      next: response => {
-        const firmEnt = response.data[0].electronicSignatureEnt;
-        const firmReceip = response.data[0].electronicSignatureReceipt;
-        this.keyDoc =
-          this.idProgramming +
-          '-' +
-          this.proceeding.actId +
-          '-' +
-          this.proceeding.id;
+    return new Promise((resolve, reject) => {
+      this.loading = true;
+      let no_autograf: number = 0;
+      let no_electronicSig: number = 0;
+      let electronicSig: boolean = false;
+      let autograf: boolean = false;
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.id'] = this.proceeding.id;
+      params.getValue()['filter.programmingId'] = this.idProgramming;
+      this.receptionGoodService.getReceipt(params.getValue()).subscribe({
+        next: response => {
+          const firmEnt = response.data[0].electronicSignatureEnt;
+          const firmReceip = response.data[0].electronicSignatureReceipt;
+          const Signatures = response.data[0];
+          this.keyDoc =
+            this.idProgramming +
+            '-' +
+            this.proceeding.actId +
+            '-' +
+            this.proceeding.id;
 
-        if (firmEnt == 1) {
-          no_electronicSig++;
-        } else if (firmEnt == 0) {
-          no_autograf++;
-        }
+          if (firmEnt == 1) {
+            no_electronicSig++;
+          } else if (firmEnt == 0) {
+            no_autograf++;
+          }
 
-        if (firmReceip == 1) {
-          no_electronicSig++;
-        } else if (firmReceip == 0) {
-          no_autograf++;
-        }
+          if (firmReceip == 1) {
+            no_electronicSig++;
+          } else if (firmReceip == 0) {
+            no_autograf++;
+          }
 
-        if (this.paragraphs.count() > 0) {
-          this.paragraphs.getElements().then(item => {
-            item.map((data: IReceiptwitness) => {
-              if (data.electronicSignature) {
-                no_electronicSig++;
-              } else {
-                no_autograf++;
-              }
-            });
-          });
-        }
-        if (no_electronicSig > 0) electronicSig = true;
-        if (no_autograf > 0) autograf = true;
-
-        const learnedType = 103;
-        const learnedId = this.idProgramming;
-        this.signatoriesService
-          .getSignatoriesFilter(learnedType, learnedId)
-          .subscribe({
-            next: async response => {
-              response.data.map(item => {
-                this.signatoriesService
-                  .deleteFirmante(Number(item.signatoryId))
-                  .subscribe({
-                    next: () => {},
-                    error: error => {},
-                  });
+          if (this.paragraphs.count() > 0) {
+            this.paragraphs.getElements().then(item => {
+              item.map((data: IReceiptwitness) => {
+                if (data.electronicSignature) {
+                  no_electronicSig++;
+                } else {
+                  no_autograf++;
+                }
               });
+            });
+          }
+          if (no_electronicSig > 0) electronicSig = true;
+          if (no_autograf > 0) autograf = true;
 
-              console.log('firmEntF', firmEnt);
-              if (firmEnt == 1) {
-                await this.createSign(
-                  this.idProgramming,
-                  103,
-                  'RECIBOS',
-                  'FIRMA_ELECTRONICA_ENT',
-                  this.proceeding.nameDelivery,
-                  this.proceeding.chargeDelivery
-                );
-              }
-
-              if (firmReceip == 1) {
-                const createReceipt = await this.createSign(
-                  this.idProgramming,
-                  103,
-                  'RECIBOS',
-                  'FIRMA_ELECTRONICA_REC',
-                  this.proceeding.nameReceipt,
-                  this.proceeding.chargeReceipt
-                );
-                if (createReceipt) {
-                  if (this.paragraphs.count() > 0) {
-                    this.paragraphs.getElements().then(item => {
-                      item.map(async (data: IReceiptwitness) => {
-                        const createReceiptWitness = await this.createSign(
-                          this.idProgramming,
-                          103,
-                          'RECIBOS_TESTIGOS',
-                          'FIRMA_ELECTRONICA',
-                          data.nameWitness,
-                          data.chargeWitness
-                        );
-                        if (createReceiptWitness) {
-                          this.modalRef.content.callback(
-                            this.proceeding,
-                            this.idProgramming
-                          );
-                          this.close();
-                          this.loading = false;
-                        }
-                      });
+          const learnedType = 103;
+          const learnedId = this.idProgramming;
+          this.signatoriesService
+            .getSignatoriesFilter(learnedType, learnedId)
+            .subscribe({
+              next: async response => {
+                response.data.map(item => {
+                  this.signatoriesService
+                    .deleteFirmante(Number(item.signatoryId))
+                    .subscribe({
+                      next: () => {
+                        //
+                        resolve(Signatures);
+                      },
+                      error: error => {},
                     });
-                  } else {
-                    this.modalRef.content.callback(
-                      this.proceeding,
-                      this.idProgramming
-                    );
-                    this.close();
-                    this.loading = false;
-                  }
-                }
-              }
-            },
-            error: async error => {
-              if (firmEnt == 1) {
-                await this.createSign(
-                  this.idProgramming,
-                  103,
-                  'RECIBOS',
-                  'FIRMA_ELECTRONICA_ENT',
-                  this.proceeding.nameDelivery,
-                  this.proceeding.chargeDelivery
-                );
-              }
-
-              console.log('firmReceip', firmReceip);
-              if (firmReceip == 1) {
-                const createReceipt = await this.createSign(
-                  this.idProgramming,
-                  103,
-                  'RECIBOS',
-                  'FIRMA_ELECTRONICA_REC',
-                  this.proceeding.nameReceipt,
-                  this.proceeding.chargeReceipt
-                );
-                if (createReceipt) {
-                  if (this.paragraphs.count() > 0) {
-                    this.paragraphs.getElements().then(item => {
-                      item.map(async (data: IReceiptwitness) => {
-                        const createReceiptWitness = await this.createSign(
-                          this.idProgramming,
-                          103,
-                          'RECIBOS_TESTIGOS',
-                          'FIRMA_ELECTRONICA',
-                          data.nameWitness,
-                          data.chargeWitness
-                        );
-                        if (createReceiptWitness) {
-                          this.modalRef.content.callback(
-                            this.proceeding,
-                            this.idProgramming
-                          );
-                          this.close();
-                          this.loading = false;
-                        }
-                      });
-                    });
-                  } else {
-                    this.modalRef.content.callback(
-                      this.proceeding,
-                      this.idProgramming
-                    );
-                    this.close();
-                    this.loading = false;
-                  }
-                }
-              }
-            },
-          });
-      },
+                });
+              },
+              error: async error => {
+                resolve(Signatures);
+              },
+            });
+        },
+      });
     });
+  }
+
+  async formInfoSignature(signatures: IReceipt) {
+    if (signatures.electronicSignatureEnt) {
+      const createDelivery = await this.createSign(
+        this.idProgramming,
+        103,
+        'RECIBOS',
+        'FIRMA_ELECTRONICA_ENT',
+        signatures.nameDelivery,
+        signatures.chargeDelivery
+      );
+
+      if (createDelivery) {
+        if (signatures.electronicSignatureReceipt) {
+          const createReceipt = await this.createSign(
+            this.idProgramming,
+            103,
+            'RECIBOS',
+            'FIRMA_ELECTRONICA_REC',
+            signatures.nameReceipt,
+            signatures.chargeReceipt
+          );
+          if (createReceipt) {
+            if (this.paragraphs.count() > 0) {
+              this.paragraphs.getElements().then(item => {
+                item.map(async (data: IReceiptwitness) => {
+                  const createReceiptWitness = await this.createSign(
+                    this.idProgramming,
+                    103,
+                    'RECIBOS_TESTIGOS',
+                    'FIRMA_ELECTRONICA',
+                    data.nameWitness,
+                    data.chargeWitness
+                  );
+                  if (createReceiptWitness) {
+                    this.modalRef.content.callback(
+                      this.proceeding,
+                      this.idProgramming
+                    );
+                    this.close();
+                    this.loading = false;
+                  }
+                });
+              });
+            } else {
+              this.modalRef.content.callback(
+                this.proceeding,
+                this.idProgramming
+              );
+              this.close();
+              this.loading = false;
+            }
+          }
+        }
+      }
+    }
   }
 
   createSign(
@@ -371,15 +332,12 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
         name: name,
         post: position,
       };
-      console.log('formData', formData);
+
       this.signatoriesService.create(formData).subscribe({
         next: response => {
-          console.log('firmantes creados');
           resolve(true);
         },
-        error: error => {
-          console.log('error', error);
-        },
+        error: error => {},
       });
     });
   }
@@ -400,7 +358,15 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
 
         this.receptionGoodService.deleteReceiptWitness(formData).subscribe({
           next: response => {
-            this.showReceiptWitness();
+            this.alertInfo(
+              'info',
+              'Acción Correcta',
+              'Testigo eliminado correctamente'
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.showReceiptWitness();
+              }
+            });
           },
           error: error => {
             console.log('error', error);

@@ -65,6 +65,7 @@ export class OriginListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });
@@ -79,13 +80,20 @@ export class OriginListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.originService.getAll(params).subscribe({
+    this.originService.getAllFilter(params).subscribe({
       next: response => {
-        this.origins = response.data;
-        this.data.load(this.origins);
-        this.data.refresh();
-        this.totalItems = response.count;
-        this.loading = false;
+        if (response.count > 0) {
+          this.origins = response.data;
+          this.data.load(this.origins);
+          this.data.refresh();
+          this.totalItems = response.count;
+          this.loading = false;
+        } else {
+          this.data.load([]);
+          this.data.refresh();
+          this.totalItems = 0;
+          this.loading = false;
+        }
       },
       error: error => (this.loading = false),
     });
@@ -118,7 +126,7 @@ export class OriginListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.originService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Procedencias', 'Borrado');
+        this.alert('success', 'Procedencia', 'Borrada Correctamente');
         this.getExample();
       },
       error: error => {

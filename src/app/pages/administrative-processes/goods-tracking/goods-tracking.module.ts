@@ -9,10 +9,19 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 //Routing
 import { GoodsTrackingRoutingModule } from './goods-tracking-routing.module';
 //Components
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
+import { AddmotiveComponent } from './addmotive/addmotive.component';
+import { DobleclickaddComponent } from './dobleclickadd/dobleclickadd.component';
 import { GoodsReviewStatusComponent } from './goods-review-status/goods-review-status.component';
-
+import { ListNoAttendedComponent } from './list-no-attended/list-no-attended.component';
 @NgModule({
-  declarations: [GoodsReviewStatusComponent],
+  declarations: [
+    GoodsReviewStatusComponent,
+    ListNoAttendedComponent,
+    AddmotiveComponent,
+    DobleclickaddComponent,
+  ],
   imports: [
     CommonModule,
     GoodsTrackingRoutingModule,
@@ -20,6 +29,8 @@ import { GoodsReviewStatusComponent } from './goods-review-status/goods-review-s
     FormsModule,
     ReactiveFormsModule,
     TabsModule,
+    FormLoaderComponent,
+    TooltipModule.forRoot(),
   ],
 })
 export class GoodsTrackingModule {}

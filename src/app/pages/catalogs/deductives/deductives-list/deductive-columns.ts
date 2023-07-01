@@ -5,7 +5,7 @@ export const DEDUCTIVE_COLUMNS = {
     sort: false,
   },
   serviceType: {
-    title: 'Tipo de servicio',
+    title: 'Tipo de Servicio',
     type: 'string',
     sort: false,
   },
@@ -15,23 +15,13 @@ export const DEDUCTIVE_COLUMNS = {
     sort: false,
   },
   startingRankPercentage: {
-    title: 'Porcentaje inicial',
+    title: 'Porcentaje Inicial',
     type: 'number',
     sort: false,
   },
   finalRankPercentage: {
-    title: 'Porcentaje final',
+    title: 'Porcentaje Final',
     type: 'number',
-    sort: false,
-  },
-  creationUser: {
-    title: 'Creado por',
-    type: 'string',
-    sort: false,
-  },
-  editionUser: {
-    title: 'Modificado por',
-    type: 'string',
     sort: false,
   },
   version: {
@@ -62,7 +52,7 @@ export const DEDUCTIVE_COLUMNS = {
     },
   },
   contractNumber: {
-    title: 'Nº de contrato',
+    title: 'Nº de Contrato',
     type: 'number',
     sort: false,
   },

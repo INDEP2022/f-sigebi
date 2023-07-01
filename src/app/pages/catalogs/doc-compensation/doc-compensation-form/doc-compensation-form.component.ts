@@ -56,6 +56,7 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
         null,
         [
           // Validators.required,
+          Validators.maxLength(4),
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
@@ -63,15 +64,13 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
         null,
         [
           // Validators.required,
+          Validators.maxLength(250),
           Validators.pattern(STRING_PATTERN),
         ],
       ],
       type: [
         null,
-        [
-          // Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
+        [Validators.maxLength(2), Validators.pattern(NUMBERS_PATTERN)],
       ],
     });
     if (this.docCompensation != null) {

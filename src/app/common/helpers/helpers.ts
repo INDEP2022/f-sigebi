@@ -1,7 +1,10 @@
 import { formatDate } from '@angular/common';
+import { firstValueFrom, map } from 'rxjs';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { environment } from 'src/environments/environment';
 import Swal, { SweetAlertResult, type SweetAlertOptions } from 'sweetalert2';
 
+export const API_VERSION = 'api/v1';
 type SwalOptions = Partial<SweetAlertOptions> & Required<{ text: string }>;
 
 /**
@@ -127,6 +130,7 @@ export function generateUrlOrPath(
 }
 
 import { read, utils } from 'xlsx';
+
 export async function getDataFromExcel<T = any>(file: File): Promise<T[]> {
   const reader = new FileReader();
   const onLoad = () =>
@@ -156,4 +160,25 @@ export function goFormControlAndFocus(formControlName: string) {
   } catch (error) {
     console.log(error);
   }
+}
+
+/**
+ *
+ * @param date Date
+ * @return Promise<number>
+ */
+export function getFaStageCreda(
+  parametersService: ParametersService,
+  date: Date = new Date()
+): Promise<number> {
+  const _date = formatDate(date, 'yyyy/MM/dd', 'en-US');
+  console.log(_date);
+  return firstValueFrom(
+    parametersService.getFaStageCreda(_date).pipe(
+      map(response => {
+        console.log(response);
+        return response.stagecreated;
+      })
+    )
+  );
 }

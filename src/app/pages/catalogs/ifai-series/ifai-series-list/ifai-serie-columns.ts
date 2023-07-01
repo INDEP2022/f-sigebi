@@ -1,6 +1,6 @@
 export const IFAI_SERIE_COLUMNS = {
   code: {
-    title: 'Registro',
+    title: 'Código',
     type: 'string',
     sort: false,
   },

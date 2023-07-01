@@ -132,6 +132,20 @@ export abstract class BasePage extends ClassWidthAlert implements OnDestroy {
     return value;
   }
 
+  protected returnParseDate(data: any) {
+    let fechaString = '';
+    // Obtener los componentes de la fecha
+    if (data !== '') {
+      const año = data.getFullYear().toString();
+      const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+      const dia = data.getDate().toString().padStart(2, '0');
+
+      // Crear la cadena de texto en formato "año mes día"
+      fechaString = `${año}-${mes}-${dia}`;
+    }
+    return fechaString;
+  }
+
   protected decodeData<T>(data: string): T {
     const value = AES.decrypt(data.trim(), this.key.trim()).toString(enc.Utf8);
     return JSON.parse(value);

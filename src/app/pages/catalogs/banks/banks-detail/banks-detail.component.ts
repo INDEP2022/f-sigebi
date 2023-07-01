@@ -14,7 +14,7 @@ import { BankService } from '../../../../core/services/catalogs/bank.service';
   styles: [],
 })
 export class BanksDetailComponent extends BasePage implements OnInit {
-  title: 'BANCO';
+  title: 'Banco';
   status: string = 'Nuevo';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
@@ -83,7 +83,8 @@ export class BanksDetailComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

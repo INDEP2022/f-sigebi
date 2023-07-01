@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ITypeService } from 'src/app/core/models/catalogs/typeservices.model';
 import { TypeServicesService } from 'src/app/core/services/catalogs/typeservices.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -18,7 +21,8 @@ export class TypeServicesListComponent extends BasePage implements OnInit {
   paragraphs: ITypeService[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
   constructor(
     private typeServicesService: TypeServicesService,
     private modalService: BsModalService
@@ -26,9 +30,36 @@ export class TypeServicesListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = TYPESERVICES_COLUMS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
+    (this.loading = true),
+      this.data
+        .onChanged()
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(change => {
+          if (change.action === 'filter') {
+            let filters = change.filter.filters;
+            filters.map((filter: any) => {
+              let field = ``;
+              let searchFilter = SearchFilter.ILIKE;
+              field = `filter.${filter.field}`;
+              filter.field == 'id' ||
+              filter.field == 'description' ||
+              filter.field == 'flag'
+                ? (searchFilter = SearchFilter.EQ)
+                : (searchFilter = SearchFilter.ILIKE);
+              if (filter.search !== '') {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              } else {
+                delete this.columnFilters[field];
+              }
+            });
+            this.getExample();
+          }
+        });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getExample());
@@ -76,7 +107,8 @@ export class TypeServicesListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.typeServicesService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Tipo Servicio', 'Borrado'), this.getExample();
+        this.alert('success', 'Tipo servicio', 'Borrado Correctamente'),
+          this.getExample();
       },
       error: error => {
         this.alert(

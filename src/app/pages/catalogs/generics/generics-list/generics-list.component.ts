@@ -31,7 +31,7 @@ export class GenericsListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = GENERICS_COLUMNS;
-    this.settings.actions.delete = false;
+    this.settings.actions.delete = true;
     this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
   }
@@ -109,7 +109,7 @@ export class GenericsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -121,7 +121,8 @@ export class GenericsListComponent extends BasePage implements OnInit {
   ShowDeleteAlert(name: string, id: number) {
     this.genericsService.remove1(name, id).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Genérico', 'Borrado');
+        this.getExample(),
+          this.alert('success', 'Genérico', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

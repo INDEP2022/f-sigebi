@@ -47,15 +47,33 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'nameSubtypeGood' ||
-            filter.field == 'idTypeGood' ||
-            filter.field == 'noPhotography' ||
-            filter.field == 'descriptionPhotography' ||
-            filter.field == 'noRegister' ||
-            filter.field == 'version'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'typeGoodDetails':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.nameGoodType`;
+                break;
+              case 'nameSubtypeGood':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'noPhotography':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'descriptionPhotography':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'noRegister':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'version':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -77,9 +95,10 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.goodTypesService.getAll(params).subscribe({
+    this.goodTypesService.getAllDetails(params).subscribe({
       next: response => {
         this.paragraphs = response.data;
+        console.log(response.data);
         this.totalItems = response.count;
         this.data.load(response.data);
         this.data.refresh();
@@ -103,7 +122,7 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         console.log(goodSubtype);
@@ -114,16 +133,17 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
   delete(data: any) {
     const ids = {
       id: data.id,
-      idTypeGood: data.idTypeGood.id,
+      idTypeGood: data.idTypeGood,
     };
     this.goodTypesService.removeByIds(ids).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Sub-tipo', 'Borrado');
+        this.getExample(),
+          this.alert('success', 'Subtipo bien', 'Borrado Correctemente');
       },
       error: err => {
         this.alert(
           'warning',
-          'Sub-tipo',
+          'Subtipo bien',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },

@@ -23,6 +23,7 @@ export enum GoodEndpoints {
   GoodsExtensionFields = 'goods-extension-fields',
   GoodByDepositaryGood = 'good/searchByDepositaryGood',
   CreateGoodNumerary = 'good/createGood',
+  GoodsMotivesrev = 'good/goods-motivesrev',
   Vban = 'good/getBan',
   AttribGoodBad = 'attrib-good-bad/get-all',
   AttribGoodBadId = 'attrib-good-bad',
@@ -31,6 +32,7 @@ export enum GoodEndpoints {
   GetAllGoodQuery = 'good/getAllGoodQuery',
   PAValidaCambioEstatus = 'good/testValid',
   GetMassiveSearch = 'good/getMassiveSearch',
+  GoodsMotivesrev2 = 'goods-motivesrev',
 }
 
 export enum GoodProcessPoints {
@@ -71,4 +73,8 @@ export enum GoodFinderEndpoint {
 
   /* Good Data Aset */
   GoodDataAsetBase = 'gooddataset',
+}
+
+export enum GoodActaConvertion {
+  GoodActaConvertion = 'minute-conversions',
 }

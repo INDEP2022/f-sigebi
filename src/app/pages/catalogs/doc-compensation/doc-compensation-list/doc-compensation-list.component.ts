@@ -11,7 +11,6 @@ import {
 import { IDocCompensation } from 'src/app/core/models/catalogs/doc-compensation.model';
 import { DocCompensationService } from 'src/app/core/services/catalogs/doc-compensation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { DocCompensationFormComponent } from '../doc-compensation-form/doc-compensation-form.component';
 import { DOC_COMPENSATION_COLUMNNS } from './doc-compensation-columns';
 
@@ -104,18 +103,31 @@ export class DocCompensationListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(docCompensation.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.docCompensationService.removeCatalogDocCompensation(id).subscribe({
-      next: () => this.getDocCompensation(),
+      next: response => {
+        this.alert(
+          'success',
+          'Documento resarcimiento',
+          'Borrado Correctamente'
+        ),
+          this.getDocCompensation();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Documento Resarcimiento',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

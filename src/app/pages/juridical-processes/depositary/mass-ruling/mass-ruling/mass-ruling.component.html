@@ -19,20 +19,36 @@
               <input class="form-control" formControlName="wheelNumber" />
             </form-field>
           </div>
-        </div>
-      </div>
-      <div class="form-material">
-        <div class="row w-100">
           <div class="col-sm-12 col-12 col-md-2 p-2">
             <form-field
               [control]="form.get('expedientNumber')"
               label="No&#46; Expediente">
-              <input
-                required
-                class="form-control"
-                formControlName="expedientNumber" />
+              <input class="form-control" formControlName="expedientNumber" />
             </form-field>
           </div>
+          <div class="col p-2 mb-2">
+            <button
+              type="submit"
+              [disabled]="
+                !form.value.expedientNumber &&
+                !form.value.wheelNumber &&
+                !form.value.id
+              "
+              class="btn btn-primary active btn-sm text-wrap"
+              (click)="searchDictation()">
+              Buscar
+            </button>
+            <button
+              class="btn btn-primary active btn-sm text-wrap ml-2"
+              (click)="onClickBtnClear()">
+              Limpiar
+              <i class="fas fa-eraser"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="form-material">
+        <div class="row w-100">
           <div class="col-sm-12 col-12 col-md-2 p-2">
             <form-field
               [control]="form.get('typeDict')"
@@ -77,14 +93,7 @@
                 bsDatepicker />
             </form-field>
           </div>
-          <div class="col-sm-12 col-12 col-md-2 p-2 mb-2">
-            <button
-              type="submit"
-              class="btn btn-primary active btn-sm text-wrap"
-              (click)="searchDictation()">
-              Buscar
-            </button>
-          </div>
+
           <hr />
           <div class="col-sm-12 col-12 col-md-12 p-2 pl-4">
             <form-check label="Eliminar" for="eliminar">
@@ -99,7 +108,7 @@
             <div class="form-group mr-2">
               <button
                 type="button"
-                [disabled]="isDisabledBtnGoodDictation"
+                [disabled]="!form.value.delete"
                 class="btn btn-primary active btn-sm text-wrap"
                 (click)="onClickGoodDictation()">
                 Bienes del Dictamen
@@ -109,7 +118,7 @@
           <div class="col-sm-12 col-12 col-md-4 col-lg-4 col-xl-2 p-2">
             <div class="form-group ml-2 mr-2">
               <button
-                [disabled]="btnsEnabled.btnDictation"
+                [disabled]="!form.value.passOfficeArmy"
                 type="button"
                 class="btn btn-primary active btn-sm text-wrap"
                 (click)="onClickDictation()">
@@ -153,7 +162,7 @@
                 [disabled]="formCargaMasiva.invalid"
                 type="button"
                 (click)="onClickLoadByIdentifier()"
-                class="btn btn-primary active btn-sm text-wrap">
+                class="btn btn-primary active btn-sm">
                 Cargar de Identificador
               </button>
             </div>
@@ -179,7 +188,6 @@
           type="file"
           name="file"
           #fileExpedient
-          #uploadFile
           class="d-none"
           accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
           (change)="onClickLoadFile($event)" />
@@ -248,7 +256,7 @@
             [settings]="tableSettings"
             [source]="dataTable"></ng2-smart-table>
         </div>
-        <div [hidden]="isFileLoad">
+        <div>
           <app-pagination
             [params]="params"
             [totalItems]="totalItems"></app-pagination>
@@ -260,6 +268,11 @@
             [attr.class]="'table-bordered'"
             [settings]="tableSettings1"
             [source]="dataTableErrors"></ng2-smart-table>
+        </div>
+        <div>
+          <app-pagination
+            [params]="paramsErrors"
+            [totalItems]="totalItemsErrors"></app-pagination>
         </div>
       </div>
     </div>

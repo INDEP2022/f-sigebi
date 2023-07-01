@@ -10,7 +10,6 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { IStateOfRepublic } from '../../../../core/models/catalogs/state-of-republic.model';
 import { StateFormComponent } from '../state-form/state-form.component';
 import { STATES_COLUMNS } from './states-columns';
@@ -26,6 +25,7 @@ export class StatesListComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
+  order: any = [];
 
   constructor(
     private stateService: StateOfRepublicService,
@@ -33,9 +33,17 @@ export class StatesListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = STATES_COLUMNS;
-    this.settings.actions.delete = true;
-    this.settings.actions.add = false;
-    this.settings.hideSubHeader = false;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        add: false,
+        delete: true,
+        position: 'right',
+      },
+    };
   }
 
   ngOnInit(): void {
@@ -83,7 +91,10 @@ export class StatesListComponent extends BasePage implements OnInit {
     this.stateService.getAll(params).subscribe({
       next: response => {
         this.states = response.data;
+        this.order = response.data;
+        //console.log(this.order);
         this.totalItems = response.count || 0;
+        //this.order.sort((a, b) => b - a);
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
@@ -111,7 +122,6 @@ export class StatesListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(state.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -119,7 +129,8 @@ export class StatesListComponent extends BasePage implements OnInit {
   delete(id: string) {
     this.stateService.remove(id).subscribe({
       next: () => {
-        this.getStates(), this.alert('success', 'Estados', 'Borrado');
+        this.getStates(),
+          this.alert('success', 'Registro de estado', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

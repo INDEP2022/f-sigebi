@@ -127,7 +127,7 @@ export class AffairListComponent extends BasePage implements OnInit {
   delete(id: number, nb: string) {
     this.affairService.remove2(id, nb).subscribe(
       res => {
-        this.alert('success', 'Asuntos', 'Borrado.');
+        this.alert('success', 'Asunto', 'Borrado Correctamente');
         this.getAffairAll();
       },
       err => {

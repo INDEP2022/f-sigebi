@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITablesType } from 'src/app/core/models/catalogs/dinamic-tables.model';
@@ -23,6 +24,8 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
   value: ITablesType;
   values = new DefaultSelect<ITablesType>();
   edit: boolean = false;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  columnFilters: any = [];
 
   constructor(
     private fb: FormBuilder,
@@ -101,10 +104,27 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
         let date = new Date(this.tvalTable.toDate);
         this.tvalTableForm.controls['toDate'].setValue(date);
       }
+    } else {
+      this.tvalTableForm.patchValue(this.tvalTable);
+      console.log(this.value);
+      this.additionalValuesForm.controls['cdtabla'].setValue(
+        this.value.cdtabla
+      );
+      this.additionalValuesForm.controls['dstabla'].setValue(
+        this.value.dstabla
+      );
+      this.tvalTableForm.controls['table'].setValue(this.value.nmtabla);
+      const { cdtabla } = this.value;
+      this.values = new DefaultSelect([cdtabla], 1);
     }
   }
-  getAditionalValues(params: ListParams) {
-    this.valuesService.getAll(params).subscribe(
+  getAditionalValues(param: ListParams) {
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+
+    this.valuesService.getAll2(params).subscribe(
       (data: any) => {
         this.values = new DefaultSelect(data.data, data.count);
       },
@@ -130,8 +150,10 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
     this.additionalValuesForm.controls['dstabla'].setValue(
       aditionalValues.description
     );
+    this.params = this.pageFilter(this.params);
+
     this.tvalTableForm.controls['table'].setValue(aditionalValues.table);
-    this.values = new DefaultSelect();
+    this.values = new DefaultSelect([aditionalValues.name], 1);
   }
   close() {
     this.modalRef.hide();
@@ -203,6 +225,7 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
         next: data => this.handleSuccess(),
         error: error => {
           this.loading = false;
+
           if (this.tvalTable.fromDate) {
             let datefrom = new Date(this.tvalTable.fromDate);
             this.tvalTableForm.controls['fromDate'].setValue(datefrom);
@@ -216,7 +239,7 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', 'Valores de atributos', `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

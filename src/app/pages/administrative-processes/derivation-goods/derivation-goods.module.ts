@@ -16,6 +16,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 //Components
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { ActaConvertionFormComponent } from './derivation-goods/acta-convertion-form/acta-convertion.component';
+import { ScanningFoilComponent } from './derivation-goods/scanning-foil/scanning-foil.component';
 import { GoodsComponent } from './goods/goods.component';
 import { PwComponent } from './pw/pw.component';
 
@@ -27,6 +28,7 @@ import { PwComponent } from './pw/pw.component';
     GoodsComponent,
     PwComponent,
     ActaConvertionFormComponent,
+    ScanningFoilComponent,
   ],
   imports: [
     CommonModule,

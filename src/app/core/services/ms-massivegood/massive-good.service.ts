@@ -7,10 +7,7 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IPackageInfo } from '../../models/catalogs/package.model';
-import {
-  IIdentifierCount,
-  IMassiveGoodTracker,
-} from '../../models/ms-massivegood/massive-good-goods-tracker.model';
+import { IMassiveGoodTracker } from '../../models/ms-massivegood/massive-good-goods-tracker.model';
 import { IMassiveGood } from '../../models/ms-massivegood/massivegood.model';
 
 @Injectable({
@@ -18,6 +15,7 @@ import { IMassiveGood } from '../../models/ms-massivegood/massivegood.model';
 })
 export class MassiveGoodService extends HttpService {
   private readonly route = MassiveGoodEndpoints;
+
   constructor() {
     super();
     this.microservice = this.route.MassiveGood;
@@ -72,6 +70,11 @@ export class MassiveGoodService extends HttpService {
 
   deleteMassiveGoodComer(good: number) {
     return this.delete(`${this.route.DeleteMassiveGood}/${good}`);
+  }
+  cargueMassiveGoodConversion(
+    params?: ListParams
+  ): Observable<IListResponse<IMassiveGood>> {
+    return this.get<IListResponse<IMassiveGood>>(this.route.Massive, params);
   }
 
   getWheelNotificationsByExpedientNumber(goodNumber: string) {

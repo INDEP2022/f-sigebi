@@ -1,11 +1,17 @@
 import { HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { catchError, map, mergeMap, Observable, of, throwError } from 'rxjs';
 import { IDocumentEndpoints } from 'src/app/common/constants/endpoints/ms-idocument-endpoints';
 import { HttpService } from 'src/app/common/services/http.service';
+import { getMimeTypeFromBase64 } from 'src/app/utils/functions/get-mime-type';
 import { environment } from 'src/environments/environment';
 import { v4 as uuidv4 } from 'uuid';
 import { IListResponseMessage } from '../../interfaces/list-response.interface';
+
+const Tiff = require('tiff.js');
+const LOADING_GIF = 'assets/images/loader-button.gif';
+const NO_IMAGE_FOUND = 'assets/images/documents-icons/not-found.jpg';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +19,8 @@ import { IListResponseMessage } from '../../interfaces/list-response.interface';
 export class FilePhotoService extends HttpService {
   private readonly _url = environment.API_URL;
   private readonly _prefix = environment.URL_PREFIX;
-  constructor() {
+  consecNumber = 1;
+  constructor(private sanitizer: DomSanitizer) {
     super();
     this.microservice = IDocumentEndpoints.Base;
   }
@@ -34,11 +41,23 @@ export class FilePhotoService extends HttpService {
     );
   }
 
+  getById(goodNumber: string, consecNumber: number) {
+    return this.post<string>(IDocumentEndpoints.filePhoto, {
+      goodNumber,
+      consecNumber,
+    });
+  }
+
   getAllWidthPhotos(goodNumber: string): Observable<string[]> {
     return this.getAll(goodNumber).pipe(
       map(response => {
         if (response && response.length > 0)
-          return response.map(item => this.getById(goodNumber, item));
+          return response.map(item =>
+            this.getById(
+              goodNumber,
+              +item.substring(item.indexOf('F'), item.length)
+            )
+          );
         else {
           return [];
         }
@@ -47,15 +66,112 @@ export class FilePhotoService extends HttpService {
     );
   }
 
-  getById(goodNumber: string, name: string) {
-    return this.post<string>(IDocumentEndpoints.filePhoto, {
-      goodNumber,
-      name,
-    });
+  getAllHistoric(goodNumber: string) {
+    return this.post<IListResponseMessage<{ name: string }>>(
+      IDocumentEndpoints.filePhotosHistoric,
+      { goodNumber }
+    ).pipe(
+      catchError(x => of({ data: [] as { name: string }[] })),
+      map(response => {
+        if (response && response.data)
+          return response.data.map(item => item.name);
+        else {
+          return [];
+        }
+      })
+    );
   }
 
-  deletePhoto(goodNumber: string, name: string) {
-    return this.delete(IDocumentEndpoints.filePhoto, { goodNumber, name });
+  getByIdHistoric(goodNumber: string, consecNumber: number) {
+    return this.post<{ image: string; usuarioElimina: string }>(
+      IDocumentEndpoints.filePhotoHistoric,
+      {
+        goodNumber,
+        consecNumber,
+      }
+    );
+  }
+
+  getAllWidthPhotosHistoric(
+    goodNumber: string
+  ): Observable<{ image: string; usuarioElimina: string }[]> {
+    return this.getAll(goodNumber).pipe(
+      catchError(x => of([] as string[])),
+      map(response => {
+        if (response && response.length > 0)
+          return response.map(item => {
+            let index = item.indexOf('F');
+            return this.getById(
+              goodNumber,
+              +item.substring(index + 1, index + 5)
+            ).pipe(
+              catchError(x => of(null)),
+              map(x => {
+                return {
+                  image: this.base64Change(x, item),
+                  usuarioElimina:
+                    'Usuario eliminó moto1.jpg ' +
+                    'Nombre: SIGEBIADMON Fecha: 29/06/2023',
+                };
+              })
+            );
+            // return this.getByIdHistoric(
+            //   goodNumber,
+            //   +item.substring(index + 1, index + 11)
+            // );
+          });
+        else {
+          return [];
+        }
+      }),
+      mergeMap(x => this.validationForkJoin(x))
+    );
+  }
+
+  private base64Change(base64: string, filename: string) {
+    if (!base64) {
+      return null;
+    }
+    const bytesSize = 4 * Math.ceil(base64.length / 3) * 0.5624896334383812;
+    // this.documentLength = bytesSize / 1000;
+    const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';
+    // TODO: Checar cuando vengan pdf, img etc
+    return ext.toLowerCase().includes('tif')
+      ? this.getUrlTiff(base64, filename)
+      : this.getUrlDocument(base64, filename);
+    // this.mimeType = getMimeTypeFromBase64(this.imgSrc as string, this.filename);
+  }
+
+  private getUrlTiff(base64: string, filename: string) {
+    try {
+      const buffer = Buffer.from(base64, 'base64');
+      const tiff = new Tiff({ buffer });
+      const canvas: HTMLCanvasElement = tiff.toCanvas();
+      canvas.style.width = '100%';
+      console.log('llego aca', filename);
+      return this.sanitizer.bypassSecurityTrustResourceUrl(canvas.toDataURL());
+    } catch (error) {
+      // this.error = true;
+      // console.log(this.error);
+      return this.sanitizer.bypassSecurityTrustResourceUrl(NO_IMAGE_FOUND);
+    }
+  }
+
+  private getUrlDocument(base64: string, filename: string) {
+    let mimeType;
+    mimeType = getMimeTypeFromBase64(base64, filename);
+    return this.sanitizer.bypassSecurityTrustResourceUrl(
+      `data:${mimeType};base64, ${base64}`
+    );
+  }
+
+  deletePhoto(goodNumber: string, consecNumber: number) {
+    const user = localStorage.getItem('username').toUpperCase();
+    return this.delete(IDocumentEndpoints.deletePhoto, {
+      goodNumber,
+      consecNumber,
+      user,
+    });
   }
 
   uploadFile(identificator: any, file: File, fileField: string = 'file') {
@@ -64,7 +180,7 @@ export class FilePhotoService extends HttpService {
     const formData = new FormData();
     formData.append(fileField, file, `FU_${uuidv4()}.${ext}`);
     formData.append('goodNumber', `${identificator}`);
-    formData.append('consecNumber', '2');
+    formData.append('consecNumber', this.consecNumber++ + '');
     formData.append('recordNumber', '305315076');
     formData.append('photoDate', new Date().toISOString());
     formData.append('photoDateHc', new Date().toISOString());

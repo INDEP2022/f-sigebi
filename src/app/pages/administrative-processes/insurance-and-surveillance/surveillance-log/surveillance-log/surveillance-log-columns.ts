@@ -1,3 +1,6 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+
 export const SURVEILLANCE_LOG_COLUMNS: any = {
   binnacleId: {
     title: 'Id',
@@ -7,11 +10,29 @@ export const SURVEILLANCE_LOG_COLUMNS: any = {
   requestDate: {
     title: 'Fecha Solicitud',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0].split('-').reverse().join('-') : ''}
+      `;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   attentionDate: {
     title: 'Fecha Atención',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0].split('-').reverse().join('-') : ''}
+      `;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   processMnto: {
     title: 'Tipo de Mantenimiento',
@@ -38,16 +59,23 @@ export const SURVEILLANCE_LOG_COLUMNS: any = {
     type: 'number',
     sort: false,
   },
-  delegationNumber: {
+  /*delegationNumber: {
     title: 'Delegación',
-    type: 'number',
+    type: 'string',
     sort: false,
-    filter: {
-      type: 'text',
-      config: {},
+    valuePrepareFuntion: (value: IDelegation) => {
+      return value?.description;
+    }
+  },*/
+  delegation: {
+    title: 'Delegación',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (value: IDelegation) => {
+      return value?.description;
     },
-    valuePrepareFunction: (cell: any, row: any) => {
-      return `${row.delegationNumber} - ${row.delegation.description}`;
+    filterFunction: (cell?: any, search?: string) => {
+      return search != null ? search : '';
     },
   },
 };

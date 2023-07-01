@@ -9,16 +9,16 @@ export const LEGENDS_COLUMS = {
     type: 'string',
     sort: false,
   },
-  userCreation: {
-    title: 'Creado por',
-    type: 'string',
-    sort: false,
-  },
-  userModification: {
-    title: 'Modificado por',
-    type: 'string',
-    sort: false,
-  },
+  // userCreation: {
+  //   title: 'Creado por',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // userModification: {
+  //   title: 'Modificado por',
+  //   type: 'string',
+  //   sort: false,
+  // },
   version: {
     title: 'Version',
     type: 'number',
@@ -28,7 +28,7 @@ export const LEGENDS_COLUMS = {
     title: 'Estatus',
     type: 'html',
     valuePrepareFunction: (value: number) => {
-      return value == 0
+      return value == 1
         ? '<strong><span class="badge badge-pill label-success">Activo</span></strong>'
         : '<strong><span class="badge badge-pill label-danger">Inactivo</span></strong>';
     },

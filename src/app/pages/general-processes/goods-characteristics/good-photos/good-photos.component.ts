@@ -25,6 +25,7 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
       this.getData();
     }
   }
+  lastConsecutive: number = 1;
   filesToDelete: string[] = [];
   private _goodNumber: string | number;
   constructor(
@@ -56,12 +57,18 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   private getData() {
+    this.lastConsecutive = 1;
     this.filePhotoService
       .getAll(this.goodNumber + '')
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          this.files = response;
+          if (response) {
+            this.files = [...response];
+            const last = response[response.length - 1];
+            const index = last.indexOf('F');
+            this.lastConsecutive += +last.substring(index + 1, index + 5);
+          }
         },
       });
   }
@@ -87,7 +94,10 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   private deleteSelectedFiles() {
-    const obs = this.filesToDelete.map(filename => this.deleteFile(filename));
+    const obs = this.filesToDelete.map(filename => {
+      const index = filename.indexOf('F');
+      return this.deleteFile(+filename.substring(index + 1, index + 5));
+    });
     forkJoin(obs).subscribe({
       complete: () => {
         // this.files = [];
@@ -97,23 +107,28 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
           'Se eliminaron las fotos correctamente'
         );
         this.filesToDelete = [];
-        // this.loadImages(this.goodNumber).subscribe(() => {
-        //   this.updateSheets();
-        // });
+        this.getData();
       },
     });
   }
 
-  private deleteFile(name: string) {
-    return this.filePhotoService.deletePhoto(this.goodNumber + '', name).pipe(
-      catchError(error => {
-        this.alert('error', 'Error', 'Ocurrió un error al eliminar la imagen');
-        return throwError(() => error);
-      })
-    );
+  private deleteFile(consecNumber: number) {
+    return this.filePhotoService
+      .deletePhoto(this.goodNumber + '', consecNumber)
+      .pipe(
+        catchError(error => {
+          this.alert(
+            'error',
+            'Error',
+            'Ocurrió un error al eliminar la imagen'
+          );
+          return throwError(() => error);
+        })
+      );
   }
 
   openFileUploader() {
+    this.filePhotoService.consecNumber = this.lastConsecutive;
     const config = {
       ...MODAL_CONFIG,
       initialState: {

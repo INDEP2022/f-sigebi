@@ -110,7 +110,7 @@ export class GoodTypesListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.goodTypesService.remove(goodType.id).subscribe(
@@ -120,7 +120,7 @@ export class GoodTypesListComponent extends BasePage implements OnInit {
           err => {
             this.alert(
               'warning',
-              'Tipo Bien',
+              'Tipo bien',
               'No se puede eliminar el objeto debido a una relación con otra tabla.'
             );
           }

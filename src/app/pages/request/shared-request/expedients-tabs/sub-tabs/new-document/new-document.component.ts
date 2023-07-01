@@ -92,7 +92,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.newDocForm = this.fb.group({
       id: [null],
       docType: [null, [Validators.required]],
-      docFile: [null],
+      docFile: [null, [Validators.required]],
       docTit: [
         null,
         [
@@ -206,25 +206,35 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
   selectFile(event?: any) {
     this.selectedFile = event.target.files[0];
-    if (this.selectedFile?.size > 10000000) {
+    if (this.selectedFile?.size > 100000000) {
       this.validateSizePDF = true;
-      this.onLoadToast(
-        'warning',
-        'Se debe cargar un documentos menor a 10MB',
-        ''
-      );
-      this.newDocForm.get('docFile').reset;
+      this.alertInfo(
+        'info',
+        'Acción Inválida',
+        'Se debe cargar un documentos menor a 100MB'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.newDocForm.get('docFile').reset;
+        }
+      });
     }
     const extension = this.selectedFile?.name.split('.').pop();
     if (extension != 'pdf') {
-      this.onLoadToast('warning', 'Se debe cargar un documentos PDF', '');
-      this.newDocForm.get('docFile').setValue(null);
+      this.alertInfo(
+        'info',
+        'Acción Inválida',
+        'Se debe cargar un documentos PDF'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.newDocForm.get('docFile').reset;
+        }
+      });
     }
   }
 
   validatePDF() {
     if (this.validateSizePDF === true) {
-      this.alert('warning', 'Se debe cargar un documentos menor a 10MB', '');
+      //this.alert('warning', 'Se debe cargar un documentos menor a 10MB', '');
       this.validateSizePDF = false;
       this.newDocForm.get('docFile').setValue(null);
       this.newDocForm.get('docFile').reset;

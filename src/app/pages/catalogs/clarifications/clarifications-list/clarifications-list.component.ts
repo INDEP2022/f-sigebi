@@ -79,6 +79,7 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getClarifications();
         }
       });
@@ -120,7 +121,7 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(clarification.id);
@@ -131,7 +132,12 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.clarificationService.remove(id).subscribe({
       next: () => {
-        this.getClarifications(), this.alert('success', 'Estados', 'Borrado');
+        this.getClarifications(),
+          this.alert(
+            'success',
+            'Registro de lista de aclaración',
+            'Borrado Correctamente'
+          );
       },
       error: error => {},
     });

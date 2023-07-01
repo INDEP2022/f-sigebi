@@ -79,13 +79,17 @@ export class DocCompensationSatListComponent
   delete(id: number) {
     this.docCompesationSatService.remove(id).subscribe({
       next: response => {
-        this.alert('success', 'Documento Resarcimiento', 'Borrado'),
+        this.alert(
+          'success',
+          'Documento resarcimiento SAT',
+          'Borrado Correctamente'
+        ),
           this.getExample();
       },
       error: err => {
         this.alert(
           'warning',
-          'Documento Resarcimiento',
+          'Documento resarcimiento SAT',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },

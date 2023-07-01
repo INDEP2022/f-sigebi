@@ -379,4 +379,20 @@ export class DictationService extends HttpService {
       model
     );
   }
+
+  postApplicationPupPreviousData(body: {
+    bienes: { goodNumber: number; fileNumber: number }[];
+  }) {
+    return this.post<IListResponse<any>>(
+      DictationEndpoints.ApplicationPupPreviousData,
+      body
+    );
+  }
+
+  getTmpExpDesahogoB(listParams: ListParams) {
+    return this.get<IListResponse<any>>(
+      DictationEndpoints.TmpExpDesahogoB,
+      listParams
+    );
+  }
 }

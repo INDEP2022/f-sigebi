@@ -87,12 +87,12 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
         this.status = new DefaultSelect(newData, data.count);
       },
       error: err => {
-        this.alert(
-          'warning',
-          'No se encontraron datos',
-          'Por favor revise haber registrado el nombre de estatus correcto e inténtelo nuevamente'
-        );
-        this.status = new DefaultSelect();
+        // this.alert(
+        //   'warning',
+        //   'No se encontraron datos',
+        //   'Por favor revise haber registrado el nombre de estatus correcto e inténtelo nuevamente'
+        // );
+        this.status = new DefaultSelect([], 0, true);
         /* let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';

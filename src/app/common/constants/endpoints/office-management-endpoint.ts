@@ -8,4 +8,5 @@ export enum OfficeManagementEndpoint {
   TmpClasifBienCustomPost = 'application/facta-db-oficio-gest',
   DeleteJobGestion = 'application/delete-job-gestion',
   MJobManagementExtSSF3 = 'm-job-management-ext-ssf3',
+  updateStatusProcess = 'application/updateStatus', // actualiza el estatus del tramite
 }

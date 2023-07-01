@@ -11,7 +11,6 @@ import {
 import { ISiabClasification } from 'src/app/core/models/catalogs/siab-clasification.model';
 import { SIABClasificationService } from 'src/app/core/services/catalogs/siab-clasification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { SiabClasificationDetailComponent } from '../siab-clasification-detail/siab-clasification-detail.component';
 import { SIAB_COLUMNS } from './siab-columns';
 
@@ -110,18 +109,20 @@ export class SiabClasificationListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(clasification.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.siabClasificationService.removeCatalogSiabClasification(id).subscribe({
-      next: () => this.getSiabClasifications(),
+      next: () => {
+        this.getSiabClasifications(),
+          this.alert('success', 'Clasificación SIAB', 'Borrado Correctamente');
+      },
     });
   }
 }

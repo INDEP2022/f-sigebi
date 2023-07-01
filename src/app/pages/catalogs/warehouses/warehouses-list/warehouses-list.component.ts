@@ -11,7 +11,6 @@ import {
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { IWarehouse } from '../../../../core/models/catalogs/warehouse.model';
 import { WarehouseService } from '../../../../core/services/catalogs/warehouse.service';
 import { WarehousesDetailComponent } from '../warehouses-detail/warehouses-detail.component';
@@ -91,6 +90,7 @@ export class WarehousesListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          console.log('this.params:', this.params);
           this.params = this.pageFilter(this.params);
           this.getWarehouses();
         }
@@ -215,14 +215,21 @@ export class WarehousesListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(warehouse.idWarehouse);
-        Swal.fire('Borrado', '', 'success');
+        //Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.warehouseService.remove(id).subscribe({
-      next: () => this.getWarehouses(),
+      next: () => {
+        this.getWarehouses();
+        this.alert(
+          'success',
+          'Categoria para almacen',
+          'Borrada Correctamente'
+        );
+      },
     });
   }
 }

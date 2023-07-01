@@ -32,7 +32,7 @@ export class StorehouseListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = STOREHOUSE_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
     this.settings.actions.add = false;
     this.settings = {
       ...this.settings,
@@ -94,6 +94,7 @@ export class StorehouseListComponent extends BasePage implements OnInit {
   }
 
   openForm(storeHouse?: IStorehouse) {
+    console.log(storeHouse);
     const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
     modalConfig.initialState = {
       storeHouse,
@@ -119,12 +120,13 @@ export class StorehouseListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.storehouseService.remove(id).subscribe({
       next: () => {
-        this.getStorehouses(), this.alert('success', 'Bodega', 'Borrado');
+        this.getStorehouses(),
+          this.alert('success', 'Bodega', 'Borrada Correctamente');
       },
       error: err => {
         this.alert(
           'warning',
-          'Sub-tipo',
+          'Bodegas',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },

@@ -203,4 +203,10 @@ export class ProcedureManagementService extends HttpService {
       body
     );
   }
+
+  updateGestionTramite(no_tramite: number) {
+    const body = { p_no_tramite: no_tramite };
+    const route = ProcedureManagementEndPoints.UpdateGestionTramite;
+    return this.post(`${route}`, body);
+  }
 }

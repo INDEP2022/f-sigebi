@@ -113,7 +113,24 @@ export class ImageMediaListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(batch.id);
       }
+    });
+  }
+
+  remove(id: number) {
+    this.imageMediaService.remove(id).subscribe({
+      next: () => {
+        this.getExample(),
+          this.alert('success', 'Medio imágen', 'Borrado Correctamente');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Medio Imágen',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

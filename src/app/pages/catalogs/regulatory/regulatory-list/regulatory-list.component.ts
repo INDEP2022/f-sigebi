@@ -47,20 +47,40 @@ export class RegulatoryListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'id_fraccion' ||
-            filter.field == 'numero' ||
-            filter.field == 'descripcion' ||
-            filter.field == 'validar_ef' ||
-            filter.field == 'validar_ec' ||
-            filter.field == 'usuario_creacion' ||
-            filter.field == 'fecha_creacion' ||
-            filter.field == 'usuario_modificacion' ||
-            filter.field == 'fecha_modificacion' ||
-            filter.field == 'version'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fractionId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fractionDetails':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
+                break;
+              case 'number':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'validateEf':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'validateEc':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -81,7 +101,7 @@ export class RegulatoryListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.regulatoryService.getAll(params).subscribe({
+    this.regulatoryService.getAllDetail(params).subscribe({
       next: response => {
         this.regulatorys = response.data;
         this.totalItems = response.count || 0;
@@ -119,7 +139,11 @@ export class RegulatoryListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.regulatoryService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Regulaciones', 'Borrado');
+        this.alert(
+          'success',
+          'Registro de regulación',
+          'Borrado Correctamente'
+        );
         this.getExample();
       },
       error: error => {

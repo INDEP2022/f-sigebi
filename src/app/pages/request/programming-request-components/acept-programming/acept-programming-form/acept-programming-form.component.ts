@@ -91,13 +91,16 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     },
     columns: ESTATE_COLUMNS_VIEW,
   };
-
+  paramsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
+  // namewarehouse1: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsStation = new BehaviorSubject<ListParams>(new ListParams());
   paramsAuthority = new BehaviorSubject<ListParams>(new ListParams());
   goodsInfoTrans: any[] = [];
+  // goodsInfoTrans: IGoodProgramming[];
   goodsInfoGuard: any[] = [];
   goodsInfoWarehouse: any[] = [];
+  // goodsInfoWarehouse2: any[] = [];
   totalItems: number = 0;
   totalItemsTransportable: number = 0;
   totalItemsGuard: number = 0;
@@ -121,6 +124,11 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   authorityName: string = '';
   typeRelevantName: string = '';
   nameWarehouse: string = '';
+  // goodId: any;
+  // uniqueKey: any;
+  // goodDescription: any;
+  // quantity: any;
+  // unitMeasure: any;
   transGoods: any[] = [];
   guardGoods: any[] = [];
   warehouseGoods: any[] = [];
@@ -167,6 +175,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.showGoodProgramming());
+    // this.sendEmailUsers();
+    // this.show2GoodProgramming();
   }
 
   getProgrammingId() {
@@ -245,6 +255,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     return this.warehouseService
       .getById(this.programming.storeId)
       .subscribe(data => {
+        console.log('nombre', data.description);
         this.nameWarehouse = data.description;
         this.formLoading = false;
       });
@@ -367,7 +378,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     config.initialState = {
       callback: (next: boolean) => {
         if (next) {
-        
+
           //this.electronicSign();
         }
       },
@@ -426,8 +437,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             response.saePhysicalState = 'MALO';
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
-          // queda pendiente mostrar el alías del almacén //
-
+          console.log('response_t', response.storeId);
+          console.log('response_tgoodis', response.goodId);
           this.goodsInfoTrans.push(response);
           this.goodsTranportables.load(this.goodsInfoTrans);
           this.totalItemsTransportable = this.goodsTranportables.count();
@@ -441,7 +452,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     const goodsTrans = data.filter(items => {
       return items.status == 'EN_RESGUARDO_TMP';
     });
-
+    console.log('transportable22', data);
     goodsTrans.map(items => {
       this.goodService.getGoodByIds(items.goodId).subscribe({
         next: response => {
@@ -452,7 +463,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
           // queda pendiente mostrar el alías del almacén //
-
+          console.log('response_g', response.storeId);
+          console.log('response_guard', response.goodId);
           this.goodsInfoGuard.push(response);
           this.goodsGuards.load(this.goodsInfoGuard);
           this.totalItemsGuard = this.goodsGuards.count();
@@ -476,8 +488,13 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             response.saePhysicalState = 'MALO';
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
+
+          // response.decriptionGoodSae = 'Sin descripción';
+          // warehouseName
           // queda pendiente mostrar el alías del almacén //
+          console.log('response_!!!', response.storeId);
           this.goodsInfoWarehouse.push(response);
+          console.log('warefilter', this.goodsInfoWarehouse);
           this.goodsWarehouse.load(this.goodsInfoWarehouse);
           this.totalItemsWarehouse = this.goodsWarehouse.count();
           this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
@@ -498,6 +515,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         }
       });
     } else {
+      // this.sendEmailUsers();
       this.alertInfo(
         'info',
         'Acción no permitida',
@@ -505,48 +523,50 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       );
     }
   }
-
   async sendEmailUsers() {
     this.infoUsers.map(user => {
       const emailsUsers = user.email;
       this.emails.push(emailsUsers);
     });
 
-    this.goodsInfoTrans.map(async good => {
-      const warehouse = await this.warehouseName(good.storeId);
-      const guardObject = {
-        goodId: good.goodId,
-        uniqueKey: good.uniqueKey,
-        goodDescription: good.goodDescription,
-        quantity: good.quantity,
-        unitMeasure: good.unitMeasure,
-        nameWarehouse: warehouse,
-      };
-      this.transGoods.push(guardObject);
-    });
+    await Promise.all(
+      this.goodsInfoTrans.map(async good => {
+        const infotrans = await this.warehouseNameT(good.storeId);
+        const transObject = {
+          goodId: good.goodId,
+          uniqueKey: good.uniqueKey,
+          goodDescription: good.goodDescription,
+          quantity: good.quantity,
+          unitMeasure: good.unitMeasure,
+          storeId: infotrans,
+        };
+        this.transGoods.push(transObject);
+      })
+    );
 
-    this.goodsInfoGuard.map(async good => {
-      const warehouse = await this.warehouseName(good.storeId);
-      const guardObject = {
-        goodId: good.goodId,
-        uniqueKey: good.uniqueKey,
-        goodDescription: good.goodDescription,
-        quantity: good.quantity,
-        unitMeasure: good.unitMeasure,
-        nameWarehouse: warehouse,
-      };
-      this.guardGoods.push(guardObject);
-    });
+    await Promise.all(
+      this.goodsInfoGuard.map(async goodRes => {
+        const guardsgood = await this.warehouseNameT(goodRes.storeId);
+        const guardObject = {
+          goodId: goodRes.goodId,
+          uniqueKey: goodRes.uniqueKey,
+          goodDescription: goodRes.goodDescription,
+          quantity: goodRes.quantity,
+          unitMeasure: goodRes.unitMeasure,
+          storeId: guardsgood,
+        };
+        this.guardGoods.push(guardObject);
+      })
+    );
 
-    this.goodsInfoWarehouse.map(async good => {
-      const warehouse = await this.warehouseName(good.storeId);
+    this.goodsInfoWarehouse.map(async warehouse => {
       const warehouseObject = {
-        goodId: good.goodId,
-        uniqueKey: good.uniqueKey,
-        goodDescription: good.goodDescription,
-        quantity: good.quantity,
-        unitMeasure: good.unitMeasure,
-        nameWarehouse: warehouse,
+        goodId: warehouse.goodId,
+        uniqueKey: warehouse.uniqueKey,
+        goodDescription: warehouse.goodDescription,
+        quantity: warehouse.quantity,
+        unitMeasure: warehouse.unitMeasure,
+        storeId: warehouse.storeId,
       };
       this.warehouseGoods.push(warehouseObject);
     });
@@ -563,12 +583,13 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       goodsWarehouse: this.warehouseGoods,
       emailSend: this.emails,
     };
+    console.log('newdata', dataEmail);
 
     this.emailService
       .createEmailProgramming(JSON.stringify(dataEmail))
       .subscribe({
         next: () => {
-          this.onLoadToast(
+          this.alert(
             'success',
             'Notificación',
             'Se envio el correo electrónico a los usuarios correctamente'
@@ -580,6 +601,93 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         error: error => {},
       });
   }
+
+  //   this.infoUsers.map(user => {
+  //     const emailsUsers = user.email;
+  //     this.emails.push(emailsUsers);
+  //     console.log('correo', emailsUsers);
+  //   });
+
+  //   this.goodsInfoTrans.map(async good => {
+  //    const infotrans = await this.warehouseNameT(good.storeId);
+  //    console.log('infotrans', good);
+  //    const transObject = {
+  //      goodId: good.goodId,
+  //      uniqueKey: good.uniqueKey,
+  //      goodDescription: good.goodDescription,
+  //      quantity: good.quantity,
+  //      unitMeasure: good.unitMeasure,
+  //      storeId: infotrans, //condicionar
+  //    };
+  //    console.log('transdato', good.storeId);
+  //    console.log('transdato nombre', infotrans);
+  //    console.log('transdato obj', transObject);
+  //    this.transGoods.push(transObject);
+  //  });
+
+  //   this.goodsInfoGuard.map( async goodRes => {
+  //    const guardsgood = await this.warehouseNameT(goodRes.storeId);
+  //    const guardObject = {
+  //      goodId: goodRes.goodId,
+  //      uniqueKey: goodRes.uniqueKey,
+  //      goodDescription: goodRes.goodDescription,
+  //      quantity: goodRes.quantity,
+  //      unitMeasure: goodRes.unitMeasure,
+  //      storeId: guardsgood,
+  //    };
+  //    console.log('guardsgood', goodRes.storeId);
+  //    console.log('guardsgood nombre', guardsgood);
+  //    console.log('guardsgood obf', guardObject);
+  //    this.guardGoods.push(guardObject);
+  //  });
+
+  //    this.goodsInfoWarehouse.map(async warehouse => {
+  //     const infowarehouse = await this.warehouseNameT(warehouse.storeId);
+  //     const warehouseObject = {
+  //       goodId: warehouse.goodId,
+  //       uniqueKey: warehouse.uniqueKey,
+  //       goodDescription: warehouse.goodDescription,
+  //       quantity: warehouse.quantity,
+  //       unitMeasure: warehouse.unitMeasure,
+  //       storeId: infowarehouse,
+  //     };
+  //     console.log('infowarehouse', warehouse.storeId);
+  //     // console.log('infowarehouse name', infowarehouse);
+  //     console.log('warehpous nombre', warehouseObject);
+  //     this.warehouseGoods.push(warehouseObject);
+  //   });
+
+  //   const dataEmail = {
+  //     folio: this.programming.folio,
+  //     startDate: this.programming.startDate,
+  //     endDate: this.programming.endDate,
+  //     city: this.programming.city,
+  //     address: this.programming.address,
+  //     usersProg: this.infoUsers,
+  //     goodsTrans: this.transGoods,
+  //     goodsResg: this.guardGoods,
+  //     goodsWarehouse: this.warehouseGoods,
+  //     emailSend: this.emails,
+  //   };
+  //   console.log('newdata', dataEmail);
+  //   this.emailService
+  //     .createEmailProgramming(JSON.stringify(dataEmail))
+  //     .subscribe({
+  //       next: () => {
+  //         this.alert(
+  //           'success',
+  //           'Notificación',
+  //           'Se envio el correo electrónico a los usuarios correctamente'
+  //         );
+  //         this.createTaskNotification();
+  //         this.createTaskExecuteProgramming();
+  //         this.createTaskFormalize();
+  //       },
+  //       error: error => {},
+  //     });
+  // }
+  // this.nameWarehouse = data.description;
+  // this.formLoading = false;
 
   //Creamos la tarea de notificación al delegado regional//
   async createTaskNotification() {
@@ -691,14 +799,15 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       });
     });
   }
-
-  warehouseName(idWarehouse: number) {
+  warehouseNameT(idWarehouse: number) {
     return new Promise((resolve, reject) => {
       this.warehouseService.getById(idWarehouse).subscribe({
         next: response => {
           return resolve(response.description);
         },
-        error: error => {},
+        error: error => {
+          console.log(error);
+        },
       });
     });
   }

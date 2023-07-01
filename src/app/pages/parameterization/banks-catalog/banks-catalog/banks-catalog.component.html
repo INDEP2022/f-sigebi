@@ -45,7 +45,12 @@
           </form-field>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <app-currency-shared [form]="form"></app-currency-shared>
+          <form-field [control]="form.get('currency_I')" label="Moneda">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="currency_I" />
+          </form-field>
         </div>
       </div>
       <div class="row mt-2">
