@@ -65,7 +65,7 @@ export class IncomePerAssetComponent
         type: 'html',
         valuePrepareFunction: (text: string) => {
           return `${
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
           }`;
         },
         filter: {
@@ -104,7 +104,7 @@ export class IncomePerAssetComponent
         type: 'html',
         valuePrepareFunction: (text: string) => {
           return `${
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
           }`;
         },
         filter: {
@@ -132,7 +132,7 @@ export class IncomePerAssetComponent
         type: 'html',
         valuePrepareFunction: (text: string) => {
           return `${
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
           }`;
         },
         filter: {
@@ -173,7 +173,6 @@ export class IncomePerAssetComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = '';
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -193,7 +192,6 @@ export class IncomePerAssetComponent
 
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log('this.param:', this.depositParams);
               this.depositParams.value.page = 1;
             } else {
               delete this.columnFilters[field];
@@ -214,7 +212,6 @@ export class IncomePerAssetComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = '';
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -240,7 +237,6 @@ export class IncomePerAssetComponent
               this.columnFiltersAsset[
                 field
               ] = `${searchFilter}:${filter.search}`;
-              console.log('this.param:', this.assetParams);
               this.assetParams.value.page = 1;
             } else {
               delete this.columnFilters[field];
@@ -273,8 +269,6 @@ export class IncomePerAssetComponent
             };
           })
         );
-        console.log('numero de registros ----->', this.depositList.length);
-        console.log('numero de registros ----->', this.depositList);
         this.dataDeposit.load(this.depositList);
         this.dataDeposit.refresh();
         this.depositLoading = false;

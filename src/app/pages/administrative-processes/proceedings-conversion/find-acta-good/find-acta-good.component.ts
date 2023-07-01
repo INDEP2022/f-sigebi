@@ -8,34 +8,31 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IConvertiongood } from 'src/app/core/models/ms-convertiongood/convertiongood';
+import { IActasConversion } from 'src/app/core/models/ms-convertiongood/convertiongood';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { COUNT_ACTAS_COLUMNS } from '../proceedings-conversion-column';
+import { ACTAS } from '../proceedings-conversion/proceedings-conversion-columns';
 import { IInitFormProceedingsBody } from '../proceedings-conversion/proceedings-conversion.component';
 @Component({
-  selector: 'app-proceedings-conversion-modal',
-  templateUrl: './proceedings-conversion-modal.component.html',
+  selector: 'app-find-acta-good',
+  templateUrl: './find-acta-good.component.html',
   styles: [],
 })
-export class ProceedingsConversionModalComponent
-  extends BasePage
-  implements OnInit
-{
+export class FindActaGoodComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   //Data Table
-  conversiones: IConvertiongood[] = [];
+  actas: IActasConversion[] = [];
   columnFilters: any = [];
   pageParams: IInitFormProceedingsBody = null;
-  conversionGood: IConvertiongood;
+  conversionGood: IActasConversion;
   edit = false;
   vaultSelect: any;
   totalItems2: number = 0;
   selectedRow: any | null = null;
   provider: any;
   providerForm: FormGroup = new FormGroup({});
-  dataFactGood: LocalDataSource = new LocalDataSource();
+  dataFactActas: LocalDataSource = new LocalDataSource();
   @Output() onSave = new EventEmitter<any>();
 
   // @Output() onConfirm = new EventEmitter<any>();
@@ -54,13 +51,13 @@ export class ProceedingsConversionModalComponent
       hideSubHeader: false,
       actions: false,
       columns: {
-        ...COUNT_ACTAS_COLUMNS,
+        ...ACTAS,
       },
     };
   }
   ngOnInit(): void {
     this.providerForm.patchValue(this.provider);
-    this.dataFactGood
+    this.dataFactActas
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
@@ -101,12 +98,12 @@ export class ProceedingsConversionModalComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.convertiongoodService.getAllGoods(para).subscribe({
+    this.convertiongoodService.getAllActasConversion(para).subscribe({
       next: response => {
-        this.conversiones = response.data;
+        this.actas = response.data;
         this.totalItems2 = response.count | 0;
-        this.dataFactGood.load(response.data);
-        this.dataFactGood.refresh();
+        this.dataFactActas.load(response.data);
+        this.dataFactActas.refresh();
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -123,7 +120,6 @@ export class ProceedingsConversionModalComponent
   }
 
   handleSuccess(): void {
-    this.loading = true;
     this.loading = false;
     // for (const prop in this.selectedRow) {
     //   if (Object.prototype.hasOwnProperty.call(this.selectedRow, prop)) {

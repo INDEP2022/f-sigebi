@@ -11,7 +11,7 @@ export const SEARCH_COLUMNS = {
     sort: false,
     type: 'html',
     valuePrepareFunction: (text: string) => {
-      return `${text ? text.split('T')[0].split('-').reverse().join('-') : ''}`;
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
       type: 'custom',
@@ -23,7 +23,7 @@ export const SEARCH_COLUMNS = {
     sort: false,
     type: 'html',
     valuePrepareFunction: (text: string) => {
-      return `${text ? text.split('T')[0].split('-').reverse().join('-') : ''}`;
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
     },
     filter: {
       type: 'custom',

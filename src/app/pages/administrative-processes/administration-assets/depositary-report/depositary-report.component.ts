@@ -96,7 +96,6 @@ export class DepositaryReportComponent extends BasePage implements OnInit {
         this.depositaryDataForm.get('reportDate').value
       ),
     };
-    console.log(model);
     this.depositaryService.putInfoDepositary(model).subscribe({
       next: response => {
         this.alert(
