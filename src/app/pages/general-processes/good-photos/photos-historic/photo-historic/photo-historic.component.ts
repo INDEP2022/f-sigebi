@@ -6,7 +6,7 @@ import { NO_IMAGE_FOUND, PhotoClassComponent } from '../../models/photo-class';
 @Component({
   selector: 'app-photo-historic',
   templateUrl: './photo-historic.component.html',
-  styleUrls: ['./photo-historic.component.css'],
+  styleUrls: ['./photo-historic.component.scss'],
 })
 export class PhotoHistoricComponent
   extends PhotoClassComponent

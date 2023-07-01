@@ -529,6 +529,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.cveActa = res.minutesErNumber;
           this.userRes = res.fileNumber.usrResponsibleFile;
           this.actaGoodForm.value.acta = this.cveActa;
+          this.actaGoodForm.value.acta = this.cveActa;
           this.time = new Date().toISOString().slice(0, 16);
           this.getExpedient(this.fileNumber);
           this.getAllConvertiones();
@@ -551,7 +552,6 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.proceedingsConversionForm.controls['txtSearch'].setValue('');
     // this.searchProcs();
   }
-
   goBack() {
     this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
       queryParams: {
@@ -810,7 +810,6 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     // this.createConversion();
     this.updateConversion();
     this.edit ? this.update() : this.create();
-    this.edit ? this.update() : this.create();
     let params = {
       id_conv: this.conversion,
       id_bien: this.goodFatherNumber,
@@ -999,7 +998,6 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       },
     });
   }
-  selectedRadio: string;
 
   changeSelection(event: any, id: number) {
     const good = this.dataTableGoodsMap.get(id);
@@ -1051,6 +1049,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
 
   changeStatus(good: string) {
+    this.loading = true;
     this.loading = true;
     this.goodprocessService.updateGoodXGoodNumber(good).subscribe({
       next: (data: any) => {

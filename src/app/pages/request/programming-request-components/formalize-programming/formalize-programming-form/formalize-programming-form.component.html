@@ -192,11 +192,24 @@
                           formControlName="observationProceedings" />
                       </form-field>
                     </td>
-                    <td class="text-center align-baseline">
+
+                    <td
+                      class="text-center align-baseline"
+                      *ngIf="proceedingData.statusProceeedings == 'ABIERTO'">
                       <a
                         (click)="generateMinute(proceeding.value)"
                         class="text-center">
                         <i class="fa fa-file mr-2" style="cursor: pointer"></i
+                      ></a>
+                    </td>
+
+                    <td
+                      class="text-center align-baseline"
+                      *ngIf="proceedingData.statusProceeedings == 'CERRADO'">
+                      <a
+                        (click)="showProceeding(proceeding.value)"
+                        class="text-center">
+                        <i class="fa fa-eye mr-2" style="cursor: pointer"></i
                       ></a>
                     </td>
                   </ng-container>
