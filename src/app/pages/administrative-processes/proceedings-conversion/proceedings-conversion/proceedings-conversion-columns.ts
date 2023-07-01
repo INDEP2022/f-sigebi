@@ -67,8 +67,8 @@ export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
       class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
         ? WHEEL_COLOR_DATA_COLUMN
         : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-        ? OFFICE_COLOR_DATA_COLUMN
-        : GOOD_COLOR_DATA_COLUMN,
+          ? OFFICE_COLOR_DATA_COLUMN
+          : GOOD_COLOR_DATA_COLUMN,
     };
   } else if (keyValueObj == 'descbien') {
     objResponse = {
@@ -88,8 +88,8 @@ export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
       class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
         ? WHEEL_COLOR_DATA_COLUMN
         : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-        ? OFFICE_COLOR_DATA_COLUMN
-        : GOOD_COLOR_DATA_COLUMN,
+          ? OFFICE_COLOR_DATA_COLUMN
+          : GOOD_COLOR_DATA_COLUMN,
     };
   } else if (keyValueObj == 'observaciones') {
     objResponse = {
@@ -109,8 +109,8 @@ export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
       class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
         ? WHEEL_COLOR_DATA_COLUMN
         : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-        ? OFFICE_COLOR_DATA_COLUMN
-        : GOOD_COLOR_DATA_COLUMN,
+          ? OFFICE_COLOR_DATA_COLUMN
+          : GOOD_COLOR_DATA_COLUMN,
     };
   } else {
     objResponse = {
@@ -120,8 +120,8 @@ export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
       class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
         ? GOODSEXPEDIENT_COLUMNS_GOODS
         : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-        ? OFFICE_COLOR_DATA_COLUMN
-        : GOOD_COLOR_DATA_COLUMN,
+          ? OFFICE_COLOR_DATA_COLUMN
+          : GOOD_COLOR_DATA_COLUMN,
     };
   }
   return objResponse;
