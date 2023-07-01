@@ -1,3 +1,5 @@
+
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -59,6 +61,14 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
         }
       },
     });
+
+    const derivationGoodId = localStorage.getItem('derivationGoodId');
+    if (derivationGoodId) {
+      this.loading = true;
+      this.noBienControl.setValue(derivationGoodId);
+      this.origin = 1;
+      this.searchGood();
+    }
   }
 
   clear() {
@@ -100,6 +110,14 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   goBack() {
-    this.previousRouteService.back();
+    const derivationGoodId = localStorage.getItem('derivationGoodId');
+    if (derivationGoodId) {
+      this.router.navigate([
+        `/pages/administrative-processes/derivation-goods`,
+      ]);
+      localStorage.setItem('derivationGoodId', '');
+    } else {
+      this.location.back();
+    }
   }
 }
