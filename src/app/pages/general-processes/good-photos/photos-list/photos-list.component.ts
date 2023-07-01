@@ -64,6 +64,13 @@ export class PhotosListComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       typedblClickAction: [1],
     });
+    this.service.deleteEvent.subscribe({
+      next: response => {
+        if (response) {
+          this.getData();
+        }
+      },
+    });
   }
 
   get typedblClickAction() {
@@ -242,25 +249,6 @@ export class PhotosListComponent extends BasePage implements OnInit {
         filename
       ).pipe(debounceTime(500));
     });
-    // await this.filesToDelete.forEach(async filename => {
-    //   const index = filename.indexOf('F');
-    //   await firstValueFrom(
-    //     this.deleteFile(+filename.substring(index + 1, index + 5), filename)
-    //   );
-    // });
-    // if (this.errorImages.length > 0) {
-    //   this.alert('error', 'Imagenes sin eliminar', this.errorImages.toString());
-    // } else {
-    //   this.alert(
-    //     'success',
-    //     'Eliminación de Fotos',
-    //     'Se eliminaron las fotos correctamente'
-    //   );
-    // }
-    // this.filesToDelete = [];
-    // this.service.deleteEvent.next(true);
-    // this.getData();
-
     concat(...obs)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
