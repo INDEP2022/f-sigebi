@@ -457,6 +457,7 @@ export class InventoryDataComponent
       }`;
       this.inventoryService.getInventoryByGood(this.goodId, params).subscribe({
         next: resp => {
+          console.log(resp);
           res(resp.data);
         },
         error: err => {
@@ -491,7 +492,7 @@ export class InventoryDataComponent
     }
     //await this.getGood();
     const inventoryAntList: any[] = await this.getInvAnterior();
-
+    console.log(inventoryAntList);
     for (const reg of inventoryAntList) {
       vb_hay_inv_anterior = true;
       vn_inv_anterior = reg.inventoryNumber;
@@ -530,6 +531,11 @@ export class InventoryDataComponent
           this.goodChange++;
         }, 100);
       }
+    } else {
+      this.viewAct = false;
+      setTimeout(() => {
+        this.goodChange++;
+      }, 100);
     }
   }
 

@@ -159,7 +159,8 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
   delete(data: any) {
     this.departmentService.remove3(data).subscribe({
       next: () => {
-        this.getDepartments(), this.alert('success', 'Departamento', 'Borrado');
+        this.getDepartments(),
+          this.alert('success', 'Departamento', 'Borrado Correctamente');
       },
     });
   }

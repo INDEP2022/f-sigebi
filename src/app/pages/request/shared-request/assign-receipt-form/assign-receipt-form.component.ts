@@ -35,6 +35,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   loadingTable: boolean = false;
   delegationDes: string = '';
   keyTransferent: string = '';
+  typeReceipt: string = '';
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -52,6 +53,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getReceipts();
+    console.log('typeReceipt', this.typeReceipt);
   }
 
   getReceipts() {
