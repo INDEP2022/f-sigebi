@@ -1,4 +1,11 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -56,6 +63,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   selectOnClick: boolean = false;
   permitSelect = true;
   @Output() onSelect = new EventEmitter<any>();
+  @ViewChild('file', { static: false }) myInput: ElementRef;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -384,7 +392,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
               const getGoodAttended: any = await this.getGoodAndAttendedReturn(
                 objGood
               );
-              if (getGoodAttended != null) {
+              if (getGoodAttended !== null) {
                 ATENCION = getGoodAttended;
               } else {
                 ATENCION = 0;
@@ -509,11 +517,16 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             );
             await this.getMotives();
           }
+          this.clearInput();
         });
+      } else {
+        this.clearInput();
       }
     });
   }
-
+  clearInput() {
+    this.myInput.nativeElement.value = '';
+  }
   // OBTENER - BIENES_MOTIVOSREV
   async getGoodReturn(data: any) {
     const params = new ListParams();
@@ -626,7 +639,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     if (areaCorresp != null) {
       this.responsable = areaCorresp;
     } else {
-      this.alert('info', 'Falta asignar área Responsable o Delegación.', '');
+      this.alert('warning', 'Falta asignar área Responsable o Delegación.', '');
     }
   }
 
@@ -745,7 +758,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
         const getGoodAttended: any = await this.getGoodAndAttendedReturn(
           objGood
         );
-        if (getGoodAttended != null) {
+        if (getGoodAttended !== null) {
           ATENCION = getGoodAttended;
         } else {
           ATENCION = 0;
@@ -800,8 +813,9 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             extDomProcess: null,
           };
           const insertHistoric: any = await this.putInsertHistoric(historyGood);
-
+          console.log('1', insertHistoric);
           if (insertHistoric == null) {
+            console.log('2', insertHistoric);
             this.alert(
               'error',
               `Error al actualizar el estatus del bien: ${this.selectedRow.goodNumber}`,
@@ -809,6 +823,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             );
             return;
           } else {
+            console.log('3', insertHistoric);
             this.alert(
               'success',
               `El bien: ${this.selectedRow.goodNumber} se ha atendido correctamente`,
@@ -816,6 +831,13 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             );
             this.getMotives();
           }
+        } else {
+          this.alert(
+            'success',
+            `El bien: ${this.selectedRow.goodNumber} se ha atendido correctamente`,
+            ''
+          );
+          this.getMotives();
         }
         // -------------------------------------------------------------------------------------------------- //
       }

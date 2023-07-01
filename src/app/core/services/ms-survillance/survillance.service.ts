@@ -94,4 +94,18 @@ export class SurvillanceService extends HttpService {
   postChangeGoodAle(data: any) {
     return this.post(this.route.ChangeGoodAle, data);
   }
+
+  getVigSupervisionMae(params: _Params) {
+    return this.get<IListResponse<IViewVigDelegations>>(
+      this.route.VigSupervisionMae,
+      params
+    );
+  }
+
+  getVigSupervisionDet(params: _Params) {
+    return this.get<IListResponse<IViewVigDelegations>>(
+      this.route.VigSupervisionDet,
+      params
+    );
+  }
 }
