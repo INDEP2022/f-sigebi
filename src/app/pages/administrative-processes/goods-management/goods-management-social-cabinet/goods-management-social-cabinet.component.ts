@@ -81,6 +81,7 @@ export class GoodsManagementSocialCabinetComponent
           this.selectedGoodstxt = [...this.selectedGoodstxt];
           const message = response.message ? response.message[0] ?? '' : '';
           this.pageLoading = false;
+          this.form.get('option').setValue(null);
           // this.form.get('option').setValue(null);
           // if (response.dataErrors.length > 0) {
           //   this.alert(
@@ -110,7 +111,10 @@ export class GoodsManagementSocialCabinetComponent
         },
         error: err => {
           this.pageLoading = false;
+          this.form.get('option').setValue(null);
           this.alert('error', 'ERROR', 'Bienes no procesados correctamente');
+          // this.selectedGoodstxt = [...this.selectedGoodstxt];
+          this.processErrors++;
         },
       });
   }

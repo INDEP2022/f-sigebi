@@ -27,6 +27,7 @@ export class GoodsManagementSocialTableErrorsComponent
     }
   }
   lastClickTime: number = 0;
+  selected: ITmpValSocialLoadSocialCabinet[];
   constructor(
     private socialCabinetService: SocialCabinetService,
     private goodManagementeService: GoodsManagementService
@@ -39,22 +40,27 @@ export class GoodsManagementSocialTableErrorsComponent
   }
 
   rowSelect(event: { selected: ITmpValSocialLoadSocialCabinet[] }) {
+    console.log(event);
     if (this.lastClickTime === 0) {
       this.lastClickTime = new Date().getTime();
+      this.selected = event.selected;
     } else {
       const change = new Date().getTime() - this.lastClickTime;
       if (change < 400) {
-        this.saveSelected(event.selected ? event.selected[0] : null);
+        this.saveSelected(this.selected);
       }
       this.lastClickTime = 0;
     }
-
-    console.log(event);
   }
 
-  saveSelected(selected: ITmpValSocialLoadSocialCabinet) {
+  saveSelected(selected: ITmpValSocialLoadSocialCabinet[]) {
     // this.goodManagementeService.selectedGood = selected.goodNumber;
-    this.goodManagementeService.selectedGoodSubject.next(selected.goodNumber);
+    console.log(selected);
+    if (selected && selected.length > 0) {
+      this.goodManagementeService.selectedGoodSubject.next(
+        selected[0].goodNumber
+      );
+    }
   }
 
   override getData() {

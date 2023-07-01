@@ -1,6 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { LocalDataSource } from 'ng2-smart-table';
+import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, map, takeUntil } from 'rxjs';
 import {
@@ -30,7 +30,10 @@ export class GoodsManagementSocialTable extends BasePage {
   limit: FormControl = new FormControl(5);
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems = 0;
-  @Input() identifier: number;
+  @ViewChild('table') table: Ng2SmartTableComponent;
+  @ViewChild('containerTable') containerTable: ElementRef;
+  @Input()
+  identifier: number;
   @Input()
   get selectedGoods(): number[] {
     return this._selectedGoods;
@@ -71,7 +74,36 @@ export class GoodsManagementSocialTable extends BasePage {
     };
     this.goodManagementeService.selectedGoodSubject.subscribe({
       next: response => {
-        console.log(response);
+        // debugger;
+        console.log(response, this.data);
+        let index = this.data.findIndex(
+          row => row.goodNumber === response + ''
+        );
+        console.log(index);
+        if (index === -1) {
+          return;
+        }
+        console.log(this.table);
+        // const cantPerPage =  this.params.value.page *  this.params.value.limit;
+        const page = index / this.params.value.limit;
+        this.params.value.page = Math.floor(page) + 1;
+        this.getPaginated(this.params.getValue());
+        setTimeout(() => {
+          this.table.grid.getRows().forEach(row => {
+            if (row.getData()['goodNumber'] === response) {
+              console.log(row);
+              this.table.grid.multipleSelectRow(row);
+              var bodyRect = document.body.getBoundingClientRect(),
+                elemRect =
+                  this.containerTable.nativeElement.getBoundingClientRect(),
+                offset = elemRect.top - bodyRect.top;
+              // this.containerTable.nativeElement.focus();
+              document.body.scrollTop = offset; // For Safari
+              document.documentElement.scrollTop = offset; // For Chrome, Firefox, IE and Opera
+              // this.table.
+            }
+          });
+        }, 500);
       },
     });
   }
