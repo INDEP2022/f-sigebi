@@ -46,7 +46,7 @@ export class ServicesSharedComponent extends BasePage implements OnInit {
         } else {
           error = err.message;
         }
-        this.onLoadToast(
+        this.alert(
           'error',
           'Error',
           'Clave de servicio errónea favor de verificar'

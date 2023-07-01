@@ -71,9 +71,20 @@
 <app-card>
   <div body>
     <div class="col-md-3 col-sm-6 col-xs-12">
-      <button class="btn btn-success btn-sm active" (click)="fileLoadBtn()">
-        Cargar archivo
+      <button
+        type="button"
+        class="btn btn-success btn-sm active"
+        (click)="file.click()">
+        Cargar Excel/CSV
+        <i aria-hidden="true" class="fa fa-upload"></i>
       </button>
+      <input
+        type="file"
+        name="file"
+        #file
+        class="d-none"
+        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+        (change)="onFileChange($event)" />
     </div>
 
     <div class="col-md-3 col-sm-6 col-xs-12">
