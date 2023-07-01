@@ -7,7 +7,10 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IPackageInfo } from '../../models/catalogs/package.model';
-import { IMassiveGoodTracker } from '../../models/ms-massivegood/massive-good-goods-tracker.model';
+import {
+  IIdentifierCount,
+  IMassiveGoodTracker,
+} from '../../models/ms-massivegood/massive-good-goods-tracker.model';
 import { IMassiveGood } from '../../models/ms-massivegood/massivegood.model';
 
 @Injectable({
