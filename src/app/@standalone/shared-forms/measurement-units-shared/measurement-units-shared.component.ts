@@ -39,12 +39,15 @@ export class MeasurementUnitsSharedComponent
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getUnits(new ListParams());
+  }
 
   getUnits(params: ListParams) {
     //Provisional data
     let data = unitsData;
     let count = data.length;
+    console.log(data);
     this.measurementUnits = new DefaultSelect(data, count);
     /*this.service.getAll(params).subscribe(data => {
         this.status = new DefaultSelect(data.data,data.count);
@@ -63,6 +66,7 @@ export class MeasurementUnitsSharedComponent
 
   onUnitsChange(type: any) {
     //this.resetFields([this.subdelegation]);
+    this.getUnits(new ListParams());
     this.form.updateValueAndValidity();
   }
 

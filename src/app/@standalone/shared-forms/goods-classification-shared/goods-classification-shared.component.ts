@@ -38,6 +38,7 @@ export class GoodsClasificationSharedComponent
 
   constructor(/*private service: WarehouseService*/) {
     super();
+    this.getGoodClassification(new ListParams());
   }
 
   ngOnInit(): void {}
@@ -58,7 +59,7 @@ export class GoodsClasificationSharedComponent
         }
         this.onLoadToast('error', 'Error', error);
 
-      }, () => {}
+      }, () => {} 
     );*/
   }
 
