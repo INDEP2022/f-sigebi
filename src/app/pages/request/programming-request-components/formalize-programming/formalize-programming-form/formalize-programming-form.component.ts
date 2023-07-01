@@ -1139,5 +1139,7 @@ export class FormalizeProgrammingFormComponent
     this.modalService.show(PreviewDocumentsComponent, config);
   }
 
-  confirm() {}
+  confirm() {
+    //SE ACABO ESTE
+  }
 }
