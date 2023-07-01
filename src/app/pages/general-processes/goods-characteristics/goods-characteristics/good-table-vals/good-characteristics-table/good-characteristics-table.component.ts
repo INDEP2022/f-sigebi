@@ -390,6 +390,8 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     const column = 'val' + item.columnNumber;
     return item.dataType === 'D' || item.attribute.includes('FECHA')
       ? formatForIsoDate(good[column], 'string')
+      : good[column] === 'NULL'
+      ? ''
       : good[column];
   }
 
