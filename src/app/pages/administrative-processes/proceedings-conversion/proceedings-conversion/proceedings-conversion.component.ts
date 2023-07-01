@@ -320,9 +320,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'goodId' ||
-              filter.field == 'description' ||
-              filter.field == 'quantity' ||
-              filter.field == 'acta'
+            filter.field == 'description' ||
+            filter.field == 'quantity' ||
+            filter.field == 'acta'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -544,7 +544,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     });
   }
 
-  openDialogSelectedManagement() { }
+  openDialogSelectedManagement() {}
 
   async getSenderByDetail(params: ListParams) {
     params.take = 20;
@@ -595,7 +595,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       }
     );
   }
-  closeActa() { }
+  closeActa() {}
 
   refreshTableCopies() {
     this.initForm();
@@ -787,7 +787,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => { },
+                callback: (data: any) => {},
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -802,7 +802,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => { },
+                callback: (data: any) => {},
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -824,7 +824,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => { },
+                callback: (data: any) => {},
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -839,7 +839,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => { },
+                callback: (data: any) => {},
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -1066,7 +1066,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   deleteGoodActa(event: any) {
     console.log(event);
   }
-  toggleDisabled() { }
+  toggleDisabled() {}
 }
 
 export interface IParamsProceedingsParamsActasConvertion {
