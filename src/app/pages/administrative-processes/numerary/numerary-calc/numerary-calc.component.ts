@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -11,6 +15,10 @@ import {
   TOTALS_COLUMNS,
 } from './numerary-calc-columns';
 
+interface IGloval {
+  process: string;
+}
+
 @Component({
   selector: 'app-numerary-calc',
   templateUrl: './numerary-calc.component.html',
@@ -18,7 +26,7 @@ import {
 })
 export class NumeraryCalcComponent extends BasePage implements OnInit {
   form: FormGroup;
-  formSumComission: FormGroup;
+  formBlkControl: FormGroup;
 
   loading1 = this.loading;
   data1: any[] = [];
@@ -37,9 +45,16 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems2: number = 0;
 
+  global: IGloval = {
+    process: '',
+  };
+
   constructor(
     private fb: FormBuilder,
-    private readonly numeraryService: NumeraryService
+    private readonly numeraryService: NumeraryService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService,
+    private siabService: SiabService
   ) {
     super();
     this.settings = {
@@ -70,7 +85,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       idProcess: [null, Validators.required],
       date: [null, Validators.required],
-
+      type: [null, Validators.required],
       concept: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -86,7 +101,9 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       bankComision: [null, Validators.required],
       totalImport: [null, Validators.required],
     });
-    this.formSumComission = this.fb.group({
+    this.formBlkControl = this.fb.group({
+      tMoneda: [null, Validators.required],
+      commisionBanc: [null, Validators.required],
       sumCommision: [null, Validators.required],
     });
   }
@@ -152,5 +169,132 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       });
   }
 
-  selectRequest() {}
+  async selectRequest() {
+    if (
+      this.form.get('type').value === null &&
+      this.form.get('type').value === 'v'
+    ) {
+      this.alert(
+        'warning',
+        'Cálculo de numerario',
+        'Debe especificar el tipo de proceso.'
+      );
+      return;
+    }
+    if (this.form.get('currency').value === null) {
+      this.alert(
+        'warning',
+        'Cálculo de numerario',
+        'Debe especificar el tipo de proceso.'
+      );
+      return;
+    }
+    const response = await this.alertQuestion(
+      'question',
+      '¿Desea continuar?',
+      '¿Se continua con la selección?'
+    );
+    if (response.isConfirmed) {
+      //// abrir el modal
+    }
+  }
+
+  printStatusAccount() {
+    const params = {
+      pn_folio: '',
+    };
+    this.downloadReport('blank', params);
+  }
+  printDetailMovi() {
+    const params = {
+      pn_folio: '',
+    };
+    this.downloadReport('blank', params);
+  }
+  printProrraComission() {
+    if (this.formBlkControl.get('tMoneda').value === 'P') {
+      const params = {
+        pn_folio: '',
+      };
+      this.downloadReport('blank', params);
+    } else {
+      this.alert(
+        'warning',
+        'Cálculo de numerario',
+        'El proceso no presenta ninguna comisión bancaria.'
+      );
+    }
+  }
+
+  downloadReport(reportName: string, params: any) {
+    //this.loadingText = 'Generando reporte ...';
+    this.siabService.fetchReport(reportName, params).subscribe({
+      next: response => {
+        this.loading = false;
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+  }
+
+  calculInteres() {
+    if (this.global.process === 'D') {
+      this.PUP_DESCALCULA();
+    } else if (this.global.process === 'C') {
+      this.PUP_CALCULA();
+    }
+  }
+
+  async deleteRequest() {
+    const response = await this.alertQuestion(
+      'question',
+      'Cálculo de numerario',
+      'Se eliminara proceso de numerario. ¿Deseas continuar?'
+    );
+    if (response.isConfirmed) {
+      //// abrir el modal
+      const deleteExi: boolean = await this.deleteSoli(0);
+      if (deleteExi) {
+        this.alert(
+          'success',
+          'Cálculo de numerario',
+          'Fue eliminado el calculo solicitado'
+        );
+      } else {
+        this.alert(
+          'error',
+          'Ha ocurrido un error',
+          'No fue posible eliminar el calculo colicitado'
+        );
+      }
+    }
+  }
+
+  deleteSoli(proceNum: number) {
+    return new Promise<boolean>((res, rej) => {
+      this.numeraryService.deleteProccess({ proceNum }).subscribe({
+        next: response => {
+          res(true);
+        },
+        error: err => {
+          res(false);
+        },
+      });
+    });
+  }
+
+  PUP_DESCALCULA() {}
+  PUP_CALCULA() {}
 }

@@ -35,6 +35,8 @@ import { GoodService } from 'src/app/core/services/good/good.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
 
+import { IActasConversion } from 'src/app/core/models/ms-convertiongood/convertiongood';
+import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
@@ -47,14 +49,14 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { FlyersService } from 'src/app/pages/documents-reception/flyers/services/flyers.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ScanningFoilComponent } from '../../payment-claim-process/scanning-foil/scanning-foil.component';
+
+import { FindActaGoodComponent } from '../find-acta-good/find-acta-good.component';
 import {
   GooByExpediente,
   IDataGoodsTable,
 } from '../proceedings-conversion-column';
 import { ProceedingsConversionModalComponent } from '../proceedings-conversion-modal/proceedings-conversion-modal.component';
 import { ActasConvertionCommunicationService } from '../services/proceedings-conversionn';
-
-import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import {
   COPY,
   GOODSEXPEDIENT_COLUMNS_GOODS,
@@ -123,11 +125,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   totalItems2: number = 0;
   fCreate: string = '';
   typeConv: number | string = 0;
+  type = 'CONVERSION';
   actaO: number | string;
   loadingText = '';
   isHideSelection = true;
   userName: string = '';
   insert = false;
+  dataTableGoodsActa: LocalDataSource = new LocalDataSource();
   disabledImport: boolean = true;
   edit = false;
   updateRe = false;
@@ -140,6 +144,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   criCase = '';
   createCon: IConverGoodCreate;
   test: any;
+  to: string = '';
+  annio: string = '';
   bienes: IGood[] = [];
   statusGoodName: string = '';
   dataTemporal: LocalDataSource = new LocalDataSource();
@@ -153,6 +159,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   isCreate = false;
   statusGood: IGoodStatus;
   selectedRow: IConvertiongood;
+  selectedActa: IActasConversion;
   origin = '';
   totalItemsActas: number = 0;
   department = '';
@@ -210,6 +217,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   @ViewChild('hijoRef', { static: false }) hijoRef: ScanningFoilComponent;
   @ViewChild('myInput') inputEl: ElementRef;
   @Output() onConfirm = new EventEmitter<any>();
+
   dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
   dataGoodsSelected = new Map<number, IGoodAndAvailable>();
 
@@ -229,6 +237,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   converGood: IConvertiongood;
   formData: Partial<IConvertiongood> = null;
   senders = new DefaultSelect();
+  actas = new DefaultSelect();
   disabled: boolean = true;
   filtroPersonaExt: ICopiesJobManagementDto[] = [];
   filterParams2 = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -320,9 +329,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'goodId' ||
-              filter.field == 'description' ||
-              filter.field == 'quantity' ||
-              filter.field == 'acta'
+            filter.field == 'description' ||
+            filter.field == 'quantity' ||
+            filter.field == 'acta'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -374,18 +383,22 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   private actaForm() {
     this.actaRecepttionForm = this.fb.group({
-      acta: [this.cveActa],
+      acta: [null],
       type: [null],
       claveTrans: [null],
       administra: [null],
       cveReceived: [null],
       consec: [null],
+      ejecuta: [null],
       anio: [null],
       mes: [null],
       cveActa: [null],
       direccion: [null],
       observaciones: [null],
       responsable: [null],
+      parrafo1: [null],
+      parrafo2: [null],
+      parrafo3: [null],
     });
   }
 
@@ -413,6 +426,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             filter.writingPermission == 'S'
           ) {
             this.read = true;
+            this.updateRe = true;
             this.updateRe = true;
             this.delete = true;
             this.insert = true;
@@ -470,7 +484,6 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe((params: any) => {
-        console.log(this.paramsScreen);
         for (const key in this.paramsScreen) {
           if (Object.prototype.hasOwnProperty.call(params, key)) {
             this.paramsScreen[key as keyof typeof this.paramsScreen] =
@@ -503,6 +516,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       .getById(body.PAR_IDCONV)
       .subscribe({
         next: (res: IConvertiongood) => {
+          this.loading = false;
           this.fileNumber = res.fileNumber.id;
           this.conversion = res.id;
           this.goodFatherNumber = res.goodFatherNumber;
@@ -515,9 +529,12 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.cveActa = res.minutesErNumber;
           this.userRes = res.fileNumber.usrResponsibleFile;
           this.actaGoodForm.value.acta = this.cveActa;
+          this.actaGoodForm.value.acta = this.cveActa;
           this.time = new Date().toISOString().slice(0, 16);
           this.getExpedient(this.fileNumber);
-          // this.getGoods(this.conversion);
+          this.getAllConvertiones();
+          // this.getActasByConversion(this.conversion);
+          this.actaRecepttionForm.value.cveActa = this.cveActa;
           // this.getActasReception(this.cveActa);
           subscription.unsubscribe();
         },
@@ -544,7 +561,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     });
   }
 
-  openDialogSelectedManagement() { }
+  openDialogSelectedManagement() {}
 
   async getSenderByDetail(params: ListParams) {
     params.take = 20;
@@ -595,7 +612,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       }
     );
   }
-  closeActa() { }
+  closeActa() {}
 
   refreshTableCopies() {
     this.initForm();
@@ -612,9 +629,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   getExpedient(id: number) {
     this.expedientService.getById(id).subscribe({
       next: (data: any) => {
+        this.loading = false;
         this.expedient = data;
         this.trasnfer = this.expedient.expTransferNumber;
-        console.log(this.expedient);
+        this.actaRecepttionForm.value.claveTrans = this.trasnfer;
+        // console.log(this.expedient);
         this.getGoodsByStatus(this.fileNumber);
       },
       error: () => console.error('expediente nulo'),
@@ -625,19 +644,17 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.loading = true;
     this.goodService.getByExpedient(id).subscribe({
       next: data => {
-        console.log(data);
-        this.bienes = data;
-        this.dataTableGood.load(data.data);
+        this.bienes = data.data;
         this.loading = false;
+        console.log(this.bienes);
+        this.dataTableGood.load(this.bienes);
         this.dataTableGood.refresh();
+        // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
         this.totalItems = data.count;
         console.log(this.dataGood);
       },
       error: error => {
-        this.loading = true;
-        console.log(error);
-        this.dataTableGood.load([]);
-        this.dataTableGood.refresh();
+        this.loading = false;
       },
     });
   }
@@ -654,9 +671,27 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
-        console.log(error);
-        this.dataTableGoodsConvertion.load([]);
-        this.dataTableGoodsConvertion.refresh();
+        // console.log(error);
+        // this.dataTableGoodsConvertion.load([]);
+        // this.dataTableGoodsConvertion.refresh();
+      },
+    });
+  }
+
+  getByActa(id: number) {
+    this.convertiongoodService.getAllGoods(id).subscribe({
+      next: data => {
+        this.dataTableGoodsActa.load(data.data);
+        this.dataTableGoodsActa.refresh();
+        this.loading = false;
+        this.totalItems = data.count;
+        console.log(this.dataTableGoodsActa);
+      },
+      error: error => {
+        this.loading = false;
+        // console.log(error);
+        // this.dataTableGoodsConvertion.load([]);
+        // this.dataTableGoodsConvertion.refresh();
       },
     });
   }
@@ -731,6 +766,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
               next: data => {
                 this.loading = false;
                 this.alert('success', 'Acta cerrada', '');
+                this.alert('success', 'Acta cerrada', '');
                 this.initForm();
               },
               error: error => {
@@ -744,12 +780,14 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.alert(
             'warning',
             'El Usuario no está autorizado para cerrar acta',
+            'El Usuario no está autorizado para cerrar acta',
             ''
           );
         }
         if (this.delete == null) {
           this.alert(
             'warning',
+            'El Usuario no está autorizado para cerrar acta',
             'El Usuario no está autorizado para cerrar acta',
             ''
           );
@@ -762,8 +800,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   //   this.edit ? this.update() : this.create();
   // }
 
+  // confirm() {
+  //   this.edit ? this.update() : this.create();
+  // }
+
   Generar() {
     this.isLoading = true;
+    // this.createConversion();
     // this.createConversion();
     this.updateConversion();
     this.edit ? this.update() : this.create();
@@ -787,7 +830,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => { },
+                callback: (data: any) => {},
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -802,7 +845,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => { },
+                callback: (data: any) => {},
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -824,7 +867,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => { },
+                callback: (data: any) => {},
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -839,7 +882,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                   urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                   type: 'pdf',
                 },
-                callback: (data: any) => { },
+                callback: (data: any) => {},
               }, //pasar datos por aca
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
@@ -872,6 +915,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     };
     console.log(params);
   }
+  selectActa(data: IActasConversion) {
+    this.selectedActa = data;
+    console.log(this.selectedRow);
+    this.changeDetectorRef.detectChanges();
+  }
 
   searchProcs(provider?: IConvertiongood) {
     const modalConfig = MODAL_CONFIG;
@@ -894,8 +942,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   getDetail() {
     this.acordionDetail = true;
-    const value = this.conversion;
-    this.actasConvertionCommunicationService.enviarDatos(value);
+    this.actasConvertionCommunicationService.enviarDatos(this.conversion);
   }
   closeDetail() {
     this.acordionDetail = false;
@@ -925,47 +972,32 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.loading = true;
     this.proceedingsDeliveryReceptionService.getStatusConversion(id).subscribe({
       next: (data: any) => {
+        this.loading = false;
         console.log(data);
         this.dataGoodTable.load(data);
         this.dataGoodTable.refresh();
-        this.loading = false;
       },
       error: error => {
-        this.dataGoodTable.load([]);
-        this.dataGoodTable.refresh();
+        // this.dataGoodTable.load([]);
+        // this.dataGoodTable.refresh();
         this.loading = false;
       },
     });
-  }
-
-  getActasReceptionAll() {
-    this.loading = true;
-    this.proceedingsDeliveryReceptionService
-      .getAll(this.params.getValue())
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          // this.dataActa.load(data);
-          // this.dataGoodTable.refresh();
-          this.loading = false;
-        },
-        error: error => {
-          // this.dataGoodTable.load([]);
-          // this.dataGoodTable.refresh();
-          this.loading = false;
-        },
-      });
   }
 
   create() {
+    this.loading = true;
     this.convertiongoodService.createActa(this.createCon).subscribe({
-      next: data => this.handleSuccess(),
+      next: data => {
+        this.loading = false;
+        this.handleSuccess();
+      },
       error: error => {
         this.loading = false;
+        this.alert('error', 'Ya el bien está agregado al acta', '');
       },
     });
   }
-  selectedRadio: string;
 
   changeSelection(event: any, id: number) {
     const good = this.dataTableGoodsMap.get(id);
@@ -998,15 +1030,18 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   updateConversion() {
     this.loading = true;
+    this.loading = true;
     this.convertiongoodService
       .update(this.conversion, this.proceedingsConversionForm.value)
       .subscribe({
         next: data => {
           console.log(data);
           this.loading = false;
+          this.loading = false;
         },
         error: error => {
           this.loading = false;
+          // this.onLoadToast('error', 'No se actualizaron los datos', '');
           // this.onLoadToast('error', 'No se actualizaron los datos', '');
         },
         // this.alert('success', 'conversión actualizada con éxito', ''),
@@ -1015,13 +1050,16 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   changeStatus(good: string) {
     this.loading = true;
+    this.loading = true;
     this.goodprocessService.updateGoodXGoodNumber(good).subscribe({
       next: (data: any) => {
         console.log(data);
         this.loading = false;
+        this.loading = false;
       },
       error: error => {
         error;
+        this.loading = false;
         this.loading = false;
       },
     });
@@ -1040,11 +1078,32 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    // this.alert('success', `${this.conversion} creado`, `${message} Correctamente`);
+    this.alert('success', `${this.conversion} creado`, `${message} `);
     this.loading = false;
     this.onConfirm.emit(true);
-    this.getAllConvertiones();
   }
+
+  getActas() {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.idConversion'] = `$eq:${this.conversion}`;
+      this.convertiongoodService
+        .getAllGoodsConversions(this.conversion, params)
+        .subscribe({
+          next: data => {
+            let name = data.data[0].authorityName;
+            this.actas = data;
+            console.log(this.actas);
+            resolve(true);
+          },
+          error: error => {
+            // this.authorityName = '';
+            resolve(true);
+          },
+        });
+    });
+  }
+
   goStatus() {
     this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
       queryParams: {
@@ -1052,6 +1111,79 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         PAR_IDCONV: this.conversion,
       },
     });
+  }
+  searchActas(actas?: IActasConversion) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      actas,
+    };
+
+    let modalRef = this.modalService.show(FindActaGoodComponent, modalConfig);
+    modalRef.content.onSave.subscribe((next: any) => {
+      console.log(next);
+      this.to = this.datePipe.transform(
+        this.actaRecepttionForm.controls['mes'].value,
+        'MM'
+      );
+      this.annio = this.datePipe.transform(
+        this.actaRecepttionForm.controls['anio'].value,
+        'yyyy'
+      );
+      this.actaRecepttionForm.setValue({
+        acta: this.conversion,
+        administra: next.administra,
+        ejecuta: next.ejecuta,
+        consec: next.folio_universal,
+        type: this.type,
+        claveTrans: this.trasnfer,
+        cveActa: next.cve_acta_conv,
+        mes: this.to,
+        cveReceived: '',
+        anio: this.annio,
+        direccion: '',
+        observaciones: '',
+        responsable: '',
+        parrafo1: next.parrafo1,
+        parrafo2: next.parrafo2,
+        parrafo3: next.parrafo3,
+      });
+      // this.getActasByConversion(next.cve_acta_conv);
+    });
+  }
+
+  getActasByConversion(cve: string) {
+    this.convertiongoodService.getActasByConvertion(cve).subscribe({
+      next: (data: IActasConversion) => {
+        this.to = this.datePipe.transform(
+          this.actaRecepttionForm.controls['mes'].value,
+          'MM'
+        );
+        this.annio = this.datePipe.transform(
+          this.actaRecepttionForm.controls['anio'].value,
+          'yyyy'
+        );
+        this.actaRecepttionForm.setValue({
+          acta: this.conversion,
+          type: this.type,
+          administra: data.administra,
+          ejecuta: data.ejecuta,
+          folio: data.folio_universal,
+          consec: data.tipo_acta,
+          claveTrans: this.trasnfer,
+          cveActa: data.cve_acta_conv,
+          mes: this.to,
+          cveReceived: '',
+          anio: this.annio,
+          direccion: '',
+          observaciones: '',
+          responsable: '',
+        });
+      },
+    });
+  }
+
+  savActa() {
+    this.alert('success', 'conversion actualizada', '');
   }
 
   selectProceedings(event: any) {
@@ -1066,7 +1198,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   deleteGoodActa(event: any) {
     console.log(event);
   }
-  toggleDisabled() { }
+  toggleDisabled() {}
 }
 
 export interface IParamsProceedingsParamsActasConvertion {

@@ -24,7 +24,8 @@ import { RegisterServiceComponent } from './register-service/register-service.co
 })
 export class RegistryServicesComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   @Input() goodId: number;
   list: any[] = [];
   totalItems: number = 0;
@@ -60,8 +61,9 @@ export class RegistryServicesComponent
         sort: false,
         type: 'html',
         valuePrepareFunction: (text: string) => {
-          return `${text ? text.split('T')[0].split('-').reverse().join('-') : ''
-            }`;
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
+          }`;
         },
         filter: {
           type: 'custom',
@@ -85,7 +87,6 @@ export class RegistryServicesComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = '';
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -106,7 +107,6 @@ export class RegistryServicesComponent
 
             if (filter.search !== '') {
               this.columnFilter[field] = `${searchFilter}:${filter.search}`;
-              console.log('this.param:', this.params);
               this.params.value.page = 1;
             } else {
               delete this.columnFilter[field];
@@ -128,7 +128,6 @@ export class RegistryServicesComponent
       ...this.params.getValue(),
       ...this.columnFilter,
     };
-    console.log(this.params.getValue());
     this.serviceGoodService.getAll(params).subscribe({
       next: response => {
         this.list = response.data.map(service => {
@@ -148,7 +147,6 @@ export class RegistryServicesComponent
         this.dataLoand.load(this.list);
         this.dataLoand.refresh();
         this.loading = false;
-        console.log(err);
       },
     });
   }
