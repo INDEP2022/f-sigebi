@@ -3,6 +3,7 @@ import {
   FilePhotoService,
   IHistoricalPhoto,
 } from 'src/app/core/services/ms-ldocuments/file-photo.service';
+import { GoodPhotosService } from '../services/good-photos.service';
 
 @Component({
   selector: 'app-photos-historic',
@@ -52,7 +53,8 @@ export class PhotosHistoricComponent implements OnInit {
   slides: { image: string; usuarioElimina: string }[] = [];
   constructor(
     // private modalRef: BsModalRef,
-    private service: FilePhotoService
+    private service: FilePhotoService,
+    private goodPhotoService: GoodPhotosService
   ) {}
 
   ngOnInit() {}
@@ -71,6 +73,13 @@ export class PhotosHistoricComponent implements OnInit {
     if (changes['goodNumber']) {
       this.getData();
     }
+    this.goodPhotoService.deleteEvent.subscribe({
+      next: response => {
+        if (response) {
+          this.getData();
+        }
+      },
+    });
   }
 
   // close() {

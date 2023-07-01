@@ -1,7 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { catchError, firstValueFrom, forkJoin, map, of, takeUntil } from 'rxjs';
+import {
+  catchError,
+  concat,
+  debounceTime,
+  firstValueFrom,
+  map,
+  of,
+  takeUntil,
+} from 'rxjs';
 import { FileUploadModalComponent } from 'src/app/@standalone/modals/file-upload-modal/file-upload-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
@@ -55,13 +63,6 @@ export class PhotosListComponent extends BasePage implements OnInit {
     super();
     this.form = this.fb.group({
       typedblClickAction: [1],
-    });
-    this.service.deleteEvent.subscribe({
-      next: response => {
-        if (response) {
-          this.getData();
-        }
-      },
     });
   }
 
@@ -208,7 +209,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
       });
   }
 
-  async confirmDelete() {
+  async confirmDelete(all = false) {
     if (this.disabledDeletePhotos()) return;
     if (this.filesToDelete.length < 1) {
       this.alert(
@@ -223,48 +224,68 @@ export class PhotosListComponent extends BasePage implements OnInit {
       'Advertencia',
       '¿Estás seguro que desea eliminar las imágenes seleccionadas?'
     );
+    if (all) {
+      this.filesToDelete = [...this.files];
+    }
 
     if (result.isConfirmed) {
       this.deleteSelectedFiles();
     }
   }
 
-  private deleteSelectedFiles() {
+  private async deleteSelectedFiles() {
     this.errorImages = [];
     const obs = this.filesToDelete.map(filename => {
       const index = filename.indexOf('F');
       return this.deleteFile(
         +filename.substring(index + 1, index + 5),
         filename
-      );
+      ).pipe(debounceTime(500));
     });
-    // this.filesToDelete.forEach(filename => {
+    // await this.filesToDelete.forEach(async filename => {
     //   const index = filename.indexOf('F');
-    //   this.deleteFile(+filename.substring(index + 1, index + 5));
+    //   await firstValueFrom(
+    //     this.deleteFile(+filename.substring(index + 1, index + 5), filename)
+    //   );
     // });
-    forkJoin(obs).subscribe({
-      complete: () => {
-        // this.files = [];
-        this.alert(
-          'success',
-          'Eliminación de Fotos',
-          'Se eliminaron las fotos correctamente'
-        );
-        this.filesToDelete = [];
-        this.service.deleteEvent.next(true);
-        this.getData();
-      },
-      error: err => {
-        this.alert(
-          'error',
-          'Imagenes sin eliminar',
-          this.errorImages.toString()
-        );
-        this.filesToDelete = [];
-        this.service.deleteEvent.next(true);
-        this.getData();
-      },
-    });
+    // if (this.errorImages.length > 0) {
+    //   this.alert('error', 'Imagenes sin eliminar', this.errorImages.toString());
+    // } else {
+    //   this.alert(
+    //     'success',
+    //     'Eliminación de Fotos',
+    //     'Se eliminaron las fotos correctamente'
+    //   );
+    // }
+    // this.filesToDelete = [];
+    // this.service.deleteEvent.next(true);
+    // this.getData();
+
+    concat(...obs)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        complete: () => {
+          // this.files = [];
+          this.alert(
+            'success',
+            'Eliminación de Fotos',
+            'Se eliminaron las fotos correctamente'
+          );
+          this.filesToDelete = [];
+          this.service.deleteEvent.next(true);
+          this.getData();
+        },
+        error: err => {
+          this.alert(
+            'error',
+            'Imagenes sin eliminar',
+            this.errorImages.toString()
+          );
+          this.filesToDelete = [];
+          this.service.deleteEvent.next(true);
+          this.getData();
+        },
+      });
   }
 
   private deleteFile(consecNumber: number, filename: string) {

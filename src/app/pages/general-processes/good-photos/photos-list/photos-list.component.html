@@ -81,7 +81,9 @@
             role="menuitem"
             [class]="disabledDeleteAllPhotos() ? 'disabledDelete' : ''"
             [tooltip]="errorMessage">
-            <a class="dropdown-item">Eliminar Todas</a>
+            <a class="dropdown-item" (click)="confirmDelete(true)"
+              >Eliminar Todas</a
+            >
           </li>
         </ul>
       </div>
