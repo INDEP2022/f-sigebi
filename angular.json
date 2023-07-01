@@ -90,7 +90,6 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "./src/assets/env.js",
               "node_modules/apexcharts/dist/apexcharts.min.js",
               "./node_modules/quill/dist/quill.js"
             ]
