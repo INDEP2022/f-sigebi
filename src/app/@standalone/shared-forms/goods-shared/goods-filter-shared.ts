@@ -103,7 +103,7 @@ export class GoodsFilterSharedComponent
         this.goods = new DefaultSelect(this.data, data.count);
       },
       error: err => {
-        this.goods = new DefaultSelect([], 0, true);
+        this.goods = new DefaultSelect([], 0);
         let error = '';
         // if (err.status === 0) {
         //   error = 'Revise su conexión de Internet.';
@@ -120,7 +120,6 @@ export class GoodsFilterSharedComponent
   }
 
   onGoodsChange(type: any) {
-    delete type['info'];
     if (this.patchValue) {
       this.form.patchValue({
         goodId: type.goodId,
