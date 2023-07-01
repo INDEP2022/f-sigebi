@@ -531,7 +531,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.actaGoodForm.value.acta = this.cveActa;
           this.time = new Date().toISOString().slice(0, 16);
           this.getExpedient(this.fileNumber);
-          // this.getAllConvertiones();
+          this.getAllConvertiones();
+          // this.getActasByConversion(this.conversion);
           this.actaRecepttionForm.value.cveActa = this.cveActa;
           // this.getActasReception(this.cveActa);
           subscription.unsubscribe();
@@ -677,14 +678,14 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     });
   }
 
-  getByActa() {
-    this.convertiongoodService.getAllGoods(this.conversion).subscribe({
+  getByActa(id: number) {
+    this.convertiongoodService.getAllGoods(id).subscribe({
       next: data => {
         this.dataTableGoodsActa.load(data.data);
         this.dataTableGoodsActa.refresh();
         this.loading = false;
         this.totalItems = data.count;
-        console.log(this.dataTableGoodsConvertion);
+        console.log(this.dataTableGoodsActa);
       },
       error: error => {
         this.loading = false;
