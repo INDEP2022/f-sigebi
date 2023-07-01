@@ -5,7 +5,7 @@ import { ConvertiongoodEndpoints } from 'src/app/common/constants/endpoints/ms-c
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IConverGoodCreate } from 'src/app/pages/administrative-processes/proceedings-conversion/proceedings-conversion/proceedings-conversion-columns';
-import { IRSender } from 'src/app/pages/administrative-processes/proceedings-conversion/proceedings-conversion/proceedings-conversion.component';
+// import { IRSender } from 'src/app/pages/administrative-processes/proceedings-conversion/proceedings-conversion/proceedings-conversion.component';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IAssetConversion } from '../../models/ms-convertiongood/asset-conversion';
 import { IConvertiongood } from '../../models/ms-convertiongood/convertiongood';
