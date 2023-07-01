@@ -240,8 +240,8 @@ export class DepositaryPaymentChargesComponent
   }
 
   btnPaymentDispersion() {
-    if (!this.form.get('numberGood').value) {
-      const { idBien } = this.form.get('numberGood').value;
+    if (this.form.get('numberGood').value) {
+      const idBien = this.form.get('numberGood').value;
       this.router.navigate(
         [
           '/pages/juridical/depositary/payment-dispersion-process/conciliation-depositary-payments',

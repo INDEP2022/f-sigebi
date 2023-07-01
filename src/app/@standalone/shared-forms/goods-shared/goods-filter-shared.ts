@@ -54,7 +54,8 @@ import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.ser
 })
 export class GoodsFilterSharedComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   @Input() form: FormGroup;
   @Input() goodField: string = 'goodId';
 
@@ -75,7 +76,7 @@ export class GoodsFilterSharedComponent
     this.getGoods({ limit: 10, page: 1 });
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   getGoods(params: ListParams) {
     //Provisional data
@@ -114,7 +115,7 @@ export class GoodsFilterSharedComponent
           'No hay bienes que mostrar con los filtros seleccionado'
         );
       },
-      complete: () => { },
+      complete: () => {},
     });
   }
 
