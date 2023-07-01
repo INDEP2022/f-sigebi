@@ -4,9 +4,10 @@ export enum IDocumentEndpoints {
   fileBrowserFiles = 'file-browser/files',
   filePhotos = 'file-photo/photos',
   filePhoto = 'file-photo/photo',
-  filePhotoHistoric = 'file-photo/photo-historic',
+  filePhotoHistoric = 'file-photo/historicalPhoto',
   savePhoto = 'file-photo/savePhoto',
   deletePhoto = 'file-photo/deletePhoto',
   editPhoto = 'file-photo/editPhoto',
-  filePhotosHistoric = 'file-photo/photos-historic',
+  savePhotoZIP = 'file-photo/savePhotoZip',
+  filePhotosHistoric = 'file-photo/historicalPhotos',
 }
