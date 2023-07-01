@@ -100,4 +100,12 @@ export class ConvertiongoodService extends HttpService {
     const route = `${ConvertiongoodEndpoints.ConvertionActa}/${id}`;
     return this.put(route, conversionActa);
   }
+  getAllActasConversion(params: ListParams) {
+    const route = `${ConvertiongoodEndpoints.LisActas}`;
+    return this.get(route, params);
+  }
+  getActasByConvertion(cve: string) {
+    const route = `${ConvertiongoodEndpoints.LisActas}?filter.cve_acta_conv=${cve}`;
+    return this.get(route, cve);
+  }
 }

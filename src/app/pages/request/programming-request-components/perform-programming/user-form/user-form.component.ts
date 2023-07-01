@@ -6,7 +6,7 @@ import { IGeneric } from 'src/app/core/models/catalogs/generic.model';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { EMAIL_PATTERN, NAME_PATTERN } from 'src/app/core/shared/patterns';
+import { EMAIL_PATTERN2, NAME_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -48,7 +48,7 @@ export class UserFormComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.maxLength(40),
-          Validators.pattern(EMAIL_PATTERN),
+          Validators.pattern(EMAIL_PATTERN2),
         ],
       ],
       userCharge: [null, [Validators.required]],

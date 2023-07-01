@@ -11,8 +11,10 @@ export interface IProceedings {
   minutesId?: number;
   proceedingsType?: string;
   proceedingsCve?: string;
+  folioProceedings?: string;
   nameWorker1?: string;
   positionWorker1?: string;
+  id_content?: string;
   idCatWorker1?: string;
   idNoWorker1?: string;
   nameWorker2?: string;

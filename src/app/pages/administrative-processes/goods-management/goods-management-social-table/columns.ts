@@ -9,11 +9,11 @@ export const COLUMNS = {
     title: 'No. Bien',
     sort: false,
   },
-  numberProceedings: {
+  fileNumber: {
     title: 'Expediente',
     sort: false,
   },
-  downloadLabel: {
+  destiny: {
     title: 'Descripción Etiqueta',
     sort: false,
   },
@@ -21,27 +21,27 @@ export const COLUMNS = {
     title: 'Estatus',
     sort: false,
   },
-  downloadStatus: {
+  statusDescription: {
     title: 'Descripción Estatus',
     sort: false,
   },
-  description: {
+  goodDescription: {
     title: 'Descripción',
     sort: false,
   },
-  downloadGuy: {
+  goodType: {
     title: 'Tipo',
     sort: false,
   },
-  downloadsubtype: {
+  goodStype: {
     title: 'Subtipo',
     sort: false,
   },
-  downloadSsubtype: {
+  goodSsType: {
     title: 'Ssubtipo',
     sort: false,
   },
-  downloadsssubtype: {
+  goodSssType: {
     title: 'Sssubtipo',
     sort: false,
   },

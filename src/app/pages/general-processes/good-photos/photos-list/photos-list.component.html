@@ -65,9 +65,11 @@
           class="dropdown-menu dropdown-menu-right"
           role="menu"
           aria-labelledby="button-basic">
-          <!-- <li role="menuitem">
-            <a class="dropdown-item" (click)="showHistoric()">Histórico</a>
-          </li> -->
+          <li role="menuitem">
+            <a class="dropdown-item" (click)="openFileUploader()"
+              >Carga Masiva (ZIP)</a
+            >
+          </li>
           <li
             role="menuitem"
             [class]="disabledDeletePhotos() ? 'disabledDelete' : ''"
@@ -81,7 +83,9 @@
             role="menuitem"
             [class]="disabledDeleteAllPhotos() ? 'disabledDelete' : ''"
             [tooltip]="errorMessage">
-            <a class="dropdown-item">Eliminar Todas</a>
+            <a class="dropdown-item" (click)="confirmDelete(true)"
+              >Eliminar Todas</a
+            >
           </li>
         </ul>
       </div>
@@ -98,7 +102,7 @@
         No hay fotos cargadas
       </h6>
       <div
-        class="col-md-4 grid-square"
+        class="col-md-4 col-sm-6 grid-square"
         *ngFor="let image of files; let i = index">
         <div class="w-100 m-1 img-container">
           <div class="row">
