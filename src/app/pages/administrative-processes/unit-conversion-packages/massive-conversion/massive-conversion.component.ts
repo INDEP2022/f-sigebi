@@ -14,9 +14,11 @@ import * as XLSX from 'xlsx';
 import { MassiveConversionPermissionsComponent } from '../massive-conversion-permissions/massive-conversion-permissions.component';
 import { COLUMNS } from './columns';
 
+import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import * as FileSaver from 'file-saver';
 import { LocalDataSource } from 'ng2-smart-table';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IpackageValidGood } from 'src/app/core/models/catalogs/Ipackage-valid-good';
 import {
@@ -24,6 +26,7 @@ import {
   IPackageInfo,
 } from 'src/app/core/models/catalogs/package.model';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
@@ -44,6 +47,7 @@ interface ValidaButton {
 })
 export class MassiveConversionComponent extends BasePage implements OnInit {
   modalRef: BsModalRef;
+  loadingText: string = '';
 
   validaButton: ValidaButton = {
     PB_VALIDA: false,
@@ -53,6 +57,13 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   };
   descData: {
     descDelegation: string;
+  };
+  descPaq = {
+    // descDelegation: '',
+    descTargetTag: '',
+    // descTransferent: '',
+    warehouseDesc: '',
+    descgoodClassification: '',
   };
 
   goodErrors: any[] = [];
@@ -90,8 +101,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     private router: Router,
     private goodService: GoodService,
     private documentService: DocumentsService,
+    private sanitizer: DomSanitizer,
     private goodProcessService: GoodprocessService,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    private siabService: SiabService
   ) {
     super();
 
@@ -177,7 +190,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   emitDelegation(delegation: any) {
-    console.log(delegation, 'delegacion');
     this.descData.descDelegation = delegation;
   }
 
@@ -185,7 +197,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     //this.openModal({ edit: true, paragraph });
   }
 
-  viewModal(type: string, size?: string) {
+  viewModal(type: string, size: string = '') {
     const modals: Record<string, any> = {
       error: {
         config: {
@@ -195,7 +207,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       },
       good: {
         config: {
-          data: this.form.value,
+          data: {
+            goodDet: this.goodsList,
+            infoPack: { ...this.form.value, ...this.descPaq },
+          },
         },
         component: MassiveConversionModalGoodComponent,
       },
@@ -216,10 +231,13 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     }
 
     this.modalRef = this.modalService.show(activeModal.component, modalConfig);
+
+    this.modalRef.content.onSentGoods.subscribe((result: any) => {
+      this.modalEvent(result);
+    });
   }
 
   validateButtons(status: string) {
-    console.log(status);
     if (status)
       if (status === 'P') {
         this.validaButton.PB_VALIDA = true;
@@ -257,6 +275,23 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       this.validaButton.PB_VALIDA = false;
       this.validaButton.PB_CERRAR = false;
     }
+  }
+
+  modalEvent(event: any) {
+    let dataRes;
+    if (event) {
+      dataRes = event.map((element: any) => {
+        return {
+          numberGood: element.goodNumber,
+          description: element.description,
+          record: element.fileNumber,
+          originalUnit: element.measurementUnit,
+          originalAmount: element.quantity,
+        };
+      });
+    }
+    this.data.load(dataRes);
+    this.totalItems = this.data.count();
   }
 
   receiveInfo(information: any) {
@@ -328,6 +363,12 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.validateButtons(statuspack);
     this.packageNumber = numberPackage;
     this.getGoods();
+    ////
+    this.descPaq = {
+      warehouseDesc: information.cat_almacenes.description,
+      descTargetTag: information.cat_etiqueta_bien.description,
+      descgoodClassification: information.cat_sssubtipo_bien.description,
+    };
   }
   // Aquí puedes realizar las acciones necesarias con la información recibida
 
@@ -363,7 +404,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     let params = new ListParams();
     params['filter.id'] = noGoodFather;
     this.goodService.getAll(params).subscribe(response => {
-      console.log(response);
       this.form2.patchValue({
         numberGood: response.data[0].id,
         record: response.data[0].fileNumber,
@@ -430,7 +470,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
               response => {
                 if (response.data.length > 0) {
                   lnuInvoiceUnoversal = 1;
-                  console.log('invoice universal 417');
                 }
                 resolve();
               },
@@ -442,8 +481,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
           documentPromise
             .then(() => {
-              console.log('invoice universal 428' + lnuInvoiceUnoversal);
-
               if (
                 lnuInvoiceUnoversal > 0 &&
                 this.form.get('status').value == 'V'
@@ -475,8 +512,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
             });
         } else if (this.form.get('packageType').value == 3) {
           let lnuInvoiceUnoversal = 1;
-
-          console.log('invoice universal 428' + lnuInvoiceUnoversal);
 
           if (lnuInvoiceUnoversal > 0 && this.form.get('status').value == 'V') {
             this.verifyGoods();
@@ -539,7 +574,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   showCloseAlert() {
     // Validar que todos los campos estén diligenciados
-    console.log(this.form.value);
     if (this.form.get('packageType').value != 3) {
       if (this.form.get('scanFolio').value === null) {
         Swal.fire('Se debe tener el folio de escaneo', '', 'error');
@@ -559,7 +593,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
               // this.form.get('quantity').markAsTouched();
               ////this.pubValidaGoods();
             } else {
-              console.log(this.chValidateGood);
               if (this.chValidateGood == true) {
                 Swal.fire(
                   'Existe inconsistencia en los bienes...',
@@ -571,7 +604,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
                 let goods = res.map((good: { numberGood: any }) => {
                   return good.numberGood;
                 });
-                console.log(goods);
                 let closeData = {
                   packageNumber: this.form.value.package,
                   packageUnit: this.form.value.measurementUnit,
@@ -648,8 +680,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         pValidVal24: 21,
       };
 
-      console.log('Linea 537', IpackageValidGoods);
-
       this.packageGoodService.pubValidGood(IpackageValidGoods).subscribe(
         response => {
           this.goodErrors = response.data;
@@ -685,7 +715,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
     this.massiveGoodService.pubExport(iPackage).subscribe(
       response => {
-        console.log(response);
         this.convertAndDownloadExcel(response.base64File, response.fileName);
         Swal.fire('Exito', 'Se genero el archivo excel', 'success');
       },
@@ -758,6 +787,34 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     // } else if (err === 7) {
     //   err0 = 'El parámetro del Val24.';
     // }
+  }
+
+  cancelPackage() {}
+
+  downloadReport() {
+    let params: any = {};
+    params['NO_PAQUETE'] = this.form.get('package').value;
+
+    this.loadingText = 'Generando reporte ...';
+    this.siabService.fetchReport('RGENACTACONVUNIDAD', params).subscribe({
+      next: (response: BlobPart) => {
+        this.loading = false;
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
   }
 
   openPermissions(data: any) {

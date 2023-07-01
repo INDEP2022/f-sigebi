@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { PackageGoodEndpoints } from 'src/app/common/constants/endpoints/ms-package-good';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
-import { IpackageValidGood } from '../../models/catalogs/Ipackage-valid-good';
+import {
+  IpackageValidGood,
+  PrepDestinationPackage,
+} from '../../models/catalogs/Ipackage-valid-good';
 import { IPackage } from '../../models/catalogs/package.model';
 
 @Injectable({
@@ -33,5 +36,10 @@ export class PackageGoodService extends HttpService {
   pubValidGood(good: IpackageValidGood) {
     const route = `${PackageGoodEndpoints.paqDestinationDet}/${PackageGoodEndpoints.pubValidGood}`;
     return this.post(route, good);
+  }
+
+  prepDestinationPackage(data: PrepDestinationPackage) {
+    const route = `${PackageGoodEndpoints.prepDestinationPackage}`;
+    return this.post(route, data);
   }
 }

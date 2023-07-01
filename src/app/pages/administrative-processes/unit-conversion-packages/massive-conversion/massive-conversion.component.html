@@ -232,6 +232,7 @@
     </div>
     <div class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-center mb-3 mt-3">
       <button
+        (click)="cancelPackage()"
         [disabled]="!validaButton.PB_CANCELA"
         type="button"
         class="btn btn-danger btn-sm active w-100">
@@ -343,8 +344,9 @@
           class="col-lg-2 col-md-2 col-sm-6 col-12 align-self-baseline mb-3 mt-3">
           <button
             (click)="exportToExcel()"
-            class="btn btn btn-success active btn-sm w-100">
-            Exportar
+            class="btn btn-sm btn-success active">
+            Exportar a Excel
+            <i class="bx bx-download float-icon"></i>
           </button>
         </div>
         <div
@@ -396,10 +398,11 @@
         <div class="d-flex justify-content-center">
           <div class="m-3">
             <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              (click)="generateFoli()">
-              Generar folio
+              (click)="generateFoli()"
+              tooltip="Generar Folio de Escaneo y Solicitud"
+              containerclass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-1">
+              <i class="bx bxs-file-find"></i>
             </button>
           </div>
         </div>
@@ -408,10 +411,10 @@
         <div class="d-flex justify-content-center">
           <div class="m-3">
             <button
-              [disabled]="generateFo"
-              type="button"
-              class="btn btn-info btn-sm active">
-              scanner
+              tooltip="Escanear"
+              containerclass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-1">
+              <i class="bx bxs-file"></i>
             </button>
           </div>
         </div>
@@ -434,11 +437,11 @@
         <div class="d-flex justify-content-center">
           <div class="m-3">
             <button
-              [disabled]="generateFo"
-              type="button"
-              class="btn btn-info btn-sm active"
-              (click)="generate()">
-              Ver folio
+              (click)="generate()"
+              tooltip="Generar Folio de Escaneo y Solicitud"
+              containerclass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-1">
+              <i class="bx bxs-file-find"></i>
             </button>
           </div>
         </div>
@@ -447,10 +450,10 @@
         <div class="d-flex justify-content-center">
           <div class="m-3">
             <button
-              [disabled]="generateFo"
-              type="button"
-              class="btn btn-primary btn-sm active">
-              ver scaneo
+              tooltip="Generar Folio de Escaneo y Solicitud"
+              containerclass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-1">
+              <i class="bx bxs-file-find"></i>
             </button>
           </div>
         </div>
@@ -482,6 +485,14 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Párrafos</h5>
+    <div class="col-md-5 buttons">
+      <button
+        (click)="downloadReport()"
+        type="button"
+        class="btn btn-primary active btn-sm">
+        Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+      </button>
+    </div>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">

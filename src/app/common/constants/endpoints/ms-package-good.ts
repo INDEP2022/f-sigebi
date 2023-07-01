@@ -4,4 +4,5 @@ export enum PackageGoodEndpoints {
   paqDestinationDet = 'paq-destination-det',
   pubValidGood = 'pup-valid-good',
   paqToExcelDet = 'paq-to-excel-det',
+  prepDestinationPackage = 'application/prepDestinationPackage',
 }

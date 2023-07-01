@@ -27,6 +27,7 @@ export class TvalTable1Service
   private readonly route2: string = ENDPOINT_LINKS.DinamicTable1;
   private readonly route3: string = ENDPOINT_LINKS.DinamicTablesFind;
   private readonly route4: string = ENDPOINT_LINKS.Table1;
+  private readonly route5: string = ENDPOINT_LINKS.tavaltable1;
   constructor(
     private Tvaltablas1Repository: Repository<ITvaltable1>,
     private Tvaltabla1Repository: Repository<ITvaltables1>,
@@ -55,8 +56,15 @@ export class TvalTable1Service
     return this.tavaltable1.getById2(`${this.route2}/tableKey/422/value`, id);
   }
 
-  getById6(id: string | number): Observable<TvalTable1Data> {
+  getById6(id: string | number): Observable<any> {
     return this.tavaltable1.getById2(`${this.route2}/tableKey/423/otKey`, id);
+  }
+
+  getById5All(params?: ListParams): Observable<IListResponse<TvalTable1Data>> {
+    return this.tavaltable1.getAllPaginated2(
+      `${this.route1}/tavaltable1?tableKey=422`,
+      params
+    );
   }
 
   getByIdFind(id: string | number): Observable<any> {
@@ -83,5 +91,9 @@ export class TvalTable1Service
       id,
       model
     );
+  }
+
+  updateTvalTable1(model: Partial<ITvaltables1>): Observable<Object> {
+    return this.Tvaltablas1Repository.update3(`${this.route5}`, model);
   }
 }

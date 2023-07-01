@@ -8,3 +8,23 @@ export interface IpackageValidGood {
   pTypePaquete: number;
   pValidVal24: number;
 }
+
+export interface GoodsItem {
+  goodNumber: number;
+  transfereeNumber: number;
+  coordAdmin: string;
+  fileNumber: number;
+  goodDescription: string;
+  unitMeasure: string;
+  quantity: number;
+  val24: string;
+  goodClassifyNumber: number;
+  labelNumber: number;
+  goodStatus: string;
+  warehouseNumber: number;
+}
+
+export interface PrepDestinationPackage {
+  packegeNumber: number;
+  goodsList: GoodsItem[];
+}

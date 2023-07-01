@@ -30,16 +30,18 @@ export class SeeMoreComponent implements OnInit, ViewCell {
   visibleText: string = '';
   hiddenText: string = '';
   textButton: string = 'Ver m\u00E1s';
-  maxLenght: number = 90;
+  maxLenght: number = 20;
   readingMore: boolean = false;
   constructor() {}
 
   ngOnInit(): void {
+    console.log(this.value);
     this.fullText = String(this.value);
     this.cutText();
   }
 
   cutText() {
+    console.log(this.fullText.length);
     if (this.fullText.length > this.maxLenght) {
       this.visibleText = this.fullText.substring(0, this.maxLenght);
       this.hiddenText = this.fullText.substring(this.maxLenght);
