@@ -4,7 +4,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { catchError, map, mergeMap, Observable, of, throwError } from 'rxjs';
 import { IDocumentEndpoints } from 'src/app/common/constants/endpoints/ms-idocument-endpoints';
 import { HttpService } from 'src/app/common/services/http.service';
-import { getMimeTypeFromBase64 } from 'src/app/utils/functions/get-mime-type';
 import { environment } from 'src/environments/environment';
 import { v4 as uuidv4 } from 'uuid';
 import { IListResponseMessage } from '../../interfaces/list-response.interface';
@@ -92,78 +91,78 @@ export class FilePhotoService extends HttpService {
     );
   }
 
-  getAllWidthPhotosHistoric(
-    goodNumber: string
-  ): Observable<{ image: string; usuarioElimina: string }[]> {
-    return this.getAll(goodNumber).pipe(
-      catchError(x => of([] as string[])),
-      map(response => {
-        if (response && response.length > 0)
-          return response.map(item => {
-            let index = item.indexOf('F');
-            return this.getById(
-              goodNumber,
-              +item.substring(index + 1, index + 5)
-            ).pipe(
-              catchError(x => of(null)),
-              map(x => {
-                return {
-                  image: this.base64Change(x, item),
-                  usuarioElimina:
-                    'Usuario eliminó moto1.jpg ' +
-                    'Nombre: SIGEBIADMON Fecha: 29/06/2023',
-                };
-              })
-            );
-            // return this.getByIdHistoric(
-            //   goodNumber,
-            //   +item.substring(index + 1, index + 11)
-            // );
-          });
-        else {
-          return [];
-        }
-      }),
-      mergeMap(x => this.validationForkJoin(x))
-    );
-  }
+  // getAllWidthPhotosHistoric(
+  //   goodNumber: string
+  // ): Observable<{ image: string; usuarioElimina: string }[]> {
+  //   return this.getAll(goodNumber).pipe(
+  //     catchError(x => of([] as string[])),
+  //     map(response => {
+  //       if (response && response.length > 0)
+  //         return response.map(item => {
+  //           let index = item.indexOf('F');
+  //           return this.getById(
+  //             goodNumber,
+  //             +item.substring(index + 1, index + 5)
+  //           ).pipe(
+  //             catchError(x => of(null)),
+  //             map(x => {
+  //               return {
+  //                 image: this.base64Change(x, item),
+  //                 usuarioElimina:
+  //                   'Usuario eliminó moto1.jpg ' +
+  //                   'Nombre: SIGEBIADMON Fecha: 29/06/2023',
+  //               };
+  //             })
+  //           );
+  //           // return this.getByIdHistoric(
+  //           //   goodNumber,
+  //           //   +item.substring(index + 1, index + 11)
+  //           // );
+  //         });
+  //       else {
+  //         return [];
+  //       }
+  //     }),
+  //     mergeMap(x => this.validationForkJoin(x))
+  //   );
+  // }
 
-  private base64Change(base64: string, filename: string) {
-    if (!base64) {
-      return null;
-    }
-    const bytesSize = 4 * Math.ceil(base64.length / 3) * 0.5624896334383812;
-    // this.documentLength = bytesSize / 1000;
-    const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';
-    // TODO: Checar cuando vengan pdf, img etc
-    return ext.toLowerCase().includes('tif')
-      ? this.getUrlTiff(base64, filename)
-      : this.getUrlDocument(base64, filename);
-    // this.mimeType = getMimeTypeFromBase64(this.imgSrc as string, this.filename);
-  }
+  // private base64Change(base64: string, filename: string) {
+  //   if (!base64) {
+  //     return null;
+  //   }
+  //   const bytesSize = 4 * Math.ceil(base64.length / 3) * 0.5624896334383812;
+  //   // this.documentLength = bytesSize / 1000;
+  //   const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';
+  //   // TODO: Checar cuando vengan pdf, img etc
+  //   return ext.toLowerCase().includes('tif')
+  //     ? this.getUrlTiff(base64, filename)
+  //     : this.getUrlDocument(base64, filename);
+  //   // this.mimeType = getMimeTypeFromBase64(this.imgSrc as string, this.filename);
+  // }
 
-  private getUrlTiff(base64: string, filename: string) {
-    try {
-      const buffer = Buffer.from(base64, 'base64');
-      const tiff = new Tiff({ buffer });
-      const canvas: HTMLCanvasElement = tiff.toCanvas();
-      canvas.style.width = '100%';
-      console.log('llego aca', filename);
-      return this.sanitizer.bypassSecurityTrustResourceUrl(canvas.toDataURL());
-    } catch (error) {
-      // this.error = true;
-      // console.log(this.error);
-      return this.sanitizer.bypassSecurityTrustResourceUrl(NO_IMAGE_FOUND);
-    }
-  }
+  // private getUrlTiff(base64: string, filename: string) {
+  //   try {
+  //     const buffer = Buffer.from(base64, 'base64');
+  //     const tiff = new Tiff({ buffer });
+  //     const canvas: HTMLCanvasElement = tiff.toCanvas();
+  //     canvas.style.width = '100%';
+  //     console.log('llego aca', filename);
+  //     return this.sanitizer.bypassSecurityTrustResourceUrl(canvas.toDataURL());
+  //   } catch (error) {
+  //     // this.error = true;
+  //     // console.log(this.error);
+  //     return this.sanitizer.bypassSecurityTrustResourceUrl(NO_IMAGE_FOUND);
+  //   }
+  // }
 
-  private getUrlDocument(base64: string, filename: string) {
-    let mimeType;
-    mimeType = getMimeTypeFromBase64(base64, filename);
-    return this.sanitizer.bypassSecurityTrustResourceUrl(
-      `data:${mimeType};base64, ${base64}`
-    );
-  }
+  // private getUrlDocument(base64: string, filename: string) {
+  //   let mimeType;
+  //   mimeType = getMimeTypeFromBase64(base64, filename);
+  //   return this.sanitizer.bypassSecurityTrustResourceUrl(
+  //     `data:${mimeType};base64, ${base64}`
+  //   );
+  // }
 
   deletePhoto(goodNumber: string, consecNumber: number) {
     const user = localStorage.getItem('username').toUpperCase();
@@ -180,7 +179,7 @@ export class FilePhotoService extends HttpService {
     const formData = new FormData();
     formData.append(fileField, file, `FU_${uuidv4()}.${ext}`);
     formData.append('goodNumber', `${identificator}`);
-    formData.append('consecNumber', this.consecNumber++ + '');
+    // formData.append('consecNumber', this.consecNumber++ + '');
     formData.append('recordNumber', '305315076');
     formData.append('photoDate', new Date().toISOString());
     formData.append('photoDateHc', new Date().toISOString());
