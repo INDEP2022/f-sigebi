@@ -65,29 +65,16 @@
   </form>
 </div>
 <div class="row">
-  <div class="d-flex justify-content-end">
-    <div class="m-3">
-      <button (click)="add()" class="btn btn-primary active btn-sm">
-        {{ textButon }}
-      </button>
-    </div>
-  </div>
-</div>
-<div class="row">
   <div class="col-md-3">
-    <!--  <button
-      class="btn btn-primary btn-sm active"
-      (click)="getAtribute()"
-      >
-      Obtener Atributos
-    </button> -->
     <button
       [disabled]="generateAtri"
-      class="btn btn-secondary btn-sm active mt-2"
+      class="btn btn-primary btn-sm active"
       (click)="generateAtribute()">
-      Generar Atributos
+      Generar Atributos&nbsp;
     </button>
-    <!-- [disabled]="disableGetAtribute" -->
+    <button (click)="add()" class="btn btn-secondary active btn-sm mt-2">
+      {{ textButon }}
+    </button>
   </div>
   <div class="col">
     <div class="row" *ngIf="viewAct">

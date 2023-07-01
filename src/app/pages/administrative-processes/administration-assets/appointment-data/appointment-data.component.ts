@@ -49,7 +49,7 @@ export class AppointmentDataComponent
         type: 'html',
         valuePrepareFunction: (text: string) => {
           return `${
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
           }`;
         },
         filter: {
@@ -64,7 +64,7 @@ export class AppointmentDataComponent
         type: 'html',
         valuePrepareFunction: (text: string) => {
           return `${
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
           }`;
         },
         filter: {
@@ -79,7 +79,7 @@ export class AppointmentDataComponent
         type: 'html',
         valuePrepareFunction: (text: string) => {
           return `${
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
           }`;
         },
         filter: {
@@ -99,7 +99,7 @@ export class AppointmentDataComponent
         type: 'html',
         valuePrepareFunction: (text: string) => {
           return `${
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
           }`;
         },
         filter: {
@@ -124,7 +124,6 @@ export class AppointmentDataComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = '';
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -153,7 +152,6 @@ export class AppointmentDataComponent
 
             if (filter.search !== '') {
               this.columnFilter[field] = `${searchFilter}:${filter.search}`;
-              console.log('this.param:', this.params);
               this.params.value.page = 1;
             } else {
               delete this.columnFilter[field];
@@ -169,7 +167,6 @@ export class AppointmentDataComponent
   }
 
   searchGoodMenage(idGood: number) {
-    console.log('******** Esto es APPOINTMENT');
     this.loading = true;
     this.params.getValue()['filter.goodNum'] = `$eq:${idGood}`;
     let params = {
@@ -178,8 +175,6 @@ export class AppointmentDataComponent
     };
     this.depositaryService.getAppointments(params).subscribe({
       next: (response: any) => {
-        console.log('--------- Nombramiento ----------');
-        console.log(response);
         this.list = response.data.map((appoiment: IDepositaryAppointments) => {
           return {
             responsible: appoiment.responsible,
@@ -199,7 +194,6 @@ export class AppointmentDataComponent
         this.dataLoand.load([]);
         this.dataLoand.refresh();
         this.loading = false;
-        console.log(err);
       },
     });
   }
