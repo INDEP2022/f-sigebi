@@ -1334,7 +1334,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           }
         });
       } else {
-        console.log('Crea un acta e asignala a recibos bienes');
         const formData: IProceedings = {
           minutesId: 1,
           idPrograming: this.programming.id,
@@ -1397,23 +1396,40 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           }
         });
       } else {
-        let config = {
-          ...MODAL_CONFIG,
-          class: 'modal-lg modal-dialog-centered',
+        const formData: IProceedings = {
+          minutesId: 1,
+          idPrograming: this.programming.id,
+          statusProceeedings: 'ABIERTO',
         };
-        config.initialState = {
-          programming: this.programming,
-          selectGoods: this.selectGood,
-          callback: (data: boolean) => {
-            if (data) {
-              this.goodsWarehouse.clear();
-              this.getReceiptsGuard();
-              this.getInfoGoodsProgramming();
+        this.proceedingService.createProceedings(formData).subscribe({
+          next: async response => {
+            const createKeyAct = await this.createKeyAct(response);
+
+            if (createKeyAct == true) {
+              const createReceiptGood: any =
+                await this.createReceiptWarehouseNewAct(response);
+              if (createReceiptGood) {
+                const createReceiptGoodGuard =
+                  await this.createReceiptGoodWarehouse(createReceiptGood);
+
+                if (createReceiptGoodGuard) {
+                  const updateProgrammingGood =
+                    await this.updateProgGoodWarehouseNewAct(response);
+
+                  if (updateProgrammingGood) {
+                    const updateGood = await this.updateGoodWarehouse();
+                    this.goodsWarehouse.clear();
+                    this.headingWarehouse = `Almacén(${this.goodsWarehouse.length})`;
+                    this.getReceiptsGuard();
+                    this.getInfoGoodsProgramming();
+                    this.formLoadingGuard = false;
+                  }
+                }
+              }
             }
           },
-        };
-
-        this.modalService.show(AssignReceiptFormComponent, config);
+          error: error => {},
+        });
       }
     }
   }
@@ -1501,6 +1517,24 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       const formData = {
         programmingId: this.programmingId,
         actId: receipt.actId,
+        typeReceipt: 'ALMACEN',
+        statusReceiptGuard: 'ABIERTO',
+        receiptDate: new Date(),
+      };
+      this.receptionGoodService.createReception(formData).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {},
+      });
+    });
+  }
+
+  createReceiptWarehouseNewAct(proceeding: IProceedings) {
+    return new Promise((resolve, reject) => {
+      const formData = {
+        programmingId: this.programmingId,
+        actId: proceeding.id,
         typeReceipt: 'ALMACEN',
         statusReceiptGuard: 'ABIERTO',
         receiptDate: new Date(),
@@ -1604,6 +1638,27 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         const formData: Object = {
           programmingId: this.programming.id,
           actaId: receipt.actId,
+          goodId: item.goodId,
+          status: 'EN_ALMACEN',
+        };
+
+        this.programminGoodService.updateGoodProgramming(formData).subscribe({
+          next: response => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(false);
+          },
+        });
+      });
+    });
+  }
+  updateProgGoodWarehouseNewAct(proceeding: IProceedings) {
+    return new Promise((resolve, reject) => {
+      this.selectGood.map(item => {
+        const formData: Object = {
+          programmingId: this.programming.id,
+          actaId: proceeding.id,
           goodId: item.goodId,
           status: 'EN_ALMACEN',
         };
