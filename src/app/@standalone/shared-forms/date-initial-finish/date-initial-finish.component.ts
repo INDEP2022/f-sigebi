@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 //Services
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -21,7 +21,6 @@ export class DateInitialFinishComponent extends BasePage implements OnInit {
   @Input() form2: FormGroup;
 
   maxDate = new Date();
-  variable: string = 'namee';
   //---
   @Output() dateInicio: EventEmitter<Date> = new EventEmitter<Date>();
 
@@ -33,22 +32,12 @@ export class DateInitialFinishComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('labelInicioName', this.labelInicioName);
-    console.log('labelFinName', this.labelFinName);
-    console.log('formInitial', this.formInitial);
-    console.log('formFin', this.formFin);
-
     if (this.form2) {
-      // this.deshabilitarFechasFinales();
-      console.log('formFin', this.form2);
       this.form2.controls[this.formFin].disable();
-      // this.form2.controls[this.formFin].disable();
     }
   }
   onChange(valor: any, nameForm: any, nameFinForm: any) {
     if (this.form2 && valor !== undefined) {
-      // this.deshabilitarFechasFinales();
-      console.log('onChange onChange onChange', this.form2);
       this.form.get(nameForm).setValue(valor);
       this.form.updateValueAndValidity();
       this.form2.controls[nameFinForm].enable();
@@ -56,29 +45,9 @@ export class DateInitialFinishComponent extends BasePage implements OnInit {
   }
 
   onChangeFin(valor: any, nameForm: any) {
-    // this.form.get(nameForm).setValue(valor);
-    // this.form.updateValueAndValidity();
-    // this.formEmit.next(this.form);
     if (this.form2 && valor !== undefined) {
-      // this.deshabilitarFechasFinales();
-      console.log('onChange onChange onChange', this.form2);
       this.form2.get(nameForm).setValue(valor);
       this.form2.updateValueAndValidity();
     }
-  }
-
-  deshabilitarFechasFinales() {
-    console.log('deshaaaaaaa', this.formInitial);
-    // this.form.controls[this.formInitial].disable();
-    // this.form.controls[this.formFin].disable();
-    // this.form.get(this.formFin).disable();
-    // this.form.get(this.formFin).disable();
-  }
-
-  resetFields(fields: AbstractControl[]) {
-    // fields.forEach(field => {
-    //   field = null;
-    // });
-    // this.form.updateValueAndValidity();
   }
 }

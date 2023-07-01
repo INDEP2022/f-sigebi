@@ -54,7 +54,8 @@ import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.ser
 })
 export class GoodsFilterSharedComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   @Input() form: FormGroup;
   @Input() goodField: string = 'goodId';
 
@@ -75,7 +76,7 @@ export class GoodsFilterSharedComponent
     this.getGoods({ limit: 10, page: 1 });
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   getGoods(params: ListParams) {
     //Provisional data
@@ -102,7 +103,7 @@ export class GoodsFilterSharedComponent
         this.goods = new DefaultSelect(this.data, data.count);
       },
       error: err => {
-        this.goods = new DefaultSelect([], 0, true);
+        this.goods = new DefaultSelect([], 0);
         let error = '';
         // if (err.status === 0) {
         //   error = 'Revise su conexión de Internet.';
@@ -114,12 +115,11 @@ export class GoodsFilterSharedComponent
           'No hay bienes que mostrar con los filtros seleccionado'
         );
       },
-      complete: () => { },
+      complete: () => {},
     });
   }
 
   onGoodsChange(type: any) {
-    delete type['info'];
     if (this.patchValue) {
       this.form.patchValue({
         goodId: type.goodId,

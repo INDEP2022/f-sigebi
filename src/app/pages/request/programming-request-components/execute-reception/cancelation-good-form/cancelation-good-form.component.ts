@@ -56,36 +56,43 @@ export class CancelationGoodFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.goodSelect.map(item => {
-      const formData: Object = {
-        programmingId: this.programming.id,
-        goodId: item.goodId,
-        status: 'CANCELADO_TMP',
-      };
+    if (this.form.get('cancelation').value) {
+      this.goodSelect.map(item => {
+        const formData: Object = {
+          programmingId: this.programming.id,
+          goodId: item.goodId,
+          status: 'CANCELADO_TMP',
+        };
 
-      this.programmingGoodService.updateGoodProgramming(formData).subscribe({
-        next: response => {
-          console.log('updeado', response);
-          const formData: Object = {
-            id: item.id,
-            goodId: item.goodId,
-            goodStatus: 'CANCELADO_TMP',
-            programmationStatus: 'CANCELADO_TMP',
-            reasonCancReprog: this.form.get('cancelation').value,
-          };
+        this.programmingGoodService.updateGoodProgramming(formData).subscribe({
+          next: response => {
+            const formData: Object = {
+              id: item.id,
+              goodId: item.goodId,
+              goodStatus: 'CANCELADO_TMP',
+              programmationStatus: 'CANCELADO_TMP',
+              reasonCancReprog: this.form.get('cancelation').value,
+            };
 
-          this.goodService.updateByBody(formData).subscribe({
-            next: response => {
-              console.log('actualizado', response);
-              this.modalRef.content.callback(true);
-              this.modalRef.hide();
-            },
-            error: error => {},
-          });
-        },
-        error: error => {},
+            this.goodService.updateByBody(formData).subscribe({
+              next: response => {
+                console.log('actualizado', response);
+                this.modalRef.content.callback(true);
+                this.modalRef.hide();
+              },
+              error: error => {},
+            });
+          },
+          error: error => {},
+        });
       });
-    });
+    } else {
+      this.alertInfo(
+        'error',
+        'Acción Inválida',
+        'Se necesita un motivo de reprogramación'
+      ).then();
+    }
   }
 
   close() {

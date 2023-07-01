@@ -221,8 +221,13 @@ export class ScheduledMaintenanceComponent
 
   selectGoodNull(good: any, self: ScheduledMaintenanceComponent) {
     console.log(good);
-    localStorage.setItem('selectedBad', JSON.stringify(good));
-    self.router.navigate(['pages/general-processes/goods-characteristics']);
+    self.router.navigate(['pages/general-processes/good-photos'], {
+      queryParams: {
+        numberGood: good.id,
+      },
+    });
+    // localStorage.setItem('selectedBad', JSON.stringify(good));
+    // self.router.navigate(['pages/general-processes/goods-characteristics']);
   }
 
   openModalActas() {

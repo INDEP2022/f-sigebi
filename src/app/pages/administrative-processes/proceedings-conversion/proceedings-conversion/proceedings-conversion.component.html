@@ -6,11 +6,15 @@
     <div class="d-flex justify-content-end">
       <div class="d-inline mr-2">
         Fec&#46; de Elaboración:
-        <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
+        <span
+          class="badge bg-info ml-3 mr-3"
+          style="display: initial !important">
           {{ fCreate || '00/00/0000' }}
         </span>
         / Estatus:
-        <span class="badge bg-info ml-3 mr-3" style="display: initial !important">
+        <span
+          class="badge bg-info ml-3 mr-3"
+          style="display: initial !important">
           {{ statusConv || '-----' }}
         </span>
         <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
@@ -31,27 +35,17 @@
                 <i class="fa fa-filter" aria-hidden="true"></i>
                 Conversión
               </h5>
-              <!-- <div class="row">
-              </div> -->
-
-              <!-- <div></div> -->
-              <!-- <div class="d-inline mr-2">
+            </div>
+            <form [formGroup]="proceedingsConversionForm" class="form-material">
+              <div class="float-right">
                 <button
                   (click)="searchProcs()"
                   type="button"
                   class="btn btn-primary active btn-sm">
                   <i class="bx bx-list-plus bx-sm float-icon"></i>
                 </button>
-              </div> -->
-            </div>
-            <form [formGroup]="proceedingsConversionForm" class="form-material">
-              <div class="float-right">
-                <div class="col-md-3">
-                  <button (click)="searchProcs()" type="button" class="btn btn-primary active btn-sm">
-                    <i class="bx bx-list-plus bx-sm float-icon"></i>
-                  </button>
-                </div>
               </div>
+
               <div class="form-material">
                 <!-- apppcatd **************************************************************-->
                 <app-card [header]="false" [footer]="true">
@@ -71,20 +65,13 @@
                                   </div>
                                   <div class="col-md-5">
                                     <div>
-                                      <label for="">No. Bien Convertido (Bien Padre):
+                                      <label for=""
+                                        >No. Bien Convertido (Bien Padre):
                                       </label>
                                       {{ goodFatherNumber || '' }}
                                     </div>
                                   </div>
-                                  <!-- <div class="col-md-3">
-                                    <button
-                                      (click)="searchProcs()"
-                                      type="button"
-                                      class="btn btn-primary active btn-sm ml-4">
-                                      <i
-                                        class="bx bx-list-plus bx-sm float-icon"></i>
-                                    </button>
-                                  </div> -->
+
                                   <div class="col-md-3">
                                     <div>
                                       <label for="">No. Expediente: </label>
@@ -95,14 +82,16 @@
                                 <div class="row p-3">
                                   <div class="col-md-3">
                                     <div>
-                                      <label for="">Averiguación Previa:
+                                      <label for=""
+                                        >Averiguación Previa:
                                       </label>
                                       {{ preAver || '' }}
                                     </div>
                                   </div>
                                   <div class="col-md-5">
                                     <div>
-                                      <label for="">No.Exp. del Trasnferente:
+                                      <label for=""
+                                        >No.Exp. del Trasnferente:
                                       </label>
                                       {{ trasnfer || '' }}
                                     </div>
@@ -110,7 +99,7 @@
                                   <div class="col-md-3">
                                     <div>
                                       <label for="">Hora de creación: </label>
-                                      {{ time | date: 'hh:mm' }}
+                                      {{ time | date : 'hh:mm' }}
                                     </div>
                                   </div>
                                 </div>
@@ -139,73 +128,79 @@
                             <div class="col-md-12">
                               <div class="card">
                                 <div class="card-body">
-                                  <!-- <div class="col-md-3">
+                                  <div class="col-md-3">
                                     <div>
                                       <form-field
                                         [control]="
                                           proceedingsConversionForm.get(
-                                            'hourConv'
+                                            'respConv'
                                           )
                                         "
-                                        label="Hora">
+                                        label="Responsable">
                                         <input
                                           #inputValue
-                                          type="time"
+                                          type="text"
                                           class="form-control"
-                                          formControlName="hourConv"
+                                          formControlName="respConv"
                                           class="form-control"
-                                          bsDatepicker
-                                          [bsConfig]="datePickerConfig"
-                                          [value]="time | date: 'hh:mm'"
                                           [disabled]="validPermisos" />
                                       </form-field>
                                     </div>
-                                  </div> -->
-                                  <div class="col-md-3">
-                                    <div>
-                                      <form-field [control]="
-                                          proceedingsConversionForm.get(
-                                            'respConv'
-                                          )
-                                        " label="Responsable">
-                                        <input #inputValue type="text" class="form-control" formControlName="respConv"
-                                          class="form-control" [disabled]="validPermisos" />
-                                      </form-field>
-                                    </div>
                                   </div>
                                   <div class="col-md-3">
                                     <div>
-                                      <form-field [control]="
+                                      <form-field
+                                        [control]="
                                           proceedingsConversionForm.get(
                                             'testigoOIC'
                                           )
-                                        " label="Testigo de la contraloria">
-                                        <input #inputValue type="text" class="form-control" formControlName="testigoOIC"
-                                          pattern="^[A-Z]+" [disabled]="validPermisos" />
+                                        "
+                                        label="Testigo de la contraloria">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="testigoOIC"
+                                          pattern="^[A-Z]+"
+                                          [disabled]="validPermisos" />
                                       </form-field>
                                     </div>
                                   </div>
                                   <div class="col-md-3">
                                     <div>
-                                      <form-field [control]="
+                                      <form-field
+                                        [control]="
                                           proceedingsConversionForm.get(
                                             'testigoTwo'
                                           )
-                                        " label="Testigo">
-                                        <input #inputValue type="text" class="form-control" formControlName="testigoTwo"
-                                          pattern="^[A-Z]+" [disabled]="validPermisos" />
+                                        "
+                                        label="Testigo">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="testigoTwo"
+                                          pattern="^[A-Z]+"
+                                          [disabled]="validPermisos" />
                                       </form-field>
                                     </div>
                                   </div>
                                   <div class="col-md-3">
                                     <div>
-                                      <form-field [control]="
+                                      <form-field
+                                        [control]="
                                           proceedingsConversionForm.get(
                                             'testigoTree'
                                           )
-                                        " label="Testigo">
-                                        <input #inputValue type="text" class="form-control"
-                                          formControlName="testigoTree" pattern="^[A-Z]+" [disabled]="validPermisos" />
+                                        "
+                                        label="Testigo">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="testigoTree"
+                                          pattern="^[A-Z]+"
+                                          [disabled]="validPermisos" />
                                       </form-field>
                                     </div>
                                   </div>
@@ -216,105 +211,232 @@
                         </div>
                       </div>
                     </div>
-                    <div class="row p-3">
-                      <div class="col-md-3"></div>
-                    </div>
-                    <form [formGroup]="actaRecepttionForm" class="form-material" (ngSubmit)="searchProcs()">
+                    <form
+                      [formGroup]="actaRecepttionForm"
+                      class="form-material">
                       <div class="row">
                         <div class="col-md-12">
                           <div class="row">
                             <div class="col-md-12">
                               <div class="card">
                                 <div class="card-body">
-                                  <div class="col-md-3">
+                                  <div class="col-md-4">
                                     <div>
-                                      <form-field [control]="
+                                      <form-field
+                                        [control]="
                                           actaRecepttionForm.get('acta')
-                                        " label="Acta">
-                                        <input #inputValue type="text" class="form-control" formControlName="acta"
-                                          [disabled]="validPermisos" />
+                                        "
+                                        label="Acta">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="acta"
+                                          [disabled]="validPermisos"
+                                          readonly />
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-2">
+                                  <div class="col-md-4">
                                     <div>
-                                      <form-field [control]="
+                                      <form-field
+                                        [control]="
                                           actaRecepttionForm.get('type')
-                                        " label="Estado">
-                                        <!-- <input #inputValue type="text" class="form-control" formControlName="type"
-                                          [disabled]="validPermisos" /> -->
-                                        <select class="form-control" formControlName="type">
-                                          <option value="2">2</option>
-                                        </select>
+                                        "
+                                        label="Estado">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="type"
+                                          [disabled]="validPermisos"
+                                          readonly />
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-2">
+                                  <div class="col-md-4">
                                     <div>
-                                      <form-field [control]="
+                                      <form-field
+                                        [control]="
                                           actaRecepttionForm.get('administra')
-                                        " label="Admin">
-                                        <input #inputValue type="text" class="form-control" formControlName="administra"
-                                          [disabled]="validPermisos" />
+                                        "
+                                        label="Admin">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="administra"
+                                          [disabled]="validPermisos"
+                                          readonly />
                                       </form-field>
                                     </div>
                                   </div>
 
-                                  <div class="col-md-2">
+                                  <div class="col-md-4">
                                     <div>
-                                      <form-field [control]="
+                                      <form-field
+                                        [control]="
                                           actaRecepttionForm.get('consec')
-                                        " label="Folio">
-                                        <input #inputValue type="text" class="form-control" formControlName="consec"
-                                          [disabled]="validPermisos" />
+                                        "
+                                        label="Folio">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="consec"
+                                          [disabled]="validPermisos"
+                                          readonly />
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-2">
+                                  <div class="col-md-4">
                                     <div>
-                                      <form-field [control]="
+                                      <form-field
+                                        [control]="
                                           actaRecepttionForm.get('anio')
-                                        " label="Año">
-                                        <input #inputValue type="text" class="form-control" formControlName="anio"
-                                          [disabled]="validPermisos" />
+                                        "
+                                        label="Año">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="anio"
+                                          [disabled]="validPermisos"
+                                          bsDatepicker
+                                          [bsConfig]="{
+                                            dateInputFormat: 'YYYY'
+                                          }" />
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-2">
+                                  <div class="col-md-4">
                                     <div>
-                                      <form-field [control]="
+                                      <form-field
+                                        [control]="
                                           actaRecepttionForm.get('mes')
-                                        " label="Mes">
-                                        <input #inputValue type="text" class="form-control" formControlName="mes"
-                                          [disabled]="validPermisos" />
+                                        "
+                                        label="Mes">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="mes"
+                                          [disabled]="validPermisos"
+                                          bsDatepicker />
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-2">
+                                  <div class="col-md-4">
                                     <div>
-                                      <form-field [control]="
+                                      <form-field
+                                        [control]="
                                           actaRecepttionForm.get('cveActa')
-                                        " label="CVE de Acta">
-                                        <input #inputValue type="text" class="form-control" formControlName="cveActa"
-                                          [disabled]="validPermisos" />
+                                        "
+                                        label="CVE de Acta">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="cveActa"
+                                          [readonly]="validPermisos" />
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-12">
+                                  <div class="col-md-4">
                                     <div>
-                                      <form-field class="form-control" [control]="
-                                          actaRecepttionForm.get('direccion')
-                                        " label="Dirección">
-                                        <textarea maxlength="4000" class="form-control" formControlName="direccion"
-                                          rows="5" [disabled]="validPermisos"></textarea>
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('ejecuta')
+                                        "
+                                        label="ejecuta">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="ejecuta"
+                                          [readonly]="validPermisos" />
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="m-3">
-                                    <button type="button" class="btn btn-primary active btn-sm"
-                                      (click)="getActasReception(conversion)">
-                                      <i class="bx bx-search bx-sm float-icon"></i>
-                                    </button>
+
+                                  <div class="float-right">
+                                    <div class="col-md-2">
+                                      <button
+                                        type="button"
+                                        class="btn btn-primary active btn-sm"
+                                        (click)="searchActas()">
+                                        Buscar actas<i
+                                          class="bx bx-search bx-sm float-icon"></i>
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="row mt-5">
+                                  <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <form-field
+                                      [control]="
+                                        actaRecepttionForm.get('direccion')
+                                      "
+                                      label="Direccón">
+                                      <textarea
+                                        maxlength="2000"
+                                        [readonly]="validPermisos"
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="direccion"
+                                        rows="5"></textarea>
+                                    </form-field>
+                                  </div>
+                                </div>
+                                <div class="row mt-5">
+                                  <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <form-field
+                                      [control]="
+                                        actaRecepttionForm.get('parrafo1')
+                                      "
+                                      label="P&aacute;rrafo 1">
+                                      <textarea
+                                        maxlength="2000"
+                                        [readonly]="validPermisos"
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="parrafo1"
+                                        rows="5"></textarea>
+                                    </form-field>
+                                  </div>
+                                </div>
+                                <div class="row mt-5">
+                                  <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <form-field
+                                      [control]="
+                                        actaRecepttionForm.get('parrafo2')
+                                      "
+                                      label="P&aacute;rrafo 2">
+                                      <textarea
+                                        maxlength="4000"
+                                        [readonly]="validPermisos"
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="parrafo2"
+                                        rows="5"></textarea>
+                                    </form-field>
+                                  </div>
+                                </div>
+                                <div class="row mt-5">
+                                  <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <form-field
+                                      [control]="
+                                        actaRecepttionForm.get('parrafo3')
+                                      "
+                                      label="P&aacute;rrafo 3">
+                                      <textarea
+                                        maxlength="4000"
+                                        [readonly]="validPermisos"
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="parrafo3"
+                                        rows="5"></textarea>
+                                    </form-field>
                                   </div>
                                 </div>
                               </div>
@@ -324,73 +446,117 @@
                       </div>
                     </form>
                     <div class="row"></div>
-                    <form [formGroup]="actaGoodForm" class="form-material">
-                      <div class="row mt-12 d-flex justify-content-center">
-                        <div class="col-md-12">
-                          <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
-                          <div [class]="loading ? 'table-loading' : ''" class="overflow-auto">
-                            <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings"
-                              [source]="dataTableGood" (userRowSelect)="selectData($event)">
-                            </ng2-smart-table>
-                            <app-pagination [totalItems]="totalItems"></app-pagination>
+                    <div class="row p-3">
+                      <div class="col-md-3"></div>
+                      <form [formGroup]="actaGoodForm" class="form-material">
+                        <div class="row mt-12 d-flex justify-content-center">
+                          <div class="col-md-12 justify-content-center">
+                            <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
+                            <ng-scrollbar
+                              track="horizontal"
+                              [autoHeightDisabled]="false">
+                              <div
+                                [class]="loading ? 'table-loading' : ''"
+                                class="overflow-auto">
+                                <ng2-smart-table
+                                  id="bienes"
+                                  [attr.class]="'table-bordered my-table'"
+                                  [settings]="settings"
+                                  [source]="dataTableGood"
+                                  (userRowSelect)="selectData($event)">
+                                </ng2-smart-table>
+                                <app-pagination
+                                  [totalItems]="totalItems"></app-pagination>
+                              </div>
+                            </ng-scrollbar>
                           </div>
-                        </div>
-                        <div class="d-flex justify-content-center">
-                          <div class="text-center">
-                            <button (click)="create()" [disabled]="isAllDisabled"
-                              class="btn btn-secondary btn-sm bg-success active m-3 p-3" type="button">
-                              Agregar <i class="fa fa-plus bx-md"></i>
-                            </button>
-                            <br />
-                            <!-- <button (click)="deleteGoodActa($event)" [disabled]="isAllDisabled"
-                              class="btn btn-secondary btn-sm active bg-danger m-3 p-3" type="button">
-                              Mover uno
-                              <i class="bx bxs-left-arrow-circle bx-md"></i>
-                            </button> -->
-                          </div>
-                        </div>
-                        <div class="col-md-12">
-                          <h6>BIENES RELACIONADOS CON EL ACTA</h6>
-                          <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
-                            <div [class]="loading ? 'table-loading' : ''" class="overflow-auto">
-                              <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings2"
-                                [source]="dataTableGoodsConvertion">
-                              </ng2-smart-table>
-                              <app-pagination [totalItems]="totalItems2"></app-pagination>
+                          <div class="d-flex justify-content-center">
+                            <div class="text-center">
+                              <button
+                                (click)="create()"
+                                [disabled]="isAllDisabled"
+                                class="btn btn-success btn-sm active"
+                                type="button">
+                                Agregar <i class="fa fa-plus float-icon"></i>
+                              </button>
+                              <br />
+                              <!-- <button (click)="deleteGoodActa($event)" [disabled]="isAllDisabled"
+                                                        class="btn btn-secondary btn-sm active bg-danger m-3 p-3" type="button">
+                                                        Mover uno
+                                                        <i class="bx bxs-left-arrow-circle bx-md"></i>
+                                                      </button> -->
                             </div>
-                          </ng-scrollbar>
+                          </div>
+                          <div class="col-md-12">
+                            <h6>BIENES RELACIONADOS CON EL ACTA</h6>
+                            <ng-scrollbar
+                              track="horizontal"
+                              [autoHeightDisabled]="false">
+                              <div
+                                [class]="loading ? 'table-loading' : ''"
+                                class="overflow-auto">
+                                <ng2-smart-table
+                                  [attr.class]="'table-bordered my-table'"
+                                  [settings]="settings2"
+                                  [source]="dataTableGoodsActa">
+                                </ng2-smart-table>
+                                <app-pagination
+                                  [totalItems]="totalItems2"></app-pagination>
+                              </div>
+                            </ng-scrollbar>
+                          </div>
                         </div>
-                      </div>
-                    </form>
+                      </form>
+                    </div>
                   </div>
                 </app-card>
               </div>
             </form>
             <div footer>
-              <div class="d-flex flex-row justify-content-center align-items-center">
-                <div class="m-3">
+              <div
+                class="d-flex flex-row justify-content-center align-items-center"></div>
+              <div
+                class="d-flex flex-row justify-content-center align-items-center">
+                <!-- <div class="m-3">
                   <button type="button" class="btn btn-primary active btn-sm" (click)="getDetail()">
                     Detalle de Acta
                     <i class="fas fa-edit bx-sm float-icon"></i>
                   </button>
+                </div> -->
+                <div class="m-3">
+                  <button
+                    *ngIf="dataTableGoodsConvertion"
+                    [disabled]="validPermisos"
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="savActa()">
+                    Guardar
+                    <i aria-hidden="true" class="fa fa-save"></i>
+                  </button>
                 </div>
                 <div class="m-3">
-                  <button class="btn btn-success btn-sm ml-2" type="button" (click)="cargueMasive()">
+                  <button
+                    class="btn btn-success btn-sm active"
+                    type="button"
+                    (click)="cargueMasive()">
                     Carga Masiva
                     <i class="fa fa-upload bx-sm float-icon"></i>
                   </button>
-                  <!-- <input type="file" name="file" #file class="d-none"
-                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                    (change)="onFileChange($event)" /> -->
                 </div>
                 <div class="m-3">
-                  <button type="button" class="btn btn-primary active btn-sm" (click)="Generar()">
+                  <button
+                    type="button"
+                    class="btn btn-primary active btn-sm"
+                    (click)="Generar()">
                     Imprimir
                     <i class="bx bx-printer bx-sm float-icon"></i>
                   </button>
                 </div>
                 <div class="m-3">
-                  <button type="button" class="btn btn-danger active btn-sm" (click)="cerrarActa(goodFatherNumber)">
+                  <button
+                    type="button"
+                    class="btn btn-danger active btn-sm"
+                    (click)="cerrarActa(goodFatherNumber)">
                     Cerrar Acta
                     <i class="fas fa-close bx-sm float-icon"></i>
                   </button>
