@@ -3,14 +3,17 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
-import { IAppointmentDepositary } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
+import {
+  IAppointmentDepositary,
+  IDepositaryAppointments,
+} from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
@@ -87,6 +90,9 @@ export class IncomeOrdersDepositoryGoodsComponent
   //===================
   users$ = new DefaultSelect<ISegUsers>();
   origin: string = null;
+  depoAppointments: IDepositaryAppointments;
+  origin2: string = null;
+  noBienParams: number = null;
 
   constructor(
     private fb: FormBuilder,
@@ -105,6 +111,13 @@ export class IncomeOrdersDepositoryGoodsComponent
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.noBienParams = params['p_bien'] ? Number(params['p_bien']) : null;
+        this.origin = params['origin'] ?? null;
+        this.origin2 = params['origin2'] ?? null;
+      });
     // this.getUserDepositary();
     this.valorBien.SharingNumbien.subscribe({
       next: res => {
@@ -179,12 +192,24 @@ export class IncomeOrdersDepositoryGoodsComponent
       return;
     }
 
+    /*const fecha = moment(this.form.get('date').value).format('DD-MM-YYYY');
     let params = {
-      P_VALORES: this.form.value,
+      //P_VALORES: this.form.value,
+      P_NOMBRA: this.depoAppointments.appointmentNum,
+      P_NO_BIEN: this.form.get('numberGood').value,
+      P_PFIRMA: this.form.get('userId').value.id,
+      P_FECHA: fecha,
+    };*/
+    let params = {
+      P_NOMBRA: 3709,
+      P_NO_BIEN: 2192691,
+      P_PFIRMA: 'AABREGOHI',
+      P_FECHA: '30-06-2023',
     };
+
     this.siabService
-      // .fetchReport('RDEPINGXBIEN.', params)
-      .fetchReport('blank', params)
+      .fetchReport('RDEPINGXBIEN.', params)
+      //.fetchReport('blank', params)
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
@@ -250,7 +275,9 @@ export class IncomeOrdersDepositoryGoodsComponent
     this.form.get('contractKey').setValue(this.interfasValorBienes.cveContrato);
     this.form.get('depositary').setValue(this.interfasValorBienes.depositario);
     this.form.get('description').setValue(this.interfasValorBienes.desc);
-    this.origin = this.interfasValorBienes.nomPantall;
+    //this.origin = this.interfasValorBienes.nomPantall;
+    this.origin = this.activatedRoute.snapshot.queryParamMap.get('origin');
+    this.getDepositaryAppointments();
   }
 
   getUsers($params: ListParams) {
@@ -279,10 +306,34 @@ export class IncomeOrdersDepositoryGoodsComponent
 
   goBack() {
     if (this.origin == 'FCONDEPODISPAGOS') {
-      this.router.navigate([
-        '/pages/juridical/depositary/payment-dispersion-process/query-related-payments-depositories/' +
-          this.form.get('numberGood').value,
-      ]);
+      const good =
+        this.form.get('numberGood').value != null
+          ? this.form.get('numberGood').value
+          : '';
+      if (good != null) {
+        this.router.navigate([
+          '/pages/juridical/depositary/payment-dispersion-process/query-related-payments-depositories/' +
+            good,
+        ]);
+      } else {
+        this.router.navigate([
+          '/pages/juridical/depositary/payment-dispersion-process/query-related-payments-depositories/',
+        ]);
+      }
     }
+  }
+
+  getDepositaryAppointments() {
+    if (this.form.get('numberGood').value == null) {
+      return;
+    }
+    let params = new ListParams();
+    params['filter.goodNum'] = `$eq:${this.form.get('numberGood').value}`;
+    params['filter.revocation'] = `$eq:N`;
+    this.depositaryService.getAppointments(params).subscribe({
+      next: resp => {
+        this.depoAppointments = resp.data[0];
+      },
+    });
   }
 }

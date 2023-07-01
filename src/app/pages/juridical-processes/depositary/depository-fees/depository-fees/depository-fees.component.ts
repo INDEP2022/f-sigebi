@@ -27,6 +27,7 @@ export class DepositoryFeesComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   origin: string = null;
+  origin2: string = null;
   noBienParams: number = null;
 
   constructor(
@@ -49,7 +50,7 @@ export class DepositoryFeesComponent extends BasePage implements OnInit {
             ? Number(params['p_bien'])
             : null;
         }
-        console.log(params);
+        this.origin2 = params['origin2'] ?? null;
       });
     this.buildForm();
   }
@@ -70,10 +71,18 @@ export class DepositoryFeesComponent extends BasePage implements OnInit {
   }
   goBack() {
     if (this.origin == 'FCONDEPODISPAGOS') {
-      this.router.navigate([
-        '/pages/juridical/depositary/payment-dispersion-process/query-related-payments-depositories/' +
-          this.noBienParams,
-      ]);
+      this.router.navigate(
+        [
+          '/pages/juridical/depositary/payment-dispersion-process/query-related-payments-depositories/' +
+            this.noBienParams,
+        ],
+        {
+          queryParams: {
+            origin: this.origin2,
+            goodNumber: this.noBienParams,
+          },
+        }
+      );
     }
   }
 }

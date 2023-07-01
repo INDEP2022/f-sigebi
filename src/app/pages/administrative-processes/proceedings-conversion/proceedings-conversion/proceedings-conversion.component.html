@@ -419,23 +419,18 @@
                       <div class="row mt-12 d-flex justify-content-center">
                         <div class="col-md-12">
                           <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
-                          <ng-scrollbar
-                            track="horizontal"
-                            [autoHeightDisabled]="false">
-                            <div
-                              [class]="loading ? 'table-loading' : ''"
-                              class="overflow-auto">
-                              <ng2-smart-table
-                                id="bienes"
-                                [attr.class]="'table-bordered my-table'"
-                                [settings]="settings"
-                                [source]="dataTableGood"
-                                (userRowSelect)="selectData($event)">
-                              </ng2-smart-table>
-                              <app-pagination
-                                [totalItems]="totalItems"></app-pagination>
-                            </div>
-                          </ng-scrollbar>
+                          <div
+                            [class]="loading ? 'table-loading' : ''"
+                            class="overflow-auto">
+                            <ng2-smart-table
+                              [attr.class]="'table-bordered'"
+                              [settings]="settings"
+                              [source]="dataTableGood"
+                              (userRowSelect)="selectData($event)">
+                            </ng2-smart-table>
+                            <app-pagination
+                              [totalItems]="totalItems"></app-pagination>
+                          </div>
                         </div>
                         <div class="d-flex justify-content-center">
                           <div class="text-center">
@@ -463,7 +458,7 @@
                               [class]="loading ? 'table-loading' : ''"
                               class="overflow-auto">
                               <ng2-smart-table
-                                [attr.class]="'table-bordered my-table'"
+                                [attr.class]="'table-bordered'"
                                 [settings]="settings2"
                                 [source]="dataTableGoodsConvertion">
                               </ng2-smart-table>
