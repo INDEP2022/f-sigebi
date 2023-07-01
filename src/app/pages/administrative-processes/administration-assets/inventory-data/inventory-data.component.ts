@@ -41,7 +41,8 @@ import { RegisterModalComponent } from './register-modal/register-modal.componen
 })
 export class InventoryDataComponent
   extends BasePage
-  implements OnInit, OnChanges {
+  implements OnInit, OnChanges
+{
   list: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -90,8 +91,9 @@ export class InventoryDataComponent
         sort: false,
         type: 'html',
         valuePrepareFunction: (text: string) => {
-          return `${text ? text.split('T')[0].split('-').reverse().join('-') : ''
-            }`;
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+          }`;
         },
         filter: {
           type: 'custom',
@@ -450,8 +452,9 @@ export class InventoryDataComponent
     return new Promise<any[]>((res, rej) => {
       const params: ListParams = {};
       const dateNow = new Date();
-      params['filter.dateInventory'] = `$lte:${dateNow.toISOString().split('T')[0]
-        }`;
+      params['filter.dateInventory'] = `$lte:${
+        dateNow.toISOString().split('T')[0]
+      }`;
       this.inventoryService.getInventoryByGood(this.goodId, params).subscribe({
         next: resp => {
           console.log(resp);
@@ -571,7 +574,7 @@ export class InventoryDataComponent
       next: resp => {
         console.log(resp);
       },
-      error: err => { },
+      error: err => {},
     });
   }
 
@@ -590,7 +593,7 @@ export class InventoryDataComponent
       next: resp => {
         console.log(resp);
       },
-      error: err => { },
+      error: err => {},
     });
   }
 }
