@@ -130,6 +130,10 @@ export class FlyersService {
     return this.msCityService.getAll(params);
   }
 
+  getCityById(params: number | string) {
+    return this.msCityService.newGetById(params);
+  }
+
   getSenderUser(params: ListParams) {
     return this.msUsersService.getAllSegXAreas(params);
   }

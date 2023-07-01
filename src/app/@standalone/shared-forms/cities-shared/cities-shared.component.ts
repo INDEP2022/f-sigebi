@@ -41,7 +41,7 @@ export class CitiesSharedComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.City.valueChanges.subscribe(id => {
       if (id) {
-        this.service.getById(this.City.value).subscribe({
+        this.service.newGetById(this.City.value).subscribe({
           next: resp => {
             this.cities = new DefaultSelect([resp], 1);
             if (resp) {
@@ -69,7 +69,7 @@ export class CitiesSharedComponent extends BasePage implements OnInit {
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        this.onLoadToast('error', 'Error registro no existente');
       },
     });
   }
@@ -77,7 +77,7 @@ export class CitiesSharedComponent extends BasePage implements OnInit {
   onCitiesChange(subdelegation: any) {
     //this.resetFields([this.City]);
     this.cities = new DefaultSelect();
-    /* this.form.updateValueAndValidity(); */
+    //this.form.updateValueAndValidity();
     if (subdelegation) {
       const { noDelegation, noSubDelegation, state } = subdelegation;
       let infoForms = {

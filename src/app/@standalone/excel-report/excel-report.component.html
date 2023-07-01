@@ -1,4 +1,7 @@
-<div style="cursor: pointer" (click)="exportToExcel()">
+<div
+  style="cursor: pointer"
+  [class]="loading ? 'disabled' : ''"
+  (click)="exportToExcel()">
   <img
     *ngIf="text === ''"
     alt="imagen-list"
@@ -8,12 +11,12 @@
     src="assets/images/excel-icon.png" />
   <ng-container *ngIf="text !== ''">
     <button
-      class="btn btn-primary btn-sm active"
+      class="btn btn-success btn-sm active"
       type="submit"
       size="small"
       (click)="exportToExcel()">
-      <i class="bx bx-download float-icon"></i>
       {{ text }}
+      <i class="bx bx-download float-icon"></i>
     </button>
   </ng-container>
 </div>

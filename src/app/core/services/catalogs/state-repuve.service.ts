@@ -12,6 +12,7 @@ import { IStateRepuve } from '../../models/catalogs/state-repuve.model';
 })
 export class StateRepuveService implements ICrudMethods<IStateRepuve> {
   private readonly route: string = ENDPOINT_LINKS.EstRepuve;
+  private readonly route2: string = 'catalog/est-repuve';
   constructor(private estRepuveRepository: Repository<IStateRepuve>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IStateRepuve>> {
@@ -26,11 +27,11 @@ export class StateRepuveService implements ICrudMethods<IStateRepuve> {
     return this.estRepuveRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IStateRepuve): Observable<Object> {
-    return this.estRepuveRepository.update(this.route, id, model);
+  update(id: string | number): Observable<Object> {
+    return this.estRepuveRepository.newUpdate(this.route, id);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.estRepuveRepository.remove(this.route, id);
+    return this.estRepuveRepository.removeRepuves(this.route, id);
   }
 }

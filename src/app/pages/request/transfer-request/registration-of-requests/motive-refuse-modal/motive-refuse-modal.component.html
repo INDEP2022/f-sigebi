@@ -1,0 +1,37 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Motivo del rechazo</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('rejectionComment')"
+            label="Motivo de rechazo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="rejectionComment" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="update()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

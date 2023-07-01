@@ -23,7 +23,6 @@ import { IStation2 } from 'src/app/core/models/catalogs/station.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
-import Swal from 'sweetalert2';
 import { CatAuthorityModalComponent } from '../cat-authority-modal/cat-authority-modal.component';
 import { CatStationModalComponent } from '../cat-station-modal/cat-station-modal.component';
 
@@ -91,11 +90,12 @@ export class CatTransferentComponent extends BasePage implements OnInit {
 
     this.settings2 = {
       ...this.settings,
-      hideSubHeader: true,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: true,
+        add: false,
         position: 'right',
       },
       columns: { ...STATION_COLUMNS },
@@ -103,10 +103,11 @@ export class CatTransferentComponent extends BasePage implements OnInit {
 
     this.settings3 = {
       ...this.settings,
-      hideSubHeader: true,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
+        add: false,
         delete: true,
         position: 'right',
       },
@@ -137,6 +138,7 @@ export class CatTransferentComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getTransferents();
         }
       });
@@ -157,8 +159,7 @@ export class CatTransferentComponent extends BasePage implements OnInit {
       next: response => {
         this.columns = response.data;
         this.totalItems = response.count || 0;
-
-        this.data.load(this.columns);
+        this.data.load(response.data);
         this.data.refresh();
         this.loading1 = false;
       },
@@ -187,7 +188,8 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(transferent.id);
-        Swal.fire('Borrado', '', 'success');
+        this.alert('success', 'Borrado', '');
+        //Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -259,7 +261,6 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete2(station.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -267,7 +268,17 @@ export class CatTransferentComponent extends BasePage implements OnInit {
   //método para borrar emisora
   delete2(id: number) {
     this.stationService.remove(id).subscribe({
-      next: () => this.getStationByTransferent(),
+      next: () => {
+        this.getStationByTransferent();
+        this.alert('success', 'Borrado', '');
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Emisoras',
+          'No se puede eliminar debe eliminar sus AUTORIDADES'
+        );
+      },
     });
   }
 
@@ -331,7 +342,8 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete3(authority.idAuthority, authority);
-        Swal.fire('Borrado', '', 'success');
+        this.alert('success', 'Autoridad', `Borrado`);
+        //Swal.fire('Borrado', '', 'success');
       }
     });
   }

@@ -17,11 +17,19 @@ export class RegulatoryService implements ICrudMethods<IRegulatory> {
     return this.regulatoryRepository.getAllPaginated(this.route, params);
   }
 
+  getAllDetail(params?: ListParams): Observable<IListResponse<IRegulatory>> {
+    const route = `${this.route}/get-all`;
+    return this.regulatoryRepository.getAllPaginated(route, params);
+  }
+
   getById(id: string | number): Observable<IRegulatory> {
     return this.regulatoryRepository.getById(this.route, id);
   }
 
   create(model: IRegulatory): Observable<IRegulatory> {
+    console.log('cambiozz', model);
+    model.fractionId = Number(model.fractionId);
+    // this.form.value.id_fraccion = Number(this.form.value.id_fraccion);
     return this.regulatoryRepository.create(this.route, model);
   }
 

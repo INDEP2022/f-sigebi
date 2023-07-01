@@ -1,18 +1,12 @@
 export const MINUTES_COLUMNS = {
-  idMinute: {
-    title: 'id acta',
+  id: {
+    title: 'Id Acta',
     type: 'number',
     sort: false,
   },
 
-  statusMinute: {
-    title: 'Estatus acta',
-    type: 'string',
-    sort: false,
-  },
-
-  observation: {
-    title: 'Observación',
+  statusProceeedings: {
+    title: 'Estatus Acta',
     type: 'string',
     sort: false,
   },

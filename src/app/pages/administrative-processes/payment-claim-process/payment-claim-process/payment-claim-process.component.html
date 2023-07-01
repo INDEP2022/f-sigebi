@@ -4,11 +4,20 @@
   </div>
   <div body>
     <div class="row">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings"
-        [source]="data">
-      </ng2-smart-table>
+      <div class="body">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            id="idTableTestHead"
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        *ngIf="paginadoNG == true"
+        [params]="paramsList"
+        [totalItems]="totalItems"></app-pagination>
     </div>
     <hr />
     <form [formGroup]="form" class="form-material">
@@ -18,10 +27,33 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <div class="d-flex justify-content-center">
+        <div class="col-8 mt-3 mb-3">
+          <div class="row pt-3 pb-3">
+            <div class="col-6">
+              <span style="color: #1e7e34; font-weight: 500"
+                >Número de registros cargados &nbsp;&nbsp;
+                <strong *ngIf="dataA == 0" style="color: #1e7e34">0</strong>
+                <strong *ngIf="dataA != 0" style="color: #1e7e34">{{
+                  dataA
+                }}</strong>
+              </span>
+            </div>
+            <div class="col-6">
+              <span style="color: crimson; font-weight: 500"
+                >Número de registros NO cargados &nbsp;&nbsp;
+                <strong *ngIf="dataD == 0" style="color: crimson">0</strong>
+                <strong *ngIf="dataD != 0" style="color: crimson">{{
+                  dataD
+                }}</strong>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-beetwen">
             <div class="m-3">
               <button
+                [disabled]="!disabledImport"
                 class="btn btn-success btn-sm ml-2"
                 type="button"
                 (click)="file.click()">
@@ -37,27 +69,28 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <div class="d-flex justify-content-center">
-            <div class="m-3">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-end">
+            <div class="mt-3 mb-3 mr-3">
               <button
-                [disabled]="form.invalid || document === undefined"
+                [disabled]="!document"
                 type="button"
                 class="btn btn-primary btn-sm active"
                 (click)="changeStatusGood()">
-                Actualizar status
+                Actualizar Estatus
               </button>
             </div>
           </div>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-1 col-sm-12 col-xs-12">
           <div class="d-flex justify-content-center">
-            <div class="m-3">
+            <div class="mt-3 mb-3 mr-5">
               <button
                 type="button"
-                class="btn btn-primary btn-sm active"
+                class="btn btn-danger btn-sm active"
                 (click)="clean((file.value = ''))">
                 Limpiar
+                <i class="fa fa-eraser" aria-hidden="true"></i>
               </button>
             </div>
           </div>
@@ -67,15 +100,13 @@
     <hr />
     <div class="row">
       <app-scanning-foil
+        #hijoRef
         [goods]="goods"
         (documentEmmit)="changeFoli($event)"
         (firstGood)="firstGood($event)"></app-scanning-foil>
     </div>
-    <div class="row mt-5">
-      <div
-        class="col-md-6"
-        style="border-right: 1px solid rgba(0, 0, 0, 0.1)"
-        *ngIf="showError">
+    <!-- <div class="row mt-5">
+      <div class="col-md-6" style="border-right: 1px solid rgba(0, 0, 0, 0.1)" *ngIf="showError">
         <div class="row">
           <div class="d-flex justify-content-center">
             <div class="m-3">
@@ -83,22 +114,14 @@
             </div>
           </div>
         </div>
-        <div
-          class="row pt-3 pb-3"
-          style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
-          <span
-            >Numero de registros NO cargados &nbsp;&nbsp;
-            <strong style="color: crimson">{{
-              idsNotExist.length
-            }}</strong></span
-          >
+        <div class="row pt-3 pb-3" style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
+          <span>Número de registros NO cargados &nbsp;&nbsp;
+            <strong style="color: crimson">{{ idsNotExist.length }}</strong></span>
         </div>
-        <div
-          class="row pt-3 pb-3"
-          style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
-          <div class="col-md-full" *ngFor="let item of idsNotExist">
+        <div class="row pt-3 pb-3" style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
+          <div class="col-md-full" *ngFor="let item2 of idsNotExist">
             <span style="color: crimson">
-              El Bien No <strong>{{ item.id }}</strong> {{ item.reason }}
+              El Bien No. <strong>{{ item2.id }}</strong> {{ item2.reason }}
             </span>
           </div>
         </div>
@@ -111,38 +134,26 @@
             </div>
           </div>
         </div>
-        <div
-          class="row pt-3 pb-3"
-          style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
-          <span
-            >Numero de registros cargados &nbsp;&nbsp;
-            <strong style="color: #1e7e34">{{ goods.length }}</strong></span
-          >
+        <div class="row pt-3 pb-3" style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
+          <span>Número de registros cargados &nbsp;&nbsp;
+            <strong style="color: #1e7e34">{{ goods.length }}</strong></span>
         </div>
-        <div
-          class="row pt-3 pb-3"
-          style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
+        <div class="row pt-3 pb-3" style="border-top: 1px solid rgba(0, 0, 0, 0.1)">
           <div class="col-md-full" *ngFor="let good of goods">
-            <span
-              >Bien No
+            <span>El Bien No.
               <strong style="color: #1e7e34">{{ good.id }}</strong> cargado
               correctamente
             </span>
           </div>
         </div>
-        <div
-          class="row pt-3 pb-3"
-          style="border-top: 1px solid rgba(0, 0, 0, 0.1)"
-          *ngIf="showStatus">
+        <div class="row pt-3 pb-3" style="border-top: 1px solid rgba(0, 0, 0, 0.1)" *ngIf="showStatus">
           <div class="col-md-full" *ngFor="let good of goods">
-            <span
-              >Status del bien No
+            <span>Estatus del Bien No.
               <strong style="color: #1e7e34">{{ good.id }}</strong>
-              cambiado correctamente</span
-            >
+              cambiado correctamente</span>
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </app-card>

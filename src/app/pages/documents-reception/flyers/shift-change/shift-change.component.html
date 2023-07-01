@@ -4,9 +4,24 @@
   </div>
 
   <div body>
+    <!--<div>
+      <button type="button" class="btn btn-danger active" (click)="goBack()">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
+      </button>
+    </div>-->
+
+    <div>
+      <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
+      </button>
+    </div>
+    <br /><br />
+
     <form [formGroup]="turnForm" class="form-material">
       <div class="row">
-        <form-field
+        <!-- <form-field
           class="col-md-2"
           [control]="turnForm.get('wheelNumber')"
           label="No Volante">
@@ -15,9 +30,13 @@
             class="form-control"
             formControlName="wheelNumber"
             readonly />
-        </form-field>
+        </form-field> -->
+        <div class="col-md-2">
+          <h5>No Volante:</h5>
+          <h6>{{ turnForm.get('wheelNumber').value }}</h6>
+        </div>
 
-        <form-field
+        <!-- <form-field
           class="col-md-4"
           [control]="turnForm.get('affair')"
           label="Asunto">
@@ -26,9 +45,13 @@
             type="text"
             formControlName="affair"
             readonly />
-        </form-field>
+        </form-field> -->
+        <div class="col-md-4">
+          <h5>Asunto:</h5>
+          <h6>{{ turnForm.get('affair').value }}</h6>
+        </div>
 
-        <form-field
+        <!-- <form-field
           class="col-md-3"
           [control]="turnForm.get('receiptDate')"
           label="Fec. Recepci&oacute;n">
@@ -37,9 +60,13 @@
             formControlName="receiptDate"
             bsDatepicker
             [readonly]="true" />
-        </form-field>
+        </form-field> -->
+        <div class="col-md-3">
+          <h5>Fec. Recepci&oacute;n:</h5>
+          <h6>{{ turnForm.get('receiptDate').value }}</h6>
+        </div>
 
-        <form-field
+        <!-- <form-field
           class="col-md-3"
           [control]="turnForm.get('captureDate')"
           label="Fec. Captura">
@@ -48,10 +75,14 @@
             formControlName="captureDate"
             bsDatepicker
             readonly />
-        </form-field>
+        </form-field> -->
+        <div class="col-md-3">
+          <h5>Fec. Captura:</h5>
+          <h6>{{ turnForm.get('captureDate').value }}</h6>
+        </div>
       </div>
       <div class="row pt-4 mb-3">
-        <form-field
+        <!-- <form-field
           class="col-md-6"
           [control]="turnForm.get('externalRemitter')"
           label="Remitente">
@@ -59,22 +90,42 @@
             class="form-control"
             formControlName="externalRemitter"
             readonly />
-        </form-field>
+        </form-field> -->
+        <div class="col-md-6">
+          <h5>Remitente:</h5>
+          <h6>{{ turnForm.get('externalRemitter').value }}</h6>
+        </div>
       </div>
       <hr class="row" />
       <div class="row">
         <div class="col-md-6">
-          <p class="font-weight-bold pb-5">Turno anterior</p>
-          <form-field [control]="turnForm.get('prevUser')">
-            <ngx-select
-              [form]="turnForm"
-              control="prevUser"
-              label="Atención"
-              [data]="users"
-              bindLabel="userAndName"
+          <p class="font-weight-bold pb-2">Turno anterior</p>
+          <!-- <form-field [control]="turnForm.get('prevUser')">
+            <ngx-select [form]="turnForm" control="prevUser" label="Atención" [data]="users" bindLabel="userAndName"
               [readonly]="true">
             </ngx-select>
           </form-field>
+        <small class="font-weight-semibold">Atención</small> -->
+
+          <p
+            [ngClass]="usErrorUserPrev ? 'text-danger' : 'text-muted'"
+            class="font-weight-bold">
+            <ng-container *ngIf="usErrorUserPrev"
+              >El volante no tiene turnados</ng-container
+            >
+            {{ preUser }}
+          </p>
+          <p class="font-weight-bold pb-2">Atención</p>
+
+          <p
+            [ngClass]="usErrorUserPrev ? 'text-danger' : 'text-muted'"
+            class="font-weight-bold">
+            <ng-container *ngIf="usErrorUserPrev"
+              >El volante no tiene turnados</ng-container
+            >
+            {{ newUser1 }}
+            <!-- <ng-container *ngIf="usErrorUserPrev">El volante no tiene turnados</ng-container> -->
+          </p>
         </div>
         <div class="col-md-6">
           <p class="font-weight-bold pb-5">Turno nuevo</p>
@@ -87,56 +138,58 @@
               [data]="users"
               bindLabel="userAndName"
               [searchOnInit]="true"
-              termMaxLength="30">
+              termMaxLength="30"
+              (change)="getUserSelected($event)">
             </ngx-select>
           </form-field>
         </div>
       </div>
 
+      <div class="row w-100 mt-3">
+        <div class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
+          <span>
+            SELECCIONA AL MENOS UN ACTA O UN DICTAMEN PARA GUARDAR&#46;</span
+          >
+        </div>
+      </div>
       <div class="row mt-3">
         <div class="col-md-6">
           <h5 class="text-center">Dictaminaciones</h5>
-          <div
-            [ngClass]="{
-              'height-limit': dictumColumns.length > 0,
-              'height-min': dictumColumns.length == 0
-            }">
-            <ng-scrollbar track="all" [autoHeightDisabled]="true">
-              <div [class]="loading ? 'table-loading' : ''">
-                <ng2-smart-table
-                  class="col-md-12"
-                  [settings]="dictumSettings"
-                  [source]="dictumColumns"
-                  [attr.class]="'table-bordered'"
-                  (userRowSelect)="selectDictums($event)"
-                  readonly>
-                </ng2-smart-table>
-              </div>
-            </ng-scrollbar>
-          </div>
+          <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
+            <div [class]="loading ? 'table-loading' : ''" class="overflow-auto">
+              <ng2-smart-table
+                class="col-md-12"
+                [settings]="dictumSettings"
+                [source]="dictumColumns"
+                [attr.class]="'table-responsive table-bordered'"
+                (userRowSelect)="selectDictums($event)">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="paramsDict"
+                [totalItems]="totalItemsDic"></app-pagination>
+            </div>
+          </ng-scrollbar>
         </div>
         <div class="col-md-6">
           <h5 class="text-center">Actas</h5>
-          <div
-            class="{{
-              proceedingColumns.length > 0 ? 'height-limit' : 'height-min'
-            }}">
-            <ng-scrollbar track="all" [autoHeightDisabled]="true">
-              <div [class]="loading ? 'table-loading' : ''">
-                <ng2-smart-table
-                  class="col-md-12"
-                  [settings]="proceedingSettings"
-                  [source]="proceedingColumns"
-                  [attr.class]="'table-bordered'"
-                  (userRowSelect)="selectProceedings($event)">
-                </ng2-smart-table>
-              </div>
-            </ng-scrollbar>
-          </div>
+          <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
+            <div [class]="loading ? 'table-loading' : ''" class="overflow-auto">
+              <ng2-smart-table
+                class="col-md-12"
+                [settings]="proceedingSettings"
+                [source]="proceedingColumns"
+                [attr.class]="'table-responsive table-bordered'"
+                (userRowSelect)="selectProceedings($event)">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="paramsActas"
+                [totalItems]="totalItemsActas"></app-pagination>
+            </div>
+          </ng-scrollbar>
         </div>
       </div>
 
-      <div class="row pt-5">
+      <div class="row mt-5">
         <form-field
           [control]="turnForm.get('argument')"
           label="Argumento"
@@ -159,16 +212,9 @@
       <div class="row">
         <div class="d-flex justify-content-center">
           <div class="m-3">
-            <button
-              type="button"
-              class="btn btn-danger active"
-              (click)="return()">
-              Regresar
-            </button>
-          </div>
-          <div class="m-3">
             <confirm-button
               text="Guardar"
+              [disabled]="!valid"
               loadingText="Cargando"
               [loading]="loading"
               (confirm)="save()"></confirm-button>

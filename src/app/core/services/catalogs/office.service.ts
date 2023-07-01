@@ -16,6 +16,12 @@ export class OfficeService implements ICrudMethods<IOffice> {
   getAll(params?: ListParams): Observable<IListResponse<IOffice>> {
     return this.officeRepository.getAllPaginated(this.route, params);
   }
+  getAllGet(params?: ListParams): Observable<IListResponse<IOffice>> {
+    return this.officeRepository.getAllPaginated(
+      this.route + '/get-all',
+      params
+    );
+  }
 
   getById(id: string | number): Observable<IOffice> {
     return this.officeRepository.getById(this.route, id);

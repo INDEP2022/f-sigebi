@@ -5,94 +5,139 @@
 
   <div body>
     <form [formGroup]="form" class="form-material">
-      <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
-            <input class="form-control" formControlName="noBien" />
-          </form-field>
+      <div class="row justify-content-center">
+        <div class="col-lg-5 mt-2 mb-2">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field [control]="form.get('noBien')" label="No&#46; Bien">
+                <input readonly class="form-control" formControlName="noBien" />
+              </form-field>
+            </div>
+            <div class="col-12 mt-2 mb-2">
+              <form-field [control]="form.get('estatus')" label="Estatus">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="estatus" />
+              </form-field>
+            </div>
+          </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('estatus')" label="Estatus">
-            <input class="form-control" formControlName="estatus" />
-          </form-field>
+
+        <div class="col-lg-5 mt-2 mb-2">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field [control]="form.get('cantidad')" label="Cantidad">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="cantidad" />
+              </form-field>
+            </div>
+
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('descripcion')"
+                label="Descripci&oacute;n">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="descripcion" />
+              </form-field>
+            </div>
+          </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('cantidad')" label="Cantidad">
-            <input class="form-control" formControlName="cantidad" />
-          </form-field>
+
+        <div class="col-lg-5 mt-2 mb-2">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('fechaNotificacion')"
+                label="Fecha Notificaci&oacute;n">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="fechaNotificacion" />
+              </form-field>
+            </div>
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('fechaNotificacion2')"
+                label="Fecha Notificaci&oacute;n 2">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="fechaNotificacion2" />
+              </form-field>
+            </div>
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('fechaNotificacion3')"
+                label="Fecha Notificaci&oacute;n 3">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="fechaNotificacion3" />
+              </form-field>
+            </div>
+          </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('fechaNotificacion')"
-            label="Fecha Notificaci&oacute;n">
-            <input
-              class="form-control"
-              formControlName="fechaNotificacion"
-              bsDatepicker />
-          </form-field>
+
+        <div class="col-lg-5 mt-2 mb-2">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('fechaTerminoPeriodo')"
+                label="Fecha Termino Periodo">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="fechaTerminoPeriodo" />
+                <!-- bsDatepicker -->
+              </form-field>
+            </div>
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('fechaTerminoPeriodo2')"
+                label="Fecha Termino Periodo 2">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="fechaTerminoPeriodo2" />
+              </form-field>
+            </div>
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('fechaTerminoPeriodo3')"
+                label="Fecha Termino Periodo 3">
+                <input
+                  readonly
+                  class="form-control"
+                  formControlName="fechaTerminoPeriodo3" />
+              </form-field>
+            </div>
+          </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('fechaNotificacion2')"
-            label="Fecha Notificaci&oacute;n 2">
-            <input
-              class="form-control"
-              formControlName="fechaNotificacion2"
-              bsDatepicker />
-          </form-field>
+
+        <div class="col-lg-10 mt-2 mb-2">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field
+                [control]="form.get('declaracionAbandonoSERA')"
+                label="Declaraci&oacute;n Abandonos SERA">
+                <textarea
+                  maxlength="1000"
+                  class="form-control"
+                  formControlName="declaracionAbandonoSERA"></textarea>
+              </form-field>
+            </div>
+          </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('fechaNotificacion3')"
-            label="Fecha Notificaci&oacute;n 3">
-            <input
-              class="form-control"
-              formControlName="fechaNotificacion3"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('fechaTerminoPeriodo')"
-            label="Fecha Termino Periodo">
-            <input
-              class="form-control"
-              formControlName="fechaTerminoPeriodo"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('fechaTerminoPeriodo2')"
-            label="Fecha Termino Periodo 2">
-            <input
-              class="form-control"
-              formControlName="fechaTerminoPeriodo2"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('fechaTerminoPeriodo3')"
-            label="Fecha Termino Periodo 3">
-            <input
-              class="form-control"
-              formControlName="fechaTerminoPeriodo3"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="form.get('declaracionAbandonoSERA')"
-            label="Declaraci&oacute;n Abandonos SERA">
-            <textarea
-              class="form-control"
-              formControlName="declaracionAbandonoSERA"></textarea>
-          </form-field>
-        </div>
+
         <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
           <div class="form-group">
             <button
+              [disabled]="!form.valid || validRatificacion == false"
               type="button"
               class="btn btn-primary btn-sm active"
               (click)="btnRatificacion()">

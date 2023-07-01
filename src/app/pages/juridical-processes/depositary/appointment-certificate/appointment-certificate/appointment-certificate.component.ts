@@ -96,28 +96,29 @@ export class AppointmentCertificateComponent
         //   delete params.P_DEPOSITARIA;
         // }
 
-        this.siabService
-          .fetchReport('RGERDIRNOMBRADEPO', params)
-          .subscribe(response => {
-            if (response !== null) {
-              const blob = new Blob([response], { type: 'application/pdf' });
-              const url = URL.createObjectURL(blob);
-              let config = {
-                initialState: {
-                  documento: {
-                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                    type: 'pdf',
-                  },
-                  callback: (data: any) => {},
-                }, //pasar datos por aca
-                class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-                ignoreBackdropClick: true, //ignora el click fuera del modal
-              };
-              this.modalService.show(PreviewDocumentsComponent, config);
-            } else {
-              this.alert('warning', ERROR_REPORT, '');
-            }
-          });
+        // 'RGERDIRNOMBRADEPO' --- REMPLAZAR CUANDO ESTE LISTO EL REPORTE
+
+        this.siabService.fetchReport('blank', {}).subscribe(response => {
+          console.log(response);
+          if (response !== null) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            this.alert('warning', ERROR_REPORT, '');
+          }
+        });
       } else {
         this.alert(
           'warning',

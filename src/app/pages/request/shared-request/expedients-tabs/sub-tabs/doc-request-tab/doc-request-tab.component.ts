@@ -56,6 +56,7 @@ export class DocRequestTabComponent
   @Input() typeDoc = '';
   @Input() updateInfo: boolean = true;
   @Input() displayName: string = '';
+  @Input() typeModule?: string = '';
   title: string = '';
   showSearchForm: boolean = false;
   selectDocType = new DefaultSelect<any>();
@@ -64,6 +65,7 @@ export class DocRequestTabComponent
   paramsTypeDoc = new BehaviorSubject<ListParams>(new ListParams());
   paramsRegDel = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: LocalDataSource = new LocalDataSource();
+  paragraphs1: any[] = [];
   columns = DOC_REQUEST_TAB_COLUMNS;
   parameter: any;
   type: string = '';
@@ -92,16 +94,17 @@ export class DocRequestTabComponent
     private requestService: RequestService
   ) {
     super();
-    this.idRequest = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as unknown as number;
+    this.idRequest = this.idRequest
+      ? this.idRequest
+      : (this.activatedRoute.snapshot.paramMap.get('id') as unknown as number);
   }
 
   ngOnInit(): void {
+    //console.log('MODULO', this.typeModule);
     // DISABLED BUTTON - FINALIZED //
     this.task = JSON.parse(localStorage.getItem('Task'));
     this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
+    //console.log('statustask', this.statusTask);
 
     this.prepareForm();
     this.getRegDelegation(new ListParams());
@@ -149,6 +152,11 @@ export class DocRequestTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (this.typeModule != '' && this.typeModule == 'doc-complementary') {
+      this.idRequest = this.activatedRoute.snapshot.paramMap.get(
+        'request'
+      ) as unknown as number;
+    }
     let onChangeCurrentValue = changes['typeDoc'].currentValue;
     let updateInfo = changes['updateInfo']?.currentValue;
     this.typeDoc = onChangeCurrentValue;
@@ -210,6 +218,7 @@ export class DocRequestTabComponent
 
     this.docRequestForm.get('noRequest').setValue(this.idRequest);
   }
+  private data: any[][] = [];
 
   getData(params: ListParams) {
     this.loading = true;
@@ -222,11 +231,12 @@ export class DocRequestTabComponent
       .getDocumentos(idSolicitud, params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
-        next: async data => {
-          console.log('docs', data);
+        next: async res => {
+          //console.log('docs', data);
           const transferent = await this.getInfoRequest();
           if (transferent == 1) {
-            const filterDoc = data.data.filter((item: any) => {
+            console.log('transferente igual a 1');
+            const filterDoc = res.data.filter((item: any) => {
               if (
                 item.dDocType == 'Document' &&
                 item.xidTransferente == 1 &&
@@ -236,41 +246,53 @@ export class DocRequestTabComponent
               }
             });
 
-            const info = filterDoc.map(async (items: any) => {
+            /*const info = filterDoc.map(async (items: any) => {
               const filter: any = await this.filterGoodDoc([
                 items.xtipoDocumento,
               ]);
-              if (items?.xdelegacionRegional) {
+              /*if (items?.xdelegacionRegional) {
+                console.log('Método getData llama a getRegionalDelegation');
                 const regionalDelegation = await this.getRegionalDelegation(
                   items?.xdelegacionRegional
                 );
                 items['delegationName'] = regionalDelegation;
               }
               if (items?.xidTransferente) {
+                console.log('Método getData llama a getTransferent');
                 const transferent = await this.getTransferent(
                   items?.xidTransferente
                 );
                 items['transferentName'] = transferent;
-              }
-              /*if (items?.xestado) {
+              }*/
+            /*if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
-              } */
+              } /
               items.xtipoDocumento = filter[0]?.ddescription;
               return items;
-            });
+            });*/
 
-            Promise.all(info).then(x => {
-              this.allDataDocReq = x;
-              this.paragraphs.load(x);
-              this.totalItems = this.paragraphs.count();
+            Promise.all(filterDoc).then(data => {
+              this.paragraphs1 =
+                res.data.length > 10
+                  ? this.setPaginate([...res.data])
+                  : res.data;
+              this.totalItems = res.data.length;
+
+              //this.allDataDocReq = x;
+              //this.paragraphs.load(x);
+
               this.loading = false;
             });
           }
 
           if (transferent != 1) {
-            const filterDoc = data.data.filter((item: any) => {
-              if (item.dDocType == 'Document' && item.xidBien == '         ') {
+            console.log('transferente diferente a 1');
+            const filterDoc = res.data.filter((item: any) => {
+              if (
+                (item.dDocType == 'Document' && item.xidBien == '         ') ||
+                item.dDocType == 'Document'
+              ) {
                 return item;
               }
             });
@@ -278,7 +300,7 @@ export class DocRequestTabComponent
               const filter: any = await this.filterGoodDoc([
                 items.xtipoDocumento,
               ]);
-              if (items?.xdelegacionRegional) {
+              /*if (items?.xdelegacionRegional) {
                 const regionalDelegation = await this.getRegionalDelegation(
                   items?.xdelegacionRegional
                 );
@@ -289,7 +311,7 @@ export class DocRequestTabComponent
                   items?.xidTransferente
                 );
                 items['transferentName'] = transferent;
-              }
+              }*/
               /*if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
@@ -298,10 +320,16 @@ export class DocRequestTabComponent
               return items;
             });
 
-            Promise.all(info).then(x => {
-              this.allDataDocReq = x;
-              this.paragraphs.load(x);
-              this.totalItems = this.paragraphs.count();
+            Promise.all(info).then(data => {
+              this.paragraphs1 =
+                res.data.length > 10
+                  ? this.setPaginate([...res.data])
+                  : res.data;
+              this.totalItems = res.data.length;
+
+              //this.allDataDocReq = x;
+              //this.paragraphs.load(x);
+
               this.loading = false;
             });
           }
@@ -310,6 +338,20 @@ export class DocRequestTabComponent
           this.loading = false;
         },
       });
+  }
+
+  private setPaginate(value: any[]): any[] {
+    let data: any[] = [];
+    let dataActual: any = [];
+    value.forEach((val, i) => {
+      dataActual.push(val);
+      if ((i + 1) % this.params.value.limit === 0) {
+        this.data.push(dataActual);
+        dataActual = [];
+      }
+    });
+    data = this.data[this.params.value.page - 1];
+    return data;
   }
 
   getInfoRequest() {
@@ -356,6 +398,7 @@ export class DocRequestTabComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: data => {
+            console.log('Método getRegionalDelegation');
             resolve(data?.description);
           },
           error: error => {},
@@ -370,6 +413,7 @@ export class DocRequestTabComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: data => {
+            console.log('Método getStateDoc');
             resolve(data?.descCondition);
           },
           error: error => {
@@ -379,19 +423,20 @@ export class DocRequestTabComponent
     });
   }
 
-  getTransferent(id: number) {
+  /*getTransferent(id: number) {
     return new Promise((resolve, reject) => {
       this.transferentService
         .getById(id)
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: data => {
+            console.log('Método getTransferent');
             resolve(data?.nameTransferent);
           },
           error: error => {},
         });
     });
-  }
+  }*/
 
   getDocType(params: ListParams) {
     this.wContentService
@@ -399,6 +444,8 @@ export class DocRequestTabComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: (resp: any) => {
+          console.log('Método getDocType');
+          console.log();
           this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
         },
       });
@@ -764,6 +811,7 @@ export class DocRequestTabComponent
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(data => {
+        console.log('Método getTransfe');
         this.selectTransfe = new DefaultSelect(data.data, data.count);
       });
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -20,7 +20,8 @@ export class StatusProcessFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private statusProcessService: StatusProcessService
+    private statusProcessService: StatusProcessService,
+    private render: Renderer2
   ) {
     super();
   }
@@ -30,20 +31,33 @@ export class StatusProcessFormComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
+    console.log(this.statusProcess);
     this.statusProcessForm = this.fb.group({
-      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      id: [null],
+      status: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(50),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       process: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(50), Validators.pattern(STRING_PATTERN)],
       ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
       ],
     });
+    const field = document.getElementById('inputstatus');
     if (this.statusProcess != null) {
+      this.render.addClass(field, 'disabled');
       this.edit = true;
       this.statusProcessForm.patchValue(this.statusProcess);
+    } else {
+      this.render.removeClass(field, 'disabled');
     }
   }
   close() {
@@ -67,7 +81,7 @@ export class StatusProcessFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.statusProcessService
-      .update(this.statusProcess.status, this.statusProcessForm.getRawValue())
+      .newUpdate(this.statusProcessForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

@@ -1,24 +1,123 @@
-// Procede Formalizacion
-export const tableSettingsProcedeFormalizacion: any = {
+interface TableSettings {
+  selectMode: string;
+  actions: any;
+  attr: Object;
+  pager: Object;
+  hideSubHeader: boolean;
+  mode: string;
+  add: Object;
+  edit: Object;
+  next: Object;
+  delete: Object;
+  columns: Object;
+  noDataMessage: string;
+  selectedRowIndex?: number;
+  rowClassFunction?: any;
+}
+
+export const TABLE_SETTINGS2: TableSettings = {
+  selectMode: '',
+  selectedRowIndex: -1,
   actions: {
-    columnTitle: '',
+    columnTitle: 'Acciones',
+    position: 'right',
     add: false,
-    edit: false,
+    edit: true,
+    next: true,
+    delete: true,
+  },
+  attr: {
+    class: 'table-bordered',
+  },
+  pager: {
+    display: false,
+  },
+  hideSubHeader: true,
+  mode: 'external',
+  add: {},
+  edit: {
+    editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
+  },
+  next: {
+    editButtonContent: '<i class="fa fa-arrow-right text-success mx-2"></i>',
+  },
+  delete: {
+    deleteButtonContent: '<i class="fa fa-arrow-right text-success mx-2"></i>',
+  },
+  columns: {},
+  noDataMessage: 'No se encontraron registros',
+  rowClassFunction: (row: any) => {},
+};
+
+export const TABLE_SETTINGS3: TableSettings = {
+  selectMode: '',
+  selectedRowIndex: -1,
+  actions: {
+    columnTitle: 'Acciones',
+    position: 'right',
+    add: false,
+    edit: true,
+    next: true,
     delete: false,
   },
-  hideSubHeader: true, //oculta subheaader de filtro
-  mode: 'external', // ventana externa
-  columns: {
-    evento: { title: 'Evento' },
-    eventoClave: { title: 'Evento Clave' },
-    noBien: { title: 'No. Bien' },
-    noBienDetalle: { title: 'No. Bien Detalle' },
-    estatusComercial: { title: 'Estatus Comercial' },
-    cliente: { title: 'Cliente' },
-    incorporado: { title: 'Incorporado' },
-    oficioDCBI: { title: 'Oficio DCBI' },
+  attr: {
+    class: 'table-bordered',
   },
+  pager: {
+    display: false,
+  },
+  hideSubHeader: true,
+  mode: 'external',
+  add: {},
+  edit: {
+    editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
+  },
+  next: {
+    editButtonContent: '<i class="fa fa-arrow-right text-success mx-2"></i>',
+  },
+  delete: {
+    deleteButtonContent: '<i class="fa fa-arrow-right text-success mx-2"></i>',
+  },
+  columns: {},
+  noDataMessage: 'No se encontrarón registros',
+  rowClassFunction: (row: any) => {},
 };
+
+export const TABLE_SETTINGS4: TableSettings = {
+  selectMode: '',
+  selectedRowIndex: -1,
+  actions: {
+    columnTitle: 'Acciones',
+    position: 'right',
+    add: false,
+    edit: false,
+    next: false,
+    delete: false,
+  },
+  attr: {
+    class: 'table-bordered',
+  },
+  pager: {
+    display: false,
+  },
+  hideSubHeader: true,
+  mode: 'external',
+  add: {},
+  edit: {
+    editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
+  },
+  next: {
+    editButtonContent: '<i class="fa fa-arrow-right text-success mx-2"></i>',
+  },
+  delete: {
+    deleteButtonContent: '<i class="fa fa-arrow-right text-success mx-2"></i>',
+  },
+  columns: {},
+  noDataMessage: 'No se encontraron registros',
+  rowClassFunction: (row: any) => {},
+};
+
+// Procede Formalizacion
 export const dataTableProcedeFormalizacion: any = [
   {
     evento: 'DATA',
@@ -31,6 +130,49 @@ export const dataTableProcedeFormalizacion: any = [
     oficioDCBI: 'DATA',
   },
 ];
+export const FORMALIZACION_COLUMNS = {
+  eventId: {
+    title: 'ID',
+    type: 'number',
+    sort: false,
+  },
+  processKey: {
+    title: 'Evento Clave',
+    type: 'string',
+    sort: false,
+  },
+  goodNumber: {
+    title: 'No. Bien',
+    sort: false,
+    type: 'string',
+  },
+  description: {
+    title: 'No. Bien Detalle',
+    type: 'string',
+    sort: false,
+  },
+  status: {
+    title: 'Estatus Comercial',
+    type: 'string',
+    sort: false,
+  },
+  idClient: {
+    title: 'Cliente',
+    type: 'number',
+    sort: false,
+  },
+  dateIncorporado: {
+    title: 'Incorporado',
+    type: 'string',
+    sort: false,
+  },
+  jobNumber: {
+    title: 'Oficio DCBI',
+    type: 'string',
+    sort: false,
+  },
+};
+
 // Asigna Notario
 export const tableSettingsAsignaNotario: any = {
   actions: {
@@ -54,20 +196,59 @@ export const tableSettingsAsignaNotario: any = {
     asignacionFormalizador: { title: 'Asignación Formalizador' },
   },
 };
-export const dataTableAsignaNotario: any = [
-  {
-    noBien: 'DATA',
-    evento: 'DATA',
-    eventoClave: 'DATA',
-    incorporado: 'DATA',
-    notarioClienteNombre: 'DATA',
-    numero: 'DATA',
-    ciudad: 'DATA',
-    abogado: 'DATA',
-    formalizador: 'DATA',
-    asignacionFormalizador: 'DATA',
+export const ASIGN_NOTARIES_COLUMNS = {
+  goodNumber: {
+    title: 'No. Bien',
+    sort: false,
+    type: 'string',
   },
-];
+  eventId: {
+    title: 'Evento',
+    type: 'number',
+    sort: false,
+  },
+  processKey: {
+    title: 'Evento Clave',
+    type: 'string',
+    sort: false,
+  },
+  dateIncorporado: {
+    title: 'Incorporado',
+    type: 'string',
+    sort: false,
+  },
+  notaryCli: {
+    title: 'Nombre del Notario Cliente',
+    type: 'string',
+    sort: false,
+  },
+  numNotaryCli: {
+    title: 'Número',
+    type: 'number',
+    sort: false,
+  },
+  cityNotary: {
+    title: 'Ciudad',
+    type: 'string',
+    sort: false,
+  },
+  notaryIdterc: {
+    title: 'Abogado',
+    type: 'string',
+    sort: false,
+  },
+  formalizador: {
+    title: 'Formalizador',
+    type: 'string',
+    sort: false,
+  },
+  dateAssignmentnotDate: {
+    title: 'Asignación Formalizador',
+    type: 'string',
+    sort: false,
+  },
+};
+
 // Formaliza Escrituracion
 export const tableSettingsFormalizaEscrituracion: any = {
   actions: {
@@ -89,18 +270,49 @@ export const tableSettingsFormalizaEscrituracion: any = {
     noFecha: { title: 'No. Fecha' },
   },
 };
-export const dataTableFormalizaEscrituracion: any = [
-  {
-    noBien: 'DATA',
-    evento: 'DATA',
-    eventoClave: 'DATA',
-    incorporado: 'DATA',
-    escrituraNo: 'DATA',
-    fechaEscritura: 'DATA',
-    escrituraAnteriorNo: 'DATA',
-    noFecha: 'DATA',
+export const ESCRITURACION_COLUMNS = {
+  goodNumber: {
+    title: 'No. Bien',
+    sort: false,
+    type: 'string',
   },
-];
+  eventId: {
+    title: 'Evento',
+    type: 'number',
+    sort: false,
+  },
+  processKey: {
+    title: 'Evento Clave',
+    type: 'string',
+    sort: false,
+  },
+  dateIncorporado: {
+    title: 'Incorporado',
+    type: 'string',
+    sort: false,
+  },
+  writingNumber: {
+    title: 'Escritura No.',
+    type: 'number',
+    sort: false,
+  },
+  dateWritingAntDate: {
+    title: 'Fecha Escritura',
+    type: 'number',
+    sort: false,
+  },
+  writingAntNumber: {
+    title: 'Escritura Anterior No.',
+    type: 'number',
+    sort: false,
+  },
+  dateWritingDate: {
+    title: 'No. Fecha',
+    type: 'string',
+    sort: false,
+  },
+};
+
 // Todos
 export const tableSettingsTodos: any = {
   actions: {
@@ -120,6 +332,39 @@ export const tableSettingsTodos: any = {
     desfaseDias: { title: 'Desfase Días' },
   },
 };
+
+export const TODOS_COLUMNS = {
+  goodnumber: {
+    title: 'No. Bien',
+    sort: false,
+    type: 'string',
+  },
+  description: {
+    title: 'No. Bien Detalle',
+    type: 'number',
+    sort: false,
+  },
+  notary: {
+    title: 'Asignado Notario',
+    type: 'string',
+    sort: false,
+  },
+  formalizes: {
+    title: 'En Formalización',
+    type: 'string',
+    sort: false,
+  },
+  writing: {
+    title: 'Escrituración',
+    type: 'string',
+    sort: false,
+  },
+  days: {
+    title: 'Desfase en Días',
+    type: 'string',
+    sort: false,
+  },
+};
 export const dataTableTodos: any = [
   {
     noBien: 'DATA',
@@ -130,45 +375,3 @@ export const dataTableTodos: any = [
     desfaseDias: 'DATA',
   },
 ];
-
-/*
-Procede Formalizacion
-evento: '',
-eventoClave: '',
-noBien: '',
-noBienDetalle: '',
-estatusComercial: '',
-cliente: '',
-incorporado: '',
-oficioDCBI: '',
-
-Asigna Notario
-noBien: '',
-evento: '',
-eventoClave: '',
-incorporado: '',
-notarioClienteNombre: '',
-numero: '',
-ciudad: '',
-abogado: '',
-formalizador: '',
-asignacionFormalizador: '',
-
-Formaliza Escrituracion
-noBien: '',
-evento: '',
-eventoClave: '',
-incorporado: '',
-escrituraNo: ''
-fechaEscritura: '',
-escrituraAnteriorNo: '',
-noFecha: '',
-
-Todos
-noBien: '',
-noBienDetalle: '',
-asignadoNotario: '',
-enFormalizacion: '',
-escrituracion: '',
-desfaseDias: '',
-*/

@@ -31,7 +31,7 @@ export class PenaltyListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = PENALTY_COLUMNS;
-    this.settings.actions.delete = false;
+    this.settings.actions.delete = true;
     this.settings.actions.add = false;
     this.settings = {
       ...this.settings,
@@ -60,6 +60,7 @@ export class PenaltyListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });
@@ -100,15 +101,30 @@ export class PenaltyListComponent extends BasePage implements OnInit {
     this.modalService.show(PenaltyFormComponent, config);
   }
 
-  delete(penalty: IPenalty) {
+  showDeleteAlert(penalty: IPenalty) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(penalty.id);
       }
+    });
+  }
+  delete(id: number) {
+    this.penaltyService.remove(id).subscribe({
+      next: () => {
+        this.getExample(),
+          this.alert('success', 'Penalización', 'Borrado Correctamente');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Penalización',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

@@ -4,53 +4,49 @@ export const REGULATORY_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  id_fraccion: {
-    title: 'Id Fraccion',
+  fractionId: {
+    title: 'No. Fracción',
     type: 'number',
     sort: false,
   },
-  numero: {
-    title: 'Numero',
+  fractionDetails: {
+    title: 'Fracción',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.description;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
+  },
+  number: {
+    title: 'Número',
     type: 'string',
     sort: false,
   },
-  descripcion: {
-    title: 'Descripcion',
+  description: {
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  validar_ef: {
-    title: 'validar Ef',
+  validateEf: {
+    title: 'Validar Ef',
     type: 'string',
     sort: false,
   },
-  validar_ec: {
+  validateEc: {
     title: 'Validar Ec',
     type: 'string',
     sort: false,
   },
-  usuario_creacion: {
-    title: 'Usuario Creacion',
-    type: 'string',
-    sort: false,
-  },
-  fecha_creacion: {
-    title: 'Fecha Creacion',
-    type: 'Date',
-    sort: false,
-  },
-  usuario_modificacion: {
-    title: 'Usuario Modificacion',
-    type: 'string',
-    sort: false,
-  },
-  fecha_modificacion: {
-    title: 'Fecha Modificacion',
-    type: 'Date',
-    sort: false,
-  },
   version: {
-    title: 'Version',
+    title: 'Versión',
     type: 'number',
     sort: false,
   },

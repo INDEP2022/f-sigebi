@@ -4,7 +4,12 @@
   </div>
   <div body>
     <div class="table-responsive">
-      <table class="table">
+      <ng2-smart-table [settings]="settings1" [source]="newAppraisalData">
+      </ng2-smart-table>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+      <!-- <table class="table">
         <thead>
           <tr>
             <th>No. Solicitud</th>
@@ -17,20 +22,20 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of appraisalData">
+          <tr *ngFor="let item of appraisalData.reverse()">
             <td>{{ item.noRequest }}</td>
             <td>{{ item.requestXAppraisal.noExpert }}</td>
             <td></td>
             <td>{{ item.requestXAppraisal.noAppraiser }}</td>
             <td></td>
-            <td>{{ item.appraisalDate }}</td>
-            <td>{{ item.effectiveDate }}</td>
+            <td>{{ item.appraisalDate | date : 'dd-MM-YYYY' }}</td>
+            <td>{{ item.effectiveDate | date : 'dd-MM-YYYY' }}</td>
             <td>{{ item.valueAppraisal }}</td>
             <td>{{ item.requestXAppraisal.cveCurrencyCost }}</td>
             <td>{{ item.good.originSignals }}</td>
           </tr>
         </tbody>
-      </table>
+      </table> -->
     </div>
   </div>
 

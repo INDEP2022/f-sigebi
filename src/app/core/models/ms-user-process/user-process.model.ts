@@ -18,4 +18,5 @@ export interface IUserProcess {
   acronymLevel4?: string;
   rol?: string;
   delegationreg?: string;
+  nomComplete?: string;
 }

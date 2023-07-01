@@ -28,7 +28,7 @@ export class SaeInputComponent implements ViewCell, OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    console.log(this.value);
+    //console.log(this.value);
     this.requestHelperService.currentReadOnly.subscribe({
       next: resp => {
         this.isreadOnly = resp;

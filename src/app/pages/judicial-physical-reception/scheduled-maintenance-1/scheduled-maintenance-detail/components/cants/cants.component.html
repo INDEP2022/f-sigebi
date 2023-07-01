@@ -1,6 +1,5 @@
-<form class="form-material" [formGroup]="form">
-  <div class="row">
-    <!-- <div class="col-md-4">
+<div class="row">
+  <!-- <div class="col-md-4">
       <form-field [control]="form.get('goods')" label="Cant. de Bienes">
         <input
           type="number"
@@ -9,25 +8,49 @@
           readonly />
       </form-field>
     </div> -->
-    <div class="col-xs-6">
-      <form-field [control]="form.get('files')" label="Cant. de Expedientes">
-        <input
-          type="number"
-          class="form-control"
-          formControlName="goods"
-          readonly />
-      </form-field>
+  <div class="col-md-4">
+    <div class="cantidad">
+      <label for="">Cantidad de Bienes</label>
+      <div>{{ goodsCant + bienesRas }}</div>
     </div>
-    <div class="col-xs-6">
-      <form-field
-        [control]="form.get('dictamenes')"
-        label="Cant. de Dictámenes">
-        <input
-          type="number"
-          class="form-control"
-          formControlName="goods"
-          readonly />
-      </form-field>
-    </div>
+
+    <!-- <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Cantidad de Expedientes</h5>
+      </div>
+      <div body>
+        {{files}}
+      </div>
+    </app-card> -->
   </div>
-</form>
+  <div class="col-md-4">
+    <div class="cantidad">
+      <label for="">Cantidad de Expedientes</label>
+      <div>{{ files + expedientesRas }}</div>
+    </div>
+
+    <!-- <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Cantidad de Expedientes</h5>
+      </div>
+      <div body>
+        {{files}}
+      </div>
+    </app-card> -->
+  </div>
+  <div class="col-md-4">
+    <div class="cantidad">
+      <label for="">Cantidad de Dictamenes</label>
+      <div>{{ dictamenes + dictamenesRas }}</div>
+    </div>
+
+    <!-- <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Cantidad de Dictamenes</h5>
+      </div>
+      <div body>
+        {{dictamenes}}
+      </div>
+    </app-card> -->
+  </div>
+</div>

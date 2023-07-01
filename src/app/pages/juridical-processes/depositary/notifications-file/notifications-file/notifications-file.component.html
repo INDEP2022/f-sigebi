@@ -18,34 +18,40 @@
   <div body *ngIf="!loading">
     <form [formGroup]="form" class="form-material">
       <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('fileNumber')"
             label="No&#46; Expediente">
             <input class="form-control" formControlName="fileNumber" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-sm-12 col-12 col-md-5 p-2">
           <form-field [control]="form.get('criminalCase')" label="Causa Penal">
             <input class="form-control" formControlName="criminalCase" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-sm-12 col-12 col-md-5 p-2">
           <form-field
             [control]="form.get('preliminaryInquiry')"
             label="Averiguaci&oacute;n Previa">
             <input class="form-control" formControlName="preliminaryInquiry" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2 text-center">
-          <div class="form-group">
-            <button
-              type="submit"
-              class="btn btn-primary btn-sm active m-4"
-              (click)="btnGetNotificationsByExpedient()">
-              Consultar Notificaciones
-            </button>
-          </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm active m-4"
+            (click)="btnGetNotificationsByExpedient()">
+            Consultar
+            <i aria-hidden="true" class="fa fa-search text-pink"></i>
+          </button>
+          <button
+            type="submit"
+            class="btn btn-danger btn-sm active m-4"
+            (click)="btnCleanData()">
+            Limpiar Filtros
+            <i aria-hidden="true" class="fa fa-trash text-light"></i>
+          </button>
         </div>
       </div>
     </form>

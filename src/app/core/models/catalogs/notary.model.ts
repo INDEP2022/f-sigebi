@@ -9,3 +9,15 @@ export interface INotary {
   correo: string;
   no_registro: number;
 }
+
+export interface IComerNotariostercs {
+  id: number;
+  name: string | null;
+  lastName: string | null;
+  motherLastName: string | null;
+  businessName: string | null;
+  physicalRfc: string | null;
+  moralRdc: string | null;
+  phone: string | null;
+  email: string;
+}

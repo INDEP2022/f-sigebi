@@ -13,8 +13,9 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class SaveValueFormComponent extends BasePage implements OnInit {
   saveValue: ISaveValue;
-  edit: boolean;
+  edit: boolean = false;
   saveValueForm: ModelForm<ISaveValue>;
+  title: string = 'Valores guardados';
 
   constructor(
     private fb: FormBuilder,
@@ -27,14 +28,30 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
   }
-
   prepareForm() {
     this.saveValueForm = this.fb.group({
-      id: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      location: [null, [Validators.required]],
+      id: [
+        null,
+        [Validators.required, Validators.minLength(0), Validators.maxLength(5)],
+      ],
+      description: [
+        null,
+        [
+          Validators.required,
+          Validators.minLength(0),
+          Validators.maxLength(60),
+        ],
+      ],
+      location: [
+        null,
+        [
+          Validators.required,
+          Validators.minLength(0),
+          Validators.maxLength(60),
+        ],
+      ],
       responsible: [null, [Validators.required]],
-      noRegistration: [null, [Validators.required]],
+      noRegistration: [null],
     });
 
     if (this.saveValue != null) {
@@ -70,6 +87,9 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

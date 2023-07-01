@@ -6,19 +6,14 @@
     <form [formGroup]="thirdPartyCompanyForm" class="form-material">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="thirdPartyCompanyForm.get('id')" label="Id">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
           <form-field
             [control]="thirdPartyCompanyForm.get('keyCompany')"
             label="Clave empresa">
             <input
               type="text"
               class="form-control"
-              formControlName="keyCompany" />
+              formControlName="keyCompany"
+              maxlength="10" />
           </form-field>
         </div>
         <div class="col-md-12">
@@ -29,18 +24,31 @@
               class="form-control"
               type="text"
               rows="2"
-              formControlName="description"></textarea>
+              formControlName="description"
+              maxlength="100">
+            </textarea>
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field
-            [control]="thirdPartyCompanyForm.get('cveZoneContract')"
-            label="Clave zona de contrato">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="cveZoneContract" />
+        <div class="col-md-4">
+          <form-field [control]="thirdPartyCompanyForm.get('keyZoneContract')">
+            <ngx-select
+              [form]="thirdPartyCompanyForm"
+              [data]="itemsZoneContract"
+              label="Clave zona de contrato"
+              bindLabel="description"
+              value="id"
+              (fetchItems)="getZoneContract($event)"
+              control="keyZoneContract">
+            </ngx-select>
           </form-field>
+          <!-- <form-field [control]="thirdPartyCompanyForm.get('keyZoneContract')" label="">
+            <select class="form-control text-center" formControlName="keyZoneContract">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </form-field> -->
         </div>
       </div>
     </form>

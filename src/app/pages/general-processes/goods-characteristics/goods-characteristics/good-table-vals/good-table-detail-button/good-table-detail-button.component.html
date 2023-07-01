@@ -1,0 +1,53 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Campos para el bien:</h5>
+  </div>
+  <div body>
+    <div class="row mt-n3 mb-3">
+      <div class="form-material col-md-7">
+        <search-bar
+          label=""
+          [type]="'text'"
+          [haveSearch]="true"
+          [params]="params"
+          [filterField]="searchFilter"
+          [searchFilterCompatible]="true"
+          [placeholder]="'Buscar...'"></search-bar>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="openForm($event)"
+            (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination
+      [params]="params"
+      [pageSizeOptions]="pageSizeOptions"
+      [limit]="limit"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [text]="'Aceptar'"
+          [type]="'button'"
+          [disabled]="disabled"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

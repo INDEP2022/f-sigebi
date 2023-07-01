@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from 'src/app/common/services/http.service';
+import { Observable } from 'rxjs';
+import { ScreenHelpEndpoint } from 'src/app/common/constants/endpoints/ms-screen-help-endpoint';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { IListResponse } from '../../interfaces/list-response.interface';
 import { IScreenHelp } from '../../models/ms-business-rule/screen-help.model';
 
 @Injectable({
@@ -14,5 +17,12 @@ export class ScreenHelpService extends HttpService {
 
   getById(id: string) {
     return this.get<IScreenHelp>(`${this.endpoint}/${id}`);
+  }
+
+  getAll(params?: _Params): Observable<IListResponse<IScreenHelp>> {
+    return this.get<IListResponse<IScreenHelp>>(
+      ScreenHelpEndpoint.IndBusinessRule,
+      params
+    );
   }
 }

@@ -25,11 +25,18 @@ export class ThirdPartyService implements ICrudMethods<IThirdPartyCompany> {
     return this.thirdPartyRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IThirdPartyCompany): Observable<Object> {
-    return this.thirdPartyRepository.update(this.route, id, model);
+  updateThirdPartyCompany(
+    id: string | number,
+    model: IThirdPartyCompany
+  ): Observable<Object> {
+    return this.thirdPartyRepository.updateThirdPartyCompany(
+      this.route,
+      id,
+      model
+    );
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.thirdPartyRepository.remove(this.route, id);
+  removeThirdPartyCompany(id: string | number): Observable<Object> {
+    return this.thirdPartyRepository.removeThirdPartyCompany(this.route, id);
   }
 }

@@ -10,11 +10,7 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { NormService } from 'src/app/core/services/catalogs/norm.service';
 import { SIABClasificationService } from 'src/app/core/services/catalogs/siab-clasification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  DOUBLE_PATTERN,
-  NUMBERS_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -28,6 +24,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   norms = new DefaultSelect<INorm>();
   clasifications = new DefaultSelect<ISiabClasification>();
   edit: boolean = false;
+  title: string = 'Fracción';
 
   constructor(
     private modalRef: BsModalRef,
@@ -45,7 +42,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.fractionForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null],
       code: [null, [Validators.required]],
       level: ['0', [Validators.required]],
       description: [
@@ -56,7 +53,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
-      unit: [null, [Validators.required]],
+      unit: [null],
       clasificationId: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
@@ -78,14 +75,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
       ],
-      decimalAmount: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(DOUBLE_PATTERN),
-          Validators.maxLength(1),
-        ],
-      ],
+      decimalAmount: [null, [Validators.required, Validators.maxLength(1)]],
       status: [null],
       fractionCode: [
         null,
@@ -103,11 +93,9 @@ export class FractionsFormComponent extends BasePage implements OnInit {
         normId: norm?.id,
         clasificationId: classification?.id,
       });
-
       this.fractionForm
         .get('level')
         .setValue(parseInt(this.fraction.level) + 1);
-
       this.fractionForm.get('parentId').setValue(this.fraction.id);
 
       this.clasifications = new DefaultSelect(
@@ -118,6 +106,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
 
       this.getClasificationSelect({ page: 1, text: '' });
       this.getFractionSelect({ page: 1, text: '' });
+      this.fractionForm.patchValue(this.fraction);
     } else {
       this.getClasificationSelect({ page: 1, text: '' });
       this.getFractionSelect({ page: 1, text: '' });
@@ -137,8 +126,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    /* this.edit ? this.update() : this.create(); */
-    this.create();
+    this.edit ? this.update() : this.create();
   }
 
   create() {
@@ -151,7 +139,6 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   }
 
   update() {
-    console.log(this.fractionForm.value);
     this.fractionService.newUpdate(this.fractionForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
@@ -163,6 +150,9 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.alert('success', this.title, `${message} Correctamente`);
+
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

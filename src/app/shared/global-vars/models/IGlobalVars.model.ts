@@ -24,12 +24,15 @@ export interface IGlobalVars {
   noTransferente: string | number;
   gNoVolante: string | number;
   varDic: string;
+  bienes_foto: number;
   //TODO: HOLOGAR MODELO DE VARIABLES GLOBALES
-  EXPEDIENTE?: string | number;
-  TIPO_DIC?: string | number;
-  VOLANTE?: string | number;
-  CONSULTA?: string;
-  TIPO_VO?: string | number;
-  P_GEST_OK?: string | number;
-  P_NO_TRAMITE?: string | number;
+  EXPEDIENTE: string | number;
+  TIPO_DIC: string | number;
+  VOLANTE: string | number;
+  CONSULTA: string;
+  TIPO_VO: string | number;
+  P_GEST_OK: string | number;
+  P_NO_TRAMITE: string | number;
+  REL_BIENES: number;
+  IMP_OF: any;
 }

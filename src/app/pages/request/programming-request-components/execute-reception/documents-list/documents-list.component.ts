@@ -19,6 +19,7 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { environment } from 'src/environments/environment';
 import { DocumentFormComponent } from '../../../shared-request/document-form/document-form.component';
 import { DocumentShowComponent } from '../../../shared-request/document-show/document-show.component';
 import {
@@ -258,7 +259,7 @@ export class DocumentsListComponent extends BasePage implements OnInit {
   //ver documento
   viewDocument(event: any) {
     const docName = event.data.dDocName;
-    let linkDoc1: string = `http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=Etiqueta_INAI.jasper&idSolicitud=43717`;
+    let linkDoc1: string = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=Etiqueta_INAI.jasper&idSolicitud=43717`;
 
     this.wcontetService.obtainFile(docName).subscribe(data => {
       let blob = this.dataURItoBlob(data);

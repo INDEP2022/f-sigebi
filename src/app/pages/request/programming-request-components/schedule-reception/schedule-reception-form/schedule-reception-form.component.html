@@ -1,7 +1,27 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Programar Recepci&oacute;n</h5>
+
+    <div class="row pt-2">
+      <div class="d-flex justify-content-end">
+        <div class="m-2">
+          <confirm-button
+            [disabled]="!userName"
+            [loading]="loading"
+            [text]="'Turnar'"
+            [loadingText]="'Turnando'"
+            [btnSmall]="true"
+            (confirm)="confirm()"></confirm-button>
+        </div>
+        <div class="m-2">
+          <button (click)="close()" class="btn btn-danger btn-sm active">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
+
   <div body>
     <div class="row">
       <div class="d-flex justify-content-end pt-3">
@@ -38,7 +58,7 @@
         <label class="control-label col-sm-2" for="pwd"
           >Usuario Recepci&oacute;n&#58;</label
         >
-        <div class="col-md-3">
+        <div class="col-md-4">
           <input
             type="text"
             class="form-control"
@@ -60,7 +80,7 @@
           >Tipo de evento&#58;</label
         >
         <div class="col-sm-6">
-          <label class="control-label">Recepci&oacute;n F&iacute;sica</label>
+          <label class="control-label">{{ typeEvent }}</label>
         </div>
       </div>
 
@@ -71,20 +91,5 @@
         </div>
       </div>
     </form>
-
-    <div class="d-flex justify-content-center">
-      <div class="m-2">
-        <confirm-button
-          [disabled]="!userName"
-          [loading]="loading"
-          [text]="'Turnar'"
-          [loadingText]="'Turnando'"
-          [btnSmall]="true"
-          (confirm)="confirm()"></confirm-button>
-      </div>
-      <div class="m-2">
-        <button class="btn btn-danger btn-sm active">Cancelar</button>
-      </div>
-    </div>
   </div>
 </app-card>

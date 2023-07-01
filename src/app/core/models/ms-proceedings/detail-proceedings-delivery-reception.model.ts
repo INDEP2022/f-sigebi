@@ -1,5 +1,7 @@
+import { IGood } from '../ms-good/good';
+
 export interface IDetailProceedingsDeliveryReception {
-  numberProceedings?: number;
+  numberProceedings?: number | string;
   numberGood?: number;
   amount?: number;
   received?: string;
@@ -12,10 +14,24 @@ export interface IDetailProceedingsDeliveryReception {
   correctIndft?: number;
   idftUser?: string;
   idftDate?: Date;
+  good?: IGood;
   numDelegationIndft?: number;
   yearIndft?: number;
   monthIndft?: number;
   idftDateHc?: Date;
   packageNumber?: number;
   exchangeValue?: number;
+}
+
+export interface IDeleteDetailProceeding {
+  numberGood: string | number;
+  numberProceedings: string | number;
+}
+
+export interface IDetailWithIndEdo {
+  no_acta: number;
+  vIndEdoFisicod?: boolean;
+  vNoColumna?: number;
+  page?: number;
+  perPage?: number;
 }

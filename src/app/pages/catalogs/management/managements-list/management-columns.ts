@@ -11,8 +11,8 @@ export const MANAGEMENT_COLUMNS = {
     sort: false,
   },
 
-  idTramite: {
-    title: 'Tramite',
+  transactId: {
+    title: 'Trámite',
     type: 'string',
     sort: false,
   },

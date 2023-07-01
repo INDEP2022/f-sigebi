@@ -10,7 +10,13 @@ export interface IGood {
   complianceLeaveDate?: string;
   quantity?: number;
   goodStatus?: string;
+  aliasWarehouse?: string;
   cant: string;
+  physicalStatusName: string;
+  quantitySae: string;
+  saePhysicalState: string;
+  stateConservationSae: string;
+  regionalDelegationNumber: string;
   notifyDate?: string | Date;
   dateEntry: string;
   dateExit?: any;
@@ -19,7 +25,8 @@ export interface IGood {
   status: string;
   classificationGood?: any;
   remarksOrien?: any;
-  physicalStatus?: boolean;
+  physicalStatus?: number | string;
+  scheduledDateDecoDev?: string;
   destinyName?: string;
   goodId?: number;
   solIncripRegister?: any;
@@ -29,6 +36,7 @@ export interface IGood {
   appraisal?: string;
   appraiserOpinion?: any;
   goodTypeId: number;
+  subTypeId: number;
   originSignals?: any;
   goodDescription?: string;
   saeDestiny?: string;
@@ -45,6 +53,12 @@ export interface IGood {
   fecNotificationAbandonment?: any;
   observationAbandoment?: any;
   fecConfAbandoment?: any;
+  delegationNumber?: { id: string; description: string };
+  subDelegationNumber?: { id: string; description: string };
+  observationss?: string;
+  referenceValue?: string;
+  appraisedValue?: string;
+  appraisalVigDate?: string;
   fecNotification?: any;
   notificationA?: any;
   placeNotification?: any;
@@ -634,4 +648,9 @@ export interface IGoodSearchGoodByFile {
 export interface IGoodSearchGoodByClasification {
   screenKey: string;
   clasifGoodNumber: number;
+}
+
+export interface IGoodAttribGoodBad {
+  id: string | number;
+  motive: string;
 }

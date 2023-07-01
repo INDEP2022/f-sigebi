@@ -75,7 +75,7 @@ export class CopiesXFlierService extends HttpService {
   }
 
   findByIds(ids: {
-    copyNumber: string | number;
+    copyNumber?: string | number;
     flierNumber: string | number;
   }): Observable<ICopiesxFlier> {
     return this.post(FlierEndpoints.FindByIds, ids);

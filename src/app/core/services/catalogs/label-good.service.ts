@@ -10,7 +10,7 @@ import { ILabelOKey } from '../../models/catalogs/label-okey.model';
 export class LabelGoodService extends HttpService {
   constructor() {
     super();
-    this.microservice = LabelGoodEndPoints.cat;
+    this.microservice = LabelGoodEndPoints.BasePage;
   }
   getEtiqXClasif(_params: _Params) {
     return this.get<IListResponse<ILabelOKey>>(

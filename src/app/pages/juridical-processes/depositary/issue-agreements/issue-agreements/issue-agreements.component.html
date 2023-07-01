@@ -5,29 +5,16 @@
   <div body>
     <h5 class="title">
       <p>
-        <a
-          class="text-color"
-          (click)="showSearchForm = true"
-          *ngIf="!showSearchForm">
+        <a class="text-color" (click)="showSearchForm = !showSearchForm">
           <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
-          bienes</a
-        >
-      </p>
-
-      <p>
-        <a
-          class="text-color"
-          (click)="showSearchForm = false"
-          *ngIf="showSearchForm">
-          <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
-          bienes</a
+          Bienes</a
         >
       </p>
     </h5>
-    <div *ngIf="showSearchForm">
+    <div *ngIf="!showSearchForm">
       <form [formGroup]="searchForm" class="form-material">
         <div class="row pt-3">
-          <div class="col-md-6">
+          <div class="col-md-4">
             <form-field
               [control]="searchForm.get('goodId')"
               label="No&#46; de Bien">
@@ -35,82 +22,87 @@
                 type="number"
                 class="form-control"
                 formControlName="goodId"
-                min="0" />
+                min="0"
+                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10)" />
             </form-field>
           </div>
-          <div class="col-md-6">
-            <form-field [control]="searchForm.get('description')">
-              <ngx-select
-                [form]="searchForm"
-                control="description"
-                [data]="goodDescriptions"
-                value="description"
-                bindLabel="description"
-                label="Descripci&oacute;n de bien"
-                (fetchItems)="getGoodTypeSelect($event)">
-              </ngx-select>
+          <div class="col-md-4">
+            <form-field
+              [control]="searchForm.get('description')"
+              label="Descripción">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="description"
+                oninput="if(this.value.length > 600) this.value = this.value.slice(0, 600)" />
+              <!-- <ngx-select [form]="searchForm" control="description" [data]="goodDescriptions" value="description"
+                bindLabel="description" label="Descripci&oacute;n de bien" (fetchItems)="getGoodTypeSelect($event)">
+              </ngx-select> -->
             </form-field>
           </div>
-        </div>
-
-        <div class="row pt-3">
-          <div class="col-md-6">
-            <form-field [control]="searchForm.get('status')">
-              <ngx-select
-                [form]="searchForm"
-                control="status"
-                [data]="goodEstatus"
-                value="status"
-                bindLabel="description"
-                label="Estatus"
-                (fetchItems)="getGoodStatusSelect($event)">
-              </ngx-select>
-            </form-field>
-          </div>
-          <div class="col-md-6">
+          <div class="col-md-4">
             <form-field
               [control]="searchForm.get('physicalReceptionDate')"
-              label="Fecha de recepción">
+              label="Fecha de Recepción">
               <input
                 type="text"
                 class="form-control"
                 formControlName="physicalReceptionDate"
                 bsDatepicker
-                [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" />
+                [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY' }"
+                (bsValueChange)="checkDate($event)" />
             </form-field>
           </div>
         </div>
+        <!-- 
+        <div class="row pt-3">
+          <div class="col-md-6">
+            <form-field [control]="searchForm.get('status')">
+              <ngx-select [form]="searchForm" control="status" [data]="goodEstatus" value="status"
+                bindLabel="description" label="Estatus" (fetchItems)="getGoodStatusSelect($event)">
+              </ngx-select>
+            </form-field>
+          </div>
+          
+        </div> -->
       </form>
+      <div class="form-inline justify-content-end btn-toolbar">
+        <button
+          class="btn btn-primary btn-sm active"
+          [disabled]="searchForm.invalid"
+          (click)="search()">
+          <i class="fa fa-search"></i> Buscar
+        </button>
+
+        <button class="btn btn-danger btn-sm active" (click)="clean()">
+          Limpiar
+        </button>
+      </div>
     </div>
 
-    <div class="form-inline justify-content-end btn-toolbar">
-      <button class="btn btn-primary btn-sm active" (click)="search()">
-        <i class="fa fa-search"></i> Buscar
-      </button>
-
-      <button class="btn btn-danger btn-sm active" (click)="clean()">
-        Limpiar
-      </button>
-    </div>
     <!-- tabla Emisión Acuerdos -->
     <div class="row w-100">
-      <app-columns-select [(settings)]="tableSettings"></app-columns-select>
+      <app-columns-select
+        (settingsChange)="render($event)"
+        [(settings)]="settings"></app-columns-select>
       <br />
-      <ng-scrollbar
-        [track]="'all'"
-        style="min-height: 300px"
+      <div
+        class="col-sm-12 col-12 col-md-12 p-2"
         [class]="loading ? 'table-loading' : ''">
-        <div class="col-sm-12 col-12 col-md-12 p-2">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="tableSettings"
-            [source]="dataTable"></ng2-smart-table>
-        </div>
-      </ng-scrollbar>
-      <app-pagination
-        [filterParams]="params"
-        [totalItems]="totalItems"></app-pagination>
+        <ng2-smart-table
+          id="table"
+          (edit)="updateHistory($event.data)"
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings"
+          [source]="dataTable"></ng2-smart-table>
+
+        <app-pagination
+          [filterParams]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
     </div>
+    <span class="badge bagde-3 bg-success mr-3"> Disponibles </span>
+    <span class="badge primary-3 bg-black"> No Disponibles </span>
     <!-- tabla Emisión Acuerdos -->
   </div>
   <div footer *ngIf="mostrarHistoricalSituationGoods == true">
@@ -130,6 +122,8 @@
   </div>
 </app-card>
 
-<app-historical-situation-goods
-  *ngIf="mostrarHistoricalSituationGoods == true"
-  [noBien]="noBien"></app-historical-situation-goods>
+<div #df>
+  <app-historical-situation-goods
+    *ngIf="mostrarHistoricalSituationGoods == true"
+    [noBien]="noBien"></app-historical-situation-goods>
+</div>

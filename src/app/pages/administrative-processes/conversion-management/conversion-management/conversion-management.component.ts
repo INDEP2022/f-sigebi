@@ -6,14 +6,25 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-conversion-management',
   templateUrl: './conversion-management.component.html',
-  styles: [],
+  styleUrls: ['./conversion-management.component.scss'],
 })
 export class ConversionManagementComponent extends BasePage implements OnInit {
+  DATA: any[] = [
+    {
+      label: 'Derivado',
+      value: '1',
+    },
+    {
+      label: 'Conversión',
+      value: '2',
+    },
+  ];
   //
   good: IGood;
   //
@@ -30,6 +41,12 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   form: FormGroup;
   // Variable para la contraseña
   password: string;
+
+  isFormModified = false;
+
+  enable: boolean = false;
+
+  dataSelect = new DefaultSelect<any>();
 
   get idConversion() {
     return this.form.get('idConversion');
@@ -72,7 +89,19 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.dataSelect = new DefaultSelect(this.DATA, this.DATA.length);
     this.buildForm();
+    this.description.disable();
+    this.actaERDate.disable();
+    this.actaER.disable();
+    this.desStatus.disable();
+    this.actaConversion.disable();
+    /* this.form.valueChanges.subscribe(() => {
+      if (this.conversion !== undefined) {
+        this.isFormModified = true;
+        console.log('******* Entro *******');
+      }
+    }); */
   }
 
   /**
@@ -82,65 +111,96 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
    */
   private buildForm() {
     this.form = this.fb.group({
-      idConversion: [null, [Validators.required]],
-      noBien: [null, [Validators.required]],
-      date: [null, [Validators.required]],
+      idConversion: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      noBien: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      date: [null],
       tipo: [null, [Validators.required]],
-      noExpediente: [null, [Validators.required]],
-      actaConversion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      desStatus: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      actaER: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      actaERDate: [null, [Validators.required]],
-      description: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      noExpediente: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      actaConversion: [null, [Validators.pattern(STRING_PATTERN)]],
+      desStatus: [null, [Validators.pattern(STRING_PATTERN)]],
+      actaER: [null, [Validators.pattern(STRING_PATTERN)]],
+      actaERDate: [null, [Validators.pattern(STRING_PATTERN)]],
+      description: [null],
       //goods: this.fb.array([])
     });
   }
 
-  save() {
-    this.date.setValue(new Date());
-    this.createObj();
-    console.log(this.assetConversion);
-    this.saved = false;
-    this.conversiongoodServices
-      .createAssetConversions(this.assetConversion)
-      .subscribe({
-        next: response => {
-          console.log(response);
-          this.onLoadToast(
-            'success',
-            'Guardado',
-            'Se ha guardado correctamente'
-          );
-        },
-        error: err => {
-          console.log(err);
-        },
-      });
+  async save() {
+    if (this.tipo.value === null) {
+      this.alert(
+        'warning',
+        'Administración de conversión de bienes',
+        'El campo tipo es requerido'
+      );
+      return;
+    }
+    console.log(this.idConversion.value);
+    if (this.idConversion.value !== null) {
+      const response: any = await this.updateConversion('');
+      this.date.setValue(new Date());
+      this.createObj();
+      this.conversiongoodServices
+        .createAssetConversions(this.assetConversion)
+        .subscribe({
+          next: response => {
+            console.log(response);
+            this.alert(
+              'success',
+              'Administración de conversión de bienes',
+              'Se ha guardado correctamente la conversión'
+            );
+            this.saved = false;
+          },
+          error: err => {
+            this.alert(
+              'warning',
+              'Administración de conversión de bienes',
+              'No se puede realizar la operación ya que este bien ya está asignado a esta conversión'
+            );
+            console.log(err);
+          },
+        });
+    } else {
+      this.alert(
+        'warning',
+        'Administración de conversión de bienes',
+        'Se debe cargar primero una conversión'
+      );
+    }
   }
 
   onChangeGood() {
-    this.searchGoods(this.noBien.value);
+    if (this.noBien.value !== null) {
+      this.searchGoods(this.noBien.value);
+    } else {
+      this.alert(
+        'warning',
+        'Administración de conversión de bienes',
+        'Se debe ingresar el numero del bien'
+      );
+    }
   }
+
   searchGoods(idGood: number | string) {
     // buscar el bien
+    console.log(idGood);
     this.goodServices.getById(idGood).subscribe({
-      next: response => {
-        this.good = response;
+      next: (response: any) => {
+        console.log(response.data[0]);
+        this.good = response.data[0];
         this.loadActER(this.good.id);
         this.loadDescriptionStatus(this.good.id);
         this.setGood(this.good);
       },
       error: err => {
-        this.onLoadToast('error', 'ERROR', 'Bien no existe');
+        this.alert(
+          'warning',
+          'Administración de conversión de bienes',
+          'Bien no existe'
+        );
         this.form.reset();
         console.log(err);
       },
@@ -157,16 +217,12 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     this.goodServices.getStatusByGood(idGood).subscribe({
       next: response => {
         this.desStatus.setValue(response.status_descripcion);
+        this.enable = true;
       },
       error: error => {
         this.desStatus.setValue('');
-        this.onLoadToast(
-          'info',
-          'Opss..',
-          'Este bien no tiene status asignado'
-        );
         this.loading = false;
-        console.log(error);
+        this.enable = true;
       },
     });
   }
@@ -175,14 +231,20 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     this.conversiongoodServices.getActsByGood(idGood).subscribe({
       next: response => {
         this.actaER.setValue(response.cve_acta);
-        this.actaERDate.setValue(new Date(response.fec_elaboracion));
+        console.log(response);
+        console.log(this.formatDate(response.fec_elaboracion));
+        this.actaERDate.setValue(
+          response.fec_elaboracion === undefined
+            ? null
+            : this.formatDate(response.fec_elaboracion)
+        );
       },
       error: err => {
         this.actaER.setValue('');
         this.actaERDate.setValue('');
-        this.onLoadToast(
-          'info',
-          'Opss..',
+        this.alert(
+          'warning',
+          'Administración de conversión de bienes',
           'Este bien no tiene Acta E/R asociada'
         );
         console.log(err);
@@ -190,61 +252,100 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     });
   }
 
-  generatePaswword() {
+  async generatePaswword() {
     this.generarPass = true;
     let pass = '';
-    let str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (let i = 1; i <= 8; i++) {
       let char = Math.floor(Math.random() * str.length + 1);
       pass += str.charAt(char);
     }
     this.password = pass;
     console.log(this.password);
-    this.updateConversion(this.password);
+    const response: any = await this.updateConversion(this.password, true);
+    if (response.statusCode === 200) {
+      this.alert(
+        'success',
+        `Password: ${this.password}`,
+        'Se ha generado y aplicado la contraseña a la Conversión'
+      );
+      this.form.reset();
+      this.saved = true;
+      this.conversion = null;
+      this.isFormModified = false;
+    } else {
+      this.alert(
+        'error',
+        'Ha ocurrido un error',
+        'Erorr al Generar la contraseña'
+      );
+    }
   }
 
   searchConversion() {
+    this.enable = false;
+    console.log(this.idConversion.value);
+    if (this.idConversion.value === '' || this.idConversion.value === null) {
+      this.alert(
+        'warning',
+        'Campo requerido',
+        'Ingrese por favor un id de conversión'
+      );
+      //this.form.markAllAsTouched();
+      return;
+    }
     this.conversiongoodServices.getById(this.idConversion.value).subscribe({
       next: response => {
+        console.log('AQUIIIIIII', response);
         this.conversion = response;
-        this.searchGoods(this.conversion.goodFatherNumber);
+        if (this.conversion.goodFatherNumber) {
+          this.searchGoods(this.conversion.goodFatherNumber);
+        }
         this.tipo.setValue(this.conversion.typeConv);
         this.date.setValue(new Date());
         this.enableButton = false;
+        this.actaConversion.setValue(this.conversion.cveActaConv);
+        this.alert(
+          'success',
+          'Administración de conversión de bienes',
+          'Se ha cargado la conversión correctamente'
+        );
       },
       error: err => {
-        this.onLoadToast('error', 'ERROR', 'Conversion no existe');
+        this.alert('error', 'Ha ocurrido un error', 'La conversión no existe');
         this.form.reset();
         console.log(err);
       },
     });
   }
-  updateConversion(pwAccess: string) {
-    this.conversion.id = Number(this.conversion.id);
-    this.conversion.fileNumber = Number(this.conversion.fileNumber);
-    this.conversion.goodFatherNumber = Number(this.conversion.goodFatherNumber);
-    this.conversion.statusConv = Number(this.conversion.statusConv);
-    this.conversion.typeConv = Number(this.conversion.typeConv);
-    this.conversion.pwAccess = pwAccess;
-    this.conversiongoodServices
-      .update(this.conversion.id, this.conversion)
-      .subscribe({
-        next: response => {
-          console.log(response);
-          this.onLoadToast(
-            'success',
-            'Generación exitoza',
-            'Se ha generado y aplicado la contraseña a la Conversión'
-          );
-          this.form.reset();
-        },
-        error: err => {
-          console.log(err);
-          this.onLoadToast('error', 'ERROR', 'Erorr al Generar la contraseña');
-        },
-      });
+  updateConversion(pwAccess: string, isPwAccess: boolean = false) {
+    return new Promise((res, rej) => {
+      this.conversion.id = Number(this.conversion.id);
+      this.conversion.fileNumber = Number(this.conversion.fileNumber);
+      this.conversion.goodFatherNumber = Number(this.good.id);
+      this.conversion.statusConv = Number(this.conversion.statusConv);
+      this.conversion.typeConv = Number(this.tipo.value);
+      if (isPwAccess) {
+        this.conversion.pwAccess = pwAccess;
+      }
+      console.log('AQUIIII', this.conversion);
+
+      this.conversiongoodServices
+        .update(this.conversion.id, this.conversion)
+        .subscribe({
+          next: response => {
+            res(response);
+            console.log(response);
+          },
+          error: err => {
+            console.log(err);
+            res(err.error);
+          },
+        });
+    });
   }
   createObj() {
+    console.log(this.good.id);
     this.assetConversion = {
       goodId: Number(this.good.id),
       conversionId: Number(this.conversion.id),
@@ -316,4 +417,24 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   /*   showToast(status: NbComponentStatus) {
     this.toastrService.show(status, 'Guardado exitoso !!', { status });
   } */
+
+  clean() {
+    this.form.reset();
+    // this.form.markAllAsTouched();
+  }
+  formatDate(fecha: string) {
+    const fecha_original = new Date(fecha);
+    // Obtener los componentes de fecha (día, mes, año)
+    const dia = fecha_original.getUTCDate();
+    const mes = (fecha_original.getUTCMonth() + 1).toString().padStart(2, '0'); // Añade cero inicial si es necesario
+    const año = fecha_original.getUTCFullYear();
+    // Formatear la fecha en el nuevo formato DD/MM/YYYY
+    const nuevo_formato = `${dia}/${mes}/${año}`;
+    return nuevo_formato;
+  }
+  detectarCambios() {
+    if (this.enable) {
+      this.isFormModified = true;
+    }
+  }
 }

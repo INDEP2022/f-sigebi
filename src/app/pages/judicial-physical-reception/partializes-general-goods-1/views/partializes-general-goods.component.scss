@@ -1,0 +1,47 @@
+// #partializes-general-goods {
+//   form-loader::ng-deep {
+//     .loader {
+//       background: #eaeaea;
+//       opacity: 0.4;
+//     }
+
+//     .loader:after {
+//       background-size: 200px 200px;
+//     }
+
+//     .loader-msg {
+//       z-index: 101;
+//       position: absolute;
+//       top: 50%;
+//       left: 50%;
+//       right: 0;
+//       bottom: 0;
+//       margin: 70px 70px 0px -120px;
+//     }
+//   }
+// }
+
+.title {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  position: relative !important;
+}
+
+.btn-return {
+  color: #9d2449;
+  padding-left: 0px;
+  left: -10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  top: -20px;
+  margin-top: 5px;
+
+  > i {
+    font-size: 35px;
+  }
+
+  &:hover {
+    color: #9d2449;
+  }
+}

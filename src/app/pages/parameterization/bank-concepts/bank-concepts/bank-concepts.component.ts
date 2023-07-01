@@ -10,7 +10,6 @@ import { BANK_CONCEPTS_COLUMNS } from './bank-concepts-columns';
 import { IBankConcepts } from 'src/app/core/models/catalogs/bank-concepts-model';
 //services
 import { BankConceptsService } from 'src/app/core/services/catalogs/bank-concepts-service';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-bank-concepts',
@@ -33,7 +32,7 @@ export class BankConceptsComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         add: false,
         position: 'right',
       },
@@ -78,14 +77,23 @@ export class BankConceptsComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(bankConcepts.key);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: string) {
     this.bankConceptsService.remove(id).subscribe({
-      next: () => this.getBankConcepts(),
+      next: () => {
+        this.getBankConcepts();
+        this.alert('success', 'Concepto bancario', 'Borrado');
+      },
+      error: erro => {
+        this.alert(
+          'warning',
+          'Concepto bancario',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

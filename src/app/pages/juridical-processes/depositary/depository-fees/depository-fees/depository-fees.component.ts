@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -25,14 +26,32 @@ export class DepositoryFeesComponent extends BasePage implements OnInit {
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  origin: string = null;
+  origin2: string = null;
+  noBienParams: number = null;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) {
     super();
     this.settings.columns = COLUMNS;
     this.settings.actions = false;
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.origin = params['origin'] ?? null;
+        if (this.origin == 'FCONDEPODISPAGOS') {
+          this.noBienParams = params['p_bien']
+            ? Number(params['p_bien'])
+            : null;
+        }
+        this.origin2 = params['origin2'] ?? null;
+      });
     this.buildForm();
   }
 
@@ -49,5 +68,21 @@ export class DepositoryFeesComponent extends BasePage implements OnInit {
       ],
       idPayment: [null, [Validators.required]],
     });
+  }
+  goBack() {
+    if (this.origin == 'FCONDEPODISPAGOS') {
+      this.router.navigate(
+        [
+          '/pages/juridical/depositary/payment-dispersion-process/query-related-payments-depositories/' +
+            this.noBienParams,
+        ],
+        {
+          queryParams: {
+            origin: this.origin2,
+            goodNumber: this.noBienParams,
+          },
+        }
+      );
+    }
   }
 }

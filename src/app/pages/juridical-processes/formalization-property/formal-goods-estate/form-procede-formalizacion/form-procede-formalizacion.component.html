@@ -1,0 +1,72 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Asignaci&oacute;n de Notario</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row justify-content-center">
+        <div class="col-5">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field [control]="form.get('idEvent')" label="No. Evento">
+                <input
+                  readonly
+                  type="text"
+                  class="form-control"
+                  formControlName="idEvent" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-5">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field [control]="form.get('goodNumber')" label="No. Bien">
+                <input
+                  readonly
+                  type="text"
+                  class="form-control"
+                  formControlName="goodNumber" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-10">
+          <div class="row">
+            <div class="col-12 mt-2 mb-2">
+              <form-field [control]="form.get('oficioDCBI')">
+                <ngx-select
+                  type="number"
+                  [form]="form"
+                  control="oficioDCBI"
+                  (change)="getJob($event)"
+                  (fetchItems)="listJobs($event)"
+                  [data]="selectJob"
+                  label="Oficio DCBI"
+                  value="id"
+                  bindLabel="idWithText">
+                </ngx-select>
+                <!-- <input maxlength="20" type="text" class="form-control" formControlName="oficioDCBI" /> -->
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -15,7 +15,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class SaveValuesModalComponent extends BasePage implements OnInit {
-  title: string = 'Guardavaloress';
+  title: string = 'Guardavalor';
   edit: boolean = false;
 
   saveValuesForm: ModelForm<ISaveValue>;
@@ -35,7 +35,7 @@ export class SaveValuesModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.saveValuesForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null, [Validators.required, Validators.min(0)]],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -83,7 +83,7 @@ export class SaveValuesModalComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

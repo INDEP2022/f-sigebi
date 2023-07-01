@@ -14,6 +14,7 @@ export const initialState: GlobalVarsState = {
     RAST_BIEN_REL: null,
     NO_EXPEDIENTE: null,
     RAST_EXPEDIENTE_REL: null,
+    REL_BIENES: null,
     CREA_EXPEDIENTE: null,
     RAST_EXPEDIENTE: null,
     RAST_DESCRIPCION_BIEN: null,
@@ -34,6 +35,15 @@ export const initialState: GlobalVarsState = {
     noTransferente: null,
     gNoVolante: null,
     varDic: null,
+    bienes_foto: 0,
+    EXPEDIENTE: null,
+    TIPO_DIC: null,
+    VOLANTE: null,
+    CONSULTA: null,
+    TIPO_VO: null,
+    P_GEST_OK: null,
+    P_NO_TRAMITE: null,
+    IMP_OF: null,
   },
 };
 

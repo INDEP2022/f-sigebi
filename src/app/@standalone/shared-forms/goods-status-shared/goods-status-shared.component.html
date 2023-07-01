@@ -11,13 +11,23 @@
           bindLabel="description"
           [label]="labelStatus"
           [control]="goodStatusField"
+          [labelTemplate]="statusLabel"
+          [optionTemplate]="statusOption"
           (change)="onGoodStatusChange($event)">
         </ngx-select>
+        <ng-template #statusLabel let-item="item">
+          {{ item.status }} - {{ item.description }}
+        </ng-template>
+        <ng-template #statusOption let-item="item">
+          <div [title]="item.status + '-' + item.description">
+            {{ item.status }} - {{ item.description }}
+          </div>
+        </ng-template>
       </form-field>
     </div>
   </div>
 </ng-container>
-<!-- 
+<!--
 
   <ngx-select
         [form]="form"

@@ -5,32 +5,15 @@
   <div body>
     <form [formGroup]="opinionForm" class="form-material">
       <div class="row">
-        <div class="col-md-2">
-          <form-field [control]="opinionForm.get('id')" label="ID">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-
-        <div class="col-md-2 offset-md-8">
-          <form-field
-            [control]="opinionForm.get('noRegistration')"
-            label="No&#46; Registro">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="noRegistration" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-5">
         <div class="col-md-12">
           <form-field
             [control]="opinionForm.get('description')"
             label="Descripci&oacute;n">
-            <input
-              type="text"
+            <textarea
+              rows="3"
               class="form-control"
-              formControlName="description" />
+              formControlName="description"
+              maxlength="100"></textarea>
           </form-field>
         </div>
       </div>
@@ -43,7 +26,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="dict_ofi" />
+              formControlName="dict_ofi"
+              maxlength="1" />
           </form-field>
         </div>
 
@@ -54,7 +38,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="areaProcess" />
+              formControlName="areaProcess"
+              maxlength="2" />
           </form-field>
         </div>
       </div>

@@ -1,5 +1,5 @@
 export interface IComerTpEvent {
-  id: string;
+  id?: string;
   description: string;
   descReceipt: null | string;
   use?: null | string;

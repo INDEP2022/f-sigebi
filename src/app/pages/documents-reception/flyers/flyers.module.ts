@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
@@ -14,7 +15,12 @@ import { DocumentsReceptionRegisterComponent } from './documents-reception-regis
 import { FlyersRoutingModule } from './flyers-routing.module';
 import { PublicMinistriesComponent } from './public-ministries/public-ministries.component';
 import { RecordUpdateComponent } from './record-update/record-update.component';
+import { DialogSelectedManagementsComponent } from './related-documents/dialog-selected-managements/dialog-selected-managements.component';
+import { DocumentsFormComponent } from './related-documents/documents-form/documents-form.component';
+import { ModalPersonaOficinaComponent } from './related-documents/modal-persona-oficina/modal-persona-oficina.component';
+import { RelatedDocumentsRelationComponent } from './related-documents/related-document-relation/related-documents-relation.component';
 import { RelatedDocumentsComponent } from './related-documents/related-documents.component';
+import { UploadDictamenFilesModalComponent } from './related-documents/upload-dictamen-files-modal/upload-dictamen-files-modal.component';
 import { ShiftChangeHistoryComponent } from './shift-change/shift-change-history/shift-change-history.component';
 import { RdFShiftChangeComponent } from './shift-change/shift-change.component';
 
@@ -30,6 +36,11 @@ import { RdFShiftChangeComponent } from './shift-change/shift-change.component';
     DocumentsReceptionSelectDocumentsComponent,
     DocReceptionTrackRecordsModalComponent,
     IDocReceptionndicatedFormComponent,
+    DocumentsFormComponent,
+    ModalPersonaOficinaComponent,
+    UploadDictamenFilesModalComponent,
+    RelatedDocumentsRelationComponent,
+    DialogSelectedManagementsComponent,
   ],
   imports: [
     CommonModule,
@@ -40,6 +51,7 @@ import { RdFShiftChangeComponent } from './shift-change/shift-change.component';
     DocumentsListComponent,
     NgScrollbarModule,
     FormLoaderComponent,
+    TooltipModule.forRoot(),
   ],
 })
 export class FlyersModule {}

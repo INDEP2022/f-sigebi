@@ -1,0 +1,9 @@
+:host ::ng-deep ng2-smart-table table tr {
+  td:last-child {
+    min-width: 50px;
+  }
+}
+
+:host::ng-deep app-modal .modal-body {
+  padding-top: 18px;
+}

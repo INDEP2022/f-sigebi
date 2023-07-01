@@ -66,3 +66,11 @@ export interface ITablesEntryData {
   abbreviation: string | null;
   otKeyAndValue?: string;
 }
+
+export interface ITvalTable1 {
+  nmtable: number;
+  otkey: number;
+  otvalor: string;
+  registerNumber: number;
+  abbreviation: string;
+}

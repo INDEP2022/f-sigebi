@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
@@ -11,6 +11,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IPackage } from 'src/app/core/models/catalogs/package.model';
+import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
 import { packagesData } from './data';
 
 @Component({
@@ -25,27 +26,34 @@ export class PackagesSharedComponent extends BasePage implements OnInit {
   @Input() packageField: string = 'package';
 
   @Input() showPackages: boolean = true;
+  @Output() infoSent: EventEmitter<string | null> = new EventEmitter<
+    string | null
+  >();
 
   packages = new DefaultSelect<IPackage>();
-
+  status = new DefaultSelect<IPackage>();
   get measurementUnit() {
     return this.form.get(this.packageField);
   }
 
-  constructor(/*private service: WarehouseService*/) {
+  constructor(private service: PackageGoodService) {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getPackages(new ListParams());
+  }
 
   getPackages(params: ListParams) {
     //Provisional data
     let data = packagesData;
     let count = data.length;
     this.packages = new DefaultSelect(data, count);
-    /*this.service.getAll(params).subscribe(data => {
-        this.status = new DefaultSelect(data.data,data.count);
-      },err => {
+    this.service.getPaqDestinationEnc(params).subscribe(
+      data => {
+        this.packages = new DefaultSelect(data.data, data.count);
+      },
+      err => {
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
@@ -53,12 +61,19 @@ export class PackagesSharedComponent extends BasePage implements OnInit {
           error = err.message;
         }
         this.onLoadToast('error', 'Error', error);
+      },
+      () => {}
+    ); /** */
+  }
 
-      }, () => {}
-    );*/
+  sentInfo(data: any) {
+    const info = data;
+    // Emitir evento con la información
+    this.infoSent.emit(info);
   }
 
   onPackagesChange(type: any) {
+    this.sentInfo(type);
     //this.resetFields([this.subdelegation]);
     this.form.updateValueAndValidity();
   }

@@ -26,10 +26,10 @@ export class DeductiveService implements ICrudMethods<IDeductive> {
   }
 
   update(id: string | number, model: IDeductive): Observable<Object> {
-    return this.deductiveRepository.update(this.route, id, model);
+    return this.deductiveRepository.newUpdateId(this.route, id, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.deductiveRepository.remove(this.route, id);
+    return this.deductiveRepository.newRemove(this.route, id);
   }
 }

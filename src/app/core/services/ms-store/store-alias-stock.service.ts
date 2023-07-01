@@ -5,7 +5,10 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 
 import { AliasStockEndpoint } from 'src/app/common/constants/endpoints/store-alias-stock-endpoint';
-import { IStoreAliasStock } from '../../models/ms-store-alias-stock/store-alias-stock.model';
+import {
+  IStoreAliasStock,
+  IStoreStock,
+} from '../../models/ms-store-alias-stock/store-alias-stock.model';
 
 @Injectable({
   providedIn: 'root',
@@ -25,6 +28,12 @@ export class StoreAliasStockService extends HttpService {
     );
   }
 
+  getAllWarehouses(
+    params?: ListParams
+  ): Observable<IListResponse<IStoreStock>> {
+    return this.get<IListResponse<IStoreStock>>('tsig004-store', params);
+  }
+
   getById(id: string | number) {
     const route = `${AliasStockEndpoint.AliasStock}/${id}`;
     return this.get<IStoreAliasStock>(route);
@@ -38,6 +47,16 @@ export class StoreAliasStockService extends HttpService {
   update(alias: IStoreAliasStock) {
     const route = `${AliasStockEndpoint.AliasStock}`;
     return this.put(route, alias);
+  }
+
+  createdataStore(data: IStoreStock) {
+    const route = `tsig004-store`;
+    return this.post(route, data);
+  }
+
+  updateDataStore(id: number, data: IStoreStock) {
+    const route = `tsig004-store/${id}`;
+    return this.put(route, data);
   }
 
   remove(id: string | number) {

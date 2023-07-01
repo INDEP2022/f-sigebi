@@ -1,6 +1,6 @@
 export const BATCH_COLUMNS = {
   id: {
-    title: 'ID',
+    title: 'Codigo',
     type: 'number',
     sort: false,
   },
@@ -8,6 +8,9 @@ export const BATCH_COLUMNS = {
     title: 'ID Almacén',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.description : '';
+    },
   },
   numRegister: {
     title: 'ID Registro',

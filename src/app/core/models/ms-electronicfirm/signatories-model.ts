@@ -19,10 +19,12 @@ export interface ISignatories {
   certificatebase64?: string;
   identifierSystem?: string;
   identifierSignatory?: string;
-  validationocsp?: string;
+  validationocsp?: boolean;
   rfcUser?: string;
   signatoryId?: number;
   IDNumber?: string;
-  ID?: string;
+  id?: number;
   nbOrigin?: string;
+  nameSignatore?: string;
+  chargeSignatore?: string;
 }

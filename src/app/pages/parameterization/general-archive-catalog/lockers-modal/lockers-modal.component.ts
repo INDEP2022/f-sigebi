@@ -23,7 +23,7 @@ export class LockersModalComponent extends BasePage implements OnInit {
   lockerForm: ModelForm<ILocker>;
   locker: ILocker;
 
-  title: string = 'Casilleros';
+  title: string = 'Casillero';
   edit: boolean = false;
 
   cveSaveValues = new DefaultSelect();
@@ -49,9 +49,15 @@ export class LockersModalComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.lockerForm = this.fb.group({
       saveValueKey: [null, [Validators.pattern(STRING_PATTERN)]],
-      numBattery: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      numShelf: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      numBattery: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.min(0)],
+      ],
+      numShelf: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.min(0)],
+      ],
+      id: [null, [Validators.pattern(NUMBERS_PATTERN), Validators.min(0)]],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -99,7 +105,7 @@ export class LockersModalComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

@@ -13,13 +13,12 @@ export class DetailDelegationService
   implements ICrudMethods<IDetailDelegation>
 {
   private readonly route: string = ENDPOINT_LINKS.DetailDelegation;
-  private readonly route2: string = 'catalog/detail-delegation/search';
   constructor(
     private detailDelegationRepository: Repository<IDetailDelegation>
   ) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IDetailDelegation>> {
-    return this.detailDelegationRepository.getAllPaginated(this.route2, params);
+    return this.detailDelegationRepository.getAllPaginated(this.route, params);
   }
 
   getById(id: string | number): Observable<IDetailDelegation> {

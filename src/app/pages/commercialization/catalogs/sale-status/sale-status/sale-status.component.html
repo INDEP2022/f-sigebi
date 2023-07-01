@@ -1,6 +1,13 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">ESTATUS DE VENTA</h5>
+    <div class="col-md-5 buttons">
+      <div>
+        <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
+          Nuevo
+        </button>
+      </div>
+    </div>
   </div>
   <div body>
     <div class="row">
@@ -46,9 +53,8 @@
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="data"
-            (deleteConfirm)="onDeleteConfirm($event)"
-            (createConfirm)="onAddConfirm($event)"
-            (editConfirm)="onSaveConfirm($event)"
+            (delete)="onDeleteConfirm($event.data)"
+            (edit)="openForm($event.data)"
             (userRowSelect)="selectRow($event.data)">
           </ng2-smart-table>
         </div>

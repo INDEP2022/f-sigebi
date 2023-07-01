@@ -1,10 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-station-form',
@@ -16,6 +22,7 @@ export class StationFormComponent extends BasePage implements OnInit {
   title: string = 'Emisoras';
   edit: boolean = false;
   station: IStation;
+  itemsTransfer = new DefaultSelect();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -31,17 +38,38 @@ export class StationFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.stationForm = this.fb.group({
       id: [null],
-      idTransferent: [null],
+      idTransferent: [null, []],
       idEntity: [null],
-      stationName: [null, Validators.required],
-      keyState: [null, Validators.required],
-      version: [null, Validators.required],
+      stationName: [null, [Validators.required, , Validators.maxLength(150)]],
+      keyState: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      version: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       status: [null, Validators.required],
     });
     if (this.station != null) {
+      this.stationForm.get('idTransferent').disable();
       this.edit = true;
       this.stationForm.patchValue(this.station);
     }
+    this.getFromSelectTransfer(new ListParams());
+  }
+
+  getFromSelectTransfer(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = `$eq:${id}`;
+    }
+    this.stationService.getTransfers(params).subscribe((data: any) => {
+      this.itemsTransfer = new DefaultSelect(data.data, data.count);
+    });
   }
   close() {
     this.modalRef.hide();

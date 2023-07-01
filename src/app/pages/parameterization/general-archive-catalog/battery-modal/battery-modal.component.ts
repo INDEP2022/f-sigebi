@@ -19,7 +19,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class BatteryModalComponent extends BasePage implements OnInit {
   batteryForm: ModelForm<IBattery>;
   battery: IBattery;
-  title: string = 'Baterias';
+  title: string = 'Bateria';
   edit: boolean = false;
 
   id: ISaveValue;
@@ -42,12 +42,17 @@ export class BatteryModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.batteryForm = this.fb.group({
-      storeCode: [null, []],
-      idBattery: [null, []],
+      storeCode: [null, [, Validators.min(0)]],
+      idBattery: [null, [Validators.min(0)]],
       description: [null, [Validators.required]],
       status: [
         null,
-        [Validators.required, Validators.maxLength(1), Validators.minLength(1)],
+        [
+          Validators.required,
+          Validators.maxLength(1),
+          Validators.minLength(1),
+          Validators.min(0),
+        ],
       ],
       registerNumber: [null, []],
     });
@@ -91,7 +96,7 @@ export class BatteryModalComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

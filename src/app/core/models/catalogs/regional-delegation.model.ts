@@ -1,4 +1,16 @@
 export class IRegionalDelegation {
+  id?: number | null;
+  description: string;
+  registerNumber: number | null;
+  idGeographicZona: number | null;
+  version: number | null;
+  regionalDelegate: string;
+  officeAddress: string;
+  status: number | null;
+  keyZone: string;
+  iva: number | null;
+  city: string;
+  keyState: string;
   // id: number | null;
   // description: string;
   // registerNumber: number | null;
@@ -16,16 +28,4 @@ export class IRegionalDelegation {
   // iva: number | null;
   // city: string;
   // keyState: string;
-  id: number | null;
-  description: string;
-  registerNumber: number | null;
-  idGeographicZona: number | null;
-  version: number | null;
-  regionalDelegate: string;
-  officeAddress: string;
-  status: number | null;
-  keyZone: string;
-  iva: number | null;
-  city: string;
-  keyState: string;
 }

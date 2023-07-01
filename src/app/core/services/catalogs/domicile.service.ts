@@ -16,7 +16,7 @@ export class DomicileService implements ICrudMethods<IDomicile> {
 
   constructor() {}
 
-  getAll(params?: ListParams): Observable<IListResponse<IDomicile>> {
+  getAll(params?: ListParams | string): Observable<IListResponse<IDomicile>> {
     return this.domicileRepository.getAllPaginated(this.route, params);
   }
 

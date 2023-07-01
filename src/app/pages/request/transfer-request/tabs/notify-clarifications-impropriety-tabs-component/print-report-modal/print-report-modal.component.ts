@@ -4,6 +4,7 @@ import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IChatClarifications } from 'src/app/core/models/ms-chat-clarifications/chat-clarifications-model';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
@@ -15,9 +16,11 @@ import { GelectronicFirmService } from 'src/app/core/services/ms-gelectronicfirm
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { UploadReportReceiptComponent } from 'src/app/pages/request/programming-request-components/execute-reception/upload-report-receipt/upload-report-receipt.component';
 import { environment } from 'src/environments/environment';
 import { UploadFielsModalComponent } from '../upload-fiels-modal/upload-fiels-modal.component';
 import { LIST_REPORTS_COLUMN } from './list-reports-column';
+
 @Component({
   selector: 'app-print-report-modal',
   templateUrl: './print-report-modal.component.html',
@@ -32,8 +35,11 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   signatories: ISignatories[] = [];
   valuesSign: ISignatories;
   requestInfo: IRequest;
+  process: string = '';
   dataClarifications2: IChatClarifications;
-
+  idProg: number = 0;
+  receiptId: number = 0;
+  receiptGuards: any;
   src = '';
   isPdfLoaded = false;
   private pdf: PDFDocumentProxy;
@@ -48,6 +54,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   btnSubTitle: string = 'Vista Previa Reporte';
   printReport: boolean = true;
   listSigns: boolean = false;
+  rowSelected: boolean = false;
   isAttachDoc: boolean = false;
   columns = LIST_REPORTS_COLUMN;
   config = {
@@ -57,13 +64,13 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   sizeMessage: boolean = false;
   pdfTemp: File;
 
-  rowSelected: boolean = false;
   selectedRow: any = null;
 
   msjCheck: boolean = false;
   formLoading: boolean = true;
   urlBaseReport = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=`;
   idSolicitud: any;
+  idRegionalDelegation: any;
   notificationValidate: any; //Parámetro que identifica si es notificación Y= si lo es
 
   constructor(
@@ -103,9 +110,11 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   userName: any[] = [];
 
   ngOnInit(): void {
+    this.idSolicitud = this.requestInfo.id;
+    this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
+
     //Borrar firmantes existentes
     this.verificateFirm();
-
     this.signParams();
 
     //Condición para saber que ID tipo de documento lelga
@@ -160,6 +169,11 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         console.log('URL reporte ', linkDoc);
         break;
       }
+      case 221: {
+        let linkDoc: string = `${this.urlBaseReport}oficio_programacion_recepcion.jasper&ID_PROGRAMACION=${this.idReportAclara}`;
+        this.src = linkDoc;
+        break;
+      }
 
       default: {
         console.log('No hay ID tipo de documento');
@@ -172,7 +186,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   verificateFirm() {
     this.signatoriesService
       .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
-      //.getSignatoriesName(this.idTypeDoc, this.idSolicitud)
       .subscribe({
         next: response => {
           console.log('Existe firmante, proceder a eliminarlo');
@@ -202,32 +215,33 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   registerSign() {
-    this.signatoriesService
-      .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
-      .subscribe({
-        next: response => {
-          console.log('Existe firmante, ya no crear');
-        },
-        error: error => {
-          console.log('Si no hay firmantes, entonces crear nuevo');
-          let token = this.authService.decodeToken();
-          const formData: Object = {
-            name: token.name,
-            post: token.cargonivel1,
-            learnedType: this.idTypeDoc,
-            learnedId: this.idReportAclara, // Para los demás reportes
-            //learnedId: this.idSolicitud, Para DictamenProdcedencia
-          };
+    if (!this.process) {
+      this.signatoriesService
+        .getSignatoriesName(this.idTypeDoc, this.idReportAclara)
+        .subscribe({
+          next: response => {
+            console.log('Existe firmante, ya no crear');
+          },
+          error: error => {
+            console.log('Si no hay firmantes, entonces crear nuevo');
+            let token = this.authService.decodeToken();
+            const formData: Object = {
+              name: token.name,
+              post: token.cargonivel1,
+              learnedType: this.idTypeDoc,
+              learnedId: this.idReportAclara, // Para los demás reportes
+            };
 
-          //Asigna un firmante según el usuario logeado
-          this.signatoriesService.create(formData).subscribe({
-            next: response => {
-              this.signParams(), console.log('Firmante creado: ', response);
-            },
-            error: error => console.log('No se puede crear: ', error),
-          });
-        },
-      });
+            //Asigna un firmante según el usuario logeado
+            this.signatoriesService.create(formData).subscribe({
+              next: response => {
+                this.signParams(), console.log('Firmante creado: ', response);
+              },
+              error: error => console.log('No se puede crear: ', error),
+            });
+          },
+        });
+    }
   }
 
   signParams() {
@@ -239,7 +253,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   //Trae listado de los firmantes disponibles para el reporte
   getSignatories() {
     const learnedType = this.idTypeDoc;
-    //const learnedId = this.idSolicitud; //Para reporte dictamenProcedencia
     const learnedId = this.idReportAclara;
     this.loading = true;
     console.log('Traer firmantes');
@@ -323,6 +336,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   rowsSelected(event: any) {
     this.valuesSign = event.data;
     const idDoc = this.idSolicitud;
+    console.log('ID solicitud row seleccionado', idDoc);
     const obj: Object = {
       id: this.requestInfo.id,
       recordId: this.requestInfo.recordId,
@@ -333,12 +347,12 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       phoneOfOwner: this.requestInfo.phoneOfOwner,
       emailOfOwner: this.requestInfo.emailOfOwner,
       transferenceId: this.requestInfo.transferenceId,
-      transferent: this.requestInfo.transferent,
+      //transferent: this.requestInfo.transferent, ¿Cambio?
       stationId: this.requestInfo.stationId,
-      emisora: this.requestInfo.emisora,
+      //emisora: this.requestInfo.emisora, ¿Cambio?
       authorityId: this.requestInfo.authorityId,
       regionalDelegationId: this.requestInfo.regionalDelegationId,
-      regionalDelegation: this.requestInfo.regionalDelegation,
+      //regionalDelegation: this.requestInfo.regionalDelegation,
       sender: this.requestInfo.sender,
       observations: this.requestInfo.observations,
       targetUser: this.requestInfo.targetUser,
@@ -364,7 +378,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       affair: this.requestInfo.affair,
       satDeterminant: this.requestInfo.satDeterminant,
       satDirectory: this.requestInfo.satDirectory,
-      authority: this.requestInfo.authority,
+      //authority: this.requestInfo.authority,
       satZoneCoordinator: this.requestInfo.satZoneCoordinator,
       userCreated: this.requestInfo.userCreated,
       creationDate: this.requestInfo.creationDate,
@@ -407,6 +421,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       recordTmpId: this.requestInfo.recordTmpId,
       coordregsae_ktl: this.requestInfo.coordregsae_ktl,
     };
+    console.log();
     //Enviar nueva información a Request
     this.requestService.update(idDoc, obj).subscribe({
       next: data => {},
@@ -451,12 +466,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       this.btnTitle = 'Adjuntar Documento';
       this.btnSubTitle = 'Imprimir Reporte';
     }
-
-    //Agregar información del firmante al reporte
-    /*this.requestService.update(idDoc, this.dictumForm.value).subscribe({
-      next: data => (this.handleSuccess(), this.signDictum()),
-      error: error => (this.loading = false),
-    });*/
   }
 
   pdfTempo: string = 'PDF';
@@ -472,24 +481,49 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   reader = new FileReader();
 
-  attachDoc() {
+  validAttachDoc() {
+    console.log('this.idSolicitud:', this.idSolicitud);
     let token = this.authService.decodeToken();
     const extension = '.pdf';
     const nombreDoc = `DOC_${this.date}${extension}`;
     const contentType: string = '.pdf';
     const file: any = '';
+    if (this.idSolicitud === undefined) {
+      console.log('soy reporte de dictaminación');
+      const formData = {
+        dDocTitle: nombreDoc, //Título del documento
+        dDocAuthor: token.name, //Autor del documento
+        dDocType: contentType, //Tipo de documento
+        dDocCreator: token.name, //Creador del documento
+        //dDocName: 'Dictamen Procendecia',	//Identificador del documento
+        dInDate: new Date(), //Fecha de creación del documento
+        xidSolicitud: this.requestInfo.id,
+        xtipoDocumento: this.idTypeDoc,
+        xdelegacionRegional: this.idRegionalDelegation,
+      };
+      this.attachDoc(formData);
+    } else {
+      console.log('soy reporte de notificaciones');
+      const formData = {
+        dDocTitle: nombreDoc, //Título del documento
+        dDocAuthor: token.name, //Autor del documento
+        dDocType: contentType, //Tipo de documento
+        dDocCreator: token.name, //Creador del documento
+        //dDocName: 'Dictamen Procendecia',	//Identificador del documento
+        dInDate: new Date(), //Fecha de creación del documento
+        xidSolicitud: this.idSolicitud,
+        xtipoDocumento: this.idTypeDoc,
+      };
+      this.attachDoc(formData);
+    }
+  }
 
-    const formData = {
-      dDocTitle: nombreDoc, //Título del documento
-      dDocAuthor: token.name, //Autor del documento
-      dDocType: contentType, //Tipo de documento
-      dDocCreator: token.name, //Creador del documento
-      //dDocName: 'Dictamen Procendecia',	//Identificador del documento
-      dInDate: new Date(), //Fecha de creación del documento
-      xidSolicitud: this.idSolicitud,
-      xtipoDocumento: this.idTypeDoc,
-    };
-
+  attachDoc(formData: Object) {
+    let token = this.authService.decodeToken();
+    const extension = '.pdf';
+    const nombreDoc = `DOC_${this.date}${extension}`;
+    const contentType: string = '.pdf';
+    const file: any = '';
     this.pdf.getData().then(u8 => {
       let blob = new Blob([u8.buffer], {
         type: 'application/pdf',
@@ -504,7 +538,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: resp => {
-            this.onLoadToast(
+            this.alert(
               'success',
               'Documento Guardado',
               'El documento se guardó correctamente'
@@ -530,7 +564,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     );
   }
 
-  //Modificar
   firm() {
     //Firmar reporte Dictamen Procedencia
     if (this.idTypeDoc == 50) {
@@ -538,7 +571,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       console.log('ID de solicitud', this.requestInfo);
       const nameTypeReport = 'DictamenProcendecia';
       const formData: Object = {
-        id: this.idSolicitud,
+        id: this.idReportAclara,
         firma: true,
         tipoDocumento: nameTypeReport,
       };
@@ -659,6 +692,21 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       });
   }
 
+  uploadReport() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      receiptGuards: this.receiptGuards,
+      typeDoc: this.idTypeDoc,
+      callback: (data: boolean) => {
+        if (data) {
+        }
+      },
+    };
+
+    this.modalService.show(UploadReportReceiptComponent, config);
+    console.log('componente para adjuntar doc');
+  }
+
   updateStatusSigned() {
     const formData = new FormData();
     formData.append('learnedType', this.valuesSign.learnedType);
@@ -687,7 +735,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.alertQuestion(undefined, 'Confirmación', message, 'Aceptar').then(
       question => {
         if (question.isConfirmed) {
-          this.attachDoc();
+          this.validAttachDoc();
           //this. attachDoc();
           console.log('Adjuntar documento:');
         }

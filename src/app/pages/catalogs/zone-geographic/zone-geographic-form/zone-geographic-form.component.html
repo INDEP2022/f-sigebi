@@ -13,9 +13,12 @@
               class="form-control"
               type="text"
               rows="2"
-              formControlName="description"></textarea>
+              formControlName="description"
+              maxlength="200"></textarea>
           </form-field>
         </div>
+      </div>
+      <div class="row pt-3">
         <div class="col-md-6">
           <form-field
             [control]="zoneGeographicForm.get('contractNumber')"
@@ -33,15 +36,18 @@
             <input
               type="text"
               class="form-control"
-              formControlName="thirdPartySpecialized" />
+              formControlName="thirdPartySpecialized"
+              maxlength="20" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-3">
         <div class="col-md-6">
-          <form-field [control]="zoneGeographicForm.get('vat')" label="Iva">
+          <form-field [control]="zoneGeographicForm.get('vat')" label="IVA">
             <input type="number" class="form-control" formControlName="vat" />
           </form-field>
         </div>
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <form-field
             [control]="zoneGeographicForm.get('status')"
             label="Estatus">
@@ -50,7 +56,7 @@
               class="form-control"
               formControlName="status" />
           </form-field>
-        </div>
+        </div> -->
       </div>
     </form>
   </div>

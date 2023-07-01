@@ -73,6 +73,7 @@ export class RequestRecordTabComponent
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: request-record-tab');
     this.getOriginInfo(new ListParams());
     this.getTypeExpedient(new ListParams());
     this.getPublicMinister(new ListParams());
@@ -212,6 +213,7 @@ export class RequestRecordTabComponent
       ],
       protectNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       typeOfTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
+      domainExtinction: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.requestForm.get('receptionDate').disable();
   }

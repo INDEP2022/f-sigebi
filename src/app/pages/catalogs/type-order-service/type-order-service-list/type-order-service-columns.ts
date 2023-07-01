@@ -4,7 +4,7 @@ export const TYPEORDERSERVICE_COLUMS = {
     type: 'number',
     sort: false,
   },
-  cve: {
+  key: {
     title: 'Clave',
     type: 'string',
     sort: false,

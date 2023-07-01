@@ -3,7 +3,7 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const COLUMNS = {
-  numberGood: {
+  id: {
     title: 'No. Bien',
     sort: false,
   },
@@ -15,7 +15,7 @@ export const COLUMNS = {
     title: 'Unidad',
     sort: false,
   },
-  amount: {
+  quantity: {
     title: 'Cantidad',
     sort: false,
   },
@@ -23,7 +23,7 @@ export const COLUMNS = {
     title: 'Estatus',
     sort: false,
   },
-  check: {
+  chSele: {
     title: '',
     type: 'custom',
     renderComponent: CheckboxElementComponent,
@@ -33,5 +33,6 @@ export const COLUMNS = {
       });
     },
     sort: false,
+    hide: false,
   },
 };

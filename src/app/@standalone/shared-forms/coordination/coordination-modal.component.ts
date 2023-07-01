@@ -5,6 +5,8 @@ import {
   BehaviorSubject,
   catchError,
   map,
+  mergeMap,
+  of,
   switchMap,
   takeUntil,
   tap,
@@ -43,7 +45,7 @@ export class CoordinationModalComponent extends BasePage implements OnInit {
       columns: {
         ...COORDINATION_COLUMNS,
         name: {
-          title: 'Seleccion volante',
+          title: 'Selección',
           sort: false,
           type: 'custom',
           valuePrepareFunction: (value: boolean, delegation: IDelegation) =>
@@ -83,7 +85,9 @@ export class CoordinationModalComponent extends BasePage implements OnInit {
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
-        switchMap(params => this.getDelegations(params))
+        tap(value => console.log(value)),
+        switchMap(params => this.getDelegations(params)),
+        catchError(error => of(''))
       )
       .subscribe();
   }
@@ -93,16 +97,18 @@ export class CoordinationModalComponent extends BasePage implements OnInit {
     params.removeAllFilters();
     return this.getPhaseEdo().pipe(
       tap(phase => params.addFilter('etapaEdo', phase)),
-      switchMap(() =>
+      mergeMap(() =>
         this.delegationService.getAllFiltered(params.getParams()).pipe(
           catchError(error => {
             this.loading = false;
-            this.onLoadToast(
-              'error',
-              'Error',
-              'Ocurrio un error al obtener las delegaciones'
-            );
-            return throwError(() => error);
+            if (error.status >= 500) {
+              this.onLoadToast(
+                'error',
+                'Error',
+                'Ocurrio un error al obtener las delegaciones'
+              );
+            }
+            return of({ data: [], count: 0 });
           }),
           tap(response => {
             this.loading = false;

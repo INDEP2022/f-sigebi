@@ -8,7 +8,7 @@ import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -39,6 +39,8 @@ export class RegionalDelegationFormComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getCity(new ListParams());
+    this.getGeoZone(new ListParams());
   }
 
   private prepareForm() {
@@ -49,10 +51,13 @@ export class RegionalDelegationFormComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       registerNumber: [null],
-      idGeographicZona: [null, [Validators.required]],
+      idGeographicZona: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
       version: [1],
       regionalDelegate: [null, [Validators.required]],
-      officeAddress: [null, [Validators.required]],
+      officeAddress: [null, [Validators.required, Validators.maxLength(200)]],
       status: [1],
       keyZone: [null, [Validators.required]],
       iva: [0.16, [Validators.required]],
@@ -61,7 +66,6 @@ export class RegionalDelegationFormComponent
     });
     if (this.regionalDelegation != null) {
       this.edit = true;
-      console.log(this.regionalDelegation);
       this.regionalDelegationForm.patchValue(this.regionalDelegation);
     }
   }
@@ -89,7 +93,6 @@ export class RegionalDelegationFormComponent
 
   update() {
     this.loading = true;
-
     this.regionalDelegationService
       .update(this.regionalDelegation.id, this.regionalDelegationForm.value)
       .subscribe({
@@ -100,7 +103,8 @@ export class RegionalDelegationFormComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
@@ -109,16 +113,34 @@ export class RegionalDelegationFormComponent
   //Data
 
   getGeoZone(param: ListParams) {
-    this.serviceGeoZone.getAll(param).subscribe(res => {
-      this.selectGeoZone = new DefaultSelect(res.data, res.count);
-    });
+    this.serviceGeoZone.getAll(param).subscribe(
+      res => {
+        this.selectGeoZone = new DefaultSelect(res.data, res.count);
+      },
+      error => {
+        this.selectGeoZone = new DefaultSelect();
+      }
+    );
+  }
+
+  fillSelectZone() {
+    const zone = this.regionalDelegationForm.get('zone').value;
+    if (zone != null) {
+      this.regionalDelegationForm.controls['idGeographicZona'].setValue(
+        this.regionalDelegation.id
+      );
+    }
   }
 
   getCity(param: ListParams) {
-    this.serviceCity.getAll(param).subscribe(res => {
-      console.log(res);
-      this.selectCity = new DefaultSelect(res.data, res.count);
-    });
+    this.serviceCity.getAll(param).subscribe(
+      res => {
+        this.selectCity = new DefaultSelect(res.data, res.count);
+      },
+      error => {
+        this.selectCity = new DefaultSelect();
+      }
+    );
   }
 
   //Action

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDocCompensationSatXml } from 'src/app/core/models/catalogs/doc-compensation-sat-xml.model';
 import { DocCompensationSatXmlService } from 'src/app/core/services/catalogs/doc-compensation-sat-xml.service';
@@ -29,6 +30,8 @@ export class DocCompensationSatXmlListComponent
     super();
     this.settings.columns = COMPENSATION_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -50,28 +53,46 @@ export class DocCompensationSatXmlListComponent
   }
 
   openForm(compensationSatXml?: IDocCompensationSatXml) {
-    let config: ModalOptions = {
-      initialState: {
-        compensationSatXml,
-        callback: (next: boolean) => {
-          if (next) this.getExample();
-        },
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      compensationSatXml,
+      callback: (next: boolean) => {
+        if (next) this.getExample();
       },
-      class: 'modal-md modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.modalService.show(DocCompensationSatXmlFormComponent, config);
+    this.modalService.show(DocCompensationSatXmlFormComponent, modalConfig);
   }
 
-  delete(compensationSatXml: IDocCompensationSatXml) {
+  showDeleteAlert(compensationSatXml: IDocCompensationSatXml) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.delete(compensationSatXml.id);
       }
+    });
+  }
+
+  delete(id: number) {
+    this.docConpensation.remove(id).subscribe({
+      next: response => {
+        this.alert(
+          'success',
+          'Documento resarcimiento SAT XML',
+          'Borrado Correctamente'
+        ),
+          this.getExample();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Documento Resarcimiento Xml',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

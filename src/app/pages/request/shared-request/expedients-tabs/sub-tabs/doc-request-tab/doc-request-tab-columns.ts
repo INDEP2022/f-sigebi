@@ -1,4 +1,5 @@
 export const DOC_REQUEST_TAB_COLUMNS = {
+  //Documentos Solicitud arreglar paginado
   dDocName: {
     title: 'No. Documento',
     type: 'string',
@@ -34,7 +35,7 @@ export const DOC_REQUEST_TAB_COLUMNS = {
   },
 
   xtipoTransferencia: {
-    title: 'Tipo de transferencia',
+    title: 'Tipo de Transferencia',
     type: 'string',
     sort: false,
   },
@@ -52,13 +53,13 @@ export const DOC_REQUEST_TAB_COLUMNS = {
   },
 
   xnoOficio: {
-    title: 'No. oficio',
+    title: 'No. Oficio',
     type: 'string',
     sort: false,
   },
 
   xcargoRemitente: {
-    title: 'Cargo remitente',
+    title: 'Cargo Remitente',
     type: 'string',
     sort: false,
   },
@@ -130,7 +131,7 @@ export const DOC_GOODS_COLUMNS = {
   },
 
   xtipoTransferencia: {
-    title: 'Tipo de transferencia',
+    title: 'Tipo de Transferencia',
     type: 'string',
     sort: false,
   },
@@ -148,13 +149,13 @@ export const DOC_GOODS_COLUMNS = {
   },
 
   xnoOficio: {
-    title: 'No. oficio',
+    title: 'No. Oficio',
     type: 'string',
     sort: false,
   },
 
   xcargoRemitente: {
-    title: 'Cargo remitente',
+    title: 'Cargo Remitente',
     type: 'string',
     sort: false,
   },
@@ -232,7 +233,7 @@ export const DOC_EXPEDIENT_COLUMNS = {
   },
 
   xtipoTransferencia: {
-    title: 'Tipo de transferencia',
+    title: 'Tipo de Transferencia',
     type: 'string',
     sort: false,
   },
@@ -250,13 +251,13 @@ export const DOC_EXPEDIENT_COLUMNS = {
   },
 
   xnoOficio: {
-    title: 'No. oficio',
+    title: 'No. Oficio',
     type: 'string',
     sort: false,
   },
 
   xcargoRemitente: {
-    title: 'Cargo remitente',
+    title: 'Cargo Remitente',
     type: 'string',
     sort: false,
   },

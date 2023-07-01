@@ -34,23 +34,22 @@ export class RevisionReasonFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.revisionReasonForm = this.fb.group({
-      id: [null, [Validators.required]],
-      estatus_inicial: [null, [Validators.required, Validators.maxLength(3)]],
-      descripcion_motivo: [
+      initialStatus: [null, [Validators.maxLength(3)]],
+      descriptionCause: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(80), Validators.pattern(STRING_PATTERN)],
       ],
-      tipo_bien: [null, [Validators.required, Validators.maxLength(1)]],
-      estatus_rev: [null, [Validators.required, Validators.maxLength(3)]],
-      area_responsable: [
+      goodType: [null, [Validators.maxLength(1)]],
+      statusRev: [null, [Validators.maxLength(3)]],
+      managerArea: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(50), Validators.pattern(STRING_PATTERN)],
       ],
-      estatus_fin: [null, [Validators.required, Validators.maxLength(3)]],
-      pantalla: [null, [Validators.required]],
-      parametro: [
+      statusPurpose: [null, [Validators.maxLength(3)]],
+      screen: [null, [Validators.maxLength(80)]],
+      parameter: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
       ],
     });
     if (this.revisionReason != null) {

@@ -1,30 +1,30 @@
 export const GENERAL_DOCS_DOCUMENTS_VIEWER_COLUMNS = {
-  expediente: {
-    title: 'No Expediente',
+  numberProceedings: {
+    title: 'No. Expediente',
     sort: false,
   },
-  voalnte: {
-    title: 'No Expediente',
+  flyerNumber: {
+    title: 'No. Volante',
     sort: false,
   },
-  tipo: {
-    title: 'No Expediente',
+  keyTypeDocument: {
+    title: 'Tipo documento',
     sort: false,
   },
-  fecha: {
-    title: 'No Expediente',
+  significantDate: {
+    title: 'Fecha significativa',
     sort: false,
   },
-  folio: {
-    title: 'No Expediente',
+  id: {
+    title: 'Folio universal',
     sort: false,
   },
-  desc: {
-    title: 'No Expediente',
+  descriptionDocument: {
+    title: 'Desc. documento',
     sort: false,
   },
-  hojas: {
-    title: 'No Expediente',
+  sheets: {
+    title: 'Hojas',
     sort: false,
   },
 };

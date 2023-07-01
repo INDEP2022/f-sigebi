@@ -18,9 +18,10 @@
             [control]="form.get('startingPercentageRange')"
             label="Rango Porcentaje Inicial">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="startingPercentageRange" />
+              formControlName="startingPercentageRange"
+              min="0" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -28,9 +29,10 @@
             [control]="form.get('finalPercentageRange')"
             label="Rango Porcentaje Final">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="finalPercentageRange" />
+              formControlName="finalPercentageRange"
+              min="0" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -40,17 +42,19 @@
             <input
               type="number"
               class="form-control"
-              formControlName="contractualPenalty" />
+              formControlName="contractualPenalty"
+              min="0" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
             [control]="form.get('contractNumber')"
-            label="N&uacute;mero de Registro">
+            label="No. de contrato">
             <input
               type="text"
               class="form-control"
-              formControlName="contractNumber" />
+              formControlName="contractNumber"
+              min="0" />
           </form-field>
         </div>
         <!--
@@ -80,7 +84,8 @@
             <input
               type="number"
               class="form-control"
-              formControlName="status" />
+              formControlName="status"
+              min="0" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -88,7 +93,8 @@
             <input
               type="number"
               class="form-control"
-              formControlName="version" />
+              formControlName="version"
+              min="0" />
           </form-field>
         </div>
       </div>

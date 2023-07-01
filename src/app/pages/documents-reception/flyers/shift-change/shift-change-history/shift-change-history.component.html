@@ -12,6 +12,8 @@
               [source]="historyColumns"
               [attr.class]="'table-bordered'">
             </ng2-smart-table>
+            <app-pagination [params]="params" [totalItems]="totalItems">
+            </app-pagination>
             <div class="table-padding"></div>
           </div>
         </ng-scrollbar>

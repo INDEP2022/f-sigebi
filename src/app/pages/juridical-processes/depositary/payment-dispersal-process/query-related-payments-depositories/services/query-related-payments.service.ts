@@ -59,19 +59,20 @@ export class QueryRelatedPaymentsService {
   getExportExcell(goodNumber: number) {
     return this.msMsMassivecapturelineService.getRefPayDepositories(goodNumber);
   }
-  setGoodParamGood(goodNumber: number, screenKey: string) {
+  setGoodParamGood(
+    goodNumber: number,
+    screenKey: string,
+    cveContrato: string,
+    depositario: string,
+    desc: string
+  ) {
     let valGood: valorBien = {
       nomPantall: screenKey,
       numBien: goodNumber,
-      cveContrato: '',
-      depositario: '',
-      desc: '',
+      cveContrato: cveContrato,
+      depositario: depositario,
+      desc: desc,
     };
-    //this.svNumBienShare.SharingNumbienData = valGood;
-    console.log(
-      this.svNumBienShare.SharingNumbien,
-      valGood,
-      this.svNumBienShare.SharingNumbienData
-    );
+    this.svNumBienShare.SharingNumbienData = valGood;
   }
 }

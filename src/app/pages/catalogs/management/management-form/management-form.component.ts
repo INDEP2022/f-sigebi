@@ -39,7 +39,7 @@ export class ManagementFormComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      idTramite: [null, [Validators.required, Validators.maxLength(2)]],
+      transactId: [null, [Validators.required, Validators.maxLength(2)]],
     });
 
     if (this.management != null) {

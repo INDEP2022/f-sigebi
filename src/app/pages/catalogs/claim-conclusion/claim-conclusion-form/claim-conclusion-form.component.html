@@ -5,20 +5,24 @@
   <div body>
     <form [formGroup]="ClaimConclusionForm" class="form-material">
       <div class="row">
-        <div class="col-md-4">
-          <form-field
-            [control]="ClaimConclusionForm.get('id')"
-            label="Id Conclusi&oacute;n siniestro">
+        <!--<div *ngIf="edit" class="col-md-4">
+          <form-field [control]="ClaimConclusionForm.get('id')" label="Id Conclusi&oacute;n siniestro">
             <input type="number" class="form-control" formControlName="id" />
           </form-field>
-        </div>
+        </div>-->
         <div class="col-md-4">
           <form-field
             [control]="ClaimConclusionForm.get('flag')"
             label="Bandera">
-            <input type="number" class="form-control" formControlName="flag" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="flag"
+              min="0" />
           </form-field>
         </div>
+      </div>
+      <div class="row mt-3">
         <div class="col-md-12">
           <form-field
             [control]="ClaimConclusionForm.get('description')"
@@ -27,8 +31,7 @@
               class="form-control"
               type="text"
               rows="2"
-              formControlName="description"
-              placeholder="Descripción"></textarea>
+              formControlName="description"></textarea>
           </form-field>
         </div>
       </div>

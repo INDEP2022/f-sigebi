@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -9,9 +10,15 @@ import { IRevisionReason } from '../../models/catalogs/revision-reason.model';
 @Injectable({
   providedIn: 'root',
 })
-export class RevisionReasonService implements ICrudMethods<IRevisionReason> {
+export class RevisionReasonService
+  extends HttpService
+  implements ICrudMethods<IRevisionReason>
+{
   private readonly route: string = ENDPOINT_LINKS.RevisionReason;
-  constructor(private revisionReasonRepository: Repository<IRevisionReason>) {}
+  constructor(private revisionReasonRepository: Repository<IRevisionReason>) {
+    super();
+    this.microservice = 'catalog';
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IRevisionReason>> {
     return this.revisionReasonRepository.getAllPaginated(this.route, params);
@@ -31,5 +38,10 @@ export class RevisionReasonService implements ICrudMethods<IRevisionReason> {
 
   remove(id: string | number): Observable<Object> {
     return this.revisionReasonRepository.remove(this.route, id);
+  }
+
+  getAll2(params: _Params) {
+    const route = `revision-reason/get-all`;
+    return this.get<IListResponse<any>>(route, params);
   }
 }

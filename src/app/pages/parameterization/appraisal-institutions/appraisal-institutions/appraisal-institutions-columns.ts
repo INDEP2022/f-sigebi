@@ -15,7 +15,7 @@ export const APPRAISALINSTITUTIONS_COLUMNS = {
     title: 'No.Exterior',
     sort: false,
   },
-  noInside: {
+  noInterior: {
     title: 'No.Interior',
     sort: false,
   },
@@ -31,12 +31,29 @@ export const APPRAISALINSTITUTIONS_COLUMNS = {
     title: 'Delegación Municipio',
     sort: false,
   },
-  cve_entfed: {
+  cveEntfed: {
     title: 'Entidad Federativa',
     sort: false,
   },
   represent: {
     title: 'Representante',
+    sort: false,
+  },
+  observations: {
+    title: 'Observación',
+    sort: false,
+    type: 'string',
+  },
+  curp: {
+    title: 'CURP',
+    sort: false,
+  },
+  tel: {
+    title: 'Telefono',
+    sort: false,
+  },
+  rfc: {
+    title: 'RFC',
     sort: false,
   },
 };

@@ -1,9 +1,10 @@
 <div class="row dropzone-container">
   <ngx-dropzone
     (change)="onSelect($event)"
+    [multiple]="multiple"
     [expandable]="true"
     [accept]="accept">
-    <ngx-dropzone-label>Selecciona o arrastra los archivos!</ngx-dropzone-label>
+    <ngx-dropzone-label>{{ info }}</ngx-dropzone-label>
     <ngx-dropzone-preview
       ngProjectAs="ngx-dropzone-preview"
       [file]="fileEvent.file"
@@ -40,9 +41,16 @@
 
 <div class="row pt-3">
   <div class="col-md-12 text-center">
-    <button class="btn btn-primary" (click)="confirm()">
-      Subir Archivos
+    <confirm-button
+      type="button"
+      (confirm)="confirm()"
+      text="Subir Archivos"
+      loadingText="Cargando"
+      [loading]="uploadLoading"
+      icon="fa fa-upload"></confirm-button>
+    <!-- <button class="btn btn-primary" >
+      {{ nameButton }}
       <i class="fa fa-upload"></i>
-    </button>
+    </button> -->
   </div>
 </div>

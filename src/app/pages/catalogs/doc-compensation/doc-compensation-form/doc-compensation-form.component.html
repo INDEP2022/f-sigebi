@@ -5,26 +5,19 @@
   <div body>
     <form [formGroup]="docCompensationForm" class="form-material">
       <div class="row">
-        <div class="col-md-2">
-          <form-field [control]="docCompensationForm.get('id')" label="ID">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-
-        <div class="col-md-2 offset-md-8">
+        <div class="col-md-2 col-md-2">
           <form-field
             [control]="docCompensationForm.get('satTypeJob')"
             label="Tipo Oficio">
             <input
               type="number"
               class="form-control"
-              formControlName="satTypeJob" />
+              formControlName="satTypeJob"
+              min="0"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
-      </div>
-
-      <div class="row pt-5">
-        <div class="col-md-8">
+        <div class="col-md-10">
           <form-field
             [control]="docCompensationForm.get('typeDocSae')"
             label="Tipo Doc SAE">
@@ -34,62 +27,47 @@
               formControlName="typeDocSae" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field [control]="docCompensationForm.get('type')" label="Tipo">
-            <input type="number" class="form-control" formControlName="type" />
-          </form-field>
-        </div>
       </div>
 
       <div class="row pt-5">
-        <div class="col-md-6">
+        <div class="col-md-4">
+          <form-field [control]="docCompensationForm.get('type')" label="Tipo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="type"
+              min="0"
+              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
           <form-field
             [control]="docCompensationForm.get('idTypeDocSat')"
             label="Doc Resarcimiento SAT">
             <input
               type="string"
               class="form-control"
-              formControlName="idTypeDocSat" />
+              formControlName="idTypeDocSat"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
-        <div class="col-md-6">
+
+        <div class="col-md-4">
           <form-field
             [control]="docCompensationForm.get('idTypeDocSatXml')"
             label="Doc Resarcimiento SAT XML">
             <input
               type="number"
               class="form-control"
-              formControlName="idTypeDocSatXml" />
+              formControlName="idTypeDocSatXml"
+              min="0"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
       </div>
 
-      <!-- <div class="row pt-5">
-        <div class="col-md-6">
-          <form-field [control]="docCompensationForm.get('idTypeDocSat')">
-            <ngx-select
-              [form]="docCompensationForm"
-              control="idTypeDocSat"
-              [data]="docCompensationSAT"
-              value="id"
-              bindLabel="typeDocSat"
-              label="Doc Resarcimiento SAT"
-              (fetchItems)="getDocCompensationSAT($event)"></ngx-select>
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="docCompensationForm.get('idTypeDocSatXml')">
-            <ngx-select
-              [form]="docCompensationForm"
-              control="idTypeDocSatXml"
-              [data]="docCompensationSATXML"
-              value="id"
-              bindLabel="typeDocSatXml"
-              label="Doc Resarcimiento SAT XML"
-              (fetchItems)="getDocCompensationSATXML($event)"></ngx-select>
-          </form-field>
-        </div>
-      </div> -->
+      <div class="row pt-5"></div>
     </form>
   </div>
   <div footer>

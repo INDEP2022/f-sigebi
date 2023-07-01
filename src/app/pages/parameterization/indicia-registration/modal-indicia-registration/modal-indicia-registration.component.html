@@ -18,9 +18,11 @@
         <div class="col-md-4">
           <form-field [control]="form.get('consecutive')" label="Consecutivo">
             <input
-              type="text"
+              type="number"
+              min="0"
               class="form-control"
-              formControlName="consecutive" />
+              formControlName="consecutive"
+              oninput="if(this.value.length > 3) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
       </div>

@@ -8,7 +8,7 @@ export const GOOD_SSUBTYPES_COLUMNS = {
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
@@ -26,11 +26,6 @@ export const GOOD_SSUBTYPES_COLUMNS = {
     valuePrepareFunction: (value: IGoodSubType) => {
       return value.nameSubtypeGood;
     },
-    sort: false,
-  },
-  noRegister: {
-    title: 'N registro',
-    type: 'number',
     sort: false,
   },
 };

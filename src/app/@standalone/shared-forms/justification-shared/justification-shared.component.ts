@@ -44,6 +44,8 @@ export class JustificationSharedComponent extends BasePage implements OnInit {
       },
       error: err => {
         console.log(err);
+        this.justifications = new DefaultSelect([], 0);
+        this.alert('warning', 'No se encontraron registros', '');
       },
     });
   }

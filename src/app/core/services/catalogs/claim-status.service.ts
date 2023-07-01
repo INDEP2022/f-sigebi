@@ -27,10 +27,10 @@ export class StatusClaimsService implements ICrudMethods<IStatusClaims> {
   }
 
   update(id: string | number, model: IStatusClaims): Observable<Object> {
-    return this.claimConclusionRepository.update(this.route, id, model);
+    return this.claimConclusionRepository.newUpdateId(this.route, id, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.claimConclusionRepository.remove(this.route, id);
+    return this.claimConclusionRepository.newRemove(this.route, id);
   }
 }

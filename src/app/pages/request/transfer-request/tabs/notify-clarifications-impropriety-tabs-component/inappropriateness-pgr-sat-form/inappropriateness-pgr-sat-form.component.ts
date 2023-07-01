@@ -42,6 +42,7 @@ export class InappropriatenessPgrSatFormComponent
   dataChatClarifications: IChatClarifications[];
   idSolicitud: any;
   formLoading: boolean = false;
+  delegationUser: any;
 
   constructor(
     private modalRef: BsModalRef,
@@ -58,17 +59,22 @@ export class InappropriatenessPgrSatFormComponent
   }
 
   ngOnInit(): void {
-    if (this.folioReporte === null) {
-      console.log('Crear folio');
-      this.dictamenSeq();
-    }
+    console.log('Delegación de la solicitud', this.delegationUser);
+    this.dictamenSeq();
+
     this.prepareForm();
   }
 
   prepareForm() {
     this.form = this.fb.group({
-      senderName: [null, [Validators.required, Validators.maxLength(50)]],
-      positionSender: [null, [Validators.required, Validators.maxLength(50)]],
+      managedTo: [
+        this.request?.nameOfOwner || null,
+        [Validators.maxLength(50)],
+      ], //NOMBRE DESTINATARIO
+      positionAddressee: [
+        this.request?.holderCharge || null,
+        [Validators.maxLength(50)],
+      ], // CARGO DESTINATARIO
       paragraphInitial: [null, [Validators.maxLength(4000)]],
       foundation: [null, [Validators.maxLength(4000)]],
     });
@@ -84,15 +90,17 @@ export class InappropriatenessPgrSatFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.notification.clarificationType,
-      sender: this.form.controls['senderName'].value,
+      clarification: this.notification?.clarificationType,
+      //sender: this.request?.nameOfOwner, //Nombre remitente - Titular de la solicitud
       foundation: this.form.controls['foundation'].value,
       id: null,
       version: 1,
       paragraphInitial: this.form.controls['paragraphInitial'].value,
       applicationId: this.request.id,
-      positionSender: this.form.controls['positionSender'].value,
+      //positionSender: this.request?.holderCharge, //cARGA remitente - Titular de la solicitud
       invoiceLearned: this.folioReporte,
+      managedTo: this.request?.nameOfOwner, //NOMBRE DESTINATARIO - Titular de la solicitud
+      positionAddressee: this.request?.holderCharge, //CARGA DESTINATARIO - Titular de la solicitud
       //invoiceNumber: 1,
       modificationDate: new Date(),
       creationUser: token.name,
@@ -100,7 +108,8 @@ export class InappropriatenessPgrSatFormComponent
       modificationUser: token.name,
       creationDate: new Date(),
       assignmentInvoiceDate: new Date(),
-      rejectNoticeId: this.notification.rejectNotificationId,
+      rejectNoticeId: this.notification?.rejectNotificationId,
+      areaUserCapture: token.name,
     };
 
     this.loading = true;

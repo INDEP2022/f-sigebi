@@ -6,7 +6,7 @@ import { IGeneric } from 'src/app/core/models/catalogs/generic.model';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { EMAIL_PATTERN, NAME_PATTERN } from 'src/app/core/shared/patterns';
+import { EMAIL_PATTERN2, NAME_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -35,8 +35,22 @@ export class UserFormComponent extends BasePage implements OnInit {
   }
   prepareForm() {
     this.userForm = this.fb.group({
-      user: [null, [Validators.required, Validators.pattern(NAME_PATTERN)]],
-      email: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
+      user: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(70),
+          Validators.pattern(NAME_PATTERN),
+        ],
+      ],
+      email: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(40),
+          Validators.pattern(EMAIL_PATTERN2),
+        ],
+      ],
       userCharge: [null, [Validators.required]],
     });
 
@@ -44,6 +58,7 @@ export class UserFormComponent extends BasePage implements OnInit {
       this.edit = true;
       if (this.userData.userCharge)
         this.userData.userCharge = this.userData.charge.keyId;
+      console.log('this.userData', this.userData);
       this.userForm.patchValue(this.userData);
     }
   }
@@ -83,6 +98,14 @@ export class UserFormComponent extends BasePage implements OnInit {
             const create: boolean = true;
             this.modalService.content.callback(true, create);
             this.close();
+          },
+          error: error => {
+            this.onLoadToast(
+              'info',
+              'Advertencia',
+              'Correo electrónico ya registrado verifica'
+            );
+            this.loading = false;
           },
         });
       }

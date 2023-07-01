@@ -18,7 +18,7 @@ export class ResponseRepuveListComponent extends BasePage implements OnInit {
   responseRepuves: IResponseRepuve[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-
+  columnFilters: any = [];
   constructor(
     private responseRepuveService: ResponseRepuveService,
     private BsModalService: BsModalService
@@ -26,6 +26,8 @@ export class ResponseRepuveListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = RESPONSE_REPUVE_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -64,11 +66,27 @@ export class ResponseRepuveListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //this.responseRepuveService.remove(responseRepuve.id);
+        this.remove(responseRepuve.id);
       }
+    });
+  }
+
+  remove(id: number) {
+    this.responseRepuveService.remove(id).subscribe({
+      next: () => {
+        this.alert('success', 'Respuesta repuve', 'Borrado Correctamente');
+        this.getExample();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Respuestas Repuve',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

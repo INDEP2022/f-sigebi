@@ -15,6 +15,8 @@ import {
 })
 export class ProceedingsDeliveryReceptionService extends HttpService {
   private readonly endpoint = ProceedingsEndpoints.ProceedingsDeliveryReception;
+  private readonly endpoint2 = ProceedingsEndpoints.GoStatus;
+  private readonly filter = `?filter.previewFind=`;
   constructor() {
     super();
     this.microservice = ProceedingsEndpoints.BasePath;
@@ -32,7 +34,9 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.delete(`${this.endpoint}/${id}`);
   }
 
-  editProceeding() {}
+  editProceeding(id: string, model: IProccedingsDeliveryReception) {
+    return this.put(`${this.endpoint}/${id}`, model);
+  }
 
   newDeleteProceeding(id: string) {
     return this.delete(`${this.endpoint}/${id}`);
@@ -63,5 +67,16 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     // return this.get<IListResponse<IValidations>>(partials, params).pipe(
     //   tap(() => (this.microservice = ''))
     // );
+  }
+
+  getAllByActa(
+    cve: string
+  ): Observable<IListResponse<IProccedingsDeliveryReception>> {
+    return this.get<IListResponse<IValidations>>(
+      `${this.endpoint}${this.filter}${cve}`
+    );
+  }
+  getStatusConversion(id: string | number) {
+    return this.get(`${this.endpoint2}/${id}`);
   }
 }

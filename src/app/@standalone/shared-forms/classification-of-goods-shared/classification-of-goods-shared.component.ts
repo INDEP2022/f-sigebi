@@ -30,7 +30,7 @@ export class ClassificationOfGoodsSharedComponent
 {
   @Input() form: FormGroup;
   @Input() classificationOfGoodsField: string = 'classificationOfGoods';
-  @Input() label: string = 'No de Clasificación de Bien';
+  @Input() label: string = 'Clasificación de Bien';
   @Input() showClasification: boolean = true;
   @Output() descriptionClasification = new EventEmitter<string>();
   @Input() patchValue: boolean = false;
@@ -48,6 +48,7 @@ export class ClassificationOfGoodsSharedComponent
   ngOnInit(): void {}
 
   getClasification(params: ListParams) {
+    params['filter.description'] = `$ilike:${params.text}`;
     this.goodSssubtypeService.getAll(params).subscribe({
       next: data => {
         console.log(data);

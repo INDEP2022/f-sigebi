@@ -60,7 +60,7 @@ export class AbandonmentsDeclarationTradesService {
         return {
           ...data,
           data: data.data.map(c => {
-            return { ...c, nameAndId: `${c.idCity} - ${c.nameCity}` };
+            return { ...c, nameAndId: `${c.idCity} - ${c.legendOffice}` };
           }),
         };
       })

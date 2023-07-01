@@ -1,0 +1,46 @@
+.table-container {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-content {
+  width: 700px !important;
+}
+
+.app-modal-wide {
+  max-width: 90%;
+  width: 700px !important;
+  /* Puedes ajustar este valor al ancho que desees */
+}
+
+.modal-body {
+  padding: 200px 100px 20px;
+}
+
+.custom-card {
+  border: 10px solid black;
+}
+
+.custom-card-buttons {
+  border: 10px solid black;
+  align-items: center;
+}
+
+.custom-card-textareas {
+  border: 10px solid black;
+}
+
+.custom-cell {
+  text-align: center;
+}
+
+.card-body-table {
+  //padding-right: 100px;
+  padding-top: 30px;
+}
+.app-modal-dialog {
+  max-width: 90%;
+}

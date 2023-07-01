@@ -5,7 +5,10 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStatusClaims } from 'src/app/core/models/catalogs/status-claims.model';
 import { StatusClaimsService } from 'src/app/core/services/catalogs/claim-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-status-claims-form',
@@ -34,21 +37,19 @@ export class StatusClaimsFormComponent extends BasePage implements OnInit {
       id: [null],
       description: [
         null,
-        Validators.compose([
-          Validators.pattern(''),
+        [
           Validators.required,
-          Validators.maxLength(80),
           Validators.pattern(STRING_PATTERN),
-        ]),
+          Validators.maxLength(200),
+        ],
       ],
       flag: [
         null,
-        Validators.compose([
-          Validators.pattern(''),
+        [
           Validators.required,
-          Validators.maxLength(60),
-          Validators.pattern(STRING_PATTERN),
-        ]),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(2),
+        ],
       ],
     });
     if (this.statusClaims != null) {
@@ -78,7 +79,7 @@ export class StatusClaimsFormComponent extends BasePage implements OnInit {
     this.loading = true;
     this.StatusClaimsService.update(
       this.statusClaims.id,
-      this.statusClaimsForm.getRawValue()
+      this.statusClaimsForm.value
     ).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),

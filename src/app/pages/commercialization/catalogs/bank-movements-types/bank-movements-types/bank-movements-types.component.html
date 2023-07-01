@@ -32,7 +32,9 @@
                       <i class="bx bx-card me-1 text-primary"></i>
                       No.Cuenta
                     </h5>
-                    <p class="text-muted mb-0">{{ bankAccounts[0].id }}</p>
+                    <p class="text-muted mb-0" *ngIf="bankAccounts.length > 0">
+                      {{ bankAccounts[0]!.id }}
+                    </p>
                   </div>
                 </div>
                 <div class="col-lg-5 col-md-6 col-sm-6 col-12">
@@ -41,7 +43,9 @@
                       <i class="bx bx-building me-1 text-primary"></i>
                       Sucursal
                     </h5>
-                    <p class="text-muted mb-0">{{ bankAccounts[0].office }}</p>
+                    <p class="text-muted mb-0" *ngIf="bankAccounts.length > 0">
+                      {{ bankAccounts[0]!.office }}
+                    </p>
                   </div>
                 </div>
               </div>

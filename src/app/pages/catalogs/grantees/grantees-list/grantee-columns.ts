@@ -20,7 +20,7 @@ export const GRANTEES_COLUMNS = {
     sort: false,
   },
   razonSocial: {
-    title: 'Razon social',
+    title: 'Razón social',
     type: 'string',
     sort: false,
   },
@@ -30,12 +30,12 @@ export const GRANTEES_COLUMNS = {
     sort: false,
   },
   noInside: {
-    title: 'No Interior',
+    title: 'No. Interior',
     type: 'string',
     sort: false,
   },
   noExterior: {
-    title: 'No Exterior',
+    title: 'No. Exterior',
     type: 'string',
     sort: false,
   },

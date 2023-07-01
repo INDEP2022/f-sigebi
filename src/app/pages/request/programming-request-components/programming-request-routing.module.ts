@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { WarehouseShowComponent } from '../shared-request/warehouse-show/warehouse-show.component';
 
 const routes: Routes = [
   {
@@ -62,6 +63,11 @@ const routes: Routes = [
         )
       ).ReturnToPerformProgramming,
     data: { title: 'Realizar programación' },
+  },
+
+  {
+    path: 'warehouse/:id',
+    component: WarehouseShowComponent,
   },
 ];
 

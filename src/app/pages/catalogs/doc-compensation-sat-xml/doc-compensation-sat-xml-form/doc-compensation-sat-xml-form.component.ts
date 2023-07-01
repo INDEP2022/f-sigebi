@@ -8,7 +8,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
-  selector: 'app-doc-resarcimiento-sat-xml-form',
+  selector: 'app-doc-compensation-sat-xml-form',
   templateUrl: './doc-compensation-sat-xml-form.component.html',
   styles: [],
 })
@@ -17,7 +17,7 @@ export class DocCompensationSatXmlFormComponent
   implements OnInit
 {
   compensationForm: ModelForm<IDocCompensationSatXml>;
-  title: string = 'Documento resarcimiento sat xml';
+  title1: string = 'Documento resarcimento SAT XML';
   edit: boolean = false;
   compensationSatXml: IDocCompensationSatXml;
 
@@ -38,11 +38,16 @@ export class DocCompensationSatXmlFormComponent
       id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       idOficioSat: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.minLength(1),
+          Validators.maxLength(3),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       typeDocSatXml: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(250)],
       ],
     });
 
@@ -83,7 +88,8 @@ export class DocCompensationSatXmlFormComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title1, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title1, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

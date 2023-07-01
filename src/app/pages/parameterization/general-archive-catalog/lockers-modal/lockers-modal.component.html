@@ -43,7 +43,7 @@
         </div>
       </div>
       <div class="row pt-5">
-        <div class="col-md-4">
+        <div class="col-md">
           <form-field
             label="Descripción"
             [control]="lockerForm.get('description')">
@@ -53,6 +53,8 @@
               formControlName="description" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-5">
         <div class="col-md-4">
           <form-field label="Estado" [control]="lockerForm.get('status')">
             <input type="text" class="form-control" formControlName="status" />

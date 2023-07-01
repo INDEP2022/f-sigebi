@@ -221,7 +221,7 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/vault-consultation',
       },
       {
-        label: 'Registro de mensaje del Bien',
+        label: 'Registro de menaje del Bien',
         link: '/pages/administrative-processes/property-registration',
       },
       {

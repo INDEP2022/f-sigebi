@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
-import { IZoneGeographic } from 'src/app/core/models/catalogs/zone-geographic.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-delegation-modal',
@@ -17,15 +19,16 @@ export class DelegationModalComponent extends BasePage implements OnInit {
   delegationForm: ModelForm<IDelegation>;
   delegationM: IDelegation;
 
-  title: string = 'Delegaciones';
+  title: string = 'Delegación';
   edit: boolean = false;
 
-  idZ: IZoneGeographic;
+  idZ = new DefaultSelect();
 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private delegationService: DelegationService
+    private delegationService: DelegationService,
+    private readonly zoneGeographicService: ZoneGeographicService
   ) {
     super();
   }
@@ -34,9 +37,17 @@ export class DelegationModalComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
+  getZones(event: ListParams) {
+    this.zoneGeographicService.getAll(event).subscribe({
+      next: data => {
+        this.idZ = new DefaultSelect(data.data, data.count);
+      },
+    });
+  }
+
   private prepareForm() {
     this.delegationForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -49,21 +60,11 @@ export class DelegationModalComponent extends BasePage implements OnInit {
           Validators.maxLength(1),
         ],
       ],
-      idZoneGeographic: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.maxLength(1),
-        ],
-      ],
+      idZoneGeographic: [null, [Validators.required, Validators.maxLength(1)]],
     });
     if (this.delegationM != null) {
       this.edit = true;
-      console.log('idzona', this.delegationM);
-      this.idZ = this.delegationM.idZoneGeographic as IZoneGeographic;
       this.delegationForm.patchValue(this.delegationM);
-      this.delegationForm.controls['idZoneGeographic'].setValue(this.idZ.id);
     }
   }
 
@@ -72,23 +73,37 @@ export class DelegationModalComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.edit ? this.update() : this.create();
+    const newDelegation = Object.assign({}, this.delegationForm.value);
+
+    Object.defineProperty(newDelegation, 'idZoneGeographic', {
+      value: newDelegation.idZoneGeographic.id,
+    });
+
+    if (this.edit) newDelegation.id = this.delegationM.id;
+
+    this.edit ? this.update() : this.create(newDelegation);
   }
 
-  create() {
+  create(newDelegation: IDelegation) {
+    console.log(newDelegation);
     this.loading = true;
-    this.delegationService.create2(this.delegationForm.value).subscribe({
-      next: data => this.handleSuccess(),
+    this.delegationService.create2(newDelegation).subscribe({
+      next: data => {
+        this.handleSuccess();
+      },
       error: error => (this.loading = false),
     });
   }
 
   update() {
+    console.log();
     this.loading = true;
-    this.delegationService.update2(this.delegationForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.delegationService
+      .update2(this.delegationForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {

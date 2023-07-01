@@ -1,7 +1,7 @@
 export interface IHistoryGood {
   propertyNum: string | number;
   status: string;
-  changeDate: Date;
+  changeDate: Date | string;
   userChange: string;
   statusChangeProgram: string;
   reasonForChange: string;
@@ -20,4 +20,8 @@ export interface ISentSirsae {
   date: string;
   user?: string;
   expedientNumber: number;
+}
+export interface IReturnStatusProcess {
+  pGoodNumber: number;
+  pStatus: string;
 }

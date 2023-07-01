@@ -16,6 +16,7 @@ export class RegistrationRequestFormComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
+    console.log('Activando tab: registration-request-form');
     this.prepareForm();
   }
 

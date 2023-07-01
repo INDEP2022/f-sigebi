@@ -21,7 +21,7 @@
           <div class="col-md-3">
             <form-field
               [control]="dateForm.get('initialDate')"
-              label="*Periodo Inicial">
+              label="Periodo Inicial">
               <input
                 type="text"
                 class="form-control"
@@ -32,7 +32,7 @@
           <div class="col-md-3">
             <form-field
               [control]="dateForm.get('finalDate')"
-              label="*Periodo Final">
+              label="Periodo Final">
               <input
                 type="text"
                 class="form-control"
@@ -51,7 +51,7 @@
             (click)="showSearchForm = true"
             *ngIf="!showSearchForm">
             <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
-            expedientes</a
+            Almac&eacute;n</a
           >
         </p>
 
@@ -61,7 +61,7 @@
             (click)="showSearchForm = false"
             *ngIf="showSearchForm">
             <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
-            expedientes</a
+            Almac&eacute;n</a
           >
         </p>
       </h5>
@@ -71,22 +71,25 @@
         <div class="row pt-4">
           <div class="col-md-4">
             <form-field
-              [control]="searchForm.get('noWarehouse')"
+              [control]="searchForm.get('id')"
               label="No&#46; Almacén">
               <input
-                type="text"
+                type="number"
                 class="form-control"
-                formControlName="noWarehouse" />
+                formControlName="id"
+                min="0" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="searchForm.get('postalCode')"
+              [control]="searchForm.get('code')"
               label="C&oacute;digo Postal">
               <input
                 type="text"
                 class="form-control"
-                formControlName="postalCode" />
+                formControlName="code"
+                minlength="0"
+                maxlength="6" />
             </form-field>
           </div>
           <div class="col-md-4">
@@ -96,34 +99,41 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="nameWarehouse" />
+                formControlName="nameWarehouse"
+                maxlength="60" />
             </form-field>
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-6">
+          <div class="col-md-4">
             <form-field
               [control]="searchForm.get('address')"
               label="Direcci&oacute;n">
               <textarea
                 class="form-control"
-                formControlName="address"></textarea>
+                formControlName="address"
+                rows="4"
+                maxlength="150"></textarea>
             </form-field>
           </div>
         </div>
       </form>
-      <div class="row pt-2">
-        <div class="d-flex justify-content-end">
-          <div class="m-3">
-            <button class="btn btn-primary btn-sm active">Buscar</button>
-          </div>
-          <div class="m-3">
-            <button class="btn btn-danger btn-sm active">Cancelar</button>
-          </div>
+    </div>
+    <div class="row">
+      <div class="d-flex justify-content-end">
+        <div class="m-3">
+          <button class="btn btn-primary btn-sm active" (click)="search()">
+            Buscar
+          </button>
+        </div>
+        <div class="m-3">
+          <button class="btn btn-danger btn-sm active" (click)="clean()">
+            Limpiar
+          </button>
         </div>
       </div>
     </div>
-    <div class="row" style="margin-top: 2%" *ngIf="displaySearchAssetsBtn">
+    <div class="row pt-4" style="margin-top: 2%" *ngIf="displaySearchAssetsBtn">
       <div class="d-flex justify-content-end">
         <div class="m-3">
           <button class="btn btn-primary btn-sm active">
@@ -133,14 +143,16 @@
       </div>
     </div>
     <div class="row pt-3">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings"
-        [source]="paragraphs"
-        (rowSelect)="selectWarehouse($event)">
-      </ng2-smart-table>
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings"
+          [source]="paragraphs"
+          (rowSelect)="selectWarehouse($event)">
+        </ng2-smart-table>
+      </div>
       <app-pagination
-        [params]="params"
+        [filterParams]="params"
         [totalItems]="totalItems"></app-pagination>
     </div>
     <div class="row pt-4">
@@ -165,7 +177,7 @@
         (userRowSelect)="selectAssts($event)">
       </ng2-smart-table>
       <app-pagination
-        [params]="params2"
+        [filterParams]="params2"
         [totalItems]="totalItems2"></app-pagination>
     </div>
     <div>

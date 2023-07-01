@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
+  ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
@@ -72,6 +73,7 @@ export class MaintenanceOfPublicMinistriesComponent
       manager: [
         null,
         [
+          Validators.required,
           Validators.minLength(1),
           Validators.maxLength(100),
           Validators.pattern(STRING_PATTERN),
@@ -80,6 +82,7 @@ export class MaintenanceOfPublicMinistriesComponent
       street: [
         null,
         [
+          Validators.required,
           Validators.minLength(1),
           Validators.maxLength(60),
           Validators.pattern(STRING_PATTERN),
@@ -87,15 +90,24 @@ export class MaintenanceOfPublicMinistriesComponent
       ],
       insideNumber: [
         null,
-        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
+        [
+          //Validators.required,
+          Validators.maxLength(10),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       outNumber: [
         null,
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       colony: [
         null,
         [
+          Validators.required,
           Validators.minLength(1),
           Validators.maxLength(60),
           Validators.pattern(STRING_PATTERN),
@@ -104,17 +116,25 @@ export class MaintenanceOfPublicMinistriesComponent
       delegNunic: [
         null,
         [
+          Validators.required,
           Validators.minLength(1),
           Validators.maxLength(60),
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      zipCode: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      zipCode: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
       phone: [
         null,
-        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(20),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
-      idCity: [null],
+      idCity: [null, [Validators.required]],
       entity: [null],
       delegation: [null],
       subDelegation: [null],
@@ -140,6 +160,7 @@ export class MaintenanceOfPublicMinistriesComponent
           error: error => {
             this.loading = false;
             this.onLoadToast('error', error.erro.message, '');
+            console.log(error);
           },
         });
       } else {
@@ -183,6 +204,7 @@ export class MaintenanceOfPublicMinistriesComponent
       } else {
         this.form.get('entity').patchValue(data.state.descCondition);
       }
+      console.log(data);
       this.getDelegation(data.noDelegation);
       this.getSubDelegation(data.noSubDelegation);
     }
@@ -196,8 +218,14 @@ export class MaintenanceOfPublicMinistriesComponent
   }
 
   private getDelegation(delegation: number) {
-    this.serviceDeleg.getById(delegation).subscribe({
-      next: data => this.form.get('delegation').patchValue(data.description),
+    const params = new ListParams();
+    params['filter.id'] = delegation;
+    params['filter.etapaEdo'] = 1;
+
+    this.serviceDeleg.getAll(params).subscribe({
+      next: data => {
+        this.form.get('delegation').patchValue(data.data[0].description);
+      },
       error: error => this.onLoadToast('error', error.erro.message, ''),
     });
   }

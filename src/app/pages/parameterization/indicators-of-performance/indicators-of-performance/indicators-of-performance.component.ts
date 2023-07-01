@@ -42,7 +42,7 @@ export class IndicatorsOfPerformanceComponent
   totalItems2: number = 0;
   typeItem: any[];
   typeItem1: any[];
-
+  rowSelecct: boolean = false;
   constructor(
     private fb: FormBuilder,
     private indicatorsParameterService: IndicatorsParameterService,
@@ -73,18 +73,37 @@ export class IndicatorsOfPerformanceComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
+            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'procedureAreaDetails':
+                // searchFilter = SearchFilter.EQ;
+                filter.field == 'procedureAreaDetails';
+                field = `filter.${filter.field}.description`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
             if (filter.search !== '') {
+              console.log(
+                (this.columnFilters1[
+                  field
+                ] = `${searchFilter}:${filter.search}`)
+              );
               this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters1[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getValuesAll();
         }
       });
@@ -97,10 +116,16 @@ export class IndicatorsOfPerformanceComponent
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'indicatorNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -113,9 +138,7 @@ export class IndicatorsOfPerformanceComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getValuesAll());
-    this.params2
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDetailIndParameterAll());
+
     this.prepareForm();
     this.typeItem = [
       { label: 'Fec. Recepción/Escaneo', value: 'FRECEPCION' },
@@ -129,6 +152,7 @@ export class IndicatorsOfPerformanceComponent
   private prepareForm() {
     this.indicatorsOfPerformanceForm = this.fb.group({
       initialDate: [null, Validators.required],
+      endDate: [null, Validators.required],
       daysLimNumber: [null, Validators.required],
       hoursLimNumber: [null, Validators.required],
       contractZoneKey: [null, Validators.required],
@@ -145,10 +169,13 @@ export class IndicatorsOfPerformanceComponent
     };
     this.indicatorsParameterService.getAll(params).subscribe({
       next: response => {
-        console.log(response);
+        console.log('response:', response);
         this.indicatorsParamenter = response.data;
+        console.log(this.indicatorsParamenter);
+
         this.data1.load(this.indicatorsParamenter);
         this.data1.refresh();
+
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -158,8 +185,11 @@ export class IndicatorsOfPerformanceComponent
       },
     });
   }
-  getDetailIndParameterAll() {
+  getDetailIndParameterAll(id?: string) {
     this.loading = true;
+    if (id) {
+      this.params.getValue()['filter.indicatorNumber'] = id;
+    }
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters2,
@@ -175,7 +205,8 @@ export class IndicatorsOfPerformanceComponent
       },
       error: error => {
         this.loading = false;
-        console.log(error);
+        this.data2.load([]);
+        this.data2.refresh();
       },
     });
   }
@@ -184,6 +215,10 @@ export class IndicatorsOfPerformanceComponent
     this.indicatorsOfPerformanceForm.controls['indicatorNumber'].setValue(
       event.data.id
     );
+    this.rowSelecct = true;
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDetailIndParameterAll(event.data.id));
   }
   confirm() {
     console.log(

@@ -31,6 +31,7 @@ export class ValuesComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems2: number = 0;
+  loading2: boolean = false;
   settings2 = { ...this.settings };
   constructor(
     private modalService: BsModalService,
@@ -49,6 +50,8 @@ export class ValuesComponent extends BasePage implements OnInit {
     };
     this.settings2.columns = TVALTABLA1_COLUMNS;
     this.settings2.actions.add = false;
+    this.settings2.actions.delet = false;
+
     this.settings2 = {
       ...this.settings2,
       hideSubHeader: false,
@@ -75,15 +78,30 @@ export class ValuesComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.resetTable2();
           this.getValuesAll();
         }
       });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getValuesAll());
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.resetTable2();
+      this.getValuesAll();
+    });
   }
+
+  resetTable2() {
+    this.params2 = new BehaviorSubject<ListParams>(new ListParams());
+
+    this.tvalTableList = [];
+    this.data1.load(this.tvalTableList);
+    this.data1.refresh();
+    this.data1.refresh();
+    this.totalItems2 = 0;
+  }
+
   getValuesAll() {
     this.loading = true;
+    console.log('params:');
+    console.log('params111:', this.params);
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -103,10 +121,14 @@ export class ValuesComponent extends BasePage implements OnInit {
       },
     });
   }
+
   rowsSelected(event: any) {
     this.totalItems2 = 0;
     this.tvalTableList = [];
     this.values = event.data;
+    this.params2 = new BehaviorSubject<ListParams>(new ListParams());
+    this.resetTable2();
+
     this.data1
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -116,10 +138,6 @@ export class ValuesComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
-            // filter.field == 'id'
-            //   ? (searchFilter = SearchFilter.EQ)
-            //   : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
               this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -129,28 +147,36 @@ export class ValuesComponent extends BasePage implements OnInit {
           this.gettvalTable(this.values);
         }
       });
+
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.gettvalTable(this.values));
   }
+
   gettvalTable(values: ITablesType) {
-    this.loading = true;
-    let params = {
-      ...this.params.getValue(),
+    this.loading2 = true;
+    // this.params2 = new BehaviorSubject<ListParams>(new ListParams());
+    let params2 = {
+      ...this.params2.getValue(),
       ...this.columnFilters,
     };
-    this.tvalTableService.getById4(values.cdtabla, params).subscribe({
+    console.log('params:', params2);
+    console.log('params2:', this.params2);
+
+    this.tvalTableService.getById4(values.cdtabla, params2).subscribe({
       next: response => {
         console.log(response);
         this.tvalTableList = response.data;
         this.data1.load(this.tvalTableList);
         this.data1.refresh();
+        this.data1.refresh();
         this.totalItems2 = response.count;
-        this.loading = false;
+        this.loading2 = false;
       },
-      error: error => (this.loading = false),
+      error: error => (this.loading2 = false),
     });
   }
+
   openForm(tvalTable?: ITvaltable1) {
     if (this.values) {
       console.log(tvalTable);
@@ -164,6 +190,7 @@ export class ValuesComponent extends BasePage implements OnInit {
               this.totalItems2 = 0;
               this.tvalTableList = [];
               this.getValuesAll();
+              this.gettvalTable(this.values);
             }
           },
         },

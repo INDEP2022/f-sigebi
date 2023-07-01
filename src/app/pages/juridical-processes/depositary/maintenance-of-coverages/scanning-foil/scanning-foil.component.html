@@ -3,8 +3,13 @@
     <div class="col-md-2 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button type="button" class="btn btn-primary btn-sm active">
-            scanner
+          <button
+            [disabled]="false"
+            (click)="createScannerFoil()"
+            tooltip="Generar Folio de Escaneo y Solicitud"
+            containerClass="tooltip-style"
+            class="btn btn-secondary btn-sm active m-1">
+            <i class="bx bxs-file-find"></i>
           </button>
         </div>
       </div>
@@ -12,8 +17,13 @@
     <div class="col-md-2 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button type="button" class="btn btn-info btn-sm active">
-            Folio scaneo
+          <button
+            [disabled]="false"
+            (click)="openScannerPage()"
+            tooltip="Escanear"
+            containerClass="tooltip-style"
+            class="btn btn-secondary btn-sm active m-1">
+            <i class="bx bxs-file"></i>
           </button>
         </div>
       </div>
@@ -35,8 +45,13 @@
     <div class="col-md-2 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button type="button" class="btn btn-info btn-sm active">
-            Folio scaneo
+          <button
+            [disabled]="false"
+            (click)="showMessageDigitalization()"
+            tooltip="imprimir Solicitud de Escaneo"
+            containerClass="tooltip-style"
+            class="btn btn-secondary btn-sm active m-1">
+            <i class="bx bxs-file-find"></i>
           </button>
         </div>
       </div>
@@ -44,8 +59,13 @@
     <div class="col-md-2 col-sm-12 col-xs-12">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button type="button" class="btn btn-primary btn-sm active">
-            Folio scaneo
+          <button
+            [disabled]="false"
+            (click)="showScannerFoil()"
+            tooltip="Consulta de imágenes escaneadas"
+            containerClass="tooltip-style"
+            class="btn btn-secondary btn-sm active m-1">
+            <i class="bx bxs-file"></i>
           </button>
         </div>
       </div>

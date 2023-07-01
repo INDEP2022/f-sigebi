@@ -2,10 +2,10 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -41,6 +41,7 @@ export class MonitorReturnAbandonmentComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  public idBien: string = '';
   public form: FormGroup;
   data: LocalDataSource = new LocalDataSource();
   totalItems: number = 0;
@@ -56,6 +57,7 @@ export class MonitorReturnAbandonmentComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
+    private activateRoute: ActivatedRoute,
     private screenStatusService: ScreenStatusService,
     private fb: FormBuilder,
     private goodService: GoodService,
@@ -78,6 +80,8 @@ export class MonitorReturnAbandonmentComponent
     };
 
     this._settings.rowClassFunction = (row: any) => {
+      console.log('1', row.data.status);
+      console.log('2', row.data.di_status_final);
       if (
         row.data.status == row.data.di_status_final &&
         row.data.judicialLeaveDate != null
@@ -93,28 +97,36 @@ export class MonitorReturnAbandonmentComponent
   }
 
   ngOnInit(): void {
-    this.prepareForm();
-
+    const id: string | number = this.activateRoute.snapshot.paramMap.get('id');
+    if (id) this.idBien = String(id);
+    console.log('SI', id);
+    this.prepareForm(this.idBien);
+    this.settingColumns();
     // this.getGoods();
     this.loading = true;
   }
 
-  private prepareForm() {
+  settingColumns() {
+    this._settings.columns = MONITOR_RETUR_ABANDONMENT;
+  }
+
+  private prepareForm(id: any) {
     this.form = this.fb.group({
       diEstatusBien: ['', Validators.required],
     });
 
-    this.params
-      .pipe(
-        takeUntil(this.$unSubscribe),
-        tap(() => this.getGoods())
-      )
-      .subscribe();
+    this.getGoods(id);
+    // this.params
+    //   .pipe(
+    //     takeUntil(this.$unSubscribe),
+    //     tap(() => this.getGoods())
+    //   )
+    //   .subscribe();
   }
 
   public async goodSelect(good: IGood) {
     this.goodData = good;
-
+    console.log();
     // DISABLED BUTTON DECLARACIÓN //
     if (this.id == good.id) {
       this.id = '';
@@ -123,60 +135,69 @@ export class MonitorReturnAbandonmentComponent
       this.validBtn = true;
       this.id = good.id;
     }
-
-    if (good.status != null) {
-      let params = new ListParams();
-      params['filter.status'] = `$ilike:${good.status}`;
-      await this.statusGoodService.getAll(params).subscribe({
-        next: (response: any) => {
-          const data = response.data[0];
-          console.log('a', response);
-          this.form.get('diEstatusBien').setValue(data.description);
-        },
-        error: err => {
-          this.form
-            .get('diEstatusBien')
-            .setValue('No se encontró estatus del Bien');
-        },
-      });
+    if (this.id == '') {
+      this.form.get('diEstatusBien').setValue('');
     } else {
-      this.form
-        .get('diEstatusBien')
-        .setValue('El Bien no tiene un estatus asignado');
+      if (good.status != null) {
+        let params = new ListParams();
+        params['filter.status'] = `$ilike:${good.status}`;
+        await this.statusGoodService.getAll(params).subscribe({
+          next: (response: any) => {
+            const data = response.data[0];
+            console.log('a', response);
+            this.form.get('diEstatusBien').setValue(data.description);
+            this.loading = false;
+          },
+          error: err => {
+            this.form
+              .get('diEstatusBien')
+              .setValue('No se encontró estatus del Bien');
+            this.loading = false;
+          },
+        });
+      } else {
+        this.form
+          .get('diEstatusBien')
+          .setValue('El Bien no tiene un estatus asignado');
+        this.loading = false;
+      }
     }
   }
 
-  getGoods(): void {
+  getGoods(id: any): void {
     this.loading = true;
-    let params = this.params.getValue();
+    // let params = this.params.getValue();
     this.id = null;
 
-    this.goods = [];
+    this.goodService.getGoodById(id).subscribe({
+      next: async resp => {
+        // console.log("RES", resp)
+        let arr: any = [];
+        const statusScreen: any = await this.getScreenStatus(resp);
 
-    this.goodService.getAll(params).subscribe({
-      next: resp => {
-        let result = resp.data.map(async (item: any) => {
-          const statusScreen: any = await this.getScreenStatus(item);
+        resp.di_disponible = statusScreen.di_disponible;
+        resp.di_status_final = statusScreen.di_status_final;
 
-          item['di_disponible'] = statusScreen.di_disponible;
-          item['di_status_final'] = statusScreen.di_status_final;
+        if (resp.judicialLeaveDate) {
+          if (statusScreen.di_status_final != null) {
+            resp.status = statusScreen.di_status_final;
+            // CAMBIAMOS STATUS DEL BIEN POR EL BIEN FINAL OBTENIDO
+            // await this.updateStatusGood(resp);
+            // APLICAMOS ABANDONO
 
-          if (item.judicialLeaveDate) {
-            if (statusScreen.di_status_final != null) {
-              // CAMBIAMOS STATUS DEL BIEN POR EL BIEN FINAL OBTENIDO
-              await this.updateStatusGood(item);
-              // APLICAMOS ABANDONO
-              await this.aplicaAbandono(item);
-            }
+            await this.aplicaAbandono(resp);
           }
-        });
+        }
+        arr.push(resp);
+        if (arr) {
+          setTimeout(() => {
+            this.goods = arr;
+          }, 100);
+        }
 
-        Promise.all(result).then(data => {
-          this.goods = resp.data;
-          console.log('Datos regresados: ', this.goods);
-          this.totalItems = resp.count;
-          this.loading = false;
-        });
+        console.log('Datos regresados: ', this.goods);
+        // this.totalItems = resp.count;
+        this.loading = false;
       },
       error: error => {
         this.loading = false;
@@ -185,7 +206,18 @@ export class MonitorReturnAbandonmentComponent
   }
 
   edit(good: IGood) {
-    this.openModal({ edit: true, good });
+    if (this.id == good.id) {
+      this.id = '';
+      this.validBtn = false;
+    } else {
+      this.validBtn = true;
+      this.id = good.id;
+    }
+    if (this.id == '') {
+      this.form.get('diEstatusBien').setValue('');
+    } else {
+      this.openModal({ edit: true, good });
+    }
   }
 
   openModal(context?: Partial<InputTableComponent>) {
@@ -195,7 +227,7 @@ export class MonitorReturnAbandonmentComponent
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe((next: any) => {
-      if (next) this.getGoods();
+      if (next) this.getGoods(this.idBien);
     });
   }
 
@@ -232,15 +264,19 @@ export class MonitorReturnAbandonmentComponent
   }
 
   public btnDeclaracion() {
-    if (this.goodData.judicialLeaveDate == null) {
-      this.alertInfo(
-        'warning',
-        'Debe capturar primero la fecha de Ratificación Judicial.',
-        ''
-      );
+    if (this.id == '') {
+      this.onLoadToast('warning', 'Debe seleccionar un bien', '');
     } else {
-      const route = `pages/juridical/return-abandonment-monitor/${this.id}`;
-      this.route.navigate([route]);
+      if (this.goodData.judicialLeaveDate == null) {
+        this.alertInfo(
+          'warning',
+          'Debe capturar primero la fecha de Ratificación Judicial.',
+          ''
+        );
+      } else {
+        const route = `pages/juridical/return-abandonment-monitor/${this.id}`;
+        this.route.navigate([route]);
+      }
     }
   }
 
@@ -258,11 +294,7 @@ export class MonitorReturnAbandonmentComponent
 
     this.historyGoodService.create(historyGood).subscribe({
       next: response => {
-        // this.onLoadToast(
-        //   'success',
-        //   'El Abandono ha sido aplicado',
-        //   ''
-        // );
+        this.onLoadToast('success', 'El Abandono ha sido aplicado', '');
 
         this.loading = false;
       },
@@ -281,16 +313,29 @@ export class MonitorReturnAbandonmentComponent
 
     this.goodService.updateWithParams(params).subscribe(
       response => {
-        // this.onLoadToast(
-        //   'success',
-        //   'Se actualizó correctamente el Estatus del Bien',
-        //   ``
-        // )
+        this.onLoadToast(
+          'success',
+          'Se actualizó correctamente el Estatus del Bien',
+          ``
+        );
+        this.loading = false;
       },
       error => (
         this.onLoadToast('error', error.error.message, ``),
         (this.loading = false)
       )
     );
+  }
+
+  Regresar() {
+    const route = `pages/juridical/depositary/notice-of-abandonment-by-return`;
+    this.route.navigate([route]);
+  }
+
+  callForm(event: any) {
+    if (event.target.value) {
+      const route = `pages/general-processes/historical-good-situation`;
+      this.route.navigate([route]);
+    }
   }
 }

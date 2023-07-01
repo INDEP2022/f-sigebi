@@ -3,7 +3,7 @@ import * as FileSaver from 'file-saver';
 import { read, utils, WorkBook, WorkSheet, write } from 'xlsx';
 import { FileSaverService } from './file-saver.service';
 
-const EXCEL_TYPE =
+export const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
 const XLSX_EXTENSIONS = {
@@ -67,5 +67,23 @@ export class ExcelService {
       type: EXCEL_TYPE,
     });
     FileSaver.saveAs(data, fileName + '_exported' + EXCEL_EXTENSION);
+  }
+
+  exportJsonToExcelNewFile(
+    json: any,
+    { type = 'xlsx', filename }: IXLSXExportConfig,
+    fileType: string
+  ) {
+    const workSheet = utils.json_to_sheet(json);
+    const workBook: WorkBook = {
+      Sheets: { 'Hoja 1': workSheet },
+      SheetNames: ['Hoja 1'],
+    };
+    const buffer = write(workBook, { bookType: type, type: 'array' });
+
+    return new File([buffer], `${'Archivo'}.xlsx`, {
+      type: fileType,
+      lastModified: new Date().getTime(),
+    });
   }
 }

@@ -11,7 +11,7 @@
             (click)="showSearchForm = true"
             *ngIf="!showSearchForm">
             <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
-            expedientes</a
+            Expedientes</a
           >
         </p>
 
@@ -21,7 +21,7 @@
             (click)="showSearchForm = false"
             *ngIf="showSearchForm">
             <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
-            expedientes</a
+            Expedientes</a
           >
         </p>
       </h5>
@@ -35,7 +35,7 @@
             </form-field>
           </div>
           <div class="col-md-8">
-            <form-field [control]="expedientForm.get('typeDoc')">
+            <!-- <form-field [control]="expedientForm.get('typeDoc')">
               <ngx-select
                 [form]="expedientForm"
                 control="typeDoc"
@@ -45,7 +45,28 @@
                 label="Tipo de Documento"
                 (fetchItems)="getTypeDocSelect($event)">
               </ngx-select>
-            </form-field>
+            </form-field> -->
+            <div
+              [formGroup]="expedientForm"
+              class="form-group form-secondary form-static-label">
+              <ng-select
+                class="form-control"
+                formControlName="typeDoc"
+                [clearable]="false"
+                [items]="typeDocSelected"
+                [virtualScroll]="true"
+                [loading]="loading"
+                bindLabel="ddescription"
+                bindValue="ddocType">
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                  <div [title]="item.ddescription">
+                    {{ item.ddescription }}
+                  </div>
+                </ng-template>
+              </ng-select>
+              <span class="form-bar"></span>
+              <label class="float-label">Tipo de documento </label>
+            </div>
           </div>
         </div>
         <div class="row pt-4">
@@ -102,7 +123,11 @@
             <form-field
               [control]="expedientForm.get('noDoc')"
               label="No&#46; Documento">
-              <input type="text" class="form-control" formControlName="noDoc" />
+              <input
+                type="number"
+                class="form-control"
+                formControlName="noDoc"
+                min="0" />
             </form-field>
           </div>
         </div>
@@ -146,6 +171,7 @@
               <input
                 type="number"
                 class="form-control"
+                min="0"
                 formControlName="noAsset" />
             </form-field>
           </div>
@@ -161,7 +187,11 @@
           </div>
           <div class="col-md-3">
             <form-field [control]="expedientForm.get('noSab')" label="No. SAB">
-              <input type="text" class="form-control" formControlName="noSab" />
+              <input
+                type="text"
+                class="form-control"
+                min="0"
+                formControlName="noSab" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -171,6 +201,7 @@
               <input
                 type="text"
                 class="form-control"
+                min="0"
                 formControlName="noOfice" />
             </form-field>
           </div>

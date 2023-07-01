@@ -45,8 +45,16 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   //typeTurn: string;
   request: any;
+  op: any;
   user: any;
+
   typeUser: string = '';
+
+  delegationUserLog: string = '';
+  role: string = '';
+  process: string = '';
+  typeUserSelect: string = '';
+
   //injections
   deleRegionalId: any;
   validBtn: any = false;
@@ -67,23 +75,38 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.typeUser = this.request.targetUserType;
-    this.storeData = this.authService.decodeToken();
-    this.deleRegionalId = this.storeData.delegacionreg;
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getAllUsers();
-    });
+    if (this.process == 'schedule') {
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+        this.getAllUsersSchedule(
+          this.typeUserSelect,
+          this.delegationUserLog,
+          this.role
+        );
+      });
+    } else {
+      this.typeUser = this.request.targetUserType;
+      this.storeData = this.authService.decodeToken();
+      this.deleRegionalId = this.storeData.delegacionreg;
+      this.role = this.storeData.puesto;
+
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+        this.getAllUsers();
+      });
+    }
   }
 
   getAllUsers() {
     this.loading = true;
-
     this.params.value.addFilter('employeeType', this.typeUser);
     this.params.value.addFilter(
       'regionalDelegation',
-      this.deleRegionalId.substring(11),
+      this.deleRegionalId,
       SearchFilter.ILIKE
     );
+    if (this.op == 2) {
+      this.params.value.addFilter('position', this.role);
+    }
+
     const filter = this.params.getValue().getParams();
 
     this.userProcessService.getAll(filter).subscribe({
@@ -101,7 +124,39 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: error => {
-        console.log(error);
+        this.loading = false;
+      },
+    });
+  }
+
+  getAllUsersSchedule(typeUser: string, delegation: string, role: string) {
+    this.loading = true;
+
+    this.params.value.addFilter('position', role);
+    this.params.value.addFilter('employeeType', typeUser);
+    this.params.value.addFilter(
+      'regionalDelegation',
+      delegation,
+      SearchFilter.ILIKE
+    );
+
+    const filter = this.params.getValue().getParams();
+
+    this.userProcessService.getAll(filter).subscribe({
+      next: resp => {
+        resp.data.map((item: any) => {
+          item['fullName'] = item.firstName + ' ' + item.lastName;
+        });
+
+        resp.data.sort(function (a: any, b: any) {
+          return a.fullName - b.fullName;
+        });
+
+        this.paragraphs = resp.data;
+        this.totalItems = resp.count;
+        this.loading = false;
+      },
+      error: error => {
         this.loading = false;
       },
     });

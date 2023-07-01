@@ -52,6 +52,12 @@ export class ProcessesSharedComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loading = false;
+          this.processes = new DefaultSelect();
+          this.alert(
+            'warning',
+            'No se encontró un proceso de extensión de dominio para actualizar en este Bien',
+            ''
+          );
         },
       });
   }

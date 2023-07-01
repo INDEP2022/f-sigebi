@@ -1,11 +1,41 @@
 <form class="form-material" [formGroup]="form">
-  <div class="row" style="align-items: center">
-    <div class="row col-lg-6 mb-4" style="align-items: center">
+  <div class="row col-12 m-0 p-0">
+    <ng-custom-select-loading
+      [form]="form"
+      formControlName="usuario"
+      label="Solicita"
+      value="usuario"
+      bindLabel="id"
+      path="users/api/v1/seg-users"
+      (change)="changeUser($event)"
+      [labelTemplate]="userLabel"
+      [optionTemplate]="userOption">
+    </ng-custom-select-loading>
+
+    <ng-template #userLabel let-item="item">
+      {{ item.id }} - {{ item.name }}
+    </ng-template>
+    <ng-template #userOption let-item="item">
+      <div [title]="item.id + '-' + item.name">
+        {{ item.id }} - {{ item.name }}
+      </div>
+    </ng-template>
+  </div>
+  <div class="col-12 mt-4">
+    <form-field
+      [control]="form.get('justification')"
+      label="Justificación del cambio">
+      <textarea
+        rows="2"
+        class="form-control"
+        formControlName="justification"
+        maxlength="300"></textarea>
+    </form-field>
+  </div>
+  <!-- <div class="row mb-4" style="align-items: center; column-gap: 15px">
+    <div class="row col-lg-6 pl-0" style="align-items: center">
       <div class="col-md-6">
-        <form-field
-          class="col-12"
-          [control]="form.get('userName')"
-          label="Nombre Usuario">
+        <form-field [control]="form.get('userName')" label="Nombre Usuario">
           <input
             type="text"
             formControlName="userName"
@@ -13,41 +43,36 @@
             readonly />
         </form-field>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-12">
         <app-elaborate-users-shared
           [form]="form"
-          label="Solicita"
-          [disabled]="statusActa !== 'ABIERTA'"></app-elaborate-users-shared>
+          label="Solicita"></app-elaborate-users-shared>
       </div>
     </div>
-    <div class="row col-lg-6 mb-4">
-      <div class="col-md-8">
-        <form-field
-          [control]="form.get('justification')"
-          label="Justificación del cambio">
-          <textarea
-            rows="2"
-            class="form-control"
-            formControlName="justification"
-            [readOnly]="statusActa !== 'ABIERTA'"></textarea>
-        </form-field>
-      </div>
-      <div
-        class="col-md-4"
-        style="text-align: right"
-        [class]="loading || form.invalid ? 'disabled' : ''">
-        <button
-          style="width: 100%; height: 45px"
-          class="btn btn-primary btn-sm active"
-          type="submit"
-          (click)="saveData()">
-          <i class="bx bx-save float-icon"></i>
-          Aplicar Cambios
-        </button>
-      </div>
+    <div class="row col-lg-6 justificationText">
+      <form-field
+        [control]="form.get('justification')"
+        label="Justificación del cambio">
+        <textarea
+          rows="2"
+          class="form-control"
+          formControlName="justification"
+          maxlength="300"></textarea>
+      </form-field>
+    </div>
+  </div> -->
+  <div class="mb-4 justificationButton">
+    <div
+      class="col-md-4"
+      style="text-align: center"
+      [class]="loading || form.invalid ? 'disabled' : ''">
+      <button
+        class="btn btn-primary btn-sm active"
+        type="submit"
+        (click)="saveData()">
+        Guardar
+        <i aria-hidden="true" class="fa fa-save"></i>
+      </button>
     </div>
   </div>
-  <!-- <div class="row justificationText">
-
-  </div> -->
 </form>

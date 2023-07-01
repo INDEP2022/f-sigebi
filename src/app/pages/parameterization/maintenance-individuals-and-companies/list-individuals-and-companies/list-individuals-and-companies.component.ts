@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -28,10 +29,16 @@ export class ListIndividualsAndCompaniesComponent
   totalItems: number = 0;
   searchFilter: SearchBarFilter;
   dataPerson: IPerson[] = [];
+  origin: string = '';
+  no_bien: number = null;
+  no_nom: number = null;
+
   constructor(
     private modalRef: BsModalRef,
     private personsSer: PersonService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -44,6 +51,17 @@ export class ListIndividualsAndCompaniesComponent
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params: any) => {
+        console.log(params);
+        this.origin = params['origin'] ?? null;
+        if (this.origin == 'FACTJURREGDESTLEG') {
+          this.no_bien = params['no_bien'] ?? null;
+          this.no_nom = params['p_nom'] ?? null;
+        }
+        console.log(params);
+      });
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -124,5 +142,23 @@ export class ListIndividualsAndCompaniesComponent
 
   close() {
     this.modalRef.hide();
+  }
+  goBack() {
+    if (this.origin == 'FACTJURREGDESTLEG') {
+      this.router.navigate(
+        ['/pages/juridical/depositary/depositary-record/' + this.no_bien],
+        {
+          queryParams: {
+            p_nom: this.no_nom,
+          },
+        }
+      );
+    } else {
+      this.alert(
+        'warning',
+        'La página de origen no tiene opción para regresar a la pantalla anterior',
+        ''
+      );
+    }
   }
 }

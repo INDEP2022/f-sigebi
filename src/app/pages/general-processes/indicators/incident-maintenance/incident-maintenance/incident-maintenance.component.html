@@ -9,48 +9,65 @@
     </div>
     <form [formGroup]="form" class="form-material">
       <div class="row pt-5">
-        <form-field [control]="form.get('aprueba')" class="col-md-4">
+        <form-field [control]="form.get('aprovedUser')" class="col-md-8">
           <ngx-select
             [form]="form"
-            control="aprueba"
-            [data]="select"
-            label="Aprueba"></ngx-select>
+            control="aprovedUser"
+            (fetchItems)="getApruebaSearch($event)"
+            [data]="apruebaSelected"
+            bindLabel="user.name"
+            label="Aprueba"
+            value="user.user"
+            (change)="getIncidences($event)"
+            [readonly]="false"></ngx-select>
         </form-field>
 
-        <form-field [control]="form.get('incidencia')" class="col-md-3">
+        <form-field [control]="form.get('incidenceId')" class="col-md-4">
           <ngx-select
             [form]="form"
-            control="incidencia"
-            [data]="select"
-            label="Incidencia"></ngx-select>
+            control="incidenceId"
+            (fetchItems)="getIncidence($event)"
+            [data]="IncidenceSelected"
+            bindLabel="incidenceId"
+            value="incidenceId"
+            label="Incidencia"
+            (change)="getIncidenceId($event)"
+            [readonly]="false"></ngx-select>
         </form-field>
-
+      </div>
+      <div class="row pt-5">
         <form-field
-          [control]="form.get('ticket')"
-          class="col-md-2"
+          [control]="form.get('ticketId')"
+          class="col-md-6"
           label="No&#46; Ticket">
-          <input type="number" class="form-control" formControlName="ticket" />
+          <input type="text" class="form-control" formControlName="ticketId" />
         </form-field>
 
         <form-field
-          [control]="form.get('oficio')"
-          class="col-md-3"
+          [control]="form.get('officeId')"
+          class="col-md-6"
           label="No&#46; Oficio">
-          <input type="text" class="form-control" formControlName="oficio" />
+          <input type="text" class="form-control" formControlName="officeId" />
         </form-field>
       </div>
       <div class="row">
         <div class="col-md-12">
-          <button class="btn btn-primary active">Aprobar</button>
+          <confirm-button
+            [disabled]="mntoStatus === 'EJECUTADO' && userValidation < 0"
+            [loading]="loading"
+            loadingText="Procesando..."
+            text="Aprobar"
+            (confirm)="putAproved()">
+          </confirm-button>
         </div>
       </div>
 
       <div class="row pt-5">
         <form-field
-          [control]="form.get('solicitud')"
+          [control]="form.get('incidenceDetail')"
           label="DESCRIPCI&Oacute;N DETALLADA DE LA SOLICITUD">
           <textarea
-            formControlName="solicitud"
+            formControlName="incidenceDetail"
             rows="10"
             class="form-control"></textarea>
         </form-field>
@@ -58,19 +75,19 @@
 
       <div class="row pt-5">
         <form-field
-          [control]="form.get('solucion')"
+          [control]="form.get('solutionDetail')"
           label="DESCRIPCI&Oacute;N DE LA SOLUCI&Oacute;N">
           <textarea
-            formControlName="solucion"
+            formControlName="solutionDetail"
             rows="10"
             class="form-control"></textarea>
         </form-field>
       </div>
 
       <div class="row pt-5">
-        <form-field [control]="form.get('scripts')" label="SCRIPTS">
+        <form-field [control]="form.get('strSql')" label="SCRIPTS">
           <textarea
-            formControlName="scripts"
+            formControlName="strSql"
             rows="10"
             class="form-control"></textarea>
         </form-field>

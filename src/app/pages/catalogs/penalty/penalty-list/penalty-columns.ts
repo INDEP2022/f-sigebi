@@ -10,17 +10,17 @@ export const PENALTY_COLUMNS = {
     sort: false,
   },
   penaltyPercentage: {
-    title: 'Porcentaje Penalizacion',
+    title: 'Porcentaje Penalización',
     type: 'string',
     sort: false,
   },
   equivalentDays: {
-    title: 'Dias equivalentes',
+    title: 'Días Equivalentes',
     type: 'string',
     sort: false,
   },
   contractNumber: {
-    title: 'Numero de contrato',
+    title: 'Número de Contrato',
     type: 'string',
     sort: false,
   },

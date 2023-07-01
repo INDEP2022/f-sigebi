@@ -31,11 +31,17 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'partializes-general-goods-1',
+    path: 'partializes-general-goods',
     loadChildren: () =>
       import(
         './partializes-general-goods-1/partializes-general-goods.module'
       ).then(m => m.PartializesGeneralGoodsModule),
+    data: { title: 'Parcialización de Bienes Generales' },
+  },
+  {
+    path: 'goods-null',
+    loadChildren: () =>
+      import('./goods-null/goods-null.module').then(m => m.GoodsNullModule),
   },
   // {
   //   path: 'partializes-general-goods-2',
@@ -71,6 +77,7 @@ const routes: Routes = [
       import('./scheduled-maintenance/scheduled-maintenance.module').then(
         m => m.ScheduledMaintenanceModule
       ),
+    data: { title: 'Programación de Recepciones' },
   },
   {
     path: 'scheduled-maintenance-1',
@@ -78,6 +85,7 @@ const routes: Routes = [
       import('./scheduled-maintenance-1/scheduled-maintenance.module').then(
         m => m.ScheduledMaintenanceModule
       ),
+    data: { title: 'Mantenimiento de Programaciones' },
   },
   {
     path: 'maintenance-records',
@@ -85,6 +93,7 @@ const routes: Routes = [
       import('./maintenance-records/maintenance-records.module').then(
         m => m.MaintenanceRecordsModule
       ),
+    data: { title: 'Mantenimiento de Actas' },
   },
 ];
 

@@ -26,10 +26,10 @@ export class SubdelegationService implements ICrudMethods<ISubdelegation> {
   }
 
   update(id: string | number, model: ISubdelegation): Observable<Object> {
-    return this.subdelegationRepository.update(this.route, id, model);
+    return this.subdelegationRepository.newUpdate(this.route, model);
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.subdelegationRepository.remove(this.route, id);
+  remove(model: any): Observable<Object> {
+    return this.subdelegationRepository.remove3(this.route, model);
   }
 }

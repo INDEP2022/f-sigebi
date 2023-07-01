@@ -11,7 +11,6 @@ import {
 import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { LegendService } from 'src/app/core/services/catalogs/legend.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { LegendFormComponent } from '../legend-form/legend-form.component';
 import { LEGENDS_COLUMS } from './legends-columns';
 
@@ -40,6 +39,7 @@ export class LegendsListComponent extends BasePage implements OnInit {
       actions: {
         ...this.settings.actions,
         delete: true,
+        edit: true,
         add: false,
       },
     };
@@ -123,14 +123,17 @@ export class LegendsListComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         console.log(legend);
         this.delete(legend.id);
-        Swal.fire('Borrado', '', 'success');
+        //Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.legendService.remove(id).subscribe({
-      next: () => this.getDeductives(),
+      next: () => {
+        this.getDeductives();
+        this.alert('success', 'Leyenda', 'Borrada Correctamente');
+      },
     });
   }
 }

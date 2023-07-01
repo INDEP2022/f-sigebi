@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
 export const NOTIFICATIONS_FILE_LOAD_COLUMNS = {
   wheelNumber: {
@@ -22,20 +23,36 @@ export const NOTIFICATIONS_FILE_LOAD_COLUMNS = {
     },
     sort: false,
   },
-  officeNumber: {
+  officeExternalKey: {
     title: 'No. Oficio',
     type: 'number',
     sort: false,
   },
   affairDescription: {
     title: 'Asunto',
-    type: 'string',
     sort: false,
+    type: 'custom',
+    renderComponent: SeeMoreComponent,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'null' || value == 'undefined') {
+        return '';
+      }
+
+      return value ? value : '';
+    },
   },
   observations: {
     title: 'Observaciones',
-    type: 'string',
     sort: false,
+    type: 'custom',
+    renderComponent: SeeMoreComponent,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'null' || value == 'undefined') {
+        return '';
+      }
+
+      return value ? value : '';
+    },
   },
   protectionKey: {
     title: 'Cve. Amparo',
@@ -44,7 +61,15 @@ export const NOTIFICATIONS_FILE_LOAD_COLUMNS = {
   },
   departmentDescription: {
     title: 'Área Destino',
-    type: 'string',
     sort: false,
+    type: 'custom',
+    renderComponent: SeeMoreComponent,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'null' || value == 'undefined') {
+        return '';
+      }
+
+      return value ? value : '';
+    },
   },
 };

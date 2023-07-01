@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
@@ -14,15 +15,18 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class WarehouseSelectFormComponent extends BasePage implements OnInit {
+  @Output() formValue = new EventEmitter<any>();
   form: FormGroup = new FormGroup({});
-  idTransferent: number = 0;
+  data: any[] = [];
   warehouses = new DefaultSelect<IWarehouse>();
   warehouse: IWarehouse;
+  typeTransportable: string = '';
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private warehouseService: WarehouseService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private router: Router
   ) {
     super();
   }
@@ -39,26 +43,46 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   }
 
   getWarehouses(params: ListParams) {
+    params['filter.name'] = `$ilike:${params.text}`;
     this.goodsQueryService.getCatStoresView(params).subscribe(data => {
-      console.log('alamcenes relacionados con transferente', data);
       this.warehouses = new DefaultSelect(data.data, data.count);
     });
   }
 
   confirm() {
-    this.alertQuestion(
-      'warning',
-      'Advertencía',
-      '¿Desea asignar el almacén para bienes de resguardo?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.loading = true;
-        this.modalRef.content.callback(this.form.value);
-        this.close();
-      } else {
-        this.close();
-      }
-    });
+    // this.formValue.emit(this.form.value(this.warehouse));
+    // console.log('entrada', this.form.value(this.warehouse));
+    // const dato = this.form.value.warehouse;
+    if (this.typeTransportable == 'guard') {
+      this.alertQuestion(
+        'warning',
+        'Advertencia',
+        '¿Desea asignar el almacén para bienes de resguardo?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.loading = true;
+          this.modalRef.content.callback(this.form.value.warehouse);
+          this.close();
+        } else {
+          this.close();
+        }
+      });
+    } else if (this.typeTransportable == 'warehouse') {
+      console.log('entrada2', this.form.value.warehouse);
+      this.alertQuestion(
+        'warning',
+        'Advertencia',
+        '¿Desea asignar el almacén para bienes de almacén?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.loading = true;
+          this.modalRef.content.callback(this.form.value.warehouse);
+          this.close();
+        } else {
+          this.close();
+        }
+      });
+    }
   }
 
   close() {

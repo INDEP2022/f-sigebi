@@ -33,13 +33,13 @@ export const GOOD_DOCUMENTES_COLUMNS = {
   },
 
   requestFolio: {
-    title: 'Folio de solicitud',
+    title: 'Folio de Solicitud',
     type: 'string',
     sort: false,
   },
 
   descriptionGoodSae: {
-    title: 'Descripción bien SAE',
+    title: 'Descripción Bien INDEP',
     type: 'string',
     sort: false,
     width: '200px',
@@ -57,24 +57,24 @@ export const GOOD_DOCUMENTES_COLUMNS = {
   },
 
   unitMeasure: {
-    title: 'Unidad de medida transferente',
+    title: 'Unidad de Medida Transferente',
     type: 'string',
     sort: false,
   },
   ligieUnit: {
-    title: 'Unidad de medida Ligie',
+    title: 'Unidad de Medida Ligie',
     type: 'string',
     sort: false,
   },
 
   quantity: {
-    title: 'Cantidad de la transferente',
+    title: 'Cantidad de la Transferente',
     type: 'string',
     sort: false,
   },
 
   saeDestiny: {
-    title: 'Destino SAE',
+    title: 'Destino INDEP',
     type: 'string',
     sort: false,
   },

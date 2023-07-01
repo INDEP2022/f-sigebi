@@ -30,7 +30,7 @@ export const TABLE_SETTINGS_T: TableSettings = {
   pager: {
     display: false,
   },
-  hideSubHeader: true,
+  hideSubHeader: false,
   mode: 'external',
   add: {},
   edit: {

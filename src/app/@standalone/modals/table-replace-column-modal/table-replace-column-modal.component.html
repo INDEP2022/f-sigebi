@@ -5,11 +5,72 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mt-3">
-        <div class="form-material col-md-4">
-          <!-- <form-field [control]="form.get('newValue')" label="">
-            <input class="form-control" formControlName="newValue" />
+        <div
+          class="form-material"
+          [class]="otherFormField ? 'col-md-4' : 'col-md-12'">
+          <!-- <form-field [control]="form.get(formField)" [label]="label">
+            <input
+              class="form-control"
+              [formControlName]="formField"
+              maxlength="30" />
           </form-field> -->
-          <app-select-form
+          <ng-custom-select-loading
+            *ngIf="selectFirstInput"
+            [form]="form"
+            [formControlName]="formField"
+            [label]="label"
+            [value]="idSelect"
+            [bindLabel]="labelSelect"
+            [paramSearch]="paramSearch"
+            [prefixSearch]="prefixSearch"
+            [path]="path"
+            [labelTemplate]="labelTemplate"
+            [optionTemplate]="optionTemplate">
+          </ng-custom-select-loading>
+          <ng-container *ngIf="!selectFirstInput">
+            <form-field
+              class="col-md-6"
+              style="padding: 0 15px 0px 1px"
+              [control]="form.get(formField)"
+              [label]="label">
+              <input
+                type="number"
+                class="form-control"
+                [formControlName]="formField"
+                (ngModelChange)="disabled = false"
+                min="1"
+                max="9999999999" />
+
+              <!-- <ng-select
+                formControlName="formField"
+                class="form-control"
+                placeholder="Seleccione una acción de cambio"
+                [searchable]="false"
+                [clearable]="false">
+                <ng-option value="1">Cambio de Acta</ng-option>
+                <ng-option value="2">Cambio de Estatus</ng-option>
+              </ng-select> -->
+            </form-field>
+            <div class="replaceButtons">
+              <div class="col-xs-2 pl-0">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active"
+                  [disabled]="form.get(formField).value === null"
+                  (click)="search()">
+                  <i class="fa fa-search"></i> Buscar
+                </button>
+              </div>
+              <div
+                class="col-md-4 col-xs-6 messageResult"
+                *ngIf="messageResult"
+                [class]="messageResult.result">
+                {{ messageResult.message }}
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- <app-select-form
             [form]="form"
             [formField]="formField"
             label=""
@@ -19,7 +80,7 @@
             [getListObservable]="getListObservableSelect"
             [paramFilter]="paramFilter"
             [operator]="operator"
-            [(paramsFilter)]="paramsControl"></app-select-form>
+            [(paramsFilter)]="paramsControl"></app-select-form> -->
         </div>
         <div class="form-material col-md-8" *ngIf="otherFormField">
           <form-field
@@ -55,7 +116,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!form.valid"
+          [disabled]="!form.valid || disabled"
           [loading]="loading"
           text="Actualizar"
           (confirm)="confirm()">

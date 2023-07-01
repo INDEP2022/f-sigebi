@@ -2,8 +2,20 @@
   <div class="ch-content" header>
     <h5 class="title">Bienes localizados</h5>
     <div class="buttons">
-      <app-columns-select [(settings)]="settings"></app-columns-select>
-      <div class="btn-group" dropdown>
+      <div class="mx-1">
+        <confirm-button
+          type="button"
+          [loading]="includeLoading"
+          text="Incluir"
+          loadingText="Cargando..."
+          className="btn-secondary"
+          [btnSmall]="true"
+          (confirm)="include()"></confirm-button>
+      </div>
+      <app-columns-select
+        class="mx-1"
+        [(settings)]="settings"></app-columns-select>
+      <div class="btn-group mx-1" dropdown>
         <button
           id="button-basic"
           dropdownToggle
@@ -30,7 +42,9 @@
             <a class="dropdown-item" href="#">Exportar Fotos</a>
           </li>
           <li role="menuitem">
-            <a class="dropdown-item" href="#">Ficha T&eacute;cnica</a>
+            <a class="dropdown-item" (click)="viewImgDataSheet()"
+              >Ficha T&eacute;cnica</a
+            >
           </li>
           <li role="menuitem">
             <a class="dropdown-item" href="#">F&#46; T&eacute;cnica Masiva</a>
@@ -39,9 +53,9 @@
             <a class="dropdown-item" href="#">Excel</a>
           </li>
           <li role="menuitem">
-            <a class="dropdown-item" href="#"
-              >Hist&oacute;rico Actas&#47;Prog&#47;Sus&#47;Can</a
-            >
+            <a class="dropdown-item" (click)="getHistory()">
+              Hist&oacute;rico Actas&#47;Prog&#47;Sus&#47;Can
+            </a>
           </li>
           <li class="divider dropdown-divider"></li>
           <li role="menuitem">
@@ -69,18 +83,17 @@
         </button>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div [ngClass]="{ 'table-loading': loading }">
-          <ng2-smart-table
-            [settings]="settings"
-            [source]="goods"></ng2-smart-table>
-        </div>
-
-        <app-pagination
-          [totalItems]="totalItems"
-          [params]="params"></app-pagination>
+    <div class="row" [ngClass]="{ 'table-loading': loading }">
+      <div class="col-md-12 table-responsive">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="goods"></ng2-smart-table>
       </div>
+    </div>
+    <div class="row">
+      <app-pagination
+        [totalItems]="totalItems"
+        [params]="params"></app-pagination>
     </div>
   </div>
 </app-card>

@@ -45,6 +45,7 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
     super();
     this.settings.actions = false;
     this.settings.columns = VALID_STATUSES_COLUMNS;
+    this.settings.hideSubHeader = false;
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
@@ -126,6 +127,6 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
     this.hideError();
     return this.screenHelpService
       .getById(this.global.screenStatus)
-      .pipe(tap(screenHelp => (this.helpText = screenHelp.help)));
+      .pipe(tap(screenHelp => (this.helpText = screenHelp.businessRoleDesc)));
   }
 }

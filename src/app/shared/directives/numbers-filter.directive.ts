@@ -7,7 +7,9 @@ const INVALID_CHARS = ['+', '-', 'e', 'E'];
   },
 })
 export class NumbersFilterDirective {
-  constructor(public ref: ElementRef) {}
+  constructor(public ref: ElementRef) {
+    (this.ref.nativeElement as HTMLInputElement).min = '0';
+  }
 
   @HostListener('keydown', ['$event']) onInput($event: KeyboardEvent) {
     if (this.ref.nativeElement)

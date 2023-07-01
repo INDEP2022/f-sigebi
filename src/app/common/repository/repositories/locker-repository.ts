@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { ILocker } from 'src/app/core/models/catalogs/locker.model';
 import { environment } from 'src/environments/environment';
 import { ListParams } from '../interfaces/list-params';
 import { ILockerMethods } from '../interfaces/locker-methods';
@@ -33,7 +34,7 @@ export class LockerRepository<T> implements ILockerMethods<T> {
   }
 
   update(formData: Object) {
-    const fullRoute = `${this.ms}/locker`;
+    const fullRoute = `${this.ms}/locker/id/${(formData as ILocker).id}`;
     return this.httpClient.put(`${fullRoute}`, formData);
   }
 

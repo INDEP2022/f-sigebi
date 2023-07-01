@@ -75,6 +75,7 @@ export class CourtListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getCourts();
         }
       });
@@ -121,7 +122,7 @@ export class CourtListComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           if (response.data.length > 0) {
-            this.onLoadToast(
+            this.alert(
               'info',
               'Juzgado con ciudades',
               'Debe eliminar primero las ciudades asignadas de dicho juzgado'
@@ -130,16 +131,21 @@ export class CourtListComponent extends BasePage implements OnInit {
             this.alertQuestion(
               'warning',
               'Eliminar',
-              'Desea eliminar este registro?'
+              '¿Desea eliminar este registro?'
             ).then(question => {
               if (question.isConfirmed) {
                 this.courtService.remove(id).subscribe({
-                  next: () => (
-                    this.onLoadToast('success', 'Eliminado correctamente', ''),
-                    this.getCourts()
-                  ),
-                  error: err =>
-                    this.onLoadToast('error', err.error.message, ''),
+                  next: () => {
+                    this.alert('success', 'Registro de juzgado', 'Borrado');
+                    this.getCourts();
+                  },
+                  error: err => {
+                    this.alert(
+                      'warning',
+                      'Juzgado con ciudades',
+                      'No se puede eliminar el objeto debido a una relación con otra tabla.'
+                    );
+                  },
                 });
               }
             });

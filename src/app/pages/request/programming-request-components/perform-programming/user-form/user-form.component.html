@@ -6,14 +6,35 @@
   </div>
   <div body>
     <form [formGroup]="userForm" class="form-material">
-      <form-field [control]="userForm.get('user')" label="Nombre usuario">
-        <input type="text" class="form-control" formControlName="user" />
+      <form-field [control]="userForm.get('user')" label="Nombre Usuario">
+        <input
+          type="text"
+          class="form-control"
+          maxlength="70"
+          formControlName="user" />
       </form-field>
       <div class="row pt-3">
         <form-field
+          *ngIf="this.userData?.email"
           [control]="userForm.get('email')"
-          label="Correo electr&oacute;nico">
-          <input type="text" class="form-control" formControlName="email" />
+          label="Correo Electr&oacute;nico">
+          <input
+            type="text"
+            class="form-control"
+            maxlength="40"
+            [readOnly]="true"
+            formControlName="email" />
+        </form-field>
+
+        <form-field
+          *ngIf="!this.userData?.email"
+          [control]="userForm.get('email')"
+          label="Correo Electr&oacute;nico">
+          <input
+            type="text"
+            class="form-control"
+            maxlength="40"
+            formControlName="email" />
         </form-field>
       </div>
       <div class="row pt-3">
@@ -24,7 +45,7 @@
             [data]="chargesUsers"
             value="keyId"
             bindLabel="description"
-            label="Cargo usuario"
+            label="Cargo Usuario"
             (change)="chargeSelect($event)"
             (fetchItems)="getChargesUsers($event)"></ngx-select>
         </form-field>

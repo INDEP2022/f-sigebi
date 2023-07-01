@@ -5,24 +5,29 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('idWarehouse')"
-            label="Id Dep&oacute;sito">
+        <div class="col-md-6">
+          <form-field [control]="form.get('id')" label="C&oacute;digo">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="idWarehouse" />
+              formControlName="id"
+              maxlength="2" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('idBatch')" label="Id Lote">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="idBatch" />
-          </form-field>
+        <div class="col-md-6">
+          <ngx-select
+            [form]="form"
+            control="idBatch"
+            (fetchItems)="getBatch($event)"
+            [data]="batch"
+            bindLabel="description"
+            value="id"
+            label="Lotes"
+            (change)="searchWarehouse($event)">
+          </ngx-select>
         </div>
+      </div>
+      <div class="row pt-3">
         <div class="col-md-12">
           <form-field
             [control]="form.get('description')"
@@ -33,22 +38,8 @@
               formControlName="description" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('status')" label="Estado">
-            <input type="text" class="form-control" formControlName="status" />
-          </form-field>
-        </div>
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('registerNumber')"
-            label="N&uacute;mero Registro">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="registerNumber" />
-          </form-field>
-        </div>
-
+      </div>
+      <div class="row pt-3">
         <div class="col-md-12">
           <ngx-select
             [form]="form"
@@ -59,6 +50,13 @@
             value="idWarehouse"
             label="Almac&eacute;n">
           </ngx-select>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-2">
+          <form-field [control]="form.get('status')" label="Estado">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
         </div>
       </div>
     </form>

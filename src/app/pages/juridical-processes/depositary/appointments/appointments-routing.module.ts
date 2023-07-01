@@ -15,6 +15,10 @@ const routes: Routes = [
     path: '',
     component: AppointmentsComponent,
   },
+  {
+    path: ':id',
+    component: AppointmentsComponent,
+  },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

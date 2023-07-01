@@ -1,6 +1,6 @@
 export const IFAI_SERIE_COLUMNS = {
   code: {
-    title: 'Registro',
+    title: 'Código',
     type: 'string',
     sort: false,
   },
@@ -19,9 +19,9 @@ export const IFAI_SERIE_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  registryNumber: {
-    title: 'No. de registro',
-    type: 'number',
-    sort: false,
-  },
+  // registryNumber: {
+  //   title: 'No. de registro',
+  //   type: 'number',
+  //   sort: false,
+  // },
 };

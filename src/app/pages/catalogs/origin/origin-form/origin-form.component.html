@@ -3,16 +3,28 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form [formGroup]="form" class="form-material">
       <div class="row">
+        <div class="col-md-12">
+          <form-field [control]="form.get('id')" label="No. Transferencia">
+            <input
+              type="text"
+              class="form-control"
+              id="id"
+              formControlName="id"
+              maxlength="255" />
+          </form-field>
+        </div>
         <div class="col-md-12">
           <form-field
             [control]="form.get('idTransferer')"
-            label="Id Transferencia">
+            label="No. Transferencia">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="idTransferer" />
+              id="idTransferer"
+              formControlName="idTransferer"
+              maxlength="255" />
           </form-field>
         </div>
         <div class="col-md-12">
@@ -20,49 +32,79 @@
             [control]="form.get('keyTransferer')"
             label="Clave Transferencia">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="keyTransferer" />
+              id="keyTransferer"
+              formControlName="keyTransferer"
+              maxlength="255" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12 pt-3">
           <form-field
             [control]="form.get('description')"
             label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
+              id="description"
+              formControlName="description"
+              maxlength="255" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12 pt-3">
           <form-field [control]="form.get('type')" label="Tipo">
-            <input type="text" class="form-control" formControlName="type" />
+            <input
+              type="text"
+              class="form-control"
+              id="type"
+              formControlName="type"
+              maxlength="255" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12 pt-3">
           <form-field [control]="form.get('address')" label="Direcci&oacute;n">
-            <input type="text" class="form-control" formControlName="address" />
+            <textarea
+              class="form-control"
+              type="text"
+              rows="3"
+              formControlName="address"
+              maxlength="255"></textarea>
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('idCity')" label="Id City">
-            <input type="text" class="form-control" formControlName="idCity" />
+        <div class="col-md-12 pt-3">
+          <form-field [control]="form.get('idCity')" label="No.Ciudad">
+            <input
+              type="number"
+              class="form-control"
+              id="idCity"
+              formControlName="idCity"
+              min="0"
+              oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('city')" label="Ciudad">
-            <input type="text" class="form-control" formControlName="city" />
+        <div class="col-md-12 pt-3">
+          <form-field [control]="form.get('cityCode')">
+            <!--<input type="text" class="form-control" id="city" formControlName="city" />-->
+            <ngx-select
+              [form]="form"
+              [data]="cities"
+              label="Ciudad"
+              value="idCity"
+              bindLabel="nameCity"
+              control="cityCode">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12 pt-3">
           <form-field
             [control]="form.get('keyEntityFederative')"
             label="Clave Federativa">
             <input
               type="text"
               class="form-control"
-              formControlName="keyEntityFederative" />
+              id="keyEntityFederative"
+              formControlName="keyEntityFederative"
+              maxlength="15" />
           </form-field>
         </div>
       </div>

@@ -555,4 +555,8 @@ export class DocReceptionRegisterService extends HttpService {
   userAreaCheck(params: string) {
     return this.userCheckService.getAllWithFilters(params);
   }
+
+  getFilterUserAreas(params: any) {
+    return this.get<IListResponse<any>>(`incident-maintenance`, params);
+  }
 }

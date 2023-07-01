@@ -4,22 +4,22 @@ export const LIST_WAREHOUSE_COLUMN = {
     type: 'string',
     sort: false,
   },
-  nameWarehouse: {
+  aliasWarehouseName: {
     title: 'Nombre Almacén',
     type: 'string',
     sort: false,
   },
-  state: {
+  keyState: {
     title: 'Estado',
     type: 'string',
     sort: false,
   },
-  address: {
+  description: {
     title: 'Dirección',
     type: 'string',
     sort: false,
   },
-  postalCode: {
+  code: {
     title: 'Codigo Postal',
     type: 'string',
     sort: false,

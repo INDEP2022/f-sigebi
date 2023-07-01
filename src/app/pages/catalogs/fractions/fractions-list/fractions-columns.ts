@@ -1,5 +1,4 @@
 import { INorm } from 'src/app/core/models/catalogs/norm.model';
-import { ISiabClasification } from 'src/app/core/models/catalogs/siab-clasification.model';
 
 export const FRACTIONS_COLUMNS = {
   id: {
@@ -9,7 +8,7 @@ export const FRACTIONS_COLUMNS = {
   },
 
   code: {
-    title: 'Codigo',
+    title: 'Código',
     type: 'string',
     sort: false,
   },
@@ -44,15 +43,20 @@ export const FRACTIONS_COLUMNS = {
     },
   },
 
-  clasificationId: {
+  clasificationName: {
+    title: 'Clasificación',
+    type: 'string',
+    sort: false,
+  },
+
+  /*clasificationId: {
     title: 'Clasificación',
     type: 'string',
     valuePrepareFunction: (clasification: ISiabClasification) => {
       return clasification?.sssubtypeDescription;
     },
     sort: false,
-  },
-
+  },*/
   unit: {
     title: 'Unidad',
     type: 'string',
@@ -60,24 +64,24 @@ export const FRACTIONS_COLUMNS = {
   },
 
   version: {
-    title: 'Version',
+    title: 'Versión',
     type: 'string',
     sort: false,
   },
 
   codeErp1: {
-    title: 'Codigo Erp 1',
+    title: 'Código  Erp 1',
     type: 'string',
     sort: false,
   },
   codeErp2: {
-    title: 'Codigo Erp 2',
+    title: 'Código  Erp 2',
     type: 'string',
     sort: false,
   },
 
   codeErp3: {
-    title: 'Codigo Erp 3',
+    title: 'Código  Erp 3',
     type: 'string',
     sort: false,
   },
@@ -89,13 +93,13 @@ export const FRACTIONS_COLUMNS = {
   },
 
   status: {
-    title: 'Estatus',
+    title: 'Estado',
     type: 'string',
     sort: false,
   },
 
   fractionCode: {
-    title: 'Codigo de fracción',
+    title: 'Código de fracción',
     type: 'string',
     sort: false,
   },

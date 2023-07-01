@@ -4,7 +4,7 @@ export const JUDICIAL_PHYSICAL_RECEPTION_ROUTES = [
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Complemento Aritculo',
+        label: 'Complemento Artículo',
         link: '/pages/judicial-physical-reception/articles-complement',
       },
       {
@@ -16,28 +16,31 @@ export const JUDICIAL_PHYSICAL_RECEPTION_ROUTES = [
         link: '/pages/judicial-physical-reception/records-report',
       },
       {
-        label: 'Actas de Recepcion',
+        label: 'Actas de Recepción',
         link: '/pages/judicial-physical-reception/confiscated-records',
       },
       {
-        label: 'Parcializa Bienes Generales',
-        link: '/pages/judicial-physical-reception/partializes-general-goods-1',
+        label: 'Parcialización de Bienes Generales',
+        link: '/pages/judicial-physical-reception/partializes-general-goods',
       },
-
+      {
+        label: 'Bienes Nulos',
+        link: '/pages/judicial-physical-reception/goods-null',
+      },
       // {
-      //   label: 'Parcializa Bienes Generales 2',
-      //   link: '/pages/judicial-physical-reception/partializes-general-goods-2',
+      //   label: 'Parcialización de Bienes Generales 2',
+      //   link: '/pages/judicial-physical-reception/partializes-general-goods/v2',
+      // },
+      // {
+      //   label: 'Bienes Parcializados',
+      //   link: '/pages/judicial-physical-reception/partializes-goods',
       // },
       {
-        label: 'Parcialización de Bienes',
-        link: '/pages/judicial-physical-reception/partializes-goods',
-      },
-      {
-        label: 'Recepcion Suspencion/Cancelacion',
+        label: 'Recepción Suspencion/Cancelacion',
         link: '/pages/judicial-physical-reception/cancellation-recepcion',
       },
       {
-        label: 'Devolucion x Cancelacion de Venta',
+        label: 'Devolución x Cancelación de Venta',
         link: '/pages/judicial-physical-reception/cancellation-sale',
       },
       {

@@ -25,6 +25,11 @@ export class PartializeGoodService extends HttpService {
   }
 
   pupInsertGood(body: GoodDTO) {
-    return this.post(PartializeGoodEndpoints.PupInsertGood, body);
+    return this.post<{
+      no_bien: number;
+      vobservaciones: string;
+      vdesc_padre: string;
+      observ_padre: string;
+    }>(PartializeGoodEndpoints.PupInsertGood, body);
   }
 }

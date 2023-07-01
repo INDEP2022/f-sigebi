@@ -246,6 +246,24 @@ export class DocumentsReceptionRegisterComponent
     private changeDetectorRef: ChangeDetectorRef
   ) {
     super();
+
+    this.globalVarsService
+      .getGlobalVars$()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: gl => {
+          this.globals = gl;
+        },
+      });
+
+    this.globals.gnuActivaGestion = 1;
+    this.globals.bn = 0;
+    this.globals.CREA_EXPEDIENTE = 'S';
+    this.globals.antecede = 0;
+    this.globalVarsService.updateGlobalVars(this.globals);
+
+    // this.globals.gnuActivaGestion = 1
+
     if (this.docDataService.flyersRegistrationParams != null)
       this.pageParams = this.docDataService.flyersRegistrationParams;
   }
@@ -1935,8 +1953,20 @@ export class DocumentsReceptionRegisterComponent
         dictamen: false,
       };
     }
-    console.log(this.procedureId);
-    this.router.navigateByUrl('/pages/juridical/file-data-update');
+
+    // this.docDataService.previousRoute = {
+    //   route: this.router.url,
+    //   params: {
+    //     wheelNumber: this.wheelNumber.value,
+    //   },
+    // };
+
+    this.router.navigate(['/pages/juridical/file-data-update'], {
+      queryParams: {
+        wheelNumber: this.wheelNumber.value,
+        previousRoute: this.router.url,
+      },
+    });
   }
 
   showTrackRecords(trackRecords: INotification[]) {

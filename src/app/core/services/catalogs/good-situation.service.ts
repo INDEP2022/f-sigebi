@@ -25,11 +25,26 @@ export class GoodSituationService implements ICrudMethods<IGoodSituation> {
     return this.goodSituationRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IGoodSituation): Observable<Object> {
-    return this.goodSituationRepository.update(this.route, id, model);
+  updateCatalogGoodSituation(
+    id: string | number,
+    model: IGoodSituation
+  ): Observable<Object> {
+    console.log('model ', model);
+    return this.goodSituationRepository.updateCatalogGoodSituation(
+      this.route,
+      id,
+      model
+    );
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.goodSituationRepository.remove(this.route, id);
+  removeCatalogGoodSituation(
+    situation: string | number,
+    status: string
+  ): Observable<Object> {
+    return this.goodSituationRepository.removeCatalogGoodSituation(
+      this.route,
+      situation,
+      status
+    );
   }
 }

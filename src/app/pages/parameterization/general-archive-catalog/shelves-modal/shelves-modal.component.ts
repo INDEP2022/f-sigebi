@@ -20,7 +20,7 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
   shelvesForm: ModelForm<IShelves>;
   shelves: IShelves;
 
-  title: string = 'Estantes';
+  title: string = 'Estante';
   edit: boolean = false;
 
   id: ISaveValue;
@@ -46,9 +46,13 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
       key: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       batteryNumber: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.min(0),
+        ],
       ],
-      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null, [Validators.pattern(NUMBERS_PATTERN), Validators.min(0)]],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -103,7 +107,7 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

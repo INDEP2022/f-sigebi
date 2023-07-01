@@ -6,57 +6,84 @@
     <div body>
       <div class="row">
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <div class="col-md-full col-sm-12 col-xs-12">
-            <form-field
-              [control]="form.get('legalStatus')"
-              label="Situación Juridica">
-              <select class="form-control" formControlName="legalStatus">
-                <option [value]="null">Seleccione un valor</option>
-                <option value="asegurado">Asegurado</option>
-                <option value="decomisado">Decomisado</option>
-                <option value="abandonado">Abandonado</option>
-              </select>
-            </form-field>
-          </div>
+          <form-field
+            [control]="form.get('legalStatus')"
+            label="Situación Juridica">
+            <ng-select
+              formControlName="legalStatus"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="ADM">ASEGURADO</ng-option>
+              <ng-option value="DEA">DECOMISADO</ng-option>
+              <ng-option value="CND">ABANDONADO</ng-option>
+            </ng-select>
+          </form-field>
         </div>
-        <div class="col-md-8 col-sm-12 col-xs-12"></div>
+        <div class="col-md-9 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('type')">
+            <ngx-select
+              [form]="form"
+              [data]="tiposData"
+              label="Tipo &#45; Subtipo &#45; Descripci&oacute;n"
+              value="clasifGoodNumber"
+              bindLabel="tipoSupbtipoDescription"
+              (fetchItems)="getTodos($event)"
+              control="type">
+            </ngx-select>
+          </form-field>
+        </div>
       </div>
       <div class="row mt-5">
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('delegation')" label="Delegación">
-            <select class="form-control" formControlName="delegation">
-              <option [value]="null">Seleccione un valor</option>
-              <option
-                value="{{ delegation.number }}"
-                *ngFor="let delegation of delegationArray">
-                {{ delegation.number }} {{ delegation.description }}
-              </option>
-            </select>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [form]="form"
+              [data]="itemsDelegation"
+              label="Delegación"
+              value="id"
+              bindLabel="description"
+              (fetchItems)="getDelegations($event)"
+              control="delegation">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('warehouse')" label="Almacén">
-            <select class="form-control" formControlName="warehouse">
-              <option [value]="null">Seleccione un valor</option>
-              <option
-                value="{{ delegation.number }}"
-                *ngFor="let delegation of warehouseArray">
-                {{ delegation.number }} {{ delegation.description }}
-              </option>
-            </select>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('warehouse')">
+            <ngx-select
+              [form]="form"
+              [data]="itemsAlmacen"
+              label="Almacén"
+              bindLabel="description"
+              value="idWarehouse"
+              (fetchItems)="getAlmacen($event)"
+              control="warehouse">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('vault')" label="Bóveda">
-            <select class="form-control" formControlName="vault">
-              <option [value]="null">Seleccione un valor</option>
-              <option
-                value="{{ delegation.number }}"
-                *ngFor="let delegation of vaultArray">
-                {{ delegation.number }} {{ delegation.description }}
-              </option>
-            </select>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('vault')">
+            <ngx-select
+              [form]="form"
+              [data]="itemsBoveda"
+              label="Bóveda"
+              bindLabel="description"
+              value="idSafe"
+              (fetchItems)="getBoveda($event)"
+              control="vault">
+            </ngx-select>
           </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm active"
+            tooltip="Enviar"
+            containerClass="tooltip-style"
+            (click)="getDataTable()"
+            [disabled]="!form.valid">
+            Ejecutar
+          </button>
         </div>
       </div>
     </div>
@@ -69,14 +96,25 @@
   </div>
   <div body>
     <div class="row">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings"
-        [source]="data">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          class="table-responsive"
+          [attr.class]="'table-responsive table-bordered'"
+          [source]="data"
+          [settings]="settings"
+          (userRowSelect)="selectData($event.data)"
+          (edit)="showReceipt($event.data)">
+        </ng2-smart-table>
+        <br />
+        <div>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+      <!-- <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data">
       </ng2-smart-table>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
+      <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination> -->
     </div>
   </div>
 </app-card>
@@ -88,140 +126,216 @@
     </div>
     <div body>
       <div class="row">
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-3 col-sm-12 col-xs-12" style="display: flex">
           <form-field
-            [control]="formaplicationData.get('dateRequest')"
-            label="Fecha Solicitud">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="dateRequest"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field
-            [control]="formaplicationData.get('numberRequest')"
+            [control]="formaplicationData.get('applicationChangeCashNumber')"
             label="No. Solicitud">
             <input
               type="text"
               class="form-control"
-              formControlName="numberRequest" />
+              formControlName="applicationChangeCashNumber" />
           </form-field>
-        </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <div class="row">
-            <div class="col-md-6 col-sm-12 col-xs-12">
-              <form-field
-                [control]="formaplicationData.get('usrRequest')"
-                label="Usr. Solicita">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="usrRequest"
-                  placeholder="Rol" />
-              </form-field>
-            </div>
-            <div class="col-md-6 col-sm-12 col-xs-12">
-              <form-field
-                [control]="formaplicationData.get('nameRequest')"
-                label="Nombre">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="nameRequest"
-                  placeholder="Nombre" />
-              </form-field>
-            </div>
-          </div>
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            style="margin-left: 5vh"
+            (click)="search()"
+            [disabled]="
+              formaplicationData.get('applicationChangeCashNumber').value ==
+              null
+            ">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
-      <div class="row mt-5">
-        <div class="col-md-6 col-sm-12 col-xs-12">
+      <br />
+      <div class="row">
+        <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
-            [control]="formaplicationData.get('charge')"
-            label="Cargo">
-            <input type="text" class="form-control" formControlName="charge" />
+            [control]="formaplicationData.get('dateRequestChangeNumerary')"
+            label="Fecha Solicitud">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateRequestChangeNumerary"
+              bsDatepicker />
           </form-field>
         </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
-            [control]="formaplicationData.get('proposedProcedure')"
-            label="Procedimiento Propuesto">
-            <select class="form-control" formControlName="proposedProcedure">
-              <option [value]="null">Seleccione un valor</option>
-              <option value="asegurado">Procedimiento 1</option>
-              <option value="decomisado">Procedimiento 2</option>
-              <option value="abandonado">Procedimiento 3</option>
-            </select>
+            [control]="formaplicationData.get('userRequestChangeNumber')"
+            label="Usr. Solicita">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userRequestChangeNumber"
+              placeholder="Rol" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('postUserRequestCamnum')"
+            label="Nombre">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="postUserRequestCamnum"
+              placeholder="Nombre" />
           </form-field>
         </div>
       </div>
-      <div class="row mt-5">
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <div class="row">
-            <div class="col-md-6 col-sm-12 col-xs-12">
-              <form-field
-                [control]="formaplicationData.get('usrAuthorized')"
-                label="Usr. Autoriza">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="usrAuthorized" />
-              </form-field>
-            </div>
-            <div class="col-md-6 col-sm-12 col-xs-12">
-              <form-field
-                [control]="formaplicationData.get('nameAuthorized')"
-                label="Nombre">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="nameAuthorized" />
-              </form-field>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
+      <br />
+      <div class="row">
+        <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
-            [control]="formaplicationData.get('causeAuthorized')"
+            [control]="formaplicationData.get('delegationRequestcamnum')"
             label="Cargo">
             <input
               type="text"
               class="form-control"
-              formControlName="causeAuthorized" />
+              formControlName="delegationRequestcamnum" />
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
-            [control]="formaplicationData.get('dateAutorized')"
+            [control]="formaplicationData.get('procedureProposal')"
+            label="Procedimiento Propuesto">
+            <select class="form-control" formControlName="procedureProposal">
+              <option [value]="null">Seleccione un valor</option>
+              <option value="LICITACION PUBLICA">LICITACION PUBLICA</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('authorizeUser')"
+            label="Usr. Autoriza">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="authorizeUser" />
+          </form-field>
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('authorizePostUser')"
+            label="Nombre">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="authorizePostUser" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('authorizeDelegation')"
+            label="Cargo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="authorizeDelegation" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formaplicationData.get('authorizeDate')"
             label="Fecha Autoriza">
             <input
               type="text"
               class="form-control"
-              formControlName="dateAutorized"
+              formControlName="authorizeDate"
               bsDatepicker />
           </form-field>
         </div>
       </div>
+      <div class="row">
+        <div footer>
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="guardarSolicitud()"
+                [disabled]="!formaplicationData.valid"
+                style="margin: 1vh">
+                Guardar
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+              <button
+                class="btn btn-danger btn-sm active mr-3"
+                (click)="clean()"
+                style="margin: 1vh">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
       <hr />
       <div class="row">
-        <div class="container">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings1"
-            [source]="data1">
-          </ng2-smart-table>
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"></app-pagination>
+        <div class="col-md-1 col-sm-12 col-xs-12" style="display: grid">
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm active"
+            tooltip="Enviar"
+            containerClass="tooltip-style"
+            (click)="pasar()">
+            <i class="bx bx-chevron-right"></i>
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm active"
+            tooltip="Enviar"
+            containerClass="tooltip-style"
+            (click)="pasarTodo()">
+            <i class="bx bx-chevrons-right"></i>
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm active"
+            tooltip="Enviar"
+            containerClass="tooltip-style"
+            (click)="quitarTodo()">
+            <i class="bx bx-chevrons-left"></i>
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm active"
+            tooltip="Enviar"
+            containerClass="tooltip-style"
+            (click)="quitar()">
+            <i class="bx bx-chevron-left"></i>
+          </button>
         </div>
+        <div class="col-md-11 col-sm-12 col-xs-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings1"
+              [source]="data1"
+              (userRowSelect)="selectDataCamNum($event.data)">
+            </ng2-smart-table>
+            <app-pagination
+              [params]="params1"
+              [totalItems]="totalItems1"></app-pagination>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="container"></div>
 
         <div footer>
           <div class="d-flex justify-content-center">
             <div class="m-3">
-              <button type="button" class="btn btn-danger btn-sm active">
-                Imprimir Cedula
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm"
+                (click)="printScanFile()">
+                Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
               </button>
             </div>
           </div>
@@ -230,3 +344,46 @@
     </div>
   </app-card>
 </form>
+<div
+  #modal="bs-modal"
+  [config]="{ ignoreBackdropClick: true }"
+  bsModal
+  class="modal fade w-100">
+  <app-modal class="modal-dialog modalSizeXL modal-dialog-centered">
+    <div header>
+      <h5 class="modal-title">GASTOS X BIEN</h5>
+    </div>
+    <div body>
+      <div class="row mt-n3">
+        <div class="col-md-12 heigth-limit">
+          <div class="d-flex justify-content-end mb-2">
+            <app-columns-select [(settings)]="settings2"></app-columns-select>
+          </div>
+
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="data2">
+            </ng2-smart-table>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems2"></app-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-danger active"
+            (click)="cerrarModal()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </app-modal>
+</div>

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { EstateSearchFormComponent } from './estate-search-form/estate-search-form.component';
 import { PerformProgrammingFormComponent } from './perform-programming-form/perform-programming-form.component';
@@ -25,6 +26,7 @@ import { WarehouseSelectFormComponent } from './warehouse-select-form/warehouse-
     TabsModule,
     PerformProgrammingRoutingModule,
     ModalModule.forChild(),
+    FormLoaderComponent,
   ],
 })
 export class PerformProgrammingModule {}

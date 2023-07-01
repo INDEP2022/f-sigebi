@@ -167,6 +167,16 @@
                     {{ registRequestForm?.get('recordId').value }}
                   </div>
                 </div>
+                <div
+                  class="col-md-4"
+                  *ngIf="infoRequest?.rejectionComment != null">
+                  <div>
+                    <label class="text-danger" for=""
+                      >Solicitud Rechazada por el Siguiente Motivo:
+                    </label>
+                    {{ infoRequest?.rejectionComment }}
+                  </div>
+                </div>
               </div>
             </div>
           </app-card>
@@ -180,14 +190,6 @@
                   [pgr]="pgr"
                   [requestForm]="registRequestForm"></app-request-record-tab>
                 <!-- Fin -->
-                <!-- cumplimiento de verificacion y clasificacion de bienes-->
-                <!--//en caso de que no funciones el === false ///
-                complianceVerifi ||
-                  classifyAssets ||
-                  validateDocument ||
-                  notifyClarifiOrImpropriety ||
-                  approvalProcess
-              -->
                 <app-request-detail-tab
                   *ngIf="requestRegistration === false"
                   [requestForm]="registRequestForm"
@@ -233,10 +235,13 @@
                   [process]="process"></app-approval-assets-tabs>
                 <!-- Fin -->
               </tab>
-              <tab heading="{{ tab3 }}">
+              <tab heading="{{ tab3 }}" (selectTab)="onSelect($event)">
                 <!-- Registro de Solicitud o bien  y Aprovacion de la solicitud-->
                 <app-address-transferor-tab
-                  *ngIf="requestRegistration || approvalProcess"
+                  *ngIf="
+                    (requestRegistration || approvalProcess) &&
+                    openAddressTab == true
+                  "
                   [requestObject]="requestData"
                   [process]="process"></app-address-transferor-tab>
                 <!-- fin -->

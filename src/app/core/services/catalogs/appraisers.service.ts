@@ -21,10 +21,6 @@ export class AppraisersService implements ICrudMethods<IAppraisers> {
     return ro;
   }
 
-  getById(id: string | number): Observable<IAppraisers> {
-    return this.appraisersRepository.getById(this.route, id);
-  }
-
   create(model: IAppraisers): Observable<IAppraisers> {
     return this.appraisersRepository.create(this.route, model);
   }

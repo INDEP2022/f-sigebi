@@ -5,11 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDeductiveVerification } from 'src/app/core/models/catalogs/deductive-verification.model';
 import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  DOUBLE_PATTERN,
-  NUMBERS_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { DOUBLE_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-create-deductives-verification-form',
@@ -21,7 +17,7 @@ export class DeductivesVerificationFormComponent
   implements OnInit
 {
   deductiveForm: ModelForm<IDeductiveVerification>;
-  title: string = 'Deductiva Verifiación';
+  title: string = 'Deductiva Verificación';
   edit: boolean = false;
   deductive: IDeductiveVerification;
   constructor(
@@ -38,10 +34,14 @@ export class DeductivesVerificationFormComponent
 
   private prepareForm() {
     this.deductiveForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       percentagePena: [
         null,
@@ -49,7 +49,11 @@ export class DeductivesVerificationFormComponent
       ],
       verificationType: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(20),
+        ],
       ],
     });
     if (this.deductive != null) {
@@ -88,7 +92,8 @@ export class DeductivesVerificationFormComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

@@ -1,5 +1,5 @@
 export const STATEREPUVES_COLUMS = {
-  cve: {
+  key: {
     title: 'Registro',
     type: 'number',
     sort: false,

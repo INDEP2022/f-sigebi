@@ -50,13 +50,13 @@ export const DOCUMENTS_LIST_REQ_COLUMNS = {
   },
 
   ddocTitle: {
-    title: 'Título del documento',
+    title: 'Título del Documento',
     type: 'string',
     sort: false,
   },
 
   typeDocName: {
-    title: 'Tipo de documento',
+    title: 'Tipo de Documento',
     type: 'string',
     sort: false,
   },
@@ -68,7 +68,7 @@ export const DOCUMENTS_LIST_REQ_COLUMNS = {
   },
 
   dInDate: {
-    title: 'Fecha creación',
+    title: 'Fecha Creación',
     type: 'string',
     sort: false,
   },
@@ -76,25 +76,25 @@ export const DOCUMENTS_LIST_REQ_COLUMNS = {
 
 export const DOCUMENTS_LIST_EST_COLUMNS = {
   ddocName: {
-    title: 'No documento',
+    title: 'No. Documento',
     type: 'number',
     sort: false,
   },
 
   xidBien: {
-    title: 'No bien',
+    title: 'No. Bien',
     type: 'number',
     sort: false,
   },
 
   ddocTitle: {
-    title: 'Título del documento',
+    title: 'Título del Documento',
     type: 'string',
     sort: false,
   },
 
   typeDocName: {
-    title: 'Tipo de documento',
+    title: 'Tipo de Documento',
     type: 'string',
     sort: false,
   },
@@ -106,7 +106,7 @@ export const DOCUMENTS_LIST_EST_COLUMNS = {
   },
 
   dInDate: {
-    title: 'Fecha creación',
+    title: 'Fecha Creación',
     type: 'string',
     sort: false,
   },

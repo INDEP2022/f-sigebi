@@ -1,15 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
-import { IAppointmentDepositary } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
+import {
+  IAppointmentDepositary,
+  IDepositaryAppointments,
+} from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { NumBienShare } from 'src/app/core/services/ms-depositary/num-bien-share.services';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -67,6 +75,7 @@ export class IncomeOrdersDepositoryGoodsComponent
   ========================================*/
   objJsonInterfazUser: ISegUsers[] = [];
   itemsJsonInterfazUser: ISegUsers[] = [];
+  userPuesto: ISegUsers[] = [];
   itemsDepositaryUser = new DefaultSelect<ISegUsers>();
   datosUser: TokenInfoModel;
 
@@ -77,35 +86,60 @@ export class IncomeOrdersDepositoryGoodsComponent
     desc: string;
     nomPantall: string;
   };
+
+  //===================
+  users$ = new DefaultSelect<ISegUsers>();
+  origin: string = null;
+  depoAppointments: IDepositaryAppointments;
+  origin2: string = null;
+  noBienParams: number = null;
+
   constructor(
     private fb: FormBuilder,
     private depositaryService: MsDepositaryService,
     private usersService: UsersService,
     private valorBien: NumBienShare,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private dynamicCatalogsService: DynamicCatalogsService,
+    private siabService: SiabService,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.noBienParams = params['p_bien'] ? Number(params['p_bien']) : null;
+        this.origin = params['origin'] ?? null;
+        this.origin2 = params['origin2'] ?? null;
+      });
+    // this.getUserDepositary();
     this.valorBien.SharingNumbien.subscribe({
       next: res => {
         this.interfasValorBienes = res;
       },
       error: err => {
-        //alert('SharingNumbien' + err);
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+          this.onLoadToast('error', 'Error', error);
+        } else {
+          this.onLoadToast('error', 'Error', err.error.message);
+        }
       },
     });
     this.buildForm();
   }
 
   getUserDepositary() {
-    console.log('====================================');
     let params = new FilterParams();
-    this.usersService.getAllSegUsers(params.getParams()).subscribe({
+    this.usersService.getUsersJob().subscribe({
       next: resp => {
-        // console.log(JSON.stringify(resp.data));
         this.itemsJsonInterfazUser = [...resp.data];
       },
       error: err => {
@@ -118,6 +152,18 @@ export class IncomeOrdersDepositoryGoodsComponent
         }
       },
     });
+  }
+
+  getAllUsers(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.users$ = new DefaultSelect(response.data, response.count);
+      })
+    );
   }
 
   getItemsNumberBienes() {
@@ -137,9 +183,66 @@ export class IncomeOrdersDepositoryGoodsComponent
     });
   }
   print() {
-    alert(JSON.stringify(this.form.value)); //jesisca  jasper - report
-    /* this.router.navigate;
-   ("pages/juridical/depositary/payment-dispersion-process/query-related-payments-depositories/"+3801);*/
+    if (this.form.get('charge').invalid) {
+      this.onLoadToast(
+        'success',
+        'Info',
+        'Verifique que la información este correcta'
+      );
+      return;
+    }
+
+    /*const fecha = moment(this.form.get('date').value).format('DD-MM-YYYY');
+    let params = {
+      //P_VALORES: this.form.value,
+      P_NOMBRA: this.depoAppointments.appointmentNum,
+      P_NO_BIEN: this.form.get('numberGood').value,
+      P_PFIRMA: this.form.get('userId').value.id,
+      P_FECHA: fecha,
+    };*/
+    let params = {
+      P_NOMBRA: 3709,
+      P_NO_BIEN: 2192691,
+      P_PFIRMA: 'AABREGOHI',
+      P_FECHA: '30-06-2023',
+    };
+
+    this.siabService
+      .fetchReport('RDEPINGXBIEN.', params)
+      //.fetchReport('blank', params)
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/userIdpdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
   }
   /**
     @method: metodo para iniciar el formulario
@@ -151,30 +254,86 @@ export class IncomeOrdersDepositoryGoodsComponent
     this.getItemsNumberBienes();
 
     this.form = this.fb.group({
-      numberGood: [null, [Validators.required]],
-      contractKey: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
+      numberGood: [null, null],
+      contractKey: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       depositary: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(255)],
       ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(300)],
       ],
       date: [null, [Validators.required]],
-      userId: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      username: [null, [Validators.required]],
+      userId: [null, null],
+      username: [null, [Validators.required, Validators.maxLength(255)]],
       charge: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
-    this.form.get('userId').setValue(this.datosUser.username);
-    this.form.get('username').setValue(this.datosUser.name);
-    this.form.get('charge').setValue(this.datosUser.puesto);
+
+    this.form.get('date').setValue(new Date(Date.now()));
     this.form.get('numberGood').setValue(this.interfasValorBienes.numBien);
     this.form.get('contractKey').setValue(this.interfasValorBienes.cveContrato);
     this.form.get('depositary').setValue(this.interfasValorBienes.depositario);
     this.form.get('description').setValue(this.interfasValorBienes.desc);
+    //this.origin = this.interfasValorBienes.nomPantall;
+    this.origin = this.activatedRoute.snapshot.queryParamMap.get('origin');
+    this.getDepositaryAppointments();
+  }
+
+  getUsers($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    params.search = $params.text;
+    this.getAllUsers(params).subscribe();
+  }
+
+  getDescUser(event: Event) {
+    let userDatos = JSON.parse(JSON.stringify(event));
+    this.form.get('username').setValue(userDatos.name);
+    this.dynamicCatalogsService
+      .getPuestovalue(userDatos.positionKey)
+      .subscribe({
+        next: resp => {
+          this.form.get('charge').setValue(resp.data.value);
+        },
+        error: err => {
+          this.form.get('charge').setValue('');
+          this.onLoadToast('error', 'Error', err.error.message);
+        },
+      });
+  }
+
+  goBack() {
+    if (this.origin == 'FCONDEPODISPAGOS') {
+      const good =
+        this.form.get('numberGood').value != null
+          ? this.form.get('numberGood').value
+          : '';
+      if (good != null) {
+        this.router.navigate([
+          '/pages/juridical/depositary/payment-dispersion-process/query-related-payments-depositories/' +
+            good,
+        ]);
+      } else {
+        this.router.navigate([
+          '/pages/juridical/depositary/payment-dispersion-process/query-related-payments-depositories/',
+        ]);
+      }
+    }
+  }
+
+  getDepositaryAppointments() {
+    if (this.form.get('numberGood').value == null) {
+      return;
+    }
+    let params = new ListParams();
+    params['filter.goodNum'] = `$eq:${this.form.get('numberGood').value}`;
+    params['filter.revocation'] = `$eq:N`;
+    this.depositaryService.getAppointments(params).subscribe({
+      next: resp => {
+        this.depoAppointments = resp.data[0];
+      },
+    });
   }
 }

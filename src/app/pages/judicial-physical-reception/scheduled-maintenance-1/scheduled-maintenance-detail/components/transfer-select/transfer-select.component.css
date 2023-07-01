@@ -1,0 +1,21 @@
+/* select:focus-visible {
+  outline: -webkit-focus-ring-color auto 1px;
+} */
+
+select {
+  width: 100%;
+  border-bottom: 1px solid #ccc !important;
+}
+
+/* select {
+  font-size: 0.875em !important;
+} */
+
+/* option {
+  box-sizing: border-box;
+  cursor: pointer;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+} */

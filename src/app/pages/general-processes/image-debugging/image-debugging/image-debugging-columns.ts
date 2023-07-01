@@ -1,22 +1,37 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 export const IMAGE_DEBUGGING_COLUMNS = {
-  noBien: {
+  goodNumber: {
     title: 'No Bien',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     sort: false,
   },
-  consec: {
+  consecNumber: {
     title: 'Consecutivo',
     sort: false,
   },
-  publicado: {
+  publicImgcatWeb: {
     title: 'Publicado',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
     sort: false,
   },
-  existe: {
+  existsfs: {
     title: 'Existe',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
     sort: false,
   },
 };

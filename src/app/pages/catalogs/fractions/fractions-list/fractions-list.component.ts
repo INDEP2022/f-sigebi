@@ -32,22 +32,9 @@ export class FractionsListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = FRACTIONS_COLUMNS;
-    this.settings = {
-      ...this.settings,
-      hideSubHeader: false,
-      actions: {
-        ...this.settings.actions,
-        add: false,
-        edit: false,
-        delete: false,
-        custom: [
-          {
-            name: 'add',
-            title: '<i class="fa fa-plus text-success mx-2"></i>',
-          },
-        ],
-      },
-    };
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -89,7 +76,11 @@ export class FractionsListComponent extends BasePage implements OnInit {
     };
     this.fractionService.getAll(params).subscribe({
       next: response => {
-        this.paragraphs = response.data;
+        this.paragraphs = response.data.map((item: any) => {
+          item.clasificationName =
+            item.siabClasification?.sssubtypeDescription || '';
+          return item;
+        });
         this.totalItems = response.count || 0;
         this.data.load(this.paragraphs);
         this.data.refresh();
@@ -113,18 +104,31 @@ export class FractionsListComponent extends BasePage implements OnInit {
     this.modalService.show(FractionsFormComponent, config);
   }
 
-  delete(fraction: IFraction) {
+  showDeleteAlert(drawer: IFraction) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.fractionService.remove(fraction.id).subscribe({
-          next: data => this.getFractions(),
-          error: error => (this.loading = false),
-        });
+        this.delete(drawer.id);
       }
+    });
+  }
+
+  delete(id: number) {
+    this.fractionService.remove(id).subscribe({
+      next: response => {
+        this.alert('success', 'Fracción', 'Borrado Correctamente'),
+          this.getFractions();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Fraccion',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

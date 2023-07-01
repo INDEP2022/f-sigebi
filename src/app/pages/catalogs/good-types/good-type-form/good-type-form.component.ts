@@ -38,40 +38,34 @@ export class GoodTypeFormComponent extends BasePage implements OnInit {
       nameGoodType: [null, [Validators.required, Validators.maxLength(70)]],
       maxAsseguranceTime: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
       ],
       maxFractionTime: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
       ],
       maxExtensionTime: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
       ],
       maxStatementTime: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
       ],
       maxLimitTime1: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
       ],
       maxLimitTime2: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
       ],
       maxLimitTime3: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
       ],
-      noRegister: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
-      version: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      noRegister: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      version: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
     if (this.goodType != null) {
       this.edit = true;
@@ -107,7 +101,8 @@ export class GoodTypeFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.refresh.emit(true);
     this.modalRef.hide();

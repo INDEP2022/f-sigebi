@@ -102,6 +102,7 @@ export class RequestInTurnFormComponent implements OnInit {
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
+      paperNumber: [null, [Validators.maxLength(100)]],
     });
 
     if (this.requestInTurn != null) {
@@ -389,6 +390,10 @@ export class RequestInTurnFormComponent implements OnInit {
     if (this.searchForm.controls['affair'].value != null) {
       const affair = this.searchForm.controls['affair'].value;
       params.addFilter('affair', affair, SearchFilter.EQ);
+    }
+    if (this.searchForm.controls['paperNumber'].value != null) {
+      const affair = this.searchForm.controls['paperNumber'].value;
+      params.addFilter('paperNumber', affair, SearchFilter.ILIKE);
     }
 
     return params;

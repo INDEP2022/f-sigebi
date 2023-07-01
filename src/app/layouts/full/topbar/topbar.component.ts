@@ -11,7 +11,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
-import { SweetalertModel } from 'src/app/core/shared/base-page';
+import { SweetalertModel } from 'src/app/core/shared';
 import {
   BINNACLE_ROUTE,
   HELP_SCREEN,

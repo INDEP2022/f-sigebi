@@ -29,6 +29,8 @@ export class DocCompensationSatListComponent
     super();
     this.settings.columns = DOCCOMPENSATIONSAT_COLUMS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -63,15 +65,34 @@ export class DocCompensationSatListComponent
     this.modalService.show(DocCompensationSatFormComponent, config);
   }
 
-  delete(docCompesationSat: IDocCompesationSat) {
+  showDeleteAlert(docCompesationSat: IDocCompesationSat) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(docCompesationSat.id);
       }
+    });
+  }
+  delete(id: number) {
+    this.docCompesationSatService.remove(id).subscribe({
+      next: response => {
+        this.alert(
+          'success',
+          'Documento resarcimiento SAT',
+          'Borrado Correctamente'
+        ),
+          this.getExample();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Documento resarcimiento SAT',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

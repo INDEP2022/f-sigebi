@@ -1,0 +1,109 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ status }} ABOGADO FORMALIZADOR</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('businessName')" label="Razón Social">
+            <input
+              maxlength="50"
+              type="text"
+              class="form-control"
+              formControlName="businessName" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('name')" label="Nombre">
+            <input
+              maxlength="50"
+              type="text"
+              class="form-control"
+              formControlName="name" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('lastName')" label="Apellido Paterno">
+            <input
+              maxlength="50"
+              type="text"
+              class="form-control"
+              formControlName="lastName" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('motherLastName')"
+            label="Apellido Materno">
+            <input
+              maxlength="50"
+              type="text"
+              class="form-control"
+              formControlName="motherLastName" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('physicalRfc')" label="RFC. Física">
+            <input
+              maxlength="13"
+              type="text"
+              class="form-control"
+              formControlName="physicalRfc" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('moralRdc')" label="RFC. Moral">
+            <input
+              maxlength="13"
+              type="text"
+              class="form-control"
+              formControlName="moralRdc" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('phone')" label="Tel&eacute;fono">
+            <input
+              maxlength="20"
+              type="text"
+              class="form-control"
+              formControlName="phone" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="form.get('email')" label="Email">
+            <input
+              maxlength="80"
+              type="text"
+              class="form-control"
+              formControlName="email" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

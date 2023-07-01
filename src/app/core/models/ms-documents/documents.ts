@@ -29,5 +29,14 @@ export interface IDocuments {
   associateUniversalFolio?: string | number;
   dateRegistrationScanningHc?: Date;
   dateRequestScanningHc?: Date;
-  goodNumber: string | number;
+  goodNumber?: string | number;
+}
+
+export interface IDocumentsGood {
+  cve_documento?: string | number;
+  descripcion?: string | number;
+  tipo_dictaminacion?: string | number;
+  no_registro?: string | number;
+  nb_origen?: string | number;
+  no_bien?: string | number;
 }

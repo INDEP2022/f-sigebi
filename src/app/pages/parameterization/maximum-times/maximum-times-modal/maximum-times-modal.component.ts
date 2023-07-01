@@ -100,7 +100,10 @@ export class MaximumTimesModalComponent extends BasePage implements OnInit {
     console.log(data);
     this.maximumTimesService.create(this.maximumTimesForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.onLoadToast('warning', 'Advertencia', error.error.message);
+        this.loading = false;
+      },
     });
   }
   update() {

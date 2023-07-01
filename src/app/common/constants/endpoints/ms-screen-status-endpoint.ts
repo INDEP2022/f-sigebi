@@ -5,4 +5,6 @@ export enum ScreenStatusEndpoints {
   SegAppScreen = 'seg-app-screen',
   ScreenTable = 'screen-table',
   StatusXScreenList = 'status-x-screen',
+  cValFolUni = 'seg-app-screen/cValfoUni',
+  cValFolRev = 'seg-app-screen/cValfoRev',
 }

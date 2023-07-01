@@ -26,6 +26,8 @@ export class LegalSupportListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = LEGAL_SUPPORT_COLUMS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -38,7 +40,10 @@ export class LegalSupportListComponent extends BasePage implements OnInit {
     this.loading = true;
     this.legalSupportService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        this.paragraphs = response.data;
+        this.paragraphs = response.data.map((item: any) => {
+          item.id = item.doctoTypeId?.id || '';
+          return item;
+        });
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -64,11 +69,28 @@ export class LegalSupportListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.remove(legalSupport.id);
       }
     });
+  }
+
+  remove(id: string) {
+    this.legalSupportService.remove(id).subscribe(
+      res => {
+        this.alert('success', 'Sustento legal', 'Borrado Correctamente');
+        this.getExample();
+      },
+      err => {
+        this.alert(
+          'warning',
+          'Sustento Legal',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      }
+    );
   }
 }

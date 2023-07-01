@@ -17,6 +17,7 @@ export class TypeRelevantFormComponent extends BasePage implements OnInit {
   title: string = 'Tipo relevante';
   edit: boolean = false;
   typeRelevant: ITypeRelevant;
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -34,21 +35,13 @@ export class TypeRelevantFormComponent extends BasePage implements OnInit {
       id: [null],
       description: [
         null,
-        Validators.compose([
-          Validators.required,
-          Validators.maxLength(100),
-          Validators.pattern(STRING_PATTERN),
-        ]),
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
       ],
-      version: [null, Validators.compose([Validators.required])],
-      noPhotography: [null, Validators.compose([Validators.required])],
+      version: [null],
+      numberPhotography: [null],
       detailsPhotography: [
         null,
-        Validators.compose([
-          Validators.required,
-          Validators.maxLength(500),
-          Validators.pattern(STRING_PATTERN),
-        ]),
+        [Validators.maxLength(500), Validators.pattern(STRING_PATTERN)],
       ],
     });
     if (this.typeRelevant != null) {
@@ -56,6 +49,7 @@ export class TypeRelevantFormComponent extends BasePage implements OnInit {
       this.typeRelevantForm.patchValue(this.typeRelevant);
     }
   }
+
   close() {
     this.modalRef.hide();
   }
@@ -77,7 +71,10 @@ export class TypeRelevantFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.typeRelevantService
-      .update(this.typeRelevant.id, this.typeRelevantForm.getRawValue())
+      .updateTypeRelevant(
+        this.typeRelevant.id,
+        this.typeRelevantForm.getRawValue()
+      )
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

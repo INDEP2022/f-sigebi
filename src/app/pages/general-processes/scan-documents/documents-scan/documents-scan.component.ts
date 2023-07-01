@@ -23,9 +23,11 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { IParamsLegalOpinionsOffice } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/legal-opinions-office.component';
 import { DOCUMENTS_SCAN_COLUMNS } from '../utils/documents-scan-columns';
 import { DocumentsScanForm } from '../utils/documents-scan-form';
 import { DOCUMENTS_SCAN_MESSAGES } from '../utils/documents-scan-messages';
+
 const INVALID_USER = 'INVALIDO';
 const SERA_USER = 'SERA';
 const DEVELOP_USER = 'DESARROLLO';
@@ -53,6 +55,24 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   get controls() {
     return this.form.controls;
   }
+  paramsScreen: IParamsLegalOpinionsOffice = {
+    PAQUETE: '',
+    P_GEST_OK: '',
+    CLAVE_OFICIO_ARMADA: '',
+    P_NO_TRAMITE: '',
+    TIPO: '',
+    P_VALOR: '',
+    TIPO_VO: '',
+    NO_EXP: '',
+    CONSULTA: '',
+  };
+  origin2: string = ''; // Pantalla para regresar a la anterior de la que se llamo
+  origin3: string = ''; // Pantalla para regresar a la anterior de la que se llamo desde la origin2
+  no_bien: number = null;
+  expedientNumber: number = null; //no_expediente
+  wheelNumber: number = null; //no_volante
+  processNumber: number = null; //no_tramite
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -71,7 +91,25 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.originFlyer = params['volante'] ?? '';
         this.origin = params['origin'] ?? null;
         this.requestOrigin = params['requestOrigin'] ?? null;
+        //mantenimiento amparo
+        this.expedientNumber = params['expedientNumber'] ?? null;
+        this.wheelNumber = params['wheelNumber'] ?? null;
+        this.processNumber = params['processNumber'] ?? null;
+        //fin
         console.log(params);
+        if (this.origin == 'FACTJURDICTAMOFICIO') {
+          for (const key in this.paramsScreen) {
+            if (Object.prototype.hasOwnProperty.call(params, key)) {
+              this.paramsScreen[key as keyof typeof this.paramsScreen] =
+                params[key] ?? null;
+            }
+          }
+          this.origin2 = params['origin2'] ?? null;
+          this.origin3 = params['origin3'] ?? null;
+        }
+        if (this.origin == 'FACTJURREGDESTLEG') {
+          this.no_bien = params['P_NB'] ?? null;
+        }
       });
     this.settings = {
       ...this.settings,
@@ -145,6 +183,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.documentsParams.next(_params);
         this.loadImages(id).subscribe(
           response => {
+            console.log('response:', response);
             this.files = response;
             // this.noDocumentsFound = false;
           },
@@ -249,8 +288,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     const config = {
       ...MODAL_CONFIG,
       initialState: {
-        folio: this.folio,
+        identificator: this.folio,
         accept: 'image/*,application/pdf',
+        nameButton: 'Subir archivos',
         callback: (refresh: boolean) => this.fileUploaderClose(refresh),
       },
     };
@@ -279,8 +319,14 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     const token = this.authService.decodeToken();
     const user = token?.preferred_username?.toUpperCase();
     const validUsers = [user, SERA_USER, DEVELOP_USER];
+
     if (this.filesToDelete.length < 1) {
-      this.onLoadToast(
+      // this.onLoadToast(
+      //   'warning',
+      //   'Advertencia',
+      //   'Debes seleccionar mínimo un archivo'
+      // );
+      this.alert(
         'warning',
         'Advertencia',
         'Debes seleccionar mínimo un archivo'
@@ -311,14 +357,13 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
 
   deleteSelectedFiles() {
     const obs = this.filesToDelete.map(filename => this.deleteFile(filename));
+    console.log('obs', obs);
+    // return;
     forkJoin(obs).subscribe({
       complete: () => {
         this.files = [];
-        this.onLoadToast(
-          'success',
-          'Se eliminaron los archivos correctamente',
-          ''
-        );
+        this.alert('success', 'Escaneo y  Digitaización', 'Borrado');
+
         this.filesToDelete = [];
         this.loadImages(this.folio).subscribe(() => {
           this.updateSheets();
@@ -392,13 +437,73 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     if (this.origin == 'FGESTBUZONTRAMITE') {
       this.router.navigate(['/pages/general-processes/work-mailbox']);
     }
-    console.log(this.requestOrigin);
+
+    if (this.origin == 'FACTREFACTAENTREC') {
+      this.router.navigate([
+        '/pages/judicial-physical-reception/confiscated-records',
+      ]);
+    }
+
+    if (this.origin == 'FACTREFCANCELAR') {
+      this.router.navigate([
+        '/pages/judicial-physical-reception/cancellation-recepcion',
+      ]);
+    }
+
+    if (this.origin == 'FACTREFACTAVENT') {
+      this.router.navigate([
+        '/pages/judicial-physical-reception/cancellation-sale',
+      ]);
+    }
+
+    if (this.origin == 'FESTATUSRGA') {
+      this.router.navigate([
+        '/pages/executive-processes/destruction-authorization-management',
+      ]);
+    }
     if (this.origin == 'FACTGENSOLICDIGIT') {
       this.router.navigate(
         [
           `/pages/general-processes/scan-request/${this.originFlyer}/${this.originFolio}`,
         ],
         { queryParams: { origin: this.requestOrigin } }
+      );
+    }
+    if (this.origin == 'FACTJURDICTAMOFICIO') {
+      this.router.navigate(
+        [`/pages/juridical/depositary/legal-opinions-office`],
+        {
+          queryParams: {
+            ...this.paramsScreen,
+            origin: this.origin2,
+            origin3: this.origin3,
+          },
+        }
+      );
+    }
+    if (this.origin == 'FACTJURABANDONOS') {
+      this.router.navigate([
+        `/pages/juridical/abandonments-declaration-trades`,
+      ]);
+    }
+    if (this.origin == 'FPROCRECPAG') {
+      this.router.navigate([
+        `/pages/administrative-processes/payment-claim-process`,
+      ]);
+    }
+    if (this.origin == 'FACTJURREGDESTLEG') {
+      this.router.navigate([
+        `/pages/juridical/depositary/depositary-record/` + this.no_bien,
+      ]);
+    }
+    if (this.origin == 'FREGULARIZAJUR') {
+      this.router.navigate([
+        `pages/administrative-processes/legal-regularization`,
+      ]);
+    }
+    if (this.origin == 'FADMAMPAROS') {
+      this.router.navigateByUrl(
+        `pages/juridical/depositary/maintenance-of-coverages?processNumber=${this.processNumber}&wheelNumber=${this.wheelNumber}&proceedingsNumber=${this.expedientNumber}`
       );
     }
   }

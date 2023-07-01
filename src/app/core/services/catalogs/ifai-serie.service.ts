@@ -26,10 +26,10 @@ export class IfaiSerieService implements ICrudMethods<IIfaiSerie> {
   }
 
   update(id: string | number, model: IIfaiSerie): Observable<Object> {
-    return this.ifaiSerieRepository.update(this.route, id, model);
+    return this.ifaiSerieRepository.update(this.route + '/id', id, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.ifaiSerieRepository.remove(this.route, id);
+    return this.ifaiSerieRepository.remove(`${this.route}/id`, id);
   }
 }

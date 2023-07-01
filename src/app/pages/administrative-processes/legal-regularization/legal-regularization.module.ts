@@ -11,6 +11,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 
 //Components
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
+import { ScanFileSharedComponent } from 'src/app/@standalone/shared-forms/scan-file-shared/scan-file-shared.component';
 import { LegalRegularizationRoutingModule } from './legal-regularization-routing.module';
 import { LegalRegularizationComponent } from './legal-regularization/legal-regularization.component';
 import { ScanningFoilComponent } from './scanning-foil/scanning-foil.component';
@@ -29,6 +30,7 @@ import { ScanningFoilComponent } from './scanning-foil/scanning-foil.component';
     TabsModule,
     ModalModule.forChild(),
     GoodsTypesSharedComponent,
+    ScanFileSharedComponent,
   ],
 })
 export class LegalRegularizationModule {}

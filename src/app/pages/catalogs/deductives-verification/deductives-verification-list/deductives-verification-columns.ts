@@ -15,18 +15,18 @@ export const DEDUCTIVE_VERIFICATION_COLUMNS = {
     sort: false,
   },
   verificationType: {
-    title: 'Tipo de verificación',
+    title: 'Tipo de Verificación',
     type: 'string',
     sort: false,
   },
-  creationUser: {
-    title: 'Creado por',
-    type: 'string',
-    sort: false,
-  },
-  editionUser: {
-    title: 'Modificado por',
-    type: 'string',
-    sort: false,
-  },
+  // creationUser: {
+  //   title: 'Creado por',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  // editionUser: {
+  //   title: 'Modificado por',
+  //   type: 'string',
+  //   sort: false,
+  // },
 };

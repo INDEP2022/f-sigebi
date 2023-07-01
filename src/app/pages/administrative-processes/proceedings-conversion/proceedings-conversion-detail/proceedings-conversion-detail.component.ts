@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-
+import { ActasConvertionCommunicationService } from '../services/proceedings-conversionn';
 @Component({
   selector: 'app-proceedings-conversion-detail',
   templateUrl: './proceedings-conversion-detail.component.html',
@@ -17,10 +17,27 @@ export class ProceedingsConversionDetailComponent implements OnInit {
   first: ModelForm<any>;
   closureOfMinutes: ModelForm<any>;
   antecedentThreeEnable: boolean = false;
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {}
+  inputValue: string;
+  userRes: any;
+  inputDisabled: boolean = true;
+  showEnableDetail = false;
+  constructor(
+    private fb: FormBuilder,
+    private modalRef: BsModalRef,
+    private actasConvertionCommunicationService: ActasConvertionCommunicationService
+  ) {}
 
   ngOnInit(): void {
     this.prepareForm();
+    this.actasConvertionCommunicationService
+      .getInputValue()
+      .subscribe(value => {
+        this.inputValue = value;
+        console.log(this.inputValue);
+        this.header.value.idConversion =
+          this.actasConvertionCommunicationService.setInputValue;
+        this.inputDisabled = false;
+      });
   }
   private prepareForm() {
     this.header = this.fb.group({
@@ -152,6 +169,7 @@ export class ProceedingsConversionDetailComponent implements OnInit {
       ],
     });
   }
+
   public next() {
     this.antecedentThreeEnable = true;
   }

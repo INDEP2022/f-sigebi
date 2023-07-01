@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IOffice } from 'src/app/core/models/catalogs/office.model';
-import { OfficeService } from 'src/app/core/services/catalogs/office.service';
-import { BasePage } from 'src/app/core/shared/base-page';
 import {
   PHONE_PATTERN,
   RFC_PATTERN,
   STRING_PATTERN,
 } from '../../../../core/shared/patterns';
+
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IOffice } from 'src/app/core/models/catalogs/office.model';
+import { OfficeService } from 'src/app/core/services/catalogs/office.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-office-form',
@@ -46,47 +47,24 @@ export class OfficeFormComponent extends BasePage implements OnInit {
       ],
       street: [
         null,
-        [
-          Validators.required,
-          Validators.maxLength(60),
-          Validators.pattern(STRING_PATTERN),
-        ],
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
       ],
-      noExt: [null, [Validators.required, Validators.maxLength(10)]],
-      noInt: [null, [Validators.required, Validators.maxLength(10)]],
-      colony: [null, [Validators.required, Validators.maxLength(100)]],
-      municipalDelegate: [
-        null,
-        [Validators.required, Validators.maxLength(60)],
-      ],
-      postalCode: [null, [Validators.required, Validators.maxLength(50)]],
-      rfc: [
-        null,
-        [
-          Validators.required,
-          Validators.maxLength(20),
-          Validators.pattern(RFC_PATTERN),
-        ],
-      ],
+      noExt: [null, [Validators.maxLength(10)]],
+      noInt: [null, [Validators.maxLength(10)]],
+      colony: [null, [Validators.maxLength(100)]],
+      municipalDelegate: [null, [Validators.maxLength(60)]],
+      postalCode: [null, [Validators.maxLength(5)]],
+      rfc: [null, [Validators.maxLength(20), Validators.pattern(RFC_PATTERN)]],
       phone: [
         null,
-        [
-          Validators.required,
-          Validators.maxLength(20),
-          Validators.pattern(PHONE_PATTERN),
-        ],
+        [Validators.maxLength(20), Validators.pattern(PHONE_PATTERN)],
       ],
       phoneTwo: [
         null,
-        [
-          Validators.required,
-          Validators.maxLength(20),
-          Validators.pattern(PHONE_PATTERN),
-        ],
+        [Validators.maxLength(20), Validators.pattern(PHONE_PATTERN)],
       ],
-      fax: [null, [Validators.required, Validators.maxLength(20)]],
-      typeOffice: [null, [Validators.required]],
-      noRegistration: [null, [Validators.required]],
+      fax: [null, [Validators.maxLength(20)]],
+      typeOffice: [null, Validators.maxLength(1)],
     });
     if (this.office != null) {
       this.edit = true;
@@ -118,8 +96,9 @@ export class OfficeFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

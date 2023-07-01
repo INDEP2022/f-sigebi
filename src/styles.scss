@@ -38,6 +38,16 @@
   display: block;
 }
 
+.not-press {
+  pointer-events: none;
+}
+
+.btn-red {
+  color: #fff !important;
+  background-color: #cb4335 !important;
+  border-color: #cb4335 !important;
+}
+
 * {
   font-size: 14px;
 }
@@ -238,11 +248,13 @@ i {
 
 table:not(.normal-hover) tbody tr.selected {
   background: #f0e4d1 !important;
+  color: black !important;
 }
 
 table:not(.normal-hover) tbody tr:hover {
   background: #f0e4d1 !important;
   cursor: pointer;
+  color: black !important;
 }
 
 .mh-80 {
@@ -449,6 +461,21 @@ ng-scrollbar.table-scrollbar {
   max-width: 280px !important;
 }
 
+.theme-green .bs-datepicker-head {
+  background-color: #9d2449;
+}
+
+.bs-datepicker-container {
+  padding: 0px;
+}
+
+.theme-green .bs-datepicker-body table td span.selected,
+.theme-green .bs-datepicker-body table td.selected span,
+.theme-green .bs-datepicker-body table td span[class*='select-']:after,
+.theme-green .bs-datepicker-body table td[class*='select-'] span:after {
+  background-color: #9d2449;
+}
+
 .disabled {
   pointer-events: none !important;
   opacity: 0.7 !important;
@@ -482,24 +509,172 @@ ng-scrollbar.table-scrollbar {
 }
 
 .bg-black-unavailable {
-  // background-color: black !important;
-  color: black;
+  background-color: rgb(14, 14, 14) !important;
+  color: white;
+  padding: 0.3rem;
+  font-weight: 900;
+}
+
+.bg-black-unavailable-roj {
+  background-color: rgb(14, 14, 14) !important;
+  color: red;
   padding: 0.3rem;
   font-weight: 900;
 }
 
 .bg-green-to-confirm {
-  // background-color: green !important;
-  color: green;
+  background-color: #28a745 !important;
+  color: white;
+  font-weight: 900;
+  padding: 0.3rem;
+}
+
+.bg-green-to-confirm-verdadero {
+  background-color: #28a745 !important;
+  color: red;
   font-weight: 900;
   padding: 0.3rem;
 }
 
 #monitorABN table:not(.normal-hover) tbody tr.selected {
-  color: default;
+  color: black;
+  // #28a745
   background: rgb(240, 228, 209) !important;
 }
 
 #monitorABN table:not(.normal-hover) tbody tr:hover {
-  color: default;
+  color: black;
+}
+
+.disabled-custom {
+  pointer-events: none !important;
+  // opacity: 0.7 !important;
+}
+
+#selectAbandono div ng-select {
+  height: 38px !important;
+}
+
+.card-header-span-fix .page-item .page-link {
+  display: flex !important;
+  font-size: auto !important;
+  margin-top: auto !important;
+}
+
+#juridicasSelect table:not(.normal-hover) tbody tr.selected {
+  // color: black;
+  // #28a745
+  background: #117a8b !important;
+}
+
+#juridicasSelect table:not(.normal-hover) tbody tr:hover {
+  // color: black;
+  background: #117a8b !important;
+}
+
+#bienesJuridicos table:not(.normal-hover) tbody tr.selected {
+  color: black !important;
+  font-weight: bold;
+  // #28a745
+  // background: #117a8b !important;
+}
+
+#bienesJuridicos table:not(.normal-hover) tbody tr:hover {
+  color: black !important;
+  font-weight: bold;
+  // background: default !important;
+}
+
+// #idTableTestBody table thead {
+//   // display: none;
+//   visibility: hidden;
+//   height: 0;
+//   padding: 0;
+// }
+
+// #idTableTestHead table tbody {
+//   display: none;
+// }
+
+// #idTableTestBody table tbody tr td {
+//   width: 33% !important;
+// }
+
+// #idTableTestBody2 table tbody tr td {
+//   width: 33.5% !important;
+// }
+
+#custom-table-table-cursor table tbody tr td {
+  cursor: default !important;
+  background-color: #fff;
+}
+
+.bg-yellow-to-good {
+  background-color: #e2c103 !important;
+  color: black;
+  font-weight: 900;
+  padding: 0.3rem;
+}
+
+#fichas table:not(.normal-hover) tbody tr.selected {
+  color: black !important;
+  // font-weight: 600;
+  // #28a745
+  background: rgb(219, 219, 219) !important;
+}
+
+#fichas table:not(.normal-hover) tbody tr:hover {
+  color: black !important;
+  // font-weight: 600;
+  background: rgb(219, 219, 219) !important;
+}
+
+.text-no-approved {
+  font-weight: 400;
+  color: crimson !important;
+}
+
+.text-approved {
+  font-weight: 400;
+  color: #1e7e34 !important;
+}
+
+custom-view-component {
+  color: black;
+}
+
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container {
+  overflow-y: auto;
+  flex-wrap: nowrap;
+}
+
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* Track */
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 12px;
+}
+
+/* Handle */
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

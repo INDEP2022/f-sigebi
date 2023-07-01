@@ -1,5 +1,51 @@
 export const PHOTOGRAPHY_COLUMNS = {
-  noPhotography: {
+  dDocName: {
+    title: 'No. Fotografía',
+    type: 'string',
+    sort: false,
+  },
+
+  xidBien: {
+    title: 'No. Bien',
+    type: 'string',
+    sort: false,
+  },
+
+  xtipoDocumento: {
+    title: 'Tipo de documento',
+    type: 'string',
+    sort: false,
+  },
+
+  ddocTitle: {
+    title: 'Título del Documento',
+    type: 'string',
+    sort: false,
+  },
+  dDocAuthor: {
+    title: 'Autor',
+    type: 'string',
+    sort: false,
+  },
+  dInDate: {
+    title: 'Fecha Creación',
+    type: 'string',
+    sort: false,
+  },
+
+  xnoProgramacion: {
+    title: 'No. Programación',
+    type: 'number',
+    sort: false,
+  },
+
+  xfolioProgramacion: {
+    title: 'Folio de programación',
+    type: 'string',
+    sort: false,
+  },
+
+  /*noPhotography: {
     title: 'No. fotografía',
     type: 'number',
     sort: false,
@@ -45,5 +91,5 @@ export const PHOTOGRAPHY_COLUMNS = {
     title: 'Folio de programación',
     type: 'string',
     sort: false,
-  },
+  }, */
 };

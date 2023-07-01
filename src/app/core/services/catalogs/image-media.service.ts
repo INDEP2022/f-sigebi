@@ -36,11 +36,11 @@ export class ImageMediaService
     return this.halfImageRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IImageMedia): Observable<Object> {
-    return this.halfImageRepository.update(this.route, id, model);
+  newUpdateId(id: string | number, model: IImageMedia): Observable<Object> {
+    return this.halfImageRepository.newUpdateId(this.route, id, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.halfImageRepository.remove(this.route, id);
+    return this.halfImageRepository.remove(`${this.route}/id`, id);
   }
 }

@@ -1,0 +1,33 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Selecciona el motivo de cancelaci&oacute;n</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <form-field [control]="form.get('cancelation')">
+        <ngx-select
+          [form]="form"
+          control="cancelation"
+          [data]="cancelations"
+          value="keyId"
+          bindLabel="description"
+          label="Selecciona un motivo de cancelación"
+          (fetchItems)="getCancelInfo($event)"></ngx-select>
+      </form-field>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

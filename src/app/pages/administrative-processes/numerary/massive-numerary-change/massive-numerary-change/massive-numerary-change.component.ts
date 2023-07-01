@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, firstValueFrom, map, skip } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, map, skip, take } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { readFile, showAlert, showToast } from 'src/app/common/helpers/helpers';
 import {
@@ -131,11 +131,17 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     });
   }
 
-  onDobleClickInputGas(num: number) {
+  onClickInputGas(num: number) {
     console.log('onDobleClickInputGas');
     this.formGas.get(`GAS${num}`).setValue('');
-    this.modalService.show(SelectConceptSpentDialogComponent, {
+    const modal = this.modalService.show(SelectConceptSpentDialogComponent, {
       class: 'modal-lg',
+    });
+    modal.onHidden.pipe(take(1)).subscribe((res: any) => {
+      console.log(res, modal.content);
+      if (modal.content) {
+        this.formGas.get(`GAS${num}`).setValue(modal.content.selectedItem.id);
+      }
     });
   }
 
@@ -670,10 +676,6 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     //TODO: por implementar la validacion del archivo excel
     return true;
   }
-
-  // getIndexForNameColumn(name: string): number {
-
-  // }
 
   //#endregion On click Button File Excel
 

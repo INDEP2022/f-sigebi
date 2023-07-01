@@ -1,62 +1,79 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">ADMINISTRACION DE CONVERSION DE BIENES</h5>
+    <h5 class="title">ADMINISTRACIÓN DE CONVERSIÓN DE BIENES</h5>
   </div>
 
   <div body>
     <form [formGroup]="form" class="form-material">
       <!--Date Form-->
+      <div class="row">
+        <div class="justify-content-start">
+          <button
+            type="button"
+            class="btn btn-sm btn-primary active mr-3"
+            (click)="searchConversion()">
+            Buscar conversión <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
       <div class="row mt-5">
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('idConversion')"
             label="Id Conversión">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="idConversion"
-              (change)="searchConversion()" />
+              [max-length]="10" />
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('noBien')"
-            label="No Bien a Convertir">
+            label="No. Bien a Convertir">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="noBien"
-              (change)="onChangeGood()" />
+              [max-length]="10"
+              (ngModelChange)="detectarCambios()" />
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('date')" label="Fecha de creación">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('date')" label="Fecha Creación">
             <input
               type="text"
               class="form-control"
               formControlName="date"
-              bsDatepicker />
+              bsDatepicker
+              (ngModelChange)="detectarCambios()" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('tipo')">
+            <ngx-select
+              [data]="dataSelect"
+              [form]="form"
+              value="value"
+              bindLabel="label"
+              label="Tipo"
+              [control]="'tipo'">
+            </ngx-select>
           </form-field>
         </div>
       </div>
       <div class="row mt-5 mb-5">
-        <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('tipo')" label="Tipo">
-            <select class="form-control" formControlName="tipo">
-              <option [value]="null">Seleccione un valor</option>
-              <option value="1">Derivado</option>
-              <option value="2">Conversión</option>
-            </select>
-          </form-field>
-        </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('noExpediente')"
-            label="No Expediente">
+            label="No. Expediente">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="noExpediente" />
+              formControlName="noExpediente"
+              [max-length]="10"
+              (ngModelChange)="detectarCambios()" />
           </form-field>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
@@ -66,14 +83,26 @@
             <input
               type="text"
               class="form-control"
-              formControlName="actaConversion" />
+              formControlName="actaConversion"
+              [max-length]="200" />
           </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <button
+            type="button"
+            class="btn btn-sm btn-primary active mr-3"
+            (click)="onChangeGood()">
+            Buscar bien <i class="fas fa-search"></i>
+          </button>
+          <button class="btn btn-danger btn-sm active" (click)="clean()">
+            Limpiar <i class="fas fa-eraser"></i>
+          </button>
         </div>
       </div>
       <app-card>
         <div body>
           <div class="row">
-            <h5 class="title mt-0">Datos del bien</h5>
+            <h5 class="title mt-0">Datos del Bien</h5>
           </div>
           <div class="row mt-3">
             <div class="col-md-5 col-sm-12 col-xs-12">
@@ -83,7 +112,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="desStatus" />
+                  formControlName="desStatus"
+                  [max-length]="100" />
               </form-field>
             </div>
             <div class="col-md-4 col-sm-12 col-xs-12">
@@ -91,14 +121,16 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="actaER" />
+                  formControlName="actaER"
+                  [max-length]="200" />
               </form-field>
             </div>
             <div class="col-md-3 col-sm-12 col-xs-12">
               <form-field
                 [control]="form.get('actaERDate')"
-                label="Fecha acta E/R">
+                label="Fecha Acta E/R">
                 <input
+                  id="disabled"
                   type="text"
                   class="form-control"
                   formControlName="actaERDate"
@@ -114,19 +146,20 @@
                 <textarea
                   type="text"
                   class="form-control"
-                  formControlName="description"></textarea>
+                  formControlName="description"
+                  [max-length]="1250"></textarea>
               </form-field>
             </div>
           </div>
         </div>
       </app-card>
-      <div class="row mt-5">
-        <div class="col-md-6 col-sm-12 col-xs-12 mt-2">
+      <div class="row">
+        <div class="col-md-6 col-sm-12 col-xs-12 mt-1">
           <div class="d-flex justify-content-center">
             <div class="m-3">
               <button
                 type="button"
-                class="btn btn-primary active"
+                class="btn btn-sm btn-primary active"
                 (click)="generatePaswword()"
                 [disabled]="saved">
                 Generar PW
@@ -134,28 +167,29 @@
             </div>
           </div>
         </div>
-        <div class="col-md-6 col-sm-12 col-xs-12 mt-2">
+        <div class="col-md-6 col-sm-12 col-xs-12 mt-1">
           <div class="d-flex justify-content-center">
             <div class="m-3">
+              <!-- [disabled]="!isFormModified" -->
+
               <button
                 type="button"
-                class="btn btn-success active"
-                [disabled]="enableButton"
+                class="btn btn-sm btn-success active"
                 (click)="save()">
-                Guardar
+                Guardar <i class="fas fa-save"></i>
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="row mt-5" *ngIf="generarPass">
+      <!--       <div class="row mt-5" *ngIf="generarPass">
         <div class="d-flex justify-content-center">
           <p>
             Nueva contraseña: &nbsp; &nbsp; <strong>{{ password }}</strong>
           </p>
         </div>
-      </div>
+      </div> -->
     </form>
   </div>
 </app-card>

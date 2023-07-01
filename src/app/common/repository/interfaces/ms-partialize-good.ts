@@ -160,6 +160,7 @@ export interface GoodDTO {
   pno_acta?: number;
   changeUser: string;
   good: IGoodP;
+  vimpbien: number;
   pEviction?: number;
   statusNew: string;
   pFactorNumber?: number;

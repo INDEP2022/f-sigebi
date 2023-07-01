@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -23,7 +29,8 @@ import { ShowDocumentsGoodComponent } from './show-documents-good/show-documents
   templateUrl: './good-doc-tab.component.html',
   styleUrls: ['./good-doc-tab.component.scss'],
 })
-export class GoodDocTabComponent extends BasePage implements OnInit {
+export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
+  @Input() typeModule: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsSearch = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: LocalDataSource = new LocalDataSource();
@@ -46,11 +53,23 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
     private fb: FormBuilder
   ) {
     super();
-    this.idRequest = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as unknown as number;
+    this.idRequest = this.idRequest
+      ? this.idRequest
+      : (this.activatedRoute.snapshot.paramMap.get('id') as unknown as number);
     this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
     this.settings.columns = GOOD_DOCUMENTES_COLUMNS;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.typeModule != '' && this.typeModule == 'doc-complementary') {
+      this.idRequest = this.activatedRoute.snapshot.paramMap.get(
+        'request'
+      ) as unknown as number;
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getGoodsRequest());
+    }
   }
 
   ngOnInit(): void {
@@ -58,7 +77,6 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
     this.task = JSON.parse(localStorage.getItem('Task'));
     this.statusTask = this.task.status;
     console.log('statustask', this.statusTask);
-
     this.getGoodTypeSelect(new ListParams());
     this.initForm();
     this.params

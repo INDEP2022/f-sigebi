@@ -10,6 +10,7 @@ import {
 import { ICalendar } from 'src/app/core/models/catalogs/calendar-model';
 import { CalendarService } from 'src/app/core/services/catalogs/calendar.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 import { NonWorkingDaysModalComponent } from '../non-working-days-modal/non-working-days-modal.component';
 import { NONWORKINGDAYS_COLUMNS } from './non-working-days-columns';
 
@@ -34,10 +35,7 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
     this.settings.columns = NONWORKINGDAYS_COLUMNS;
     this.settings.actions.delete = true;
     this.settings.actions.add = false;
-    this.settings = {
-      ...this.settings,
-      hideSubHeader: false,
-    };
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -49,18 +47,29 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            let field = ``;
+            let field = `filter.${filter.field}`;
             let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
-            // filter.field == 'id'
-            //   ? (searchFilter = SearchFilter.EQ)
-            //   : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            /*filter.field == 'id' || filter.field == 'description'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getCalendarAll();
         }
       });
@@ -70,7 +79,7 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
   }
   private prepareForm() {
     this.nonWorkingDaysForm = this.fb.group({
-      year: [null, Validators.required],
+      year: [null, Validators.required, Validators.pattern(NUM_POSITIVE)],
     });
   }
   getCalendarAll() {
@@ -81,11 +90,10 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
     };
     this.calendarService.getAll(params).subscribe({
       next: response => {
-        console.log(response.data);
         this.calendar = response.data;
         this.data.load(this.calendar);
         this.data.refresh();
-        this.totalItems = response.count;
+        this.totalItems = response.count || 0;
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -97,15 +105,15 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
     this.calendarService.getById3(file).subscribe({
       next: response => {
         this.calendar = response.data;
-        console.log(response);
         this.totalItems = response.count;
+        this.data.load(this.calendar);
+        this.data.refresh();
         this.loading = false;
       },
       error: error => (this.loading = false),
     });
   }
   openForm(calendar?: ICalendar) {
-    console.log(calendar);
     let config: ModalOptions = {
       initialState: {
         calendar,

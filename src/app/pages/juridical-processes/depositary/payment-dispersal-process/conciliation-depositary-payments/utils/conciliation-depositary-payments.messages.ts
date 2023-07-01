@@ -1,5 +1,6 @@
 const ERROR_GOOD_PARAM = `El número de Bien ingresado como parámetro no es un número`;
-const ERROR_GOOD_NULL = `Ingresa un número de Bien`;
+const ERROR_GOOD_NULL = `Ingresa un número de Bien válido`;
+const ERROR_APOINTMENT_NUMBER_NULL = `Se requiere un número de nombramiento, realiza la búsqueda por número de bien para cargar los datos del Nombramiento`;
 const ERROR_DATE_DISPERSAL_NULL = `Se requiere una Fecha para realizar la Eliminación de la Dispersión`;
 const NOT_FOUND_GOOD_APPOINTMENT = (error: string) =>
   `El número de Bien no existe. ${error}`;
@@ -15,6 +16,31 @@ const NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS = (error: string) =>
   `Error al consultar la Composición de Pagos Recibidos. ${error}`;
 const NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS_TOTALS = (error: string) =>
   `Error al consultar la suma de los totales. ${error}`;
+const NOT_FOUND_GET_PARAMSDEP_PAYMENTS = (
+  error: string,
+  no_nombramiento: number
+) =>
+  `Error al validar los parámetros para el número de Nombramientro ${no_nombramiento}. ${error}`;
+const NOT_FOUND_GET_VALIDADEP_PAYMENTS = (
+  error: string,
+  no_nombramiento: number
+) =>
+  `Error al validar la Depositaría para el número de Nombramientro ${no_nombramiento}. ${error}`;
+const NOT_FOUND_GET_VALID_STATUS = (error: string, no_nombramiento: number) =>
+  `Error al validar los estatus de los bienes para el número de Nombramientro ${no_nombramiento}. ${error}`;
+const NOT_FOUND_GET_VALID_BLACKLIST = (
+  error: string,
+  no_nombramiento: number
+) =>
+  `Error al validar si el Depositario se encuentra en Lista Negra para el número de Nombramientro ${no_nombramiento}. ${error}`;
+const NOT_FOUND_REMOVE_PAYMENTS = (
+  error: string,
+  no_nombramiento: number,
+  date_param: string
+) =>
+  `Error al Remover la Depositaría para el número de Nombramiento: ${no_nombramiento} y la Fecha: ${date_param}. ${error}`;
+const CORRECT_REMOVE_PAYMENTS = (no_nombramiento: number, date_param: string) =>
+  `Se realizó correctamente la Eliminación de la Dispersión de Pagos para el número de Nombramiento: ${no_nombramiento} y la Fecha: ${date_param}`;
 
 export {
   ERROR_GOOD_PARAM,
@@ -27,4 +53,11 @@ export {
   NOT_FOUND_PAYMENTS_BANK_TOTALS,
   NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS,
   NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS_TOTALS,
+  NOT_FOUND_GET_PARAMSDEP_PAYMENTS,
+  NOT_FOUND_GET_VALID_STATUS,
+  NOT_FOUND_GET_VALID_BLACKLIST,
+  ERROR_APOINTMENT_NUMBER_NULL,
+  NOT_FOUND_GET_VALIDADEP_PAYMENTS,
+  NOT_FOUND_REMOVE_PAYMENTS,
+  CORRECT_REMOVE_PAYMENTS,
 };

@@ -23,6 +23,6 @@ export interface IProtectionPerGood {
   goodNumber: number;
   cveProtection: string;
   recordDate: Date;
-  recordUser: string;
+  recordUser?: string;
   recordNumber?: number;
 }

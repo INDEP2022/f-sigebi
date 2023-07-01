@@ -65,7 +65,8 @@
               [virtualScroll]="true"
               [loading]="loading"
               bindLabel="DscUnidad"
-              bindValue="IdUnidad">
+              bindValue="IdUnidad"
+              (change)="getUnit($event)">
               <ng-template ng-option-tmp let-item="item" let-index="index">
                 <div [title]="item.DscUnidad">
                   {{ item.DscUnidad }}

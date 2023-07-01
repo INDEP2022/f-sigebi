@@ -9,27 +9,27 @@ export const ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  goodTypeName: {
+  descriptionRelevantType: {
     title: 'Tipo de Bien',
     type: 'string',
     sort: false,
   },
-  physicalStatusName: {
+  descriptionPhysicalStatus: {
     title: 'Estado Físico',
     type: 'string',
     sort: false,
   },
-  stateConservationName: {
+  descriptionConservationStatus: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },
-  unitMeasure: {
+  measureUnitTransferent: {
     title: 'Unidad de Medida Transferente',
     type: 'string',
     sort: false,
   },
-  ligieUnit: {
+  measureUnitLigie: {
     title: 'Unidad de Medida de la Ligie',
     type: 'string',
     sort: false,
@@ -39,12 +39,12 @@ export const ASSETS_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  destinyLigieName: {
+  descriptionDestiny: {
     title: 'Destino Ligie',
     type: 'string',
     sort: false,
   },
-  transferentDestinyName: {
+  descriptionDestinyTransferent: {
     title: 'Destino Transferente',
     type: 'string',
     sort: false,
@@ -54,11 +54,16 @@ export const ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  fraccion: {
+  /*  fraccion: {
     title: 'Fracción',
     valuePrepareFunction: (value: any) => {
       return value.fractionCode;
     },
+    type: 'string',
+    sort: false,
+  }, */
+  codeFracction: {
+    title: 'Fracción',
     type: 'string',
     sort: false,
   },

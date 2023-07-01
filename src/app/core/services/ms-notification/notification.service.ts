@@ -3,6 +3,7 @@ import { map, Observable } from 'rxjs';
 import { NotificationEndpoints } from 'src/app/common/constants/endpoints/ms-notification-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { NotificationRepository } from 'src/app/common/repository/repositories/ms-notification-repository';
+import { Repository } from 'src/app/common/repository/repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from './../../interfaces/list-response.interface';
 
@@ -10,7 +11,9 @@ import {
   INotification,
   INotificationInquiry,
   INotificationTransferentIndiciadoCityGetData,
+  INotificationUpdate,
   INotificationXProperty,
+  ITransfActaEntrec,
   ItVolanteNotificacionesByNoExpedient,
 } from '../../models/ms-notification/notification.model';
 
@@ -19,12 +22,24 @@ import {
 })
 export class NotificationService extends HttpService {
   private readonly route = NotificationEndpoints;
-
+  private readonly endpoint: string = 'notification';
   constructor(
-    private notificationRepository: NotificationRepository<INotification>
+    private notificationRepository: NotificationRepository<INotification>,
+    private notificationUpdateRepository: NotificationRepository<INotificationUpdate>,
+    private notificationRepository2: Repository<INotification>
   ) {
     super();
     this.microservice = this.route.Notification;
+  }
+
+  //Trae los objetos de ciudad,delegación,departamento,instituciòn,subdelegacion y transferente
+  getAllNotifications(
+    params?: ListParams
+  ): Observable<IListResponse<INotification>> {
+    return this.notificationRepository.getAll(
+      this.route.NotificationAll,
+      params
+    );
   }
 
   getAll(params?: ListParams): Observable<IListResponse<INotification>> {
@@ -35,6 +50,27 @@ export class NotificationService extends HttpService {
     return this.get<IListResponse<INotification>>(
       `${this.route.Notification}?${params}`
     );
+  }
+  getAllListParams(
+    params: ListParams
+  ): Observable<IListResponse<INotification>> {
+    return this.get<IListResponse<INotification>>(
+      this.route.Notification,
+      params
+    );
+  }
+
+  getAllListParamsColumns(
+    params: ListParams
+  ): Observable<IListResponse<INotification>> {
+    return this.get<IListResponse<INotification>>(
+      this.route.Notification,
+      params
+    );
+  }
+
+  getAllFilterExpedient(params: any) {
+    return this.get<IListResponse<any>>(`${this.route.Notification}`, params);
   }
 
   getAllFilterTmpNotification(
@@ -205,5 +241,53 @@ export class NotificationService extends HttpService {
     const route = `${this.route.NotificationxProperty}/property/${numberProperty}/notification/${notificationDate}`;
     console.log('ROUT', route);
     return this.put(route, formData);
+  }
+
+  getAllWithFilter(
+    params?: ListParams | string
+  ): Observable<IListResponse<INotification>> {
+    return this.notificationRepository2.getAllPaginatedFilter(
+      this.endpoint,
+      params
+    );
+  }
+
+  updateWithBody(
+    wheelNumber: number,
+    body: any
+  ): Observable<{ statusCode: number; message: string[] }> {
+    return this.put(`${this.route.Notification}/${wheelNumber}`, body);
+  }
+
+  getTransferenteentrec(model: ITransfActaEntrec) {
+    const route = 'application/get-fact-ref-acta-entrec';
+    return this.post(route, model);
+  }
+
+  getTransferenteCancel(model: ITransfActaEntrec) {
+    const route = 'application/get-fact-ref-cancelar';
+    return this.post(route, model);
+  }
+
+  getVariableType(numberExp: number) {
+    const route = `application/getVariablesVolType/${numberExp}`;
+    return this.get(route);
+  }
+
+  getMaxFlyer(fileNumber: number) {
+    return this.get(`notification/maxCFlyer/${fileNumber}`);
+  }
+  getCFlyer(fileNumber: number) {
+    return this.get(`notification/cFlyer/${fileNumber}`);
+  }
+
+  applyAllGoddMaintenanceCoverage(body: any) {
+    const route = 'application/updateUnitProgramAll';
+    return this.post(route, body);
+  }
+
+  applySomeGoddMaintenanceCoverage(body: any) {
+    const route = 'application/updateUnitProgram';
+    return this.post(route, body);
   }
 }

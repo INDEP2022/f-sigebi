@@ -64,12 +64,12 @@ export class AffairService
   }
 
   update2(id: number, model: IAffair) {
-    const route = `affair/id/${id}`;
+    const route = `affair/id/${id}/nbOrigen/${model.nbOrigen}`;
     return this.put(route, model);
   }
 
-  remove2(id: number) {
-    const route = `affair/id/${id}`;
+  remove2(id: number, nb: string) {
+    const route = `affair/id/${id}/nbOrigen/${nb}`;
     return this.delete(route);
   }
 }

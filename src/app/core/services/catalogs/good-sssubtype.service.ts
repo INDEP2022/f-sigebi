@@ -25,7 +25,7 @@ export class GoodSssubtypeService
   }
 
   getFilter(params?: string): Observable<IListResponse<IGoodSssubtype>> {
-    return this.goodSssubtypeRepository.getAllPaginated(this.route, params);
+    return this.get<IListResponse<IGoodSssubtype>>('good-sssubtype', params);
   }
 
   getAll2(params: string) {
@@ -40,7 +40,8 @@ export class GoodSssubtypeService
     return this.goodSssubtypeRepository.getByIds(this.route, ids);
   }
   create(model: IGoodSssubtype): Observable<IGoodSssubtype> {
-    return this.goodSssubtypeRepository.create(this.route, model);
+    const fullRoute = `${this.route}`;
+    return this.goodSssubtypeRepository.create(fullRoute, model);
   }
 
   update(id: string | number, model: IGoodSssubtype): Observable<Object> {
@@ -53,7 +54,10 @@ export class GoodSssubtypeService
     return this.goodSssubtypeRepository.updateByIds(this.route, ids, model);
   }
 
-  remove(id: string | number): Observable<Object> {
+  removeByIds(ids: Partial<IGoodSssubtype>): Observable<Object> {
+    return this.goodSssubtypeRepository.removeByIds(this.route, ids);
+  }
+  removeIds(id: string | number): Observable<Object> {
     return this.goodSssubtypeRepository.remove(this.route, id);
   }
 

@@ -101,17 +101,21 @@ export class TypeDoctoListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
         this.typeDoctoService.remove(typeDocto.id).subscribe({
           next: response => {
-            this.onLoadToast('success', 'Exito', 'Eliminado Correctamente');
+            this.alert('success', 'Tipo docto', 'Borrado Correctamente');
             this.getExample();
           },
           error: err => {
-            this.onLoadToast('error', 'Error', 'Intente nuevamente');
+            this.alert(
+              'warning',
+              'Tipo Docto',
+              'No se puede eliminar el objeto debido a una relación con otra tabla.'
+            );
           },
         });
       }

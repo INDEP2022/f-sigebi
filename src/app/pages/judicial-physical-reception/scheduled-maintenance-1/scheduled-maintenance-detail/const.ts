@@ -1,40 +1,90 @@
 import { DatePickerComponent } from 'src/app/shared/render-components/date-picker/date-picker.component';
+import { AnioInputComponent } from './components/anio-input/anio-input.component';
+import { FolioInputComponent } from './components/folio-input/folio-input.component';
+import { MesInputComponent } from './components/mes-input/mes-input.component';
+import { TransferSelectComponent } from './components/transfer-select/transfer-select.component';
 
 export const columnsKeysProceddings = {
   0: {
     title: 'Tipo',
     sort: false,
-    editable: true,
+    class: 'w-md',
+    editor: {
+      type: 'list',
+      config: {
+        selectText: 'Select',
+        list: [
+          { value: 'RT', title: 'RT' },
+          { value: 'A', title: 'A' },
+          { value: 'D', title: 'D' },
+        ],
+      },
+    },
   },
   1: {
     title: 'Prog.',
     sort: false,
+    class: 'w-md',
+    editor: {
+      type: 'list',
+      config: {
+        selectText: 'Select',
+        list: [
+          { value: 'R', title: 'R' },
+          { value: 'E', title: 'E' },
+        ],
+      },
+    },
   },
   2: {
     title: 'Transferente',
     sort: false,
+    class: 'w-xxl',
+    editor: {
+      type: 'custom',
+      component: TransferSelectComponent,
+    },
   },
   3: {
     title: 'Área',
     sort: false,
+    class: 'w-lg',
+    editor: {},
   },
   4: {
     title: 'Usuario',
     sort: false,
+    class: 'w-xl',
+    editor: {},
   },
   5: {
     title: 'Folio',
     sort: false,
+    class: 'w-md',
+    editor: {
+      type: 'custom',
+      component: FolioInputComponent,
+    },
   },
   6: {
     title: 'Año',
     sort: false,
     type: 'number',
+    class: 'w-md',
+    editor: {
+      type: 'custom',
+      component: AnioInputComponent,
+    },
   },
   7: {
     title: 'Mes',
     sort: false,
     type: 'number',
+    class: 'w-md',
+    editor: {
+      type: 'custom',
+      component: MesInputComponent,
+    },
   },
 };
 
@@ -91,6 +141,12 @@ export const columnsGoods = {
       component: DatePickerComponent,
     },
   },
+  agregado: {
+    title: 'Origen',
+    type: 'string',
+    sort: false,
+    editable: false,
+  },
   tipo_bien: {
     title: 'Tipo Bien',
     type: 'string',
@@ -133,7 +189,7 @@ export const settingsGoods = {
   },
   selectedRowIndex: -1,
   sort: false,
-  hideSubHeader: true,
+  hideSubHeader: false,
   mode: 'inline',
   selectMode: 'multi',
   noDataMessage: 'No se encontrarón registros',
@@ -145,7 +201,7 @@ export const settingsGoods = {
   },
   actions: {
     columnTitle: 'Acciones',
-    position: 'right',
+    position: 'left',
     add: false,
     edit: true,
     delete: true,

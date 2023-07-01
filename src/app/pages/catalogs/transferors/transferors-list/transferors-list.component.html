@@ -43,7 +43,8 @@
               [attr.class]="'table-bordered'"
               [settings]="settings2"
               [source]="stateList"
-              (edit)="openForm2($event.data)"></ng2-smart-table>
+              (edit)="openForm2($event.data)"
+              (delete)="showDelet($event.data)"></ng2-smart-table>
           </div>
           <app-pagination
             [params]="params2"

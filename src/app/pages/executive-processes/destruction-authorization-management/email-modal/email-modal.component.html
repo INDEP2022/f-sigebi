@@ -36,17 +36,29 @@
       <div class="row pt-5">
         <div class="col-md-4">
           <form-field label="CC Usuario" [control]="emailForm.get('ccUser')">
-            <input type="text" class="form-control" formControlName="ccUser" />
+            <input
+              type="text"
+              [max-length]="30"
+              class="form-control"
+              formControlName="ccUser" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field label="CC Nombre" [control]="emailForm.get('ccName')">
-            <input type="text" class="form-control" formControlName="ccName" />
+            <input
+              type="text"
+              [max-length]="100"
+              class="form-control"
+              formControlName="ccName" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field label="Email" [control]="emailForm.get('ccEmail')">
-            <input type="text" class="form-control" formControlName="ccEmail" />
+            <input
+              type="text"
+              [max-length]="50"
+              class="form-control"
+              formControlName="ccEmail" />
           </form-field>
         </div>
       </div>
@@ -56,6 +68,8 @@
             label="Cuerpo del correo"
             [control]="emailForm.get('body')">
             <textarea
+              [maxlength]="5000"
+              autosize
               class="form-control"
               formControlName="body"
               rows="6"></textarea>

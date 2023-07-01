@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
@@ -8,6 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -22,6 +24,7 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
@@ -65,7 +68,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   principalSave: boolean = false;
   bsModalRef: BsModalRef;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
-  paragraphs: any[] = [];
+  paragraphs = new LocalDataSource();
   createNewAsset: boolean = false;
   btnCreate: string = 'Nuevo Bien';
   domicilieObject: IDomicilies = null;
@@ -80,6 +83,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   private fractionProperties: any = {};
   typeRecord: string = '';
   transferente: string = '';
+  selectedAll: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -93,7 +97,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     private procedureManagementService: ProcedureManagementService,
     private authService: AuthService,
     private fractionService: FractionService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private goodFinderService: GoodFinderService,
+    private cdr: ChangeDetectorRef
   ) {
     super();
   }
@@ -106,6 +112,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: assets');
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -127,119 +134,29 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   getData() {
     this.loading = true;
-    this.paragraphs = [];
+    this.paragraphs = new LocalDataSource();
     const requestId = Number(this.route.snapshot.paramMap.get('id'));
     this.params.value.addFilter('requestId', requestId);
-    this.goodService.getAll(this.params.getValue().getParams()).subscribe({
-      next: async (data: any) => {
-        if (data !== null) {
-          const result = data.data.map(async (item: any) => {
-            //obtener tipo bien
-            const goodType = await this.getGoodType(item.goodTypeId);
-            item['goodTypeName'] = goodType;
-            //obtener el estado fisico
-            const physicalStatus = await this.getPhysicalStatus(
-              item.physicalStatus
-            );
-            item['physicalStatusName'] = physicalStatus;
-
-            //obtener el estado de concervacion
-            const stateConservation = await this.getStateConservation(
-              item.stateConservation
-            );
-            item['stateConservationName'] = stateConservation;
-
-            //obtener el destino de la transferencia
-            const transferentDestiny = await this.getTransferDestiny(
-              item.transferentDestiny
-            );
-            item['transferentDestinyName'] = transferentDestiny;
-            item['destinyLigieName'] = transferentDestiny;
-
+    this.goodFinderService
+      .goodFinder(this.params.getValue().getParams())
+      .subscribe({
+        next: async resp => {
+          const result = resp.data.map(async (item: any) => {
             const goodMenaje = await this.getMenaje(item.id);
             item['goodMenaje'] = goodMenaje;
           });
 
           Promise.all(result).then(x => {
-            this.totalItems = data.count;
-            this.paragraphs = data.data;
+            this.totalItems = resp.count;
+            this.paragraphs.load(resp.data);
             this.loading = false;
           });
-        } else {
-          this.paragraphs = defaultData;
+        },
+        error: error => {
           this.loading = false;
-        }
-      },
-      error: error => {
-        this.loading = false;
-        this.paragraphs = [];
-      },
-    });
-  }
-
-  getGoodType(goodTypeId: number) {
-    return new Promise((resolve, reject) => {
-      if (goodTypeId !== null) {
-        this.typeRelevantSevice.getById(goodTypeId).subscribe({
-          next: (data: any) => {
-            resolve(data.description);
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
-  }
-
-  getPhysicalStatus(physicalState: any) {
-    return new Promise((resolve, reject) => {
-      if (physicalState !== null) {
-        var params = new ListParams();
-        params['filter.keyId'] = `$eq:${physicalState}`;
-        params['filter.name'] = `$eq:Estado Fisico`;
-        this.genericService.getAll(params).subscribe({
-          next: data => {
-            resolve(data.data[0].description);
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
-  }
-
-  getStateConservation(stateConcervation: any) {
-    return new Promise((resolve, reject) => {
-      if (stateConcervation !== null) {
-        var params = new ListParams();
-        params['filter.keyId'] = `$eq:${stateConcervation}`;
-        params['filter.name'] = `$eq:Estado Conservacion`;
-        this.genericService.getAll(params).subscribe({
-          next: data => {
-            resolve(data.data[0].description);
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
-  }
-
-  getTransferDestiny(transferentDestiny: any) {
-    return new Promise((resolve, reject) => {
-      if (transferentDestiny !== null) {
-        var params = new ListParams();
-        params['filter.keyId'] = `$eq:${transferentDestiny}`;
-        params['filter.name'] = `$eq:Destino`;
-        this.genericService.getAll(params).subscribe({
-          next: data => {
-            resolve(data.data[0].description);
-          },
-        });
-      } else {
-        resolve('');
-      }
-    });
+          this.paragraphs = new LocalDataSource();
+        },
+      });
   }
 
   getMenaje(id: number) {
@@ -260,41 +177,94 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   onFileChange(event: any, type?: string) {
-    this.loader.load = true;
+    this.loaderProgress.load = true; //Loading cambiar por uno de porcentaje
     const file = event.target.files[0];
+    const name = file.name;
+    const lastModified = file.lastModified;
     const user = this.authService.decodeToken().preferred_username;
-
     /*const fileReader = new FileReader();
     fileReader.readAsBinaryString(file);
     fileReader.onload = () => {
-      const result = this.readExcel(fileReader.result);
-      if(result === true){
-        this.uploadFile(file, this.requestObject.id, user);
+      console.log('fileReader ',fileReader)
+      const result:any = this.readExcel(fileReader.result,name,lastModified);
+      if(result != null){
+        this.uploadFile(result, this.requestObject.id, user);
       }
     }*/
     this.uploadFile(file, this.requestObject.id, user);
-    // this.fileUploaded.nativeElement.value = "";
+    this.fileUploaded.nativeElement.value = '';
   }
 
-  readExcel(binaryExcel: string | ArrayBuffer) {
+  readExcel(binaryExcel: string | ArrayBuffer, name: string) {
     try {
-      let correcto = true;
       this.data = this.excelService.getData<any>(binaryExcel);
+
       for (let i = 0; i < this.data.length; i++) {
         const element: any = this.data[i];
-        //|| element['FRACCIÓN ARANCELARIA'] === undefined
-        if (element['CLAVE ARANCELARIA'] === undefined) {
-          this.onLoadToast(
-            'error',
-            'Carga de archivo',
-            'Todos los bienes deben tener una clave arancelaria!'
-          );
-          correcto = false;
-          this.loader.load = false;
-          break;
+        if (element['ENTFED'] != undefined) {
+          element['ENTFED'] = element['ENTFED'].toLowerCase();
+          element['ENTFED'] =
+            element['ENTFED'][0].toUpperCase() + element['ENTFED'].substring(1);
+        } else {
+          element['ENTFED'] = 'xx';
+        }
+
+        if (element['EDOFISICO'] != undefined) {
+          element['EDOFISICO'] = element['EDOFISICO'].toLowerCase();
+          element['EDOFISICO'] =
+            element['EDOFISICO'][0].toUpperCase() +
+            element['EDOFISICO'].substring(1);
+        }
+        if (element['MARCA'] != undefined) {
+          element['MARCA'] = element['MARCA'].toLowerCase();
+          element['MARCA'] =
+            element['MARCA'][0].toUpperCase() + element['MARCA'].substring(1);
+        } else {
+          element['MARCA'] = 'xx';
+        }
+
+        if (element['SUBMARCA'] != undefined) {
+          element['SUBMARCA'] = element['SUBMARCA'].toLowerCase();
+          element['SUBMARCA'] =
+            element['SUBMARCA'][0].toUpperCase() +
+            element['SUBMARCA'].substring(1);
+        }
+
+        if (element['UNIDAD'] != undefined) {
+          element['UNIDAD'] = element['UNIDAD'].toLowerCase();
+          element['UNIDAD'] =
+            element['UNIDAD'][0].toUpperCase() + element['UNIDAD'].substring(1);
+        }
+
+        if (element['ESTADO FÍSICO'] != undefined) {
+          element['ESTADO FÍSICO'] = element['ESTADO FÍSICO'].toLowerCase();
+          element['ESTADO FÍSICO'] =
+            element['ESTADO FÍSICO'][0].toUpperCase() +
+            element['ESTADO FÍSICO'].substring(1);
+        }
+
+        if (element['ESTADO DE CONSERVACIÓN'] != undefined) {
+          element['ESTADO DE CONSERVACIÓN'] =
+            element['ESTADO DE CONSERVACIÓN'].toLowerCase();
+          element['ESTADO DE CONSERVACIÓN'] =
+            element['ESTADO DE CONSERVACIÓN'][0].toUpperCase() +
+            element['ESTADO DE CONSERVACIÓN'].substring(1);
+        }
+
+        if (element['TIPO'] == undefined) {
+          element['TIPO'] = 'xx';
         }
       }
-      return correcto;
+      console.table(this.data);
+      const filename: string = name;
+      const FileType: string =
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+      const file = this.excelService.exportJsonToExcelNewFile(
+        this.data,
+        { filename },
+        FileType
+      );
+      return file;
     } catch (error) {
       this.loader.load = false;
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
@@ -312,12 +282,12 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             'Archivos cargados',
             `Se importaron los archivos`
           );
-          this.loader.load = false;
+          this.loaderProgress.load = false;
           this.fileUploaded.nativeElement.value = '';
           this.closeCreateGoodWIndows();
         },
         error: error => {
-          this.loader.load = false;
+          this.loaderProgress.load = false;
           this.message(
             'error',
             'Error al subir el file',
@@ -484,7 +454,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             `Se guardo el domicilio del bien`
           );
           this.refreshTable();
-          this.isSaveFraction = false;
+          this.isSaveDomicilie = false;
         }
       }
     });
@@ -502,7 +472,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             `Se guardaron los menajes exitosamente`
           );
           this.refreshTable();
-          this.isSaveFraction = false;
+          this.isSaveMenaje = false;
         }
       }
     });
@@ -540,6 +510,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             'Error',
             `Error al actualizar los bienes ${error.error.message}`
           );
+          console.log(error);
           console.log(error.error.message);
           reject(false);
         },
@@ -633,7 +604,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         if (data) {
           setTimeout(() => {
             this.closeCreateGoodWIndows();
-          }, 600);
+          }, 800);
         }
       },
     });
@@ -749,8 +720,34 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       good.fractionId = Number(this.fractionProperties['fractionId']);
       good.goodTypeId = Number(this.fractionProperties['goodTypeId']);
 
+      /* inf. del bien */
       good.goodDescription = item.goodDescription;
-      good.processStatus = item.processStatus;
+      good.goodStatus = 'VERIFICAR_CUMPLIMIENTO';
+      good.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+      //good.processStatus = item.processStatus;
+
+      good.quantity = item.quantity ? item.quantity : 0;
+      good.duplicity = item.duplicity;
+      good.capacity = item.capacity;
+      good.fileeNumber = item.fileeNumber;
+      good.volume = item.volume;
+      good.physicalStatus = item.physicalStatus;
+      good.useType = item.useType;
+      good.stateConservation = item.stateConservation;
+      good.origin = item.origin;
+      good.destiny = item.destiny;
+      if (item.transferentDestiny) {
+        good.transferentDestiny = item.transferentDestiny;
+      } else if (!item.transferentDestiny && good.destiny) {
+        good.transferentDestiny = item.destiny;
+      } else {
+        good.transferentDestiny = 1;
+      }
+      good.notesTransferringEntity = item.notesTransferringEntity;
+      good.appraisal = item.appraisal ? 'Y' : 'N';
+      good.compliesNorm = item.compliesNorm ? 'Y' : 'N';
+      good.saeDestiny = item.saeDestiny;
+      /*  */
 
       for (let i = 0; i < listReverse.length; i++) {
         const fractionsId = listReverse[i];
@@ -759,6 +756,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       this.listGoodsFractions.push(good);
     }
     this.loading = false;
+    console.table(this.listGoodsFractions);
     if (existAddres > 0) {
       this.onLoadToast(
         'info',
@@ -835,7 +833,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async data => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -868,7 +868,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async data => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -904,7 +906,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async data => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -937,7 +941,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async data => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -969,7 +975,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async data => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -1001,7 +1009,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       next: async (data: any) => {
         const fraction: any = data.data[0];
         this.idFractions.push(fraction.id);
-        const fractionCode = fraction.fractionCode.toString();
+        const fractionCode = fraction.fractionCode
+          ? fraction.fractionCode.toString()
+          : '';
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
@@ -1011,7 +1021,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             fractionDesc.clasifGoodNumber;
           this.fractionProperties['fractionId'] = fraction.id;
           if (fraction.typeRelevant) {
-            this.fractionProperties['goodTypeId'] = fraction.id;
+            this.fractionProperties['goodTypeId'] = fraction.typeRelevant.id;
           }
           this.fractionProperties['unitMeasure'] = fraction.unit
             ? fraction.unit
@@ -1024,5 +1034,132 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       },
       error: error => {},
     });
+  }
+
+  assignAllAddress() {
+    Swal.fire({
+      title: 'Asignacion Masiva de domicilio',
+      html: 'Se asignara a todos los bienes el domicio que se seleccionara',
+      icon: 'info',
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        let config: ModalOptions = {
+          initialState: {
+            request: this.requestObject,
+            address: '',
+            onlyOrigin: true,
+            callback: (next: boolean) => {
+              //if (next) this.getExample();
+            },
+          },
+          class: 'modalSizeXL modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.bsModalRef = this.modalServise.show(
+          SelectAddressComponent,
+          config
+        );
+
+        this.bsModalRef.content.event.subscribe((res: any) => {
+          //cargarlos en el formulario
+          this.loading = true;
+          if (res) {
+            this.assignAddress(this.requestObject.id, res.id);
+          }
+        });
+      }
+    });
+  }
+
+  assignAddress(requestId: number | string, addresId: number | string) {
+    this.goodFinderService
+      .masiveAssignationDomicileGood(requestId, addresId)
+      .subscribe({
+        next: resp => {
+          this.onLoadToast(
+            'success',
+            'Asignación exitosa',
+            `Se asigno un domicilio a todos los bienes`
+          );
+          this.loading = true;
+          this.closeCreateGoodWIndows();
+        },
+        error: error => {
+          this.loading = false;
+          console.log('Error al asignar domicilio a los bienes ', error);
+          this.onLoadToast(
+            'error',
+            'Error',
+            `Error al asignar domicilio a los bienes`
+          );
+        },
+      });
+  }
+
+  classifyAllGoods() {
+    Swal.fire({
+      title: 'Clasificación Masiva',
+      html: 'Se asignara a todos los bienes la fraccion que se seleccionara',
+      icon: 'info',
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        let config: ModalOptions = {
+          initialState: {
+            parameter: '',
+            callback: (next: boolean) => {
+              //if(next) this.getExample();
+            },
+          },
+          class: 'modalSizeXL modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.bsModalRef = this.modalServise.show(
+          AdvancedSearchComponent,
+          config
+        );
+
+        this.bsModalRef.content.event.subscribe((res: any) => {
+          this.idFractions = [];
+          this.loading = true;
+          //this.isSaveFraction = true;
+          //console.log(res.id,this.requestObject.id)
+          this.classifyGoods(this.requestObject.id, res.id);
+        });
+      }
+    });
+  }
+
+  classifyGoods(requestId: number | string, fractionId: number | string) {
+    let type = this.requestObject.typeOfTransfer == 'PGR_SAE' ? 4 : 1;
+    this.goodFinderService
+      .masiveClassificationGood(requestId, fractionId, type)
+      .subscribe({
+        next: resp => {
+          this.onLoadToast(
+            'success',
+            'Clasificación exitosa',
+            `Se clasificaron todos los bienes`
+          );
+          this.loading = true;
+          this.closeCreateGoodWIndows();
+        },
+        error: error => {
+          this.loading = false;
+          console.log('Error al clasificar los bienes masivamente ', error);
+          this.onLoadToast(
+            'error',
+            'Error',
+            `No se pudieron clasificar los bienes`
+          );
+        },
+      });
   }
 }

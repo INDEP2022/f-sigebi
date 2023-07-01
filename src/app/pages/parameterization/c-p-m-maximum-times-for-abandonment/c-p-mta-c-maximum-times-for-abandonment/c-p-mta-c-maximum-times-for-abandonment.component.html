@@ -1,6 +1,13 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Tiempos Maximos para abandono</h5>
+    <div class="col-md-5 buttons">
+      <div>
+        <button class="btn btn-primary active btn-sm ml-3" (click)="openForm()">
+          Nuevo
+        </button>
+      </div>
+    </div>
   </div>
   <div body>
     <div class="row">
@@ -8,7 +15,8 @@
         <div class="table-responsive">
           <ng2-smart-table
             [settings]="settings"
-            [source]="contentData.data"></ng2-smart-table>
+            [source]="dataTable"
+            (edit)="openForm($event.data)"></ng2-smart-table>
         </div>
       </div>
       <div class="col-md-8">
@@ -29,7 +37,7 @@
       <div class="col-12">
         <app-pagination
           [params]="params"
-          [totalItems]="contentData.count"></app-pagination>
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
   </div>

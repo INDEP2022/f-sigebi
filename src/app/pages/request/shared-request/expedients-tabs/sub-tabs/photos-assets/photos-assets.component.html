@@ -86,7 +86,27 @@
     <div class="row pt-4" *ngIf="!formLoading">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
+          <div class="row pt-4">
+            <div class="d-flex">
+              <app-columns-select
+                class="float-right"
+                [(settings)]="settings"></app-columns-select>
+              <div class="ml-auto p-2">
+                <button
+                  [disabled]="statusTask == 'FINALIZADA'"
+                  class="btn btn-primary btn-sm active"
+                  (click)="filter()">
+                  Actualizar
+                </button>
+                <!--<button
+              class="btn btn-info btn-sm active ml-2"
+              (click)="updateData()">
+              Actualizar
+            </button> -->
+              </div>
+            </div>
+          </div>
+
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"

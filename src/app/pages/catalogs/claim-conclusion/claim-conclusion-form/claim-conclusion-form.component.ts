@@ -14,7 +14,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class ClaimConclusionFormComponent extends BasePage implements OnInit {
   ClaimConclusionForm: ModelForm<IClaimConclusion>;
-  title: string = 'Conclusion de siniestros';
+  title: string = 'Conclusión de siniestros';
   edit: boolean = false;
   claimConclusion: IClaimConclusion;
   constructor(
@@ -31,7 +31,7 @@ export class ClaimConclusionFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.ClaimConclusionForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null],
       description: [
         null,
         [
@@ -84,7 +84,8 @@ export class ClaimConclusionFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

@@ -42,7 +42,7 @@ export class BankAccountService
     return this.post<IBankAccount>(`${this.api}/find-by-ids`, accountNumber);
   }
 
-  getAllWithFilters(params?: string): Observable<IListResponse<IBankAccount>> {
+  getAllWithFilters(params?: _Params): Observable<IListResponse<IBankAccount>> {
     return this.get<IListResponse<IBankAccount>>(this.api, params);
   }
 

@@ -180,7 +180,8 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
           item['paperDate'] = new Date(item.paperDate).toLocaleDateString();
           item['regionalDelegationName'] =
             item.regionalDelegation.description ?? '';
-          item['stateName'] = item.state.descCondition;
+          item['stateName'] =
+            item.state != null ? item.state.descCondition : '';
           item['transferentName'] = item.transferent.name;
 
           if (item.stationId) {

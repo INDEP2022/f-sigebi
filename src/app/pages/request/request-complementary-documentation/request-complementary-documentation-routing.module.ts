@@ -15,6 +15,10 @@ const routes: Routes = [
     component: RequestCompDocFormComponent,
   },
   {
+    path: 'create/:id',
+    component: RequestCompDocFormComponent,
+  },
+  {
     path: 'tasks/:process/:request',
     component: RequestCompDocTasksComponent,
   },

@@ -1,9 +1,9 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="proceedingForm">
+    <form *ngIf="edit" class="form-material" [formGroup]="proceedingForm">
       <div class="row">
         <div class="col-md-2">
           <form-field label="No." [control]="proceedingForm.get('id')">
@@ -140,6 +140,79 @@
               type="text"
               class="form-control"
               formControlName="numDelegation1" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <!-- Cuando se edita que se muestren los demas campos -->
+    <form *ngIf="!edit" class="form-material" [formGroup]="proceedingForm">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            label="Oficio de solicitud"
+            [control]="proceedingForm.get('keysProceedings')">
+            <input
+              type="text"
+              [max-length]="60"
+              class="form-control"
+              formControlName="keysProceedings" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            label="Oficio de alcance"
+            [control]="proceedingForm.get('affair')">
+            <input
+              type="text"
+              [max-length]="70"
+              class="form-control"
+              formControlName="affair" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            label="Fecha de recepción"
+            [control]="proceedingForm.get('elaborationDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="elaborationDate"
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Fecha de alcance"
+            [control]="proceedingForm.get('datePhysicalReception')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="datePhysicalReception"
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Fecha de intergracion"
+            [control]="proceedingForm.get('closeDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="closeDate"
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
       </div>

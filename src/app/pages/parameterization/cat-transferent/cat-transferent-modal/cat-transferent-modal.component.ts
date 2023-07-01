@@ -8,7 +8,10 @@ import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 //Services
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-cat-transferent-modal',
@@ -57,7 +60,7 @@ export class CatTransferentModalComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      version: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      version: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       status: [null, [Validators.required]],
       dateBegOperation: [null, []],
       dateFinalOperation: [{ value: null, disabled: true }, []],

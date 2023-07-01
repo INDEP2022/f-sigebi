@@ -6,12 +6,20 @@ export const LAWYER_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  office: {
+  officeDetails: {
     title: 'Despacho',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
       return value.name;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.name;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
   name: {
@@ -43,6 +51,7 @@ export const LAWYER_COLUMNS = {
   delegation: {
     title: 'Delegación',
     type: 'string',
+    sort: false,
   },
   zipCode: {
     title: 'Código postal',

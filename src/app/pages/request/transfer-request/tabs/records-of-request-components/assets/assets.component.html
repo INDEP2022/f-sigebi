@@ -4,11 +4,11 @@
       <div class="mr-auto p-2">
         <h5 class="title"><strong>Bienes</strong></h5>
       </div>
-      <div class="p-2">
+      <!-- <div class="p-2">
         <button class="btn btn-primary btn-sm active" (click)="save()">
           Guardar
         </button>
-      </div>
+      </div> -->
     </div>
   </div>
   <div class="row pt-4">
@@ -26,7 +26,19 @@
           accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
           (change)="onFileChange($event, 'inmueble')" />
       </div>
-      <div class="p-2">
+      <div
+        class="p-2"
+        style="margin-left: 1%"
+        *ngIf="
+          isSaveDomicilie == true ||
+          isSaveFraction == true ||
+          isSaveMenaje == true
+        ">
+        <button class="btn btn-primary btn-sm active" (click)="save()">
+          <i class="bx bx-save"></i> Guardar
+        </button>
+      </div>
+      <div class="p-2" style="margin-left: 1%">
         <div class="btn-group" dropdown placement="bottom right">
           <button
             id="button-alignment"
@@ -55,16 +67,28 @@
             <!-- *ngIf="typeRecord == 'PAMA' && transferente === 'SAT_SAE'" -->
             <li role="menuitem">
               <a class="dropdown-item" (click)="masiveClasification()">
-                <i class="bx bx-layer"></i> Clasificaci&oacute;n Masiva
+                <i class="bx bx-layer"></i> Clasificar Bienes
               </a>
             </li>
             <!-- sub menu de importacion -->
             <!-- *ngIf="transferente == 'PGR_SAE' || transferente === 'SAT_SAE'" -->
             <li role="menuitem">
               <a class="dropdown-item" (click)="fileInmueble.click()"
-                ><i class="bx bx-import"></i> Importar archivo Excel &#47; CSV
+                ><i class="bx bx-import"></i> Importar Archivo Excel &#47; CSV
               </a>
             </li>
+            <li class="divider dropdown-divider"></li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="classifyAllGoods()">
+                <i class="bx bx-layer"></i> Clasificar Todos los Bienes
+              </a>
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="assignAllAddress()">
+                <i class="bx bx-layer"></i> Assignar a Todos el Domicilio
+              </a>
+            </li>
+            <li class="divider dropdown-divider"></li>
             <!-- *ngIf="transferente == 'PGR_SAE' || transferente === 'SAT_SAE'" -->
             <li role="menuitem">
               <a class="dropdown-item" style="color: red" (click)="delete()">
@@ -77,6 +101,11 @@
       <div class="p-2" style="margin-left: 1%">
         <button class="btn btn-secondary btn-sm active" (click)="newAsset()">
           {{ btnCreate }}
+        </button>
+      </div>
+      <div class="p-2" style="margin-left: 1%">
+        <button class="btn btn-primary btn-sm active" (click)="getData()">
+          Actualizar
         </button>
       </div>
     </div>

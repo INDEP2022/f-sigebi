@@ -104,16 +104,20 @@ export class ZoneGeographicListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.zoneGeographicService.remove(zoneGeographic.id).subscribe({
           next: response => {
-            this.onLoadToast('success', 'Exito', 'Eliminado Correctamente');
-            this.getExample();
+            this.alert('success', 'Zona geográfica', 'Borrada Correctamente'),
+              this.getExample();
           },
           error: err => {
-            this.onLoadToast('error', 'Error', 'Intente nuevamente');
+            this.alert(
+              'warning',
+              'Zona Geográfica',
+              'No se puede eliminar el objeto debido a una relación con otra tabla.'
+            );
           },
         });
       }

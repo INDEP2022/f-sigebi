@@ -1,6 +1,6 @@
 export const COLUMNS = {
   id: {
-    title: 'Clave Admi',
+    title: 'Clave Administrativa',
     sort: false,
   },
   dsarea: {

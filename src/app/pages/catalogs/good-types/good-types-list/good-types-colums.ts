@@ -15,17 +15,17 @@ export const GOOD_TYPES_COLUMS = {
     sort: false,
   },
   maxFractionTime: {
-    title: 'Tiempo Max Fraccion',
+    title: 'Tiempo Max Fracción',
     type: 'number',
     sort: false,
   },
   maxExtensionTime: {
-    title: 'Tiempo Max Prorroga',
+    title: 'Tiempo Max Prórroga',
     type: 'number',
     sort: false,
   },
   maxStatementTime: {
-    title: 'Tiempo Max Declaracion',
+    title: 'Tiempo Max Declaración',
     type: 'number',
     sort: false,
   },

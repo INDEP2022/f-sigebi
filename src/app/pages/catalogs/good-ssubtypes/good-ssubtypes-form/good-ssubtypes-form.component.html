@@ -13,7 +13,8 @@
             [data]="types"
             label="Tipo"
             bindLabel="nameGoodType"
-            value="id">
+            value="id"
+            (change)="getAllSubtypes($event)">
           </ngx-select>
         </div>
         <div class="col-md-12">
@@ -39,7 +40,7 @@
             </textarea>
           </form-field>
         </div>
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <form-field
             [control]="goodSsubtypeForm.get('noRegister')"
             label="No. Registro"
@@ -48,7 +49,7 @@
               class="form-control"
               formControlName="noRegister" />
           </form-field>
-        </div>
+        </div> -->
       </div>
     </form>
   </div>

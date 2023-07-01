@@ -118,4 +118,20 @@ export class NonDeliveryReasonsListComponent
       }
     });
   }
+
+  remove(id: number) {
+    this.nonDeliveryReasonsService.remove(id).subscribe({
+      next: () => {
+        this.getExample(),
+          this.alert('success', 'Motivo no entrega', 'Borrado Correctamente');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Motivo no entrega',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
+    });
+  }
 }

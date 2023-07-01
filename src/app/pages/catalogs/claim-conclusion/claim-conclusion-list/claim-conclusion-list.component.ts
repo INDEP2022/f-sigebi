@@ -26,6 +26,8 @@ export class ClaimConclusionListComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = CLAIMCONCLUSION_COLUMS;
     this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -64,11 +66,32 @@ export class ClaimConclusionListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.deleteReg(claimConclusion.id);
       }
+    });
+  }
+
+  deleteReg(id: string | number) {
+    this.claimConclusionService.remove(id).subscribe({
+      next: response => {
+        this.alert(
+          'success',
+          'Conclusión de registro',
+          'Borrado Correctamente'
+        ),
+          this.getExample();
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Conclusión de Registro',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 }

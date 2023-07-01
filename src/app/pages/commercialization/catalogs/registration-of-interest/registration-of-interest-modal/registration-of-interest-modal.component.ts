@@ -16,7 +16,7 @@ import { ParameterTiieService } from 'src/app/core/services/ms-parametercomer/pa
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { RegistrationOfInterestComponent } from '../registration-of-interest.component';
 
@@ -67,17 +67,31 @@ export class RegistrationOfInterestModalComponent
       id: [null],
       tiieDays: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.pattern(NUM_POSITIVE),
+          Validators.min(1000),
+          Validators.max(999999),
+        ],
       ],
-      tiieMonth: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      tiieMonth: [null, [Validators.pattern(NUM_POSITIVE), Validators.max(99)]],
       // mes: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      tiieYear: [null, [Validators.required]],
+      tiieYear: [
+        null,
+        [Validators.pattern(NUM_POSITIVE), Validators.max(9999)],
+      ],
       registryDate: [new Date()],
-      tiieAverage: [null, [Validators.required]],
-      user: [null, [Validators.required]],
+      tiieAverage: [
+        null,
+        [
+          Validators.pattern(NUM_POSITIVE),
+          Validators.min(1000),
+          Validators.max(999999),
+        ],
+      ],
+      user: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
+      ],
     });
     if (this.provider !== undefined) {
       this.edit = true;

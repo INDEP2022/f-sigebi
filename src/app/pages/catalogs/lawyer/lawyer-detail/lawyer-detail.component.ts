@@ -5,12 +5,12 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { OfficeService } from 'src/app/core/services/catalogs/office.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { ILawyer } from '../../../../core/models/catalogs/lawyer.model';
 import { DelegationService } from '../../../../core/services/catalogs/delegation.service';
 import { LawyerService } from '../../../../core/services/catalogs/lawyer.service';
 import {
   NUMBERS_PATTERN,
   PHONE_PATTERN,
+  RFC_PATTERN,
   STRING_PATTERN,
 } from '../../../../core/shared/patterns';
 
@@ -24,9 +24,9 @@ export class LawyerDetailComponent extends BasePage implements OnInit {
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   lawyer: any;
-  delegations = new DefaultSelect<ILawyer>();
-  offices = new DefaultSelect<ILawyer>();
-
+  delegations = new DefaultSelect();
+  offices = new DefaultSelect();
+  title: string = 'Abogado';
   @Output() refresh = new EventEmitter<true>();
   constructor(
     private fb: FormBuilder,
@@ -72,11 +72,7 @@ export class LawyerDetailComponent extends BasePage implements OnInit {
       ],
       apartmentNumber: [
         null,
-        [
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.required,
-          Validators.maxLength(10),
-        ],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10)],
       ],
       suburb: [
         null,
@@ -91,7 +87,14 @@ export class LawyerDetailComponent extends BasePage implements OnInit {
         [Validators.pattern(''), Validators.required, Validators.maxLength(60)],
       ],
       zipCode: [null, [Validators.pattern(''), Validators.required]],
-      rfc: [null, [Validators.required, Validators.maxLength(20)]],
+      rfc: [
+        null,
+        [
+          Validators.pattern(RFC_PATTERN),
+          Validators.required,
+          Validators.maxLength(20),
+        ],
+      ],
       phone: [
         null,
         [
@@ -102,14 +105,21 @@ export class LawyerDetailComponent extends BasePage implements OnInit {
       ],
       registerNumber: [null],
     });
-    if (this.edit) {
-      this.status = 'Actualizar';
-      const { idOffice, delegation } = this.lawyer;
+    if (this.lawyer != null) {
+      this.edit = true;
       this.form.patchValue(this.lawyer);
-      this.form.get('idOffice').setValue(idOffice.id);
-      this.offices = new DefaultSelect([idOffice], 1);
-      this.delegations = new DefaultSelect([delegation], 1);
+      console.log(this.lawyer);
+      console.log(this.lawyer.delegation);
+      console.log(this.lawyer.idOffice);
+      //this.form.controls['delegation'].setValue(this.lawyer.delegation);
+      //this.form.controls['idOffice'].setValue(this.lawyer.idOffice);
+      this.getFromSelect(new ListParams());
+      this.getOffices(new ListParams());
     }
+    setTimeout(() => {
+      this.getFromSelect(new ListParams());
+      this.getOffices(new ListParams());
+    }, 1000);
   }
 
   confirm() {
@@ -122,17 +132,18 @@ export class LawyerDetailComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.lawerService.create(this.form.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    this.lawerService.create(this.form.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', 'ABOGADO', `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', 'Abogado', `${message} Correctamente`);
     this.loading = false;
-    this.refresh.emit(true);
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 
@@ -146,15 +157,54 @@ export class LawyerDetailComponent extends BasePage implements OnInit {
   }
 
   getFromSelect(params: ListParams) {
-    this.delegationService.getAll(params).subscribe(data => {
-      this.delegations = new DefaultSelect(data.data, data.count);
+    /*params[
+      'filter.id'
+    ] = `$eq:${this.form.controls['idOffice'].value}`;*/
+
+    this.delegationService.getAll(params).subscribe({
+      next: data => {
+        this.delegations = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log(error);
+        this.delegations = new DefaultSelect();
+        this.loading = false;
+      },
     });
   }
 
   getOffices(params: ListParams) {
-    this.officeService.getAll(params).subscribe(data => {
-      console.log(data);
-      this.offices = new DefaultSelect(data.data, 1);
+    params[
+      'filter.delegationDetail.id'
+    ] = `$eq:${this.form.controls['idOffice'].value}`;
+
+    this.officeService.getAll(params).subscribe({
+      next: data => {
+        console.log(data);
+        this.offices = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log(error);
+        this.offices = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  getFilterDelegations(params?: ListParams) {
+    params[
+      'filter.aprovedUser'
+    ] = `$eq:${this.form.controls['aprovedUser'].value}`;
+    console.log(this.form.controls['aprovedUser'].value);
+    this.delegationService.getAll(params).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.delegations = new DefaultSelect(resp.data, resp.count);
+      },
+      error: error => {
+        console.log(error);
+        this.delegations = new DefaultSelect();
+      },
     });
   }
 }

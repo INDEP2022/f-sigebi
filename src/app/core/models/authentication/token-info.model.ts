@@ -33,4 +33,5 @@ export interface TokenInfoModel {
   siglasnivel2: string;
   siglasnivel3: string;
   siglasnivel4: string;
+  delegacionreg: string;
 }

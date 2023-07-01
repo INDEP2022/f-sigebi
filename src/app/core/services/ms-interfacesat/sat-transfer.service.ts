@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { InterfaceSatEndpoints } from '../../../common/constants/endpoints/ms-intefacesat-endpoints';
 import {
@@ -65,5 +65,18 @@ export class SatTransferService extends HttpService {
 
   getCountRegisters(body: {}) {
     return this.post(this.route.CountRegisters, body);
+  }
+
+  JobAsunto3(body: {
+    jobNumber: number | string;
+    limit: number;
+    page: number;
+  }) {
+    return this.post('transfersat-v2/JobAsunto3', body);
+  }
+
+  getPgrTransfers(params: _Params) {
+    // TODO:corregir endpoint
+    return this.get('pgr-transfer', params);
   }
 }

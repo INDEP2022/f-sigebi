@@ -1,0 +1,85 @@
+<app-good-form [version]="version"></app-good-form>
+<!-- <hr /> -->
+<form class="form-material mt-5" [formGroup]="form">
+  <div class="row">
+    <div class="col-md-4">
+      <form-field [control]="form.get('cantPar')" label="Veces a Parcializar">
+        <input class="form-control" formControlName="cantPar" maxlength="16" />
+      </form-field>
+    </div>
+
+    <div class="col-md-4">
+      <form-field [control]="form.get('cantidad')" label="Cantidad">
+        <input class="form-control" formControlName="cantidad" maxlength="16" />
+      </form-field>
+    </div>
+
+    <div class="col-md-4">
+      <div class="saldo">
+        <label for="">Saldo: </label>
+        <div>{{ form.get('saldo').value }}</div>
+      </div>
+      <!-- <form-field *ngIf="firstCase" [control]="form.get('saldo')" label="Saldo">
+        <input
+          type="number"
+          class="form-control"
+          formControlName="saldo"
+          min="1" />
+      </form-field> -->
+    </div>
+  </div>
+  <!-- <ol class="c-stepper">
+    <li class="c-stepper__item">
+      <h3 class="c-stepper__title">Step 2</h3>
+      <p class="c-stepper__desc">Some desc text</p>
+    </li>
+    <li class="c-stepper__item">
+      <h3 class="c-stepper__title">Step 1</h3>
+      <p class="c-stepper__desc">Some desc text</p>
+    </li>
+  </ol> -->
+
+  <div class="row">
+    <div class="d-flex justify-content-center stepper">
+      <div [class]="statePartialize">
+        <div (click)="pressed($event, 1)">1</div>
+        <app-partialize-button
+          [press]="pressPartialize"
+          (notFilledRow)="loading = false"
+          (filledRow)="filledRow()"></app-partialize-button>
+      </div>
+      <div [class]="stateApply">
+        <div (click)="pressed($event, 2)">2</div>
+        <app-apply-button
+          [press]="pressApply"
+          (fillPagedRow)="filledRow()"></app-apply-button>
+      </div>
+      <!-- Second Step -->
+    </div>
+  </div>
+</form>
+<div
+  *ngIf="firstCase"
+  class="pt-2 scroll-table table-responsive"
+  [class]="loading ? 'table-loading' : ''">
+  <ng2-smart-table
+    class="col-md-12"
+    [settings]="settingsGoddFirstCase"
+    [source]="pagedBienesPar"
+    (delete)="deleteRow($event)"></ng2-smart-table>
+</div>
+<div
+  *ngIf="!firstCase"
+  class="pt-2 scroll-table table-responsive"
+  [class]="loading ? 'table-loading' : ''">
+  <ng2-smart-table
+    class="col-md-12"
+    [settings]="settingsGoodsSecondCase"
+    [source]="pagedBienesPar"
+    (delete)="deleteRow($event)"></ng2-smart-table>
+</div>
+<app-pagination
+  [params]="params"
+  [totalItems]="
+    bienesPar.length > 0 ? bienesPar.length - 1 : 0
+  "></app-pagination>

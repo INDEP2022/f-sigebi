@@ -84,13 +84,14 @@ export class RequestDetailTabComponent
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: request-detail-tab');
     this.formLoading = true;
     this.tyepOfTransferent = this.requestForm.controls['typeOfTransfer'].value;
     this.reactiveFormCalls();
     this.showDataProg();
     setTimeout(() => {
       this.formLoading = false;
-    }, 600);
+    }, 1100);
   }
 
   ngOnChanges(changes: SimpleChanges): void {

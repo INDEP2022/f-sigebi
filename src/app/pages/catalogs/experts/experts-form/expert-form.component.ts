@@ -38,11 +38,15 @@ export class ExpertFormComponent extends BasePage implements OnInit {
       name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       position: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       registryNumber: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.min(0),
+        ],
       ],
     });
     if (this.proficient != null) {
@@ -78,7 +82,11 @@ export class ExpertFormComponent extends BasePage implements OnInit {
       .update(this.proficient.id, this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => {
+          this.loading = false;
+          this.alert('error', 'Ha Ocurrido un Error', error.error.message[0]);
+          this.modalRef.hide();
+        },
       });
   }
 

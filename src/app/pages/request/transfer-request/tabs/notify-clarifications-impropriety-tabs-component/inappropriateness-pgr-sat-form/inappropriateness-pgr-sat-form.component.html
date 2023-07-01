@@ -7,23 +7,23 @@
       <div class="row pt-3">
         <div class="col-md-6">
           <form-field
-            [control]="form.get('senderName')"
-            label="Nombre Remitente">
+            [control]="form.get('managedTo')"
+            label="Nombre destinatario">
             <input
               type="text"
               class="form-control"
               maxlength="50"
-              formControlName="senderName" />
+              formControlName="managedTo" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
-            [control]="form.get('positionSender')"
-            label="Cargo remitente">
+            [control]="form.get('positionAddressee')"
+            label="Cargo destinatario">
             <input
               class="form-control"
               maxlength="50"
-              formControlName="positionSender" />
+              formControlName="positionAddressee" />
           </form-field>
         </div>
       </div>

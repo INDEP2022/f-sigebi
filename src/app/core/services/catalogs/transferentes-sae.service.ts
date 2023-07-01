@@ -44,4 +44,9 @@ export class TransferentesSaeService extends HttpService {
   updateStateForTransferent(model: IStateByTransferent) {
     return this.put(TransferentesSaeEndpoints.EntityTransferring, model);
   }
+
+  remove(id: string, statekey: string): Observable<Object> {
+    const route2 = `${TransferentesSaeEndpoints.EntityTransferring}/idTransferee/${id}/stateKey/${statekey}`;
+    return this.delete(route2);
+  }
 }

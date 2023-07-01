@@ -5,7 +5,6 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
-  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
@@ -25,6 +24,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   loadUsersData: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   paramsUsers = new BehaviorSubject<ListParams>(new ListParams());
+  paramsShowUsers = new BehaviorSubject<ListParams>(new ListParams());
   idProgramming: number = 0;
   totalItems: number = 0;
   typeUser: string = '';
@@ -74,7 +74,6 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('delegation', this.delegationUserLog);
     this.showHideErrorInterceptorService.showHideError(false);
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -83,45 +82,24 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
 
   getUsers() {
     this.loading = true;
-
-    this.params.value.addFilter('employeeType', this.typeUser);
-    this.params.value.addFilter(
-      'regionalDelegation',
-      this.delegationUserLog,
-      SearchFilter.ILIKE
-    );
-    const filter = this.params.getValue().getParams();
-
-    this.userProcessService.getAll(filter).subscribe({
-      next: resp => {
-        resp.data.map((item: any) => {
-          item['fullName'] = item.firstName + ' ' + item.lastName;
-        });
-
-        resp.data.sort(function (a: any, b: any) {
-          return a.fullName - b.fullName;
-        });
-
-        this.usersData.load(resp.data);
-        this.totalItems = resp.count;
-        this.loading = false;
-      },
-      error: error => {
-        console.log(error);
-        this.loading = false;
-      },
-    });
-
-    /*this.params.getValue()['search'] = this.params.getValue().text;
-    this.params.getValue()['filter.employeeType'] = this.typeUser;
-    //this.params.getValue()['filter.regionalDelegation'] = this.delegation;
-    this.userProcessService.getAll(this.params.getValue()).subscribe(data => {
-      console.log('data', data);
-      //this.filterUsersProg(data.data);
-      this.usersData.load(data.data);
-      this.totalItems = data.count;
-      this.loading = false;
-    }); */
+    this.paramsShowUsers.getValue()['filter.role'] =
+      'SolicitudProgramacion.creaProgramacion';
+    this.paramsShowUsers.getValue()['filter.delegationreg'] =
+      this.delegationUserLog;
+    this.userProcessService
+      .getAllUsersWithRol(this.paramsShowUsers.getValue())
+      .subscribe({
+        next: response => {
+          this.usersData.load(response.data);
+          this.totalItems = response.count;
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+          this.alert('info', 'Usuarios', 'Usuarios no encontrados');
+          console.log(error);
+        },
+      });
   }
 
   //Filtrar los usuarios que ya estén programados
@@ -159,7 +137,6 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   sendUser(user: any, selected: boolean) {
     if (selected) {
       this.userInfo.push(user);
-      console.log(this.userInfo);
     } else {
       this.userInfo = this.userInfo.filter(
         _user => _user.wheelNumber != _user.wheelNumber
@@ -168,8 +145,8 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    console.log('Usuario a guardar', this.userInfo);
     if (this.userInfo.length > 0) {
+      let count: number = 0;
       this.userInfo.map(info => {
         let user: Object = {
           programmingId: this.idProgramming,
@@ -179,8 +156,11 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
         };
 
         this.programmingService.createUsersProgramming(user).subscribe(data => {
-          this.modalRef.content.callback(true);
-          this.modalRef.hide();
+          count = count + 1;
+          if (count == 1) {
+            this.modalRef.content.callback(true);
+            this.modalRef.hide();
+          }
         });
       });
     } else {

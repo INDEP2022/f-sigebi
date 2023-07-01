@@ -7,7 +7,9 @@
       <div class="row mb-3 mt-3">
         <!--Packages Component-->
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-          <app-packages-shared [form]="form"></app-packages-shared>
+          <app-packages-shared
+            [form]="form"
+            (infoSent)="receiveInfo($event)"></app-packages-shared>
         </div>
         <!--Package type-->
         <div
@@ -15,33 +17,29 @@
           <div class="row justify-content-between">
             <div class="col-md-4">
               <form-radio label="Destrucción">
-                <input
-                  type="radio"
-                  formControlName="packageType"
-                  value="destruction" />
+                <input type="radio" formControlName="packageType" value="1" />
               </form-radio>
             </div>
             <div class="col-md-4">
               <form-radio label="Donación">
-                <input
-                  type="radio"
-                  formControlName="packageType"
-                  value="donation" />
+                <input type="radio" formControlName="packageType" value="2" />
               </form-radio>
             </div>
             <div class="col-md-4">
               <form-radio label="Chatarra">
-                <input
-                  type="radio"
-                  formControlName="packageType"
-                  value="junk" />
+                <input type="radio" formControlName="packageType" value="3" />
               </form-radio>
             </div>
           </div>
         </div>
         <div class="col-lg-3 col-md-6 col-sm-6 col-12 mb-3 mt-3">
           <form-field [control]="form.get('amountKg')" label="Cantidad en KG.">
-            <input formControlName="amountKg" class="form-control" />
+            <input
+              formControlName="amountKg"
+              class="form-control"
+              type="number"
+              min="0"
+              oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16);" />
           </form-field>
         </div>
         <div
@@ -49,13 +47,15 @@
           <form-field
             [control]="form.get('status')"
             label="Estatus del Paquete">
-            <select class="form-control" formControlName="status">
+            <select
+              class="form-control text-center px-2"
+              formControlName="status">
               <option [value]="null">Seleccione un valor</option>
-              <option value="project">P-Proyecto</option>
-              <option value="validation">V-Validado</option>
-              <option value="authorized">A-Autorizado</option>
-              <option value="closed">C-Cerrado</option>
-              <option value="successful">L-Aplicado</option>
+              <option value="P">P-Proyecto</option>
+              <option value="V">V-Validado</option>
+              <option value="A">A-Autorizado</option>
+              <option value="C">C-Cerrado</option>
+              <option value="S">L-Aplicado</option>
             </select>
           </form-field>
         </div>
@@ -64,22 +64,33 @@
         <!--Actions-->
         <div
           class="col-lg-3 col-md-4 col-sm-4 col-12 align-self-center mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">
+          <button
+            [disabled]="!validaButton.PB_VALIDA"
+            class="btn btn-secondary btn-sm active w-100"
+            (click)="showConfirmAlert()">
             Validado
           </button>
         </div>
         <div
           class="col-lg-3 col-md-4 col-sm-4 col-12 align-self-center mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">
+          <button
+            [disabled]="!validaButton.PB_AUTORIZA"
+            class="btn btn-secondary btn-sm active w-100"
+            (click)="showAutorizateAlert()">
             Autorizado
           </button>
         </div>
         <div
           class="col-lg-3 col-md-4 col-sm-4 col-12 align-self-center mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">Cierre</button>
+          <button
+            [disabled]="!validaButton.PB_CERRAR"
+            class="btn btn-secondary btn-sm active w-100"
+            (click)="showCloseAlert()">
+            Cierre
+          </button>
         </div>
       </div>
-      <!--Process dates-->
+
       <!--Process Users-->
       <div class="row mt-3">
         <div class="col-md-12">
@@ -95,14 +106,14 @@
               <i class="bx bx-calendar me-1 text-primary"></i>
               Proyecto
             </h5>
-            <p class="text-muted mb-0">08 Sept, 2019</p>
+            <p class="text-muted mb-0">{{ this.dates.elaborationDate }}</p>
           </div>
           <div class="mt-4">
             <h5 class="font-size-14">
               <i class="bx bx-user me-1 text-primary"></i>
               Usuario
             </h5>
-            <p class="text-muted mb-0">User123</p>
+            <p class="text-muted mb-0">{{ this.users.elaborationUSU }}</p>
           </div>
         </div>
         <div class="col-lg-2 col-md-2 col-sm-4 col-12 mb-3 mt-3">
@@ -111,14 +122,14 @@
               <i class="bx bx-calendar me-1 text-primary"></i>
               Validación
             </h5>
-            <p class="text-muted mb-0">08 Sept, 2019</p>
+            <p class="text-muted mb-0">{{ this.dates.validationDate }}</p>
           </div>
           <div class="mt-4">
             <h5 class="font-size-14">
               <i class="bx bx-user me-1 text-primary"></i>
               Usuario
             </h5>
-            <p class="text-muted mb-0">User123</p>
+            <p class="text-muted mb-0">{{ this.users.validationUSU }}</p>
           </div>
         </div>
         <div class="col-lg-2 col-md-2 col-sm-4 col-12 mb-3 mt-3">
@@ -127,14 +138,14 @@
               <i class="bx bx-calendar me-1 text-primary"></i>
               Autorización
             </h5>
-            <p class="text-muted mb-0">08 Sept, 2019</p>
+            <p class="text-muted mb-0">{{ this.dates.authorizationDate }}</p>
           </div>
           <div class="mt-4">
             <h5 class="font-size-14">
               <i class="bx bx-user me-1 text-primary"></i>
               Usuario
             </h5>
-            <p class="text-muted mb-0">User123</p>
+            <p class="text-muted mb-0">{{ this.users.authorizationUSU }}</p>
           </div>
         </div>
         <div class="col-lg-2 col-md-2 col-sm-4 col-12 mb-3 mt-3">
@@ -143,14 +154,14 @@
               <i class="bx bx-calendar me-1 text-primary"></i>
               Cierre/Modificación
             </h5>
-            <p class="text-muted mb-0">08 Sept, 2019</p>
+            <p class="text-muted mb-0">{{ this.dates.closingDate }}</p>
           </div>
           <div class="mt-4">
             <h5 class="font-size-14">
               <i class="bx bx-user me-1 text-primary"></i>
               Usuario
             </h5>
-            <p class="text-muted mb-0">User123</p>
+            <p class="text-muted mb-0">{{ this.users.closingUSU }}</p>
           </div>
         </div>
         <div class="col-lg-2 col-md-2 col-sm-4 col-12 mb-3 mt-3">
@@ -159,14 +170,14 @@
               <i class="bx bx-calendar me-1 text-primary"></i>
               Cancelación
             </h5>
-            <p class="text-muted mb-0">08 Sept, 2019</p>
+            <p class="text-muted mb-0">{{ this.dates.cancellationDate }}</p>
           </div>
           <div class="mt-4">
             <h5 class="font-size-14">
               <i class="bx bx-user me-1 text-primary"></i>
               Usuario
             </h5>
-            <p class="text-muted mb-0">User123</p>
+            <p class="text-muted mb-0">{{ this.users.cancellationUSU }}</p>
           </div>
         </div>
       </div>
@@ -176,6 +187,7 @@
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
           <app-delegation-shared
             [form]="form"
+            (emitDelegation)="emitDelegation($event)"
             [showSubdelegation]="false"></app-delegation-shared>
         </div>
         <!--Goods Classification Component-->
@@ -219,17 +231,22 @@
       </button>
     </div>
     <div class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-center mb-3 mt-3">
-      <button type="button" class="btn btn-danger btn-sm active w-100">
+      <button
+        (click)="cancelPackage()"
+        [disabled]="!validaButton.PB_CANCELA"
+        type="button"
+        class="btn btn-danger btn-sm active w-100">
         Cancelar
       </button>
     </div>
-    <div class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-center mb-3 mt-3">
-      <button type="button" class="btn btn-primary btn-sm active w-100">
+    <!--<div class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-center mb-3 mt-3">
+      <button (click)="emailButton()" type="button" class="btn btn-primary btn-sm active w-100">
         Correo
       </button>
-    </div>
+    </div>-->
   </div>
 </app-card>
+
 <!--Add New Good-->
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
@@ -243,35 +260,57 @@
             <input
               formControlName="numberGood"
               type="text"
-              class="form-control" />
+              class="form-control"
+              type="number"
+              min="0"
+              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
           <form-field label="Expediente" [control]="form2.get('record')">
-            <input formControlName="record" type="text" class="form-control" />
+            <input
+              formControlName="record"
+              class="form-control"
+              type="number"
+              min="0"
+              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
           </form-field>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-12 mb-3 mt-3">
           <form-field label="Descripción" [control]="form2.get('description')">
             <input
               formControlName="description"
+              class="form-control"
               type="text"
-              class="form-control" />
+              maxlength="1250" />
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
           <form-field label="Cantidad" [control]="form2.get('amount')">
-            <input formControlName="amount" type="text" class="form-control" />
+            <input
+              formControlName="amount"
+              class="form-control"
+              type="number"
+              min="0"
+              oninput="if(this.value.length > 19) this.value = this.value.slice(0, 19);" />
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
           <form-field label="Unidad" [control]="form2.get('unit')">
-            <input formControlName="unit" type="text" class="form-control" />
+            <input
+              formControlName="unit"
+              type="text"
+              class="form-control"
+              maxlength="25" />
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
           <form-field label="Estatus" [control]="form2.get('status')">
-            <input formControlName="status" type="text" class="form-control" />
+            <input
+              formControlName="status"
+              type="text"
+              class="form-control"
+              maxlength="25" />
           </form-field>
         </div>
       </div>
@@ -279,26 +318,35 @@
       <div class="row justify-content-between mb-3 mt-3">
         <div
           class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-baseline mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">
+          <button
+            (click)="viewModal('good', 'xl')"
+            class="btn btn-secondary btn-sm active w-100">
             Seleccionar Bienes
           </button>
         </div>
         <div
           class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-baseline mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">
+          <button
+            (click)="verifyGoods()"
+            class="btn btn-secondary btn-sm active w-100">
             Verificar Bienes
           </button>
         </div>
         <div
           class="col-lg-2 col-md-2 col-sm-6 col-12 align-self-baseline mb-3 mt-3">
-          <button class="btn btn-secondary btn-sm active w-100">
+          <button
+            (click)="viewModal('error')"
+            class="btn btn-secondary btn-sm active w-100">
             Ver Error
           </button>
         </div>
         <div
           class="col-lg-2 col-md-2 col-sm-6 col-12 align-self-baseline mb-3 mt-3">
-          <button class="btn btn btn-success active btn-sm w-100">
-            Exportar
+          <button
+            (click)="exportToExcel()"
+            class="btn btn-sm btn-success active">
+            Exportar a Excel
+            <i class="bx bx-download float-icon"></i>
           </button>
         </div>
         <div
@@ -311,6 +359,7 @@
     </form>
   </div>
 </app-card>
+
 <!--Data Previsualization-->
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
@@ -339,52 +388,137 @@
     </app-pagination>
   </div>
 </app-card>
+
 <!--Scan Folio-->
-<app-card [header]="true" [footer]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Escaneo</h5>
-  </div>
+
+<app-card>
   <div body>
-    <form class="form-material" [formGroup]="form">
-      <div class="row mb-3 mt-3">
-        <div class="col-lg-3 col-md-6 col-sm-6 col-6 mb-3 mt-3">
-          <form-field [control]="form.get('scanFolio')" label="Folio Escaneo">
-            <input
-              formControlName="scanFolio"
-              type="number"
-              class="form-control" />
-          </form-field>
-        </div>
-        <div
-          class="col-lg-3 col-md-6 col-sm-6 col-6 mb-3 mt-3 align-self-center">
-          <button class="btn btn-primary btn-sm active w-100">Escanear</button>
+    <div class="row">
+      <div class="col-md-2 col-sm-12 col-xs-12">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              (click)="generateFoli()"
+              tooltip="Generar Folio de Escaneo y Solicitud"
+              containerclass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-1">
+              <i class="bx bxs-file-find"></i>
+            </button>
+          </div>
         </div>
       </div>
-    </form>
+      <div class="col-md-2 col-sm-12 col-xs-12">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              tooltip="Escanear"
+              containerclass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-1">
+              <i class="bx bxs-file"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-12 col-xs-12 mt-1">
+        <form [formGroup]="form" class="form-material">
+          <div class="col-md-full col-sm-12 col-xs-12">
+            <form-field
+              label="Folio de escaneo"
+              [control]="form.get('scanFolio')">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="scanFolio" />
+            </form-field>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-2 col-sm-12 col-xs-12">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              (click)="generate()"
+              tooltip="Generar Folio de Escaneo y Solicitud"
+              containerclass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-1">
+              <i class="bx bxs-file-find"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2 col-sm-12 col-xs-12">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              tooltip="Generar Folio de Escaneo y Solicitud"
+              containerclass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-1">
+              <i class="bx bxs-file-find"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </app-card>
+
+<!--<div class="ch-content" header>
+      <h5 class="title">Escaneo</h5>
+    </div>
+    <div body>
+      <form class="form-material" [formGroup]="form">
+        <div class="row mb-3 mt-3">
+          <div class="col-lg-3 col-md-6 col-sm-6 col-6 mb-3 mt-3">
+            <form-field [control]="form.get('scanFolio')" label="Folio Escaneo">
+              <input formControlName="scanFolio" type="number" class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-lg-3 col-md-6 col-sm-6 col-6 mb-3 mt-3 align-self-center">
+            <button class="btn btn-primary btn-sm active w-100">Escanear</button>
+          </div>
+        </div>
+      </form>
+    </div>-->
+<!--</app-card>-->
+
 <!--Paragraphs-->
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Párrafos</h5>
+    <div class="col-md-5 buttons">
+      <button
+        (click)="downloadReport()"
+        type="button"
+        class="btn btn-primary active btn-sm">
+        Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+      </button>
+    </div>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
         <div class="col-12 mb-3 mt-3">
-          <form-field [control]="form.get('paragraphF')" label="Párafo Inicial">
+          <form-field [control]="form.get('paragraph1')" label="Párafo Inicial">
             <textarea
               rows="3"
               class="form-control"
-              formControlName="paragraphF"></textarea>
+              formControlName="paragraph1"></textarea>
           </form-field>
         </div>
         <div class="col-12 mb-3 mt-3">
-          <form-field [control]="form.get('paragraphL')" label="Párafo Final">
+          <form-field [control]="form.get('paragraph2')" label="Párafo Inicial">
             <textarea
               rows="3"
               class="form-control"
-              formControlName="paragraphL"></textarea>
+              formControlName="paragraph2"></textarea>
+          </form-field>
+        </div>
+        <div class="col-12 mb-3 mt-3">
+          <form-field [control]="form.get('paragraph3')" label="Párafo Final">
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="paragraph3"></textarea>
           </form-field>
         </div>
       </div>

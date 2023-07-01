@@ -6,3 +6,10 @@ export interface IUpdateProceedings
   fileNumber: number;
   transferNumber: number;
 }
+
+export interface ICveAct {
+  pExpedientNumber: string | number;
+  pGoodNumber: string | number;
+  pVarTypeActa1: string;
+  pVarTypeActa2: string;
+}

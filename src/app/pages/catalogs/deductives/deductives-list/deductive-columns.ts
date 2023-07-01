@@ -5,7 +5,7 @@ export const DEDUCTIVE_COLUMNS = {
     sort: false,
   },
   serviceType: {
-    title: 'Tipo de servicio',
+    title: 'Tipo de Servicio',
     type: 'string',
     sort: false,
   },
@@ -15,42 +15,44 @@ export const DEDUCTIVE_COLUMNS = {
     sort: false,
   },
   startingRankPercentage: {
-    title: 'Porcentaje inicial',
+    title: 'Porcentaje Inicial',
     type: 'number',
     sort: false,
   },
   finalRankPercentage: {
-    title: 'Porcentaje final',
+    title: 'Porcentaje Final',
     type: 'number',
     sort: false,
   },
-  creationUser: {
-    title: 'Creado por',
-    type: 'string',
-    sort: false,
-  },
-  editionUser: {
-    title: 'Modificado por',
-    type: 'string',
-    sort: false,
-  },
   version: {
-    title: 'Version',
+    title: 'Versión',
     type: 'number',
     sort: false,
   },
   status: {
     title: 'Estatus',
     type: 'html',
-    valuePrepareFunction: (value: number) => {
-      return value == 0
-        ? '<strong><span class="badge badge-pill badge-success">Activo</span></strong>'
-        : '<strong><span class="badge badge-pill badge-warning">Inactivo</span></strong>';
-    },
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1')
+        return '<strong><span class="badge badge-pill badge-success">Activo</span></strong>';
+      if (value == '0')
+        return '<strong><span class="badge badge-pill badge-warning">Inactivo</span></strong>';
+      return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: '1', title: 'Activo' },
+          { value: '0', title: 'Inactivo' },
+        ],
+      },
+    },
   },
   contractNumber: {
-    title: 'No. de contrato',
+    title: 'Nº de Contrato',
     type: 'number',
     sort: false,
   },

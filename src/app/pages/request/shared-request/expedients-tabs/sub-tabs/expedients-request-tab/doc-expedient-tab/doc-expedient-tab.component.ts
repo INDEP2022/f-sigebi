@@ -191,7 +191,7 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
     if (this.idRequest && this.idExpedient) {
       this.loading = true;
       const body = {
-        xidSolicitud: this.idRequest,
+        //xidSolicitud: this.idRequest,
         xidExpediente: this.idExpedient,
       };
 

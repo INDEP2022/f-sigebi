@@ -34,7 +34,7 @@ export class SaveValueService
   }
 
   update(id: string | number, model: ISaveValue): Observable<Object> {
-    return this.saveValueRepository.update(this.route, id, model);
+    return this.saveValueRepository.updateSaveValue(this.route, id, model);
   }
 
   remove(id: string | number): Observable<Object> {

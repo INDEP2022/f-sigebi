@@ -14,7 +14,7 @@ export const VAULT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  manager: {
+  managerDetail: {
     title: 'Responsable',
     type: 'string',
     sort: false,
@@ -24,7 +24,7 @@ export const VAULT_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value.nameCity;
+      return value != null ? value.nameCity : '';
     },
   },
   stateDetail: {
@@ -32,7 +32,7 @@ export const VAULT_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value.descCondition;
+      return value != null ? value.descCondition : '';
     },
   },
   municipalityDetail: {
@@ -40,7 +40,7 @@ export const VAULT_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value.nameMunicipality;
+      return value != null ? value.nameMunicipality : '';
     },
   },
   localityDetail: {
@@ -48,7 +48,7 @@ export const VAULT_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      return value.nameLocation;
+      return value != null ? value.nameLocation : '';
     },
   },
 };

@@ -8,6 +8,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -27,6 +28,7 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GetGoodResVeService } from 'src/app/core/services/ms-rejected-good/goods-res-dev.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
@@ -97,6 +99,8 @@ export class VerifyComplianceTabComponent
   statusTask: any = '';
   showClarificationButtons: boolean = true;
 
+  goodsModified: any = [];
+
   constructor(
     private fb: FormBuilder,
     private goodServices: GoodService,
@@ -112,12 +116,14 @@ export class VerifyComplianceTabComponent
     private requestHelperService: RequestHelperService,
     private goodResDevService: GetGoodResVeService,
     private goodsQueryService: GoodsQueryService,
-    private chatClarificationService: ChatClarificationsService
+    private chatClarificationService: ChatClarificationsService,
+    private goodFinderService: GoodFinderService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    console.log('Activando tab: verify-compliance-tab');
     // DISABLED BUTTON - FINALIZED //
     this.task = JSON.parse(localStorage.getItem('Task'));
     this.statusTask = this.task.status;
@@ -138,8 +144,8 @@ export class VerifyComplianceTabComponent
       },
     };
 
-    this.columns.unitMeasureName = {
-      ...this.columns.unitMeasureName,
+    this.columns.measureUnitTransferent = {
+      ...this.columns.measureUnitTransferent,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
           this.setUnitTransferent(data);
@@ -168,8 +174,11 @@ export class VerifyComplianceTabComponent
     };
 
     /* Cambia el estado a readonly los checkboxs y el textarea de las tablas */
-    if (this.typeDoc === 'approval-process') {
+    if (this.process == 'process-approval') {
       this.checkboxReadOnly = true;
+      this.requestHelperService.changeReadOnly(this.checkboxReadOnly);
+    } else if (this.process == 'verify-compliance') {
+      this.checkboxReadOnly = false;
       this.requestHelperService.changeReadOnly(this.checkboxReadOnly);
     }
   }
@@ -477,7 +486,14 @@ export class VerifyComplianceTabComponent
   }
 
   clarificationSelected(event: any) {
-    this.clarifyRowSelected = event.selected;
+    console.log(event);
+    if (event.isSelected == true) {
+      this.showClarificationButtons =
+        event.data.answered == 'ACLARADA' ? false : true;
+      this.clarifyRowSelected = event.selected;
+    } else {
+      this.showClarificationButtons = true;
+    }
   }
 
   newClarification() {
@@ -510,6 +526,8 @@ export class VerifyComplianceTabComponent
           this.clarificationData = [];
           if (next) {
             this.loadingClarification = true;
+            //this.isGoodSelected = false
+            //this.getData()
             this.getClarifications(this.goodsSelected[0].id);
           }
         },
@@ -517,16 +535,32 @@ export class VerifyComplianceTabComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    //this.bsModalRef =
-    this.bsModalservice.show(ClarificationFormTabComponent, config);
-    /* this.bsModalRef.content.event.subscribe((res: any) => {
-    }); */
+    this.bsModalRef = this.bsModalservice.show(
+      ClarificationFormTabComponent,
+      config
+    );
+
+    this.bsModalRef.content.event.subscribe((res: any) => {
+      if (res === 'UPDATE-GOOD') {
+        this.goodData.getElements().then(data => {
+          data.map((item: any) => {
+            if (item.id === this.goodsSelected[0].id) {
+              item.processStatus = 'SOLICITAR_ACLARACION';
+              item.goodStatus = 'SOLICITUD DE ACLARACION';
+            }
+          });
+          this.goodData.load(data);
+        });
+      }
+    });
   }
 
   setDescriptionGoodSae(descriptionInput: any) {
     this.goodData['data'].map((item: any) => {
       if (item.id === descriptionInput.data.id) {
         item.descriptionGoodSae = descriptionInput.text;
+
+        this.addGoodModified(item);
       }
     });
     /*this.goodData.getElements().then(data => {
@@ -539,6 +573,14 @@ export class VerifyComplianceTabComponent
     });*/
   }
 
+  addGoodModified(good: any) {
+    const index = this.goodsModified.indexOf(good);
+    if (index != -1) {
+      this.goodsModified[index] = good;
+    } else {
+      this.goodsModified.push(good);
+    }
+  }
   getData() {
     this.loading = true;
     this.params.value.addFilter('requestId', this.requestObject.id);
@@ -548,101 +590,15 @@ export class VerifyComplianceTabComponent
       SearchFilter.IN
     );
     const filter = this.params.getValue().getParams();
-    this.goodServices.getAll(filter).subscribe({
+    this.goodFinderService.goodFinder(filter).subscribe({
       next: resp => {
-        /*let goods = resp.data.filter(x =>  
-          x.processStatus == 'VERIFICAR_CUMPLIMIENTO' || x.processStatus == 'SOLICITAR_ACLARACION'
-        );*/
-
-        var result = resp.data.map(async (item: any) => {
-          const goodTypeName = await this.getTypeGood(item.goodTypeId);
-          item['goodTypeName'] = goodTypeName;
-
-          const physicalStatus = await this.getByTheirStatus(
-            item.physicalStatus,
-            'Estado Fisico'
-          );
-          item['physicstateName'] = physicalStatus;
-
-          const stateConservation = await this.getByTheirStatus(
-            item.stateConservation,
-            'Estado Conservacion'
-          );
-          item['stateConservationName'] = stateConservation;
-
-          const transferentDestiny = await this.getByTheirStatus(
-            item.transferentDestiny,
-            'Destino'
-          );
-          item['transferentDestinyName'] = transferentDestiny;
-
-          const destiny = await this.getByTheirStatus(item.destiny, 'Destino');
-          item['destinyName'] = destiny;
-
-          const unitMeasureName = await this.getTransferentUnit(
-            item.unitMeasure
-          );
-          item['unitMeasureName'] = unitMeasureName;
-        });
-
-        Promise.all(result).then(data => {
-          this.goodData.load(resp.data); //load  new LocalDataSource()
-          this.totalItems = resp.count;
-          this.loading = false;
-        });
+        this.goodData.load(resp.data); //load  new LocalDataSource()
+        this.totalItems = resp.count;
+        this.loading = false;
       },
       error: error => {
         this.loading = false;
       },
-    });
-  }
-
-  getTypeGood(id: number) {
-    return new Promise((resolve, reject) => {
-      if (id) {
-        this.typeRelevantService.getById(id).subscribe({
-          next: resp => {
-            resolve(resp.description);
-          },
-        });
-      } else {
-        resolve(null);
-      }
-    });
-  }
-
-  getByTheirStatus(id: number | string, typeName: string) {
-    return new Promise((resolve, reject) => {
-      if (id) {
-        var params = new ListParams();
-        params['filter.name'] = `$eq:${typeName}`;
-        params['filter.keyId'] = `$eq:${id}`;
-        this.genericService.getAll(params).subscribe({
-          next: resp => {
-            resolve(resp.data.length > 0 ? resp.data[0].description : '');
-          },
-        });
-      } else {
-        resolve(null);
-      }
-    });
-  }
-
-  getTransferentUnit(id: string) {
-    return new Promise((resolve, reject) => {
-      const params = new ListParams();
-      params['filter.uomCode'] = `$eq:${id}`;
-      this.goodsQueryService
-        .getCatMeasureUnitView(params)
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: resp => {
-            resolve(resp.data[0].measureTlUnit);
-          },
-          error: erro => {
-            resolve('');
-          },
-        });
     });
   }
 
@@ -658,8 +614,10 @@ export class VerifyComplianceTabComponent
     this.goodData.getElements().then(data => {
       data.map((item: any) => {
         if (item.id === unitData.id) {
-          item['unitMeasureName'] = unitData.unitDesc;
+          item['measureUnitTransferent'] = unitData.unitDesc;
           item['unitMeasure'] = unitData.unitId;
+
+          this.addGoodModified(item);
         }
       });
       this.goodData.load(data);
@@ -761,7 +719,9 @@ export class VerifyComplianceTabComponent
     if (this.goodsSelected.length === 1) {
       //verifica si el bien ya fue aclarado para desabilitar
       this.showClarificationButtons =
-        this.goodsSelected[0].goodStatus == 'ACLARADO' ? false : true;
+        this.goodsSelected[0].processStatus != 'SOLICITAR_ACLARACION'
+          ? true
+          : false;
       this.loadingClarification = true;
       this.getClarifications(this.goodsSelected[0].id);
       setTimeout(() => {
@@ -793,6 +753,9 @@ export class VerifyComplianceTabComponent
         const clarification = resp.data.map(async (item: any) => {
           const clarifi = await this.getCatClarification(item.clarificationId);
           item['clarificationName'] = clarifi;
+
+          const formatDate = moment(item.rejectionDate).format('DD/MM/YYYY');
+          item.rejectionDate = formatDate;
         });
 
         Promise.all(clarification).then(data => {
@@ -844,6 +807,7 @@ export class VerifyComplianceTabComponent
       confirmButtonText: 'Eliminar',
     }).then(async result => {
       if (result.isConfirmed) {
+        //debugger;
         this.loader.load = true;
         //eliminar el chat clarification
         const idChatClarification =
@@ -855,21 +819,33 @@ export class VerifyComplianceTabComponent
           next: async resp => {
             this.alert('success', 'Eliminado', 'La aclaración fue eliminada');
             this.clarificationData = [];
-            this.getClarifications(this.goodsSelected[0].id);
+            //this.getClarifications(this.goodsSelected[0].id);
+            this.isGoodSelected = false;
+            this.getData();
             this.loader.load = false;
             //actualizar el good-res-dev
+            let body: any = {};
             if (clarifycationLength === 1) {
               const goodResDev: any = await this.getGoodResDev(
                 this.goodsSelected[0].id
               );
               await this.removeDevGood(Number(goodResDev));
-              let body: any = {};
               body['id'] = this.goodsSelected[0].id;
               body['goodId'] = this.goodsSelected[0].goodId;
-              body.processStatus = 'REGISTRO_SOLICITUD';
-              body.goodStatus = 'REGISTRO_SOLICITUD';
+              body.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+              body.goodStatus = 'VERIFICAR_CUMPLIMIENTO';
+              await this.updateGoods(body);
+            } else {
+              body['id'] = this.goodsSelected[0].id;
+              body['goodId'] = this.goodsSelected[0].goodId;
+              body.goodStatus =
+                this.goodsSelected[0].goodStatus != 'ACLARADO'
+                  ? 'ACLARADO'
+                  : 'VERIFICAR_CUMPLIMIENTO';
+              body.processStatus = 'VERIFICAR_CUMPLIMIENTO';
               await this.updateGoods(body);
             }
+            this.updateTable(body.goodStatus, body.processStatus);
           },
           error: error => {
             this.loader.load = false;
@@ -882,6 +858,18 @@ export class VerifyComplianceTabComponent
           },
         });
       }
+    });
+  }
+
+  updateTable(goodStatus: string, processStatus: string) {
+    this.goodData.getElements().then(data => {
+      data.map((item: any) => {
+        if (item.id === this.goodsSelected[0].id) {
+          item.goodStatus = goodStatus;
+          item.processStatus = processStatus;
+        }
+      });
+      this.goodData.load(data);
     });
   }
 
@@ -908,30 +896,45 @@ export class VerifyComplianceTabComponent
       await this.updateDocRequest(id, item);
     });
 
-    const good = this.goodData['data'];
-    setTimeout(() => {
-      good.map(async (item: any, i: number) => {
-        let index = i + 1;
+    const good = this.goodsModified; //this.goodData['data'];
+    if (good.length > 0) {
+      setTimeout(() => {
+        good.map(async (item: any, i: number) => {
+          let index = i + 1;
 
-        let body: any = {};
-        body['id'] = item.id;
-        body['goodId'] = item.goodId;
-        body['descriptionGoodSae'] = item.descriptionGoodSae;
-        body['unitMeasure'] = item.unitMeasure ? item.unitMeasure : null;
-        const result = await this.updateGoods(body);
+          let body: any = {};
+          body['id'] = item.id;
+          body['goodId'] = item.goodId;
+          body['descriptionGoodSae'] = item.descriptionGoodSae;
+          body['unitMeasure'] = item.unitMeasure ? item.unitMeasure : null;
+          const result = await this.updateGoods(body);
 
-        if (result === true) {
-          if (good.length === index) {
-            this.onLoadToast(
-              'success',
-              'Verificación Guardada',
-              'Los datos se guardaron correctamente'
-            );
-            this.confirmation = true;
+          if (result === true) {
+            if (good.length === index) {
+              this.onLoadToast(
+                'success',
+                'Verificación Guardada',
+                'Los datos se guardaron correctamente'
+              );
+              this.confirmation = true;
+              this.goodData.refresh();
+              this.isGoodSelected = false;
+              this.clarificationData = [];
+            }
           }
-        }
-      });
-    }, 400);
+        });
+      }, 400);
+    } else {
+      this.onLoadToast(
+        'success',
+        'Verificación Guardada',
+        'Los datos se guardaron correctamente'
+      );
+      this.confirmation = true;
+      this.goodData.refresh();
+      this.isGoodSelected = false;
+      this.clarificationData = [];
+    }
   }
 
   updateGoods(body: any) {

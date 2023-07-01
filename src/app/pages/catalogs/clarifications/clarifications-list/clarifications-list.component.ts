@@ -9,7 +9,6 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { IClarification } from '../../../../core/models/catalogs/clarification.model';
 import { ClarificationService } from '../../../../core/services/catalogs/clarification.service';
 import { ClarificationsDetailComponent } from '../clarifications-detail/clarifications-detail.component';
@@ -80,6 +79,7 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getClarifications();
         }
       });
@@ -121,18 +121,25 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(clarification.id);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.clarificationService.remove(id).subscribe({
-      next: () => this.getClarifications(),
+      next: () => {
+        this.getClarifications(),
+          this.alert(
+            'success',
+            'Registro de lista de aclaración',
+            'Borrado Correctamente'
+          );
+      },
+      error: error => {},
     });
   }
 }

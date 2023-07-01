@@ -57,6 +57,7 @@ export class NotifyAssetsImproprietyFormComponent
   //Parámetro para detectar que tipo de aclaración es
   typeClarifications: any;
   idSolicitud: any;
+  delegationUser: any;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -74,10 +75,8 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
-    if (this.folioReporte === null) {
-      console.log('Crear folio');
-      this.dictamenSeq();
-    }
+    console.log('Delegación de la solicitud', this.delegationUser);
+    this.dictamenSeq();
     this.withDocumentation = this.idAclara === '1' ? true : false;
     this.initForm1();
     const applicationId = this.idRequest;
@@ -95,48 +94,32 @@ export class NotifyAssetsImproprietyFormComponent
 
     this.clarificationForm = this.fb.group({
       addresseeName: [
-        '',
-        [
-          //Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(50),
-        ],
+        //Nombre Destinatario - Titular de la solicitud
+        this.infoRequest?.nameOfOwner || null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
       positionAddressee: [
-        '',
-        [
-          Validators.pattern(STRING_PATTERN),
-          //Validators.required,
-          Validators.maxLength(50),
-        ],
+        //Cargo Destinatario - Titular de la solicitud
+        this.infoRequest?.holderCharge || null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
       senderName: [
-        this.infoRequest.nameOfOwner,
-        [
-          Validators.pattern(STRING_PATTERN),
-          //Validators.required,
-          Validators.maxLength(50),
-        ],
+        //Nombre Remitente - DELEGADO
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
       senderCharge: [
-        this.infoRequest.holderCharge,
-        [
-          Validators.pattern(STRING_PATTERN),
-          //Validators.required,
-          Validators.maxLength(50),
-        ],
+        //Cargo Remitente - DELEGADO
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
       consistentIn: [
-        '',
-        [
-          Validators.pattern(STRING_PATTERN),
-          //Validators.required,
-          Validators.maxLength(1000),
-        ],
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
       ],
 
       paragraphInitial: [
@@ -150,64 +133,28 @@ export class NotifyAssetsImproprietyFormComponent
 
       clarification: [
         null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          //Validators.required,
-          Validators.maxLength(1000),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
       ],
 
       observations: [
-        this.dataClarifications2?.observations,
+        this.dataClarifications2?.observations || null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
       ],
 
-      /*foundation: [
-        ' ',
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(4000),
-        ],
-      ], */
-
-      /*transmitterId: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(15)],
-      ], */
-
-      /*invoiceLearned: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
-      ], */
-
-      /*worthAppraisal: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
-      ], */
-
-      /*jobClarificationKey: [
-        this.dataClarifications2.chatClarification.keyClarificationPaper,
-        [Validators.pattern(KEYGENERATION_PATTERN), Validators.required],
-      ], */
-
       userAreaCaptures: [
-        this.dataClarifications2?.chatClarification?.areaUserCapture,
+        this.dataClarifications2?.chatClarification?.areaUserCapture || null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
       ],
 
       webMail: [
-        ' ',
-        [
-          //Validators.required,
-          Validators.pattern(EMAIL_PATTERN),
-          Validators.maxLength(30),
-        ],
+        null,
+        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
       ],
     });
   }
 
   async confirm() {
+    console.log('Botón de continuar');
     const typeTransference = this.infoRequest.typeOfTransfer;
     let generaXML: boolean = false;
     if (
@@ -218,13 +165,13 @@ export class NotifyAssetsImproprietyFormComponent
     }
 
     if (typeTransference != 'SAT_SAE' || generaXML) {
-      if (
-        this.typeClarifications == 2 &&
-        typeTransference != 'SAT_SAE' &&
-        typeTransference != 'PGR_SAE'
-      ) {
-        this.improcedenciaTransferentesVoluntarias(); //Aclaración Manual tipo 2
-      }
+      // if (
+      //   this.typeClarifications == 2 &&
+      //   typeTransference != 'SAT_SAE' &&
+      //   typeTransference != 'PGR_SAE'
+      // ) {
+      //   this.improcedenciaTransferentesVoluntarias(); //Aclaración Manual tipo 2
+      // }
       const obtainTypeDocument = await this.obtainTypeDocument(
         false,
         this.infoRequest
@@ -232,22 +179,23 @@ export class NotifyAssetsImproprietyFormComponent
       if (obtainTypeDocument) {
         switch (this.typeDoc) {
           case 'AclaracionAsegurados': {
-            if (this.typeClarifications == 2) {
-              this.oficioImprocedencia(); //Aclaración PGR tipo 2
-            } else {
-              this.aclaracionAsegurados(); //Aclaración PGR tipo 1
-            }
+            this.aclaracionAsegurados(); //Aclaración PGR tipo 1 y 2
 
             break;
           }
           case 'AclaracionTransferentesVoluntarias': {
-            if (this.typeClarifications == 1) {
-              this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
-            }
+            this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
 
             break;
           }
         }
+      }
+
+      if (
+        this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
+        this.dataClarifications2.chatClarification.idClarificationType == '2'
+      ) {
+        this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
       }
     }
 
@@ -267,8 +215,8 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
-      sender: this.clarificationForm.controls['senderName'].value,
+      clarification: this.clarificationForm.controls['clarification'].value,
+      sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
       //foundation: ",",
       //id: 1, //ID primaria
       version: 1,
@@ -276,13 +224,14 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphInitial:
         this.clarificationForm.controls['paragraphInitial'].value,
       applicationId: this.idRequest,
-      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      //managedTo: this.clarificationForm.controls['addresseeName'].value,
+      managedTo: this.infoRequest?.nameOfOwner, //Nombre Destinatario - Titular de la solicitud
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
-      //positionAddressee: this.clarificationForm.controls['positionAddressee'].value,
+      positionAddressee:
+        this.clarificationForm.controls['positionAddressee'].value, //Cargo Destinatario - Titular de la solicitud
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '216',
@@ -318,8 +267,8 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
-      sender: this.clarificationForm.controls['senderName'].value,
+      clarification: this.clarificationForm.controls['clarification'].value,
+      sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
       //foundation: ",",
       //id: 1, //ID primaria
       version: 1,
@@ -327,13 +276,14 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphInitial:
         this.clarificationForm.controls['paragraphInitial'].value,
       applicationId: this.idRequest,
-      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      //managedTo: this.clarificationForm.controls['addresseeName'].value,
+      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre Destinatario - Titular de la solicitud
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
-      //positionAddressee: this.clarificationForm.controls['positionAddressee'].value,
+      positionAddressee:
+        this.clarificationForm.controls['positionAddressee'].value, //cargo Destinatario - Titular de la solicitud
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '111',
@@ -369,8 +319,8 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
-      sender: this.clarificationForm.controls['senderName'].value,
+      clarification: this.clarificationForm.controls['clarification'].value,
+      sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
       //foundation: ",",
       //id: 1, //ID primaria
       version: 1,
@@ -378,13 +328,13 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphInitial:
         this.clarificationForm.controls['paragraphInitial'].value,
       applicationId: this.idRequest,
-      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
-      consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      managedTo: this.infoRequest.nameOfOwner,
+      consistentIn: this.clarificationForm.controls['observations'].value,
+      managedTo: this.infoRequest?.nameOfOwner, //Nombre destinatario - Titular de la solicitud
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
-      positionAddressee: this.infoRequest.holderCharge,
+      positionAddressee: this.infoRequest?.holderCharge, //Cargo destinatario - Titular de la solicitud
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '212',
@@ -420,8 +370,8 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
-      sender: this.clarificationForm.controls['senderName'].value,
+      clarification: this.clarificationForm.controls['clarification'].value,
+      sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
       //foundation: ",",
       //id: 1, //ID primaria
       version: 1,
@@ -429,14 +379,14 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphInitial:
         this.clarificationForm.controls['paragraphInitial'].value,
       applicationId: this.idRequest,
-      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      managedTo: this.clarificationForm.controls['addresseeName'].value,
+      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
       positionAddressee:
-        this.clarificationForm.controls['positionAddressee'].value,
+        this.clarificationForm.controls['positionAddressee'].value, //Cargo destinatario - Titular de la solicitud
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '104',
@@ -472,8 +422,8 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
-      sender: this.clarificationForm.controls['senderName'].value,
+      clarification: this.clarificationForm.controls['clarification'].value,
+      sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
       //foundation: ",",
       //id: 1, //ID primaria
       version: 1,
@@ -481,14 +431,14 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphInitial:
         this.clarificationForm.controls['paragraphInitial'].value,
       applicationId: this.idRequest,
-      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      managedTo: this.clarificationForm.controls['addresseeName'].value,
+      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
       positionAddressee:
-        this.clarificationForm.controls['positionAddressee'].value,
+        this.clarificationForm.controls['positionAddressee'].value, //Cargo destinatario - Titular de la solicitud
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '211',
@@ -524,8 +474,8 @@ export class NotifyAssetsImproprietyFormComponent
 
     //Crear objeto para generar el reporte
     const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.dataClarifications2.clarificationType,
-      sender: this.clarificationForm.controls['senderName'].value,
+      clarification: this.clarificationForm.controls['clarification'].value,
+      sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
       //foundation: ",",
       //id: 1, //ID primaria
       version: 1,
@@ -533,14 +483,14 @@ export class NotifyAssetsImproprietyFormComponent
       paragraphInitial:
         this.clarificationForm.controls['paragraphInitial'].value,
       applicationId: this.idRequest,
-      positionSender: this.clarificationForm.controls['senderCharge'].value,
+      positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      managedTo: this.clarificationForm.controls['addresseeName'].value,
+      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
       positionAddressee:
-        this.clarificationForm.controls['positionAddressee'].value,
+        this.clarificationForm.controls['positionAddressee'].value, //Cargo destinatario - Titular de la solicitud
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '213',
@@ -570,6 +520,7 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   changeStatusAnswered() {
+    console.log('changeStatusAnswered()');
     this.loading = true;
     this.paramsReload.getValue()['filter.clarifiNewsRejectId'] =
       this.dataClarifications2.rejectNotificationId;
@@ -579,11 +530,14 @@ export class NotifyAssetsImproprietyFormComponent
         this.dataChatClarifications = data.data;
         this.updateChatClarification(this.dataChatClarifications[0]);
       },
-      error: error => {},
+      error: error => {
+        console.log('changeStatusAnswered() ERROR');
+      },
     });
   }
 
   updateChatClarification(chatClarifications: IChatClarifications) {
+    console.log('updateChatClarification()');
     const modelChatClarifications: IChatClarifications = {
       id: chatClarifications.id, //ID primaria
       clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
@@ -597,12 +551,14 @@ export class NotifyAssetsImproprietyFormComponent
       .subscribe({
         next: async data => {
           if (data.clarificationTypeId == 1) {
+            console.log('updateAnsweredAcla() TIPO 1');
             this.updateAnsweredAcla(
               data.clarifiNewsRejectId,
               chatClarifications.id,
               modelChatClarifications.goodId
             );
           } else if (data.clarificationTypeId == 2) {
+            console.log('updateAnsweredAcla() TIPO 2');
             this.updateAnsweredImpro(
               data.clarifiNewsRejectId,
               chatClarifications.id,
@@ -611,6 +567,7 @@ export class NotifyAssetsImproprietyFormComponent
           }
         },
         error: error => {
+          console.log('NO SE PUDO ACTUALIZAR');
           this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
         },
       });
@@ -622,6 +579,7 @@ export class NotifyAssetsImproprietyFormComponent
     goodId?: number,
     observations?: string
   ) {
+    console.log('actualizando... 2');
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
@@ -661,7 +619,7 @@ export class NotifyAssetsImproprietyFormComponent
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
-      answered: 'IMPROCEDENCIA',
+      answered: 'EN ACLARACION',
       observations: observations,
     };
 

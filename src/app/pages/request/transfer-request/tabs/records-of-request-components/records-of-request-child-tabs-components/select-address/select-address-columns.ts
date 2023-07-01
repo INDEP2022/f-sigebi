@@ -5,7 +5,7 @@ export const SELECT_ADDRESS_COLUMN = {
     sort: false,
   },
   warehouseAlias: {
-    title: 'Alias Almacen',
+    title: 'Alias Almacén',
     type: 'string',
     sort: false,
   },

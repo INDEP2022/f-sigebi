@@ -34,12 +34,11 @@ export class CalendarService implements ICrudMethods<ICalendar> {
     return this.calendarRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: ICalendar): Observable<Object> {
-    return this.calendarRepository.update(this.route, id, model);
+  update(model: any): Observable<Object> {
+    return this.calendarRepository.newUpdate(this.route, model);
   }
 
   remove(model: any): Observable<Object> {
-    console.log(model);
     return this.calendarRepository.remove3(this.route, model);
   }
 }

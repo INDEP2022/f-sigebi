@@ -132,13 +132,20 @@
         <tab *ngIf="dictumValidate" heading="Datos del Dictamen" id="dictumTab">
           <app-register-dictum-val></app-register-dictum-val>
         </tab>
-        <tab *ngIf="expRequest" heading="Expediente" id="fileTab">
-          <tabset class="md-tabs">
+        <tab
+          *ngIf="expRequest"
+          (selectTab)="expedientSelected(true)"
+          heading="Expediente"
+          id="fileTab">
+          <tabset class="md-tabs" *ngIf="displayExpedient == true">
             <tab
               heading="Documentos Solicitud"
               id="tab1"
               (selectTab)="requestSelected(1)">
-              <app-doc-request-tab [typeDoc]="typeDoc"></app-doc-request-tab>
+              <app-doc-request-tab
+                [typeDoc]="typeDoc"
+                [updateInfo]="updateInfo"
+                [typeModule]="typeModule"></app-doc-request-tab>
             </tab>
             <tab
               heading="Documentos Generales"
@@ -149,13 +156,15 @@
                   id="tab1"
                   (selectTab)="requestSelected(2)">
                   <app-doc-request-tab
-                    [typeDoc]="typeDoc"></app-doc-request-tab>
+                    [typeDoc]="typeDoc"
+                    [typeModule]="typeModule"></app-doc-request-tab>
                 </tab>
                 <tab
                   heading="Solicitudes del Expediente"
                   (selectTab)="requestSelected(3)">
                   <app-expedients-request-tab
-                    [typeDoc]="typeDoc"></app-expedients-request-tab>
+                    [typeDoc]="typeDoc"
+                    [typeModule]="typeModule"></app-expedients-request-tab>
                 </tab>
               </tabset>
             </tab>

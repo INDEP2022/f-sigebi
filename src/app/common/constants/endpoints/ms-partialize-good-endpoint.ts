@@ -4,4 +4,5 @@ export enum PartializeGoodEndpoints {
   Partilize = 'aplication/pa-partialization',
   InsertGood = 'aplication/insertGood',
   PupInsertGood = 'aplication/pupInsertGood',
+  IsPartializeGood = 'aplication/get-padre-bien-parcializacion',
 }

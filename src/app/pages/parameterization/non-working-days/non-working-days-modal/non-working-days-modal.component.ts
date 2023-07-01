@@ -40,13 +40,10 @@ export class NonWorkingDaysModalComponent extends BasePage implements OnInit {
       ],
     });
     if (this.calendar != null) {
-      console.log('editar');
       this.edit = true;
       this.nonWorkingDaysForm.patchValue(this.calendar);
       let date = new Date(this.calendar.id + 'T00:00:00-07:00');
-      console.log(date);
       this.nonWorkingDaysForm.controls['idDate'].setValue(date);
-      console.log(this.nonWorkingDaysForm.controls['idDate'].value);
       this.nonWorkingDaysForm.get('idDate').disable();
     }
   }
@@ -66,24 +63,32 @@ export class NonWorkingDaysModalComponent extends BasePage implements OnInit {
       idDate: this.nonWorkingDaysForm.controls['idDate'].value,
       description: this.nonWorkingDaysForm.controls['description'].value,
     };
-    console.log(form);
     this.calendarService.create(form).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        //this.loading = false;
+        console.log(error.error.message);
+        this.onLoadToast('error', 'El registro ya existe', '');
+        this.loading = false;
+      },
     });
   }
   update() {
     this.loading = true;
-    this.calendarService
-      .update(this.calendar.id.toString(), this.nonWorkingDaysForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    const object = {
+      id: this.calendar.id.toString(),
+      description: this.nonWorkingDaysForm.value.description,
+      idDate: this.nonWorkingDaysForm.value.idDate,
+    };
+    this.calendarService.update(object).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

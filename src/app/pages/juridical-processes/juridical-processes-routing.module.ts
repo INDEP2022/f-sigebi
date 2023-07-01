@@ -13,7 +13,7 @@ import { routesJuridicalProcesses } from 'src/app/common/constants/juridical-pro
 const routes: Routes = [
   {
     // DICTAMINACIONES JURIDICAS
-    path: routesJuridicalProcesses[0].link + '/:id',
+    path: routesJuridicalProcesses[0].link,
     loadChildren: async () =>
       (await import('./juridical-ruling/juridical-ruling.module'))
         .JuridicalRulingModule,
@@ -102,7 +102,7 @@ const routes: Routes = [
   },
   {
     // Lista - Monitor de Abandono por Devolución
-    path: routesJuridicalProcesses[8].link,
+    path: routesJuridicalProcesses[8].link + '/:id',
     loadChildren: async () =>
       (
         await import(

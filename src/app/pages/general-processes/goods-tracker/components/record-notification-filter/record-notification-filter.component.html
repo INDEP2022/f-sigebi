@@ -5,13 +5,12 @@
       label="Expediente"
       class="col-md-3">
       <ng-select
-        class="form-control"
+        class="form-control scroll-line"
         formControlName="expedientNum"
         [items]="[]"
+        addTagText="Agregar Elemento"
         [addTag]="true"
-        [multiple]="true"
-        [selectOnTab]="true"
-        [isOpen]="false">
+        [multiple]="true">
       </ng-select>
     </form-field>
 
@@ -20,19 +19,18 @@
       label="Volante"
       class="col-md-3">
       <ng-select
-        class="form-control"
+        class="form-control scroll-line"
         formControlName="flyerNum"
         [items]="[]"
+        addTagText="Agregar Elemento"
         [addTag]="true"
         (change)="flyerChange($event)"
-        [multiple]="true"
-        [selectOnTab]="true"
-        [isOpen]="false">
+        [multiple]="true">
       </ng-select>
       <!-- <input type="text" formControlName="flyerNum" class="form-control" /> -->
     </form-field>
 
-    <form-field [control]="form.get('judgeNum')" class="col-md-3">
+    <form-field [control]="form.get('judgeNum')" class="col-md-6">
       <!-- <input type="text" formControlName="judgeNum" class="form-control" /> -->
       <ngx-select
         [form]="form"
@@ -59,11 +57,11 @@
       [control]="form.get('flyerType')"
       label="Tipo de Volante"
       class="col-md-2">
-      <!-- <input type="text" formControlName="flyerType" class="form-control" /> -->
       <select
         formControlName="flyerType"
         class="form-control"
         (change)="flyerTypeChange()">
+        <option value="">Todos</option>
         <option value="T">T</option>
         <option value="P">P</option>
       </select>
@@ -71,7 +69,7 @@
     <form-field
       [control]="form.get('officeDate')"
       label="Fecha Oficio Ext&#46;"
-      class="col-md-3">
+      class="col-md-2">
       <input
         type="text"
         (ngModelChange)="fecChange()"
@@ -90,16 +88,26 @@
         class="form-control"
         (change)="protectionChange()" />
     </form-field>
+
+    <form-field
+      [control]="form.get('criminalCase')"
+      label="Toca Penal"
+      class="col-md-4">
+      <input
+        type="text"
+        formControlName="criminalCase"
+        (change)="criminalCaseChange()"
+        class="form-control" />
+    </form-field>
   </div>
 
   <div class="row pt-4">
-    <!-- ! no hay filtro aun -->
-    <!-- <form-field
+    <form-field
       [control]="form.get('indicatedName')"
       label="Nombre Indiciado"
       class="col-md-4">
       <input type="text" formControlName="indicatedName" class="form-control" />
-    </form-field> -->
+    </form-field>
 
     <form-field [control]="form.get('publicMin')" class="col-md-4">
       <!-- <input type="text" formControlName="publicMin" class="form-control" /> -->
@@ -116,29 +124,18 @@
     </form-field>
 
     <form-field
-      [control]="form.get('criminalCase')"
-      label="Toca Penal"
+      [control]="form.get('extOfficeNum')"
+      label="Oficio Ext&#46; No&#46;"
       class="col-md-4">
-      <input
-        type="text"
-        formControlName="criminalCase"
-        (change)="criminalCaseChange()"
-        class="form-control" />
+      <input type="text" formControlName="extOfficeNum" class="form-control" />
     </form-field>
   </div>
 
-  <!-- <div class="row pt-4">
-    <form-field
-      [control]="form.get('extOfficeNum')"
-      label="Oficio Ext&#46; No&#46;"
-      class="col-md-3">
-      <input type="text" formControlName="extOfficeNum" class="form-control" />
-    </form-field>
-
+  <div class="row pt-4">
     <form-field
       [control]="form.get('previusInvestigation')"
       label="Averiguaci&oacute;n Previa"
-      class="col-md-3">
+      class="col-md-4">
       <input
         type="text"
         formControlName="previusInvestigation"
@@ -148,23 +145,23 @@
     <form-field
       [control]="form.get('dictum')"
       label="Dictamen"
-      class="col-md-3">
+      class="col-md-4">
       <input type="text" formControlName="dictum" class="form-control" />
     </form-field>
 
     <form-field
-      [control]="form.get('criminalCase')"
+      [control]="form.get('criminalCause')"
       label="Causa Penal"
-      class="col-md-3">
-      <input type="text" formControlName="criminalCase" class="form-control" />
+      class="col-md-4">
+      <input type="text" formControlName="criminalCause" class="form-control" />
     </form-field>
-  </div> -->
+  </div>
 
   <div class="row">
     <div class="col-md-12">
-      <button class="btn btn-primary active" [disabled]="subloading">
-        {{ subloading ? 'Espere un momento...' : 'Buscar'
-        }}<i class="fa fa-search ml-2"></i>
+      <button class="btn btn-primary active btn-sm">
+        Buscar
+        <i class="bx bx-search-alt bx-sm float-icon"></i>
       </button>
     </div>
   </div>

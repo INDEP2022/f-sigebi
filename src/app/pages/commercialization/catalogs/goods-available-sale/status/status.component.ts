@@ -16,32 +16,14 @@ export class StatusComponent
 {
   comercializationGoods: any[] = [];
   goodsAFSD = data;
-
   rowSelected: boolean = false;
   selectedRow: any = null;
-
   status: any;
-
-  //Columns
   columns = COLUMNS;
 
   constructor(private goodService: GoodService) {
     super();
-
     this.service = this.goodService;
-
-    /* this.settings = {
-      ...this.settings,
-      actions: {
-        ...this.settings.actions,
-        add: true,
-        edit: true,
-        delete: true,
-      },
-      mode: 'inline',
-      hideSubHeader: false,
-      columns: COLUMNS,
-    }; */
     this.service = this.goodService;
     this.ilikeFilters = ['description'];
     this.settings = {
@@ -63,18 +45,35 @@ export class StatusComponent
     this.onLoadToast('success', 'Elemento Creado', '');
   }
 
-  onDeleteConfirm(event: any) {
+  showDeleteAlert(event: any) {
+    const body = {
+      id: event.id,
+      goodId: event.goodId,
+    };
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        event.confirm.resolve();
-        this.goodService.remove(event.data.id).subscribe();
-
-        this.onLoadToast('success', 'Elemento Eliminado', '');
+        this.delete(body);
       }
+    });
+  }
+
+  delete(body: Object) {
+    this.goodService.removeGood(body).subscribe({
+      next: () => {
+        this.alert('success', 'Delegación Regional', 'Borrado');
+        // this.getAllEventTypes();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Delegación Regional',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
     });
   }
 

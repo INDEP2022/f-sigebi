@@ -31,16 +31,16 @@ export class OpinionFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.opinionForm = this.fb.group({
       id: [null],
-      description: [null, Validators.required],
-      noRegistration: [null, Validators.required],
-      dict_ofi: [null, [Validators.required, Validators.maxLength(1)]],
-      areaProcess: [null, [Validators.required, Validators.maxLength(2)]],
+      description: [null, [Validators.required]],
+      dict_ofi: [null, [Validators.maxLength(1)]],
+      areaProcess: [null, [Validators.maxLength(2)]],
     });
     if (this.opinion != null) {
       this.edit = true;
       this.opinionForm.patchValue(this.opinion);
     }
   }
+
   close() {
     this.modalRef.hide();
   }
@@ -60,7 +60,7 @@ export class OpinionFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.opinionService
-      .update(this.opinion.id, this.opinionForm.value)
+      .updateCatalogOpinions(this.opinion.id, this.opinionForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -69,7 +69,8 @@ export class OpinionFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
+    //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

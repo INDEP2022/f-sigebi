@@ -290,7 +290,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     columns: {
       ...LAYOUTS_COLUMNS1,
     },
-    noDataMessage: 'No se encontrarón registros',
+    noDataMessage: 'No se encontraron registros',
   };
 
   data = EXAMPLE_DATA;
@@ -299,7 +299,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     ...TABLE_SETTINGS,
     actions: false,
     columns: { ...LAYOUTS_COLUMNS2 },
-    noDataMessage: 'No se encontrarón registros',
+    noDataMessage: 'No se encontraron registros',
   };
 
   data2 = EXAMPLE_DAT2;
@@ -308,7 +308,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
     ...TABLE_SETTINGS,
     actions: false,
     columns: { ...LAYOUTS_COLUMNS3 },
-    noDataMessage: 'No se encontrarón registros',
+    noDataMessage: 'No se encontraron registros',
   };
 
   data3 = EXAMPLE_DAT3;

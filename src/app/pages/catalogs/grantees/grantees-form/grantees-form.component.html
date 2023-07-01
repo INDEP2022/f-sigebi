@@ -1,17 +1,11 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="granteesForm" class="form-material">
       <div class="row mb-3">
         <div class="col-md-4">
-          <form-field [control]="granteesForm.get('id')" label="Id">
-            <input type="number" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-
-        <div class="col-md-4 offset-md-4">
           <form-field
             [control]="granteesForm.get('usrStatus')"
             label="Estatus de usuario">
@@ -21,10 +15,8 @@
               formControlName="usrStatus" />
           </form-field>
         </div>
-      </div>
 
-      <div class="row mb-3">
-        <div class="col-md-12">
+        <div class="col-md-8">
           <form-field
             [control]="granteesForm.get('description')"
             label="Descripci&oacute;n">
@@ -48,7 +40,12 @@
           <form-field
             [control]="granteesForm.get('type')"
             label="Tipo donatarios">
-            <input type="number" class="form-control" formControlName="type" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="type"
+              min="0"
+              oninput="if(this.value.length > 3) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
       </div>

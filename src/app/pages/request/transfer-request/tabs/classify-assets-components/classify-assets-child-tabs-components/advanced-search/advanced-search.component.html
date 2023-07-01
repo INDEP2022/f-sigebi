@@ -74,6 +74,12 @@
           [source]="paragraphs">
         </ng2-smart-table>
       </div>
+      <div class="row pt-3" *ngIf="complaince?.code.length != 10">
+        <span class="ms-1 text-danger"
+          ><strong>Nota:</strong> Seleccionar fracciones con 8 dígitos
+          (XXXX.XX.XX)</span
+        >
+      </div>
       <!--  </ng-scrollbar> -->
       <app-pagination
         [params]="params"
@@ -84,6 +90,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
+          [disabled]="complaince?.code.length != 10"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="complianceSelected()">

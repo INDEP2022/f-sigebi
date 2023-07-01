@@ -1,5 +1,6 @@
 export enum GoodTrackerEndpoints {
-  GoodTracker = `trackergood`,
+  GoodTracker = `ind-business-rule`,
   TmpTracker = 'tmptracker',
   GenerateIdentifier = 'tmptracker/generate-identifier',
+  ViewTracker = 't-v-goods-tracker',
 }
