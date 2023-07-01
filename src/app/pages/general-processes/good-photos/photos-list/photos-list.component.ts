@@ -1,15 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import {
-  catchError,
-  firstValueFrom,
-  forkJoin,
-  map,
-  of,
-  takeUntil,
-  throwError,
-} from 'rxjs';
+import { catchError, firstValueFrom, forkJoin, map, of, takeUntil } from 'rxjs';
 import { FileUploadModalComponent } from 'src/app/@standalone/modals/file-upload-modal/file-upload-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
@@ -47,6 +39,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   filesToDelete: string[] = [];
   files: string[] = [];
   form: FormGroup;
+  errorImages: string[] = [];
   constructor(
     private filePhotoService: FilePhotoService,
     private modalService: BsModalService,
@@ -192,6 +185,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
                   console.log(this.errorMessage);
 
                   this.userPermisions = false;
+                  this.userPermisions = true;
                 } else {
                   this.userPermisions = true;
                 }
@@ -224,10 +218,18 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   private deleteSelectedFiles() {
+    this.errorImages = [];
     const obs = this.filesToDelete.map(filename => {
       const index = filename.indexOf('F');
-      return this.deleteFile(+filename.substring(index + 1, index + 5));
+      return this.deleteFile(
+        +filename.substring(index + 1, index + 5),
+        filename
+      );
     });
+    // this.filesToDelete.forEach(filename => {
+    //   const index = filename.indexOf('F');
+    //   this.deleteFile(+filename.substring(index + 1, index + 5));
+    // });
     forkJoin(obs).subscribe({
       complete: () => {
         // this.files = [];
@@ -240,23 +242,29 @@ export class PhotosListComponent extends BasePage implements OnInit {
         this.getData();
       },
       error: err => {
+        this.alert(
+          'error',
+          'Imagenes sin eliminar',
+          this.errorImages.toString()
+        );
         this.filesToDelete = [];
         this.getData();
       },
     });
   }
 
-  private deleteFile(consecNumber: number) {
+  private deleteFile(consecNumber: number, filename: string) {
     return this.filePhotoService
       .deletePhoto(this.goodNumber + '', consecNumber)
       .pipe(
         catchError(error => {
-          this.alert(
-            'error',
-            'Error',
-            'Ocurrió un error al eliminar la imagen'
-          );
-          return throwError(() => error);
+          // this.alert(
+          //   'error',
+          //   'Error',
+          //   'Ocurrió un error al eliminar la imagen'
+          // );
+          this.errorImages.push(filename);
+          return null;
         })
       );
   }
