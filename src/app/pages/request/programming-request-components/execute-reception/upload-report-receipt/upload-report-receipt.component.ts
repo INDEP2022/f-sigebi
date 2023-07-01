@@ -58,7 +58,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       this.getProceeding();
     }
 
-    if (this.typeDoc == 210) {
+    if (this.typeDoc == 210 || this.typeDoc == 106 || this.typeDoc == 107) {
       this.programmingGoods();
       this.getProceedingById();
     }
@@ -319,7 +319,56 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       };
 
       const extension = '.pdf';
-      const docName = 'Recibo Resguardo';
+      const docName = this.folioPro;
+
+      console.log('formData', formData);
+      this.wContentService
+        .addDocumentToContent(
+          docName,
+          extension,
+          JSON.stringify(formData),
+          this.selectedFile,
+          extension
+        )
+        .subscribe({
+          next: response => {
+            const updateReceipt = this.procedding(response.dDocName);
+            if (updateReceipt) {
+              this.alertInfo(
+                'success',
+                'Acción Correcta',
+                'Documento adjuntado correctamente'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.close();
+                  this.modalRef.content.callback(true);
+                }
+              });
+            }
+          },
+        });
+    }
+
+    if (this.typeDoc == 106) {
+      const idProg = this.programming.id;
+      //const idReceipt = this.
+      const formData = {
+        keyDoc: this.programming.id + '-' + this.actId,
+        xNivelRegistroNSBDB: 'Bien',
+        xNoProgramacion: this.programming.id,
+        xNombreProceso: 'Ejecutar Recepción',
+        xDelegacionRegional: this.programming.regionalDelegationNumber,
+        xFolioProgramacion: this.programming.folio,
+        DocTitle: this.folioPro,
+        xnoActa: this.actId,
+        dSecurityGroup: 'Public',
+        xidBien: this.goodId,
+        xidTransferente: this.programming.tranferId,
+        xTipoDocumento: 106,
+      };
+
+      const extension = '.pdf';
+      const docName = this.folioPro;
 
       console.log('formData', formData);
       this.wContentService
