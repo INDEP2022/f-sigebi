@@ -96,4 +96,8 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
       params
     );
   }
+
+  deleteProccess(model: any): Observable<any> {
+    return this.post('', model);
+  }
 }
