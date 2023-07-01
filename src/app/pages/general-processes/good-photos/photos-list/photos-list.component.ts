@@ -198,7 +198,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
                   console.log(this.errorMessage);
 
                   this.userPermisions = false;
-                  this.userPermisions = true;
+                  // this.userPermisions = true;
                 } else {
                   this.userPermisions = true;
                 }
