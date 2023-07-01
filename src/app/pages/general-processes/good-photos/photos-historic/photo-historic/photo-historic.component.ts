@@ -1,4 +1,4 @@
-import { Component, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { takeUntil } from 'rxjs';
 import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
 import { NO_IMAGE_FOUND, PhotoClassComponent } from '../../models/photo-class';
@@ -12,6 +12,8 @@ export class PhotoHistoricComponent
   extends PhotoClassComponent
   implements OnInit
 {
+  @Input() userDeleted: string;
+  @Input() deletedDate: Date;
   usuarioElimina: string =
     'Usuario eliminó moto1.jpg ' + 'Nombre: SIGEBIADMON Fecha: 29/06/2023';
   constructor(private service: FilePhotoService) {
@@ -31,10 +33,15 @@ export class PhotoHistoricComponent
     let index = this.filename.indexOf('F');
     console.log(index);
     this.service
-      .getById(this.goodNumber, +this.filename.substring(index + 1, index + 5))
+      .getByIdHistoric(
+        this.goodNumber,
+        +this.filename.substring(index + 1, index + 11)
+      )
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
+          console.log(response);
+
           this.loading = false;
           this.error = false;
           // this.usuarioElimina = response.usuarioElimina;
