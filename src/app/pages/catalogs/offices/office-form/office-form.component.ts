@@ -69,10 +69,19 @@ export class OfficeFormComponent extends BasePage implements OnInit {
     if (this.office != null) {
       this.edit = true;
       this.officeForm.patchValue(this.office);
+      this.updateValidationForm();
     }
   }
   close() {
     this.modalRef.hide();
+  }
+
+  updateValidationForm() {
+    Object.keys(this.officeForm.controls).forEach(key => {
+      const control = this.officeForm.controls[key];
+      control.markAsDirty();
+      control.updateValueAndValidity();
+    });
   }
 
   confirm() {

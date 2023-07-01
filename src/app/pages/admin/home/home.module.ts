@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { NgxCurrencyModule } from 'ngx-currency';
+// import { NgxCurrencyModule } from 'ngx-currency';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -49,7 +49,7 @@ export const customCurrencyMaskConfig = {
     FileUploadModule,
     ClipboardModule,
     FormLoaderComponent,
-    NgxCurrencyModule.forRoot(customCurrencyMaskConfig),
+    // NgxCurrencyModule.forRoot(customCurrencyMaskConfig),
   ],
 })
 export class HomeModule {}
