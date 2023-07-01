@@ -1,0 +1,75 @@
+<app-modal>
+  <div class="w-100" header>
+    <div class="d-flex flex-wrap justify-content-between aling-items-center">
+      <h5 class="modal-title">
+        {{
+          editDialogData
+            ? 'Editando Acceso a Usuarios'
+            : 'Agregando Acceso a Usuarios'
+        }}
+      </h5>
+      <div class="buttons">
+        <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
+        <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <!-- *ngIf="editDialogData" -->
+        <div class="col-12">
+          <form-field [control]="form.get('userKey')">
+            <ngx-select
+              [form]="form"
+              [data]="users"
+              (fetchItems)="getUser($event)"
+              value="id"
+              bindLabel="userAndName"
+              control="userKey"
+              label="Clave Usuario"
+              [searchOnInit]="false"
+              [showTooltip]="true"
+              termMaxLength="30">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-6 mt-4">
+          <form-field class="mt-4" [control]="form.get('userRole')" label="Rol">
+            <input
+              type="text"
+              formControlName="userRole"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-6 mt-4">
+          <form-field [control]="form.get('estAccess')">
+            <form-check class="mt-4" label="Estatus" for="Estatus">
+              <input
+                id="Estatus"
+                formControlName="estAccess"
+                class="form-control"
+                type="checkbox" />
+            </form-check>
+            <!-- <input max="100" type="text" formControlName="estAccess" class="form-control" /> -->
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          [disabled]="!form.valid"
+          type="button"
+          class="btn btn-primary active"
+          (click)="guardarRegistro()">
+          {{ editDialogData ? 'Actualizar' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
