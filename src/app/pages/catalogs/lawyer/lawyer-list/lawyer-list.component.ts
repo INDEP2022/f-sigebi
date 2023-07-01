@@ -176,7 +176,8 @@ export class LawyerListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.lawyerService.remove(id).subscribe({
       next: () => {
-        this.getLawyers(), this.alert('success', 'Abogado', 'Borrado');
+        this.getLawyers(),
+          this.alert('success', 'Abogado', 'Borrado Correctemente');
       },
     });
   }

@@ -5,7 +5,12 @@ import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods'
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { INumerary } from '../../models/ms-numerary/numerary.model';
+import {
+  INumerary,
+  IRequesNumeraryCal,
+  IRequesNumeraryDet,
+  IRequesNumeraryEnc,
+} from '../../models/ms-numerary/numerary.model';
 
 @Injectable({
   providedIn: 'root',
@@ -69,5 +74,26 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
 
   getNumeraryCategories(params?: _Params) {
     return this.get(NumeraryEndpoints.NumeraryCategories, params);
+  }
+
+  getNumeraryRequestNumeEnc(params?: ListParams) {
+    return this.get<IListResponse<IRequesNumeraryEnc>>(
+      NumeraryEndpoints.RequestEnc,
+      params
+    );
+  }
+
+  getNumeraryRequestNumeDet(params?: ListParams) {
+    return this.get<IListResponse<IRequesNumeraryDet>>(
+      NumeraryEndpoints.RequestDet,
+      params
+    );
+  }
+
+  getNumeraryRequestNumeCal(params?: ListParams) {
+    return this.get<IListResponse<IRequesNumeraryCal>>(
+      NumeraryEndpoints.RequestCal,
+      params
+    );
   }
 }

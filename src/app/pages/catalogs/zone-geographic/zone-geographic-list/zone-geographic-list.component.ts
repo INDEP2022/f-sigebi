@@ -109,7 +109,7 @@ export class ZoneGeographicListComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.zoneGeographicService.remove(zoneGeographic.id).subscribe({
           next: response => {
-            this.alert('success', 'Zona Geográfica', 'Borrado'),
+            this.alert('success', 'Zona geográfica', 'Borrada Correctamente'),
               this.getExample();
           },
           error: err => {

@@ -115,7 +115,8 @@ export class ParagraphsListComponent extends BasePage implements OnInit {
   delete(id?: number) {
     this.paragraphService.remove(id).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Párrafo', 'Borrado');
+        this.getExample(),
+          this.alert('success', 'Párrafo', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

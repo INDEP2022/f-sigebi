@@ -120,7 +120,8 @@ export class RAsuntDicListComponent extends BasePage implements OnInit {
   delete(asunto: IRAsuntDic) {
     this.rAsuntDicService.remove2(asunto).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'R Asunt Dic', 'Borrado');
+        this.getExample(),
+          this.alert('success', 'R Asunt Dic', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

@@ -126,7 +126,7 @@ export class MunicipalityListComponent extends BasePage implements OnInit {
 
     this.municipalityService.remove2(data).subscribe(
       res => {
-        this.alert('success', 'Municipio', 'Borrado.');
+        this.alert('success', 'Municipio', 'Borrado Correctamente');
         this.getExample();
       },
       err => {

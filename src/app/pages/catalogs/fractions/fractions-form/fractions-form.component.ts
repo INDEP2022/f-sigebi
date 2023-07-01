@@ -24,7 +24,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   norms = new DefaultSelect<INorm>();
   clasifications = new DefaultSelect<ISiabClasification>();
   edit: boolean = false;
-  title: string = 'FRACCIÓN';
+  title: string = 'Fracción';
 
   constructor(
     private modalRef: BsModalRef,

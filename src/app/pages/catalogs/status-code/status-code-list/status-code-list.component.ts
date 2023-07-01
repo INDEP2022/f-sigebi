@@ -127,7 +127,7 @@ export class StatusCodeListComponent extends BasePage implements OnInit {
     };
     this.statusCodeService.remove2(data).subscribe(
       res => {
-        this.alert('success', 'Código de Estado', 'Borrado.');
+        this.alert('success', 'Código de estado', 'Borrado Correctamente');
         this.getExample();
       },
       err => {
