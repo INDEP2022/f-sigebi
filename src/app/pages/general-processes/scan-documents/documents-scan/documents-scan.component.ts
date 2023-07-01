@@ -362,7 +362,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     forkJoin(obs).subscribe({
       complete: () => {
         this.files = [];
-        this.alert('success', 'Escaneo y  Digitaización', 'Borrado');
+        this.alert('success', 'Escaneo y  Digitalización', 'Eliminado');
 
         this.filesToDelete = [];
         this.loadImages(this.folio).subscribe(() => {
