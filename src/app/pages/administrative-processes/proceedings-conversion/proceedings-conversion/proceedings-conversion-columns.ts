@@ -1,4 +1,3 @@
-import { ProceedingsConversionComponent } from './proceedings-conversion.component';
 export const COPY = {
   goodId: {
     title: 'No. Bien',
@@ -47,91 +46,6 @@ export const GOODSEXPEDIENT_COLUMNS_GOODS = {
     sort: false,
   },
 };
-
-export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
-  let objResponse: any = {};
-  if (keyValueObj == 'descripcion') {
-    objResponse = {
-      title: keyValueObj.toLocaleUpperCase(),
-      type: 'custom',
-      sort: false,
-      renderComponent: ProceedingsConversionComponent,
-      valuePrepareFunction: (value: string) => {
-        console.log(value);
-        if (value == 'null' || value == 'undefined') {
-          return '';
-        }
-
-        return value ? value : '';
-      },
-      class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
-        ? WHEEL_COLOR_DATA_COLUMN
-        : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-          ? OFFICE_COLOR_DATA_COLUMN
-          : GOOD_COLOR_DATA_COLUMN,
-    };
-  } else if (keyValueObj == 'descbien') {
-    objResponse = {
-      title: keyValueObj.toLocaleUpperCase(),
-      type: 'custom',
-      sort: false,
-      renderComponent: ProceedingsConversionComponent,
-      valuePrepareFunction: (value: string) => {
-        console.log(value);
-
-        if (value == 'null' || value == 'undefined') {
-          return '';
-        }
-
-        return value ? value : '';
-      },
-      class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
-        ? WHEEL_COLOR_DATA_COLUMN
-        : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-          ? OFFICE_COLOR_DATA_COLUMN
-          : GOOD_COLOR_DATA_COLUMN,
-    };
-  } else if (keyValueObj == 'observaciones') {
-    objResponse = {
-      title: keyValueObj.toLocaleUpperCase(),
-      type: 'custom',
-      sort: false,
-      renderComponent: ProceedingsConversionComponent,
-      valuePrepareFunction: (value: string) => {
-        console.log(value);
-
-        if (value == 'null' || value == 'undefined') {
-          return '';
-        }
-
-        return value ? value : '';
-      },
-      class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
-        ? WHEEL_COLOR_DATA_COLUMN
-        : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-          ? OFFICE_COLOR_DATA_COLUMN
-          : GOOD_COLOR_DATA_COLUMN,
-    };
-  } else {
-    objResponse = {
-      title: keyValueObj.toLocaleUpperCase(),
-      type: 'string',
-      sort: false,
-      class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
-        ? GOODSEXPEDIENT_COLUMNS_GOODS
-        : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-          ? OFFICE_COLOR_DATA_COLUMN
-          : GOOD_COLOR_DATA_COLUMN,
-    };
-  }
-  return objResponse;
-};
-export const GOOD_COLOR_DATA_COLUMN = ''; //'bg-secondary text-dark';
-export const WHEEL_COLOR_DATA_COLUMN = 'bg-success text-light';
-const WHEEL_DATA_COLUMNS = ['idConversion'];
-
-export const OFFICE_COLOR_DATA_COLUMN = 'bg-info text-light';
-const OFFICE_DATA_COLUMNS = ['idConversion'];
 
 export class IGoodStatus {
   goodClassNumber: string | number;
