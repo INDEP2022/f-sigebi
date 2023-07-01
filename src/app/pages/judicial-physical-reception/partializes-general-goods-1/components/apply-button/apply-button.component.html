@@ -6,7 +6,8 @@
       : ''
   "
   size="small"
-  (click)="apply()">
+  (click)="apply()"
+  [disabled]="formGood.invalid || loading || bienesPar.length === 0">
   Aplica
 </div>
 
