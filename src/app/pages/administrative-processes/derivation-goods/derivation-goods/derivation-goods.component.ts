@@ -361,7 +361,12 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         this.goodData = res;
         console.log('res:', res);
         this.goodData = this.goodData.data[0];
-        console.log('goodData:', this.goodData);
+
+        // this.finishConversionBeforeValidation(
+        //   this.goodData.goodId,
+        //   this.goodData.id
+        // );
+        // return;
 
         if (this.goodData.status == 'CVD') {
           this.alert(
@@ -397,25 +402,22 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       goodId: goodId,
       status: 'CVD',
     };
-    console.log('dataBien', dataBien);
-    this.insertHistoryGood();
-
-    // this.serviceGood.update(dataBien).subscribe(
-    //   async res => {
-    //     console.log('ress serviceGood update:', res);
-
-    //     this.insertHistoryGood();
-    //   },
-    //   err => {
-    //     console.log(err);
-    //   }
-    // );
+    this.serviceGood.update(dataBien).subscribe(
+      async res => {
+        if (res) {
+          this.insertHistoryGood(goodId);
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
-  insertHistoryGood() {
+  insertHistoryGood(goodId: any) {
     let user = localStorage.getItem('username');
     let dataBien = {
-      propertyNum: this.no_bien_blk_tipo_bien,
+      propertyNum: goodId,
       status: 'CVD',
       changeDate: new Date(),
       userChange: user,
@@ -423,39 +425,37 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       reasonForChange: 'Conversión de Bienes',
     };
 
-    console.log('dataBien', dataBien);
-
-    console.log('no_bien_blk_tipo_bien', this.no_bien_blk_tipo_bien);
-    this.updateConversion();
-    /*
     this.historyGoodProcess.create(dataBien).subscribe(
       async res => {
         console.log('ress historyGoodProcess res:', res);
+        if (res) {
+          this.updateConversion();
+        }
       },
       err => {
         console.log(err);
       }
     );
-    */
   }
 
   updateConversion() {
     let idConversion = this.form.get('idConversion').value;
     let conversions = {
-      id: idConversion,
-      statusConv: 'estatus conv',
+      id: parseInt(idConversion),
+      statusConv: 2,
     };
     console.log('ress conversions :', conversions);
 
-    /*
     this.convertiongoodService.update(idConversion, conversions).subscribe(
       async res => {
-        console.log('ress updateConversion res:', res);
+        if (res.statusCode === 200 && res.message[0] === 'ok') {
+          this.alert('success', 'Conversión Finalizada', '');
+        }
       },
       err => {
         console.log(err);
       }
-    );*/
+    );
   }
 
   bulkUpload() {
@@ -473,7 +473,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         console.log('res:', res);
         this.goodData = this.goodData.data[0];
         localStorage.setItem('derivationGoodId', this.goodData.goodId);
-        this.router.navigate(['pages/general-processes/goods-characteristics']);
+        this.router.navigate(['pages/general-processes/good-photos']);
       },
       err => {
         console.log(err);

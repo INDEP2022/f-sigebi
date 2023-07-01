@@ -268,7 +268,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
     delete: {
       deleteButtonContent:
-        '<i class="fa fa-file ml-4" text-primary aria-hidden="true"></i> Ver recibo',
+        '<i class="fa fa-eye ml-4" text-primary aria-hidden="true"></i> Ver recibo',
     },
 
     columns: RECEIPT_GUARD_COLUMNS,
@@ -1234,8 +1234,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 .updateGoodProgramming(formData)
                 .subscribe({
                   next: response => {
-                    this.goodsCancelation.clear();
+                    this.goodsReprog.clear();
                     this.getInfoGoodsProgramming();
+                    this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
                   },
                   error: error => {},
                 });
@@ -1270,6 +1271,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   next: response => {
                     this.goodsCancelation.clear();
                     this.getInfoGoodsProgramming();
+                    this.headingCancelation = `Cancelación(${this.goodsCancelation.length})`;
                   },
                   error: error => {},
                 });
@@ -1356,8 +1358,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   if (updateProgrammingGood) {
                     const updateGood = await this.updateGoodGuard();
                     this.goodsGuards.clear();
+                    this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
                     this.getReceiptsGuard();
                     this.getInfoGoodsProgramming();
+
                     this.formLoadingGuard = false;
                   }
                 }
@@ -1385,6 +1389,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               if (updateProgrammingGood) {
                 const updateGood = await this.updateGoodWarehouse();
                 this.goodsWarehouse.clear();
+                this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
                 this.getReceiptsGuard();
                 this.getInfoGoodsProgramming();
               }
