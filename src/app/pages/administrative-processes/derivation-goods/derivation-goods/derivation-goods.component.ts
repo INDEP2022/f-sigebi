@@ -118,6 +118,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
 
   cveActaConv: any;
   tipoValue: any;
+  statusCode: any;
 
   constructor(
     private fb: FormBuilder,
@@ -167,6 +168,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   getAll() {
+    this.loading = false;
     this.form.valueChanges.subscribe(value => {
       this.convertiongoodService
         .getAllGoodsConversions(this.params.getValue(), value.idConversion)
@@ -274,10 +276,11 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.classifier.setValue(res.data[0]['goodClassNumber']);
             this.unitOfMeasure.setValue(res.data[0]['unit']);
             this.destinationLabel.setValue(res.data[0]['labelNumber']);
+            this.statusCode = res.data[0]['status'];
             this.numberGoodSon.setValue(e);
             this.searchStatus(res.data[0]['status']);
             this.getAttributesGood(e);
-            this.flagActa = true;
+            // this.flagActa = true;
             this.flagCargMasiva = false;
             this.flagCargaImagenes = false;
             this.flagFinConversion = false;
@@ -459,9 +462,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   bulkUpload() {
-    this.router.navigate([
-      'pages/administrative-processes/derivation-goods/bulk-upload',
-    ]);
+    this.router.navigate(
+      ['pages/administrative-processes/derivation-goods/bulk-upload'],
+      {
+        queryParams: {
+          pGoodFatherNumber: this.form.value.numberGoodFather,
+        },
+      }
+    );
   }
 
   imgUpload() {
@@ -482,6 +490,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   openModal(): void {
+    this.loading = false;
     this.modalService.show(GoodsComponent, {
       initialState: {},
       class: 'modal-lg modal-dialog-centered',
@@ -583,8 +592,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         }
       },
     };
-    this.loading = true;
-    this.modalService.show(ActaConvertionFormComponent, config);
     this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
       queryParams: {
         actConvertion: this.form.value.actConvertion,
