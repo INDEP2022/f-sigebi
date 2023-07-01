@@ -186,7 +186,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
       this.searchTabForm.get('noBien').value === '' ||
       this.searchTabForm.get('noBien').value === null
     ) {
-      this.onLoadToast('info', 'Debe seleccionar un bien');
+      this.alert('warning', 'Datos Búsqueda', 'Debe seleccionar un bien', '');
       return;
     }
     this.dataSearch.emit({
@@ -249,9 +249,11 @@ export class SearchTabComponent extends BasePage implements OnInit {
       this.searchTabForm.get('noBien').value === '' ||
       this.searchTabForm.get('noBien').value === null
     ) {
-      this.onLoadToast('info', 'Debe seleccionar un bien');
+      this.alert('warning', 'Datos Búsqueda', 'Debe seleccionar un bien');
       return;
     }
+    const array: any[] = [this.searchTabForm.get('noBien').value];
+    localStorage.setItem('selectedGoodsForPhotos', JSON.stringify(array));
     const data = {
       id: this.searchTabForm.get('noBien').value,
     };
