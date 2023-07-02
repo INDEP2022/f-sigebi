@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { takeUntil } from 'rxjs';
 import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
-import { firstFormatDate } from 'src/app/shared/utils/date';
+import { formatForIsoDate } from 'src/app/shared/utils/date';
 import { NO_IMAGE_FOUND, PhotoClassComponent } from '../../models/photo-class';
 
 @Component({
@@ -29,9 +29,9 @@ export class PhotoHistoricComponent
       this.filenameChange();
     }
     if (changes['deletedDate']) {
-      this.deletedDateString = firstFormatDate(
-        changes['deletedDate'].currentValue
-      );
+      this.deletedDateString =
+        formatForIsoDate(changes['deletedDate'].currentValue + '', 'string') +
+        '';
     }
   }
 

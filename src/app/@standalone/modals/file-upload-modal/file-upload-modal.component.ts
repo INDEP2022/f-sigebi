@@ -58,7 +58,9 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.accept);
+  }
 
   testFiles(uploadEvent: IUploadEvent) {
     const { index, fileEvents } = uploadEvent;

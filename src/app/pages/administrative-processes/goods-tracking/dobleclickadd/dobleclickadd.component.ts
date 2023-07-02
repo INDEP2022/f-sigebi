@@ -373,6 +373,10 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
       });
     } else if (screen == 'FIMGFOTBIEADD') {
       // No hay url
+      let arr = [];
+      arr.push(no_bien);
+      const dataString = JSON.stringify(arr);
+      localStorage.setItem('selectedGoodsForPhotos', dataString);
       this.router.navigate([`/pages/general-processes/good-photos`], {
         queryParams: {
           origin: 'FMATENCBIENESREV',
