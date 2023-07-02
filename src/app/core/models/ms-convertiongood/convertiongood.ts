@@ -37,3 +37,17 @@ export interface IConvertiongood {
   typeConv: string | number;
   pwAccess: string;
 }
+
+export class IActasConversion {
+  cve_acta_conv: number | string;
+  tipo_acta: string;
+  emisora: string;
+  administra: string;
+  ejecuta: string;
+  folio_universal: string;
+  parrafo1: string;
+  parrafo2: string;
+  parrafo3: string;
+  no_registro: string;
+  nb_origen: string;
+}

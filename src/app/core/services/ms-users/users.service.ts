@@ -115,6 +115,26 @@ export class UsersService extends HttpService {
     return this.post(`factadboficiogestrel/delete-when-button-pressed`, body);
   }
 
+  deleteAccessUsers(id: any) {
+    return this.delete<IListResponse<IUserAccess>>(
+      `${UserEndpoints.VigSupervisionAccess}/${id}`
+    );
+  }
+
+  editAccessUsers(body: any) {
+    return this.put<IListResponse<IUserAccess>>(
+      UserEndpoints.VigSupervisionAccess,
+      body
+    );
+  }
+
+  createAccessUsers(body: any) {
+    return this.post<IListResponse<IUserAccess>>(
+      UserEndpoints.VigSupervisionAccess,
+      body
+    );
+  }
+
   /*
  getUsersJob() {
     return this.get<IListResponse<ISegUsers>>(UserEndpoints.SegUsers);

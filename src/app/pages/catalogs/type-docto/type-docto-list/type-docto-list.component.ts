@@ -107,7 +107,7 @@ export class TypeDoctoListComponent extends BasePage implements OnInit {
         //Ejecutar el servicio
         this.typeDoctoService.remove(typeDocto.id).subscribe({
           next: response => {
-            this.alert('success', 'Tipo Docto', 'Borrado');
+            this.alert('success', 'Tipo docto', 'Borrado Correctamente');
             this.getExample();
           },
           error: err => {

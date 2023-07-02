@@ -123,7 +123,7 @@ export class NonDeliveryReasonsListComponent
     this.nonDeliveryReasonsService.remove(id).subscribe({
       next: () => {
         this.getExample(),
-          this.alert('success', 'Motivo no entrega', 'Borrado');
+          this.alert('success', 'Motivo no entrega', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

@@ -1,4 +1,3 @@
-import { ProceedingsConversionComponent } from './proceedings-conversion.component';
 export const COPY = {
   goodId: {
     title: 'No. Bien',
@@ -35,107 +34,18 @@ export const GOODSEXPEDIENT_COLUMNS_GOODS = {
   },
   acta: {
     title: 'Acta',
-    type: 'custom',
+    type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.cveActa;
     },
   },
-  // status: {
-  //   title: 'Estatus',
-  //   type: 'string',
-  //   sort: false,
-  // },
-  rowClassFunction: (row: any) => {
-    if (row.status === 'CNE') {
-      return 'row-verde';
-    } else if (row.status === 'RRE' || row.status === 'VXR') {
-      return 'row-negro';
-    } else {
-      return 'row-verde';
-    }
+  status: {
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
   },
 };
-
-export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
-  let objResponse: any = {};
-  if (keyValueObj == 'descripcion') {
-    objResponse = {
-      title: keyValueObj.toLocaleUpperCase(),
-      type: 'custom',
-      sort: false,
-      renderComponent: ProceedingsConversionComponent,
-      valuePrepareFunction: (value: string) => {
-        if (value == 'null' || value == 'undefined') {
-          return '';
-        }
-
-        return value ? value : '';
-      },
-      class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
-        ? WHEEL_COLOR_DATA_COLUMN
-        : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-        ? OFFICE_COLOR_DATA_COLUMN
-        : GOOD_COLOR_DATA_COLUMN,
-    };
-  } else if (keyValueObj == 'descbien') {
-    objResponse = {
-      title: keyValueObj.toLocaleUpperCase(),
-      type: 'custom',
-      sort: false,
-      renderComponent: ProceedingsConversionComponent,
-      valuePrepareFunction: (value: string) => {
-        if (value == 'null' || value == 'undefined') {
-          return '';
-        }
-
-        return value ? value : '';
-      },
-      class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
-        ? WHEEL_COLOR_DATA_COLUMN
-        : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-        ? OFFICE_COLOR_DATA_COLUMN
-        : GOOD_COLOR_DATA_COLUMN,
-    };
-  } else if (keyValueObj == 'observaciones') {
-    objResponse = {
-      title: keyValueObj.toLocaleUpperCase(),
-      type: 'custom',
-      sort: false,
-      renderComponent: ProceedingsConversionComponent,
-      valuePrepareFunction: (value: string) => {
-        if (value == 'null' || value == 'undefined') {
-          return '';
-        }
-
-        return value ? value : '';
-      },
-      class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
-        ? WHEEL_COLOR_DATA_COLUMN
-        : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-        ? OFFICE_COLOR_DATA_COLUMN
-        : GOOD_COLOR_DATA_COLUMN,
-    };
-  } else {
-    objResponse = {
-      title: keyValueObj.toLocaleUpperCase(),
-      type: 'string',
-      sort: false,
-      class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
-        ? GOODSEXPEDIENT_COLUMNS_GOODS
-        : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-        ? OFFICE_COLOR_DATA_COLUMN
-        : GOOD_COLOR_DATA_COLUMN,
-    };
-  }
-  return objResponse;
-};
-export const GOOD_COLOR_DATA_COLUMN = ''; //'bg-secondary text-dark';
-export const WHEEL_COLOR_DATA_COLUMN = 'bg-success text-light';
-const WHEEL_DATA_COLUMNS = ['idConversion'];
-
-export const OFFICE_COLOR_DATA_COLUMN = 'bg-info text-light';
-const OFFICE_DATA_COLUMNS = ['idConversion'];
 
 export class IGoodStatus {
   goodClassNumber: string | number;
@@ -147,3 +57,35 @@ export class IConverGoodCreate {
   goodNumber: number | string;
   proceedingNumber: number;
 }
+export const ACTAS = {
+  cve_acta_conv: {
+    title: 'No. Conversión',
+    type: 'number',
+    sort: false,
+  },
+  tipo_acta: {
+    title: 'Typo de Acta',
+    type: 'string',
+    sort: false,
+  },
+  folio_universal: {
+    title: 'Folio Universal',
+    type: 'string',
+    sort: false,
+  },
+  emisora: {
+    title: 'Emisora',
+    type: 'string',
+    sort: false,
+  },
+  administra: {
+    title: 'Administra',
+    type: 'string',
+    sort: false,
+  },
+  ejecuta: {
+    title: 'Ejecuta',
+    type: 'string',
+    sort: false,
+  },
+};

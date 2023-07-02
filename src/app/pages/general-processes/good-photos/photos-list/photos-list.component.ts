@@ -3,22 +3,24 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import {
   catchError,
+  concat,
+  debounceTime,
   firstValueFrom,
-  forkJoin,
   map,
   of,
   takeUntil,
-  throwError,
 } from 'rxjs';
 import { FileUploadModalComponent } from 'src/app/@standalone/modals/file-upload-modal/file-upload-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { FilePhotoSaveZipService } from 'src/app/core/services/ms-ldocuments/file-photo-save-zip.service';
 import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared';
 import { PhotosHistoricComponent } from '../photos-historic/photos-historic.component';
+import { GoodPhotosService } from '../services/good-photos.service';
 
 @Component({
   selector: 'app-photos-list',
@@ -47,12 +49,15 @@ export class PhotosListComponent extends BasePage implements OnInit {
   filesToDelete: string[] = [];
   files: string[] = [];
   form: FormGroup;
+  errorImages: string[] = [];
   constructor(
     private filePhotoService: FilePhotoService,
     private modalService: BsModalService,
     private segAppService: SecurityService,
     private dictationService: DictationService,
     private proceedingService: ProceedingsService,
+    private filePhotoSaveZipService: FilePhotoSaveZipService,
+    private service: GoodPhotosService,
     private fb: FormBuilder
   ) {
     super();
@@ -176,6 +181,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
       .subscribe({
         next: async response => {
           if (response) {
+            console.log(response);
             this.files = [...response];
             if (response.length > 0) {
               const last = response[response.length - 1];
@@ -192,6 +198,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
                   console.log(this.errorMessage);
 
                   this.userPermisions = false;
+                  // this.userPermisions = true;
                 } else {
                   this.userPermisions = true;
                 }
@@ -202,7 +209,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
       });
   }
 
-  async confirmDelete() {
+  async confirmDelete(all = false) {
     if (this.disabledDeletePhotos()) return;
     if (this.filesToDelete.length < 1) {
       this.alert(
@@ -217,46 +224,63 @@ export class PhotosListComponent extends BasePage implements OnInit {
       'Advertencia',
       '¿Estás seguro que desea eliminar las imágenes seleccionadas?'
     );
+    if (all) {
+      this.filesToDelete = [...this.files];
+    }
 
     if (result.isConfirmed) {
       this.deleteSelectedFiles();
     }
   }
 
-  private deleteSelectedFiles() {
+  private async deleteSelectedFiles() {
+    this.errorImages = [];
     const obs = this.filesToDelete.map(filename => {
       const index = filename.indexOf('F');
-      return this.deleteFile(+filename.substring(index + 1, index + 5));
+      return this.deleteFile(
+        +filename.substring(index + 1, index + 5),
+        filename
+      ).pipe(debounceTime(500));
     });
-    forkJoin(obs).subscribe({
-      complete: () => {
-        // this.files = [];
-        this.alert(
-          'success',
-          'Eliminación de Fotos',
-          'Se eliminaron las fotos correctamente'
-        );
-        this.filesToDelete = [];
-        this.getData();
-      },
-      error: err => {
-        this.filesToDelete = [];
-        this.getData();
-      },
-    });
+    concat(...obs)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        complete: () => {
+          // this.files = [];
+          this.alert(
+            'success',
+            'Eliminación de Fotos',
+            'Se eliminaron las fotos correctamente'
+          );
+          this.filesToDelete = [];
+          this.service.deleteEvent.next(true);
+          this.getData();
+        },
+        error: err => {
+          this.alert(
+            'error',
+            'Imagenes sin eliminar',
+            this.errorImages.toString()
+          );
+          this.filesToDelete = [];
+          this.service.deleteEvent.next(true);
+          this.getData();
+        },
+      });
   }
 
-  private deleteFile(consecNumber: number) {
+  private deleteFile(consecNumber: number, filename: string) {
     return this.filePhotoService
       .deletePhoto(this.goodNumber + '', consecNumber)
       .pipe(
         catchError(error => {
-          this.alert(
-            'error',
-            'Error',
-            'Ocurrió un error al eliminar la imagen'
-          );
-          return throwError(() => error);
+          // this.alert(
+          //   'error',
+          //   'Error',
+          //   'Ocurrió un error al eliminar la imagen'
+          // );
+          this.errorImages.push(filename);
+          return null;
         })
       );
   }
@@ -270,6 +294,26 @@ export class PhotosListComponent extends BasePage implements OnInit {
         uploadFiles: false,
         service: this.filePhotoService,
         identificator: this.goodNumber + '',
+        titleFinishUpload: 'Imagenes cargadas correctamente',
+        questionFinishUpload: '¿Desea subir más imagenes?',
+        callback: (refresh: boolean) => {
+          console.log(refresh);
+          this.fileUploaderClose(refresh);
+        },
+      },
+    };
+    this.modalService.show(FileUploadModalComponent, config);
+  }
+
+  openZipUploader() {
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        accept: '.zip',
+        uploadFiles: false,
+        service: this.filePhotoSaveZipService,
+        identificator: this.goodNumber + '',
+        multiple: false,
         titleFinishUpload: 'Imagenes cargadas correctamente',
         questionFinishUpload: '¿Desea subir más imagenes?',
         callback: (refresh: boolean) => {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -74,6 +75,7 @@ export class GenerateReceiptGuardFormComponent
       chargeSae: [null, [Validators.required]],
       contractNumber: [null],
       vigencia: [null],
+      receiptDate: [null],
     });
     this.params.getValue()['filter.id'] = this.receiptId;
     this.receptionGoodService.getReceptions(this.params.getValue()).subscribe({
@@ -85,6 +87,9 @@ export class GenerateReceiptGuardFormComponent
   }
 
   confirm() {
+    const now = moment(new Date().toLocaleString(), 'DD/MM/YYYY HH:mm:ss');
+
+    this.form.get('receiptDate').setValue(now);
     console.log('this.form', this.form.value);
     this.receptionGoodService
       .updateReceiptGuard(this.receiptId, this.form.value)

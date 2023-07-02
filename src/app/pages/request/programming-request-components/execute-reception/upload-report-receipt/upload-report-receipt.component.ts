@@ -31,6 +31,8 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   receipt: IReceipt;
   proceeding: IProceedings;
   guardReception: any;
+  actId: number;
+  folioPro: string = '';
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -45,6 +47,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('this.typeDoc', this.typeDoc);
     this.prepareForm();
     if (this.typeDoc == 185 || this.typeDoc == 186) {
       this.getGoodsRelReceipt();
@@ -53,6 +56,11 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     if (this.typeDoc == 103) {
       this.getReceipts();
       this.getProceeding();
+    }
+
+    if (this.typeDoc == 210 || this.typeDoc == 106 || this.typeDoc == 107) {
+      this.programmingGoods();
+      this.getProceedingById();
     }
     this.getProgramming();
   }
@@ -63,6 +71,17 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     });
   }
 
+  getProceedingById() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = this.actId;
+    this.proceedingService.getProceedings(params.getValue()).subscribe({
+      next: response => {
+        this.folioPro = response.data[0].folioProceedings;
+      },
+      error: error => {},
+    });
+  }
+
   getGoodsRelReceipt() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.receiptGuardId'] = this.receiptGuards.id;
@@ -70,6 +89,19 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       next: response => {
         response.data.map((item: IRecepitGuard) => {
           this.goodId += item.idGood + ' ';
+        });
+      },
+      error: error => {},
+    });
+  }
+
+  programmingGoods() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.programming.id;
+    this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+      next: response => {
+        response.data.map(item => {
+          this.goodId += item.goodId;
         });
       },
       error: error => {},
@@ -267,6 +299,104 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           },
         });
     }
+
+    if (this.typeDoc == 210) {
+      const idProg = this.programming.id;
+      //const idReceipt = this.
+      const formData = {
+        keyDoc: this.programming.id + '-' + this.actId,
+        xNivelRegistroNSBDB: 'Bien',
+        xNoProgramacion: this.programming.id,
+        xNombreProceso: 'Ejecutar Recepción',
+        xDelegacionRegional: this.programming.regionalDelegationNumber,
+        xFolioProgramacion: this.programming.folio,
+        DocTitle: this.folioPro,
+        xnoActa: this.actId,
+        dSecurityGroup: 'Public',
+        xidBien: this.goodId,
+        xidTransferente: this.programming.tranferId,
+        xTipoDocumento: 210,
+      };
+
+      const extension = '.pdf';
+      const docName = this.folioPro;
+
+      console.log('formData', formData);
+      this.wContentService
+        .addDocumentToContent(
+          docName,
+          extension,
+          JSON.stringify(formData),
+          this.selectedFile,
+          extension
+        )
+        .subscribe({
+          next: response => {
+            const updateReceipt = this.procedding(response.dDocName);
+            if (updateReceipt) {
+              this.alertInfo(
+                'success',
+                'Acción Correcta',
+                'Documento adjuntado correctamente'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.close();
+                  this.modalRef.content.callback(true);
+                }
+              });
+            }
+          },
+        });
+    }
+
+    if (this.typeDoc == 106) {
+      const idProg = this.programming.id;
+      //const idReceipt = this.
+      const formData = {
+        keyDoc: this.programming.id + '-' + this.actId,
+        xNivelRegistroNSBDB: 'Bien',
+        xNoProgramacion: this.programming.id,
+        xNombreProceso: 'Ejecutar Recepción',
+        xDelegacionRegional: this.programming.regionalDelegationNumber,
+        xFolioProgramacion: this.programming.folio,
+        DocTitle: this.folioPro,
+        xnoActa: this.actId,
+        dSecurityGroup: 'Public',
+        xidBien: this.goodId,
+        xidTransferente: this.programming.tranferId,
+        xTipoDocumento: 106,
+      };
+
+      const extension = '.pdf';
+      const docName = this.folioPro;
+
+      console.log('formData', formData);
+      this.wContentService
+        .addDocumentToContent(
+          docName,
+          extension,
+          JSON.stringify(formData),
+          this.selectedFile,
+          extension
+        )
+        .subscribe({
+          next: response => {
+            const updateReceipt = this.procedding(response.dDocName);
+            if (updateReceipt) {
+              this.alertInfo(
+                'success',
+                'Acción Correcta',
+                'Documento adjuntado correctamente'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.close();
+                  this.modalRef.content.callback(true);
+                }
+              });
+            }
+          },
+        });
+    }
   }
 
   updateReceiptGuard(docName: string) {
@@ -285,6 +415,24 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           },
           error: error => {},
         });
+    });
+  }
+
+  procedding(docName: string) {
+    return new Promise((resolve, reject) => {
+      const formData: any = {
+        id: this.actId,
+        idPrograming: this.programming.id,
+        statusProceeedings: 'CERRADO',
+        id_content: docName,
+      };
+
+      this.proceedingService.updateProceeding(formData).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {},
+      });
     });
   }
 

@@ -124,7 +124,7 @@ export class StationListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.stationService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Emisora', 'Borrado');
+        this.alert('success', 'Emisora', 'Borrada Correctamente');
         this.getExample();
       },
       error: error => {

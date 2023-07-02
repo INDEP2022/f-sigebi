@@ -37,7 +37,6 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
   @Input() inventary: any;
   @Input() loadInventary: boolean = false;
   @Input() set goodChange(value: number) {
-    console.error('ESTE es el valor de Value', value);
     this._goodChange = value;
     if (value > 0) this.getData();
   }
@@ -73,13 +72,9 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
 
   private getData() {
     // console.log(this.clasification);
-    console.error(
-      'LLEGO A GET_DATA Y ESTE ES EL CLASIFICADOR:',
-      this.clasification
-    );
     this.loading = true;
     const filterParams = new FilterParams();
-    filterParams.limit = 100;
+    filterParams.limit = 120;
     filterParams.addFilter('classifGoodNumber', this.clasification);
     filterParams.addFilter('columnNumber', '51', SearchFilter.NOTIN);
     const good = this.good as any;
@@ -89,8 +84,6 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          console.error('ATRIBUTOS DEL BIEN', response.data);
-
           this.val_atributos_inmuebles = 0;
 
           if (response.data && response.data.length > 0) {
@@ -117,7 +110,6 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
                   ) {
                   }
                 }
-                console.log(this.inventary);
                 if (this.inventary) {
                   return {
                     column,
@@ -162,7 +154,6 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
                   };
                 }
               });
-              console.log('Data', this.dataInventary);
               this.totalItems = this.dataInventary.length;
               this.dataTemp = [...this.dataInventary];
               this.getPaginated(this.params.value);
@@ -266,11 +257,9 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.onSelect.subscribe(data => {
-      console.log(this.loadInventary);
       if (this.loadInventary) {
         this['data'] = this['dataInventary'];
       }
-      console.log(this);
       if (data) callback(data, this);
       // console.log(this['data']=this['dataInventary']);
     });
@@ -401,6 +390,8 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     const column = 'val' + item.columnNumber;
     return item.dataType === 'D' || item.attribute.includes('FECHA')
       ? formatForIsoDate(good[column], 'string')
+      : good[column] === 'NULL'
+      ? ''
       : good[column];
   }
 
