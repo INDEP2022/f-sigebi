@@ -30,7 +30,7 @@
           formControlName="typedblClickAction"
           [clearable]="false"
           [searchable]="false"
-          [readonly]="files.length < 1">
+          [readonly]="files.length < 1 || disabled">
           <ng-option [value]="1">Visualizar</ng-option>
           <ng-option [value]="2">Editar</ng-option>
         </ng-select>
@@ -66,7 +66,7 @@
           role="menu"
           aria-labelledby="button-basic">
           <li role="menuitem">
-            <a class="dropdown-item" (click)="openFileUploader()"
+            <a class="dropdown-item" (click)="openZipUploader()"
               >Carga Masiva (ZIP)</a
             >
           </li>
