@@ -148,6 +148,7 @@ export class DepositAccountStatementComponent
     this.getAccountMovement();
     this.searchMode = false;
     this.searchConfirm = true;
+    this.calculateReturn();
     //this.onConfirmSearch.emit(true);
   }
 
@@ -221,7 +222,7 @@ export class DepositAccountStatementComponent
     } else {
       if (
         this.form.controls['transfDate'].value !=
-        this.form.controls['transfDate'].value
+        this.form.controls['transferDate'].value
       ) {
         // actualizar movimiento cuentas
         //this.accountMovementService.update();
@@ -363,8 +364,6 @@ export class DepositAccountStatementComponent
     }
   }
 
-  interestCheck() {}
-
   validComplementary() {
     this.ok = true;
     const noMovimientoOrigenDeposito = 0;
@@ -438,4 +437,192 @@ export class DepositAccountStatementComponent
       }
     }
   }
+
+  calculateReturn() {
+    let hoy = this.form.controls['cutoffDate'].value;
+    let months: number;
+    let annual: number;
+    let currentMonth: number;
+    let currentYear: number;
+    let calculateDays: number;
+    let accruedInterest: number;
+    let estimatedInterest: number;
+    let periodInterest: number;
+    let capitalization: number;
+    let accumulatedCap: number;
+    let dailyRate: number;
+    let points: number;
+    let anualBasis: number;
+    let bills: number;
+    let percentage: number;
+    let realRate: boolean;
+    let estimatedRate: string = '';
+
+    console.log(this.instrument);
+    if (this.form.controls['transferDate'].value != null) {
+      accruedInterest = 0;
+      estimatedInterest = 0;
+      capitalization = this.form.controls['toReturn'].value;
+      accumulatedCap = capitalization;
+      this.goodParametersService.getById('TASAPROYEC').subscribe({
+        next: resp => {
+          points = Number(resp.initialValue);
+        },
+      });
+      this.goodParametersService.getById('DIASCALINT').subscribe({
+        next: resp => {
+          anualBasis = Number(resp.initialValue);
+        },
+      });
+
+      const monthsBetween: number = this.calculateMonthsBetween(
+        this.form.controls['cutoffDate'].value,
+        this.form.controls['transferDate'].value
+      );
+      const monthsComplete = Math.floor(monthsBetween);
+      const result = monthsComplete + 1;
+      months = result;
+      console.log(months);
+      for (let i_mes_actual = 0; i_mes_actual < months; i_mes_actual++) {
+        //const mes_actual = i_mes_actual + 1;
+        //console.log(`Revisando mes actual: ${mes_actual}`);
+        const fechaInicioInteres: Date = new Date(
+          this.form.controls['transferDate'].value
+        ); // Convertir la fecha a un objeto Date
+        const month: Date = new Date(
+          fechaInicioInteres.setMonth(
+            fechaInicioInteres.getMonth() + i_mes_actual
+          )
+        ); // Agregar i_mes_actual meses a la fecha
+        currentMonth = month.getMonth() + 1;
+
+        const year: Date = new Date(
+          fechaInicioInteres.setMonth(
+            fechaInicioInteres.getMonth() + i_mes_actual
+          )
+        ); // Agregar i_mes_actual meses a la fecha
+        currentYear = year.getFullYear();
+        console.log(this.instrument);
+
+        this.getTasas();
+        /*if(){
+          realRate = true;
+        }else{
+          realRate =false;
+          annual = anualBasis;
+          estimatedRate = annual; 
+        }*/
+
+        if ((i_mes_actual = 0)) {
+          if (months > 1) {
+            const ti_fec_inicio_interes: Date = new Date(); // Asigna aquí la fecha de inicio del período de interés
+
+            const ultimoDiaMes: Date = new Date(
+              this.form.controls['transferDate'].value.getFullYear(),
+              this.form.controls['transferDate'].value.getMonth() + 1,
+              0
+            );
+            // El código anterior crea una nueva fecha que representa el último día del mes correspondiente a 'ti_fec_inicio_interes'
+
+            const diferenciaMilisegundos: number =
+              ultimoDiaMes.getTime() -
+              this.form.controls['transferDate'].value.getTime();
+            const diferenciaDias: number = Math.floor(
+              diferenciaMilisegundos / (1000 * 60 * 60 * 24)
+            );
+            // Calcula la diferencia de días dividiendo la diferencia en milisegundos entre ambos días por la cantidad de milisegundos en un día (24 * 60 * 60 * 1000)
+
+            calculateDays = diferenciaDias;
+          } else {
+            const trunc_vf_hoy: Date = new Date(
+              hoy.getFullYear(),
+              hoy.getMonth(),
+              hoy.getDate()
+            );
+            // Crea una nueva fecha que representa la fecha actual sin la parte de tiempo (hora, minutos, segundos y milisegundos)
+
+            const trunc_ti_fec_inicio_interes: Date = new Date(
+              this.form.controls['transferDate'].value.getFullYear(),
+              this.form.controls['transferDate'].value.getMonth(),
+              this.form.controls['transferDate'].value.getDate()
+            );
+            // Crea una nueva fecha que representa la fecha de inicio de interés sin la parte de tiempo
+
+            const diferenciaMilisegundos: number =
+              trunc_vf_hoy.getTime() - trunc_ti_fec_inicio_interes.getTime();
+            const diferenciaDias: number = Math.floor(
+              diferenciaMilisegundos / (1000 * 60 * 60 * 24)
+            );
+            // Calcula la diferencia de días dividiendo la diferencia en milisegundos entre las dos fechas por la cantidad de milisegundos en un día (24 * 60 * 60 * 1000)
+
+            calculateDays = diferenciaDias;
+          }
+        } else if (i_mes_actual > 0 && i_mes_actual < months - 1) {
+          const fechaInicio = new Date(currentYear, currentMonth - 1, 1); // Crea la fecha de inicio del mes actual
+          const ultimoDiaMes = new Date(currentYear, currentMonth, 0).getDate(); // Obtiene el último día del mes actual
+          const fechaFin = new Date(
+            currentYear,
+            currentMonth - 1,
+            ultimoDiaMes
+          ); // Crea la fecha de fin del mes actual
+          const diferenciaDias =
+            Math.floor(
+              (fechaFin.getTime() - fechaInicio.getTime()) /
+                (1000 * 60 * 60 * 24)
+            ) + 1;
+          // Calcula la diferencia en días entre las dos fechas y le suma 1
+          calculateDays = diferenciaDias;
+        } else if ((i_mes_actual = months - 1)) {
+          const diaActual: number = hoy.getDate(); // Obtiene el día actual como un número
+          calculateDays = diaActual;
+        }
+
+        dailyRate = annual / anualBasis / 100;
+        const resultado: number = capitalization * dailyRate * calculateDays;
+        const resultadoRedondeado: number = +resultado.toFixed(2); // Redondea el resultado a 2 decimales
+        periodInterest = resultadoRedondeado;
+        capitalization = capitalization + periodInterest;
+
+        if (realRate) {
+          accruedInterest = (accruedInterest ?? 0) + (periodInterest ?? 0);
+          accumulatedCap = (accumulatedCap ?? 0) + (periodInterest ?? 0);
+        } else {
+          estimatedInterest = estimatedInterest + (periodInterest ?? 0);
+        }
+      }
+
+      this.getPayment();
+      /* SETEAR A LAS SIGUIENTES VARIABLES
+      interes_real
+      interes_estimado
+      interes_acreditado
+      di_subtotal
+      importe_devolucion
+      tasa_estimda
+      */
+    }
+  }
+
+  calculateMonthsBetween(date1: Date, date2: Date): number {
+    const monthsDiff = (date2.getFullYear() - date1.getFullYear()) * 12;
+    return monthsDiff + (date2.getMonth() - date1.getMonth());
+  }
+
+  getTasas() {
+    /*let body{
+      diCoinDeposit: 'di_moneda_deposito',
+      vnActualYear: 'vn_anio_actual',
+      vnMonthYear: 'vn_mes_actual',
+      diInstrument: 'di_instrumento',
+    };
+    this.goodParametersService.createAccount(body).subscribe({
+      next: resp=>{
+        return resp.tas, resp.mes
+      }
+    });*/
+  }
+
+  getPayment() {}
+
+  interestCheck() {}
 }
