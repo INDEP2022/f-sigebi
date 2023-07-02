@@ -3,3 +3,11 @@
     padding: 0px 20px;
   }
 }
+
+@media (min-width: 992px) {
+  .modal-xl {
+    &.modal-dialog {
+      width: 1040px;
+    }
+  }
+}

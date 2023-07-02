@@ -62,7 +62,6 @@ export class SearchTabComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = '';
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -72,14 +71,12 @@ export class SearchTabComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'receiptDate':
-                console.log('dddd', filter.search);
                 if (filter.search != null) {
                   filter.search = this.returnParseDate(filter.search);
                   searchFilter = SearchFilter.EQ;
                 } else {
                   filter.search = '';
                 }
-                console.log('ddddccc', filter.search);
                 break;
               case 'captureDate':
                 filter.search = this.returnParseDate(filter.search);
@@ -101,7 +98,6 @@ export class SearchTabComponent extends BasePage implements OnInit {
 
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log('this.param:', this.params1);
               this.params1.value.page = 1;
             } else {
               delete this.columnFilters[field];
@@ -190,7 +186,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
       this.searchTabForm.get('noBien').value === '' ||
       this.searchTabForm.get('noBien').value === null
     ) {
-      this.onLoadToast('info', 'Debe seleccionar un bien');
+      this.alert('warning', 'Datos Búsqueda', 'Debe seleccionar un bien', '');
       return;
     }
     this.dataSearch.emit({
@@ -204,7 +200,6 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
 
   searchNotifications() {
-    console.log(this.expedientNumber);
     return new Promise((res, rej) => {
       if (this.expedientNumber) {
         this.loading = true;
@@ -222,7 +217,6 @@ export class SearchTabComponent extends BasePage implements OnInit {
             this.data.refresh();
             this.totalItems = data.count;
             this.loading = false;
-            console.log('ESTA ES LA LISTA DE NOTIFICACIONES', this.list);
           },
           error: err => {
             this.data.load([]);
@@ -255,9 +249,11 @@ export class SearchTabComponent extends BasePage implements OnInit {
       this.searchTabForm.get('noBien').value === '' ||
       this.searchTabForm.get('noBien').value === null
     ) {
-      this.onLoadToast('info', 'Debe seleccionar un bien');
+      this.alert('warning', 'Datos Búsqueda', 'Debe seleccionar un bien');
       return;
     }
+    const array: any[] = [this.searchTabForm.get('noBien').value];
+    localStorage.setItem('selectedGoodsForPhotos', JSON.stringify(array));
     const data = {
       id: this.searchTabForm.get('noBien').value,
     };
@@ -289,12 +285,11 @@ export class SearchTabComponent extends BasePage implements OnInit {
     dia = dia < 10 ? '0' + dia : dia;
     mes = mes < 10 ? '0' + mes : mes;
     let fechaFormateada = dia + '/' + mes + '/' + anio;
-    console.log(fechaFormateada);
     return fechaFormateada;
   }
 
   onChangeGood(event: IGood) {
-    console.log(event);
+    // this.searchTabForm.get('noBien').setValue(event.id);
     this.goodSelect = event;
   }
 }

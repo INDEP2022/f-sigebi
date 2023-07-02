@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { PreviousRouteService } from 'src/app/common/services/previous-route.service';
 import { IGoodDesc } from 'src/app/core/models/ms-good/good-and-desc.model';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -18,6 +24,11 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   form: FormGroup;
   actualGoodNumber: string = null;
   good: IGoodDesc;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems = 1;
+  newLimit = new FormControl(1);
+  selectedGoodsForPhotos: number[] = [];
+  changes = 0;
   constructor(
     private activatedRoute: ActivatedRoute,
     private goodService: GoodService,
@@ -30,13 +41,26 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
       noBien: [null, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
       description: [null],
     });
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      // console.log(params);
+      console.log(params);
+      params.limit = 1;
+      // console.log(this.selectedGoodsOfRastrer[params.page - 1]);
+      if (
+        this.selectedGoodsForPhotos &&
+        this.selectedGoodsForPhotos.length > 0
+      ) {
+        this.noBienControl = this.selectedGoodsForPhotos[params.page - 1];
+        this.searchGood();
+      }
+    });
   }
 
   get noBienControl() {
     return this.form.get('noBien');
   }
 
-  set noBienControl(value) {
+  set noBienControl(value: any) {
     if (this.form.get('noBien')) this.form.get('noBien').setValue(value);
   }
 
@@ -47,25 +71,22 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe({
       next: param => {
-        if (param['numberGood']) {
-          this.noBienControl = param['numberGood'];
-          console.log(window.history);
-          if (this.previousRouteService.getHistory().length > 1) {
-            this.origin = 1;
-          }
-          this.searchGood();
-        } else {
-          this.origin = 0;
+        console.log(param);
+        if (this.previousRouteService.getHistory().length > 1) {
+          this.origin = 1;
         }
       },
     });
-
-    const derivationGoodId = localStorage.getItem('derivationGoodId');
-    if (derivationGoodId) {
-      this.loading = true;
-      this.noBienControl.setValue(derivationGoodId);
-      this.origin = 1;
+    if (localStorage.getItem('selectedGoodsForPhotos')) {
+      this.selectedGoodsForPhotos = JSON.parse(
+        localStorage.getItem('selectedGoodsForPhotos')
+      );
+    }
+    if (this.selectedGoodsForPhotos && this.selectedGoodsForPhotos.length > 0) {
+      this.totalItems = this.selectedGoodsForPhotos.length;
+      this.noBienControl = this.selectedGoodsForPhotos[0];
       this.searchGood();
+      return;
     }
   }
 
@@ -76,11 +97,11 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   searchGood() {
-    this.router.navigate([], {
-      relativeTo: this.activatedRoute,
-      queryParams: { numberGood: this.noBienControl.value },
-      queryParamsHandling: 'merge', // remove to replace all query params by provided
-    });
+    // this.router.navigate([], {
+    //   relativeTo: this.activatedRoute,
+    //   queryParams: { numberGood: this.noBienControl.value },
+    //   queryParamsHandling: 'merge', // remove to replace all query params by provided
+    // });
     this.loading = true;
     this.goodService
       .getGoodAndDesc(this.noBienControl.value)
@@ -108,15 +129,6 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   goBack() {
-    const derivationGoodId = localStorage.getItem('derivationGoodId');
-    if (derivationGoodId) {
-      this.router.navigate([
-        `/pages/administrative-processes/derivation-goods`,
-      ]);
-      localStorage.setItem('derivationGoodId', '');
-    } else {
-      // this.location.back();
-      console.log('modificar');
-    }
+    this.previousRouteService.back();
   }
 }
