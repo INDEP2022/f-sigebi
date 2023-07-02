@@ -1,6 +1,8 @@
 <div class="ch-content">
   <h5 class="title">Previsualización de Datos</h5>
-  <div *ngIf="selectedGoods" style="font-weight: 500">
+  <div
+    *ngIf="selectedGoods && selectedGoods.length > 0"
+    style="font-weight: 500">
     Cargados {{ totalItems }} de {{ selectedGoods.length }}
   </div>
   <div style="display: flex">
