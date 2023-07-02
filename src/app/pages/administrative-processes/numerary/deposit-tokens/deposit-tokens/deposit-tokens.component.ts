@@ -1,9 +1,16 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnChanges,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
@@ -20,7 +27,7 @@ import { AddMovementComponent } from '../add-movement/add-movement.component';
 import { CustomdbclickComponent } from '../customdbclick/customdbclick.component';
 import { CustomdbclickdepositComponent } from '../customdbclickdeposit/customdbclickdeposit.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
-import { CustomDateFilterComponent_ } from './searchDate';
+
 @Component({
   selector: 'app-deposit-tokens',
   templateUrl: './deposit-tokens.component.html',
@@ -48,7 +55,10 @@ import { CustomDateFilterComponent_ } from './searchDate';
     `,
   ],
 })
-export class DepositTokensComponent extends BasePage implements OnInit {
+export class DepositTokensComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   form: FormGroup;
 
   data1: LocalDataSource = new LocalDataSource();
@@ -64,6 +74,9 @@ export class DepositTokensComponent extends BasePage implements OnInit {
   dateMovemFin: Date;
   loadingBtn: boolean = false;
   valorDate1: string = 'Fecha Transferencia';
+  @ViewChild('file', { static: false }) myInput: ElementRef;
+
+  testCompare: any;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -106,13 +119,33 @@ export class DepositTokensComponent extends BasePage implements OnInit {
           // width: '13%',
           type: 'html',
           valuePrepareFunction: (text: string) => {
-            return `${
-              text ? text.split('T')[0].split('-').reverse().join('-') : ''
-            }`;
+            console.log('text', text);
+            if (typeof text === 'number') {
+              let date = new Date((Number(text) - 25569) * 86400 * 1000);
+              let fechaString = date.toString();
+
+              let fecha = new Date(fechaString);
+
+              let dia = fecha.getDate();
+              let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
+              let año = fecha.getFullYear();
+
+              // Asegurarse de que el día y el mes tengan dos dígitos
+              let diaString = dia < 10 ? '0' + dia : dia;
+              let mesString = mes < 10 ? '0' + mes : mes;
+
+              let fechaFormateada = `${diaString}/${mesString}/${año}`;
+
+              return `${fechaFormateada}`;
+            } else {
+              return `${
+                text ? text.split('T')[0].split('-').reverse().join('-') : ''
+              }`;
+            }
           },
           filter: {
             type: 'custom',
-            component: CustomDateFilterComponent_,
+            component: CustomDateFilterComponent,
           },
         },
         folio_ficha: {
@@ -127,13 +160,33 @@ export class DepositTokensComponent extends BasePage implements OnInit {
           // width: '13%',
           type: 'html',
           valuePrepareFunction: (text: string) => {
-            return `${
-              text ? text.split('T')[0].split('-').reverse().join('-') : ''
-            }`;
+            console.log('text', text);
+            if (typeof text === 'number') {
+              let date = new Date((Number(text) - 25569) * 86400 * 1000);
+              let fechaString = date.toString();
+
+              let fecha = new Date(fechaString);
+
+              let dia = fecha.getDate();
+              let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
+              let año = fecha.getFullYear();
+
+              // Asegurarse de que el día y el mes tengan dos dígitos
+              let diaString = dia < 10 ? '0' + dia : dia;
+              let mesString = mes < 10 ? '0' + mes : mes;
+
+              let fechaFormateada = `${diaString}/${mesString}/${año}`;
+
+              return `${fechaFormateada}`;
+            } else {
+              return `${
+                text ? text.split('T')[0].split('-').reverse().join('-') : ''
+              }`;
+            }
           },
           filter: {
             type: 'custom',
-            component: CustomDateFilterComponent_,
+            component: CustomDateFilterComponent,
           },
         },
         currency: {
@@ -192,9 +245,32 @@ export class DepositTokensComponent extends BasePage implements OnInit {
     // this.settings.rowClassFunction = async (row: any) => {
 
     // };
+
+    this.testCompare = {
+      no_movimiento: 'number',
+      fec_movimiento: 'string',
+      deposito: 'number',
+      usuario_inserto: 'string',
+      fec_insercion: 'string',
+      es_ficha_deposito: 'string',
+      no_cuenta: 'number',
+      fec_traspaso: 'string',
+      fec_calculo_intereses: 'string',
+      no_registro: 'number',
+      categoria: 'string',
+      currency: 'string',
+      bank: 'string',
+      cveAccount: 'number',
+      motionDate: 'number',
+      es_parcializacion: 'string',
+      no_bien: 'number',
+      no_expediente: 'number',
+      calculationInterestsDate: 'string',
+    };
   }
 
   ngOnInit(): void {
+    console.log(screen.width);
     this.prepareForm();
     this.data1
       .onChanged()
@@ -251,7 +327,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       this.getAccount();
     });
   }
-
+  ngOnChanges() {}
   getAccount() {
     this.loading = true;
     let params: any = {
@@ -392,6 +468,12 @@ export class DepositTokensComponent extends BasePage implements OnInit {
       if (event.data.bancoDetails.cveCurrency) {
         await this.getTvalTable5(event.data.bancoDetails.cveCurrency);
       }
+    } else {
+      const aaaa: any = await this.returnDataBank(event.data.no_cuenta);
+      if (aaaa != null) {
+        await this.insertDataBank(aaaa);
+        await this.getTvalTable5(aaaa.cveCurrency);
+      }
     }
   }
 
@@ -483,20 +565,97 @@ export class DepositTokensComponent extends BasePage implements OnInit {
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
       const excelImport = this.excelService.getData<any>(binaryExcel);
-      this.data1.load(excelImport);
-      this.showPagination = false;
-      this.totalItems = this.data1.count();
+      console.log('excelImport', excelImport);
+      let arr: any = [];
+
+      let result = excelImport.map(async (item: any) => {
+        // const aaa = await this.validarEstructura(item, this.testCompare)
+
+        // if (aaa) {
+        if (
+          item.no_movimiento &&
+          item.fec_movimiento &&
+          item.deposito &&
+          item.fec_insercion &&
+          item.no_cuenta &&
+          item.cveAccount &&
+          item.motionDate
+        ) {
+          arr.push(item);
+        }
+        // }
+      });
+
+      Promise.all(result).then(item => {
+        if (excelImport.length == 0) {
+          this.alert('warning', 'No hay registros en el archivo', '');
+          return;
+        } else if (arr.length == 0 && excelImport.length > 0) {
+          this.alert(
+            'warning',
+            'No hay registros en el archivo que cumplan con las condiciones de inserción',
+            ''
+          );
+          return;
+        } else if (arr.length > 0) {
+          this.alert('success', 'Archivo insertado correctamente', '');
+          this.data1.load(arr);
+          this.showPagination = false;
+          this.totalItems = this.data1.count();
+          this.clearInput();
+        }
+      });
     } catch (error) {
-      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+      this.alert('warning', 'Ocurrio un error al leer el archivo', '');
+      this.clearInput();
     }
   }
 
+  async validarEstructura(objeto: any, estructura: any) {
+    for (let key in estructura) {
+      if (
+        !objeto.hasOwnProperty(key) ||
+        typeof objeto[key] !== estructura[key]
+      ) {
+        return false;
+      }
+    }
+    return true;
+  }
   async exportar() {
     const filename: string = 'Deposit Tokens';
-    const jsonToCsv = await this.returnJsonToCsv();
-    console.log('jsonToCsv', jsonToCsv);
-    this.jsonToCsv = jsonToCsv;
-    this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+    const jsonToCsv: any = await this.returnJsonToCsv();
+
+    let arr: any = [];
+    let result = jsonToCsv.map(async (item: any) => {
+      let obj = {
+        no_movimiento: item.no_movimiento,
+        fec_movimiento: item.fec_movimiento,
+        deposito: item.deposito,
+        usuario_inserto: item.usuario_inserto,
+        fec_insercion: item.fec_insercion,
+        es_ficha_deposito: item.es_ficha_deposito,
+        no_cuenta: item.no_cuenta,
+        fec_traspaso: item.fec_traspaso,
+        fec_calculo_intereses: item.fec_calculo_intereses,
+        no_registro: item.no_registro,
+        categoria: item.categoria,
+        currency: item.currency,
+        no_bien: item.no_bien,
+        no_expediente: item.no_expediente,
+        bank: item.bank,
+        cveAccount: item.cveAccount,
+        motionDate: item.motionDate,
+        calculationInterestsDate: item.calculationInterestsDate,
+      };
+      arr.push(obj);
+    });
+
+    Promise.all(result).then(i => {
+      console.log('jsonToCsv', arr);
+      this.jsonToCsv = arr;
+      this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+    });
   }
 
   async returnJsonToCsv() {
@@ -620,6 +779,7 @@ export class DepositTokensComponent extends BasePage implements OnInit {
             this.accountMovementService.eliminarMovementAccount(obj).subscribe({
               next: response => {
                 this.getAccount();
+                this.form.reset();
                 this.alert('success', 'Movimiento Eliminado Correctamente', '');
                 console.log('res', response);
               },
@@ -680,5 +840,9 @@ export class DepositTokensComponent extends BasePage implements OnInit {
         },
       });
     }
+  }
+
+  clearInput() {
+    this.myInput.nativeElement.value = '';
   }
 }

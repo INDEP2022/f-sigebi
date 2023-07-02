@@ -1,3 +1,5 @@
+import { CustomDateMounthFilterComponent } from '../../../../@standalone/shared-forms/filter-date-mounth-custom/custom-date-mounth-filter';
+
 export const GENERAL_DOCS_DOCUMENTS_VIEWER_COLUMNS = {
   numberProceedings: {
     title: 'No. Expediente',
@@ -14,6 +16,15 @@ export const GENERAL_DOCS_DOCUMENTS_VIEWER_COLUMNS = {
   significantDate: {
     title: 'Fecha significativa',
     sort: false,
+    //   valuePrepareFunction: (text: string) => {
+    //   return `${
+    //     text ? text.split('T')[0].split('-').reverse().join('-') : ''
+    //   }`;
+    // },
+    filter: {
+      type: 'custom',
+      component: CustomDateMounthFilterComponent,
+    },
   },
   id: {
     title: 'Folio universal',

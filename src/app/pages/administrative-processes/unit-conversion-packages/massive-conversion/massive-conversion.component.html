@@ -56,6 +56,7 @@
               <option value="A">A-Autorizado</option>
               <option value="C">C-Cerrado</option>
               <option value="S">L-Aplicado</option>
+              <option value="X">L-Cancelado</option>
             </select>
           </form-field>
         </div>
@@ -224,6 +225,7 @@
   <div footer class="row justify-content-end">
     <div class="col-lg-3 col-md-3 col-sm-6 col-12 align-self-center mb-3 mt-3">
       <button
+        [disabled]="!buttonPermiso"
         type="button"
         class="btn btn-primary btn-sm active w-100"
         (click)="openPermissions('')">
