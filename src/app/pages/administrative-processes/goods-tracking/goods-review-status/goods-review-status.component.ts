@@ -7,6 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -55,6 +56,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   delegacionId: any;
   delegationNumber: any = null; // BLK_CONTROL.DELEGACION
   responsable: any = null; // BLK_CONTROL.RESPONSABLE
+  responsable2: any = null;
   goodsExcel: any;
   selectedGender: string = 'all';
   jsonToCsv: any[] = [];
@@ -79,7 +81,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     private dynamicCatalogsService: DynamicCatalogsService,
     private modalRef: BsModalRef,
     private revisionReasonService: RevisionReasonService,
-    private router: Router
+    private router: Router,
+    private titleService: Title
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -91,6 +94,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   }
 
   async ngOnInit() {
+    this.titleService.setTitle('Atención de Bienes en Estatus REV | SIGEBI');
     this.loading = true;
     this.data
       .onChanged()
@@ -161,6 +165,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   handleGenderChange() {
     console.log('Selected gender: ' + this.selectedGender);
     this.loading = true;
+    this.paramsList.getValue().limit = 10;
+    this.paramsList.getValue().page = 1;
     this.getMotives();
   }
 
@@ -627,7 +633,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   // PUP_INICIALIZA_FORMA
   async getDataPupInicializaForma() {
-    const user = this.token.decodeToken().preferred_username;
+    const user = this.token.decodeToken().username;
     const dataUserToolbar: any = await this.getDataUser(user);
     if (dataUserToolbar != null)
       this.delegationNumber = dataUserToolbar.delegationNumber;
@@ -638,6 +644,12 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     const areaCorresp: any = await this.getAreaCorresp(obj);
     if (areaCorresp != null) {
       this.responsable = areaCorresp;
+
+      if (this.responsable === 'JURIDICO') {
+        this.responsable2 = 'JURÍDICO';
+      } else {
+        this.responsable2 = this.responsable;
+      }
     } else {
       this.alert('warning', 'Falta asignar área Responsable o Delegación.', '');
     }

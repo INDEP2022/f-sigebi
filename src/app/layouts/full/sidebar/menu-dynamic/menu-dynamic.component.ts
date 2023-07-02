@@ -22,5 +22,8 @@ export class MenuDynamicComponent implements OnInit {
     if (item.label === 'Características del Bien') {
       localStorage.removeItem('selectedBad');
     }
+    if (item.link === '/pages/general-processes/good-photos') {
+      localStorage.removeItem('selectedGoodsForPhotos');
+    }
   }
 }
