@@ -17,10 +17,11 @@
         <div class="col-12">
           <form-field [control]="form.get('userKey')">
             <ngx-select
+              [readonly]="editDialogData === true"
               [form]="form"
               [data]="users"
               (fetchItems)="getUser($event)"
-              value="id"
+              value="user"
               bindLabel="userAndName"
               control="userKey"
               label="Clave Usuario"
@@ -33,7 +34,7 @@
         <div class="col-6 mt-4">
           <form-field class="mt-4" [control]="form.get('userRole')" label="Rol">
             <ng-select formControlName="userRole" class="form-control">
-              <ng-option value="null">Seleccione un Rol</ng-option>
+              <!-- <ng-option value=null>Seleccione un Rol</ng-option> -->
               <ng-option value="1">Rol 1</ng-option>
               <ng-option value="2">Rol 2</ng-option>
             </ng-select>
