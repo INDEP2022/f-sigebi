@@ -3,7 +3,7 @@
     <button
       class="btn btn-primary btn-sm active"
       type="button"
-      [disabled]="disabled || !this.userPermisions"
+      [disabled]="disabled"
       (click)="openFileUploader()">
       Subir Fotos
       <i class="fa fa-upload"></i>
@@ -30,7 +30,7 @@
           formControlName="typedblClickAction"
           [clearable]="false"
           [searchable]="false"
-          [readonly]="files.length < 1 || disabled || !this.userPermisions">
+          [readonly]="files.length < 1 || disabled">
           <ng-option [value]="1">Visualizar</ng-option>
           <ng-option [value]="2">Editar</ng-option>
         </ng-select>
@@ -52,7 +52,7 @@
           id="button-basic"
           dropdownToggle
           class="btn btn-primary dropdown-toggle btn-sm active"
-          [class]="disabled || !this.userPermisions ? 'disabled' : ''"
+          [class]="disabled ? 'disabled' : ''"
           type="button"
           aria-controls="dropdown-basic">
           <div class="d-flex align-items-center">
