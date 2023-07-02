@@ -83,6 +83,9 @@ export class CharacteristicEditorCell extends DefaultEditor {
   }
 
   haveCaracteresEspeciales(row: ICharacteristicValue) {
+    if (!row) {
+      return false;
+    }
     if (row.dataType === 'V') {
       if (this.haveVerticalSlash(row)) {
         return !this.isAddCat(row.value);
@@ -96,12 +99,18 @@ export class CharacteristicEditorCell extends DefaultEditor {
   }
 
   haveVerticalSlash(row: ICharacteristicValue) {
+    if (!row) {
+      return false;
+    }
     return (
       row.attribute === 'RESERVADO' || row.attribute === 'SITUACION JURIDICA'
     );
   }
 
   haveAddWeb(row: ICharacteristicValue) {
+    if (!row) {
+      return false;
+    }
     return row.attribute.includes('CATÁLOGO COMERCIAL');
   }
 
