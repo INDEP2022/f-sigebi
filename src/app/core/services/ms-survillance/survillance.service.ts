@@ -107,4 +107,15 @@ export class SurvillanceService extends HttpService {
   getVigSupervisionTmp(params?: ListParams) {
     return this.get<IListResponse<any>>(this.route.VigSupervisionTMP, params);
   }
+
+  deleteVigSupervisionTmp(params?: ListParams) {
+    return this.post<IListResponse<any>>(
+      this.route.DeleteVigSupervisionTMP,
+      params
+    );
+  }
+
+  createVigSupervisionTmp(params?: ListParams) {
+    return this.post<IListResponse<any>>(this.route.VigSupervisionTMP, params);
+  }
 }
