@@ -46,6 +46,7 @@ export class GoodsManagementSocialTable extends BasePage {
   }
   @Input() set clear(value: number) {
     if (value > 0) {
+      this.selectedGoods = [];
       this.notLoadedGoods = [];
       this.dataNotFound();
     }

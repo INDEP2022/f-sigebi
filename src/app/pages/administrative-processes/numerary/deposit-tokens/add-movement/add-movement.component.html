@@ -2,11 +2,11 @@
   <div class="w-100 mt-3" header>
     <div class="d-flex flex-wrap justify-content-between aling-items-center">
       <h5 class="modal-title">{{ title }}</h5>
-      <div class="buttons">
+      <!-- <div class="buttons">
         <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
           Cerrar
         </button>
-      </div>
+      </div> -->
     </div>
   </div>
   <div body>
@@ -93,14 +93,22 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <button
-          type="button"
-          [disabled]="!form.valid"
-          class="btn btn-primary active"
-          (click)="saveRegister()">
-          Guardar
-        </button>
+      <div class="row m-3">
+        <div class="col-6">
+          <button
+            type="button"
+            style="float: right"
+            [disabled]="!form.valid"
+            class="btn btn-primary active"
+            (click)="saveRegister()">
+            Guardar
+          </button>
+        </div>
+        <div class="col-6" style="float: left">
+          <button type="button" class="btn btn-danger active" (click)="close()">
+            Cerrar
+          </button>
+        </div>
       </div>
     </div>
   </div>
