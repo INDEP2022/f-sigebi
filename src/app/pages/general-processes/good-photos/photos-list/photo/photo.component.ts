@@ -38,7 +38,7 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
   private filenameChange() {
     this.loading = true;
     let index = this.filename.indexOf('F');
-    console.log(index);
+    // console.log(index);
     this.service
       .getById(this.goodNumber, +this.filename.substring(index + 1, index + 5))
       .pipe(takeUntil(this.$unSubscribe))
@@ -47,13 +47,13 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
           this.loading = false;
           this.error = false;
           this.base64Change(base64);
-          console.log(this.error);
+          // console.log(this.error);
         },
         error: error => {
           // this.alert('error', 'Fotos', 'Ocurrio un error al cargar la foto');
           this.loading = false;
           this.error = true;
-          console.log(this.error);
+          // console.log(this.error);
           this.imgSrc = NO_IMAGE_FOUND;
         },
       });
@@ -78,7 +78,7 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
         questionFinishUpload: '¿Desea seguir editando?',
         identificator: this.goodNumber + '',
         callback: (refresh: boolean) => {
-          console.log(refresh);
+          // console.log(refresh);
           this.refreshFiles.emit(refresh);
         },
       },
