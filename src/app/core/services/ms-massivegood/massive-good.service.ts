@@ -6,7 +6,11 @@ import { MassiveGoodEndpoints } from '../../../common/constants/endpoints/ms-mas
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IMassiveGoodTracker } from '../../models/ms-massivegood/massive-good-goods-tracker.model';
+import { IPackageInfo } from '../../models/catalogs/package.model';
+import {
+  IIdentifierCount,
+  IMassiveGoodTracker,
+} from '../../models/ms-massivegood/massive-good-goods-tracker.model';
 import { IMassiveGood } from '../../models/ms-massivegood/massivegood.model';
 
 @Injectable({
@@ -102,6 +106,18 @@ export class MassiveGoodService extends HttpService {
   pufVerificaComers(body: any) {
     const route = `findica/pup-verif-comer`;
     return this.post<IMassiveGoodTracker>(route, body);
+  }
+
+  pubExport(body: IPackageInfo) {
+    const route = `application/pup-export`;
+    return this.post(route, body);
+  }
+
+  getIdentifierCount(
+    params: ListParams
+  ): Observable<IListResponse<IIdentifierCount>> {
+    const route = `application/getIdentifierCount`;
+    return this.get(route, params);
   }
 
   getDataCSVFile(currency: string, file: any) {
