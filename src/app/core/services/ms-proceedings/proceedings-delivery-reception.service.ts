@@ -35,6 +35,8 @@ export interface INotSucess {
 })
 export class ProceedingsDeliveryReceptionService extends HttpService {
   private readonly endpoint = ProceedingsEndpoints.ProceedingsDeliveryReception;
+  private readonly endpoint2 = ProceedingsEndpoints.GoStatus;
+  private readonly filter = `?.filter.keysProceedings=`;
   constructor(
     private detailService: ProceedingsDetailDeliveryReceptionService
   ) {
@@ -296,5 +298,22 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.get(
       `${ProceedingsEndpoints.ProceedingsDeliveryReception}/find/user/${user}/area/${area}`
     );
+  }
+  getStatusDeliveryCveExpendiente(cve: string) {
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}?text.keysProceedings=${cve}`;
+    return this.get(route, cve);
+  }
+  getAllByActa(
+    cve: string,
+    fileNumber: number,
+    tipe: number
+  ): Observable<IListResponse<IProceedingDeliveryReception>> {
+    return this.get<IListResponse<IProceedingDeliveryReception>>(
+      `${this.endpoint}/proceedings-delivery-reception?text.${cve}&file.filesId=${fileNumber}file.filesId=${fileNumber}`
+    );
+  }
+
+  getStatusConversion(id: string | number) {
+    return this.get(`${this.endpoint2}/${id}`);
   }
 }

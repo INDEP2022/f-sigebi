@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Visualizaci&oacute;n de Documentos</h5>
+    <h5 class="title">Visualización de Documentos</h5>
   </div>
 
   <div body>
@@ -160,7 +160,7 @@
               ><i class="fa fa-square"></i> Documento digitalizado</span
             >
             <span style="color: #05668d"
-              ><i class="fa fa-square"></i> Documento pendiente de
+              ><i class="fa fa-square"></i> Documento pendiente a
               digitalizar</span
             >
           </div>
@@ -187,13 +187,13 @@
                   [settings]="settings"
                   [source]="data"
                   (delete)="showDeleteAlert($event.data)"
-                  (userRowSelect)="modalImage($event.data)">
+                  (userRowSelect)="modalImage($event.data)"
+                  (resetFilter)="resetFilters()">
                 </ng2-smart-table>
               </div>
             </div>
           </div>
         </div>
-        <!-- (edit)="openForm($event.data)" -->
         <app-pagination
           [params]="params"
           [totalItems]="totalItems"></app-pagination>
