@@ -160,12 +160,14 @@
                 <div class="row">
                   <div class="col-6 text-center">
                     <button
+                      (click)="generaAleatorios()"
                       type="button"
                       style="width: 80%"
                       class="btn btn-secondary btn-sm active mt-4">
                       Generar Aleatorios
                     </button>
                     <button
+                      (click)="revisarCarga()"
                       type="button"
                       style="width: 80%"
                       class="btn btn-secondary btn-sm active mt-4">
@@ -194,6 +196,7 @@
                       Cargar Archivo <i class="bx bx-download float-icon"></i>
                     </button> -->
                     <button
+                      (click)="exportar()"
                       type="button"
                       style="width: 80%"
                       class="btn btn-success btn-sm mt-4">
@@ -225,14 +228,26 @@
         <div class="ch-content">
           <h5 class="title">BIENES</h5>
         </div>
-        <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="goods">
-            </ng2-smart-table>
+        <div class="row">
+          <form-loader *ngIf="loading"></form-loader>
+          <div class="col-md-12">
+            <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loading ? '0px' : '500px' }">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                class="table-responsive"
+                [settings]="settings"
+                [source]="goods">
+              </ng2-smart-table>
+            </ng-scrollbar>
+            <!-- </div> -->
           </div>
+          <!-- <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="goods">
+            </ng2-smart-table>
+          </div> -->
         </div>
       </div>
       <app-pagination
