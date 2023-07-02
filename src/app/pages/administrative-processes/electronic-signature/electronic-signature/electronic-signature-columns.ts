@@ -2,7 +2,7 @@ import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filt
 
 export const ELECTRONICSIGNATURE_COLUMNS = {
   clave_oficio_armada: {
-    title: 'Clave oficio Armada',
+    title: 'Clave Oficio Armada',
     width: '20%',
     sort: false,
   },
@@ -36,7 +36,7 @@ export const ELECTRONICSIGNATURE_COLUMNS = {
   },
 
   firma: {
-    title: 'Firma electrónica',
+    title: 'Firma Electrónica',
     width: '20%',
     sort: false,
   },

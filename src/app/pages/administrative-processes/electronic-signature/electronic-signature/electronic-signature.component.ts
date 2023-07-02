@@ -183,7 +183,10 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
   }
 
   async send() {
-    if (this.dictaminationSelect.remitente !== this.userAuth) {
+    if (
+      this.dictaminationSelect.remitente.toLowerCase() !==
+      this.userAuth.toLowerCase()
+    ) {
       this.alert(
         'warning',
         'Firma electrónica dictamen de procedencia',

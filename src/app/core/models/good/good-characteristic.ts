@@ -181,8 +181,12 @@ export class CharacteristicEditorCell extends DefaultEditor {
   }
 
   haveErrorRequired(row: ICharacteristicValue) {
-    return (
-      row.required && (!row.value || (row.value && row.value.trim() == ''))
-    );
+    if (row.value) {
+      return (
+        row.required && (!row.value || (row.value && row.value.trim() == ''))
+      );
+    } else {
+      return null;
+    }
   }
 }
