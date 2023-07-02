@@ -60,6 +60,7 @@ export enum GoodProcessPoints {
   getVstatusIniVnoRegister = 'application/getVstatusIniVnoRegister',
   pup_change_impro = 'application/pup-change-impro',
   GetDescDep = 'application/getDestDepBan',
+  GetGoodSituation = 'update-good-status/pupMakeQuery2',
 }
 
 export enum GoodFinderEndpoint {

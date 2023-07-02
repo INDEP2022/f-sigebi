@@ -16,6 +16,7 @@ export class PwComponent extends BasePage implements OnInit {
   form: FormGroup;
   //Search conversion
   conversiones = new DefaultSelect();
+  conversionData: any;
   // Variable para la contraseña
   private _password: string;
   conversionId: any;
@@ -47,10 +48,11 @@ export class PwComponent extends BasePage implements OnInit {
     });
   }
 
-  serachIdConversion(e: any) {
+  serachIdConversion(e?: any) {
     this.serviceConversion.getById(e.text).subscribe(
       res => {
         console.log(res);
+        this.conversionData = res;
         this.conversiones = new DefaultSelect([res]);
       },
       err => {
@@ -75,8 +77,16 @@ export class PwComponent extends BasePage implements OnInit {
             'Por favor verificar y volver a intentar'
           );
         } else {
-          this.modalService.content.callback(this.idConversion.value);
-          this.modalService.hide();
+          if (this.conversionData.goodFatherNumber != null) {
+            this.modalService.content.callback(this.conversionData);
+            this.modalService.hide();
+          } else {
+            this.alert(
+              'warning',
+              'Conversiones',
+              'La conversion debe tener un bien padre'
+            );
+          }
         }
       } else {
         this.alert('warning', 'Debe introducir la contraseña', '');
