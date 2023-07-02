@@ -781,6 +781,15 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       console.log('objjj', obj);
       const getPaValidPeriod_: any = await this.getPaValidaPeriodo(obj);
 
+      if (getPaValidPeriod_ === 'error mes') {
+        this.alert(
+          'warning',
+          'Ya existe relación con este período',
+          'relation "lv_mes" already exists'
+        );
+        return;
+      }
+
       if (getPaValidPeriod_ != null) {
         LV_ANIO_PROCESO = getPaValidPeriod_.P_ANIO_PROCESO;
         LV_MES_PROCESO = getPaValidPeriod_.P_MES_PROCESO;
