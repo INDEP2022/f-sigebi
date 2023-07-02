@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs';
 import { ITmpValSocialLoadSocialCabinet } from 'src/app/core/models/ms-social-cabinet/tmp-val-load-social-cabinet';
 import { SocialCabinetService } from 'src/app/core/services/ms-social-cabinet/social-cabinet.service';
@@ -26,6 +27,8 @@ export class GoodsManagementSocialTableErrorsComponent
       this.dataNotFound();
     }
   }
+  pageSizeOptions = [5, 10, 15, 20];
+  limit: FormControl = new FormControl(5);
   lastClickTime: number = 0;
   selected: ITmpValSocialLoadSocialCabinet[];
   constructor(
@@ -33,6 +36,7 @@ export class GoodsManagementSocialTableErrorsComponent
     private goodManagementeService: GoodsManagementService
   ) {
     super();
+    this.params.value.limit = 5;
     this.haveInitialCharge = false;
     this.service = this.socialCabinetService;
     this.ilikeFilters = ['valMessage'];
