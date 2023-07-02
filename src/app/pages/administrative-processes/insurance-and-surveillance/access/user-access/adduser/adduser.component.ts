@@ -11,6 +11,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -28,7 +29,8 @@ export class AdduserComponent extends BasePage implements OnInit {
   constructor(
     private userService: UsersService,
     private modalRef: BsModalRef,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private securityService: SecurityService
   ) {
     super();
   }
@@ -53,7 +55,7 @@ export class AdduserComponent extends BasePage implements OnInit {
       });
       const paramsUser: any = new ListParams();
       paramsUser.text = userKey.toString();
-      await this.getUser(paramsUser);
+      await this.getUser2(paramsUser);
     } else {
       await this.getUser(new ListParams());
     }
@@ -64,6 +66,11 @@ export class AdduserComponent extends BasePage implements OnInit {
   }
 
   guardarRegistro() {
+    if (this.form.value.userRole != 1 && this.form.value.userRole != 2) {
+      this.form.get('userRole').markAsUntouched();
+      this.alert('warning', 'Debe seleccionar un Rol', '');
+      return;
+    }
     let obj = {
       userKey: this.form.value.userKey,
       userRole: this.form.value.userRole,
@@ -112,14 +119,48 @@ export class AdduserComponent extends BasePage implements OnInit {
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    params.addFilter('id', lparams.text, SearchFilter.ILIKE);
+    params.addFilter('user', lparams.text, SearchFilter.ILIKE);
 
     return new Promise((resolve, reject) => {
-      this.userService.getAllSegUsers(params.getParams()).subscribe({
+      this.securityService.getAllUsersTracker(params.getParams()).subscribe({
         next: async (response: any) => {
           console.log('resss', response);
+
           let result = response.data.map(async (item: any) => {
-            item['userAndName'] = item.id + ' - ' + item.name;
+            // const name = item.userDetail ? item.userDetail.name : '';
+            item['userAndName'] = item.user + ' - ' + item.name;
+          });
+
+          Promise.all(result).then(async (resp: any) => {
+            this.users = new DefaultSelect(response.data, response.count);
+            this.loading = false;
+          });
+        },
+        error: error => {
+          this.users = new DefaultSelect();
+          this.loading = false;
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getUser2(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    params.addFilter('user', lparams.text, SearchFilter.EQ);
+
+    return new Promise((resolve, reject) => {
+      this.securityService.getAllUsersTracker(params.getParams()).subscribe({
+        next: async (response: any) => {
+          console.log('resss', response);
+
+          let result = response.data.map(async (item: any) => {
+            // const name = item.userDetail ? item.userDetail.name : '';
+            item['userAndName'] = item.user + ' - ' + item.name;
           });
 
           Promise.all(result).then(async (resp: any) => {
