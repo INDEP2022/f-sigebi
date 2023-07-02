@@ -15,4 +15,9 @@ export class LotService extends HttpService {
     const route = `${LotEndpoints.ComerLot}?filter.eventId=${id}`;
     return this.get(route, params);
   }
+
+  pubFmtoPackage(value: any) {
+    const route = `${LotEndpoints.pubFmtoPackage}`;
+    return this.post(route, value);
+  }
 }
