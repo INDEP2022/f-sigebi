@@ -1,6 +1,6 @@
 export const ESTATE_COLUMNS = {
   googId: {
-    title: 'Nº Gestión 1',
+    title: 'Nº Gestión',
     type: 'string',
     sort: false,
   },
@@ -84,7 +84,7 @@ export const ESTATE_COLUMNS = {
 
 export const ESTATE_COLUMNS_VIEW = {
   goodId: {
-    title: 'Nª Gestión 2',
+    title: 'Nª Gestión',
     type: 'string',
     sort: false,
   },
@@ -188,7 +188,7 @@ export const ESTATE_COLUMNS_VIEW = {
 
 export const ESTATE_COLUMNS_NOTIFY = {
   gestionNumber: {
-    title: 'Nº Gestión 3',
+    title: 'Nº Gestión',
     type: 'string',
     sort: false,
   },
@@ -225,7 +225,7 @@ export const ESTATE_COLUMNS_NOTIFY = {
 
 export const ESTATE_COLUMNS_1 = {
   goodId: {
-    title: 'Nª Gestión 4',
+    title: 'Nª Gestión',
     type: 'string',
     sort: false,
   },
