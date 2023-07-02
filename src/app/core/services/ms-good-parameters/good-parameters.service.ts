@@ -21,4 +21,8 @@ export class GoodParametersService extends HttpService {
   getById(parameter: string) {
     return this.get<IGoodParameter>(`parameters/${parameter}`);
   }
+
+  createAccount(movement: any) {
+    return this.post('parameters/getFromRates', movement);
+  }
 }
