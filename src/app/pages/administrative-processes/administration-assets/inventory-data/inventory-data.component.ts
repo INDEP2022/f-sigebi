@@ -359,6 +359,7 @@ export class InventoryDataComponent
     if (this.dataInventory) {
       if (this.inventorySelect) {
         this.dataInventory.forEach((item: any) => {
+          console.log(item);
           this.updateInventary(
             this.inventorySelect.inventoryNumber,
             item.numColumn,
