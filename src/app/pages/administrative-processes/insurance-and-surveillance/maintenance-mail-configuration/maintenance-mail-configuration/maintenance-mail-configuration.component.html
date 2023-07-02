@@ -7,14 +7,26 @@
     <div class="row mt-4">
       <div class="ch-content">
         <h5 class="title">CORREO DE RESPONSABLES DE ENVÍO</h5>
+        <div class="col-md-5 buttons">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+          <div>
+            <button
+              class="btn btn-primary active btn-sm ml-3"
+              (click)="openForm()">
+              Nuevo
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="row pt-4">
-        <div class="col-md-12">
+      <div class="row pt-4 table-container">
+        <div class="col-md-12 table-responsive">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="emailsSend">
+              [source]="data"
+              (edit)="openForm($event)"
+              (delete)="delete($event.data)">
             </ng2-smart-table>
           </div>
         </div>
@@ -27,10 +39,12 @@
     <div class="ch-content">
       <h5 class="title">DATOS GENERALES DEL CORREO</h5>
     </div>
-    <form [formGroup]="form" class="form-material">
+    <form class="form-material">
       <div class="row mt-4">
         <div class="col-md-3">
-          <form-field [control]="form.get('identifier')" label="Identificador">
+          <form-field
+            [control]="formCorreo.get('identifier')"
+            label="Identificador">
             <input
               type="number"
               class="form-control"
@@ -41,7 +55,7 @@
           </form-field>
         </div>
         <div class="col-md-9">
-          <form-field [control]="form.get('asunto')" label="Asunto">
+          <form-field [control]="formCorreo.get('asunto')" label="Asunto">
             <textarea
               type="text"
               class="form-control"
@@ -52,7 +66,9 @@
       </div>
       <div class="row mt-4">
         <div class="col-md-12">
-          <form-field [control]="form.get('body')" label="Cuerpo del correo">
+          <form-field
+            [control]="formCorreo.get('body')"
+            label="Cuerpo del correo">
             <textarea
               type="text"
               class="form-control"

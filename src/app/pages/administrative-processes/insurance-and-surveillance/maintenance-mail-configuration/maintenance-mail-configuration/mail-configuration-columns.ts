@@ -1,7 +1,7 @@
 export const EMAIL_CONFIG_COLUMNS = {
   id: {
     title: 'Id',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
   emailSend: {
@@ -11,17 +11,17 @@ export const EMAIL_CONFIG_COLUMNS = {
   },
   nameSend: {
     title: 'Nombre',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
   postSend: {
     title: 'Puesto',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
   status: {
     title: 'Estatus',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
 };
