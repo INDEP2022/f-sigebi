@@ -5,11 +5,14 @@
 
   <div body>
     <div class="col-12">
-      <div class="row mt-4">
+      <div class="row">
         <div class="col-6">
+          <div class="ch-content">
+            <h5 class="title">PERIODOS DE SUPERVISIÓN Y VALIDACIÓN</h5>
+          </div>
           <form action="" [formGroup]="form" class="form-material">
-            <div class="row">
-              <div class="col-12">
+            <div class="row mt-4">
+              <div class="col-12 mt-3">
                 <form-field [control]="form.get('delegation')">
                   <ngx-select
                     [form]="form"
@@ -103,56 +106,115 @@
           </form>
         </div>
         <div class="col-6">
+          <div class="ch-content">
+            <h5 class="title">PROCESA</h5>
+          </div>
           <form action="" [formGroup]="formRegistro" class="form-material">
-            <div class="row">
-              <form-field
-                [control]="formRegistro.get('processTwo')"
-                label="Proceso">
-                <ng-select class="form-control" formControlName="processTwo">
-                  <ng-option [value]="null">Seleccione un valor</ng-option>
-                  <ng-option [value]="1">Proceso 1</ng-option>
-                  <ng-option [value]="2">Proceso 2</ng-option>
-                </ng-select>
-              </form-field>
-            </div>
             <div class="row mt-4">
-              <div class="col-md-6">
-                <form-field
-                  [control]="formRegistro.get('fromTwo')"
-                  label="Periodo del">
-                  <input
-                    type="text"
-                    formControlName="fromTwo"
-                    class="form-control"
-                    bsDatepicker />
-                </form-field>
+              <div class="col-12">
+                <div class="row">
+                  <div class="col-12 mt-3">
+                    <form-field
+                      [control]="formRegistro.get('processTwo')"
+                      label="Proceso">
+                      <ng-select
+                        class="form-control"
+                        formControlName="processTwo">
+                        <ng-option [value]="null"
+                          >Seleccione un proceso</ng-option
+                        >
+                        <ng-option [value]="1">Proceso 1</ng-option>
+                        <ng-option [value]="2">Proceso 2</ng-option>
+                      </ng-select>
+                    </form-field>
+                  </div>
+                  <div
+                    class="col-md-6 mt-5"
+                    style="margin-top: 23px !important">
+                    <form-field
+                      [control]="formRegistro.get('fromTwo')"
+                      label="Periodo del">
+                      <input
+                        type="text"
+                        formControlName="fromTwo"
+                        class="form-control"
+                        bsDatepicker />
+                    </form-field>
+                  </div>
+                  <div
+                    class="col-md-6 mt-5"
+                    style="margin-top: 23px !important">
+                    <form-field
+                      [control]="formRegistro.get('toTwo')"
+                      label="Al">
+                      <input
+                        type="text"
+                        formControlName="toTwo"
+                        class="form-control"
+                        bsDatepicker />
+                    </form-field>
+                  </div>
+                </div>
               </div>
-              <div class="col-md-6">
-                <form-field [control]="formRegistro.get('toTwo')" label="Al">
-                  <input
-                    type="text"
-                    formControlName="toTwo"
-                    class="form-control"
-                    bsDatepicker />
-                </form-field>
+              <div class="col-12 mt-4">
+                <div class="row">
+                  <div class="col-6 text-center">
+                    <button
+                      type="button"
+                      style="width: 80%"
+                      class="btn btn-secondary btn-sm active mt-4">
+                      Generar Aleatorios
+                    </button>
+                    <button
+                      type="button"
+                      style="width: 80%"
+                      class="btn btn-secondary btn-sm active mt-4">
+                      Revisar Carga
+                    </button>
+                  </div>
+                  <div class="col-6 text-center">
+                    <button
+                      class="btn btn-success btn-sm mt-4"
+                      style="width: 80%"
+                      type="button"
+                      (click)="cargarArchivo()">
+                      Cargar Archivo
+                      <i class="bx bx-download float-icon"></i>
+                    </button>
+                    <input
+                      type="file"
+                      name="file"
+                      #file
+                      class="d-none"
+                      accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                      (change)="onFileChange($event)" />
+
+                    <!-- <button (click)="cargarArchivo()" type="button" style="width: 80%;"
+                      class="btn btn-success btn-sm mt-4">
+                      Cargar Archivo <i class="bx bx-download float-icon"></i>
+                    </button> -->
+                    <button
+                      type="button"
+                      style="width: 80%"
+                      class="btn btn-success btn-sm mt-4">
+                      Exportar Reporte <i class="bx bx-upload float-icon"></i>
+                    </button>
+                  </div>
+                  <div class="col-3"></div>
+                  <div class="col-6 text-center">
+                    <button
+                      [disabled]="!delegationMae"
+                      type="button"
+                      (click)="generarReport()"
+                      style="width: 80%"
+                      class="btn btn-primary btn-sm active mt-4">
+                      Crear Reporte
+                    </button>
+                  </div>
+                  <div class="col-3"></div>
+                </div>
               </div>
             </div>
-
-            <button type="button" class="btn btn-primary btn-sm active">
-              CARGAR ARCHIVO
-            </button>
-            <button type="button" class="btn btn-secondary btn-sm active mx-4">
-              REVISAR CARGA
-            </button>
-            <button type="button" class="btn btn-secondary btn-sm active mx-4">
-              GENERAR ALEATORIOS
-            </button>
-            <button type="button" class="btn btn-secondary btn-sm active mx-4">
-              CREAR REPORTE
-            </button>
-            <button type="button" class="btn btn-success btn-sm active">
-              EXPORTAR REPORTE
-            </button>
           </form>
         </div>
       </div>
@@ -174,7 +236,7 @@
         </div>
       </div>
       <app-pagination
-        [params]="params"
+        [params]="paramsList"
         [totalItems]="totalItems"></app-pagination>
     </div>
   </div>

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SurvillanceEndpoints } from 'src/app/common/constants/endpoints/ms-survillance';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
@@ -96,16 +97,14 @@ export class SurvillanceService extends HttpService {
   }
 
   getVigSupervisionMae(params: _Params) {
-    return this.get<IListResponse<IViewVigDelegations>>(
-      this.route.VigSupervisionMae,
-      params
-    );
+    return this.get<IListResponse<any>>(this.route.VigSupervisionMae, params);
   }
 
-  getVigSupervisionDet(params: _Params) {
-    return this.get<IListResponse<IViewVigDelegations>>(
-      this.route.VigSupervisionDet,
-      params
-    );
+  getVigSupervisionDet(params?: ListParams) {
+    return this.get<IListResponse<any>>(this.route.VigSupervisionDet, params);
+  }
+
+  getVigSupervisionTmp(params?: ListParams) {
+    return this.get<IListResponse<any>>(this.route.VigSupervisionTMP, params);
   }
 }
