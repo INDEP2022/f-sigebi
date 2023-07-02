@@ -10,6 +10,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
@@ -26,7 +27,6 @@ import { AddMovementComponent } from '../add-movement/add-movement.component';
 import { CustomdbclickComponent } from '../customdbclick/customdbclick.component';
 import { CustomdbclickdepositComponent } from '../customdbclickdeposit/customdbclickdeposit.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
-import { CustomDateFilterComponent_ } from './searchDate';
 
 @Component({
   selector: 'app-deposit-tokens',
@@ -145,7 +145,7 @@ export class DepositTokensComponent
           },
           filter: {
             type: 'custom',
-            component: CustomDateFilterComponent_,
+            component: CustomDateFilterComponent,
           },
         },
         folio_ficha: {
@@ -186,7 +186,7 @@ export class DepositTokensComponent
           },
           filter: {
             type: 'custom',
-            component: CustomDateFilterComponent_,
+            component: CustomDateFilterComponent,
           },
         },
         currency: {
