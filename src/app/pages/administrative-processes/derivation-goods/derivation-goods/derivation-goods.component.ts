@@ -47,6 +47,11 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   goodData: any;
 
   bkConversionsCveActaCon: any;
+
+  get id() {
+    return this.form.get('id');
+  }
+
   get idConversion() {
     return this.form.get('idConversion');
   }
@@ -147,6 +152,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         ...MODAL_CONFIG,
         callback: (data: any) => {
           if (data != null) {
+            console.log(data);
             this.no_bien_blk_tipo_bien = data.goodFatherNumber;
             this.idConversion.setValue(data.id);
             this.numberDossier.setValue(data.fileNumber.id);
@@ -157,6 +163,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.actConvertion.setValue(data.cveActaConv);
             this.searchGoods(data.goodFatherNumber);
             this.searchGoodSon(data.goodFatherNumber);
+            this.searchSituation(data.goodFatherNumber);
           }
         },
       }, //pasar datos por aca
@@ -194,6 +201,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
    */
   private buildForm() {
     this.form = this.fb.group({
+      id: [null],
       idConversion: [null, [Validators.required]],
       numberGoodFather: [null, [Validators.pattern(NUMBERS_PATTERN)]], //Se quita la validación, en el forms no es requerido
       tipo: [null, [Validators.required]],
@@ -215,10 +223,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(NUMBERS_PATTERN), Validators.required],
       ],
-      observation: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      observation: [null, [Validators.pattern(STRING_PATTERN)]],
       descriptionSon: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -270,8 +275,9 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             .toPromise();
           // if (conversionData.typeConv === '1') {
           if (conversionData.typeConv === '2') {
+            this.id.setValue(res.data[0]['id']);
             this.observation.setValue(res.data[0]['observations']);
-            this.descriptionSon.setValue(res.data[0]['descriptionSon']);
+            this.descriptionSon.setValue(res.data[0]['description']);
             this.quantity.setValue(res.data[0]['quantity']);
             this.classifier.setValue(res.data[0]['goodClassNumber']);
             this.unitOfMeasure.setValue(res.data[0]['unit']);
@@ -306,6 +312,17 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         }
       }
     });
+  }
+  async searchSituation(e: any) {
+    this.serviceGoodProcess.getByIdSituation(e).subscribe(
+      res => {
+        console.log(res);
+        this.situation.setValue(res.data[0]['desc_situacion']);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   searchStatus(data: any) {
@@ -348,6 +365,29 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           );
       }
     });
+  }
+  updateGood() {
+    const data = {
+      id: this.id.value,
+      goodId: this.numberGoodFather.value,
+      observations: this.observation.value,
+      quantity: this.quantity.value,
+      goodClassNumber: this.classifier.value,
+      unit: this.unitOfMeasure.value,
+      labelNumber: this.destinationLabel.value,
+    };
+    this.serviceGood.update(data).subscribe(
+      res => {
+        this.alert('success', 'Bien', `Actualizado correctamente`);
+      },
+      err => {
+        this.alert(
+          'error',
+          'Bien',
+          'No se pudo actualizar el bien, por favor intentelo nuevamente'
+        );
+      }
+    );
   }
 
   watchFlagChanges(flag: any) {
@@ -569,8 +609,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   getAttributesGood(event: any) {
     this.serviceGood.getAttributesGood(event.goodId).subscribe(
       res => {
+        console.log(res);
         delete res.goodNumber;
         this.attributes = Object.entries(res).filter(([key, value]) => value);
+        console.log(this.attributes);
       },
       err => {
         console.log(err);
