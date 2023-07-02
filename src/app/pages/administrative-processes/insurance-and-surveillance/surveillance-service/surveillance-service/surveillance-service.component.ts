@@ -176,6 +176,9 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       this.disabledPeriod = false;
       this.form.get('process').setValue(null);
       this.form.get('period').setValue(null);
+      this.form.get('from').setValue(null);
+      this.form.get('to').setValue(null);
+      this.form.get('total').setValue(null);
       this.delegationDefault = event;
       params.addFilter(
         'delegationNumber',
@@ -188,6 +191,9 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       this.disabledPeriod = false;
       this.form.get('process').setValue(null);
       this.form.get('period').setValue(null);
+      this.form.get('from').setValue(null);
+      this.form.get('to').setValue(null);
+      this.form.get('total').setValue(null);
       // this.form.get('delegation').setValue(null);
     }
     //=======================================================//
@@ -212,11 +218,18 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
   async cleanPeriod(event: any) {
     console.log('event', event);
 
-    if (event === null) {
+    if (event != 1 && event != 2) {
       this.disabledPeriod = false;
       this.form.get('period').setValue(null);
+      this.form.get('from').setValue(null);
+      this.form.get('to').setValue(null);
+      this.form.get('total').setValue(null);
     } else {
       this.disabledPeriod = true;
+      this.form.get('period').setValue(null);
+      this.form.get('from').setValue(null);
+      this.form.get('to').setValue(null);
+      this.form.get('total').setValue(null);
       this.getPeriods(new ListParams());
     }
   }
@@ -362,6 +375,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     this.objGetSupervionDet = null;
     this.delegationDefault = null;
     this.delegationMae = null;
+    this.objectDelete = null;
     this.totalItems = 0;
     this.goods.load([]);
     this.goods.refresh();
@@ -379,7 +393,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       LV_VALIDAREP = 0;
       this.alert(
         'warning',
-        'La delegación regional es un valor requerido para generar el reporte',
+        'La Delegación Regional es un valor requerido para generar el reporte',
         ''
       );
       return;
@@ -462,12 +476,13 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     try {
       const excelImport = this.excelService.getData<any>(binaryExcel);
       console.log('excelImport', excelImport);
+      this.createDataVigilanceMtp(excelImport);
     } catch (error) {
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
     }
   }
 
-  onButtonClick(): void {
+  async onButtonClick() {
     this.fileInput.nativeElement.click();
   }
 
@@ -543,28 +558,86 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         ).then(async (question: any) => {
           if (question.isConfirmed) {
             let objDelete = {
-              delegationNumber: this.delegationDefault.delegationNumber,
-              cvePeriod: cveProcessTwo,
+              delegationNo: this.delegationDefault.delegationNumber,
+              lvCvePeriod: LV_CVE_PERIODO,
             };
-            // const deleteVIG_SUPERVISION_TMP_ = await this.deleteVIG_SUPERVISION_TMP(objDelete)
-            this.onButtonClick();
-            let objCreate = {
-              recordId: 'Dato de tipo numérico',
-              delegationNumber: 'Dato de tipo numérico',
-              cvePeriod: 'Dato de tipo numérico',
-              goodNumber: 'Dato de tipo texto',
-              address: 'Dato de tipo texto',
-              transferee: 'Dato de tipo texto',
-              delegationType: 'Dato de tipo texto',
-              user: 'Dato de tipo texto',
-            };
-            if (objCreate) {
-            }
+
+            this.objectDelete = objDelete;
+
+            await this.onButtonClick();
           }
         });
       } else {
         this.alert('warning', LV_MENSAJE, '');
       }
+    }
+  }
+
+  objectDelete: any = null;
+  async createDataVigilanceMtp(excelImport: any) {
+    let LV_REGVALIDO: number = null;
+    let LV_VALCONSE: number = null;
+    let arr: any = [];
+    // ELIMINAMOS REGISTROS //
+    const deleteVIG_SUPERVISION_TMP_ = await this.deleteVIG_SUPERVISION_TMP(
+      this.objectDelete
+    );
+
+    // VALIDAMOS ANTES DE REALIZAR NUEVOS REGISTROS //
+    if (excelImport.length > 0) {
+      let result = excelImport.map(async (item: any) => {
+        console.log('item', item);
+        try {
+          LV_VALCONSE = Number(item.recordId);
+          LV_REGVALIDO = 1;
+        } catch (error) {
+          LV_REGVALIDO = 0;
+        }
+
+        if (LV_REGVALIDO == 1) {
+          if (item.goodNumber) {
+            let objCreate = {
+              recordId: item.recordId,
+              delegationNumber: this.objectDelete.delegationNo,
+              cvePeriod: this.objectDelete.lvCvePeriod,
+              goodNumber: item.goodNumber,
+              address: item.address,
+              transferee: item.transferee,
+              delegationType: item.delegationType,
+              user: item.user,
+            };
+
+            const createVIG_SUPERVISION_TMP_: any =
+              await this.createVIG_SUPERVISION_TMP(objCreate);
+
+            if (createVIG_SUPERVISION_TMP_ === null) {
+              //ALMACENAMOS LA DATA QUE NO SE GUARDÓ //
+              arr.push(objCreate);
+            }
+          }
+        }
+      });
+
+      Promise.all(result).then(async (resp: any) => {
+        if (excelImport.length != arr.length) {
+          this.alertQuestion(
+            'success',
+            'Registros cargados correctamente',
+            '¿Quiere visualizarlos?'
+          ).then(async question => {
+            if (question.isConfirmed) {
+              this.openForm();
+            }
+          });
+        }
+
+        this.objectDelete = null; // LIMPIAMOS OBJECTDELETE //
+        this.clearInput();
+      });
+    } else {
+      this.objectDelete = null; // LIMPIAMOS OBJECTDELETE //
+      this.alert('warning', 'El archivo no contenía registros', '');
+      this.clearInput();
     }
   }
 
@@ -587,9 +660,9 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
   // DELETE - VIG_SUPERVISION_TMP //
   async deleteVIG_SUPERVISION_TMP(params: any) {
     return new Promise((resolve, reject) => {
-      this.survillanceService.getVigSupervisionTmp(params).subscribe({
+      this.survillanceService.deleteVigSupervisionTmp(params).subscribe({
         next: async (response: any) => {
-          console.log('EDED2', response);
+          console.log('ELIMINADO', response);
           resolve(response);
         },
         error: error => {
@@ -599,4 +672,27 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       });
     });
   }
+
+  // CREAMOS REGISTROS EN LA TABLA VIG_SUPERVISION_TMP //
+  async createVIG_SUPERVISION_TMP(params: any) {
+    return new Promise((resolve, reject) => {
+      this.survillanceService.createVigSupervisionTmp(params).subscribe({
+        next: async (response: any) => {
+          console.log('CREATE', response);
+          resolve(response);
+        },
+        error: error => {
+          this.loading = false;
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  clearInput() {
+    this.fileInput.nativeElement.value = '';
+  }
+
+  // LISTA DE REGISTROS CREADOS EN LA TABLA VIG_SUPERVISION_TMP //
+  openForm() {}
 }
