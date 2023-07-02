@@ -175,6 +175,8 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
       if (n_COUNT > 0) {
         /// mandar a llamar al reporte R_FIRMA_DICTAMASIV
         this.downloadReport('blank', null);
+        console.log(this.dictaminationSelect.remitente);
+        console.log(this.userAuth);
         if (this.dictaminationSelect.remitente === this.userAuth) {
           this.enableSend = true;
         }

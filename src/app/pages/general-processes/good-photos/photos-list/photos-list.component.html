@@ -24,13 +24,13 @@
     <form class="form-material" [formGroup]="form">
       <form-field
         [control]="form.get('typedblClickAction')"
-        label="Acciones de doble click">
+        label="Acciones de Doble Click">
         <ng-select
           class="form-control"
           formControlName="typedblClickAction"
           [clearable]="false"
           [searchable]="false"
-          [readonly]="files.length < 1">
+          [readonly]="files.length < 1 || disabled">
           <ng-option [value]="1">Visualizar</ng-option>
           <ng-option [value]="2">Editar</ng-option>
         </ng-select>
@@ -65,9 +65,11 @@
           class="dropdown-menu dropdown-menu-right"
           role="menu"
           aria-labelledby="button-basic">
-          <!-- <li role="menuitem">
-            <a class="dropdown-item" (click)="showHistoric()">Histórico</a>
-          </li> -->
+          <li role="menuitem">
+            <a class="dropdown-item" (click)="openZipUploader()"
+              >Carga Masiva (ZIP)</a
+            >
+          </li>
           <li
             role="menuitem"
             [class]="disabledDeletePhotos() ? 'disabledDelete' : ''"
@@ -81,7 +83,9 @@
             role="menuitem"
             [class]="disabledDeleteAllPhotos() ? 'disabledDelete' : ''"
             [tooltip]="errorMessage">
-            <a class="dropdown-item">Eliminar Todas</a>
+            <a class="dropdown-item" (click)="confirmDelete(true)"
+              >Eliminar Todas</a
+            >
           </li>
         </ul>
       </div>
