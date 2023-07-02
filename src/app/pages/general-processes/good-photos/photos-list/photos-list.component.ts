@@ -210,7 +210,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   async confirmDelete(all = false) {
-    if (this.disabledDeletePhotos()) return;
+    // if (this.disabledDeletePhotos()) return;
     if (this.filesToDelete.length < 1) {
       this.alert(
         'warning',
@@ -262,9 +262,11 @@ export class PhotosListComponent extends BasePage implements OnInit {
             'Imagenes sin eliminar',
             this.errorImages.toString()
           );
-          this.filesToDelete = [];
-          this.service.deleteEvent.next(true);
-          this.getData();
+          if (this.errorImages.length < this.filesToDelete.length) {
+            this.filesToDelete = [];
+            this.service.deleteEvent.next(true);
+            this.getData();
+          }
         },
       });
   }
