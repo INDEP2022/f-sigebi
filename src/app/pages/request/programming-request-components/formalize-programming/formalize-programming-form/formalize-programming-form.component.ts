@@ -14,6 +14,7 @@ import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { IReceipt } from 'src/app/core/models/receipt/receipt.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
@@ -26,6 +27,7 @@ import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/sign
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -224,7 +226,9 @@ export class FormalizeProgrammingFormComponent
     // private router: ActivatedRoute,
     private router: Router,
     private signatoriesService: SignatoriesService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private taskService: TaskService,
+    private authService: AuthService
   ) {
     super();
     this.settings.columns = TRANSPORTABLE_GOODS_FORMALIZE;
@@ -1139,7 +1143,51 @@ export class FormalizeProgrammingFormComponent
     this.modalService.show(PreviewDocumentsComponent, config);
   }
 
-  confirm() {
-    //SE ACABO ESTE
+  async confirm() {
+    if (this.proceedingData.statusProceeedings == 'CERRADO') {
+      console.log('this.proceeding', this.proceedingData);
+
+      const _task = JSON.parse(localStorage.getItem('Task'));
+      const user: any = this.authService.decodeToken();
+      let body: any = {};
+      body['idTask'] = _task.id;
+      body['userProcess'] = user.username;
+      body['type'] = 'SOLICITUD_PROGRAMACION';
+      body['subtype'] = 'Formalizar_Entrega';
+      body['ssubtype'] = 'ACCEPT';
+
+      const closeTask = await this.closeTaskExecuteRecepcion(body);
+      if (closeTask) {
+        this.alertInfo(
+          'success',
+          'Acción correcta',
+          'Se cerro la tarea formalizar entrega correctamente'
+        ).then(question => {
+          if (question.isConfirmed) {
+            this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+          }
+        });
+      }
+    } else {
+      this.alertInfo(
+        'info',
+        'Acción Inválida',
+        'Se necesita cerrar el acta'
+      ).then();
+    }
+  }
+
+  closeTaskExecuteRecepcion(body: any) {
+    return new Promise((resolve, reject) => {
+      this.taskService.createTaskWitOrderService(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          this.alertInfo('error', 'Error', 'No se pudo crear la tarea').then();
+          reject(false);
+        },
+      });
+    });
   }
 }
