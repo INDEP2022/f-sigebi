@@ -17,4 +17,5 @@ export enum GoodprocessEndpoints {
   GetGoodType = 'v-good-type',
   GetGoodProceedings = 'application/get-good-proceedings',
   AppliesControl = 'update-good-status/appliesControl',
+  consultationScreenGood = 'factadbsolcamnume/consultation-post-query-good',
 }

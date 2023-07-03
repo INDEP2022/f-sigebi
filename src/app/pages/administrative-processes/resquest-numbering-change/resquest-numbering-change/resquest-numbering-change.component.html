@@ -8,7 +8,7 @@
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('legalStatus')"
-            label="Situación Juridica">
+            label="Situación Jurídica">
             <ng-select
               formControlName="legalStatus"
               [searchable]="false"
@@ -96,6 +96,9 @@
   </div>
   <div body>
     <div class="row">
+      <div class="d-flex justify-content-end mb-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
       <div [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table
           class="table-responsive"
