@@ -3,12 +3,13 @@
     <h5 class="modal-title">Folios Relacionados al Expediente</h5>
   </div>
   <div body>
+    <small>De clic sobre el registro para visualizar los documentos</small>
     <div class="row" [class.table-loading]="loading">
       <div style="overflow: auto">
         <ng2-smart-table
           [source]="documents"
           [settings]="settings"
-          (userRowSelect)="selectedRow = $event.data"></ng2-smart-table>
+          (userRowSelect)="viewDocuments($event.data)"></ng2-smart-table>
       </div>
       <app-pagination
         [filterParams]="$params"

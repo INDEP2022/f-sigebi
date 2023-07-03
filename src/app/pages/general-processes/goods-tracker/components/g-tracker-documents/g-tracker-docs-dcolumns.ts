@@ -12,6 +12,7 @@ export const GTTRACKER_DOCUMENTS_COLUMNS = {
   descripcion_documento: {
     title: 'Descripción del documento',
     sort: false,
+    type: 'custom',
     renderComponent: SeeMoreComponent,
     valuePrepareFunction: (value: string) => {
       return value ?? '';
