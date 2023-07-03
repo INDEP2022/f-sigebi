@@ -1,3 +1,4 @@
+import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const GP_GOODS_COLUMNS = {
@@ -31,6 +32,13 @@ export const GP_GOODS_COLUMNS = {
   parentGoodPartialNumber: {
     title: 'No. Bien Padre Parcialización',
     sort: false,
+    type: 'custom',
+    renderComponent: LinkCellComponent,
+    onComponentInitFunction: (instance: LinkCellComponent) => {
+      instance.onNavigate.subscribe(row => {
+        console.log(row);
+      });
+    },
     class: 'bg-primary',
   },
   parentGoodMenajeNumber: {
