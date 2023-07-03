@@ -7,6 +7,7 @@
             <div class="row">
               <div class="col-md-12">
                 <app-goods-types-shared
+                  [reloadGood]="reloadGood"
                   [loadOnChangesNoBien]="true"
                   [goodselect]="goodSelect"
                   [form]="searchTabForm"
@@ -23,6 +24,7 @@
               <div class="col-md-12">
                 <div class="form-group">
                   <goods-filter-shared
+                    [reloadGood]="reloadGood"
                     [clean]="cleanGood"
                     [form]="searchTabForm"
                     goodField="noBien"
@@ -76,19 +78,19 @@
               <div class="col-md-5 d-flex justify-content-end">
                 <div class="m-3">
                   <button
-                    class="btn btn-sm btn-primary active mr-3"
+                    class="btn btn-sm btn-primary active mr-2"
                     (click)="search()">
                     Buscar <i class="fas fa-search"></i>
                   </button>
                   <button
-                    class="btn btn-danger btn-sm active mr-3"
+                    class="btn btn-danger btn-sm active mr-2"
                     (click)="clean()">
                     Limpiar <i class="fas fa-eraser"></i>
                   </button>
                   <button
                     class="btn btn-sm btn-primary active"
                     (click)="openPhotos()">
-                    Ver fotos <i class="fas fa-eye"></i>
+                    Ver Fotos <i class="fas fa-eye"></i>
                   </button>
                 </div>
               </div>

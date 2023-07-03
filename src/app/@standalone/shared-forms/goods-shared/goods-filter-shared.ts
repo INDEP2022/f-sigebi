@@ -23,7 +23,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 /**import SERVICE**/
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
-import { IGood } from 'src/app/core/models/catalogs/goods.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 
 @Component({
@@ -58,6 +58,9 @@ export class GoodsFilterSharedComponent
 {
   @Input() form: FormGroup;
   @Input() goodField: string = 'goodId';
+  @Input() set reloadGood(value: IGood) {
+    if (value) this.getData(value);
+  }
 
   @Input() showGoods: boolean = true;
   //If Form PatchValue
@@ -138,6 +141,18 @@ export class GoodsFilterSharedComponent
       field = null;
     });
     this.form.updateValueAndValidity();
+  }
+
+  getData(good: IGood) {
+    const data = [good].map(clasi => {
+      return {
+        ...clasi,
+        info: `${clasi.id} - ${clasi.description}`,
+      };
+    });
+    console.log('DESDE el SELECT **********', data);
+    this.goods = new DefaultSelect(data, data.length);
+    //this.form.get('noBien').setValue(good.id);
   }
 
   concatenarEtiquetas(data: any): string {
