@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { IZoneGeographic } from 'src/app/core/models/catalogs/zone-geographic.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -38,7 +41,10 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
     private delegationService: DelegationService,
     private serviceGood: GoodService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService
   ) {
     super();
     this.route.queryParams.subscribe(params => {
@@ -260,6 +266,49 @@ Ultima página del Acta Administrativa de Validación y Conversión de Unidades 
 
       return { ...item, cveActaConvId: newCveActaConvId };
     });
+  }
+  printAct() {
+    let params = {
+      PCLAVE: '',
+      PDESTINO: '',
+    };
+
+    this.siabService
+      // .fetchReport('RGENACTACONVBIS', params)
+      .fetchReportBlank('blank')
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
   }
 
   /*V_CONSECUTIVO  */

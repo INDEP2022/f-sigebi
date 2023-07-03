@@ -353,14 +353,14 @@ export class PerformProgrammingFormComponent
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      startDate: [null, [Validators.required]],
-      endDate: [null, [Validators.required]],
+      startDate: [null, Validators.required],
+      endDate: [null, Validators.required],
       observation: [
         null,
         [Validators.maxLength(400), Validators.pattern(STRING_PATTERN)],
       ],
       regionalDelegationNumber: [null, [Validators.required]],
-      delregAttentionId: [null, [Validators.required]],
+      delregAttentionId: [null],
       stateKey: [null, [Validators.required]],
       tranferId: [null, [Validators.required]],
       stationId: [null, [Validators.required]],
@@ -1841,7 +1841,9 @@ export class PerformProgrammingFormComponent
                 this.formLoading = false;
                 this.newTransferent = false;
               },
-              error: error => {},
+              error: error => {
+                console.log('error', error);
+              },
             });
         }
       }
@@ -2207,11 +2209,13 @@ export class PerformProgrammingFormComponent
       this.performForm
         .get('startDate')
         .setValue(
-          moment(this.dataProgramming.startDate).format('DD/MMMM/YYYY')
+          moment(this.dataProgramming.startDate).format('YYYY/MM/DD HH:mm:ss')
         );
       this.performForm
         .get('endDate')
-        .setValue(moment(this.dataProgramming.endDate).format('DD/MMMM/YYYY'));
+        .setValue(
+          moment(this.dataProgramming.endDate).format('YYYY/MM/DD HH:mm:ss')
+        );
 
       this.transferentId = this.dataProgramming.tranferId;
 
@@ -2392,15 +2396,27 @@ export class PerformProgrammingFormComponent
 
   checkInfoDate(event: any) {
     const startDate = event;
-    const _startDateFormat = moment(startDate).format('DD/MMMM/YYYY');
+    const _startDateFormat = moment(startDate).format('YYYY/MM/DD HH:mm:ss');
 
     const _endDateFormat = moment(this.performForm.get('endDate').value).format(
-      'DD/MMMM/YYYY'
+      'YYYY/MM/DD HH:mm:ss'
     );
-    const date = moment(new Date()).format('YYYY-MM-DD');
-    this.programmingService.getDateProgramming(date, 5).subscribe({
+    const date = moment(new Date()).format('YYYY/MM/DD');
+
+    console.log('_startDateFormat', _startDateFormat);
+    console.log('_endDateFormat', _endDateFormat);
+
+    const formData = {
+      days: 5,
+      hours: 0,
+      minutes: 0,
+      date: date,
+    };
+
+    this.programmingService.getDateProgramming(formData).subscribe({
       next: (response: any) => {
-        const correctDate = moment(response).format('DD/MMMM/YYYY');
+        console.log('response', response);
+        const correctDate = moment(response).format('YYYY/MM/DD HH:mm:ss');
         if (correctDate > _startDateFormat || correctDate > _endDateFormat) {
           this.performForm
             .get('startDate')
@@ -2408,7 +2424,9 @@ export class PerformProgrammingFormComponent
           this.performForm
             .get('startDate')
             .setErrors({ minDate: { min: new Date(response) } });
-          this.performForm
+          this.performForm.markAllAsTouched();
+          //this.performForm.reset();
+          /*this.performForm
             .get('endDate')
             .addValidators([minDate(new Date(response))]);
           this.performForm
@@ -2416,7 +2434,7 @@ export class PerformProgrammingFormComponent
             .setErrors({ minDate: { min: new Date(response) } });
           this.performForm.markAllAsTouched();
           this.performForm.reset();
-          /*const endDate = this.performForm.get('endDate').value;
+          const endDate = this.performForm.get('endDate').value;
           const _endDateFormat = moment(endDate).format(
             'DD/MMMM/YYYY, h:mm:ss a'
           );
@@ -2435,6 +2453,9 @@ export class PerformProgrammingFormComponent
             this.performForm.markAllAsTouched();
           } */
         }
+      },
+      error: error => {
+        console.log('error', error);
       },
     });
   }

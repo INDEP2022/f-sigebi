@@ -24,13 +24,13 @@
         <button
           (click)="aprobateProgramming()"
           class="btn btn-primary btn-sm active"
-          *ngIf="programming?.concurrentMsg == null">
+          *ngIf="!task?.State">
           Aprobar
         </button>
         <button
           (click)="aprobateProgramming()"
-          class="btn btn-primary btn-sm active"
-          *ngIf="programming?.concurrentMsg">
+          class="btn btn-primary btn-sm active disabled"
+          *ngIf="task?.State == 'FINALIZADA'">
           Aprobar
         </button>
         <button

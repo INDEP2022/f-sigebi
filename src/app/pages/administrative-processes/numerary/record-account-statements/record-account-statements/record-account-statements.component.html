@@ -7,23 +7,31 @@
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-md-3">
-            <form-field [control]="form.get('bank')" label="Banco">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="bank"
-                (click)="openForm()" />
+            <form-field [control]="form.get('bank')">
+              <ngx-select
+                [form]="form"
+                [data]="itemsBancos"
+                label="Banco"
+                bindLabel="name"
+                value="bankCode"
+                (fetchItems)="getBancos($event)"
+                control="bank"
+                (change)="ChangeBanco($event)">
+              </ngx-select>
             </form-field>
           </div>
           <div class="col-md-3">
-            <form-field [control]="form.get('account')" label="Cuenta">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="account"
-                min="1"
-                pattern="^[0-9]+"
-                oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
+            <form-field [control]="form.get('account')">
+              <ngx-select
+                [form]="form"
+                [data]="itemsCuentas"
+                label="Cuenta"
+                bindLabel="accountNumber"
+                value="accountNumber"
+                (fetchItems)="getCuentas($event)"
+                control="account"
+                (change)="ChangeCuenta($event)">
+              </ngx-select>
             </form-field>
           </div>
           <div class="col-md-3">
@@ -32,7 +40,7 @@
                 type="text"
                 class="form-control"
                 formControlName="square"
-                maxlength="30" />
+                id="square" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -41,7 +49,7 @@
                 type="text"
                 class="form-control"
                 formControlName="branch"
-                maxlength="30" />
+                id="branch" />
             </form-field>
           </div>
         </div>
@@ -54,7 +62,7 @@
                 type="text"
                 class="form-control"
                 formControlName="accountType"
-                maxlength="13" />
+                id="account" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -63,7 +71,7 @@
                 type="text"
                 class="form-control"
                 formControlName="currency"
-                maxlength="15" />
+                id="currency" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -71,26 +79,55 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="description" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('balanceOf')" label="Saldo de">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="balanceOf" />
+                formControlName="description"
+                id="description" />
             </form-field>
           </div>
         </div>
+        <hr />
         <div class="row mt-4">
           <div class="col-md-3">
             <form-field [control]="form.get('balanceAt')" label="Saldo al">
               <input
                 type="text"
                 class="form-control"
-                formControlName="balanceAt" />
+                formControlName="balanceAt"
+                bsDatepicker />
             </form-field>
+            <!-- <form-field [control]="form.get('balanceAt')" label="Saldo al">
+              <input type="text" class="form-control" formControlName="balanceAt" />
+            </form-field> -->
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('balanceOf')" label="Saldo de">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="balanceOf"
+                bsDatepicker />
+            </form-field>
+            <!-- <form-field [control]="form.get('balanceOf')" label="Saldo de">
+              <input type="text" class="form-control" formControlName="balanceOf" />
+            </form-field> -->
+          </div>
+          <div class="col-md-3" *ngIf="validation">
+            <form-field [control]="form.get('total')" label="Total">
+              <input type="text" class="form-control" formControlName="total" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              style="margin-left: 5vh"
+              (click)="search()"
+              [disabled]="
+                form.get('balanceAt').value == null ||
+                form.get('balanceOf').value == null
+              ">
+              Buscar
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
           </div>
         </div>
       </form>
@@ -100,7 +137,8 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="data1">
+              [source]="data1"
+              (userRowSelect)="selectData($event.data)">
             </ng2-smart-table>
           </div>
         </div>
