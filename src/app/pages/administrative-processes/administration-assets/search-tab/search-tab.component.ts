@@ -36,6 +36,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
   cleanGood: boolean = false;
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
+  reloadGood: IGood;
   constructor(
     private fb: FormBuilder,
     private readonly goodService: GoodService,
@@ -49,8 +50,17 @@ export class SearchTabComponent extends BasePage implements OnInit {
     this.settings.hideSubHeader = false;
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.prepareForm();
+    const form = localStorage.getItem('formSearch');
+    if (form) {
+      const newForm = JSON.parse(form);
+      this.searchTabForm.get('noBien').setValue(newForm.noBien);
+      localStorage.removeItem('formSearch');
+      this.reloadGood = await this.getGood();
+      console.log(this.goodSelect);
+      this.search();
+    }
     this.searchTabForm.get('noBien').valueChanges.subscribe({
       next: val => {
         this.searchTabForm.get('estatus').setValue('');
@@ -147,21 +157,9 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
 
   clean() {
-    /* this.searchTabForm.get('noClasifBien').setValue('');
-    this.searchTabForm.get('noTipo').setValue('');
-    this.searchTabForm.get('tipo').setValue('');
-    this.searchTabForm.get('noSubtipo').setValue('');
-    this.searchTabForm.get('subtipo').setValue('');
-    this.searchTabForm.get('noSsubtipo').setValue('');
-    this.searchTabForm.get('ssubtipo').setValue('');
-    this.searchTabForm.get('noSssubtipo').setValue('');
-    this.searchTabForm.get('sssubtipo').setValue('');
-    this.searchTabForm.get('estatus').setValue('');
-    this.searchTabForm.get('situacion').setValue('');
-    this.searchTabForm.get('destino').setValue('');
-    this.cleanGood = true; */
     this.searchTabForm.reset();
-    this.list = [];
+    this.data.load([]);
+    this.data.refresh();
     this.dataSearch.emit({
       data: this.searchTabForm.get('noBien').value,
       exist: false,
@@ -169,20 +167,6 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
 
   async search() {
-    /* if (
-      this.searchTabForm.get('subtipo').value === '' ||
-      this.searchTabForm.get('subtipo').value === null
-    ) {
-      this.onLoadToast('info', 'Debe seleccionar un subtipo');
-      return;
-    }
-    if (
-      this.searchTabForm.get('ssubtipo').value === '' ||
-      this.searchTabForm.get('ssubtipo').value === null
-    ) {
-      this.onLoadToast('info', 'Debe seleccionar un ssubtipo');
-      return;
-    } */
     if (
       this.searchTabForm.get('noBien').value === '' ||
       this.searchTabForm.get('noBien').value === null
@@ -195,9 +179,15 @@ export class SearchTabComponent extends BasePage implements OnInit {
       exist: true,
     });
     const respStatus = await this.searchStatus();
-    this.searchTabForm.get('situacion').patchValue(this.goodSelect.situation);
-    this.searchTabForm.get('destino').patchValue(this.goodSelect.destiny);
     const respNotification = await this.searchNotifications();
+    if (this.goodSelect) {
+      this.searchTabForm.get('situacion').patchValue(this.goodSelect.situation);
+      this.searchTabForm.get('destino').patchValue(this.goodSelect.destiny);
+    }
+    if (this.reloadGood) {
+      this.searchTabForm.get('situacion').patchValue(this.reloadGood.situation);
+      this.searchTabForm.get('destino').patchValue(this.reloadGood.destiny);
+    }
   }
 
   searchNotifications() {
@@ -294,5 +284,18 @@ export class SearchTabComponent extends BasePage implements OnInit {
   onChangeGood(event: IGood) {
     // this.searchTabForm.get('noBien').setValue(event.id);
     this.goodSelect = event;
+  }
+
+  getGood() {
+    return new Promise<any>((res, rej) => {
+      this.goodService
+        .getById(this.searchTabForm.get('noBien').value)
+        .subscribe({
+          next: (response: any) => {
+            res(response.data[0]);
+          },
+          error: err => res(null),
+        });
+    });
   }
 }

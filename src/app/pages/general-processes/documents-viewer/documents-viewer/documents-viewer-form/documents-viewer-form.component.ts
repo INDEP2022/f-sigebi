@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -39,8 +39,7 @@ export class DocumentViewerFormComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private documentService: DocumentsService,
-    private modalService: BsModalService,
-    private renderer: Renderer2
+    private modalService: BsModalService
   ) {
     super();
     this.settings.columns = RELATED_FOLIO_COLUMNS;
@@ -136,10 +135,8 @@ export class DocumentViewerFormComponent extends BasePage implements OnInit {
       ignoreBackdropClick: false,
       folio,
     };
-
     // Ocultar el primer modal antes de mostrar el segundo modal
     this.modalRef.hide();
-
     this.modalService.show(DocumentsViewerByFolioComponent, modalConfig);
   }
 }
