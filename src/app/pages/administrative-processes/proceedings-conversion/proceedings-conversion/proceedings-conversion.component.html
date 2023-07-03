@@ -127,84 +127,7 @@
                           <div class="row">
                             <div class="col-md-12">
                               <div class="card">
-                                <div class="card-body">
-                                  <div class="col-md-3">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          proceedingsConversionForm.get(
-                                            'respConv'
-                                          )
-                                        "
-                                        label="Responsable">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="respConv"
-                                          class="form-control"
-                                          [disabled]="validPermisos" />
-                                      </form-field>
-                                    </div>
-                                  </div>
-                                  <div class="col-md-3">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          proceedingsConversionForm.get(
-                                            'testigoOIC'
-                                          )
-                                        "
-                                        label="Testigo de la contraloria">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="testigoOIC"
-                                          pattern="^[A-Z]+"
-                                          [disabled]="validPermisos" />
-                                      </form-field>
-                                    </div>
-                                  </div>
-                                  <div class="col-md-3">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          proceedingsConversionForm.get(
-                                            'testigoTwo'
-                                          )
-                                        "
-                                        label="Testigo">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="testigoTwo"
-                                          pattern="^[A-Z]+"
-                                          [disabled]="validPermisos" />
-                                      </form-field>
-                                    </div>
-                                  </div>
-                                  <div class="col-md-3">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          proceedingsConversionForm.get(
-                                            'testigoTree'
-                                          )
-                                        "
-                                        label="Testigo">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="testigoTree"
-                                          pattern="^[A-Z]+"
-                                          [disabled]="validPermisos" />
-                                      </form-field>
-                                    </div>
-                                  </div>
-                                </div>
+                                <div class="card-body"></div>
                               </div>
                             </div>
                           </div>
@@ -224,6 +147,71 @@
                                     <div>
                                       <form-field
                                         [control]="
+                                          actaRecepttionForm.get('respConv')
+                                        "
+                                        label="Responsable">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="respConv"
+                                          class="form-control"
+                                          [readonly]="!validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-4">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('testigoOIC')
+                                        "
+                                        label="Testigo de la contraloria">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="testigoOIC"
+                                          [readonly]="!validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-4">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('testigoTwo')
+                                        "
+                                        label="Testigo">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="testigoTwo"
+                                          [readonly]="!validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-4">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('testigoTree')
+                                        "
+                                        label="Testigo">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="testigoTree"
+                                          [disabled]="!validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-4">
+                                    <div>
+                                      <form-field
+                                        [control]="
                                           actaRecepttionForm.get('acta')
                                         "
                                         label="Acta">
@@ -232,7 +220,6 @@
                                           type="text"
                                           class="form-control"
                                           formControlName="acta"
-                                          [disabled]="validPermisos"
                                           readonly />
                                       </form-field>
                                     </div>
@@ -249,7 +236,6 @@
                                           type="text"
                                           class="form-control"
                                           formControlName="type"
-                                          [disabled]="validPermisos"
                                           readonly />
                                       </form-field>
                                     </div>
@@ -266,7 +252,6 @@
                                           type="text"
                                           class="form-control"
                                           formControlName="administra"
-                                          [disabled]="validPermisos"
                                           readonly />
                                       </form-field>
                                     </div>
@@ -284,7 +269,6 @@
                                           type="text"
                                           class="form-control"
                                           formControlName="consec"
-                                          [disabled]="validPermisos"
                                           readonly />
                                       </form-field>
                                     </div>
@@ -295,37 +279,29 @@
                                         [control]="
                                           actaRecepttionForm.get('anio')
                                         "
-                                        label="Año">
+                                        label="Fecha de Captura">
                                         <input
                                           #inputValue
                                           type="text"
                                           class="form-control"
                                           formControlName="anio"
-                                          [disabled]="validPermisos"
+                                          [readonly]="!validPermisos"
                                           bsDatepicker
                                           [bsConfig]="{
-                                            dateInputFormat: 'YYYY'
+                                            dateInputFormat: 'MM/YYYY'
                                           }" />
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-4">
+                                  <!-- <div class="col-md-4">
                                     <div>
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('mes')
-                                        "
-                                        label="Mes">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="mes"
-                                          [disabled]="validPermisos"
-                                          bsDatepicker />
+                                      <form-field [control]="actaRecepttionForm.get('mes')">
+                                        <input formControlName="mes" class="form-control" bsDatepicker
+                                          [bsConfig]="datePickerConfig"
+                                          [minDate]="actaRecepttionForm.get('mes').value" />
                                       </form-field>
                                     </div>
-                                  </div>
+                                  </div> -->
                                   <div class="col-md-4">
                                     <div>
                                       <form-field
@@ -338,26 +314,20 @@
                                           type="text"
                                           class="form-control"
                                           formControlName="cveActa"
-                                          [readonly]="validPermisos" />
+                                          readonly />
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-4">
+                                  <!-- <div class="col-md-4">
                                     <div>
-                                      <form-field
-                                        [control]="
+                                      <form-field [control]="
                                           actaRecepttionForm.get('ejecuta')
-                                        "
-                                        label="ejecuta">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="ejecuta"
+                                        " label="ejecuta">
+                                        <input #inputValue type="text" class="form-control" formControlName="ejecuta"
                                           [readonly]="validPermisos" />
                                       </form-field>
                                     </div>
-                                  </div>
+                                  </div> -->
 
                                   <div class="float-right">
                                     <div class="col-md-2">
@@ -365,7 +335,7 @@
                                         type="button"
                                         class="btn btn-primary active btn-sm"
                                         (click)="searchActas()">
-                                        Buscar actas<i
+                                        Estatus actas<i
                                           class="bx bx-search bx-sm float-icon"></i>
                                       </button>
                                     </div>
@@ -380,7 +350,7 @@
                                       label="Direccón">
                                       <textarea
                                         maxlength="2000"
-                                        [readonly]="validPermisos"
+                                        [readonly]="!validPermisos"
                                         type="text"
                                         class="form-control"
                                         formControlName="direccion"
@@ -397,7 +367,7 @@
                                       label="P&aacute;rrafo 1">
                                       <textarea
                                         maxlength="2000"
-                                        [readonly]="validPermisos"
+                                        [readonly]="!validPermisos"
                                         type="text"
                                         class="form-control"
                                         formControlName="parrafo1"
@@ -414,7 +384,7 @@
                                       label="P&aacute;rrafo 2">
                                       <textarea
                                         maxlength="4000"
-                                        [readonly]="validPermisos"
+                                        [readonly]="!validPermisos"
                                         type="text"
                                         class="form-control"
                                         formControlName="parrafo2"
@@ -431,7 +401,7 @@
                                       label="P&aacute;rrafo 3">
                                       <textarea
                                         maxlength="4000"
-                                        [readonly]="validPermisos"
+                                        [readonly]="!validPermisos"
                                         type="text"
                                         class="form-control"
                                         formControlName="parrafo3"
@@ -474,7 +444,6 @@
                             <div class="text-center">
                               <button
                                 (click)="create()"
-                                [disabled]="isAllDisabled"
                                 class="btn btn-success btn-sm active"
                                 type="button">
                                 Agregar <i class="fa fa-plus float-icon"></i>
@@ -498,7 +467,7 @@
                                 <ng2-smart-table
                                   [attr.class]="'table-bordered my-table'"
                                   [settings]="settings2"
-                                  [source]="dataTableGoodsActa">
+                                  [source]="rececption">
                                 </ng2-smart-table>
                                 <app-pagination
                                   [totalItems]="totalItems2"></app-pagination>
@@ -526,7 +495,6 @@
                 <div class="m-3">
                   <button
                     *ngIf="dataTableGoodsConvertion"
-                    [disabled]="validPermisos"
                     type="button"
                     class="btn btn-primary btn-sm active"
                     (click)="savActa()">
