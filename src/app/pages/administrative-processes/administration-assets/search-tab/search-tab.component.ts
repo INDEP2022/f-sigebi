@@ -41,7 +41,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
     private readonly goodService: GoodService,
     private readonly notifyService: NotificationService,
     private modalService: BsModalService,
-    private readonly router: Router
+    private router: Router
   ) {
     super();
     this.settings.actions = false;
@@ -51,17 +51,6 @@ export class SearchTabComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    const form = localStorage.getItem('formSearch');
-    console.log(form);
-
-    if (form) {
-      const newForm = JSON.parse(form);
-      console.log(newForm.noBien);
-      this.searchTabForm.get('noBien').setValue(newForm.noBien);
-      this.search();
-      localStorage.removeItem('formSearch');
-    }
-
     this.searchTabForm.get('noBien').valueChanges.subscribe({
       next: val => {
         this.searchTabForm.get('estatus').setValue('');
@@ -158,6 +147,19 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
 
   clean() {
+    /* this.searchTabForm.get('noClasifBien').setValue('');
+    this.searchTabForm.get('noTipo').setValue('');
+    this.searchTabForm.get('tipo').setValue('');
+    this.searchTabForm.get('noSubtipo').setValue('');
+    this.searchTabForm.get('subtipo').setValue('');
+    this.searchTabForm.get('noSsubtipo').setValue('');
+    this.searchTabForm.get('ssubtipo').setValue('');
+    this.searchTabForm.get('noSssubtipo').setValue('');
+    this.searchTabForm.get('sssubtipo').setValue('');
+    this.searchTabForm.get('estatus').setValue('');
+    this.searchTabForm.get('situacion').setValue('');
+    this.searchTabForm.get('destino').setValue('');
+    this.cleanGood = true; */
     this.searchTabForm.reset();
     this.list = [];
     this.dataSearch.emit({
@@ -167,6 +169,20 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
 
   async search() {
+    /* if (
+      this.searchTabForm.get('subtipo').value === '' ||
+      this.searchTabForm.get('subtipo').value === null
+    ) {
+      this.onLoadToast('info', 'Debe seleccionar un subtipo');
+      return;
+    }
+    if (
+      this.searchTabForm.get('ssubtipo').value === '' ||
+      this.searchTabForm.get('ssubtipo').value === null
+    ) {
+      this.onLoadToast('info', 'Debe seleccionar un ssubtipo');
+      return;
+    } */
     if (
       this.searchTabForm.get('noBien').value === '' ||
       this.searchTabForm.get('noBien').value === null

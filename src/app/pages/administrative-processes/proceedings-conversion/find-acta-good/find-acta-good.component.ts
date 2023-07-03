@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -9,8 +9,10 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IActasConversion } from 'src/app/core/models/ms-convertiongood/convertiongood';
+import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ACTAS } from '../proceedings-conversion/proceedings-conversion-columns';
 import { IInitFormProceedingsBody } from '../proceedings-conversion/proceedings-conversion.component';
@@ -22,18 +24,21 @@ import { IInitFormProceedingsBody } from '../proceedings-conversion/proceedings-
 export class FindActaGoodComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   //Data Table
-  actas: IActasConversion[] = [];
+  actas: IProceedingDeliveryReception[] = [];
   columnFilters: any = [];
   pageParams: IInitFormProceedingsBody = null;
   conversionGood: IActasConversion;
   edit = false;
   vaultSelect: any;
+  cve: any;
   totalItems2: number = 0;
   selectedRow: any | null = null;
-  provider: any;
+  conversiones: any;
   providerForm: FormGroup = new FormGroup({});
+  dataTableGoodsActa: LocalDataSource = new LocalDataSource();
   dataFactActas: LocalDataSource = new LocalDataSource();
   @Output() onSave = new EventEmitter<any>();
+  @Input() idConversion: number | string;
 
   // @Output() onConfirm = new EventEmitter<any>();
   constructor(
@@ -43,7 +48,8 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
     private router: Router,
     private opcion: ModalOptions,
     private convertiongoodService: ConvertiongoodService,
-    protected goodprocessService: GoodProcessService
+    protected goodprocessService: GoodProcessService,
+    private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService
   ) {
     super();
     this.settings = {
@@ -56,7 +62,7 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
     };
   }
   ngOnInit(): void {
-    this.providerForm.patchValue(this.provider);
+    this.providerForm.patchValue(this.actas);
     this.dataFactActas
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -66,6 +72,7 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            this.cve = filter.field == 'cveActaConv';
             field = `filter.${filter.field}`;
             filter.field == 'idConversion' ||
             filter.field == 'fileNumber' ||
@@ -81,34 +88,41 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getGoodByCOnversiones();
+          this.getStatusDeliveryCve();
         }
       });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoodByCOnversiones());
+      .subscribe(() => this.getStatusDeliveryCve());
   }
 
   return() {
     this.modalRef.hide();
   }
-  getGoodByCOnversiones(): void {
-    this.loading = true;
-    let para = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-    this.convertiongoodService.getAllActasConversion(para).subscribe({
-      next: response => {
-        this.actas = response.data;
-        this.totalItems2 = response.count | 0;
-        this.dataFactActas.load(response.data);
-        this.dataFactActas.refresh();
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
+
+  getStatusDeliveryCve() {
+    // console.log(this.providerForm.value.cveActa.replace(/\//g, ''));
+    // console.log(nuevaCadena);
+    console.log(this.providerForm.value.cve);
+    this.proceedingsDeliveryReceptionService
+      .getStatusDeliveryCveExpendiente(this.providerForm.value.cveActa)
+      .subscribe({
+        next: data => {
+          this.dataFactActas.load(data.data);
+          this.dataFactActas.refresh();
+          this.loading = false;
+          this.totalItems2 = data.count;
+          // console.log(this.dataTableGoodsActa);
+        },
+        error: error => {
+          this.loading = false;
+          // console.log(error);
+          // this.dataTableGoodsConvertion.load([]);
+          // this.dataTableGoodsConvertion.refresh();
+        },
+      });
   }
+
   onUserRowSelect(row: any): void {
     if (row.isSelected) {
       this.selectedRow = row.data;

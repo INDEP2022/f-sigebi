@@ -1,14 +1,35 @@
-.excuse {
-  margin-top: 20px;
-  @media screen and (max-width: 576px) {
-    margin-top: 0px;
+// .excuse {
+//   margin-top: 20px;
+//   @media screen and (max-width: 576px) {
+//     margin-top: 0px;
+//   }
+// }
+
+.titleTabs {
+  align-items: center;
+  display: flex;
+  label {
+    font-weight: 500;
   }
 }
 
-.labelCabinetSocial {
-  font-size: 10px;
-  font-weight: 600;
-  color: #74788d;
+.clearButton {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  @media screen and (max-width: 576px) {
+    button {
+      width: 100%;
+    }
+  }
+}
+
+:host ::ng-deep .md-tabs tabset {
+  .tab-content {
+    form {
+      margin-bottom: 10px;
+    }
+  }
 }
 
 // .buttons {

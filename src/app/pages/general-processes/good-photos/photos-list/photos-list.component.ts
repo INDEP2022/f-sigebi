@@ -45,7 +45,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   private _goodNumber: string | number;
   errorMessage = '';
   userPermisions = true;
-  lastConsecutive: number = 1;
+  // lastConsecutive: number = 1;
   filesToDelete: string[] = [];
   files: string[] = [];
   form: FormGroup;
@@ -174,7 +174,8 @@ export class PhotosListComponent extends BasePage implements OnInit {
 
   private async getData() {
     this.files = [];
-    this.lastConsecutive = 1;
+    // debugger;
+    // this.lastConsecutive = 1;
     this.filePhotoService
       .getAll(this.goodNumber + '')
       .pipe(takeUntil(this.$unSubscribe))
@@ -182,11 +183,11 @@ export class PhotosListComponent extends BasePage implements OnInit {
         next: async response => {
           if (response) {
             console.log(response);
-            this.files = [...response];
-            if (response.length > 0) {
-              const last = response[response.length - 1];
-              const index = last.indexOf('F');
-              this.lastConsecutive += +last.substring(index + 1, index + 5);
+            // debugger;
+            if (response) {
+              this.files = [...response];
+              // const index = last.indexOf('F');
+              // this.lastConsecutive += +last.substring(index + 1, index + 5);
               const pufValidaUsuario = await this.pufValidaUsuario();
               if (pufValidaUsuario === 1) {
                 this.userPermisions = true;
@@ -210,7 +211,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   async confirmDelete(all = false) {
-    if (this.disabledDeletePhotos()) return;
+    // if (this.disabledDeletePhotos()) return;
     if (this.filesToDelete.length < 1) {
       this.alert(
         'warning',
@@ -237,8 +238,9 @@ export class PhotosListComponent extends BasePage implements OnInit {
     this.errorImages = [];
     const obs = this.filesToDelete.map(filename => {
       const index = filename.indexOf('F');
+      const finish = filename.indexOf('.');
       return this.deleteFile(
-        +filename.substring(index + 1, index + 5),
+        +filename.substring(index + 1, finish),
         filename
       ).pipe(debounceTime(500));
     });
@@ -262,9 +264,11 @@ export class PhotosListComponent extends BasePage implements OnInit {
             'Imagenes sin eliminar',
             this.errorImages.toString()
           );
-          this.filesToDelete = [];
-          this.service.deleteEvent.next(true);
-          this.getData();
+          if (this.errorImages.length < this.filesToDelete.length) {
+            this.filesToDelete = [];
+            this.service.deleteEvent.next(true);
+            this.getData();
+          }
         },
       });
   }
@@ -286,7 +290,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   openFileUploader() {
-    this.filePhotoService.consecNumber = this.lastConsecutive;
+    // this.filePhotoService.consecNumber = this.lastConsecutive;
     const config = {
       ...MODAL_CONFIG,
       initialState: {
