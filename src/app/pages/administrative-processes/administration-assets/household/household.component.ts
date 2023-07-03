@@ -66,7 +66,6 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = '';
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -82,7 +81,6 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
             }
             if (filter.search !== '') {
               this.columnFilter[field] = `${searchFilter}:${filter.search}`;
-              console.log('this.param:', this.params);
               this.params.value.page = 1;
             } else {
               delete this.columnFilter[field];
@@ -105,11 +103,9 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
       ...this.params.getValue(),
       ...this.columnFilter,
     };
-    console.log(this.params.getValue());
     this.menageServices.getMenaje(params).subscribe({
       next: response => {
         this.loading = false;
-        console.log(response);
         if (response.count > 0) {
           this.menajes = response.data.map((menage: any) => {
             return menage.menajeDescription;
@@ -123,7 +119,6 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
         this.dataLoand.load([]);
         this.dataLoand.refresh();
         this.loading = false;
-        console.log(err);
       },
     });
   }
@@ -142,19 +137,17 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
   delete(idGood: string | number) {
     this.menageServices.remove(idGood).subscribe({
       next: responde => {
-        console.log(responde);
         //this.searchGoodMenage(this.numberGoodSelect);
-        this.onLoadToast(
+        this.alert(
           'success',
-          'Exito',
+          'Datos Menaje',
           `Se elimino el Menaje N° ${idGood}`
         );
       },
       error: err => {
-        console.log(err);
-        this.onLoadToast(
+        this.alert(
           'error',
-          'ERROR',
+          'Ha ocurrido un error',
           `No se pudo eliminar el Menaje N° ${idGood}`
         );
       },

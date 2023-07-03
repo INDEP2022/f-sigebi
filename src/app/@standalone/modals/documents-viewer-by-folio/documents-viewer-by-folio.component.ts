@@ -50,6 +50,7 @@ export class DocumentsViewerByFolioComponent
     return this.fileBrowserService.getFilenamesFromFolio(this.folio).pipe(
       catchError(error => {
         if (error.status < 500) {
+          this.modalRef.hide();
           this.alert('error', 'Error', 'No hay documentos digitalizados');
           setTimeout(() => {
             this.modalRef.hide();
