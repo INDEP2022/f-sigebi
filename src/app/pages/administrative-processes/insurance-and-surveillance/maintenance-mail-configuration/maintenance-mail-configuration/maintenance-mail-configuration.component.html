@@ -12,7 +12,7 @@
           <div>
             <button
               class="btn btn-primary active btn-sm ml-3"
-              (click)="openForm()">
+              (click)="openForm(null, false)">
               Nuevo
             </button>
           </div>
@@ -25,7 +25,7 @@
               [attr.class]="'table-bordered'"
               [settings]="settings"
               [source]="data"
-              (edit)="openForm($event)"
+              (edit)="openForm($event.data, true)"
               (delete)="delete($event.data)">
             </ng2-smart-table>
           </div>
@@ -39,49 +39,63 @@
     <div class="ch-content">
       <h5 class="title">DATOS GENERALES DEL CORREO</h5>
     </div>
-    <form class="form-material">
+    <div class="row">
+      <div class="col-md-12">
+        <button class="btn btn-primary btn-sm active mr-2" (click)="showData()">
+          Ver lista datos
+        </button>
+      </div>
+    </div>
+
+    <form class="form-material" [formGroup]="formCorreo">
       <div class="row mt-4">
         <div class="col-md-3">
-          <form-field
-            [control]="formCorreo.get('identifier')"
-            label="Identificador">
+          <form-field [control]="formCorreo.get('id')" label="Identificador">
             <input
               type="number"
               class="form-control"
-              readonly="true"
-              formControlName="identifier"
+              formControlName="id"
               min="1"
               pattern="^[0-9]+" />
           </form-field>
         </div>
         <div class="col-md-9">
-          <form-field [control]="formCorreo.get('asunto')" label="Asunto">
+          <form-field [control]="formCorreo.get('subjectEmail')" label="Asunto">
             <textarea
-              type="text"
               class="form-control"
-              rows="2"
-              formControlName="asunto"></textarea>
+              formControlName="subjectEmail"></textarea>
           </form-field>
         </div>
       </div>
       <div class="row mt-4">
         <div class="col-md-12">
           <form-field
-            [control]="formCorreo.get('body')"
+            [control]="formCorreo.get('bodyEmail')"
             label="Cuerpo del correo">
             <textarea
-              type="text"
               class="form-control"
-              rows="2"
-              formControlName="body"></textarea>
+              formControlName="bodyEmail"></textarea>
           </form-field>
         </div>
       </div>
       <div class="row mt-4">
-        <div class="col-md-12" style="margin-left: 15px">
-          <form-check label="Estatus" for="status">
-            <input id="status" type="checkbox" formControlName="status" />
-          </form-check>
+        <div class="col-md-4">
+          <form-field [control]="formCorreo.get('status')" label="Estado">
+            <select class="form-control" formControlName="status">
+              <option [value]="1">Activo</option>
+              <option [value]="0">Inactivo</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="ml-3">
+          <confirm-button
+            [disabled]="false"
+            [loading]="loading"
+            (click)="createBody()"
+            (click)="resetForm()">
+          </confirm-button>
         </div>
       </div>
     </form>

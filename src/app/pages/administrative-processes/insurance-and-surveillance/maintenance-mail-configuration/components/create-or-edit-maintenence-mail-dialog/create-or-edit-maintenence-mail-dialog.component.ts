@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IVigEmailSend } from 'src/app/core/models/ms-email/email-model';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { MaintenanceMailConfigurationComponent } from '../../maintenance-mail-configuration/maintenance-mail-configuration.component';
 
 @Component({
   selector: 'app-create-or-edit-maintenence-mail-dialog',
@@ -16,10 +17,14 @@ export class CreateOrEditEmailMaintenencekDialogComponent
   implements OnInit
 {
   form: ModelForm<IVigEmailSend>;
-  title: string = 'Editar';
+
+  title: string = 'Modal';
   edit: boolean = false;
   emailSend: IVigEmailSend;
+  data: any;
   email: any;
+  valEdit: boolean;
+  maintenanceMailConfigurationComponent: MaintenanceMailConfigurationComponent;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -29,6 +34,7 @@ export class CreateOrEditEmailMaintenencekDialogComponent
   }
 
   ngOnInit(): void {
+    this.emailSend = this.data;
     this.prepareForm();
   }
 
@@ -40,13 +46,11 @@ export class CreateOrEditEmailMaintenencekDialogComponent
       postSend: [null],
       status: [],
     });
-    if (this.emailSend != null) {
+    if (this.valEdit === true) {
       this.edit = true;
+      console.log('VAINA', this.emailSend);
       //console.log(this.state);
       this.form.patchValue(this.emailSend);
-      this.form.controls['id'].setValue(this.emailSend.id);
-      this.form.get('id').disable();
-      console.log(this.form);
     }
   }
 
@@ -60,7 +64,7 @@ export class CreateOrEditEmailMaintenencekDialogComponent
 
   create() {
     this.loading = true;
-    this.emailService.createSendEmail(this.form.getRawValue()).subscribe({
+    this.emailService.createSendEmail(this.form.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -69,7 +73,7 @@ export class CreateOrEditEmailMaintenencekDialogComponent
   update() {
     this.loading = true;
     this.emailService
-      .updateSendEmail(this.emailSend.id, this.form.getRawValue())
+      .updateSendEmail(this.form.controls['id'].value, this.form.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

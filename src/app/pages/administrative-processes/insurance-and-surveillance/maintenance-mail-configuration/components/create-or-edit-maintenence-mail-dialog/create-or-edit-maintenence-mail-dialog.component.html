@@ -1,6 +1,6 @@
 <app-modal>
-  <div class="modal-header">
-    <h4 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} DATO</h4>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
@@ -10,46 +10,32 @@
             required
             type="text"
             formControlName="id"
-            class="form-control"
-            value="id" />
+            class="form-control" />
         </form-field>
       </div>
       <div class="col-md-12">
         <form-field
           [control]="form.get('emailSend')"
           label="Correo Electronico">
-          <input
-            type="text"
-            formControlName="emailSend"
-            class="form-control"
-            value="emailSend" />
+          <input type="text" formControlName="emailSend" class="form-control" />
         </form-field>
       </div>
       <div class="col-md-12">
         <form-field [control]="form.get('nameSend')" label="Nombre">
-          <input
-            type="text"
-            formControlName="nameSend"
-            class="form-control"
-            value="nameSend" />
+          <input type="text" formControlName="nameSend" class="form-control" />
         </form-field>
       </div>
       <div class="col-md-12">
         <form-field [control]="form.get('postSend')" label="Puesto">
-          <input
-            type="text"
-            formControlName="postSend"
-            class="form-control"
-            value="postSend" />
+          <input type="text" formControlName="postSend" class="form-control" />
         </form-field>
       </div>
       <div class="col-md-12">
         <form-field [control]="form.get('status')" label="Estado">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="status"
-            value="status" />
+          <select class="form-control" formControlName="status">
+            <option [value]="1">Activo</option>
+            <option [value]="0">Inactivo</option>
+          </select>
         </form-field>
       </div>
     </form>

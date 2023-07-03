@@ -21,7 +21,7 @@ export class EmailService extends HttpService {
     return this.post(EmailEndPoint.Email, model);
   }
 
-  getVigEmailBody() {
+  getVigEmailBody(params: _Params) {
     return this.get<IListResponse<IVigEmailBody>>(EmailEndPoint.VigEmailBody);
   }
 
@@ -47,12 +47,16 @@ export class EmailService extends HttpService {
     return this.post(EmailEndPoint.VigEmailSend, form);
   }
 
+  createEmailBody(form: Omit<IVigEmailBody, 'id'>) {
+    return this.post(EmailEndPoint.VigEmailBody, form);
+  }
+
   updateEmailBook(id: any, form: Omit<IVigMailBook, 'id'>) {
     return this.put(`${EmailEndPoint.VigMailBook}/${id}`, form);
   }
 
   updateSendEmail(id: any, form: Omit<IVigEmailSend, 'id'>) {
-    return this.put(`${EmailEndPoint.VigMailBook}/${id}`, form);
+    return this.put(`${EmailEndPoint.VigEmailSend}/${id}`, form);
   }
 
   getById(id: string | number): Observable<IVigEmailSend> {

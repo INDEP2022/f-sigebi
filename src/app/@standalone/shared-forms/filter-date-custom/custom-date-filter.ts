@@ -12,7 +12,7 @@ import { DefaultFilter } from 'ng2-smart-table';
         [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"
         (ngModelChange)="onChange($event)" />
       <span class="input-group-addon" *ngIf="this.query">
-        <i class="fa fa-broom" (click)="clearDate($event)"></i>
+        <i class="fa fa-trash" (click)="clearDate($event)"></i>
       </span>
     </div>
   `,

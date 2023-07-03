@@ -2,11 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, skip } from 'rxjs';
-import {
-  showAlert,
-  showQuestion,
-  showToast,
-} from 'src/app/common/helpers/helpers';
+import { showAlert, showQuestion } from 'src/app/common/helpers/helpers';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IVigMailBook } from 'src/app/core/models/ms-email/email-model';
@@ -99,9 +95,9 @@ export class EmailBookConfigComponent
   }
   getVigMailBook(listParams = new ListParams()): void {
     if (this.formControlRegionalDelegation.invalid) {
-      showToast({
-        text: 'Debe seleccionar una delegación regional',
+      showAlert({
         icon: 'error',
+        text: 'Debe seleccionar una delegación regional',
       });
       this.emailsBook.load([]);
       return;
