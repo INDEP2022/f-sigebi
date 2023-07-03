@@ -30,6 +30,7 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
   ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
     if (changes['filename']) {
       this.filenameChange();
     }
@@ -37,10 +38,12 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
 
   private filenameChange() {
     this.loading = true;
+    console.log(this.filename);
     let index = this.filename.indexOf('F');
+    let finish = this.filename.indexOf('.');
     // console.log(index);
     this.service
-      .getById(this.goodNumber, +this.filename.substring(index + 1, index + 5))
+      .getById(this.goodNumber, +this.filename.substring(index + 1, finish))
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: base64 => {
@@ -61,10 +64,8 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
 
   editPhoto() {
     const index = this.filename.indexOf('F');
-    this.editService.consecNumber = +this.filename.substring(
-      index + 1,
-      index + 5
-    );
+    let finish = this.filename.indexOf('.');
+    this.editService.consecNumber = +this.filename.substring(index + 1, finish);
     const config = {
       ...MODAL_CONFIG,
       initialState: {
