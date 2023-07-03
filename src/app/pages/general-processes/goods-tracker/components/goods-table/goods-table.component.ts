@@ -37,7 +37,7 @@ import {
 } from '../../utils/constants/origins';
 import { ActaHistoComponent } from '../acta-histo/acta-histo.component';
 import { GTrackerDocumentsComponent } from '../g-tracker-documents/g-tracker-documents.component';
-import { GP_GOODS_COLUMNS } from './goods-columns';
+import { GoodsTableService } from './goods-table.service';
 
 @Component({
   selector: 'goods-table',
@@ -66,6 +66,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     private store: Store,
     private router: Router,
     private location: Location,
+    private goodsTableService: GoodsTableService,
     private documentsService: DocumentsService,
     private proceedingService: ProceedingsService,
     private goodTrackerService: GoodTrackerService,
@@ -76,7 +77,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.actions = false;
-    this.settings.columns = GP_GOODS_COLUMNS;
+    this.settings.columns = this.goodsTableService.columns;
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
@@ -105,7 +106,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
             onComponentInitFunction: (instance: CheckboxElementComponent) =>
               this.onGoodSelect(instance),
           },
-          ...GP_GOODS_COLUMNS,
+          ...this.goodsTableService.columns,
         },
       };
     }
