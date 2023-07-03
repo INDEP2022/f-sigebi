@@ -15,6 +15,7 @@ import {
 } from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -115,7 +116,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   goodsTranportables: LocalDataSource = new LocalDataSource();
   goodsGuards: LocalDataSource = new LocalDataSource();
   goodsWarehouse: LocalDataSource = new LocalDataSource();
-
+  task: ITask;
   headingTransportable: string = `Transportables(0)`;
   headingGuard: string = `Resguardo(0)`;
   headingWarehouse: string = `Almacén INDEP(0)`;
@@ -196,7 +197,21 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         this.getAuthority();
         this.getTypeRelevant();
         this.getwarehouse();
+        this.getTask();
       });
+  }
+
+  getTask() {
+    const task = JSON.parse(localStorage.getItem('Task'));
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = task.id;
+    this.taskService.getAll(params.getValue()).subscribe({
+      next: response => {
+        console.log('response task', response);
+        this.task = response.data[0];
+      },
+      error: error => {},
+    });
   }
 
   getRegionalDelegation() {

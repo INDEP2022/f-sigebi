@@ -3,7 +3,6 @@ import { ICharacteristicValue } from 'src/app/core/models/good/good-characterist
 
 export class ICharacteristicsWidthData {
   data: ICharacteristicValue[];
-  dataInventary: ICharacteristicValue[];
   dataDetails: {
     abreviatura: string;
     nmtabla: string;
