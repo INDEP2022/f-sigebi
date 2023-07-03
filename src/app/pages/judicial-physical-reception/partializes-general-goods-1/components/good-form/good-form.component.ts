@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { firstValueFrom, map } from 'rxjs';
 import {
   FilterParams,
@@ -33,6 +34,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     // private service2: PartializeGeneralGoodV2Service,
     // private service2Tab2: PartializeGeneralGoodV2Tab2Service,
     private goodService: GoodService,
+    private activatedRoute: ActivatedRoute,
     private goodSssubtypeService: GoodSssubtypeService,
     private statusService: StatusGoodService,
     private statusScreenService: StatusXScreenService
@@ -64,11 +66,22 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     if (this.version === null) {
       return;
     }
+
     // if (this.firstCase === null || this.version === null) {
     //   return;
     // }
     // this.moreParams = [];
     this.service.initFormGood();
+    this.activatedRoute.queryParams.subscribe({
+      next: param => {
+        console.log(param);
+        if (param['numberGood']) {
+          this.form.get('noBien').setValue(param['numberGood'] || null);
+          this.searchGood();
+          return;
+        }
+      },
+    });
     // this.selectGood(this.service.getSavedGood());
     // if (this.firstCase === true) {
     // this.service.initFormGood();
