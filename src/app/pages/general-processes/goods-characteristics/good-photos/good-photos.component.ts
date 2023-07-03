@@ -128,7 +128,7 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   openFileUploader() {
-    this.filePhotoService.consecNumber = this.lastConsecutive;
+    // this.filePhotoService.consecNumber = this.lastConsecutive;
     const config = {
       ...MODAL_CONFIG,
       initialState: {
