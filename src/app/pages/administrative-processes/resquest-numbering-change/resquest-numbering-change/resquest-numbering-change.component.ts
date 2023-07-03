@@ -125,12 +125,12 @@ export class ResquestNumberingChangeComponent
     hideSubHeader: false,
     columns: {
       goodNumber: {
-        title: 'No Bien',
+        title: 'No. Bien',
         width: '10%',
         sort: false,
       },
       situationlegal: {
-        title: 'Sit. Juridica',
+        title: 'Situación Jurídica',
         width: '30%',
         sort: false,
       },
@@ -220,6 +220,7 @@ export class ResquestNumberingChangeComponent
     this.settings = {
       ...this.settings,
       rowClassFunction: (row: { data: { id: any } }) =>
+        //this.validationScreen(row.data.id),
         row.data.id ? 'bg-dark text-white' : 'bg-success text-white',
 
       actions: {
@@ -232,12 +233,12 @@ export class ResquestNumberingChangeComponent
       },
       columns: {
         id: {
-          title: 'No Bien',
+          title: 'No. Bien',
           width: '10%',
           sort: false,
         },
         description: {
-          title: 'description',
+          title: 'Descripción',
           width: '30%',
           sort: false,
         },
@@ -252,12 +253,12 @@ export class ResquestNumberingChangeComponent
           sort: false,
         },
         appraisedValue: {
-          title: 'Avaluó Vig',
+          title: 'Avaluó Vigente',
           width: '10%',
           sort: false,
         },
         armor: {
-          title: 'Mon.',
+          title: 'Monto',
           width: '10%',
           sort: false,
         },
@@ -266,38 +267,41 @@ export class ResquestNumberingChangeComponent
           width: '20%',
           sort: false,
         },
-        'expediente.id': {
-          title: 'No Exp.',
+        expedienteid: {
+          title: 'Número de Expediente',
           width: '10%',
           sort: false,
-          valuePrepareFunction: (
-            cell: any,
-            row: { expediente: { id: any } }
-          ) => {
-            return row.expediente.id;
+          valuePrepareFunction: (cell: any, row: any) => {
+            if (row.expediente == null) {
+              return '';
+            } else {
+              return row.expediente.id;
+            }
           },
         },
 
-        'expediente.preliminaryInquiry': {
-          title: 'Averiguacion prev.',
+        expedientepreliminaryInquiry: {
+          title: 'Averiguación Previa',
           width: '10%',
           sort: false,
-          valuePrepareFunction: (
-            cell: any,
-            row: { expediente: { preliminaryInquiry: any } }
-          ) => {
-            return row.expediente.preliminaryInquiry;
+          valuePrepareFunction: (cell: any, row: any) => {
+            if (row.expediente == null) {
+              return '';
+            } else {
+              return row.expediente.preliminaryInquiry;
+            }
           },
         },
-        'expediente.criminalCase': {
+        expedientecriminalCase: {
           title: 'Causa Penal',
           width: '40%',
           sort: false,
-          valuePrepareFunction: (
-            cell: any,
-            row: { expediente: { criminalCase: any } }
-          ) => {
-            return row.expediente.criminalCase;
+          valuePrepareFunction: (cell: any, row: any) => {
+            if (row.expediente == null) {
+              return '';
+            } else {
+              return row.expediente.criminalCase;
+            }
           },
         },
       },
@@ -325,9 +329,26 @@ export class ResquestNumberingChangeComponent
    * @since: 27/09/2022
    */
 
+  validationScreen(id: any) {
+    //row.data.id ? 'bg-dark text-white' : 'bg-success text-white'
+    this.loading = true;
+    const payload = {
+      pNumberGood: id,
+      vcScreen: 'FACTADBSOLCAMNUME',
+    };
+    this.goodprocessService.getScreenGood(payload).subscribe({
+      next: async (response: any) => {
+        this.loading = false;
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+    this.loading = false;
+  }
+
   showReceipt(event: any) {
     this.modal.show();
-    console.log('YAaaaaaaaaaaaaaaaaaaaaaaaa', event);
     this.loading = true;
 
     this.expenseService.getGoodCosto(event.id).subscribe(
