@@ -79,9 +79,9 @@ export class ProgrammingRequestService {
     return this.http.put(`${environment.API_URL}/${route}`, formData);
   }
 
-  getDateProgramming(date: string, range: number) {
-    const route = `goodprocess/api/v1/util-pkg/getDate/${date}/${range}`;
-    return this.http.get(`${environment.API_URL}/${route}`);
+  getDateProgramming(formData: Object) {
+    const route = `goodprocess/api/v1/util-pkg/getDate`;
+    return this.http.post(`${environment.API_URL}/${route}`, formData);
   }
 
   private makeParams(params: ListParams): HttpParams {
