@@ -1,17 +1,18 @@
-export const COLUMNS = {
-  id: {
-    title: 'Folio Universal',
+export const COLUMNS_DATA = {
+  numberAppointment: {
+    title: 'No. Nombramiento',
     sort: false,
   },
-  keyTypeDocument: {
-    title: 'Tipo Documento',
+  cveContract: {
+    title: 'Cve. Contrato',
     sort: false,
   },
-  significantDate: {
-    title: 'Fecha Significativa',
+  datestartContract: {
+    title: 'Fecha Inicio Contrato',
     sort: false,
-    valuePrepareFunction: (value: string) => {
-      return value;
-    },
+  },
+  representativeBe: {
+    title: 'Representante SAE',
+    sort: false,
   },
 };

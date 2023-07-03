@@ -110,7 +110,6 @@ export class GeneralDataGoodsComponent
       if (patron.test(row.value)) {
         row.value = this.convertirFecha(row.value);
       }
-      console.log(row.value);
       body[row.column] = row.value;
     });
     body['quantitySae'] = this.generalDataForm.get('cantidad').value;
@@ -119,12 +118,10 @@ export class GeneralDataGoodsComponent
     body['description'] = this.generalDataForm.get('descripcion').value;
     body['id'] = Number(this.good.id);
     body['goodId'] = Number(this.good.id);
-    console.log(body);
     this.goodService.update(body).subscribe({
       next: resp => {
         this.viewAct = !this.viewAct;
         this.disableUpdate = !this.disableUpdate;
-        console.log(resp);
         this.good = resp;
         this.alert('success', 'Datos del bien actualizados', '');
         setTimeout(() => {
@@ -176,15 +173,11 @@ export class GeneralDataGoodsComponent
         this.generalDataForm
           .get('fechaFe')
           .patchValue(
-            this.good.judicialDate === undefined
+            this.good.judicialDate === undefined ||
+              this.good.judicialDate === null
               ? null
               : this.formatearFecha(this.good.judicialDate.toString())
           );
-        console.error(
-          '******* Esta es la fecha ********',
-          this.formatearFecha(this.good.judicialDate.toString())
-        );
-
         this.generalDataForm
           .get('observacion')
           .patchValue(this.good.observations);

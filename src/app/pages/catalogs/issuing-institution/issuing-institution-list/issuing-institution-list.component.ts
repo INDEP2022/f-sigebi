@@ -10,7 +10,6 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { IInstitutionClassification } from 'src/app/core/models/catalogs/institution-classification.model';
 import { InstitutionClasificationService } from 'src/app/core/services/catalogs/institution-classification.service';
-import Swal from 'sweetalert2';
 import { IIssuingInstitution } from '../../../../core/models/catalogs/issuing-institution.model';
 import { InstitutionClasificationModalComponent } from '../institution-clasification-modal/institution-clasification-modal.component';
 import { IssuingInstitutionFormComponent } from '../issuing-institution-form/issuing-institution-form.component';
@@ -171,7 +170,7 @@ export class IssuingInstitutionListComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete2(institute.id);
-        Swal.fire('Borrado', '', 'success');
+        //Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -179,7 +178,14 @@ export class IssuingInstitutionListComponent
   //Método para borrar Clasificaciones instituciones
   delete2(id: number) {
     this.institutionClasificationService.remove2(id).subscribe({
-      next: () => this.getInstitutionClassification(),
+      next: () => {
+        this.getInstitutionClassification();
+        this.alert(
+          'success',
+          'Clasificación institución',
+          'Borrado Correctamente'
+        );
+      },
     });
   }
 
@@ -311,7 +317,7 @@ export class IssuingInstitutionListComponent
     const idInstitute = { ...this.institutes };
     this.issuingInstitutionService.remove2(id).subscribe({
       next: () => {
-        this.alert('success', 'Autoridad Emisora', 'Borrado');
+        this.alert('success', 'Autoridad Emisora', 'Borrado Correctamente');
         this.getIssuingInstitution(idInstitute.id);
         this.loading2 = true;
       },

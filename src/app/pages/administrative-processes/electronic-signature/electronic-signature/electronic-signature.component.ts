@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
@@ -9,6 +10,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -39,6 +41,8 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
   dictaminationSelect: IGetSigned;
   enableSend: boolean = false;
   loadingText: string = '';
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
   get userAuth() {
     return this.authService.decodeToken().preferred_username;
   }
@@ -64,6 +68,51 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.electronicSignatureForm.disable();
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'rulingdate':
+                if (filter.search != null) {
+                  filter.search = this.returnParseDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
+                break;
+              case 'armedtradekey':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'typeruling':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'sender':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${filter.search}`;
+              this.params.value.page = 1;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getDictamen();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDictamen());
@@ -77,15 +126,24 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
 
   getDictamen() {
     this.loading = true;
-    this.dictationService.getSigned(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.dictationService.getSigned(params).subscribe({
       next: resp => {
-        this.data1 = resp.data;
+        console.log(resp);
+        //this.data1 = resp.data;
+        this.data.load(resp.data);
+        this.data.refresh();
         this.totalItems = resp.count;
         this.loading = false;
       },
       error: err => {
+        this.data.load([]);
+        this.data.refresh();
         this.loading = false;
-        this.onLoadToast(
+        this.alert(
           'error',
           'Ha ocurrido un error',
           'Error al obtener la lista de dictáminaciones'
@@ -94,14 +152,15 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
     });
   }
 
-  change(event: any) {
-    console.log(event);
+  change(event: IGetSigned) {
     this.enableSend = false;
     this.dictaminationSelect = event;
     this.electronicSignatureForm
       .get('no_expediente')
-      .patchValue(event.no_expediente);
-    this.electronicSignatureForm.get('no_volante').patchValue(event.no_volante);
+      .patchValue(event.universalfolio);
+    this.electronicSignatureForm
+      .get('no_volante')
+      .patchValue(event.steeringwheelnumber);
   }
 
   async print() {
@@ -114,22 +173,20 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
       return;
     }
     const n_COUNT: number = await this.ssf3SignatureElecDocsCount(
-      this.dictaminationSelect.no_of_dicta,
-      this.dictaminationSelect.tipo_dictaminacion
+      this.dictaminationSelect.dictanumber,
+      this.dictaminationSelect.typeruling
     );
-    console.log(n_COUNT);
     if (n_COUNT > 0) {
       this.PUP_CONSULTA_PDF_BD_SSF3();
     } else if (n_COUNT === 0) {
       const n_COUNT: number = await this.dictaminaCount(
-        this.dictaminationSelect.no_of_dicta,
-        this.dictaminationSelect.estatus_of
+        this.dictaminationSelect.dictanumber,
+        this.dictaminationSelect.statusof
       );
-      console.log(n_COUNT);
       if (n_COUNT > 0) {
         /// mandar a llamar al reporte R_FIRMA_DICTAMASIV
         this.downloadReport('blank', null);
-        if (this.dictaminationSelect.remitente === this.userAuth) {
+        if (this.dictaminationSelect.sender === this.userAuth) {
           this.enableSend = true;
         }
       }
@@ -137,7 +194,10 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
   }
 
   async send() {
-    if (this.dictaminationSelect.remitente !== this.userAuth) {
+    if (
+      this.dictaminationSelect.sender.toLowerCase() !==
+      this.userAuth.toLowerCase()
+    ) {
       this.alert(
         'warning',
         'Firma electrónica dictamen de procedencia',
@@ -145,7 +205,7 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
       );
       return;
     }
-    if (this.dictaminationSelect.firma !== 'S/FIRMA') {
+    if (this.dictaminationSelect.signature !== 'S/FIRMA') {
       this.alert(
         'warning',
         'Firma electrónica dictamen de procedencia',
@@ -210,20 +270,21 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
       },
     });
   }
+
   PUP_CONSULTA_PDF_BD_SSF3() {
     this.viewPictures();
   }
 
   viewPictures() {
-    if (!this.dictaminationSelect.no_volante) {
-      this.onLoadToast(
+    if (!this.dictaminationSelect.steeringwheelnumber) {
+      this.alert(
         'error',
-        'Error',
+        'Ha ocurrido un error',
         'Este dictamen no tiene volante asignado.'
       );
       return;
     }
-    this.getDocumentsByFlyer(this.dictaminationSelect.no_volante);
+    this.getDocumentsByFlyer(this.dictaminationSelect.steeringwheelnumber);
   }
 
   getDocumentsByFlyer(flyerNum: string | number) {
@@ -232,14 +293,12 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
     modalRef.content.selected
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(document => {
-        console.log('Aqui los documentos', document);
         this.getPicturesFromFolio(document);
       });
   }
 
   getPicturesFromFolio(document: IDocuments) {
     let folio = document.id;
-    console.log('Aqui el Folio', folio);
     if (document.associateUniversalFolio) {
       folio = document.associateUniversalFolio;
     }
@@ -304,12 +363,11 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
     };
     this.msProcessgoodreportService.getReportXMLToFirm(paramsData).subscribe({
       next: (response: any) => {
-        console.log(response);
         if (!response) {
-          this.onLoadToast(
+          this.alert(
             'warning',
-            'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
-            ''
+            'Firma electrónica dictamen de procedencia',
+            'Ocurrió un error al cargar el XML con el nombre: ' + nameFile
           );
           return;
         }
@@ -327,20 +385,21 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
         });
       },
       error: error => {
-        console.log(error);
         if (error.status == 200) {
           let response = error.error.text;
           if (!response) {
-            this.onLoadToast(
+            this.alert(
               'warning',
+              'Firma electrónica dictamen de procedencia',
               'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
               ''
             );
             return;
           }
           if (!response.includes('xml')) {
-            this.onLoadToast(
+            this.alert(
               'warning',
+              'Firma electrónica dictamen de procedencia',
               'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
               ''
             );
@@ -359,8 +418,9 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
             fileDocumentDictation: formData.get('file'), // DOCUMENTO XML GENERADO
           });
         } else {
-          this.onLoadToast(
+          this.alert(
             'warning',
+            'Firma electrónica dictamen de procedencia',
             'Ocurrió un error al CREAR el XML con el nombre: ' + nameFile,
             ''
           );

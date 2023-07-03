@@ -30,7 +30,7 @@
             <div class="m-3">
               <app-columns-select
                 [(settings)]="settings"
-                [defaultColumns]="5"></app-columns-select>
+                [defaultColumns]="6"></app-columns-select>
             </div>
           </div>
         </div>
@@ -42,7 +42,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
-            [source]="data1"
+            [source]="data"
             (rowSelect)="change($event.data)">
           </ng2-smart-table>
         </div>
@@ -64,7 +64,7 @@
           type="submit"
           class="btn btn-primary btn-sm active"
           (click)="send()">
-          Enviar <i class="bx bx-send"></i>
+          Enviar&nbsp;&nbsp; <i class="bx bx-send"></i>
         </button>
       </div>
     </div>

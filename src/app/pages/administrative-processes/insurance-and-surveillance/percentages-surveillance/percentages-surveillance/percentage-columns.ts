@@ -42,7 +42,7 @@ export const PERCENTAGE_COLUMNS = {
         selectText: 'Seleccione un tipo',
         list: [
           { value: '1', title: 'Ferronal' },
-          { value: '2', title: 'Sae' },
+          { value: '2', title: 'Indep' },
         ],
       },
     },
@@ -51,7 +51,7 @@ export const PERCENTAGE_COLUMNS = {
       if (type == 1) {
         return 'Ferronal';
       } else {
-        return 'Sae';
+        return 'Indep';
       }
     },
   },

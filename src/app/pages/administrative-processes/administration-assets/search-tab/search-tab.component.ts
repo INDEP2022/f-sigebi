@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -14,7 +15,6 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { OpenPhotosComponent } from 'src/app/pages/request/shared-request/expedients-tabs/sub-tabs/photos-assets/open-photos/open-photos.component';
 import { SEARCH_COLUMNS } from './search-columns';
 
 @Component({
@@ -36,11 +36,13 @@ export class SearchTabComponent extends BasePage implements OnInit {
   cleanGood: boolean = false;
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
+  reloadGood: IGood;
   constructor(
     private fb: FormBuilder,
     private readonly goodService: GoodService,
     private readonly notifyService: NotificationService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private router: Router
   ) {
     super();
     this.settings.actions = false;
@@ -48,8 +50,17 @@ export class SearchTabComponent extends BasePage implements OnInit {
     this.settings.hideSubHeader = false;
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.prepareForm();
+    const form = localStorage.getItem('formSearch');
+    if (form) {
+      const newForm = JSON.parse(form);
+      this.searchTabForm.get('noBien').setValue(newForm.noBien);
+      localStorage.removeItem('formSearch');
+      this.reloadGood = await this.getGood();
+      console.log(this.goodSelect);
+      this.search();
+    }
     this.searchTabForm.get('noBien').valueChanges.subscribe({
       next: val => {
         this.searchTabForm.get('estatus').setValue('');
@@ -62,7 +73,6 @@ export class SearchTabComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = '';
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -72,17 +82,24 @@ export class SearchTabComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'receiptDate':
-                console.log('dddd', filter.search);
                 if (filter.search != null) {
                   filter.search = this.returnParseDate(filter.search);
                   searchFilter = SearchFilter.EQ;
                 } else {
                   filter.search = '';
                 }
-                console.log('ddddccc', filter.search);
                 break;
               case 'captureDate':
                 filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'indiciadoNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'expedientNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'affairKey':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -92,7 +109,6 @@ export class SearchTabComponent extends BasePage implements OnInit {
 
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log('this.param:', this.params1);
               this.params1.value.page = 1;
             } else {
               delete this.columnFilters[field];
@@ -141,21 +157,9 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
 
   clean() {
-    /* this.searchTabForm.get('noClasifBien').setValue('');
-    this.searchTabForm.get('noTipo').setValue('');
-    this.searchTabForm.get('tipo').setValue('');
-    this.searchTabForm.get('noSubtipo').setValue('');
-    this.searchTabForm.get('subtipo').setValue('');
-    this.searchTabForm.get('noSsubtipo').setValue('');
-    this.searchTabForm.get('ssubtipo').setValue('');
-    this.searchTabForm.get('noSssubtipo').setValue('');
-    this.searchTabForm.get('sssubtipo').setValue('');
-    this.searchTabForm.get('estatus').setValue('');
-    this.searchTabForm.get('situacion').setValue('');
-    this.searchTabForm.get('destino').setValue('');
-    this.cleanGood = true; */
     this.searchTabForm.reset();
-    this.list = [];
+    this.data.load([]);
+    this.data.refresh();
     this.dataSearch.emit({
       data: this.searchTabForm.get('noBien').value,
       exist: false,
@@ -163,25 +167,11 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
 
   async search() {
-    /* if (
-      this.searchTabForm.get('subtipo').value === '' ||
-      this.searchTabForm.get('subtipo').value === null
-    ) {
-      this.onLoadToast('info', 'Debe seleccionar un subtipo');
-      return;
-    }
-    if (
-      this.searchTabForm.get('ssubtipo').value === '' ||
-      this.searchTabForm.get('ssubtipo').value === null
-    ) {
-      this.onLoadToast('info', 'Debe seleccionar un ssubtipo');
-      return;
-    } */
     if (
       this.searchTabForm.get('noBien').value === '' ||
       this.searchTabForm.get('noBien').value === null
     ) {
-      this.onLoadToast('info', 'Debe seleccionar un bien');
+      this.alert('warning', 'Datos Búsqueda', 'Debe seleccionar un bien', '');
       return;
     }
     this.dataSearch.emit({
@@ -189,13 +179,18 @@ export class SearchTabComponent extends BasePage implements OnInit {
       exist: true,
     });
     const respStatus = await this.searchStatus();
-    this.searchTabForm.get('situacion').patchValue(this.goodSelect.situation);
-    this.searchTabForm.get('destino').patchValue(this.goodSelect.destiny);
     const respNotification = await this.searchNotifications();
+    if (this.goodSelect) {
+      this.searchTabForm.get('situacion').patchValue(this.goodSelect.situation);
+      this.searchTabForm.get('destino').patchValue(this.goodSelect.destiny);
+    }
+    if (this.reloadGood) {
+      this.searchTabForm.get('situacion').patchValue(this.reloadGood.situation);
+      this.searchTabForm.get('destino').patchValue(this.reloadGood.destiny);
+    }
   }
 
   searchNotifications() {
-    console.log(this.expedientNumber);
     return new Promise((res, rej) => {
       if (this.expedientNumber) {
         this.loading = true;
@@ -213,7 +208,6 @@ export class SearchTabComponent extends BasePage implements OnInit {
             this.data.refresh();
             this.totalItems = data.count;
             this.loading = false;
-            console.log('ESTA ES LA LISTA DE NOTIFICACIONES', this.list);
           },
           error: err => {
             this.data.load([]);
@@ -246,13 +240,17 @@ export class SearchTabComponent extends BasePage implements OnInit {
       this.searchTabForm.get('noBien').value === '' ||
       this.searchTabForm.get('noBien').value === null
     ) {
-      this.onLoadToast('info', 'Debe seleccionar un bien');
+      this.alert('warning', 'Datos Búsqueda', 'Debe seleccionar un bien');
       return;
     }
-    const data = {
-      id: this.searchTabForm.get('noBien').value,
-    };
-    this.openModal(OpenPhotosComponent, data);
+    const array: any[] = [this.searchTabForm.get('noBien').value];
+    localStorage.setItem('selectedGoodsForPhotos', JSON.stringify(array));
+    localStorage.setItem(
+      'formSearch',
+      JSON.stringify(this.searchTabForm.value)
+    );
+    const route: string = 'pages/general-processes/good-photos';
+    this.router.navigate([route]);
   }
 
   openModal(component: any, data?: any): void {
@@ -280,12 +278,24 @@ export class SearchTabComponent extends BasePage implements OnInit {
     dia = dia < 10 ? '0' + dia : dia;
     mes = mes < 10 ? '0' + mes : mes;
     let fechaFormateada = dia + '/' + mes + '/' + anio;
-    console.log(fechaFormateada);
     return fechaFormateada;
   }
 
   onChangeGood(event: IGood) {
-    console.log(event);
+    // this.searchTabForm.get('noBien').setValue(event.id);
     this.goodSelect = event;
+  }
+
+  getGood() {
+    return new Promise<any>((res, rej) => {
+      this.goodService
+        .getById(this.searchTabForm.get('noBien').value)
+        .subscribe({
+          next: (response: any) => {
+            res(response.data[0]);
+          },
+          error: err => res(null),
+        });
+    });
   }
 }

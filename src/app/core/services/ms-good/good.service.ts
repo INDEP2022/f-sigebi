@@ -33,7 +33,10 @@ import {
   IGoodStatusFinalProcess,
   IGoodStatusProcess,
 } from '../../models/ms-good/status-and-process.model';
-import { GoodEndpoints } from './../../../common/constants/endpoints/ms-good-endpoints';
+import {
+  GoodActaConvertion,
+  GoodEndpoints,
+} from './../../../common/constants/endpoints/ms-good-endpoints';
 
 @Injectable({
   providedIn: 'root',
@@ -129,6 +132,13 @@ export class GoodService extends HttpService {
   getAllFilter(params?: string): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(`${GoodEndpoints.Good}?${params}`);
   }
+  getAllFilterClassification(
+    classifGoodNumber?: string
+  ): Observable<IListResponse<any>> {
+    const URL = `${environment.API_URL}/goodsquery/api/v1/${GoodEndpoints.AttribGood}?filter.classifGoodNumber=${classifGoodNumber}`;
+    const headers = new HttpHeaders();
+    return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
+  }
 
   getAllFilterDetail(params?: string): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(
@@ -185,7 +195,7 @@ export class GoodService extends HttpService {
   }
 
   //
-  update(good: IGood) {
+  update(good: IGood | any) {
     const route = `${GoodEndpoints.Good}`;
     return this.put(route, good);
   }
@@ -228,7 +238,6 @@ export class GoodService extends HttpService {
     expedient: number | string,
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
-    console.log(params);
     // if (params) {
     //   params['expedient'] = expedient;
     // }
@@ -354,6 +363,30 @@ export class GoodService extends HttpService {
     return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
   }
 
+  getGoods(goodI: any) {
+    const URL = `${environment.API_URL}/good/api/v1/${GoodEndpoints.Good}?filter.goodId=$eq:${goodI}`;
+
+    const headers = new HttpHeaders();
+
+    return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
+  }
+
+  getGoodRealDocums(goodI: any) {
+    const URL = `${environment.API_URL}/good/api/v1/${GoodEndpoints.Good}?filter.goodId=$eq:${goodI}`;
+
+    const headers = new HttpHeaders();
+
+    return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
+  }
+
+  crateGood(payload: any) {
+    const URL = `${environment.API_URL}/good/api/v1/${GoodEndpoints.Good}`;
+
+    const headers = new HttpHeaders();
+
+    return this.http.post<any>(URL, payload).pipe(map(res => res));
+  }
+
   updateWithParams(good: any) {
     const route = `${GoodEndpoints.Good}`;
     return this.put(route, good);
@@ -389,7 +422,31 @@ export class GoodService extends HttpService {
     return this.get('good/get-facta-dbo-ficio-gestrel', body);
   }
 
+  getActasConversion(actaConvertion: any) {
+    const URL = `${environment.API_URL}/convertiongood/api/v1/${GoodActaConvertion.GoodActaConvertion}/get-all?filter.cveActaConvId=$eq:${actaConvertion}`;
+    const headers = new HttpHeaders();
+
+    return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
+  }
+  getFolioActaConversion(actaConvertion: any) {
+    const URL = `${environment.API_URL}/convertiongood/api/v1/conversions/procedure/fConvBienHijos?cve_acta_conv=${actaConvertion}`;
+    const headers = new HttpHeaders();
+
+    return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
+  }
+
+  createActaConversion(payload: any) {
+    const URL = `${environment.API_URL}/convertiongood/api/v1/${GoodActaConvertion.GoodActaConvertion}`;
+
+    return this.http.post<any>(URL, payload).pipe(map(res => res));
+  }
   updateGoodsRev(params?: any): Observable<IListResponse<any>> {
     return this.put(GoodEndpoints.GoodsMotivesrev2, params);
+  }
+
+  generateWeaponKey(payload: any) {
+    const URL = `${environment.API_URL}/parametergood/api/v1/application/pup-weapon-key`;
+
+    return this.http.post<any>(URL, payload).pipe(map(res => res));
   }
 }

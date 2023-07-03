@@ -106,12 +106,13 @@ export class AppointmentsService {
   getPersonById(id: number) {
     return this.msPersonService.getById(id);
   }
-  getDepositaryType(params: ListParams) {
+  getAllTvalTable1(params: ListParams) {
     return this.msDynamicTablesService.getAllTvalTable1(params);
   }
   getSaeUser(params: _Params) {
     return this.msUsersService.getAllSegUsers(params);
   }
+  getKeyOperation() {}
   /**
    * HELP FUNCTIONS FOR COMPONENT
    */

@@ -4,6 +4,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IProceedingDeliveryReception } from '../../models/ms-proceedings/proceeding-delivery-reception';
 import { IProccedingsDeliveryReception } from '../../models/ms-proceedings/proceedings-delivery-reception-model';
 import {
   IValidations,
@@ -15,6 +16,8 @@ import {
 })
 export class ProceedingsDeliveryReceptionService extends HttpService {
   private readonly endpoint = ProceedingsEndpoints.ProceedingsDeliveryReception;
+  private readonly endpoint2 = ProceedingsEndpoints.GoStatus;
+  private readonly filter = `?.filter.keysProceedings=`;
   constructor() {
     super();
     this.microservice = ProceedingsEndpoints.BasePath;
@@ -65,5 +68,33 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     // return this.get<IListResponse<IValidations>>(partials, params).pipe(
     //   tap(() => (this.microservice = ''))
     // );
+  }
+
+  // getAllByActa(
+  //   cve: string,
+  //   params?: ListParams
+  // ): Observable<IListResponse<IProccedingsDeliveryReception>> {
+  //   return this.get<IListResponse<IValidations>>(
+  //     `${this.endpoint}${this.filter}${cve}`
+  //   );
+  // }
+  getAllByActa(
+    cve: string,
+    fileNumber: number,
+    tipe: number
+  ): Observable<IListResponse<IProceedingDeliveryReception>> {
+    return this.get<IListResponse<IProceedingDeliveryReception>>(
+      `${this.endpoint}/proceedings-delivery-reception?text.${cve}&file.filesId=${fileNumber}`
+    );
+  }
+
+  getStatusConversion(id: string | number) {
+    return this.get(`${this.endpoint2}/${id}`);
+  }
+  createDetail(model: IProceedingDeliveryReception) {
+    return this.post<{
+      message: string[];
+      data: IProceedingDeliveryReception;
+    }>('detail-proceedings-delivery-reception', model);
   }
 }

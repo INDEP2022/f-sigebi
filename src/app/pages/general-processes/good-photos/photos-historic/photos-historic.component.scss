@@ -1,0 +1,20 @@
+.vertical-carousel {
+  height: 470px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.b-content {
+  margin-top: -40px !important;
+}
+
+.close {
+  padding: 0px 20px !important;
+  span {
+    font-size: 25px !important;
+  }
+}
+
+.grid-square {
+  padding: 10px;
+}

@@ -1,18 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
+import { IDocumentsViewerFlyerNumber } from 'src/app/core/models/ms-documents/documents-viewer-flyerNumber.models';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GENERAL_DOCS_DOCUMENTS_VIEWER_COLUMNS } from './documents-viewer-columns';
+import { DocumentViewerFormComponent } from './documents-viewer-form/documents-viewer-form.component';
 
 @Component({
   selector: 'app-documents-viewer',
@@ -45,17 +50,24 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   dateInput: number | string;
   dateInputString: string;
   otro: any = [];
+  id: number | string;
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
 
   constructor(
     private fb: FormBuilder,
-    private documentService: DocumentsService
+    private documentService: DocumentsService,
+    private modalService: BsModalService
   ) {
     super();
-    this.settings.actions = false;
     this.settings.columns = GENERAL_DOCS_DOCUMENTS_VIEWER_COLUMNS;
     this.settings.hideSubHeader = false;
+    this.settings.actions.edit = false;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
     this.settings.rowClassFunction = (row: { data: { scanStatus: string } }) =>
-      row.data.scanStatus == 'ESCANEADO' ? 'digital' : 'pending';
+      row.data.scanStatus == 'ESCANEADO'
+        ? 'bg-success text-white'
+        : 'bg-dark text-white';
   }
 
   ngOnInit(): void {
@@ -85,6 +97,16 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
               case 'keyTypeDocument':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'significantDate':
+                if (filter.search != null) {
+                  filter.search = this.formatDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                  console.log(filter.search);
+                } else {
+                  filter.search = '';
+                }
+                console.log('ddddccc', filter.search);
+                break;
               case 'flyerNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
@@ -106,6 +128,21 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
       .subscribe(() => this.getDocuments());
   }
 
+  formatDate(dateString: string): string {
+    if (dateString === '') {
+      return '';
+    }
+    const date = new Date(dateString);
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    return `${month}/${year}`;
+  }
+
+  resetFilters(): void {
+    // Eliminar los filtros aplicados aquí
+    this.columnFilters = {};
+    this.getDocuments();
+  }
   onOptionsSelectedTypeDocument(value: any) {
     this.selectTypeDoc = value.id;
   }
@@ -126,30 +163,35 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
           const year = date.getFullYear().toString();
           const formattedDate = `${month}/${year}`;
           this.dateInput = formattedDate;
-          const param = `filter.${controlName}=$eq:${formattedDate}`;
+          const param = `filter.${controlName}=$ilike:${formattedDate}`;
           filterParams.push(param);
         } else if (controlName === 'keyTypeDocument') {
           this.aux = controlName;
           const keyTypeDocument = this.selectTypeDoc;
           const keyTypeDocumentDate = JSON.stringify(keyTypeDocument);
           this.dateInput = keyTypeDocumentDate;
-          const param = `filter.${controlName}=$eq:${keyTypeDocument}`;
+          const param = `filter.${controlName}=$ilike:${keyTypeDocument}`;
           filterParams.push(param);
         } else if (controlName === 'keySeparator') {
           this.aux = controlName;
           const keySeparator = this.selectSeparator;
           const keykeySeparatorDate = JSON.stringify(keySeparator);
           this.dateInput = keykeySeparatorDate;
-          const param = `filter.${controlName}=$eq:${keySeparator}`;
+          const param = `filter.${controlName}=$ilike:${keySeparator}`;
           filterParams.push(param);
         } else if (controlName === 'preliminaryInquiry') {
           this.aux = controlName;
-          const param = `filter.file.${controlName}=$eq:${controlValue}`;
+          const param = `filter.file.${controlName}=$ilike:${controlValue}`;
           this.dateInput = controlValue;
           filterParams.push(param);
         } else if (controlName === 'criminalCase') {
           this.aux = controlName;
-          const param = `filter.file.${controlName}=$eq:${controlValue}`;
+          const param = `filter.file.${controlName}=$ilike:${controlValue}`;
+          this.dateInput = controlValue;
+          filterParams.push(param);
+        } else if (controlName === 'descriptionDocument') {
+          this.aux = controlName;
+          const param = `filter.${controlName}=$ilike:${controlValue}`;
           this.dateInput = controlValue;
           filterParams.push(param);
         } else if (controlValue === 'all') {
@@ -166,6 +208,7 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   }
 
   getDocuments() {
+    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -220,6 +263,42 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
       .subscribe();
   }
 
+  modalImage(documentViewer: IDocumentsViewerFlyerNumber) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      ignoreBackdropClick: false,
+      documentViewer,
+      callback: (next: boolean) => {
+        if (next) this.getDocuments();
+      },
+    };
+    this.modalService.show(DocumentViewerFormComponent, modalConfig);
+  }
+
+  showDeleteAlert(documentViewerUpdate: IDocuments) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(documentViewerUpdate.id);
+      }
+    });
+  }
+
+  delete(id: string | number) {
+    this.documentService.remove(id).subscribe({
+      next: () => {
+        this.alert('success', 'Expediente eliminado', '');
+        this.getDocuments();
+      },
+      error: error => {
+        this.alert('warning', 'No es posible eliminar el expediente', '');
+      },
+    });
+  }
+
   onSubmit() {
     this.loading = true;
     if (this.generateFilterParams(this.form).length > 0) {
@@ -250,56 +329,84 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error => {
-        if (this.aux === 'numberProceedings') {
-          this.alert(
-            'error',
-            '',
-            `No existe el expediente No. ${this.dateInput}`
-          );
-          this.form.get('numberProceedings').reset();
-        } else if (this.aux === 'flyerNumber') {
-          this.alert('error', '', `No existe el volante No. ${this.dateInput}`);
-          this.form.get('flyerNumber').reset();
-        } else if (this.aux === 'separador') {
-          this.alert('error', '', `No existe el separador ${this.dateInput}`);
-          this.form.get('separador').reset();
-        } else if (this.aux === 'significantDate') {
-          this.alert(
-            'error',
-            '',
-            `No existe la fecha significativa ${this.dateInput}`
-          );
-          this.form.get('significantDate').reset();
-        } else if (this.aux === 'keyTypeDocument') {
-          this.alert(
-            'error',
-            '',
-            `No existe el tipo de documento ${this.dateInput}`
-          );
-          this.form.get('keyTypeDocument').reset();
-        } else if (this.aux === 'descriptionDocument') {
-          this.alert(
-            'error',
-            '',
-            `No existe la descripción del deocumento ${this.dateInput}`
-          );
-          this.form.get('descriptionDocument').reset();
-        } else if (this.aux === 'preliminaryInquiry') {
-          this.alert(
-            'error',
-            '',
-            `No existe la averiguación previa ${this.dateInput}`
-          );
-          this.form.get('preliminaryInquiry').reset();
-        } else if (this.aux === 'criminalCase') {
-          this.alert('error', '', `No existe la causa penal ${this.dateInput}`);
-          this.form.get('criminalCase').reset();
-        } else if (this.aux === 'scanStatus') {
-          this.alert('error', '', `No existe el el estatus ${this.dateInput}`);
-          this.form.get('scanStatus').reset();
+        let contador = 0;
+        const errors: { [key: string]: string } = {};
+
+        Object.keys(this.form.controls).forEach(controlName => {
+          if (this.aux === controlName) {
+            let errorMessage = '';
+            switch (controlName) {
+              case 'numberProceedings':
+                errorMessage = 'No. de expediente no encontrado';
+                this.form.get('numberProceedings').reset();
+                this.onSubmit();
+                break;
+              case 'flyerNumber':
+                errorMessage = 'No. de volante no encontrado';
+                this.form.get('flyerNumber').reset();
+                this.onSubmit();
+                break;
+              case 'separador':
+                errorMessage = 'Separador no encontrado';
+                this.form.get('separador').reset();
+                this.onSubmit();
+                break;
+              case 'significantDate':
+                errorMessage = 'Fecha significativa no encontrada';
+                this.form.get('significantDate').reset();
+                this.onSubmit();
+                break;
+              case 'keyTypeDocument':
+                errorMessage = 'Tipo de documento no existe';
+                this.form.get('keyTypeDocument').reset();
+                this.onSubmit();
+                break;
+              case 'descriptionDocument':
+                errorMessage = 'Descripción no encontrada';
+                this.form.get('descriptionDocument').reset();
+                this.onSubmit();
+                break;
+              case 'preliminaryInquiry':
+                errorMessage = 'Averiguación previa no encontrada';
+                this.form.get('preliminaryInquiry').reset();
+                this.onSubmit();
+                break;
+              case 'criminalCase':
+                errorMessage = 'Causa penal no encontrada';
+                this.form.get('criminalCase').reset();
+                this.onSubmit();
+                break;
+              case 'scanStatus':
+                errorMessage = 'Estatus de digitalización no encontrado';
+                this.form.get('scanStatus').reset();
+                this.onSubmit();
+                break;
+            }
+
+            if (errorMessage !== '') {
+              errors[controlName] = errorMessage;
+              contador++;
+            }
+          }
+          this.loading = false;
+          // this.data.load([]);
+          // this.totalItems =  0;
+          this.params = new BehaviorSubject<ListParams>(new ListParams());
+        });
+
+        if (contador === 0) {
+          this.alert('warning', 'No se encontraron registros', '');
+          this.cleandInfo();
+        } else {
+          Object.keys(errors).forEach(controlName => {
+            const errorMessage = errors[controlName];
+            this.alert(
+              'warning',
+              errorMessage,
+              `Si en el formulario quedó un filtro, presiona de nuevo en "Consultar"`
+            );
+          });
         }
-        this.loading = false;
-        this.data.load([]);
       }
     );
   }

@@ -1,0 +1,35 @@
+<app-modal>
+  <div class="w-100" header>
+    <div class="d-flex flex-wrap justify-content-between aling-items-center">
+      <h5 class="modal-title">
+        Historial de Actas, Programaciones, Suspensiones y Cancelación de los
+        Bienes
+      </h5>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <p>De click sobre el registro para visualizar los documentos</p>
+      <div class="col-md-12" [ngClass]="{ 'table-loading': loading }">
+        <ng-scrollbar [track]="'all'" style="height: 200px">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
+            [settings]="settings"
+            [source]="histo"
+            (rowSelect)="showDocs($event.data)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+      </div>
+    </div>
+    <div class="d-flex justify-content-center">
+      <div class="d-inline">
+        <button
+          class="btn btn-danger btn-sm active mr-3"
+          (click)="modalRef.hide()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

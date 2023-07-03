@@ -1,0 +1,73 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <div class="row w-100">
+      <div class="col-12 col-sm-12 col-md-8">
+        <h5 class="title">
+          Fotos del bien
+          <ng-container *ngIf="actualGoodNumber">{{
+            actualGoodNumber
+          }}</ng-container>
+        </h5>
+      </div>
+      <div
+        class="col-12 col-sm-12 col-md-4 text-end"
+        *ngIf="origin && origin > 0">
+        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row" *ngIf="totalItems > 1">
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"
+          [limit]="newLimit"
+          [maxSize]="1"></app-pagination>
+      </div>
+      <div class="row">
+        <div class="col-md-6" style="display: flex; column-gap: 15px">
+          <form-field [control]="form.get('noBien')" label="No. de Bien">
+            <input
+              class="form-control"
+              formControlName="noBien"
+              maxlength="10" />
+          </form-field>
+          <button
+            [disabled]="loading || form.invalid"
+            class="btn btn-primary btn-sm active"
+            type="button"
+            (click)="searchGood()">
+            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+          <button
+            [disabled]="loading"
+            class="btn btn-danger btn-sm active"
+            type="button"
+            (click)="clear()">
+            Limpiar
+          </button>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="description"
+              readonly></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <app-photos-tabs
+      [goodNumber]="actualGoodNumber"
+      [disabled]="!actualGoodNumber"></app-photos-tabs>
+  </div>
+</app-card>

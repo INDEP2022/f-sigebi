@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   catchError,
   debounceTime,
@@ -13,6 +14,7 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { PreviousRouteService } from 'src/app/common/services/previous-route.service';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { ILabelOKey } from 'src/app/core/models/catalogs/label-okey.model';
 import { IStatusCode } from 'src/app/core/models/catalogs/status-code.model';
@@ -43,6 +45,7 @@ export class ChangeOfGoodClassificationComponent
   implements OnInit
 {
   //Reactive Forms
+  origin: number = null;
   usuarVal: string;
   form: FormGroup;
   status = new DefaultSelect<IStatusCode>();
@@ -121,13 +124,16 @@ export class ChangeOfGoodClassificationComponent
 
   constructor(
     private fb: FormBuilder,
+    private activatedRoute: ActivatedRoute,
     private readonly goodServices: GoodService,
     private readonly classifyGoodServices: ClassifyGoodService,
     private readonly labeGoodServices: LabelGoodService,
     private readonly goodsQueryServices: GoodsQueryService,
     private readonly dynamicCatalogsService: DynamicCatalogsService,
     private readonly goodSssubtypeService: GoodSssubtypeService,
-    private statusScreenService: StatusXScreenService
+    private previousRouteService: PreviousRouteService,
+    private statusScreenService: StatusXScreenService,
+    private router: Router
   ) {
     super();
     this.atributActSettings = {
@@ -195,6 +201,20 @@ export class ChangeOfGoodClassificationComponent
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams.subscribe({
+      next: param => {
+        if (param['numberGood']) {
+          this.numberGood.setValue(param['numberGood']);
+          if (this.previousRouteService.getHistory().length > 1) {
+            this.origin = 1;
+          }
+          this.loadGood();
+        } else {
+          this.origin = 0;
+        }
+      },
+    });
+
     this.buildForm();
     this.buildFormNew();
     this.numberGood.valueChanges
@@ -224,6 +244,10 @@ export class ChangeOfGoodClassificationComponent
     this.form.disable();
     this.formNew.disable();
     this.numberGood.enable();
+  }
+
+  goBack() {
+    this.previousRouteService.back();
   }
 
   clear() {
@@ -309,6 +333,11 @@ export class ChangeOfGoodClassificationComponent
     this.loading = true;
     // this.listAtributAct = [];
     // this.refreshTableAct(this.listAtributAct);
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: { numberGood: this.numberGood.value },
+      queryParamsHandling: 'merge', // remove to replace all query params by provided
+    });
     const filterParams = new FilterParams();
     filterParams.addFilter('id', this.numberGood.value);
     const response = await firstValueFrom(

@@ -4,6 +4,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import {
   IListResponse,
+  IListResponseMessage,
   IResponse,
 } from '../../interfaces/list-response.interface';
 import {
@@ -101,7 +102,13 @@ export class ProceedingsService extends HttpService {
     );
   }
 
-  createProceedings(formData: any) {
+  getExistProceedings(numberGood: string) {
+    return this.get<IListResponseMessage<{ existe: number }>>(
+      ProceedingsEndpoints.ExistProceedings + '/' + numberGood
+    );
+  }
+
+  createProceedings(formData: IProceedings) {
     return this.post(this.route, formData);
   }
 
@@ -145,5 +152,13 @@ export class ProceedingsService extends HttpService {
 
   deleteProceeding(model: Object) {
     return this.delete(this.route, model);
+  }
+
+  getUnioTable(goodNumber: number, params?: string) {
+    return this.get(`${ProceedingsEndpoints.GetUnion}/${goodNumber}`, params);
+  }
+
+  getCountActas(goodNumber: number | string) {
+    return this.get('aplication/get-count-actas/' + goodNumber);
   }
 }

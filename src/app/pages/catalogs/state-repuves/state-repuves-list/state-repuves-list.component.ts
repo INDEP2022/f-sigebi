@@ -115,7 +115,7 @@ export class StateRepuvesListComponent extends BasePage implements OnInit {
     this.stateRepuveService.remove(id).subscribe({
       next: () => {
         this.getDeductives(),
-          this.alert('success', 'Estado Repuvese', 'Borrado');
+          this.alert('success', 'Estado repuvese', 'Borrado Correctamente');
       },
     });
   }

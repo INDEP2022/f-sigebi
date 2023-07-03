@@ -31,6 +31,8 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   receipt: IReceipt;
   proceeding: IProceedings;
   guardReception: any;
+  actId: number;
+  folioPro: string = '';
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -45,6 +47,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('this.typeDoc', this.typeDoc);
     this.prepareForm();
     if (this.typeDoc == 185 || this.typeDoc == 186) {
       this.getGoodsRelReceipt();
@@ -53,9 +56,11 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     if (this.typeDoc == 103) {
       this.getReceipts();
       this.getProceeding();
-      this.getGoodsReceipt();
+    }
 
-      console.log('guardReception');
+    if (this.typeDoc == 210 || this.typeDoc == 106 || this.typeDoc == 107) {
+      this.programmingGoods();
+      this.getProceedingById();
     }
     this.getProgramming();
   }
@@ -66,15 +71,12 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     });
   }
 
-  getGoodsReceipt() {
+  getProceedingById() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.programmationId'] = this.programming.id;
-    this.receptionService.getReceiptGood(params.getValue()).subscribe({
+    params.getValue()['filter.id'] = this.actId;
+    this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
-        console.log('response', response); //Hace falta un filtro
-        response.data.map((item: IRecepitGuard) => {
-          this.goodId += item.idGood + ' ';
-        });
+        this.folioPro = response.data[0].folioProceedings;
       },
       error: error => {},
     });
@@ -87,6 +89,19 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       next: response => {
         response.data.map((item: IRecepitGuard) => {
           this.goodId += item.idGood + ' ';
+        });
+      },
+      error: error => {},
+    });
+  }
+
+  programmingGoods() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.programming.id;
+    this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+      next: response => {
+        response.data.map(item => {
+          this.goodId += item.goodId;
         });
       },
       error: error => {},
@@ -109,8 +124,25 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     params.getValue()['filter.idPrograming'] = this.programming.id;
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
-        console.log('proc', response);
         this.proceeding = response.data[0];
+        this.getGoodsReceipt();
+      },
+      error: error => {},
+    });
+  }
+
+  getGoodsReceipt() {
+    let good: IRecepitGuard[] = [];
+    const formData = {
+      programmationId: this.programming.id,
+      actId: this.proceeding?.id,
+    };
+    this.receptionService.getReceiptGoodByIds(formData).subscribe({
+      next: response => {
+        good.push(response);
+        good.map((item: IRecepitGuard) => {
+          this.goodId += item.goodId + ' ';
+        });
       },
       error: error => {},
     });
@@ -216,10 +248,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     }
 
     if (this.typeDoc == 103) {
-      console.log('Soy un recibo de entrega listo para ser creado');
       const idProg = this.programming.id;
-      console.log('recibos', this.receipt);
-      console.log('actas', this.proceeding);
       //const idReceipt = this.
       const formData = {
         keyDoc:
@@ -241,8 +270,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         xTipoDocumento: 103,
       };
 
-      console.log('formData', formData);
-
       const extension = '.pdf';
       const docName = 'Recibo Resguardo';
 
@@ -256,15 +283,116 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: response => {
-            console.log('doc guardado', response);
             const updateReceipt = this.updateReceipt(response.dDocName);
             if (updateReceipt) {
-              const updateGood = this.onLoadToast(
+              this.alertInfo(
                 'success',
-                'Acción correcta',
-                'Documento Adjuntado correctamente'
-              );
-              this.close();
+                'Acción Correcta',
+                'Documento adjuntado correctamente'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.close();
+                  this.modalRef.content.callback(true);
+                }
+              });
+            }
+          },
+        });
+    }
+
+    if (this.typeDoc == 210) {
+      const idProg = this.programming.id;
+      //const idReceipt = this.
+      const formData = {
+        keyDoc: this.programming.id + '-' + this.actId,
+        xNivelRegistroNSBDB: 'Bien',
+        xNoProgramacion: this.programming.id,
+        xNombreProceso: 'Ejecutar Recepción',
+        xDelegacionRegional: this.programming.regionalDelegationNumber,
+        xFolioProgramacion: this.programming.folio,
+        DocTitle: this.folioPro,
+        xnoActa: this.actId,
+        dSecurityGroup: 'Public',
+        xidBien: this.goodId,
+        xidTransferente: this.programming.tranferId,
+        xTipoDocumento: 210,
+      };
+
+      const extension = '.pdf';
+      const docName = this.folioPro;
+
+      console.log('formData', formData);
+      this.wContentService
+        .addDocumentToContent(
+          docName,
+          extension,
+          JSON.stringify(formData),
+          this.selectedFile,
+          extension
+        )
+        .subscribe({
+          next: response => {
+            const updateReceipt = this.procedding(response.dDocName);
+            if (updateReceipt) {
+              this.alertInfo(
+                'success',
+                'Acción Correcta',
+                'Documento adjuntado correctamente'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.close();
+                  this.modalRef.content.callback(true);
+                }
+              });
+            }
+          },
+        });
+    }
+
+    if (this.typeDoc == 106) {
+      const idProg = this.programming.id;
+      //const idReceipt = this.
+      const formData = {
+        keyDoc: this.programming.id + '-' + this.actId,
+        xNivelRegistroNSBDB: 'Bien',
+        xNoProgramacion: this.programming.id,
+        xNombreProceso: 'Ejecutar Recepción',
+        xDelegacionRegional: this.programming.regionalDelegationNumber,
+        xFolioProgramacion: this.programming.folio,
+        DocTitle: this.folioPro,
+        xnoActa: this.actId,
+        dSecurityGroup: 'Public',
+        xidBien: this.goodId,
+        xidTransferente: this.programming.tranferId,
+        xTipoDocumento: 106,
+      };
+
+      const extension = '.pdf';
+      const docName = this.folioPro;
+
+      console.log('formData', formData);
+      this.wContentService
+        .addDocumentToContent(
+          docName,
+          extension,
+          JSON.stringify(formData),
+          this.selectedFile,
+          extension
+        )
+        .subscribe({
+          next: response => {
+            const updateReceipt = this.procedding(response.dDocName);
+            if (updateReceipt) {
+              this.alertInfo(
+                'success',
+                'Acción Correcta',
+                'Documento adjuntado correctamente'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.close();
+                  this.modalRef.content.callback(true);
+                }
+              });
             }
           },
         });
@@ -290,9 +418,26 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     });
   }
 
+  procedding(docName: string) {
+    return new Promise((resolve, reject) => {
+      const formData: any = {
+        id: this.actId,
+        idPrograming: this.programming.id,
+        statusProceeedings: 'CERRADO',
+        id_content: docName,
+      };
+
+      this.proceedingService.updateProceeding(formData).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {},
+      });
+    });
+  }
+
   updateReceipt(docName: string) {
     return new Promise((resolve, reject) => {
-      console.log('receipt', this.receipt);
       const formData: any = {
         id: this.receipt.id,
         actId: this.receipt.actId,

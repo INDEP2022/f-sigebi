@@ -20,11 +20,6 @@
   <div class="col p-0" style="text-align: right">
     <button
       type="button"
-      [disabled]="
-        files.length < 2 ||
-        filesToDelete.length === 0 ||
-        filesToDelete.length === files.length
-      "
       class="btn btn-danger btn-sm active"
       (click)="confirmDelete()">
       Borrar fotos seleccionadas

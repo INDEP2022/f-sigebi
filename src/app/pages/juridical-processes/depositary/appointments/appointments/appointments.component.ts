@@ -26,7 +26,10 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IPerson } from 'src/app/core/models/catalogs/person.model';
 import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
-import { IAppointmentDepositary } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
+import {
+  IDepositaryAppointments,
+  IDepositaryAppointments_custom,
+} from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -42,13 +45,13 @@ import {
   RFC_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
-import { ListDataComponent } from 'src/app/pages/admin/home/list-data/list-data.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IGlobalVars } from 'src/app/shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { AppointmentsAdministrativeReportComponent } from '../appointments-administrative-report/appointments-administrative-report.component';
 import { AppointmentsJuridicalReportComponent } from '../appointments-juridical-report/appointments-juridical-report.component';
 import { AppointmentsRelationsPaysComponent } from '../appointments-relations-pays/appointments-relations-pays.component';
+import { ListDataAppointmentComponent } from '../list-data/list-data.component';
 import { ModalScanningFoilAppointmentTableComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
 import { PersonFormComponentAppointment } from '../person-form/person-form-appointment.component';
 import { AppointmentsService } from '../services/appointments.service';
@@ -82,7 +85,8 @@ export class AppointmentsComponent
   globalVars: any;
   public good: IGood;
   noBien: number = null;
-  depositaryAppointment: IAppointmentDepositary;
+  // depositaryAppointment: IAppointmentDepositary;
+  depositaryAppointment: IDepositaryAppointments_custom;
   _saveDataDepositary: boolean = false;
   // Loadings
   loadingGood: boolean = false;
@@ -112,6 +116,7 @@ export class AppointmentsComponent
 
   paramsModal = new BehaviorSubject(new ListParams());
   filterParams = new BehaviorSubject(new FilterParams());
+  appointmentNumberParams: number = null;
 
   constructor(
     private fb: FormBuilder,
@@ -166,7 +171,23 @@ export class AppointmentsComponent
       if (!isNaN(Number(id))) {
         this.noBienReadOnly = Number(id);
         this.form.get('noBien').setValue(this.noBienReadOnly);
-        this.validGoodNumberInDepositaryAppointment();
+        this.activatedRoute.queryParams
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(params => {
+            this.appointmentNumberParams = params['p_nom']
+              ? Number(params['p_nom'])
+              : null;
+            console.log(this.appointmentNumberParams);
+
+            if (this.appointmentNumberParams) {
+              this.validGoodNumberInDepositaryAppointment(
+                true,
+                this.appointmentNumberParams
+              );
+            } else {
+              this.validGoodNumberInDepositaryAppointment();
+            }
+          });
       } else {
         this.alert(
           'warning',
@@ -236,7 +257,11 @@ export class AppointmentsComponent
       ], //* Provisional, Definitiva
       representanteSAE: [
         { value: null, disabled: false },
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ], //*
       nombre: [
         { value: '', disabled: true },
@@ -254,7 +279,7 @@ export class AppointmentsComponent
       ], //*
       representante: [
         { value: '', disabled: true },
-        [Validators.maxLength(120), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
       ], //*
 
       calle: [
@@ -300,7 +325,11 @@ export class AppointmentsComponent
 
       tipoPersona: [
         { value: '', disabled: true },
-        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(20),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ], //* TIPO PERSONA
       tipoPersona2: [
         { value: '', disabled: true },
@@ -308,7 +337,11 @@ export class AppointmentsComponent
       ], //* TIPO RESPONSABLE
       giro: [
         { value: '', disabled: true },
-        [Validators.maxLength(45), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(15), Validators.pattern(STRING_PATTERN)],
+      ],
+      giroDesc: [
+        { value: '', disabled: true },
+        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
       ],
       referencia: [
         { value: '', disabled: true },
@@ -316,7 +349,7 @@ export class AppointmentsComponent
       ],
 
       remocion: [
-        { value: 'N', disabled: false },
+        { value: false, disabled: false },
         [Validators.maxLength(1), Validators.pattern(STRING_PATTERN)],
       ],
       fecha: [{ value: '', disabled: true }, [Validators.maxLength(11)]],
@@ -389,11 +422,31 @@ export class AppointmentsComponent
     });
   }
 
+  newDepositary() {
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder continuar con esta acción',
+        ''
+      );
+      return;
+    }
+    this._saveDataDepositary = true;
+    this.formScan.reset();
+    this.form.reset();
+    this.depositaryAppointment = null;
+    this.form.get('noBien').setValue(this.noBienReadOnly);
+    this.setGoodData();
+    this.getStatusGoodByNoGood();
+    this.form.get('fecha').disable();
+    this.form.get('noOficio').disable();
+  }
+
   cleanScreenFields() {
+    this._saveDataDepositary = true;
     this.formScan.reset();
     this.form.reset();
     this.noBienReadOnly = null;
-    this.depositaryAppointment = null;
     this.depositaryAppointment = null;
   }
 
@@ -408,8 +461,8 @@ export class AppointmentsComponent
         };
       }
       if (
-        this.depositaryAppointment.universalFolio == null &&
-        this.depositaryAppointment.folioReturn == null
+        this.depositaryAppointment.InvoiceUniversal == null &&
+        this.depositaryAppointment.InvoiceReturn == null
       ) {
         this.alertInfo(
           'info',
@@ -417,8 +470,8 @@ export class AppointmentsComponent
           ''
         );
       } else if (
-        this.depositaryAppointment.universalFolio == null &&
-        this.depositaryAppointment.folioReturn != null
+        this.depositaryAppointment.InvoiceUniversal == null &&
+        this.depositaryAppointment.InvoiceReturn != null
       ) {
         this.alertInfo(
           'info',
@@ -426,8 +479,8 @@ export class AppointmentsComponent
           ''
         );
       } else if (
-        this.depositaryAppointment.universalFolio == null &&
-        this.depositaryAppointment.folioReturn != null
+        this.depositaryAppointment.InvoiceUniversal == null &&
+        this.depositaryAppointment.InvoiceReturn != null
       ) {
         this.alertInfo(
           'info',
@@ -529,8 +582,16 @@ export class AppointmentsComponent
       );
       return;
     }
+    if (this._saveDataDepositary) {
+      this.alert('warning', 'Guardar el registro para continuar', '');
+      return;
+    }
+    if (!this.depositaryAppointment.numberAppointment) {
+      this.alert('warning', 'Es necesario un número de nombramiento', '');
+      return;
+    }
     this.openModalPaysDetails({
-      depositaryNumber: Number(this.depositaryAppointment.appointmentNumber),
+      depositaryNumber: Number(this.depositaryAppointment.numberAppointment),
     });
   }
 
@@ -555,8 +616,16 @@ export class AppointmentsComponent
       );
       return;
     }
+    if (this._saveDataDepositary) {
+      this.alert('warning', 'Guardar el registro para continuar', '');
+      return;
+    }
+    if (!this.depositaryAppointment.numberAppointment) {
+      this.alert('warning', 'Es necesario un número de nombramiento', '');
+      return;
+    }
     this.openModalJuridicalReport({
-      depositaryNumber: Number(this.depositaryAppointment.appointmentNumber),
+      depositaryNumber: Number(this.depositaryAppointment.numberAppointment),
     });
   }
 
@@ -584,7 +653,7 @@ export class AppointmentsComponent
       return;
     }
     this.openModaladministrativeReport({
-      depositaryNumber: Number(this.depositaryAppointment.appointmentNumber),
+      depositaryNumber: Number(this.depositaryAppointment.numberAppointment),
     });
   }
 
@@ -611,6 +680,14 @@ export class AppointmentsComponent
       );
       return;
     }
+    if (this._saveDataDepositary) {
+      this.alert('warning', 'Guardar el nombramiento para continuar', '');
+      return;
+    }
+    if (!this.depositaryAppointment.numberAppointment) {
+      this.alert('warning', 'Es necesario un número de nombramiento', '');
+      return;
+    }
     // Llama pantalla FMASINSPAGDEPOSITARIAS
     this.router.navigate(
       ['/pages/juridical/depositary/bulk-loading-depository-cargo'],
@@ -618,6 +695,7 @@ export class AppointmentsComponent
         queryParams: {
           origin: this.screenKey,
           no_bien: this.noBienReadOnly,
+          p_nom: this.depositaryAppointment.numberAppointment,
         },
       }
     );
@@ -633,11 +711,20 @@ export class AppointmentsComponent
       );
       return;
     }
+    if (this._saveDataDepositary) {
+      this.alert('warning', 'Guardar el nombramiento para continuar', '');
+      return;
+    }
+    if (!this.depositaryAppointment.numberAppointment) {
+      this.alert('warning', 'Es necesario un número de nombramiento', '');
+      return;
+    }
     // Llama pantalla FCATCATCONCEPPAGO
     this.router.navigate(['/pages/catalogs/person'], {
       queryParams: {
         origin: this.screenKey,
         no_bien: this.noBienReadOnly,
+        p_nom: this.depositaryAppointment.numberAppointment,
       },
     });
   }
@@ -652,6 +739,14 @@ export class AppointmentsComponent
       );
       return;
     }
+    if (this._saveDataDepositary) {
+      this.alert('warning', 'Guardar el nombramiento para continuar', '');
+      return;
+    }
+    if (!this.depositaryAppointment.numberAppointment) {
+      this.alert('warning', 'Es necesario un número de nombramiento', '');
+      return;
+    }
     // Llama pantalla FCATCATMTOPERSONA
     this.router.navigate(
       ['/pages/parameterization/maintenance-individuals-and-companies'],
@@ -659,6 +754,7 @@ export class AppointmentsComponent
         queryParams: {
           origin: this.screenKey,
           no_bien: this.noBienReadOnly,
+          p_nom: this.depositaryAppointment.numberAppointment,
         },
       }
     );
@@ -789,7 +885,10 @@ export class AppointmentsComponent
   /**
    * Validar el número de bien
    */
-  async validGoodNumberInDepositaryAppointment() {
+  async validGoodNumberInDepositaryAppointment(
+    appointmentNumber: boolean = false,
+    appointmentNum: number = null
+  ) {
     if (this.form.get('noBien').valid) {
       this._saveDataDepositary = true;
       this.depositaryAppointment = null;
@@ -800,9 +899,12 @@ export class AppointmentsComponent
         page: this.params.getValue().page,
         limit: 10,
       };
-      this.params.getValue().getParams();
+      // this.params.getValue().getParams();
       // params['filter.goodNumber'] = '$eq:' + this.noBien;
       params['filter.numberGood'] = this.noBien;
+      if (appointmentNumber) {
+        params['filter.numberAppointment'] = appointmentNum;
+      }
       this.form.reset();
       this.formRadioScan.reset();
       this.formScan.reset();
@@ -817,19 +919,7 @@ export class AppointmentsComponent
             this.loadingAppointment = false;
             console.log('DEPOSITARIA ', res);
             if (res.count == 1) {
-              this.depositaryAppointment = res.data[0];
-              this.setDataDepositary(); // Set data depositary
-              if (this.depositaryAppointment.personNumber) {
-                if (this.depositaryAppointment.personNumber.id) {
-                  this.form
-                    .get('personNumber')
-                    .setValue(this.depositaryAppointment.personNumber.id);
-                  this.getPersonCatalog(new ListParams(), true);
-                  this.setDataPerson(); // Set data Person
-                }
-              }
-              this.getFromGoodsAndExpedients(); // Get data good
-              this.setOthers();
+              this.dataLoad(res.data[0]);
             } else {
               this.showDataListAppointment(res.data[0], res.count);
               // this.globalVars.noExiste = 0;
@@ -843,7 +933,7 @@ export class AppointmentsComponent
               this.globalVars.noExiste = 0;
               this.depositaryAppointment = {
                 ...this.depositaryAppointment,
-                seraRepresentative: 'SERA',
+                representativeBe: 'SERA',
               };
               this.validFielddGoodNumber();
               // this.getFromGoodsAndExpedients(true);
@@ -861,6 +951,22 @@ export class AppointmentsComponent
     }
   }
 
+  dataLoad(data: IDepositaryAppointments_custom) {
+    this.depositaryAppointment = data;
+    this.setDataDepositary(); // Set data depositary
+    if (this.depositaryAppointment.personNumber) {
+      if (this.depositaryAppointment.personNumber.id) {
+        this.form
+          .get('personNumber')
+          .setValue(this.depositaryAppointment.personNumber.id);
+        this.getPersonCatalog(new ListParams(), true);
+        this.setDataPerson(); // Set data Person
+      }
+    }
+    this.getFromGoodsAndExpedients(); // Get data good
+    this.setOthers();
+  }
+
   showDataListAppointment(data: any, totalCount: number) {
     //descomentar si usan FilterParams ejemplo de consulta
     //this.filterParams.getValue().addFilter('id', 3429640, SearchFilter.EQ)
@@ -868,51 +974,78 @@ export class AppointmentsComponent
 
     //ejemplo de uso con ListParams
     //this.params.getValue()['filter.id'] = '$eq:3429640'
-
+    // let dataSource = new LocalDataSource(data);
     this.filterParams.getValue().addFilter('numberGood', this.noBien);
+
+    const params: ListParams = {
+      page: 1,
+      limit: 10,
+    };
+    params['filter.numberGood'] = this.noBien;
 
     let config: ModalOptions = {
       initialState: {
         //filtros
-        paramsList: this.paramsModal,
-        filterParams: this.filterParams, // en caso de no usar FilterParams no enviar
-        data: data,
-        totalItems: totalCount,
-        callback: (next: boolean, data: any /*Modelado de datos*/) => {
+        // paramsList: params, //this.paramsModal,
+        // filterParams: this.filterParams, // en caso de no usar FilterParams no enviar
+        noBien: this.noBien,
+        // data: dataSource,
+        // totalItems: totalCount,
+        callback: (next: boolean, data: IDepositaryAppointments_custom) => {
           console.log(next, data);
 
           if (next) {
             //mostrar datos de la búsqueda
+            this.dataLoad(data);
+          } else {
+            // this.alert(
+            //   'warning',
+            //   'La pantalla esta lista para crear un nuevo registro',
+            //   ''
+            // );
+            this.getFromGoodsAndExpedients(false, false, true); // Get data good
+            // this.newDepositary();
           }
         },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(ListDataComponent, config);
+    this.modalService.show(ListDataAppointmentComponent, config);
   }
 
   setDataDepositary() {
     this.showScanForm = false; // Ocultar parte de escaneo
     this.form
       .get('representanteSAE')
-      .setValue(this.depositaryAppointment.seraRepresentative);
+      .setValue(this.depositaryAppointment.representativeBe);
+    this.getSaeUser(new ListParams(), true);
     this.form.get('referencia').setValue(this.depositaryAppointment.reference);
     this.form
       .get('tipoNombramiento')
-      .setValue(this.depositaryAppointment.typeNameKey);
+      .setValue(this.depositaryAppointment.cveGuyAdministrator);
+    this.form.get('estatus').setValue(this.depositaryAppointment.cveGuyname);
+    console.log('TIPO DEPOSITARIA', this.depositaryAppointment.guydepositary);
+
     this.form
       .get('tipoDepositaria')
-      .setValue(this.depositaryAppointment.depositaryType);
-
+      .setValue(this.depositaryAppointment.guydepositary);
+    this.getDepositaryType(new ListParams(), true);
+    this.form
+      .get('bienesMenaje')
+      .setValue(
+        this.depositaryAppointment.withHousehold
+          ? this.depositaryAppointment.withHousehold
+          : 'N'
+      );
     setTimeout(() => {
       this.formScan
         .get('scanningFoli')
-        .setValue(this.depositaryAppointment.universalFolio);
+        .setValue(this.depositaryAppointment.InvoiceUniversal);
       this.formScan.get('scanningFoli').updateValueAndValidity();
       this.formScan
         .get('returnFoli')
-        .setValue(this.depositaryAppointment.folioReturn);
+        .setValue(this.depositaryAppointment.InvoiceReturn);
       this.formScan.get('returnFoli').updateValueAndValidity();
       this.showScanForm = true; // Mostrar parte de escaneo
     }, 200);
@@ -1062,6 +1195,10 @@ export class AppointmentsComponent
       .setValue(
         allNull ? null : this.depositaryAppointment.personNumber.keyOperation
       );
+    this.form.get('giroDesc').reset();
+    if (allNull == false) {
+      this.getKeyOperation();
+    }
     this.form
       .get('tipoPersona')
       .setValue(
@@ -1082,6 +1219,26 @@ export class AppointmentsComponent
       );
   }
 
+  getKeyOperation() {
+    let paramsData = new ListParams();
+    paramsData['filter.nmtable'] = '$eq:8';
+    if (paramsData['search'] == undefined || paramsData['search'] == null) {
+      paramsData['search'] = '';
+    }
+    paramsData['filter.otkey'] = '$eq:' + this.form.get('giro').value;
+    this.appointmentsService.getAllTvalTable1(paramsData).subscribe({
+      next: data => {
+        console.log('OPERACION ', data);
+        if (data) {
+          this.form.get('giroDesc').setValue(data.data[0].otvalor);
+        }
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
+
   setGoodData() {
     this.form.get('descriptionGood').setValue(this.good.description);
     if (this.good.expediente) {
@@ -1091,30 +1248,51 @@ export class AppointmentsComponent
         this.form
           .get('averiguacionPrevia')
           .setValue(this.good.expediente.preliminaryInquiry);
-        let dateAgree: any;
-        if (this.good.expediente.dateAgreementAssurance) {
-          dateAgree = this.datePipe.transform(
-            this.good.expediente.dateAgreementAssurance,
-            this.dateFormat
+        // let dateAgree: any;
+        // if (this.good.expediente.dateAgreementAssurance) {
+        //   dateAgree = this.datePipe.transform(
+        //     this.good.expediente.dateAgreementAssurance,
+        //     this.dateFormat
+        //   );
+        // }
+        this.form
+          .get('fechaAcuerdoAsegurado')
+          .setValue(
+            this.good.expediente.dateAgreementAssurance
+              ? new Date(this.good.expediente.dateAgreementAssurance)
+              : null
           );
-        }
-        this.form.get('fechaAcuerdoAsegurado').setValue(dateAgree);
-        let dateReception: any;
-        if (this.good.expediente.receptionDate) {
-          dateReception = this.datePipe.transform(
-            this.good.expediente.receptionDate,
-            this.dateFormat
+        // .setValue(this.good.expediente.dateAgreementAssurance);
+        // let dateReception: any;
+        // if (this.good.expediente.receptionDate) {
+        //   dateReception = this.datePipe.transform(
+        //     this.good.expediente.receptionDate,
+        //     this.dateFormat
+        //   );
+        // }
+        this.form
+          .get('fechaRecepcion')
+          .setValue(
+            this.good.expediente.receptionDate
+              ? new Date(this.good.expediente.receptionDate)
+              : null
           );
-        }
-        this.form.get('fechaRecepcion').setValue(dateReception);
-        let dateConfiscate: any;
-        if (this.good.expediente.confiscateDictamineDate) {
-          dateConfiscate = this.datePipe.transform(
-            this.good.expediente.confiscateDictamineDate,
-            this.dateFormat
+        // .setValue(this.good.expediente.receptionDate);
+        // let dateConfiscate: any;
+        // if (this.good.expediente.confiscateDictamineDate) {
+        //   dateConfiscate = this.datePipe.transform(
+        //     this.good.expediente.confiscateDictamineDate,
+        //     this.dateFormat
+        //   );
+        // }
+        this.form
+          .get('fechaDecomiso')
+          .setValue(
+            this.good.expediente.confiscateDictamineDate
+              ? new Date(this.good.expediente.confiscateDictamineDate)
+              : null
           );
-        }
-        this.form.get('fechaDecomiso').setValue(dateConfiscate);
+        // .setValue(this.good.expediente.confiscateDictamineDate);
       }
     } else {
       if (this.good.fileNumber) {
@@ -1124,50 +1302,88 @@ export class AppointmentsComponent
 
   setOthers() {
     // Revocation
-    this.form.get('remocion').setValue(this.depositaryAppointment.revocation);
-    this.form.get('fecha').setValue(this.depositaryAppointment.revocationDate);
+    this.form
+      .get('remocion')
+      .setValue(this.depositaryAppointment.revocation == 'S' ? true : false);
+    console.log(this.depositaryAppointment.revocation);
+    if (this.depositaryAppointment.revocation == 'S') {
+      this.form.get('fecha').enable();
+      this.form.get('noOficio').enable();
+    } else if (this.depositaryAppointment.revocation == 'N') {
+      this.form.get('fecha').disable();
+      this.form.get('noOficio').disable();
+    }
+    console.log(this.depositaryAppointment.dateRevocation);
+
+    // let dateRevocation: any;
+    // if (this.depositaryAppointment.dateRevocation) {
+    //   dateRevocation = this.datePipe.transform(
+    //     this.depositaryAppointment.dateRevocation,
+    //     this.dateFormat
+    //   );
+    //   let test = new Date(dateRevocation).toISOString();
+    //   console.log(test);
+    // }
+    this.form
+      .get('fecha') //.setValue(this.depositaryAppointment.dateRevocation);
+      .setValue(
+        this.depositaryAppointment.dateRevocation
+          ? new Date(this.depositaryAppointment.dateRevocation)
+          : null
+      );
     this.form
       .get('noOficio')
-      .setValue(this.depositaryAppointment.officialRevocationNumber);
+      .setValue(this.depositaryAppointment.numberJobRevocation);
     // Junta de gobierno
     this.form
       .get('fechaAcuerdo')
-      .setValue(this.depositaryAppointment.governmentMeetingOfficialDate);
+      .setValue(
+        this.depositaryAppointment.dateJobBoardgovt
+          ? new Date(this.depositaryAppointment.dateJobBoardgovt)
+          : null
+      );
+    // .setValue(this.depositaryAppointment.dateJobBoardgovt);
     this.form
       .get('noAcuerdo')
-      .setValue(this.depositaryAppointment.governmentMeetingOfficialNumber);
+      .setValue(this.depositaryAppointment.numberJobBoardgovt);
     // Honorarios y Contraprestaciones
     this.form
       .get('contraprestacion')
       .setValue(
-        this.depositaryAppointment.importConsideration
-          ? this.depositaryAppointment.importConsideration
+        this.depositaryAppointment.amountconsideration
+          ? this.depositaryAppointment.amountconsideration
           : '0.00'
       );
     this.form
       .get('honorarios')
       .setValue(
-        this.depositaryAppointment.feeAmount
-          ? this.depositaryAppointment.feeAmount
+        this.depositaryAppointment.amountFee
+          ? this.depositaryAppointment.amountFee
           : '0.00'
       );
-    this.form.get('iva').setValue(this.depositaryAppointment.iva);
-    let startDate: any;
-    if (this.depositaryAppointment) {
-      startDate = this.datePipe.transform(
-        this.depositaryAppointment.contractStartDate,
-        this.dateFormat
+    this.form.get('iva').setValue(this.depositaryAppointment.vat);
+    // let startDate: any;
+    // if (this.depositaryAppointment) {
+    //   startDate = this.datePipe.transform(
+    //     this.depositaryAppointment.datestartContract,
+    //     this.dateFormat
+    //   );
+    // }
+    this.form
+      .get('fechaInicio')
+      .setValue(
+        this.depositaryAppointment.datestartContract
+          ? new Date(this.depositaryAppointment.datestartContract)
+          : null
       );
-    }
-    this.form.get('fechaInicio').setValue(startDate);
     this.form
       .get('noNombramiento')
-      .setValue(this.depositaryAppointment.appointmentNumber);
+      .setValue(this.depositaryAppointment.cveContract);
     // Anexo y Observaciones
-    this.form.get('anexo').setValue(this.depositaryAppointment.annexed);
+    this.form.get('anexo').setValue(this.depositaryAppointment.exhibit);
     this.form
       .get('observaciones')
-      .setValue(this.depositaryAppointment.observation);
+      .setValue(this.depositaryAppointment.observations);
   }
 
   /**
@@ -1176,7 +1392,8 @@ export class AppointmentsComponent
    */
   async getFromGoodsAndExpedients(
     onlyGood: boolean = false,
-    btnGood: boolean = false
+    btnGood: boolean = false,
+    callNew: boolean = false
   ) {
     // let paramsGoodExpedient: IFromGoodsAndExpedientsBody = {
     //   goodNumber: this.noBien,
@@ -1205,6 +1422,9 @@ export class AppointmentsComponent
           console.log(res);
           this.good = res.data[0]; // Set data good
           if (this.good.expediente) {
+            if (callNew) {
+              this.newDepositary();
+            }
             this.loadingGood = false;
             this.setGoodData();
             this.getStatusGoodByNoGood();
@@ -1221,6 +1441,9 @@ export class AppointmentsComponent
                   this.good.expediente = res.data[0]; // Set data good
                   this.setGoodData();
                   this.getStatusGoodByNoGood();
+                  if (callNew) {
+                    this.newDepositary();
+                  }
                 },
                 error: err => {
                   this.loadingGood = false;
@@ -1385,28 +1608,28 @@ export class AppointmentsComponent
   }
 
   setPostalCode(data: any, setPostalCode: boolean = false) {
-    let dataSet = data.data.find((item: any) => {
-      return setPostalCode
-        ? item.postalCode
-        : Number(item.postalCode) == Number(this.postalCodeSelectValue);
-    });
-    console.log(dataSet);
-    if (dataSet) {
-      if (setPostalCode) {
-        this.postalCodeSelectValue = dataSet.postalCode.toString();
-      }
-      this.postalCode = new DefaultSelect(
-        [dataSet].map((i: any) => {
-          i.township = i.postalCode + ' -- ' + i.township;
-          return i;
-        }),
-        data.count
-      );
-      if (setPostalCode) {
-        this.form.get('codigoPostal').setValue(this.postalCodeSelectValue);
-        this.changePostalCodeDetail(dataSet);
-      }
-    }
+    // let dataSet = data.data.find((item: any) => {
+    //   return setPostalCode
+    //     ? item.postalCode
+    //     : Number(item.postalCode) == Number(this.postalCodeSelectValue);
+    // });
+    // console.log(dataSet);
+    // if (dataSet) {
+    //   if (setPostalCode) {
+    //     this.postalCodeSelectValue = dataSet.postalCode.toString();
+    //   }
+    //   this.postalCode = new DefaultSelect(
+    //     [dataSet].map((i: any) => {
+    //       i.township = i.postalCode + ' -- ' + i.township;
+    //       return i;
+    //     }),
+    //     data.count
+    //   );
+    //   if (setPostalCode) {
+    //     this.form.get('codigoPostal').setValue(this.postalCodeSelectValue);
+    //     this.changePostalCodeDetail(dataSet);
+    //   }
+    // }
   }
 
   changeLocalityDetail(event: any) {
@@ -1677,7 +1900,7 @@ export class AppointmentsComponent
       if (this.formScan.get('scanningFoli').value) {
         // Continuar proceso mostrar reporte solicitud de escaneo
         this.reportDigitalizationReport(
-          Number(this.depositaryAppointment.universalFolio)
+          Number(this.depositaryAppointment.InvoiceUniversal)
         );
       } else {
         this.alertInfo(
@@ -1690,7 +1913,7 @@ export class AppointmentsComponent
       if (this.formScan.get('returnFoli').value) {
         // Continuar proceso mostrar reporte solicitud de escaneo  RGERGENSOLICDIGIT
         this.reportDigitalizationReport(
-          Number(this.depositaryAppointment.folioReturn)
+          Number(this.depositaryAppointment.InvoiceReturn)
         );
       } else {
         this.alertInfo(
@@ -1771,7 +1994,7 @@ export class AppointmentsComponent
       if (this.formRadioScan.get('scanningFolio').value == 'A') {
         this.appointmentsService
           .getCValFoUni({
-            adminTypeKey: this.depositaryAppointment.typeAdminKey,
+            adminTypeKey: this.depositaryAppointment.cveGuyAdministrator,
             goodNumber: this.noBienReadOnly,
             screen: this.screenKey,
           })
@@ -1818,7 +2041,7 @@ export class AppointmentsComponent
       } else if (this.formRadioScan.get('scanningFolio').value == 'R') {
         this.appointmentsService
           .getCValFoRev({
-            adminTypeKey: this.depositaryAppointment.typeAdminKey,
+            adminTypeKey: this.depositaryAppointment.cveGuyAdministrator,
             goodNumber: this.noBienReadOnly,
             screen: this.screenKey,
           })
@@ -1872,9 +2095,11 @@ export class AppointmentsComponent
         return;
       }
       if (this.formRadioScan.get('scanningFolio').value == 'A') {
-        if (this.depositaryAppointment.universalFolio) {
+        if (this.depositaryAppointment.InvoiceUniversal) {
           // LANZA ESCANEO
-          this.runScanScreen(Number(this.depositaryAppointment.universalFolio));
+          this.runScanScreen(
+            Number(this.depositaryAppointment.InvoiceUniversal)
+          );
         } else {
           this.alert(
             'warning',
@@ -1884,9 +2109,9 @@ export class AppointmentsComponent
           this.showScanRadio = false;
         }
       } else if (this.formRadioScan.get('scanningFolio').value == 'R') {
-        if (this.depositaryAppointment.folioReturn) {
+        if (this.depositaryAppointment.InvoiceReturn) {
           // LANZA ESCANEO
-          this.runScanScreen(Number(this.depositaryAppointment.folioReturn));
+          this.runScanScreen(Number(this.depositaryAppointment.InvoiceReturn));
         } else {
           this.alert(
             'warning',
@@ -1936,7 +2161,7 @@ export class AppointmentsComponent
               P_NB: this.noBienReadOnly,
               // P_NO_VOLANTE: wheeelNumber,
               P_FOLIO: this.formRadioScan.get('scanningFolio').value,
-              P_ND: this.depositaryAppointment.appointmentNumber,
+              P_ND: this.depositaryAppointment.numberAppointment,
             },
           }
         );
@@ -1970,7 +2195,7 @@ export class AppointmentsComponent
       if (this.formScan.get('scanningFoli').value) {
         // Continuar proceso para cargar imágenes
         this.getDocumentsByFolio(
-          Number(this.depositaryAppointment.universalFolio),
+          Number(this.depositaryAppointment.InvoiceUniversal),
           true
         );
       } else {
@@ -1984,7 +2209,7 @@ export class AppointmentsComponent
       if (this.formScan.get('returnFoli').value) {
         // Continuar proceso para cargar imágenes
         this.getDocumentsByFolio(
-          Number(this.depositaryAppointment.folioReturn),
+          Number(this.depositaryAppointment.InvoiceReturn),
           false
         );
       } else {
@@ -2160,17 +2385,26 @@ export class AppointmentsComponent
       }, 300);
     }
   }
+  getDepositaryTypeChange(event: any) {
+    console.log(event);
+  }
 
-  getDepositaryType(paramsData: ListParams) {
+  getDepositaryType(paramsData: ListParams, getByValue: boolean = false) {
     console.log(paramsData);
     paramsData['filter.nmtable'] = '$eq:7';
     if (paramsData['search'] == undefined || paramsData['search'] == null) {
       paramsData['search'] = '';
     }
+    if (getByValue) {
+      paramsData['filter.otkey'] =
+        '$eq:' + this.form.get('tipoDepositaria').value;
+    }
     // paramsData['sortBy'] = 'townshipKey:DESC';
-    this.appointmentsService.getDepositaryType(paramsData).subscribe({
+    console.log('DATA SELECT DEPOSITARY ', paramsData);
+
+    this.appointmentsService.getAllTvalTable1(paramsData).subscribe({
       next: data => {
-        console.log('DATA ', data.data);
+        console.log('DATA SELECT DEPOSITARY ', data.data);
         if (data.data) {
           this.depositaryTypeSelect = new DefaultSelect(
             data.data.map((i: any) => {
@@ -2181,6 +2415,9 @@ export class AppointmentsComponent
           );
         }
         console.log(data, this.depositaryTypeSelect);
+        // if (getByValue) {
+        //   this.depositaryTypeSelect = data.data[0];
+        // }
       },
       error: error => {
         this.depositaryTypeSelect = new DefaultSelect();
@@ -2210,27 +2447,51 @@ export class AppointmentsComponent
       // params.addFilter('name', paramsData['search'], SearchFilter.LIKE);
     }
     params['sortBy'] = 'name:ASC';
-    let subscription = this.appointmentsService
-      .getSaeUser(params.getParams())
-      .subscribe({
-        next: data => {
-          this.saeRepresentativeSelect = new DefaultSelect(
-            data.data.map(i => {
-              i['nameDesc'] = i.id + ' -- ' + i.name;
-              return i;
-            }),
-            data.count
-          );
-          console.log(data, this.saeRepresentativeSelect);
-          subscription.unsubscribe();
-        },
-        error: error => {
-          this.saeRepresentativeSelect = new DefaultSelect();
-          subscription.unsubscribe();
-        },
-      });
+    console.log(params, getByValue);
+
+    this.appointmentsService.getSaeUser(params.getParams()).subscribe({
+      next: data => {
+        console.log('DATA SELECT SERA', data.data);
+
+        this.saeRepresentativeSelect = new DefaultSelect(
+          data.data.map(i => {
+            i['nameDesc'] = i.id + ' -- ' + i.name;
+            return i;
+          }),
+          data.count
+        );
+        console.log(data, this.saeRepresentativeSelect);
+        if (getByValue) {
+          // this.saeRepresentativeSelect = data.data[0].map((i: any) => {
+          //   i['nameDesc'] = i.id + ' -- ' + i.name;
+          //   return i;
+          // });
+          this.getSaeUserChange(data.data[0]);
+        }
+      },
+      error: error => {
+        this.saeRepresentativeSelect = new DefaultSelect();
+      },
+    });
   }
   saveDataForm() {
+    if (!this.noBienReadOnly) {
+      this.alert(
+        'warning',
+        'Se requiere de una búsqueda de Bien primero para poder continuar con esta acción',
+        ''
+      );
+      return;
+    }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.alertInfo(
+        'warning',
+        'Complete correctamente los campos requeridos',
+        ''
+      );
+      return;
+    }
     if (this._saveDataDepositary == true) {
       if (!this.depositaryAppointment.personNumber) {
         this.alertInfo(
@@ -2241,56 +2502,65 @@ export class AppointmentsComponent
         return;
       }
       // Update data
-      let bodySave: any = {
-        appointmentNumber: null,
-        nameProvDate: null,
+      let bodySave: IDepositaryAppointments = {
+        appointmentNum: null,
+        nameProvDete: null,
         revocationDate: this.form.value.fecha,
-        revocation: this.form.value.remocion,
+        revocation: this.form.value.remocion == true ? 'S' : 'N',
         contractKey: this.form.value.noNombramiento,
-        contractStartDate: this.form.value.fechaInicio,
-        contractEndDate: null,
-        quantity: null,
-        typeNameKey: this.form.value.tipoNombramiento,
-        typeAdminKey: this.form.value.estatus,
+        startContractDate: this.form.value.fechaInicio,
+        endContractDate: null,
+        amount: null,
+        nameTypeKey: this.form.value.estatus,
+        administratorTypeKey: this.form.value.tipoNombramiento,
         assignmentDate: null,
         appointmentDate: new Date(),
-        appointmentCard: null,
-        depositaryType: this.form.value.tipoDepositaria,
-        observation: this.form.value.observaciones,
-        officialRevocationNumber: this.form.value.noOficio,
-        importConsideration: this.form.value.contraprestacion,
-        feeAmount: this.form.value.honorarios,
-        provisionalOfficialNumber: null,
-        annexed: this.form.value.annexed,
-        governmentMeetingOfficialDate: this.form.value.fechaAcuerdo,
-        governmentMeetingOfficialNumber: this.form.value.noAcuerdo,
-        shippingDateGeneralAddress: null,
-        replyDateGeneralAddress: null,
-        jobShiftNumber: null,
-        turnDate: null,
+        cardAppointmentId: null,
+        typeDepositary: this.form.value.tipoDepositaria,
+        observations: this.form.value.observaciones,
+        jobRevocationNum: this.form.value.noOficio,
+        amountConsideration: this.form.value.contraprestacion,
+        amountFee: this.form.value.honorarios,
+        jobProvisionalNum: null,
+        exhibit: this.form.value.anexo,
+        jobBoardgovtDate: this.form.value.fechaAcuerdo,
+        jobBoardgovtNum: this.form.value.noAcuerdo,
+        shipmentDirgralDate: null,
+        replyDirgralDate: null,
+        jobShiftNum: null,
+        shiftDate: null,
         returnDate: null,
-        answerOfficeNumber: null,
-        appointmentAgreement: null,
-        governmentBoardAppointmentCard: null,
-        officialNumberAnswerAddressGeneral: null,
-        authorityOrdersAllocation: null,
-        responsible: this.form.value.depositaria,
-        seraRepresentative: this.form.value.representanteSAE,
-        propertyNumber: null,
-        registerNumber: null,
+        jobReplyNum: null,
+        agreementAppointment: null,
+        cardAppointmentIdBoardgovt: null,
+        jobAnswerDirgralNum: null,
+        authorityorderAssignment: null,
+        responsible: this.form.value.depositaria
+          ? this.form.value.depositaria
+          : this.depositaryAppointment.personNumber.personName,
+        representativeSera: this.form.value.representanteSAE,
+        folioUniversal: null,
+        nbOrigin: null,
+        registryNum: null,
         validity: null,
-        amountIVA: null,
+        amountVat: null,
         folioReturn: null,
-        personNumber: this.depositaryAppointment.personNumber.id,
+        personNum: this.depositaryAppointment.personNumber.id,
         reference: this.form.value.referencia,
-        iva: this.form.value.iva ? Number(this.form.value.iva) : null,
-        withKitchenware: null,
-        goodNumber: this.form.value.noBien,
+        vat: this.form.value.iva ? Number(this.form.value.iva) : null,
+        withHousehold: this.form.value.bienesMenaje,
+        goodNum: this.form.value.noBien,
       };
 
+      console.log(bodySave, this.form.value);
       this.appointmentsService.createAppointment(bodySave).subscribe({
         next: data => {
+          this._saveDataDepositary = false;
           console.log(data);
+          this.validGoodNumberInDepositaryAppointment(
+            true,
+            data.data[0].appointmentNum
+          );
           this.alertInfo('success', 'Registro guardado correctamente', '');
         },
         error: error => {
@@ -2303,32 +2573,42 @@ export class AppointmentsComponent
         },
       });
     } else {
-      let body: any = {
-        appointmentNumber: this.depositaryAppointment.appointmentNumber,
+      console.log(this.form.value.fechaInicio);
+
+      let body: Partial<IDepositaryAppointments> = {
+        appointmentNum: Number(this.depositaryAppointment.numberAppointment),
         revocationDate: this.form.value.fecha,
-        revocation: this.form.value.remocion,
+        revocation: this.form.value.remocion == true ? 'S' : 'N',
         contractKey: this.form.value.noNombramiento,
-        contractStartDate: this.form.value.fechaInicio,
-        typeNameKey: this.form.value.tipoNombramiento,
-        typeAdminKey: this.form.value.estatus,
-        depositaryType: this.form.value.tipoDepositaria,
-        observation: this.form.value.observaciones,
-        officialRevocationNumber: this.form.value.noOficio,
-        importConsideration: this.form.value.contraprestacion,
-        feeAmount: this.form.value.honorarios,
-        annexed: this.form.value.annexed,
-        governmentMeetingOfficialDate: this.form.value.fechaAcuerdo,
-        governmentMeetingOfficialNumber: this.form.value.noAcuerdo,
-        responsible: this.form.value.depositaria,
-        seraRepresentative: this.form.value.representanteSAE,
-        personNumber: this.depositaryAppointment.personNumber.id,
+        startContractDate: this.form.value.fechaInicio,
+        nameTypeKey: this.form.value.estatus,
+        administratorTypeKey: this.form.value.tipoNombramiento,
+        typeDepositary: this.form.value.tipoDepositaria,
+        observations: this.form.value.observaciones,
+        jobRevocationNum: this.form.value.noOficio,
+        amountConsideration: this.form.value.contraprestacion,
+        amountFee: this.form.value.honorarios,
+        exhibit: this.form.value.anexo,
+        jobBoardgovtDate: this.form.value.fechaAcuerdo,
+        jobBoardgovtNum: this.form.value.noAcuerdo,
+        responsible: this.form.value.depositaria
+          ? this.form.value.depositaria
+          : this.depositaryAppointment.personNumber.personName,
+        representativeSera: this.form.value.representanteSAE,
+        personNum: this.depositaryAppointment.personNumber.id,
         reference: this.form.value.referencia,
-        iva: this.form.value.iva,
-        goodNumber: this.form.value.noBien,
+        vat: this.form.value.iva ? Number(this.form.value.iva) : null,
+        withHousehold: this.form.value.bienesMenaje,
+        goodNum: this.form.value.noBien,
       };
+      console.log(body, this.form.value);
       this.appointmentsService.updateAppointment(body).subscribe({
         next: data => {
           console.log(data);
+          this.validGoodNumberInDepositaryAppointment(
+            true,
+            body.appointmentNum
+          );
           this.alertInfo('success', 'Registro guardado correctamente', '');
         },
         error: error => {

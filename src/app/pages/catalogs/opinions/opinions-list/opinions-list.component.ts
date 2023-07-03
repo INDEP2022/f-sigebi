@@ -57,6 +57,7 @@ export class OpinionsListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getDeductives();
         }
       });
@@ -109,7 +110,8 @@ export class OpinionsListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.opinionService.removeCatalogOpinions(id).subscribe({
       next: () => {
-        this.getDeductives(), this.alert('success', 'Dictamen', 'Borrado');
+        this.getDeductives(),
+          this.alert('success', 'Dictamen', 'Borrado Correctamente');
       },
       error: err => {
         this.alert(

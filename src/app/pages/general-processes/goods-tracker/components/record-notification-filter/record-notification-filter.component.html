@@ -5,7 +5,7 @@
       label="Expediente"
       class="col-md-3">
       <ng-select
-        class="form-control"
+        class="form-control scroll-line"
         formControlName="expedientNum"
         [items]="[]"
         addTagText="Agregar Elemento"
@@ -19,7 +19,7 @@
       label="Volante"
       class="col-md-3">
       <ng-select
-        class="form-control"
+        class="form-control scroll-line"
         formControlName="flyerNum"
         [items]="[]"
         addTagText="Agregar Elemento"
@@ -57,18 +57,14 @@
       [control]="form.get('flyerType')"
       label="Tipo de Volante"
       class="col-md-2">
-      <input
-        type="text"
-        formControlName="flyerType"
-        class="form-control"
-        oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3)" />
-      <!-- <select
+      <select
         formControlName="flyerType"
         class="form-control"
         (change)="flyerTypeChange()">
+        <option value="">Todos</option>
         <option value="T">T</option>
         <option value="P">P</option>
-      </select> -->
+      </select>
     </form-field>
     <form-field
       [control]="form.get('officeDate')"
@@ -106,13 +102,12 @@
   </div>
 
   <div class="row pt-4">
-    <!-- ! no hay filtro aun -->
-    <!-- <form-field
+    <form-field
       [control]="form.get('indicatedName')"
       label="Nombre Indiciado"
       class="col-md-4">
       <input type="text" formControlName="indicatedName" class="form-control" />
-    </form-field> -->
+    </form-field>
 
     <form-field [control]="form.get('publicMin')" class="col-md-4">
       <!-- <input type="text" formControlName="publicMin" class="form-control" /> -->
@@ -127,20 +122,20 @@
         (change)="minpubChange()"
         label="Ministerio P&uacute;blico"></ngx-select>
     </form-field>
-  </div>
 
-  <!-- <div class="row pt-4">
     <form-field
       [control]="form.get('extOfficeNum')"
       label="Oficio Ext&#46; No&#46;"
-      class="col-md-3">
+      class="col-md-4">
       <input type="text" formControlName="extOfficeNum" class="form-control" />
     </form-field>
+  </div>
 
+  <div class="row pt-4">
     <form-field
       [control]="form.get('previusInvestigation')"
       label="Averiguaci&oacute;n Previa"
-      class="col-md-3">
+      class="col-md-4">
       <input
         type="text"
         formControlName="previusInvestigation"
@@ -150,17 +145,17 @@
     <form-field
       [control]="form.get('dictum')"
       label="Dictamen"
-      class="col-md-3">
+      class="col-md-4">
       <input type="text" formControlName="dictum" class="form-control" />
     </form-field>
 
     <form-field
-      [control]="form.get('criminalCase')"
+      [control]="form.get('criminalCause')"
       label="Causa Penal"
-      class="col-md-3">
-      <input type="text" formControlName="criminalCase" class="form-control" />
+      class="col-md-4">
+      <input type="text" formControlName="criminalCause" class="form-control" />
     </form-field>
-  </div> -->
+  </div>
 
   <div class="row">
     <div class="col-md-12">

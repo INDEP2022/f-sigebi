@@ -121,7 +121,8 @@ export class GenericsListComponent extends BasePage implements OnInit {
   ShowDeleteAlert(name: string, id: number) {
     this.genericsService.remove1(name, id).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Genérico', 'Borrado');
+        this.getExample(),
+          this.alert('success', 'Genérico', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

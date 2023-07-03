@@ -110,7 +110,8 @@ export class NotaryListComponent extends BasePage implements OnInit {
   delete(notary?: INotary) {
     this.notaryService.remove(notary.id).subscribe({
       next: () => {
-        this.getExample(), this.alert('success', 'Notario', 'Borrado');
+        this.getExample(),
+          this.alert('success', 'Notario', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

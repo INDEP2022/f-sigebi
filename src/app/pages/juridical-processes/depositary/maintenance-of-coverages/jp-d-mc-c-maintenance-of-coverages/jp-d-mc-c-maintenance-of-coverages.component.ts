@@ -11,6 +11,7 @@ import { BehaviorSubject, catchError, map, of, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
@@ -25,10 +26,13 @@ import { GoodService } from 'src/app/core/services/good/good.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { HistoryProtectionService } from 'src/app/core/services/ms-history-protection/history-protection.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { MaintenanceOfCoveragesService } from '../maintenace-of-coverages-services/maintenance-of-coverages.service';
 import { ReservedModalComponent } from '../reserved-modal/reserved-modal.component';
+import { SendMailModalComponent } from '../send-mail-modal/send-mail-modal.component';
 import { SendingOfEMailsComponent } from '../sending-of-e-mails/sending-of-e-mails.component';
 import { COLUMNS } from './columns';
 
@@ -58,7 +62,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     expediente: null,
   };
   blkControlForm: any = {
-    folioUniversal: null,
+    folioUniversal: 0,
     rel_est_si: null,
     rel_est_no: null,
   };
@@ -79,6 +83,10 @@ export class JpDMcCMaintenanceOfCoveragesComponent
 
   listGoodSelected: any = [];
   selectAll: boolean = false;
+  userAuth: any = null;
+  screenKey: string = 'FADMAMPAROS';
+  dwhere: string = '';
+  formLoading: boolean = true;
 
   notificationServices = inject(NotificationService);
   route = inject(ActivatedRoute);
@@ -98,6 +106,9 @@ export class JpDMcCMaintenanceOfCoveragesComponent
   maintenanceOfCoferageService = inject(MaintenanceOfCoveragesService);
   documentsService = inject(DocumentsService);
   bsModalRef = inject(BsModalRef);
+  authService = inject(AuthService);
+  securityService = inject(SecurityService);
+  officeManagementService = inject(OfficeManagementService);
 
   get wheelNumber() {
     return this.form.get('wheelNumber');
@@ -200,14 +211,15 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     this.settings.columns = COLUMNS;
     this.settings.actions = false;
 
-    COLUMNS.selected = {
-      ...COLUMNS.selected,
+    COLUMNS.chSele = {
+      ...COLUMNS.chSele,
       onComponentInitFunction: this.onCLickCheckBox.bind(this),
     };
   }
 
   ngOnInit(): void {
     this.buildForm();
+    this.userAuth = this.authService.decodeToken();
     //no_tramite
     this.pathParams.tramite = Number(
       this.route.snapshot.queryParamMap.get('processNumber')
@@ -222,6 +234,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     );
     this.getNotifications();
     this.getFolioUniv();
+    this.updateStatusProcess();
     this.getDocument();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       const expediente = this.pathParams.expediente;
@@ -468,7 +481,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     this.entFedService.getAll(params).subscribe({
       next: resp => {
         resp.data.map((item: any) => {
-          item['otWorthAndId'] = item.id + ' - ' + item.otWorth;
+          item['downloadStateAndId'] = item.id + ' - ' + item.downloadState;
         });
 
         this.entFedSelected = new DefaultSelect(resp.data, resp.count);
@@ -624,18 +637,18 @@ export class JpDMcCMaintenanceOfCoveragesComponent
         next: resp => {
           resp.data.map(async item => {
             const result: any = await this.setFolioUnivAndSelects(item);
-            item.selected = result.block;
-            item.cambio_ch = result.block;
+            item.chSele = result.block;
+            item.chChange = result.block;
             item.folio_universal = result.folio;
             //this.blkControlForm.folioUniversal = result.folio;
-            //if (result.block == true) {
-            this.listGoodSelected.push(item);
-            //}
+            if (result.block == true) {
+              this.listGoodSelected.push(item);
+            }
           });
           if (this.selectAll == true) {
             //this.listGoodSelected = [];
             resp.data.map((item: any) => {
-              item.selected = true;
+              item.chSele = true;
             });
           }
 
@@ -653,7 +666,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
   async setFolioUnivAndSelects(good: any) {
     return new Promise(async (resolve, reject) => {
       const folio = await this.getGoodFolio(good.id);
-      console.log('folio ', folio, '// etiqueta:', good.labelNumber);
+      //console.log('folio ', folio, '// etiqueta:', good.labelNumber);
       let result = { block: false, folio: folio };
       if (good.labelNumber == 6) {
         result.block = true;
@@ -676,7 +689,6 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       });
     });
   }
-
   getDocument() {
     let params = new ListParams();
     params['filter.flyerNumber'] = `$eq:${this.pathParams.volante}`;
@@ -694,8 +706,8 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       )
       .subscribe({
         next: (resp: any) => {
-          this.blkControlForm.folioUniversal = resp.id;
-          this.folioUniv = resp.id;
+          this.blkControlForm.folioUniversal = resp.id || 0;
+          this.folioUniv = resp.id || 0;
           this.documents = resp as IDocuments;
         },
       });
@@ -705,16 +717,21 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     event.toggle.subscribe((data: any) => {
       const index = this.listGoodSelected.indexOf(data.row);
       if (index == -1 && data.toggle == true) {
+        data.row.chSele = data.toggle;
         this.listGoodSelected.push(data.row);
       } else if (index != -1 && data.toggle == false) {
-        this.listGoodSelected.splice(index, 1);
+        if (data.row.chChange == true) {
+          this.listGoodSelected[index].chSele = false;
+        }
+        if (data.row.chChange == false || data.row.chChange == undefined) {
+          this.listGoodSelected.splice(index, 1);
+        }
       }
       console.log(this.listGoodSelected);
     });
   }
 
   changeSelectAll(event: any) {
-    console.log(event.checked);
     this.selectAll = event.checked;
     this.listGoodSelected = [];
     this.getGoodTable(new ListParams());
@@ -728,20 +745,16 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     //let exist = resp.data.filter(x => x.idAuthority == authority.idAuthority);
   }
 
-  apply() {
-    const notifications = this.form.value;
-    //folio en duro
-    const folio: any = 3600189; //this.blkControlForm.folioUniversal
-    let vc_pantalla = '';
-    let v_cuantos = 0;
-    let v_ind_si = false;
+  async apply() {
     let v_ind_no: boolean = false;
-    let v_rel_si: any = null;
-    let v_rel_no: any = null;
-    let v_ban = false;
-    let v_no_etiqueta: any = null;
-    let v_ban_esc = true;
-    let v_val_esc = 0;
+    let v_ind_si: boolean = false;
+    let v_rel_est_si: string = null;
+    let v_rel_est_no: string = null;
+    let v_rel_si: string = null;
+    let v_rel_no: string = null;
+
+    const notifications = this.form.value;
+    const folio: any = Number(this.blkControlForm.folioUniversal);
 
     if (!notifications.wheelNumber) {
       this.alert('error', 'Error', 'Se debe ingresar un Volante/Expediente.');
@@ -757,6 +770,11 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       return;
     }
 
+    if (this.selectAll == false && this.listGoodSelected.length == 0) {
+      this.onLoadToast('info', 'No hay ni un bien seleccionado');
+      return;
+    }
+
     if (this.data.length == 0 || this.data[0].id == null) {
       this.alert(
         'error',
@@ -765,78 +783,193 @@ export class JpDMcCMaintenanceOfCoveragesComponent
       );
       return;
     }
+    let result: any = null;
+    if (this.selectAll == true) {
+      const body: any = {};
+      body['flierNumber'] = this.pathParams.volante;
+      body['folioUniversal'] = Number(this.blkControlForm.folioUniversal);
+      body['affairKey'] = Number(this.form.get('affairKey').value);
+      body['user'] = this.userAuth.username;
+      body['transactNumber'] = this.pathParams.tramite;
+      body['expedientNumber'] = this.pathParams.expediente;
+      body['chSele'] = true;
+      body['chChange'] = false;
+      const forAllResult = await this.applyForAllGood(body);
+      result = forAllResult;
+    }
 
-    this.data.map((item: any) => {
-      if (item.selected != item.cambio_ch) {
-        //se ampara
-        if (item.selected == true && item.cambio_ch == false) {
-          if (v_rel_si == null) {
-            v_rel_si = `${item.id}  ${item.description}`;
-          } else {
-            const value = `${v_rel_si || ''} 
-            ${item.id}  ${item.description}`;
-            v_rel_si = value.substring(1, 4000);
-          }
+    if (this.listGoodSelected.length > 0) {
+      const listGoods = await this.returnGoodFormat(this.listGoodSelected);
+      const body: any = {};
+      body['screenKey'] = this.screenKey;
+      body['flyerNumber'] = this.pathParams.volante;
+      body['folioUniversal'] = folio;
+      body['affairKey'] = Number(this.form.get('affairKey').value);
+      body['user'] = this.userAuth.username;
+      body['transactNumber'] = this.pathParams.tramite;
+      body['goodArray'] = listGoods;
 
-          if (this.blkControlForm.rel_est_si == null) {
-            const value = `${item.status}`;
-            this.blkControlForm.rel_est_si = value;
-          } else {
-            if (this.blkControlForm.rel_est_si.includes(item.status)) {
-              const value = this.blkControlForm.rel_est_si + ',' + item.status;
-              this.blkControlForm.rel_est_si = value.substring(1, 4000);
-            }
-          }
-          v_ind_si = true;
-          //insert historical bien amparos
+      const forSome = await this.applyForSomeGood(body);
+      result = forSome;
+    }
+    console.log('apply result', result);
+    delete notifications.reserved;
+    delete notifications.dictumKey;
+    const notfiResult = await this.updateNotification(notifications);
 
-          v_no_etiqueta = 6;
-        } else {
-          if (v_ban_esc) {
-            v_ban_esc = false;
+    v_ind_no = result.V_IND_NO;
+    v_ind_si = result.V_IND_SI;
+    v_rel_est_si = result.V_REL_EST_SI;
+    v_rel_est_no = result.V_REL_EST_NO;
+    v_rel_si = result.V_REL_SI;
+    v_rel_no = result.V_REL_NO;
 
-            //query select documentos guardar en v_val_esc
+    //body para traer los correos
+    const emails = {
+      delegationNumber: this.userAuth.department,
+      vcScreen: 'FADMAMPAROS',
+      pRelStaus: v_ind_si == true ? v_rel_est_si : v_rel_est_no,
+    };
+    const copy = {
+      pantalla: 'FADMAMPAROS',
+    };
 
-            if (
-              v_val_esc == 0 &&
-              notifications.affairKey &&
-              (Number(notifications.affairKey) == 13 ||
-                Number(notifications.affairKey) == 14)
-            ) {
-              this.alert(
-                'error',
-                'Error',
-                'No se puede actualizar por falta de escaneo de documentos...'
-              );
-              return;
-            }
-          }
-          if (v_rel_no == null) {
-            v_rel_no = `${item.id}  ${item.description}`;
-          } else {
-            const value = `${v_rel_no || ''}
-            ${item.id}  ${item.description}`;
-            v_rel_no = value.substring(1, 4000);
-          }
+    if (v_ind_si == true) {
+      const correo: any = await this.getGenRelEmail(emails);
+      const copie: any = await this.getGenRelCopy(copy);
+      this.dwhere = correo;
+      //pup_ini_correo
+      const preview = this.concatPreview(v_rel_si);
+      const subject = 'Aviso de Bienes amparados';
+      this.openEmail(
+        SendMailModalComponent,
+        this.form.value,
+        subject,
+        preview,
+        correo,
+        '',
+        copie
+      );
+    }
+    if (v_ind_no == true) {
+      const correo: any = await this.getGenRelEmail(emails);
+      const copie: any = await this.getGenRelCopy(copy);
+      this.dwhere = correo;
+      //pup_ini_correo
+      const preview = this.concatPreview(v_rel_no);
+      const subject = 'Aviso de Bienes liberados de amparado';
+      this.openEmail(
+        SendMailModalComponent,
+        this.form.value,
+        subject,
+        preview,
+        correo,
+        '',
+        copie
+      );
+    }
+  }
 
-          if (this.blkControlForm.rel_est_no == null) {
-            const value = `${item.status}`;
-            this.blkControlForm.rel_est_no = value;
-          } else {
-            if (this.blkControlForm.rel_est_no.includes(item.status)) {
-              const value = this.blkControlForm.rel_est_no + ',' + item.status;
-              this.blkControlForm.rel_est_no = value.substring(1, 4000);
-            }
-          }
-          //seleccionarmos v_no_etiquesta de historial
-          //actualizamos histoail con la fecha_libera
-
-          v_ind_no = true;
-        }
-        //item.labelNumber = v_no_etiqueta
-        //cambio_ch = selected
-      }
+  applyForAllGood(body: any) {
+    return new Promise((resolve, reject) => {
+      this.notificationServices
+        .applyAllGoddMaintenanceCoverage(body)
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+          error: error => {
+            this.onLoadToast('error', 'Ocurrio un error en el proceso', '');
+            reject(error);
+          },
+        });
     });
+  }
+
+  applyForSomeGood(body: any) {
+    return new Promise((resolve, reject) => {
+      this.notificationServices
+        .applySomeGoddMaintenanceCoverage(body)
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+          error: error => {
+            this.onLoadToast('error', 'Ocurrio un error en el proceso', '');
+            reject(error);
+          },
+        });
+    });
+  }
+
+  returnGoodFormat(listValue: any) {
+    return new Promise((resolve, reject) => {
+      let newList: any = [];
+      listValue.map((item: any) => {
+        newList.push({
+          goodNumber: item.id,
+          description: item.description,
+          status: item.status,
+          labelNumber: item.labelNumber,
+          chSele: item.chSele,
+          chChange: item.chChange,
+        });
+      });
+      resolve(newList);
+    });
+  }
+
+  getGenRelEmail(body: any) {
+    return new Promise((resolve, reject) => {
+      const newList: any = [];
+      this.securityService
+        .getSegEmailUser(body)
+        .pipe(
+          catchError(e => {
+            if (e.status == 400) {
+              return of({ data: [], count: 0 });
+            }
+            throw e;
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resp.data.map((item: any) => {
+              newList.push(item.email);
+            });
+            resolve(newList.join(','));
+          },
+        });
+    });
+  }
+
+  getGenRelCopy(body: any) {
+    return new Promise((resolve, reject) => {
+      const newList: any = [];
+      this.securityService
+        .getSegCopyEmailUser(body)
+        .pipe(
+          catchError(e => {
+            if (e.status == 400) {
+              return of({ data: [], count: 0 });
+            }
+            throw e;
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resp.data.map((item: any) => {
+              newList.push(item.email);
+            });
+            resolve(newList.join(','));
+          },
+        });
+    });
+  }
+
+  concatPreview(v_rel_si: any) {
+    const value = v_rel_si.join('.\n');
+    return value.toLowerCase();
   }
 
   async knowledge() {
@@ -849,20 +982,26 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     }
 
     if (this.data.length > 0) {
-      //consultar la logica de esta parte
+      const CAMBIO_CH = await this.getGoodByLabel();
+      v_ban = CAMBIO_CH != 0 ? true : false;
     }
 
-    /*if (v_ban == false) {
+    if (v_ban == true) {
       this.alert(
         'error',
         'Se tiene al menos 1 bien amparado, no puede concluir por este medio.',
         ''
       );
       return;
-    }*/
+    }
 
     const affair = Number(this.form.get('affairKey').value);
-    if (this.folioUniv == null && (affair == 13 || affair == 14)) {
+    const folio =
+      this.blkControlForm.folioUniversal == 0 ||
+      this.blkControlForm.folioUniversal == undefined
+        ? 0
+        : this.blkControlForm.folioUniversal;
+    if (folio == 0 && (affair == 13 || affair == 14)) {
       this.alert('error', 'Se debe ingresar el Folio de escaneo.', '');
       return;
     }
@@ -895,6 +1034,30 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     }); */
   }
 
+  getGoodByLabel() {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.flyerNumber'] = `$eq:${this.pathParams.volante}`;
+      params['filter.labelNumber'] = `$eq:6`;
+      //params['filter.numberProceedings'] = `$eq:${this.pathParams.expediente}`;
+      this.goodService
+        .getAll(params)
+        .pipe(
+          catchError(e => {
+            if (e.status == 400) {
+              return of({ data: [], count: 0 });
+            }
+            throw e;
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resolve(resp.count);
+          },
+        });
+    });
+  }
+
   getQuantityDocuments() {
     return new Promise((resolve, reject) => {
       let params = new ListParams();
@@ -904,6 +1067,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
         .getAll(params)
         .pipe(
           catchError((e, _a) => {
+            console.log('error contando cant. documentos', e);
             let result: any = null;
             if (e.status == 400) {
               return of({ data: [], count: 0 });
@@ -920,7 +1084,7 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     });
   }
 
-  openCustonModal(component: any, notification: any, processNumber?: number) {
+  openCustonModal(component: any, notification?: any, processNumber?: number) {
     const config = {
       ...MODAL_CONFIG,
       initialState: {
@@ -937,9 +1101,86 @@ export class JpDMcCMaintenanceOfCoveragesComponent
     return this.modalService.show(component, config);
   }
 
+  openEmail(
+    component: any,
+    notification?: any,
+    subject?: string,
+    preview?: any,
+    para?: any,
+    message?: string,
+    cc?: any
+  ) {
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        notification: notification,
+        subject: subject,
+        preview: preview,
+        for: para,
+        message: message,
+        cc: cc,
+
+        /*callback: (next: boolean) => {
+          if (next) this.getExample();
+        },*/
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+
+    return this.modalService.show(component, config);
+  }
+
+  //llama al modal de abrir correo
+  sendEmail() {
+    this.openEmail(
+      SendMailModalComponent,
+      this.form.value,
+      'Aviso de amparo',
+      null,
+      null,
+      null,
+      null
+    );
+  }
+
+  updateNotification(body: any) {
+    return new Promise((resolve, reject) => {
+      body.cityNumber = Number(body.cityNumber);
+      const wheelNumber = this.pathParams.volante;
+      this.notificationServices.update(wheelNumber, body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          resolve(null);
+          this.onLoadToast(
+            'info',
+            'No se pudo guardar la información de la notificación'
+          );
+        },
+      });
+    });
+  }
+
   manttoEmail() {
     this.router.navigateByUrl(`pages/parameterization/mail`);
   }
 
-
+  updateStatusProcess() {
+    this.officeManagementService
+      .updateStatusProcess(this.pathParams.tramite)
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+        },
+        error: error => {
+          console.log('No se pudo actualizar el status', error);
+          this.onLoadToast(
+            'info',
+            'No se pudo actualizar el estatus del tramite'
+          );
+        },
+      });
+  }
 }

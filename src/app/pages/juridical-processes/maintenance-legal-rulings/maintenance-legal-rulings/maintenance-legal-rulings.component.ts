@@ -59,7 +59,7 @@ export class MaintenanceLegalRulingComponent
   ngOnInit(): void {
     this.prepareForm();
     this.getUser();
-    this.loading = true;
+    // this.loading = true;
   }
 
   getUser() {
@@ -90,7 +90,7 @@ export class MaintenanceLegalRulingComponent
 
     this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     let data = this.params.value;
-
+    let delegación;
     if (dictationNumber) {
       data.addFilter('dictatesNumber', dictationNumber);
     }
@@ -256,19 +256,21 @@ export class MaintenanceLegalRulingComponent
       this.alert('info', 'Es necesario ingresar la justificación.', '');
     }
     console.log(this.user);
-    const req: IUsrRelBitacora = {
-      observed: this.form.get('justificacion').value,
-      observedDate: new Date(),
-      // sessionId: this.user.session_state,
-      detiUser: 'USER',
+    const req: Partial<IUsrRelBitacora> = {
+      // sessionId: this.user.,
       sidId: this.user.sid,
-      user: this.user.name,
+      user: this.user.name.toUpperCase(),
       userrequired: 'USER',
+      observed: this.form.get('justificacion').value.toUpperCase(),
+      observedDate: new Date(),
+      // detiUser: 'USER',
     };
+    this.loading = true;
 
-    this.usrRelLogService.create(req).subscribe({
+    this.usrRelLogService.create(req as any).subscribe({
       next: data => {
         this.alert('success', 'Se ha creado la bitácora correctamente.', '');
+        this.loading = false;
       },
       error: err => {
         this.loading = false;

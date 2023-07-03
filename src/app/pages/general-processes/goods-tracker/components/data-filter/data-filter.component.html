@@ -6,7 +6,7 @@
       label="No&#46; Bien(es)">
       <ng-select
         addTagText="Agregar Elemento"
-        class="form-control"
+        class="form-control scroll-line"
         formControlName="goodNum"
         [items]="[]"
         [addTag]="true"
@@ -29,7 +29,7 @@
       label="Proceso">
       <ng-select
         addTagText="Agregar Elemento"
-        class="form-control"
+        class="form-control scroll-line"
         formControlName="process"
         bindValue="value"
         bindLabel="label"
@@ -61,7 +61,7 @@
         [searchOnInit]="true"
         control="targetIdentifier"
         [data]="labels"
-        value="description"
+        value="id"
         bindLabel="description"
         (fetchItems)="getGoodLabels($event)"
         label="Identificador de Destino"></ngx-select>
@@ -112,7 +112,7 @@
       label="Bien Padre Menaje">
       <ng-select
         addTagText="Agregar Elemento"
-        class="form-control"
+        class="form-control scroll-line"
         formControlName="menageFather"
         [items]="[]"
         [addTag]="true"
@@ -128,15 +128,27 @@
     </form-field>
   </div>
   <div class="row pt-5">
-    <form-field
-      [control]="form.get('valueFrom')"
-      class="col-md-3"
-      label="Valor Aval&uacute;o de">
-      <input type="number" formControlName="valueFrom" class="form-control" />
-    </form-field>
+    <div class="col-md-3 mx-0 px-0 bx-0">
+      <form-field
+        [control]="form.get('valueFrom')"
+        class="col-md-6"
+        label="Valor Aval&uacute;o de">
+        <input type="number" formControlName="valueFrom" class="form-control" />
+      </form-field>
 
-    <form-field [control]="form.get('valueTo')" class="col-md-3" label="A">
-      <input type="number" formControlName="valueTo" class="form-control" />
+      <form-field [control]="form.get('valueTo')" class="col-md-6" label="A">
+        <input type="number" formControlName="valueTo" class="form-control" />
+      </form-field>
+    </div>
+
+    <form-field
+      [control]="form.get('movableIventory')"
+      class="col-md-3"
+      label="Inv&#46; Mueble">
+      <input
+        type="text"
+        formControlName="movableIventory"
+        class="form-control" />
     </form-field>
 
     <form-field

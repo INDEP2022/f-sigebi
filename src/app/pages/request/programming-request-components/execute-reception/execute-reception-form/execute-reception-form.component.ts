@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -87,6 +88,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   goodsWarehouseForm: FormGroup = new FormGroup({});
   goodsReprogForm: FormGroup = new FormGroup({});
   goodsCancelationForm: FormGroup = new FormGroup({});
+  searchGoodForm: FormGroup = new FormGroup({});
   buildForm: FormGroup = new FormGroup({});
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsgeneric = new BehaviorSubject<ListParams>(new ListParams());
@@ -121,6 +123,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   headingCancelation: string = `Cancelación(0)`;
   idStation: any;
   transferentName: string = '';
+  tranType: string = '';
   stationName: string = '';
   authorityName: string = '';
   typeRelevantName: string = '';
@@ -129,10 +132,20 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   formLoadingReprog: boolean = false;
   formLoadingTrans: boolean = false;
   formLoadingGuard: boolean = false;
+  showReception: boolean = false;
+  showTransportable: boolean = false;
+  showGuard: boolean = false;
+  showWarehouse: boolean = false;
+  showReprog: boolean = false;
+  showCancel: boolean = false;
   receiptGuardGood: IRecepitGuard;
   receiptData: IReceipt;
   goodData: IGood;
   transfersDestinity: any[] = [];
+
+  delegationDes: string = '';
+  keyTransferent: string = '';
+
   settingsGuardGoods = {
     ...this.settings,
     actions: false,
@@ -255,7 +268,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
     delete: {
       deleteButtonContent:
-        '<i class="fa fa-file ml-4" text-primary aria-hidden="true"></i> Ver recibo',
+        '<i class="fa fa-eye ml-4" text-primary aria-hidden="true"></i> Ver recibo',
     },
 
     columns: RECEIPT_GUARD_COLUMNS,
@@ -290,7 +303,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private router: Router,
     private authService: AuthService,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private typeTransferentService: TransferenteService,
+    private regionalDelegationService: RegionalDelegationService
   ) {
     super();
     this.settings = {
@@ -306,6 +321,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.prepareSearchForm();
     this.prepareReceptionForm();
     this.prepareGuardForm();
     this.prepareWarehouseForm();
@@ -317,6 +333,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.getPhysicalStatus();
     this.getReceipts();
     this.getReceiptsGuard();
+    this.getTypeTransferent();
   }
 
   prepareForm() {
@@ -335,9 +352,18 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       stateConservationSae: [null],
       destiny: [null],
       selectColumn: [null],
+      observations: [null],
       transferentDestiny: [null],
     });
   }
+
+  prepareSearchForm() {
+    this.searchGoodForm = this.fb.group({
+      goodId: [null],
+    });
+  }
+
+  getTypeTransferent() {}
 
   prepareReceptionForm() {
     this.receptionForm = this.fb.group({
@@ -353,7 +379,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       saeMeasureUnit: [null],
       saePhysicalState: [null],
       stateConservationSae: [null],
+      observations: [null],
       selectColumn: [null],
+      transferentDestiny: [null],
+      destiny: [null],
     });
   }
 
@@ -453,6 +482,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.programmingId'] = this.programmingId;
     this.receptionGoodService.getReceptions(params.getValue()).subscribe({
       next: response => {
+        console.log('receipt guard', response);
         this.receiptGuardGood = response.data[0];
 
         const filterWarehouse = response.data.map((item: any) => {
@@ -518,10 +548,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         this.getAuthority();
         this.getTypeRelevant();
         this.getwarehouse();
+        this.typeTransferent();
         this.getUsersProgramming();
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getInfoGoodsProgramming());
+      });
+  }
+
+  typeTransferent() {
+    this.transferentService
+      .getById(this.programming.tranferId)
+      .subscribe(data => {
+        this.tranType = data.typeTransferent;
       });
   }
 
@@ -625,7 +664,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 item.stateConservationName = 'MALO';
               }
 
-              const destinyIndep = await this.getDestinyIndep(item.saeDestiny);
+              await this.getDestinyIndep(item.saeDestiny);
 
               this.goodData = item;
               const form = this.fb.group({
@@ -648,9 +687,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 regionalDelegationNumber: [item?.regionalDelegationNumber],
                 destiny: [item?.destiny],
                 transferentDestiny: [item?.saeDestiny],
+                observations: [item?.observations],
               });
               this.goodsTransportable.push(form);
               this.formLoadingTrans = false;
+              this.showTransportable = true;
             });
           },
           error: error => {
@@ -719,8 +760,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               stateConservationName: [item?.stateConservationName],
               stateConservationSae: [item?.stateConservationSae],
               regionalDelegationNumber: [item?.regionalDelegationNumber],
+              observations: [item?.observations],
+              destiny: [item?.destiny],
+              transferentDestiny: [item?.saeDestiny],
             });
             this.goodsReception.push(form);
+            this.showReception = true;
           });
         },
         error: error => {
@@ -777,6 +822,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             });
             this.goodsGuards.push(form);
             this.headingGuard = `En Resguardo(${this.goodsGuards.length})`;
+            this.showGuard = true;
           });
         },
         error: error => {
@@ -785,59 +831,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         },
       });
     });
-    /*
-    const goodRes = data.filter(items => {
-      return items.status == 'EN_RESGUARDO_TMP';
-    });
-
-    goodRes.map(items => {
-      this.params.getValue()['filter.id'] = items.goodId;
-      this.goodService.getAll(this.params.getValue()).subscribe({
-        next: data => {
-          data.data.map(response => {
-            if (response.physicalStatus == 1) {
-              response.physicalStatusName = 'BUENO';
-            } else if (response.physicalStatus == 2) {
-              response.physicalStatusName = 'MALO';
-            }
-            if (response.stateConservation == 1) {
-              response.stateConservationName = 'BUENO';
-            } else if (response.stateConservation == 2) {
-              response.stateConservationName = 'MALO';
-            }
-            this.goodsGuards.clear();
-            this.goodData = response;
-
-            const form = this.fb.group({
-              id: [response?.id],
-              goodId: [response?.goodId],
-              uniqueKey: [response?.uniqueKey],
-              fileNumber: [response?.fileNumber],
-              goodDescription: [response?.goodDescription],
-              quantity: [response?.quantity],
-              unitMeasure: [response?.unitMeasure],
-              descriptionGoodSae: [response?.descriptionGoodSae],
-              quantitySae: [response?.quantitySae],
-              saeMeasureUnit: [response?.saeMeasureUnit],
-              physicalStatus: [response?.physicalStatus],
-              physicalStatusName: [response?.physicalStatusName],
-              saePhysicalState: [response?.saePhysicalState],
-              stateConservation: [response?.stateConservation],
-              stateConservationName: [response?.stateConservationName],
-              stateConservationSae: [response?.stateConservationSae],
-              regionalDelegationNumber: [response?.regionalDelegationNumber],
-            });
-            this.goodsGuards.push(form);
-            this.goodsGuards.updateValueAndValidity();
-            this.formLoading = false;
-            this.headingGuard = `En Resguardo(${this.goodsGuards.length})`;
-          });
-        },
-        error: error => {
-          this.formLoading = false;
-        },
-      });
-    }); */
   }
 
   filterStatusWarehouse(data: IGoodProgramming[]) {
@@ -886,6 +879,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             this.goodsWarehouse.updateValueAndValidity();
             this.formLoading = false;
             this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+            this.showWarehouse = true;
           });
         },
         error: error => {
@@ -946,6 +940,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
             this.formLoadingReprog = false;
             this.formLoadingTrans = false;
+            this.showReprog = true;
           });
         },
         error: error => {
@@ -956,55 +951,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         },
       });
     });
-    /*goodsReprog.map(items => {
-      this.params.getValue()['filter.id'] = items.goodId;
-      this.goodService.getAll(this.params.getValue()).subscribe({
-        next: data => {
-          this.goodsReprog.clear();
-          data.data.map(response => {
-            if (response.physicalStatus == 1) {
-              response.physicalStatusName = 'BUENO';
-            } else if (response.physicalStatus == 2) {
-              response.physicalStatusName = 'MALO';
-            }
-            if (response.stateConservation == 1) {
-              response.stateConservationName = 'BUENO';
-            } else if (response.stateConservation == 2) {
-              response.stateConservationName = 'MALO';
-            }
-
-            this.goodData = response;
-
-            const form = this.fb.group({
-              id: [response?.id],
-              goodId: [response?.goodId],
-              uniqueKey: [response?.uniqueKey],
-              fileNumber: [response?.fileNumber],
-              goodDescription: [response?.goodDescription],
-              quantity: [response?.quantity],
-              unitMeasure: [response?.unitMeasure],
-              descriptionGoodSae: [response?.descriptionGoodSae],
-              quantitySae: [response?.quantitySae],
-              saeMeasureUnit: [response?.saeMeasureUnit],
-              physicalStatus: [response?.physicalStatus],
-              physicalStatusName: [response?.physicalStatusName],
-              saePhysicalState: [response?.saePhysicalState],
-              stateConservation: [response?.stateConservation],
-              stateConservationName: [response?.stateConservationName],
-              stateConservationSae: [response?.stateConservationSae],
-              regionalDelegationNumber: [response?.regionalDelegationNumber],
-            });
-            this.goodsReprog.push(form);
-            this.goodsReprog.updateValueAndValidity();
-            this.formLoading = false;
-            this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
-          });
-        },
-        error: error => {
-          this.formLoading = false;
-        },
-      });
-    }); */
   }
 
   filterStatusCancelation(data: IGoodProgramming[]) {
@@ -1054,6 +1000,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             this.goodsCancelation.updateValueAndValidity();
             this.formLoading = false;
             this.headingCancelation = `Cancelación(${this.goodsCancelation.length})`;
+            this.showCancel = true;
           });
         },
         error: error => {
@@ -1150,6 +1097,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       good,
+      tranType: this.tranType,
       callback: (next: boolean) => {
         if (next) this.getInfoGoodsProgramming();
       },
@@ -1202,7 +1150,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     if (this.selectGood.length > 0) {
       this.alertQuestion(
         'warning',
-        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        '¿Seguro que quiere asignar los bienes  a una acta?',
         '',
         'Aceptar'
       ).then(question => {
@@ -1224,7 +1172,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'warning',
         'Confirmación',
-        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        '¿Seguro que quiere asignar los bienes  a una acta?',
         'Aceptar'
       ).then(async question => {
         if (question.isConfirmed) {
@@ -1245,7 +1193,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'warning',
         'Confirmación',
-        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        '¿Seguro que quiere asignar los bienes  a una acta?',
         'Aceptar'
       ).then(async question => {
         if (question.isConfirmed) {
@@ -1286,8 +1234,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 .updateGoodProgramming(formData)
                 .subscribe({
                   next: response => {
-                    this.goodsCancelation.clear();
+                    this.goodsReprog.clear();
                     this.getInfoGoodsProgramming();
+                    this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
                   },
                   error: error => {},
                 });
@@ -1322,6 +1271,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   next: response => {
                     this.goodsCancelation.clear();
                     this.getInfoGoodsProgramming();
+                    this.headingCancelation = `Cancelación(${this.goodsCancelation.length})`;
                   },
                   error: error => {},
                 });
@@ -1340,7 +1290,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'warning',
         'Confirmación',
-        '¿Seguro que quiere asignar los bienes  a una acta (cambio irreversible)?',
+        '¿Seguro que quiere asignar los bienes  a una acta?',
         'Aceptar'
       ).then(question => {
         if (question.isConfirmed) {
@@ -1384,23 +1334,41 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           }
         });
       } else {
-        let config = {
-          ...MODAL_CONFIG,
-          class: 'modal-lg modal-dialog-centered',
+        const formData: IProceedings = {
+          minutesId: 1,
+          idPrograming: this.programming.id,
+          statusProceeedings: 'ABIERTO',
         };
-        config.initialState = {
-          programming: this.programming,
-          selectGoods: this.selectGood,
-          callback: (data: boolean) => {
-            if (data) {
-              this.goodsGuards.clear();
-              this.getReceiptsGuard();
-              this.getInfoGoodsProgramming();
+        this.proceedingService.createProceedings(formData).subscribe({
+          next: async response => {
+            const createKeyAct = await this.createKeyAct(response);
+
+            if (createKeyAct == true) {
+              const createReceiptGood: any =
+                await this.createReceiptGuardNewAct(response);
+              if (createReceiptGood) {
+                const createReceiptGoodGuard =
+                  await this.createReceiptGoodGuard(createReceiptGood);
+
+                if (createReceiptGoodGuard) {
+                  const updateProgrammingGood =
+                    await this.updateProgGoodGuardNewAct(response);
+
+                  if (updateProgrammingGood) {
+                    const updateGood = await this.updateGoodGuard();
+                    this.goodsGuards.clear();
+                    this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
+                    this.getReceiptsGuard();
+                    this.getInfoGoodsProgramming();
+
+                    this.formLoadingGuard = false;
+                  }
+                }
+              }
             }
           },
-        };
-
-        this.modalService.show(AssignReceiptFormComponent, config);
+          error: error => {},
+        });
       }
     } else if (type == 'almacen') {
       if (this.receipts.count() > 0) {
@@ -1420,6 +1388,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               if (updateProgrammingGood) {
                 const updateGood = await this.updateGoodWarehouse();
                 this.goodsWarehouse.clear();
+                this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
                 this.getReceiptsGuard();
                 this.getInfoGoodsProgramming();
               }
@@ -1427,25 +1396,102 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           }
         });
       } else {
-        let config = {
-          ...MODAL_CONFIG,
-          class: 'modal-lg modal-dialog-centered',
+        const formData: IProceedings = {
+          minutesId: 1,
+          idPrograming: this.programming.id,
+          statusProceeedings: 'ABIERTO',
         };
-        config.initialState = {
-          programming: this.programming,
-          selectGoods: this.selectGood,
-          callback: (data: boolean) => {
-            if (data) {
-              this.goodsWarehouse.clear();
-              this.getReceiptsGuard();
-              this.getInfoGoodsProgramming();
+        this.proceedingService.createProceedings(formData).subscribe({
+          next: async response => {
+            const createKeyAct = await this.createKeyAct(response);
+
+            if (createKeyAct == true) {
+              const createReceiptGood: any =
+                await this.createReceiptWarehouseNewAct(response);
+              if (createReceiptGood) {
+                const createReceiptGoodGuard =
+                  await this.createReceiptGoodWarehouse(createReceiptGood);
+
+                if (createReceiptGoodGuard) {
+                  const updateProgrammingGood =
+                    await this.updateProgGoodWarehouseNewAct(response);
+
+                  if (updateProgrammingGood) {
+                    const updateGood = await this.updateGoodWarehouse();
+                    this.goodsWarehouse.clear();
+                    this.headingWarehouse = `Almacén(${this.goodsWarehouse.length})`;
+                    this.getReceiptsGuard();
+                    this.getInfoGoodsProgramming();
+                    this.formLoadingGuard = false;
+                  }
+                }
+              }
             }
           },
-        };
-
-        this.modalService.show(AssignReceiptFormComponent, config);
+          error: error => {},
+        });
       }
     }
+  }
+
+  createKeyAct(act: IProceedings) {
+    return new Promise((resolve, reject) => {
+      this.regionalDelegationService
+        .getById(this.programming.regionalDelegationNumber)
+        .subscribe(data => {
+          this.delegationDes = data.description;
+
+          this.transferentService
+            .getById(this.programming.tranferId)
+            .subscribe(data => {
+              this.keyTransferent = data.keyTransferent;
+              const month = moment(new Date()).format('MM');
+              const year = moment(new Date()).format('YY');
+              const keyProceeding =
+                this.delegationDes +
+                '-' +
+                this.keyTransferent +
+                '-' +
+                this.programming.id +
+                '-' +
+                `A${act.id}` +
+                '-' +
+                year +
+                '-' +
+                month;
+
+              const receiptform = {
+                id: act.id,
+                idPrograming: this.programming.id,
+                folioProceedings: keyProceeding,
+              };
+
+              this.proceedingService.updateProceeding(receiptform).subscribe({
+                next: () => {
+                  resolve(true);
+                },
+              });
+            });
+        });
+    });
+  }
+
+  createReceiptGuardNewAct(proceeding: IProceedings) {
+    return new Promise((resolve, reject) => {
+      const formData = {
+        programmingId: this.programmingId,
+        actId: proceeding.id,
+        typeReceipt: 'RESGUARDO',
+        statusReceiptGuard: 'ABIERTO',
+        receiptDate: new Date(),
+      };
+      this.receptionGoodService.createReception(formData).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {},
+      });
+    });
   }
 
   createReceiptGuard(receipt: IReceipt) {
@@ -1471,6 +1517,24 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       const formData = {
         programmingId: this.programmingId,
         actId: receipt.actId,
+        typeReceipt: 'ALMACEN',
+        statusReceiptGuard: 'ABIERTO',
+        receiptDate: new Date(),
+      };
+      this.receptionGoodService.createReception(formData).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {},
+      });
+    });
+  }
+
+  createReceiptWarehouseNewAct(proceeding: IProceedings) {
+    return new Promise((resolve, reject) => {
+      const formData = {
+        programmingId: this.programmingId,
+        actId: proceeding.id,
         typeReceipt: 'ALMACEN',
         statusReceiptGuard: 'ABIERTO',
         receiptDate: new Date(),
@@ -1546,12 +1610,55 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
   }
 
+  updateProgGoodGuardNewAct(proceeding: IProceedings) {
+    return new Promise((resolve, reject) => {
+      this.selectGood.map(item => {
+        const formData: Object = {
+          programmingId: this.programming.id,
+          actaId: proceeding.id,
+          goodId: item.goodId,
+          status: 'EN_RESGUARDO',
+        };
+
+        this.programminGoodService.updateGoodProgramming(formData).subscribe({
+          next: response => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(false);
+          },
+        });
+      });
+    });
+  }
+
   updateProgGoodWarehouse(receipt: IReceipt) {
     return new Promise((resolve, reject) => {
       this.selectGood.map(item => {
         const formData: Object = {
           programmingId: this.programming.id,
           actaId: receipt.actId,
+          goodId: item.goodId,
+          status: 'EN_ALMACEN',
+        };
+
+        this.programminGoodService.updateGoodProgramming(formData).subscribe({
+          next: response => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(false);
+          },
+        });
+      });
+    });
+  }
+  updateProgGoodWarehouseNewAct(proceeding: IProceedings) {
+    return new Promise((resolve, reject) => {
+      this.selectGood.map(item => {
+        const formData: Object = {
+          programmingId: this.programming.id,
+          actaId: proceeding.id,
           goodId: item.goodId,
           status: 'EN_ALMACEN',
         };
@@ -1997,6 +2104,72 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
   }
 
+  searchGood() {
+    const goodsTransportable = this.goodsTransportable.value;
+    const goodsTransportableCopy = this.goodsTransportable.value;
+
+    const filterGood = goodsTransportableCopy.filter((item: any) => {
+      return item.id == this.searchGoodForm.get('goodId').value;
+    });
+
+    if (filterGood.length > 0) {
+      const _data: any[] = [];
+      filterGood.forEach((item: IGood) => {
+        this.params.getValue()['filter.id'] = item.goodId;
+        this.goodService.getAll(this.params.getValue()).subscribe({
+          next: response => {
+            _data.push(response.data[0]);
+            this.goodsTransportable.clear();
+            _data.forEach(async item => {
+              if (item.physicalStatus == 1) {
+                item.physicalStatusName = 'BUENO';
+              } else if (item.physicalStatus == 2) {
+                item.physicalStatusName = 'MALO';
+              }
+              if (item.stateConservation == 1) {
+                item.stateConservationName = 'BUENO';
+              } else if (item.stateConservation == 2) {
+                item.stateConservationName = 'MALO';
+              }
+
+              await this.getDestinyIndep(item.saeDestiny);
+
+              this.goodData = item;
+              const form = this.fb.group({
+                id: [item?.id],
+                goodId: [item?.goodId],
+                uniqueKey: [item?.uniqueKey],
+                fileNumber: [item?.fileNumber],
+                goodDescription: [item?.goodDescription],
+                quantity: [item?.quantity],
+                unitMeasure: [item?.unitMeasure],
+                descriptionGoodSae: [item?.descriptionGoodSae],
+                quantitySae: [item?.quantitySae],
+                saeMeasureUnit: [item?.saeMeasureUnit],
+                physicalStatus: [item?.physicalStatus],
+                physicalStatusName: [item?.physicalStatusName],
+                saePhysicalState: [item?.saePhysicalState],
+                stateConservation: [item?.stateConservation],
+                stateConservationName: [item?.stateConservationName],
+                stateConservationSae: [item?.stateConservationSae],
+                regionalDelegationNumber: [item?.regionalDelegationNumber],
+                destiny: [item?.destiny],
+                transferentDestiny: [item?.saeDestiny],
+                observations: [item?.observations],
+              });
+              this.goodsTransportable.push(form);
+              this.formLoadingTrans = false;
+              this.showTransportable = true;
+            });
+          },
+          error: error => {
+            this.formLoadingTrans = false;
+          },
+        });
+      });
+    }
+  }
+
   changeStatusGoodProg(good: IGood) {
     return new Promise(async (resolve, reject) => {
       this.goodsReprog.clear();
@@ -2019,6 +2192,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
       }
     });
+  }
+
+  cancel() {
+    this.goodsTransportable.clear();
+    this.searchGoodForm.reset();
+    this.getInfoGoodsProgramming();
   }
 
   changeStatusGoodWarehouse(good: IGood) {

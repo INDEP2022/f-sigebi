@@ -120,7 +120,7 @@ export class GoodTypesListComponent extends BasePage implements OnInit {
           err => {
             this.alert(
               'warning',
-              'Tipo Bien',
+              'Tipo bien',
               'No se puede eliminar el objeto debido a una relación con otra tabla.'
             );
           }

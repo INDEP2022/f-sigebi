@@ -63,7 +63,7 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          if (response && response.length > 0) {
+          if (response) {
             this.files = [...response];
             const last = response[response.length - 1];
             const index = last.indexOf('F');
@@ -128,7 +128,7 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   openFileUploader() {
-    this.filePhotoService.consecNumber = this.lastConsecutive;
+    // this.filePhotoService.consecNumber = this.lastConsecutive;
     const config = {
       ...MODAL_CONFIG,
       initialState: {

@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -11,6 +13,7 @@ import { IGoodProgramming } from 'src/app/core/models/good-programming/good-prog
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
+import { IReceipt } from 'src/app/core/models/receipt/receipt.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
@@ -23,6 +26,7 @@ import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/sign
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ESTATE_COLUMNS_VIEW } from '../../acept-programming/columns/estate-columns';
@@ -32,6 +36,7 @@ import {
 } from '../../execute-reception/execute-reception-form/columns/minute-columns';
 import { TRANSPORTABLE_GOODS_FORMALIZE } from '../../execute-reception/execute-reception-form/columns/transportable-goods-columns';
 import { ShowReportComponentComponent } from '../../execute-reception/show-report-component/show-report-component.component';
+import { UploadReportReceiptComponent } from '../../execute-reception/upload-report-receipt/upload-report-receipt.component';
 import { InformationRecordComponent } from '../information-record/information-record.component';
 
 @Component({
@@ -79,6 +84,7 @@ export class FormalizeProgrammingFormComponent
   totalItemsProceedings: number = 0;
   selectGood: IGood[] = [];
   selectGoodGuard: IGood[] = [];
+  receiptData: IReceipt;
   goodIdSelect: any;
   goodIdSelectGuard: string | number;
   programmingId: number = 0;
@@ -91,6 +97,7 @@ export class FormalizeProgrammingFormComponent
   headingCancelation: string = `Cancelación(0)`;
   idStation: any;
   transferentName: string = '';
+  typeTransferent: string = '';
   stationName: string = '';
   authorityName: string = '';
   typeRelevantName: string = '';
@@ -213,9 +220,11 @@ export class FormalizeProgrammingFormComponent
     private receptionGoodService: ReceptionGoodService,
     private proceedingService: ProceedingsService,
     private stateService: StateOfRepublicService,
+    private wcontentService: WContentService,
     // private router: ActivatedRoute,
     private router: Router,
-    private signatoriesService: SignatoriesService
+    private signatoriesService: SignatoriesService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings.columns = TRANSPORTABLE_GOODS_FORMALIZE;
@@ -253,7 +262,7 @@ export class FormalizeProgrammingFormComponent
       proceeding: this.fb.array([]),
       id: [null],
       statusProceeedings: [null],
-      idPrograming: [null],
+      idPrograming: [this.programmingId],
       observationProceedings: [null],
     });
   }
@@ -267,7 +276,7 @@ export class FormalizeProgrammingFormComponent
     params.getValue()['filter.programmingId'] = this.programmingId;
     this.receptionGoodService.getReceipt(params.getValue()).subscribe({
       next: response => {
-        console.log('recibos', response);
+        this.receiptData = response.data[0];
         this.receipts.load(response.data);
       },
       error: error => {
@@ -281,8 +290,8 @@ export class FormalizeProgrammingFormComponent
     params.getValue()['filter.idPrograming'] = this.programmingId;
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
-        console.log('response', response);
         this.actId = response.data[0].id;
+        this.proceedingData = response.data[0];
         this.proceeding.clear();
         response.data.forEach(item => {
           this.observation = item?.observationProceedings;
@@ -348,6 +357,7 @@ export class FormalizeProgrammingFormComponent
   getTransferent(data: Iprogramming) {
     this.transferentService.getById(data.tranferId).subscribe(data => {
       this.transferentName = data.nameTransferent;
+      this.typeTransferent = data.typeTransferent;
     });
   }
   getStation(data: Iprogramming) {
@@ -566,9 +576,32 @@ export class FormalizeProgrammingFormComponent
   }
 
   generateMinute(proceeding: IProceedings) {
-    console.log('proceeding', proceeding);
-    this.proceedingService.updateProceeding(proceeding).subscribe({
-      next: response => {
+    if (this.receiptData.statusReceipt == 'CERRADO') {
+      if (this.proceeding.value[0].observationProceedings) {
+        this.proceedingService.updateProceeding(proceeding).subscribe({
+          next: () => {
+            let config = {
+              ...MODAL_CONFIG,
+              class: 'modal-lg modal-dialog-centered',
+            };
+
+            config.initialState = {
+              proceeding,
+              programming: this.programming,
+              typeTransferent: this.typeTransferent,
+              callback: (proceeding: IProceedings, tranType: string) => {
+                if (proceeding && tranType) {
+                  this.processInfoProceeding(proceeding, tranType);
+                  //this.getProccedings();
+                }
+              },
+            };
+
+            this.modalService.show(InformationRecordComponent, config);
+          },
+          error: error => {},
+        });
+      } else {
         let config = {
           ...MODAL_CONFIG,
           class: 'modal-lg modal-dialog-centered',
@@ -577,18 +610,24 @@ export class FormalizeProgrammingFormComponent
         config.initialState = {
           proceeding,
           programming: this.programming,
+          typeTransferent: this.typeTransferent,
           callback: (proceeding: IProceedings, tranType: string) => {
             if (proceeding && tranType) {
               this.processInfoProceeding(proceeding, tranType);
-              this.getProccedings();
+              //this.getProccedings();
             }
           },
         };
 
         this.modalService.show(InformationRecordComponent, config);
-      },
-      error: error => {},
-    });
+      }
+    } else {
+      this.alertInfo(
+        'info',
+        'Acción Inválida',
+        'Se requiere tener los recibos cerrados'
+      ).then();
+    }
   }
 
   saveInfoProceeding() {
@@ -862,8 +901,6 @@ export class FormalizeProgrammingFormComponent
                   }
                 }
               }
-              console.log('response', response);
-              console.log('uvfv', uvfv);
             },
             error: async error => {
               console.log('No hay Firmantes');
@@ -1028,11 +1065,12 @@ export class FormalizeProgrammingFormComponent
       initialState: {
         idTypeDoc,
         idProg,
+        programming: this.programming,
         nomReport: nomReport,
         actId: actId,
         callback: (next: boolean) => {
           if (next) {
-            //this.uplodadReceiptDelivery();
+            this.uplodadReceiptDelivery(typeDoc, actId);
           }
         },
       },
@@ -1042,8 +1080,66 @@ export class FormalizeProgrammingFormComponent
     this.modalService.show(ShowReportComponentComponent, config);
   }
 
+  uplodadReceiptDelivery(typeDoc: number, actId: number) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      typeDoc: typeDoc,
+      actId: actId,
+      programming: this.programming,
+      callback: (data: boolean) => {
+        if (data) {
+          this.getProccedings();
+        }
+      },
+    };
+
+    this.modalService.show(UploadReportReceiptComponent, config);
+  }
+
   close() {
     this.router.navigate(['pages/siab-web/sami/consult-tasks']);
   }
-  confirm() {}
+
+  showProceeding(proceeding: IProceedings) {
+    console.log('proceeding', this.proceedingData);
+    this.wcontentService.obtainFile(this.proceedingData.id_content).subscribe({
+      next: response => {
+        let blob = this.dataURItoBlob(response);
+        let file = new Blob([blob], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        this.openPrevPdf(fileURL);
+      },
+      error: error => {},
+    });
+  }
+
+  dataURItoBlob(dataURI: any) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'image/png' });
+    return blob;
+  }
+
+  openPrevPdf(pdfUrl: string) {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {},
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
+  confirm() {
+    //SE ACABO ESTE
+  }
 }

@@ -24,12 +24,12 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { IGlobalVars } from '../../../shared/global-vars/models/IGlobalVars.model';
 import { GlobalVarsService } from '../../../shared/global-vars/services/global-vars.service';
 import { ListDataComponent } from './list-data/list-data.component';
 import { BASIC_BUTTONS } from './utils/basic-buttons';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
-import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 
 interface IExcelToJson {
   id: number;
@@ -48,6 +48,7 @@ interface IUser {
   username: string;
   person: IPerson;
   roles: IRole[];
+  currency: string;
 }
 
 interface IRole {
@@ -90,7 +91,7 @@ export class HomeComponent extends BasePage implements OnInit {
     private homeService: HomeService,
     private globalVarsService: GlobalVarsService,
     private sanitized: DomSanitizer,
-    private authService: AuthService,
+    private authService: AuthService
   ) {
     super();
     this.settings = {
@@ -138,10 +139,10 @@ export class HomeComponent extends BasePage implements OnInit {
     });
   }
 
-  token:TokenInfoModel ;
+  token: TokenInfoModel;
   ngOnInit(): void {
     this.token = this.authService.decodeToken();
-    
+
     console.log('Información del usuario logeado: ', this.token);
     this.prepareForm();
     this.store.select('count').subscribe({
@@ -177,6 +178,7 @@ export class HomeComponent extends BasePage implements OnInit {
       person: this.personForm,
       roles: this.fb.array([this.roleForm]),
       username: [''],
+      currency: [null, []],
     });
   }
 
@@ -329,6 +331,16 @@ export class HomeComponent extends BasePage implements OnInit {
           noTransferente: null,
           gNoVolante: null,
           varDic: null,
+          bienes_foto: 0,
+          EXPEDIENTE: null,
+          TIPO_DIC: null,
+          VOLANTE: null,
+          CONSULTA: null,
+          TIPO_VO: null,
+          P_GEST_OK: null,
+          P_NO_TRAMITE: null,
+          IMP_OF: null,
+          REL_BIENES: null,
         };
 
         this.globalVarsService.updateGlobalVars(newState);
@@ -378,5 +390,4 @@ export class HomeComponent extends BasePage implements OnInit {
     };
     this.modalService.show(ListDataComponent, config);
   }
-
 }

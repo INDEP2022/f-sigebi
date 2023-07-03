@@ -189,8 +189,8 @@
                 (ngModelChange)="checkInfoDate($event)"
                 [daysDisabled]="[6, 0]"
                 [bsConfig]="{
-                  rangeInputFormat: 'DD/MMMM/YYYY',
-                  dateInputFormat: 'DD/MMMM/YYYY'
+                  rangeInputFormat: 'YYYY-MM--DD HH:mm:ss',
+                  dateInputFormat: 'YYYY-MM--DD HH:mm:ss'
                 }"
                 bsDatepicker />
             </form-field>
@@ -206,8 +206,9 @@
                 formControlName="endDate"
                 [daysDisabled]="[6, 0]"
                 [bsConfig]="{
-                  rangeInputFormat: 'DD/MMMM/YYYY',
-                  dateInputFormat: 'DD/MMMM/YYYY'
+                  withTimepicker: true,
+                  rangeInputFormat: 'YYYY-MM--DD HH:mm:ss',
+                  dateInputFormat: 'YYYY-MM--DD HH:mm:ss'
                 }"
                 bsDatepicker />
             </form-field>
@@ -629,7 +630,7 @@
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="settingWarehouseGoods"
                 [source]="goodsWarehouse"
-                (edit)="showDomicile($event.data)"
+                (edit)="showGood($event.data)"
                 (delete)="removeGoodWarehouse($event.data)">
               </ng2-smart-table>
               <app-pagination
