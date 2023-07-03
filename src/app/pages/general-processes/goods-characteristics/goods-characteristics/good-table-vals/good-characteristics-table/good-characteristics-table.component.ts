@@ -438,6 +438,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
 
   private getValueInventary(isFecha: boolean, item: any) {
     if (isFecha) {
+      console.log(formatForIsoDate(item, 'string'));
       return formatForIsoDate(item, 'string');
     } else {
       return item;
