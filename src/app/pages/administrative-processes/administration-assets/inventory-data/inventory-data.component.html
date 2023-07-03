@@ -2,7 +2,7 @@
 <div class="row">
   <div class="row">
     <div class="col-md-8">
-      <p><strong>Seleccione un inventario</strong></p>
+      <p><strong>Seleccione un Inventario</strong></p>
     </div>
     <div class="col-md-4" *ngIf="inventorySelect">
       <p>
@@ -65,16 +65,8 @@
   </form>
 </div>
 <div class="row">
-  <div class="d-flex justify-content-end">
-    <div class="m-3">
-      <button (click)="add()" class="btn btn-primary active btn-sm">
-        {{ textButon }}
-      </button>
-    </div>
-  </div>
-</div>
-<div class="row">
   <div class="col-md-3">
+    <<<<<<< HEAD
     <!--  <button
       class="btn btn-primary btn-sm active"
       (click)="getAtribute()"
@@ -88,6 +80,27 @@
       Generar Atributos
     </button>
     <!-- [disabled]="disableGetAtribute" -->
+    =======
+    <div class="row">
+      <div class="col-md-10">
+        <button
+          [disabled]="generateAtri"
+          class="btn btn-primary btn-sm active"
+          (click)="generateAtribute()">
+          {{ atribute }}&nbsp;
+        </button>
+      </div>
+    </div>
+    <br />
+    <div class="row">
+      <div class="col-md-10">
+        <button (click)="add()" class="btn btn-secondary active btn-sm">
+          {{ textButon }}
+        </button>
+      </div>
+    </div>
+    <br />
+    >>>>>>> 7563eb767473b032460bcee082c28dcfc2d6ef5b
   </div>
   <div class="col">
     <div class="row" *ngIf="viewAct">

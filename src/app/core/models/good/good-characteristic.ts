@@ -70,6 +70,8 @@ export class CharacteristicEditorCell extends DefaultEditor {
   // }
 
   haveError(row: ICharacteristicValue) {
+    if (!row) return true;
+    if (!row.value) return true;
     return (
       this.haveErrorRequired(row) ||
       (!(row.dataType === 'D' || row.attribute.includes('FECHA')) &&
@@ -81,6 +83,9 @@ export class CharacteristicEditorCell extends DefaultEditor {
   }
 
   haveCaracteresEspeciales(row: ICharacteristicValue) {
+    if (!row) {
+      return false;
+    }
     if (row.dataType === 'V') {
       if (this.haveVerticalSlash(row)) {
         return !this.isAddCat(row.value);
@@ -94,12 +99,18 @@ export class CharacteristicEditorCell extends DefaultEditor {
   }
 
   haveVerticalSlash(row: ICharacteristicValue) {
+    if (!row) {
+      return false;
+    }
     return (
       row.attribute === 'RESERVADO' || row.attribute === 'SITUACION JURIDICA'
     );
   }
 
   haveAddWeb(row: ICharacteristicValue) {
+    if (!row) {
+      return false;
+    }
     return row.attribute.includes('CATÁLOGO COMERCIAL');
   }
 
@@ -154,14 +165,23 @@ export class CharacteristicEditorCell extends DefaultEditor {
   }
 
   haveNumericError(row: ICharacteristicValue) {
+    if (!row) {
+      return true;
+    }
     return row.dataType === 'N' && this.notInt(row.value);
   }
 
   haveFloatError(row: ICharacteristicValue) {
+    if (!row) {
+      return true;
+    }
     return row.dataType === 'F' && this.notFloat(row.value);
   }
 
   haveMoneyError(row: ICharacteristicValue) {
+    if (!row) {
+      return '';
+    }
     if (row.attribute === 'MONEDA') {
       if (
         this.good.goodClassNumber === 62 &&
@@ -181,6 +201,10 @@ export class CharacteristicEditorCell extends DefaultEditor {
   }
 
   haveErrorRequired(row: ICharacteristicValue) {
+    if (!row) {
+      return true;
+    }
+    console.log(row.value);
     return (
       row.required && (!row.value || (row.value && row.value.trim() == ''))
     );

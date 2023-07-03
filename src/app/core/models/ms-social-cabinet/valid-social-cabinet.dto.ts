@@ -3,4 +3,5 @@ export interface IValidSocialCabinet {
   pTypeProcess: number;
   pJustify: string;
   pUser: string;
+  currentProcessType: number;
 }

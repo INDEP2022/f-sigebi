@@ -21,7 +21,7 @@
     class="form-control"
     [maxDate]="today"
     [attr.required]="row.required"
-    [(ngModel)]="row.value"
+    [ngModel]="row.value"
     (ngModelChange)="updateDate($event)" />
   <div class="errorMessage" *ngIf="haveErrorRequired(row)">
     El campo es obligatorio

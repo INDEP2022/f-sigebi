@@ -208,7 +208,7 @@ export class IncomeOrdersDepositoryGoodsComponent
     };
 
     this.siabService
-      .fetchReport('RDEPINGXBIEN.', params)
+      .fetchReport('RDEPINGXBIEN', params)
       //.fetchReport('blank', params)
       .subscribe(response => {
         if (response !== null) {

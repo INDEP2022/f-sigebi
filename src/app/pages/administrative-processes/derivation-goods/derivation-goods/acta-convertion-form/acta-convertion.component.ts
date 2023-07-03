@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { IZoneGeographic } from 'src/app/core/models/catalogs/zone-geographic.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -31,13 +34,17 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   actConvertion: string = '';
   tipoConv: any;
   pGoodFatherNumber: any;
+  numberFoli: any;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private delegationService: DelegationService,
     private serviceGood: GoodService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService
   ) {
     super();
     this.route.queryParams.subscribe(params => {
@@ -71,21 +78,26 @@ Se da por concluida la presente acta, siendo las ____ horas del día ____ de ___
 Ultima página del Acta Administrativa de Validación y Conversión de Unidades de Medida de Bienes Muebles con Clave :CONVERSIONES_ACTAS.CVE_ACTA_CONV de fecha ___ de  _________ de 2008, constante de ____ fojas. - - - - - - - - - - - - -`;
   }
   close() {
+    this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
+      queryParams: {},
+    });
     this.modalRef.hide();
   }
   payload: any;
   handleSubmitNewItem() {
+    this.flagNewActa = true;
+    this.flagAsignaActa = true;
     for (let i = 0; i < this.items.length; i++) {
-      if (this.items[i].cveActaConvId === 'CONV/RT/ALAF/GDL/GDL/00018/10/11') {
-        this.selectedItems = this.items[i].cveActaConvId;
-        this.selectedIndex = i;
+      if (this.items[i].cve_acta_conv === this.selectItem2) {
+        this.selectedItems = this.items[i].cve_acta_conv;
+        this.selectedIndex = i + 1;
       }
     }
     let parts: any = this.selectItem2.split('/');
     const DATAselectItem2 = parts.join('/');
     const str = this.updateString(DATAselectItem2);
     this.selectItem2 = str;
-    this.items.push({ cveActaConvId: this.selectItem2 });
+    this.items.push({ cve_acta_conv: this.selectItem2 });
 
     if (this.items[this.items.length - 1]) {
       const payload: any = {
@@ -111,7 +123,6 @@ Ultima página del Acta Administrativa de Validación y Conversión de Unidades 
         }
       );
     }
-    console.log('NOS QUIEDAMOS ACA');
     if (this.actConvertion) {
       /*this.alert(
           'error',
@@ -125,7 +136,7 @@ Ultima página del Acta Administrativa de Validación y Conversión de Unidades 
           ''
         ).then(q => {
           if (q.isConfirmed) {
-            /*FALTA END POINT PARA ACTUALIZAR LOS PARRAFOS DEL LA CONVERSIO NDE ACTA */
+            /*SOLO ES PREGUNTA */
             //http://sigebimsdev.indep.gob.mx/catalog/api/v1/apps/pupInsertParaph
             //END POINT NO ESTA ACTUALIZANDO NADA
             /*this.serviceGood
@@ -160,14 +171,11 @@ Ultima página del Acta Administrativa de Validación y Conversión de Unidades 
     if (this.tipoConv === '2') {
       if (this.actConvertion) {
         this.selectItem2 = this.actConvertion;
-        this.items = [{ cveActaConvId: this.actConvertion }];
       } else {
-        /*VALIDAR CON BACK END DE QUE MANERA USAN EL FILTRO PARA ESTE END POINT POR cveActaConvId PADRE */
         this.serviceGood
-          .getActasConversion(this.actConvertion)
-          .subscribe((item: any) => {
-            this.items = item.data;
-            // this.items = item.data.filter((item:any) => item.cveActaConvId === 'CONV/RT/ALAF/OFICINAS CENTRALES/TIJ/%/23/06');
+          .getFolioActaConversion(this.actConvertion)
+          .subscribe(item => {
+            this.numberFoli = item.data[0].folio_universal;
           });
         const payload = {
           pGoodFatherNumber: this.pGoodFatherNumber,
@@ -175,8 +183,18 @@ Ultima página del Acta Administrativa de Validación y Conversión de Unidades 
         };
         this.serviceGood.generateWeaponKey(payload).subscribe((item: any) => {
           this.selectItem2 = item;
+          this.items = [{ cve_acta_conv: item }];
+          this.selectedIndex = 0;
         });
       }
+      this.serviceGood
+        .getActasConversion(this.actConvertion)
+        .subscribe((item: any) => {
+          this.items = item.data.map((item: any) => {
+            item.cve_acta_conv = item.cveActaConvId;
+            return item;
+          });
+        });
     }
   }
   selectedIndex: number | null = null;
@@ -188,7 +206,7 @@ Ultima página del Acta Administrativa de Validación y Conversión de Unidades 
     if (event.target.checked) {
       this.selectedIndex = index;
       this.selectedItems = [this.items[index]];
-      this.selectItem = this.selectedItems[0].cveActaConvId;
+      this.selectItem = this.selectedItems[0].cve_acta_conv;
     } else if (this.selectedIndex === index) {
       this.selectItem2 = '';
       this.selectedIndex = null;
@@ -248,6 +266,49 @@ Ultima página del Acta Administrativa de Validación y Conversión de Unidades 
 
       return { ...item, cveActaConvId: newCveActaConvId };
     });
+  }
+  printAct() {
+    let params = {
+      PCLAVE: '',
+      PDESTINO: '',
+    };
+
+    this.siabService
+      // .fetchReport('RGENACTACONVBIS', params)
+      .fetchReportBlank('blank')
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
   }
 
   /*V_CONSECUTIVO  */

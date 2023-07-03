@@ -1,6 +1,6 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">CALCULO DE NUMERARIO</h5>
+    <h5 class="title">CÁLCULO DE NUMERARIO</h5>
   </div>
   <div body>
     <div class="row mt-3 mb-3">
@@ -28,7 +28,28 @@
           </form-field>
         </div>
         <div class="row mt-4">
-          <div class="col-md-3">
+          <div class="col-md-6">
+            <div class="row">
+              <small class="label text-secondary r-label">Tipo</small>
+            </div>
+            <div class="row">
+              <div class="d-flex justify-content-around">
+                <form-radio label="Devolución">
+                  <input
+                    type="radio"
+                    formControlName="type"
+                    value="Devolucion" />
+                </form-radio>
+                <form-radio label="Decomiso">
+                  <input type="radio" formControlName="type" value="Decomiso" />
+                </form-radio>
+                <form-radio label="Abandono">
+                  <input type="radio" formControlName="type" value="Abandono" />
+                </form-radio>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="col-md-3">
             <form-radio label="Devolución">
               <input type="radio" formControlName="devolution" value="value" />
             </form-radio>
@@ -43,6 +64,7 @@
               <input type="radio" formControlName="abandono" value="value" />
             </form-radio>
           </div>
+          -->
           <div class="col-md-3">
             <form-field
               [control]="form.get('totalInterests')"
@@ -55,29 +77,7 @@
                 pattern="^[0-9]+" />
             </form-field>
           </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-md-4">
-            <form-field [control]="form.get('currency')" label="Tipo moneda">
-              <input
-                type="text"
-                formControlName="currency"
-                class="form-control" />
-            </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field
-              [control]="form.get('bankComision')"
-              label="Comisión bancaria">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="bankComision"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
-          </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <form-field
               [control]="form.get('totalImport')"
               label="Importe total">
@@ -91,6 +91,35 @@
           </div>
         </div>
       </form>
+      <form action="" class="form-material" [formGroup]="formBlkControl">
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <form-field [control]="formBlkControl.get('tMoneda')">
+              <ngx-select
+                [data]="dataSelect"
+                [form]="formBlkControl"
+                value="value"
+                bindLabel="label"
+                label="Tipo moneda"
+                [control]="'tMoneda'">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="formBlkControl.get('commisionBanc')"
+              label="Comisión bancaria">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="commisionBanc"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+
       <div class="d-flex justify-content-center">
         <div class="m-3">
           <div>
@@ -98,22 +127,36 @@
               type="button"
               class="btn btn-sm btn-primary active m-3"
               (click)="selectRequest()">
-              SELECCIONA SOLICITUDES
+              Selecciona solicitudes
             </button>
-            <button type="button" class="btn btn-sm btn-primary active m-3">
-              CALCULA INTERESES
+            <button
+              type="button"
+              class="btn btn-sm btn-primary active m-3"
+              (click)="calculInteres()">
+              Calcula interese
             </button>
-            <button type="button" class="btn btn-sm btn-primary active m-3">
-              ESTADO DE CUENTA
+            <button
+              type="button"
+              class="btn btn-sm btn-primary active m-3"
+              (click)="printStatusAccount()">
+              Estado de cuenta
             </button>
-            <button type="button" class="btn btn-sm btn-primary active m-3">
-              DETALLE MOVIMIENTOS
+            <button
+              type="button"
+              class="btn btn-sm btn-primary active m-3"
+              (click)="printDetailMovi()">
+              Detalle movimiento
             </button>
-            <button type="button" class="btn btn-sm btn-primary active m-3">
-              PRORRATEO COMISION
+            <button
+              type="button"
+              class="btn btn-sm btn-primary active m-3"
+              (click)="printProrraComission()">
+              Prorrateo comisión
             </button>
-            <button type="button" class="btn btn-sm btn-primary active m-3">
-              ELIMINA PROCESO
+            <button
+              class="btn btn-red btn-sm active m-3"
+              (click)="deleteRequest()">
+              Eliminar proceso <i class="fa fa-trash" aria-hidden="true"></i>
             </button>
           </div>
         </div>
@@ -125,7 +168,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data1">
+            [source]="data"
+            (rowSelect)="onChangeProcces($event.data)">
           </ng2-smart-table>
         </div>
       </div>
@@ -145,10 +189,10 @@
       <app-pagination [params]="params1" [totalItems]="totalItems1">
       </app-pagination>
       <div class="row">
-        <form action="" class="form-material" [formGroup]="formSumComission">
+        <form action="" class="form-material" [formGroup]="formBlkControl">
           <div class="col-md-4">
             <form-field
-              [control]="formSumComission.get('sumCommision')"
+              [control]="formBlkControl.get('sumCommision')"
               label="Comisión Bancaria">
               <input
                 type="text"

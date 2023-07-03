@@ -21,9 +21,16 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
+      <div class="row" *ngIf="totalItems > 1">
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"
+          [limit]="newLimit"
+          [maxSize]="1"></app-pagination>
+      </div>
       <div class="row">
         <div class="col-md-6" style="display: flex; column-gap: 15px">
-          <form-field [control]="form.get('noBien')" label="No. de bien">
+          <form-field [control]="form.get('noBien')" label="No. de Bien">
             <input
               class="form-control"
               formControlName="noBien"

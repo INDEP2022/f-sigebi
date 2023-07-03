@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { setTheme } from 'ngx-bootstrap/utils';
+import { PreviousRouteService } from './common/services/previous-route.service';
 @Component({
   selector: 'app-root',
   template: `
@@ -9,7 +10,7 @@ import { setTheme } from 'ngx-bootstrap/utils';
   `,
 })
 export class AppComponent implements OnInit {
-  constructor() {
+  constructor(private previousRouteService: PreviousRouteService) {
     setTheme('bs5');
   }
 
