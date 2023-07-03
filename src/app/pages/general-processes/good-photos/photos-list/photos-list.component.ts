@@ -43,7 +43,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
     }
   }
   private _goodNumber: string | number;
-  errorMessage = '';
+  errorMessage: string;
   userPermisions = true;
   // lastConsecutive: number = 1;
   filesToDelete: string[] = [];
@@ -195,7 +195,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
                 const pufValidaProcesoBien = await this.pufValidaProcesoBien();
                 if (pufValidaProcesoBien) {
                   this.errorMessage =
-                    'No puede eliminar las fotos, el bien ya fue recibido';
+                    'No puede alterar las fotos, el bien ya fue recibido';
                   console.log(this.errorMessage);
 
                   this.userPermisions = false;
