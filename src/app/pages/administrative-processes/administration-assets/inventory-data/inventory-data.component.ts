@@ -64,8 +64,8 @@ export class InventoryDataComponent
   columnFilter: any = [];
   inventoryDataForm: ModelForm<any>;
   generateAtri: boolean = false;
-  textButon: string = 'Generar inventario';
-
+  textButon: string = 'Generar Inventario';
+  atribute: string = 'Generar Atributos';
   get dataInventory() {
     return this.service.dataInventary;
   }
@@ -224,7 +224,7 @@ export class InventoryDataComponent
         if (date.length > 0) {
           this.inventorySelect = null;
           this.generateAtri = false;
-          this.textButon = 'Generar inventario';
+          this.textButon = 'Generar Inventario';
           this.viewAct = !this.viewAct;
           this.viewAct = !this.viewAct;
           this.generateAtri = false;
@@ -358,6 +358,21 @@ export class InventoryDataComponent
   async add() {
     if (this.dataInventory) {
       if (this.inventorySelect) {
+        let required: boolean = false;
+        this.dataInventory.forEach((item: any) => {
+          console.log(item);
+          if (item.required && item.value === null) {
+            required = true;
+          }
+        });
+        if (required) {
+          this.alert(
+            'warning',
+            'Datos inventario',
+            'Debe diligenciar los valores requeridos.'
+          );
+          return;
+        }
         this.dataInventory.forEach((item: any) => {
           this.updateInventary(
             this.inventorySelect.inventoryNumber,
@@ -371,6 +386,21 @@ export class InventoryDataComponent
           'Se ha realizado la actualización correctamente'
         );
       } else {
+        let required: boolean = false;
+        this.dataInventory.forEach((item: any) => {
+          console.log(item);
+          if (item.required && item.value === null) {
+            required = true;
+          }
+        });
+        if (required) {
+          this.alert(
+            'warning',
+            'Datos inventario',
+            'Debe diligenciar los valores requeridos.'
+          );
+          return;
+        }
         const inventoryNumber: number = await this.createInventory();
         if (inventoryNumber !== null) {
           this.dataInventory.forEach((item: any) => {
