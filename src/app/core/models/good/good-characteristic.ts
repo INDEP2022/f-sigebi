@@ -204,6 +204,7 @@ export class CharacteristicEditorCell extends DefaultEditor {
     if (!row) {
       return true;
     }
+    console.log(row.value);
     return (
       row.required && (!row.value || (row.value && row.value.trim() == ''))
     );

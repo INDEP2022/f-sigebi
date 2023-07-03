@@ -50,7 +50,7 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
   }
 
   onCellDoubleClick() {
-    if (!this.rowData.no_bien) {
+    if (!this.rowData.goodnumber) {
       this.seleccionarBien_();
     } else {
       // Lógica a ejecutar en caso de doble clic en una celda con valor
@@ -77,15 +77,15 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
     let vb_encontrado: any = false;
     if (
       this.rowData.currency != null &&
-      this.rowData.deposito != null &&
-      this.rowData.fec_movimiento != null &&
+      this.rowData.deposit != null &&
+      this.rowData.motiondate != null &&
       this.rowData.cveAccount != null &&
-      this.rowData.deposito
+      this.rowData.deposit
     ) {
       let obj = {
         diCurrency: this.rowData.currency,
         tiBank: this.rowData.bank,
-        fecMovement: this.rowData.fec_movimiento,
+        fecMovement: this.rowData.motiondate,
         diAccount: this.rowData.cveAccount,
       };
       console.log('obj', obj);
@@ -97,8 +97,8 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
           var canVal2 = can[i].val2;
           var number = parseFloat(canVal2.replace(',', ''));
           console.log('number', number);
-          console.log('this.rowData.deposito', this.rowData.deposito);
-          if (number == Number(this.rowData.deposito)) {
+          console.log('this.rowData.deposito', this.rowData.deposit);
+          if (number == Number(this.rowData.deposit)) {
             console.log('SI');
 
             vb_encontrado = await this.getGoodMovimientosCuentas(can[i]);
@@ -107,10 +107,10 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
               V_BIEN_VALIDO = await this.getGoodMovimientosCuentas1(can[i]);
               if (V_BIEN_VALIDO == 0) {
                 let obj: any = {
-                  numberMotion: this.rowData.no_movimiento,
-                  numberAccount: this.rowData.no_cuenta,
-                  numberGood: can[i].no_bien,
-                  numberProceedings: can[i].no_expediente,
+                  numberMotion: this.rowData.motionnumber,
+                  numberAccount: this.rowData.accountnumber,
+                  numberGood: can[i].goodnumber,
+                  numberProceedings: can[i].proceedingsnumber,
                 };
                 const validUpdate = await this.updateAccountMovement(obj);
                 if (validUpdate) {
@@ -162,8 +162,8 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
 
   async getGoodMovimientosCuentas(data: any) {
     const params = new ListParams();
-    params['filter.numberGood'] = `$eq:${data.no_bien}`;
-    params['filter.numberProceedings'] = `$eq:${data.no_expediente}`;
+    params['filter.numberGood'] = `$eq:${data.goodnumber}`;
+    params['filter.numberProceedings'] = `$eq:${data.proceedingsnumber}`;
 
     return new Promise((resolve, reject) => {
       this.accountMovementService.getAllFiltered(params).subscribe({
@@ -179,7 +179,7 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
 
   async getGoodMovimientosCuentas1(data: any) {
     const params = new ListParams();
-    params['filter.numberGood'] = `$eq:${data.no_bien}`;
+    params['filter.numberGood'] = `$eq:${data.goodnumber}`;
     return new Promise((resolve, reject) => {
       this.accountMovementService.getAllFiltered(params).subscribe({
         next: response => {

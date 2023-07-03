@@ -95,6 +95,13 @@ export class AccountMovementService extends HttpService {
       params
     );
   }
+
+  getMovementAccountXBankAccount(params: _Params) {
+    return this.get<IListResponse<any>>(
+      'aplication/movementAccountXBankAccount',
+      params
+    );
+  }
 }
 
 //``

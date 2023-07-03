@@ -27,8 +27,7 @@ export enum GoodEndpoints {
   Vban = 'good/getBan',
   AttribGoodBad = 'attrib-good-bad/get-all',
   AttribGoodBadId = 'attrib-good-bad',
-  AttribGood = 'goods-attributes',
-
+  AttribGood = 'attributes-classification-good',
   GetAllGoodQuery = 'good/getAllGoodQuery',
   PAValidaCambioEstatus = 'good/testValid',
   GetMassiveSearch = 'good/getMassiveSearch',
