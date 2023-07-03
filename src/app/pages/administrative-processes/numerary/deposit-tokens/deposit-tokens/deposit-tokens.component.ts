@@ -112,7 +112,7 @@ export class DepositTokensComponent
           type: 'string',
           sort: false,
         },
-        motionDate: {
+        motionDate_: {
           title: 'Fecha Depósito',
           // type: 'string',
           sort: false,
@@ -139,7 +139,7 @@ export class DepositTokensComponent
               return `${fechaFormateada}`;
             } else {
               return `${
-                text ? text.split('T')[0].split('-').reverse().join('-') : ''
+                text ? text.split('T')[0].split('-').reverse().join('/') : ''
               }`;
             }
           },
@@ -148,12 +148,12 @@ export class DepositTokensComponent
             component: CustomDateFilterComponent,
           },
         },
-        folio_ficha: {
+        invoicefile: {
           title: 'Folio',
           type: 'string',
           sort: false,
         },
-        calculationInterestsDate: {
+        calculationInterestsDate_: {
           title: 'Fecha Transferencia',
           // type: 'string',
           sort: false,
@@ -180,7 +180,7 @@ export class DepositTokensComponent
               return `${fechaFormateada}`;
             } else {
               return `${
-                text ? text.split('T')[0].split('-').reverse().join('-') : ''
+                text ? text.split('T')[0].split('-').reverse().join('/') : ''
               }`;
             }
           },
@@ -194,7 +194,7 @@ export class DepositTokensComponent
           type: 'string',
           sort: false,
         },
-        deposito: {
+        deposit: {
           title: 'Depósito',
           type: 'custom',
           sort: false,
@@ -205,12 +205,12 @@ export class DepositTokensComponent
             });
           },
         },
-        no_expediente: {
+        proceedingsnumber: {
           title: 'Expediente',
           type: 'string',
           sort: false,
         },
-        no_bien: {
+        goodnumber: {
           title: 'Bien',
           type: 'custom',
           sort: false,
@@ -221,51 +221,24 @@ export class DepositTokensComponent
             });
           },
         },
-        categoria: {
-          title: 'Categoria',
+        category: {
+          title: 'Categoría',
           type: 'string',
           sort: false,
         },
-        es_parcializacion: {
+        ispartialization: {
           title: 'Parcial',
           type: 'string',
           sort: false,
         },
       },
       rowClassFunction: (row: any) => {
-        if (row.data.no_bien != null) {
+        if (row.data.goodnumber != null) {
           return 'bg-warning text-black';
         } else {
           return '';
         }
       },
-    };
-    // this.settings.delete = true;
-
-    // this.settings.rowClassFunction = async (row: any) => {
-
-    // };
-
-    this.testCompare = {
-      no_movimiento: 'number',
-      fec_movimiento: 'string',
-      deposito: 'number',
-      usuario_inserto: 'string',
-      fec_insercion: 'string',
-      es_ficha_deposito: 'string',
-      no_cuenta: 'number',
-      fec_traspaso: 'string',
-      fec_calculo_intereses: 'string',
-      no_registro: 'number',
-      categoria: 'string',
-      currency: 'string',
-      bank: 'string',
-      cveAccount: 'number',
-      motionDate: 'number',
-      es_parcializacion: 'string',
-      no_bien: 'number',
-      no_expediente: 'number',
-      calculationInterestsDate: 'string',
     };
   }
 
@@ -288,31 +261,28 @@ export class DepositTokensComponent
             const search: any = {
               bank: () => (searchFilter = SearchFilter.ILIKE),
               cveAccount: () => (searchFilter = SearchFilter.EQ),
-              motionDate: () => (searchFilter = SearchFilter.ILIKE),
-              folio_ficha: () => (searchFilter = SearchFilter.ILIKE),
-              calculationInterestsDate: () =>
+              motionDate_: () => (searchFilter = SearchFilter.ILIKE),
+              invoicefile: () => (searchFilter = SearchFilter.ILIKE),
+              calculationInterestsDate_: () =>
                 (searchFilter = SearchFilter.ILIKE),
               currency: () => (searchFilter = SearchFilter.ILIKE),
-              deposito: () => (searchFilter = SearchFilter.EQ),
-              no_expediente: () => (searchFilter = SearchFilter.EQ),
-              no_bien: () => (searchFilter = SearchFilter.EQ),
-              categoria: () => (searchFilter = SearchFilter.ILIKE),
-              es_parcializacion: () => (searchFilter = SearchFilter.EQ),
+              deposit: () => (searchFilter = SearchFilter.EQ),
+              proceedingsnumber: () => (searchFilter = SearchFilter.EQ),
+              goodnumber: () => (searchFilter = SearchFilter.EQ),
+              category: () => (searchFilter = SearchFilter.ILIKE),
+              ispartialization: () => (searchFilter = SearchFilter.EQ),
             };
 
             search[filter.field]();
 
             if (filter.search !== '') {
-              console.log('filter.search', filter.search);
-              if (filter.search == 'motionDate') {
-              }
               this.columnFilters[field] = `${filter.search}`;
               // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
 
-              console.log(
-                'this.columnFilters[field]',
-                this.columnFilters[field]
-              );
+              // console.log(
+              //   'this.columnFilters[field]',
+              //   this.columnFilters[field]
+              // );
             } else {
               delete this.columnFilters[field];
             }
@@ -335,8 +305,8 @@ export class DepositTokensComponent
       ...this.columnFilters,
     };
     console.log('params1', params);
-    if (params['filter.motionDate']) {
-      var fecha = new Date(params['filter.motionDate']);
+    if (params['filter.motionDate_']) {
+      var fecha = new Date(params['filter.motionDate_']);
 
       // Obtener los componentes de la fecha (año, mes y día)
       var año = fecha.getFullYear();
@@ -346,14 +316,14 @@ export class DepositTokensComponent
       // Crear la cadena de fecha en el formato yyyy-mm-dd
       var fechaFormateada = año + '-' + mes + '-' + día;
       params['motionDate'] = fechaFormateada;
-      delete params['filter.motionDate'];
+      delete params['filter.motionDate_'];
     }
-    if (params['filter.deposito']) {
-      params['deposit'] = params['filter.deposito'];
-      delete params['filter.deposito'];
+    if (params['filter.deposit']) {
+      params['deposit'] = params['filter.deposit'];
+      delete params['filter.deposit'];
     }
-    if (params['filter.calculationInterestsDate']) {
-      var fecha = new Date(params['filter.calculationInterestsDate']);
+    if (params['filter.calculationInterestsDate_']) {
+      var fecha = new Date(params['filter.calculationInterestsDate_']);
 
       // Obtener los componentes de la fecha (año, mes y día)
       var año = fecha.getFullYear();
@@ -363,59 +333,79 @@ export class DepositTokensComponent
       // Crear la cadena de fecha en el formato yyyy-mm-dd
       var fechaFormateada = año + '-' + mes + '-' + día;
       params['calculationInterestsDate'] = fechaFormateada;
-      delete params['filter.calculationInterestsDate'];
+      delete params['filter.calculationInterestsDate_'];
     }
-    if (params['filter.no_bien']) {
-      params['goodNumber'] = params['filter.no_bien'];
-      delete params['filter.no_bien'];
+    if (params['filter.goodnumber']) {
+      params['goodNumber'] = params['filter.goodnumber'];
+      delete params['filter.goodnumber'];
     }
-    if (params['filter.no_expediente']) {
-      params['proceedingsNumber'] = params['filter.no_expediente'];
-      delete params['filter.no_expediente'];
+    if (params['filter.proceedingsnumber']) {
+      params['proceedingsNumber'] = params['filter.proceedingsnumber'];
+      delete params['filter.proceedingsnumber'];
     }
-    if (params['filter.categoria']) {
-      params['category'] = params['filter.categoria'];
-      delete params['filter.categoria'];
+    if (params['filter.category']) {
+      params['category'] = params['filter.category'];
+      delete params['filter.category'];
     }
-    if (params['filter.es_parcializacion']) {
-      params['ispartialization'] = params['filter.es_parcializacion'];
-      delete params['filter.es_parcializacion'];
+    if (params['filter.ispartialization']) {
+      params['ispartialization'] = params['filter.ispartialization'];
+      delete params['filter.ispartialization'];
+    }
+    if (params['filter.currency']) {
+      params['currencykey'] = params['filter.currency'];
+      delete params['filter.currency'];
+    }
+    if (params['filter.bank']) {
+      params['bankkey'] = params['filter.bank'];
+      delete params['filter.bank'];
+    }
+
+    if (params['filter.cveAccount']) {
+      params['accountkey'] = params['filter.cveAccount'];
+      delete params['filter.cveAccount'];
     }
 
     console.log('params2', params);
-    this.accountMovementService.getAccount2(params).subscribe({
-      next: async (response: any) => {
-        let result = response.data.map(async (item: any) => {
-          const detailsBank: any = await this.returnDataBank(item.no_cuenta);
+    this.accountMovementService
+      .getMovementAccountXBankAccount(params)
+      .subscribe({
+        next: async (response: any) => {
+          let result = response.data.map(async (item: any) => {
+            const detailsBank: any = await this.returnDataBank(
+              item.accountnumber
+            );
 
-          item['currency'] = detailsBank ? detailsBank.cveCurrency : null;
-          item['bank'] = detailsBank ? detailsBank.cveBank : null;
-          item['cveAccount'] = detailsBank ? detailsBank.cveAccount : null;
-          item['motionDate'] = item.fec_movimiento
-            ? this.datePipe.transform(item.fec_movimiento, 'dd/MM/yyyy')
-            : null;
-          item['calculationInterestsDate'] = item.fec_calculo_intereses
-            ? this.datePipe.transform(item.fec_calculo_intereses, 'dd/MM/yyyy')
-            : null;
-          item['bancoDetails'] = detailsBank ? detailsBank : null;
-        });
+            item['currency'] = detailsBank ? detailsBank.cveCurrency : null;
+            item['bank'] = detailsBank ? detailsBank.cveBank : null;
+            item['cveAccount'] = detailsBank ? detailsBank.cveAccount : null;
+            item['motionDate_'] = item.motiondate
+              ? this.datePipe.transform(item.motiondate, 'dd/MM/yyyy')
+              : null;
+            item['calculationInterestsDate_'] = item.calculationinterestsdate
+              ? this.datePipe.transform(
+                  item.calculationinterestsdate,
+                  'dd/MM/yyyy'
+                )
+              : null;
+            item['bancoDetails'] = detailsBank ? detailsBank : null;
+          });
 
-        Promise.all(result).then((resp: any) => {
-          this.showPagination = true;
-          this.totalItems = response.count;
-          this.data1.load(response.data);
-          this.data1.refresh();
-          console.log(response);
+          Promise.all(result).then((resp: any) => {
+            this.showPagination = true;
+            this.totalItems = response.count;
+            this.data1.load(response.data);
+            this.data1.refresh();
+            console.log('AQUI', response);
+            this.loading = false;
+          });
+        },
+        error: err => {
           this.loading = false;
-        });
-      },
-      error: err => {
-        this.loading = false;
-        this.totalItems = 0;
-        this.data1.load([]);
-        this.data1.refresh();
-      },
-    });
+          this.totalItems = 0;
+          this.data1.load([]);
+          this.data1.refresh();
+        },
+      });
   }
 
   async returnDataBank(id: any) {
@@ -455,8 +445,8 @@ export class DepositTokensComponent
     this.dataMovements = event.data;
     console.log('data', event);
     // DESCRIPCIÓN DEL BIEN
-    if (event.data.no_bien) {
-      this.getDetailsGood(event.data.no_bien);
+    if (event.data.goodnumber) {
+      this.getDetailsGood(event.data.goodnumber);
     } else {
       this.form.get('descriptionGood').setValue('');
     }
@@ -469,7 +459,7 @@ export class DepositTokensComponent
         await this.getTvalTable5(event.data.bancoDetails.cveCurrency);
       }
     } else {
-      const aaaa: any = await this.returnDataBank(event.data.no_cuenta);
+      const aaaa: any = await this.returnDataBank(event.data.accountnumber);
       if (aaaa != null) {
         await this.insertDataBank(aaaa);
         await this.getTvalTable5(aaaa.cveCurrency);
@@ -506,7 +496,7 @@ export class DepositTokensComponent
   async desconciliarFunc() {
     // this.loading = true;
     if (this.dataMovements) {
-      if (this.dataMovements.no_bien == null) {
+      if (this.dataMovements.goodnumber == null) {
         this.alert(
           'warning',
           'No existe un bien asociado a este depósito.',
@@ -514,8 +504,8 @@ export class DepositTokensComponent
         );
       } else {
         let obj: any = {
-          numberMotion: this.dataMovements.no_movimiento,
-          numberAccount: this.dataMovements.no_cuenta,
+          numberMotion: this.dataMovements.motionnumber,
+          numberAccount: this.dataMovements.accountnumber,
           numberGood: null,
           numberProceedings: null,
         };
@@ -524,7 +514,7 @@ export class DepositTokensComponent
             this.getAccount();
             this.alert(
               'success',
-              `El bien ${this.dataMovements.no_bien} ha sido desconciliado`,
+              `El bien ${this.dataMovements.goodnumber} ha sido desconciliado`,
               ''
             );
             this.form.get('descriptionGood').setValue('');
@@ -569,21 +559,19 @@ export class DepositTokensComponent
       let arr: any = [];
 
       let result = excelImport.map(async (item: any) => {
-        // const aaa = await this.validarEstructura(item, this.testCompare)
-
-        // if (aaa) {
         if (
-          item.no_movimiento &&
-          item.fec_movimiento &&
-          item.deposito &&
-          item.fec_insercion &&
-          item.no_cuenta &&
-          item.cveAccount &&
-          item.motionDate
+          item.motionnumber &&
+          item.motionDate_ &&
+          item.deposit &&
+          item.currency &&
+          // item.calculationinterestsdate &&
+          item.insertiondate &&
+          item.accountnumber &&
+          item.bank &&
+          item.cveAccount
         ) {
           arr.push(item);
         }
-        // }
       });
 
       Promise.all(result).then(item => {
@@ -611,17 +599,6 @@ export class DepositTokensComponent
     }
   }
 
-  async validarEstructura(objeto: any, estructura: any) {
-    for (let key in estructura) {
-      if (
-        !objeto.hasOwnProperty(key) ||
-        typeof objeto[key] !== estructura[key]
-      ) {
-        return false;
-      }
-    }
-    return true;
-  }
   async exportar() {
     const filename: string = 'Deposit Tokens';
     const jsonToCsv: any = await this.returnJsonToCsv();
@@ -629,24 +606,25 @@ export class DepositTokensComponent
     let arr: any = [];
     let result = jsonToCsv.map(async (item: any) => {
       let obj = {
-        no_movimiento: item.no_movimiento,
-        fec_movimiento: item.fec_movimiento,
-        deposito: item.deposito,
-        usuario_inserto: item.usuario_inserto,
-        fec_insercion: item.fec_insercion,
-        es_ficha_deposito: item.es_ficha_deposito,
-        no_cuenta: item.no_cuenta,
-        fec_traspaso: item.fec_traspaso,
-        fec_calculo_intereses: item.fec_calculo_intereses,
-        no_registro: item.no_registro,
-        categoria: item.categoria,
+        motionnumber: item.motionnumber,
+        motiondate: item.motiondate,
+        deposit: item.deposit,
+        userinsert: item.userinsert,
+        insertiondate: item.insertiondate,
+        isfiledeposit: item.isfiledeposit,
+        accountnumber: item.accountnumber,
+        calculationInterestsDate_: item.calculationinterestsdate,
+        calculationinterestsdate: item.calculationinterestsdate,
+        registernumber: item.registernumber,
+        category: item.category,
         currency: item.currency,
-        no_bien: item.no_bien,
-        no_expediente: item.no_expediente,
+        goodnumber: item.goodnumber,
+        proceedingsnumber: item.proceedingsnumber,
         bank: item.bank,
-        cveAccount: item.cveAccount,
-        motionDate: item.motionDate,
-        calculationInterestsDate: item.calculationInterestsDate,
+        cveAccount: item.accountkey,
+        accountkey: item.accountkey,
+        motionDate_: item.motiondate,
+        transferdate: item.transferdate,
       };
       arr.push(obj);
     });
@@ -679,20 +657,6 @@ export class DepositTokensComponent
     });
   }
 
-  getAttributes() {
-    // this.loading = true;
-    // this.attributesInfoFinancialService
-    //   .getAll(this.params.getValue())
-    //   .subscribe({
-    //     next: response => {
-    //       this.attributes = response.data;
-    //       this.totalItems = response.count;
-    //       this.loading = false;
-    //     },
-    //     error: error => (this.loading = false),
-    //   });
-  }
-
   getDetailsGood(id: any) {
     const params = new ListParams();
     params['filter.id'] = `$eq:${id}`;
@@ -715,9 +679,7 @@ export class DepositTokensComponent
     modalConfig.initialState = {
       noCuenta,
       data,
-      callback: (next: boolean) => {
-        if (next) this.getAttributes();
-      },
+      callback: (next: boolean) => {},
     };
     this.modalService.show(DepositTokensModalComponent, modalConfig);
   }
@@ -748,7 +710,7 @@ export class DepositTokensComponent
     console.log(data);
     let vb_hay_hijos: boolean = false;
 
-    if (data.no_bien != null) {
+    if (data.goodnumber != null) {
       this.alert(
         'warning',
         'No puede eliminar un movimiento que ya está asociado a un expediente-bien',
@@ -756,7 +718,7 @@ export class DepositTokensComponent
       );
     } else {
       // VERIFICAR CHEQUES
-      const val: any = await this.getChecksReturn(data.no_movimiento);
+      const val: any = await this.getChecksReturn(data.motionnumber);
       vb_hay_hijos = val;
 
       if (vb_hay_hijos) {
@@ -773,8 +735,8 @@ export class DepositTokensComponent
         ).then(async question => {
           if (question.isConfirmed) {
             let obj: ICuentaDelete = {
-              numberAccount: Number(data.no_cuenta),
-              numberMotion: Number(data.no_movimiento),
+              numberAccount: Number(data.accountnumber),
+              numberMotion: Number(data.motionnumber),
             };
             this.accountMovementService.eliminarMovementAccount(obj).subscribe({
               next: response => {
@@ -824,7 +786,7 @@ export class DepositTokensComponent
   calcularSaldo() {
     if (this.dataMovements) {
       let obj = {
-        no_cuenta: this.dataMovements.no_cuenta,
+        no_cuenta: this.dataMovements.accountnumber,
         ti_fecha_calculo: this.dateMovemInicio,
         ti_fecha_calculo_fin: this.dateMovemFin,
       };

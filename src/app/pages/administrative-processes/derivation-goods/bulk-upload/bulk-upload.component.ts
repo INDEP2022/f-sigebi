@@ -22,6 +22,8 @@ interface IDs {
 export class BulkUploadComponent implements OnInit {
   totalItems: number = 0;
   pGoodFatherNumber: any;
+  expedientNumber: any;
+  Number: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   //Reactive Forms
   form: FormGroup;
@@ -53,30 +55,37 @@ export class BulkUploadComponent implements OnInit {
       CLASIFICADOR: {
         title: 'Clasif.',
         width: '10%',
+        sort: false,
       },
       DESCRIPCION: {
         title: 'Descripcion',
         width: '20%',
+        sort: false,
       },
       CANTIDAD: {
         title: 'Cantidad',
         width: '10%',
+        sort: false,
       },
       UNIDAD: {
         title: 'Unidad',
         width: '10%',
+        sort: false,
       },
       TIPO: {
         title: 'Tipo',
         width: '10%',
+        sort: false,
       },
       MATERIAL: {
         title: 'Material',
         width: '10%',
+        sort: false,
       },
       EDOFISICO: {
         title: 'Edo. Fisico',
         width: '10%',
+        sort: false,
       },
     },
   };
@@ -95,10 +104,12 @@ export class BulkUploadComponent implements OnInit {
       numberGood: {
         title: 'No. Renglon',
         width: '20%',
+        sort: false,
       },
       description: {
         title: 'Descripcion',
         width: '60%',
+        sort: false,
       },
     },
   };
@@ -114,6 +125,7 @@ export class BulkUploadComponent implements OnInit {
   ) {
     this.route.queryParams.subscribe(params => {
       this.pGoodFatherNumber = params['pGoodFatherNumber'] || null;
+      this.expedientNumber = params['expedientNumber'] || null;
     });
   }
 
@@ -128,6 +140,7 @@ export class BulkUploadComponent implements OnInit {
       fileLoad: [null, [Validators.required]],
     });
     this.numberGoodFather.setValue(this.pGoodFatherNumber);
+    this.numberDossier.setValue(this.expedientNumber);
   }
 
   fileLoadBtn() {}
@@ -154,6 +167,7 @@ export class BulkUploadComponent implements OnInit {
         const arrayMasive = respuesta['data'].map(
           (i: any) => i.CLASIFICADOR && i.DESCRIPCION && i.CANTIDAD
         );
+        //ejecutar loop
       },
       err => {
         console.log(err);

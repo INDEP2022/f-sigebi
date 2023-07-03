@@ -150,24 +150,66 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     this.expNotDicFilter();
     // Filtros de actas
     this.certificatesFilter();
+    // Filtro transferente emisora autoridad
+    this.transferFilter();
 
-    const {
-      transfers,
-      transmitters,
-      autorities,
-      warehouse,
-      cordination,
-      autorityState,
-      goodState,
-    } = form;
+    const { warehouse, cordination, autorityState, goodState } = form;
+
+    if (warehouse.length) {
+      this.filters.global.gstSelecStore = 'S';
+      this.filters.global.cstStoreNumber = warehouse;
+    } else {
+      this.filters.global.cstStoreNumber = null;
+    }
+
+    if (autorityState.length) {
+      this.filters.global.gstSelecEntfed = 'S';
+      this.filters.global.otKey = autorityState;
+    } else {
+      this.filters.global.otKey = null;
+    }
+
+    if (goodState.length) {
+      this.filters.global.gstSelecEntfedOne = 'S';
+      this.filters.global.otKeyOne = goodState;
+    } else {
+      this.filters.global.otKeyOne = null;
+    }
+
+    if (cordination.length) {
+      this.filters.global.gstSelecDeleg = 'S';
+      this.filters.global.delegationNumber = cordination;
+    } else {
+      this.filters.global.delegationNumber = null;
+    }
+  }
+
+  transferFilter() {
+    const form = this.form.getRawValue();
+    const { transfers, transmitters, autorities } = form;
 
     const all = [...transfers, ...transmitters, ...autorities];
     if (all.length) {
       this.filters.global.gstSelecProced = 'S';
     }
-    //     selecAuthority;
-    //     selecStation;
-    // selecTransferee
+    if (transfers.length) {
+      this.filters.global.selecTransferee = 'S';
+      this.filters.global.ctTransfereeNumber = transfers.map(t => Number(t));
+    } else {
+      this.filters.global.ctTransfereeNumber = null;
+    }
+    if (transmitters.length) {
+      this.filters.global.selecStation = 'S';
+      this.filters.global.csTransfereeNumber = transmitters;
+    } else {
+      this.filters.global.csTransfereeNumber = null;
+    }
+    if (autorities.length) {
+      this.filters.global.selecAuthority = 'S';
+      this.filters.global.caAuthorityNumber = autorities;
+    } else {
+      this.filters.global.caAuthorityNumber = null;
+    }
   }
 
   certificatesFilter() {
@@ -203,9 +245,8 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
       ? format(new Date(statusChaangeTo), 'yyyy-MM-dd')
       : null;
     this.filters.parval.actKey = certificate;
-    this.filters.parval.statusChange = receptionStatus
-      ? [receptionStatus]
-      : null;
+    this.filters.parval.statusChange =
+      receptionStatus.length > 0 ? receptionStatus : null;
     this.filters.parval.alienationProcessNumber = eventNum;
     this.filters.parval.processChange = historicalProcess
       ? [historicalProcess]
