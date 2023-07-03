@@ -24,7 +24,6 @@ export interface IHistoricalPhoto {
 export class FilePhotoService extends HttpService {
   private readonly _url = environment.API_URL;
   private readonly _prefix = environment.URL_PREFIX;
-  consecNumber = 1;
   constructor(private sanitizer: DomSanitizer) {
     super();
     this.microservice = IDocumentEndpoints.Base;
