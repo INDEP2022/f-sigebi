@@ -64,14 +64,16 @@
       No hay fotos cargadas
     </h6>
     <div
-      class="col-md-6 grid-square"
+      class="col-sm-6 grid-square"
       *ngFor="let image of files; let i = index">
       <div class="w-100 m-1 img-container">
         <div class="row">
           <div class="col-md-12">
             <app-photo-historic
-              [filename]="image"
-              [goodNumber]="goodNumber + ''"></app-photo-historic>
+              [filename]="image.name"
+              [goodNumber]="image.goodNumber"
+              [userDeleted]="image.userDeleted"
+              [deletedDate]="image.deletedDate"></app-photo-historic>
           </div>
         </div>
       </div>

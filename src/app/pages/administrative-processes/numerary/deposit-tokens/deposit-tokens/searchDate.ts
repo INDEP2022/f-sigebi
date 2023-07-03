@@ -11,7 +11,8 @@ import { DefaultFilter } from 'ng2-smart-table';
         bsDatepicker
         [ngModel]="query"
         [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY' }"
-        (ngModelChange)="onChange($event)" />
+        (ngModelChange)="onChange($event)"
+        style="border-radius: 5px;padding: 8px;border: 1px solid #ccc;" />
       <span class="input-group-addon" *ngIf="this.query">
         <i class="fa fa-broom" (click)="clearDate($event)"></i>
       </span>

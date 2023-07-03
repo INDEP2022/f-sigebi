@@ -6,6 +6,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { FormSearchHandlerModule } from '../../juridical-processes/shared/form-search-handler/form-search-handler.module';
+import { FindActaGoodComponent } from './find-acta-good/find-acta-good.component';
 import { ProceedingsConversionDetailComponent } from './proceedings-conversion-detail/proceedings-conversion-detail.component';
 import { ProceedingsConversionModalComponent } from './proceedings-conversion-modal/proceedings-conversion-modal.component';
 import { ProceedingsConversionRoutingModule } from './proceedings-conversion-routing.module';
@@ -16,6 +17,7 @@ import { ProceedingsConversionComponent } from './proceedings-conversion/proceed
     ProceedingsConversionComponent,
     ProceedingsConversionDetailComponent,
     ProceedingsConversionModalComponent,
+    FindActaGoodComponent,
   ],
   exports: [
     ProceedingsConversionComponent,

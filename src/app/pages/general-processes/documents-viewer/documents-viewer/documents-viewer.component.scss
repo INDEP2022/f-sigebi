@@ -1,9 +1,11 @@
 :host ::ng-deep ng2-smart-table tr.pending td {
-  color: #05668d !important;
+  background-color: #05668d !important;
+  color: #fff !important;
 }
 
 :host ::ng-deep ng2-smart-table tr.digital td {
-  color: #bc955c !important;
+  background-color: #1e7e34 !important;
+  color: #fff !important;
 }
 
 // :host ::ng-deep ng2-smart-table tr.pending td {
