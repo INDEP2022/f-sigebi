@@ -1,16 +1,7 @@
 <app-modal *ngIf="!plain">
-  <div class="w-100" header>
-    <div class="d-flex flex-wrap justify-content-between aling-items-center">
-      <h5 class="modal-title">Lista de datos</h5>
-      <div class="buttons">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
-        <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
-          Cerrar
-        </button>
-      </div>
-    </div>
+  <div header>
+    <h5 class="modal-title">DATOS GENERALES DEL CORREO</h5>
   </div>
-
   <div body>
     <div class="row pt-4">
       <div class="col-md-12">
@@ -23,7 +14,6 @@
             class="table-responsive"
             [settings]="settings"
             [source]="data"
-            (edit)="formData($event.data)"
             (userRowSelect)="selectRow($event)">
           </ng2-smart-table>
         </ng-scrollbar>
@@ -32,26 +22,43 @@
     <app-pagination [params]="paramsList" [totalItems]="totalItems">
     </app-pagination>
   </div>
-</app-modal>
 
-<ng-container *ngIf="plain">
-  <div class="row pt-4">
-    <div class="col-md-12">
-      <!--<form-loader *ngIf="loading"></form-loader>-->
-      <ng-scrollbar
-        [track]="'all'"
-        [ngStyle]="{ height: loading ? '0px' : '300px' }">
-        <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive'"
-          class="table-responsive"
-          [settings]="settings"
-          [source]="data"
-          (edit)="formData($event.data)"
-          (userRowSelect)="selectRow($event)">
-        </ng2-smart-table>
-      </ng-scrollbar>
+  <ng-container *ngIf="plain">
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <!--<form-loader *ngIf="loading"></form-loader>-->
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
+            [settings]="settings"
+            [source]="data"
+            (userRowSelect)="selectRow($event.data)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+      </div>
+    </div>
+    <app-pagination [params]="paramsList" [totalItems]="totalItems">
+    </app-pagination>
+  </ng-container>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          class="btn btn-primary btn-sm active"
+          [disabled]="!rowSelected"
+          (click)="confirm()">
+          Seleccionar
+        </button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-primary active btn-sm" (click)="close()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
     </div>
   </div>
-  <app-pagination [params]="paramsList" [totalItems]="totalItems">
-  </app-pagination>
-</ng-container>
+</app-modal>

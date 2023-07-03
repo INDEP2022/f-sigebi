@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -8,6 +8,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { IVigEmailBody } from 'src/app/core/models/ms-email/email-model';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EMAIL_BODY_COLUMNS } from './body-mail-columns';
@@ -18,10 +19,13 @@ import { EMAIL_BODY_COLUMNS } from './body-mail-columns';
   styles: [],
 })
 export class MailBodyListDataComponent extends BasePage implements OnInit {
+  static selectedRow() {
+    throw new Error('Method not implemented.');
+  }
   @Input() plain = false;
   dataDocs: IListResponse<any /*Modelado de datos*/> =
     {} as IListResponse<any /*Modelado de datos*/>;
-
+  @Output() refresh = new EventEmitter<true>();
   //Declaraciones para ocupar filtrado
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
@@ -31,14 +35,13 @@ export class MailBodyListDataComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   selectedRow: any;
   rowSelected: boolean;
+  bodyMail: IVigEmailBody[] = [];
 
   constructor(private modalRef: BsModalRef, private docService: EmailService) {
     super();
-    this.settings.hideSubHeader = false;
     this.settings.columns = EMAIL_BODY_COLUMNS;
     this.settings.actions.delete = false;
-    this.settings.actions.add = false;
-    this.settings.hideSubHeader = false;
+    this.settings.actions.edit = false;
     this.dataDocs.count = 0;
   }
 
@@ -72,7 +75,7 @@ export class MailBodyListDataComponent extends BasePage implements OnInit {
               id: () => (searchFilter = SearchFilter.EQ),
               bodyEmail: () => (searchFilter = SearchFilter.ILIKE),
               subjectEmail: () => (searchFilter = SearchFilter.ILIKE),
-              status: () => (searchFilter = SearchFilter.ILIKE),
+              status: () => (searchFilter = SearchFilter.EQ),
             };
 
             search[filter.field]();
@@ -133,5 +136,26 @@ export class MailBodyListDataComponent extends BasePage implements OnInit {
     console.log(row);
     this.selectedRow = row.data;
     this.rowSelected = true;
+  }
+
+  confirm() {
+    if (!this.rowSelected) return;
+    this.refresh.emit(this.selectedRow);
+    this.modalRef.hide();
+  }
+
+  private getBodyMail() {
+    this.loading = true;
+    this.docService.getVigEmailBody(this.selectedRow.id).subscribe({
+      next: response => {
+        this.bodyMail = response.data;
+        for (let i = 0; i < this.bodyMail.length; i++) {
+          this.bodyMail[i].id = response.data[i].bodyEmail;
+          this.bodyMail[i].id = response.data[i].subjectEmail;
+          this.bodyMail[i].id = response.data[i].status;
+        }
+      },
+      error: error => (this.loading = false),
+    });
   }
 }

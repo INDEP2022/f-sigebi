@@ -18,7 +18,7 @@ export class CreateOrEditEmailMaintenencekDialogComponent
 {
   form: ModelForm<IVigEmailSend>;
 
-  title: string = 'Modal';
+  title: string = 'CORREO DE RESPONSABLES DE ENVÍO';
   edit: boolean = false;
   emailSend: IVigEmailSend;
   data: any;
@@ -82,7 +82,7 @@ export class CreateOrEditEmailMaintenencekDialogComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

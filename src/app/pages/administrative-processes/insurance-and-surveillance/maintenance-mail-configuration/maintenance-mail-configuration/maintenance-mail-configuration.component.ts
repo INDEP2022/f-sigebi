@@ -14,6 +14,7 @@ import {
 } from 'src/app/core/models/ms-email/email-model';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { EventSelectionModalComponent } from 'src/app/pages/commercialization/catalogs/components/event-selection-modal/event-selection-modal.component';
 import { MailBodyListDataComponent } from '../body-mail-list/body-mail-list.component';
 import { CreateOrEditEmailMaintenencekDialogComponent } from '../components/create-or-edit-maintenence-mail-dialog/create-or-edit-maintenence-mail-dialog.component';
 import { EMAIL_CONFIG_COLUMNS } from './mail-configuration-columns';
@@ -31,10 +32,12 @@ export class MaintenanceMailConfigurationComponent
   columnFilters: any = [];
   formCorreo: ModelForm<IVigEmailBody>;
   createOrEditEmailMaintenencekDialogComponent: CreateOrEditEmailMaintenencekDialogComponent;
+  mailBodyListDataComponent = MailBodyListDataComponent;
   data: LocalDataSource = new LocalDataSource();
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   emailBody: IVigEmailBody;
+  event: IVigEmailBody = null;
   modalRef: any;
   constructor(
     private emailService: EmailService,
@@ -128,6 +131,7 @@ export class MaintenanceMailConfigurationComponent
       status: ['', [Validators.required]],
     });
     if (this.emailBody != null) {
+      console.log(this.emailBody);
     }
   }
 
@@ -161,51 +165,51 @@ export class MaintenanceMailConfigurationComponent
   }
 
   handleSuccess() {
-    const message: string = 'Guardado';
-    this.alert('success', 'Registro guardado correctamente', '');
+    const message: string = 'Actualizado';
+    this.alert('success', 'Registro actualizado correctamente', '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 
-  createBody() {
+  update() {
     this.loading = true;
-    this.emailService.createEmailBody(this.formCorreo.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => {
-        this.loading = false;
-        this.alert('warning', 'Error al guardar registros', '');
-        this.data.refresh();
-      },
-    });
+    this.emailService
+      .updateEmailBody(
+        this.formCorreo.controls['id'].value,
+        this.formCorreo.value
+      )
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => {
+          this.loading = false;
+          this.alert('warning', 'Error al actualizar registros', '');
+          this.data.refresh();
+        },
+      });
   }
 
-  resetForm() {
+  resetForm(): void {
     this.formCorreo.reset();
   }
 
-  showData() {
-    //descomentar si usan FilterParams ejemplo de consulta
-    //this.filterParams.getValue().addFilter('id', 3429640, SearchFilter.EQ)
-    //this.filterParams.getValue().addFilter('keyTypeDocument', 'ENTRE', SearchFilter.ILIKE)
-
-    //ejemplo de uso con ListParams
-    //this.params.getValue()['filter.id'] = '$eq:3429640'
-
-    let config: ModalOptions = {
-      initialState: {
-        //filtros
-        paramsList: this.params,
-        //filterParams: this.filterParams, // en caso de no usar FilterParams no enviar
-        callback: (next: boolean, data: any /*Modelado de datos*/) => {
-          if (next) {
-            //mostrar datos de la búsqueda
-          }
-        },
-      },
+  showData(context?: Partial<EventSelectionModalComponent>) {
+    const modalRef = this.modalService.show(MailBodyListDataComponent, {
+      initialState: { ...context },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    };
-    this.modalService.show(MailBodyListDataComponent, config);
+    });
+    modalRef.content.refresh.subscribe((next: any) => {
+      if (next) {
+        console.log(next);
+        this.event = next;
+        this.formCorreo.controls['id'].setValue(this.event.id);
+        this.formCorreo.controls['subjectEmail'].setValue(
+          this.event.subjectEmail
+        );
+        this.formCorreo.controls['bodyEmail'].setValue(this.event.bodyEmail);
+        this.formCorreo.controls['status'].setValue(this.event.status);
+      }
+    });
   }
 }

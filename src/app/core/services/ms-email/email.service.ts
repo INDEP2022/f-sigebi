@@ -59,11 +59,19 @@ export class EmailService extends HttpService {
     return this.put(`${EmailEndPoint.VigEmailSend}/${id}`, form);
   }
 
+  updateEmailBody(id: any, form: Omit<IVigEmailBody, 'id'>) {
+    return this.put(`${EmailEndPoint.VigEmailBody}/${id}`, form);
+  }
+
   getById(id: string | number): Observable<IVigEmailSend> {
     return this.getById(`${EmailEndPoint.VigEmailSend}/${id}`);
   }
 
-  deleteEmailBook(id: any) {
+  getMailById(id: any, form: Omit<IVigEmailBody, 'id'>) {
+    return this.getById(`${EmailEndPoint.VigEmailBody}/${id}`);
+  }
+
+  deleteEmailBook(id: any): Observable<any> {
     return this.delete(`${EmailEndPoint.VigMailBook}/${id}`);
   }
 
