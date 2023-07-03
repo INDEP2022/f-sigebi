@@ -12,9 +12,18 @@
       <div class="d-flex justify-content-end">
         <div class="p-2">
           <button
+            *ngIf="infoTask?.State == null"
             type="button"
             (click)="confirm()"
             class="btn btn-primary btn-sm active">
+            Aceptar
+          </button>
+
+          <button
+            *ngIf="infoTask?.State == 'FINALIZADA'"
+            type="button"
+            (click)="confirm()"
+            class="btn btn-primary btn-sm active disabled">
             Aceptar
           </button>
         </div>

@@ -106,6 +106,7 @@ export class GeneralDataGoodsComponent
     const patron: RegExp =
       /^(0[1-9]|1[0-9]|2[0-9]|3[01])\/(0[1-9]|1[0-2])\/((19|20)\d\d)$/;
     let body: any = {};
+    console.log('ATRIBUTOS DESDE GENERAL', this.dataAtribute);
     this.dataAtribute.forEach((row: any) => {
       if (patron.test(row.value)) {
         row.value = this.convertirFecha(row.value);

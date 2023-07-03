@@ -7,6 +7,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IStoreStock } from 'src/app/core/models/ms-store-alias-stock/store-alias-stock.model';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
@@ -15,6 +16,7 @@ import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-
 import { TypeWarehouseService } from 'src/app/core/services/catalogs/type-warehouse.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { StoreAliasStockService } from 'src/app/core/services/ms-store/store-alias-stock.service';
+import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { WarehouseConfirmComponent } from '../warehouse-confirm/warehouse-confirm.component';
 
@@ -36,6 +38,8 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
   startDate: string = '';
   endDate: string = '';
   programming: Iprogramming;
+  task: ITask;
+  infoTask: ITask;
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
@@ -47,7 +51,8 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
     private localityService: LocalityService,
     private typeWarehouseService: TypeWarehouseService,
     private router: Router,
-    private programmingService: ProgrammingRequestService
+    private programmingService: ProgrammingRequestService,
+    private taskService: TaskService
   ) {
     super();
     this.programmingId = Number(
@@ -57,6 +62,7 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getInfoWarehouse();
+    this.getInfoTask();
   }
 
   getInfoWarehouse() {
@@ -83,6 +89,18 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
         const endDate = response.data[0].fhend;
         this.startDate = moment(startDate).format('DD-MM-YYYY');
         this.endDate = moment(endDate).format('DD-MM-YYYY');
+      },
+      error: error => {},
+    });
+  }
+
+  getInfoTask() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    this.task = JSON.parse(localStorage.getItem('Task'));
+    params.getValue()['filter.id'] = this.task.id;
+    this.taskService.getAll(params.getValue()).subscribe({
+      next: response => {
+        this.infoTask = response.data[0];
       },
       error: error => {},
     });

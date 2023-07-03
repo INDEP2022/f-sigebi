@@ -103,7 +103,7 @@ export class ProceedingsService extends HttpService {
   }
 
   getExistProceedings(numberGood: string) {
-    return this.get<IListResponseMessage<{ existe: number }>>(
+    return this.get<IListResponseMessage<{ no_acta: string }>>(
       ProceedingsEndpoints.ExistProceedings + '/' + numberGood
     );
   }

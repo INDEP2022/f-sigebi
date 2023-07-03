@@ -64,9 +64,6 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       if (this.data) {
         this.getPaginated(params);
       }
-      if (this.dataInventary) {
-        this.getPaginated(params);
-      }
     });
   }
 
@@ -78,7 +75,6 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     filterParams.addFilter('classifGoodNumber', this.clasification);
     filterParams.addFilter('columnNumber', '51', SearchFilter.NOTIN);
     const good = this.good as any;
-    // console.log(good);
     this.goodsqueryService
       .getAtribuXClasif(filterParams.getParams())
       .pipe(takeUntil(this.$unSubscribe))
@@ -90,116 +86,168 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
             const newData = response.data.sort((a, b) => {
               return a.columnNumber - b.columnNumber;
             });
-            // console.log(newData);
-            if (this.loadInventary) {
-              this.dataInventary = newData.map((item, index) => {
-                const column = 'val' + item.columnNumber;
-                if (item.attribute === 'SITUACION JURIDICA') {
-                  if (good[column]) {
-                    good.val35 = secondFormatDate(new Date());
-                  } else {
-                    good.val35 = null;
-                  }
-                }
-                let v_val_entfed;
-                this.val_atributos_inmuebles++;
-                if (good.no_tipo && good.no_tipo + '' === '6') {
-                  if (
-                    item.attribute === 'ESTADO' &&
-                    this.val_atributos_inmuebles > 4
-                  ) {
-                  }
-                }
-                if (this.inventary) {
-                  return {
-                    column,
-                    attribute: item.attribute,
-                    value:
-                      this.initValue === true
-                        ? this.inventary[index]
-                          ? this.inventary[index].valueAttributeInventory
-                          : null
-                        : null,
-                    required: item.required === 'S',
-                    update: this.haveUpdate(item.update),
-                    requiredAva: item.attribute
-                      ? this.haveRequiredAva(item.attribute)
-                      : false,
-                    tableCd: item.tableCd,
-                    editing: false,
-                    length: item.length,
-                    dataType: item.dataType,
-                    numColumn: item.columnNumber,
-                  };
+            this.data = newData.map(item => {
+              const column = 'val' + item.columnNumber;
+              if (item.attribute === 'SITUACION JURIDICA') {
+                if (good[column]) {
+                  good.val35 = secondFormatDate(new Date());
                 } else {
-                  return {
-                    column,
-                    attribute: item.attribute,
-                    value:
-                      this.initValue === true
-                        ? this.inventary
-                          ? this.inventary[index].valueAttributeInventory
-                          : null
-                        : null,
-                    required: item.required === 'S',
-                    update: this.haveUpdate(item.update),
-                    requiredAva: item.attribute
-                      ? this.haveRequiredAva(item.attribute)
-                      : false,
-                    tableCd: item.tableCd,
-                    editing: false,
-                    length: item.length,
-                    dataType: item.dataType,
-                    numColumn: item.columnNumber,
-                  };
+                  good.val35 = null;
                 }
-              });
-              this.totalItems = this.dataInventary.length;
-              this.dataTemp = [...this.dataInventary];
-              this.getPaginated(this.params.value);
-              this.loading = false;
-            } else {
-              this.data = newData.map(item => {
-                const column = 'val' + item.columnNumber;
-                if (item.attribute === 'SITUACION JURIDICA') {
-                  if (good[column]) {
-                    good.val35 = secondFormatDate(new Date());
-                  } else {
-                    good.val35 = null;
-                  }
+              }
+              // validar si existe tipo con goodClassNumber
+              let v_val_entfed;
+              this.val_atributos_inmuebles++;
+              if (this.v_bien_inm) {
+                if (
+                  item.attribute === 'ESTADO' &&
+                  this.val_atributos_inmuebles > 4
+                ) {
                 }
-                // validar si existe tipo con goodClassNumber
-                let v_val_entfed;
-                this.val_atributos_inmuebles++;
-                if (this.v_bien_inm) {
-                  if (
-                    item.attribute === 'ESTADO' &&
-                    this.val_atributos_inmuebles > 4
-                  ) {
-                  }
-                }
-                return {
-                  column,
-                  attribute: item.attribute,
-                  value:
-                    this.initValue === true ? this.getValue(good, item) : null,
-                  required: item.required === 'S',
-                  update: this.haveUpdate(item.update),
-                  requiredAva: item.attribute
-                    ? this.haveRequiredAva(item.attribute)
-                    : false,
-                  tableCd: item.tableCd,
-                  editing: false,
-                  length: item.length,
-                  dataType: item.dataType,
-                };
-              });
-              this.totalItems = this.data.length;
-              this.dataTemp = [...this.data];
-              this.getPaginated(this.params.value);
-              this.loading = false;
-              // console.log(this.data);
-            }
+              }
+              return {
+                column,
+                attribute: item.attribute,
+                value:
+                  this.initValue === true ? this.getValue(good, item) : null,
+                required: item.required === 'S',
+                update: this.haveUpdate(item.update),
+                requiredAva: item.attribute
+                  ? this.haveRequiredAva(item.attribute)
+                  : false,
+                tableCd: item.tableCd,
+                editing: false,
+                length: item.length,
+                dataType: item.dataType,
+              };
+            });
+            console.log(this.data);
+
+            this.totalItems = this.data.length;
+            this.dataTemp = [...this.data];
+            this.getPaginated(this.params.value);
+            this.loading = false;
+            // if (this.loadInventary) {
+            //   this.data = newData.map((item, index) => {
+            //     const column = 'val' + item.columnNumber;
+            //     if (item.attribute === 'SITUACION JURIDICA') {
+            //       if (good[column]) {
+            //         good.val35 = secondFormatDate(new Date());
+            //       } else {
+            //         good.val35 = null;
+            //       }
+            //     }
+            //     let fecha: boolean = false;
+            //     if (item.dataType === 'D' || item.attribute.includes('FECHA')) {
+            //       fecha = true;
+            //       console.log(item.attribute);
+            //     }
+            //     this.val_atributos_inmuebles++;
+            //     if (good.no_tipo && good.no_tipo + '' === '6') {
+            //       if (
+            //         item.attribute === 'ESTADO' &&
+            //         this.val_atributos_inmuebles > 4
+            //       ) {
+            //       }
+            //     }
+
+            //     if (this.inventary) {
+            //       return {
+            //         column,
+            //         attribute: item.attribute,
+            //         value:
+            //           this.initValue === true
+            //             ? this.inventary[index]
+            //               ? this.getValueInventary(
+            //                   fecha,
+            //                   this.inventary[index].valueAttributeInventory
+            //                 )
+            //               : null
+            //             : null,
+            //         required: item.required === 'S',
+            //         update: this.haveUpdate(item.update),
+            //         requiredAva: item.attribute
+            //           ? this.haveRequiredAva(item.attribute)
+            //           : false,
+            //         tableCd: item.tableCd,
+            //         editing: false,
+            //         length: item.length,
+            //         dataType: item.dataType,
+            //         numColumn: item.columnNumber,
+            //       };
+            //     } else {
+            //       return {
+            //         column,
+            //         attribute: item.attribute,
+            //         value:
+            //           this.initValue === true
+            //             ? this.inventary
+            //               ? this.getValueInventary(
+            //                   fecha,
+            //                   this.inventary[index].valueAttributeInventory
+            //                 )
+            //               : null
+            //             : null,
+            //         required: item.required === 'S',
+            //         update: this.haveUpdate(item.update),
+            //         requiredAva: item.attribute
+            //           ? this.haveRequiredAva(item.attribute)
+            //           : false,
+            //         tableCd: item.tableCd,
+            //         editing: false,
+            //         length: item.length,
+            //         dataType: item.dataType,
+            //         numColumn: item.columnNumber,
+            //       };
+            //     }
+            //   });
+            //   this.totalItems = this.data.length;
+            //   this.dataTemp = [...this.data];
+            //   console.log(this.dataTemp);
+            //   this.getPaginated(this.params.value);
+            //   this.loading = false;
+            // } else {
+            //   this.data = newData.map(item => {
+            //     const column = 'val' + item.columnNumber;
+            //     if (item.attribute === 'SITUACION JURIDICA') {
+            //       if (good[column]) {
+            //         good.val35 = secondFormatDate(new Date());
+            //       } else {
+            //         good.val35 = null;
+            //       }
+            //     }
+            //     // validar si existe tipo con goodClassNumber
+            //     let v_val_entfed;
+            //     this.val_atributos_inmuebles++;
+            //     if (this.v_bien_inm) {
+            //       if (
+            //         item.attribute === 'ESTADO' &&
+            //         this.val_atributos_inmuebles > 4
+            //       ) {
+            //       }
+            //     }
+            //     return {
+            //       column,
+            //       attribute: item.attribute,
+            //       value:
+            //         this.initValue === true ? this.getValue(good, item) : null,
+            //       required: item.required === 'S',
+            //       update: this.haveUpdate(item.update),
+            //       requiredAva: item.attribute
+            //         ? this.haveRequiredAva(item.attribute)
+            //         : false,
+            //       tableCd: item.tableCd,
+            //       editing: false,
+            //       length: item.length,
+            //       dataType: item.dataType,
+            //     };
+            //   });
+            //   this.totalItems = this.data.length;
+            //   this.dataTemp = [...this.data];
+            //   this.getPaginated(this.params.value);
+            //   this.loading = false;
+            //   // console.log(this.data);
+            // }
           } else {
             this.clearTable();
           }
@@ -235,16 +283,8 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     return this.service ? this.service.data : [];
   }
 
-  get dataInventary() {
-    return this.service ? this.service.dataInventary : [];
-  }
-
   set data(value) {
     if (this.service) this.service.data = value;
-  }
-
-  set dataInventary(value) {
-    if (this.service) this.service.dataInventary = value;
   }
 
   private openModalSelect(
@@ -257,11 +297,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.onSelect.subscribe(data => {
-      if (this.loadInventary) {
-        this['data'] = this['dataInventary'];
-      }
       if (data) callback(data, this);
-      // console.log(this['data']=this['dataInventary']);
     });
   }
 
@@ -388,11 +424,39 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
 
   private getValue(good: any, item: IAttribClassifGoods) {
     const column = 'val' + item.columnNumber;
-    return item.dataType === 'D' || item.attribute.includes('FECHA')
-      ? formatForIsoDate(good[column], 'string')
-      : good[column] === 'NULL'
-      ? ''
-      : good[column];
+    if (item.dataType === 'D' || item.attribute.includes('FECHA')) {
+      debugger;
+    }
+    return good[column]
+      ? item.dataType === 'D' || item.attribute.includes('FECHA')
+        ? formatForIsoDate(good[column], 'string')
+        : good[column] === 'NULL'
+        ? ''
+        : good[column]
+      : null;
+  }
+
+  private getValueInventary(isFecha: boolean, item: any) {
+    if (isFecha) {
+      console.log(formatForIsoDate(item, 'string'));
+      return formatForIsoDate(item, 'string');
+    } else {
+      return item;
+    }
+  }
+
+  formatDate(fe: string) {
+    const fecha = new Date(fe);
+    console.log(fe);
+    console.log(fecha);
+
+    const dia = fecha.getDate();
+    const mes = fecha.getMonth() + 1; // Los meses comienzan desde 0, por lo que se suma 1
+    const anio = fecha.getFullYear();
+    const diaFormateado = ('0' + dia).slice(-2);
+    const mesFormateado = ('0' + mes).slice(-2);
+    const fechaFormateada = diaFormateado + '/' + mesFormateado + '/' + anio;
+    return fechaFormateada;
   }
 
   private haveRequiredAva(attribute: string) {

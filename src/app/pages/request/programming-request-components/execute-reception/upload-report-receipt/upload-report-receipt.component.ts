@@ -4,12 +4,15 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { IGood } from 'src/app/core/models/good/good.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import {
   IReceipt,
   IRecepitGuard,
 } from 'src/app/core/models/receipt/receipt.model';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
+import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
@@ -41,7 +44,9 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     private programmingService: ProgrammingRequestService,
     private wContentService: WContentService,
     private receptionGoodService: ReceptionGoodService,
-    private proceedingService: ProceedingsService
+    private proceedingService: ProceedingsService,
+    private programminGoodService: ProgrammingGoodService,
+    private goodService: GoodService
   ) {
     super();
   }
@@ -282,19 +287,25 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           extension
         )
         .subscribe({
-          next: response => {
+          next: async response => {
             const updateReceipt = this.updateReceipt(response.dDocName);
             if (updateReceipt) {
-              this.alertInfo(
-                'success',
-                'Acción Correcta',
-                'Documento adjuntado correctamente'
-              ).then(question => {
-                if (question.isConfirmed) {
-                  this.close();
-                  this.modalRef.content.callback(true);
+              const updateProgrammingGood = await this.updateProgrammingGood();
+              if (updateProgrammingGood) {
+                const updateGood = await this.updateGood();
+                if (updateGood) {
+                  this.alertInfo(
+                    'success',
+                    'Acción Correcta',
+                    'Documento adjuntado correctamente'
+                  ).then(question => {
+                    if (question.isConfirmed) {
+                      this.close();
+                      this.modalRef.content.callback(true);
+                    }
+                  });
                 }
-              });
+              }
             }
           },
         });
@@ -450,6 +461,44 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         next: () => {
           resolve(true);
         },
+      });
+    });
+  }
+
+  updateProgrammingGood() {
+    return new Promise((resolve, reject) => {
+      const goodsReception = this.guardReception.value;
+      goodsReception.map((item: IGood) => {
+        const formData: Object = {
+          programmingId: this.programming.id,
+          goodId: item.id,
+          status: 'EN_RECEPCION',
+        };
+        this.programminGoodService.updateGoodProgramming(formData).subscribe({
+          next: response => {
+            resolve(true);
+          },
+          error: error => {},
+        });
+      });
+    });
+  }
+
+  updateGood() {
+    return new Promise((resolve, reject) => {
+      const goodsReception = this.guardReception.value;
+      goodsReception.map((item: IGood) => {
+        const formData: Object = {
+          id: item.id,
+          goodId: item.id,
+          status: 'EN_RECEPCION',
+        };
+        this.goodService.updateByBody(formData).subscribe({
+          next: response => {
+            resolve(true);
+          },
+          error: error => {},
+        });
       });
     });
   }
