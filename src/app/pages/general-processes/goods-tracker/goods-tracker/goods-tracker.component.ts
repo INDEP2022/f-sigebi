@@ -200,9 +200,9 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     }
     if (transmitters.length) {
       this.filters.global.selecStation = 'S';
-      this.filters.global.csTransfereeNumber = transmitters;
+      this.filters.global.csStationNumber = transmitters;
     } else {
-      this.filters.global.csTransfereeNumber = null;
+      this.filters.global.csStationNumber = null;
     }
     if (autorities.length) {
       this.filters.global.selecAuthority = 'S';
