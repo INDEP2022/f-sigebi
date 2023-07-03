@@ -72,6 +72,11 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
     this.activatedRoute.queryParams.subscribe({
       next: param => {
         console.log(param);
+        if (param['numberGood']) {
+          this.noBienControl = param['numberGood'] || null;
+          this.searchGood();
+          return;
+        }
         if (this.previousRouteService.getHistory().length > 1) {
           this.origin = 1;
         }

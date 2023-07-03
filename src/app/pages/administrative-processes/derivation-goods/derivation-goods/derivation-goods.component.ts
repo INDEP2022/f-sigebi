@@ -45,7 +45,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   selectedRow: any;
   goodData: any;
-
+  good: any;
   bkConversionsCveActaCon: any;
 
   get id() {
@@ -98,7 +98,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     return this.form.get('destinationLabel');
   }
 
-  attributes: any;
+  attributes: any = [];
 
   //Settings para la tabla
   settingsGood = {
@@ -274,6 +274,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             .getAllFilter(paramsF.getParams())
             .toPromise();
           // if (conversionData.typeConv === '1') {
+          this.good = res.data[0];
           if (conversionData.typeConv === '2') {
             this.id.setValue(res.data[0]['id']);
             this.observation.setValue(res.data[0]['observations']);
@@ -285,7 +286,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.statusCode = res.data[0]['status'];
             this.numberGoodSon.setValue(e);
             this.searchStatus(res.data[0]['status']);
-            this.getAttributesGood(e);
+            this.getAttributesGood(res.data[0]['goodClassNumber']);
             // this.flagActa = true;
             this.flagCargMasiva = false;
             this.flagCargaImagenes = false;
@@ -507,6 +508,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       {
         queryParams: {
           pGoodFatherNumber: this.form.value.numberGoodFather,
+          expedientNumber: this.form.value.numberDossier,
         },
       }
     );
@@ -520,8 +522,12 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         this.goodData = res;
         console.log('res:', res);
         this.goodData = this.goodData.data[0];
-        localStorage.setItem('derivationGoodId', this.goodData.goodId);
-        this.router.navigate(['pages/general-processes/good-photos']);
+        // localStorage.setItem('selectedGoodsForPhotos', this.form.value.numberGoodFather);
+        this.router.navigate(['pages/general-processes/good-photos'], {
+          queryParams: {
+            numberGood: this.form.value.numberGoodFather,
+          },
+        });
       },
       err => {
         console.log(err);
@@ -603,16 +609,31 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     this.destinationLabel.setValue(event.data.noLabel);
     this.selectedRow = event.data;
 
-    this.getAttributesGood(event.data);
+    this.getAttributesGood(event.data.noClassifGood);
   }
 
   getAttributesGood(event: any) {
-    this.serviceGood.getAttributesGood(event.goodId).subscribe(
+    this.serviceGood.getAllFilterClassification(event).subscribe(
       res => {
+        this.attributes = [];
         console.log(res);
-        delete res.goodNumber;
-        this.attributes = Object.entries(res).filter(([key, value]) => value);
-        console.log(this.attributes);
+        // delete res.goodNumber;
+        // this.attributes = Object.entries(res.data).filter(([key, value]) => value.attribute);
+        for (let i = 0; i < res.data.length; i++) {
+          let value = '';
+          for (const index in this.good) {
+            if (index === `val${res.data[i].columnNumber}`) {
+              console.log(this.good[index]);
+              value = this.good[index];
+            }
+          }
+          this.attributes.push({
+            attributes: res.data[i].attribute,
+            value: value,
+          });
+        }
+        // this.attributes = res.data.map(objeto => objeto.attribute);
+        // console.log(this.attributes);
       },
       err => {
         console.log(err);
