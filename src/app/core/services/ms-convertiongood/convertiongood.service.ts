@@ -9,6 +9,7 @@ import { IRSender } from 'src/app/pages/administrative-processes/proceedings-con
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IAssetConversion } from '../../models/ms-convertiongood/asset-conversion';
 import { IConvertiongood } from '../../models/ms-convertiongood/convertiongood';
+import { IProceedingDeliveryReception } from '../../models/ms-proceedings/proceeding-delivery-reception';
 import { environment } from './../../../../environments/environment';
 @Injectable({
   providedIn: 'root',
@@ -92,7 +93,7 @@ export class ConvertiongoodService extends HttpService {
       .get<any>(URL, { headers: headers, params: params })
       .pipe(map(res => res));
   }
-  createActa(conversionActa: IConverGoodCreate) {
+  createActa(conversionActa: IProceedingDeliveryReception) {
     return this.post(ConvertiongoodEndpoints.Convertion, conversionActa);
   }
 
@@ -105,7 +106,7 @@ export class ConvertiongoodService extends HttpService {
     return this.get(route, params);
   }
   getActasByConvertion(cve: string) {
-    const route = `${ConvertiongoodEndpoints.LisActas}?filter.cve_acta_conv=${cve}`;
+    const route = `${ConvertiongoodEndpoints.LisActas}?filter.minutesErNumber=${cve}`;
     return this.get(route, cve);
   }
 }
