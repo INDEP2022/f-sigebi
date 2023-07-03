@@ -435,12 +435,23 @@
         </button>
       </div>
       <ng2-smart-table
+        *ngIf="!infoTask?.State"
         [attr.class]="'table-bordered table-responsive'"
         [settings]="settingUser"
         [source]="usersToProgramming"
         (edit)="openForm($event.data)"
         (delete)="deleteUser($event.data)">
       </ng2-smart-table>
+
+      <ng2-smart-table
+        *ngIf="infoTask?.State == 'FINALIZADA'"
+        [attr.class]="'table-bordered table-responsive'"
+        [settings]="settingUserClose"
+        [source]="usersToProgramming"
+        (edit)="openForm($event.data)"
+        (delete)="deleteUser($event.data)">
+      </ng2-smart-table>
+
       <app-pagination
         [params]="paramsUsers"
         [totalItems]="totalItemsUsers"></app-pagination>
@@ -474,6 +485,7 @@
                   value="id"
                   bindLabel="descCondition"
                   label="Estado"
+                  (change)="stateSearchSelect($event)"
                   (fetchItems)="getStates($event)"></ngx-select>
               </form-field>
             </div>
@@ -486,6 +498,7 @@
                   value="idMunicipality"
                   bindLabel="nameMunicipality"
                   label="Municipio"
+                  (change)="municipalitySearchSelect($event)"
                   (fetchItems)="getMunicipalities($event)"></ngx-select>
               </form-field>
             </div>
@@ -593,12 +606,22 @@
                   "></app-columns-select>
               </div>
               <ng2-smart-table
+                *ngIf="!infoTask?.State"
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="settingsTransportableGoods"
                 [source]="goodsTranportables"
                 (edit)="showGood($event.data)"
                 (delete)="removeGoodTrans($event.data)">
               </ng2-smart-table>
+
+              <ng2-smart-table
+                *ngIf="infoTask?.State == 'FINALIZADA'"
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settingsTransportableGoodsClose"
+                [source]="goodsTranportables"
+                (edit)="showGood($event.data)">
+              </ng2-smart-table>
+
               <app-pagination
                 [params]="paramsTransportableGoods"
                 [totalItems]="totalItemsTransportableGoods"></app-pagination>
@@ -609,12 +632,22 @@
                   [(settings)]="settingGuardGoods"></app-columns-select>
               </div>
               <ng2-smart-table
+                *ngIf="!infoTask?.State"
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="settingGuardGoods"
                 [source]="goodsGuards"
                 (edit)="showGood($event.data)"
                 (delete)="removeGoodGuard($event.data)">
               </ng2-smart-table>
+
+              <ng2-smart-table
+                *ngIf="infoTask?.State == 'FINALIZADA'"
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settingGuardGoodsClose"
+                [source]="goodsGuards"
+                (edit)="showGood($event.data)">
+              </ng2-smart-table>
+
               <app-pagination
                 [params]="paramsGuardGoods"
                 [totalItems]="totalItemsTransportableGuard"></app-pagination>
@@ -625,11 +658,20 @@
                   [(settings)]="settingWarehouseGoods"></app-columns-select>
               </div>
               <ng2-smart-table
+                *ngIf="!infoTask?.State"
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="settingWarehouseGoods"
                 [source]="goodsWarehouse"
                 (edit)="showGood($event.data)"
                 (delete)="removeGoodWarehouse($event.data)">
+              </ng2-smart-table>
+
+              <ng2-smart-table
+                *ngIf="infoTask?.State == 'FINALIZADA'"
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settingWarehouseGoodsClose"
+                [source]="goodsWarehouse"
+                (edit)="showGood($event.data)">
               </ng2-smart-table>
               <app-pagination
                 [params]="paramsWarehouseGoods"
