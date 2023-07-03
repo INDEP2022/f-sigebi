@@ -91,8 +91,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         .get('noBien')
         .valueChanges.pipe(debounceTime(500), takeUntil(this.$unSubscribe))
         .subscribe(async res => {
-          console.log('Desde el componenete de change', res);
-
+          console.info('Desde el componenete de change', res);
           if (this.goodselect && res !== null) {
             if (this.goodselect.goodClassNumber) {
               const params = new ListParams();
