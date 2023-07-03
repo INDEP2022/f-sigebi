@@ -50,11 +50,15 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   @Input() subtypes = new DefaultSelect();
   @Input() ssubtypes = new DefaultSelect();
   @Input() sssubtypes = new DefaultSelect();
+  @Input() set reloadGood(value: IGood) {
+    if (value) this.getData(value);
+  }
 
   @Output() goodTypeChange = new EventEmitter<IGoodType>();
   @Output() goodSubtypeChange = new EventEmitter<IGoodSubType>();
   @Output() goodSsubtypeChange = new EventEmitter<IGoodsSubtype>();
   @Output() goodSssubtypeChange = new EventEmitter<IGoodSssubtype>();
+
   get type() {
     return this.form.get(this.typeField);
   }
@@ -87,6 +91,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         this.form.get('noBien').value !== '') &&
       this.loadOnChangesNoBien
     ) {
+      console.info('Desde el componenete de change*******');
       this.form
         .get('noBien')
         .valueChanges.pipe(debounceTime(500), takeUntil(this.$unSubscribe))
@@ -120,6 +125,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         });
       return;
     }
+
     if (this.form) {
       this.form.valueChanges
         .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
@@ -150,6 +156,34 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     }
   }
 
+  async getData(good: IGood) {
+    console.info('---------- nuevo flujo -----------------', this.goodselect);
+    if (good) {
+      if (good.goodClassNumber) {
+        const params = new ListParams();
+        const response: any = await this.getClassif(
+          params,
+          good.goodClassNumber
+        );
+        console.log(response);
+        this.sssubtype.setValue(response.id);
+        this.onSssubtypesChange(response);
+      }
+    } else {
+      this.type.setValue('');
+      this.types = new DefaultSelect([], 0);
+      this.subtype.setValue('');
+      this.subtypes = new DefaultSelect([], 0);
+      this.ssubtype.setValue('');
+      this.ssubtypes = new DefaultSelect([], 0);
+      this.sssubtype.setValue('');
+      this.sssubtypes = new DefaultSelect([], 0);
+      this.form.get('situacion').setValue('');
+      this.form.get('destino').setValue('');
+      this.form.get('estatus').setValue('');
+      this.goodSssubtypeChange.emit(null);
+    }
+  }
   getTypes(params: ListParams, id: any = null) {
     const _params: any = params;
     if (id) {
