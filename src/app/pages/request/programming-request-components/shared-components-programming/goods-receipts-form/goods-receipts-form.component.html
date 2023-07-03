@@ -1,6 +1,11 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Bienes por recibo resguardo</h5>
+    <h5 *ngIf="type == 'guard'" class="modal-title">
+      Bienes por recibo resguardo
+    </h5>
+    <h5 *ngIf="type == 'warehouse'" class="modal-title">
+      Bienes por recibo Almacén
+    </h5>
   </div>
   <div body>
     <div class="d-flex justify-content-end">
