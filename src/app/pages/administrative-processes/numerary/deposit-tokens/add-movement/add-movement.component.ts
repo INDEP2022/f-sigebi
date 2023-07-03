@@ -180,6 +180,7 @@ export class AddMovementComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.accountMovementService.getDataBank(params__).subscribe({
         next: response => {
+          console.log('ress1', response);
           let result = response.data.map(item => {
             item['bankAndNumber'] =
               item.no_cuenta + ' - ' + item.cve_banco + ' - ' + item.nombre;
