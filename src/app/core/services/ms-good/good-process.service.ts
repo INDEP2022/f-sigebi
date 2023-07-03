@@ -30,7 +30,10 @@ export class GoodProcessService extends HttpService {
   getValOtro(model: IValNumeOtro) {
     return this.post<IResponse>(GoodProcessPoints.cuValOtro, model);
   }
-
+  getByIdSituation(id: string | number) {
+    const route = `${GoodProcessPoints.GetGoodSituation}`;
+    return this.get<any>(`${route}/${id}`);
+  }
   getVnNumerario(id: string | number) {
     return this.get(`${GoodProcessPoints.vnNumerario}?no_bien=${id}`);
   }

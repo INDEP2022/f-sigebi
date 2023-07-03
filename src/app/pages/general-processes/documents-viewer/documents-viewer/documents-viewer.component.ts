@@ -65,7 +65,9 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     this.settings.actions.delete = true;
     this.settings.actions.add = false;
     this.settings.rowClassFunction = (row: { data: { scanStatus: string } }) =>
-      row.data.scanStatus == 'ESCANEADO' ? 'digital' : 'pending';
+      row.data.scanStatus == 'ESCANEADO'
+        ? 'bg-success text-white'
+        : 'bg-dark text-white';
   }
 
   ngOnInit(): void {
@@ -95,6 +97,16 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
               case 'keyTypeDocument':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'significantDate':
+                if (filter.search != null) {
+                  filter.search = this.formatDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                  console.log(filter.search);
+                } else {
+                  filter.search = '';
+                }
+                console.log('ddddccc', filter.search);
+                break;
               case 'flyerNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
@@ -116,6 +128,21 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
       .subscribe(() => this.getDocuments());
   }
 
+  formatDate(dateString: string): string {
+    if (dateString === '') {
+      return '';
+    }
+    const date = new Date(dateString);
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    return `${month}/${year}`;
+  }
+
+  resetFilters(): void {
+    // Eliminar los filtros aplicados aquí
+    this.columnFilters = {};
+    this.getDocuments();
+  }
   onOptionsSelectedTypeDocument(value: any) {
     this.selectTypeDoc = value.id;
   }
@@ -181,6 +208,7 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   }
 
   getDocuments() {
+    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,

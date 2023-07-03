@@ -111,6 +111,7 @@
               <input
                 type="text"
                 class="form-control"
+                [readOnly]="true"
                 formControlName="numberGoodSon" />
             </form-field>
           </div>
@@ -135,6 +136,7 @@
               <textarea
                 type="text"
                 class="form-control"
+                [readOnly]="true"
                 formControlName="descriptionSon">
               </textarea>
             </form-field>
@@ -184,11 +186,18 @@
         </div>
 
         <div class="row mt-5 text-center">
-          <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="col-md-6 col-sm-6 col-xs-12">
             <button
               class="btn btn-primary btn-sm active"
               (click)="updateStatus()">
               Cambiar Status
+            </button>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="updateGood()">
+              Actualizar Bien
             </button>
           </div>
         </div>
@@ -225,9 +234,9 @@
           </div>
           <div class="table-responsive">
             <ng2-smart-table
-              class="col"
               [settings]="settingsGood"
               [source]="dataGoods2"
+              [attr.class]="'table-bordered table-responsive'"
               (rowSelect)="onRowSelect($event)">
             </ng2-smart-table>
           </div>
@@ -250,10 +259,13 @@
           </div>
           <div class="row" *ngFor="let attr of attributes">
             <div class="col-6">
-              <label class="label-first">{{ attr[1] }}:</label>
+              <label class="label-first">{{ attr.attributes }}:</label>
             </div>
             <div class="col-6">
-              <input type="text" placeholder="Introduce un valor" />
+              <input
+                type="text"
+                placeholder="Introduce un valor"
+                [value]="attr.value" />
             </div>
           </div>
         </div>

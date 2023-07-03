@@ -13,7 +13,27 @@ import { ListGoodsComponent } from '../list-goods/list-goods.component';
     `
       .hoverBg:hover {
         background-color: #11798a !important;
-        font-weight: 600;
+        font-weight: 700;
+      }
+
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
       }
     `,
   ],
@@ -23,7 +43,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
   clickTimer: any;
   @Input() rowData: any;
   @Output() funcionEjecutada = new EventEmitter<void>();
-
+  loadingBtn: boolean = false;
   constructor(
     private modalService: BsModalService,
     private accountMovementService: AccountMovementService
@@ -92,22 +112,26 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
   }
 
   async seleccionarBien_() {
+    this.loadingBtn = true;
+
     let V_BIEN_VALIDO: any;
     let vb_encontrado: any = false;
     if (
       this.rowData.currency != null &&
-      this.rowData.deposito != null &&
-      this.rowData.fec_movimiento != null &&
+      this.rowData.deposit != null &&
+      this.rowData.motionDate_ != null &&
       this.rowData.cveAccount != null
     ) {
       let obj = {
         diCurrency: this.rowData.currency,
         tiBank: this.rowData.bank,
-        fecMovement: this.rowData.fec_movimiento,
+        fecMovement: this.rowData.motiondate,
         diAccount: this.rowData.cveAccount,
       };
       console.log('obj', obj);
       const can: any = await this.getGoodSelectClasif(obj);
+      this.loadingBtn = false;
+      console.log('this.loadingBtn', this.loadingBtn);
       console.log('can', can);
 
       for (let i = 0; i < can.length; i++) {
@@ -115,8 +139,8 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
           var canVal2 = can[i].val2;
           var number = parseFloat(canVal2.replace(',', ''));
           console.log('number', number);
-          console.log('this.rowData.deposito', this.rowData.deposito);
-          if (number == Number(this.rowData.deposito)) {
+          console.log('this.rowData.deposito', this.rowData.deposit);
+          if (number == Number(this.rowData.deposit)) {
             console.log('SI');
 
             vb_encontrado = await this.getGoodMovimientosCuentas(can[i]);
@@ -125,10 +149,10 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
               V_BIEN_VALIDO = await this.getGoodMovimientosCuentas1(can[i]);
               if (V_BIEN_VALIDO == 0) {
                 let obj: any = {
-                  numberMotion: this.rowData.no_movimiento,
-                  numberAccount: this.rowData.no_cuenta,
-                  numberGood: can[i].no_bien,
-                  numberProceedings: can[i].no_expediente,
+                  numberMotion: this.rowData.motionnumber,
+                  numberAccount: this.rowData.accountnumber,
+                  numberGood: can[i].goodnumber,
+                  numberProceedings: can[i].proceedingsnumber,
                 };
                 const validUpdate = await this.updateAccountMovement(obj);
                 if (validUpdate) {
@@ -162,7 +186,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
           // this.data1.load(response.data);
           // this.data1.refresh();
           // this.totalItems = response.data.length;
-          this.loading = false;
+          // this.loading = false;
           console.log('response', response);
           resolve(response.data);
         },
@@ -170,7 +194,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
           // this.data1.load([]);
           // this.data1.refresh();
           // this.totalItems = 0;
-          this.loading = false;
+          // this.loading = false;
           resolve(null);
           console.log(null);
         },
@@ -180,8 +204,8 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
 
   async getGoodMovimientosCuentas(data: any) {
     const params = new ListParams();
-    params['filter.numberGood'] = `$eq:${data.no_bien}`;
-    params['filter.numberProceedings'] = `$eq:${data.no_expediente}`;
+    params['filter.numberGood'] = `$eq:${data.goodnumber}`;
+    params['filter.numberProceedings'] = `$eq:${data.proceedingsnumber}`;
 
     return new Promise((resolve, reject) => {
       this.accountMovementService.getAllFiltered(params).subscribe({
@@ -197,7 +221,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
 
   async getGoodMovimientosCuentas1(data: any) {
     const params = new ListParams();
-    params['filter.numberGood'] = `$eq:${data.no_bien}`;
+    params['filter.numberGood'] = `$eq:${data.goodnumber}`;
     return new Promise((resolve, reject) => {
       this.accountMovementService.getAllFiltered(params).subscribe({
         next: response => {
@@ -219,12 +243,12 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
           // this.modalRef.content.callback(true);
           // this.close();
           this.ejecutarFuncion();
-          this.loading = false;
+          // this.loading = false;
           resolve(true);
         },
         error: err => {
           this.alert('error', `Error al actualizar los datos`, '');
-          this.loading = false;
+          // this.loading = false;
           resolve(false);
         },
       });

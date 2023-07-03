@@ -75,26 +75,35 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = '';
             let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
+            field = `${filter.field}`;
             /*SPECIFIC CASES*/
-            if (filter.field === 'fec_dictaminacion') {
-              console.log('dddd', filter.search);
-              if (filter.search != null) {
-                filter.search = this.returnParseDate(filter.search);
-                searchFilter = SearchFilter.EQ;
-              } else {
-                filter.search = '';
-              }
-            } else {
-              searchFilter = SearchFilter.ILIKE;
+            switch (filter.field) {
+              case 'rulingdate':
+                if (filter.search != null) {
+                  filter.search = this.returnParseDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
+                break;
+              case 'armedtradekey':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'typeruling':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'sender':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
             }
 
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log('this.param:', this.params);
+              this.columnFilters[field] = `${filter.search}`;
               this.params.value.page = 1;
             } else {
               delete this.columnFilters[field];
@@ -123,13 +132,16 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
     };
     this.dictationService.getSigned(params).subscribe({
       next: resp => {
-        this.data1 = resp.data;
-        this.data.load(this.data1);
+        console.log(resp);
+        //this.data1 = resp.data;
+        this.data.load(resp.data);
         this.data.refresh();
         this.totalItems = resp.count;
         this.loading = false;
       },
       error: err => {
+        this.data.load([]);
+        this.data.refresh();
         this.loading = false;
         this.alert(
           'error',
@@ -140,14 +152,15 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
     });
   }
 
-  change(event: any) {
-    console.log(event);
+  change(event: IGetSigned) {
     this.enableSend = false;
     this.dictaminationSelect = event;
     this.electronicSignatureForm
       .get('no_expediente')
-      .patchValue(event.no_expediente);
-    this.electronicSignatureForm.get('no_volante').patchValue(event.no_volante);
+      .patchValue(event.universalfolio);
+    this.electronicSignatureForm
+      .get('no_volante')
+      .patchValue(event.steeringwheelnumber);
   }
 
   async print() {
@@ -160,22 +173,20 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
       return;
     }
     const n_COUNT: number = await this.ssf3SignatureElecDocsCount(
-      this.dictaminationSelect.no_of_dicta,
-      this.dictaminationSelect.tipo_dictaminacion
+      this.dictaminationSelect.dictanumber,
+      this.dictaminationSelect.typeruling
     );
-    console.log(n_COUNT);
     if (n_COUNT > 0) {
       this.PUP_CONSULTA_PDF_BD_SSF3();
     } else if (n_COUNT === 0) {
       const n_COUNT: number = await this.dictaminaCount(
-        this.dictaminationSelect.no_of_dicta,
-        this.dictaminationSelect.estatus_of
+        this.dictaminationSelect.dictanumber,
+        this.dictaminationSelect.statusof
       );
-      console.log(n_COUNT);
       if (n_COUNT > 0) {
         /// mandar a llamar al reporte R_FIRMA_DICTAMASIV
         this.downloadReport('blank', null);
-        if (this.dictaminationSelect.remitente === this.userAuth) {
+        if (this.dictaminationSelect.sender === this.userAuth) {
           this.enableSend = true;
         }
       }
@@ -183,7 +194,10 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
   }
 
   async send() {
-    if (this.dictaminationSelect.remitente !== this.userAuth) {
+    if (
+      this.dictaminationSelect.sender.toLowerCase() !==
+      this.userAuth.toLowerCase()
+    ) {
       this.alert(
         'warning',
         'Firma electrónica dictamen de procedencia',
@@ -191,7 +205,7 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
       );
       return;
     }
-    if (this.dictaminationSelect.firma !== 'S/FIRMA') {
+    if (this.dictaminationSelect.signature !== 'S/FIRMA') {
       this.alert(
         'warning',
         'Firma electrónica dictamen de procedencia',
@@ -256,12 +270,13 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
       },
     });
   }
+
   PUP_CONSULTA_PDF_BD_SSF3() {
     this.viewPictures();
   }
 
   viewPictures() {
-    if (!this.dictaminationSelect.no_volante) {
+    if (!this.dictaminationSelect.steeringwheelnumber) {
       this.alert(
         'error',
         'Ha ocurrido un error',
@@ -269,7 +284,7 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
       );
       return;
     }
-    this.getDocumentsByFlyer(this.dictaminationSelect.no_volante);
+    this.getDocumentsByFlyer(this.dictaminationSelect.steeringwheelnumber);
   }
 
   getDocumentsByFlyer(flyerNum: string | number) {
@@ -278,14 +293,12 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
     modalRef.content.selected
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(document => {
-        console.log('Aqui los documentos', document);
         this.getPicturesFromFolio(document);
       });
   }
 
   getPicturesFromFolio(document: IDocuments) {
     let folio = document.id;
-    console.log('Aqui el Folio', folio);
     if (document.associateUniversalFolio) {
       folio = document.associateUniversalFolio;
     }
@@ -350,7 +363,6 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
     };
     this.msProcessgoodreportService.getReportXMLToFirm(paramsData).subscribe({
       next: (response: any) => {
-        console.log(response);
         if (!response) {
           this.alert(
             'warning',
@@ -373,7 +385,6 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
         });
       },
       error: error => {
-        console.log(error);
         if (error.status == 200) {
           let response = error.error.text;
           if (!response) {
