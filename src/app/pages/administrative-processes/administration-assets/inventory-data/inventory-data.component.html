@@ -2,7 +2,7 @@
 <div class="row">
   <div class="row">
     <div class="col-md-8">
-      <p><strong>Seleccione un inventario</strong></p>
+      <p><strong>Seleccione un Inventario</strong></p>
     </div>
     <div class="col-md-4" *ngIf="inventorySelect">
       <p>
@@ -66,15 +66,25 @@
 </div>
 <div class="row">
   <div class="col-md-3">
-    <button
-      [disabled]="generateAtri"
-      class="btn btn-primary btn-sm active"
-      (click)="generateAtribute()">
-      Generar Atributos&nbsp;
-    </button>
-    <button (click)="add()" class="btn btn-secondary active btn-sm mt-2">
-      {{ textButon }}
-    </button>
+    <div class="row">
+      <div class="col-md-10">
+        <button
+          [disabled]="generateAtri"
+          class="btn btn-primary btn-sm active"
+          (click)="generateAtribute()">
+          {{ atribute }}&nbsp;
+        </button>
+      </div>
+    </div>
+    <br />
+    <div class="row">
+      <div class="col-md-10">
+        <button (click)="add()" class="btn btn-secondary active btn-sm">
+          {{ textButon }}
+        </button>
+      </div>
+    </div>
+    <br />
   </div>
   <div class="col">
     <div class="row" *ngIf="viewAct">
@@ -102,8 +112,7 @@
         [disabled]="false"
         [loadInventary]="loadInventary"
         [inventary]="inventary"
-        [service]="service"
-        [initValue]="false"></app-good-characteristics-table>
+        [service]="service"></app-good-characteristics-table>
     </div>
   </div>
 </div>

@@ -65,7 +65,9 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     this.settings.actions.delete = true;
     this.settings.actions.add = false;
     this.settings.rowClassFunction = (row: { data: { scanStatus: string } }) =>
-      row.data.scanStatus == 'ESCANEADO' ? 'digital' : 'pending';
+      row.data.scanStatus == 'ESCANEADO'
+        ? 'bg-success text-white'
+        : 'bg-dark text-white';
   }
 
   ngOnInit(): void {
@@ -206,6 +208,7 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   }
 
   getDocuments() {
+    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,

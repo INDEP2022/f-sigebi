@@ -43,7 +43,7 @@ export class AppointmentDataComponent
         sort: false,
       },
       deliveryDate: {
-        title: 'Fecha entrega',
+        title: 'Fecha Entrega',
         width: '70%',
         sort: false,
         type: 'html',
