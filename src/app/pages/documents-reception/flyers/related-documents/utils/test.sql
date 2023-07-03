@@ -1,456 +1,334 @@
-IF :blk_toolbar.toolbar_escritura != 'S' THEN
-	 LIP_MENSAJE('No tiene permiso de escritura para ejecutar el cambio de numerario','C');
-	 RAISE FORM_TRIGGER_FAILURE;
-END IF;		
-
-
-/*IF :blk_bie.no_bien IS NULL AND :MASIVO = 'N' THEN
-   LIP_MENSAJE('Debe especificar el bien que se quiere cambiar a numerario','S');
-	 RAISE FORM_TRIGGER_FAILURE;
-END IF;*/--VALIDA MASIVO LIRH
-
-IF :blk_bie.no_bien IS NULL AND :MASIVO = 'N' THEN --VALIDA MASIVO LIRH
-
-	 LIP_MENSAJE('Debe especificar el bien que se quiere cambiar a numerario','S');
-	 RAISE FORM_TRIGGER_FAILURE;
-
-ELSIF :BLK_BIE_NUM_MASIV.no_bien IS NULL AND :MASIVO = 'S' THEN --VALIDA MASIVO LIRH
---IF :blk_bie.no_bien IS NULL AND :MASIVO = 'N' THEN
-	 LIP_MENSAJE('Debe cargar los bienes que desea cambiar a numerario','S');
-	 RAISE FORM_TRIGGER_FAILURE;
-ELSIF :blk_bie.no_bien IS NULL AND :BLK_BIE_NUM_MASIV.no_bien IS NULL THEN
-	LIP_MENSAJE('No hay bienes para cambiar a numerario','S');
-	 RAISE FORM_TRIGGER_FAILURE;
-END IF;
-/*IF :importevta IS NULL THEN
-	LIP_MENSAJE('Debe especificar el importe para el numerario','S');
-	GO_ITEM('ti_importe_new');
-	RAISE FORM_TRIGGER_FAILURE;
-END IF;*/
---***** 
-IF :BLK_CONTROL.CHK_MOVBAN = 'SI' THEN
-   IF :ti_banco_new IS NULL THEN
-      LIP_MENSAJE('Debe especificar el banco','S');
-      GO_ITEM('ti_banco_new');
-      RAISE FORM_TRIGGER_FAILURE;
-   END IF;		
-   IF :di_no_movimiento IS NULL THEN
-      LIP_MENSAJE('No ha seleccionado debidamente del deposito que ampara el cambio a numerario','S');
-      GO_ITEM('ti_importe_new');
-      RAISE FORM_TRIGGER_FAILURE;
-   END IF;
-/*ELSE
-   :TI_BANCO_NEW := NULL;
-   :DI_BANCO_NEW := NULL;
-   :DI_CUENTA_NEW := NULL;
-   :DI_MONEDA_NEW := 'MN';
-   :TI_FECHA_NEW := NULL;
-   :TI_FICHA_NEW := NULL;*/
-END IF;
---*****
-IF :BLK_CONTROL.TIPO_CONV IS NULL THEN
-	LIP_MENSAJE('No ha seleccionado el tipo de conversión','S');
-	GO_ITEM('BLK_CONTROL.TIPO_CONV');
-	RAISE FORM_TRIGGER_FAILURE;
-END IF;
-
----H---
-/*IF :BLK_CONTROL.TIPO_CONV = 'CNE1' THEN 
-	LIP_MENSAJE('Debe especificar el IVA','S');
-	GO_ITEM('BLK_CONTROL.PORC1')
-END IF;*/
-
-IF :MASIVO = 'S' THEN --- NUMERARIO MASIVO LIRH 16012012
-   GO_BLOCK('BLK_BIEN_GEN_MASIV');
-   CLEAR_BLOCK(NO_VALIDATE);	 
-   PUP_VALIDA_MASIV;
-ELSE 
-   IF :DI_MONEDA_NEW IS NULL AND PUP_VALIDANUME(:blk_bie.no_bien)= 'S' THEN
-      LIP_MENSAJE('Debe especificar el tipo de moneda','S');									
-      GO_ITEM('DI_MONEDA_NEW');
-      RAISE FORM_TRIGGER_FAILURE;
-   END IF;																																		---CAMBIO DIVISAS
-
-   IF (PUP_VALIDANUME(:blk_bie.no_bien)= 'S' AND :BLK_CONTROL.TIPO_CONV not in ('CNE','BBB')) OR 
-      (PUP_VALIDANUME(:blk_bie.no_bien)= 'N' AND :BLK_CONTROL.TIPO_CONV = 'CNE') THEN
-	    LIP_MENSAJE('El tipo de conversión seleccionado no es permitido para este bien.','S');
-	    GO_ITEM('TIPO_CONV');
-      RAISE FORM_TRIGGER_FAILURE;
-   END IF;																																			---CAMBIO DIVISAS
-
-   IF :importevta IS NULL OR :importevta=0 THEN 
-	    IF LIF_MENSAJE_SI_NO('El nuevo bien se generara con un precio de venta de 1. ¿Desea continuar?') = 'S' THEN
-		     IF LIF_MENSAJE_SI_NO('¿Seguro que desea cambiar el bien a numerario?') = 'S' THEN
-	  --:importevta:=1;
-   		      PUP_CREA_BIEN;
-		     END IF;
-	     ELSE
-		     NULL;
-	     END IF;
-   ELSE
-	   	IF LIF_MENSAJE_SI_NO('¿Seguro que desea cambiar el bien a numerario?') = 'S' THEN
-		   PUP_CREA_BIEN;
-		   END IF;
-   END IF;
-
-END IF;
-
-----------
-
-/*
-IF LIF_MENSAJE_SI_NO('¿Seguro que desea cambiar el bien a numerario?') = 'S' THEN
-	PUP_CREA_BIEN;
-END IF;*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-PROCEDURE PUP_CREA_BIEN IS
-  vn_bien_new 			bienes.no_bien%TYPE;
-  vc_pantalla 			VARCHAR2(100) := GET_APPLICATION_PROPERTY(CURRENT_FORM_NAME);
-  v_clasif_bien			NUMBER;
-	v_sumagasto				NUMBER := 0;
-	vNO_MOVIMIENTO_n	MOVIMIENTOS_CUENTAS.NO_MOVIMIENTO%TYPE;
-  v_importen        NUMBER := 0;
-  v_importe         NUMBER := 0;
-	v_importec        VARCHAR2(20);
-	v_importenc       VARCHAR2(20);
-  v_etiqueta_num    ETIQXCLASIF.NO_ETIQUETA%TYPE;
-  v_impor						NUMBER :=0;
-  v_tot_gasto			  NUMBER := 0;
-  V_CMOVI						MOVIMIENTOS_CUENTAS.NO_MOVIMIENTO%TYPE;
-  CONCIL						VARCHAR2(15);
-  V_CREGI						MOVIMIENTOS_CUENTAS.NO_REGISTRO%TYPE;
-  V_COMENTARIO			BIENES.DESCRIPCION%TYPE;
+DECLARE
+   vc_pantalla                   VARCHAR2(100) := GET_APPLICATION_PROPERTY(CURRENT_FORM_NAME);
+   v_cont                        NUMBER;
+   v_contm                       NUMBER;
+   v_item                        VARCHAR2(100);
+   v_tipo                        VARCHAR2(50);
+   v_ban                         BOOLEAN;
+   v_banb                        NUMBER;
+   v_bani                        NUMBER;
+   v_banv                        NUMBER;
+   v_bang                        BOOLEAN;
+   v_dato                        NUMBER;
+   v_colb                        NUMBER;
+   v_coli                        NUMBER;
+   v_colv                        NUMBER;
+   v_colg                        VARCHAR2(200);
+   v_colg1                       VARCHAR2(200);
+   v_colgu                       NUMBER;
+   vno_bien                      BIENES.NO_BIEN%TYPE;
+   vdescripcion                  BIENES.DESCRIPCION%TYPE;
+   vestatus                      BIENES.ESTATUS%TYPE;
+   vno_exp_asociado              BIENES.NO_EXP_ASOCIADO%TYPE;
+   vno_expediente                BIENES.NO_EXPEDIENTE%TYPE;
+   vcantidad                     BIENES.CANTIDAD%TYPE;
+   vno_delegacion                BIENES.NO_DELEGACION%TYPE;
+   vno_subdelegacion             BIENES.NO_SUBDELEGACION%TYPE;
+   videntificador                BIENES.IDENTIFICADOR%TYPE;
+   vno_volante                   BIENES.NO_VOLANTE%TYPE;
+   vno_bienn                     BIENES.NO_BIEN%TYPE;
+   vestatusn                     BIENES.ESTATUS%TYPE;
+   vno_bienc                     BIENES.NO_BIEN%TYPE;
+   vno_clasif_bien               BIENES.NO_CLASIF_BIEN%TYPE;
+   vdescripciong                 CONCEPTO_GASTO.DESCRIPCION%TYPE;
+   vcve_proceso                  COMER_EVENTOS.CVE_PROCESO%TYPE;
+   expidentificador              ESTATUS_X_PANTALLA.IDENTIFICADOR%TYPE;
+   vno_clasif_bienn              CAT_SSSUBTIPO_BIEN.NO_CLASIF_BIEN%TYPE;
+   vno_bien_padre_parcializacion BIENES.NO_BIEN_PADRE_PARCIALIZACION%TYPE;
+   vingreso                      NUMBER;
+   vgasto                        NUMBER;
+   vdgasto                       NUMBER;
+   vtotgasto                     NUMBER;
+   viva                          NUMBER;
+   valida_num                    NUMBER;
+   v_ind_nume                    NUMBER;
+   v_color                       varchar2(30);
+   v_acta_ok                     BOOLEAN;
+errtxt VARCHAR2(80);
 BEGIN
-	--H--
-	IF :blk_bie.importevta IS NULL or :blk_bie.importevta<=0 THEN
-		:blk_bie.importevta:=1;
-	END IF;
-	
-	IF :BLK_CONTROL.TIPO_CONV = 'CNE1' THEN
-		:BLK_CONTROL.TIPO_CONV:='CNE';
-	END IF;
-	---------
-	GO_BLOCK('BLK_CTR');
-	FIRST_RECORD;
-	IF :BLK_CTR.ID_GASTO IS NOT NULL THEN
-		LOOP
-			BEGIN
-				v_sumagasto := NVL(v_sumagasto,0) + NVL(:BLK_CTR.IMPORTE,0);
-			EXCEPTION	WHEN OTHERS THEN
-                			NULL;
-			END;
-		  EXIT WHEN :system.Last_record = 'TRUE';
-    	NEXT_RECORD; 
-		END LOOP;	
-	END IF;
-	FOR reg IN (SELECT	estatus_final, estatus_nuevo_bien, accion, est.proceso_ext_dom
-  	            FROM	estatus_x_pantalla est
-  	           WHERE	est.cve_pantalla = vc_pantalla
-  	             AND	est.estatus      = :blk_bie.estatus
-  	             AND  est.identificador = :blk_bie.identificador
-  	             AND  est.proceso_ext_dom  = :blk_bie.proceso_ext_dom) --AKCO 17/09/2009
-  	             
-	LOOP
---      IF :BLK_CONTROL.TIPO_CONV <> 'BBB' THEN
-         /*v_importe := NVL(:blk_bie.importevta,0)+NVL(:blk_bie.ivavta,0);
-         v_importen := NVL(v_importe,0)-(NVL(:blk_bie.comision,0)+NVL(:blk_bie.ivacom,0))-NVL(v_sumagasto,0);*/
-         v_importe := NVL(:blk_bie.importevta,0)+NVL(:blk_bie.ivavta,0);
-      	 --v_tot_gasto := NVL(v_sumagasto,0)+(NVL(:blk_bie.comision,0)+NVL(:blk_bie.ivacom,0));
-      	 v_tot_gasto := NVL(v_sumagasto,0)+(NVL(:blk_bie.comision,0)+NVL(:blk_bie.ivacom,0)+NVL(:blk_bie.ivavta,0));--H--
-         v_impor := :blk_bie.importevta;
-         v_importen := NVL(v_importe,0)-(NVL(:blk_bie.comision,0)+NVL(:blk_bie.ivacom,0))-NVL(v_sumagasto,0);
-         
-         IF TRUNC(v_importe) <> v_importe THEN
-            v_importec := RTRIM(LTRIM(TO_CHAR(v_importe,'999999999.99')));
+   v_banb := 0;
+   v_bani := 0;
+   v_banv := 0;
+   v_ban := FALSE;
+   v_bang := FALSE;
+   v_colb := 0;
+   v_coli := 0;
+   v_colv := 0;
+   v_colg := NULL;
+   FOR v_cont IN 1..28 LOOP
+      v_item := ':TIP'||TO_CHAR(v_cont);
+      v_tipo := name_in(v_item);
+      IF v_tipo = 'B' THEN
+         v_colb := v_cont;
+         v_banb := v_banb+1;
+      ELSIF v_tipo = 'I' THEN
+         v_coli := v_cont;
+         v_bani := v_bani+1;
+      ELSIF v_tipo = 'G' THEN
+         v_item := ':GAS'||TO_CHAR(v_cont);
+         v_dato := name_in(v_item);
+         IF v_dato IS NULL THEN
+            v_bang := TRUE;
          ELSE
-            v_importec := RTRIM(LTRIM(TO_CHAR(v_importe,'999999999')));
+            v_colg := v_colg||TO_CHAR(v_cont)||',';
          END IF;
-         IF TRUNC(v_importen) <> v_importen THEN
-            v_importenc := RTRIM(LTRIM(TO_CHAR(v_importen,'999999999.99')));
-         ELSE
-            v_importenc := RTRIM(LTRIM(TO_CHAR(v_importen,'999999999')));
-         END IF;
-         
-         --LIP_MENSAJE (V_IMPOR||'    '||v_tot_gasto,'A');
-     IF :BLK_BIE.IDENTIFICADOR!='TRANS' THEN
-         begin
-             SELECT seq_bienes.nextval
-              INTO vn_bien_new
-              FROM dual;
-          end;
-       END IF; 
-
-IF :BLK_CONTROL.TIPO_CONV = 'BBB' THEN -- ALEDESMA SOLICITADO X GMURIAS
-V_COMENTARIO := SUBSTR('PAGO PARCIAL POR SINIESTRO GENERANDO EL BIEN HIJO NO. '||TO_CHAR(vn_bien_new)||' CON ESTATUS '||:BLK_BIE.ESTATUS||', '||:BLK_CONTROL.COMENTARIO||' , '||:BLK_BIE.DESCRIPCION,1,1200);
-         UPDATE BIENES													-- Actualizacion del bien en su estatus al mismo
-            SET ESTATUS = :BLK_BIE.ESTATUS,
-                DESCRIPCION = V_COMENTARIO,
-                val40 = :BLK_CONTROL.di_moneda_new,
-                val41 = v_importec,
-                val42 = v_importenc,
-                val43 = :ti_banco_new,
-                val44 = TO_CHAR(:ti_fecha_new,'dd-mm-yyyy'),
-                val45 = :BLK_CONTROL.di_cuenta_new,
-                val46 = :blk_bie.importevta,
-                val47 = :blk_bie.ivavta,
-                val48 = :blk_bie.comision,
-                val49 = :blk_bie.ivacom,
-                val50 = v_sumagasto,
-                proceso_ext_dom = reg.proceso_ext_dom --AKCO 17/09/09
-          WHERE NO_BIEN = :blk_bie.no_bien;
-         INSERT INTO historico_estatus_bien 			-- Insertar en el historico el cambio de estatus de este bien
-         (no_bien, estatus, fec_cambio, usuario_cambio, motivo_cambio, programa_cambio_estatus, proceso_ext_dom)--AKCO 17/09/09
-         VALUES          			
-         (:blk_bie.no_bien,:BLK_BIE.ESTATUS,sysdate,:toolbar_usuario,'Cambio numerario', vc_pantalla, reg.proceso_ext_dom); --AKCO 17/09/09
-
-
-ELSIF :BLK_CONTROL.TIPO_CONV = 'CNR' THEN
-	
-	 V_COMENTARIO :=  SUBSTR(:BLK_BIE.DESCRIPCION,1,1250);    
-     begin
-         UPDATE BIENES                                                    -- Actualizacion del bien A CNR
-            SET ESTATUS = :BLK_CONTROL.TIPO_CONV,
-                DESCRIPCION = V_COMENTARIO,
-                val40 = :BLK_CONTROL.di_moneda_new,
-                val41 = v_importec,
-                val42 = v_importenc,
-                val43 = :ti_banco_new,
-                val44 = TO_CHAR(:ti_fecha_new,'dd-mm-yyyy'),
-                val45 = :BLK_CONTROL.di_cuenta_new,
-                val46 = :blk_bie.importevta,
-                val47 = :blk_bie.ivavta,
-                val48 = :blk_bie.comision,
-                val49 = :blk_bie.ivacom,
-                val50 = v_sumagasto,
-                proceso_ext_dom = reg.proceso_ext_dom --AKCO 17/09/09
-          WHERE NO_BIEN = :blk_bie.no_bien;
-           INSERT INTO historico_estatus_bien             -- Insertar en el historico el cambio de estatus de este bien
-         --(no_bien, estatus, fec_cambio, usuario_cambio, motivo_cambio, programa_cambio_estatus)
-         (no_bien, estatus, fec_cambio, usuario_cambio, motivo_cambio, programa_cambio_estatus, proceso_ext_dom)--AKCO 17/09/09
-         VALUES                      
-         --(:blk_bie.no_bien,:BLK_CONTROL.TIPO_CONV,sysdate,:toolbar_usuario,'Cambio numerario', vc_pantalla);
-         (:blk_bie.no_bien,:BLK_CONTROL.TIPO_CONV,sysdate,:toolbar_usuario,'Cambio numerario', vc_pantalla, reg.proceso_ext_dom); --AKCO 17/09/09
-     lip_commit_silencioso;
-     LIP_MENSAJE('Proceso Terminado, no se generó numerario por ser un bien Transferente','A');
-      exception when others then
-         LIP_MENSAJE('sqlerrm','A');
-          raise form_trigger_failure;
-        end;  
-
-
-ELSE
-
-	V_COMENTARIO := SUBSTR('CONV. A NUM. GENERANDO EL BIEN HIJO NO. '||TO_CHAR(vn_bien_new)||' '||:blk_bie.descripcion,1,1250);	
-         UPDATE BIENES													-- Actualizacion del bien anterior a el estatus CNE
-            SET ESTATUS = :BLK_CONTROL.TIPO_CONV,
-                DESCRIPCION = V_COMENTARIO,
-                val40 = :BLK_CONTROL.di_moneda_new,
-                val41 = v_importec,
-                val42 = v_importenc,
-                val43 = :ti_banco_new,
-                val44 = TO_CHAR(:ti_fecha_new,'dd-mm-yyyy'),
-                val45 = :BLK_CONTROL.di_cuenta_new,
-                val46 = :blk_bie.importevta,
-                val47 = :blk_bie.ivavta,
-                val48 = :blk_bie.comision,
-                val49 = :blk_bie.ivacom,
-                val50 = v_sumagasto,
-                proceso_ext_dom = reg.proceso_ext_dom --AKCO 17/09/09
-          WHERE NO_BIEN = :blk_bie.no_bien;
-          
-         INSERT INTO historico_estatus_bien 			-- Insertar en el historico el cambio de estatus de este bien
-         --(no_bien, estatus, fec_cambio, usuario_cambio, motivo_cambio, programa_cambio_estatus)
-         (no_bien, estatus, fec_cambio, usuario_cambio, motivo_cambio, programa_cambio_estatus, proceso_ext_dom)--AKCO 17/09/09
-         VALUES          			
-         --(:blk_bie.no_bien,:BLK_CONTROL.TIPO_CONV,sysdate,:toolbar_usuario,'Cambio numerario', vc_pantalla);
-         (:blk_bie.no_bien,:BLK_CONTROL.TIPO_CONV,sysdate,:toolbar_usuario,'Cambio numerario', vc_pantalla, reg.proceso_ext_dom); --AKCO 17/09/09
-
-
-
-
-
-END IF;     
-         IF :blk_bie.identificador <> 'TRANS' THEN
-            :blk_bie.cantidad :=1;
-            
-            --IF :BLK_BIE.DI_MONEDA_NEW = 'MN' THEN
-            IF :BLK_CONTROL.DI_MONEDA_NEW = 'MN' AND PUP_VALIDANUME(:blk_bie.no_bien)= 'N' THEN
-               v_clasif_bien := 1424;
-            ELSE
-               v_clasif_bien := 1426;
-            END IF;
-            
-            IF :BLK_CONTROL.TIPO_CONV= 'CNE' THEN --H--
-               v_clasif_bien := 1427;
-            END IF;
-            
-begin
-            SELECT MIN(NO_ETIQUETA)
-              INTO v_etiqueta_num
-              FROM ETIQXCLASIF
-             WHERE no_clasif_bien = v_clasif_bien;
-end;             
-            INSERT INTO bienes 	-- Insertar el nuevo bien, el bien numerario
-            (no_bien,					descripcion,					   no_exp_asociado,						
-            val1,							val2,									   val3, 							no_clasif_bien,
-            no_expediente,     no_bien_referencia,		   valor_avaluo, 			estatus,            	
-            cantidad,					val4,									   val5,              val6,									
-            no_delegacion,  		no_subdelegacion,   	   identificador,			val9,
-            val10,							val11,								   val12,							val13,
-            cve_moneda_avaluo, no_etiqueta,             no_volante,        unidad,
-            proceso_ext_dom-- AKCO 17/09/09
-            )      
-            VALUES 
-            (vn_bien_new,SUBSTR('CONV. A NUM. DEL BIEN '||TO_CHAR(:blk_bie.no_bien)||' '||:blk_bie.descripcion,1,1250), :blk_bie.no_exp_asociado,	
-            :BLK_CONTROL.di_moneda_new, v_impor,	              :BLK_CONTROL.ti_ficha_new,	             v_clasif_bien,
-            :blk_bie.no_expediente, :blk_bie.no_bien,          v_importec,                          reg.estatus_nuevo_bien,
-            1 ,	     :ti_banco_new,				     TO_CHAR(:ti_fecha_new,'dd-mm-yyyy'), :BLK_CONTROL.di_cuenta_new,
-            :blk_bie.no_delegacion, :blk_bie.no_subdelegacion, :blk_bie.identificador,              :blk_bie.importevta,
-            :blk_bie.ivavta,		     :blk_bie.comision,		      :blk_bie.ivacom,			               v_tot_gasto,
-            :BLK_CONTROL.di_moneda_new, v_etiqueta_num,            :blk_bie.no_volante,                 'PIEZA',
-            reg.proceso_ext_dom -- AKCO 17/09/09
-            );
-            
-          ----H---  
-           BEGIN 
-           IF 		:ti_fecha_new 	IS NOT NULL 
-           		AND	:ti_banco_new IS NOT NULL 
-           		AND	:BLK_CONTROL.di_cuenta_new IS NOT NULL 
-           		AND	:BLK_CONTROL.di_moneda_new  IS NOT NULL 	
-           THEN
-           		BEGIN
-            		SELECT  MOV.NO_MOVIMIENTO, MOV.NO_REGISTRO
-         								INTO		V_CMOVI,V_CREGI
-												FROM    movimientos_cuentas mov, cuentas_bancarias   cta 
-												WHERE   MOV.fec_movimiento = :ti_fecha_new
-												AND     MOV.DEPOSITO = :blk_bie.importevta
-												AND     cta.cve_banco = :ti_banco_new
-												AND     cta.cve_cuenta = :BLK_CONTROL.di_cuenta_new
-												AND     cta.cve_moneda = :BLK_CONTROL.di_moneda_new
-												AND     MOV.NO_BIEN IS NULL;
-								EXCEPTION
-  									WHEN NO_DATA_FOUND THEN
-  										V_CMOVI:=NULL;						
-								END;						
-							
-							IF V_CMOVI IS NOT NULL THEN
-								  UPDATE	MOVIMIENTOS_CUENTAS 
-									SET			NO_BIEN =vn_bien_new, NO_EXPEDIENTE=:blk_bie.no_expediente
-									WHERE		NO_MOVIMIENTO = V_CMOVI
-									AND			NO_REGISTRO = V_CREGI;
-									CONCIL:='CONCILIADO';
-							END IF;
-           END IF;
-           END;
-					----------------		
-
-            INSERT INTO historico_estatus_bien -- inserta en el historico el nuevo bien
-            --(no_bien,			estatus,	fec_cambio, usuario_cambio, 	motivo_cambio,			programa_cambio_estatus)
-            (no_bien, estatus, fec_cambio, usuario_cambio, motivo_cambio, programa_cambio_estatus, proceso_ext_dom)--AKCO 17/09/09
-            VALUES 
-            --(vn_bien_new, reg.estatus_nuevo_bien,		sysdate,	:toolbar_usuario, 'Cambio numerario', vc_pantalla);
-            (vn_bien_new, reg.estatus_nuevo_bien,		sysdate,	:toolbar_usuario, 'Cambio numerario', vc_pantalla, reg.proceso_ext_dom); --AKCO 17/09/09
-
-            INSERT INTO cambio_numerario
-            (no_bien_original, 	no_bien_numerario, 	usuario, 					fec_cambio, 	estatus_final, 		estatus_nuevo_bien) 
-            VALUES 
-            (:blk_bie.no_bien,	vn_bien_new,				:toolbar_usuario,	SYSDATE,:BLK_CONTROL.TIPO_CONV,reg.estatus_nuevo_bien);
-           
---
-            -- copia registro de relación de documentos -- JAC 231208 --
-
-            INSERT INTO BIENES_REL_DOCUMS (NO_BIEN,ACTA_ACIRDES,ACTA_ACIRDEV,ACTA_ACIRVEN,
-                                           ACTA_ACTCIRCU,ACTA_CONSENTR,ACTA_CONSVEN,ACTA_CONVERSION,
-                                           ACTA_DECOMISO,ACTA_DESTINO,ACTA_DESTRUCCION,ACTA_DEVOLUCION,
-                                           ACTA_DONACION,ACTA_ENTREGA,ACTA_EVENCOMER,ACTA_EVENDEST,
-                                           ACTA_EVENDEV,ACTA_EVENDON,ACTA_EVENTREC,ACTA_POSESION_3R,
-                                           ACTA_RECEPCAN,ACTA_SUSPENSION,COMER_LOTE,OFIC_DESAHOGO,
-                                           DICTA_ABANDONO,DICTA_DECOMISO,DICTA_DESTINO,DICTA_DESTRUCCION,
-                                           DICTA_DEVOLUCION,DICTA_DONACION,DICTA_PROCEDENCIA,DICTA_RESARCIMIENTO,
-                                           DON_SOLICITUD)
-            SELECT vn_bien_new,ACTA_ACIRDES,ACTA_ACIRDEV,ACTA_ACIRVEN,
-                   ACTA_ACTCIRCU,ACTA_CONSENTR,ACTA_CONSVEN,ACTA_CONVERSION,
-                   ACTA_DECOMISO,ACTA_DESTINO,ACTA_DESTRUCCION,ACTA_DEVOLUCION,
-                   ACTA_DONACION,ACTA_ENTREGA,ACTA_EVENCOMER,ACTA_EVENDEST,
-                   ACTA_EVENDEV,ACTA_EVENDON,ACTA_EVENTREC,ACTA_POSESION_3R,
-                   ACTA_RECEPCAN,ACTA_SUSPENSION,COMER_LOTE,OFIC_DESAHOGO,
-                   DICTA_ABANDONO,DICTA_DECOMISO,DICTA_DESTINO,DICTA_DESTRUCCION,
-                   DICTA_DEVOLUCION,DICTA_DONACION,DICTA_PROCEDENCIA,DICTA_RESARCIMIENTO,
-                   DON_SOLICITUD
-              FROM BIENES_REL_DOCUMS
-             WHERE NO_BIEN = :blk_bie.no_bien;                         
-            
-             -----
-            LIP_COMMIT_SILENCIOSO;
-         IF :blk_bie.identificador <> 'TRANS' THEN
-            LIP_MENSAJE('Proceso Terminado, No. de Bien Generado: '||vn_bien_new||' '||CONCIL,'A');      
-         ELSE
-            LIP_MENSAJE('Proceso Terminado, no se generó numerario por ser un bien Transferente','A');
-         END IF;
- 	END IF;
- 	END LOOP;
---exit_form;
- 		EXCEPTION
-         	WHEN OTHERS THEN
-         	LIP_MENSAJE(SQLERRM,'A');
-<<<<<<< HEAD
-END;
-
-
-
-
-
-
-PROCEDURE PUP_VALIDA_MASIV IS
-BEGIN
-   IF LIF_MENSAJE_SI_NO('¿Seguro que desea cambiar los bienes a numerario?') = 'S' THEN   
-      GO_BLOCK('BLK_BIE_NUM_MASIV');
-      FIRST_RECORD;
-      LOOP
-         IF :BLK_BIE_NUM_MASIV.DISPONIBLE = 'S' THEN 	
-            IF :DI_MONEDA_NEW IS NULL AND PUP_VALIDANUME(:BLK_BIE_NUM_MASIV.NO_BIEN)= 'S' THEN
-               LIP_MENSAJE('Debe especificar el tipo de moneda.','S');
-               RAISE FORM_TRIGGER_FAILURE;
-            END IF;																																		---CAMBIO DIVISAS
-
-            IF (PUP_VALIDANUME(:BLK_BIE_NUM_MASIV.NO_BIEN)= 'S' AND :BLK_CONTROL.TIPO_CONV not in ('CNE','BBB')) OR 
-               (PUP_VALIDANUME(:BLK_BIE_NUM_MASIV.NO_BIEN)= 'N' AND :BLK_CONTROL.TIPO_CONV = 'CNE') THEN
-	             LIP_MENSAJE('El tipo de conversión seleccionado no es permitido para este bien: '||:BLK_BIE_NUM_MASIV.NO_BIEN,'S');
-               RAISE FORM_TRIGGER_FAILURE;
-            END IF;																																			---CAMBIO DIVISAS
-
-            IF :BLK_BIE_NUM_MASIV.PRECIO_VENTA IS NULL OR :BLK_BIE_NUM_MASIV.PRECIO_VENTA = 0 THEN 
-         	     IF LIF_MENSAJE_SI_NO('El nuevo bien para el bien '||:BLK_BIE_NUM_MASIV.NO_BIEN||' se generara con un precio de venta de 1. ¿Desea continuar?') = 'N' THEN
-		              LIP_MENSAJE('Agregue el precio de venta del bien '||:BLK_BIE_NUM_MASIV.NO_BIEN||' o elimine el registro...','C');   	        
-		              RAISE FORM_TRIGGER_FAILURE;
-	             END IF;      
-            END IF;
-            PUP_CREA_BIEN_MASIV(:BLK_BIE_NUM_MASIV.NO_BIEN);            
-         END IF;
-      GO_BLOCK('BLK_BIE_NUM_MASIV');
-      EXIT WHEN :SYSTEM.LAST_RECORD = 'TRUE';
-      NEXT_RECORD;      
-      END LOOP;
---LIP_MENSAJE('FINAL :GLOBAL.P_BIEN_TRANS: '||:GLOBAL.P_BIEN_TRANS,'A');      
-			IF :GLOBAL.P_BIEN_TRANS > 0 THEN
-		   	LIP_MENSAJE('Proceso Terminado, no se generaron bienes hijos por ser de tipo Transferente','A');
-		   	:GLOBAL.P_BIEN_TRANS := 0;		
-		  ELSE
-		  	LIP_MENSAJE('Proceso Terminado, verifique el detalle de los bienes generados','A');	
-   		END IF;
+      ELSIF v_tipo = 'V' THEN
+         v_colv := v_cont;
+         v_banv := v_banv+1;
+      END IF;
+   END LOOP;
+   IF v_banb = 0 THEN
+      LIP_MENSAJE('Se debe especificar la columna del No. de Bien','A');
+      v_ban := TRUE;
+   ELSIF v_banb > 1 THEN
+      LIP_MENSAJE('Se especificó más de una columna del No. de Bien','A');
+      v_ban := TRUE;
    END IF;
-   GO_BLOCK('BLK_BIEN_GEN_MASIV');
-=======
->>>>>>> 8d2da9fd591dca2f4ed963e274ef8b73562c9bf1
+   IF v_bani = 0 THEN
+      LIP_MENSAJE('Se debe especificar la columna del Ingreso neto','A');
+      v_ban := TRUE;
+   ELSIF v_bani > 1 THEN
+      LIP_MENSAJE('Se especificó más de una columna del Ingreso neto','A');
+      v_ban := TRUE;
+   END IF;
+   IF v_bang THEN
+      LIP_MENSAJE('No se especificó el Concepto de Gasto en al menos una columna','A');
+      v_ban := TRUE;
+   END IF;
+   IF v_banv = 0 THEN
+      LIP_MENSAJE('Se debe especificar la columna del IVA','A');
+      v_ban := TRUE;
+   ELSIF v_banv > 1 THEN
+      LIP_MENSAJE('Se especificó más de una columna del IVA','A');
+      v_ban := TRUE;
+   END IF;
+   IF v_ban THEN
+      RAISE FORM_TRIGGER_FAILURE;
+   END IF;
+--   LIP_MENSAJE(v_colg,'A');
+   GO_BLOCK('BLK_BIENES');
+   CLEAR_BLOCK;
+   GO_BLOCK('BLK_GASTOS');
+   CLEAR_BLOCK;
+   GO_BLOCK('BLK_PREVIEW');
+   FIRST_RECORD;
+   v_cont := 0;
+   v_contm := 0;
+   LOOP
+      v_item := ':COL'||TO_CHAR(v_colb);
+      v_tipo := name_in(v_item);
+      IF v_tipo IS NOT NULL THEN
+         BEGIN
+            vno_bien := TO_NUMBER(REPLACE(v_tipo,',','.'),'99999999999999.9999999999');
+            BEGIN
+               SELECT descripcion, estatus, no_exp_asociado, no_expediente, cantidad,
+                      no_delegacion, no_subdelegacion, identificador, no_volante, no_clasif_bien, no_bien_padre_parcializacion
+                 INTO vdescripcion, vestatus, vno_exp_asociado, vno_expediente, vcantidad,
+                      vno_delegacion, vno_subdelegacion, videntificador, vno_volante, vno_clasif_bien, vno_bien_padre_parcializacion
+                 FROM BIENES
+                WHERE no_bien = vno_bien;
+               vno_bienn := NULL;
+               vcve_proceso := NULL;
+               BEGIN
+                  SELECT no_bien, estatus
+                    INTO vno_bienn, vestatusn
+                    FROM BIENES
+                   WHERE no_bien_referencia = vno_bien
+                     AND no_bien <> vno_bien;
+                  IF vestatusn <> 'ADM' THEN
+                     v_ind_nume := 0;
+                     v_contm := v_contm+1;
+                     vcve_proceso := 'Numerario <> ADM.';
+                  ELSE
+                     BEGIN
+                        SELECT DISTINCT no_bien
+                          INTO vno_bienc
+                          FROM MOVIMIENTOS_CUENTAS
+                         WHERE no_bien = vno_bienn;
+                        v_ind_nume := 3;
+                        v_contm := v_contm+1;
+                        vcve_proceso := 'Numerario conciliado.';
+                     EXCEPTION
+                     		 WHEN OTHERS THEN
+                           v_ind_nume := 2;
+                     END;
+                  END IF;
+                  vcve_proceso := PUF_BUSCA_EVENTO(vno_bien);
+               EXCEPTION
+                  WHEN TOO_MANY_ROWS THEN
+                     v_ind_nume := 0;
+                     v_contm := v_contm+1;
+                     vcve_proceso := 'Más de una ref.';
+                  WHEN OTHERS THEN
+-- Validación de transferente convertido a numerario -- 040408 JAC --
+                     IF videntificador = 'TRANS' AND vestatus IN ('CNE','CBD','CDS','CNS','CNR') THEN
+                        v_ind_nume := 2;
+                        vcve_proceso := PUF_BUSCA_EVENTO(vno_bien);
+                     ELSE
+                        v_ind_nume := 1;
+                        IF videntificador = 'TRANS' THEN
+                           v_ind_nume := 4;
+                        END IF;	
+-- Validación para verificar que el bien esté en acta de entrega recepción -- 04-04-08 JAC --
+                        v_acta_ok := PUF_VALIDA_ACTA_RECEP(vno_bien);
+                        IF NOT v_acta_ok AND NVL(vno_bien_padre_parcializacion,0) > 0 THEN
+                           v_acta_ok := PUF_VALIDA_ACTA_RECEP(vno_bien_padre_parcializacion);
+                        END IF;
+                        IF NOT v_acta_ok THEN
+                           v_ind_nume := 5;
+                           v_contm := v_contm+1;
+                           vcve_proceso := 'Bien sin Acta.';
+                        END IF;
+                     END IF;
+               END;
+               v_item := ':COL'||TO_CHAR(v_coli);
+               v_tipo := name_in(v_item);
+               IF v_tipo IS NOT NULL THEN
+                  BEGIN
+                     vingreso := ROUND(TO_NUMBER(REPLACE(v_tipo,',','.'),'99999999999999.9999999999'),2);
+                     v_item := ':COL'||TO_CHAR(v_colv);
+                     v_tipo := name_in(v_item);
+                     IF v_tipo IS NOT NULL THEN
+                        BEGIN
+                           viva := ROUND(TO_NUMBER(REPLACE(v_tipo,',','.'),'99999999999999.9999999999'),2);
+                           v_colg1 := v_colg;
+                           vtotgasto := 0;
+                           WHILE v_colg1 IS NOT NULL LOOP
+                              v_colgu := SUBSTR(v_colg1,1,INSTR(v_colg1,',',1)-1);
+                              v_item := ':COL'||v_colgu;
+                              v_tipo := name_in(v_item);
+                              BEGIN
+                                 vgasto := NVL(ROUND(TO_NUMBER(REPLACE(v_tipo,',','.'),'99999999999999.9999999999'),2),0);
+                                 v_item := ':GAS'||v_colgu;
+                                 vdgasto := name_in(v_item);
+                                 vtotgasto := vtotgasto+vgasto;
+                                 v_item := ':GAD'||v_colgu;
+                                 vdescripciong := name_in(v_item);
+                                 IF vdescripciong IS NULL THEN
+                                    BEGIN
+                                       SELECT descripcion
+                                         INTO vdescripciong
+                                         FROM CONCEPTO_GASTO
+                                        WHERE no_concepto_gasto = vdgasto;
+                                    EXCEPTION
+                                       WHEN OTHERS THEN
+                                          vdescripciong := 'Gasto: '||TO_CHAR(vdgasto);
+                                    END;
+                                 END IF;
+                                 GO_BLOCK('BLK_GASTOS');
+                                 IF NOT FORM_SUCCESS THEN
+                                    RAISE Form_Trigger_Failure;
+                                 END IF;
+                                 IF :BLK_GASTOS.NO_BIEN IS NOT NULL THEN
+                                    CREATE_RECORD;
+                                 END IF;
+                                 :BLK_GASTOS.NO_BIEN := vno_bien;
+                                 :BLK_GASTOS.NO_CONCEPTO_GASTO := vdgasto;
+                                 :BLK_GASTOS.IMPORTE := vgasto;
+                                 :BLK_GASTOS.DESCRIPCION := vdescripciong;
+                                 :BLK_GASTOS.ESTATUS := vestatus;
+                                 :BLK_GASTOS.TIPO := 'E';
+                                 GO_BLOCK('BLK_PREVIEW');
+                              EXCEPTION
+                                 WHEN OTHERS THEN
+                                    NULL;
+                              END;
+                              v_colg1 := SUBSTR(v_colg1,INSTR(v_colg1,',',1)+1);
+                           END LOOP;
+                           GO_BLOCK('BLK_GASTOS');
+                           IF :BLK_GASTOS.NO_BIEN IS NOT NULL THEN
+                              CREATE_RECORD;
+                           END IF;
+                           :BLK_GASTOS.NO_BIEN := vno_bien;
+                           :BLK_GASTOS.NO_CONCEPTO_GASTO := 0;
+                           :BLK_GASTOS.IMPORTE := viva;
+                           :BLK_GASTOS.DESCRIPCION := 'I.V.A.';
+                           :BLK_GASTOS.ESTATUS := vestatus;
+                           :BLK_GASTOS.TIPO := 'I';
+                           GO_BLOCK('BLK_BIENES');
+                           IF :BLK_BIENES.NO_BIEN IS NOT NULL THEN
+                              CREATE_RECORD;
+                           END IF;
+                           :BLK_BIENES.NO_BIEN := vno_bien;
+                           :BLK_BIENES.DESCRIPCION := vdescripcion;
+                           :BLK_BIENES.ESTATUS := vestatus;
+                           :BLK_BIENES.INGRESO := vingreso+vtotgasto-viva;
+                           :BLK_BIENES.GASTO := vtotgasto;
+                           :BLK_BIENES.IVA := viva;
+                           :BLK_BIENES.VALOR_AVALUO := vingreso;
+                           :BLK_BIENES.NO_EXP_ASOCIADO := vno_exp_asociado;
+                           :BLK_BIENES.NO_EXPEDIENTE := vno_expediente;
+                           :BLK_BIENES.CANTIDAD := vcantidad;
+                           :BLK_BIENES.NO_DELEGACION := vno_delegacion;
+                           :BLK_BIENES.NO_SUBDELEGACION := vno_subdelegacion;
+                           :BLK_BIENES.IDENTIFICADOR := videntificador;
+                           :BLK_BIENES.NO_VOLANTE := vno_volante;
+                           :BLK_BIENES.IND_NUME := v_ind_nume;
+--*** cambio atributos para v_ind_nume diferente de 1 
+                           IF v_ind_nume <> 1 THEN
+                              IF v_ind_nume = 0 THEN
+                                 v_color := 'VA_ROJO';
+                              ELSIF v_ind_nume = 2 THEN
+                                 v_color := 'VA_VERDE';
+                              ELSIF v_ind_nume = 4 THEN
+                                 v_color := 'VA_CYAN';
+                              ELSIF v_ind_nume = 5 THEN
+                                 v_color := 'VA_NARANJA';
+                              ELSE
+                                 v_color := 'VA_AMARILLO';
+                              END IF;
+                              :BLK_BIENES.NO_BIEN_NUME := vno_bienn;
+                              :BLK_BIENES.CVE_PROCESO := vcve_proceso;
+                              Set_Item_Instance_Property( 'BLK_BIENES.NO_BIEN', CURRENT_RECORD,VISUAL_ATTRIBUTE,v_color);
+                              Set_Item_Instance_Property( 'BLK_BIENES.NO_BIEN_NUME', CURRENT_RECORD,VISUAL_ATTRIBUTE,v_color);
+                              Set_Item_Instance_Property( 'BLK_BIENES.DESCRIPCION', CURRENT_RECORD,VISUAL_ATTRIBUTE,v_color);
+                              Set_Item_Instance_Property( 'BLK_BIENES.CVE_PROCESO', CURRENT_RECORD,VISUAL_ATTRIBUTE,v_color);
+                              Set_Item_Instance_Property( 'BLK_BIENES.ESTATUS', CURRENT_RECORD,VISUAL_ATTRIBUTE,v_color);
+                              Set_Item_Instance_Property( 'BLK_BIENES.INGRESO', CURRENT_RECORD,VISUAL_ATTRIBUTE,v_color);
+                              Set_Item_Instance_Property( 'BLK_BIENES.GASTO', CURRENT_RECORD,VISUAL_ATTRIBUTE,v_color);
+                              Set_Item_Instance_Property( 'BLK_BIENES.IVA', CURRENT_RECORD,VISUAL_ATTRIBUTE,v_color);
+                              Set_Item_Instance_Property( 'BLK_BIENES.VALOR_AVALUO', CURRENT_RECORD,VISUAL_ATTRIBUTE,v_color);
+                           END IF;
+                           GO_BLOCK('BLK_PREVIEW');
+                           v_cont := v_cont+1;
+                        EXCEPTION
+                           WHEN OTHERS THEN
+                              v_contm := v_contm+1;
+                        END;
+                     ELSE
+                        v_contm := v_contm+1;
+                     END IF;
+                  EXCEPTION
+                     WHEN OTHERS THEN
+                        v_contm := v_contm+1;
+                  END;
+               ELSE
+                  v_contm := v_contm+1;
+               END IF;
+            EXCEPTION
+               WHEN OTHERS THEN
+                  v_contm := v_contm+1;
+            END;
+         EXCEPTION
+            WHEN OTHERS THEN
+               v_contm := v_contm+1;
+         END;
+      ELSE
+         v_contm := v_contm+1;
+      END IF;
+      :T_REG_PROCESADOS := v_cont+v_contm;
+      :T_REG_CORRECTOS := v_cont;
+      :T_REG_ERRONEOS := v_contm;
+      SYNCHRONIZE;
+      EXIT WHEN :system.Last_record = 'TRUE';
+      NEXT_RECORD; 
+   END LOOP;	
+   FIRST_RECORD;
+   GO_BLOCK('BLK_GASTOS');
+   FIRST_RECORD;   
+   GO_BLOCK('BLK_BIENES');
+   FIRST_RECORD;
+EXCEPTION
+   WHEN OTHERS THEN
+      NULL;
 END;

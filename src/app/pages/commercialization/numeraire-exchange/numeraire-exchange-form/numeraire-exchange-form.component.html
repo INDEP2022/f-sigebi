@@ -94,7 +94,8 @@
                         </ng-template>
                       </ng-custom-select> -->
                       <input
-                        type="text"
+                        type="number"
+                        min="1"
                         class="form-control"
                         formControlName="id" />
                     </form-field>
@@ -497,10 +498,7 @@
                       class="form-group"
                       [control]="formBlkControl.get('diNewFile')"
                       label="Referencia">
-                      <input
-                        type="number"
-                        class="form-control"
-                        formControlName="diNewFile" />
+                      <input class="form-control" formControlName="diNewFile" />
                     </form-field>
                   </div>
                   <div class="col-md-3">
@@ -629,13 +627,102 @@
           </div>
           <app-pagination [params]="params" [totalItems]="totalItems">
           </app-pagination>
-          <div>
-            <button
-              [disabled]="isLoadingMassive || !sourcesMassive.count"
-              class="btn btn-primary active"
-              (click)="saveInServerMassive()">
-              Guardar
-            </button>
+          <div class="form-material">
+            <div [formGroup]="formBlkControl" class="row mt-3 py-5 px-3">
+              <div class="ms-n2 mb-2">
+                <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
+                <h6 class="d-inline">Conversi&oacute;n</h6>
+              </div>
+              <hr class="mw-98" />
+              <div class="row">
+                <div class="col-sm-12 col-md-8 pt-sm-5 pt-md-2">
+                  <div class="form-group">
+                    <form-field
+                      class="form-group"
+                      label="Tipo de conversión"
+                      [control]="formBlkControl.get('typeConversion')">
+                      <select
+                        (change)="changeTypeConversion($event)"
+                        class="form-control"
+                        formControlName="typeConversion">
+                        <option
+                          [value]="type.value"
+                          *ngFor="let type of conversionTypes">
+                          {{ type.text }}
+                        </option>
+                      </select>
+                    </form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3 py-5 px-3">
+                <div class="ms-n2 mb-2">
+                  <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
+                  <h6 class="d-inline">Datos de cuenta</h6>
+                </div>
+                <hr class="mw-98" />
+                <div [formGroup]="formBlkControl" class="row mb-0 d-block">
+                  <div
+                    class="row d-flex justify-content-center align-content-center">
+                    <div class="col-sm-12 col-md-6 mh-80">
+                      <i
+                        class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
+                      <h5 class="font-size-14 mb-2 d-inline">Banco</h5>
+                      <div class="form-group">
+                        <ng-custom-select
+                          placeholder="Buscador de bancos"
+                          class="form-control"
+                          paramSearch="filter.nombre"
+                          formControlName="tiNewBank"
+                          value="cve_cuenta"
+                          path="accountmvmnt/api/v1/aplication/get-data-bank"
+                          (valueChange)="selectAccount($event)">
+                          <ng-template let-item
+                            >{{ item.cve_banco }} - {{ item.nombre }}
+                          </ng-template>
+                        </ng-custom-select>
+                      </div>
+                    </div>
+                    <ng-container *ngIf="selectedBank">
+                      <div class="col-sm-12 col-md-6">
+                        <i
+                          class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                        <h5 class="font-size-14 mb-2 d-inline">
+                          Descripci&oacute;n
+                        </h5>
+                        <p class="text-muted">
+                          {{ formBlkControl.value.diNewBank }}
+                        </p>
+                      </div>
+                      <div class="col-sm-6 col-md-6">
+                        <i
+                          class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                        <h5 class="font-size-14 mb-2 d-inline">Cuenta</h5>
+                        <p class="text-muted">
+                          {{ formBlkControl.value.diNewAccount }}
+                        </p>
+                      </div>
+                      <div class="col-sm-6 col-md-6">
+                        <i
+                          class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+                        <h5 class="font-size-14 mb-2 d-inline">Moneda</h5>
+                        <p class="text-muted">
+                          {{ formBlkControl.value.diNewCurrency }}
+                        </p>
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <button
+                [disabled]="isLoadingMassive || sourcesMassive.count()"
+                class="btn btn-primary active"
+                (click)="saveInServerMassive()">
+                Guardar
+              </button>
+            </div>
           </div>
         </tab>
       </tabset>

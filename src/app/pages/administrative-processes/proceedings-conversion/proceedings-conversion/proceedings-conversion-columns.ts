@@ -57,85 +57,6 @@ export const GOODSEXPEDIENT_COLUMNS_GOODS = {
   },
 };
 
-<<<<<<< HEAD
-export const APPLY_DATA_COLUMNS = (keyValueObj: any) => {
-  let objResponse: any = {};
-  if (keyValueObj == 'descripcion') {
-    objResponse = {
-      title: keyValueObj.toLocaleUpperCase(),
-      type: 'custom',
-      sort: false,
-      renderComponent: ProceedingsConversionComponent,
-      valuePrepareFunction: (value: string) => {
-        console.log(value);
-        if (value == 'null' || value == 'undefined') {
-          return '';
-        }
-
-        return value ? value : '';
-      },
-      class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
-        ? WHEEL_COLOR_DATA_COLUMN
-        : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-        ? OFFICE_COLOR_DATA_COLUMN
-        : GOOD_COLOR_DATA_COLUMN,
-    };
-  } else if (keyValueObj == 'descbien') {
-    objResponse = {
-      title: keyValueObj.toLocaleUpperCase(),
-      type: 'custom',
-      sort: false,
-      renderComponent: ProceedingsConversionComponent,
-      valuePrepareFunction: (value: string) => {
-        console.log(value);
-
-        if (value == 'null' || value == 'undefined') {
-          return '';
-        }
-
-        return value ? value : '';
-      },
-      class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
-        ? WHEEL_COLOR_DATA_COLUMN
-        : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-        ? OFFICE_COLOR_DATA_COLUMN
-        : GOOD_COLOR_DATA_COLUMN,
-    };
-  } else if (keyValueObj == 'observaciones') {
-    objResponse = {
-      title: keyValueObj.toLocaleUpperCase(),
-      type: 'custom',
-      sort: false,
-      renderComponent: ProceedingsConversionComponent,
-      valuePrepareFunction: (value: string) => {
-        console.log(value);
-
-        if (value == 'null' || value == 'undefined') {
-          return '';
-        }
-
-        return value ? value : '';
-      },
-      class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
-        ? WHEEL_COLOR_DATA_COLUMN
-        : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-        ? OFFICE_COLOR_DATA_COLUMN
-        : GOOD_COLOR_DATA_COLUMN,
-    };
-  } else {
-    objResponse = {
-      title: keyValueObj.toLocaleUpperCase(),
-      type: 'string',
-      sort: false,
-      class: WHEEL_DATA_COLUMNS.includes(keyValueObj)
-        ? GOODSEXPEDIENT_COLUMNS_GOODS
-        : OFFICE_DATA_COLUMNS.includes(keyValueObj)
-        ? OFFICE_COLOR_DATA_COLUMN
-        : GOOD_COLOR_DATA_COLUMN,
-    };
-  }
-  return objResponse;
-=======
 export const ACTAS = {
   statusProceedings: {
     title: 'Estatus',
@@ -180,7 +101,6 @@ export const ACTAS = {
     type: 'string',
     sort: false,
   },
->>>>>>> 7563eb767473b032460bcee082c28dcfc2d6ef5b
 };
 export class IGoodStatus {
   goodClassNumber: string | number;

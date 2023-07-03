@@ -449,4 +449,17 @@ export class GoodService extends HttpService {
 
     return this.http.post<any>(URL, payload).pipe(map(res => res));
   }
+
+  pupValidMasiv(body: {
+    available: string;
+    diCoinNew: number;
+    screenKey: string;
+    goodNumber: string;
+    convType: string;
+    sellPrice: number;
+    pTransGood: string;
+    availableMasive: string;
+  }) {
+    return this.http.post<any>('api/v1/good/pupValidMasiv', body);
+  }
 }

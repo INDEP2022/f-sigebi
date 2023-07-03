@@ -62,11 +62,7 @@ export class RegistryServicesComponent
         type: 'html',
         valuePrepareFunction: (text: string) => {
           return `${
-<<<<<<< HEAD
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
-=======
             text ? text.split('T')[0].split('-').reverse().join('/') : ''
->>>>>>> 7563eb767473b032460bcee082c28dcfc2d6ef5b
           }`;
         },
         filter: {

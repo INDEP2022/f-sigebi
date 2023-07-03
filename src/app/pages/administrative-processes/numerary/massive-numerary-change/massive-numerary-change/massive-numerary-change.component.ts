@@ -63,7 +63,7 @@ import {
 })
 export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   form: FormGroup;
-  dataPrevious = new LocalDataSource();
+  dataPrevious: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
@@ -179,77 +179,77 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   //#region On click Button Process Extraction
   isLoadingProcessExtraction = false;
   async onClickBtnProcessExtraction() {
+    console.log('onClickBtnProcessExtraction');
     this.isLoadingProcessExtraction = true;
-    let colB = 0;
-    let banB = 0;
+    let vBanB = 0;
+    let vBanI = 0;
+    let vBanV = 0;
+    let vBanG = false;
 
-    let colI = 0;
-    let banI = 0;
-
-    let colG: any = null;
-    let banG = false;
-    let colV = 0;
-    let banV = 0;
+    let vColI = 0;
+    let vColG: any = null;
+    let vColV = 0;
+    let vColB = 0;
     this.columns.forEach((_column, index) => {
       index++;
       const control = this.formTips.get(`TIP${index}`);
       const controlValue = control?.value;
       switch (controlValue) {
         case 'B':
-          colB = index;
-          banB++;
+          vColB = index;
+          vBanB++;
           break;
         case 'I':
-          colI = index;
-          banI++;
+          vColI = index;
+          vBanI++;
           break;
         case 'G':
           const controlGas = this.formGas.get(`GAS${index}`);
           if (!controlGas?.value) {
-            banG = true;
+            vBanG = true;
           } else {
-            colG = colG + index + ',';
+            vColG = vColG + index + ',';
           }
           break;
         case 'V':
-          colV = index;
-          banV++;
+          vColV = index;
+          vBanV++;
       }
     });
     const messages = [];
-    let ban = false;
-    if (banB === 0 || banB > 1) {
+    let vBan = false;
+    if (vBanB === 0 || vBanB > 1) {
       messages.push(
-        banB === 0
+        vBanB === 0
           ? 'Se debe especificar la columna del No. de Bien'
           : 'Se especificó más de una columna del No. de Bien'
       );
-      ban = true;
+      vBan = true;
     }
 
-    if (banI === 0 || banI > 1) {
+    if (vBanI === 0 || vBanI > 1) {
       messages.push(
-        banI === 0
+        vBanI === 0
           ? 'Se debe especificar la columna del Ingreso neto'
           : 'Se especificó más de una columna del Ingreso neto'
       );
-      ban = true;
+      vBan = true;
     }
 
-    if (banG) {
+    if (vBanG) {
       messages.push(
         'No se especificó el Concepto de Gasto en al menos una columna'
       );
-      ban = true;
+      vBan = true;
     }
 
-    if (banV === 0 || banV > 1) {
+    if (vBanV === 0 || vBanV > 1) {
       messages.push(
-        banV === 0
+        vBanV === 0
           ? 'Se debe especificar la columna del IVA'
           : 'Se especificó más de una columna del IVA'
       );
-      ban = true;
+      vBan = true;
     }
     if (messages.length > 0) {
       showToast({
@@ -258,7 +258,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
         text: messages.join('\n'),
       });
     }
-    if (ban) {
+    if (vBan) {
       this.isLoadingProcessExtraction = false;
       return;
     }
@@ -272,35 +272,31 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
         FIRST_RECORD;
     */
 
-    const dataTablePreview = await this.dataPrevious.getAll();
-    console.log({ dataTablePreview });
-    this.processExtraction(dataTablePreview, colB, colI, colV, colG);
+    //  const dataTablePreview = await this.dataPrevious.getAll();
+    //  console.log({ dataTablePreview });
+    this.processExtraction(vColB, vColI, vColV, vColG);
   }
 
+  dataTableSpent: IMassiveNumeraryChangeSpent[] = [];
+  dataTableSmall: IMassiveNumeraryTableSmall[] = [];
   async processExtraction(
-    dataTablePreview: any[],
+    // dataTablePreview: any[],
     colB: number,
     colI: number,
     colV: number,
     colG: string
   ) {
-    let dataTableSpent: IMassiveNumeraryChangeSpent[] = [];
-    let dataTableSmall: IMassiveNumeraryTableSmall[] = [];
-    // let indNume;
-    // let contm = 0;
     let cont = 0;
-    // let cveProcess: string | null = null;
-    // let actaOk = false;
     let vItem = null;
 
     let vType = null;
-    let vnoGood;
+    let vNoGood;
     let vContm = 0;
 
-    let vGood = null;
+    let good = null;
     let vGoodStatus = null;
 
-    let vnoGoodn = null;
+    let vnoGoodN = null;
     let vcveProcess = null;
     let vIndNume: number;
     let vActaOk = null;
@@ -311,29 +307,23 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     let vColgu;
     let vdSpent = null;
     let vDescription = null;
-    // /** @replace vno_bienn */
-    // let numberGoodn = null;
-
-    /** @replace vestatusn */
-    // let status = null;
-
-    // dataTablePreview.map(
-    const test = async (item: any) => {
+    this.dataPrevious.forEach(async item => {
+      // const test = async (item: any) => {
       vItem = 'COL' + colB;
       vType = item[vItem];
 
       if (vType) {
         try {
-          vnoGood = Number(vType.replace(',', '.'));
+          vNoGood = Number(vType.replace(',', '.'));
           try {
-            vGood = await this.selectGoodForId(vnoGood);
-            vnoGoodn = null;
+            good = await this.selectGoodForId(vNoGood);
+            vnoGoodN = null;
             vcveProcess = null;
             try {
               vGoodStatus = await this.selectGoodFilterNoGoodReferenceAndNoGood(
-                vnoGood
+                vNoGood
               );
-              vnoGoodn = vGoodStatus?.id;
+              vnoGoodN = vGoodStatus?.id;
               if (vGoodStatus?.status !== 'ADM') {
                 vIndNume = 0;
                 vContm++;
@@ -341,7 +331,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
               } else {
                 try {
                   const accountMovement = await this.selectMovementAccount(
-                    vnoGoodn
+                    vnoGoodN
                   );
                   vIndNume = 3;
                   vContm++;
@@ -350,7 +340,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                   vContm++;
                 }
               }
-              vcveProcess = await this.pufSearchEvent(vnoGood);
+              vcveProcess = await this.pufSearchEvent(vNoGood);
             } catch (ex: any) {
               console.log({ ex: ex.message });
               if (ex?.message === 'Más de una ref.') {
@@ -359,23 +349,23 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                 vcveProcess = ex?.message;
               } else {
                 if (
-                  vGood.identifier == 'TRANS' &&
-                  ['CNE', 'CBD', 'CDS', 'CNS', 'CNR'].includes(vGood.status)
+                  good.identifier == 'TRANS' &&
+                  ['CNE', 'CBD', 'CDS', 'CNS', 'CNR'].includes(good.status)
                 ) {
                   vIndNume = 2;
-                  vcveProcess = await this.pufSearchEvent(vnoGood);
+                  vcveProcess = await this.pufSearchEvent(vNoGood);
                 } else {
                   vIndNume = 1;
-                  if (vGood.identifier == 'TRANS') {
+                  if (good.identifier == 'TRANS') {
                     vIndNume = 4;
                   }
-                  vActaOk = await this.pufValidActaReception(vnoGood);
+                  vActaOk = await this.pufValidActaReception(vNoGood);
                   if (
                     !vActaOk &&
-                    this.nvl(vGood.goodsPartializationFatherNumber) > 0
+                    this.nvl(good.goodsPartializationFatherNumber) > 0
                   ) {
                     vActaOk = await this.pufValidActaReception(
-                      vGood.goodsPartializationFatherNumber
+                      good.goodsPartializationFatherNumber
                     );
                   }
                   if (!vActaOk) {
@@ -437,11 +427,11 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                         //            END IF;
 
                         const blkSpent = {
-                          noGood: vnoGood,
+                          noGood: vNoGood,
                           cveie: vdSpent,
                           amount: vdSpent,
                           description: vDescription,
-                          status: vGood.status,
+                          status: good.status,
                           type: 'E',
                         };
                         dataTableSmall.push(blkSpent);
@@ -455,32 +445,32 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                     //           CREATE_RECORD;
                     //        END IF;
                     dataTableSmall.push({
-                      noGood: vnoGood,
+                      noGood: vNoGood,
                       cveie: 0,
                       amount: vTax.toString(),
                       description: 'I.V.A',
-                      status: vGood.status,
+                      status: good.status,
                       type: 'I',
                     });
 
                     const prevDataTableSpent: IMassiveNumeraryChangeSpent = {
-                      noGood: vnoGood,
-                      description: vGood.description,
-                      status: vGood.status,
+                      noGood: vNoGood,
+                      description: good.description,
+                      status: good.status,
                       entry: vIncome + vTotalSpent - vTax,
                       costs: vTotalSpent,
                       tax: vTax,
                       impNumerary: vIncome,
-                      noExpAssociated: vGood.associatedFileNumber,
-                      noExpedient: vGood.fileeNumber,
-                      quantity: vGood.quantity,
-                      noDelegation: (vGood.delegationNumber as any)?.id,
-                      noSubDelegation: (vGood.subDelegationNumber as any)?.id,
-                      identifier: vGood.identifier,
-                      noFlier: vGood.flyerNumber,
+                      noExpAssociated: good.associatedFileNumber,
+                      noExpedient: good.fileeNumber,
+                      quantity: good.quantity,
+                      noDelegation: (good.delegationNumber as any)?.id,
+                      noSubDelegation: (good.subDelegationNumber as any)?.id,
+                      identifier: good.identifier,
+                      noFlier: good.flyerNumber,
                       indNume: vIndNume,
                       cveEvent: vcveProcess,
-                      npNUm: vnoGoodn,
+                      npNUm: vnoGoodN,
                     };
 
                     if (vIndNume !== 1) {
@@ -525,9 +515,9 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       this.registerProcessed = cont + vContm;
       this.registerCorrect = cont;
       this.registerIncorrect = vContm;
-    };
+    });
 
-    await test({ COL1: '7349', COL2: '10', COL3: '10', COL4: '10' });
+    // await test({ COL1: '7349', COL2: '10', COL3: '10', COL4: '10' });
     this.isLoadingProcessExtraction = false;
     this.modalService.show(MassiveNumeraryChangeModalComponent, {
       initialState: {

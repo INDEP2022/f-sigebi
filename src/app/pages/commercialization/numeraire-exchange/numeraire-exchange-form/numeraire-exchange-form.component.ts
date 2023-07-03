@@ -497,10 +497,39 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     fileReader.onload = () => this.readCsv(fileReader.result);
   }
 
+  validateHeaderTableMassive(data: { [key: string]: any }) {
+    const itemHeader = {
+      appraisalAmount: 147,
+      commentary: 'EXAMPLE COMMENT',
+      commission: 10,
+      commissionTax: 15,
+      description: 'NUMERARIO FÃSICO POR LA CANTIDAD DE US$200.00',
+      domain: 'EXAMPLE',
+      id: 1,
+      identifier: 111,
+      salePrice: 200,
+      saleTax: 15,
+      status: 'ACTIVO',
+      totalExpenses: 53,
+    };
+    const keys = Object.keys(itemHeader);
+    Object.keys(data).forEach(key => {
+      if (!keys.includes(key)) {
+        this.alert(
+          'error',
+          'Error',
+          `El archivo no contiene la columna ${key}`
+        );
+        throw `El archivo no contiene la columna ${key}`;
+      }
+    });
+  }
+
   readCsv(binaryExcel: string | ArrayBuffer) {
     try {
       this.loading = true;
       const dataCvs = this.excelService.getData(binaryExcel);
+      this.validateHeaderTableMassive(dataCvs[0]);
       this.sourcesMassive.load(dataCvs);
       console.log(dataCvs);
       this.totalItems = dataCvs.length;
@@ -731,7 +760,34 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   isLoadingMassive: boolean = false;
   saveInServerMassive(): void {
+    // if (this.formMassive.invalid) {
+    //   this.alert('warning', 'Advertencia', '');
+    //   return;
+    // }
     // this.sourcesMassive.c
+  }
+
+  pupValidateMassive(): void {
+    // const body = {
+    //   available: string;
+    // diCoinNew: number;
+    // screenKey: string;
+    // goodNumber: string;
+    // convType: string;
+    // sellPrice: number;
+    // pTransGood: string;
+    // availableMasive: string;
+    // }
+    // firstValueFrom(
+    // this.goodService.pupValidMasiv().pipe(
+    //   map(res => res),
+    //   catchError(err => {
+    //     // if ()
+    //     console.log('err', err);
+    //     throw err;
+    //   })
+    // )
+    // );
   }
 
   checkedMovBan = false;

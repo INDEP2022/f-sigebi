@@ -164,9 +164,7 @@
                                     <div>
                                       <form-field
                                         [control]="
-                                          proceedingsConversionForm.get(
-                                            'testigoOIC'
-                                          )
+                                          actaRecepttionForm.get('testigoOIC')
                                         "
                                         label="Testigo de la contraloria">
                                         <input
@@ -174,8 +172,7 @@
                                           type="text"
                                           class="form-control"
                                           formControlName="testigoOIC"
-                                          pattern="^[A-Z]+"
-                                          [disabled]="validPermisos" />
+                                          [readonly]="!validPermisos" />
                                       </form-field>
                                     </div>
                                   </div>
@@ -183,9 +180,7 @@
                                     <div>
                                       <form-field
                                         [control]="
-                                          proceedingsConversionForm.get(
-                                            'testigoTwo'
-                                          )
+                                          actaRecepttionForm.get('testigoTwo')
                                         "
                                         label="Testigo">
                                         <input
@@ -193,8 +188,7 @@
                                           type="text"
                                           class="form-control"
                                           formControlName="testigoTwo"
-                                          pattern="^[A-Z]+"
-                                          [disabled]="validPermisos" />
+                                          [readonly]="!validPermisos" />
                                       </form-field>
                                     </div>
                                   </div>
@@ -202,9 +196,7 @@
                                     <div>
                                       <form-field
                                         [control]="
-                                          proceedingsConversionForm.get(
-                                            'testigoTree'
-                                          )
+                                          actaRecepttionForm.get('testigoTree')
                                         "
                                         label="Testigo">
                                         <input
@@ -212,8 +204,7 @@
                                           type="text"
                                           class="form-control"
                                           formControlName="testigoTree"
-                                          pattern="^[A-Z]+"
-                                          [disabled]="validPermisos" />
+                                          [disabled]="!validPermisos" />
                                       </form-field>
                                     </div>
                                   </div>
@@ -229,7 +220,7 @@
                                           type="text"
                                           class="form-control"
                                           formControlName="acta"
-                                          [disabled]="validPermisos" />
+                                          readonly />
                                       </form-field>
                                     </div>
                                   </div>
@@ -240,13 +231,12 @@
                                           actaRecepttionForm.get('type')
                                         "
                                         label="Estado">
-                                        <!-- <input #inputValue type="text" class="form-control" formControlName="type"
-                                          [disabled]="validPermisos" /> -->
-                                        <select
+                                        <input
+                                          #inputValue
+                                          type="text"
                                           class="form-control"
-                                          formControlName="type">
-                                          <option value="2">2</option>
-                                        </select>
+                                          formControlName="type"
+                                          readonly />
                                       </form-field>
                                     </div>
                                   </div>
@@ -262,7 +252,7 @@
                                           type="text"
                                           class="form-control"
                                           formControlName="administra"
-                                          [disabled]="validPermisos" />
+                                          readonly />
                                       </form-field>
                                     </div>
                                   </div>
@@ -279,7 +269,7 @@
                                           type="text"
                                           class="form-control"
                                           formControlName="consec"
-                                          [disabled]="validPermisos" />
+                                          readonly />
                                       </form-field>
                                     </div>
                                   </div>
@@ -289,13 +279,17 @@
                                         [control]="
                                           actaRecepttionForm.get('anio')
                                         "
-                                        label="Año">
+                                        label="Fecha de Captura">
                                         <input
                                           #inputValue
                                           type="text"
                                           class="form-control"
                                           formControlName="anio"
-                                          [disabled]="validPermisos" />
+                                          [readonly]="!validPermisos"
+                                          bsDatepicker
+                                          [bsConfig]="{
+                                            dateInputFormat: 'MM/YYYY'
+                                          }" />
                                       </form-field>
                                     </div>
                                   </div>
@@ -320,7 +314,7 @@
                                           type="text"
                                           class="form-control"
                                           formControlName="cveActa"
-                                          [disabled]="validPermisos" />
+                                          readonly />
                                       </form-field>
                                     </div>
                                   </div>
@@ -397,14 +391,22 @@
                                         rows="5"></textarea>
                                     </form-field>
                                   </div>
-                                  <div class="m-3">
-                                    <button
-                                      type="button"
-                                      class="btn btn-primary active btn-sm"
-                                      (click)="getActasReception(conversion)">
-                                      <i
-                                        class="bx bx-search bx-sm float-icon"></i>
-                                    </button>
+                                </div>
+                                <div class="row mt-5">
+                                  <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <form-field
+                                      [control]="
+                                        actaRecepttionForm.get('parrafo3')
+                                      "
+                                      label="P&aacute;rrafo 3">
+                                      <textarea
+                                        maxlength="4000"
+                                        [readonly]="!validPermisos"
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="parrafo3"
+                                        rows="5"></textarea>
+                                    </form-field>
                                   </div>
                                 </div>
                               </div>
@@ -414,77 +416,82 @@
                       </div>
                     </form>
                     <div class="row"></div>
-                    <form [formGroup]="actaGoodForm" class="form-material">
-                      <div class="row mt-12 d-flex justify-content-center">
-                        <div class="col-md-12">
-                          <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
-                          <div
-                            [class]="loading ? 'table-loading' : ''"
-                            class="overflow-auto">
-                            <ng2-smart-table
-                              [attr.class]="'table-bordered'"
-                              [settings]="settings"
-                              [source]="dataTableGood"
-                              (userRowSelect)="selectData($event)">
-                            </ng2-smart-table>
-                            <app-pagination
-                              [totalItems]="totalItems"></app-pagination>
+                    <div class="row p-3">
+                      <div class="col-md-3"></div>
+                      <form [formGroup]="actaGoodForm" class="form-material">
+                        <div class="row mt-12 d-flex justify-content-center">
+                          <div class="col-md-12 justify-content-center">
+                            <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
+                            <ng-scrollbar
+                              track="horizontal"
+                              [autoHeightDisabled]="false">
+                              <div
+                                [class]="loading ? 'table-loading' : ''"
+                                class="overflow-auto">
+                                <ng2-smart-table
+                                  id="bienes"
+                                  [attr.class]="'table-bordered my-table'"
+                                  [settings]="settings"
+                                  [source]="dataTableGood"
+                                  (userRowSelect)="selectData($event)">
+                                </ng2-smart-table>
+                                <app-pagination
+                                  [totalItems]="totalItems"></app-pagination>
+                              </div>
+                            </ng-scrollbar>
                           </div>
-                        </div>
-                        <div class="d-flex justify-content-center">
-                          <div class="text-center">
-                            <button
-                              (click)="create()"
-                              [disabled]="isAllDisabled"
-                              class="btn btn-secondary btn-sm bg-success active m-3 p-3"
-                              type="button">
-                              Agregar <i class="fa fa-plus bx-md"></i>
-                            </button>
-                            <br />
-                            <!-- <button (click)="deleteGoodActa($event)" [disabled]="isAllDisabled"
-                              class="btn btn-secondary btn-sm active bg-danger m-3 p-3" type="button">
-                              Mover uno
-                              <i class="bx bxs-left-arrow-circle bx-md"></i>
-                            </button> -->
-                          </div>
-                        </div>
-                        <div class="col-md-12">
-                          <h6>BIENES RELACIONADOS CON EL ACTA</h6>
-                          <ng-scrollbar
-                            track="horizontal"
-                            [autoHeightDisabled]="false">
-                            <div
-                              [class]="loading ? 'table-loading' : ''"
-                              class="overflow-auto">
-                              <ng2-smart-table
-                                [attr.class]="'table-bordered'"
-                                [settings]="settings2"
-                                [source]="dataTableGoodsConvertion">
-                              </ng2-smart-table>
-                              <app-pagination
-                                [totalItems]="totalItems2"></app-pagination>
+                          <div class="d-flex justify-content-center">
+                            <div class="text-center">
+                              <button
+                                (click)="create()"
+                                class="btn btn-success btn-sm active"
+                                type="button">
+                                Agregar <i class="fa fa-plus float-icon"></i>
+                              </button>
+                              <br />
+                              <!-- <button (click)="deleteGoodActa($event)" [disabled]="isAllDisabled"
+                                                        class="btn btn-secondary btn-sm active bg-danger m-3 p-3" type="button">
+                                                        Mover uno
+                                                        <i class="bx bxs-left-arrow-circle bx-md"></i>
+                                                      </button> -->
                             </div>
-                          </ng-scrollbar>
+                          </div>
+                          <div class="col-md-12">
+                            <h6>BIENES RELACIONADOS CON EL ACTA</h6>
+                            <ng-scrollbar
+                              track="horizontal"
+                              [autoHeightDisabled]="false">
+                              <div
+                                [class]="loading ? 'table-loading' : ''"
+                                class="overflow-auto">
+                                <ng2-smart-table
+                                  [attr.class]="'table-bordered my-table'"
+                                  [settings]="settings2"
+                                  [source]="rececption">
+                                </ng2-smart-table>
+                                <app-pagination
+                                  [totalItems]="totalItems2"></app-pagination>
+                              </div>
+                            </ng-scrollbar>
+                          </div>
                         </div>
-                      </div>
-                    </form>
+                      </form>
+                    </div>
                   </div>
                 </app-card>
               </div>
             </form>
             <div footer>
               <div
+                class="d-flex flex-row justify-content-center align-items-center"></div>
+              <div
                 class="d-flex flex-row justify-content-center align-items-center">
-                <div class="m-3">
-                  <button
-                    type="button"
-                    class="btn btn-primary active btn-sm"
-                    (click)="getDetail()">
+                <!-- <div class="m-3">
+                  <button type="button" class="btn btn-primary active btn-sm" (click)="getDetail()">
                     Detalle de Acta
                     <i class="fas fa-edit bx-sm float-icon"></i>
                   </button>
-                </div>
-                -->
+                </div> -->
                 <div class="m-3">
                   <button
                     *ngIf="dataTableGoodsConvertion"
@@ -497,7 +504,7 @@
                 </div>
                 <div class="m-3">
                   <button
-                    class="btn btn-success btn-sm ml-2"
+                    class="btn btn-success btn-sm active"
                     type="button"
                     (click)="cargueMasive()">
                     Carga Masiva
