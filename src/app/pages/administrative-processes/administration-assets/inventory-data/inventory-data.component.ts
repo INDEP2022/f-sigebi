@@ -64,10 +64,11 @@ export class InventoryDataComponent
   columnFilter: any = [];
   inventoryDataForm: ModelForm<any>;
   generateAtri: boolean = false;
-  textButon: string = 'Generar inventario';
+  textButon: string = 'Generar Inventario';
+  atribute: string = 'Generar Atributos';
 
-  get dataInventory() {
-    return this.service.dataInventary;
+  get dataIn() {
+    return this.service.data;
   }
   constructor(
     private fb: FormBuilder,
@@ -224,7 +225,7 @@ export class InventoryDataComponent
         if (date.length > 0) {
           this.inventorySelect = null;
           this.generateAtri = false;
-          this.textButon = 'Generar inventario';
+          this.textButon = 'Generar Inventario';
           this.viewAct = !this.viewAct;
           this.viewAct = !this.viewAct;
           this.generateAtri = false;
@@ -303,6 +304,7 @@ export class InventoryDataComponent
       this.goodId,
       this.inventorySelect.inventoryNumber
     );
+    console.log(atributes);
     if (atributes.length > 0) {
       this.inventary = atributes;
     } else {
@@ -356,9 +358,25 @@ export class InventoryDataComponent
   }
 
   async add() {
-    if (this.dataInventory) {
+    if (this.dataIn) {
+      console.log('ESTA ES LA DATA INV', this.dataIn);
       if (this.inventorySelect) {
-        this.dataInventory.forEach((item: any) => {
+        let required: boolean = false;
+        this.dataIn.forEach((item: any) => {
+          console.log(item);
+          if (item.required && item.value === null) {
+            required = true;
+          }
+        });
+        if (required) {
+          this.alert(
+            'warning',
+            'Datos inventario',
+            'Debe diligenciar los valores requeridos.'
+          );
+          return;
+        }
+        this.dataIn.forEach((item: any) => {
           this.updateInventary(
             this.inventorySelect.inventoryNumber,
             item.numColumn,
@@ -371,9 +389,24 @@ export class InventoryDataComponent
           'Se ha realizado la actualización correctamente'
         );
       } else {
+        let required: boolean = false;
+        this.dataIn.forEach((item: any) => {
+          console.log(item);
+          if (item.required && item.value === null) {
+            required = true;
+          }
+        });
+        if (required) {
+          this.alert(
+            'warning',
+            'Datos inventario',
+            'Debe diligenciar los valores requeridos.'
+          );
+          return;
+        }
         const inventoryNumber: number = await this.createInventory();
         if (inventoryNumber !== null) {
-          this.dataInventory.forEach((item: any) => {
+          this.dataIn.forEach((item: any) => {
             this.createLineaInventory(
               inventoryNumber,
               item.numColumn,

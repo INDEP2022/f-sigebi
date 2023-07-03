@@ -17,6 +17,7 @@
             min="0"
             oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
         </form-field>
+
         <form-field
           [control]="form.get('flyerNumber')"
           label="No. Volante"
@@ -43,7 +44,7 @@
 
         <form-field
           [control]="form.get('significantDate')"
-          label="Fecha significativa (mm/aaaa)"
+          label="Fecha Significativa (mm/aaaa)"
           class="col-md-2">
           <input
             type="text"
@@ -60,7 +61,7 @@
             [data]="selectTypeDoc"
             [form]="form"
             bindLabel="id"
-            label="Tipo de documento"
+            label="Tipo de Documento"
             control="keyTypeDocument"
             (fetchItems)="onTipoDocumentoInputChange($event)"
             (change)="onOptionsSelectedTypeDocument($event)">
@@ -69,7 +70,7 @@
 
         <form-field
           [control]="form.get('descriptionDocument')"
-          label="Descripci&oacute;n del documento"
+          label="Descripci&oacute;n del Documento"
           class="col-md-9">
           <input
             type="text"
@@ -82,7 +83,7 @@
       <div class="row pt-3">
         <form-field
           [control]="form.get('preliminaryInquiry')"
-          label="Averiguaci&oacute;n previa"
+          label="Averiguaci&oacute;n Previa"
           class="col-md-3">
           <input
             type="text"
@@ -93,7 +94,7 @@
 
         <form-field
           [control]="form.get('criminalCase')"
-          label="Causa penal"
+          label="Causa Penal"
           class="col-md-3">
           <input
             type="text"
@@ -156,10 +157,10 @@
       <div class="row" style="margin-bottom: 30px">
         <div class="col-md-10 d-flex justify-content-between">
           <div class="d-flex align-items-center">
-            <span class="mr-5" style="color: #b38e5d"
+            <span class="mr-5" style="color: #1e7e34"
               ><i class="fa fa-square"></i> Documento digitalizado</span
             >
-            <span style="color: #05668d"
+            <span class="text-dark"
               ><i class="fa fa-square"></i> Documento pendiente a
               digitalizar</span
             >
@@ -183,6 +184,7 @@
             <div [class]="loading ? 'table-loading' : ''">
               <div class="table-responsive">
                 <ng2-smart-table
+                  id="hooverTableDocumentViewer"
                   [attr.class]="'table-bordered'"
                   [settings]="settings"
                   [source]="data"

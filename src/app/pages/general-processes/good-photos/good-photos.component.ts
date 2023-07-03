@@ -69,6 +69,19 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   ngOnInit() {
+    this.activatedRoute.queryParams.subscribe({
+      next: param => {
+        console.log(param);
+        if (param['numberGood']) {
+          this.noBienControl = param['numberGood'] || null;
+          this.searchGood();
+          return;
+        }
+        if (this.previousRouteService.getHistory().length > 1) {
+          this.origin = 1;
+        }
+      },
+    });
     if (localStorage.getItem('selectedGoodsForPhotos')) {
       this.selectedGoodsForPhotos = JSON.parse(
         localStorage.getItem('selectedGoodsForPhotos')

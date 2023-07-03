@@ -212,6 +212,9 @@ export class PhotosListComponent extends BasePage implements OnInit {
 
   async confirmDelete(all = false) {
     // if (this.disabledDeletePhotos()) return;
+    if (all) {
+      this.filesToDelete = [...this.files];
+    }
     if (this.filesToDelete.length < 1) {
       this.alert(
         'warning',
@@ -220,15 +223,14 @@ export class PhotosListComponent extends BasePage implements OnInit {
       );
       return;
     }
+
     const result = await this.alertQuestion(
       'warning',
       'Advertencia',
-      '¿Estás seguro que desea eliminar las imágenes seleccionadas?'
+      all
+        ? '¿Estás seguro que desea eliminar todas las fotos?'
+        : '¿Estás seguro que desea eliminar las fotos seleccionadas?'
     );
-    if (all) {
-      this.filesToDelete = [...this.files];
-    }
-
     if (result.isConfirmed) {
       this.deleteSelectedFiles();
     }

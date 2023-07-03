@@ -157,4 +157,8 @@ export class ProceedingsService extends HttpService {
   getUnioTable(goodNumber: number, params?: string) {
     return this.get(`${ProceedingsEndpoints.GetUnion}/${goodNumber}`, params);
   }
+
+  getCountActas(goodNumber: number | string) {
+    return this.get('aplication/get-count-actas/' + goodNumber);
+  }
 }

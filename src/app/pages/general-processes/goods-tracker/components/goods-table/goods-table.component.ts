@@ -8,20 +8,21 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
+  firstValueFrom,
   forkJoin,
   map,
+  of,
   switchMap,
   take,
   takeUntil,
   tap,
   throwError,
 } from 'rxjs';
-import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
@@ -35,6 +36,7 @@ import {
   GOOD_TRACKER_ORIGINS_TITLES,
 } from '../../utils/constants/origins';
 import { ActaHistoComponent } from '../acta-histo/acta-histo.component';
+import { GTrackerDocumentsComponent } from '../g-tracker-documents/g-tracker-documents.component';
 import { GP_GOODS_COLUMNS } from './goods-columns';
 
 @Component({
@@ -64,6 +66,8 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     private store: Store,
     private router: Router,
     private location: Location,
+    private documentsService: DocumentsService,
+    private proceedingService: ProceedingsService,
     private goodTrackerService: GoodTrackerService,
     private globalVarService: GlobalVarsService,
     private jasperServ: SiabService,
@@ -117,7 +121,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     const exists = this.selectedGooods.find(
       good => good.goodNumber == _good.goodNumber
     );
-    return !exists ? false : true;
+    return exists ? true : false;
   }
 
   private isValidOrigin() {
@@ -158,9 +162,62 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       });
   }
 
-  viewImages() {
-    const modalConfig = MODAL_CONFIG;
-    this.modalService.show(DocumentsListComponent, modalConfig);
+  async viewImages() {
+    if (!this.selectedGooods.length) {
+      this.alert('error', 'Error', 'Primero selecciona un registro');
+      return;
+    }
+
+    if (this.selectedGooods.length > 1) {
+      await this.alertInfo(
+        'info',
+        'Más de un registro seleccionado',
+        'Se tomará el último registro seleccionado'
+      );
+    }
+    const selectedGood = this.selectedGooods.at(-1);
+    if (!selectedGood.fileNumber) {
+      this.alert('error', 'Error', 'Este trámite no tiene volante asignado');
+      return;
+    }
+
+    await this.getDocuments(selectedGood);
+  }
+
+  async getDocuments(trackedGood: ITrackedGood) {
+    let config = {
+      initialState: {
+        trackedGood: trackedGood,
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    const count = await this.countAct(trackedGood.goodNumber);
+    console.log({ count });
+    if (count > 0) {
+      this.modalService.show(GTrackerDocumentsComponent, config);
+    }
+  }
+
+  countAct(goodNumber: number | string) {
+    return firstValueFrom(
+      this.proceedingService.getCountActas(goodNumber).pipe(
+        catchError(error => {
+          return of({ data: [{ count: 0 }] });
+        }),
+        map(res => res.data[0].count ?? 0)
+      )
+    );
+  }
+
+  otDocuments() {}
+
+  async takeOneProcess(turnSelects: any) {
+    await this.alertInfo(
+      'info',
+      'Más de un trámite seleccionado',
+      'Se tomará el último registro seleccionado'
+    );
   }
 
   openPrevPdf() {
