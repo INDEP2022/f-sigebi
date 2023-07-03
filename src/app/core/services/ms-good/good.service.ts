@@ -132,6 +132,13 @@ export class GoodService extends HttpService {
   getAllFilter(params?: string): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(`${GoodEndpoints.Good}?${params}`);
   }
+  getAllFilterClassification(
+    classifGoodNumber?: string
+  ): Observable<IListResponse<any>> {
+    const URL = `${environment.API_URL}/goodsquery/api/v1/${GoodEndpoints.AttribGood}?filter.classifGoodNumber=${classifGoodNumber}`;
+    const headers = new HttpHeaders();
+    return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
+  }
 
   getAllFilterDetail(params?: string): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(
@@ -416,8 +423,13 @@ export class GoodService extends HttpService {
   }
 
   getActasConversion(actaConvertion: any) {
-    const URL = `${environment.API_URL}/convertiongood/api/v1/${GoodActaConvertion.GoodActaConvertion}?filter.cveActaConvId=$like:${actaConvertion}`;
+    const URL = `${environment.API_URL}/convertiongood/api/v1/${GoodActaConvertion.GoodActaConvertion}/get-all?filter.cveActaConvId=$eq:${actaConvertion}`;
+    const headers = new HttpHeaders();
 
+    return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
+  }
+  getFolioActaConversion(actaConvertion: any) {
+    const URL = `${environment.API_URL}/convertiongood/api/v1/conversions/procedure/fConvBienHijos?cve_acta_conv=${actaConvertion}`;
     const headers = new HttpHeaders();
 
     return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));

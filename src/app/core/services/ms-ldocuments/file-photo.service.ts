@@ -11,6 +11,12 @@ import { IListResponseMessage } from '../../interfaces/list-response.interface';
 const Tiff = require('tiff.js');
 const LOADING_GIF = 'assets/images/loader-button.gif';
 const NO_IMAGE_FOUND = 'assets/images/documents-icons/not-found.jpg';
+export interface IHistoricalPhoto {
+  name: string;
+  goodNumber: string;
+  userDeleted: string;
+  deletedDate: Date;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +24,6 @@ const NO_IMAGE_FOUND = 'assets/images/documents-icons/not-found.jpg';
 export class FilePhotoService extends HttpService {
   private readonly _url = environment.API_URL;
   private readonly _prefix = environment.URL_PREFIX;
-  consecNumber = 1;
   constructor(private sanitizer: DomSanitizer) {
     super();
     this.microservice = IDocumentEndpoints.Base;
@@ -66,14 +71,13 @@ export class FilePhotoService extends HttpService {
   }
 
   getAllHistoric(goodNumber: string) {
-    return this.post<IListResponseMessage<{ name: string }>>(
+    return this.post<IListResponseMessage<IHistoricalPhoto>>(
       IDocumentEndpoints.filePhotosHistoric,
       { goodNumber }
     ).pipe(
-      catchError(x => of({ data: [] as { name: string }[] })),
+      catchError(x => of({ data: [] as IHistoricalPhoto[] })),
       map(response => {
-        if (response && response.data)
-          return response.data.map(item => item.name);
+        if (response && response.data) return response.data.map(item => item);
         else {
           return [];
         }
@@ -82,13 +86,10 @@ export class FilePhotoService extends HttpService {
   }
 
   getByIdHistoric(goodNumber: string, consecNumber: number) {
-    return this.post<{ image: string; usuarioElimina: string }>(
-      IDocumentEndpoints.filePhotoHistoric,
-      {
-        goodNumber,
-        consecNumber,
-      }
-    );
+    return this.post<string>(IDocumentEndpoints.filePhotoHistoric, {
+      goodNumber,
+      consecNumber,
+    });
   }
 
   // getAllWidthPhotosHistoric(

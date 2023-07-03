@@ -1,19 +1,14 @@
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, map, takeUntil } from 'rxjs';
-import {
-  FilterParams,
-  ListParams,
-  SearchFilter,
-} from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { BasePage } from 'src/app/core/shared';
+import { ETypeGabinetProcess } from '../goods-management-social-cabinet/typeProcess';
 import { GoodsManagementService } from '../services/goods-management.service';
 import { COLUMNS } from './columns';
-import { GoodsManagementSocialNotLoadGoodsComponent } from './goods-management-social-not-load-goods/goods-management-social-not-load-goods.component';
 
 @Component({
   selector: 'app-goods-management-social-table',
@@ -21,42 +16,41 @@ import { GoodsManagementSocialNotLoadGoodsComponent } from './goods-management-s
   styleUrls: ['./goods-management-social-table.component.scss'],
 })
 export class GoodsManagementSocialTable extends BasePage {
-  private _selectedGoods: number[];
+  // private _selectedGoods: number[];
   data: ITrackedGood[] = [];
   dataTemp: ITrackedGood[] = [];
   dataPaginated: LocalDataSource = new LocalDataSource();
-  notLoadedGoods: { good: number }[] = [];
+  // notLoadedGoods: { good: number }[] = [];
   pageSizeOptions = [5, 10, 15, 20];
   limit: FormControl = new FormControl(5);
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems = 0;
+  @Input() override loading: boolean = false;
+  @Input() process: ETypeGabinetProcess;
   @ViewChild('table') table: Ng2SmartTableComponent;
   @ViewChild('containerTable') containerTable: ElementRef;
   @Input()
   identifier: number;
-  @Input()
-  get selectedGoods(): number[] {
-    return this._selectedGoods;
-  }
-  set selectedGoods(value) {
-    if (value.length > 0) {
-      this._selectedGoods = value;
-      this.getData();
-    }
-  }
-  @Input() set clear(value: number) {
-    if (value > 0) {
-      this.notLoadedGoods = [];
-      this.dataNotFound();
-    }
-  }
-  @Input() option: string;
+  // @Input()
+  // set selectedGoods(value:ITrackedGood[]) {
+  //   if (value.length > 0) {
+  //     // this._selectedGoods = value;
+  //     // this.getData();
+  //   }
+  // }
+  // @Input() option: string;
+
   constructor(
-    private modalService: BsModalService,
     private goodTrackerService: GoodTrackerService,
-    private goodManagementeService: GoodsManagementService
+    private goodsManagementService: GoodsManagementService
   ) {
     super();
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      columns: COLUMNS,
+      actions: null,
+    };
     this.params.value.limit = 5;
     this.searchNotServerPagination();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
@@ -65,14 +59,34 @@ export class GoodsManagementSocialTable extends BasePage {
         this.getPaginated(params);
       }
     });
-
-    this.settings = {
-      ...this.settings,
-      hideSubHeader: false,
-      columns: COLUMNS,
-      actions: null,
-    };
-    this.goodManagementeService.selectedGoodSubject.subscribe({
+    this.goodsManagementService.clear
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.dataNotFound();
+          }
+        },
+      });
+    this.goodsManagementService.refreshTable.subscribe({
+      next: response => {
+        if (response) {
+          // debugger;
+          this.data = [
+            ...this.goodsManagementService.data.filter(row =>
+              row.socialCabite
+                ? +row.socialCabite === this.process
+                : this.process === ETypeGabinetProcess['Sin Asignar']
+            ),
+          ];
+          this.dataTemp = [...this.data];
+          this.getPaginated(this.params.value);
+        } else {
+          this.dataNotFound();
+        }
+      },
+    });
+    this.goodsManagementService.selectedGoodSubject.subscribe({
       next: response => {
         // debugger;
         console.log(response, this.data);
@@ -135,18 +149,6 @@ export class GoodsManagementSocialTable extends BasePage {
     this.loading = false;
   }
 
-  showNotLoads() {
-    let config: ModalOptions = {
-      initialState: {
-        data: this.notLoadedGoods,
-        totalItems: this.notLoadedGoods.length,
-      },
-      class: 'modal-md modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(GoodsManagementSocialNotLoadGoodsComponent, config);
-  }
-
   private searchNotServerPagination() {
     this.dataPaginated
       .onChanged()
@@ -178,68 +180,60 @@ export class GoodsManagementSocialTable extends BasePage {
       });
   }
 
-  getData() {
-    this.loading = true;
-    // let params = {
-    //   ...this.params.getValue(),
-    // };
-    const filterParams = new FilterParams();
-    filterParams.limit = 2000;
-    filterParams.addFilter(
-      'goodNumber',
-      this.selectedGoods.toString(),
-      SearchFilter.IN
-    );
-    // if (!params['filter.goodNumber']) {
-    //   params['filter.goodNumber'] = '$in:' + this.selectedGoods.toString();
-    // }
+  // getData() {
+  //   this.loading = true;
+  //   // let params = {
+  //   //   ...this.params.getValue(),
+  //   // };
+  //   const filterParams = new FilterParams();
+  //   filterParams.limit = 2000;
+  //   filterParams.addFilter(
+  //     'goodNumber',
+  //     this.selectedGoods.toString(),
+  //     SearchFilter.IN
+  //   );
+  //   if (this.process === 0) {
+  //     filterParams.addFilter3('filter.socialCabite', SearchFilter.NULL);
+  //   } else {
+  //     filterParams.addFilter('socialCabite', this.process);
+  //   }
+  //   // if (!params['filter.goodNumber']) {
+  //   //   params['filter.goodNumber'] = '$in:' + this.selectedGoods.toString();
+  //   // }
 
-    this.goodTrackerService
-      .getAll(filterParams.getParams())
-      .pipe(
-        takeUntil(this.$unSubscribe),
-        map(response => {
-          return {
-            ...response,
-            data: response.data.map(row => {
-              return {
-                ...row,
-                officeProc: this.optionString(row.socialCabite),
-              };
-            }),
-          };
-        })
-      )
-      .subscribe({
-        next: (response: any) => {
-          if (response) {
-            this.totalItems = response.count || 0;
-            this.notLoadedGoods = [];
-            this.selectedGoods.forEach(x => {
-              if (
-                !response.data
-                  .map((item: any) => item.goodNumber)
-                  .toString()
-                  .includes(x)
-              ) {
-                this.notLoadedGoods.push({ good: x });
-              }
-            });
-            this.data = response.data;
-            this.dataTemp = [...this.data];
-            this.getPaginated(this.params.value);
-            this.loading = false;
-          } else {
-            this.notLoadedGoods = [];
-            this.dataNotFound();
-          }
-        },
-        error: err => {
-          this.notLoadedGoods = [];
-          this.dataNotFound();
-        },
-      });
-  }
+  //   this.goodTrackerService
+  //     .getAll(filterParams.getParams())
+  //     .pipe(
+  //       takeUntil(this.$unSubscribe)
+  //       // map(response => {
+  //       //   return {
+  //       //     ...response,
+  //       //     data: response.data.filter(row => {
+  //       //       row.socialCabite
+  //       //         ? +row.socialCabite === this.process
+  //       //         : this.process === ETypeGabinetProcess['Sin Asignar'];
+  //       //     }),
+  //       //   };
+  //       // })
+  //     )
+  //     .subscribe({
+  //       next: response => {
+  //         if (response) {
+  //           this.totalItems = response.count || 0;
+
+  //           this.data = response.data;
+  //           this.dataTemp = [...this.data];
+  //           this.getPaginated(this.params.value);
+  //           this.loading = false;
+  //         } else {
+  //           this.dataNotFound();
+  //         }
+  //       },
+  //       error: err => {
+  //         this.dataNotFound();
+  //       },
+  //     });
+  // }
 
   private getPaginated(params: ListParams) {
     const cantidad = params.page * params.limit;

@@ -1,14 +1,16 @@
 <div class="ch-content">
   <h5 class="title">Previsualización de Datos</h5>
-  <div *ngIf="selectedGoods" style="font-weight: 500">
+  <!-- <div
+    *ngIf="selectedGoods && selectedGoods.length > 0"
+    style="font-weight: 500">
     Cargados {{ totalItems }} de {{ selectedGoods.length }}
-  </div>
+  </div> -->
   <div style="display: flex">
     <app-columns-select
       (settingsChange)="settingsChange($event)"
       [settings]="settings"
       class="row justify-content-end"></app-columns-select>
-    <button
+    <!-- <button
       class="btn btn-primary btn-sm active ml-3"
       type="button"
       [disabled]="
@@ -19,7 +21,7 @@
       (click)="showNotLoads()">
       No Cargados
       <i class="fa fa-info-circle"></i>
-    </button>
+    </button> -->
   </div>
 </div>
 <div class="row pt-4">
@@ -38,5 +40,5 @@
   [params]="params"
   [pageSizeOptions]="pageSizeOptions"
   [limit]="limit"
-  [totalItems]="totalItems">
+  [totalItems]="data.length">
 </app-pagination>

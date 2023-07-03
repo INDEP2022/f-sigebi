@@ -1,10 +1,4 @@
 export const COLUMNS = {
-  officeProc: {
-    title: 'Proceso Gabinete',
-    sort: false,
-    filter: false,
-  },
-
   goodNumber: {
     title: 'No. Bien',
     sort: false,

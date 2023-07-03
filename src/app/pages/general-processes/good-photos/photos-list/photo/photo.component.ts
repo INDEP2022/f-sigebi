@@ -30,6 +30,7 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
   ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
     if (changes['filename']) {
       this.filenameChange();
     }
@@ -37,23 +38,25 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
 
   private filenameChange() {
     this.loading = true;
+    console.log(this.filename);
     let index = this.filename.indexOf('F');
-    console.log(index);
+    let finish = this.filename.indexOf('.');
+    // console.log(index);
     this.service
-      .getById(this.goodNumber, +this.filename.substring(index + 1, index + 5))
+      .getById(this.goodNumber, +this.filename.substring(index + 1, finish))
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: base64 => {
           this.loading = false;
           this.error = false;
           this.base64Change(base64);
-          console.log(this.error);
+          // console.log(this.error);
         },
         error: error => {
           // this.alert('error', 'Fotos', 'Ocurrio un error al cargar la foto');
           this.loading = false;
           this.error = true;
-          console.log(this.error);
+          // console.log(this.error);
           this.imgSrc = NO_IMAGE_FOUND;
         },
       });
@@ -61,10 +64,8 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
 
   editPhoto() {
     const index = this.filename.indexOf('F');
-    this.editService.consecNumber = +this.filename.substring(
-      index + 1,
-      index + 5
-    );
+    let finish = this.filename.indexOf('.');
+    this.editService.consecNumber = +this.filename.substring(index + 1, finish);
     const config = {
       ...MODAL_CONFIG,
       initialState: {
@@ -78,7 +79,7 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
         questionFinishUpload: '¿Desea seguir editando?',
         identificator: this.goodNumber + '',
         callback: (refresh: boolean) => {
-          console.log(refresh);
+          // console.log(refresh);
           this.refreshFiles.emit(refresh);
         },
       },

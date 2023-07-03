@@ -390,6 +390,8 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     const column = 'val' + item.columnNumber;
     return item.dataType === 'D' || item.attribute.includes('FECHA')
       ? formatForIsoDate(good[column], 'string')
+      : good[column] === 'NULL'
+      ? ''
       : good[column];
   }
 
@@ -420,7 +422,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
             );
           });
           // this.totalItems = filterData.length;
-          // console.log(this.dataTemp);
+          console.log(this.dataTemp);
           this.totalItems = this.dataTemp.length;
           this.params.value.page = 1;
           this.getPaginated(this.params.getValue());

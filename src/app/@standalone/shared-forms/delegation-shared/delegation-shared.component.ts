@@ -85,6 +85,8 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   }
 
   getDelegations(params: ListParams) {
+    params.limit = 100;
+    params.take = 100;
     this.service.getAll(params).subscribe(
       data => {
         this.delegations = new DefaultSelect(data.data, data.count);
@@ -145,6 +147,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   }
 
   onDelegationsChange(type: any) {
+    console.log(type);
     this.resetFields([this.subdelegation]);
     this.subdelegations = new DefaultSelect();
     this.getSubDelegations(new ListParams());
