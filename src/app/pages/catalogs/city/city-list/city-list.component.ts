@@ -117,11 +117,9 @@ export class CityListComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
 
-    this.cityService.getAllCitys(params).subscribe({
+    this.cityService.getAll(params).subscribe({
       next: response => {
-        this.columns = response.data.sort(
-          (a: any, b: any) => parseInt(b.idCity) - parseInt(a.idCity)
-        );
+        this.columns = response.data;
         console.log(this.columns);
         this.totalItems = response.count || 0;
         this.data.load(this.columns);

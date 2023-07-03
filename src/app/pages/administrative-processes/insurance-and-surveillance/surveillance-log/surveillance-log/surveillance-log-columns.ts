@@ -36,8 +36,9 @@ export const SURVEILLANCE_LOG_COLUMNS: any = {
   },
   processMnto: {
     title: 'Tipo de Mantenimiento',
-    type: 'number',
+    type: 'string',
     sort: false,
+    width: '200',
   },
   reasonMnto: {
     title: 'Motivo de Cambio',

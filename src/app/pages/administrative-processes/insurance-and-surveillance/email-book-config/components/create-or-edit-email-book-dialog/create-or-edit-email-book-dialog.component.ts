@@ -2,7 +2,7 @@ import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
-import { showToast } from 'src/app/common/helpers/helpers';
+import { showAlert, showToast } from 'src/app/common/helpers/helpers';
 import { IVigMailBook } from 'src/app/core/models/ms-email/email-model';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
 
@@ -59,7 +59,7 @@ export class CreateOrEditEmailBookDialogComponent {
   saveInServer(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      showToast({
+      showAlert({
         icon: 'error',
         text: 'Formulario invalido, complete los campos requeridos',
       });
