@@ -634,7 +634,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   // PUP_INICIALIZA_FORMA
   async getDataPupInicializaForma() {
     const user = this.token.decodeToken().username;
-    const dataUserToolbar: any = await this.getDataUser(user);
+    const user2 = this.token.decodeToken().preferred_username;
+    const dataUserToolbar: any = await this.getDataUser(user2);
     if (dataUserToolbar != null)
       this.delegationNumber = dataUserToolbar.delegationNumber;
 
