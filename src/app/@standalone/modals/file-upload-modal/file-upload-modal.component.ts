@@ -44,7 +44,12 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
   refresh: boolean = false;
   successCount: number = 0;
   totalDocs: number = 0;
+  multiple = true;
   fileEvents: FileUploadEvent[];
+  info = `Haz clic para seleccionar las imágenes o arrástralas
+      aquí`;
+  titleFinishUpload = 'Archivos cargados correctamente';
+  questionFinishUpload = '¿Desea subir más archivos?';
   service: IServiceUpload = inject(FileBrowserService);
   constructor(
     private modalRef: BsModalRef,
@@ -53,7 +58,9 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.accept);
+  }
 
   testFiles(uploadEvent: IUploadEvent) {
     const { index, fileEvents } = uploadEvent;
@@ -105,9 +112,6 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
     // }
     // console.log(index);
     this._blockErrors.blockAllErrors = true;
-    if (this.service['consecNumber']) {
-      this.service['consecNumber'] += consecNumber;
-    }
     return this.service
       .uploadFile(this.identificator, fileEvent.file, 'file')
       .pipe(
@@ -136,10 +140,27 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
       );
   }
 
-  private async finishUpload(
-    fileEvent: FileUploadEvent,
-    uploadEvent: IUploadEvent
-  ) {}
+  // private async finishUpload(
+  //   fileEvent: FileUploadEvent,
+  //   uploadEvent: IUploadEvent
+  // ) {
+  //   fileEvent.status = FILE_UPLOAD_STATUSES.SUCCESS;
+  //   this.refresh = true;
+  //   const result = await this.alertQuestion(
+  //     'question',
+  //     this.titleFinishUpload,
+  //     this.questionFinishUpload
+  //   );
+
+  //   if (!result.isConfirmed) {
+  //     this.close();
+  //   }
+  //   if (result.isConfirmed) {
+  //     this.totalDocs = 0;
+  //     this.successCount = 0;
+  //     uploadEvent.fileEvents.length = 0;
+  //   }
+  // }
 
   close() {
     this.modalRef.content.callback(this.refresh);

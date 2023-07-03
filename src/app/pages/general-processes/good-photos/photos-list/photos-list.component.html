@@ -3,7 +3,7 @@
     <button
       class="btn btn-primary btn-sm active"
       type="button"
-      [disabled]="disabled"
+      [disabled]="disabled || !this.userPermisions"
       (click)="openFileUploader()">
       Subir Fotos
       <i class="fa fa-upload"></i>
@@ -24,13 +24,13 @@
     <form class="form-material" [formGroup]="form">
       <form-field
         [control]="form.get('typedblClickAction')"
-        label="Acciones de doble click">
+        label="Acciones de Doble Click">
         <ng-select
           class="form-control"
           formControlName="typedblClickAction"
           [clearable]="false"
           [searchable]="false"
-          [readonly]="files.length < 1">
+          [readonly]="files.length < 1 || disabled || !this.userPermisions">
           <ng-option [value]="1">Visualizar</ng-option>
           <ng-option [value]="2">Editar</ng-option>
         </ng-select>
@@ -52,7 +52,7 @@
           id="button-basic"
           dropdownToggle
           class="btn btn-primary dropdown-toggle btn-sm active"
-          [class]="disabled ? 'disabled' : ''"
+          [class]="disabled || !this.userPermisions ? 'disabled' : ''"
           type="button"
           aria-controls="dropdown-basic">
           <div class="d-flex align-items-center">
@@ -66,14 +66,16 @@
           role="menu"
           aria-labelledby="button-basic">
           <li role="menuitem">
-            <a class="dropdown-item" (click)="showHistoric()">Histórico</a>
+            <a class="dropdown-item" (click)="openZipUploader()"
+              >Carga Masiva (ZIP)</a
+            >
           </li>
           <li
             role="menuitem"
             [class]="disabledDeletePhotos() ? 'disabledDelete' : ''"
             [tooltip]="errorMessage">
             <a class="dropdown-item" (click)="confirmDelete()"
-              >Borrar Seleccionados</a
+              >Borrar Seleccionadas</a
             >
           </li>
           <li class="divider dropdown-divider"></li>
@@ -81,7 +83,9 @@
             role="menuitem"
             [class]="disabledDeleteAllPhotos() ? 'disabledDelete' : ''"
             [tooltip]="errorMessage">
-            <a class="dropdown-item">Eliminar Todas</a>
+            <a class="dropdown-item" (click)="confirmDelete(true)"
+              >Eliminar Todas</a
+            >
           </li>
         </ul>
       </div>
@@ -93,17 +97,18 @@
     >Da doble click a la foto para visualizarlo</small
   > -->
   <div class="row docs-scroll">
-    <div class="col-md-12">
+    <div class="col-md-12 p-0">
       <h6 class="text-center" *ngIf="files.length === 0">
         No hay fotos cargadas
       </h6>
       <div
-        class="col-md-4 grid-square"
+        class="col-md-4 col-sm-6 grid-square"
         *ngFor="let image of files; let i = index">
         <div class="w-100 m-1 img-container">
           <div class="row">
             <div class="col-md-12">
               <app-photo
+                (refreshFiles)="refresh($event)"
                 [typedblClickAction]="typedblClickAction"
                 [filename]="image"
                 [goodNumber]="goodNumber + ''"></app-photo>

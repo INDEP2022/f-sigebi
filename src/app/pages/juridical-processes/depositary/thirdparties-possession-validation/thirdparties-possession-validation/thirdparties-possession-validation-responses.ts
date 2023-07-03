@@ -34,10 +34,10 @@ export abstract class thirdpartiesPossessionValidationResponses extends BasePage
   /**
    *
    * @param date Date
-   * @returns
+   * @return Promise<number>
    */
   getFaStageCreda(date: Date): Promise<number> {
-    const _date = formatDate(date, 'dd-MM-yyyy', 'en-US');
+    const _date = formatDate(date, 'yyyy/MM/dd', 'en-US');
     console.log(_date);
     return firstValueFrom(
       this.parametersService.getFaStageCreda(_date).pipe(

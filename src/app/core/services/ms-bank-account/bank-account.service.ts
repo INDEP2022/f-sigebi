@@ -22,6 +22,8 @@ export class BankAccountService
 
   private readonly apiAccount = 'account-movements';
 
+  private readonly apiStatusCta = 'aplication/get-facta-db-status-cta';
+
   constructor(private repository: Repository<IBankAccount>) {
     super();
     this.microservice = 'accountmvmnt';
@@ -42,6 +44,10 @@ export class BankAccountService
     return this.post<IBankAccount>(`${this.api}/find-by-ids`, accountNumber);
   }
 
+  getStatusCta(statusCta: Object): Observable<IBankAccount> {
+    return this.post<any>(this.apiStatusCta, statusCta);
+  }
+
   getAllWithFilters(params?: _Params): Observable<IListResponse<IBankAccount>> {
     return this.get<IListResponse<IBankAccount>>(this.api, params);
   }
@@ -50,6 +56,10 @@ export class BankAccountService
     params?: string
   ): Observable<IListResponse<IAccountMovement>> {
     return this.get<IListResponse<IAccountMovement>>(this.apiAccount, params);
+  }
+
+  getTransferAccount(Cta: Object): Observable<any> {
+    return this.post<any>(this.apiAccount, Cta);
   }
 
   getBankAndAccount() {

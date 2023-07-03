@@ -64,10 +64,11 @@ export class InventoryDataComponent
   columnFilter: any = [];
   inventoryDataForm: ModelForm<any>;
   generateAtri: boolean = false;
-  textButon: string = 'Generar inventario';
+  textButon: string = 'Generar Inventario';
+  atribute: string = 'Generar Atributos';
 
-  get dataInventory() {
-    return this.service.dataInventary;
+  get dataIn() {
+    return this.service.data;
   }
   constructor(
     private fb: FormBuilder,
@@ -92,7 +93,7 @@ export class InventoryDataComponent
         type: 'html',
         valuePrepareFunction: (text: string) => {
           return `${
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
           }`;
         },
         filter: {
@@ -187,7 +188,6 @@ export class InventoryDataComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = '';
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -207,7 +207,6 @@ export class InventoryDataComponent
 
             if (filter.search !== '') {
               this.columnFilter[field] = `${searchFilter}:${filter.search}`;
-              console.log('this.param:', this.params);
               this.params.value.page = 1;
             } else {
               delete this.columnFilter[field];
@@ -226,14 +225,13 @@ export class InventoryDataComponent
         if (date.length > 0) {
           this.inventorySelect = null;
           this.generateAtri = false;
-          this.textButon = 'Generar inventario';
+          this.textButon = 'Generar Inventario';
           this.viewAct = !this.viewAct;
           this.viewAct = !this.viewAct;
           this.generateAtri = false;
         }
       } else {
         this.viewAct = !this.viewAct;
-        console.log('Se resetio nuevamente');
       }
     });
   }
@@ -267,7 +265,6 @@ export class InventoryDataComponent
         this.dataLoand.load([]);
         this.dataLoand.refresh();
         this.loading = false;
-        console.log('AQUIIIIIIIIIIIIIIIIIII', err);
       },
     });
   }
@@ -303,11 +300,11 @@ export class InventoryDataComponent
       return;
     }
     await this.getGood();
-    console.log(this.inventorySelect);
     const atributes: any[] = await this.getAtributeBack(
       this.goodId,
       this.inventorySelect.inventoryNumber
     );
+    console.log(atributes);
     if (atributes.length > 0) {
       this.inventary = atributes;
     } else {
@@ -327,7 +324,6 @@ export class InventoryDataComponent
       params.limit = 120;
       this.inventoryService.getLinesInventory(params).subscribe({
         next: response => {
-          console.log('Estos son los anteriores', response.data);
           res(response.data);
         },
         error: _err => {
@@ -344,7 +340,6 @@ export class InventoryDataComponent
       dataParam.addFilter('classifGoodNumber', goodClassNumber);
       this.goodQueryService.getAllFilter(dataParam.getParams()).subscribe({
         next: val => {
-          console.log('[[[[[[[ ATRIBUTOS AQUIIIIIIIIII ]]]]]]]]', val);
           res(val.data);
         },
         error: err => {
@@ -355,7 +350,6 @@ export class InventoryDataComponent
   }
 
   selectInventory(event: any) {
-    console.log(event);
     this.inventorySelect = event.data;
     this.getAtribute();
     this.disableGetAtribute = false;
@@ -364,10 +358,25 @@ export class InventoryDataComponent
   }
 
   async add() {
-    console.log(this.dataInventory);
-    if (this.dataInventory) {
+    if (this.dataIn) {
+      console.log('ESTA ES LA DATA INV', this.dataIn);
       if (this.inventorySelect) {
-        this.dataInventory.forEach((item: any) => {
+        let required: boolean = false;
+        this.dataIn.forEach((item: any) => {
+          console.log(item);
+          if (item.required && item.value === null) {
+            required = true;
+          }
+        });
+        if (required) {
+          this.alert(
+            'warning',
+            'Datos inventario',
+            'Debe diligenciar los valores requeridos.'
+          );
+          return;
+        }
+        this.dataIn.forEach((item: any) => {
           this.updateInventary(
             this.inventorySelect.inventoryNumber,
             item.numColumn,
@@ -380,9 +389,24 @@ export class InventoryDataComponent
           'Se ha realizado la actualización correctamente'
         );
       } else {
+        let required: boolean = false;
+        this.dataIn.forEach((item: any) => {
+          console.log(item);
+          if (item.required && item.value === null) {
+            required = true;
+          }
+        });
+        if (required) {
+          this.alert(
+            'warning',
+            'Datos inventario',
+            'Debe diligenciar los valores requeridos.'
+          );
+          return;
+        }
         const inventoryNumber: number = await this.createInventory();
         if (inventoryNumber !== null) {
-          this.dataInventory.forEach((item: any) => {
+          this.dataIn.forEach((item: any) => {
             this.createLineaInventory(
               inventoryNumber,
               item.numColumn,
@@ -491,20 +515,13 @@ export class InventoryDataComponent
     }
     //await this.getGood();
     const inventoryAntList: any[] = await this.getInvAnterior();
-
     for (const reg of inventoryAntList) {
       vb_hay_inv_anterior = true;
       vn_inv_anterior = reg.inventoryNumber;
       break;
     }
-    console.log('Inventario anterior', vn_inv_anterior);
-    console.log('Inventario anterior', vb_hay_inv_anterior);
 
     await this.getGood();
-    /* const clasifi: any[] = await this.getClsifi(9999);
-    for (const reg of clasifi) {
-      console.log(reg);
-    } */
 
     if (vb_hay_inv_anterior) {
       const response = await this.alertQuestion(
@@ -524,12 +541,16 @@ export class InventoryDataComponent
           this.goodChange++;
         }, 100);
       } else {
-        console.log('Cancelo');
         this.viewAct = false;
         setTimeout(() => {
           this.goodChange++;
         }, 100);
       }
+    } else {
+      this.viewAct = false;
+      setTimeout(() => {
+        this.goodChange++;
+      }, 100);
     }
   }
 
@@ -542,7 +563,6 @@ export class InventoryDataComponent
       };
       this.inventoryService.create(model).subscribe({
         next: resp => {
-          console.log(resp);
           this.inventoryForGood(this.goodId);
           res(Number(resp.inventoryNumber));
         },

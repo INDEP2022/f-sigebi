@@ -1,5 +1,13 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -48,6 +56,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   delegacionId: any;
   delegationNumber: any = null; // BLK_CONTROL.DELEGACION
   responsable: any = null; // BLK_CONTROL.RESPONSABLE
+  responsable2: any = null;
   goodsExcel: any;
   selectedGender: string = 'all';
   jsonToCsv: any[] = [];
@@ -56,6 +65,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   selectOnClick: boolean = false;
   permitSelect = true;
   @Output() onSelect = new EventEmitter<any>();
+  @ViewChild('file', { static: false }) myInput: ElementRef;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -71,7 +81,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     private dynamicCatalogsService: DynamicCatalogsService,
     private modalRef: BsModalRef,
     private revisionReasonService: RevisionReasonService,
-    private router: Router
+    private router: Router,
+    private titleService: Title
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -83,6 +94,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   }
 
   async ngOnInit() {
+    this.titleService.setTitle('Atención de Bienes en Estatus REV | SIGEBI');
     this.loading = true;
     this.data
       .onChanged()
@@ -153,6 +165,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   handleGenderChange() {
     console.log('Selected gender: ' + this.selectedGender);
     this.loading = true;
+    this.paramsList.getValue().limit = 10;
+    this.paramsList.getValue().page = 1;
     this.getMotives();
   }
 
@@ -384,7 +398,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
               const getGoodAttended: any = await this.getGoodAndAttendedReturn(
                 objGood
               );
-              if (getGoodAttended != null) {
+              if (getGoodAttended !== null) {
                 ATENCION = getGoodAttended;
               } else {
                 ATENCION = 0;
@@ -509,11 +523,16 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             );
             await this.getMotives();
           }
+          this.clearInput();
         });
+      } else {
+        this.clearInput();
       }
     });
   }
-
+  clearInput() {
+    this.myInput.nativeElement.value = '';
+  }
   // OBTENER - BIENES_MOTIVOSREV
   async getGoodReturn(data: any) {
     const params = new ListParams();
@@ -614,8 +633,9 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   // PUP_INICIALIZA_FORMA
   async getDataPupInicializaForma() {
-    const user = this.token.decodeToken().preferred_username;
-    const dataUserToolbar: any = await this.getDataUser(user);
+    const user = this.token.decodeToken().username;
+    const user2 = this.token.decodeToken().preferred_username;
+    const dataUserToolbar: any = await this.getDataUser(user2);
     if (dataUserToolbar != null)
       this.delegationNumber = dataUserToolbar.delegationNumber;
 
@@ -625,8 +645,14 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     const areaCorresp: any = await this.getAreaCorresp(obj);
     if (areaCorresp != null) {
       this.responsable = areaCorresp;
+
+      if (this.responsable === 'JURIDICO') {
+        this.responsable2 = 'JURÍDICO';
+      } else {
+        this.responsable2 = this.responsable;
+      }
     } else {
-      this.alert('info', 'Falta asignar área Responsable o Delegación.', '');
+      this.alert('warning', 'Falta asignar área Responsable o Delegación.', '');
     }
   }
 
@@ -745,7 +771,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
         const getGoodAttended: any = await this.getGoodAndAttendedReturn(
           objGood
         );
-        if (getGoodAttended != null) {
+        if (getGoodAttended !== null) {
           ATENCION = getGoodAttended;
         } else {
           ATENCION = 0;
@@ -800,8 +826,9 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             extDomProcess: null,
           };
           const insertHistoric: any = await this.putInsertHistoric(historyGood);
-
+          console.log('1', insertHistoric);
           if (insertHistoric == null) {
+            console.log('2', insertHistoric);
             this.alert(
               'error',
               `Error al actualizar el estatus del bien: ${this.selectedRow.goodNumber}`,
@@ -809,6 +836,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             );
             return;
           } else {
+            console.log('3', insertHistoric);
             this.alert(
               'success',
               `El bien: ${this.selectedRow.goodNumber} se ha atendido correctamente`,
@@ -816,6 +844,13 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             );
             this.getMotives();
           }
+        } else {
+          this.alert(
+            'success',
+            `El bien: ${this.selectedRow.goodNumber} se ha atendido correctamente`,
+            ''
+          );
+          this.getMotives();
         }
         // -------------------------------------------------------------------------------------------------- //
       }

@@ -15,6 +15,7 @@ import {
 } from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -115,7 +116,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   goodsTranportables: LocalDataSource = new LocalDataSource();
   goodsGuards: LocalDataSource = new LocalDataSource();
   goodsWarehouse: LocalDataSource = new LocalDataSource();
-
+  task: ITask;
   headingTransportable: string = `Transportables(0)`;
   headingGuard: string = `Resguardo(0)`;
   headingWarehouse: string = `Almacén INDEP(0)`;
@@ -196,7 +197,21 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         this.getAuthority();
         this.getTypeRelevant();
         this.getwarehouse();
+        this.getTask();
       });
+  }
+
+  getTask() {
+    const task = JSON.parse(localStorage.getItem('Task'));
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = task.id;
+    this.taskService.getAll(params.getValue()).subscribe({
+      next: response => {
+        console.log('response task', response);
+        this.task = response.data[0];
+      },
+      error: error => {},
+    });
   }
 
   getRegionalDelegation() {
@@ -510,9 +525,12 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         'Aprobar Programación',
         `¿Esta seguro de aprobar la programación con folio: ${this.programmingId}`
       ).then(question => {
-       if(question.isConfirmed){
-         this.sendEmailUsers();
-       }
+        if (question.isConfirmed) {
+          //this.sendEmailUsers();
+          this.createTaskNotification();
+          this.createTaskExecuteProgramming();
+          this.createTaskFormalize();
+        }
       });
     } else {
       // this.sendEmailUsers();
@@ -523,77 +541,54 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       );
     }
   }
-
   async sendEmailUsers() {
     this.infoUsers.map(user => {
       const emailsUsers = user.email;
       this.emails.push(emailsUsers);
-      console.log('correo', emailsUsers);
     });
 
-    this.goodsInfoTrans.map(async good => {
-      const warehouse = await this.warehouseNameT(good.storeId);
-      console.log('infotrans', good);
-      const transObject = {
-        goodId: good.goodId,
-        uniqueKey: good.uniqueKey,
-        goodDescription: good.goodDescription,
-        quantity: good.quantity,
-        unitMeasure: good.unitMeasure,
-        storeId: good.storeId, //condicionar
-      };
-      console.log('transdato', good.storeId);
-      console.log('transdato nombre', warehouse);
-      console.log('transdato obj', transObject);
-      this.transGoods.push(transObject);
-    });
+    await Promise.all(
+      this.goodsInfoTrans.map(async good => {
+        const infotrans = await this.warehouseNameT(good.storeId);
+        const transObject = {
+          goodId: good.goodId,
+          uniqueKey: good.uniqueKey,
+          goodDescription: good.goodDescription,
+          quantity: good.quantity,
+          unitMeasure: good.unitMeasure,
+          storeId: infotrans,
+        };
+        this.transGoods.push(transObject);
+      })
+    );
 
-    this.goodsInfoGuard.map(async good => {
-      const warehouse = await this.warehouseNameT(good.storeId);
-      const guardObject = {
-        goodId: good.goodId,
-        uniqueKey: good.uniqueKey,
-        goodDescription: good.goodDescription,
-        quantity: good.quantity,
-        unitMeasure: good.unitMeasure,
-        storeId: good.storeId,
-      };
-      console.log('guardsgood', good.storeId);
-      console.log('guardsgood nombre', warehouse);
-      console.log('guardsgood obf', guardObject);
-      this.guardGoods.push(guardObject);
-    });
+    await Promise.all(
+      this.goodsInfoGuard.map(async goodRes => {
+        const guardsgood = await this.warehouseNameT(goodRes.storeId);
+        const guardObject = {
+          goodId: goodRes.goodId,
+          uniqueKey: goodRes.uniqueKey,
+          goodDescription: goodRes.goodDescription,
+          quantity: goodRes.quantity,
+          unitMeasure: goodRes.unitMeasure,
+          storeId: guardsgood,
+        };
+        this.guardGoods.push(guardObject);
+      })
+    );
 
-    this.goodsInfoWarehouse.map(async good => {
-      const warehouse = await this.warehouseNameT(good.storeId);
+    this.goodsInfoWarehouse.map(async warehouse => {
       const warehouseObject = {
-        goodId: good.goodId,
-        uniqueKey: good.uniqueKey,
-        goodDescription: good.goodDescription,
-        quantity: good.quantity,
-        unitMeasure: good.unitMeasure,
-        storeId: good.storeId,
+        goodId: warehouse.goodId,
+        uniqueKey: warehouse.uniqueKey,
+        goodDescription: warehouse.goodDescription,
+        quantity: warehouse.quantity,
+        unitMeasure: warehouse.unitMeasure,
+        storeId: warehouse.storeId,
       };
-      console.log('infowarehouse', good.storeId);
-      console.log('infowarehouse name', warehouse);
-      console.log('warehpous nombre', warehouseObject);
       this.warehouseGoods.push(warehouseObject);
     });
-    // this.goodsInfoTrans.map(item => {
-    //   item.nameWarehouse = item.storeId;
-    //   delete item.storeId;
-    //   return item;
-    // });
-    // this.goodsInfoGuard.map(item => {
-    //   item.nameWarehouse = item.storeId;
-    //   delete item.storeId;
-    //   return item;
-    // });
-    // this.goodsInfoWarehouse.map(item => {
-    //   item.nameWarehouse = item.storeId;
-    //   delete item.storeId;
-    //   return item;
-    // });
+
     const dataEmail = {
       folio: this.programming.folio,
       startDate: this.programming.startDate,
@@ -606,23 +601,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       goodsWarehouse: this.warehouseGoods,
       emailSend: this.emails,
     };
-    // this.warehouseService
-    //   .getAllFilter(this.paramsWarehouse.getValue())
-    //   .subscribe(data => {
-    //     dataEmail.goodsWarehouse = dataEmail.goodsWarehouse.map(
-    //       (element1: any) => {
-    //         data.data.map(element2 => {
-    //           if (element1.nameWarehouse === element2.idWarehouse) {
-    //             element1.nameWarehouse = element2.description;
-    //           }
-    //         });
-    //         console.log('nombre zzzz', element1.nameWarehouse);
-    //         console.log('nombre zzzzxxxxx', element1);
-    //         return element1.nameWarehouse;
-    //       }
-    //     );
-    //   });
     console.log('newdata', dataEmail);
+
     this.emailService
       .createEmailProgramming(JSON.stringify(dataEmail))
       .subscribe({
@@ -639,6 +619,91 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         error: error => {},
       });
   }
+
+  //   this.infoUsers.map(user => {
+  //     const emailsUsers = user.email;
+  //     this.emails.push(emailsUsers);
+  //     console.log('correo', emailsUsers);
+  //   });
+
+  //   this.goodsInfoTrans.map(async good => {
+  //    const infotrans = await this.warehouseNameT(good.storeId);
+  //    console.log('infotrans', good);
+  //    const transObject = {
+  //      goodId: good.goodId,
+  //      uniqueKey: good.uniqueKey,
+  //      goodDescription: good.goodDescription,
+  //      quantity: good.quantity,
+  //      unitMeasure: good.unitMeasure,
+  //      storeId: infotrans, //condicionar
+  //    };
+  //    console.log('transdato', good.storeId);
+  //    console.log('transdato nombre', infotrans);
+  //    console.log('transdato obj', transObject);
+  //    this.transGoods.push(transObject);
+  //  });
+
+  //   this.goodsInfoGuard.map( async goodRes => {
+  //    const guardsgood = await this.warehouseNameT(goodRes.storeId);
+  //    const guardObject = {
+  //      goodId: goodRes.goodId,
+  //      uniqueKey: goodRes.uniqueKey,
+  //      goodDescription: goodRes.goodDescription,
+  //      quantity: goodRes.quantity,
+  //      unitMeasure: goodRes.unitMeasure,
+  //      storeId: guardsgood,
+  //    };
+  //    console.log('guardsgood', goodRes.storeId);
+  //    console.log('guardsgood nombre', guardsgood);
+  //    console.log('guardsgood obf', guardObject);
+  //    this.guardGoods.push(guardObject);
+  //  });
+
+  //    this.goodsInfoWarehouse.map(async warehouse => {
+  //     const infowarehouse = await this.warehouseNameT(warehouse.storeId);
+  //     const warehouseObject = {
+  //       goodId: warehouse.goodId,
+  //       uniqueKey: warehouse.uniqueKey,
+  //       goodDescription: warehouse.goodDescription,
+  //       quantity: warehouse.quantity,
+  //       unitMeasure: warehouse.unitMeasure,
+  //       storeId: infowarehouse,
+  //     };
+  //     console.log('infowarehouse', warehouse.storeId);
+  //     // console.log('infowarehouse name', infowarehouse);
+  //     console.log('warehpous nombre', warehouseObject);
+  //     this.warehouseGoods.push(warehouseObject);
+  //   });
+
+  //   const dataEmail = {
+  //     folio: this.programming.folio,
+  //     startDate: this.programming.startDate,
+  //     endDate: this.programming.endDate,
+  //     city: this.programming.city,
+  //     address: this.programming.address,
+  //     usersProg: this.infoUsers,
+  //     goodsTrans: this.transGoods,
+  //     goodsResg: this.guardGoods,
+  //     goodsWarehouse: this.warehouseGoods,
+  //     emailSend: this.emails,
+  //   };
+  //   console.log('newdata', dataEmail);
+  //   this.emailService
+  //     .createEmailProgramming(JSON.stringify(dataEmail))
+  //     .subscribe({
+  //       next: () => {
+  //         this.alert(
+  //           'success',
+  //           'Notificación',
+  //           'Se envio el correo electrónico a los usuarios correctamente'
+  //         );
+  //         this.createTaskNotification();
+  //         this.createTaskExecuteProgramming();
+  //         this.createTaskFormalize();
+  //       },
+  //       error: error => {},
+  //     });
+  // }
   // this.nameWarehouse = data.description;
   // this.formLoading = false;
 
@@ -752,30 +817,18 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       });
     });
   }
-
-  warehouseNameT(idWarehouse: any) {
+  warehouseNameT(idWarehouse: number) {
     return new Promise((resolve, reject) => {
       this.warehouseService.getById(idWarehouse).subscribe({
         next: response => {
           return resolve(response.description);
         },
-        error: error => {},
+        error: error => {
+          console.log(error);
+        },
       });
     });
   }
-  //   this.paramsWarehouse.getValue()['filter.idWarehouse'] =
-  //   this.goodsInfoTrans[0].nameWarehouse;
-  // this.warehouseService
-  //   .getAllFilter(this.paramsWarehouse.getValue())
-  //   .subscribe(data => {
-  //     dataEmail.goodsTrans = dataEmail.goodsTrans.map((element1: any) => {
-  //       data.data.map(element2 => {
-  //         if (element1.nameWarehouse === element2.idWarehouse) {
-  //           element1.nameWarehouse = element2.description;
-  //         }
-  //       });
-  //       return element1;
-  //     });
 
   showGood(item: IGoodProgrammingSelect) {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };

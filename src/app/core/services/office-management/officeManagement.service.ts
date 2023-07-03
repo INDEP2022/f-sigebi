@@ -56,4 +56,9 @@ export class OfficeManagementService extends HttpService {
   createMJobManagementExtSSF3(body: IMJobManagementExtSSF3) {
     return this.post(OfficeManagementEndpoint.MJobManagementExtSSF3, body);
   }
+
+  updateStatusProcess(no_process: number) {
+    const route = OfficeManagementEndpoint.updateStatusProcess;
+    return this.put(`${route}/${no_process}`);
+  }
 }

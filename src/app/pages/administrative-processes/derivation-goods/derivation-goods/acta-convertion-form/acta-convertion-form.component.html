@@ -1,4 +1,4 @@
-<app-modal>
+<app-modal class="col-md-15">
   <div header>
     <h5 class="modal-title">{{ 'Actas Conversion' }}</h5>
   </div>
@@ -18,7 +18,7 @@
               <tbody>
                 <tr *ngFor="let item of items; let i = index">
                   <th scope="row">{{ i + 1 }}</th>
-                  <td class="custom-cell">{{ item.cveActaConvId }}</td>
+                  <td class="custom-cell">{{ item.cve_acta_conv }}</td>
                   <td>
                     <div class="form-check">
                       <input
@@ -120,6 +120,7 @@
           data-toggle="tooltop"
           title="Eliminar Bien"
           class="btn btn-danger btn-sm active ml-2 mr-2 float-center">
+          (click)="printAct()"
           <i class=""></i> Imprimir Acta
         </button>
       </div>

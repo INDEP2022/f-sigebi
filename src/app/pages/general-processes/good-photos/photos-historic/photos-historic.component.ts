@@ -1,5 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import {
+  FilePhotoService,
+  IHistoricalPhoto,
+} from 'src/app/core/services/ms-ldocuments/file-photo.service';
+import { GoodPhotosService } from '../services/good-photos.service';
 
 @Component({
   selector: 'app-photos-historic',
@@ -7,51 +11,80 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
   styleUrls: ['./photos-historic.component.scss'],
 })
 export class PhotosHistoricComponent implements OnInit {
-  mainUrl: string =
-    'https://media.istockphoto.com/vectors/image-preview-icon-picture-placeholder-for-website-or-uiux-design-vector-id1222357475?k=20&m=1222357475&s=612x612&w=0&h=jPhUdbj_7nWHUp0dsKRf4DMGaHiC16kg_FSjRRGoZEI=';
-  itemsPerSlide = 4;
   singleSlideOffset = true;
   noWrap = true;
 
-  slides = [
-    {
-      image:
-        'https://images.kavak.services/images/202518/EXTERIOR-frontSidePilotNear-1663797326136.jpeg?d=756x434',
-    },
-    {
-      image:
-        'https://images.kavak.services/images/202518/EXTERIOR-front-1663797338664.jpeg?d=756x434',
-    },
-    {
-      image:
-        'https://images.kavak.services/images/202518/EXTERIOR-frontSideCopilot-1663797361668.jpeg?d=756x434',
-    },
-    {
-      image:
-        'https://images.kavak.services/images/202518/EXTERIOR-pilotRim-1663797207371.jpeg?d=756x434',
-    },
-    {
-      image:
-        'https://images.kavak.services/images/202518/EXTERIOR-openDoorPilot-1663797159535.jpeg?d=756x434',
-    },
-    {
-      image:
-        'https://images.kavak.services/images/202518/INTERIOR-console-1663797010209.jpeg?d=756x434',
-    },
-    {
-      image:
-        'https://images.kavak.services/images/202518/INTERIOR-openTrunk-1663797109010.jpeg?d=756x434',
-    },
-    {
-      image:
-        'https://images.kavak.services/images/202518/INTERIOR-backSeatCopilot-1663797095691.jpeg?d=756x434',
-    },
-  ];
-  constructor(private modalRef: BsModalRef) {}
+  // slides = [
+  //   {
+  //     image:
+  //       'https://images.kavak.services/images/202518/EXTERIOR-frontSidePilotNear-1663797326136.jpeg?d=756x434',
+  //   },
+  //   {
+  //     image:
+  //       'https://images.kavak.services/images/202518/EXTERIOR-front-1663797338664.jpeg?d=756x434',
+  //   },
+  //   {
+  //     image:
+  //       'https://images.kavak.services/images/202518/EXTERIOR-frontSideCopilot-1663797361668.jpeg?d=756x434',
+  //   },
+  //   {
+  //     image:
+  //       'https://images.kavak.services/images/202518/EXTERIOR-pilotRim-1663797207371.jpeg?d=756x434',
+  //   },
+  //   {
+  //     image:
+  //       'https://images.kavak.services/images/202518/EXTERIOR-openDoorPilot-1663797159535.jpeg?d=756x434',
+  //   },
+  //   {
+  //     image:
+  //       'https://images.kavak.services/images/202518/INTERIOR-console-1663797010209.jpeg?d=756x434',
+  //   },
+  //   {
+  //     image:
+  //       'https://images.kavak.services/images/202518/INTERIOR-openTrunk-1663797109010.jpeg?d=756x434',
+  //   },
+  //   {
+  //     image:
+  //       'https://images.kavak.services/images/202518/INTERIOR-backSeatCopilot-1663797095691.jpeg?d=756x434',
+  //   },
+  // ];
+  files: IHistoricalPhoto[] = [];
+  @Input() goodNumber: string;
+  slides: { image: string; usuarioElimina: string }[] = [];
+  constructor(
+    // private modalRef: BsModalRef,
+    private service: FilePhotoService,
+    private goodPhotoService: GoodPhotosService
+  ) {}
 
   ngOnInit() {}
 
-  close() {
-    this.modalRef.hide();
+  private getData() {
+    if (this.goodNumber) {
+      this.service.getAllHistoric(this.goodNumber).subscribe({
+        next: response => {
+          if (response) {
+            this.files = [...response];
+          }
+        },
+      });
+    }
   }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['goodNumber']) {
+      this.getData();
+    }
+    this.goodPhotoService.deleteEvent.subscribe({
+      next: response => {
+        if (response) {
+          this.getData();
+        }
+      },
+    });
+  }
+
+  // close() {
+  //   this.modalRef.hide();
+  // }
 }

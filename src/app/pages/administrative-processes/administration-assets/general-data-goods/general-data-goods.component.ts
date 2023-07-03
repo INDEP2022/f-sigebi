@@ -110,7 +110,6 @@ export class GeneralDataGoodsComponent
       if (patron.test(row.value)) {
         row.value = this.convertirFecha(row.value);
       }
-      console.log(row.value);
       body[row.column] = row.value;
     });
     body['quantitySae'] = this.generalDataForm.get('cantidad').value;
@@ -119,12 +118,10 @@ export class GeneralDataGoodsComponent
     body['description'] = this.generalDataForm.get('descripcion').value;
     body['id'] = Number(this.good.id);
     body['goodId'] = Number(this.good.id);
-    console.log(body);
     this.goodService.update(body).subscribe({
       next: resp => {
         this.viewAct = !this.viewAct;
         this.disableUpdate = !this.disableUpdate;
-        console.log(resp);
         this.good = resp;
         this.alert('success', 'Datos del bien actualizados', '');
         setTimeout(() => {
@@ -171,18 +168,16 @@ export class GeneralDataGoodsComponent
     this.goodService.getById(this.goodId).subscribe({
       next: (response: any) => {
         this.classificationOfGoods = Number(response.data[0].goodClassNumber);
-
         this.good = response.data[0];
         this.generalDataForm.get('cantidad').patchValue(this.good.quantitySae);
-        console.log(this.good.judicialDate);
         this.generalDataForm
           .get('fechaFe')
           .patchValue(
-            this.good.judicialDate != null
-              ? this.formatearFecha(this.good.judicialDate.toString())
-              : null
+            this.good.judicialDate === undefined ||
+              this.good.judicialDate === null
+              ? null
+              : this.formatearFecha(this.good.judicialDate.toString())
           );
-
         this.generalDataForm
           .get('observacion')
           .patchValue(this.good.observations);

@@ -108,7 +108,7 @@ export class ProceedingsService extends HttpService {
     );
   }
 
-  createProceedings(formData: any) {
+  createProceedings(formData: IProceedings) {
     return this.post(this.route, formData);
   }
 
@@ -156,5 +156,9 @@ export class ProceedingsService extends HttpService {
 
   getUnioTable(goodNumber: number, params?: string) {
     return this.get(`${ProceedingsEndpoints.GetUnion}/${goodNumber}`, params);
+  }
+
+  getCountActas(goodNumber: number | string) {
+    return this.get('aplication/get-count-actas/' + goodNumber);
   }
 }
