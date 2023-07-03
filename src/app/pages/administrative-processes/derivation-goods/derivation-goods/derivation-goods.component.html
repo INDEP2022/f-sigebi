@@ -227,7 +227,8 @@
                 type="button"
                 data-toggle="tooltop"
                 title="Eliminar Bien"
-                class="btn btn-danger btn-sm active ml-2 mr-2">
+                class="btn btn-danger btn-sm active ml-2 mr-2"
+                (click)="deletGood(selectedRow)">
                 <i class="bx bx-minus bx-sm float-icon"></i>
               </button>
             </div>
@@ -237,7 +238,7 @@
               [settings]="settingsGood"
               [source]="dataGoods2"
               [attr.class]="'table-bordered table-responsive'"
-              (rowSelect)="onRowSelect($event)">
+              (userRowSelect)="onRowSelect($event)">
             </ng2-smart-table>
           </div>
         </div>
