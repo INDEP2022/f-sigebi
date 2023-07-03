@@ -4,8 +4,15 @@
   </div>
   <div body>
     <div class="row">
-      <div class="col-md-4"></div>
-      <div class="col-md-8 text-end">
+      <div class="col-md-5">
+        <!-- <div class="col-md-4 mt-3"> -->
+        <i class="fa fa-square" style="color: #e2c103"></i
+        ><span style="font-weight: 500">
+          Movimientos Con Bienes Conciliados &nbsp;&nbsp;
+        </span>
+        <!-- </div> -->
+      </div>
+      <div class="col-md-7 text-end">
         <div class="row">
           <div class="col-12 text-end">
             <div class="row">
@@ -22,7 +29,7 @@
                   <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
                 <button
-                  class="btn btn-primary btn-sm active"
+                  class="btn btn-primary btn-sm active mr-3"
                   (click)="openForm()">
                   Movimientos
                 </button>
@@ -55,13 +62,13 @@
           </ng-scrollbar>
         </div>
         <div class="row">
-          <div class="col-md-4 mt-3">
+          <!-- <div class="col-md-4 mt-3">
             <i class="fa fa-square" style="color: #e2c103"></i
             ><span style="font-weight: 500">
               Movimientos Con Bienes Conciliados &nbsp;&nbsp;
             </span>
-          </div>
-          <div class="col-8">
+          </div> -->
+          <div class="col-12">
             <app-pagination
               *ngIf="showPagination"
               [params]="paramsList"
@@ -73,26 +80,22 @@
     </div>
     <form class="form-material mt-4" [formGroup]="form">
       <div class="row">
-        <div class="col-md-6 mt-3">
-          <!-- <i class="fa fa-square" style="color: #e2c103;"></i><span style="font-weight: 500;">
-            Movimientos con bienes conciliados &nbsp;&nbsp;
-          </span> -->
-
-          <!-- <span class="text-yellow mr-5"><i class="fa fa-square" style="color: #e2c103;"></i> Ficha asociada
-          </span> -->
-        </div>
         <!-- <div class="col-md-5"></div> -->
-        <div class="col-md-6 mt-3">
-          <form-field
-            [control]="form.get('descriptionGood')"
-            label="Descripción del Bien">
-            <textarea
-              cols="2"
-              rows="3"
-              type="text"
-              class="form-control"
-              formControlName="descriptionGood"></textarea>
-          </form-field>
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-12 pl-5 pr-5">
+              <form-field
+                [control]="form.get('descriptionGood')"
+                label="Descripción del Bien">
+                <textarea
+                  cols="2"
+                  rows="3"
+                  type="text"
+                  class="form-control"
+                  formControlName="descriptionGood"></textarea>
+              </form-field>
+            </div>
+          </div>
         </div>
       </div>
     </form>
