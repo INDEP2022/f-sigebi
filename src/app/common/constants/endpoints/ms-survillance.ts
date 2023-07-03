@@ -11,4 +11,8 @@ export enum SurvillanceEndpoints {
   ChangePeriod = 'surveillance/change-period',
   ChangeGoodAle = 'surveillance/change-good-ale',
   Georeferencie = 'georeference-object',
+  VigSupervisionDet = 'vig-supervision-det',
+  VigSupervisionMae = 'vig-supervision-mae',
+  VigSupervisionTMP = 'vig-supervision-tmp',
+  DeleteVigSupervisionTMP = 'application/delete-vig-supervision-tmp',
 }

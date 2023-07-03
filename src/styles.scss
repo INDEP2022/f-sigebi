@@ -609,6 +609,11 @@ ng-scrollbar.table-scrollbar {
   background-color: #fff;
 }
 
+#hooverTableDocumentViewer table tbody tr td:hover {
+  cursor: pointer !important;
+  background-color: transparent;
+}
+
 .bg-yellow-to-good {
   background-color: #e2c103 !important;
   color: black;
@@ -641,4 +646,40 @@ ng-scrollbar.table-scrollbar {
 
 custom-view-component {
   color: black;
+}
+
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container {
+  overflow-y: auto;
+  flex-wrap: nowrap;
+}
+
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* Track */
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 12px;
+}
+
+/* Handle */
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

@@ -54,7 +54,7 @@ export class SecureDataComponent extends BasePage implements OnInit, OnChanges {
         type: 'html',
         valuePrepareFunction: (text: string) => {
           return `${
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
           }`;
         },
         filter: {
@@ -68,7 +68,7 @@ export class SecureDataComponent extends BasePage implements OnInit, OnChanges {
         type: 'html',
         valuePrepareFunction: (text: string) => {
           return `${
-            text ? text.split('T')[0].split('-').reverse().join('-') : ''
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
           }`;
         },
         filter: {
@@ -103,7 +103,6 @@ export class SecureDataComponent extends BasePage implements OnInit, OnChanges {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = '';
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -127,7 +126,6 @@ export class SecureDataComponent extends BasePage implements OnInit, OnChanges {
 
             if (filter.search !== '') {
               this.columnFilter[field] = `${searchFilter}:${filter.search}`;
-              console.log('this.param:', this.params);
               this.params.value.page = 1;
             } else {
               delete this.columnFilter[field];
@@ -149,7 +147,6 @@ export class SecureDataComponent extends BasePage implements OnInit, OnChanges {
       ...this.params.getValue(),
       ...this.columnFilter,
     };
-    console.log(this.params.getValue());
     this.policyServices.getAll(params).subscribe({
       next: response => {
         this.list = response.data.map(policy => {
@@ -165,7 +162,6 @@ export class SecureDataComponent extends BasePage implements OnInit, OnChanges {
         });
         this.dataLoand.load(this.list);
         this.dataLoand.refresh();
-        console.log(response);
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -173,7 +169,6 @@ export class SecureDataComponent extends BasePage implements OnInit, OnChanges {
         this.dataLoand.load([]);
         this.dataLoand.refresh();
         this.loading = false;
-        console.log(err);
       },
     });
   }

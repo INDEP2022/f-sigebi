@@ -1,0 +1,224 @@
+<div body>
+  <!-- Start modal header -->
+  <div class="modal-header">
+    <h5 class="modal-title">Selección de bienes para paquete</h5>
+    <button type="button" class="close py-0 my-0" (click)="onClose()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <!-- End modal header -->
+
+  <!-- Start modal body -->
+  <div class="modal-body">
+    <!-- Start filters -->
+    <div class="row">
+      <div class="col-9 h-50">
+        <div class="row">
+          <!-- Start field -->
+          <div class="col-12 col-md-4 mb-4">
+            <label class="form-label" for="coordination">Coordinación</label>
+            <input
+              class="form-control"
+              [ngModel]="data.infoPack.delegation"
+              type="text"
+              id="coordination"
+              placeholder="Ingrese..." />
+          </div>
+          <div class="col-12 col-md-8 mb-4 d-flex align-items-end">
+            <input
+              class="form-control"
+              [ngModel]="data.infoPack.descDelegation"
+              type="text"
+              id="coordination-info"
+              placeholder=""
+              readonly />
+          </div>
+          <!-- End field -->
+
+          <!-- Start field -->
+          <div class="col-12 col-md-4 mb-4">
+            <label class="form-label" for="asset-classification"
+              >Clasificación de bien</label
+            >
+            <input
+              class="form-control"
+              [ngModel]="data.infoPack.goodClassification"
+              type="text"
+              id="asset-classification"
+              placeholder="" />
+          </div>
+          <div class="col-12 col-md-8 mb-4 d-flex align-items-end">
+            <input
+              class="form-control"
+              [ngModel]="data.infoPack.descgoodClassification"
+              type="text"
+              id="asset-classification-info"
+              placeholder=""
+              readonly />
+          </div>
+          <!-- End field -->
+
+          <!-- Start field -->
+          <div class="col-12 col-md-4 mb-4">
+            <label class="form-label" for="destination-label"
+              >Etiqueta de destino</label
+            >
+            <input
+              class="form-control"
+              [ngModel]="data.infoPack.targetTag"
+              type="text"
+              id="destination-label"
+              placeholder="" />
+          </div>
+
+          <div class="col-12 col-md-3 d-flex align-items-end mb-4">
+            <input
+              class="form-control"
+              type="text"
+              [ngModel]="data.infoPack.descTargetTag"
+              id="destination-label-info"
+              placeholder=""
+              readonly />
+          </div>
+          <div class="col-12 col-md-2 d-flex flex-column mb-4">
+            <label class="form-label" for="good-status">Estatus</label>
+            <input
+              class="form-control"
+              [ngModel]="data.infoPack.goodStatus"
+              type="text"
+              id="good-status"
+              placeholder="" />
+          </div>
+          <div class="col-12 col-md-3 d-flex flex-column mb-4">
+            <label class="form-label" for="unity">Unidad</label>
+            <input
+              class="form-control"
+              [ngModel]="data.infoPack.measurementUnit"
+              type="text"
+              id="unity"
+              placeholder="" />
+          </div>
+          <!-- End field -->
+
+          <!-- Start field -->
+          <div class="col-12 col-md-4 mb-4">
+            <label class="form-label" for="transferor">Transferente</label>
+            <input
+              class="form-control"
+              [ngModel]="data.infoPack.transferent"
+              type="text"
+              id="transferor"
+              placeholder="Ingrese..." />
+          </div>
+
+          <div class="col-12 col-md-8 mb-4 d-flex align-items-end">
+            <input
+              class="form-control"
+              type="text"
+              [ngModel]="data.infoPack.descTransferent"
+              id="transferor-info"
+              placeholder=""
+              readonly />
+          </div>
+          <!-- End field -->
+
+          <!-- Start field -->
+          <div class="col-12 col-md-4 mb-4">
+            <label class="form-label" for="warehouse">Almacén</label>
+            <input
+              class="form-control"
+              [ngModel]="data.infoPack.warehouse"
+              type="text"
+              id="warehouse"
+              placeholder="Ingrese..." />
+          </div>
+
+          <div class="col-12 col-md-8 mb-4 d-flex align-items-end">
+            <input
+              class="form-control"
+              [ngModel]="data.infoPack.warehouseDesc"
+              type="text"
+              id="warehouse-info"
+              placeholder=""
+              readonly />
+          </div>
+          <!-- End field -->
+        </div>
+      </div>
+      <!-- Start buttons -->
+      <div class="col-3">
+        <div class="row">
+          <!-- Start button -->
+          <div class="col-12 mb-4">
+            <button class="btn btn-secondary btn-sm active w-100">
+              Filtrar bienes
+            </button>
+          </div>
+          <!-- End button -->
+
+          <!-- Start button -->
+          <div class="col-12 mb-4">
+            <button
+              (click)="this.onInitChargeGoods()"
+              class="btn btn-secondary btn-sm active w-100">
+              Listado de bienes
+            </button>
+          </div>
+          <!-- End button -->
+
+          <!-- Start button -->
+          <div class="col-12 mb-4">
+            <button
+              (click)="insertGoods()"
+              class="btn btn-secondary btn-sm active w-100">
+              Ingresar bienes
+            </button>
+          </div>
+          <!-- End button -->
+
+          <!-- Start button -->
+          <div class="col-12 mb-4">
+            <button
+              (click)="exportToExcel()"
+              class="btn btn-success btn-sm active w-100">
+              Exportar
+            </button>
+          </div>
+          <!-- End button -->
+        </div>
+      </div>
+      <!-- End buttons -->
+    </div>
+    <!-- End filters -->
+
+    <hr class="col-xs-12 mb-6" />
+
+    <!-- Start table -->
+
+    <div class="row pt-4">
+      <div class="ch-content" header>
+        <h5 class="title">Previsualización de Bienes</h5>
+        <div class="col-md-5 buttons">
+          <app-columns-select
+            (settingsChange)="settingsChange($event)"
+            [settings]="settings"></app-columns-select>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div class="table-responsive" [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="datares"
+            (userRowSelect)="selectEvent($event)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+
+    <!-- End table -->
+  </div>
+  <!-- End modal body -->
+</div>

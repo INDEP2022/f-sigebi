@@ -316,8 +316,6 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   ngAfterViewInit() {
     const selectedBadString = localStorage.getItem('selectedBad');
-    const derivationGoodId = localStorage.getItem('derivationGoodId');
-
     const actualGoodNumberString = localStorage.getItem(
       'goodCharacteristicNumber'
     );
@@ -328,12 +326,6 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           this.enabledFotos();
         }, 1000);
       }
-    }
-    if (derivationGoodId) {
-      setTimeout(() => {
-        this.selectTab(0, 1);
-        this.enabledFotos();
-      }, 1000);
     } else {
       setTimeout(() => {
         this.selectTab(1, 0);
@@ -933,12 +925,18 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
             map(x => {
               return {
                 ...x,
-                data: x.data.map(item => {
-                  return {
-                    ...item,
-                    quantity: item.quantity ? +(item.quantity + '') : null,
-                  };
-                }),
+                data: x
+                  ? x.data
+                    ? x.data.map(item => {
+                        return {
+                          ...item,
+                          quantity: item.quantity
+                            ? +(item.quantity + '')
+                            : null,
+                        };
+                      })
+                    : []
+                  : [],
               };
             })
           )
@@ -1005,6 +1003,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         } else {
           this.loading = false;
           this.goodChange++;
+          this.alert('error', 'Error', 'No existe biene');
           // this.service.goodChange.next(false);
         }
       } else {

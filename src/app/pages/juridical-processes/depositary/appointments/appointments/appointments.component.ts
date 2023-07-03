@@ -1248,30 +1248,51 @@ export class AppointmentsComponent
         this.form
           .get('averiguacionPrevia')
           .setValue(this.good.expediente.preliminaryInquiry);
-        let dateAgree: any;
-        if (this.good.expediente.dateAgreementAssurance) {
-          dateAgree = this.datePipe.transform(
-            this.good.expediente.dateAgreementAssurance,
-            this.dateFormat
+        // let dateAgree: any;
+        // if (this.good.expediente.dateAgreementAssurance) {
+        //   dateAgree = this.datePipe.transform(
+        //     this.good.expediente.dateAgreementAssurance,
+        //     this.dateFormat
+        //   );
+        // }
+        this.form
+          .get('fechaAcuerdoAsegurado')
+          .setValue(
+            this.good.expediente.dateAgreementAssurance
+              ? new Date(this.good.expediente.dateAgreementAssurance)
+              : null
           );
-        }
-        this.form.get('fechaAcuerdoAsegurado').setValue(dateAgree);
-        let dateReception: any;
-        if (this.good.expediente.receptionDate) {
-          dateReception = this.datePipe.transform(
-            this.good.expediente.receptionDate,
-            this.dateFormat
+        // .setValue(this.good.expediente.dateAgreementAssurance);
+        // let dateReception: any;
+        // if (this.good.expediente.receptionDate) {
+        //   dateReception = this.datePipe.transform(
+        //     this.good.expediente.receptionDate,
+        //     this.dateFormat
+        //   );
+        // }
+        this.form
+          .get('fechaRecepcion')
+          .setValue(
+            this.good.expediente.receptionDate
+              ? new Date(this.good.expediente.receptionDate)
+              : null
           );
-        }
-        this.form.get('fechaRecepcion').setValue(dateReception);
-        let dateConfiscate: any;
-        if (this.good.expediente.confiscateDictamineDate) {
-          dateConfiscate = this.datePipe.transform(
-            this.good.expediente.confiscateDictamineDate,
-            this.dateFormat
+        // .setValue(this.good.expediente.receptionDate);
+        // let dateConfiscate: any;
+        // if (this.good.expediente.confiscateDictamineDate) {
+        //   dateConfiscate = this.datePipe.transform(
+        //     this.good.expediente.confiscateDictamineDate,
+        //     this.dateFormat
+        //   );
+        // }
+        this.form
+          .get('fechaDecomiso')
+          .setValue(
+            this.good.expediente.confiscateDictamineDate
+              ? new Date(this.good.expediente.confiscateDictamineDate)
+              : null
           );
-        }
-        this.form.get('fechaDecomiso').setValue(dateConfiscate);
+        // .setValue(this.good.expediente.confiscateDictamineDate);
       }
     } else {
       if (this.good.fileNumber) {
@@ -1294,21 +1315,34 @@ export class AppointmentsComponent
     }
     console.log(this.depositaryAppointment.dateRevocation);
 
-    let dateRevocation: any;
-    if (this.depositaryAppointment.dateRevocation) {
-      dateRevocation = this.datePipe.transform(
-        this.depositaryAppointment.dateRevocation,
-        this.dateFormat
+    // let dateRevocation: any;
+    // if (this.depositaryAppointment.dateRevocation) {
+    //   dateRevocation = this.datePipe.transform(
+    //     this.depositaryAppointment.dateRevocation,
+    //     this.dateFormat
+    //   );
+    //   let test = new Date(dateRevocation).toISOString();
+    //   console.log(test);
+    // }
+    this.form
+      .get('fecha') //.setValue(this.depositaryAppointment.dateRevocation);
+      .setValue(
+        this.depositaryAppointment.dateRevocation
+          ? new Date(this.depositaryAppointment.dateRevocation)
+          : null
       );
-    }
-    this.form.get('fecha').setValue(dateRevocation);
     this.form
       .get('noOficio')
       .setValue(this.depositaryAppointment.numberJobRevocation);
     // Junta de gobierno
     this.form
       .get('fechaAcuerdo')
-      .setValue(this.depositaryAppointment.dateJobBoardgovt);
+      .setValue(
+        this.depositaryAppointment.dateJobBoardgovt
+          ? new Date(this.depositaryAppointment.dateJobBoardgovt)
+          : null
+      );
+    // .setValue(this.depositaryAppointment.dateJobBoardgovt);
     this.form
       .get('noAcuerdo')
       .setValue(this.depositaryAppointment.numberJobBoardgovt);
@@ -1328,14 +1362,20 @@ export class AppointmentsComponent
           : '0.00'
       );
     this.form.get('iva').setValue(this.depositaryAppointment.vat);
-    let startDate: any;
-    if (this.depositaryAppointment) {
-      startDate = this.datePipe.transform(
-        this.depositaryAppointment.datestartContract,
-        this.dateFormat
+    // let startDate: any;
+    // if (this.depositaryAppointment) {
+    //   startDate = this.datePipe.transform(
+    //     this.depositaryAppointment.datestartContract,
+    //     this.dateFormat
+    //   );
+    // }
+    this.form
+      .get('fechaInicio')
+      .setValue(
+        this.depositaryAppointment.datestartContract
+          ? new Date(this.depositaryAppointment.datestartContract)
+          : null
       );
-    }
-    this.form.get('fechaInicio').setValue(startDate);
     this.form
       .get('noNombramiento')
       .setValue(this.depositaryAppointment.cveContract);
@@ -2471,8 +2511,8 @@ export class AppointmentsComponent
         startContractDate: this.form.value.fechaInicio,
         endContractDate: null,
         amount: null,
-        nameTypeKey: this.form.value.tipoNombramiento,
-        administratorTypeKey: this.form.value.estatus,
+        nameTypeKey: this.form.value.estatus,
+        administratorTypeKey: this.form.value.tipoNombramiento,
         assignmentDate: null,
         appointmentDate: new Date(),
         cardAppointmentId: null,
@@ -2495,7 +2535,9 @@ export class AppointmentsComponent
         cardAppointmentIdBoardgovt: null,
         jobAnswerDirgralNum: null,
         authorityorderAssignment: null,
-        responsible: this.form.value.depositaria,
+        responsible: this.form.value.depositaria
+          ? this.form.value.depositaria
+          : this.depositaryAppointment.personNumber.personName,
         representativeSera: this.form.value.representanteSAE,
         folioUniversal: null,
         nbOrigin: null,
@@ -2531,14 +2573,16 @@ export class AppointmentsComponent
         },
       });
     } else {
+      console.log(this.form.value.fechaInicio);
+
       let body: Partial<IDepositaryAppointments> = {
         appointmentNum: Number(this.depositaryAppointment.numberAppointment),
         revocationDate: this.form.value.fecha,
         revocation: this.form.value.remocion == true ? 'S' : 'N',
         contractKey: this.form.value.noNombramiento,
         startContractDate: this.form.value.fechaInicio,
-        nameTypeKey: this.form.value.tipoNombramiento,
-        administratorTypeKey: this.form.value.estatus,
+        nameTypeKey: this.form.value.estatus,
+        administratorTypeKey: this.form.value.tipoNombramiento,
         typeDepositary: this.form.value.tipoDepositaria,
         observations: this.form.value.observaciones,
         jobRevocationNum: this.form.value.noOficio,
@@ -2547,7 +2591,9 @@ export class AppointmentsComponent
         exhibit: this.form.value.anexo,
         jobBoardgovtDate: this.form.value.fechaAcuerdo,
         jobBoardgovtNum: this.form.value.noAcuerdo,
-        responsible: this.form.value.depositaria,
+        responsible: this.form.value.depositaria
+          ? this.form.value.depositaria
+          : this.depositaryAppointment.personNumber.personName,
         representativeSera: this.form.value.representanteSAE,
         personNum: this.depositaryAppointment.personNumber.id,
         reference: this.form.value.referencia,

@@ -27,8 +27,7 @@ export enum GoodEndpoints {
   Vban = 'good/getBan',
   AttribGoodBad = 'attrib-good-bad/get-all',
   AttribGoodBadId = 'attrib-good-bad',
-  AttribGood = 'goods-attributes',
-
+  AttribGood = 'attributes-classification-good',
   GetAllGoodQuery = 'good/getAllGoodQuery',
   PAValidaCambioEstatus = 'good/testValid',
   GetMassiveSearch = 'good/getMassiveSearch',
@@ -60,6 +59,7 @@ export enum GoodProcessPoints {
   getVstatusIniVnoRegister = 'application/getVstatusIniVnoRegister',
   pup_change_impro = 'application/pup-change-impro',
   GetDescDep = 'application/getDestDepBan',
+  GetGoodSituation = 'update-good-status/pupMakeQuery2',
 }
 
 export enum GoodFinderEndpoint {

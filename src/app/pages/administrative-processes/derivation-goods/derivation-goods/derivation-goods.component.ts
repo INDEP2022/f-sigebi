@@ -45,8 +45,13 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   selectedRow: any;
   goodData: any;
-
+  good: any;
   bkConversionsCveActaCon: any;
+
+  get id() {
+    return this.form.get('id');
+  }
+
   get idConversion() {
     return this.form.get('idConversion');
   }
@@ -93,7 +98,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     return this.form.get('destinationLabel');
   }
 
-  attributes: any;
+  attributes: any = [];
 
   //Settings para la tabla
   settingsGood = {
@@ -118,6 +123,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
 
   cveActaConv: any;
   tipoValue: any;
+  statusCode: any;
 
   constructor(
     private fb: FormBuilder,
@@ -146,6 +152,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         ...MODAL_CONFIG,
         callback: (data: any) => {
           if (data != null) {
+            console.log(data);
             this.no_bien_blk_tipo_bien = data.goodFatherNumber;
             this.idConversion.setValue(data.id);
             this.numberDossier.setValue(data.fileNumber.id);
@@ -156,6 +163,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.actConvertion.setValue(data.cveActaConv);
             this.searchGoods(data.goodFatherNumber);
             this.searchGoodSon(data.goodFatherNumber);
+            this.searchSituation(data.goodFatherNumber);
           }
         },
       }, //pasar datos por aca
@@ -167,6 +175,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   getAll() {
+    this.loading = false;
     this.form.valueChanges.subscribe(value => {
       this.convertiongoodService
         .getAllGoodsConversions(this.params.getValue(), value.idConversion)
@@ -192,6 +201,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
    */
   private buildForm() {
     this.form = this.fb.group({
+      id: [null],
       idConversion: [null, [Validators.required]],
       numberGoodFather: [null, [Validators.pattern(NUMBERS_PATTERN)]], //Se quita la validación, en el forms no es requerido
       tipo: [null, [Validators.required]],
@@ -213,10 +223,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(NUMBERS_PATTERN), Validators.required],
       ],
-      observation: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      observation: [null, [Validators.pattern(STRING_PATTERN)]],
       descriptionSon: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -267,17 +274,20 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             .getAllFilter(paramsF.getParams())
             .toPromise();
           // if (conversionData.typeConv === '1') {
+          this.good = res.data[0];
           if (conversionData.typeConv === '2') {
+            this.id.setValue(res.data[0]['id']);
             this.observation.setValue(res.data[0]['observations']);
-            this.descriptionSon.setValue(res.data[0]['descriptionSon']);
+            this.descriptionSon.setValue(res.data[0]['description']);
             this.quantity.setValue(res.data[0]['quantity']);
             this.classifier.setValue(res.data[0]['goodClassNumber']);
             this.unitOfMeasure.setValue(res.data[0]['unit']);
             this.destinationLabel.setValue(res.data[0]['labelNumber']);
+            this.statusCode = res.data[0]['status'];
             this.numberGoodSon.setValue(e);
             this.searchStatus(res.data[0]['status']);
-            this.getAttributesGood(e);
-            this.flagActa = true;
+            this.getAttributesGood(res.data[0]['goodClassNumber']);
+            // this.flagActa = true;
             this.flagCargMasiva = false;
             this.flagCargaImagenes = false;
             this.flagFinConversion = false;
@@ -303,6 +313,17 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         }
       }
     });
+  }
+  async searchSituation(e: any) {
+    this.serviceGoodProcess.getByIdSituation(e).subscribe(
+      res => {
+        console.log(res);
+        this.situation.setValue(res.data[0]['desc_situacion']);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   searchStatus(data: any) {
@@ -346,6 +367,29 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       }
     });
   }
+  updateGood() {
+    const data = {
+      id: this.id.value,
+      goodId: this.numberGoodFather.value,
+      observations: this.observation.value,
+      quantity: this.quantity.value,
+      goodClassNumber: this.classifier.value,
+      unit: this.unitOfMeasure.value,
+      labelNumber: this.destinationLabel.value,
+    };
+    this.serviceGood.update(data).subscribe(
+      res => {
+        this.alert('success', 'Bien', `Actualizado correctamente`);
+      },
+      err => {
+        this.alert(
+          'error',
+          'Bien',
+          'No se pudo actualizar el bien, por favor intentelo nuevamente'
+        );
+      }
+    );
+  }
 
   watchFlagChanges(flag: any) {
     this.flagActa = flag;
@@ -361,7 +405,12 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         this.goodData = res;
         console.log('res:', res);
         this.goodData = this.goodData.data[0];
-        console.log('goodData:', this.goodData);
+
+        // this.finishConversionBeforeValidation(
+        //   this.goodData.goodId,
+        //   this.goodData.id
+        // );
+        // return;
 
         if (this.goodData.status == 'CVD') {
           this.alert(
@@ -397,25 +446,22 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       goodId: goodId,
       status: 'CVD',
     };
-    console.log('dataBien', dataBien);
-    this.insertHistoryGood();
-
-    // this.serviceGood.update(dataBien).subscribe(
-    //   async res => {
-    //     console.log('ress serviceGood update:', res);
-
-    //     this.insertHistoryGood();
-    //   },
-    //   err => {
-    //     console.log(err);
-    //   }
-    // );
+    this.serviceGood.update(dataBien).subscribe(
+      async res => {
+        if (res) {
+          this.insertHistoryGood(goodId);
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
-  insertHistoryGood() {
+  insertHistoryGood(goodId: any) {
     let user = localStorage.getItem('username');
     let dataBien = {
-      propertyNum: this.no_bien_blk_tipo_bien,
+      propertyNum: goodId,
       status: 'CVD',
       changeDate: new Date(),
       userChange: user,
@@ -423,45 +469,49 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       reasonForChange: 'Conversión de Bienes',
     };
 
-    console.log('dataBien', dataBien);
-
-    console.log('no_bien_blk_tipo_bien', this.no_bien_blk_tipo_bien);
-    this.updateConversion();
-    /*
     this.historyGoodProcess.create(dataBien).subscribe(
       async res => {
         console.log('ress historyGoodProcess res:', res);
+        if (res) {
+          this.updateConversion();
+        }
       },
       err => {
         console.log(err);
       }
     );
-    */
   }
 
   updateConversion() {
     let idConversion = this.form.get('idConversion').value;
     let conversions = {
-      id: idConversion,
-      statusConv: 'estatus conv',
+      id: parseInt(idConversion),
+      statusConv: 2,
     };
     console.log('ress conversions :', conversions);
 
-    /*
     this.convertiongoodService.update(idConversion, conversions).subscribe(
       async res => {
-        console.log('ress updateConversion res:', res);
+        if (res.statusCode === 200 && res.message[0] === 'ok') {
+          this.alert('success', 'Conversión Finalizada', '');
+        }
       },
       err => {
         console.log(err);
       }
-    );*/
+    );
   }
 
   bulkUpload() {
-    this.router.navigate([
-      'pages/administrative-processes/derivation-goods/bulk-upload',
-    ]);
+    this.router.navigate(
+      ['pages/administrative-processes/derivation-goods/bulk-upload'],
+      {
+        queryParams: {
+          pGoodFatherNumber: this.form.value.numberGoodFather,
+          expedientNumber: this.form.value.numberDossier,
+        },
+      }
+    );
   }
 
   imgUpload() {
@@ -472,8 +522,12 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         this.goodData = res;
         console.log('res:', res);
         this.goodData = this.goodData.data[0];
-        localStorage.setItem('derivationGoodId', this.goodData.goodId);
-        this.router.navigate(['pages/general-processes/goods-characteristics']);
+        // localStorage.setItem('selectedGoodsForPhotos', this.form.value.numberGoodFather);
+        this.router.navigate(['pages/general-processes/good-photos'], {
+          queryParams: {
+            numberGood: this.form.value.numberGoodFather,
+          },
+        });
       },
       err => {
         console.log(err);
@@ -482,6 +536,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   openModal(): void {
+    this.loading = false;
     this.modalService.show(GoodsComponent, {
       initialState: {},
       class: 'modal-lg modal-dialog-centered',
@@ -554,14 +609,31 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     this.destinationLabel.setValue(event.data.noLabel);
     this.selectedRow = event.data;
 
-    this.getAttributesGood(event.data);
+    this.getAttributesGood(event.data.noClassifGood);
   }
 
   getAttributesGood(event: any) {
-    this.serviceGood.getAttributesGood(event.goodId).subscribe(
+    this.serviceGood.getAllFilterClassification(event).subscribe(
       res => {
-        delete res.goodNumber;
-        this.attributes = Object.entries(res).filter(([key, value]) => value);
+        this.attributes = [];
+        console.log(res);
+        // delete res.goodNumber;
+        // this.attributes = Object.entries(res.data).filter(([key, value]) => value.attribute);
+        for (let i = 0; i < res.data.length; i++) {
+          let value = '';
+          for (const index in this.good) {
+            if (index === `val${res.data[i].columnNumber}`) {
+              console.log(this.good[index]);
+              value = this.good[index];
+            }
+          }
+          this.attributes.push({
+            attributes: res.data[i].attribute,
+            value: value,
+          });
+        }
+        // this.attributes = res.data.map(objeto => objeto.attribute);
+        // console.log(this.attributes);
       },
       err => {
         console.log(err);
@@ -583,8 +655,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         }
       },
     };
-    this.loading = true;
-    this.modalService.show(ActaConvertionFormComponent, config);
     this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
       queryParams: {
         actConvertion: this.form.value.actConvertion,

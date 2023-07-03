@@ -18,6 +18,7 @@
         [control]="generalDataForm.get('descripcion')"
         label="Descripción">
         <textarea
+          rows="4"
           class="form-control"
           type="text"
           formControlName="descripcion"></textarea>
@@ -114,7 +115,8 @@
         [avaluo]="false"
         [good]="good"
         [disabled]="true"
-        [service]="service"></app-good-characteristics-table>
+        [service]="service"
+        [initValue]="true"></app-good-characteristics-table>
     </div>
     <div class="row" *ngIf="viewAct">
       <app-characteristics-legend></app-characteristics-legend>
