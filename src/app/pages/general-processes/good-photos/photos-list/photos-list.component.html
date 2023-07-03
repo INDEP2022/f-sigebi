@@ -1,3 +1,6 @@
+<div class="errorMessage" *ngIf="errorMessage && !this.userPermisions">
+  {{ errorMessage }}
+</div>
 <div class="photoGoods mt-3 mb-3">
   <div class="col-md-4 p-0">
     <button
