@@ -60,13 +60,15 @@ export class PhotosHistoricComponent implements OnInit {
   ngOnInit() {}
 
   private getData() {
-    this.service.getAllHistoric(this.goodNumber).subscribe({
-      next: response => {
-        if (response) {
-          this.files = [...response];
-        }
-      },
-    });
+    if (this.goodNumber) {
+      this.service.getAllHistoric(this.goodNumber).subscribe({
+        next: response => {
+          if (response) {
+            this.files = [...response];
+          }
+        },
+      });
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
