@@ -1,21 +1,16 @@
-export const EMAIL_CONFIG_COLUMNS = {
+export const EMAIL_BODY_COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'Identificador',
     type: 'string',
     sort: false,
   },
-  emailSend: {
-    title: 'Correo Electrónico',
+  bodyEmail: {
+    title: 'Cuerpo del Correo',
     type: 'string',
     sort: false,
   },
-  nameSend: {
-    title: 'Nombre',
-    type: 'string',
-    sort: false,
-  },
-  postSend: {
-    title: 'Puesto',
+  subjectEmail: {
+    title: 'Asunto',
     type: 'string',
     sort: false,
   },
@@ -24,7 +19,7 @@ export const EMAIL_CONFIG_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (_cell: any, row: any) => {
-      return row.status == '1' ? 'SI' : 'NO';
+      return row.status == '1' ? 'Activo' : 'Inactivo';
     },
   },
 };
