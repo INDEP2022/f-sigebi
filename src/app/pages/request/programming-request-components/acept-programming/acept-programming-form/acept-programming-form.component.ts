@@ -207,7 +207,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.id'] = task.id;
     this.taskService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('response task', response);
         this.task = response.data[0];
       },
       error: error => {},
@@ -270,7 +269,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     return this.warehouseService
       .getById(this.programming.storeId)
       .subscribe(data => {
-        console.log('nombre', data.description);
         this.nameWarehouse = data.description;
         this.formLoading = false;
       });
@@ -452,8 +450,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             response.saePhysicalState = 'MALO';
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
-          console.log('response_t', response.storeId);
-          console.log('response_tgoodis', response.goodId);
           this.goodsInfoTrans.push(response);
           this.goodsTranportables.load(this.goodsInfoTrans);
           this.totalItemsTransportable = this.goodsTranportables.count();
@@ -467,7 +463,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     const goodsTrans = data.filter(items => {
       return items.status == 'EN_RESGUARDO_TMP';
     });
-    console.log('transportable22', data);
     goodsTrans.map(items => {
       this.goodService.getGoodByIds(items.goodId).subscribe({
         next: response => {
@@ -478,8 +473,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           if (response.decriptionGoodSae == null)
             response.decriptionGoodSae = 'Sin descripción';
           // queda pendiente mostrar el alías del almacén //
-          console.log('response_g', response.storeId);
-          console.log('response_guard', response.goodId);
           this.goodsInfoGuard.push(response);
           this.goodsGuards.load(this.goodsInfoGuard);
           this.totalItemsGuard = this.goodsGuards.count();
@@ -507,9 +500,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           // response.decriptionGoodSae = 'Sin descripción';
           // warehouseName
           // queda pendiente mostrar el alías del almacén //
-          console.log('response_!!!', response.storeId);
           this.goodsInfoWarehouse.push(response);
-          console.log('warefilter', this.goodsInfoWarehouse);
           this.goodsWarehouse.load(this.goodsInfoWarehouse);
           this.totalItemsWarehouse = this.goodsWarehouse.count();
           this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
@@ -526,7 +517,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         `¿Esta seguro de aprobar la programación con folio: ${this.programmingId}`
       ).then(question => {
         if (question.isConfirmed) {
-          //this.sendEmailUsers();
+          this.sendEmailUsers();
           this.createTaskNotification();
           this.createTaskExecuteProgramming();
           this.createTaskFormalize();
@@ -591,8 +582,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
     const dataEmail = {
       folio: this.programming.folio,
-      startDate: this.programming.startDate,
-      endDate: this.programming.endDate,
+      startDate: moment(this.programming.startDate).format(
+        'YYYY-MM-DD HH:mm:ss'
+      ),
+      endDate: moment(this.programming.endDate).format('YYYY-MM-DD HH:mm:ss'),
       city: this.programming.city,
       address: this.programming.address,
       usersProg: this.infoUsers,
@@ -601,8 +594,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       goodsWarehouse: this.warehouseGoods,
       emailSend: this.emails,
     };
-    console.log('newdata', dataEmail);
 
+    console.log('dataEmail', dataEmail);
     this.emailService
       .createEmailProgramming(JSON.stringify(dataEmail))
       .subscribe({
@@ -612,9 +605,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             'Notificación',
             'Se envio el correo electrónico a los usuarios correctamente'
           );
-          this.createTaskNotification();
+          /*this.createTaskNotification();
           this.createTaskExecuteProgramming();
-          this.createTaskFormalize();
+          this.createTaskFormalize(); */
         },
         error: error => {},
       });

@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
 import { catchError, forkJoin, map, mergeMap, Observable, of } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
 import {
@@ -302,6 +305,10 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   getStatusDeliveryCveExpendiente(cve: string) {
     const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}?text.keysProceedings=${cve}`;
     return this.get(route, cve);
+  }
+  getStatusDeliveryCveExpendienteAll(params?: ListParams) {
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}`;
+    return this.get(route, params);
   }
   getAllByActa(
     cve: string,

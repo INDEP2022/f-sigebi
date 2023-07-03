@@ -2,6 +2,7 @@ import { Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 // import { PartializeGeneralGoodV2Service } from '../services/partialize-general-good-v2.service';
+import { PreviousRouteService } from 'src/app/common/services/previous-route.service';
 import { PartializeGeneralGoodService } from '../services/partialize-general-good.service';
 
 @Component({
@@ -12,9 +13,11 @@ import { PartializeGeneralGoodService } from '../services/partialize-general-goo
 export class PartializesGeneralGoodsComponent {
   // version: number;
   // clasificators = 'Clasificadores (1424, 1426, 1427, 1575, 1590)';
+  origin: number = null;
   constructor(
     private location: Location,
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
+    private previousRouteService: PreviousRouteService,
     private service: PartializeGeneralGoodService // private serviceTab2: PartializeGeneralGoodTab2Service, // private service2: PartializeGeneralGoodV2Service
   ) {}
 
@@ -31,6 +34,19 @@ export class PartializesGeneralGoodsComponent {
   }
 
   ngOnInit() {
+    this.activatedRoute.queryParams.subscribe({
+      next: param => {
+        console.log(param);
+        if (
+          this.previousRouteService.getHistory().length > 1 &&
+          param['numberGood']
+        ) {
+          this.origin = 1;
+        } else {
+          this.origin = null;
+        }
+      },
+    });
     // this.route.url.subscribe(([url]) => {
     //   const { path, parameters } = url;
     //   if (path !== 'v1') {
