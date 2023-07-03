@@ -308,7 +308,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
 
   deleteSoli(proceNum: number) {
     return new Promise<boolean>((res, rej) => {
-      this.numeraryService.deleteProccess({ proceNum }).subscribe({
+      this.numeraryService.deleteProccess(proceNum).subscribe({
         next: response => {
           res(true);
         },
@@ -341,6 +341,151 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     this.getRequestNumeDet(event.solnumId);
   }
 
-  PUP_DESCALCULA() {}
-  PUP_CALCULA() {}
+  async PUP_DESCALCULA() {
+    if (this.formBlkControl.get('tMoneda').value === 'P') {
+      this.formBlkControl.get('commisionBanc').reset();
+    }
+    const res = await this.pupSonDelDate(102, 129, 125);
+    if (this.form.get('idProcess').value !== null) {
+      if (this.data2[0].IdSolNum !== null) {
+        const response = await this.alertQuestion(
+          'question',
+          '¿Desea continuar?',
+          '¿Se ejecuta el cálculo?'
+        );
+        if (response.isConfirmed) {
+          const vResul = await this.fCalculaNume(
+            this.form.get('idProcess').value,
+            200
+          );
+          if (vResul === 'Error') {
+            this.alert('error', 'Ha ocurrido un error', '');
+          } else {
+            this.alert('success', 'Cálculo de numerario', '');
+          }
+        }
+      } else {
+        this.alert(
+          'warning',
+          'Cálculo de numerario',
+          'No se encontró la solicitud.'
+        );
+      }
+    } else {
+      this.alert(
+        'warning',
+        'Cálculo de numerario',
+        'No se especificó el proceso a calcular.'
+      );
+    }
+  }
+
+  pupElimCalculNume(pIdProcNum: number) {
+    return new Promise((res, rej) => {
+      const model = {
+        pIdProcNum,
+      };
+      this.numeraryService.pupElimCalculNume(model).subscribe({
+        next: resp => {
+          console.log(resp);
+          res(res);
+        },
+        error: err => {
+          res('Error');
+        },
+      });
+    });
+  }
+
+  fCalculaNume(pIdProcNum: number, commisionBanc: number) {
+    return new Promise((res, rej) => {
+      const model = {
+        pIdProcNum,
+        commisionBanc,
+      };
+      this.numeraryService.fCalculaNume(model).subscribe({
+        next: resp => {
+          console.log(resp);
+          res(res);
+        },
+        error: err => {
+          res('Error');
+        },
+      });
+    });
+  }
+
+  pupSonDelDate(
+    lvIdSolnum: number,
+    lvIdProcnum: number,
+    lvBpParcializado: number | string
+  ) {
+    return new Promise<boolean>((res, rej) => {
+      const model = {
+        lvIdSolnum,
+        lvIdProcnum,
+        lvBpParcializado,
+      };
+      this.numeraryService.pupSonDelDate(model).subscribe({
+        next: resp => {
+          console.log(resp);
+          res(true);
+        },
+        error: err => {
+          res(false);
+        },
+      });
+    });
+  }
+  async PUP_CALCULA() {
+    if (this.formBlkControl.get('tMoneda').value === 'P') {
+      this.formBlkControl.get('commisionBanc').reset();
+    }
+
+    if (['CN', 'CD'].includes(this.formBlkControl.get('tMoneda').value)) {
+      null;
+    } else {
+      const res = await this.pupSonDelDate(102, 129, 125);
+    }
+
+    if (this.form.get('idProcess').value !== null) {
+      if (this.data2[0].IdSolNum !== null) {
+        const response = await this.alertQuestion(
+          'question',
+          '¿Desea continuar?',
+          '¿Se ejecuta el cálculo?'
+        );
+        if (response.isConfirmed) {
+          const vResul = await this.pupElimCalculNume(
+            this.form.get('idProcess').value
+          );
+          if (vResul === 'Error') {
+            this.alert(
+              'error',
+              'Ha ocurrido un error',
+              'No se pudo eliminar el cálculo numerario.'
+            );
+          } else {
+            this.alert(
+              'success',
+              'Cálculo de numerario',
+              'Se eliminó el cálculo numerario correctamente'
+            );
+          }
+        }
+      } else {
+        this.alert(
+          'warning',
+          'Cálculo de numerario',
+          'No se encontró la solicitud.'
+        );
+      }
+    } else {
+      this.alert(
+        'warning',
+        'Cálculo de numerario',
+        'No se especificó el proceso a calcular.'
+      );
+    }
+  }
 }
