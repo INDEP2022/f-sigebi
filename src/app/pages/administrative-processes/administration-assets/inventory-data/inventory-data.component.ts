@@ -66,8 +66,9 @@ export class InventoryDataComponent
   generateAtri: boolean = false;
   textButon: string = 'Generar Inventario';
   atribute: string = 'Generar Atributos';
-  get dataInventory() {
-    return this.service.dataInventary;
+
+  get dataIn() {
+    return this.service.data;
   }
   constructor(
     private fb: FormBuilder,
@@ -303,6 +304,7 @@ export class InventoryDataComponent
       this.goodId,
       this.inventorySelect.inventoryNumber
     );
+    console.log(atributes);
     if (atributes.length > 0) {
       this.inventary = atributes;
     } else {
@@ -356,10 +358,11 @@ export class InventoryDataComponent
   }
 
   async add() {
-    if (this.dataInventory) {
+    if (this.dataIn) {
+      console.log('ESTA ES LA DATA INV', this.dataIn);
       if (this.inventorySelect) {
         let required: boolean = false;
-        this.dataInventory.forEach((item: any) => {
+        this.dataIn.forEach((item: any) => {
           console.log(item);
           if (item.required && item.value === null) {
             required = true;
@@ -373,7 +376,7 @@ export class InventoryDataComponent
           );
           return;
         }
-        this.dataInventory.forEach((item: any) => {
+        this.dataIn.forEach((item: any) => {
           this.updateInventary(
             this.inventorySelect.inventoryNumber,
             item.numColumn,
@@ -387,7 +390,7 @@ export class InventoryDataComponent
         );
       } else {
         let required: boolean = false;
-        this.dataInventory.forEach((item: any) => {
+        this.dataIn.forEach((item: any) => {
           console.log(item);
           if (item.required && item.value === null) {
             required = true;
@@ -403,7 +406,7 @@ export class InventoryDataComponent
         }
         const inventoryNumber: number = await this.createInventory();
         if (inventoryNumber !== null) {
-          this.dataInventory.forEach((item: any) => {
+          this.dataIn.forEach((item: any) => {
             this.createLineaInventory(
               inventoryNumber,
               item.numColumn,

@@ -204,9 +204,22 @@ export class CharacteristicEditorCell extends DefaultEditor {
     if (!row) {
       return true;
     }
-    console.log(row.value);
+    if (row.attribute.includes('FECHA')) {
+      row.value = this.formatDate(row.value);
+    }
     return (
       row.required && (!row.value || (row.value && row.value.trim() == ''))
     );
+  }
+
+  formatDate(fe: string) {
+    const fecha = new Date(fe);
+    const dia = fecha.getDate();
+    const mes = fecha.getMonth() + 1; // Los meses comienzan desde 0, por lo que se suma 1
+    const año = fecha.getFullYear();
+    const diaFormateado = ('0' + dia).slice(-2);
+    const mesFormateado = ('0' + mes).slice(-2);
+    const fechaFormateada = diaFormateado + '-' + mesFormateado + '-' + año;
+    return fechaFormateada;
   }
 }
