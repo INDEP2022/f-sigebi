@@ -609,6 +609,11 @@ ng-scrollbar.table-scrollbar {
   background-color: #fff;
 }
 
+#hooverTableDocumentViewer table tbody tr td:hover {
+  cursor: pointer !important;
+  background-color: transparent;
+}
+
 .bg-yellow-to-good {
   background-color: #e2c103 !important;
   color: black;

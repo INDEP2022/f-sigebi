@@ -1131,7 +1131,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingsReceiptsGuards"
                   [source]="receiptGuards"
-                  (edit)="showGoodsReceipt($event.data)"
+                  (edit)="showGoodsReceiptGuard($event.data)"
                   (delete)="generateReceiptGuard($event.data)">
                 </ng2-smart-table>
               </div>
@@ -1142,7 +1142,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingsReceiptsGuardsClose"
                   [source]="receiptGuards"
-                  (edit)="showGoodsReceipt($event.data)"
+                  (edit)="showGoodsReceiptGuard($event.data)"
                   (delete)="showReceipt($event.data)">
                 </ng2-smart-table>
               </div>
@@ -1422,7 +1422,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingsReceiptWarehouse"
                   [source]="receiptWarehouse"
-                  (edit)="showGoodsReceipt($event.data)"
+                  (edit)="showGoodsReceiptWarehouse($event.data)"
                   (delete)="generateReceiptWarehouse($event.data)">
                 </ng2-smart-table>
               </div>
@@ -1434,7 +1434,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingsReceiptWarehouseClose"
                   [source]="receiptWarehouse"
-                  (edit)="showGoodsReceipt($event.data)"
+                  (edit)="showGoodsReceiptWarehouse($event.data)"
                   (delete)="generateReceiptWarehouse($event.data)">
                 </ng2-smart-table>
               </div>

@@ -3,6 +3,17 @@
   font-size: 12px;
 }
 
+.errorMessage {
+  margin-bottom: 3em;
+  text-align: center;
+  color: #ba657f;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  @media screen and (max-width: 576px) {
+    margin-bottom: 1.5em;
+  }
+}
+
 .float-check {
   left: 8px;
 }

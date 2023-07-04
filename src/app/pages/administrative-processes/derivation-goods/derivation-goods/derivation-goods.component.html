@@ -227,7 +227,8 @@
                 type="button"
                 data-toggle="tooltop"
                 title="Eliminar Bien"
-                class="btn btn-danger btn-sm active ml-2 mr-2">
+                class="btn btn-danger btn-sm active ml-2 mr-2"
+                (click)="deletGood(selectedRow)">
                 <i class="bx bx-minus bx-sm float-icon"></i>
               </button>
             </div>
@@ -237,7 +238,7 @@
               [settings]="settingsGood"
               [source]="dataGoods2"
               [attr.class]="'table-bordered table-responsive'"
-              (rowSelect)="onRowSelect($event)">
+              (userRowSelect)="onRowSelect($event)">
             </ng2-smart-table>
           </div>
         </div>
@@ -259,10 +260,13 @@
           </div>
           <div class="row" *ngFor="let attr of attributes">
             <div class="col-6">
-              <label class="label-first">{{ attr[1] }}:</label>
+              <label class="label-first">{{ attr.attributes }}:</label>
             </div>
             <div class="col-6">
-              <input type="text" placeholder="Introduce un valor" />
+              <input
+                type="text"
+                placeholder="Introduce un valor"
+                [value]="attr.value" />
             </div>
           </div>
         </div>

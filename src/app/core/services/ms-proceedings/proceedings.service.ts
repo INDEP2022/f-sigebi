@@ -103,7 +103,7 @@ export class ProceedingsService extends HttpService {
   }
 
   getExistProceedings(numberGood: string) {
-    return this.get<IListResponseMessage<{ existe: number }>>(
+    return this.get<IListResponseMessage<{ no_acta: string }>>(
       ProceedingsEndpoints.ExistProceedings + '/' + numberGood
     );
   }
@@ -156,5 +156,9 @@ export class ProceedingsService extends HttpService {
 
   getUnioTable(goodNumber: number, params?: string) {
     return this.get(`${ProceedingsEndpoints.GetUnion}/${goodNumber}`, params);
+  }
+
+  getCountActas(goodNumber: number | string) {
+    return this.get('aplication/get-count-actas/' + goodNumber);
   }
 }

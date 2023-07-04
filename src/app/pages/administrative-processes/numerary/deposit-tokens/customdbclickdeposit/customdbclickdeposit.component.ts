@@ -166,8 +166,8 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
 
   async getGoodMovimientosCuentas(data: any) {
     const params = new ListParams();
-    params['filter.numberGood'] = `$eq:${data.no_bien}`;
-    params['filter.numberProceedings'] = `$eq:${data.no_expediente}`;
+    params['filter.numberGood'] = `$eq:${data.goodnumber}`;
+    params['filter.numberProceedings'] = `$eq:${data.proceedingsnumber}`;
 
     return new Promise((resolve, reject) => {
       this.accountMovementService.getAllFiltered(params).subscribe({
@@ -183,7 +183,7 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
 
   async getGoodMovimientosCuentas1(data: any) {
     const params = new ListParams();
-    params['filter.numberGood'] = `$eq:${data.no_bien}`;
+    params['filter.numberGood'] = `$eq:${data.goodnumber}`;
     return new Promise((resolve, reject) => {
       this.accountMovementService.getAllFiltered(params).subscribe({
         next: response => {
