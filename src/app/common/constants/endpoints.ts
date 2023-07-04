@@ -5,6 +5,8 @@ export enum ENDPOINT_LINKS {
   appraiser = 'catalog/appraisers',
   Appraisers = 'appraise/appraisal-x-good', // ? Agregado para el nuevo MS agregado el 20/02/23
   Bank = 'catalog/bank',
+  bank = 'bank',
+  BankAccount = 'bank-account',
   Batch = 'catalog/batch',
   Battery = 'catalog/battery',
   City = 'catalog/city-sera',
