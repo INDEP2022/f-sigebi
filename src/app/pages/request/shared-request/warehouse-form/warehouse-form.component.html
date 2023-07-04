@@ -358,11 +358,16 @@
           [text]="'Enviar'"
           [loadingText]="'Enviando almacén'"
           [loading]="loading"
+          [btnSmall]="true"
+          [icon]="'bx bx-send'"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
+        <button
+          class="btn btn-danger btn-sm active"
+          (click)="close()"
+          type="button">
+          Regresar <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>
