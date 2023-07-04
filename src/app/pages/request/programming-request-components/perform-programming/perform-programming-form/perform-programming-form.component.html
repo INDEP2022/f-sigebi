@@ -680,7 +680,7 @@
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="settingWarehouseGoods"
                 [source]="goodsWarehouse"
-                (edit)="showGood($event.data)"
+                (edit)="showGoodWarehouse($event.data)"
                 (delete)="removeGoodWarehouse($event.data)">
               </ng2-smart-table>
 
@@ -689,7 +689,7 @@
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="settingWarehouseGoodsClose"
                 [source]="goodsWarehouse"
-                (edit)="showGood($event.data)">
+                (edit)="showGoodWarehouse($event.data)">
               </ng2-smart-table>
               <app-pagination
                 [params]="paramsWarehouseGoods"

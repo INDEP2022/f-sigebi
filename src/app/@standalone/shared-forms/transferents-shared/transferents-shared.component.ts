@@ -51,9 +51,18 @@ export class TransferenteSharedComponent extends BasePage implements OnInit {
   }
 
   getTransferents(params?: ListParams) {
+    console.log(params)
     this.service.getAll(params).subscribe(
-      data => {
-        this.transferents = new DefaultSelect(data.data, data.count);
+      async data => {
+        const newData = await Promise.all(
+          data['data'].map((item:any) => {
+            return {
+              ...item,
+              selectValue: `${item.id}-${item.nameTransferent}`
+            }
+          })
+        )
+        this.transferents = new DefaultSelect(newData);
       },
       err => {
         let error = '';
