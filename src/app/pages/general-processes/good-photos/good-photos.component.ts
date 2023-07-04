@@ -72,6 +72,11 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
     this.activatedRoute.queryParams.subscribe({
       next: param => {
         console.log(param);
+        if (param['numberGood']) {
+          this.noBienControl = param['numberGood'] || null;
+          this.searchGood();
+          return;
+        }
         if (this.previousRouteService.getHistory().length > 1) {
           this.origin = 1;
         }
@@ -82,6 +87,17 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
         localStorage.getItem('selectedGoodsForPhotos')
       );
     }
+    this.activatedRoute.queryParams.subscribe({
+      next: param => {
+        console.log(param);
+        if (
+          this.previousRouteService.getHistory().length > 1 &&
+          localStorage.getItem('selectedGoodsForPhotos')
+        ) {
+          this.origin = 1;
+        }
+      },
+    });
     if (this.selectedGoodsForPhotos && this.selectedGoodsForPhotos.length > 0) {
       this.totalItems = this.selectedGoodsForPhotos.length;
       this.noBienControl = this.selectedGoodsForPhotos[0];

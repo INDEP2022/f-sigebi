@@ -11,11 +11,12 @@
     <div class="row">
       <div class="col-12 text-end justify-content-ends">
         <button
-          (click)="openDialogPercentage()"
+          (click)="openDialogPercentage(true)"
           type="button"
-          tooltip="Agregar"
+          tooltip="Agregar Porcentaje"
           containerClass="tooltip-style"
-          class="btn btn-info btn-sm active ml-2 mr-2">
+          class="btn btn-primary btn-sm active ml-2 mr-2">
+          Agregar
           <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
       </div>
@@ -27,11 +28,13 @@
           [track]="'all'"
           [ngStyle]="{ height: loading ? '0px' : '300px' }">
           <ng2-smart-table
+            id="porcentajes"
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="sources"
-            (edit)="onEditConfirm($event)"
+            (edit)="onEditConfirm($event, false)"
             (delete)="onDeleteConfirm($event)">
+            <select class="custom-filter-select"></select>
           </ng2-smart-table>
         </ng-scrollbar>
       </div>
@@ -73,17 +76,63 @@
       <form class="form-material" [formGroup]="form">
         <div class="row">
           <!-- *ngIf="editDialogData" -->
-          <div class="col-12 mt-4">
+          <div class="col-4 mt-4">
             <form-field [control]="form.get('cveProcess')" label="Proceso">
-              <input
+              <ng-select
+                [readonly]="!disabledEdit"
+                formControlName="cveProcess"
+                class="form-control">
+                <ng-option
+                  [value]="process.value"
+                  *ngFor="let process of processes">
+                  {{ process.name }}
+                </ng-option>
+              </ng-select>
+              <!-- <input
                 type="text"
                 formControlName="cveProcess"
+                class="form-control" /> -->
+            </form-field>
+          </div>
+          <div class="col-4 mt-4">
+            <form-field
+              class="mt-4"
+              [control]="form.get('delegationType')"
+              label="Tipo Delegación">
+              <ng-select
+                [readonly]="!disabledEdit"
+                formControlName="delegationType"
+                class="form-control">
+                <ng-option
+                  [value]="type.value"
+                  *ngFor="let type of delegationTypes"
+                  >{{ type.name }}</ng-option
+                >
+              </ng-select>
+              <!-- <input readonly type="text" formControlName="delegationType" class="form-control" /> -->
+              <!-- <ng-select formControlName="delegationType" class="form-control">
+                <ng-option [value]="type.value" *ngFor="let type of delegationTypes">{{
+                  type.name
+                  }}</ng-option>
+              </ng-select> -->
+            </form-field>
+          </div>
+          <div class="col-4 mt-4">
+            <form-field
+              class="mt-4"
+              [control]="form.get('percentage')"
+              label="Porcentaje">
+              <input
+                max="100"
+                type="number"
+                formControlName="percentage"
                 class="form-control" />
             </form-field>
           </div>
           <div class="col-12 mt-4">
             <form-field [control]="form.get('delegationNumber')">
               <ngx-select
+                [readonly]="!disabledEdit"
                 [form]="form"
                 [data]="delegations"
                 (change)="llenarCampos($event)"
@@ -104,35 +153,6 @@
                   {{ item.delegationNumber + '-' + item.description }}
                 </ng-template>
               </ng-custom-select> -->
-            </form-field>
-          </div>
-          <div class="col-12 mt-4">
-            <form-field
-              class="mt-4"
-              [control]="form.get('delegationType')"
-              label="Tipo Delegación">
-              <input
-                readonly
-                type="text"
-                formControlName="delegationType"
-                class="form-control" />
-              <!-- <ng-select formControlName="delegationType" class="form-control">
-                <ng-option [value]="type.value" *ngFor="let type of delegationTypes">{{
-                  type.name
-                  }}</ng-option>
-              </ng-select> -->
-            </form-field>
-          </div>
-          <div class="col-12 mt-4">
-            <form-field
-              class="mt-4"
-              [control]="form.get('percentage')"
-              label="Porcentaje">
-              <input
-                max="100"
-                type="number"
-                formControlName="percentage"
-                class="form-control" />
             </form-field>
           </div>
         </div>

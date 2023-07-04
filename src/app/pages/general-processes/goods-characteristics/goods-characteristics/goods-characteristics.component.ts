@@ -925,12 +925,18 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
             map(x => {
               return {
                 ...x,
-                data: x.data.map(item => {
-                  return {
-                    ...item,
-                    quantity: item.quantity ? +(item.quantity + '') : null,
-                  };
-                }),
+                data: x
+                  ? x.data
+                    ? x.data.map(item => {
+                        return {
+                          ...item,
+                          quantity: item.quantity
+                            ? +(item.quantity + '')
+                            : null,
+                        };
+                      })
+                    : []
+                  : [],
               };
             })
           )
@@ -997,6 +1003,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         } else {
           this.loading = false;
           this.goodChange++;
+          this.alert('error', 'Error', 'No existe biene');
           // this.service.goodChange.next(false);
         }
       } else {

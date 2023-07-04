@@ -45,8 +45,13 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   selectedRow: any;
   goodData: any;
-
+  good: any;
   bkConversionsCveActaCon: any;
+
+  get id() {
+    return this.form.get('id');
+  }
+
   get idConversion() {
     return this.form.get('idConversion');
   }
@@ -93,7 +98,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     return this.form.get('destinationLabel');
   }
 
-  attributes: any;
+  attributes: any = [];
 
   //Settings para la tabla
   settingsGood = {
@@ -147,6 +152,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         ...MODAL_CONFIG,
         callback: (data: any) => {
           if (data != null) {
+            console.log(data);
             this.no_bien_blk_tipo_bien = data.goodFatherNumber;
             this.idConversion.setValue(data.id);
             this.numberDossier.setValue(data.fileNumber.id);
@@ -157,6 +163,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.actConvertion.setValue(data.cveActaConv);
             this.searchGoods(data.goodFatherNumber);
             this.searchGoodSon(data.goodFatherNumber);
+            this.searchSituation(data.goodFatherNumber);
           }
         },
       }, //pasar datos por aca
@@ -180,7 +187,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
               item.fileNumber =
                 item.fileNumber != null ? item.fileNumber : item.idConversion;
             });
-
             this.dataGoods2 = response.data;
           },
         });
@@ -194,6 +200,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
    */
   private buildForm() {
     this.form = this.fb.group({
+      id: [null],
       idConversion: [null, [Validators.required]],
       numberGoodFather: [null, [Validators.pattern(NUMBERS_PATTERN)]], //Se quita la validación, en el forms no es requerido
       tipo: [null, [Validators.required]],
@@ -215,10 +222,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(NUMBERS_PATTERN), Validators.required],
       ],
-      observation: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      observation: [null, [Validators.pattern(STRING_PATTERN)]],
       descriptionSon: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -269,9 +273,11 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             .getAllFilter(paramsF.getParams())
             .toPromise();
           // if (conversionData.typeConv === '1') {
+          this.good = res.data[0];
           if (conversionData.typeConv === '2') {
+            this.id.setValue(res.data[0]['id']);
             this.observation.setValue(res.data[0]['observations']);
-            this.descriptionSon.setValue(res.data[0]['descriptionSon']);
+            this.descriptionSon.setValue(res.data[0]['description']);
             this.quantity.setValue(res.data[0]['quantity']);
             this.classifier.setValue(res.data[0]['goodClassNumber']);
             this.unitOfMeasure.setValue(res.data[0]['unit']);
@@ -279,7 +285,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.statusCode = res.data[0]['status'];
             this.numberGoodSon.setValue(e);
             this.searchStatus(res.data[0]['status']);
-            this.getAttributesGood(e);
+            this.getAttributesGood(res.data[0]['goodClassNumber']);
             // this.flagActa = true;
             this.flagCargMasiva = false;
             this.flagCargaImagenes = false;
@@ -306,6 +312,17 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         }
       }
     });
+  }
+  async searchSituation(e: any) {
+    this.serviceGoodProcess.getByIdSituation(e).subscribe(
+      res => {
+        console.log(res);
+        this.situation.setValue(res.data[0]['desc_situacion']);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   searchStatus(data: any) {
@@ -348,6 +365,29 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           );
       }
     });
+  }
+  updateGood() {
+    const data = {
+      id: this.id.value,
+      goodId: this.numberGoodFather.value,
+      observations: this.observation.value,
+      quantity: this.quantity.value,
+      goodClassNumber: this.classifier.value,
+      unit: this.unitOfMeasure.value,
+      labelNumber: this.destinationLabel.value,
+    };
+    this.serviceGood.update(data).subscribe(
+      res => {
+        this.alert('success', 'Bien', `Actualizado correctamente`);
+      },
+      err => {
+        this.alert(
+          'error',
+          'Bien',
+          'No se pudo actualizar el bien, por favor intentelo nuevamente'
+        );
+      }
+    );
   }
 
   watchFlagChanges(flag: any) {
@@ -467,6 +507,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       {
         queryParams: {
           pGoodFatherNumber: this.form.value.numberGoodFather,
+          expedientNumber: this.form.value.numberDossier,
         },
       }
     );
@@ -480,8 +521,12 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         this.goodData = res;
         console.log('res:', res);
         this.goodData = this.goodData.data[0];
-        localStorage.setItem('derivationGoodId', this.goodData.goodId);
-        this.router.navigate(['pages/general-processes/good-photos']);
+        // localStorage.setItem('selectedGoodsForPhotos', this.form.value.numberGoodFather);
+        this.router.navigate(['pages/general-processes/good-photos'], {
+          queryParams: {
+            numberGood: this.form.value.numberGoodFather,
+          },
+        });
       },
       err => {
         console.log(err);
@@ -509,50 +554,59 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         `ya ha sido convertido`
       );
     }*/
-    this.serviceGood.getGoods(this.goodFatherNumber$.getValue()).subscribe(
-      res => {
-        const data = res;
-        this.filterGood$.next(data);
-      },
-      err => {
-        console.log(err);
-      }
-    );
-    let payload = this.filterGood$.getValue().data;
-    payload = payload.map((item: any) => {
-      delete item.almacen;
-      delete item.delegationNumber;
-      delete item.expediente;
-      delete item.menaje;
-      delete item.statusDetails;
-      delete item.subDelegationNumber;
-      return item;
-    });
-    delete payload.almacen;
-    this.serviceGood.crateGood(payload[0]).subscribe(
-      res => {
-        this.alert('success', 'se ha agregado el Bien', `con el id: ${res.id}`);
-      },
-      err => {
-        this.alert(
-          'error',
-          'No se pudo cambiar el estatus del bien',
-          'Se presentó un error inesperado que no permitió el cambio de estatus del bien, por favor intentelo nuevamente'
-        );
-      }
-    );
+    if (event != null) {
+      this.serviceGood.getGoods(this.goodFatherNumber$.getValue()).subscribe(
+        res => {
+          const data = res;
+          console.log(data);
+          this.filterGood$.next(data);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+      let payload = this.filterGood$.getValue().data;
+      payload = payload.map((item: any) => {
+        delete item.almacen;
+        delete item.delegationNumber;
+        delete item.expediente;
+        delete item.menaje;
+        delete item.statusDetails;
+        delete item.subDelegationNumber;
+        return item;
+      });
+      delete payload.almacen;
+      this.serviceGood.crateGood(payload[0]).subscribe(
+        res => {
+          this.alert(
+            'success',
+            'se ha agregado el Bien',
+            `con el id: ${res.id}`
+          );
+        },
+        err => {
+          this.alert(
+            'error',
+            'No se pudo cambiar el estatus del bien',
+            'Se presentó un error inesperado que no permitió el cambio de estatus del bien, por favor intentelo nuevamente'
+          );
+        }
+      );
 
-    this.serviceGood.getGoods(this.goodFatherNumber$.getValue()).subscribe(
-      res => {
-        const data = res;
-        this.filterGood$.next(data);
-      },
-      err => {
-        console.log(err);
-      }
-    );
+      this.serviceGood.getGoods(this.goodFatherNumber$.getValue()).subscribe(
+        res => {
+          const data = res;
+          this.filterGood$.next(data);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    } else {
+      this.alert('warning', 'No bien hijo', 'Debe seleccionar un bien hijo');
+    }
   }
-
+  deletGood(event: any) {}
   onRowSelect(event: any) {
     this.numberGoodSon.setValue(event.data.goodId);
     this.observation.setValue(event.data.descriptionConv);
@@ -563,14 +617,31 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     this.destinationLabel.setValue(event.data.noLabel);
     this.selectedRow = event.data;
 
-    this.getAttributesGood(event.data);
+    this.getAttributesGood(event.data.noClassifGood);
   }
 
   getAttributesGood(event: any) {
-    this.serviceGood.getAttributesGood(event.goodId).subscribe(
+    this.serviceGood.getAllFilterClassification(event).subscribe(
       res => {
-        delete res.goodNumber;
-        this.attributes = Object.entries(res).filter(([key, value]) => value);
+        this.attributes = [];
+        console.log(res);
+        // delete res.goodNumber;
+        // this.attributes = Object.entries(res.data).filter(([key, value]) => value.attribute);
+        for (let i = 0; i < res.data.length; i++) {
+          let value = '';
+          for (const index in this.good) {
+            if (index === `val${res.data[i].columnNumber}`) {
+              console.log(this.good[index]);
+              value = this.good[index];
+            }
+          }
+          this.attributes.push({
+            attributes: res.data[i].attribute,
+            value: value,
+          });
+        }
+        // this.attributes = res.data.map(objeto => objeto.attribute);
+        // console.log(this.attributes);
       },
       err => {
         console.log(err);

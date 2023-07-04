@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, map, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
@@ -25,12 +28,16 @@ import {
   IPackage,
   IPackageInfo,
 } from 'src/app/core/models/catalogs/package.model';
+import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { MassiveConversionErrorsModalComponent } from '../massive-conversion-erros-list/massive-conversion-errors-modal/massive-conversion-errors-modal.component';
 import { MassiveConversionModalGoodComponent } from '../massive-conversion-modal-good/massive-conversion-modal-good.component';
 interface ValidaButton {
@@ -48,13 +55,17 @@ interface ValidaButton {
 export class MassiveConversionComponent extends BasePage implements OnInit {
   modalRef: BsModalRef;
   loadingText: string = '';
-
+  cvePackage: string = '';
   validaButton: ValidaButton = {
     PB_VALIDA: false,
     PB_AUTORIZA: false,
     PB_CERRAR: false,
     PB_CANCELA: false,
   };
+  buttonPermiso: boolean = false;
+  delUser: any;
+  subDelUser: any;
+  departmentUser: any;
   descData: {
     descDelegation: string;
   };
@@ -99,12 +110,16 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     private packageGoodService: PackageGoodService,
     private bsModalRef: BsModalRef,
     private router: Router,
+    private serviceUser: UsersService,
+    private lotService: LotService,
     private goodService: GoodService,
     private documentService: DocumentsService,
     private sanitizer: DomSanitizer,
     private goodProcessService: GoodprocessService,
     private massiveGoodService: MassiveGoodService,
-    private siabService: SiabService
+    private siabService: SiabService,
+    private segAppService: SecurityService,
+    private tvalTable1Service: TvalTable1Service
   ) {
     super();
 
@@ -121,7 +136,33 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoods());
     this.prepareForm();
+    this.getDataUser();
+    this.getSegPantalla().subscribe({
+      next: response => {
+        if (response && response.length > 0) {
+          this.buttonPermiso = true;
+        } else {
+        }
+      },
+      error: err => {},
+    });
+    this.getKeyUser();
   }
+
+  getKeyUser() {
+    let params = new ListParams();
+    params['filter.value'] = this.getUsername().toLocaleUpperCase();
+
+    this.tvalTable1Service.getById5All(params).subscribe({
+      next: response => {
+        console.log(response);
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+
   generate() {}
 
   private prepareForm(): void {
@@ -179,8 +220,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   add() {
     //this.openModal();
   }
-
-  generateFoli() {}
 
   goToGoodTracker() {
     this.bsModalRef.hide();
@@ -363,6 +402,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.validateButtons(statuspack);
     this.packageNumber = numberPackage;
     this.getGoods();
+    this.cvePackage = information.cvePackage;
     ////
     this.descPaq = {
       warehouseDesc: information.cat_almacenes.description,
@@ -789,6 +829,33 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     // }
   }
 
+  generateFoli() {
+    if (this.form.get('scanFolio').value) {
+      Swal.fire('Error', 'Ya existe un folio', 'error');
+    } else {
+      let data = {
+        noPaquete: this.form.get('package').value,
+        tipoPaquete: this.form.get('packageType').value,
+        cvePaquete: this.cvePackage,
+        toolbarNoDelegacion: '',
+        toolbarNoSubdelegacion: '',
+        toolbarNoDepartamento: '',
+        usuario: 'DR_SIGEBI',
+      };
+
+      this.lotService.pubFmtoPackage(data).subscribe(
+        response => {
+          console.log('response', 'response');
+          this.form.get('scanFolio').setValue(response.data.LNU_FOLIO);
+          Swal.fire('Exito', 'Se genero el folio', 'success');
+        },
+        error => {
+          Swal.fire('Error', 'Error Al generar el folio', 'error');
+        }
+      );
+    }
+  }
+
   cancelPackage() {
     this.alertQuestion(
       'warning',
@@ -801,11 +868,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           packageNumber: this.form.get('package').value,
           user: 'DR_SIGEBI',
           toolbarUsername: 'DR_SIGEBI',
-          statusPaq: this.form.get('packageStatus').value,
+          statusPaq: this.form.get('status').value,
           parentGoodNumber: this.form2.get('numberGood').value,
           status: this.form2.get('status').value,
         };
-        this.packageGoodService.pubCancelPackage(data).subscribe(
+        this.lotService.pubCancelPackage(data).subscribe(
           response => {
             Swal.fire('Exito', 'Se cancelo el paquete', 'success');
           },
@@ -815,6 +882,28 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         );
       }
     });
+  }
+
+  getDataUser() {
+    const user =
+      localStorage.getItem('username') == 'sigebiadmon'
+        ? localStorage.getItem('username')
+        : localStorage.getItem('username').toLocaleUpperCase();
+    const routeUser = `?filter.name=$eq:${user}`;
+    this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
+      const resJson = JSON.parse(JSON.stringify(res.data[0]));
+      this.delUser = resJson.usuario.delegationNumber;
+      this.subDelUser = resJson.usuario.subdelegationNumber;
+      this.departmentUser = resJson.usuario.departamentNumber;
+    });
+  }
+
+  getUsername() {
+    const user =
+      localStorage.getItem('username') == 'sigebiadmon'
+        ? localStorage.getItem('username')
+        : localStorage.getItem('username').toLocaleUpperCase();
+    return user;
   }
 
   downloadReport() {
@@ -841,6 +930,23 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.modalService.show(PreviewDocumentsComponent, config);
       },
     });
+  }
+
+  private getSegPantalla() {
+    const filterParams = new FilterParams();
+    filterParams.addFilter('screenKey', 'FMTOPAQUETE_0001');
+    filterParams.addFilter(
+      'user',
+      localStorage.getItem('username').toUpperCase()
+    );
+    filterParams.addFilter('writingPermission', 'S');
+    filterParams.addFilter('readingPermission', 'S');
+    return this.segAppService
+      .getScreenWidthParams(filterParams.getFilterParams())
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        map(x => (x.data ? x.data : []))
+      );
   }
 
   openPermissions(data: any) {

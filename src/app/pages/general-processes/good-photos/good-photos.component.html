@@ -3,7 +3,7 @@
     <div class="row w-100">
       <div class="col-12 col-sm-12 col-md-8">
         <h5 class="title">
-          Fotos del bien
+          Fotos del Bien
           <ng-container *ngIf="actualGoodNumber">{{
             actualGoodNumber
           }}</ng-container>
@@ -30,7 +30,7 @@
       </div>
       <div class="row">
         <div class="col-md-6" style="display: flex; column-gap: 15px">
-          <form-field [control]="form.get('noBien')" label="No. de bien">
+          <form-field [control]="form.get('noBien')" label="No. de Bien">
             <input
               class="form-control"
               formControlName="noBien"
@@ -48,7 +48,7 @@
             class="btn btn-danger btn-sm active"
             type="button"
             (click)="clear()">
-            Limpiar
+            Limpiar <i class="fas fa-eraser"></i>
           </button>
         </div>
       </div>
