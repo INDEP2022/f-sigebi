@@ -44,7 +44,7 @@
       </div>
       <div class="row mb-3 mt-3">
         <div class="col text-center">
-          <button class="btn btn-primary btn-sm active mr-3">
+          <button class="btn btn-primary btn-sm active mr-3" (click)="filter()">
             Filtrar Bienes
           </button>
           <button class="btn btn-primary btn-sm active mr-3">
@@ -58,7 +58,7 @@
             Exportar a Excel
             <i class="bx bx-download float-icon"></i>
           </button>
-          <button class="btn btn-danger btn-sm active">
+          <button class="btn btn-danger btn-sm active" (click)="closeModal()">
             Salir
           </button>
         </div>
@@ -79,6 +79,11 @@
           [settings]="settingsTable"
           [source]="data"
         ></ng2-smart-table>
+        <app-pagination
+          [params]="params"
+          [limit]="limit"
+          [totalItems]="totalItems"
+        ></app-pagination>
       </div>
     </form>
   </div>

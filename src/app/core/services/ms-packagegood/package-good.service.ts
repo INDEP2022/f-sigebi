@@ -38,7 +38,7 @@ export class PackageGoodService extends HttpService {
   }
 
   //paq-destination - det
-  getPaqDestinationDet(params?: ListParams) {
+  getPaqDestinationDet(params?: any) {
     const route = `${PackageGoodEndpoints.paqDestinationDet}`;
     return this.get(route, params);
   }
