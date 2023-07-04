@@ -77,7 +77,7 @@ export class FormFieldsToParamsService {
 
             //clearObj[pref + '.' + key] = `${prefEqual}${encodeURI(element)}`;
             clearObj[pref + '.' + key] = `${prefEqual}${
-              key == 'officeNumber' || key == 'issue'
+              key == 'officeNumber' || key == 'issue' || key == 'office'
                 ? element
                 : encodeURI(element)
             }`;
