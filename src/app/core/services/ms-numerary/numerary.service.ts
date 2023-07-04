@@ -7,6 +7,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   INumerary,
+  IProccesNum,
   IRequesNumeraryCal,
   IRequesNumeraryDet,
   IRequesNumeraryEnc,
@@ -114,5 +115,12 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
 
   fCalculaNume(model: Object) {
     return this.post('', model);
+  }
+
+  getProccesNum(params?: ListParams) {
+    return this.get<IListResponse<IProccesNum>>(
+      NumeraryEndpoints.ProcessesNume,
+      params
+    );
   }
 }
