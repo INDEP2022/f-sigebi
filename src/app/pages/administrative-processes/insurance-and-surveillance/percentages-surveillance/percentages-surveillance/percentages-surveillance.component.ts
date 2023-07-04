@@ -84,7 +84,7 @@ export class PercentagesSurveillanceComponent
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               cveProcess: () => (searchFilter = SearchFilter.EQ),
-              delegation: () => (searchFilter = SearchFilter.EQ),
+              delegationNumber: () => (searchFilter = SearchFilter.EQ),
               delegationType: () => (searchFilter = SearchFilter.EQ),
               percentage: () => (searchFilter = SearchFilter.EQ),
             };
@@ -94,7 +94,7 @@ export class PercentagesSurveillanceComponent
             if (filter.search !== '') {
               console.log('filter.search', filter.search);
 
-              if (filter.field == 'delegation') {
+              if (filter.field == 'delegationNumber') {
                 this.columnFilters[field] = `${filter.search}`;
               } else {
                 this.columnFilters[field] = `${searchFilter}:${filter.search}`;
@@ -157,24 +157,29 @@ export class PercentagesSurveillanceComponent
       ...this.columnFilters,
     };
 
-    if (params['filter.delegation']) {
-      if (!isNaN(parseInt(params['filter.delegation']))) {
-        params['filter.delegation.id'] = `$eq:${params['filter.delegation']}`;
-        delete params['filter.delegation'];
+    if (params['filter.delegationNumber']) {
+      if (!isNaN(parseInt(params['filter.delegationNumber']))) {
+        console.log('SI');
+        params[
+          'filter.delegation.id'
+        ] = `$eq:${params['filter.delegationNumber']}`;
+        delete params['filter.delegationNumber'];
       } else {
+        console.log('NO');
         params[
           'filter.delegation.description'
-        ] = `$ilike:${params['filter.delegation']}`;
-        delete params['filter.delegation'];
+        ] = `$ilike:${params['filter.delegationNumber']}`;
+        delete params['filter.delegationNumber'];
       }
     }
 
     // delegation
     this.survillanceService.getVigProcessPercentages(params).subscribe({
       next: response => {
+        const data = response.data;
         console.log('responseresponse', response);
-        let result = response.data.map(item => {});
-        this.sources.load(response.data);
+
+        this.sources.load(data);
         this.sources.refresh();
         this.totalItems = response.count;
         this.loading = false;

@@ -22,7 +22,7 @@ export const PERCENTAGE_COLUMNS = {
       }
     },
   },
-  delegation: {
+  delegationNumber: {
     title: 'Delegación',
     type: 'string',
     sort: false,
