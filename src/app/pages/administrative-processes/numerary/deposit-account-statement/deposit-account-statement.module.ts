@@ -7,6 +7,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DepositAccountStatementModalComponent } from './deposit-account-statement-modal/deposit-account-statement-modal.component';
+import { DepositAccountStatementParameterComponent } from './deposit-account-statement-parameter/deposit-account-statement-parameter.component';
 import { DepositAccountStatementRoutingModule } from './deposit-account-statement-routing.module';
 import { DepositAccountStatementComponent } from './deposit-account-statement/deposit-account-statement.component';
 
@@ -14,6 +15,7 @@ import { DepositAccountStatementComponent } from './deposit-account-statement/de
   declarations: [
     DepositAccountStatementComponent,
     DepositAccountStatementModalComponent,
+    DepositAccountStatementParameterComponent,
   ],
   imports: [
     CommonModule,

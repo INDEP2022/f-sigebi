@@ -22,13 +22,13 @@ export const PERCENTAGE_COLUMNS = {
       }
     },
   },
-  delegation: {
+  delegation_: {
     title: 'Delegación',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (_cell: any, row: any) => {
-      return `${row?.delegation?.id} ${'-  ' + row?.delegation?.description}`;
-    },
+    // valuePrepareFunction: (_cell: any, row: any) => {
+    //   return `${row?.delegation?.id} ${'-  ' + row?.delegation?.description}`;
+    // },
     // filterFunction: (cell?: any, search?: string) => {
     //   return search != null ? search : '';
     // },
