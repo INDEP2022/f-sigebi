@@ -989,6 +989,8 @@ export class JuridicalRulingGComponent
         this.dictaminacionesForm.get('estatus').setValue(null);
         this.dictaminacionesForm.get('cveOficio').setValue(null);
         this.disabledSend = true;
+        this.departamentNumberOficioDict = null;
+        this.delegationNumberOficioDict = null;
         console.log(err);
       },
     });
@@ -1861,7 +1863,7 @@ export class JuridicalRulingGComponent
         this.loading = false;
       },
       error: error => {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Error al eliminar el Dictamen.',
           'tabla: DICTAMINACIONES'
@@ -2436,7 +2438,7 @@ export class JuridicalRulingGComponent
 
   addAll() {
     if (!this.expedientesForm.get('identifier').value) {
-      this.onLoadToast('error', 'Debe seleccionar un identificador');
+      this.alert('warning', 'Debe seleccionar un identificador', '');
       return;
     }
 
@@ -2446,15 +2448,16 @@ export class JuridicalRulingGComponent
       const contieneElemento = cadena.includes(elemento);
 
       if (contieneElemento == false) {
-        this.onLoadToast('warning', 'Este dictamen ya no se puede modificar');
+        this.alert('warning', 'Este dictamen ya no se puede modificar', '');
         return;
       }
     }
 
     if (this.statusDict == 'DICTAMINADO' || this.statusDict == 'IMPROCEDENTE') {
-      this.onLoadToast(
+      this.alert(
         'warning',
-        'Este dictamen ya tiene un estatus DICTAMINADO'
+        'Este dictamen ya tiene un estatus DICTAMINADO',
+        ''
       );
       return;
     }
@@ -2464,17 +2467,17 @@ export class JuridicalRulingGComponent
     }
 
     if (!this.dictaminacionesForm.get('autoriza_remitente').value) {
-      this.onLoadToast('warning', 'Debe especificar quien autoriza dictamen');
+      this.alert('warning', 'Debe especificar quien autoriza dictamen', '');
       return;
     }
 
     if (this.expedientesForm.get('type').value == null) {
-      this.onLoadToast('warning', 'Debe seleccionar un tipo de bien');
+      this.alert('warning', 'Debe seleccionar un tipo de bien', '');
       return;
     }
 
     if (!this.dictaminacionesForm.get('fechaPPFF').value) {
-      this.onLoadToast('warning', `Debe capturar la ${this.label}`);
+      this.alert('warning', `Debe capturar la ${this.label}`, '');
       return;
     }
     let typeDict = this.expedientesForm.get('tipoDictaminacion').value;
@@ -2537,15 +2540,16 @@ export class JuridicalRulingGComponent
       const contieneElemento = cadena.includes(elemento);
 
       if (contieneElemento == false) {
-        this.onLoadToast('warning', 'Este dictamen ya no se puede modificar');
+        this.alert('warning', 'Este dictamen ya no se puede modificar', '');
         return;
       }
     }
 
     if (this.statusDict == 'DICTAMINADO' || this.statusDict == 'IMPROCEDENTE') {
-      this.onLoadToast(
-        'error',
-        'Este dictamen ya tiene un estatus DICTAMINADO'
+      this.alert(
+        'warning',
+        'Este dictamen ya tiene un estatus DICTAMINADO',
+        ''
       );
       return;
     }
@@ -2555,42 +2559,27 @@ export class JuridicalRulingGComponent
     }
 
     if (!this.dictaminacionesForm.get('autoriza_remitente').value) {
-      this.onLoadToast('error', 'Debe especificar quien autoriza dictamen');
+      this.alert('warning', 'Debe especificar quien autoriza dictamen', '');
       return;
     }
 
-    // Cambiar la forma en agregar bien ya que es un push y no dato directo para el estatus
-    // if(this.bien.est_disponible = 'N'){
-    //   this.onLoadToast('error','El bien tiene un estatus invalido para ser dictaminado o ya esta dictaminado')
-    //   return
-    // }
-
     if (this.expedientesForm.get('type').value == null) {
-      this.onLoadToast('error', 'Debe seleccionar un tipo de bien');
+      this.alert('warning', 'Debe seleccionar un tipo de bien', '');
       return;
     }
 
     if (!this.expedientesForm.get('identifier').value) {
-      this.onLoadToast('error', 'Debe seleccionar un identificador');
+      this.alert('warning', 'Debe seleccionar un identificador', '');
       return;
     }
 
-    // Cambiar la forma en agregar bien ya que es un push y no dato directo para el estatus
-    // if(this.bien.di_disponible = 'N'){
-    //   this.onLoadToast('error','El Bien ya existe')
-    //   return
-    // }
-
     if (!this.dictaminacionesForm.get('fechaPPFF').value) {
-      this.onLoadToast('error', `Debe capturar la ${this.label}`);
+      this.alert('warning', `Debe capturar la ${this.label}`, '');
       return;
     }
     let obj = {};
     const statusScreen: any = await this.getScreenStatus(obj);
-    // Cambiar la forma en agregar bien ya que es un push y no dato directo para el estatus
-    //if (this.bienes.DI_ES_NUMERARIO == 'S' this.bienes.DI_ESTA_CONCILIADO == 'N' AND: this.expedientesForm.get('tipoDictaminacion').value == 'PROCEDENCIA')
-    //   this.onLoadToast('error', 'El numerario no esta conciliado')
-    //   return
+
     console.log(
       "== 'PROCEDENCIA'",
       this.expedientesForm.get('tipoDictaminacion').value
@@ -2628,10 +2617,6 @@ export class JuridicalRulingGComponent
               );
               return;
             }
-            // if (this.goods[indexGood].fa_concilia_bien == 'S') {
-            //   this.onLoadToast('warning', 'El numerario no está conciliado', '');
-            //   return;
-            // }
 
             // IF: bienes.DI_ES_NUMERARIO = 'S' AND: bienes.DI_ESTA_CONCILIADO = 'N' AND: VARIABLES.TIPO_DICTA = 'PROCEDENCIA' THEN
             // LIP_MENSAJE('El numerario no está conciliado', 'S');
@@ -2644,7 +2629,7 @@ export class JuridicalRulingGComponent
           this.totalItems3 = this.goodsValid.length;
         } else {
           if (good.di_disponible == 'N') {
-            this.onLoadToast('warning', `El bien ${good.goodId} ya existe`);
+            this.alert('warning', `El bien ${good.goodId} ya existe`, '');
           }
         }
       });
@@ -2692,15 +2677,16 @@ export class JuridicalRulingGComponent
       const contieneElemento = cadena.includes(elemento);
 
       if (contieneElemento == false) {
-        this.onLoadToast('warning', 'Este dictamen ya no se puede modificar');
+        this.alert('warning', 'Este dictamen ya no se puede modificar', '');
         return;
       }
     }
 
     if (this.statusDict == 'DICTAMINADO' || this.statusDict == 'IMPROCEDENTE') {
-      this.onLoadToast(
-        'error',
-        'Este dictamen ya tiene un estatus DICTAMINADO'
+      this.alert(
+        'warning',
+        'Este dictamen ya tiene un estatus DICTAMINADO',
+        ''
       );
       return;
     }
@@ -2754,9 +2740,10 @@ export class JuridicalRulingGComponent
   }
   removeAll() {
     if (this.statusDict == 'DICTAMINADO' || this.statusDict == 'IMPROCEDENTE') {
-      this.onLoadToast(
-        'error',
-        'Este dictamen ya tiene un estatus DICTAMINADO'
+      this.alert(
+        'warning',
+        'Este dictamen ya tiene un estatus DICTAMINADO',
+        ''
       );
       return;
     }
@@ -2767,7 +2754,7 @@ export class JuridicalRulingGComponent
       const contieneElemento = cadena.includes(elemento);
 
       if (contieneElemento == false) {
-        this.onLoadToast('warning', 'Este dictamen ya no se puede modificar');
+        this.alert('warning', 'Este dictamen ya no se puede modificar', '');
         return;
       }
     }
@@ -3445,7 +3432,7 @@ export class JuridicalRulingGComponent
           error = err.message;
         }
 
-        this.onLoadToast('error', 'Error', error);
+        this.alert('error', 'Error', error);
       }
     );
   }
@@ -4473,8 +4460,10 @@ export class JuridicalRulingGComponent
           this.oficioDictamen.sender = sender_;
           this.oficioDictamen.typeDict = this.dictamen.typeDict;
           this.oficioDictamen.officialNumber = this.dictamen.id;
-          this.oficioDictamen.delegacionRecipientNumber = null;
-
+          this.oficioDictamen.delegacionRecipientNumber =
+            this.delegationNumberOficioDict;
+          this.oficioDictamen.recipientDepartmentNumber =
+            this.departamentNumberOficioDict;
           await this.createOficioDictamen(this.oficioDictamen);
           await this.generateCveOficio(this.dictamen.id);
           this.cveOficio.nativeElement.focus();
@@ -4748,6 +4737,8 @@ export class JuridicalRulingGComponent
         //   'No se encontraron oficio de dictámenes'
         // );
         this.disabledSend = true;
+        this.departamentNumberOficioDict = null;
+        this.delegationNumberOficioDict = null;
         this.loading = false;
       },
     });
@@ -4922,9 +4913,17 @@ export class JuridicalRulingGComponent
       })
     );
   }
+  delegationNumberOficioDict: any = null;
+  departamentNumberOficioDict: any = null;
   userChange(user: any) {
     // ..captura usuario
     console.log(user);
+    if (user.usuario)
+      this.delegationNumberOficioDict = user.usuario.delegationNumber;
+
+    if (user.usuario)
+      this.departamentNumberOficioDict = user.usuario.departamentNumber;
+
     this.dictaminacionesForm.get('autoriza_nombre').setValue(user.name);
   }
 
@@ -4967,6 +4966,8 @@ export class JuridicalRulingGComponent
     this.dictaminacionesForm.get('fechaPPFF').setValue('');
     this.dictaminacionesForm.get('autoriza_remitente').setValue(null);
     this.dictaminacionesForm.get('autoriza_nombre').setValue('');
+    this.departamentNumberOficioDict = null;
+    this.delegationNumberOficioDict = null;
     this.buttonApr = true;
     this.buttonDeleteDisabled = false;
     this.totalItems3 = 0;
@@ -5023,10 +5024,13 @@ export class JuridicalRulingGComponent
     await this.updateDictamen(obj);
 
     let sender_ = this.dictaminacionesForm.get('autoriza_remitente').value;
+    console.log(sender_);
     this.oficioDictamen.sender = sender_;
 
     let obj1 = {
       sender: sender_,
+      delegacionRecipientNumber: this.delegationNumberOficioDict,
+      recipientDepartmentNumber: this.departamentNumberOficioDict,
       typeDict: this.oficioDictamen.typeDict,
       officialNumber: this.oficioDictamen.officialNumber,
     };
