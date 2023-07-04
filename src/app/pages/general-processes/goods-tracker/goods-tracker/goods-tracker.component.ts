@@ -51,9 +51,7 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this._params.pipe(takeUntil(this.$unSubscribe), skip(1)).subscribe(next => {
-      this.params.limit = next.limit;
-      this.params.page = next.page;
-      this.getGoods();
+      this.getGoods(next);
     });
   }
 
@@ -107,13 +105,13 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     return _val;
   }
 
-  getGoods() {
+  getGoods(params?: ListParams) {
     this.loading = true;
     this.filters = new GoodTrackerMap();
     this.mapFilters();
     this.scrollTable.nativeElement.scrollIntoView();
     this.goodTrackerService
-      .trackGoods(this.filters, this._params.getValue())
+      .trackGoods(this.filters, params ?? new ListParams())
       .subscribe({
         next: res => {
           this.loading = false;
