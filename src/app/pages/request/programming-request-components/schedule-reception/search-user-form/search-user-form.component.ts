@@ -96,8 +96,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loading = false;
-          this.alert('info', 'Usuarios', 'Usuarios no encontrados');
-          console.log(error);
+          this.alert('warning', 'Usuarios no encontrados', '');
         },
       });
   }
