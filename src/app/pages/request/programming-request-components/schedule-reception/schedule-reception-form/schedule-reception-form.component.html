@@ -11,11 +11,12 @@
             [text]="'Turnar'"
             [loadingText]="'Turnando'"
             [btnSmall]="true"
+            [icon]="'fa fa-check'"
             (confirm)="confirm()"></confirm-button>
         </div>
         <div class="m-2">
           <button (click)="close()" class="btn btn-danger btn-sm active">
-            Cancelar
+            Cancelar <i class="fas fa-arrow-circle-left"></i>
           </button>
         </div>
       </div>
@@ -87,7 +88,7 @@
       <div class="form-group">
         <label class="control-label col-sm-2" for="pwd">Fecha&#58;</label>
         <div class="col-sm-6">
-          <label class="control-label">{{ date | date : 'dd/MM/yyyy' }}</label>
+          <label class="control-label">{{ date | date: 'dd/MM/yyyy' }}</label>
         </div>
       </div>
     </form>
