@@ -1719,13 +1719,28 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   //Bienes asociados a recibo
-  showGoodsReceipt(receipt: IReceipt) {
+  showGoodsReceiptGuard(receipt: IReceipt) {
     let config = {
       ...MODAL_CONFIG,
       class: 'modalSizeXL modal-dialog-centered',
     };
     config.initialState = {
       receipt,
+      type: 'guard',
+      callBack: (data: boolean) => {},
+    };
+
+    this.modalService.show(GoodsReceiptsFormComponent, config);
+  }
+
+  showGoodsReceiptWarehouse(receipt: IReceipt) {
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modalSizeXL modal-dialog-centered',
+    };
+    config.initialState = {
+      receipt,
+      type: 'warehouse',
       callBack: (data: boolean) => {},
     };
 
@@ -1913,6 +1928,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       proceeding: data,
       idProgramming: this.programmingId,
       programming: this.programming,
+
       callback: (receipt: IProceedings, keyDoc: string) => {
         if (receipt && keyDoc) {
           this.openReportReceipt(receipt, keyDoc);
