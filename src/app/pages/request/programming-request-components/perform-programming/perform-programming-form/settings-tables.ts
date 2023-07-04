@@ -34,7 +34,7 @@ export const settingTransGoods = {
 
 export const settingTransGoodsClose = {
   actions: {
-    delete: true,
+    delete: false,
     edit: true,
     columnTitle: 'Acciones',
     position: 'right',

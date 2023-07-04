@@ -4,63 +4,82 @@
   </div>
   <div body>
     <div class="row">
-      <form class="form-horizontal">
-        <div class="col-md-15">
-          <div class="form-group">
-            <label class="text-right">Alias Almac&eacute;n : </label>
-            <span>{{ item?.domicilio.warehouseAlias }}</span>
-          </div>
-
-          <div class="form-group">
-            <label class="text-right">Estado : </label>
-            <span>{{ item.cveState }}</span>
-          </div>
-
-          <div class="form-group">
-            <label class="text-right">Municipio : </label>
-            <span>{{ item.cveMunicipality }}</span>
-          </div>
-
-          <div class="form-group">
-            <label class="text-right">Asentamiento : </label>
-            <span>{{ item?.cveSettlement }}</span>
-          </div>
-
-          <div class="form-group">
-            <label class="text-right">Código Postal : </label>
-            <span>{{ item?.domicilio.code }}</span>
-          </div>
-          <div class="form-group">
-            <label class="text-right">Nombre de la Via : </label>
-            <span>{{ item?.domicilio.wayName }}</span>
-          </div>
-
-          <div class="form-group">
-            <label class="text-right">Origen de la Via : </label>
-            <span>{{ item?.domicilio.wayOrigin }}</span>
-          </div>
-
-          <div class="form-group">
-            <label class="text-right">Destino de la Via : </label>
-            <span>{{ item?.domicilio.wayDestiny }}</span>
-          </div>
-
-          <div class="form-group">
-            <label class="text-right">Kil&oacute;metro de la Via : </label>
-            <span>{{ item?.domicilio.wayChaining }}</span>
-          </div>
-
-          <div class="form-group">
-            <label class="text-right">Num. Ext : </label>
-            <span>{{ item?.domicilio.exteriorNumber }}</span>
-          </div>
-
-          <div class="form-group">
-            <label class="text-right">Num. Int : </label>
-            <span>{{ item.domicilio.interiorNumber }}</span>
-          </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Alias Almac&eacute;n: </label>
+          <span>{{ domicileInfo?.aliasWarehouse }}</span>
         </div>
-      </form>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Estado: </label>
+          <span>{{ stateName }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Municipio: </label>
+          <span>{{ domicileInfo?.cveMunicipality }}</span>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Asentamiento: </label>
+          <span>{{ domicileInfo?.cveSettlement }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Código Postal: </label>
+          <span>{{ domicileInfo?.code }}</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Nombre de la Via: </label>
+          <span>{{ domicileInfo?.viaName }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Origen de la Via: </label>
+          <span>{{ domicileInfo?.viaOrigin }}</span>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Destino de la Via: </label>
+          <span>{{ domicileInfo?.viaDestination }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Kil&oacute;metro de la Via: </label>
+          <span>{{ domicileInfo?.viaChaining }}</span>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label class="text-right mr-2">Num. Ext: </label>
+          <span>{{ domicileInfo?.numExt }}</span>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -49,7 +49,7 @@ export const customCurrencyMaskConfig = {
     FileUploadModule,
     ClipboardModule,
     FormLoaderComponent,
-    NgxCurrencyModule.forRoot(customCurrencyMaskConfig),
+    NgxCurrencyModule.forRoot(customCurrencyMaskConfig)
   ],
 })
 export class HomeModule {}

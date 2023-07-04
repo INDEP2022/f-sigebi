@@ -1,6 +1,6 @@
 //Interface Provisional sin Validar
 export interface IPackage {
-  numberPackage: number;
+  numberPackage?: number;
   description: string;
   typePackage: number;
   amount: number;
@@ -45,4 +45,9 @@ export interface IPackageInfo {
   amountGood: number;
   unitGood: number;
   statusGood: number;
+}
+
+export interface IFoliovInvoice {
+  vExecute: string,
+  vYear: number
 }
