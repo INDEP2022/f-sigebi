@@ -31,10 +31,10 @@ export const JUDICIAL_PHYSICAL_RECEPTION_ROUTES = [
       //   label: 'Parcialización de Bienes Generales 2',
       //   link: '/pages/judicial-physical-reception/partializes-general-goods/v2',
       // },
-      // {
-      //   label: 'Bienes Parcializados',
-      //   link: '/pages/judicial-physical-reception/partializes-goods',
-      // },
+      {
+        label: 'Bienes Parcializados',
+        link: '/pages/judicial-physical-reception/partializes-goods',
+      },
       {
         label: 'Recepción Suspencion/Cancelacion',
         link: '/pages/judicial-physical-reception/cancellation-recepcion',
