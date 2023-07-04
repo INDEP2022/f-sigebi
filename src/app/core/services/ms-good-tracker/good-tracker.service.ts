@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { GoodTrackerEndpoints } from 'src/app/common/constants/endpoints/ms-good-tracker-endpoints';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { GoodTrackerMap } from 'src/app/pages/general-processes/goods-tracker/utils/good-tracker-map';
@@ -9,7 +9,11 @@ import {
 } from '../../interfaces/list-response.interface';
 import { Iidentifier } from '../../models/ms-good-tracker/identifier.model';
 import { ITmpTracker } from '../../models/ms-good-tracker/tmpTracker.model';
-import { ITrackedGood } from '../../models/ms-good-tracker/tracked-good.model';
+import {
+  ITrackedGood,
+  ITrackerGoodSocialCabinet,
+  ITrackerGoodSocialCabinetObject,
+} from '../../models/ms-good-tracker/tracked-good.model';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +28,30 @@ export class GoodTrackerService extends HttpService {
     return this.get<IListResponseMessage<ITrackedGood>>(
       'trackergood/apps/goodtrackertmp',
       params
+    );
+  }
+
+  getAllSocialCabinet(params?: _Params) {
+    return this.get<IListResponseMessage<ITrackerGoodSocialCabinetObject>>(
+      'trackergood/apps/goodtrackertmpv2',
+      params
+    ).pipe(
+      catchError(x =>
+        of({ count: 0, data: [] as ITrackerGoodSocialCabinetObject[] })
+      ),
+      map(response => {
+        return {
+          ...response,
+          data: response.data.map(x => {
+            return {
+              ...x,
+              socialCabinet: x.socialCabinet
+                ? x.socialCabinet.cabinetType
+                : null,
+            } as ITrackerGoodSocialCabinet;
+          }),
+        };
+      })
     );
   }
 

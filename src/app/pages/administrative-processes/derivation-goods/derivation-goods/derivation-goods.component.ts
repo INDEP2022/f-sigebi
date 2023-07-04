@@ -187,7 +187,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
               item.fileNumber =
                 item.fileNumber != null ? item.fileNumber : item.idConversion;
             });
-
             this.dataGoods2 = response.data;
           },
         });
@@ -555,50 +554,59 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         `ya ha sido convertido`
       );
     }*/
-    this.serviceGood.getGoods(this.goodFatherNumber$.getValue()).subscribe(
-      res => {
-        const data = res;
-        this.filterGood$.next(data);
-      },
-      err => {
-        console.log(err);
-      }
-    );
-    let payload = this.filterGood$.getValue().data;
-    payload = payload.map((item: any) => {
-      delete item.almacen;
-      delete item.delegationNumber;
-      delete item.expediente;
-      delete item.menaje;
-      delete item.statusDetails;
-      delete item.subDelegationNumber;
-      return item;
-    });
-    delete payload.almacen;
-    this.serviceGood.crateGood(payload[0]).subscribe(
-      res => {
-        this.alert('success', 'se ha agregado el Bien', `con el id: ${res.id}`);
-      },
-      err => {
-        this.alert(
-          'error',
-          'No se pudo cambiar el estatus del bien',
-          'Se presentó un error inesperado que no permitió el cambio de estatus del bien, por favor intentelo nuevamente'
-        );
-      }
-    );
+    if (event != null) {
+      this.serviceGood.getGoods(this.goodFatherNumber$.getValue()).subscribe(
+        res => {
+          const data = res;
+          console.log(data);
+          this.filterGood$.next(data);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+      let payload = this.filterGood$.getValue().data;
+      payload = payload.map((item: any) => {
+        delete item.almacen;
+        delete item.delegationNumber;
+        delete item.expediente;
+        delete item.menaje;
+        delete item.statusDetails;
+        delete item.subDelegationNumber;
+        return item;
+      });
+      delete payload.almacen;
+      this.serviceGood.crateGood(payload[0]).subscribe(
+        res => {
+          this.alert(
+            'success',
+            'se ha agregado el Bien',
+            `con el id: ${res.id}`
+          );
+        },
+        err => {
+          this.alert(
+            'error',
+            'No se pudo cambiar el estatus del bien',
+            'Se presentó un error inesperado que no permitió el cambio de estatus del bien, por favor intentelo nuevamente'
+          );
+        }
+      );
 
-    this.serviceGood.getGoods(this.goodFatherNumber$.getValue()).subscribe(
-      res => {
-        const data = res;
-        this.filterGood$.next(data);
-      },
-      err => {
-        console.log(err);
-      }
-    );
+      this.serviceGood.getGoods(this.goodFatherNumber$.getValue()).subscribe(
+        res => {
+          const data = res;
+          this.filterGood$.next(data);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    } else {
+      this.alert('warning', 'No bien hijo', 'Debe seleccionar un bien hijo');
+    }
   }
-
+  deletGood(event: any) {}
   onRowSelect(event: any) {
     this.numberGoodSon.setValue(event.data.goodId);
     this.observation.setValue(event.data.descriptionConv);

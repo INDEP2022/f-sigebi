@@ -143,11 +143,6 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
         this.data.load([]);
         this.data.refresh();
         this.loading = false;
-        this.alert(
-          'error',
-          'Ha ocurrido un error',
-          'Error al obtener la lista de dictáminaciones'
-        );
       },
     });
   }
