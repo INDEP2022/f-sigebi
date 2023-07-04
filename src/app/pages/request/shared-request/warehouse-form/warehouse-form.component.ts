@@ -63,6 +63,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   showZipCode: boolean = false;
   programmingId: number = 0;
   task: ITask;
+  stateKeySelect: number = 0;
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
@@ -187,11 +188,6 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
         this.storeService.createdataStore(this.warehouseForm.value).subscribe({
           next: async response => {
-            this.onLoadToast(
-              'success',
-              'Correcto',
-              'Almacén creado correctamente'
-            );
             this.loading = false;
             await this.createTaskWarehouse(response.id);
           },

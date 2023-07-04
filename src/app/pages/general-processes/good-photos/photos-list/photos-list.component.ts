@@ -44,7 +44,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
   private _goodNumber: string | number;
   errorMessage: string;
-  userPermisions = true;
+  userPermisions = false;
   // lastConsecutive: number = 1;
   filesToDelete: string[] = [];
   files: string[] = [];
@@ -93,9 +93,9 @@ export class PhotosListComponent extends BasePage implements OnInit {
       this.proceedingService.getExistProceedings(this._goodNumber + '').pipe(
         takeUntil(this.$unSubscribe),
         catchError(x => {
-          return of({ data: [] as { existe: number }[] });
+          return of({ data: [] as { no_acta: string }[] });
         }),
-        map(x => x.data.length > 0)
+        map(x => (x.data.length > 0 ? x.data[0].no_acta : null))
       )
     );
     return existe;
@@ -192,10 +192,11 @@ export class PhotosListComponent extends BasePage implements OnInit {
               if (pufValidaUsuario === 1) {
                 this.userPermisions = true;
               } else {
-                const pufValidaProcesoBien = await this.pufValidaProcesoBien();
-                if (pufValidaProcesoBien) {
+                const noActa = await this.pufValidaProcesoBien();
+                if (noActa) {
                   this.errorMessage =
-                    'No puede alterar las fotos, el bien ya fue recibido';
+                    'No puede alterar las fotos, el bien ya fue recibido por el acta ' +
+                    noActa;
                   console.log(this.errorMessage);
 
                   this.userPermisions = false;
