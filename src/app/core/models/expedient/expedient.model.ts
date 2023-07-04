@@ -8,3 +8,7 @@ export interface IExpedient {
   // TODO: revisar el nombre correcto cuando llegue del ms
   transferId?: number;
 }
+
+export interface IPerUser {
+  user: string;
+}
