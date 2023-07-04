@@ -161,4 +161,11 @@ export class ProceedingsService extends HttpService {
   getCountActas(goodNumber: number | string) {
     return this.get('aplication/get-count-actas/' + goodNumber);
   }
+
+  getSteeringWheelNumber(body: {
+    pExpedientNumber: string | number;
+    pGoodNumber: string | number;
+  }) {
+    return this.post('application/get-v-steeringwheel-number', body);
+  }
 }
