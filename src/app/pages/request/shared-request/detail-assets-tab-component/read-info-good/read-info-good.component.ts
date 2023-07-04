@@ -497,11 +497,12 @@ export class ReadInfoGoodComponent
             );
           },
           error: error => {
-            this.onLoadToast(
-              'error',
-              'Error',
-              `El formulario no se puede actualizar ${error.error.message}`
-            );
+           console.log('El formulario no se puede actualizar', error.error.message)
+        // this.onLoadToast(
+        //   'error',
+        //   'Error',
+        //   `El formulario no se puede actualizar ${error.error.message}`
+        // );
           },
         });
       }
