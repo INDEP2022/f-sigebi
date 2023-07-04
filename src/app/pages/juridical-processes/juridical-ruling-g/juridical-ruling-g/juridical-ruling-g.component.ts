@@ -359,6 +359,9 @@ export class JuridicalRulingGComponent
   filter1 = new BehaviorSubject<FilterParams>(new FilterParams());
   filter2 = new BehaviorSubject<FilterParams>(new FilterParams());
   isExp: boolean = true;
+  disabledSend: boolean = true;
+
+  @ViewChild('datepickerElement') datepickerElement: ElementRef;
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -885,7 +888,7 @@ export class JuridicalRulingGComponent
         this.dictaminacionesForm
           .get('fechaDictaminacion')
           .setValue(
-            this.datePipe.transform(new Date(), 'dd-MM-yyyy') || undefined
+            this.datePipe.transform(new Date(), 'dd/MM/yyyy') || undefined
           );
         this.dictaminacionesForm
           .get('fechaResolucion')
@@ -938,6 +941,13 @@ export class JuridicalRulingGComponent
           this.disabledButtons = false;
         }
 
+        if (!contieneElemento) {
+          this.disabledSend = false;
+          this.datepickerElement.nativeElement.disabled = false;
+        } else {
+          this.disabledSend = true;
+        }
+
         await this.checkDictumXGood(this.dictamen);
 
         await this.getOficioDictamen(this.dictamen);
@@ -978,6 +988,7 @@ export class JuridicalRulingGComponent
         this.dictaminacionesForm.get('etiqueta').setValue(null);
         this.dictaminacionesForm.get('estatus').setValue(null);
         this.dictaminacionesForm.get('cveOficio').setValue(null);
+        this.disabledSend = true;
         console.log(err);
       },
     });
@@ -4722,6 +4733,11 @@ export class JuridicalRulingGComponent
           await this.getSenders2(paramsSender);
         }
 
+        if (this.oficioDictamen.statusOf == 'ENVIADO') {
+          this.disabledSend = false;
+        } else {
+          this.disabledSend = true;
+        }
         console.log('DATA OFFICE', data);
         this.loading = false;
       },
@@ -4731,6 +4747,7 @@ export class JuridicalRulingGComponent
         //   'OFICIO DE DICTÁMENES',
         //   'No se encontraron oficio de dictámenes'
         // );
+        this.disabledSend = true;
         this.loading = false;
       },
     });
@@ -4944,6 +4961,7 @@ export class JuridicalRulingGComponent
     let obj = {
       no_clasif_bien: 0,
     };
+    this.disabledSend = true;
     this.statusDict = '';
     this.disabledButtons = true;
     this.dictaminacionesForm.get('fechaPPFF').setValue('');
