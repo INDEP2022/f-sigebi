@@ -363,9 +363,11 @@ export class InventoryDataComponent
       if (this.inventorySelect) {
         let required: boolean = false;
         this.dataIn.forEach((item: any) => {
-          console.log(item);
-          if (item.required && item.value === null) {
-            required = true;
+          console.log(!item.attribute.includes('FECHA'));
+          if (!item.attribute.includes('FECHA')) {
+            if (item.required && item.value === null) {
+              required = true;
+            }
           }
         });
         if (required) {
@@ -392,8 +394,10 @@ export class InventoryDataComponent
         let required: boolean = false;
         this.dataIn.forEach((item: any) => {
           console.log(item);
-          if (item.required && item.value === null) {
-            required = true;
+          if (!item.attribute.includes('FECHA')) {
+            if (item.required && item.value === null) {
+              required = true;
+            }
           }
         });
         if (required) {

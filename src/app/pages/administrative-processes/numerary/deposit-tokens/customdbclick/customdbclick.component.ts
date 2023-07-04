@@ -123,7 +123,8 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
       this.rowData.cveAccount != null
     ) {
       let obj = {
-        diCurrency: this.rowData.currency,
+        diCurrency:
+          this.rowData.currency == "'M'" ? 'M' : this.rowData.currency,
         tiBank: this.rowData.bank,
         fecMovement: this.rowData.motiondate,
         diAccount: this.rowData.cveAccount,
@@ -151,8 +152,8 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
                 let obj: any = {
                   numberMotion: this.rowData.motionnumber,
                   numberAccount: this.rowData.accountnumber,
-                  numberGood: can[i].goodnumber,
-                  numberProceedings: can[i].proceedingsnumber,
+                  numberGood: can[i].no_bien,
+                  numberProceedings: can[i].no_expediente,
                 };
                 const validUpdate = await this.updateAccountMovement(obj);
                 if (validUpdate) {
