@@ -6,9 +6,15 @@ export const BASIC_BUTTONS = [
               </button>`,
   },
   {
-    name: 'Nuevo / Agregar',
-    code: `<button type="button" tooltip="Agregar" containerClass="tooltip-style" class="btn btn-info btn-sm active ml-2 mr-2">
+    name: 'Nuevo',
+    code: `<button type="button" tooltip="Nuevo" containerClass="tooltip-style" class="btn btn-info btn-sm active ml-2 mr-2">
                 Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>`,
+  },
+  {
+    name: 'Agregar',
+    code: `<button type="button" tooltip="Agregar" containerClass="tooltip-style" class="btn btn-info btn-sm active ml-2 mr-2">
+                Agregar <i class="bx bx-plus bx-sm float-icon"></i>
               </button>`,
   },
   {
@@ -182,5 +188,13 @@ export const BASIC_BUTTONS = [
     code: `<button  class="btn btn-info active btn-sm"> 
     Escanear <i  class="bx bx-file bx-sm float-icon"></i>
     </button>`,
+  },
+  {
+    name: 'Importar Excel',
+    code: `<button
+            type="button"
+            class="btn btn-sm btn-success active m-3">
+            Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
+          </button>`,
   },
 ];
