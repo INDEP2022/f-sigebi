@@ -161,4 +161,32 @@ export class ProceedingsService extends HttpService {
   getCountActas(goodNumber: number | string) {
     return this.get('aplication/get-count-actas/' + goodNumber);
   }
+
+  getGlobalExpedientF(body: {
+    pCveActa: string;
+    pGoodNumber: string | number;
+    pDelivery: string;
+  }) {
+    return this.post('aplication/get-global-expedient-f', body);
+  }
+
+  getGlobalExpedientF3(body: { pGoodNumber: string; pConstEntKey: string }) {
+    return this.post('aplication/get-global-expedient-f-3', body);
+  }
+
+  getGlobalExpedientF2(body: {
+    pGoodNumber: number | string;
+    pRecepCan: string;
+    pSuspension: string;
+    pCveActa: string;
+  }) {
+    return this.post('aplication/get-global-expedient-f-2', body);
+  }
+
+  getSteeringWheelNumber(body: {
+    pExpedientNumber: string | number;
+    pGoodNumber: string | number;
+  }) {
+    return this.post('application/get-v-steeringwheel-number', body);
+  }
 }

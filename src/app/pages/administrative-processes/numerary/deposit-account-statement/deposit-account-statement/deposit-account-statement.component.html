@@ -1,7 +1,7 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Estado de cuenta (Depósito)</h5>
-    <div class="mr-2">
+    <!--<div class="mr-2">
       <div class="d-inline mr-2" *ngIf="!searchMode && !loading">
         <button
           type="button"
@@ -26,19 +26,19 @@
           </button>
         </div>
       </div>
-    </div>
+    </div>-->
   </div>
   <div body>
-    <div class="row">
+    <!--<div class="row">
       <div class="col-md-12">
         <h5 class="title">
           <i class="fa fa-filter" aria-hidden="true"></i> Filtrar por:
         </h5>
       </div>
-    </div>
+    </div>-->
     <div class="row mt-2 mb-1">
       <form action="" class="form-material" [formGroup]="form">
-        <div class="row pt-5">
+        <!--<div class="row pt-5">
           <div class="col-md-3">
             <form-field [control]="form.get('goodId')" label="No. Bien">
               <input
@@ -57,15 +57,25 @@
                 formControlName="fileNumber" />
             </form-field>
           </div>
-        </div>
+        </div>-->
         <h5 class="title">Datos del Depósito</h5>
         <div class="row pt-4 mt-4">
           <div class="col-md-3">
-            <form-field [control]="form.get('account')" label="Cuenta">
-              <input
+            <form-field [control]="form.get('account')">
+              <ngx-select
+                label="Cuenta"
+                [form]="form"
+                control="account"
+                [data]="accountChecksSelect"
+                value="accountOriginDepositNumber"
+                bindLabel="accountOriginDepositNumber"
+                label="Cuenta"
+                (fetchItems)="returnChecks($event)"
+                (change)="changeChecks($event)"></ngx-select>
+              <!--<input
                 type="text"
                 class="form-control"
-                formControlName="account" />
+                formControlName="account" />-->
             </form-field>
           </div>
           <div class="col-md-3">
@@ -122,8 +132,8 @@
             </form-field>
           </div>
           <div class="col-md-3">
-            <form-field [control]="form.get('good')" label="Bien">
-              <!--<ngx-select
+            <form-field [control]="form.get('good')">
+              <ngx-select
                 label="Bien"
                 [form]="form"
                 control="good"
@@ -131,9 +141,8 @@
                 value="id"
                 bindLabel="description"
                 label="Bien"
-                (fetchItems)="getGood($event)"
-                (change)="changeGood($event)"></ngx-select>-->
-              <input type="text" class="form-control" formControlName="good" />
+                (change)="changeGood($event)"></ngx-select>
+              <!--<input type="text" class="form-control" formControlName="good" />-->
             </form-field>
           </div>
         </div>
@@ -147,7 +156,7 @@
             </form-field>
           </div>
           <div class="col-md-3">
-            <form-field [control]="form.get('indicated')" label="Indiciando">
+            <form-field [control]="form.get('indicated')" label="Indiciado">
               <input
                 type="text"
                 class="form-control"
@@ -214,7 +223,7 @@
           <div class="col-md-3">
             <form-field
               [control]="form.get('interestCredited')"
-              label="Interes acreditados">
+              label="Interes acreditado">
               <input
                 type="number"
                 class="form-control"
@@ -226,7 +235,7 @@
         </div>
         <div class="row mt-4">
           <div class="col-md-3">
-            <form-field [control]="form.get('costsAdmon')" label="Sub total">
+            <form-field [control]="form.get('subTotal')" label="Sub total">
               <input
                 type="number"
                 class="form-control"
@@ -274,12 +283,18 @@
         </div>
         <div class="row mt-4">
           <div class="col-md-2">
-            <button class="btn btn-secondary btn-sm active">
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="detailCalculation()">
               Edo. de Cta.
             </button>
           </div>
           <div class="col-md-2">
-            <button class="btn btn-secondary btn-sm active">Parametros</button>
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="openFormParameter()">
+              Parametros
+            </button>
           </div>
           <div class="col-md-2">
             <button class="btn btn-secondary btn-sm active">
