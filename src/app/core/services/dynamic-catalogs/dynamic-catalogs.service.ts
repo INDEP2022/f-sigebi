@@ -3,7 +3,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Repository } from 'src/app/common/repository/repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IExpedient } from '../../models/expedient/expedient.model';
+import { IExpedient, IPerUser } from '../../models/expedient/expedient.model';
 
 @Injectable({
   providedIn: 'root',
@@ -41,6 +41,10 @@ export class DynamicCatalogService extends HttpService {
         clave: string;
       }>
     >(`dinamic-tables/getIncapAndClave`, { no_expediente });
+  }
+
+  getPerUser(model: IPerUser){
+    return this.post('dinamic-tables/getOtvalue', model)
   }
 
   getDescEmisora(no_expediente: string | number) {

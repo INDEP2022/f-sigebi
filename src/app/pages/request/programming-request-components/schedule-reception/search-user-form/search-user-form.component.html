@@ -28,11 +28,17 @@
           [disabled]="!userInfo"
           [text]="textButton"
           [loading]="loading"
+          [btnSmall]="true"
+          [icon]="'bx bx-plus bx-sm float-icon'"
+          [className]="'btn-info'"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="close()"
+          type="button">
+          Regresar <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>
