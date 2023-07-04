@@ -1,4 +1,3 @@
-<!-- <form class="form-material" [formGroup]="inventoryDataForm"> -->
 <div class="row">
   <div class="row">
     <div class="col-md-8">
@@ -34,11 +33,6 @@
   <form class="form-material" [formGroup]="inventoryDataForm">
     <div class="container">
       <div class="row">
-        <!-- <div class="col-md-4">
-          <form-field [control]="inventoryDataForm.get('noInventario')" label="No. Inventario">
-            <input type="number" class="form-control" formControlName="noInventario" />
-          </form-field>
-        </div> -->
         <div class="col-md-6">
           <form-field
             [control]="inventoryDataForm.get('fechaInventario')"
@@ -112,18 +106,7 @@
         [disabled]="false"
         [loadInventary]="loadInventary"
         [inventary]="inventary"
-        [service]="service"
-        [initValue]="false"></app-good-characteristics-table>
+        [service]="service"></app-good-characteristics-table>
     </div>
   </div>
 </div>
-<!-- <div class="d-flex justify-content-center">
-  <div>
-    <button
-      class="btn btn-secondary btn-sm active"
-      (click)="inventoryAutorization()">
-      Inventario Autoridad Emisora
-    </button>
-  </div>
-</div> -->
-<!-- </form> -->

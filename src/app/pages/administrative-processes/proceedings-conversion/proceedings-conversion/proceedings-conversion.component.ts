@@ -34,7 +34,6 @@ import { RegionalDelegationService } from 'src/app/core/services/catalogs/region
 import { GoodService } from 'src/app/core/services/good/good.service';
 
 import { IActasConversion } from 'src/app/core/models/ms-convertiongood/convertiongood';
-import { IDetailProceedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/detail-proceeding-delivery-reception';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
@@ -1216,6 +1215,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.loading = false;
           this.handleSuccess();
         },
+        error: error => {
+          this.loading = false;
+        },
       });
   }
 
@@ -1330,7 +1332,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       },
     });
   }
-  searchActas(actas?: IDetailProceedingsDeliveryReception) {
+  searchActas(actas?: string) {
+    actas = this.cveActa;
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       actas,
@@ -1339,14 +1342,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     let modalRef = this.modalService.show(FindActaGoodComponent, modalConfig);
     modalRef.content.onSave.subscribe((next: any) => {
       console.log(next);
-      this.to = this.datePipe.transform(
-        this.actaRecepttionForm.controls['mes'].value,
-        'MM/yyyy'
-      );
-      this.annio = this.datePipe.transform(
-        this.actaRecepttionForm.controls['anio'].value,
-        'MM/yyyy'
-      );
+
       this.actaRecepttionForm.patchValue({
         acta: next.id,
         administra: next.approvedXAdmon,
@@ -1357,12 +1353,20 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         cveActa: next.keysProceedings,
         // mes: next.dateElaborationReceipt,
         cveReceived: next.receiptKey,
-        anio: next.dateElaborationReceipt,
+        anio: new Date(next.dateElaborationReceipt),
         direccion: next.address,
         // parrafo1: next.parrafo1,
         // parrafo2: next.parrafo2,
         // parrafo3: next.parrafo3,
       });
+      this.to = this.datePipe.transform(
+        this.actaRecepttionForm.controls['mes'].value,
+        'MM/yyyy'
+      );
+      this.annio = this.datePipe.transform(
+        this.actaRecepttionForm.controls['anio'].value,
+        'MM/yyyy'
+      );
       // this.getActasByConversion(next.cve_acta_conv);
     });
   }
@@ -1394,6 +1398,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           observaciones: '',
           responsable: '',
         });
+
         console.log(this.actaRecepttionForm.value);
       },
     });

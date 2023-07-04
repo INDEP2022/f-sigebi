@@ -126,7 +126,7 @@
                   <div class="row pt-3">
                     <form-field
                       [control]="form.get('noBien')"
-                      label="No. de bien">
+                      label="No. de Bien">
                       <input
                         class="form-control"
                         formControlName="noBien"
@@ -445,7 +445,7 @@
             <tab heading="Fotos">
               <app-photos-tabs
                 [goodNumber]="actualGoodNumber + ''"
-                [disabled]="disabledBienes"></app-photos-tabs>
+                [disabled]="false"></app-photos-tabs>
               <!-- <app-good-photos
                 *ngIf="actualGoodNumber"
                 [showPhoto]="showPhoto"
