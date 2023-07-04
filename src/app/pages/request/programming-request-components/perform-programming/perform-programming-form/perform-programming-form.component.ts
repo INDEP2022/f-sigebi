@@ -63,9 +63,13 @@ import { UserFormComponent } from '../user-form/user-form.component';
 import { WarehouseSelectFormComponent } from '../warehouse-select-form/warehouse-select-form.component';
 import {
   settingGuard,
+  settingGuardClose,
   settingTransGoods,
+  settingTransGoodsClose,
   SettingUserTable,
+  SettingUserTableClose,
   settingWarehouse,
+  settingWarehouseClose,
 } from './settings-tables';
 
 @Component({
@@ -160,16 +164,33 @@ export class PerformProgrammingFormComponent
   infoTask: ITask;
   goodsProgCopy: IGoodProgramming[] = [];
   goodsProg: IGoodProgramming[] = [];
+  stateKey: string = '';
+  idMunicipality: string = '';
   settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
+  settingsTransportableGoodsClose = {
+    ...this.settings,
+    ...settingTransGoodsClose,
+  };
   settingUser = { ...this.settings, ...SettingUserTable };
+  settingUserClose = { ...this.settings, ...SettingUserTableClose };
   settingGuardGoods = {
     ...this.settings,
     ...settingGuard,
   };
 
+  settingGuardGoodsClose = {
+    ...this.settings,
+    ...settingGuardClose,
+  };
+
   settingWarehouseGoods = {
     ...this.settings,
     ...settingWarehouse,
+  };
+
+  settingWarehouseGoodsClose = {
+    ...this.settings,
+    ...settingWarehouseClose,
   };
 
   transferentId: string | number;
@@ -235,8 +256,7 @@ export class PerformProgrammingFormComponent
     this.getTypeRelevantSelect(new ListParams());
     this.getAkaWarehouse(new ListParams());
     this.getStates(new ListParams());
-    this.getMunicipalities(new ListParams());
-    this.getLocalities(new ListParams());
+
     this.getWarehouseSelect(new ListParams());
     this.getTransferentSelect(new ListParams());
     this.showUsersProgramming();
@@ -368,11 +388,11 @@ export class PerformProgrammingFormComponent
       typeRelevantId: [null, [Validators.required]],
       storeId: [null],
       folio: [null],
+      concurrentMsg: [null],
     });
   }
   checkInfoDate2() {
     const startDateValue = this.performForm.get('startDate').value;
-    console.log('Valor de startDate:', startDateValue);
     // Realiza cualquier operación adicional con el valor de startDateValue
   }
   searchEstate() {
@@ -653,8 +673,6 @@ export class PerformProgrammingFormComponent
 
     if (akaWarehouse) {
       const filterData = this.goodsProgCopy.filter(item => {
-        console.log('item', item);
-        console.log('akaWarehouse', akaWarehouse);
         return item.aliasWarehouse == akaWarehouse;
       });
 
@@ -1078,19 +1096,25 @@ export class PerformProgrammingFormComponent
   }
 
   getStates(params?: ListParams) {
-    this.stateService.getAll(params).subscribe({
-      next: response => {
-        const statesData = response.data.map(data => {
-          return data.stateCode;
-        });
-        this.statesSearch = new DefaultSelect(statesData, response.count);
-      },
+    this.stateService.getAll(params).subscribe(data => {
+      const filterStates = data.data.filter(_states => {
+        return _states.stateCode;
+      });
 
-      error: error => {},
+      const states = filterStates.map(items => {
+        return items.stateCode;
+      });
+      this.statesSearch = new DefaultSelect(states, data.count);
     });
   }
 
+  stateSearchSelect(state: IStateOfRepublic) {
+    this.stateKey = state.id;
+    this.getMunicipalities(new ListParams());
+  }
+
   getMunicipalities(params?: ListParams) {
+    params['filter.stateKey'] = this.stateKey;
     this.municipalityService.getAll(params).subscribe({
       next: response => {
         this.municipailitites = new DefaultSelect(
@@ -1102,7 +1126,13 @@ export class PerformProgrammingFormComponent
     });
   }
 
+  municipalitySearchSelect(municipality: IMunicipality) {
+    this.idMunicipality = municipality.idMunicipality;
+    this.getLocalities(new ListParams());
+  }
+
   getLocalities(params?: ListParams) {
+    params['filter.municipalityId'] = this.idMunicipality;
     this.localityService.getAll(params).subscribe({
       next: response => {
         this.localities = new DefaultSelect(response.data, response.count);
@@ -1147,7 +1177,6 @@ export class PerformProgrammingFormComponent
       .postGoodsProgramming(this.params.getValue(), filterColumns)
       .subscribe({
         next: response => {
-          console.log('response', response);
           let goodsFilter = response.data.map(items => {
             if (items.physicalState) {
               if (items.physicalState == 1) {
@@ -1161,16 +1190,16 @@ export class PerformProgrammingFormComponent
               return items;
             }
           });
-          // const goodsFilter = goodsFilter.filter(item => item);
+
           goodsFilter = goodsFilter.filter(item => item);
-          // console.log('goodsFilter1222', JSON.stringify(goodsFilter2));
-          this.goodsProgCopy = goodsFilter;
+
+          this.filterGoodsProgramming(goodsFilter);
+          /*this.goodsProgCopy = goodsFilter;
           this.goodsProg = goodsFilter;
 
           this.estatesList.load(goodsFilter);
           this.totalItems = response.count;
-          this.loadingGoods = false;
-          //this.filterGoodsProgramming(goodsFilter);
+          this.loadingGoods = false; */
           //
         },
         error: error => (this.loadingGoods = false),
@@ -2180,7 +2209,7 @@ export class PerformProgrammingFormComponent
     downloadLink.href = linkSource;
     downloadLink.target = '_blank';
     downloadLink.click();
-    this.onLoadToast('success', '', 'Archivo generado');
+    this.alertInfo('success', 'Acción Correcta', 'Archivo generado').then();
   }
 
   close() {
@@ -2403,9 +2432,6 @@ export class PerformProgrammingFormComponent
     );
     const date = moment(new Date()).format('YYYY/MM/DD');
 
-    console.log('_startDateFormat', _startDateFormat);
-    console.log('_endDateFormat', _endDateFormat);
-
     const formData = {
       days: 5,
       hours: 0,
@@ -2415,7 +2441,6 @@ export class PerformProgrammingFormComponent
 
     this.programmingService.getDateProgramming(formData).subscribe({
       next: (response: any) => {
-        console.log('response', response);
         const correctDate = moment(response).format('YYYY/MM/DD HH:mm:ss');
         if (correctDate > _startDateFormat || correctDate > _endDateFormat) {
           this.performForm
@@ -2426,14 +2451,14 @@ export class PerformProgrammingFormComponent
             .setErrors({ minDate: { min: new Date(response) } });
           this.performForm.markAllAsTouched();
           //this.performForm.reset();
-          /*this.performForm
+          this.performForm
             .get('endDate')
             .addValidators([minDate(new Date(response))]);
           this.performForm
             .get('endDate')
             .setErrors({ minDate: { min: new Date(response) } });
           this.performForm.markAllAsTouched();
-          this.performForm.reset();
+          //this.performForm.reset();
           const endDate = this.performForm.get('endDate').value;
           const _endDateFormat = moment(endDate).format(
             'DD/MMMM/YYYY, h:mm:ss a'
@@ -2451,7 +2476,7 @@ export class PerformProgrammingFormComponent
               .get('endDate')
               .setErrors({ minDate: { min: response } });
             this.performForm.markAllAsTouched();
-          } */
+          }
         }
       },
       error: error => {
