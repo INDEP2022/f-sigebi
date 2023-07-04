@@ -247,7 +247,11 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
             this.formLoading = false;
           }, 7000);
           if (loadingPhotos == 1) {
-            this.onLoadToast('success', 'Imagen cargada correctamente', '');
+            this.alert(
+              'success',
+              'Acción correcta',
+              'Imagen agregada correctamente'
+            );
           }
         }
       },
