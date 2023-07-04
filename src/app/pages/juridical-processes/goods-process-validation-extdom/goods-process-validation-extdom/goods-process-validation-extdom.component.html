@@ -4,149 +4,268 @@
   </div>
 
   <div body>
-    <!-- FORM Expediente -->
-    <form [formGroup]="form" class="form-material">
-      <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('noExpediente')"
-            label="No&#46; Expediente">
-            <input class="form-control" formControlName="noExpediente" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('fechaRecepcion')"
-            label="Fecha Recepci&oacute;n">
-            <input
-              class="form-control"
-              formControlName="fechaRecepcion"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="form.get('noExpedienteTransferente')"
-            label="No&#46; Expediente Transferente">
-            <input
-              class="form-control"
-              formControlName="noExpedienteTransferente" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('cveOficioExterno')"
-            label="Cve&#46; Oficio Externo">
-            <input class="form-control" formControlName="cveOficioExterno" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('fechaOficioExterno')"
-            label="Fecha Oficio Externo">
-            <input
-              class="form-control"
-              formControlName="fechaOficioExterno"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="form.get('remitenteExterno')"
-            label="Remitente Externo">
-            <input class="form-control" formControlName="remitenteExterno" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('cveAmparo')" label="Cve&#46; Amparo">
-            <input class="form-control" formControlName="cveAmparo" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field
-            [control]="form.get('cveTocaPenal')"
-            label="Cve&#46; Toca Penal">
-            <input class="form-control" formControlName="cveTocaPenal" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="form.get('actaCircunstanciada')"
-            label="Acta Circunstanciada">
-            <input class="form-control" formControlName="actaCircunstanciada" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('averiguacionPrevia')"
-            label="Averiguaci&oacute;n Previa">
-            <input class="form-control" formControlName="averiguacionPrevia" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('causaPenal')" label="Causa Penal">
-            <input class="form-control" formControlName="causaPenal" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('asunto')" label="Asunto">
-            <input class="form-control" formControlName="asunto" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('indiciado')" label="Indiciado">
-            <input class="form-control" formControlName="indiciado" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('ministerioPublico')"
-            label="Ministerio P&uacute;blico">
-            <input class="form-control" formControlName="ministerioPublico" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('juzgado')" label="Juzgado">
-            <input class="form-control" formControlName="juzgado" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('delegacion')"
-            label="Delegaci&oacute;n">
-            <input class="form-control" formControlName="delegacion" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('entidadFederativa')"
-            label="Entidad Federativa">
-            <input class="form-control" formControlName="entidadFederativa" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('ciudad')" label="Ciudad">
-            <input class="form-control" formControlName="ciudad" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('transferente')" label="Transferente">
-            <input class="form-control" formControlName="transferente" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('emisora')" label="Emisora">
-            <input class="form-control" formControlName="emisora" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('autoridad')" label="Autoridad">
-            <input class="form-control" formControlName="autoridad" />
-          </form-field>
+    <div class="row">
+      <div
+        class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+        *ngIf="loading">
+        <div class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center">
+            <div class="loader"></div>
+            <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+          </div>
         </div>
       </div>
-    </form>
-    <!-- FORM Expediente -->
+      <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+        <!-- FORM Expediente -->
+        <div class="card">
+          <form [formGroup]="form" class="container-fluid form-material p-0">
+            <div class="card-body">
+              <div class="row">
+                <form-field
+                  class="col-12 col-sm-12 col-md-3 p-2"
+                  [control]="form.get('wheelNumber')"
+                  label="No&#46; Volante">
+                  <input class="form-control" formControlName="wheelNumber" />
+                </form-field>
+                <form-field
+                  class="col-12 col-sm-12 col-md-3 p-2"
+                  [control]="form.get('expedientNumber')"
+                  label="No&#46; Expediente">
+                  <input
+                    class="form-control"
+                    formControlName="expedientNumber" />
+                </form-field>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <button
+                    type="button"
+                    [disabled]="loading"
+                    class="btn btn-primary btn-sm active"
+                    (click)="getNotificationData()">
+                    Buscar
+                    <i class="bx bx-search-alt bx-sm float-icon"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12 col-12 col-md-2 p-2">
+                  <form-field
+                    [control]="form.get('receiptDate')"
+                    label="Fecha Recepci&oacute;n">
+                    <input
+                      class="form-control"
+                      formControlName="receiptDate"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('expedientTransferenceNumber')"
+                    label="No&#46; Expediente Transferente">
+                    <input
+                      class="form-control"
+                      formControlName="expedientTransferenceNumber" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('officeExternalKey')"
+                    label="Cve&#46; Oficio Externo">
+                    <input
+                      class="form-control"
+                      formControlName="officeExternalKey" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-2 p-2">
+                  <form-field
+                    [control]="form.get('externalOfficeDate')"
+                    label="Fecha Oficio Externo">
+                    <input
+                      class="form-control"
+                      formControlName="externalOfficeDate"
+                      bsDatepicker />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('externalRemitter')"
+                    label="Remitente Externo">
+                    <input
+                      class="form-control"
+                      formControlName="externalRemitter" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('protectionKey')"
+                    label="Cve&#46; Amparo">
+                    <input
+                      class="form-control"
+                      formControlName="protectionKey" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('touchPenaltyKey')"
+                    label="Cve&#46; Toca Penal">
+                    <input
+                      class="form-control"
+                      formControlName="touchPenaltyKey" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('circumstantialRecord')"
+                    label="Acta Circunstanciada">
+                    <input
+                      class="form-control"
+                      formControlName="circumstantialRecord" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('preliminaryInquiry')"
+                    label="Averiguaci&oacute;n Previa">
+                    <input
+                      class="form-control"
+                      formControlName="preliminaryInquiry" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <form-field
+                    [control]="form.get('criminalCase')"
+                    label="Causa Penal">
+                    <input
+                      class="form-control"
+                      formControlName="criminalCase" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-3 p-2">
+                  <ngx-select
+                    [data]="selectAffairkey"
+                    bindLabel="name"
+                    label="Autoriza Dictaminaci&oacute;n"
+                    value="id"
+                    (fetchItems)="getAffair($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="affairKey"></ngx-select>
+                  <!-- <form-field [control]="form.get('asunto')" label="Asunto">
+                    <input class="form-control" formControlName="asunto" />
+                  </form-field> -->
+                </div>
+                <div class="col-sm-12 col-12 col-md-3 p-2">
+                  <ngx-select
+                    [data]="selectIndiciadoNumber"
+                    bindLabel="name"
+                    label="Indiciado"
+                    value="id"
+                    (fetchItems)="getIndiciadoNumber($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="indiciadoNumber"></ngx-select>
+                  <!-- <form-field
+                    [control]="form.get('indiciadoNumber')"
+                    label="Indiciado">
+                    <input
+                      class="form-control"
+                      formControlName="indiciadoNumber" />
+                  </form-field> -->
+                </div>
+                <div class="col-sm-12 col-12 col-md-3 p-2">
+                  <ngx-select
+                    [data]="selectMinpubNumber"
+                    bindLabel="name"
+                    label="Ministerio P&uacute;blico"
+                    value="id"
+                    (fetchItems)="getMinpubNumber($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="minpubNumber"></ngx-select>
+                  <!-- <form-field
+                    [control]="form.get('minpubNumber')"
+                    label="Ministerio P&uacute;blico">
+                    <input
+                      class="form-control"
+                      formControlName="minpubNumber" />
+                  </form-field> -->
+                </div>
+                <div class="col-sm-12 col-12 col-md-3 p-2">
+                  <ngx-select
+                    [data]="selectCourtNumber"
+                    bindLabel="name"
+                    label="Juzgado"
+                    value="id"
+                    (fetchItems)="getCourtNumber($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="courtNumber"></ngx-select>
+                  <!-- <form-field
+                    [control]="form.get('courtNumber')"
+                    label="Juzgado">
+                    <input class="form-control" formControlName="courtNumber" />
+                  </form-field> -->
+                </div>
+                <div class="col-sm-12 col-12 col-md-3 p-2">
+                  <form-field
+                    [control]="form.get('delegationNumber')"
+                    label="Delegaci&oacute;n">
+                    <input
+                      class="form-control"
+                      formControlName="delegationNumber" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-3 p-2">
+                  <form-field
+                    [control]="form.get('entFedKey')"
+                    label="Entidad Federativa">
+                    <input class="form-control" formControlName="entFedKey" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-3 p-2">
+                  <form-field [control]="form.get('cityNumber')" label="Ciudad">
+                    <input class="form-control" formControlName="cityNumber" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-3 p-2">
+                  <form-field
+                    [control]="form.get('transference')"
+                    label="Transferente">
+                    <input
+                      class="form-control"
+                      formControlName="transference" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-3 p-2">
+                  <form-field
+                    [control]="form.get('stationNumber')"
+                    label="Emisora">
+                    <input
+                      class="form-control"
+                      formControlName="stationNumber" />
+                  </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-3 p-2">
+                  <form-field
+                    [control]="form.get('authority')"
+                    label="Autoridad">
+                    <input class="form-control" formControlName="authority" />
+                  </form-field>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <!-- FORM Expediente -->
+      </div>
+    </div>
     <br />
     <!-- tabla Bienes -->
     <div class="row w-100">

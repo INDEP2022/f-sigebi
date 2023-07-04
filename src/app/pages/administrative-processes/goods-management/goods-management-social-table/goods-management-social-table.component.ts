@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
+import { ITrackerGoodSocialCabinet } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { BasePage } from 'src/app/core/shared';
 import { ETypeGabinetProcess } from '../goods-management-social-cabinet/typeProcess';
@@ -17,8 +17,8 @@ import { COLUMNS } from './columns';
 })
 export class GoodsManagementSocialTable extends BasePage {
   // private _selectedGoods: number[];
-  data: ITrackedGood[] = [];
-  dataTemp: ITrackedGood[] = [];
+  data: ITrackerGoodSocialCabinet[] = [];
+  dataTemp: ITrackerGoodSocialCabinet[] = [];
   dataPaginated: LocalDataSource = new LocalDataSource();
   // notLoadedGoods: { good: number }[] = [];
   pageSizeOptions = [5, 10, 15, 20];
@@ -74,8 +74,8 @@ export class GoodsManagementSocialTable extends BasePage {
           // debugger;
           this.data = [
             ...this.goodsManagementService.data.filter(row =>
-              row.socialCabite
-                ? +row.socialCabite === this.process
+              row.socialCabinet
+                ? +row.socialCabinet === this.process
                 : this.process === ETypeGabinetProcess['Sin Asignar']
             ),
           ];
@@ -144,6 +144,7 @@ export class GoodsManagementSocialTable extends BasePage {
   dataNotFound() {
     this.totalItems = 0;
     this.data = [];
+    this.dataPaginated.setFilter([], true, false);
     this.dataPaginated.load([]);
     this.dataPaginated.refresh();
     this.loading = false;
@@ -171,71 +172,14 @@ export class GoodsManagementSocialTable extends BasePage {
                 : true
             );
           });
-          // this.totalItems = filterData.length;
-          // console.log(this.dataTemp);
-          this.totalItems = this.dataTemp.length;
           this.params.value.page = 1;
           this.getPaginated(this.params.getValue());
         }
       });
   }
 
-  // getData() {
-  //   this.loading = true;
-  //   // let params = {
-  //   //   ...this.params.getValue(),
-  //   // };
-  //   const filterParams = new FilterParams();
-  //   filterParams.limit = 2000;
-  //   filterParams.addFilter(
-  //     'goodNumber',
-  //     this.selectedGoods.toString(),
-  //     SearchFilter.IN
-  //   );
-  //   if (this.process === 0) {
-  //     filterParams.addFilter3('filter.socialCabite', SearchFilter.NULL);
-  //   } else {
-  //     filterParams.addFilter('socialCabite', this.process);
-  //   }
-  //   // if (!params['filter.goodNumber']) {
-  //   //   params['filter.goodNumber'] = '$in:' + this.selectedGoods.toString();
-  //   // }
-
-  //   this.goodTrackerService
-  //     .getAll(filterParams.getParams())
-  //     .pipe(
-  //       takeUntil(this.$unSubscribe)
-  //       // map(response => {
-  //       //   return {
-  //       //     ...response,
-  //       //     data: response.data.filter(row => {
-  //       //       row.socialCabite
-  //       //         ? +row.socialCabite === this.process
-  //       //         : this.process === ETypeGabinetProcess['Sin Asignar'];
-  //       //     }),
-  //       //   };
-  //       // })
-  //     )
-  //     .subscribe({
-  //       next: response => {
-  //         if (response) {
-  //           this.totalItems = response.count || 0;
-
-  //           this.data = response.data;
-  //           this.dataTemp = [...this.data];
-  //           this.getPaginated(this.params.value);
-  //           this.loading = false;
-  //         } else {
-  //           this.dataNotFound();
-  //         }
-  //       },
-  //       error: err => {
-  //         this.dataNotFound();
-  //       },
-  //     });
-  // }
-
   private getPaginated(params: ListParams) {
+    this.totalItems = this.dataTemp.length;
     const cantidad = params.page * params.limit;
     this.dataPaginated.load([
       ...this.dataTemp.slice(

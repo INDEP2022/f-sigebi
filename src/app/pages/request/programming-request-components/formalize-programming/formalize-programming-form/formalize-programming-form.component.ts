@@ -1145,29 +1145,35 @@ export class FormalizeProgrammingFormComponent
 
   async confirm() {
     if (this.proceedingData.statusProceeedings == 'CERRADO') {
-      console.log('this.proceeding', this.proceedingData);
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea formalizar la programación?'
+      ).then(async question => {
+        if (question.isConfirmed) {
+          const _task = JSON.parse(localStorage.getItem('Task'));
+          const user: any = this.authService.decodeToken();
+          let body: any = {};
+          body['idTask'] = _task.id;
+          body['userProcess'] = user.username;
+          body['type'] = 'SOLICITUD_PROGRAMACION';
+          body['subtype'] = 'Formalizar_Entrega';
+          body['ssubtype'] = 'ACCEPT';
 
-      const _task = JSON.parse(localStorage.getItem('Task'));
-      const user: any = this.authService.decodeToken();
-      let body: any = {};
-      body['idTask'] = _task.id;
-      body['userProcess'] = user.username;
-      body['type'] = 'SOLICITUD_PROGRAMACION';
-      body['subtype'] = 'Formalizar_Entrega';
-      body['ssubtype'] = 'ACCEPT';
-
-      const closeTask = await this.closeTaskExecuteRecepcion(body);
-      if (closeTask) {
-        this.alertInfo(
-          'success',
-          'Acción correcta',
-          'Se cerro la tarea formalizar entrega correctamente'
-        ).then(question => {
-          if (question.isConfirmed) {
-            this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+          const closeTask = await this.closeTaskExecuteRecepcion(body);
+          if (closeTask) {
+            this.alertInfo(
+              'success',
+              'Acción correcta',
+              'Se cerro la tarea formalizar entrega correctamente'
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+              }
+            });
           }
-        });
-      }
+        }
+      });
     } else {
       this.alertInfo(
         'info',

@@ -18,7 +18,11 @@
           </div>
           <div class="col-md-6">
             <form-field [control]="form.get('date')" label="Fecha">
-              <input formControlName="date" class="form-control" bsDatepicker />
+              <input
+                id="disabled"
+                formControlName="date"
+                class="form-control"
+                bsDatepicker />
             </form-field>
           </div>
         </div>
@@ -127,36 +131,36 @@
               type="button"
               class="btn btn-sm btn-primary active m-3"
               (click)="selectRequest()">
-              Selecciona solicitudes
+              Selecciona Solicitudes
             </button>
             <button
               type="button"
               class="btn btn-sm btn-primary active m-3"
               (click)="calculInteres()">
-              Calcula interese
+              Calcula Interese
             </button>
             <button
               type="button"
               class="btn btn-sm btn-primary active m-3"
               (click)="printStatusAccount()">
-              Estado de cuenta
+              Estado de Cuenta
             </button>
             <button
               type="button"
               class="btn btn-sm btn-primary active m-3"
               (click)="printDetailMovi()">
-              Detalle movimiento
+              Detalle Movimiento
             </button>
             <button
               type="button"
               class="btn btn-sm btn-primary active m-3"
               (click)="printProrraComission()">
-              Prorrateo comisión
+              Prorrateo Comisión
             </button>
             <button
               class="btn btn-red btn-sm active m-3"
               (click)="deleteRequest()">
-              Eliminar proceso <i class="fa fa-trash" aria-hidden="true"></i>
+              Eliminar Proceso <i class="fa fa-trash" aria-hidden="true"></i>
             </button>
           </div>
         </div>
@@ -182,7 +186,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings1"
-            [source]="data2">
+            [source]="data2"
+            (rowSelect)="onChangeTable2($event.data)">
           </ng2-smart-table>
         </div>
       </div>
