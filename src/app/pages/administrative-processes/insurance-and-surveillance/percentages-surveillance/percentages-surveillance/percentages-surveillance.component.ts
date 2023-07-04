@@ -84,7 +84,7 @@ export class PercentagesSurveillanceComponent
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               cveProcess: () => (searchFilter = SearchFilter.EQ),
-              delegationNumber: () => (searchFilter = SearchFilter.EQ),
+              delegation: () => (searchFilter = SearchFilter.EQ),
               delegationType: () => (searchFilter = SearchFilter.EQ),
               percentage: () => (searchFilter = SearchFilter.EQ),
             };
