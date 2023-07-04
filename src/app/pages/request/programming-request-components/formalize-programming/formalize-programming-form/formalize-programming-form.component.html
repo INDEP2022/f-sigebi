@@ -16,13 +16,14 @@
           [text]="'Formalizar'"
           [loadingText]="'Formalizando'"
           [btnSmall]="true"
+          [icon]="'fa fa-check'"
           (confirm)="confirm()"></confirm-button>
 
         <button
           type="button"
           class="btn btn-danger btn-sm active"
           (click)="close()">
-          Cancelar
+          Cancelar <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
 

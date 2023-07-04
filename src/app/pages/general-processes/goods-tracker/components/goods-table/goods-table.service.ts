@@ -8,7 +8,6 @@ import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.m
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 
 const ORIGIN = 'FCONGENRASTREADOR';
@@ -27,16 +26,6 @@ const TYPES = {
  */
 export class GoodsTableService {
   columns = {
-    select: {
-      title: 'Selección',
-      type: 'custom',
-      renderComponent: CheckboxElementComponent,
-      onComponentInitFunction: (instance: CheckboxElementComponent) => {
-        instance.toggle.subscribe(resp => {
-          resp.row.select = resp.toggle;
-        });
-      },
-    },
     numberPhotos: {
       title: 'No. Fotos',
       sort: false,
@@ -62,7 +51,7 @@ export class GoodsTableService {
       onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
         instance.onNavigate.subscribe(trackedGood => {
           this.router.navigate(
-            ['/pages/judicial-physical-reception/partializes-general-goods'],
+            ['/pages/judicial-physical-reception/partializes-goods'],
             {
               queryParams: {
                 numberGood:

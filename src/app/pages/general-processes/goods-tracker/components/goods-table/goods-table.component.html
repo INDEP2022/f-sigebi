@@ -4,6 +4,7 @@
     <div class="buttons">
       <div class="mx-1">
         <confirm-button
+          *ngIf="showInclude"
           type="button"
           [loading]="includeLoading"
           text="Incluir"

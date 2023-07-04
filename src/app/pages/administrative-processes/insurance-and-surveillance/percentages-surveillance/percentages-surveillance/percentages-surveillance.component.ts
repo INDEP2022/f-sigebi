@@ -84,7 +84,7 @@ export class PercentagesSurveillanceComponent
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               cveProcess: () => (searchFilter = SearchFilter.EQ),
-              delegation: () => (searchFilter = SearchFilter.EQ),
+              delegation_: () => (searchFilter = SearchFilter.EQ),
               delegationType: () => (searchFilter = SearchFilter.EQ),
               percentage: () => (searchFilter = SearchFilter.EQ),
             };
@@ -94,7 +94,7 @@ export class PercentagesSurveillanceComponent
             if (filter.search !== '') {
               console.log('filter.search', filter.search);
 
-              if (filter.field == 'delegation') {
+              if (filter.field == 'delegation_') {
                 this.columnFilters[field] = `${filter.search}`;
               } else {
                 this.columnFilters[field] = `${searchFilter}:${filter.search}`;
@@ -157,27 +157,37 @@ export class PercentagesSurveillanceComponent
       ...this.columnFilters,
     };
 
-    if (params['filter.delegation']) {
-      if (!isNaN(parseInt(params['filter.delegation']))) {
-        params['filter.delegation.id'] = `$eq:${params['filter.delegation']}`;
-        delete params['filter.delegation'];
+    if (params['filter.delegation_']) {
+      if (!isNaN(parseInt(params['filter.delegation_']))) {
+        console.log('SI');
+        params['filter.delegation.id'] = `$eq:${params['filter.delegation_']}`;
+        delete params['filter.delegation_'];
       } else {
+        console.log('NO');
         params[
           'filter.delegation.description'
-        ] = `$ilike:${params['filter.delegation']}`;
-        delete params['filter.delegation'];
+        ] = `$ilike:${params['filter.delegation_']}`;
+        delete params['filter.delegation_'];
       }
     }
 
     // delegation
     this.survillanceService.getVigProcessPercentages(params).subscribe({
       next: response => {
+        const data = response.data;
         console.log('responseresponse', response);
-        let result = response.data.map(item => {});
-        this.sources.load(response.data);
-        this.sources.refresh();
-        this.totalItems = response.count;
-        this.loading = false;
+        let result = data.map(async (item: any) => {
+          item['delegation_'] =
+            item.delegationView.delegationNumber +
+            ' - ' +
+            item.delegationView.description;
+        });
+        Promise.all(result).then(item => {
+          this.sources.load(data);
+          this.sources.refresh();
+          this.totalItems = response.count;
+          this.loading = false;
+        });
       },
       error: () => {
         this.loading = false;
