@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
+import { ITrackerGoodSocialCabinet } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +10,7 @@ export class GoodsManagementService {
   refreshData = new Subject<boolean>();
   refreshTable = new Subject<boolean>();
   clear = new Subject<boolean>();
-  data: ITrackedGood[];
+  data: ITrackerGoodSocialCabinet[];
   loading: boolean = false;
   constructor() {}
 }

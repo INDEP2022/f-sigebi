@@ -5,6 +5,7 @@ export enum NumeraryEndpoints {
   NumEnc = 'numerary-enc',
   NumDet = 'numerary-det',
   NumCal = 'numerary-cal',
+  ProcessesNume = 'processes-nume',
   RequestEnc = 'requests-nume-enc',
   RequestCal = 'requests-nume-cal',
   RequestDet = 'requests-nume-det',
