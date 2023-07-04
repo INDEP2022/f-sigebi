@@ -58,11 +58,18 @@
         <confirm-button
           [disabled]="!userForm.valid"
           [loading]="loading"
+          [btnSmall]="true"
+          [text]="'Agregar'"
+          [loadingText]="'Agregando'"
+          [icon]="'bx bx-plus'"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>
