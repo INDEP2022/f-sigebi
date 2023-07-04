@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, map, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -151,6 +151,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private bsModalRef: BsModalRef,
     private router: Router,
+    private serviceUser: UsersService,
     private lotService: LotService,
     private goodService: GoodService,
     private documentService: DocumentsService,
@@ -184,7 +185,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoods());
     this.prepareForm();
-
     this.checkPer();
     this.fillDataByPackage();
     this.getDataUser()
@@ -1104,11 +1104,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           packageNumber: this.form.get('package').value,
           user: 'DR_SIGEBI',
           toolbarUsername: 'DR_SIGEBI',
-          statusPaq: this.form.get('packageStatus').value,
+          statusPaq: this.form.get('status').value,
           parentGoodNumber: this.form2.get('numberGood').value,
           status: this.form2.get('status').value,
         };
-        this.packageGoodService.pubCancelPackage(data).subscribe(
+        this.lotService.pubCancelPackage(data).subscribe(
           response => {
             Swal.fire('Exito', 'Se cancelo el paquete', 'success');
           },
@@ -1118,6 +1118,14 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         );
       }
     });
+  }
+
+  getUsername() {
+    const user =
+      localStorage.getItem('username') == 'sigebiadmon'
+        ? localStorage.getItem('username')
+        : localStorage.getItem('username').toLocaleUpperCase();
+    return user;
   }
 
   downloadReport() {
@@ -1145,6 +1153,23 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       },
     });
   }
+
+  /* private getSegPantalla() {
+    const filterParams = new FilterParams();
+    filterParams.addFilter('screenKey', 'FMTOPAQUETE_0001');
+    filterParams.addFilter(
+      'user',
+      localStorage.getItem('username').toUpperCase()
+    );
+    filterParams.addFilter('writingPermission', 'S');
+    filterParams.addFilter('readingPermission', 'S');
+    return this.segAppService
+      .getScreenWidthParams(filterParams.getFilterParams())
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        map(x => (x.data ? x.data : []))
+      );
+  } */
 
   openPermissions(data: any) {
     const modalConfig = MODAL_CONFIG;

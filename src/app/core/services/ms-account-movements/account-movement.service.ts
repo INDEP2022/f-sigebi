@@ -6,7 +6,10 @@ import {
   ICuentaInsert,
 } from 'src/app/core/models/catalogs/bank-modelo-type-cuentas';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IAccountMovement } from '../../models/ms-account-movements/account-movement.model';
+import {
+  IAccountMovement,
+  IUserChecks,
+} from '../../models/ms-account-movements/account-movement.model';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +26,10 @@ export class AccountMovementService extends HttpService {
       'account-movements',
       params
     );
+  }
+
+  getAllUsersChecks(params: _Params) {
+    return this.get<IListResponse<IUserChecks>>('user-checks', params);
   }
 
   update(movement: any) {
@@ -42,6 +49,10 @@ export class AccountMovementService extends HttpService {
 
   createAccount(movement: any) {
     return this.post('account-movements/lovDeposits', movement);
+  }
+
+  createPostQuery(movement: any) {
+    return this.post('account-movements/postQuery', movement);
   }
 
   getAllAccountMovement(params: ListParams) {
@@ -92,6 +103,13 @@ export class AccountMovementService extends HttpService {
   getReturnSaldo(params: any) {
     return this.post<IListResponse<any>>(
       `aplication/get-facta-db-fichas-depo`,
+      params
+    );
+  }
+
+  getMovementAccountXBankAccount(params: _Params) {
+    return this.get<IListResponse<any>>(
+      'aplication/movementAccountXBankAccount',
       params
     );
   }

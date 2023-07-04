@@ -153,7 +153,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
         this.searchGoods(this.expedient.id);
       },
       error: err => {
-        this.alert('error', 'ERROR', 'No existe el registro');
+        this.alert('warning', 'No existe el registro', '');
       },
     });
   }
@@ -195,7 +195,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
         },
         error: err => {
           this.loading = false;
-          this.alert('error', 'Expediente sin bienes asociados', ``);
+          this.alert('warning', 'Expediente sin bienes asociados', ``);
         },
       });
   }
@@ -260,14 +260,14 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
           this.totalItems = response.count;
           this.loading = false;
         } else {
-          this.alert('error', 'Bien sin menajes asociados', ``);
+          this.alert('warning', 'Bien sin menajes asociados', ``);
           this.loading = false;
           this.totalItems = 0;
           this.searchGoods(this.idExpedientSearch);
         }
       },
       error: err => {
-        this.alert('error', 'Bien sin menajes asociados', ``);
+        this.alert('warning', 'Bien sin menajes asociados', ``);
         this.loading = false;
         this.totalItems = 0;
         this.searchGoods(this.idExpedientSearch);

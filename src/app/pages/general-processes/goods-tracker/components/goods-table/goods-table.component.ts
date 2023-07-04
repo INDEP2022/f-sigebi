@@ -8,21 +8,27 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
+  firstValueFrom,
   forkJoin,
   map,
+  of,
   switchMap,
   take,
   takeUntil,
   tap,
   throwError,
 } from 'rxjs';
-import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
+import { PartializeGoodService } from 'src/app/core/services/ms-partializate-good/partializate-good.service';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -34,8 +40,10 @@ import {
   GOOD_TRACKER_ORIGINS,
   GOOD_TRACKER_ORIGINS_TITLES,
 } from '../../utils/constants/origins';
+import { GoodTrackerMap } from '../../utils/good-tracker-map';
 import { ActaHistoComponent } from '../acta-histo/acta-histo.component';
-import { GP_GOODS_COLUMNS } from './goods-columns';
+import { GTrackerDocumentsComponent } from '../g-tracker-documents/g-tracker-documents.component';
+import { GoodsTableService } from './goods-table.service';
 
 @Component({
   selector: 'goods-table',
@@ -50,12 +58,14 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   @Input() override loading: boolean = false;
   @Input() formData: FormGroup;
   @Input() fomrCheck: FormGroup;
+  @Input() filters: GoodTrackerMap;
 
   private selectedGooods: ITrackedGood[] = [];
   origin: string = null;
   ngGlobal: any = null;
   $trackedGoods = this.store.select(getTrackedGoods);
   includeLoading: boolean = false;
+  excelLoading: boolean = false;
 
   constructor(
     private modalService: BsModalService,
@@ -64,15 +74,19 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     private store: Store,
     private router: Router,
     private location: Location,
+    private goodsTableService: GoodsTableService,
+    private documentsService: DocumentsService,
+    private proceedingService: ProceedingsService,
     private goodTrackerService: GoodTrackerService,
     private globalVarService: GlobalVarsService,
     private jasperServ: SiabService,
     private goodPartService: GoodPartializeService,
-    private procedings: ProceedingsService
+    private procedings: ProceedingsService,
+    private partializeGoodServ: PartializeGoodService
   ) {
     super();
     this.settings.actions = false;
-    this.settings.columns = GP_GOODS_COLUMNS;
+    this.settings.columns = this.goodsTableService.columns;
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
@@ -101,7 +115,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
             onComponentInitFunction: (instance: CheckboxElementComponent) =>
               this.onGoodSelect(instance),
           },
-          ...GP_GOODS_COLUMNS,
+          ...this.goodsTableService.columns,
         },
       };
     }
@@ -117,7 +131,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     const exists = this.selectedGooods.find(
       good => good.goodNumber == _good.goodNumber
     );
-    return !exists ? false : true;
+    return exists ? true : false;
   }
 
   private isValidOrigin() {
@@ -158,9 +172,62 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       });
   }
 
-  viewImages() {
-    const modalConfig = MODAL_CONFIG;
-    this.modalService.show(DocumentsListComponent, modalConfig);
+  async viewImages() {
+    if (!this.selectedGooods.length) {
+      this.alert('error', 'Error', 'Primero selecciona un registro');
+      return;
+    }
+
+    if (this.selectedGooods.length > 1) {
+      await this.alertInfo(
+        'info',
+        'Más de un registro seleccionado',
+        'Se tomará el último registro seleccionado'
+      );
+    }
+    const selectedGood = this.selectedGooods.at(-1);
+    if (!selectedGood.fileNumber) {
+      this.alert('error', 'Error', 'Este trámite no tiene volante asignado');
+      return;
+    }
+
+    await this.getDocuments(selectedGood);
+  }
+
+  async getDocuments(trackedGood: ITrackedGood) {
+    let config = {
+      initialState: {
+        trackedGood: trackedGood,
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    const count = await this.countAct(trackedGood.goodNumber);
+    console.log({ count });
+    if (count > 0) {
+      this.modalService.show(GTrackerDocumentsComponent, config);
+    }
+  }
+
+  countAct(goodNumber: number | string) {
+    return firstValueFrom(
+      this.proceedingService.getCountActas(goodNumber).pipe(
+        catchError(error => {
+          return of({ data: [{ count: 0 }] });
+        }),
+        map(res => res.data[0].count ?? 0)
+      )
+    );
+  }
+
+  otDocuments() {}
+
+  async takeOneProcess(turnSelects: any) {
+    await this.alertInfo(
+      'info',
+      'Más de un trámite seleccionado',
+      'Se tomará el último registro seleccionado'
+    );
   }
 
   openPrevPdf() {
@@ -466,6 +533,94 @@ export class GoodsTableComponent extends BasePage implements OnInit {
           resolve([]);
         },
       });
+    });
+  }
+
+  async certificateSell() {
+    const goods = this.goods.filter(good => good.select == true);
+
+    if (goods.length > 0) {
+      if (goods.length > 1) {
+        this.alertQuestion(
+          'warning',
+          '',
+          'Se tiene varios bienes seleccionados se tomara el último',
+          ''
+        ).then(async answ => {
+          if (answ.isConfirmed) {
+            const good = goods[goods.length - 1];
+            const v_entra = await this.getExist(Number(good.goodNumber));
+            if (v_entra > 0) {
+              this.callReport(Number(good.goodNumber), 1);
+            } else {
+              await this.partializePaGood(Number(good.goodNumber));
+              this.callReport(Number(good.goodNumber), 1);
+            }
+          }
+        });
+      } else {
+        const good = goods[0];
+        const v_entra = await this.getExist(Number(good.goodNumber));
+        if (v_entra > 0) {
+          this.callReport(Number(good.goodNumber), 1);
+        } else {
+          await this.partializePaGood(Number(good.goodNumber));
+          this.callReport(Number(good.goodNumber), 1);
+        }
+      }
+    } else {
+      this.alert('error', 'Error', 'Se requiere un bien');
+    }
+  }
+
+  async getExist(good: number) {
+    return new Promise<number>((resolve, reject) => {
+      const filter = new FilterParams();
+      filter.addFilter('goodNumber', good, SearchFilter.EQ);
+      this.partializeGoodServ.getAll(filter.getParams()).subscribe({
+        next: resp => {
+          resolve(resp.count);
+        },
+        error: () => {
+          resolve(0);
+        },
+      });
+    });
+  }
+
+  async partializePaGood(good: number) {
+    return new Promise<boolean>((resolve, reject) => {
+      const filter = new FilterParams();
+      filter.addFilter('goodNumber', good, SearchFilter.EQ);
+      this.partializeGoodServ.partializePaGood(good).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: () => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  getDataExcell() {
+    this.excelLoading = true;
+    this.goodTrackerService.getExcel(this.filters).subscribe({
+      next: resp => {
+        const mediaType =
+          'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+        const link = document.createElement('a');
+        link.href = mediaType + resp.base64File;
+        link.download = 'Rastreador_Bienes.xlsx';
+        link.click();
+        link.remove();
+        this.excelLoading = false;
+        this.alert('success', 'Archivo descargado correctamente', '');
+      },
+      error: () => {
+        this.excelLoading = false;
+        this.alert('error', 'Error', 'No se genero correctamente el archivo');
+      },
     });
   }
 }

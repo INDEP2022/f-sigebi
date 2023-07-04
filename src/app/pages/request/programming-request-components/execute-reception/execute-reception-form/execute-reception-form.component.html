@@ -10,10 +10,10 @@
         <button
           (click)="aprobateReception()"
           class="btn btn-primary btn-sm active">
-          Terminar Ejecución
+          Terminar Ejecución <i class="fa fa-check" aria-hidden="true"></i>
         </button>
         <button (click)="close()" class="btn btn-danger btn-sm active">
-          Cancelar
+          Cancelar <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>
@@ -159,12 +159,12 @@
             <button
               (click)="uploadDocuments()"
               class="btn btn-primary btn-sm active">
-              <i class="fa fa-file-archive"></i> Adjuntar documentos
+              Adjuntar documentos <i class="fa fa-file-archive"></i>
             </button>
             <button
               (click)="uploadPicture()"
               class="btn btn-info btn-sm active">
-              <i class="fa fa-camera"></i> Adjuntar fotografias
+              Adjuntar fotografias <i class="fa fa-camera"></i>
             </button>
           </div>
         </div>
@@ -255,21 +255,21 @@
           <button
             (click)="assignReceipt()"
             class="btn btn-primary btn-sm active">
-            Asignar recibo
+            Asignar recibo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
           <button (click)="sendGoodGuard()" class="btn btn-info btn-sm active">
-            Resguardo
+            Resguardo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
           <button
             (click)="sendWarehouse()"
             class="btn btn-primary btn-sm active">
-            Almacén
+            Almacén <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
           <button (click)="rescheduling()" class="btn btn-info btn-sm active">
-            Reprogramaci&oacute;n
+            Reprogramaci&oacute;n <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
           <button (click)="cancelGood()" class="btn btn-danger btn-sm active">
-            Cancelaci&oacute;n
+            Cancelaci&oacute;n <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
       </div>
@@ -572,18 +572,18 @@
                     <button
                       (click)="deleteGoodReceipt()"
                       class="btn btn-danger btn-sm active ml-2">
-                      <i class="fa fa-trash"></i> Eliminar selección
+                      Eliminar selección <i class="fa fa-trash"></i>
                     </button>
 
                     <button
                       (click)="uploadDocuments()"
                       class="btn btn-primary btn-sm active ml-2">
-                      <i class="fa fa-file-archive"></i> Adjuntar documentos
+                      Adjuntar documentos <i class="fa fa-file-archive"></i>
                     </button>
                     <button
                       (click)="uploadPicture()"
                       class="btn btn-info btn-sm active ml-2">
-                      <i class="fa fa-camera"></i> Adjuntar fotografias
+                      Adjuntar fotografias <i class="fa fa-camera"></i>
                     </button>
                   </div>
                   <div class="row" *ngIf="!formLoading">
@@ -870,24 +870,24 @@
                 <button
                   (click)="assingMinute()"
                   class="btn btn-primary btn-sm active ml-2">
-                  Asignar Acta
+                  Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
 
                 <button
                   (click)="deleteGoodGuard()"
                   class="btn btn-danger btn-sm active ml-2">
-                  <i class="fa fa-trash"></i> Eliminar selección
+                  Eliminar selección <i class="fa fa-trash"></i>
                 </button>
 
                 <button
                   (click)="uploadDocuments()"
                   class="btn btn-primary btn-sm active ml-2">
-                  <i class="fa fa-file-archive"></i> Adjuntar documentos
+                  Adjuntar documentos <i class="fa fa-file-archive"></i>
                 </button>
                 <button
                   (click)="uploadPicture()"
                   class="btn btn-info btn-sm active ml-2">
-                  <i class="fa fa-camera"></i> Adjuntar fotografias
+                  Adjuntar fotografias <i class="fa fa-camera"></i>
                 </button>
               </div>
               <div>
@@ -1131,7 +1131,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingsReceiptsGuards"
                   [source]="receiptGuards"
-                  (edit)="showGoodsReceipt($event.data)"
+                  (edit)="showGoodsReceiptGuard($event.data)"
                   (delete)="generateReceiptGuard($event.data)">
                 </ng2-smart-table>
               </div>
@@ -1142,7 +1142,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingsReceiptsGuardsClose"
                   [source]="receiptGuards"
-                  (edit)="showGoodsReceipt($event.data)"
+                  (edit)="showGoodsReceiptGuard($event.data)"
                   (delete)="showReceipt($event.data)">
                 </ng2-smart-table>
               </div>
@@ -1158,24 +1158,24 @@
                 <button
                   (click)="assingMinuteWarehouse()"
                   class="btn btn-primary btn-sm active ml-2">
-                  Asignar Acta
+                  Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
 
                 <button
                   (click)="deleteGoodWarehouse()"
                   class="btn btn-danger btn-sm active ml-2">
-                  <i class="fa fa-trash"></i> Eliminar selección
+                  Eliminar selección <i class="fa fa-trash"></i>
                 </button>
 
                 <button
                   (click)="uploadDocuments()"
                   class="btn btn-primary btn-sm active ml-2">
-                  <i class="fa fa-file-archive"></i> Adjuntar documentos
+                  Adjuntar documentos <i class="fa fa-file-archive"></i>
                 </button>
                 <button
                   (click)="uploadPicture()"
                   class="btn btn-info btn-sm active ml-2">
-                  <i class="fa fa-camera"></i> Adjuntar fotografias
+                  Adjuntar fotografias <i class="fa fa-camera"></i>
                 </button>
               </div>
               <div class="row">
@@ -1422,7 +1422,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingsReceiptWarehouse"
                   [source]="receiptWarehouse"
-                  (edit)="showGoodsReceipt($event.data)"
+                  (edit)="showGoodsReceiptWarehouse($event.data)"
                   (delete)="generateReceiptWarehouse($event.data)">
                 </ng2-smart-table>
               </div>
@@ -1434,7 +1434,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingsReceiptWarehouseClose"
                   [source]="receiptWarehouse"
-                  (edit)="showGoodsReceipt($event.data)"
+                  (edit)="showGoodsReceiptWarehouse($event.data)"
                   (delete)="generateReceiptWarehouse($event.data)">
                 </ng2-smart-table>
               </div>
@@ -1456,24 +1456,24 @@
                   <button
                     (click)="assingMinuteReprogramation()"
                     class="btn btn-primary btn-sm active ml-2">
-                    Asignar Acta
+                    Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
                   </button>
 
                   <button
                     (click)="deleteGoodRep()"
                     class="btn btn-danger btn-sm active ml-2">
-                    <i class="fa fa-trash"></i> Eliminar selección
+                    Eliminar selección <i class="fa fa-trash"></i>
                   </button>
 
                   <button
                     (click)="uploadDocuments()"
                     class="btn btn-primary btn-sm active ml-2">
-                    <i class="fa fa-file-archive"></i> Adjuntar documentos
+                    Adjuntar documentos <i class="fa fa-file-archive"></i>
                   </button>
                   <button
                     (click)="uploadPicture()"
                     class="btn btn-info btn-sm active ml-2">
-                    <i class="fa fa-camera"></i> Adjuntar fotografias
+                    Adjuntar fotografias <i class="fa fa-camera"></i>
                   </button>
                 </div>
                 <div class="row">
@@ -1717,24 +1717,24 @@
                 <button
                   (click)="assingMinuteCancelation()"
                   class="btn btn-primary btn-sm active ml-2">
-                  Asignar Acta
+                  Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
 
                 <button
                   (click)="deleteGoodCancelation()"
                   class="btn btn-danger btn-sm active ml-2">
-                  <i class="fa fa-trash"></i> Eliminar selección
+                  Eliminar selección <i class="fa fa-trash"></i>
                 </button>
 
                 <button
                   (click)="uploadDocuments()"
                   class="btn btn-primary btn-sm active ml-2">
-                  <i class="fa fa-file-archive"></i> Adjuntar documentos
+                  Adjuntar documentos <i class="fa fa-file-archive"></i>
                 </button>
                 <button
                   (click)="uploadPicture()"
                   class="btn btn-info btn-sm active ml-2">
-                  <i class="fa fa-camera"></i> Adjuntar fotografias
+                  Adjuntar fotografias <i class="fa fa-camera"></i>
                 </button>
               </div>
               <div class="row">

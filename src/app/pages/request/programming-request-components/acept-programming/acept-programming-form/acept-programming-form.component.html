@@ -10,28 +10,27 @@
         <button
           (click)="signOffice()"
           class="btn btn-info btn-sm active"
-          *ngIf="programming?.contentId == null">
-          Firmar oficio
+          *ngIf="!programming?.contentId">
+          Firmar oficio <i class="fa fa-file" aria-hidden="true"></i>
         </button>
 
         <button
           (click)="viewOffice()"
           class="btn btn-info btn-sm active"
           *ngIf="programming?.contentId">
-          Ver oficio
+          Ver oficio <i class="fa fa-eye" aria-hidden="true"></i>
         </button>
 
         <button
           (click)="aprobateProgramming()"
           class="btn btn-primary btn-sm active"
-          *ngIf="programming?.concurrentMsg == null">
-          Aprobar
+          *ngIf="!task?.State">
+          Aprobar <i class="fa fa-check" aria-hidden="true"></i>
         </button>
         <button
-          (click)="aprobateProgramming()"
-          class="btn btn-primary btn-sm active"
-          *ngIf="programming?.concurrentMsg">
-          Aprobar
+          class="btn btn-primary btn-sm active disabled"
+          *ngIf="task?.State == 'FINALIZADA'">
+          Aprobar <i class="fa fa-check" aria-hidden="true"></i>
         </button>
         <button
           (click)="rejectProgramming()"
@@ -165,7 +164,7 @@
         <div class="md-tabs">
           <tabset>
             <tab [heading]="headingTransportable" id="tab1">
-              <div class="d-flex justify-content-end">
+              <div class="d-flex justify-content-start">
                 <app-columns-select
                   [(settings)]="
                     settingsTransportableGoods
@@ -184,7 +183,7 @@
                 [totalItems]="totalItemsTransportable"></app-pagination>
             </tab>
             <tab [heading]="headingGuard">
-              <div class="d-flex justify-content-end">
+              <div class="d-flex justify-content-start">
                 <app-columns-select
                   [(settings)]="settingGuardGoods"></app-columns-select>
               </div>
@@ -198,7 +197,7 @@
               </div>
             </tab>
             <tab [heading]="headingWarehouse">
-              <div class="d-flex justify-content-end">
+              <div class="d-flex justify-content-start">
                 <app-columns-select
                   [(settings)]="settingWarehouseGoods"></app-columns-select>
               </div>

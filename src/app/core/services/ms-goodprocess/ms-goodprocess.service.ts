@@ -44,6 +44,10 @@ export class GoodprocessService extends HttpService {
     return this.post(`${GoodprocessEndpoints.ExpedientePostQuery}`, params);
   }
 
+  getScreenGood(model: any): Observable<IListResponse<any>> {
+    return this.post(`${GoodprocessEndpoints.consultationScreenGood}`, model);
+  }
+
   getGoodType(params?: ListParams) {
     return this.get<IListResponse<any>>(
       GoodprocessEndpoints.GetGoodType,

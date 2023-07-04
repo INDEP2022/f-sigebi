@@ -392,7 +392,11 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     let LV_PROCESO: any = null;
     let LV_CVE_PERIODO: any = null;
     let LV_VALIDAREP: number = 1;
-    if (this.delegationMae.delegationNumber == null) {
+
+    if (
+      this.delegationDefault == null ||
+      this.delegationMae.delegationNumber == null
+    ) {
       LV_VALIDAREP = 0;
       this.alert(
         'warning',
@@ -459,7 +463,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
             };
-            this.onLoadToast('success', '', 'Reporte generado');
+            this.alert('success', '', 'Reporte generado');
             this.cleanForm();
             this.modalService.show(PreviewDocumentsComponent, config);
           }
@@ -479,9 +483,19 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     try {
       const excelImport = this.excelService.getData<any>(binaryExcel);
       console.log('excelImport', excelImport);
-      this.createDataVigilanceMtp(excelImport);
+      if (excelImport.length == 0) {
+        this.alert('warning', 'El archivo se encuentra vacío', '');
+        return;
+      } else {
+        let result = excelImport.map(item => {
+          if (1) {
+          }
+        });
+
+        this.createDataVigilanceMtp(excelImport);
+      }
     } catch (error) {
-      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+      this.alert('error', 'Ocurrio un error al leer el archivo', 'Error');
     }
   }
 
@@ -499,8 +513,13 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     let LV_MES_PROCESO: number = null;
     let LV_CVE_PERIODO: any = null;
     let LV_MENSAJE: any = null;
-    const cveProcessTwo = this.formRegistro.get('processTwo').value;
 
+    if (this.delegationDefault == null) {
+      this.alert('warning', 'Debe seleccionar una delegación', '');
+      return;
+    }
+
+    const cveProcessTwo = this.formRegistro.get('processTwo').value;
     if (cveProcessTwo != 1 && cveProcessTwo != 2) {
       LV_VALPROCESO = 0;
       this.alert('warning', 'El Proceso es información requerida', '');
@@ -739,6 +758,11 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     let LV_CVE_PERIODO: any = null;
     let LV_MENSAJE: any = null;
     let LV_TOTREGISTRO: any = null;
+
+    if (this.delegationDefault == null) {
+      this.alert('warning', 'Debe seleccionar una delegación', '');
+      return;
+    }
     const cveProcessTwo = this.formRegistro.get('processTwo').value;
     if (cveProcessTwo != 1 && cveProcessTwo != 2) {
       LV_VALPROCESO = 0;
@@ -826,7 +850,6 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
                 pTypeDelaga: this.delegationDefault.typeDelegation,
                 pInitialDate: fromTwo,
                 pEndDate: toTwo,
-                cvRecord: 100,
               };
 
               const createRegisterRandom: any = await this.createRegisterRandom(
@@ -940,6 +963,10 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
   // LV_VALPROCESO:= 0;
   // 	end if;
   async exportar() {
+    if (this.goods.count() == 0) {
+      this.alert('warning', 'No hay registros cargados para exportar', '');
+      return;
+    }
     const cveProcess = this.form.get('process').value;
     if (cveProcess == null) {
       this.alert('warning', 'El tipo de proceso es un valor requerido', '');
@@ -963,6 +990,11 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
   }
 
   async revisarCarga() {
+    if (this.delegationDefault == null) {
+      this.alert('warning', 'Debe seleccionar una delegación', '');
+      return;
+    }
+
     const cveProcessTwo = this.formRegistro.get('processTwo').value;
     if (cveProcessTwo != 1 && cveProcessTwo != 2) {
       this.alert('warning', 'El Proceso es información requerida', '');
@@ -992,8 +1024,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     const fecha = new Date(fromTwo);
     const year = fecha.getFullYear();
     const month = fecha.getMonth() + 1;
-    const formattedDate = `${year}${month.toString()}`;
-    // const formattedDate = `${year}${month.toString().padStart(2, '0')}`;
+    // const formattedDate = `${year}${month.toString()}`;
+    const formattedDate = `${year}${month.toString().padStart(2, '0')}`;
 
     console.log(formattedDate);
     let obj = {

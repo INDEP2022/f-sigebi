@@ -1,12 +1,12 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const ELECTRONICSIGNATURE_COLUMNS = {
-  clave_oficio_armada: {
-    title: 'Clave oficio Armada',
+  armedtradekey: {
+    title: 'Clave Oficio Armada',
     width: '20%',
     sort: false,
   },
-  fec_dictaminacion: {
+  rulingdate: {
     title: 'Fecha Dictámen',
     width: '20%',
     sort: false,
@@ -19,24 +19,23 @@ export const ELECTRONICSIGNATURE_COLUMNS = {
       component: CustomDateFilterComponent,
     },
   },
-  tipo_dictaminacion: {
+  typeruling: {
     title: 'Tipo Dictámen',
     width: '20%',
     sort: false,
   },
-  remitente: {
+  sender: {
     title: 'Remitente',
     width: '10%',
     sort: false,
   },
-  estatus_of: {
+  statusof: {
     title: 'Estatus',
     width: '10%',
     sort: false,
   },
-
-  firma: {
-    title: 'Firma electrónica',
+  signature: {
+    title: 'Firma Electrónica',
     width: '20%',
     sort: false,
   },

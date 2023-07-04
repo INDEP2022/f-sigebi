@@ -43,9 +43,9 @@ export class PhotosListComponent extends BasePage implements OnInit {
     }
   }
   private _goodNumber: string | number;
-  errorMessage = '';
-  userPermisions = true;
-  lastConsecutive: number = 1;
+  errorMessage: string;
+  userPermisions = false;
+  // lastConsecutive: number = 1;
   filesToDelete: string[] = [];
   files: string[] = [];
   form: FormGroup;
@@ -93,9 +93,9 @@ export class PhotosListComponent extends BasePage implements OnInit {
       this.proceedingService.getExistProceedings(this._goodNumber + '').pipe(
         takeUntil(this.$unSubscribe),
         catchError(x => {
-          return of({ data: [] as { existe: number }[] });
+          return of({ data: [] as { no_acta: string }[] });
         }),
-        map(x => x.data.length > 0)
+        map(x => (x.data.length > 0 ? x.data[0].no_acta : null))
       )
     );
     return existe;
@@ -174,7 +174,8 @@ export class PhotosListComponent extends BasePage implements OnInit {
 
   private async getData() {
     this.files = [];
-    this.lastConsecutive = 1;
+    // debugger;
+    // this.lastConsecutive = 1;
     this.filePhotoService
       .getAll(this.goodNumber + '')
       .pipe(takeUntil(this.$unSubscribe))
@@ -182,19 +183,20 @@ export class PhotosListComponent extends BasePage implements OnInit {
         next: async response => {
           if (response) {
             console.log(response);
-            this.files = [...response];
-            if (response.length > 0) {
-              const last = response[response.length - 1];
-              const index = last.indexOf('F');
-              this.lastConsecutive += +last.substring(index + 1, index + 5);
+            // debugger;
+            if (response) {
+              this.files = [...response];
+              // const index = last.indexOf('F');
+              // this.lastConsecutive += +last.substring(index + 1, index + 5);
               const pufValidaUsuario = await this.pufValidaUsuario();
               if (pufValidaUsuario === 1) {
                 this.userPermisions = true;
               } else {
-                const pufValidaProcesoBien = await this.pufValidaProcesoBien();
-                if (pufValidaProcesoBien) {
+                const noActa = await this.pufValidaProcesoBien();
+                if (noActa) {
                   this.errorMessage =
-                    'No puede eliminar las fotos, el bien ya fue recibido';
+                    'No puede alterar las fotos, el bien ya fue recibido por el acta ' +
+                    noActa;
                   console.log(this.errorMessage);
 
                   this.userPermisions = false;
@@ -210,7 +212,10 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   async confirmDelete(all = false) {
-    if (this.disabledDeletePhotos()) return;
+    // if (this.disabledDeletePhotos()) return;
+    if (all) {
+      this.filesToDelete = [...this.files];
+    }
     if (this.filesToDelete.length < 1) {
       this.alert(
         'warning',
@@ -219,15 +224,14 @@ export class PhotosListComponent extends BasePage implements OnInit {
       );
       return;
     }
+
     const result = await this.alertQuestion(
       'warning',
       'Advertencia',
-      '¿Estás seguro que desea eliminar las imágenes seleccionadas?'
+      all
+        ? '¿Estás seguro que desea eliminar todas las fotos?'
+        : '¿Estás seguro que desea eliminar las fotos seleccionadas?'
     );
-    if (all) {
-      this.filesToDelete = [...this.files];
-    }
-
     if (result.isConfirmed) {
       this.deleteSelectedFiles();
     }
@@ -237,8 +241,9 @@ export class PhotosListComponent extends BasePage implements OnInit {
     this.errorImages = [];
     const obs = this.filesToDelete.map(filename => {
       const index = filename.indexOf('F');
+      const finish = filename.indexOf('.');
       return this.deleteFile(
-        +filename.substring(index + 1, index + 5),
+        +filename.substring(index + 1, finish),
         filename
       ).pipe(debounceTime(500));
     });
@@ -262,9 +267,11 @@ export class PhotosListComponent extends BasePage implements OnInit {
             'Imagenes sin eliminar',
             this.errorImages.toString()
           );
-          this.filesToDelete = [];
-          this.service.deleteEvent.next(true);
-          this.getData();
+          if (this.errorImages.length < this.filesToDelete.length) {
+            this.filesToDelete = [];
+            this.service.deleteEvent.next(true);
+            this.getData();
+          }
         },
       });
   }
@@ -286,7 +293,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   openFileUploader() {
-    this.filePhotoService.consecNumber = this.lastConsecutive;
+    // this.filePhotoService.consecNumber = this.lastConsecutive;
     const config = {
       ...MODAL_CONFIG,
       initialState: {

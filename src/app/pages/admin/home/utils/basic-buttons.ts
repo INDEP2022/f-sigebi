@@ -6,6 +6,18 @@ export const BASIC_BUTTONS = [
               </button>`,
   },
   {
+    name: 'Nuevo',
+    code: `<button type="button" tooltip="Nuevo" containerClass="tooltip-style" class="btn btn-info btn-sm active ml-2 mr-2">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>`,
+  },
+  {
+    name: 'Agregar',
+    code: `<button type="button" tooltip="Agregar" containerClass="tooltip-style" class="btn btn-info btn-sm active ml-2 mr-2">
+                Agregar <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>`,
+  },
+  {
     name: 'Guardar',
     code: `<button
               type="button"
@@ -125,7 +137,17 @@ export const BASIC_BUTTONS = [
               </button>`,
   },
   {
-    name: 'Regrear',
+    name: 'Enviar',
+    code: `<button
+                type="submit"
+                class="btn btn-primary btn-sm active"
+                tooltip="Enviar"
+                containerClass="tooltip-style">
+                Enviar <i class="bx bx-send"></i>
+              </button>`,
+  },
+  {
+    name: 'Regresar',
     code: `<button class="btn btn-primary active btn-sm m-2">
           Regresar
           <i class="fas fa-arrow-circle-left"></i>
@@ -159,6 +181,42 @@ export const BASIC_BUTTONS = [
     code: `<button
             class="btn btn-primary btn-sm active mr-3">
             Recargar <i class="fas fa-sync-alt"> </i>
+          </button>`,
+  },
+  {
+    name: 'Escanear 2',
+    code: `<button  class="btn btn-info active btn-sm"> 
+    Escanear <i  class="bx bx-file bx-sm float-icon"></i>
+    </button>`,
+  },
+  {
+    name: 'Importar Excel',
+    code: `<button
+            type="button"
+            class="btn btn-sm btn-success active m-3">
+            Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
+          </button>`,
+  },
+  {
+    name: 'Seleccionar',
+    code: `<button
+          type="button"
+          class="btn btn-primary active btn-sm">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>`,
+  },
+  {
+    name: 'Aceptar',
+    code: `<button
+            class="btn btn-primary btn-sm active mr-3">
+            Aceptar
+          </button>`,
+  },
+  {
+    name: 'Cancelar',
+    code: `<button
+            class="btn btn-danger btn-sm active mr-3">
+            Cancelar
           </button>`,
   },
 ];

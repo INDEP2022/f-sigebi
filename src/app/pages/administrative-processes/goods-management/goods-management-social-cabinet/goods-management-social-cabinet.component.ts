@@ -1,14 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { catchError, firstValueFrom, of, takeUntil } from 'rxjs';
 import { map } from 'rxjs/operators';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { Iidentifier } from 'src/app/core/models/ms-good-tracker/identifier.model';
 import { ITmpTracker } from 'src/app/core/models/ms-good-tracker/tmpTracker.model';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
-import { SocialCabinetService } from 'src/app/core/services/ms-social-cabinet/social-cabinet.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { COLUMNS } from '../goods-management-social-table/columns';
+import { GoodsManagementSocialNotLoadGoodsComponent } from '../goods-management-social-table/goods-management-social-not-load-goods/goods-management-social-not-load-goods.component';
+import { GoodsManagementService } from '../services/goods-management.service';
+import { ETypeGabinetProcess } from './typeProcess';
 
 @Component({
   selector: 'app-goods-management-social-cabinet',
@@ -21,20 +26,20 @@ export class GoodsManagementSocialCabinetComponent
 {
   form: FormGroup = new FormGroup({});
   selectedGoodstxt: number[] = [];
-  clearFlag = 0;
-  processErrors = 0;
+  notLoadedGoods: { good: number }[] = [];
   disabledProcess = true;
   identifier: number;
-  user: string;
-  pageLoading = false;
+  typeGabinetProcess = ETypeGabinetProcess;
+  totalItems = 0;
   constructor(
+    private modalService: BsModalService,
     private fb: FormBuilder,
     private goodTrackerService: GoodTrackerService,
-    private service: SocialCabinetService
+    private goodsManagementService: GoodsManagementService
   ) {
     super();
-    this.user = localStorage.getItem('username').toUpperCase();
-    this.settings.columns = COLUMNS;
+
+    // this.settings.columns = COLUMNS;
   }
 
   ngOnInit(): void {
@@ -42,86 +47,40 @@ export class GoodsManagementSocialCabinetComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getExample());*/
     this.prepareForm();
-  }
-
-  get option() {
-    return this.form
-      ? this.form.get('option')
-        ? this.form.get('option').value
-        : null
-      : null;
-  }
-
-  private prepareForm(): void {
-    this.form = this.fb.group({
-      option: [null, [Validators.required]],
-      excuse: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      file: [null, [Validators.required]],
-      //message: [null, [Validators.required]]
-    });
-  }
-
-  showInfo() {}
-
-  async processCabinetSocial() {
-    this.pageLoading = true;
-    this.service
-      .paValidSocialCabinet({
-        pId: this.identifier,
-        pTypeProcess: this.option,
-        pJustify: this.form.get('excuse').value,
-        pUser: this.user,
-      })
+    this.goodsManagementService.refreshData
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          console.log(response);
-          this.processErrors++;
-          // this.disabledProcess = true;
-          this.selectedGoodstxt = [...this.selectedGoodstxt];
-          const message = response.message ? response.message[0] ?? '' : '';
-          this.pageLoading = false;
-          this.form.get('option').setValue(null);
-          // this.form.get('option').setValue(null);
-          // if (response.dataErrors.length > 0) {
-          //   this.alert(
-          //     'error',
-          //     'Procesamiento Gabinete Social',
-          //     response.dataErrors[0]
-          //   );
-          // } else {
-          //   this.alert(
-          //     'success',
-          //     'Procesamiento Gabinete Social',
-          //     'Bienes procesados'
-          //   );
-          // }
-          if (
-            message.includes('correctamente') ||
-            message.includes('procesado')
-          ) {
-            this.alert(
-              'success',
-              'Procesamiento Gabinete Social',
-              'Bienes procesados'
-            );
-          } else {
-            this.alert('error', 'Procesamiento Gabinete Social', message);
+          if (response) {
+            this.getData();
           }
-        },
-        error: err => {
-          this.pageLoading = false;
-          this.form.get('option').setValue(null);
-          this.alert('error', 'ERROR', 'Bienes no procesados correctamente');
-          // this.selectedGoodstxt = [...this.selectedGoodstxt];
-          this.processErrors++;
         },
       });
   }
 
   clear() {
     this.form.reset();
-    this.clearFlag++;
+    this.selectedGoodstxt = [];
+    this.goodsManagementService.clear.next(true);
+  }
+
+  showNotLoads() {
+    let config: ModalOptions = {
+      initialState: {
+        data: this.notLoadedGoods,
+        totalItems: this.notLoadedGoods.length,
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(GoodsManagementSocialNotLoadGoodsComponent, config);
+  }
+
+  private prepareForm(): void {
+    this.form = this.fb.group({
+      file: [null, [Validators.required]],
+      //message: [null, [Validators.required]]
+    });
   }
 
   private getSeqRastreador() {
@@ -144,6 +103,7 @@ export class GoodsManagementSocialCabinetComponent
   }
 
   async onFileChange(event: any) {
+    this.loading = true;
     const file = event.target.files[0];
     let fileReader = new FileReader();
     fileReader.onload = async e => {
@@ -172,27 +132,45 @@ export class GoodsManagementSocialCabinetComponent
       });
       this.selectedGoodstxt = [...newArray];
       console.log(this.selectedGoodstxt);
-      // const filterParams = new FilterParams();
-      // filterParams.addFilter(
-      //   'goodNumber',
-      //   this.selectedGoodstxt.toString(),
-      //   SearchFilter.IN
-      // );
-      // const response = await firstValueFrom(
-      //   this.goodTrackerService
-      //     .getAll(filterParams.getParams())
-      //     .pipe(catchError(x => of({ count: 0, data: [] })))
-      // );
-      // if (response.data.length === 0) {
-      //   this.alert('error', 'Error', 'Bienes no encontrados');
-      // } else {
-      //   this.totalItems = response.count;
-      //   this.data = response.data;
-      // }
+      this.getData();
       // console.log(this.selectedGoodstxt);
       // console.log(response);
     };
     fileReader.readAsText(file);
+  }
+
+  private async getData() {
+    const filterParams = new FilterParams();
+    filterParams.limit = 20000;
+    filterParams.addFilter(
+      'goodNumber',
+      this.selectedGoodstxt.toString(),
+      SearchFilter.IN
+    );
+    const response = await firstValueFrom(
+      this.goodTrackerService.getAllSocialCabinet(filterParams.getParams())
+    );
+    if (response.data.length === 0) {
+      this.notLoadedGoods = [];
+      this.alert('error', 'Error', 'Bienes no encontrados');
+      this.goodsManagementService.refreshTable.next(false);
+    } else {
+      this.totalItems = response.count;
+      this.notLoadedGoods = [];
+      this.selectedGoodstxt.forEach(x => {
+        if (
+          !response.data
+            .map((item: any) => item.goodNumber)
+            .toString()
+            .includes(x + '')
+        ) {
+          this.notLoadedGoods.push({ good: x });
+        }
+      });
+      this.goodsManagementService.data = response.data;
+      this.goodsManagementService.refreshTable.next(true);
+    }
+    this.loading = false;
   }
 
   delete(data: any) {

@@ -3,57 +3,58 @@ export const PERCENTAGE_COLUMNS = {
     title: 'Proceso',
     type: 'number',
     sort: false,
-    // filter: {
-    //   type: 'list',
-    //   config: {
-    //     selectText: 'Seleccione un proceso',
-    //     list: [
-    //       { value: '1', title: 'Supervisión' },
-    //       { value: '2', title: 'Validación' },
-    //     ],
-    //   },
-    // },
-    // valuePrepareFunction: (_cell: any, row: any) => {
-    //   const process = row.cveProcess;
-    //   if (process == 1) {
-    //     return 'Supervisión';
-    //   } else {
-    //     return 'Validación';
-    //   }
-    // },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Todos',
+        list: [
+          { value: '1', title: 'Supervisión' },
+          { value: '2', title: 'Validación' },
+        ],
+      },
+    },
+    valuePrepareFunction: (_cell: any, row: any) => {
+      const process = row.cveProcess;
+      if (process == 1) {
+        return 'Supervisión';
+      } else {
+        return 'Validación';
+      }
+    },
   },
-  delegationNumber: {
+  delegation_: {
     title: 'Delegación',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (_cell: any, row: any) => {
-      return `${row.delegationNumber} ${
-        '-  ' + row?.delegationView?.description
-      }`;
-    },
+    // valuePrepareFunction: (_cell: any, row: any) => {
+    //   return `${row?.delegation?.id} ${'-  ' + row?.delegation?.description}`;
+    // },
+    // filterFunction: (cell?: any, search?: string) => {
+    //   return search != null ? search : '';
+    // },
   },
   delegationType: {
     title: 'Tipo',
     type: 'number',
     sort: false,
-    // filter: {
-    //   type: 'list',
-    //   config: {
-    //     selectText: 'Seleccione un tipo',
-    //     list: [
-    //       { value: '1', title: 'Ferronal' },
-    //       { value: '2', title: 'Sae' },
-    //     ],
-    //   },
-    // },
-    // valuePrepareFunction: (_cell: any, row: any) => {
-    //   const type = row.delegationType;
-    //   if (type == 1) {
-    //     return 'Ferronal';
-    //   } else {
-    //     return 'Sae';
-    //   }
-    // },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Todos',
+        list: [
+          { value: '1', title: 'Ferronal' },
+          { value: '2', title: 'Indep' },
+        ],
+      },
+    },
+    valuePrepareFunction: (_cell: any, row: any) => {
+      const type = row.delegationType;
+      if (type == 1) {
+        return 'Ferronal';
+      } else {
+        return 'Indep';
+      }
+    },
   },
   percentage: {
     title: 'Porcentaje',

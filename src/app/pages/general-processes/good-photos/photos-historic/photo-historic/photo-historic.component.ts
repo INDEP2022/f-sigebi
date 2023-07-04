@@ -38,11 +38,12 @@ export class PhotoHistoricComponent
   private filenameChange() {
     this.loading = true;
     let index = this.filename.indexOf('F');
+    let finish = this.filename.indexOf('.');
     console.log(index);
     this.service
       .getByIdHistoric(
         this.goodNumber,
-        +this.filename.substring(index + 1, index + 11)
+        +this.filename.substring(index + 1, finish)
       )
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
