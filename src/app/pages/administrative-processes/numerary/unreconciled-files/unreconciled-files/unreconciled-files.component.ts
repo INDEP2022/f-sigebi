@@ -78,6 +78,7 @@ export class UnreconciledFilesComponent implements OnInit {
       PN_EXPFIN: this.form.controls['fileTo'].value,
     };
 
+    console.log('params', params);
     this.siabService
       .fetchReport('RGERADBEXPESCONCI', params)
       // .fetchReportBlank('blank')

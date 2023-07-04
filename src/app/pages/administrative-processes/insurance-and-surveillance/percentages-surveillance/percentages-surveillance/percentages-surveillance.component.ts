@@ -32,7 +32,7 @@ export class PercentagesSurveillanceComponent
 
   delegationTypes = [
     { name: 'Ferronal', value: '1' },
-    { name: 'Sae', value: '2' },
+    { name: 'Indep', value: '2' },
   ];
 
   totalItems: number = 0;
@@ -54,6 +54,7 @@ export class PercentagesSurveillanceComponent
   filters = new FilterParams();
   delegations = new DefaultSelect<any>();
   columnFilters: any = [];
+  disabledEdit: boolean = false;
   constructor(
     private survillanceService: SurvillanceService,
     private dialogService: BsModalService
@@ -83,7 +84,7 @@ export class PercentagesSurveillanceComponent
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               cveProcess: () => (searchFilter = SearchFilter.EQ),
-              delegationNumber: () => (searchFilter = SearchFilter.EQ),
+              delegation: () => (searchFilter = SearchFilter.EQ),
               delegationType: () => (searchFilter = SearchFilter.EQ),
               percentage: () => (searchFilter = SearchFilter.EQ),
             };
@@ -92,10 +93,12 @@ export class PercentagesSurveillanceComponent
 
             if (filter.search !== '') {
               console.log('filter.search', filter.search);
-              if (filter.search == 'motionDate') {
+
+              if (filter.field == 'delegation') {
+                this.columnFilters[field] = `${filter.search}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
               }
-              this.columnFilters[field] = `${filter.search}`;
-              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
 
               console.log(
                 'this.columnFilters[field]',
@@ -149,14 +152,28 @@ export class PercentagesSurveillanceComponent
 
   getPercentages(): void {
     this.loading = true;
-    let params: any = {
+    let params = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
 
+    if (params['filter.delegation']) {
+      if (!isNaN(parseInt(params['filter.delegation']))) {
+        params['filter.delegation.id'] = `$eq:${params['filter.delegation']}`;
+        delete params['filter.delegation'];
+      } else {
+        params[
+          'filter.delegation.description'
+        ] = `$ilike:${params['filter.delegation']}`;
+        delete params['filter.delegation'];
+      }
+    }
+
+    // delegation
     this.survillanceService.getVigProcessPercentages(params).subscribe({
       next: response => {
         console.log('responseresponse', response);
+        let result = response.data.map(item => {});
         this.sources.load(response.data);
         this.sources.refresh();
         this.totalItems = response.count;
@@ -168,7 +185,10 @@ export class PercentagesSurveillanceComponent
     });
   }
 
-  onEditConfirm(event: { data: IVigProcessPercentages }): void {
+  onEditConfirm(
+    event: { data: IVigProcessPercentages },
+    valEdit: boolean
+  ): void {
     this.editDialogData = event.data;
     const {
       cveProcess,
@@ -183,7 +203,7 @@ export class PercentagesSurveillanceComponent
       delegationType: delegationType.toString(),
       percentage: percentage,
     });
-    this.openDialogPercentage();
+    this.openDialogPercentage(valEdit);
   }
 
   onDeleteConfirm(event: { data: IVigProcessPercentages }): void {
@@ -194,14 +214,19 @@ export class PercentagesSurveillanceComponent
       ''
     ).then(async question => {
       if (question.isConfirmed) {
-        this.deleteInServerPercentage(event.data.cveProcess);
+        let obj = {
+          cveProcess: event.data.cveProcess,
+          delegationNumber: event.data.delegationNumber,
+          delegationType: event.data.delegationType,
+        };
+        this.deleteInServerPercentage(obj);
       }
     });
   }
 
-  deleteInServerPercentage(id: any): void {
+  deleteInServerPercentage(data: any): void {
     this.loading = true;
-    this.survillanceService.deleteVigProcessPercentages(id).subscribe({
+    this.survillanceService.deleteVigProcessPercentages(data).subscribe({
       next: response => {
         console.log(response);
 
@@ -216,7 +241,8 @@ export class PercentagesSurveillanceComponent
     });
   }
 
-  openDialogPercentage(): void {
+  openDialogPercentage(valEdit: boolean): void {
+    this.disabledEdit = valEdit;
     this.getDelegation(new ListParams());
     this.dialogPercentageRef = this.dialogService.show(
       this.dialogPercentageTemplateRef,
@@ -247,8 +273,8 @@ export class PercentagesSurveillanceComponent
       delegationNumber: this.form.value.delegationNumber,
       delegationType: this.form.value.delegationType,
       percentage: this.form.value.percentage,
-      // delegation: delegation,
-      // delegationView: this.form.value.delegationNumber,
+      delegation: this.form.value.delegationNumber,
+      delegationView: this.form.value.delegationNumber,
     };
     // this.loading = true;
     if (this.editDialogData) {
@@ -257,11 +283,11 @@ export class PercentagesSurveillanceComponent
         delegationNumber: this.form.value.delegationNumber,
         delegationType: this.form.value.delegationType,
         percentage: this.form.value.percentage,
-        // delegation: delegation,
-        // delegationView: this.form.value.delegationNumber,
+        delegation: this.form.value.delegationNumber,
+        delegationView: this.form.value.delegationNumber,
       };
       this.survillanceService
-        .putVigProcessPercentages(this.editDialogData.cveProcess as any, obj1)
+        .putVigProcessPercentages(this.editDialogData.cveProcess as any, values)
         .subscribe({
           next: () => {
             this.alert('success', 'Registro actualizado correctamente', '');
@@ -277,7 +303,7 @@ export class PercentagesSurveillanceComponent
       return;
     } else {
     }
-    this.survillanceService.postVigProcessPercentages(obj).subscribe({
+    this.survillanceService.postVigProcessPercentages(values).subscribe({
       next: response => {
         console.log('treu', response);
         if (response) {
@@ -288,8 +314,16 @@ export class PercentagesSurveillanceComponent
         }
         // this.loading = false;
       },
-      error: () => {
-        this.alert('error', 'Error al crear el registro', '');
+      error: err => {
+        if (err.error.message == 'Los ids ya fueron registrados') {
+          this.alert(
+            'error',
+            'Se han encontrado registros previos con estos datos ingresados.',
+            ''
+          );
+        } else {
+          this.alert('error', 'Error al crear el registro', err.error.message);
+        }
         // this.loading = false;
       },
     });
@@ -332,7 +366,7 @@ export class PercentagesSurveillanceComponent
   }
 
   async llenarCampos(event: any) {
-    this.form.get('delegationType').setValue(event.typeDelegation);
+    // this.form.get('delegationType').setValue(event.typeDelegation);
     console.log('event', event);
   }
 }
