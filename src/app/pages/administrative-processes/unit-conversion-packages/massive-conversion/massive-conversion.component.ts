@@ -4,7 +4,10 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
@@ -16,15 +19,21 @@ import { COLUMNS } from './columns';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { format } from 'date-fns';
 import * as FileSaver from 'file-saver';
 import { LocalDataSource } from 'ng2-smart-table';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IpackageValidGood } from 'src/app/core/models/catalogs/Ipackage-valid-good';
 import {
+  IFoliovInvoice,
   IPackage,
   IPackageInfo,
 } from 'src/app/core/models/catalogs/package.model';
+import { IPerUser } from 'src/app/core/models/expedient/expedient.model';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dynamic-catalogs.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
@@ -32,13 +41,32 @@ import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-good
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { MassiveConversionErrorsModalComponent } from '../massive-conversion-erros-list/massive-conversion-errors-modal/massive-conversion-errors-modal.component';
 import { MassiveConversionModalGoodComponent } from '../massive-conversion-modal-good/massive-conversion-modal-good.component';
+import { MassiveConversionSelectGoodComponent } from '../massive-conversion-select-good/massive-conversion-select-good';
 interface ValidaButton {
   PB_VALIDA: boolean;
   PB_AUTORIZA: boolean;
   PB_CERRAR: boolean;
   PB_CANCELA: boolean;
+  PB_PERMISOS: boolean;
+}
+
+interface GeneralPermissions {
+  Proyecto: boolean;
+  Validar: boolean;
+  Autorizar: boolean;
+  Cerrar: boolean;
+  Cancelar: boolean;
+}
+
+interface DataUser {
+  delegation: string;
+  desDelegation: string;
 }
 
 @Component({
@@ -49,13 +77,25 @@ interface ValidaButton {
 export class MassiveConversionComponent extends BasePage implements OnInit {
   modalRef: BsModalRef;
   loadingText: string = '';
-  cvePackage: string = '';
   validaButton: ValidaButton = {
     PB_VALIDA: false,
     PB_AUTORIZA: false,
     PB_CERRAR: false,
     PB_CANCELA: false,
+    PB_PERMISOS: false,
   };
+  generalPermissions: GeneralPermissions = {
+    Proyecto: false,
+    Validar: false,
+    Autorizar: false,
+    Cerrar: false,
+    Cancelar: false,
+  };
+  dataUser: DataUser = {
+    delegation: '',
+    desDelegation: '',
+  };
+
   descData: {
     descDelegation: string;
   };
@@ -94,10 +134,21 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   chValidateGood = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   goodsList: any;
+
+  //VARIABLES PARA PAQUETES
+  dataPackage = new DefaultSelect();
+  statusPackage = new DefaultSelect([
+    { name: 'Proyecto', value: 'P' },
+    { name: 'Validado', value: 'V' },
+    { name: 'Autorizado', value: 'A' },
+    { name: 'Cerrado', value: 'C' },
+    { name: 'Aplicado', value: 'S' },
+    { name: 'Cancelado', value: 'X' },
+  ]);
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private packageGoodService: PackageGoodService,
     private bsModalRef: BsModalRef,
     private router: Router,
     private lotService: LotService,
@@ -106,13 +157,23 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private goodProcessService: GoodprocessService,
     private massiveGoodService: MassiveGoodService,
-    private siabService: SiabService
+    private siabService: SiabService,
+    //Nuevos servicios
+    private securityService: SecurityService,
+    private dynamicCatalogService: DynamicCatalogService,
+    private transferCatalogService: TransferenteService,
+    private rNomenclaService: ParametersService,
+    private userService: UsersService,
+    private packageGoodService: PackageGoodService,
+    private delegationService: DelegationService
   ) {
     super();
 
     //Tabla de PREVISUALIZACIÓN DE DATOS
     this.settings = {
       ...this.settings,
+      rowClassFunction: (row: { data: { available: any } }) =>
+        row.data.available ? 'bg-success text-white' : 'bg-dark text-white',
       actions: { add: false, delete: false, edit: false },
       columns: COLUMNS,
     };
@@ -123,18 +184,137 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoods());
     this.prepareForm();
+
+    this.checkPer();
+    this.fillDataByPackage();
+    this.getDataUser()
   }
-  generate() {}
+
+  //Gets del formulario de paquete
+  //Primera parte
+  get noPackage() {
+    return this.form.get('noPackage');
+  }
+
+  get cvePackage() {
+    return this.form.get('cvePackage');
+  }
+
+  get descriptionPackage() {
+    return this.form.get('descriptionPackage');
+  }
+
+  get packageType() {
+    return this.form.get('packageType');
+  }
+
+  get amountKg() {
+    return this.form.get('amountKg');
+  }
+
+  get status() {
+    return this.form.get('status');
+  }
+  //Segunda parte
+  get fecElab() {
+    return this.form.get('fecElab');
+  }
+
+  get userElab() {
+    return this.form.get('userElab');
+  }
+
+  get fecValida() {
+    return this.form.get('fecValida');
+  }
+
+  get userValida() {
+    return this.form.get('userValida');
+  }
+
+  get fecAutoriza() {
+    return this.form.get('fecAutoriza');
+  }
+
+  get userAutoriza() {
+    return this.form.get('userAutoriza');
+  }
+
+  get fecCerrado() {
+    return this.form.get('fecCerrado');
+  }
+
+  get userCerrado() {
+    return this.form.get('userCerrado');
+  }
+
+  get fecCancelado() {
+    return this.form.get('fecCancelado');
+  }
+
+  get userCancelado() {
+    return this.form.get('userCancelado');
+  }
+  //Tercera parte
+  get delegation() {
+    return this.form.get('delegation');
+  }
+
+  get goodClassification() {
+    return this.form.get('goodClassification');
+  }
+
+  get targetTag() {
+    return this.form.get('targetTag');
+  }
+
+  get goodStatus() {
+    return this.form.get('goodStatus');
+  }
+
+  get measurementUnit() {
+    return this.form.get('measurementUnit');
+  }
+
+  get transferent() {
+    return this.form.get('transferent');
+  }
+
+  get warehouse() {
+    return this.form.get('warehouse');
+  }
+  //Parrafos
+  get paragraph1() {
+    return this.form.get('paragraph1');
+  }
+
+  get paragraph2() {
+    return this.form.get('paragraph2');
+  }
+
+  get paragraph3() {
+    return this.form.get('paragraph3');
+  }
 
   private prepareForm(): void {
     this.form = this.fb.group({
       //Primer form
-      package: [null, [Validators.required]],
+      noPackage: [null, [Validators.required]],
+      cvePackage: [null, [Validators.required]],
+      descriptionPackage: [null, [Validators.required]],
       packageType: ['', [Validators.required]],
       amountKg: [null, [Validators.required]],
       status: [null, [Validators.required]],
-
-      //Segundo form
+      fecElab: [null],
+      userElab: [null],
+      fecValida: [null],
+      userValida: [null],
+      fecAutoriza: [null],
+      userAutoriza: [null],
+      fecCerrado: [null],
+      userCerrado: [null],
+      fecCancelado: [null],
+      userCancelado: [null],
       delegation: [null, [Validators.required]],
       goodClassification: [null, [Validators.required]],
       targetTag: [null, [Validators.required]],
@@ -142,6 +322,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       measurementUnit: [null, [Validators.required]],
       transferent: [null, [Validators.required]],
       warehouse: [null, [Validators.required]],
+
       //Pestaña de "ESCANEO"
       scanFolio: [
         null,
@@ -177,9 +358,136 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       check: [false],
     });
   }
+  //Datos de usuario logueado
+  getDataUser() {
+    const user =
+      localStorage.getItem('username') == 'sigebiadmon'
+        ? localStorage.getItem('username')
+        : localStorage.getItem('username').toLocaleUpperCase();
+    const routeUser = `?filter.name=$eq:${user}`;
+    this.userService.getAllSegUsers(routeUser).subscribe(
+      res => {
+        const resJson = JSON.parse(JSON.stringify(res.data[0]));
+        console.log(resJson.usuario.delegationNumber)
+        this.dataUser.delegation = resJson.usuario.delegationNumber;
+        const paramsF = new FilterParams()
+        paramsF.addFilter('id', resJson.usuario.delegationNumber)
+        this.delegationService
+          .getFiltered(paramsF.getParams())
+          .subscribe(
+            res => {
+              console.log(res['data'][0]['description']);
+              this.dataUser.desDelegation = res['data'][0]['description']
+            },
+            err => {
+              console.log(err);
+            }
+          );
+      },
+      err => {}
+    );
+  }
 
-  add() {
-    //this.openModal();
+  //Llenar valores por el no. paquete
+  fillDataByPackage() {
+    this.noPackage.valueChanges.subscribe(res => {
+      console.log(res);
+      if (res != null) {
+        //Seteo de la primera parte
+        this.cvePackage.setValue(res.cvePackage);
+        this.descriptionPackage.setValue(res.description);
+        this.packageType.setValue(res.typePackage);
+        this.amountKg.setValue(res.amount);
+        this.status.setValue(res.statuspack.toString().toLocaleUpperCase());
+        //Seteo de la segunda parte
+        this.fecElab.setValue(res.dateElaboration);
+        this.userElab.setValue(res.useElaboration);
+        this.fecValida.setValue(res.dateValid);
+        this.userValida.setValue(res.useValid);
+        this.fecAutoriza.setValue(res.dateauthorize);
+        this.userAutoriza.setValue(res.useauthorize);
+        this.fecCerrado.setValue(res.dateClosed);
+        this.userCerrado.setValue(res.useClosed);
+        this.fecCancelado.setValue(res.dateCancelled);
+        this.userCancelado.setValue(res.useCancelled);
+        //Setep de la tercera parte
+        this.delegation.setValue(res.numberDelegation);
+        this.goodClassification.setValue(res.numberClassifyGood);
+        this.targetTag.setValue(res.numberLabel);
+        this.goodStatus.setValue(res.status);
+        this.measurementUnit.setValue(res.unit);
+        this.transferent.setValue(res.numbertrainemiaut);
+        this.warehouse.setValue(res.numberStore);
+        //Parrafos
+        this.paragraph1.setValue(res.paragraph1);
+        this.paragraph2.setValue(res.paragraph2);
+        this.paragraph3.setValue(res.paragraph3);
+        //Traer los bienes de pack_det
+        this.getGoods();
+      }
+    });
+  }
+  //Buscar no_paquete
+  searchNoPackage(params: any) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('numberPackage', params.text);
+    this.packageGoodService.getPaqDestinationEnc(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        this.dataPackage = new DefaultSelect(res.data);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  checkPer() {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('screenKey', 'FMTOPAQUETE_0001');
+    paramsF.addFilter('readingPermission', 'S');
+    paramsF.addFilter('writingPermission', 'S');
+    paramsF.addFilter(
+      'user',
+      localStorage.getItem('username') == 'sigebiadmon'
+        ? localStorage.getItem('username')
+        : localStorage.getItem('username').toLocaleUpperCase()
+    );
+    this.securityService.getAccessXScreenFilter(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        if (res.count > 0) {
+          this.validaButton.PB_PERMISOS = true;
+        } else {
+          this.validaButton.PB_PERMISOS = false;
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
+
+    const model: IPerUser = {
+      user:
+        localStorage.getItem('username') == 'sigebiadmon'
+          ? localStorage.getItem('username')
+          : localStorage.getItem('username').toLocaleUpperCase(),
+    };
+
+    this.dynamicCatalogService.getPerUser(model).subscribe(
+      res => {
+        const resPer = res['data'][0]['otvalor'].split('-');
+        const gPer = this.generalPermissions;
+        gPer.Proyecto = resPer[0] == 'P' ? true : false;
+        gPer.Validar = resPer[1] == 'V' ? true : false;
+        gPer.Autorizar = resPer[2] == 'A' ? true : false;
+        gPer.Cerrar = resPer[3] == 'C' ? true : false;
+        gPer.Cancelar = resPer[4] == 'X' ? true : false;
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   goToGoodTracker() {
@@ -237,7 +545,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     });
   }
 
-  validateButtons(status: string) {
+  /* validateButtons(status: string) {
     if (status)
       if (status === 'P') {
         this.validaButton.PB_VALIDA = true;
@@ -275,7 +583,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       this.validaButton.PB_VALIDA = false;
       this.validaButton.PB_CERRAR = false;
     }
-  }
+  } */
 
   modalEvent(event: any) {
     let dataRes;
@@ -294,110 +602,77 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.totalItems = this.data.count();
   }
 
-  receiveInfo(information: any) {
-    const {
-      numberPackage,
-      typePackage,
-      amount,
-      statuspack,
-      unit,
-      status,
-      numberStore,
-      InvoiceUniversal,
-      cat_etiqueta_bien,
-      numberDelegation,
-      numberClassifyGood,
-      trial785,
-      numbertrainemiaut,
-      paragraph1,
-      paragraph2,
-      paragraph3,
-      dateApplied,
-      dateCapture,
-      dateCaptureHc,
-      dateClosed,
-      dateCancelled,
-      useElaboration,
-      useValid,
-      useauthorize,
-      useClosed,
-      useApplied,
-      useCancelled,
-      numberGoodFather,
-    } = information;
-    this.form.patchValue({
-      package: numberPackage,
-      packageType: typePackage,
-      amountKg: amount,
-      status: statuspack,
-      measurementUnit: unit,
-      goodStatus: status,
-      warehouse: numberStore,
-      scanFolio: InvoiceUniversal,
-      targetTag: cat_etiqueta_bien.labelNumber,
-      delegation: numberDelegation,
-      goodClassification: numberClassifyGood,
-      trial785,
-      transferent: numbertrainemiaut,
-      paragraph1,
-      paragraph2,
-      paragraph3,
-    });
-    ///// Asignacion de fechas
-    this.dates.elaborationDate = dateApplied;
-    this.dates.validationDate = dateCapture;
-    this.dates.authorizationDate = dateCaptureHc;
-    this.dates.closingDate = dateClosed;
-    this.dates.cancellationDate = dateCancelled;
-    /////
-    if (numberGoodFather) this.chargeForm2(numberGoodFather);
-    if (InvoiceUniversal) this.generateFo = false;
-    //Validacion de usuarios
-    this.users.elaborationUSU = useElaboration;
-    this.users.validationUSU = useValid;
-    this.users.authorizationUSU = useauthorize;
-    this.users.closingUSU = useClosed;
-    this.users.applicationUSU = useApplied;
-    this.users.cancellationUSU = useCancelled;
-    ///////
-    this.validateButtons(statuspack);
-    this.packageNumber = numberPackage;
-    this.getGoods();
-    this.cvePackage = information.cvePackage;
-    ////
-    this.descPaq = {
-      warehouseDesc: information.cat_almacenes.description,
-      descTargetTag: information.cat_etiqueta_bien.description,
-      descgoodClassification: information.cat_sssubtipo_bien.description,
-    };
-  }
   // Aquí puedes realizar las acciones necesarias con la información recibida
 
+  validateGood(item: any) {
+    const packVal = this.noPackage.value;
+    return new Promise((resolve, reject) => {
+      if (item.delegationNumber != packVal.numberDelegation) {
+        resolve({ available: false });
+      } else if (item.bienes.numberClassifyGood != packVal.numberClassifyGood) {
+        resolve({ available: false });
+      } else if (item.bienes.labelNumber != packVal.labelNumber) {
+        resolve({ available: false });
+      } else if (item.bienes.status != packVal.status) {
+        resolve({ available: false });
+      } //!Busqueda de no_transferente por el no_expediente
+      else if (item.bienes.storeNumber != packVal.numberStore) {
+        resolve({ available: false });
+      } else if (this.packageType.value != 3) {
+        if (item.bienes.storeNumber != packVal.numberStore) {
+          resolve({ available: false });
+        } else {
+          console.log('Entro aquí');
+        }
+      } else if (this.packageType.value == 3) {
+        if (item.bienes.val24 == null) {
+          resolve({ available: false });
+        } else {
+          console.log('Entro aquí');
+        }
+      } else {
+        resolve({ available: true });
+      }
+    });
+  }
+
+  selectRow(e: any) {
+    console.log(e);
+  }
+
   getGoods() {
-    if (!this.packageNumber) return;
+    if (!this.noPackage.value) return;
     this.loading = true;
     const newParams = new ListParams();
-    newParams['filter.id'] = this.packageNumber;
-    this.params.getValue()['filter.id'] = this.packageNumber;
+    newParams['filter.numberPackage'] = this.noPackage.value.numberPackage;
+    this.params.getValue()['filter.numberPackage'] =
+      this.noPackage.value.numberPackage;
     this.packageGoodService
       .getPaqDestinationDet(this.params.getValue())
       .subscribe(
-        response => {
+        async response => {
           this.goodsList = response.data;
-          let dataMap = response.data.map((item: any) => {
-            return {
-              numberGood: item.numberGood,
-              description: item.bienes.description,
-              record: item.numberRecord,
-              originalUnit: item.bienes.unit,
-              originalAmount: item.amount,
-            };
-          });
+          let dataMap = await Promise.all(
+            response.data.map(async (item: any) => {
+              const respAvailable = await this.validateGood(item);
+              let disponible = JSON.parse(
+                JSON.stringify(respAvailable)
+              ).available;
+              return {
+                ...item,
+                available: disponible,
+              };
+            })
+          );
           this.totalItems = response.count || 0;
           this.data.load(dataMap);
           this.loading = false;
         },
-        error => (this.loading = false)
+        error => {
+          this.totalItems = 0;
+          this.data.load([]);
+          this.loading = false;
+        }
       );
   }
 
@@ -879,5 +1154,249 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       ignoreBackdropClick: false,
     };
     this.modalService.show(MassiveConversionPermissionsComponent, modalConfig);
+  }
+
+  //Funciones Agregadar por Grigork Farfan
+  //Nuevo
+  newPackage() {
+    if (!this.generalPermissions.Proyecto) {
+      this.alert(
+        'warning',
+        'No cuenta con privilegios',
+        'No cuenta con privilegios para guardar un nuevo paquete'
+      );
+    } else if (this.packageType.value == null) {
+      this.alert('warning', 'Debe especificar el tipo de paquete', '');
+    } else if (this.delegation.value == null) {
+      this.alert('warning', 'Debe ingresar la coordinación que administra', '');
+    } else if (this.goodClassification.value == null) {
+      this.alert('warning', 'Debe ingresar el Clasificador', '');
+    } else if (this.targetTag.value == null) {
+      this.alert('warning', 'Debe ingresar la Etiqueta de destino', '');
+    } else if (this.goodStatus.value == null) {
+      this.alert('warning', 'Debe ingresar el Estatus', '');
+    } else if (this.transferent.value == null) {
+      this.alert('warning', 'Debe ingresar la Transferente', '');
+    } else if (this.packageType.value != 3) {
+      if (this.warehouse.value == null) {
+        this.alert('warning', 'Debe ingresar el Almacén', '');
+      }else{
+      this.newCvePackage()
+      }
+    }else{
+      this.newCvePackage()
+    }
+  }
+
+  zeroAdd(number: number, lengthS: number) {
+    if (number != null) {
+      const stringNum = number.toString();
+      let newString = '';
+      if (stringNum.length < lengthS) {
+        lengthS = lengthS - stringNum.length;
+        for (let i = 0; i < lengthS; i++) {
+          newString = newString + '0';
+        }
+        newString = newString + stringNum;
+        return newString;
+      } else {
+        return stringNum;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  newCvePackage() {
+    //Variables
+    let v_clave: string; //V_DESC_TRANS es el mismo valor
+    let v_id_tipo_acta: string;
+    let v_administra: string;
+    let v_ejecuta: string;
+    let v_folio: string;
+    console.log(this.delegation.value);
+
+    const paramsF = new FilterParams();
+    paramsF.addFilter('id', this.transferent.value);
+    this.transferCatalogService.getAllWithFilter(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        v_clave = res['data'][0].keyTransferent;
+        if (['PGR', 'PJF'].includes(v_clave)) {
+          v_id_tipo_acta = 'A';
+        } else {
+          v_id_tipo_acta = 'RT';
+        }
+        console.log(v_clave);
+        this.rNomenclaService
+          .getPhaseEdo(`date=${format(new Date(), 'yyyy-MM-dd')}`)
+          .subscribe(res => {
+            let edo = JSON.parse(JSON.stringify(res));
+            console.log(edo);
+            const paramsF2 = new FilterParams();
+            paramsF2.addFilter('numberDelegation2', this.delegation.value);
+            paramsF2.addFilter('stageedo', edo.stagecreated);
+            this.rNomenclaService.getRNomencla(paramsF2.getParams()).subscribe(
+              res => {
+                v_administra = JSON.parse(
+                  JSON.stringify(res['data'][0])
+                ).delegation;
+
+                const resJson = JSON.parse(JSON.stringify(res.data[0]));
+                const paramsF3 = new FilterParams();
+                paramsF3.addFilter('stageedo', edo.stagecreated);
+                paramsF3.addFilter3(
+                  'numberDelegation2',
+                  this.dataUser.delegation
+                );
+                this.rNomenclaService
+                  .getRNomencla(paramsF3.getParams())
+                  .subscribe(
+                    res => {
+                      v_ejecuta = JSON.parse(
+                        JSON.stringify(res['data'][0])
+                      ).delegation;
+                      const model: IFoliovInvoice = {
+                        vExecute: v_ejecuta,
+                        vYear: parseInt(format(new Date(), 'yy')),
+                      };
+                      console.log(model);
+                      this.packageGoodService.getFolio(model).subscribe(
+                        async res => {
+                          console.log(res);
+                          v_folio = this.zeroAdd(res.vfolio, 5);
+                          await this.cvePackage.setValue(
+                            `CONV/${v_id_tipo_acta}/${v_clave}/${v_administra}/${v_ejecuta}/${v_folio}/${format(
+                              new Date(),
+                              'yy'
+                            )}/${format(new Date(), 'MM')}`
+                          );
+                          await this.descriptionPackage.setValue(
+                            `FOLIO: ${v_folio}, DELEGACION: ${this.dataUser.desDelegation}`
+                          );
+                          this.generate()
+                        },
+                        err => {
+                          console.log(err);
+                        }
+                      );
+                    },
+                    err => {
+                      console.log(err);
+                    }
+                  );
+              },
+              err => {
+                console.log(err);
+              }
+            );
+          });
+      },
+      err => {
+        console.log(err);
+        v_clave = 'XXX';
+      }
+    );
+  }
+
+  generate() {
+    const user = localStorage.getItem('username') == 'sigebiadmon'
+    ? localStorage.getItem('username')
+    : localStorage.getItem('username').toLocaleUpperCase()
+
+    const model:IPackage = {
+      description: this.descriptionPackage.value,
+      typePackage: this.packageType.value,
+      amount: this.amountKg.value,
+      dateElaboration: format(new Date(),'yyyy-MM-dd'),
+      dateCapture: format(new Date(),'yyyy-MM-dd'),
+      dateCaptureHc: null,
+      statuspack: 'P',
+      numberClassifyGood: this.goodClassification.value,
+      numberLabel: this.targetTag.value,
+      unit: this.measurementUnit.value,
+      numberStore: null,
+      numberRecord: null,
+      status: this.goodStatus.value,
+      numbertrainemiaut: this.transferent.value,
+      dateValid: null,
+      dateauthorize: null,
+      dateClosed: null,
+      dateApplied: null,
+      cvePackage: this.cvePackage.value,
+      dateCancelled: null,
+      InvoiceUniversal: 0,
+      paragraph1: null,
+      paragraph2: null,
+      paragraph3: null,
+      numberDelegation: this.delegation.value,
+      useElaboration: user,
+      useValid: null,
+      useauthorize: null,
+      useClosed: null,
+      useApplied: null,
+      useCancelled: null,
+      numberGoodFather: 0,
+      nbOrigin: ''
+    }
+    console.log(model)
+    this.status.setValue('P')
+    this.fecElab.setValue(format(new Date(),'yyyy-MM-dd'))
+    this.userElab.setValue(user)
+
+    this.packageGoodService.insertPaqDestionarioEnc(model).subscribe(
+      res => {
+        console.log(res)
+        this.alert('success','Se creo nuevo paquete','')
+      },
+      err => {
+        console.log(err)
+      }
+    )
+  }
+
+  validateButtons(status: string) {
+    const vBtn = this.validaButton;
+    if (status == 'P') {
+      if (this.generalPermissions.Validar) {
+        vBtn.PB_VALIDA = true;
+        vBtn.PB_AUTORIZA = false;
+        vBtn.PB_CERRAR = false;
+      }
+      if (this.generalPermissions.Cancelar) {
+        vBtn.PB_CANCELA = true;
+      }
+    } else if (status == 'V') {
+      if (this.generalPermissions.Autorizar) {
+        vBtn.PB_AUTORIZA = true;
+        vBtn.PB_VALIDA = false;
+        vBtn.PB_CERRAR = false;
+      }
+      if (this.generalPermissions.Cancelar) {
+        vBtn.PB_CANCELA = true;
+      }
+    } else if (status == 'A') {
+      if (this.generalPermissions.Cancelar) {
+        vBtn.PB_CERRAR = true;
+        vBtn.PB_AUTORIZA = false;
+        vBtn.PB_VALIDA = false;
+      }
+      if (this.generalPermissions.Cancelar) {
+        vBtn.PB_CANCELA = true;
+      }
+    } else if (status == 'C') {
+      if (this.generalPermissions.Cancelar) {
+        vBtn.PB_CANCELA = true;
+      }
+    }
+  }
+
+  //Cargar bienes
+  selectGoods(){
+    let modalConfig = MODAL_CONFIG;
+    modalConfig = {
+      class: 'modal-lg modal-dialog-centered'
+    }
+    this.modalService.show(MassiveConversionSelectGoodComponent,modalConfig)
   }
 }
