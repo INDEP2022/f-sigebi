@@ -123,7 +123,8 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
       this.rowData.cveAccount != null
     ) {
       let obj = {
-        diCurrency: this.rowData.currency,
+        diCurrency:
+          this.rowData.currency == "'M'" ? 'M' : this.rowData.currency,
         tiBank: this.rowData.bank,
         fecMovement: this.rowData.motiondate,
         diAccount: this.rowData.cveAccount,
@@ -151,8 +152,8 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
                 let obj: any = {
                   numberMotion: this.rowData.motionnumber,
                   numberAccount: this.rowData.accountnumber,
-                  numberGood: can[i].goodnumber,
-                  numberProceedings: can[i].proceedingsnumber,
+                  numberGood: can[i].no_bien,
+                  numberProceedings: can[i].no_expediente,
                 };
                 const validUpdate = await this.updateAccountMovement(obj);
                 if (validUpdate) {
@@ -204,8 +205,8 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
 
   async getGoodMovimientosCuentas(data: any) {
     const params = new ListParams();
-    params['filter.numberGood'] = `$eq:${data.goodnumber}`;
-    params['filter.numberProceedings'] = `$eq:${data.proceedingsnumber}`;
+    params['filter.numberGood'] = `$eq:${data.no_bien}`;
+    params['filter.numberProceedings'] = `$eq:${data.no_expediente}`;
 
     return new Promise((resolve, reject) => {
       this.accountMovementService.getAllFiltered(params).subscribe({
@@ -221,7 +222,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
 
   async getGoodMovimientosCuentas1(data: any) {
     const params = new ListParams();
-    params['filter.numberGood'] = `$eq:${data.goodnumber}`;
+    params['filter.numberGood'] = `$eq:${data.no_bien}`;
     return new Promise((resolve, reject) => {
       this.accountMovementService.getAllFiltered(params).subscribe({
         next: response => {

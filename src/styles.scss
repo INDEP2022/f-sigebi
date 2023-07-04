@@ -678,3 +678,8 @@ custom-view-component {
   .ng-value-container::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+#porcentajes .ng2-smart-filter select {
+  /* Estilos específicos para los elementos de entrada (input) y selección (select) en el filtro */
+  border: 1px solid #d4d4d4 !important;
+}
