@@ -647,7 +647,14 @@ export class ConciliationDepositaryPaymentsComponent
     //   .then(() => {
     //     this.getPrepOI();
     //   });
-    this.getPrepOI();
+    this.alertInfo(
+      'warning',
+      'La siguiente pantalla no se migra: FCONDEPOCONDISPAG - dispersion de pagos depositarias',
+      ''
+    ).then(() => {
+      this.getPrepOI();
+    });
+    // this.getPrepOI();
     // FCONDEPOCONDISPAG
   }
 
