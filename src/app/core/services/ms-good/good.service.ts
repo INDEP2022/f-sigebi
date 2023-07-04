@@ -451,15 +451,12 @@ export class GoodService extends HttpService {
   }
 
   pupValidMasiv(body: {
-    available: string;
-    diCoinNew: number;
-    screenKey: string;
-    goodNumber: string;
+    availableMasive: any[];
+    diCoinNew: string | number;
     convType: string;
-    sellPrice: number;
-    pTransGood: string;
-    availableMasive: string;
+    pTransGood: string | number;
+    screenKey: string;
   }) {
-    return this.http.post<any>('api/v1/good/pupValidMasiv', body);
+    return this.http.post<any>('api/v1/good/pupValidMasiv2', body);
   }
 }

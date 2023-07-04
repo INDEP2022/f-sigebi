@@ -1,9 +1,17 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, formatDate } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, catchError, firstValueFrom, map, of } from 'rxjs';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import {
+  BehaviorSubject,
+  catchError,
+  firstValueFrom,
+  map,
+  of,
+  take,
+} from 'rxjs';
+import { HasMoreResultsComponent } from 'src/app/@standalone/has-more-results/has-more-results.component';
 import { GoodEndpoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
 import {
   generateUrlOrPath,
@@ -13,10 +21,13 @@ import {
 } from 'src/app/common/helpers/helpers';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IAccountMovement } from 'src/app/core/models/ms-account-movements/account-movement.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IPupValidMassive } from 'src/app/core/models/ms-massivegood/massive-good-goods-tracker.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
@@ -228,7 +239,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     editable: false,
   };
 
-  sourcesMassive = new LocalDataSource();
+  dataTableMassive: IPupValidMassive[] = [];
   fileName: string = 'Seleccionar archivo';
 
   // formHelpivavtaPercent = new FormControl(null);
@@ -271,7 +282,9 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     private goodService: GoodService,
     private authService: AuthService,
     private massiveGoodService: MassiveGoodService,
-    private goodProcessService: GoodProcessService
+    private goodProcessService: GoodProcessService,
+    private modalService: BsModalService,
+    private accountMovementService: AccountMovementService
   ) {
     super();
   }
@@ -354,6 +367,81 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     });
   }
 
+  generateParamsSearchDate() {
+    const dateMotion = this.formBlkControl.value.tiNewDate;
+    console.log({ dateMotion });
+    return { 'filter.dateMotion': dateMotion };
+  }
+
+  getInfoDeposit() {
+    const deposit = this.formBlkControl.value.tiNewDate;
+    const params = new ListParams();
+    params['filter.dateMotion'] = formatDate(deposit, 'yyyy-MM-dd', 'en-US');
+    params.limit = 1;
+    console.log({ params });
+    this.accountMovementService.getAllAccountMovement(params).subscribe({
+      next: res => {
+        if (res.count > 1) {
+          this.openMoreOneResults(res);
+        } else {
+          this.changeDeposit(res.data[0]);
+        }
+      },
+      error: () => {
+        // this.formBlkControl.get('tiNewDate').setValue(null);
+        this.onLoadToast(
+          'warning',
+          '',
+          'No se encontró el depósito en la fecha seleccionada'
+        );
+      },
+    });
+  }
+
+  openMoreOneResults(data?: IListResponse<any>) {
+    let context: Partial<HasMoreResultsComponent> = {
+      queryParams: this.generateParamsSearchDate(),
+      columns: {
+        numberMotion: {
+          title: 'Número de movimiento',
+        },
+        deposit: {
+          title: 'Depósito',
+        },
+        dateMotion: {
+          title: 'Fecha de movimiento',
+        },
+        InvoiceFile: {
+          title: 'Folio ficha',
+        },
+        category: {
+          title: 'Categoría',
+          valuePrepareFunction: (cell: any, _row: any) => {
+            return cell?.category;
+          },
+        },
+      },
+      totalItems: data ? data.count : 0,
+      ms: 'accountmvmnt',
+      path: 'account-movements',
+    };
+
+    console.log({ context });
+
+    const modalRef = this.modalService.show(HasMoreResultsComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onClose.pipe(take(1)).subscribe(result => {
+      console.log({ result });
+      if (result) {
+        console.log({ result });
+        // this.loadValuesDictation(result);
+      }
+    });
+  }
+
   getDataForTableExpenses(): { spentId: any[]; spentImport: any[] } {
     const expense = this.tableExpense.getExpense();
     let convertExpense: { spentId: any[]; spentImport: any[] } = {
@@ -361,12 +449,8 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       spentImport: [],
     };
     expense.forEach(element => {
-      convertExpense.spentId.push({
-        element: element.id,
-      });
-      convertExpense.spentImport.push({
-        element: element.import,
-      });
+      convertExpense.spentId.push(element.id);
+      convertExpense.spentImport.push(element.import);
     });
     return convertExpense;
   }
@@ -489,51 +573,55 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       throw 'No seleccionó ningún archivo o seleccionó más de la cantidad permitida (1)';
 
     readFile(files[0], 'BinaryString').then(data => {
-      this.readCsv(data.result);
+      this.readCsv(data.result, files[0]);
     });
-
-    const fileReader = new FileReader();
-    fileReader.readAsBinaryString(files[0]);
-    fileReader.onload = () => this.readCsv(fileReader.result);
   }
 
   validateHeaderTableMassive(data: { [key: string]: any }) {
     const itemHeader = {
-      appraisalAmount: 147,
-      commentary: 'EXAMPLE COMMENT',
-      commission: 10,
-      commissionTax: 15,
-      description: 'NUMERARIO FÃSICO POR LA CANTIDAD DE US$200.00',
-      domain: 'EXAMPLE',
-      id: 1,
-      identifier: 111,
-      salePrice: 200,
-      saleTax: 15,
-      status: 'ACTIVO',
-      totalExpenses: 53,
+      COMENTARIO: 'Ejemplo de Conversion a numerario',
+      COMISION: 222,
+      IMPORTE: 3472.08,
+      IVACOM: 35.52,
+      IVAVTA: 710.4,
+      NO_BIEN: 163719,
+      PRECIO_VENTA: 4440,
     };
     const keys = Object.keys(itemHeader);
-    Object.keys(data).forEach(key => {
-      if (!keys.includes(key)) {
-        this.alert(
-          'error',
-          'Error',
-          `El archivo no contiene la columna ${key}`
-        );
-        throw `El archivo no contiene la columna ${key}`;
+    const keysData = Object.keys(data);
+    let messages: string[] = [];
+    keys.forEach(key => {
+      if (!keysData.includes(key)) {
+        messages.push(key);
       }
     });
+    if (messages.length > 0) {
+      this.alert(
+        'error',
+        'Error',
+        `El archivo no contiene las columnas ${messages.join(', ')}`
+      );
+      return false;
+    }
+    return true;
   }
 
-  readCsv(binaryExcel: string | ArrayBuffer) {
+  readCsv(binaryExcel: string | ArrayBuffer, file: File) {
     try {
       this.loading = true;
       const dataCvs = this.excelService.getData(binaryExcel);
-      this.validateHeaderTableMassive(dataCvs[0]);
-      this.sourcesMassive.load(dataCvs);
       console.log(dataCvs);
-      this.totalItems = dataCvs.length;
-      this.loading = false;
+      if (!this.validateHeaderTableMassive(dataCvs[0])) {
+        this.loading = false;
+        this.dataTableMassive = [];
+        this.totalItems = 0;
+        return;
+      }
+      // this.sourcesMassive.load(dataCvs);
+      // console.log(dataCvs);
+      // this.totalItems = dataCvs.length;
+      // this.loading = false;
+      this.pupLoadCsv(file);
     } catch (error) {
       this.loading = false;
       showToast({ icon: 'error', text: 'Ocurrió un error al leer el archivo' });
@@ -600,40 +688,26 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   }
 
   async saveInServer(): Promise<void> {
-    // this.validateForm().then(isValid => {
-    //   console.log(isValid);
-    //   console.log(this.form.value);
-    //   if (isValid) {
-    //     this.goodService.changeGoodToNumerary(this.form.value).subscribe({
-    //       next: (res: any) => {
-    //         console.log(res);
-    //       },
-    //       error: (error: any) => {},
-    //     });
-    //   }
-    // });
-    // const isWhite = this.infoToken.;
-
-    /*TODO: hace cuando se sepa de donde traer IF :blk_toolbar.toolbar_escritura != 'S' THEN
-	    LIP_MENSAJE('No tiene permiso de escritura para ejecutar el cambio de numerario','C');
-	    RAISE FORM_TRIGGER_FAILURE;
-      END IF;
-    */
     console.log(this.formBlkControl.value);
-    if (!this.formGood.value.id) {
+    if (!this.formGood.value.id && !this.isMassive) {
       this.alert(
         'warning',
         'Advertencia',
         'Debe especificar el bien que se quiere cambiar a numerario'
       );
       return;
-    }
-
-    if (!this.formBlkControl.value.tiNewDate) {
+    } else if (this.dataTableMassive.length < 1 && this.isMassive) {
       this.alert(
         'warning',
         'Advertencia',
-        'Debe especificar la fecha del deposito'
+        'Debe especificar el bien que se quiere cambiar a numerario'
+      );
+      return;
+    } else if (!this.formGood.value.id && this.dataTableMassive.length < 1) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'No hay bienes para cambiar a numerario'
       );
       return;
     }
@@ -641,6 +715,14 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     if (this.formBlkControl.value.checkMovementBank) {
       if (!this.formBlkControl.value.tiNewBank) {
         this.alert('warning', 'Advertencia', 'Debe especificar el banco');
+        return;
+      }
+      if (!this.formBlkControl.value.tiNewDate) {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Debe especificar la fecha del deposito'
+        );
         return;
       }
       if (!this.formBlkControl.value.diNumberMovement) {
@@ -661,53 +743,57 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       );
       return;
     }
-    const validNumerary = await this.pupValidNumerary();
-    if (!this.formBlkControl.value.diNewCurrency && validNumerary) {
-      this.alert(
-        'warning',
-        'Advertencia',
-        'Debe especificar el tipo de moneda'
-      );
-      return;
-    }
-    if (
-      (validNumerary &&
-        !['CNE', 'BBB'].includes(this.formBlkControl.value.typeConversion)) ||
-      (!validNumerary && this.formBlkControl.value.typeConversion == 'CNE')
-    ) {
-      this.alert(
-        'warning',
-        'Advertencia',
-        'El tipo de conversión seleccionado no es permitido para este bien.'
-      );
-      return;
-    }
-
-    if (!this.formGood.value.importSell) {
-      const questionResponse1 = await this.alertQuestion(
-        'question',
-        'Advertencia',
-        'El nuevo bien se generara con un precio de venta de 1. ¿Desea continuar?'
-      );
-      if (!questionResponse1.isConfirmed) {
+    if (this.isMassive) {
+      await this.pupValidateMassive();
+    } else {
+      const validNumerary = await this.pupValidNumerary();
+      if (!this.formBlkControl.value.diNewCurrency && validNumerary) {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Debe especificar el tipo de moneda'
+        );
         return;
       }
-      const questionResponse2 = await this.alertQuestion(
-        'question',
-        'Advertencia',
-        '¿Seguro que desea cambiar el bien a numerario?'
-      );
-      if (questionResponse2.isConfirmed) {
-        await this.pupCreateGood();
+      if (
+        (validNumerary &&
+          !['CNE', 'BBB'].includes(this.formBlkControl.value.typeConversion)) ||
+        (!validNumerary && this.formBlkControl.value.typeConversion == 'CNE')
+      ) {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'El tipo de conversión seleccionado no es permitido para este bien.'
+        );
+        return;
       }
-    } else {
-      const questionResponse = await this.alertQuestion(
-        'question',
-        'Advertencia',
-        '¿Seguro que desea cambiar el bien a numerario?'
-      );
-      if (questionResponse.isConfirmed) {
-        await this.pupCreateGood();
+
+      if (!this.formGood.value.importSell) {
+        const questionResponse1 = await this.alertQuestion(
+          'question',
+          'Advertencia',
+          'El nuevo bien se generara con un precio de venta de 1. ¿Desea continuar?'
+        );
+        if (!questionResponse1.isConfirmed) {
+          return;
+        }
+        const questionResponse2 = await this.alertQuestion(
+          'question',
+          'Advertencia',
+          '¿Seguro que desea cambiar el bien a numerario?'
+        );
+        if (questionResponse2.isConfirmed) {
+          await this.pupCreateGood();
+        }
+      } else {
+        const questionResponse = await this.alertQuestion(
+          'question',
+          'Advertencia',
+          '¿Seguro que desea cambiar el bien a numerario?'
+        );
+        if (questionResponse.isConfirmed) {
+          await this.pupCreateGood();
+        }
       }
     }
   }
@@ -723,7 +809,9 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       description: this.form.value.description,
       amountevta: this.formGood.value.importSell || 1,
       typeConv: this.formBlkControl.value.typeConversion,
-      spentId: spent?.spentId,
+      spentId: spent?.spentId || [],
+      amount: spent?.spentImport || [],
+      spentPlus: 0,
       // totalAmount: null,
       status: this.formGood.value.status,
       identificator: this.formGood.value.identifier,
@@ -737,7 +825,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       fileNumber: this.formGood.value.fileNumber,
       user: this.infoToken.preferred_username.toUpperCase(),
       bankNew: this.formBlkControl.value.tiNewBank,
-      moneyNew: this.formBlkControl.value.diNewCurrency,
+      moneyNew: this.formBlkControl.value.diNewCurrency?.replaceAll("'", ''),
       accountNew: this.formBlkControl.value.diNewAccount,
       comment: this.formBlkControl.value.comment,
       expAssociated: this.formGood.value.associatedFileNumber,
@@ -746,6 +834,14 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     };
     await firstValueFrom(
       this.goodService.changeGoodToNumerary(body).pipe(
+        map((resp: { message: []; data: null }) => {
+          const message =
+            resp.message.length > 0
+              ? resp.message.join('.\n')
+              : 'Proceso terminado con éxito';
+
+          this.alert('success', 'Éxito', message);
+        }),
         catchError(err => {
           this.alert(
             'error',
@@ -758,140 +854,101 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     );
   }
 
+  pupLoadCsv(file: File): void {
+    this.loading = true;
+    this.massiveGoodService
+      .postPupCargaCsv(file, 'FACTADBCAMBIONUME')
+      .subscribe({
+        next: res => {
+          console.log('res', res);
+          this.dataTableMassive = res.bienes;
+          this.loading = false;
+        },
+        error: err => {
+          console.log('err', err);
+          this.loading = false;
+        },
+      });
+  }
+
   isLoadingMassive: boolean = false;
-  saveInServerMassive(): void {
-    // if (this.formMassive.invalid) {
-    //   this.alert('warning', 'Advertencia', '');
-    //   return;
-    // }
-    // this.sourcesMassive.c
+  async saveInServerMassive(): Promise<void> {
+    try {
+      await this.pupValidateMassive();
+    } catch (error) {
+      this.alert('error', 'Error', 'Ocurrió un error al validar el masivo');
+    }
+  }
+
+  getTransGood(): string | number {
+    return '';
+  }
+
+  selectedTab(e: any) {
+    console.log(e);
+  }
+
+  isMassive = false;
+
+  pupCreateGoodMassive() {
+    const body = {
+      goods: this.dataTableMassive.map(item => {
+        return {
+          status: item.estatus,
+          comment: item.comentario,
+          salePrice: item.precio_venta,
+          identificador: item.identificador,
+          description: item.descripcion,
+          amount: item.importe,
+          ivavta: item.ivavta,
+          goodNumber: item.no_bien,
+          ivacom: item.ivacom,
+          commission: item.comision,
+          user: this.infoToken.preferred_username.toUpperCase(),
+        };
+      }),
+      token: this.formBlkControl.value.tiNewFile,
+      dateNew: this.formBlkControl.value.tiNewDate,
+      moneyNew: this.formBlkControl.value.diNewCurrency.replaceAll("'", ''),
+      accountNew: this.formBlkControl.value.diNewAccount,
+      bankNew: this.formBlkControl.value.tiNewBank,
+      screenKey: 'FACTADBCAMBIONUME',
+      typeConv: this.formBlkControl.value.typeConversion,
+      pTransGood: this.getTransGood(),
+    };
   }
 
   pupValidateMassive(): void {
-    // const body = {
-    //   available: string;
-    // diCoinNew: number;
-    // screenKey: string;
-    // goodNumber: string;
-    // convType: string;
-    // sellPrice: number;
-    // pTransGood: string;
-    // availableMasive: string;
-    // }
-    // firstValueFrom(
-    // this.goodService.pupValidMasiv().pipe(
-    //   map(res => res),
-    //   catchError(err => {
-    //     // if ()
-    //     console.log('err', err);
-    //     throw err;
-    //   })
-    // )
-    // );
+    try {
+      const body = {
+        availableMasive: this.dataTableMassive.map(item => {
+          return {
+            available: item.disponible,
+            goodNumber: item.no_bien,
+            sellPrice: item.precio_venta,
+          };
+        }),
+        diCoinNew: this.formBlkControl.value.diNewCurrency.replaceAll("'", ''),
+        screenKey: 'FACTADBCAMBIONUME',
+        convType: this.formBlkControl.value.typeConversion,
+        pTransGood: this.getTransGood(),
+      };
+      firstValueFrom(
+        this.goodService.pupValidMasiv(body).pipe(
+          map(res => res),
+          catchError(err => {
+            // if ()
+            console.log('err', err);
+            throw err;
+          })
+        )
+      );
+    } catch (error) {
+      this.alert('error', 'Error', 'Ocurrió un error al validar el masivo');
+    }
   }
 
   checkedMovBan = false;
-  // validateForm(): Promise<boolean> {
-  //   if (this.validNumerary === 'error') {
-  //     showToast({ icon: 'error', text: 'Ocurrió un error al validar el bien' });
-  //     return Promise.resolve(false);
-  //   }
-  //   if (this.validNumerary === 'loading') {
-  //     showToast({ icon: 'warning', text: 'Validando bien, espere un momento' });
-  //     return Promise.resolve(false);
-  //   }
-
-  //   const {
-  //     typeConv,
-  //     goodId,
-  //     bankNew,
-  //     amountevta,
-  //     moneyNew,
-  //     ivavta,
-  //     commission,
-  //     ivacom,
-  //   } = this.form.value;
-  //   const message: string[] = [];
-  //   if (!goodId) {
-  //     message.push(
-  //       'Debe especificar el bien que se quiere cambiar a numerario'
-  //     );
-  //   }
-
-  //   if (!ivavta) {
-  //     message.push('Debe especificar el IVA en los datos de venta');
-  //   }
-
-  //   if (!commission) {
-  //     message.push('Debe especificar la comisión en los datos de venta');
-  //   }
-
-  //   if (!ivacom) {
-  //     message.push(
-  //       'Debe especificar el IVA de la comisión en los datos de venta'
-  //     );
-  //   }
-
-  //   if (this.checkedMovBan && !bankNew) {
-  //     message.push('Debe especificar el banco');
-  //   }
-
-  //   if (!typeConv) {
-  //     message.push('No ha seleccionado el tipo de conversión');
-  //   }
-
-  //   if (!moneyNew && this.validNumerary === 'valid') {
-  //     message.push('Debe especificar el tipo de moneda');
-  //   }
-
-  //   if (
-  //     (this.validNumerary === 'valid' && ['CNE', 'BBB'].includes(typeConv)) ||
-  //     (this.validNumerary === 'notValid' && typeConv === 'CNE')
-  //   ) {
-  //     showToast({
-  //       icon: 'warning',
-  //       text: 'El tipo de conversión seleccionado no es permitido para este bien.',
-  //     });
-  //     return Promise.resolve(false);
-  //   }
-
-  //   if (message.length > 0) {
-  //     showToast({
-  //       html: message.join('\n'),
-  //       customClass: 'ws-pre',
-  //       icon: 'warning',
-  //       text: '',
-  //     });
-  //     return Promise.resolve(false);
-  //   }
-
-  //   if (!amountevta) {
-  //     return showQuestion({
-  //       title: 'Confirmación',
-  //       text: 'El nuevo bien se generara con un precio de venta de 1.\n ¿Seguro que desea cambiar el bien a numerario?',
-  //       confirmButtonText: 'Si, continuar',
-  //       cancelButtonText: 'No, cancelar',
-  //     }).then(result => {
-  //       if (result.isConfirmed) {
-  //         this.form.controls['amountevta'].setValue(1);
-  //         return Promise.resolve(true);
-  //       }
-  //       return Promise.resolve(false);
-  //     });
-  //   }
-
-  //   return showQuestion({
-  //     title: 'Confirmación',
-  //     text: '¿Seguro que desea cambiar el bien a numerario?',
-  //     confirmButtonText: 'Si, continuar',
-  //     cancelButtonText: 'No, cancelar',
-  //   }).then(result => {
-  //     if (result.isConfirmed) {
-  //       return Promise.resolve(true);
-  //     }
-  //     return Promise.resolve(false);
-  //   });
-  // }
   isSearchDate = false;
 
   changeDeposit(event: IAccountMovement): void {
