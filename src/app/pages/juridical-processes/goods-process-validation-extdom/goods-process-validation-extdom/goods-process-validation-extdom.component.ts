@@ -16,6 +16,7 @@ import {
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GoodsProcessValidationExtdomService } from '../services/goods-process-validation-extdom.service';
 import { COLUMNS_GOODS_LIST_EXTDOM } from './process-extdoom-columns';
+
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -42,8 +43,6 @@ export class GoodsProcessValidationExtdomComponent
     ...this.settings,
   };
   dataTable2 = new BehaviorSubject<ListParams>(new ListParams());
-  // SELECTS
-  selectAsunto = new DefaultSelect();
 
   tableSettingsHistorico = {
     actions: {
@@ -87,6 +86,17 @@ export class GoodsProcessValidationExtdomComponent
   origin: string = '';
   P_NO_TRAMITE: number = null;
   P_GEST_OK: number = null;
+  // SELECTS
+  selectAffairkey = new DefaultSelect();
+  selectIndiciadoNumber = new DefaultSelect();
+  selectMinpubNumber = new DefaultSelect();
+  selectCourtNumber = new DefaultSelect();
+  selectDelegationNumber = new DefaultSelect();
+  selectEntFedKey = new DefaultSelect();
+  selectCityNumber = new DefaultSelect();
+  selectTransference = new DefaultSelect();
+  selectStationNumber = new DefaultSelect();
+  selectAuthority = new DefaultSelect();
 
   constructor(
     private fb: FormBuilder,
@@ -198,4 +208,13 @@ export class GoodsProcessValidationExtdomComponent
    */
 
   getAffair(paramsData: ListParams, getByValue: boolean = false) {}
+  getIndiciadoNumber(paramsData: ListParams, getByValue: boolean = false) {}
+  getMinpubNumber(paramsData: ListParams, getByValue: boolean = false) {}
+  getCourtNumber(paramsData: ListParams, getByValue: boolean = false) {}
+  getDelegationNumber(paramsData: ListParams, getByValue: boolean = false) {}
+  getEntFedKey(paramsData: ListParams, getByValue: boolean = false) {}
+  getCityNumber(paramsData: ListParams, getByValue: boolean = false) {}
+  getTransference(paramsData: ListParams, getByValue: boolean = false) {}
+  getStationNumber(paramsData: ListParams, getByValue: boolean = false) {}
+  getAuthority(paramsData: ListParams, getByValue: boolean = false) {}
 }
