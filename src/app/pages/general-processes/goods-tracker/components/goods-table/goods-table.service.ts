@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { catchError, firstValueFrom, map, of } from 'rxjs';
+import { catchError, firstValueFrom, map, of, take } from 'rxjs';
 import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
@@ -10,6 +10,7 @@ import { NotificationService } from 'src/app/core/services/ms-notification/notif
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+
 const ORIGIN = 'FCONGENRASTREADOR';
 const TYPES = {
   PROCEDENCIA: 'PROCEDENCIA',
@@ -256,9 +257,10 @@ export class GoodsTableService {
       renderComponent: LinkCellComponent<ITrackedGood>,
       onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
         instance.onNavigate.subscribe(async trackedGood => {
-          const expedient = await this.getGlobalExpedientF3({
+          const expedient = await this.getGlobalExpedientF({
             pGoodNumber: trackedGood.goodNumber,
-            pConstEntKey: trackedGood.keyDestMinutes as string,
+            pCveActa: trackedGood.keyDestMinutes as string,
+            pDelivery: 'DESTINO',
           });
           console.log(expedient);
 
@@ -1096,7 +1098,20 @@ export class GoodsTableService {
     );
   }
 
+  getGlobalExpedientF(body: {
+    pCveActa: string;
+    pGoodNumber: string | number;
+    pDelivery: string;
+  }) {
+    return firstValueFrom(
+      this.proceedingService.getGlobalExpedientF(body).pipe(
+        catchError(error => of({ data: [{ max: null }] })),
+        map(res => res.data[0].max)
+      )
+    );
+  }
+
   getGlobalVars() {
-    return this.globalVarService.getGlobalVars$();
+    return this.globalVarService.getGlobalVars$().pipe(take(1));
   }
 }

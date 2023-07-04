@@ -197,4 +197,26 @@ export const BASIC_BUTTONS = [
             Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
           </button>`,
   },
+  {
+    name: 'Seleccionar',
+    code: `<button
+          type="button"
+          class="btn btn-primary active btn-sm">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>`,
+  },
+  {
+    name: 'Aceptar',
+    code: `<button
+            class="btn btn-primary btn-sm active mr-3">
+            Aceptar
+          </button>`,
+  },
+  {
+    name: 'Cancelar',
+    code: `<button
+            class="btn btn-danger btn-sm active mr-3">
+            Cancelar
+          </button>`,
+  },
 ];
