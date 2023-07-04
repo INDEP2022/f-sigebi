@@ -395,4 +395,15 @@ export class DictationService extends HttpService {
       listParams
     );
   }
+
+  vGoodsTracker(body: {
+    pDictOrigin: string | number;
+    pOrigin: string | number;
+    goodNumber: string | number;
+  }) {
+    return this.post<IListResponse<{ no_volante: string }>>(
+      'application/get-v-goods-tracker',
+      body
+    );
+  }
 }

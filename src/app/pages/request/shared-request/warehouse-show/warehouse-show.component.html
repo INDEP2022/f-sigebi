@@ -16,24 +16,23 @@
             type="button"
             (click)="confirm()"
             class="btn btn-primary btn-sm active">
-            Aceptar
+            Aceptar <i class="fa fa-check" aria-hidden="true"></i>
           </button>
 
           <button
             *ngIf="infoTask?.State == 'FINALIZADA'"
             type="button"
-            (click)="confirm()"
-            class="btn btn-primary btn-sm active disabled">
-            Aceptar
+            class="btn btn-primary disabled btn-sm active">
+            Aceptar <i class="fa fa-check" aria-hidden="true"></i>
           </button>
         </div>
 
         <div class="p-2">
           <button
-            type="button"
             class="btn btn-danger btn-sm active"
-            (click)="close()">
-            Cancelar
+            (click)="close()"
+            type="button">
+            Regresar <i class="fas fa-arrow-circle-left"></i>
           </button>
         </div>
       </div>

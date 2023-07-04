@@ -7,8 +7,11 @@
 
     <div class="justify-content-end" *ngIf="!formLoading">
       <div class="m-3 btn-toolbar">
-        <button (click)="backTask()" class="btn btn-danger btn-sm active">
-          Cancelar
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="backTask()">
+          Cancelar <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>
