@@ -19,11 +19,16 @@ import {
   throwError,
 } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
+import { PartializeGoodService } from 'src/app/core/services/ms-partializate-good/partializate-good.service';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -35,6 +40,7 @@ import {
   GOOD_TRACKER_ORIGINS,
   GOOD_TRACKER_ORIGINS_TITLES,
 } from '../../utils/constants/origins';
+import { GoodTrackerMap } from '../../utils/good-tracker-map';
 import { ActaHistoComponent } from '../acta-histo/acta-histo.component';
 import { GTrackerDocumentsComponent } from '../g-tracker-documents/g-tracker-documents.component';
 import { GoodsTableService } from './goods-table.service';
@@ -52,12 +58,14 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   @Input() override loading: boolean = false;
   @Input() formData: FormGroup;
   @Input() fomrCheck: FormGroup;
+  @Input() filters: GoodTrackerMap;
 
   private selectedGooods: ITrackedGood[] = [];
   origin: string = null;
   ngGlobal: any = null;
   $trackedGoods = this.store.select(getTrackedGoods);
   includeLoading: boolean = false;
+  excelLoading: boolean = false;
 
   constructor(
     private modalService: BsModalService,
@@ -73,7 +81,8 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     private globalVarService: GlobalVarsService,
     private jasperServ: SiabService,
     private goodPartService: GoodPartializeService,
-    private procedings: ProceedingsService
+    private procedings: ProceedingsService,
+    private partializeGoodServ: PartializeGoodService
   ) {
     super();
     this.settings.actions = false;
@@ -524,6 +533,94 @@ export class GoodsTableComponent extends BasePage implements OnInit {
           resolve([]);
         },
       });
+    });
+  }
+
+  async certificateSell() {
+    const goods = this.goods.filter(good => good.select == true);
+
+    if (goods.length > 0) {
+      if (goods.length > 1) {
+        this.alertQuestion(
+          'warning',
+          '',
+          'Se tiene varios bienes seleccionados se tomara el último',
+          ''
+        ).then(async answ => {
+          if (answ.isConfirmed) {
+            const good = goods[goods.length - 1];
+            const v_entra = await this.getExist(Number(good.goodNumber));
+            if (v_entra > 0) {
+              this.callReport(Number(good.goodNumber), 1);
+            } else {
+              await this.partializePaGood(Number(good.goodNumber));
+              this.callReport(Number(good.goodNumber), 1);
+            }
+          }
+        });
+      } else {
+        const good = goods[0];
+        const v_entra = await this.getExist(Number(good.goodNumber));
+        if (v_entra > 0) {
+          this.callReport(Number(good.goodNumber), 1);
+        } else {
+          await this.partializePaGood(Number(good.goodNumber));
+          this.callReport(Number(good.goodNumber), 1);
+        }
+      }
+    } else {
+      this.alert('error', 'Error', 'Se requiere un bien');
+    }
+  }
+
+  async getExist(good: number) {
+    return new Promise<number>((resolve, reject) => {
+      const filter = new FilterParams();
+      filter.addFilter('goodNumber', good, SearchFilter.EQ);
+      this.partializeGoodServ.getAll(filter.getParams()).subscribe({
+        next: resp => {
+          resolve(resp.count);
+        },
+        error: () => {
+          resolve(0);
+        },
+      });
+    });
+  }
+
+  async partializePaGood(good: number) {
+    return new Promise<boolean>((resolve, reject) => {
+      const filter = new FilterParams();
+      filter.addFilter('goodNumber', good, SearchFilter.EQ);
+      this.partializeGoodServ.partializePaGood(good).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: () => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  getDataExcell() {
+    this.excelLoading = true;
+    this.goodTrackerService.getExcel(this.filters).subscribe({
+      next: resp => {
+        const mediaType =
+          'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+        const link = document.createElement('a');
+        link.href = mediaType + resp.base64File;
+        link.download = 'Rastreador_Bienes.xlsx';
+        link.click();
+        link.remove();
+        this.excelLoading = false;
+        this.alert('success', 'Archivo descargado correctamente', '');
+      },
+      error: () => {
+        this.excelLoading = false;
+        this.alert('error', 'Error', 'No se genero correctamente el archivo');
+      },
     });
   }
 }

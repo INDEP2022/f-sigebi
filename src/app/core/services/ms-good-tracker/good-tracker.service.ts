@@ -87,4 +87,8 @@ export class GoodTrackerService extends HttpService {
   createTmpTracker(tmpTracker: ITmpTracker) {
     return this.post(GoodTrackerEndpoints.TmpTracker, tmpTracker);
   }
+
+  getExcel(tmp: GoodTrackerMap) {
+    return this.post(GoodTrackerEndpoints.GoodExcel, tmp);
+  }
 }
