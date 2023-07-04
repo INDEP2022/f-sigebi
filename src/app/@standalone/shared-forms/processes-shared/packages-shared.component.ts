@@ -45,6 +45,7 @@ export class ProcessesSharedComponent extends BasePage implements OnInit {
       .getByGoodAndProcess(this.idGood, this.process)
       .subscribe({
         next: response => {
+          console.log(response)
           this.processes = new DefaultSelect(
             this.distinct(response.data, 'extDomProcess'),
             response.count

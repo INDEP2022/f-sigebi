@@ -53,6 +53,10 @@ export class DelegationService
     return self.get<IListResponse<IDelegation>>('delegation', params);
   }
 
+  getFiltered(params: string){
+    return this.get('delegation',params)
+  }
+
   getById(id: string | number): Observable<IDelegation> {
     return this.delegationRepository.newGetById(this.route, id);
   }
