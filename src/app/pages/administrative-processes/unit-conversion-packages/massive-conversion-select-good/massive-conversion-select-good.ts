@@ -2,16 +2,20 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { columns } from './columns.component';
 import { GOODS_SELECTIONS_COLUMNS } from '../massive-conversion/columns';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 
 @Component({
   selector: 'app-massive-conversion-select-good',
   templateUrl: './massive-conversion-select-good.html',
   styleUrls: [],
 })
-export class MassiveConversionSelectGoodComponent extends BasePage implements OnInit {
+export class MassiveConversionSelectGoodComponent
+  extends BasePage
+  implements OnInit
+{
   //Forma
   form: FormGroup = new FormGroup({});
 
@@ -53,17 +57,19 @@ export class MassiveConversionSelectGoodComponent extends BasePage implements On
     actions: false,
     columns: GOODS_SELECTIONS_COLUMNS,
     noDataMessage: 'No se encontrarón registros',
-  }
+  };
 
-  data = new LocalDataSource()
+  data = new LocalDataSource();
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private delegationService: DelegationService
+  ) {
     super();
-
   }
 
   ngOnInit(): void {
-    this.prepareForm()
+    this.prepareForm();
   }
 
   private prepareForm(): void {
@@ -86,7 +92,16 @@ export class MassiveConversionSelectGoodComponent extends BasePage implements On
     this.settingsTable = $event;
   }
 
-  filter(){
-    
+  filter() {
+    const paramsF = new FilterParams()
+    paramsF.addFilter('id', this.delegation.value)
+    this.delegationService.getFiltered(paramsF.getParams()).subscribe(
+      res => {
+        
+      },
+      err => {
+
+      }
+    )
   }
 }
