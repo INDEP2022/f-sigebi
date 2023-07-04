@@ -1,9 +1,26 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { catchError, firstValueFrom, map, of, take } from 'rxjs';
 import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
+import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+
 const ORIGIN = 'FCONGENRASTREADOR';
+const TYPES = {
+  PROCEDENCIA: 'PROCEDENCIA',
+  DEVOLUCION: 'DEVOLUCION',
+  DECOMISO: 'DECOMISO',
+  DONACION: 'DONACION',
+  DESTINO: 'DESTINO',
+  RESARCIMIENTO: 'RESARCIMIENTO',
+  ABANDONO: 'ABANDONO',
+};
 @Injectable({ providedIn: 'root' })
 /**
  * !IMPORTANTE: ESTE SERVICIO SOLO SE USA EN LA PANTALLA DEL RASTREADOR DE BIENES
@@ -167,6 +184,35 @@ export class GoodsTableService {
     programmingConstentKey: {
       title: 'Constancia de Entrega',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(async trackedGood => {
+          const expedient = await this.getGlobalExpedientF2({
+            pGoodNumber: trackedGood.goodNumber,
+            pCveActa: trackedGood.programmingConstentKey as string,
+            pRecepCan: 'RECEPCAN',
+            pSuspension: 'SUSPENSION',
+          });
+          console.log({ expedient });
+
+          this.getGlobalVars().subscribe(global => {
+            //global NO_EXPEDIENTE_F
+            this.globalVarService.updateGlobalVars({
+              ...global,
+              NO_EXPEDIENTE_F: expedient,
+            });
+            this.router.navigate(
+              ['/pages/final-destination-process/proof-of-delivery'],
+              {
+                queryParams: {
+                  origin: ORIGIN,
+                },
+              }
+            );
+          });
+        });
+      },
       class: 'bg-warning',
     },
     transfereeMinuteNumber: {
@@ -207,17 +253,75 @@ export class GoodsTableService {
     keyDestMinutes: {
       title: 'Acta Destino',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(async trackedGood => {
+          const expedient = await this.getGlobalExpedientF({
+            pGoodNumber: trackedGood.goodNumber,
+            pCveActa: trackedGood.keyDestMinutes as string,
+            pDelivery: 'DESTINO',
+          });
+          console.log(expedient);
+
+          this.getGlobalVars().subscribe(global => {
+            //global NO_EXPEDIENTE_F
+            this.globalVarService.updateGlobalVars({
+              ...global,
+              NO_EXPEDIENTE_F: expedient,
+            });
+            this.router.navigate(
+              ['/pages/final-destination-process/destination-acts'],
+              {
+                queryParams: {
+                  origin: ORIGIN,
+                },
+              }
+            );
+          });
+        });
+      },
       class: 'bg-warning',
     },
     keyDestructionMinutes: {
       title: 'Acta Destrucción',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(trackedGood => {
+          //global NO_EXPEDIENTE_F TIPO_DICTA_F
+          this.router.navigate(
+            ['/pages/final-destination-process/destruction-acts'],
+            {
+              queryParams: {
+                origin: ORIGIN,
+              },
+            }
+          );
+        });
+      },
       class: 'bg-warning',
     },
     keyDevolutionMinutes: {
       title: 'Acta Devolución',
       sort: false,
       class: 'bg-warning',
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(trackedGood => {
+          //global NO_EXPEDIENTE_F TIPO_DICTA_F
+          this.router.navigate(
+            ['/pages/final-destination-process/return-acts'],
+            {
+              queryParams: {
+                origin: ORIGIN,
+              },
+            }
+          );
+        });
+      },
     },
     compensationMinute: {
       title: 'Acta Resarcimiento',
@@ -229,49 +333,275 @@ export class GoodsTableService {
       sort: false,
       class: 'bg-warning',
     },
+    extDomIniProcess: {
+      title: 'Historico del Bien',
+      sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(trackedGood => {
+          this.router.navigate(
+            ['/pages/general-processes/historical-good-situation'],
+            {
+              queryParams: {
+                origin: ORIGIN,
+                noBien: trackedGood.goodNumber,
+              },
+            }
+          );
+        });
+      },
+      class: 'bg-warning',
+    },
     keyOpinionOrigin: {
       title: 'Dictamen Procedencia',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(async trackedGood => {
+          const flyer = await this.getDictation({
+            pDictOrigin: trackedGood.keyOpinionOrigin,
+            pOrigin: TYPES.PROCEDENCIA,
+            goodNumber: trackedGood.goodNumber,
+          });
+          const flyerType = await this.getNotificationType(flyer);
+          this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
+            queryParams: {
+              origin: ORIGIN,
+              EXPEDIENTE: trackedGood.fileNumber,
+              VOLANTE: flyer, //consulta de service
+              TIPO_VO: flyerType, //consulta de service
+              TIPO_DIC: TYPES.PROCEDENCIA,
+              CONSULTA: 'S',
+              P_GEST_OK: '',
+              P_NO_TRAMITE: '',
+            },
+          });
+        });
+      },
       class: 'bg-success',
     },
     forfeitureDict: {
       title: 'Dictamen Decomiso',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(async trackedGood => {
+          const flyer = await this.getDictation({
+            pDictOrigin: trackedGood.forfeitureDict,
+            pOrigin: TYPES.DECOMISO,
+            goodNumber: trackedGood.goodNumber,
+          });
+          const flyerType = await this.getNotificationType(flyer);
+          this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
+            queryParams: {
+              origin: ORIGIN,
+              EXPEDIENTE: trackedGood.fileNumber,
+              VOLANTE: flyer, //consulta de service
+              TIPO_VO: flyerType, //consulta de service
+              TIPO_DIC: TYPES.DECOMISO,
+              CONSULTA: 'S',
+              P_GEST_OK: '',
+              P_NO_TRAMITE: '',
+              CLAVE_OFICIO_ARMADA: trackedGood.forfeitureDict,
+            },
+          });
+        });
+      },
       class: 'bg-success',
     },
     dictDevolution: {
       title: 'Dictamen Devolución',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(async trackedGood => {
+          const flyer = await this.getDictation({
+            pDictOrigin: trackedGood.dictDevolution,
+            pOrigin: TYPES.DEVOLUCION,
+            goodNumber: trackedGood.goodNumber,
+          });
+          const flyerType = await this.getNotificationType(flyer);
+          this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
+            queryParams: {
+              origin: ORIGIN,
+              EXPEDIENTE: trackedGood.fileNumber,
+              VOLANTE: flyer, //consulta de service
+              TIPO_VO: flyerType, //consulta de service
+              TIPO_DIC: TYPES.DEVOLUCION,
+              CONSULTA: 'S',
+              P_GEST_OK: '',
+              P_NO_TRAMITE: '',
+              CLAVE_OFICIO_ARMADA: trackedGood.dictDevolution,
+            },
+          });
+        });
+      },
       class: 'bg-success',
     },
     compensationDict: {
       title: 'Dictamen Resarcimiento',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(async trackedGood => {
+          const flyer = await this.getDictation({
+            pDictOrigin: trackedGood.compensationDict,
+            pOrigin: TYPES.RESARCIMIENTO,
+            goodNumber: trackedGood.goodNumber,
+          });
+          const flyerType = await this.getNotificationType(flyer);
+          this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
+            queryParams: {
+              origin: ORIGIN,
+              EXPEDIENTE: trackedGood.fileNumber,
+              VOLANTE: flyer, //consulta de service
+              TIPO_VO: flyerType, //consulta de service
+              TIPO_DIC: TYPES.RESARCIMIENTO,
+              CONSULTA: 'S',
+              P_GEST_OK: '',
+              P_NO_TRAMITE: '',
+              CLAVE_OFICIO_ARMADA: trackedGood.compensationDict,
+            },
+          });
+        });
+      },
       class: 'bg-success',
     },
     dictDestruction: {
       title: 'Dictamen Destrucción',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(trackedGood => {
+          this.router.navigate(['/pages/juridical/juridical-ruling'], {
+            queryParams: {
+              origin: ORIGIN,
+              NO_EXP: trackedGood.fileNumber,
+              P_GEST_OK: '',
+              P_NO_TRAMITE: '',
+            },
+          });
+        });
+      },
       class: 'bg-success',
     },
     destinyDict: {
       title: 'Dictamen Destino',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(async trackedGood => {
+          const flyer = await this.getDictation({
+            pDictOrigin: trackedGood.destinyDict,
+            pOrigin: TYPES.DESTINO,
+            goodNumber: trackedGood.goodNumber,
+          });
+          const flyerType = await this.getNotificationType(flyer);
+
+          this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
+            queryParams: {
+              origin: ORIGIN,
+              EXPEDIENTE: trackedGood.fileNumber,
+              VOLANTE: flyer, //consulta de service
+              TIPO_VO: flyerType, //consulta de service
+              TIPO_DIC: TYPES.DESTINO,
+              CONSULTA: 'S',
+              P_GEST_OK: '',
+              P_NO_TRAMITE: '',
+              CLAVE_OFICIO_ARMADA: trackedGood.destinyDict,
+            },
+          });
+        });
+      },
       class: 'bg-success',
     },
     donationDict: {
       title: 'Dictamen Donación',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(async trackedGood => {
+          const flyer = await this.getDictation({
+            pDictOrigin: trackedGood.donationDict,
+            pOrigin: TYPES.DONACION,
+            goodNumber: trackedGood.goodNumber,
+          });
+          const flyerType = await this.getNotificationType(flyer);
+          this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
+            queryParams: {
+              origin: ORIGIN,
+              EXPEDIENTE: trackedGood.fileNumber,
+              VOLANTE: flyer, //consulta de service
+              TIPO_VO: flyerType, //consulta de service
+              TIPO_DIC: TYPES.DONACION,
+              CONSULTA: 'S',
+              P_GEST_OK: '',
+              P_NO_TRAMITE: '',
+              CLAVE_OFICIO_ARMADA: trackedGood.donationDict,
+            },
+          });
+        });
+      },
       class: 'bg-success',
     },
     abandonmentDict: {
       title: 'Dictamen Abandono',
       sort: false,
       class: 'bg-success',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(async trackedGood => {
+          const flyer = await this.getDictation({
+            pDictOrigin: trackedGood.abandonmentDict,
+            pOrigin: TYPES.DONACION,
+            goodNumber: trackedGood.goodNumber,
+          });
+          const flyerType = await this.getNotificationType(flyer);
+          this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
+            queryParams: {
+              origin: ORIGIN,
+              EXPEDIENTE: trackedGood.fileNumber,
+              VOLANTE: flyer, //consulta de service
+              TIPO_VO: flyerType, //consulta de service
+              TIPO_DIC: TYPES.DONACION,
+              CONSULTA: 'S',
+              P_GEST_OK: '',
+              P_NO_TRAMITE: '',
+              CLAVE_OFICIO_ARMADA: trackedGood.abandonmentDict,
+            },
+          });
+        });
+      },
     },
     managementNumber: {
       title: 'Oficio Gestión',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(trackedGood => {
+          this.router.navigate(
+            [
+              '/pages/documents-reception/flyers-registration/related-document-management/1',
+            ],
+            {
+              queryParams: {
+                origin: ORIGIN,
+                EXPEDIENTE: trackedGood.fileNumber,
+                VOLANTE: null, //consulta de service
+              },
+            }
+          );
+        });
+      },
       class: 'bg-success',
     },
     adminCoord: {
@@ -326,10 +656,40 @@ export class GoodsTableService {
     emitter: {
       title: 'Emisora',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(trackedGood => {
+          this.router.navigate(
+            ['/pages/documents-reception/flyers-registration'],
+            {
+              queryParams: {
+                origin: ORIGIN,
+                P_NO_VOLANTE: null, //consulta de service
+              },
+            }
+          );
+        });
+      },
     },
     authority: {
       title: 'Autoridad',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(trackedGood => {
+          this.router.navigate(
+            ['/pages/documents-reception/flyers-registration'],
+            {
+              queryParams: {
+                origin: ORIGIN,
+                P_NO_VOLANTE: null, //consulta de service
+              },
+            }
+          );
+        });
+      },
     },
     avPrev: {
       title: 'Averiguación Previa',
@@ -338,10 +698,40 @@ export class GoodsTableService {
     penalizeCause: {
       title: 'Causa Penal',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(trackedGood => {
+          this.router.navigate(
+            ['/pages/documents-reception/flyers-registration'],
+            {
+              queryParams: {
+                origin: ORIGIN,
+                P_NO_VOLANTE: null, //consulta de service
+              },
+            }
+          );
+        });
+      },
     },
     transfereeExp: {
       title: 'Expediente Transferente',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(trackedGood => {
+          this.router.navigate(
+            ['/pages/documents-reception/flyers-registration'],
+            {
+              queryParams: {
+                origin: ORIGIN,
+                P_NO_VOLANTE: null, //consulta de service
+              },
+            }
+          );
+        });
+      },
     },
     identificator: {
       title: 'Identificador',
@@ -354,26 +744,94 @@ export class GoodsTableService {
     keyEvent: {
       title: 'Clave del Evento',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(trackedGood => {
+          //Globals ID_EVENTO_F NO_BIEN_F
+          this.router.navigate(
+            [
+              '/pages/commercialization/consultation-goods-commercial-process-tabs',
+            ],
+            {
+              queryParams: {
+                origin: ORIGIN,
+              },
+            }
+          );
+        });
+      },
       class: 'bg-info',
     },
     lotEvent: {
       title: 'No. Evento y No. Lote',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(trackedGood => {
+          //Globals ID_EVENTO_F NO_BIEN_F
+          this.router.navigate(
+            [
+              '/pages/commercialization/consultation-goods-commercial-process-tabs',
+            ],
+            {
+              queryParams: {
+                origin: ORIGIN,
+              },
+            }
+          );
+        });
+      },
       class: 'bg-info',
     },
     evelotStatus: {
-      title: 'Estatus del Evento y Love',
+      title: 'Estatus del Evento y Lote',
       sort: false,
       class: 'bg-info',
     },
     invoiceNumber: {
       title: 'No. Factura',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(trackedGood => {
+          //Globals ID_EVENTO_F NO_BIEN_F
+          this.router.navigate(
+            [
+              '/pages/commercialization/consultation-goods-commercial-process-tabs',
+            ],
+            {
+              queryParams: {
+                origin: ORIGIN,
+              },
+            }
+          );
+        });
+      },
       class: 'bg-info',
     },
     eventDate: {
       title: 'Fec. Evento',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(trackedGood => {
+          //Globals ID_EVENTO_F NO_BIEN_F
+          this.router.navigate(
+            [
+              '/pages/commercialization/consultation-goods-commercial-process-tabs',
+            ],
+            {
+              queryParams: {
+                origin: ORIGIN,
+              },
+            }
+          );
+        });
+      },
       class: 'bg-info',
     },
     comerAppraisalActive: {
@@ -584,5 +1042,76 @@ export class GoodsTableService {
     },
   };
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private dictationService: DictationService,
+    private notificationService: NotificationService,
+    private proceedingService: ProceedingsService,
+    private store: Store,
+    private globalVarService: GlobalVarsService
+  ) {}
+
+  getDictation(body: {
+    pDictOrigin: string | number;
+    pOrigin: string | number;
+    goodNumber: string | number;
+  }) {
+    return firstValueFrom(
+      this.dictationService.vGoodsTracker(body).pipe(
+        catchError(err => of({ data: [{ no_volante: null }] })),
+        map(res => res.data[0].no_volante)
+      )
+    );
+  }
+
+  getNotificationType(flyerNum: string | number) {
+    const params = new FilterParams();
+    params.addFilter('wheelNumber', flyerNum);
+    return firstValueFrom(
+      this.notificationService.getAllFilter(params.getParams()).pipe(
+        catchError(res => of({ data: [{ wheelType: null }] })),
+        map(res => res.data[0].wheelType)
+      )
+    );
+  }
+
+  getGlobalExpedientF3(body: { pGoodNumber: string; pConstEntKey: string }) {
+    return firstValueFrom(
+      this.proceedingService.getGlobalExpedientF3(body).pipe(
+        catchError(error => of({ data: [{ max: null }] })),
+        map(res => res.data[0].max)
+      )
+    );
+  }
+
+  getGlobalExpedientF2(body: {
+    pGoodNumber: number | string;
+    pRecepCan: string;
+    pSuspension: string;
+    pCveActa: string;
+  }) {
+    return firstValueFrom(
+      this.proceedingService.getGlobalExpedientF2(body).pipe(
+        catchError(error => of({ data: [{ max: null }] })),
+        map(res => res.data[0].max)
+      )
+    );
+  }
+
+  getGlobalExpedientF(body: {
+    pCveActa: string;
+    pGoodNumber: string | number;
+    pDelivery: string;
+  }) {
+    return firstValueFrom(
+      this.proceedingService.getGlobalExpedientF(body).pipe(
+        catchError(error => of({ data: [{ max: null }] })),
+        map(res => res.data[0].max)
+      )
+    );
+  }
+
+  getGlobalVars() {
+    return this.globalVarService.getGlobalVars$().pipe(take(1));
+  }
 }

@@ -20,7 +20,7 @@ export const REQUESTS_COLUMNS = {
     sort: false,
   },
   user: {
-    title: 'Usuario que solicita',
+    title: 'Usuario que Solicita',
     type: 'string',
     sort: false,
   },
@@ -53,12 +53,12 @@ export const GOODS_COLUMNS = {
     sort: false,
   },
   allintPay: {
-    title: 'Intereses a pagar',
+    title: 'Intereses a Pagar',
     type: 'number',
     sort: false,
   },
   allPayNumber: {
-    title: 'Total a pagar',
+    title: 'Total a Pagar',
     type: 'string',
     sort: false,
   },

@@ -106,6 +106,7 @@ export class GeneralDataGoodsComponent
     const patron: RegExp =
       /^(0[1-9]|1[0-9]|2[0-9]|3[01])\/(0[1-9]|1[0-2])\/((19|20)\d\d)$/;
     let body: any = {};
+    console.log('ATRIBUTOS DESDE GENERAL', this.dataAtribute);
     this.dataAtribute.forEach((row: any) => {
       if (patron.test(row.value)) {
         row.value = this.convertirFecha(row.value);
@@ -113,7 +114,9 @@ export class GeneralDataGoodsComponent
       body[row.column] = row.value;
     });
     body['quantitySae'] = this.generalDataForm.get('cantidad').value;
-    body['judicialDate'] = this.generalDataForm.get('fechaFe').value;
+    body['judicialDate'] = this.convertirFecha2(
+      this.generalDataForm.get('fechaFe').value
+    );
     body['observations'] = this.generalDataForm.get('observacion').value;
     body['description'] = this.generalDataForm.get('descripcion').value;
     body['id'] = Number(this.good.id);
@@ -134,7 +137,7 @@ export class GeneralDataGoodsComponent
     });
   }
 
-  convertirFecha(fechaOriginal: string): string {
+  convertirFecha(fechaOriginal: any): string {
     const [dia, mes, anio] = fechaOriginal.split('/');
     const fechaObjeto: Date = new Date(`${mes}/${dia}/${anio}`);
     const anioFormateado: string = fechaObjeto.getFullYear().toString();
@@ -147,6 +150,22 @@ export class GeneralDataGoodsComponent
       .padStart(2, '0');
     const fechaFormateada: string = `${anioFormateado}-${mesFormateado}-${diaFormateado}`;
     return fechaFormateada;
+  }
+
+  convertirFecha2(fecha: string | Date): string {
+    let fechaObj: Date;
+
+    if (typeof fecha === 'string') {
+      fechaObj = new Date(fecha);
+    } else {
+      fechaObj = fecha;
+    }
+
+    const anio = fechaObj.getFullYear();
+    const mes = (fechaObj.getMonth() + 1).toString().padStart(2, '0');
+    const dia = fechaObj.getDate().toString().padStart(2, '0');
+
+    return `${anio}-${mes}-${dia}`;
   }
 
   formatearFecha(fecha: string): string {
