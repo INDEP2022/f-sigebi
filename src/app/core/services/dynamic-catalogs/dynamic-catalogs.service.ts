@@ -43,8 +43,8 @@ export class DynamicCatalogService extends HttpService {
     >(`dinamic-tables/getIncapAndClave`, { no_expediente });
   }
 
-  getPerUser(model: IPerUser){
-    return this.post('dinamic-tables/getOtvalue', model)
+  getPerUser(model: IPerUser) {
+    return this.post('dinamic-tables/getOtvalue', model);
   }
 
   getDescEmisora(no_expediente: string | number) {

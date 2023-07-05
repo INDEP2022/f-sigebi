@@ -24,6 +24,7 @@ export class UnreconciledFilesComponent implements OnInit {
   isLoading = false;
   maxDate = new Date();
   currencies = new DefaultSelect<IMoneda>([], 0);
+  types = new DefaultSelect<IMoneda>([], 0);
   fromF: string = '';
   toT: string = '';
   import: number = 0;

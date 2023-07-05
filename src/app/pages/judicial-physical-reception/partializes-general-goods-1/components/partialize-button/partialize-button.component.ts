@@ -61,7 +61,7 @@ export class PartializeButtonComponent
     if (!this.validationClasif()) {
       // this.vimporte = +(cantidad + '');
       if (+(this.good.quantity + '') < 2 || isNaN(+this.good.quantity)) {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Parcialización',
           'No es posible realizar la parcialización'
@@ -78,7 +78,7 @@ export class PartializeButtonComponent
         isNaN(+this.good.val2) ||
         (cantidad != 1 && cantidad != this.vimporte)
       ) {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Parcialización',
           'El numerario no tiene consistencia'
@@ -86,11 +86,7 @@ export class PartializeButtonComponent
         // this.form.get('ind').setValue('S');
         return false;
       } else if (this.vimporte < 2) {
-        this.onLoadToast(
-          'error',
-          'Parcialización',
-          'No posible importe menor a 2'
-        );
+        this.alert('error', 'Parcialización', 'No posible importe menor a 2');
         return false;
       }
     }
@@ -104,7 +100,7 @@ export class PartializeButtonComponent
     if (!this.validationClasif()) {
       if (cantidad < 0.1) {
         // if (this.version === 1 ? cantidad < 0.1 : cantidad < 2) {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Parcialización',
           'No es posible realizar la parcialización'
@@ -114,7 +110,7 @@ export class PartializeButtonComponent
       }
     } else {
       if (cantidad != 1 && cantidad != this.vimporte) {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Parcialización',
           'El numerario no tiene consistencia'
@@ -122,11 +118,7 @@ export class PartializeButtonComponent
         this.form.get('ind').setValue('S');
         return false;
       } else if (this.vimporte < 2) {
-        this.onLoadToast(
-          'error',
-          'Parcialización',
-          'No posible importe menor a 2'
-        );
+        this.alert('error', 'Parcialización', 'No posible importe menor a 2');
         return false;
       }
     }
@@ -143,7 +135,7 @@ export class PartializeButtonComponent
     this.v_inmueble = inmuebleValidation.count;
     if (this.v_inmueble > 0) {
       if (this.cantPar.value % 1 !== 0 || this.cantidad.value % 1 !== 0) {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Parcialización',
           'No es posible parcializar bien en fracciones'
@@ -188,7 +180,7 @@ export class PartializeButtonComponent
     //fraccion.decimalAmount === 'N'
     if (decimales === 'N' && !this.validationClasif()) {
       if (this.cantPar.value % 1 !== 0 || this.cantidad.value % 1 !== 0) {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Parcialización',
           'No es posible parcializar bien en fracciones'
@@ -215,7 +207,7 @@ export class PartializeButtonComponent
 
     if (this.v_numerario === 0) {
       if (this.cantidad.value === this.good.quantity) {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Parcialización',
           'No se puede parcializar la misma cantidad que el bien padre'
@@ -394,7 +386,7 @@ export class PartializeButtonComponent
     const newImporte: number =
       +this.cantPar.value * +this.cantidad.value + this.vsum;
     if (newImporte > this.vimporte) {
-      this.onLoadToast(
+      this.alert(
         'error',
         'Parcialización',
         'No es posible parcializar, excede por ' + (newImporte - this.vimporte)
