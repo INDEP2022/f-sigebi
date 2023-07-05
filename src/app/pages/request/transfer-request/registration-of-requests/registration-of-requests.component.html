@@ -10,10 +10,10 @@
           class="btn btn-primary btn-sm active"
           [disabled]="registRequestForm.invalid || statusTask == 'FINALIZADA'"
           (click)="saveClarification()">
-          <i class="bx bxs-right-arrow-square"></i> {{ btnSaveTitle }}
+          {{ btnSaveTitle }} <i class="bx bxs-right-arrow-square"></i>
         </button>
       </div>
-      <!-- *ngIf="approvalProcess" -->
+
       <div class="p-2" *ngIf="approvalProcess && haveDictamen == false">
         <button
           type="button"
@@ -35,7 +35,8 @@
           type="button"
           class="btn btn-secondary btn-sm active"
           (click)="finish()">
-          <i class="bx bxs-right-arrow-square"></i> Finalizar
+          Finalizar
+          <i class="bx bxs-right-arrow-square"></i>
         </button>
       </div>
       <div
@@ -50,7 +51,8 @@
           [disabled]="statusTask == 'FINALIZADA'"
           class="btn btn-secondary btn-sm active"
           (click)="returnar()">
-          <i class="bx bxs-right-arrow-square"></i> Returnar
+          Returnar
+          <i class="fa fa-retweet" aria-hidden="true"></i>
         </button>
       </div>
       <div class="p-2" *ngIf="!approvalProcess">
@@ -59,7 +61,8 @@
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="confirm()">
-          <i class="bx bxs-right-arrow-square"></i> {{ btnTitle }}
+          {{ btnTitle }}
+          <i aria-hidden="true" class="fa fa-share-square"></i>
         </button>
       </div>
       <div class="p-2" *ngIf="approvalProcess">
@@ -106,7 +109,7 @@
                 <div class="col-md-4">
                   <div>
                     <label for="">Fecha de Solicitud&#58;</label>
-                    {{ infoRequest?.applicationDate | date : 'dd/MM/yyyy' }}
+                    {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
                   </div>
                 </div>
                 <div class="col-md-4">

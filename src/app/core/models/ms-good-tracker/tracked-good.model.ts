@@ -23,6 +23,7 @@ export interface ITrackedGood {
   labelNumber: string;
   destiny: string;
   goodStatus: string;
+  status: string;
   statusDescription: string;
   situation: string | number;
   situationDesc: string | number;

@@ -44,6 +44,13 @@
                     Buscar
                     <i class="bx bx-search-alt bx-sm float-icon"></i>
                   </button>
+                  <button
+                    type="button"
+                    class="btn btn-danger active btn-sm m-2"
+                    (click)="cleanDataform()">
+                    Limpiar
+                    <i class="fa fa-eraser ml-1"></i>
+                  </button>
                 </div>
               </div>
               <div class="row">
@@ -256,7 +263,7 @@
                     [data]="selectCityNumber"
                     bindLabel="dataDesc"
                     label="Ciudad"
-                    value="id"
+                    value="idCity"
                     (fetchItems)="getCityNumber($event)"
                     [form]="form"
                     [showTooltip]="true"
@@ -312,7 +319,7 @@
                     [data]="selectAuthority"
                     bindLabel="dataDesc"
                     label="Autoridad"
-                    value="id"
+                    value="idAuthority"
                     (fetchItems)="getAuthority($event)"
                     [form]="form"
                     [showTooltip]="true"

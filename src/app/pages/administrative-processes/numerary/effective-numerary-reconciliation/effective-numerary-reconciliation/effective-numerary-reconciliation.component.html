@@ -10,7 +10,8 @@
           <div class="col-md-6 pt-3">
             <form-field [control]="form.get('currency')">
               <ngx-select
-                (fetchItems)="getRegCurrency($event, true)"
+                [searchOnInit]="true"
+                (fetchItems)="getCurrencies($event)"
                 [data]="currencies"
                 [form]="form"
                 value="cve_moneda"

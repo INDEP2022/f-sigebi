@@ -5,6 +5,7 @@ import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { SelectFractionComponent } from 'src/app/@standalone/modals/select-fraction/select-fraction.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -19,6 +20,8 @@ import { DataFilterComponent } from './components/data-filter/data-filter.compon
 import { GTrackerDocumentsComponent } from './components/g-tracker-documents/g-tracker-documents.component';
 import { GoodsTableComponent } from './components/goods-table/goods-table.component';
 import { LocationFilterComponent } from './components/location-filter/location-filter.component';
+import { PhotoGaleryItemComponent } from './components/photo-galery-item/photo-galery-item.component';
+import { PhotoGaleryComponent } from './components/photo-galery/photo-galery.component';
 import { RecordNotificationFilterComponent } from './components/record-notification-filter/record-notification-filter.component';
 import { TransferAutorityFilterComponent } from './components/transfer-autority-filter/transfer-autority-filter.component';
 import { ViewPhotosComponent } from './components/view-photos/view-photos.component';
@@ -39,6 +42,8 @@ import { trackedGoodsReducer } from './store/goods-tracker.reducer';
     ActaHistoComponent,
     GTrackerDocumentsComponent,
     AlternClasficationListComponent,
+    PhotoGaleryComponent,
+    PhotoGaleryItemComponent,
   ],
   imports: [
     CommonModule,
@@ -54,6 +59,7 @@ import { trackedGoodsReducer } from './store/goods-tracker.reducer';
     DocumentsViewerByFolioComponent,
     SelectFractionComponent,
     StoreModule.forFeature('trackedGoods', trackedGoodsReducer),
+    FormLoaderComponent,
   ],
 })
 export class GoodsTrackerModule {}
