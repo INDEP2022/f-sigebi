@@ -288,11 +288,15 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         )
         .subscribe({
           next: async response => {
-            const updateReceipt = this.updateReceipt(response.dDocName);
+            const updateReceipt = await this.updateReceipt(response.dDocName);
+            console.log('updateReceipt', updateReceipt);
             if (updateReceipt) {
               const updateProgrammingGood = await this.updateProgrammingGood();
+
+              console.log('updateProgrammingGood', updateProgrammingGood);
               if (updateProgrammingGood) {
                 const updateGood = await this.updateGood();
+                console.log('updateGood', updateGood);
                 if (updateGood) {
                   this.alertInfo(
                     'success',
@@ -488,16 +492,19 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       const goodsReception = this.guardReception.value;
       goodsReception.map((item: IGood) => {
+        console.log('item', item);
         const formData: Object = {
           id: item.id,
-          goodId: item.id,
-          status: 'EN_RECEPCION',
+          goodId: item.goodId,
+          goodStatus: 'EN_RECEPCION',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
             resolve(true);
           },
-          error: error => {},
+          error: error => {
+            console.log('error update good', error);
+          },
         });
       });
     });

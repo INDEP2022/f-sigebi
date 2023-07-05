@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { GOODS_SELECTIONS_COLUMNS } from '../massive-conversion/columns';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 
 @Component({
   selector: 'app-massive-conversion-select-good',
@@ -93,15 +93,11 @@ export class MassiveConversionSelectGoodComponent
   }
 
   filter() {
-    const paramsF = new FilterParams()
-    paramsF.addFilter('id', this.delegation.value)
+    const paramsF = new FilterParams();
+    paramsF.addFilter('id', this.delegation.value);
     this.delegationService.getFiltered(paramsF.getParams()).subscribe(
-      res => {
-        
-      },
-      err => {
-
-      }
-    )
+      res => {},
+      err => {}
+    );
   }
 }

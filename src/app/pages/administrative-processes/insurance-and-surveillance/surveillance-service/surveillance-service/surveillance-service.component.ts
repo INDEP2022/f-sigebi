@@ -483,19 +483,38 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     try {
       const excelImport = this.excelService.getData<any>(binaryExcel);
       console.log('excelImport', excelImport);
+
       if (excelImport.length == 0) {
+        this.clearInput();
         this.alert('warning', 'El archivo se encuentra vacío', '');
         return;
       } else {
+        let arr: any = [];
+
         let result = excelImport.map(item => {
-          if (1) {
+          if (
+            item.recordId &&
+            item.goodNumber &&
+            item.address &&
+            item.delegationType &&
+            item.user
+          ) {
+            arr.push(item);
           }
         });
 
-        this.createDataVigilanceMtp(excelImport);
+        if (arr.length == 0) {
+          this.clearInput();
+          this.alert('warning', 'No hay registros válidos para insertar.', '');
+          return;
+        } else {
+          Promise.all(result).then(item => {
+            this.createDataVigilanceMtp(arr);
+          });
+        }
       }
     } catch (error) {
-      this.alert('error', 'Ocurrio un error al leer el archivo', 'Error');
+      this.alert('error', 'Ocurrió un error al leer el archivo', 'Error');
     }
   }
 

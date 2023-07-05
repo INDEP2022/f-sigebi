@@ -123,4 +123,8 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
       params
     );
   }
+
+  getAllCloseNumerary(params?: ListParams): Observable<IListResponse<any>> {
+    return this.get(NumeraryEndpoints.CloseNumerary, params);
+  }
 }

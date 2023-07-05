@@ -42,11 +42,10 @@ export const COLUMNS = {
   amount: {
     title: 'Cantidad Original',
     sort: false,
-    
   },
   val24: {
     title: 'Prog. Chatarra',
-    sort:false,
+    sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       if (row.bienes && row.bienes.val24) {
         return row.bienes.val24;
@@ -54,7 +53,7 @@ export const COLUMNS = {
         return null;
       }
     },
-  }
+  },
 };
 
 export const ERRORCOLUMNS = {

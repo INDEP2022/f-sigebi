@@ -127,7 +127,7 @@ export class WarehouseProceedingsComponent
         : this.service.updateVaultByProceedingNumber(vault);
       await firstValueFrom(service).then(response => {
         count++;
-        this.onLoadToast('success', 'Bovedas', 'Registros Actualizados');
+        this.alert('success', 'Bovedas', 'Registros Actualizados');
       });
     }
     if (this.warehouse) {
@@ -137,7 +137,7 @@ export class WarehouseProceedingsComponent
       await firstValueFrom(service).then(response => {
         count++;
         // console.log(response);
-        this.onLoadToast('success', 'Almacenes', 'Registros Actualizados');
+        this.alert('success', 'Almacenes', 'Registros Actualizados');
       });
     }
     if (count > 0) this.dataService.updateWarehouseVault.emit('');

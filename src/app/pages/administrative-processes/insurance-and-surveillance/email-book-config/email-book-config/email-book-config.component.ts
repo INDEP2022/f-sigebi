@@ -2,7 +2,6 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, skip } from 'rxjs';
-import { showAlert, showQuestion } from 'src/app/common/helpers/helpers';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IVigMailBook } from 'src/app/core/models/ms-email/email-model';
@@ -57,13 +56,13 @@ export class EmailBookConfigComponent
             : 'Se ha editado el libro de correos correctamente',
         icon: 'success',
       });*/
-      showAlert({
-        icon: 'success',
-        text:
-          res.action === 'create'
-            ? 'Se ha creado el libro de correos correctamente'
-            : 'Se ha editado el libro de correos correctamente',
-      });
+      this.alert(
+        'success',
+        res.action === 'create'
+          ? 'Se ha creado el libro de correos correctamente'
+          : 'Se ha editado el libro de correos correctamente',
+        ''
+      );
       if (
         res.newData.delegationNumber !==
         this.formControlRegionalDelegation.value
@@ -95,10 +94,7 @@ export class EmailBookConfigComponent
   }
   getVigMailBook(listParams = new ListParams()): void {
     if (this.formControlRegionalDelegation.invalid) {
-      showAlert({
-        icon: 'error',
-        text: 'Debe seleccionar una delegación regional',
-      });
+      this.alert('error', 'Debe seleccionar una delegación regional', '');
       this.emailsBook.load([]);
       return;
     }
@@ -125,10 +121,11 @@ export class EmailBookConfigComponent
 
   onDeleteConfirm(event: { data: IVigMailBook }): void {
     console.log(event);
-    showQuestion({
-      text: '¿Está seguro de eliminar el registro?',
-      title: 'Eliminar',
-    }).then(result => {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(result => {
       if (!result?.isConfirmed) {
         return;
       }
@@ -140,14 +137,7 @@ export class EmailBookConfigComponent
     this.loading = true;
     this.emailService.deleteEmailBook(data.id).subscribe({
       next: () => {
-        /*showToast({
-          text: 'Registro eliminado correctamente',
-          icon: 'success',
-        });*/
-        showAlert({
-          icon: 'success',
-          text: 'Registro eliminado correctamente',
-        });
+        this.alert('success', 'Registro eliminado correctamente', '');
         this.emailsBook.remove(data);
         this.loading = false;
       },
