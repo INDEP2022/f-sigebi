@@ -34,6 +34,7 @@ import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive
 import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { GoodsGenerateDialogComponent } from '../components/goods-generate-dialog/goods-generate-dialog.component';
 import { TableExpensesComponent } from '../components/table-expenses/table-expenses.component';
 import { NUMERAIRE_COLUMNS } from './numeraire-exchange-columns';
 
@@ -378,6 +379,27 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     };
   }
 
+  async hasPermissionWrite() {
+    const body = {
+      user: this.infoToken.preferred_username.toUpperCase(),
+      screen: this.NAME_CURRENT_FORM,
+    };
+    return await firstValueFrom(
+      this.statusScreenService.postPermissionByScreenAndUser(body).pipe(
+        map(res => {
+          if (res.write == 'S') {
+            return true;
+          } else {
+            return false;
+          }
+        }),
+        catchError(err => {
+          return of(false);
+        })
+      )
+    );
+  }
+
   getInfoDeposit() {
     const deposit = this.formBlkControl.value.tiNewDate;
     this.changeDeposit(null);
@@ -677,6 +699,18 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   async saveInServer(): Promise<void> {
     console.log(this.formBlkControl.value);
+    this.loading = true;
+    const permissionWrite = await this.hasPermissionWrite();
+    if (!permissionWrite) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'No tiene permiso de escritura para ejecutar el cambio de numerario'
+      );
+      this.loading = false;
+      return;
+    }
+    this.loading = false;
     if (!this.formGood.value.id && !this.isMassive) {
       this.alert(
         'warning',
@@ -944,7 +978,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       //   pTransGood: this.getTransGood(),
       // };
       const body = {
-        goods: this.dataTableMassive.map(item => {
+        availableMasive: this.dataTableMassive.map(item => {
           return {
             status: item.estatus,
             comment: item.comentario,
@@ -970,7 +1004,23 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       };
       await firstValueFrom(
         this.goodService.pupValidMasiv(body).pipe(
-          map(res => res),
+          map(res => {
+            if (res.responses) {
+              const goodFather = res.responses.map((item: any) => {
+                return {
+                  goodNumberF: item.goodNumberF,
+                  goodStatusF: item.goodStatusF,
+                };
+              });
+              const goodGenerate = res.responses.map((item: any) => {
+                return {
+                  goodNumberF: item.goodNumberS,
+                  goodStatusF: item.goodStatusS,
+                };
+              });
+              this.openDialogGoodStatus(goodFather, goodGenerate);
+            }
+          }),
           catchError(err => {
             console.log('err', err);
             throw err;
@@ -1010,5 +1060,19 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     if (value !== 'BBB') {
       this.formBlkControl.get('comment').setValue(null);
     }
+  }
+
+  openDialogGoodStatus(
+    dataFather: { goodNumberF: string; goodStatusF: string }[],
+    dataGenerate: { goodNumberS: string; goodStatusS: string }[]
+  ) {
+    this.modalService.show(GoodsGenerateDialogComponent, {
+      initialState: {
+        dataFather,
+        dataGenerate,
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
   }
 }

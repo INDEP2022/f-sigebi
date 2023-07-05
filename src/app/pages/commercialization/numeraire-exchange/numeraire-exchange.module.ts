@@ -11,6 +11,7 @@ import { GoodsSharedComponent } from 'src/app/@standalone/shared-forms/goods-sha
 import { SharedModule } from 'src/app/shared/shared.module';
 // import { TableSelectComponent } from './components/table-select/table-select.component';
 import CurrencyDirective from 'src/app/common/directives/currency.directive';
+import { GoodsGenerateDialogComponent } from './components/goods-generate-dialog/goods-generate-dialog.component';
 import { TableExpensesComponent } from './components/table-expenses/table-expenses.component';
 import { NumeraireExchangeFormComponent } from './numeraire-exchange-form/numeraire-exchange-form.component';
 import { NumeraireExchangeRoutingModule } from './numeraire-exchange-routing.module';
@@ -20,6 +21,7 @@ import { NumeraireExchangeRoutingModule } from './numeraire-exchange-routing.mod
     NumeraireExchangeFormComponent,
     // TableSelectComponent,
     TableExpensesComponent,
+    GoodsGenerateDialogComponent,
   ],
   imports: [
     CommonModule,

@@ -9,7 +9,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, map, skip, take } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { readFile, showAlert, showToast } from 'src/app/common/helpers/helpers';
+import { readFile, showAlert } from 'src/app/common/helpers/helpers';
 import {
   ListParams,
   SearchFilter,
@@ -252,11 +252,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       vBan = true;
     }
     if (messages.length > 0) {
-      showToast({
-        icon: 'warning',
-        title: 'Advertencia',
-        text: messages.join('\n'),
-      });
+      this.alert('warning', 'Advertencia', messages.join('\n'));
     }
     if (vBan) {
       this.isLoadingProcessExtraction = false;
@@ -307,14 +303,17 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     let vColgu;
     let vdSpent = null;
     let vDescription = null;
-    this.dataPrevious.forEach(async item => {
+    this.dataPrevious.forEach(async (item, index) => {
+      if (index === 0) {
+        return;
+      }
       // const test = async (item: any) => {
       vItem = 'COL' + colB;
       vType = item[vItem];
 
       if (vType) {
         try {
-          vNoGood = Number(vType.replace(',', '.'));
+          vNoGood = Number(String(vType).replace(',', '.'));
           try {
             good = await this.selectGoodForId(vNoGood);
             vnoGoodN = null;
@@ -434,24 +433,12 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                           status: good.status,
                           type: 'E',
                         };
-                        // dataTableSmall.push(blkSpent);
+                        this.dataTableSmall.push(blkSpent);
                       } catch (ex) {
                         null;
                       }
                       vColg1 = vColg1.substring(vColg1.indexOf(',') + 1);
                     }
-
-                    // IF :BLK_GASTOS.NO_BIEN IS NOT NULL THEN
-                    //           CREATE_RECORD;
-                    //        END IF;
-                    // dataTableSmall.push({
-                    //   noGood: vNoGood,
-                    //   cveie: 0,
-                    //   amount: vTax.toString(),
-                    //   description: 'I.V.A',
-                    //   status: good.status,
-                    //   type: 'I',
-                    // });
 
                     const prevDataTableSpent: IMassiveNumeraryChangeSpent = {
                       noGood: vNoGood,
@@ -491,7 +478,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                           prevDataTableSpent['color'] = 'bg-custom-yellow';
                       }
                     }
-                    // dataTableSpent.push(prevDataTableSpent);
+                    this.dataTableSpent.push(prevDataTableSpent);
                     cont++;
                   } catch (ex) {
                     vContm++;
@@ -628,7 +615,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   onClickBtnFileExcel(e: Event) {
     const file = (e.target as HTMLInputElement).files[0];
     try {
-      readFile(file).then(data => {
+      readFile(file, 'BinaryString').then(data => {
         const dataExcel = this.excelService.getData(data.result);
         if (dataExcel.length < 1 || !this.validatorFileExcel()) {
           showAlert({
@@ -646,11 +633,18 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
           const itemValues = Object.values(item);
           this.columns.forEach((column, index) => {
             const key = `COL${index + 1}`;
-            data[key] = itemValues?.[index] || '';
+            data[key] = itemValues?.[index];
           });
           return data;
         });
         this.registerReads = dataPreviewTable.length;
+        const keys = Object.keys(dataExcel[0]);
+        const header: { [key: string]: string } = {};
+        keys.forEach((element, index) => {
+          const key = `COL${index + 1}`;
+          header[key] = element;
+        });
+        dataPreviewTable.unshift(header);
 
         this.dataPrevious = dataPreviewTable;
 

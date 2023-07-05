@@ -924,6 +924,7 @@
                 </div>
                 <div class="col-12">
                   <button
+                    [disabled]="loading"
                     class="btn btn-primary active"
                     (click)="saveInServer()">
                     Cambiar a numerario

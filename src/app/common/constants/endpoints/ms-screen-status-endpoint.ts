@@ -7,4 +7,5 @@ export enum ScreenStatusEndpoints {
   StatusXScreenList = 'status-x-screen',
   cValFolUni = 'seg-app-screen/cValfoUni',
   cValFolRev = 'seg-app-screen/cValfoRev',
+  PermissionsByScreenAndUser = 'seg-app-screen/get-permissions-by-screen-and-user',
 }
