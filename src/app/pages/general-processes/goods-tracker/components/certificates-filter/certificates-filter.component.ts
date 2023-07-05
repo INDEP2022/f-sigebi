@@ -14,6 +14,7 @@ import { GoodTrackerForm } from '../../utils/goods-tracker-form';
 export class CertificatesFilterComponent implements OnInit {
   @Output() onSubmit = new EventEmitter<any>();
   @Input() form: FormGroup<GoodTrackerForm>;
+  @Output() cleanFilters = new EventEmitter<void>();
   goodStatuses = new DefaultSelect();
 
   constructor(

@@ -29,6 +29,7 @@ export class DataFilterComponent implements OnInit {
   @Input() subloading: boolean;
   @Output() subloadingChange = new EventEmitter<boolean>();
   labels = new DefaultSelect();
+  @Output() cleanFilters = new EventEmitter<void>();
   goodStatuses = new DefaultSelect();
   processes = PROCESSES;
   constructor(

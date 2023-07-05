@@ -4,8 +4,15 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { BasePage } from 'src/app/core/shared';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-print-massive-account',
   templateUrl: './print-massive-account.component.html',
@@ -20,19 +27,21 @@ export class PrintMassiveAccountComponent extends BasePage implements OnInit {
   recepctD: string = '';
   recepctT: string = '';
   maxDate = new Date();
-
+  expedientes = new DefaultSelect<any>();
   constructor(
     private fb: FormBuilder,
     private datePipe: DatePipe,
     private siabService: SiabService,
     private modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private expedientService: ExpedientService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    // this.getExpediente(new ListParams());
   }
 
   prepareForm() {
@@ -48,6 +57,32 @@ export class PrintMassiveAccountComponent extends BasePage implements OnInit {
       receptionDateTo: [null, Validators.required],
     });
     console.log('formmm', this.form);
+  }
+  getExpedientes($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    if ($params.text) params.addFilter('id', $params.text, SearchFilter.EQ);
+    this.getExpediente(params);
+  }
+
+  getExpediente(_params?: FilterParams) {
+    this.expedientService.getAll(_params.getParams()).subscribe({
+      next: response => {
+        console.log(response);
+        this.expedientes = new DefaultSelect(response.data, response.count);
+        this.loading = false;
+      },
+      error: err => {
+        this.expedientes = new DefaultSelect([], 0);
+        this.alert(
+          'warning',
+          'Ese expediente no se tiene registrado en el sistema',
+          ''
+        );
+        this.loading = false;
+      },
+    });
   }
   Generar() {
     this.depositD = this.datePipe.transform(
@@ -76,8 +111,9 @@ export class PrintMassiveAccountComponent extends BasePage implements OnInit {
       'dd/MM/yyyy'
     );
 
+    const idExp = this.form.controls['file'].value;
     let params = {
-      PN_EXPEDIENTE: this.form.controls['file'].value,
+      PN_EXPEDIENTE: idExp.id,
       PF_DEPOSITO_INI: this.depositD,
       PF_DEPOSITO_FIN: this.depositT,
       PF_TRANSFERENCIA_INI: this.transfD,
@@ -86,6 +122,7 @@ export class PrintMassiveAccountComponent extends BasePage implements OnInit {
       PF_RECEPCION_FIN: this.recepctT,
     };
 
+    console.log('params', params);
     this.siabService
       // .fetchReport('FGERADBIMPRMASIVA', params)
       .fetchReportBlank('blank')

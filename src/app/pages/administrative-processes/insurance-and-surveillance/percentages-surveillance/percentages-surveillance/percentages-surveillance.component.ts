@@ -133,20 +133,19 @@ export class PercentagesSurveillanceComponent
     // });
   }
 
-  clearSubheaderFields() {
+  async clearSubheaderFields() {
     const subheaderFields: any = this.table.grid.source;
 
     const filterConf = subheaderFields.filterConf;
     console.log('this.table', this.table.grid);
     filterConf.filters = [];
-    this.sources.load([]);
-    this.sources.refresh();
-    this.paramsList.getValue().limit = 10;
-    this.paramsList.getValue().page = 1;
     this.columnFilters = [];
-    this.getPercentages();
-
-    return;
+    // this.sources.load([]);
+    // this.sources.refresh();
+    // this.paramsList.getValue().limit = 10;
+    // this.paramsList.getValue().page = 1;
+    console.log('this.paramsList.getValue()', this.paramsList.getValue());
+    await this.getPercentages();
   }
 
   generateFilterDynamically(
@@ -168,7 +167,7 @@ export class PercentagesSurveillanceComponent
     this.filters = params;
   }
 
-  getPercentages(): void {
+  async getPercentages() {
     this.loading = true;
     let params = {
       ...this.paramsList.getValue(),
