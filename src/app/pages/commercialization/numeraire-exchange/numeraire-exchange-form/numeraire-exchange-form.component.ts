@@ -831,11 +831,9 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
           this.alert('success', 'Éxito', message);
         }),
         catchError(err => {
-          this.alert(
-            'error',
-            'Error',
-            'Ocurrió un error al cambiar el bien a numerario'
-          );
+          console.log('error', err);
+          const message = err.error.message;
+          this.alert('error', 'Error', message);
           throw err;
         })
       )
@@ -851,6 +849,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
           console.log('res', res);
           this.dataTableMassive = res.bienes;
           this.loading = false;
+          this.alert('warning', 'Advertencias', res.errores.join('\n'));
         },
         error: err => {
           console.log('err', err);
@@ -860,13 +859,13 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   }
 
   isLoadingMassive: boolean = false;
-  async saveInServerMassive(): Promise<void> {
-    try {
-      await this.pupValidateMassive();
-    } catch (error) {
-      this.alert('error', 'Error', 'Ocurrió un error al validar el masivo');
-    }
-  }
+  // async saveInServerMassive(): Promise<void> {
+  //   try {
+  //     await this.pupValidateMassive();
+  //   } catch (error) {
+  //     this.alert('error', 'Error', 'Ocurrió un error al validar el masivo');
+  //   }
+  // }
 
   getTransGood(): string | number {
     return '';
@@ -878,83 +877,108 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   isMassive = false;
 
-  pupCreateGoodMassive() {
-    const body = {
-      goods: this.dataTableMassive.map(item => {
-        return {
-          status: item.estatus,
-          comment: item.comentario,
-          salePrice: item.precio_venta,
-          identificador: item.identificador,
-          description: item.descripcion,
-          amount: item.importe,
-          ivavta: item.ivavta,
-          goodNumber: item.no_bien,
-          ivacom: item.ivacom,
-          commission: item.comision,
-          user: this.infoToken.preferred_username.toUpperCase(),
-        };
-      }),
-      token: this.formBlkControl.value.tiNewFile,
-      dateNew: this.formBlkControl.value.tiNewDate,
-      moneyNew: this.formBlkControl.value.diNewCurrency.replaceAll("'", ''),
-      accountNew: this.formBlkControl.value.diNewAccount,
-      bankNew: this.formBlkControl.value.tiNewBank,
-      screenKey: 'FACTADBCAMBIONUME',
-      typeConv: this.formBlkControl.value.typeConversion,
-      pTransGood: this.getTransGood(),
-    };
-  }
+  // pupCreateGoodMassive() {
+  //   const body = {
+  //     goods: this.dataTableMassive.map(item => {
+  //       return {
+  //         status: item.estatus,
+  //         comment: item.comentario,
+  //         salePrice: item.precio_venta,
+  //         identificador: item.identificador,
+  //         description: item.descripcion,
+  //         amount: item.importe,
+  //         ivavta: item.ivavta,
+  //         goodNumber: item.no_bien,
+  //         ivacom: item.ivacom,
+  //         commission: item.comision,
+  //         user: this.infoToken.preferred_username.toUpperCase(),
+  //       };
+  //     }),
+  //     token: this.formBlkControl.value.tiNewFile,
+  //     dateNew: this.formBlkControl.value.tiNewDate,
+  //     moneyNew: this.formBlkControl.value.diNewCurrency.replaceAll("'", ''),
+  //     accountNew: this.formBlkControl.value.diNewAccount,
+  //     bankNew: this.formBlkControl.value.tiNewBank,
+  //     screenKey: 'FACTADBCAMBIONUME',
+  //     typeConv: this.formBlkControl.value.typeConversion,
+  //     pTransGood: this.getTransGood(),
+  //   };
+  // }
 
-  pupValidateMassive(): void {
+  async pupValidateMassive(): Promise<void> {
     try {
+      // const body = {
+      //   availableMasive: this.dataTableMassive.map(item => {
+      //     return {
+      //       available: item.disponible,
+      //       goodNumber: item.no_bien,
+      //       sellPrice: item.precio_venta,
+      //       screenKey: 'FACTADBCAMBIONUME',
+      //       salePrice: item.precio_venta,
+      //       typeConv: this.formBlkControl.value.typeConversion,
+      //       // spentId,
+      //       ivavta: item.ivavta,
+      //       amount: item.importe,
+      //       commission: item.comision,
+      //       ivacom: item.ivacom,
+      //       goodTransP: this.getTransGood(),
+      //       identificator: item.identificador,
+      //       description: item.descripcion,
+      //       statusGood: item.estatus,
+      //       Comment: item.comentario,
+      //       bankNew: this.formBlkControl.value.tiNewBank,
+      //       moneyNew: this.formBlkControl.value.diNewCurrency.replaceAll(
+      //         "'",
+      //         ''
+      //       ),
+      //       accountNew: this.formBlkControl.value.diNewAccount,
+      //       user: this.infoToken.preferred_username.toUpperCase(),
+      //       token: this.formBlkControl.value.tiNewFile,
+      //       // amountevta,
+      //       // fileNumber
+      //     };
+      //   }),
+      //   diCoinNew: this.formBlkControl.value.diNewCurrency.replaceAll("'", ''),
+      //   screenKey: 'FACTADBCAMBIONUME',
+      //   convType: this.formBlkControl.value.typeConversion,
+      //   pTransGood: this.getTransGood(),
+      // };
       const body = {
-        availableMasive: this.dataTableMassive.map(item => {
+        goods: this.dataTableMassive.map(item => {
           return {
-            available: item.disponible,
-            goodNumber: item.no_bien,
-            sellPrice: item.precio_venta,
-            screenKey: 'FACTADBCAMBIONUME',
+            status: item.estatus,
+            comment: item.comentario,
             salePrice: item.precio_venta,
-            typeConv: this.formBlkControl.value.typeConversion,
-            // spentId,
-            ivavta: item.ivavta,
-            amount: item.importe,
-            commission: item.comision,
-            ivacom: item.ivacom,
-            goodTransP: this.getTransGood(),
-            identificator: item.identificador,
+            identificador: item.identificador,
             description: item.descripcion,
-            statusGood: item.estatus,
-            Comment: item.comentario,
-            bankNew: this.formBlkControl.value.tiNewBank,
-            moneyNew: this.formBlkControl.value.diNewCurrency.replaceAll(
-              "'",
-              ''
-            ),
-            accountNew: this.formBlkControl.value.diNewAccount,
+            amount: item.importe,
+            ivavta: item.ivavta,
+            goodNumber: item.no_bien,
+            ivacom: item.ivacom,
+            commission: item.comision,
             user: this.infoToken.preferred_username.toUpperCase(),
-            token: this.formBlkControl.value.tiNewFile,
-            // amountevta,
-            // fileNumber
           };
         }),
-        diCoinNew: this.formBlkControl.value.diNewCurrency.replaceAll("'", ''),
+        token: this.formBlkControl.value.tiNewFile,
+        dateNew: this.formBlkControl.value.tiNewDate,
+        moneyNew: this.formBlkControl.value.diNewCurrency?.replaceAll("'", ''),
+        accountNew: this.formBlkControl.value.diNewAccount,
+        bankNew: this.formBlkControl.value.tiNewBank,
         screenKey: 'FACTADBCAMBIONUME',
-        convType: this.formBlkControl.value.typeConversion,
+        typeConv: this.formBlkControl.value.typeConversion,
         pTransGood: this.getTransGood(),
       };
-      firstValueFrom(
+      await firstValueFrom(
         this.goodService.pupValidMasiv(body).pipe(
           map(res => res),
           catchError(err => {
-            // if ()
             console.log('err', err);
             throw err;
           })
         )
       );
     } catch (error) {
+      console.log('error', error);
       this.alert('error', 'Error', 'Ocurrió un error al validar el masivo');
     }
   }
