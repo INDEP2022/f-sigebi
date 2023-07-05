@@ -8,20 +8,25 @@ import {
 import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
+import { GoodViewTrackerService } from 'src/app/core/services/ms-good-tracker/good-v-tracker.service';
 import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { V_GOOD_COLUMNS, goodCheck } from './columns.component';
+import { goodCheck, V_GOOD_COLUMNS } from './columns.component';
 
+interface IExcelToJson {
+  No_bien: string;
+}
 @Component({
   selector: 'app-massive-conversion-select-good',
   templateUrl: './massive-conversion-select-good.html',
@@ -32,8 +37,8 @@ export class MassiveConversionSelectGoodComponent
   implements OnInit
 {
   //Variables que recibe
-  paqDestinationGoodLenght: number
-  clearPaqDestination: boolean
+  paqDestinationGoodLenght: number;
+  clearPaqDestination: boolean;
   //Params para navegación
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -82,6 +87,8 @@ export class MassiveConversionSelectGoodComponent
   };
 
   data = new LocalDataSource();
+  list: any[] = [];
+  dataExcel: IExcelToJson[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -89,13 +96,21 @@ export class MassiveConversionSelectGoodComponent
     private rNomenclaService: ParametersService,
     private packageGoodService: PackageGoodService,
     private trackerGoodService: GoodTrackerService,
-    private bsModel: BsModalRef
+    private bsModel: BsModalRef,
+    private excelService: ExcelService,
+    private goodViewTrackerService: GoodViewTrackerService
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.data = new LocalDataSource();
     this.prepareForm();
+    this.params.value.page = 1;
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      console.log(params);
+      this.paginator(params.page, params.limit);
+    });
   }
 
   private prepareForm(): void {
@@ -275,24 +290,132 @@ export class MassiveConversionSelectGoodComponent
     }
   }
 
-  enterGoods(){
-    let v_bani: boolean
-      
-      if(goodCheck.length > 0){
-        if(this.paqDestinationGoodLenght > 0){
-          this.alertQuestion('question','¿El paquete tiene bienes, se eliminan?','','Eliminar').then(
-            q => {
-              if(q.isConfirmed){
-                this.clearPaqDestination = true
-                v_bani = false
-              }else{
-                v_bani = true
-              }
-            }
-          )
-        }
-      }else{
-        this.alert('warning','No seleccionó ningún bien','')
+  enterGoods() {
+    let v_bani: boolean;
+
+    if (goodCheck.length > 0) {
+      if (this.paqDestinationGoodLenght > 0) {
+        this.alertQuestion(
+          'question',
+          '¿El paquete tiene bienes, se eliminan?',
+          '',
+          'Eliminar'
+        ).then(q => {
+          if (q.isConfirmed) {
+            this.clearPaqDestination = true;
+            v_bani = false;
+          } else {
+            v_bani = true;
+          }
+        });
       }
+    } else {
+      this.alert('warning', 'No seleccionó ningún bien', '');
+    }
+  }
+
+  async exportarExcel() {
+    const filename: string = 'Bienes';
+    const jsonToCsv = await this.returnJsonToCsv();
+    const lista = [];
+    console.log('jsonToCsv.length ', jsonToCsv.length);
+    for (let i = 0; jsonToCsv.length; i++) {
+      if (jsonToCsv[i] === undefined) {
+        break;
+      }
+      lista.push(this.asignarDescripcionLabelExcel(jsonToCsv[i]));
+    }
+    this.excelService.export(lista, { filename });
+  }
+
+  async returnJsonToCsv() {
+    return this.data.getAll();
+  }
+  onFileChange(event: Event) {
+    console.log('event: ', event);
+    const files = (event.target as HTMLInputElement).files;
+    console.log('files.length: ', files.length);
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => this.readExcel(fileReader.result);
+  }
+
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      this.ngOnInit();
+      this.dataExcel = this.excelService.getData<IExcelToJson>(binaryExcel);
+      for (let i = 0; i < this.dataExcel.length; i++) {
+        this.goodViewTrackerService
+          .getGoods(this.dataExcel[i].No_bien)
+          .subscribe({
+            next: response => {
+              for (let j = 0; j < response.data.length; j++) {
+                let item = {
+                  goodNumber: response.data[j].goodNumber,
+                  description: response.data[j].description,
+                  unitExtent: response.data[j].unitExtent,
+                  numberProceedings: response.data[j].numberProceedings,
+                  downloadLabel: response.data[j].downloadLabel,
+                  status: response.data[j].status,
+                  numberClassifyGood: response.data[j].numberClassifyGood,
+                  downloadsssubtype: response.data[j].downloadsssubtype,
+                  coordinateadmin: response.data[j].coordinateadmin,
+                  numberStore: response.data[j].numberStore,
+                  downloadLocationStore: response.data[j].downloadLocationStore,
+                  storeCity: response.data[j].storeCity,
+                  storeState: response.data[j].storeState,
+                  dTransferee: response.data[j].dTransferee,
+                  dstation: response.data[j].dstation,
+                  dAuthority: response.data[j].dAuthority,
+                  amount: response.data[j].amount,
+                };
+                this.list.push(item);
+              }
+              this.data.load(this.list);
+              this.totalItems = this.list.length;
+              this.paginator();
+              this.data.refresh();
+            },
+            error: err => {
+              console.error(err);
+            },
+          });
+      }
+    } catch (error) {
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+    }
+  }
+
+  paginator(noPage: number = 1, elementPerPage: number = 10) {
+    const indiceInicial = (noPage - 1) * elementPerPage;
+    const indiceFinal = indiceInicial + elementPerPage;
+
+    let paginateData = this.list.slice(indiceInicial, indiceFinal);
+    this.data.load(paginateData);
+  }
+
+  asignarDescripcionLabelExcel(data: any): any {
+    let item = {
+      'NUMERO BIEN': data.goodNumber,
+      DESCRIPCIÓN: data.description,
+      CANTIDAD: data.amount,
+      'UNIDAD MEDIDA': data.unitExtent,
+      'NUMERO EXPEDIENTE': data.numberProceedings,
+      'DESCRIPCIÓN ETIQUETA': data.downloadLabel,
+      ESTADO: data.status,
+      CLASIFICADOR: data.numberClassifyGood,
+      'DESCRIPCIÓN CLASIFICADOR': data.downloadsssubtype,
+      'COORDINACIÓN ADMIN': data.coordinateadmin,
+      ALMACEN: data.numberStore,
+      'UBICACIÓN ALMACEN': data.downloadLocationStore,
+      'CIUDAD ALMACEN': data.storeCity,
+      'ESTADO ALMACEN': data.storeState,
+      TRANSFERENTE: data.dTransferee,
+      EMISORA: data.dstation,
+      AUTORIDAD: data.dAuthority,
+    };
+
+    return item;
   }
 }

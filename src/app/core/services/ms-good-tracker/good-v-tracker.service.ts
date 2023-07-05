@@ -19,4 +19,12 @@ export class GoodViewTrackerService extends HttpService {
       params
     );
   }
+
+  getGoods(bien: string) {
+    let data = '?filter.goodNumber=$eq:' + bien;
+    return this.get<IListResponseMessage<any>>(
+      GoodTrackerEndpoints.ViewTracker,
+      data
+    );
+  }
 }

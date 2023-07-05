@@ -47,13 +47,27 @@
           <button class="btn btn-primary btn-sm active mr-3" (click)="filter()">
             Filtrar Bienes
           </button>
-          <button class="btn btn-success btn-sm active mr-3">
-            Listado de Bienes <i class="bi bi-file-earmark-excel-fill"></i>
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            type="button"
+            (click)="file.click()">
+            Listado de Bienes
           </button>
-          <button class="btn btn-primary btn-sm active mr-3" (click)="enterGoods()">
+          <input
+            type="file"
+            name="file"
+            #file
+            class="d-none"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            (change)="onFileChange($event)" />
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="enterGoods()">
             Ingresar Bienes
           </button>
-          <button class="btn btn-sm btn-success active mr-3">
+          <button
+            class="btn btn-sm btn-success active mr-3"
+            (click)="exportarExcel()">
             Exportar a Excel
             <i class="bx bx-download float-icon"></i>
           </button>
