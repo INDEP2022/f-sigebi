@@ -49,6 +49,7 @@ export class NumeraryPhysicsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getTvalTable1Service(new ListParams());
   }
 
   prepareForm() {

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { PackageGoodEndpoints } from 'src/app/common/constants/endpoints/ms-package-good';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import {
   IpackageValidGood,
@@ -38,7 +37,7 @@ export class PackageGoodService extends HttpService {
   }
 
   //paq-destination - det
-  getPaqDestinationDet(params?: ListParams) {
+  getPaqDestinationDet(params?: any) {
     const route = `${PackageGoodEndpoints.paqDestinationDet}`;
     return this.get(route, params);
   }
