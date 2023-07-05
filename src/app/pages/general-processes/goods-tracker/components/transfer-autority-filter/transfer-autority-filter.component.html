@@ -8,6 +8,7 @@
         bindLabel="nameTransferent"
         [form]="form"
         control="transfers"
+        className="scroll-line"
         label="Transferente"
         [data]="transfers"
         (fetchItems)="getTransfers($event)"
@@ -18,6 +19,7 @@
         [form]="form"
         [multiple]="true"
         control="transmitters"
+        className="scroll-line"
         value="id"
         bindLabel="stationName"
         label="Emisora"
@@ -32,16 +34,24 @@
         value="idAuthority"
         bindLabel="authorityName"
         control="autorities"
+        className="scroll-line"
         label="Autoridad"
         [data]="autorities"
         (fetchItems)="getAutorities($event)"></ngx-select>
     </form-field>
   </div>
-  <div class="row">
-    <div class="col-md-12">
-      <button class="btn btn-primary active btn-sm">
+  <div class="row pt-3">
+    <div class="col-md-12 d-inline">
+      <button class="btn btn-primary active btn-sm mr-3">
         Buscar
         <i class="bx bx-search-alt bx-sm float-icon"></i>
+      </button>
+
+      <button
+        type="button"
+        (click)="cleanFilters.emit()"
+        class="btn btn-danger btn-sm active mr-3">
+        Limpiar <i class="fas fa-eraser"> </i>
       </button>
     </div>
   </div>
