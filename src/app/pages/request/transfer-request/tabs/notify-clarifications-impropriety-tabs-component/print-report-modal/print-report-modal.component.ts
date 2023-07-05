@@ -576,7 +576,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         firma: true,
         tipoDocumento: nameTypeReport,
       };
-      console.log('Información del reporte', formData);
+      console.log( 'Información del reporte', formData);
 
       this.firmReport(requestInfo.id, nameTypeReport, formData);
     }
@@ -656,12 +656,13 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           this.msjCheck = true;
           this.handleSuccess();
 
-          if (nameTypeReport === 'DictamenProcendecia') {
+          if(nameTypeReport === 'DictamenProcendecia'){
             //this.updateRequest();
           } else {
             this.updateStatusclarifications();
           }
 
+          
           //this.updateStatusSigned();
         },
         error: error => {
@@ -674,23 +675,22 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       });
   }
 
-  updateRequest() {
-    this.requestService
-      .update(this.idReportAclara, this.requestInfo)
-      .subscribe({
-        next: data => {
-          //this.handleSuccess(), this.signDictum();
-          console.log('Se actualizó');
-        },
-        error: error => (
-          this.onLoadToast(
-            'warning',
-            'No se pudo actualizar',
-            error.error.message[0]
-          ),
-          (this.loading = false)
+  updateRequest(){
+    this.requestService.update(this.idReportAclara, this.requestInfo).subscribe({
+      next: data => {
+        //this.handleSuccess(), this.signDictum(); 
+        console.log('Se actualizó')
+      },
+      error: error => (
+        this.onLoadToast(
+          'warning',
+          'No se pudo actualizar',
+          error.error.message[0]
         ),
-      });
+        (this.loading = false)
+      ),
+    });
+
   }
 
   updateStatusclarifications() {
