@@ -141,7 +141,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
 
   confirm() {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Estás seguro que desea crear los firmantes?'
     ).then(question => {

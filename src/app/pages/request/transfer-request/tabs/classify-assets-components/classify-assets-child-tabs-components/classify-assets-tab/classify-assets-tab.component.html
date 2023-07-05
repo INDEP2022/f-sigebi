@@ -9,9 +9,10 @@
       <div class="p-2 buttons">
         <button
           [disabled]="isClassifyAsset == true"
-          class="btn btn-secondary btn-sm active"
+          class="btn btn-primary btn-sm active"
           (click)="openSearchModal()">
           B&uacute;squeda Avanzada
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
       </div>
       <div class="p-2 buttons">
@@ -19,15 +20,13 @@
           [disabled]="statusTask == 'FINALIZADA' || isClassifyAsset == true"
           class="btn btn-primary btn-sm active"
           (click)="saveRequest()">
-          <i class="bx bx-save"></i> Guardar
+          Guardar
+          <i class="bx bx-save"></i>
         </button>
       </div>
       <div class="p-2 buttons">
-        <button
-          [disabled]="isClassifyAsset == true"
-          class="btn btn-danger btn-sm active"
-          (click)="cleanLvl()">
-          Limpiar
+        <button class="btn btn-danger btn-sm active" (click)="cleanLvl()">
+          Limpiar <i class="fas fa-eraser"> </i>
         </button>
       </div>
     </div>
