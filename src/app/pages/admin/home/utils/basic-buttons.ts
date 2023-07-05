@@ -183,4 +183,10 @@ export const BASIC_BUTTONS = [
     Escanear <i  class="bx bx-file bx-sm float-icon"></i>
     </button>`,
   },
+  {
+    name: 'Turnar',
+    code: `<button  class="btn btn-primary active btn-sm"> 
+    Turnar <i aria-hidden="true" class="fa fa-share-square"></i>
+    </button>`,
+  },
 ];

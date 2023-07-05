@@ -208,8 +208,8 @@ export class IncomeOrdersDepositoryGoodsComponent
     };
 
     this.siabService
-      .fetchReport('RDEPINGXBIEN', params)
-      //.fetchReport('blank', params)
+      //.fetchReport('RDEPINGXBIEN.', params)
+      .fetchReport('blank', params)
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
