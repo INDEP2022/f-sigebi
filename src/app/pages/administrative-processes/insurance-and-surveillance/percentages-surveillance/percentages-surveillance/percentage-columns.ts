@@ -43,7 +43,7 @@ export const PERCENTAGE_COLUMNS = {
         selectText: 'Todos',
         list: [
           { value: '1', title: 'Ferronal' },
-          { value: '2', title: 'Indep' },
+          { value: '2', title: 'INDEP' },
         ],
       },
     },
@@ -52,12 +52,12 @@ export const PERCENTAGE_COLUMNS = {
       if (type == 1) {
         return 'Ferronal';
       } else {
-        return 'Indep';
+        return 'INDEP';
       }
     },
   },
   percentage: {
-    title: 'Porcentaje',
+    title: 'Porcentaje %',
     type: 'number',
     sort: false,
   },

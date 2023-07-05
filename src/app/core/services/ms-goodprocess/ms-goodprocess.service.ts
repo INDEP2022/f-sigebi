@@ -146,4 +146,8 @@ export class GoodprocessService extends HttpService {
   getAppliesControl(params: any) {
     return this.post(`${GoodprocessEndpoints.AppliesControl}`, params);
   }
+
+  getVSteeringWhel(data: any) {
+    return this.post(GoodprocessEndpoints.AppVWheel, data);
+  }
 }

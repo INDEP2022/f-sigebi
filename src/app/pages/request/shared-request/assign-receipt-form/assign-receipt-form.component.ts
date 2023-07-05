@@ -67,11 +67,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
         this.loadingTable = false;
       },
       error: error => {
-        this.alertInfo(
-          'info',
-          'Información',
-          'No se encontraron recibos'
-        ).then();
+        this.alert('warning', 'Información', 'No se encontraron recibos');
         this.loadingTable = false;
       },
     });

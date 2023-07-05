@@ -4,6 +4,7 @@
     <div class="buttons">
       <div class="mx-1">
         <confirm-button
+          *ngIf="showInclude"
           type="button"
           [loading]="includeLoading"
           text="Incluir"
@@ -23,7 +24,8 @@
       </div>
       <app-columns-select
         class="mx-1"
-        [(settings)]="settings"></app-columns-select>
+        [(settings)]="settings"
+        (settingsChange)="setterColorRow($event)"></app-columns-select>
       <div class="btn-group mx-1" dropdown>
         <button
           id="button-basic"
@@ -72,12 +74,12 @@
               >C&eacute;dula de Venta</a
             >
           </li>
-          <li role="menuitem">
+          <!-- <li role="menuitem">
             <a class="dropdown-item" href="#">C&#46; Venta Masiva</a>
           </li>
           <li role="menuitem">
             <a class="dropdown-item" href="#">Excel C&#46;Venta</a>
-          </li>
+          </li> -->
         </ul>
       </div>
     </div>
@@ -97,6 +99,7 @@
     <div class="row" [ngClass]="{ 'table-loading': loading }">
       <div class="col-md-12 table-responsive">
         <ng2-smart-table
+          id="t-rastreador"
           [settings]="settings"
           [source]="goods"></ng2-smart-table>
       </div>
