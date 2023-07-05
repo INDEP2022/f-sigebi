@@ -275,17 +275,46 @@ export const BASIC_BUTTONS = [
             </button>`,
   },
   {
-    name: 'Ver Documento',
-    code: `<button  
-            class="btn btn-primary btn-sm active">
-            Ver documentos <i class="fa fa-eye" aria-hidden="true"></i>
-          </button>`,
-  },
-  {
     name: 'Nuevo Documento',
     code: `<button
              class="btn btn-success btn-sm active">
             Nuevo expediente <i class="fa fa-file"></i>
           </button>`,
+  },
+  {
+    name: 'Ver (Oficio, Acta etc...)',
+    code: `<button
+            class="btn btn-primary btn-sm active mr-3">
+            Ver  <i class="fa fa-eye" aria-hidden="true"></i>
+          </button>`,
+  },
+  {
+    name: 'Actualizar',
+    code: `<button
+            class="btn btn-primary btn-sm active mr-3">
+            Actualizar <i class="fas fa-sync-alt"> </i>
+          </button>`,
+  },
+
+  {
+    name: 'Turnar',
+    code: `<button
+              class="btn btn-primary btn-sm active m-3">
+              Turnar  <i class="fa fa-check" aria-hidden="true"></i>
+            </button>`,
+  },
+  {
+    name: 'Aprobar',
+    code: `<button
+              class="btn btn-primary btn-sm active m-3">
+              Aprobar  
+            </button>`,
+  },
+  {
+    name: 'Consultar',
+    code: `<button
+              class="btn btn-primary btn-sm active m-3">
+              Consultar 
+            </button>`,
   },
 ];
