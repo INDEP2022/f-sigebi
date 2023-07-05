@@ -1,4 +1,18 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+
 export const ASSETS_COLUMNS = {
+  select: {
+    title: '',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+    sort: false,
+    hide: false,
+  },
   goodId: {
     title: 'No. Gestión',
     type: 'string',

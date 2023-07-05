@@ -1,6 +1,6 @@
 export const ESTATE_COLUMNS = {
   googId: {
-    title: 'Nº Gestión',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -52,7 +52,7 @@ export const ESTATE_COLUMNS = {
   },
 
   esReprogramming: {
-    title: 'Nº Reprogramación',
+    title: 'No. Reprogramación',
     type: 'string',
     sort: false,
   },
@@ -84,7 +84,7 @@ export const ESTATE_COLUMNS = {
 
 export const ESTATE_COLUMNS_VIEW = {
   goodId: {
-    title: 'N° Gestión',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -188,7 +188,7 @@ export const ESTATE_COLUMNS_VIEW = {
 
 export const ESTATE_COLUMNS_NOTIFY = {
   gestionNumber: {
-    title: 'Nº Gestión',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -225,7 +225,7 @@ export const ESTATE_COLUMNS_NOTIFY = {
 
 export const ESTATE_COLUMNS_1 = {
   goodId: {
-    title: 'N° Gestión',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },

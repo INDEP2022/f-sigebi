@@ -124,6 +124,21 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
     );
   }
 
+  createProccesNum(model: IProccesNum) {
+    return this.post<IListResponse<IProccesNum>>(
+      NumeraryEndpoints.ProcessesNume,
+      model
+    );
+  }
+
+  getAllProccesNum(
+    params?: ListParams
+  ): Observable<IListResponse<IProccesNum>> {
+    return this.get<IListResponse<IProccesNum>>(
+      NumeraryEndpoints.ProcessesNume,
+      params
+    );
+  }
   getAllCloseNumerary(params?: ListParams): Observable<IListResponse<any>> {
     return this.get(NumeraryEndpoints.CloseNumerary, params);
   }

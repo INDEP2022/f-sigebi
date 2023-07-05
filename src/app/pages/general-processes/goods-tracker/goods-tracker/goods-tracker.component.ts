@@ -186,6 +186,10 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     } else {
       this.filters.global.delegationNumber = null;
     }
+
+    if (this.formCheckbox.controls.goodIrre.value) {
+      this.filters.parval.chkIrregular = 'S';
+    }
   }
 
   transferFilter() {
