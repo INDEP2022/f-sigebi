@@ -26,7 +26,6 @@ export class RecordAccountStatementsService
   getAll(
     params?: ListParams
   ): Observable<IListResponse<IRecordAccountStatements>> {
-    console.log(this.route);
     return this.recordAccountStatementsServiceRepository.getAllPaginated(
       this.route,
       params

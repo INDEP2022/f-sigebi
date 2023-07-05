@@ -8,7 +8,7 @@
         <div class="col-md-6">
           <form-field
             [control]="form.get('startDate')"
-            label="Fecha inicio operativo">
+            label="Fecha inicio Operativo">
             <input
               bsDatepicker
               class="form-control"
@@ -23,7 +23,7 @@
         <div class="col-md-6">
           <form-field
             [control]="form.get('endDate')"
-            label="Fecha fin operativo">
+            label="Fecha fin Operativo">
             <input
               bsDatepicker
               class="form-control"
@@ -54,6 +54,7 @@
         <confirm-button
           [disabled]="!form.valid"
           [loading]="loading"
+          [icon]="'fa fa-save'"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

@@ -100,9 +100,9 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
     console.log('Actualizar reporte', this.folioReporte);
 
     const idDoc = this.idSolicitud;
-    this.requestService.update(idDoc, obj).subscribe({ 
+    this.requestService.update(idDoc, obj).subscribe({
       next: data => {
-        this.handleSuccess(), this.signDictum();  
+        this.handleSuccess(), this.signDictum();
       },
       error: error => (
         this.onLoadToast(
@@ -118,11 +118,13 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
   newDataRequest: IRequest;
 
   signDictum(): void {
-
     this.requestService.getById(this.requestData.id).subscribe({
       next: resp => {
         this.newDataRequest = resp;
-        console.log('Información de solicitud actualizada: ', this.newDataRequest);
+        console.log(
+          'Información de solicitud actualizada: ',
+          this.newDataRequest
+        );
         console.log('id de solicitud', this.requestData.id);
         const requestInfo = this.newDataRequest;
         const idReportAclara = this.idSolicitud;
@@ -149,15 +151,9 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'warning',
           'Hay un error con la solicitud, inténtelo de nuevo'
-        )
-
-      }
-      
-    })
-
-
-
-    
+        );
+      },
+    });
   }
 
   close(): void {

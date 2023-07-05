@@ -64,7 +64,7 @@ export class ClarificationsComponent
   rowSelected: any;
   detailArray: any;
   typeDoc: string = 'clarification';
-  good: any;
+  good: IGood[] = [];
   totalItems: number = 0;
   showClarificationButtons: boolean = true;
 
@@ -74,6 +74,8 @@ export class ClarificationsComponent
   isLoadingTable2 = false;
   task: any;
   statusTask: any = '';
+  columns = ASSETS_COLUMNS;
+  goodsSelected: IGood[] = [];
 
   constructor(
     private modalService: BsModalService,
@@ -117,10 +119,13 @@ export class ClarificationsComponent
     this.goodSetting = {
       ...TABLE_SETTINGS,
       actions: false,
-      selectMode: 'multi',
       columns: ASSETS_COLUMNS,
     };
 
+    this.columns.select = {
+      ...this.columns.select,
+      onComponentInitFunction: this.selectGoods.bind(this),
+    };
     this.prepareForm();
   }
   private prepareForm() {
@@ -434,26 +439,40 @@ export class ClarificationsComponent
   }
 
   selectGoods(event: any) {
-    if (event.selected.length === 1) {
-      this.showClarificationButtons =
-        event.data.processStatus != 'SOLICITAR_ACLARACION' ? true : false;
-      this.good = event.data;
-      this.goodForm.reset();
-      this.goodForm.patchValue({ ...this.good });
-      this.rowSelected = this.good;
+    event.toggle.subscribe((data: any) => {
+      const index = this.goodsSelected.indexOf(data.row);
+      if (index == -1 && data.toggle == true) {
+        this.goodsSelected.push(data.row);
+      } else if (index != -1 && data.toggle == false) {
+        this.goodsSelected.splice(index, 1);
+      }
+      if (this.goodsSelected.length === 1) {
+        this.showClarificationButtons =
+          this.goodsSelected[0].processStatus != 'SOLICITAR_ACLARACION'
+            ? true
+            : false;
+        this.good = this.goodsSelected;
+        this.goodForm.reset();
+        this.goodForm.patchValue({ ...this.good[0] });
+        this.rowSelected = this.good;
 
-      this.getClarifications();
-    } else {
-      this.rowSelected = null;
-      this.paragraphs = [];
-    }
+        this.getClarifications();
+      } else if (this.goodsSelected.length > 1) {
+        this.rowSelected = null;
+        this.paragraphs = [];
+        this.onLoadToast('error', 'Solo se puede seleccionar un bien');
+      } else {
+        this.rowSelected = null;
+        this.paragraphs = [];
+      }
+    });
   }
 
   getClarifications() {
     this.paragraphs = [];
     this.isLoadingTable2 = true;
     const params = new ListParams();
-    params['filter.goodId'] = `$eq:${this.good.id}`;
+    params['filter.goodId'] = `$eq:${this.good[0].id}`;
 
     this.rejectGoodService.getAllFilter(params).subscribe({
       next: resp => {
@@ -580,18 +599,18 @@ export class ClarificationsComponent
 
             let body: any = {};
             if (clarifycationLength === 1) {
-              const goodResDev: any = await this.getGoodResDev(this.good.id);
+              const goodResDev: any = await this.getGoodResDev(this.good[0].id);
               await this.removeDevGood(Number(goodResDev));
-              body['id'] = this.good.id;
-              body['goodId'] = this.good.goodId;
+              body['id'] = this.good[0].id;
+              body['goodId'] = this.good[0].goodId;
               body.processStatus = 'DESTINO_DOCUMENTAL';
               body.goodStatus = 'DESTINO_DOCUMENTAL';
               await this.updateGood(body);
             } else {
-              body['id'] = this.good.id;
-              body['goodId'] = this.good.goodId;
+              body['id'] = this.good[0].id;
+              body['goodId'] = this.good[0].goodId;
               body.goodStatus =
-                this.good.goodStatus != 'ACLARADO'
+                this.good[0].goodStatus != 'ACLARADO'
                   ? 'ACLARADO'
                   : 'DESTINO_DOCUMENTAL';
               body.processStatus = 'DESTINO_DOCUMENTAL';
@@ -619,7 +638,8 @@ export class ClarificationsComponent
   updateStatusTable(body: any) {
     this.assetsArray.getElements().then(data => {
       data.map((item: any) => {
-        if (item.id === this.good.id) {
+        debugger;
+        if (item.id === body.id) {
           item.processStatus = body.processStatus;
           item.goodStatus = body.goodStatus;
         }
@@ -640,8 +660,9 @@ export class ClarificationsComponent
   openForm(event?: any): void {
     let docClarification = event;
     let config: ModalOptions = {
+      //this.goodForm.value
       initialState: {
-        goodTransfer: this.goodForm.value,
+        goodTransfer: this.good,
         docClarification,
         request: this.requestObject,
         callback: (next: boolean) => {
@@ -660,7 +681,7 @@ export class ClarificationsComponent
       if (res === 'UPDATE-GOOD') {
         this.assetsArray.getElements().then(data => {
           data.map((item: any) => {
-            if (item.id === this.good.id) {
+            if (item.id === res.id) {
               item.processStatus = 'SOLICITAR_ACLARACION';
               item.goodStatus = 'SOLICITUD DE ACLARACION';
             }

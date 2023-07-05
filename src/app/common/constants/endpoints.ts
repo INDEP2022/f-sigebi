@@ -7,6 +7,7 @@ export enum ENDPOINT_LINKS {
   Bank = 'catalog/bank',
   bank = 'bank',
   BankAccount = 'bank-account',
+  AccountMovements = 'account-movements',
   Batch = 'catalog/batch',
   Battery = 'catalog/battery',
   City = 'catalog/city-sera',

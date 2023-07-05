@@ -167,7 +167,7 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
           if (taskResult) {
             this.msgGuardado(
               'success',
-              'Creación de tarea exitosa',
+              'Creación de tarea correcta',
               `Se creó la tarea Realizar Programación con el folio: ${this.programmingId}`
             );
           }

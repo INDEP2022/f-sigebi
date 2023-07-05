@@ -190,6 +190,12 @@ export const BASIC_BUTTONS = [
     </button>`,
   },
   {
+    name: 'Turnar',
+    code: `<button  class="btn btn-primary active btn-sm"> 
+    Turnar <i aria-hidden="true" class="fa fa-share-square"></i>
+    </button>`,
+  },
+  {
     name: 'Importar Excel',
     code: `<button
             type="button"
