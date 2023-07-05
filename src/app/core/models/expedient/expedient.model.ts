@@ -10,5 +10,5 @@ export interface IExpedient {
 }
 
 export interface IPerUser {
-  user: string
+  user: string;
 }
