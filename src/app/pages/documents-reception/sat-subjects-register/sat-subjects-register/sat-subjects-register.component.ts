@@ -544,10 +544,8 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
   }
 
   selectRow(row: any) {
-    if (row.proceedingsNumber && row.officeNumber) {
-      this.satTransferForm
-        .get('satProceedings')
-        .setValue(row.proceedingsNumber);
+    if (row.issue && row.officeNumber) {
+      this.satTransferForm.get('satProceedings').setValue(row.issue);
       this.satTransferForm.get('job').setValue(row.officeNumber);
       this.satTransferForm.updateValueAndValidity();
       this.onLoadToast(
@@ -556,10 +554,8 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
         ERROR_FORM_SEARCH_OFICIO_EXPEDIENTE_SAT
       );
     } else {
-      if (row.proceedingsNumber) {
-        this.satTransferForm
-          .get('satProceedings')
-          .setValue(row.proceedingsNumber);
+      if (row.issue) {
+        this.satTransferForm.get('satProceedings').setValue(row.issue);
         this.satTransferForm.updateValueAndValidity();
         this.onLoadToast(
           'info',
@@ -576,5 +572,15 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     setTimeout(() => {
       this.consultarSatTransferForm(true, true);
     }, 300);
+  }
+  cleanSatForm() {
+    this.satForm.reset();
+    this.listGestionSat = [];
+    this.totalGestionSat = 0;
+  }
+  cleanSatTransfer() {
+    this.satForm.reset();
+    this.listSatTransferencia = [];
+    this.totalSatTransferencia = 0;
   }
 }

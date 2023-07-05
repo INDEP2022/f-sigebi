@@ -17,9 +17,9 @@ export class PackageGoodService extends HttpService {
     this.microservice = PackageGoodEndpoints.BasePath;
   }
 
-  insertPaqDestionarioEnc(body: IPackage){
+  insertPaqDestionarioEnc(body: IPackage) {
     const route = `${PackageGoodEndpoints.paqDestinationEnc}`;
-    return this.post(route, body)
+    return this.post(route, body);
   }
 
   getPaqDestinationEnc(params?: any) {
@@ -32,9 +32,9 @@ export class PackageGoodService extends HttpService {
     return this.put(route, good);
   }
 
-  getFolio(model: IFoliovInvoice){
-    const route = `application/get-vInvoice`
-    return this.post(route, model)
+  getFolio(model: IFoliovInvoice) {
+    const route = `application/get-vInvoice`;
+    return this.post(route, model);
   }
 
   //paq-destination - det

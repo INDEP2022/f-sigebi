@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, map, takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -187,7 +187,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.checkPer();
     this.fillDataByPackage();
-    this.getDataUser()
+    this.getDataUser();
   }
 
   //Gets del formulario de paquete
@@ -368,21 +368,19 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.userService.getAllSegUsers(routeUser).subscribe(
       res => {
         const resJson = JSON.parse(JSON.stringify(res.data[0]));
-        console.log(resJson.usuario.delegationNumber)
+        console.log(resJson.usuario.delegationNumber);
         this.dataUser.delegation = resJson.usuario.delegationNumber;
-        const paramsF = new FilterParams()
-        paramsF.addFilter('id', resJson.usuario.delegationNumber)
-        this.delegationService
-          .getFiltered(paramsF.getParams())
-          .subscribe(
-            res => {
-              console.log(res['data'][0]['description']);
-              this.dataUser.desDelegation = res['data'][0]['description']
-            },
-            err => {
-              console.log(err);
-            }
-          );
+        const paramsF = new FilterParams();
+        paramsF.addFilter('id', resJson.usuario.delegationNumber);
+        this.delegationService.getFiltered(paramsF.getParams()).subscribe(
+          res => {
+            console.log(res['data'][0]['description']);
+            this.dataUser.desDelegation = res['data'][0]['description'];
+          },
+          err => {
+            console.log(err);
+          }
+        );
       },
       err => {}
     );
@@ -1205,11 +1203,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     } else if (this.packageType.value != 3) {
       if (this.warehouse.value == null) {
         this.alert('warning', 'Debe ingresar el Almacén', '');
-      }else{
-      this.newCvePackage()
+      } else {
+        this.newCvePackage();
       }
-    }else{
-      this.newCvePackage()
+    } else {
+      this.newCvePackage();
     }
   }
 
@@ -1299,7 +1297,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
                           await this.descriptionPackage.setValue(
                             `FOLIO: ${v_folio}, DELEGACION: ${this.dataUser.desDelegation}`
                           );
-                          this.generate()
+                          this.generate();
                         },
                         err => {
                           console.log(err);
@@ -1325,16 +1323,17 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   generate() {
-    const user = localStorage.getItem('username') == 'sigebiadmon'
-    ? localStorage.getItem('username')
-    : localStorage.getItem('username').toLocaleUpperCase()
+    const user =
+      localStorage.getItem('username') == 'sigebiadmon'
+        ? localStorage.getItem('username')
+        : localStorage.getItem('username').toLocaleUpperCase();
 
-    const model:IPackage = {
+    const model: IPackage = {
       description: this.descriptionPackage.value,
       typePackage: this.packageType.value,
       amount: this.amountKg.value,
-      dateElaboration: format(new Date(),'yyyy-MM-dd'),
-      dateCapture: format(new Date(),'yyyy-MM-dd'),
+      dateElaboration: format(new Date(), 'yyyy-MM-dd'),
+      dateCapture: format(new Date(), 'yyyy-MM-dd'),
       dateCaptureHc: null,
       statuspack: 'P',
       numberClassifyGood: this.goodClassification.value,
@@ -1362,22 +1361,22 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       useApplied: null,
       useCancelled: null,
       numberGoodFather: 0,
-      nbOrigin: ''
-    }
-    console.log(model)
-    this.status.setValue('P')
-    this.fecElab.setValue(format(new Date(),'yyyy-MM-dd'))
-    this.userElab.setValue(user)
+      nbOrigin: '',
+    };
+    console.log(model);
+    this.status.setValue('P');
+    this.fecElab.setValue(format(new Date(), 'yyyy-MM-dd'));
+    this.userElab.setValue(user);
 
     this.packageGoodService.insertPaqDestionarioEnc(model).subscribe(
       res => {
-        console.log(res)
-        this.alert('success','Se creo nuevo paquete','')
+        console.log(res);
+        this.alert('success', 'Se creo nuevo paquete', '');
       },
       err => {
-        console.log(err)
+        console.log(err);
       }
-    )
+    );
   }
 
   validateButtons(status: string) {
@@ -1417,11 +1416,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   //Cargar bienes
-  selectGoods(){
+  selectGoods() {
     let modalConfig = MODAL_CONFIG;
     modalConfig = {
-      class: 'modal-lg modal-dialog-centered'
-    }
-    this.modalService.show(MassiveConversionSelectGoodComponent,modalConfig)
+      class: 'modal-lg modal-dialog-centered',
+    };
+    this.modalService.show(MassiveConversionSelectGoodComponent, modalConfig);
   }
 }
