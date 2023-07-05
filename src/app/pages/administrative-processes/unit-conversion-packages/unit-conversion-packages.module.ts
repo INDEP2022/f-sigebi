@@ -31,8 +31,8 @@ import { MassiveConversionSelectGoodComponent } from './massive-conversion-selec
     MassiveConversionErrorsModalComponent,
     MassiveConversionPermissionsComponent,
     MasiveConversionPermissionsDeleteComponent,
-    MassiveConversionModalGoodComponent, 
-    MassiveConversionSelectGoodComponent
+    MassiveConversionModalGoodComponent,
+    MassiveConversionSelectGoodComponent,
   ],
   imports: [
     CommonModule,

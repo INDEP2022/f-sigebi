@@ -13,6 +13,7 @@ import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 export class NumeraryHistoricalClosingComponent implements OnInit {
   form: FormGroup;
   date: string = '';
+  dateReportNg: Date;
   constructor(
     private fb: FormBuilder,
     private siabService: SiabService,
@@ -29,6 +30,10 @@ export class NumeraryHistoricalClosingComponent implements OnInit {
     this.form = this.fb.group({
       dateReport: [null, Validators.required],
     });
+  }
+
+  dateReport(event: any) {
+    console.log(this.dateReportNg);
   }
   Generar() {
     this.date = this.datePipe.transform(
