@@ -40,6 +40,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.idGood = this.data.id;
     if (this.idRequest) this.infoRequest();
     this.obtainDate();
     this.getInfoUserLog();
