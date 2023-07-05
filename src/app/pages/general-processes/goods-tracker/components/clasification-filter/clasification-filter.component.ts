@@ -38,6 +38,7 @@ export class ClasificationFilterComponent implements OnInit {
   @Input() params: FilterParams;
   @Input() subloading: boolean;
   @Output() subloadingChange = new EventEmitter<boolean>();
+  @Output() cleanFilters = new EventEmitter<void>();
 
   types = new DefaultSelect();
   subtypes = new DefaultSelect();

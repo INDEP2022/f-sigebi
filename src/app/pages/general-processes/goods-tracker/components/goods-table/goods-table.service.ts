@@ -7,6 +7,7 @@ import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
@@ -789,45 +790,52 @@ export class GoodsTableService {
     keyEvent: {
       title: 'Clave del Evento',
       sort: false,
-      type: 'custom',
-      renderComponent: LinkCellComponent<ITrackedGood>,
-      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
-        instance.onNavigate.subscribe(trackedGood => {
-          //Globals ID_EVENTO_F NO_BIEN_F
-          this.router.navigate(
-            [
-              '/pages/commercialization/consultation-goods-commercial-process-tabs',
-            ],
-            {
-              queryParams: {
-                origin: ORIGIN,
-              },
-            }
-          );
-        });
-      },
+      // type: 'custom',
+      // renderComponent: LinkCellComponent<ITrackedGood>,
+      // onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+      //   instance.onNavigate.subscribe(async trackedGood => {
+      //     const eventKey = await this.getEventKey({
+      //       pcveEvent: trackedGood.keyEvent as string,
+      //       pGoodNumber: trackedGood.goodNumber,
+      //     });
+      //     const goodNum = await this.getEventGlobal(trackedGood.goodNumber);
+      //     console.log({ eventKey, goodNum });
+
+      //     //Globals ID_EVENTO_F NO_BIEN_F
+      //     this.router.navigate(
+      //       [
+      //         '/pages/commercialization/consultation-goods-commercial-process-tabs',
+      //       ],
+      //       {
+      //         queryParams: {
+      //           origin: ORIGIN,
+      //         },
+      //       }
+      //     );
+      //   });
+      // },
       class: 'bg-info',
     },
     lotEvent: {
       title: 'No. Evento y No. Lote',
       sort: false,
-      type: 'custom',
-      renderComponent: LinkCellComponent<ITrackedGood>,
-      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
-        instance.onNavigate.subscribe(trackedGood => {
-          //Globals ID_EVENTO_F NO_BIEN_F
-          this.router.navigate(
-            [
-              '/pages/commercialization/consultation-goods-commercial-process-tabs',
-            ],
-            {
-              queryParams: {
-                origin: ORIGIN,
-              },
-            }
-          );
-        });
-      },
+      // type: 'custom',
+      // renderComponent: LinkCellComponent<ITrackedGood>,
+      // onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+      //   instance.onNavigate.subscribe(trackedGood => {
+      //     //Globals ID_EVENTO_F NO_BIEN_F
+      //     this.router.navigate(
+      //       [
+      //         '/pages/commercialization/consultation-goods-commercial-process-tabs',
+      //       ],
+      //       {
+      //         queryParams: {
+      //           origin: ORIGIN,
+      //         },
+      //       }
+      //     );
+      //   });
+      // },
       class: 'bg-info',
     },
     evelotStatus: {
@@ -838,45 +846,45 @@ export class GoodsTableService {
     invoiceNumber: {
       title: 'No. Factura',
       sort: false,
-      type: 'custom',
-      renderComponent: LinkCellComponent<ITrackedGood>,
-      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
-        instance.onNavigate.subscribe(trackedGood => {
-          //Globals ID_EVENTO_F NO_BIEN_F
-          this.router.navigate(
-            [
-              '/pages/commercialization/consultation-goods-commercial-process-tabs',
-            ],
-            {
-              queryParams: {
-                origin: ORIGIN,
-              },
-            }
-          );
-        });
-      },
+      // type: 'custom',
+      // renderComponent: LinkCellComponent<ITrackedGood>,
+      // onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+      //   instance.onNavigate.subscribe(trackedGood => {
+      //     //Globals ID_EVENTO_F NO_BIEN_F
+      //     this.router.navigate(
+      //       [
+      //         '/pages/commercialization/consultation-goods-commercial-process-tabs',
+      //       ],
+      //       {
+      //         queryParams: {
+      //           origin: ORIGIN,
+      //         },
+      //       }
+      //     );
+      //   });
+      // },
       class: 'bg-info',
     },
     eventDate: {
       title: 'Fec. Evento',
       sort: false,
-      type: 'custom',
-      renderComponent: LinkCellComponent<ITrackedGood>,
-      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
-        instance.onNavigate.subscribe(trackedGood => {
-          //Globals ID_EVENTO_F NO_BIEN_F
-          this.router.navigate(
-            [
-              '/pages/commercialization/consultation-goods-commercial-process-tabs',
-            ],
-            {
-              queryParams: {
-                origin: ORIGIN,
-              },
-            }
-          );
-        });
-      },
+      // type: 'custom',
+      // renderComponent: LinkCellComponent<ITrackedGood>,
+      // onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+      //   instance.onNavigate.subscribe(trackedGood => {
+      //     //Globals ID_EVENTO_F NO_BIEN_F
+      //     this.router.navigate(
+      //       [
+      //         '/pages/commercialization/consultation-goods-commercial-process-tabs',
+      //       ],
+      //       {
+      //         queryParams: {
+      //           origin: ORIGIN,
+      //         },
+      //       }
+      //     );
+      //   });
+      // },
       class: 'bg-info',
     },
     comerAppraisalActive: {
@@ -1094,7 +1102,8 @@ export class GoodsTableService {
     private proceedingService: ProceedingsService,
     private store: Store,
     private globalVarService: GlobalVarsService,
-    private goodProcessService: GoodprocessService
+    private goodProcessService: GoodprocessService,
+    private lotService: LotService
   ) {}
 
   getVWheel(body: {
@@ -1171,5 +1180,13 @@ export class GoodsTableService {
 
   getGlobalVars() {
     return this.globalVarService.getGlobalVars$().pipe(take(1));
+  }
+
+  getEventKey(body: { pcveEvent: string; pGoodNumber: string | number }) {
+    return firstValueFrom(this.lotService.getEventId(body));
+  }
+
+  getEventGlobal(goodId: string | number) {
+    return firstValueFrom(this.lotService.getGlobalGood(goodId as number));
   }
 }

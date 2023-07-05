@@ -58,6 +58,8 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     if (good.length > 0) {
       this.goodsList = good;
       this.setterColorRow();
+    } else {
+      this.goodsList = [];
     }
   }
 

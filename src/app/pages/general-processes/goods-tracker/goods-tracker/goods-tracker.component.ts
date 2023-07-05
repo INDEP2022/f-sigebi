@@ -72,7 +72,9 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
       );
       return;
     }
-    this.getGoods();
+    const _params = new ListParams();
+    this._params.next(_params);
+    // this.getGoods();
     this.showTable = true;
   }
 
@@ -114,6 +116,8 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
       .trackGoods(this.filters, params ?? new ListParams())
       .subscribe({
         next: res => {
+          console.log(res);
+
           this.loading = false;
           this.goods = res.data;
           this.totalItems = res.count;
@@ -131,6 +135,8 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
             );
             return;
           }
+          console.log('xd');
+
           this.goods = [];
           this.totalItems = 0;
         },
@@ -357,5 +363,9 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     this.showTable = true;
     this.params.removeAllFilters();
     this.getGoods();
+  }
+
+  resetFilters() {
+    this.form = this.fb.group(new GoodTrackerForm());
   }
 }
