@@ -896,202 +896,252 @@ export class GoodsTableService {
     val1: {
       title: 'Atributo Variable 1',
       sort: false,
+      class: 'bg-primary',
     },
     val2: {
       title: 'Atributo Variable 2',
       sort: false,
+      class: 'bg-primary',
     },
     val3: {
       title: 'Atributo Variable 3',
       sort: false,
+      class: 'bg-primary',
     },
     val4: {
       title: 'Atributo Variable 4',
       sort: false,
+      class: 'bg-primary',
     },
     val5: {
       title: 'Atributo Variable 5',
       sort: false,
+      class: 'bg-primary',
     },
     val6: {
       title: 'Atributo Variable 6',
       sort: false,
+      class: 'bg-primary',
     },
     val7: {
       title: 'Atributo Variable 7',
       sort: false,
+      class: 'bg-primary',
     },
     val8: {
       title: 'Atributo Variable 8',
       sort: false,
+      class: 'bg-primary',
     },
     val9: {
       title: 'Atributo Variable 9',
       sort: false,
+      class: 'bg-primary',
     },
     val10: {
       title: 'Atributo Variable 10',
       sort: false,
+      class: 'bg-primary',
     },
     val11: {
       title: 'Atributo Variable 11',
       sort: false,
+      class: 'bg-primary',
     },
     val12: {
       title: 'Atributo Variable 12',
       sort: false,
+      class: 'bg-primary',
     },
     val13: {
       title: 'Atributo Variable 13',
       sort: false,
+      class: 'bg-primary',
     },
     val14: {
       title: 'Atributo Variable 14',
       sort: false,
+      class: 'bg-primary',
     },
     val15: {
       title: 'Atributo Variable 15',
       sort: false,
+      class: 'bg-primary',
     },
     val16: {
       title: 'Atributo Variable 16',
       sort: false,
+      class: 'bg-primary',
     },
     val17: {
       title: 'Atributo Variable 17',
       sort: false,
+      class: 'bg-primary',
     },
     val18: {
       title: 'Atributo Variable 18',
       sort: false,
+      class: 'bg-primary',
     },
     val19: {
       title: 'Atributo Variable 19',
       sort: false,
+      class: 'bg-primary',
     },
     val20: {
       title: 'Atributo Variable 20',
       sort: false,
+      class: 'bg-primary',
     },
     val21: {
       title: 'Atributo Variable 21',
       sort: false,
+      class: 'bg-primary',
     },
     val22: {
       title: 'Atributo Variable 22',
       sort: false,
+      class: 'bg-primary',
     },
     val23: {
       title: 'Atributo Variable 23',
       sort: false,
+      class: 'bg-primary',
     },
     val24: {
       title: 'Atributo Variable 24',
       sort: false,
+      class: 'bg-primary',
     },
     val25: {
       title: 'Atributo Variable 25',
       sort: false,
+      class: 'bg-primary',
     },
     val26: {
       title: 'Atributo Variable 26',
       sort: false,
+      class: 'bg-primary',
     },
     val27: {
       title: 'Atributo Variable 27',
       sort: false,
+      class: 'bg-primary',
     },
     val28: {
       title: 'Atributo Variable 28',
       sort: false,
+      class: 'bg-primary',
     },
     val29: {
       title: 'Atributo Variable 29',
       sort: false,
+      class: 'bg-primary',
     },
     val30: {
       title: 'Atributo Variable 30',
       sort: false,
+      class: 'bg-primary',
     },
     val31: {
       title: 'Atributo Variable 31',
       sort: false,
+      class: 'bg-primary',
     },
     val32: {
       title: 'Atributo Variable 32',
       sort: false,
+      class: 'bg-primary',
     },
     val33: {
       title: 'Atributo Variable 33',
       sort: false,
+      class: 'bg-primary',
     },
     val34: {
       title: 'Atributo Variable 34',
       sort: false,
+      class: 'bg-primary',
     },
     val35: {
       title: 'Atributo Variable 35',
       sort: false,
+      class: 'bg-primary',
     },
     val36: {
       title: 'Atributo Variable 36',
       sort: false,
+      class: 'bg-primary',
     },
     val37: {
       title: 'Atributo Variable 37',
       sort: false,
+      class: 'bg-primary',
     },
     val38: {
       title: 'Atributo Variable 38',
       sort: false,
+      class: 'bg-primary',
     },
     val39: {
       title: 'Atributo Variable 39',
       sort: false,
+      class: 'bg-primary',
     },
     val40: {
       title: 'Atributo Variable 40',
       sort: false,
+      class: 'bg-primary',
     },
     val41: {
       title: 'Atributo Variable 41',
       sort: false,
+      class: 'bg-primary',
     },
     val42: {
       title: 'Atributo Variable 42',
       sort: false,
+      class: 'bg-primary',
     },
     val43: {
       title: 'Atributo Variable 43',
       sort: false,
+      class: 'bg-primary',
     },
     val44: {
       title: 'Atributo Variable 44',
       sort: false,
+      class: 'bg-primary',
     },
     val45: {
       title: 'Atributo Variable 45',
       sort: false,
+      class: 'bg-primary',
     },
     val46: {
       title: 'Atributo Variable 46',
       sort: false,
+      class: 'bg-primary',
     },
     val47: {
       title: 'Atributo Variable 47',
       sort: false,
+      class: 'bg-primary',
     },
     val48: {
       title: 'Atributo Variable 48',
       sort: false,
+      class: 'bg-primary',
     },
     val49: {
       title: 'Atributo Variable 49',
       sort: false,
+      class: 'bg-primary',
     },
     val50: {
       title: 'Atributo Variable 50',
       sort: false,
+      class: 'bg-primary',
     },
   };
 
