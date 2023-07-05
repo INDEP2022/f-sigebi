@@ -4,6 +4,7 @@
     <div class="buttons">
       <div class="mx-1">
         <confirm-button
+          *ngIf="showInclude"
           type="button"
           [loading]="includeLoading"
           text="Incluir"
@@ -11,10 +12,20 @@
           className="btn-secondary"
           [btnSmall]="true"
           (confirm)="include()"></confirm-button>
+        <confirm-button
+          type="button"
+          [loading]="excelLoading"
+          text="Excel"
+          loadingText="Cargando..."
+          className="btn-success ml-2"
+          [icon]="'bx bx-download'"
+          [btnSmall]="true"
+          (confirm)="getDataExcell()"></confirm-button>
       </div>
       <app-columns-select
         class="mx-1"
-        [(settings)]="settings"></app-columns-select>
+        [(settings)]="settings"
+        (settingsChange)="setterColorRow($event)"></app-columns-select>
       <div class="btn-group mx-1" dropdown>
         <button
           id="button-basic"
@@ -49,9 +60,9 @@
           <li role="menuitem">
             <a class="dropdown-item" href="#">F&#46; T&eacute;cnica Masiva</a>
           </li>
-          <li role="menuitem">
-            <a class="dropdown-item" href="#">Excel</a>
-          </li>
+          <!-- <li role="menuitem">
+            <a class="dropdown-item" (click)="getDataExcell()">Excel</a>
+          </li> -->
           <li role="menuitem">
             <a class="dropdown-item" (click)="getHistory()">
               Hist&oacute;rico Actas&#47;Prog&#47;Sus&#47;Can
@@ -59,14 +70,16 @@
           </li>
           <li class="divider dropdown-divider"></li>
           <li role="menuitem">
-            <a class="dropdown-item" href="#">C&eacute;dula de Venta</a>
+            <a class="dropdown-item" (click)="certificateSell()"
+              >C&eacute;dula de Venta</a
+            >
           </li>
-          <li role="menuitem">
+          <!-- <li role="menuitem">
             <a class="dropdown-item" href="#">C&#46; Venta Masiva</a>
           </li>
           <li role="menuitem">
             <a class="dropdown-item" href="#">Excel C&#46;Venta</a>
-          </li>
+          </li> -->
         </ul>
       </div>
     </div>
@@ -86,6 +99,7 @@
     <div class="row" [ngClass]="{ 'table-loading': loading }">
       <div class="col-md-12 table-responsive">
         <ng2-smart-table
+          id="t-rastreador"
           [settings]="settings"
           [source]="goods"></ng2-smart-table>
       </div>

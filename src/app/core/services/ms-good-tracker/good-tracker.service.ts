@@ -70,6 +70,10 @@ export class GoodTrackerService extends HttpService {
     );
   }
 
+  getTvGoodTrackerFilter(params: any) {
+    return this.get('t-v-goods-tracker', params);
+  }
+
   getAllModal(
     self?: GoodTrackerService,
     params?: _Params
@@ -86,5 +90,9 @@ export class GoodTrackerService extends HttpService {
 
   createTmpTracker(tmpTracker: ITmpTracker) {
     return this.post(GoodTrackerEndpoints.TmpTracker, tmpTracker);
+  }
+
+  getExcel(tmp: GoodTrackerMap) {
+    return this.post(GoodTrackerEndpoints.GoodExcel, tmp);
   }
 }

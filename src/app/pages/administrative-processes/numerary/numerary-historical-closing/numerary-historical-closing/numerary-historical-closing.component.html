@@ -13,8 +13,11 @@
               [control]="form.get('dateReport')"
               label="Fecha a reportar">
               <input
+                [(ngModel)]="dateReportNg"
+                (ngModelChange)="dateReport($event)"
                 formControlName="dateReport"
                 class="form-control"
+                [maxDate]="maxDate"
                 bsDatepicker />
             </form-field>
           </div>

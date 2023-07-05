@@ -58,11 +58,11 @@ export class SurvillanceService extends HttpService {
   }
 
   putVigProcessPercentages(id: number, data: IVigProcessPercentages) {
-    return this.put(`${this.route.VigProcessPercentages}/${id}`, data);
+    return this.put(`${this.route.VigProcessPercentages}`, data);
   }
 
-  deleteVigProcessPercentages(id: number) {
-    return this.delete(`${this.route.VigProcessPercentages}/${id}`);
+  deleteVigProcessPercentages(data: any) {
+    return this.delete(`${this.route.VigProcessPercentages}`, data);
   }
 
   getVigBinnacle(params?: _Params) {

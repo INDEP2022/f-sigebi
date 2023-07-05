@@ -10,10 +10,10 @@
         <button
           (click)="aprobateReception()"
           class="btn btn-primary btn-sm active">
-          Terminar Ejecución
+          Terminar Ejecución <i class="fa fa-check" aria-hidden="true"></i>
         </button>
         <button (click)="close()" class="btn btn-danger btn-sm active">
-          Cancelar
+          Cancelar <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>
@@ -159,12 +159,12 @@
             <button
               (click)="uploadDocuments()"
               class="btn btn-primary btn-sm active">
-              <i class="fa fa-file-archive"></i> Adjuntar documentos
+              Adjuntar documentos <i class="fa fa-file-archive"></i>
             </button>
             <button
               (click)="uploadPicture()"
               class="btn btn-info btn-sm active">
-              <i class="fa fa-camera"></i> Adjuntar fotografias
+              Adjuntar fotografias <i class="fa fa-camera"></i>
             </button>
           </div>
         </div>
@@ -255,21 +255,21 @@
           <button
             (click)="assignReceipt()"
             class="btn btn-primary btn-sm active">
-            Asignar recibo
+            Asignar recibo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
           <button (click)="sendGoodGuard()" class="btn btn-info btn-sm active">
-            Resguardo
+            Resguardo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
           <button
             (click)="sendWarehouse()"
             class="btn btn-primary btn-sm active">
-            Almacén
+            Almacén <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
           <button (click)="rescheduling()" class="btn btn-info btn-sm active">
-            Reprogramaci&oacute;n
+            Reprogramaci&oacute;n <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
           <button (click)="cancelGood()" class="btn btn-danger btn-sm active">
-            Cancelaci&oacute;n
+            Cancelaci&oacute;n <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
       </div>
@@ -566,25 +566,26 @@
                 </div>
                 <div class="row pt-5">
                   <div class="justify-content-start">
-                    <app-columns-select
-                      [(settings)]="settingsGuardGoods"></app-columns-select>
-
                     <button
-                      (click)="deleteGoodReceipt()"
-                      class="btn btn-danger btn-sm active ml-2">
-                      <i class="fa fa-trash"></i> Eliminar selección
+                      (click)="uploadPicture()"
+                      class="btn btn-info btn-sm active ml-2">
+                      Adjuntar fotografias <i class="fa fa-camera"></i>
                     </button>
 
                     <button
                       (click)="uploadDocuments()"
                       class="btn btn-primary btn-sm active ml-2">
-                      <i class="fa fa-file-archive"></i> Adjuntar documentos
+                      Adjuntar documentos <i class="fa fa-file-archive"></i>
                     </button>
+
                     <button
-                      (click)="uploadPicture()"
-                      class="btn btn-info btn-sm active ml-2">
-                      <i class="fa fa-camera"></i> Adjuntar fotografias
+                      (click)="deleteGoodReceipt()"
+                      class="btn btn-danger btn-sm active ml-2 mr-2">
+                      Eliminar selección <i class="fa fa-trash"></i>
                     </button>
+
+                    <app-columns-select
+                      [(settings)]="settingsGuardGoods"></app-columns-select>
                   </div>
                   <div class="row" *ngIf="!formLoading">
                     <form [formGroup]="receptionForm">
@@ -864,31 +865,32 @@
 
             <tab [heading]="headingGuard">
               <div class="justify-content-start">
-                <app-columns-select
-                  [(settings)]="settingsGuardGoods"></app-columns-select>
-
                 <button
                   (click)="assingMinute()"
                   class="btn btn-primary btn-sm active ml-2">
-                  Asignar Acta
+                  Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
 
                 <button
-                  (click)="deleteGoodGuard()"
-                  class="btn btn-danger btn-sm active ml-2">
-                  <i class="fa fa-trash"></i> Eliminar selección
+                  (click)="uploadPicture()"
+                  class="btn btn-info btn-sm active ml-2">
+                  Adjuntar fotografias <i class="fa fa-camera"></i>
                 </button>
 
                 <button
                   (click)="uploadDocuments()"
                   class="btn btn-primary btn-sm active ml-2">
-                  <i class="fa fa-file-archive"></i> Adjuntar documentos
+                  Adjuntar documentos <i class="fa fa-file-archive"></i>
                 </button>
+
                 <button
-                  (click)="uploadPicture()"
-                  class="btn btn-info btn-sm active ml-2">
-                  <i class="fa fa-camera"></i> Adjuntar fotografias
+                  (click)="deleteGoodGuard()"
+                  class="btn btn-danger btn-sm active ml-2 mr-2">
+                  Eliminar selección <i class="fa fa-trash"></i>
                 </button>
+
+                <app-columns-select
+                  [(settings)]="settingsGuardGoods"></app-columns-select>
               </div>
               <div>
                 <form [formGroup]="goodsGuardForm">
@@ -1152,31 +1154,32 @@
 
             <tab [heading]="headingWarehouse">
               <div class="justify-content-start">
-                <app-columns-select
-                  [(settings)]="settingsGuardGoods"></app-columns-select>
-
                 <button
                   (click)="assingMinuteWarehouse()"
                   class="btn btn-primary btn-sm active ml-2">
-                  Asignar Acta
+                  Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
 
                 <button
-                  (click)="deleteGoodWarehouse()"
-                  class="btn btn-danger btn-sm active ml-2">
-                  <i class="fa fa-trash"></i> Eliminar selección
+                  (click)="uploadPicture()"
+                  class="btn btn-info btn-sm active ml-2">
+                  Adjuntar fotografias <i class="fa fa-camera"></i>
                 </button>
 
                 <button
                   (click)="uploadDocuments()"
                   class="btn btn-primary btn-sm active ml-2">
-                  <i class="fa fa-file-archive"></i> Adjuntar documentos
+                  Adjuntar documentos <i class="fa fa-file-archive"></i>
                 </button>
+
                 <button
-                  (click)="uploadPicture()"
-                  class="btn btn-info btn-sm active ml-2">
-                  <i class="fa fa-camera"></i> Adjuntar fotografias
+                  (click)="deleteGoodWarehouse()"
+                  class="btn btn-danger btn-sm active ml-2 mr-2">
+                  Eliminar selección <i class="fa fa-trash"></i>
                 </button>
+
+                <app-columns-select
+                  [(settings)]="settingsGuardGoods"></app-columns-select>
               </div>
               <div class="row">
                 <form [formGroup]="goodsWarehouseForm">
@@ -1450,31 +1453,32 @@
 
               <div *ngIf="!formLoadingReprog">
                 <div class="justify-content-start">
-                  <app-columns-select
-                    [(settings)]="settingsGuardGoods"></app-columns-select>
-
                   <button
                     (click)="assingMinuteReprogramation()"
                     class="btn btn-primary btn-sm active ml-2">
-                    Asignar Acta
+                    Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
                   </button>
 
                   <button
-                    (click)="deleteGoodRep()"
-                    class="btn btn-danger btn-sm active ml-2">
-                    <i class="fa fa-trash"></i> Eliminar selección
+                    (click)="uploadPicture()"
+                    class="btn btn-info btn-sm active ml-2">
+                    Adjuntar fotografias <i class="fa fa-camera"></i>
                   </button>
 
                   <button
                     (click)="uploadDocuments()"
                     class="btn btn-primary btn-sm active ml-2">
-                    <i class="fa fa-file-archive"></i> Adjuntar documentos
+                    Adjuntar documentos <i class="fa fa-file-archive"></i>
                   </button>
+
                   <button
-                    (click)="uploadPicture()"
-                    class="btn btn-info btn-sm active ml-2">
-                    <i class="fa fa-camera"></i> Adjuntar fotografias
+                    (click)="deleteGoodRep()"
+                    class="btn btn-danger btn-sm active ml-2 mr-2">
+                    Eliminar selección <i class="fa fa-trash"></i>
                   </button>
+
+                  <app-columns-select
+                    [(settings)]="settingsGuardGoods"></app-columns-select>
                 </div>
                 <div class="row">
                   <form [formGroup]="goodsReprogForm">
@@ -1711,31 +1715,32 @@
 
             <tab [heading]="headingCancelation">
               <div class="justify-content-start">
-                <app-columns-select
-                  [(settings)]="settingsGuardGoods"></app-columns-select>
-
                 <button
                   (click)="assingMinuteCancelation()"
                   class="btn btn-primary btn-sm active ml-2">
-                  Asignar Acta
+                  Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
 
                 <button
-                  (click)="deleteGoodCancelation()"
-                  class="btn btn-danger btn-sm active ml-2">
-                  <i class="fa fa-trash"></i> Eliminar selección
+                  (click)="uploadPicture()"
+                  class="btn btn-info btn-sm active ml-2">
+                  Adjuntar fotografias <i class="fa fa-camera"></i>
                 </button>
 
                 <button
                   (click)="uploadDocuments()"
                   class="btn btn-primary btn-sm active ml-2">
-                  <i class="fa fa-file-archive"></i> Adjuntar documentos
+                  Adjuntar documentos <i class="fa fa-file-archive"></i>
                 </button>
+
                 <button
-                  (click)="uploadPicture()"
-                  class="btn btn-info btn-sm active ml-2">
-                  <i class="fa fa-camera"></i> Adjuntar fotografias
+                  (click)="deleteGoodCancelation()"
+                  class="btn btn-danger btn-sm active ml-2 mr-2">
+                  Eliminar selección <i class="fa fa-trash"></i>
                 </button>
+
+                <app-columns-select
+                  [(settings)]="settingsGuardGoods"></app-columns-select>
               </div>
               <div class="row">
                 <form [formGroup]="goodsCancelationForm">

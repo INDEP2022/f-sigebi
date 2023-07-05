@@ -35,4 +35,6 @@ export interface IGlobalVars {
   P_NO_TRAMITE: string | number;
   REL_BIENES: number;
   IMP_OF: any;
+  NO_EXPEDIENTE_F?: string | number;
+  TIPO_DICTA_F?: string;
 }

@@ -193,6 +193,9 @@ export class DepositTokensComponent
           title: 'Moneda',
           type: 'string',
           sort: false,
+          valuePrepareFunction: (_cell: any, row: any) => {
+            return row.currency == "'M'" ? 'M' : row.currency;
+          },
         },
         deposit: {
           title: 'Depósito',
@@ -231,6 +234,11 @@ export class DepositTokensComponent
           type: 'string',
           sort: false,
         },
+        motionnumber: {
+          title: 'No. Movimiento',
+          type: 'string',
+          sort: false,
+        },
       },
       rowClassFunction: (row: any) => {
         if (row.data.goodnumber != null) {
@@ -259,6 +267,7 @@ export class DepositTokensComponent
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
+              motionnumber: () => (searchFilter = SearchFilter.EQ),
               bank: () => (searchFilter = SearchFilter.ILIKE),
               cveAccount: () => (searchFilter = SearchFilter.EQ),
               motionDate_: () => (searchFilter = SearchFilter.ILIKE),
@@ -304,6 +313,7 @@ export class DepositTokensComponent
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
+
     console.log('params1', params);
     if (params['filter.motionDate_']) {
       var fecha = new Date(params['filter.motionDate_']);
@@ -365,6 +375,12 @@ export class DepositTokensComponent
       delete params['filter.cveAccount'];
     }
 
+    if (params['filter.motionnumber']) {
+      params['motionNumber'] = params['filter.motionnumber'];
+      delete params['filter.motionnumber'];
+    }
+
+    params['&sortBy=motionNumber:DESC&'];
     console.log('params2', params);
     this.accountMovementService
       .getMovementAccountXBankAccount(params)
@@ -375,7 +391,11 @@ export class DepositTokensComponent
               item.accountnumber
             );
 
-            item['currency'] = detailsBank ? detailsBank.cveCurrency : null;
+            if (detailsBank.cveCurrency == "'M'") {
+              item['currency'] = 'M';
+            } else {
+              item['currency'] = detailsBank ? detailsBank.cveCurrency : null;
+            }
             item['bank'] = detailsBank ? detailsBank.cveBank : null;
             item['cveAccount'] = detailsBank ? detailsBank.cveAccount : null;
             item['motionDate_'] = item.motiondate

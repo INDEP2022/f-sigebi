@@ -19,11 +19,16 @@ import {
   throwError,
 } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
+import { PartializeGoodService } from 'src/app/core/services/ms-partializate-good/partializate-good.service';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -35,6 +40,7 @@ import {
   GOOD_TRACKER_ORIGINS,
   GOOD_TRACKER_ORIGINS_TITLES,
 } from '../../utils/constants/origins';
+import { GoodTrackerMap } from '../../utils/good-tracker-map';
 import { ActaHistoComponent } from '../acta-histo/acta-histo.component';
 import { GTrackerDocumentsComponent } from '../g-tracker-documents/g-tracker-documents.component';
 import { GoodsTableService } from './goods-table.service';
@@ -46,18 +52,34 @@ import { GoodsTableService } from './goods-table.service';
 })
 export class GoodsTableComponent extends BasePage implements OnInit {
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
-  @Input() goods: ITrackedGood[] = [];
+  goodsList: ITrackedGood[] = [];
+
+  @Input() set goods(good: ITrackedGood[]) {
+    if (good.length > 0) {
+      this.goodsList = good;
+      this.setterColorRow();
+    } else {
+      this.goodsList = [];
+    }
+  }
+
+  get goods(): ITrackedGood[] {
+    return this.goodsList;
+  }
   @Input() totalItems: number = 0;
   @Input() params: BehaviorSubject<ListParams>;
   @Input() override loading: boolean = false;
   @Input() formData: FormGroup;
   @Input() fomrCheck: FormGroup;
+  @Input() filters: GoodTrackerMap;
 
   private selectedGooods: ITrackedGood[] = [];
   origin: string = null;
   ngGlobal: any = null;
   $trackedGoods = this.store.select(getTrackedGoods);
   includeLoading: boolean = false;
+  excelLoading: boolean = false;
+  showInclude = false;
 
   constructor(
     private modalService: BsModalService,
@@ -73,7 +95,8 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     private globalVarService: GlobalVarsService,
     private jasperServ: SiabService,
     private goodPartService: GoodPartializeService,
-    private procedings: ProceedingsService
+    private procedings: ProceedingsService,
+    private partializeGoodServ: PartializeGoodService
   ) {
     super();
     this.settings.actions = false;
@@ -89,26 +112,45 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       });
   }
 
+  setterColorRow(ev?: any) {
+    setTimeout(() => {
+      const table = document.getElementById('t-rastreador');
+      const thead = table.children[0].children[0].children[0].children;
+      const tbody = table.children[0].children[1].children;
+      for (let i = 0; i < tbody.length; i++) {
+        const cell = tbody[i].children;
+        for (let x = 0; x < cell.length; x++) {
+          const th = thead[x].classList[thead[x].classList.length - 1];
+          const tr = cell[x];
+          tr.classList.add(th.includes('bg-') ? th : 'x');
+        }
+      }
+    }, 300);
+  }
+
   setColumnsFromOrigin() {
-    if (this.isValidOrigin()) {
-      this.settings = {
-        ...this.settings,
-        actions: false,
-        columns: {
-          name: {
-            title: '',
-            sort: false,
-            type: 'custom',
-            showAlways: true,
-            valuePrepareFunction: (isSelected: boolean, row: ITrackedGood) =>
-              this.isGoodSelected(row),
-            renderComponent: CheckboxElementComponent,
-            onComponentInitFunction: (instance: CheckboxElementComponent) =>
-              this.onGoodSelect(instance),
-          },
-          ...this.goodsTableService.columns,
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: {
+        name: {
+          title: 'Selección',
+          sort: false,
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: ITrackedGood) =>
+            this.isGoodSelected(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onGoodSelect(instance),
         },
-      };
+        ...this.goodsTableService.columns,
+      },
+    };
+    if (this.isValidOrigin()) {
+      this.showInclude = true;
+    } else {
+      this.showInclude = false;
     }
   }
 
@@ -136,8 +178,10 @@ export class GoodsTableComponent extends BasePage implements OnInit {
 
   goodSelectedChange(good: ITrackedGood, selected: boolean) {
     if (selected) {
+      good.select = true;
       this.selectedGooods.push(good);
     } else {
+      good.select = false;
       this.selectedGooods = this.selectedGooods.filter(
         _good => _good.goodNumber != good.goodNumber
       );
@@ -253,7 +297,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
             },
           });
         } else {
-          const good = this.goods.filter(good => good.select == true);
+          const good = this.selectedGooods;
           if (good.length) {
             if (good[0].goodNumber) {
               this.router.navigate(['pages/general-processes/good-photos'], {
@@ -274,7 +318,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      const good = this.goods.filter(good => good.select == true);
+      const good = this.selectedGooods;
       if (good.length) {
         if (good[0].goodNumber) {
           this.router.navigate(['pages/general-processes/good-photos'], {
@@ -374,7 +418,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     } else {
       await this.getTem();
 
-      this.goods.map(async good => {
+      this.selectedGooods.map(async good => {
         if (good.select) {
           lst_good = lst_good + `${good.goodNumber},`;
           this.insertListPhoto(Number(good.goodNumber));
@@ -391,9 +435,9 @@ export class GoodsTableComponent extends BasePage implements OnInit {
         this.insertListPhoto(Number(lst_good));
         this.callReport(null, this.ngGlobal);
       } else {
-        if (this.goods.length > 0) {
-          this.insertListPhoto(Number(this.goods[0].goodNumber));
-          this.callReport(Number(this.goods[0].goodNumber), null);
+        if (this.selectedGooods.length > 0) {
+          this.insertListPhoto(Number(this.selectedGooods[0].goodNumber));
+          this.callReport(Number(this.selectedGooods[0].goodNumber), null);
         } else {
           this.alert('error', 'Error', 'Se requiere de almenos un bien');
         }
@@ -491,7 +535,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   }
 
   async getHistory() {
-    const good = this.goods.filter(g => g.select == true)[0];
+    const good = this.selectedGooods[0];
 
     const histo = await this.getHistoryData(Number(good.goodNumber));
 
@@ -524,6 +568,94 @@ export class GoodsTableComponent extends BasePage implements OnInit {
           resolve([]);
         },
       });
+    });
+  }
+
+  async certificateSell() {
+    const goods = this.selectedGooods;
+
+    if (goods.length > 0) {
+      if (goods.length > 1) {
+        this.alertQuestion(
+          'warning',
+          '',
+          'Se tiene varios bienes seleccionados se tomara el último',
+          ''
+        ).then(async answ => {
+          if (answ.isConfirmed) {
+            const good = goods[goods.length - 1];
+            const v_entra = await this.getExist(Number(good.goodNumber));
+            if (v_entra > 0) {
+              this.callReport(Number(good.goodNumber), 1);
+            } else {
+              await this.partializePaGood(Number(good.goodNumber));
+              this.callReport(Number(good.goodNumber), 1);
+            }
+          }
+        });
+      } else {
+        const good = goods[0];
+        const v_entra = await this.getExist(Number(good.goodNumber));
+        if (v_entra > 0) {
+          this.callReport(Number(good.goodNumber), 1);
+        } else {
+          await this.partializePaGood(Number(good.goodNumber));
+          this.callReport(Number(good.goodNumber), 1);
+        }
+      }
+    } else {
+      this.alert('error', 'Error', 'Se requiere un bien');
+    }
+  }
+
+  async getExist(good: number) {
+    return new Promise<number>((resolve, reject) => {
+      const filter = new FilterParams();
+      filter.addFilter('goodNumber', good, SearchFilter.EQ);
+      this.partializeGoodServ.getAll(filter.getParams()).subscribe({
+        next: resp => {
+          resolve(resp.count);
+        },
+        error: () => {
+          resolve(0);
+        },
+      });
+    });
+  }
+
+  async partializePaGood(good: number) {
+    return new Promise<boolean>((resolve, reject) => {
+      const filter = new FilterParams();
+      filter.addFilter('goodNumber', good, SearchFilter.EQ);
+      this.partializeGoodServ.partializePaGood(good).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: () => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  getDataExcell() {
+    this.excelLoading = true;
+    this.goodTrackerService.getExcel(this.filters).subscribe({
+      next: resp => {
+        const mediaType =
+          'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+        const link = document.createElement('a');
+        link.href = mediaType + resp.base64File;
+        link.download = 'Rastreador_Bienes.xlsx';
+        link.click();
+        link.remove();
+        this.excelLoading = false;
+        this.alert('success', 'Archivo descargado correctamente', '');
+      },
+      error: () => {
+        this.excelLoading = false;
+        this.alert('error', 'Error', 'No se genero correctamente el archivo');
+      },
     });
   }
 }

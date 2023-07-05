@@ -98,7 +98,7 @@ export class JustificationComponent extends AlertButton implements OnInit {
             )
             .subscribe({
               next: response => {
-                this.onLoadToast(
+                this.alert(
                   'success',
                   this.id + '',
                   'Registro actualizado correctamente y correo enviado.'
@@ -106,7 +106,7 @@ export class JustificationComponent extends AlertButton implements OnInit {
                 this.form.reset();
               },
               error: () => {
-                this.onLoadToast(
+                this.alert(
                   'success',
                   this.id + '',
                   'Registro actualizado correctamente.'
@@ -120,7 +120,7 @@ export class JustificationComponent extends AlertButton implements OnInit {
           this.service.selectedAct.statusProceedings = this.statusActa;
         },
         error: err => {
-          this.onLoadToast('error', this.id + '', 'No se pudo actualizar');
+          this.alert('error', this.id + '', 'No se pudo actualizar');
         },
       });
   }

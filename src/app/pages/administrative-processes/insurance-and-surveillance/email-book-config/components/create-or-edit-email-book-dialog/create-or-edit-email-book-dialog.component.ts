@@ -2,18 +2,18 @@ import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
-import { showAlert, showToast } from 'src/app/common/helpers/helpers';
 import { IVigMailBook } from 'src/app/core/models/ms-email/email-model';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
-
+import { BasePage } from 'src/app/core/shared';
+//import { ModelForm } from 'src/app/core/interfaces/model-form';
 @Component({
   selector: 'app-create-or-edit-email-book-dialog',
   templateUrl: './create-or-edit-email-book-dialog.component.html',
   styleUrls: ['./create-or-edit-email-book-dialog.component.css'],
 })
-export class CreateOrEditEmailBookDialogComponent {
+export class CreateOrEditEmailBookDialogComponent extends BasePage {
   form = new FormGroup({
-    id: new FormControl(null),
+    //id: new FormControl(null, []),
     bookName: new FormControl('', [Validators.required]),
     bookEmail: new FormControl('', [Validators.required, Validators.email]),
     bookType: new FormControl('', [Validators.required]),
@@ -37,7 +37,9 @@ export class CreateOrEditEmailBookDialogComponent {
   constructor(
     private dialogService: BsModalService,
     private emailService: EmailService
-  ) {}
+  ) {
+    super();
+  }
 
   openDialog() {
     this.dialogRef = this.dialogService.show(this.templateRefDialog);
@@ -59,10 +61,11 @@ export class CreateOrEditEmailBookDialogComponent {
   saveInServer(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      showAlert({
-        icon: 'error',
-        text: 'Formulario invalido, complete los campos requeridos',
-      });
+      this.alert(
+        'error',
+        'Formulario invalido, complete los campos requeridos',
+        ''
+      );
       return;
     }
 
@@ -83,11 +86,8 @@ export class CreateOrEditEmailBookDialogComponent {
         this.closeDialog();
         this.isLoading = false;
       },
-      error: () => {
-        showToast({
-          icon: 'error',
-          text: 'Error al guardar el libro de correo',
-        });
+      error: error => {
+        this.alert('error', 'Error al guardar registros', '');
         this.isLoading = false;
       },
     });
