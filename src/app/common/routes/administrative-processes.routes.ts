@@ -556,7 +556,7 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             link: '/pages/administrative-processes/numerary/deposit-tokens',
           },
           {
-            label: 'Calculo de numerario',
+            label: 'Cálculo de numerario',
             link: '/pages/administrative-processes/numerary/numerary-calc',
           },
           {

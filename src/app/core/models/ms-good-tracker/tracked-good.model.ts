@@ -166,3 +166,29 @@ export interface ITrackedGood {
   goodId: string | number;
   select?: boolean;
 }
+
+export interface ITrackerGoodF {
+  id: number;
+  fileNumber: string;
+  goodNumber: string;
+  destiny: string;
+  goodStatus: string;
+  statusDescription: string;
+  goodDescription: string;
+  goodType: string;
+  goodStype: string;
+  goodSsType: string;
+  goodSssType: string;
+}
+
+export interface ITrackerGoodSocialCabinetObject extends ITrackerGoodF {
+  socialCabinet: SocialCabinet;
+}
+
+export interface ITrackerGoodSocialCabinet extends ITrackerGoodF {
+  socialCabinet: string;
+}
+
+interface SocialCabinet {
+  cabinetType: string;
+}

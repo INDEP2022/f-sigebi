@@ -1,3 +1,5 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const registrosMovidos: IDetailProceedingsDeliveryReceptionNew[] = [];
 
 export const COPY = {
@@ -7,7 +9,7 @@ export const COPY = {
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
@@ -33,7 +35,7 @@ export const GOODSEXPEDIENT_COLUMNS_GOODS = {
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
@@ -98,8 +100,15 @@ export const ACTAS = {
   },
   dateElaborationReceipt: {
     title: 'Fecha de Elaboración',
-    type: 'string',
+    type: 'html',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
 };
 export class IGoodStatus {

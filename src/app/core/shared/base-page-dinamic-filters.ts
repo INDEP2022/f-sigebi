@@ -102,12 +102,18 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
     });
   }
 
-  getData() {
-    this.loading = true;
-    let params = {
+  getParams() {
+    return {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+  }
+
+  extraOperationsGetData() {}
+
+  getData() {
+    this.loading = true;
+    let params = this.getParams();
     if (this.service) {
       this.service
         .getAll(params)
@@ -119,6 +125,7 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
               this.data.load(response.data);
               this.data.refresh();
               this.loading = false;
+              this.extraOperationsGetData();
             }
           },
           error: err => {

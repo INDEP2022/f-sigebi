@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import {
   FilterParams,
@@ -63,8 +63,10 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   showZipCode: boolean = false;
   programmingId: number = 0;
   task: ITask;
+  stateKeySelect: number = 0;
   constructor(
     private modalService: BsModalService,
+    private modalRef: BsModalRef,
     private fb: FormBuilder,
     private municipalityService: MunicipalityService,
     private typeWarehouseService: TypeWarehouseService,
@@ -176,7 +178,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   confirm() {
     this.loading = true;
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Seguro de mandar a solicitar un nuevo almacén?'
     ).then(async question => {
@@ -187,11 +189,6 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
         this.storeService.createdataStore(this.warehouseForm.value).subscribe({
           next: async response => {
-            this.onLoadToast(
-              'success',
-              'Correcto',
-              'Almacén creado correctamente'
-            );
             this.loading = false;
             await this.createTaskWarehouse(response.id);
           },
@@ -229,9 +226,9 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     if (taskResult) {
       const closeTaskPerformProg = await this.closeTaskPerform();
       if (closeTaskPerformProg) {
-        this.msgGuardado(
+        this.alert(
           'success',
-          'Creación de tarea exitosa',
+          'Registro guardado',
           `Solicitud de alta de almacén con folio: ${this.programmingId}`
         );
         this.close();
@@ -246,7 +243,6 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
       params.getValue()['filter.id'] = this.task.id;
       this.taskService.getAll(params.getValue()).subscribe({
         next: async response => {
-          console.log('task', response);
           const updateStatusTMP = await this.updateTask(response.data[0]);
           if (updateStatusTMP == true) {
             resolve(true);
@@ -267,11 +263,9 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
       };
       this.taskService.update(task.id, taskForm).subscribe({
         next: () => {
-          console.log('tarea actualizada');
           resolve(true);
         },
         error: error => {
-          console.log('tarea error', error);
           resolve(false);
         },
       });
@@ -406,6 +400,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   close() {
     this.modalService.hide();
+    this.modalRef.content.callback(true);
   }
 
   msgGuardado(icon: any, title: string, message: string) {

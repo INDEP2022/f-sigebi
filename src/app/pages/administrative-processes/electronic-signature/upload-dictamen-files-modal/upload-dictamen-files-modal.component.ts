@@ -188,7 +188,7 @@ export class UploadDictamenElectronicModalComponent
           this.alertInfo(
             'success',
             'Se Realizó el Proceso de Firmar el Dictamen Correctamente',
-            data.message
+            'Archivo firmado correctamente'
           ).then(() => {
             this.fileForm.controls['signature'] = data.signature;
             this.fileForm.controls['fileData'] = data.fileData;

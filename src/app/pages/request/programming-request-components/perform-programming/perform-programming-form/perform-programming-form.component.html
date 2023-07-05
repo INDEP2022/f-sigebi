@@ -18,22 +18,30 @@
         [btnSmall]="true"
         [text]="'Reporte de bienes programables'"
         [loadingText]="'Generando Reporte'"
-        [className]="'btn-info'"
+        [className]="'btn-success'"
+        [icon]="'bx bx-download float-icon'"
         class="mr-2"
         (confirm)="reportGoodsProgramming()"></confirm-button>
 
       <button
         *ngIf="infoTask?.State == null"
         (click)="newWarehouse()"
-        class="btn btn-primary btn-sm active mr-2">
+        type="button"
+        tooltip="Agregar"
+        containerClass="tooltip-style"
+        class="btn btn-info btn-sm active ml-2 mr-2">
         Solicitar alta almac&eacute;n
+        <i class="bx bx-plus bx-sm float-icon"></i>
       </button>
 
       <button
         *ngIf="infoTask?.State == 'FINALIZADA'"
-        (click)="newWarehouse()"
-        class="btn btn-primary disabled btn-sm active mr-2">
+        type="button"
+        tooltip="Agregar"
+        containerClass="tooltip-style"
+        class="btn btn-info btn-sm active disabled ml-2 mr-2">
         Solicitar alta almac&eacute;n
+        <i class="bx bx-plus bx-sm float-icon"></i>
       </button>
 
       <confirm-button
@@ -42,6 +50,7 @@
         [loading]="loading"
         [btnSmall]="true"
         class="mr-2"
+        [icon]="'fa fa-save'"
         (confirm)="confirm()"></confirm-button>
 
       <confirm-button
@@ -49,20 +58,29 @@
         [loading]="loading"
         [btnSmall]="true"
         class="mr-2 disabled"
+        [icon]="'fa fa-save'"
         (confirm)="confirm()"></confirm-button>
 
       <button
-        *ngIf="infoTask?.State == null"
         (click)="sendProgramation()"
-        class="btn btn-success btn-sm active mr-2">
+        *ngIf="infoTask?.State == null"
+        type="submit"
+        class="btn btn-primary btn-sm active"
+        tooltip="Enviar"
+        containerClass="tooltip-style">
         Enviar
+        <i class="bx bx-send"></i>
       </button>
 
       <button
-        *ngIf="infoTask?.State == 'FINALIZADA'"
         (click)="sendProgramation()"
-        class="btn btn-success disabled btn-sm active mr-2">
+        *ngIf="infoTask?.State == 'FINALIZADA'"
+        type="submit"
+        class="btn btn-primary btn-sm active disabled"
+        tooltip="Enviar"
+        containerClass="tooltip-style">
         Enviar
+        <i class="bx bx-send"></i>
       </button>
     </div>
 
@@ -408,39 +426,50 @@
       <div class="justify-content-end btn-toolbar">
         <button
           (click)="listUsers()"
-          class="btn btn-info disabled btn-sm active"
+          class="btn btn-primary disabled btn-sm active"
           *ngIf="infoTask?.State == 'FINALIZADA'">
           Usuarios
         </button>
 
         <button
           (click)="listUsers()"
-          class="btn btn-info btn-sm active"
-          *ngIf="infoTask?.State == null">
-          Usuarios
-        </button>
-
-        <button
-          (click)="openForm()"
-          class="btn btn-primary disabled btn-sm active"
-          *ngIf="infoTask?.State == 'FINALIZADA'">
-          Nuevo usuario
-        </button>
-
-        <button
-          (click)="openForm()"
           class="btn btn-primary btn-sm active"
           *ngIf="infoTask?.State == null">
-          Nuevo usuario
+          Usuarios <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+
+        <button
+          (click)="openForm()"
+          class="btn btn-info disabled btn-sm active"
+          *ngIf="infoTask?.State == 'FINALIZADA'">
+          Nuevo usuario <i class="bx bx-plus bx-sm float-icon"></i>
+        </button>
+
+        <button
+          (click)="openForm()"
+          class="btn btn-info btn-sm active"
+          *ngIf="infoTask?.State == null">
+          Nuevo usuario <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
       </div>
       <ng2-smart-table
+        *ngIf="!infoTask?.State"
         [attr.class]="'table-bordered table-responsive'"
         [settings]="settingUser"
         [source]="usersToProgramming"
         (edit)="openForm($event.data)"
         (delete)="deleteUser($event.data)">
       </ng2-smart-table>
+
+      <ng2-smart-table
+        *ngIf="infoTask?.State == 'FINALIZADA'"
+        [attr.class]="'table-bordered table-responsive'"
+        [settings]="settingUserClose"
+        [source]="usersToProgramming"
+        (edit)="openForm($event.data)"
+        (delete)="deleteUser($event.data)">
+      </ng2-smart-table>
+
       <app-pagination
         [params]="paramsUsers"
         [totalItems]="totalItemsUsers"></app-pagination>
@@ -474,6 +503,7 @@
                   value="id"
                   bindLabel="descCondition"
                   label="Estado"
+                  (change)="stateSearchSelect($event)"
                   (fetchItems)="getStates($event)"></ngx-select>
               </form-field>
             </div>
@@ -486,6 +516,7 @@
                   value="idMunicipality"
                   bindLabel="nameMunicipality"
                   label="Municipio"
+                  (change)="municipalitySearchSelect($event)"
                   (fetchItems)="getMunicipalities($event)"></ngx-select>
               </form-field>
             </div>
@@ -521,7 +552,7 @@
         <button
           (click)="showGoodsProgramming()"
           class="btn btn-primary btn-sm active mr-2">
-          Mostrar bienes
+          Mostrar bienes <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
         <button (click)="showClean()" class="btn btn-danger btn-sm active">
           Limpiar <i class="fa fa-eraser"></i>
@@ -534,31 +565,31 @@
           class="btn btn-primary btn-sm active"
           *ngIf="idTypeRelevant != 1 && infoTask?.State == null"
           (click)="sendTransportable()">
-          <i class="fa fa-plus-circle" aria-hidden="true"></i> Transportable
+          <i class="bx bx-plus bx-sm float-icon"></i> Transportable
         </button>
         <button
           class="btn btn-primary disabled btn-sm active"
           *ngIf="idTypeRelevant != 1 && infoTask?.State == 'FINALIZADA'"
           (click)="sendTransportable()">
-          <i class="fa fa-plus-circle" aria-hidden="true"></i> Transportable
+          <i class="bx bx-plus bx-sm float-icon"></i> Transportable
         </button>
         <button
           class="btn btn-primary btn-sm active"
           (click)="sendGuard()"
           *ngIf="infoTask?.State == null">
-          <i class="fa fa-plus-circle" aria-hidden="true"></i> Resguardo
+          <i class="bx bx-plus bx-sm float-icon"></i> Resguardo
         </button>
         <button
           class="btn btn-primary disabled btn-sm active"
           (click)="sendGuard()"
           *ngIf="infoTask?.State == 'FINALIZADA'">
-          <i class="fa fa-plus-circle" aria-hidden="true"></i> Resguardo
+          <i class="bx bx-plus bx-sm float-icon"></i> Resguardo
         </button>
         <button
           class="btn btn-primary btn-sm active"
           (click)="sendWarehouse()"
           *ngIf="infoTask?.State == null">
-          <i class="fa fa-plus-circle" aria-hidden="true"></i> Almac&eacute;n
+          <i class="bx bx-plus bx-sm float-icon"></i> Almac&eacute;n
         </button>
 
         <button
@@ -586,50 +617,79 @@
         <div class="md-tabs">
           <tabset>
             <tab [heading]="headingTransportable" id="tab1">
-              <div class="d-flex justify-content-end">
+              <div class="d-flex justify-content-start">
                 <app-columns-select
                   [(settings)]="
                     settingsTransportableGoods
                   "></app-columns-select>
               </div>
               <ng2-smart-table
+                *ngIf="!infoTask?.State"
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="settingsTransportableGoods"
                 [source]="goodsTranportables"
                 (edit)="showGood($event.data)"
                 (delete)="removeGoodTrans($event.data)">
               </ng2-smart-table>
+
+              <ng2-smart-table
+                *ngIf="infoTask?.State == 'FINALIZADA'"
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settingsTransportableGoodsClose"
+                [source]="goodsTranportables"
+                (edit)="showGood($event.data)">
+              </ng2-smart-table>
+
               <app-pagination
                 [params]="paramsTransportableGoods"
                 [totalItems]="totalItemsTransportableGoods"></app-pagination>
             </tab>
             <tab [heading]="headingGuard">
-              <div class="d-flex justify-content-end">
+              <div class="d-flex justify-content-start">
                 <app-columns-select
                   [(settings)]="settingGuardGoods"></app-columns-select>
               </div>
               <ng2-smart-table
+                *ngIf="!infoTask?.State"
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="settingGuardGoods"
                 [source]="goodsGuards"
                 (edit)="showGood($event.data)"
                 (delete)="removeGoodGuard($event.data)">
               </ng2-smart-table>
+
+              <ng2-smart-table
+                *ngIf="infoTask?.State == 'FINALIZADA'"
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settingGuardGoodsClose"
+                [source]="goodsGuards"
+                (edit)="showGood($event.data)">
+              </ng2-smart-table>
+
               <app-pagination
                 [params]="paramsGuardGoods"
                 [totalItems]="totalItemsTransportableGuard"></app-pagination>
             </tab>
             <tab [heading]="headingWarehouse">
-              <div class="d-flex justify-content-end">
+              <div class="d-flex justify-content-start">
                 <app-columns-select
                   [(settings)]="settingWarehouseGoods"></app-columns-select>
               </div>
               <ng2-smart-table
+                *ngIf="!infoTask?.State"
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="settingWarehouseGoods"
                 [source]="goodsWarehouse"
-                (edit)="showGood($event.data)"
+                (edit)="showGoodWarehouse($event.data)"
                 (delete)="removeGoodWarehouse($event.data)">
+              </ng2-smart-table>
+
+              <ng2-smart-table
+                *ngIf="infoTask?.State == 'FINALIZADA'"
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settingWarehouseGoodsClose"
+                [source]="goodsWarehouse"
+                (edit)="showGoodWarehouse($event.data)">
               </ng2-smart-table>
               <app-pagination
                 [params]="paramsWarehouseGoods"

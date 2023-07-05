@@ -7,6 +7,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   INumerary,
+  IProccesNum,
   IRequesNumeraryCal,
   IRequesNumeraryDet,
   IRequesNumeraryEnc,
@@ -97,7 +98,29 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
     );
   }
 
-  deleteProccess(model: any): Observable<any> {
+  deleteProccess(procNum: number): Observable<any> {
+    const model = {
+      procNum: procNum,
+    };
+    return this.post('application/fp-sol-numerary', model);
+  }
+
+  pupSonDelDate(model: Object) {
+    return this.post('application/pup-son-del-date', model);
+  }
+
+  pupElimCalculNume(model: Object) {
+    return this.post('application/pup-del-calc-numerary', model);
+  }
+
+  fCalculaNume(model: Object) {
     return this.post('', model);
+  }
+
+  getProccesNum(params?: ListParams) {
+    return this.get<IListResponse<IProccesNum>>(
+      NumeraryEndpoints.ProcessesNume,
+      params
+    );
   }
 }

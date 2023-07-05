@@ -63,3 +63,27 @@ export interface IAccountMovement {
   goodsNumber?: any;
   accountNumber: IAccountNumber;
 }
+
+export interface IUserChecks {
+  returnNumber: number;
+  accountOriginDepositNumber: number;
+  motionOriginDepositNumber: number;
+  courtReturnDate: string;
+  amountWithoutInterest: number;
+  rateDear: number;
+  interestReal: number;
+  interestDear: number;
+  billsadmin: number;
+  interestaccredited: number;
+  billsAssociates: number;
+  amountReturn: number;
+  accountPayReturnNumber: number;
+  expeditionCheckDate: string;
+  InvoiceCheck: string;
+  paymentCheckDate: string;
+  piercedTOAccount: string;
+  beneficiaryCheck: string;
+  checkType: string;
+  registerNumber: number;
+  nbOrigin: string;
+}

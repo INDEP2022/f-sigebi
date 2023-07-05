@@ -47,15 +47,15 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
     private modalService: BsModalService
   ) {
     super();
+  }
+
+  ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.actConvertion = params['actConvertion'] || null;
       this.tipoConv = params['tipoConv'] || null;
       this.pGoodFatherNumber = params['pGoodFatherNumber'] || null;
+      this.fetchItems();
     });
-  }
-
-  ngOnInit(): void {
-    this.fetchItems();
   }
 
   insertarParrafos() {
@@ -76,6 +76,7 @@ Se da por concluida la presente acta, siendo las ____ horas del día ____ de ___
 \t\t\tPOR EL TLP\t\t\tPOR EL S.A.E.\n\n\n\n\n\n
 \t\t\tC. _____________________\t\t\t\t\t\t\t\tC. _____________________\n\n\n\n
 Ultima página del Acta Administrativa de Validación y Conversión de Unidades de Medida de Bienes Muebles con Clave :CONVERSIONES_ACTAS.CVE_ACTA_CONV de fecha ___ de  _________ de 2008, constante de ____ fojas. - - - - - - - - - - - - -`;
+    //hay q actualizar atravez el id de convercion los parrofos
   }
   close() {
     this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
@@ -168,9 +169,12 @@ Ultima página del Acta Administrativa de Validación y Conversión de Unidades 
   }
 
   fetchItems() {
+    console.log(this.tipoConv);
     if (this.tipoConv === '2') {
+      console.log(this.tipoConv);
       if (this.actConvertion) {
         this.selectItem2 = this.actConvertion;
+        console.log(this.actConvertion);
       } else {
         this.serviceGood
           .getFolioActaConversion(this.actConvertion)
@@ -180,9 +184,11 @@ Ultima página del Acta Administrativa de Validación y Conversión de Unidades 
         const payload = {
           pGoodFatherNumber: this.pGoodFatherNumber,
           pDelegationNumber: 1,
+          //buscar numero de delegacion del usuario logeado
         };
         this.serviceGood.generateWeaponKey(payload).subscribe((item: any) => {
           this.selectItem2 = item;
+
           this.items = [{ cve_acta_conv: item }];
           this.selectedIndex = 0;
         });
@@ -194,6 +200,7 @@ Ultima página del Acta Administrativa de Validación y Conversión de Unidades 
             item.cve_acta_conv = item.cveActaConvId;
             return item;
           });
+          console.log(item);
         });
     }
   }

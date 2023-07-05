@@ -9,7 +9,6 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { Iidentifier } from 'src/app/core/models/ms-good-tracker/identifier.model';
 import { ITmpTracker } from 'src/app/core/models/ms-good-tracker/tmpTracker.model';
-import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { GoodsManagementSocialNotLoadGoodsComponent } from '../goods-management-social-table/goods-management-social-not-load-goods/goods-management-social-not-load-goods.component';
@@ -142,16 +141,14 @@ export class GoodsManagementSocialCabinetComponent
 
   private async getData() {
     const filterParams = new FilterParams();
-    filterParams.limit = 2000;
+    filterParams.limit = 20000;
     filterParams.addFilter(
       'goodNumber',
       this.selectedGoodstxt.toString(),
       SearchFilter.IN
     );
     const response = await firstValueFrom(
-      this.goodTrackerService
-        .getAll(filterParams.getParams())
-        .pipe(catchError(x => of({ count: 0, data: [] as ITrackedGood[] })))
+      this.goodTrackerService.getAllSocialCabinet(filterParams.getParams())
     );
     if (response.data.length === 0) {
       this.notLoadedGoods = [];
