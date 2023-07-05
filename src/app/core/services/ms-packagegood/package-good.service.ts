@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { PackageGoodEndpoints } from 'src/app/common/constants/endpoints/ms-package-good';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import {
   IpackageValidGood,

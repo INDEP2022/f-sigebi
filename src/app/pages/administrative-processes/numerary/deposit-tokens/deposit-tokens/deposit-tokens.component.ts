@@ -237,7 +237,7 @@ export class DepositTokensComponent
         motionnumber: {
           title: 'No. Movimiento',
           type: 'string',
-          sort: true,
+          sort: false,
         },
       },
       rowClassFunction: (row: any) => {

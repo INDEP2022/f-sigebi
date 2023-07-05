@@ -2,59 +2,37 @@
   <div class="ch-content" header>
     <h5 class="title">Estado de cuenta (Bancos)</h5>
   </div>
+
   <div body>
     <div class="row mt-3 mb-3">
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
-          <div class="row mt-5">
-            <div class="col-12">
-              <form-field [control]="form.get('bankSelect')">
-                <ngx-select
-                  [data]="banks"
-                  [form]="form"
-                  bindLabel="name"
-                  label="Seleccione un banco"
-                  [control]="'bankSelect'"
-                  (change)="onBankSelectChange($event)"></ngx-select>
-              </form-field>
-            </div>
-          </div>
-          <div class="row mt-5">
-            <div class="col-12">
-              <form-field [control]="form.get('bankSelect')">
-                <ngx-select
-                  [data]="bankAccountSelect"
-                  [form]="form"
-                  bindLabel="accountNumber"
-                  label="Seleccione una cuenta"
-                  [control]="'account'"
-                  (change)="onBankAccountSelectChange($event)"></ngx-select>
-              </form-field>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('square')" label="Plaza">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="square"
-                maxlength="30"
-                readonly />
+          <div class="col-6">
+            <form-field [control]="form.get('bankSelect')">
+              <ngx-select
+                [data]="banks"
+                [form]="form"
+                bindLabel="name"
+                label="Seleccione un banco"
+                [control]="'bankSelect'"
+                (change)="onBankSelectChange($event)"></ngx-select>
             </form-field>
           </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('branch')" label="Sucursal">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="branch"
-                maxlength="30"
-                readonly />
+          <div class="col-6">
+            <form-field [control]="form.get('bankSelect')">
+              <ngx-select
+                [data]="bankAccountSelect"
+                [form]="form"
+                bindLabel="accountNumber"
+                label="Seleccione una cuenta"
+                [control]="'account'"
+                (change)="onBankAccountSelectChange($event)"></ngx-select>
             </form-field>
           </div>
         </div>
+
         <div class="row mt-4">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <form-field
               [control]="form.get('accountType')"
               label="Tipo de cuenta">
@@ -66,6 +44,29 @@
                 readonly />
             </form-field>
           </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('square')" label="Plaza">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="square"
+                maxlength="30"
+                readonly />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('branch')" label="Sucursal">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="branch"
+                maxlength="30"
+                readonly />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mt-4">
           <div class="col-md-3">
             <form-field [control]="form.get('currency')" label="Moneda">
               <input
@@ -94,8 +95,6 @@
                 formControlName="balanceOf" />
             </form-field>
           </div>
-        </div>
-        <div class="row mt-4">
           <div class="col-md-3">
             <form-field [control]="form.get('balanceAt')" label="Saldo al">
               <input
@@ -107,25 +106,27 @@
           </div>
         </div>
       </form>
-      <div class="row pt-4">
-        <div class="col-md-12">
+
+      <div class="row mt-6">
+        <div class="col-12 mt-6">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="data1">
+              [source]="dataAccount">
             </ng2-smart-table>
           </div>
         </div>
-        <app-pagination [params]="params" [totalItems]="totalItems">
-        </app-pagination>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
       </div>
+
       <p>(Doble click para traspasar movimientos)</p>
       <div class="row">
         <div class="col-md-2"></div>
         <div class="col-md-10">
           <p>
-            .
             <span class="text-success mr-5"
               ><i class="fa fa-square"></i> Movimiento de transferencia(Padre)
             </span>
