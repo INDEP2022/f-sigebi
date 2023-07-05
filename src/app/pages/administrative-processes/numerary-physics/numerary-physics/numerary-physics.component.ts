@@ -147,9 +147,8 @@ export class NumeraryPhysicsComponent extends BasePage implements OnInit {
 
   getTvalTable1Service(params?: ListParams) {
     params['filter.nmtable'] = `$eq:348`;
-    if (params.text) {
-      params['filter.otvalor'] = `$eq:${params.text}`;
-    }
+    if (params.text) params['filter.otvalor'] = `$eq:${params.text}`;
+
     this.tvalTable1Service.getAlls(params).subscribe({
       next: (data: any) => {
         console.log('data', data);

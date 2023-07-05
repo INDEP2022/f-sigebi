@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { catchError, of } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -432,12 +433,28 @@ export class AssociateFileComponent extends BasePage implements OnInit {
 
   getUserSelect(params: ListParams) {
     params['sortBy'] = 'Nombre:ASC';
-    this.externalExpedientService.getUsers(params).subscribe({
-      next: (resp: any) => {
-        const data = resp.ObtenUsuarioResult.Usuario;
-        this.users = data; //new DefaultSelect(data, data.length);
-      },
-    });
+    this.externalExpedientService
+      .getUsers(params)
+      .pipe(
+        catchError(e => {
+          if (e.status == 400) {
+            return of({ ObtenUsuarioResult: {} });
+          }
+          this.onLoadToast(
+            'error',
+            'Ocurrio un error al cargar los datos',
+            e.error?.message
+          );
+          console.log(e);
+          throw e;
+        })
+      )
+      .subscribe({
+        next: (resp: any) => {
+          const data = resp.ObtenUsuarioResult?.Usuario;
+          this.users = data; //new DefaultSelect(data, data.length);
+        },
+      });
   }
 
   getUnitSelect(params: ListParams, userId?: number) {

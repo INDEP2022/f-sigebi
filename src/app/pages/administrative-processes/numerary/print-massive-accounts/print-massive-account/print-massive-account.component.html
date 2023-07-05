@@ -13,11 +13,11 @@
                   <ngx-select
                     [form]="form"
                     [data]="expedientes"
-                    (fetchItems)="getExpediente($event, true)"
+                    (fetchItems)="getExpedientes($event)"
                     bindLabel="id"
                     control="file"
                     label="Expediente"
-                    [searchOnInit]="false"
+                    [searchOnInit]="true"
                     [showTooltip]="true"
                     termMaxLength="30">
                   </ngx-select>
