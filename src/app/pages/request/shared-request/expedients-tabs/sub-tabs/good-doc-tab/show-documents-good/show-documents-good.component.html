@@ -4,6 +4,16 @@
   </div>
   <div body>
     <div *ngIf="showSearchForm">
+      <div class="d-flex justify-content-end">
+        <div class="mt-3 btn-toolbar">
+          <button (click)="search()" class="btn btn-primary btn-sm active">
+            <i class="bx bx-search-alt-2"></i> Buscar
+          </button>
+          <button (click)="cleanForm()" class="btn btn-danger btn-sm active">
+            Limpiar <i class="fas fa-eraser"></i>
+          </button>
+        </div>
+      </div>
       <form [formGroup]="docRequestForm" class="form-material">
         <div class="row pt-2">
           <div class="col-md-6">
@@ -210,18 +220,6 @@
           </div>
         </div>
         <div class="row">
-          <div class="d-flex justify-content-end">
-            <div class="mt-3 btn-toolbar">
-              <button (click)="search()" class="btn btn-primary btn-sm active">
-                <i class="bx bx-search-alt-2"></i> Buscar
-              </button>
-              <button
-                (click)="cleanForm()"
-                class="btn btn-danger btn-sm active">
-                Limpiar <i class="fas fa-eraser"></i>
-              </button>
-            </div>
-          </div>
           <!--<div class="justify-content-end">
             <button
               (click)="search()"
