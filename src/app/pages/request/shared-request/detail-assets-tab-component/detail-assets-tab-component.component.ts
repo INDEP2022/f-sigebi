@@ -702,9 +702,11 @@ export class DetailAssetsTabComponentComponent
         this.onLoadToast('success', 'Actualizado', 'Formulario actualizado');
       },
       error: error => {
-        console.log(
-          'El formulario no se puede actualizar',
-          error.error.message
+        debugger;
+        this.onLoadToast(
+          'error',
+          'Error',
+          `El formulario no se puede actualizar ${error.error.message}`
         );
         // this.onLoadToast(
         //   'error',
@@ -1309,12 +1311,14 @@ export class DetailAssetsTabComponentComponent
   }
 
   getTypeGood(id: number) {
+    let params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
     this.typeRelevantSevice
-      .getById(id)
+      .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: (data: any) => {
-          this.goodTypeName = data.description;
+          this.goodTypeName = data.data[0].description;
         },
       });
   }

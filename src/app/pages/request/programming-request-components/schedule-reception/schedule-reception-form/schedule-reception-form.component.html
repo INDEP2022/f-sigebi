@@ -16,7 +16,7 @@
         </div>
         <div class="m-2">
           <button (click)="close()" class="btn btn-danger btn-sm active">
-            Cancelar <i class="fas fa-arrow-circle-left"></i>
+            Cancelar
           </button>
         </div>
       </div>
@@ -69,9 +69,11 @@
         </div>
         <div class="col-md-1">
           <button
-            class="btn btn-info active btn-sm ml-3"
-            (click)="openModalSelectUser()">
+            (click)="openModalSelectUser()"
+            type="button"
+            class="btn btn-primary active btn-sm ml-3">
             Seleccionar
+            <i class="fas fa-edit bx-sm float-icon"></i>
           </button>
         </div>
       </div>

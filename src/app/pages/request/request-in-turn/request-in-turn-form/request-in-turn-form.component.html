@@ -212,18 +212,17 @@
           <div class="d-flex justify-content-end">
             <div class="p-2">
               <button
-                (click)="search()"
+                type="button"
+                class="btn btn-primary active btn-sm"
                 [disabled]="searchForm.invalid"
-                class="btn btn-primary active btn-sm ml-3"
-                style="height: 36px">
-                <i class="bx bx-search-alt-2"></i> Buscar
+                (click)="search()">
+                Buscar
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
             </div>
             <div class="p-2">
-              <button
-                (click)="reset()"
-                class="btn btn-danger active btn-sm ml-3">
-                <i class="bx bx-reset"></i> Limpiar
+              <button class="btn btn-red btn-sm active" (click)="reset()">
+                Eliminar <i class="fa fa-trash" aria-hidden="true"></i>
               </button>
             </div>
           </div>
