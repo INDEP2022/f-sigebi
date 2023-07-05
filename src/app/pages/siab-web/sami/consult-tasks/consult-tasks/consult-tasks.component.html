@@ -308,7 +308,7 @@
                 class="btn btn-sm btn-primary active"
                 (click)="searchTasks()"
                 (keydown.enter)="onKeydown($event)">
-                Buscar
+                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
             </div>
             <div class="col-md-auto pt-5">
@@ -316,15 +316,15 @@
                 type="button"
                 class="btn btn-sm btn-success active"
                 (click)="exportToExcel()">
-                Exportar a Excel
+                Exportar a Excel <i class="bx bx-download float-icon"></i>
               </button>
             </div>
             <div class="col-md-auto pt-5">
               <button
                 type="button"
-                class="btn btn-sm btn-secondary active"
+                class="btn btn-sm btn-danger active"
                 (click)="cleanFilter()">
-                Limpiar Filtro
+                Limpiar Filtro <i class="fas fa-eraser"> </i>
               </button>
             </div>
           </div>

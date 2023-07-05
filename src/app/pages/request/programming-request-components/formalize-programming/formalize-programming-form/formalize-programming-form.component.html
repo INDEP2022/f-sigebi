@@ -21,9 +21,9 @@
 
         <button
           type="button"
-          class="btn btn-danger btn-sm active"
+          class="btn btn-primary btn-sm active"
           (click)="close()">
-          Cancelar <i class="fas fa-arrow-circle-left"></i>
+          Regresar <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
 
@@ -146,17 +146,17 @@
         <button
           (click)="saveInfoProceeding()"
           class="btn btn-primary btn-sm active">
-          <i class="fa fa-save"></i> Guardar
+          Guardar <i class="fa fa-save"></i>
         </button>
 
         <button class="btn btn-success btn-sm active">
-          <i class="fa fa-file-archive"></i> Adjuntar documentos
+          Adjuntar documentos <i class="fa fa-file-archive"></i>
         </button>
 
         <button
           (click)="this.getProccedings()"
-          class="btn btn-info btn-sm active">
-          <i class="fa fa-retweet"></i> Actualizar
+          class="btn btn-primary btn-sm active">
+          Actualizar <i class="fa fa-retweet"></i>
         </button>
       </div>
       <form [formGroup]="proceedingForm">
