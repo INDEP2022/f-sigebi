@@ -25,4 +25,12 @@ export class LotService extends HttpService {
     const route = `${LotEndpoints.pubCancelPackage}`;
     return this.post(route, value);
   }
+
+  getEventId(data: Object) {
+    return this.post(LotEndpoints.Event, data);
+  }
+
+  getGlobalGood(id: number) {
+    return this.get(`${LotEndpoints.EventGlobalGood}/${id}`);
+  }
 }

@@ -71,10 +71,6 @@ export const TARGET_IDENTIFIERS = [
 
 export const GOOD_PHOTOS_OPTIOS = [
   {
-    label: 'Todos',
-    value: null,
-  },
-  {
     label: 'Con fotografías',
     value: 'F',
   },

@@ -4487,7 +4487,9 @@ export class DocumentsReceptionRegisterComponent
     );
     params.addFilter('wheelNumber', this.formControls.wheelNumber.value);
     this.hideError();
-    this.docRegisterService.getGoods(params.getParams()).subscribe({
+    // ! Consulta lenta
+    // this.docRegisterService.getGoods(params.getParams()).subscribe({
+    this.docRegisterService.goodFinder(params.getParams()).subscribe({
       next: data => {
         if (data.data.length > 0) {
           this.updateProcedure(true);

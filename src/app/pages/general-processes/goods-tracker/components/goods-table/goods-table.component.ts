@@ -52,7 +52,20 @@ import { GoodsTableService } from './goods-table.service';
 })
 export class GoodsTableComponent extends BasePage implements OnInit {
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
-  @Input() goods: ITrackedGood[] = [];
+  goodsList: ITrackedGood[] = [];
+
+  @Input() set goods(good: ITrackedGood[]) {
+    if (good.length > 0) {
+      this.goodsList = good;
+      this.setterColorRow();
+    } else {
+      this.goodsList = [];
+    }
+  }
+
+  get goods(): ITrackedGood[] {
+    return this.goodsList;
+  }
   @Input() totalItems: number = 0;
   @Input() params: BehaviorSubject<ListParams>;
   @Input() override loading: boolean = false;
@@ -66,6 +79,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   $trackedGoods = this.store.select(getTrackedGoods);
   includeLoading: boolean = false;
   excelLoading: boolean = false;
+  showInclude = false;
 
   constructor(
     private modalService: BsModalService,
@@ -98,26 +112,45 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       });
   }
 
+  setterColorRow(ev?: any) {
+    setTimeout(() => {
+      const table = document.getElementById('t-rastreador');
+      const thead = table.children[0].children[0].children[0].children;
+      const tbody = table.children[0].children[1].children;
+      for (let i = 0; i < tbody.length; i++) {
+        const cell = tbody[i].children;
+        for (let x = 0; x < cell.length; x++) {
+          const th = thead[x].classList[thead[x].classList.length - 1];
+          const tr = cell[x];
+          tr.classList.add(th.includes('bg-') ? th : 'x');
+        }
+      }
+    }, 300);
+  }
+
   setColumnsFromOrigin() {
-    if (this.isValidOrigin()) {
-      this.settings = {
-        ...this.settings,
-        actions: false,
-        columns: {
-          name: {
-            title: '',
-            sort: false,
-            type: 'custom',
-            showAlways: true,
-            valuePrepareFunction: (isSelected: boolean, row: ITrackedGood) =>
-              this.isGoodSelected(row),
-            renderComponent: CheckboxElementComponent,
-            onComponentInitFunction: (instance: CheckboxElementComponent) =>
-              this.onGoodSelect(instance),
-          },
-          ...this.goodsTableService.columns,
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: {
+        name: {
+          title: 'Selección',
+          sort: false,
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: ITrackedGood) =>
+            this.isGoodSelected(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onGoodSelect(instance),
         },
-      };
+        ...this.goodsTableService.columns,
+      },
+    };
+    if (this.isValidOrigin()) {
+      this.showInclude = true;
+    } else {
+      this.showInclude = false;
     }
   }
 
@@ -145,8 +178,10 @@ export class GoodsTableComponent extends BasePage implements OnInit {
 
   goodSelectedChange(good: ITrackedGood, selected: boolean) {
     if (selected) {
+      good.select = true;
       this.selectedGooods.push(good);
     } else {
+      good.select = false;
       this.selectedGooods = this.selectedGooods.filter(
         _good => _good.goodNumber != good.goodNumber
       );
@@ -262,7 +297,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
             },
           });
         } else {
-          const good = this.goods.filter(good => good.select == true);
+          const good = this.selectedGooods;
           if (good.length) {
             if (good[0].goodNumber) {
               this.router.navigate(['pages/general-processes/good-photos'], {
@@ -283,7 +318,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      const good = this.goods.filter(good => good.select == true);
+      const good = this.selectedGooods;
       if (good.length) {
         if (good[0].goodNumber) {
           this.router.navigate(['pages/general-processes/good-photos'], {
@@ -383,7 +418,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     } else {
       await this.getTem();
 
-      this.goods.map(async good => {
+      this.selectedGooods.map(async good => {
         if (good.select) {
           lst_good = lst_good + `${good.goodNumber},`;
           this.insertListPhoto(Number(good.goodNumber));
@@ -400,9 +435,9 @@ export class GoodsTableComponent extends BasePage implements OnInit {
         this.insertListPhoto(Number(lst_good));
         this.callReport(null, this.ngGlobal);
       } else {
-        if (this.goods.length > 0) {
-          this.insertListPhoto(Number(this.goods[0].goodNumber));
-          this.callReport(Number(this.goods[0].goodNumber), null);
+        if (this.selectedGooods.length > 0) {
+          this.insertListPhoto(Number(this.selectedGooods[0].goodNumber));
+          this.callReport(Number(this.selectedGooods[0].goodNumber), null);
         } else {
           this.alert('error', 'Error', 'Se requiere de almenos un bien');
         }
@@ -500,7 +535,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   }
 
   async getHistory() {
-    const good = this.goods.filter(g => g.select == true)[0];
+    const good = this.selectedGooods[0];
 
     const histo = await this.getHistoryData(Number(good.goodNumber));
 
@@ -537,7 +572,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   }
 
   async certificateSell() {
-    const goods = this.goods.filter(good => good.select == true);
+    const goods = this.selectedGooods;
 
     if (goods.length > 0) {
       if (goods.length > 1) {
