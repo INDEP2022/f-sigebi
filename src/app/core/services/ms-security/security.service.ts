@@ -63,8 +63,8 @@ export class SecurityService extends HttpService {
     );
   }
 
-  getAccessXScreenFilter(params?: any){
-    return this.get(`tracking-access-screens`, params)
+  getAccessXScreenFilter(params?: any) {
+    return this.get(`tracking-access-screens`, params);
   }
 
   getFilterAllUsersTracker(params: any) {

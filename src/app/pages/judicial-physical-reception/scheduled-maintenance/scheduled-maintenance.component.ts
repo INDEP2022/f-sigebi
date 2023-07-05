@@ -87,7 +87,7 @@ export class ScheduledMaintenanceComponent
   captureEvent() {
     console.log(this.form.value);
     if (!this.form.get('tipoEvento').value) {
-      this.onLoadToast(
+      this.alert(
         'error',
         'Captura de Evento',
         'No se ha especificado el Tipo de Evento'
@@ -146,7 +146,7 @@ export class ScheduledMaintenanceComponent
             if (err.error.message.includes('detalle_acta_ent_recep')) {
               message = message + ` porque tiene detalles de acta`;
             }
-            this.onLoadToast('error', `Acta No. ${item.id}`, message);
+            this.alert('error', `Acta No. ${item.id}`, message);
           },
         });
       }
@@ -228,7 +228,7 @@ export class ScheduledMaintenanceComponent
     a.click();
     document.body.removeChild(a);
     this._toastrService.clear();
-    this.onLoadToast('success', 'Descarga Finalizada');
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
     URL.revokeObjectURL(objURL);
   }
 
@@ -246,7 +246,7 @@ export class ScheduledMaintenanceComponent
   async exportExcel2() {
     this.loadingExcel = true;
 
-    this.onLoadToast(
+    this.alert(
       'info',
       'Reporte de Mantenimiento de Programaciones',
       'Consiguiendo datos'
@@ -269,7 +269,7 @@ export class ScheduledMaintenanceComponent
       this.loadingExcel = false;
     } catch (error) {
       this.loadingExcel = false;
-      this.onLoadToast('error', 'Error', `Error al obtener el documento `);
+      this.alert('error', 'Error', `Error al obtener el documento `);
     }
   }
 
@@ -284,7 +284,7 @@ export class ScheduledMaintenanceComponent
     // })
     this.loadingExcel = true;
     this.elementToExport = null;
-    this.onLoadToast(
+    this.alert(
       'info',
       'Reporte de Mantenimiento de Programaciones',
       'Consiguiendo datos'
@@ -300,7 +300,11 @@ export class ScheduledMaintenanceComponent
       }
       this.loadingExcel = false;
     } catch (x) {
-      this.onLoadToast('error', 'Error en obtención de datos');
+      this.alert(
+        'error',
+        'Reporte de Mantenimiento de Programaciones',
+        'Error en obtención de datos'
+      );
       this.loadingExcel = false;
     }
 

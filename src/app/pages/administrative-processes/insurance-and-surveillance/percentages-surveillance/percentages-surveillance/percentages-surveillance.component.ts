@@ -1,6 +1,7 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
@@ -32,7 +33,7 @@ export class PercentagesSurveillanceComponent
 
   delegationTypes = [
     { name: 'Ferronal', value: '1' },
-    { name: 'Indep', value: '2' },
+    { name: 'INDEP', value: '2' },
   ];
 
   totalItems: number = 0;
@@ -55,6 +56,7 @@ export class PercentagesSurveillanceComponent
   delegations = new DefaultSelect<any>();
   columnFilters: any = [];
   disabledEdit: boolean = false;
+  @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   constructor(
     private survillanceService: SurvillanceService,
     private dialogService: BsModalService
@@ -131,6 +133,22 @@ export class PercentagesSurveillanceComponent
     // });
   }
 
+  clearSubheaderFields() {
+    const subheaderFields: any = this.table.grid.source;
+
+    const filterConf = subheaderFields.filterConf;
+    console.log('this.table', this.table.grid);
+    filterConf.filters = [];
+    this.sources.load([]);
+    this.sources.refresh();
+    this.paramsList.getValue().limit = 10;
+    this.paramsList.getValue().page = 1;
+    this.columnFilters = [];
+    this.getPercentages();
+
+    return;
+  }
+
   generateFilterDynamically(
     data: { field: string; search: string; filter: any }[]
   ): void {
@@ -157,6 +175,7 @@ export class PercentagesSurveillanceComponent
       ...this.columnFilters,
     };
 
+    console.log('this.columnFilters', this.columnFilters);
     if (params['filter.delegation_']) {
       if (!isNaN(parseInt(params['filter.delegation_']))) {
         console.log('SI');
@@ -235,7 +254,7 @@ export class PercentagesSurveillanceComponent
   }
 
   deleteInServerPercentage(data: any): void {
-    this.loading = true;
+    // this.loading = true;
     this.survillanceService.deleteVigProcessPercentages(data).subscribe({
       next: response => {
         console.log(response);
