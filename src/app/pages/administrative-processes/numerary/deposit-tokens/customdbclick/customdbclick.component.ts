@@ -11,8 +11,11 @@ import { ListGoodsComponent } from '../list-goods/list-goods.component';
   templateUrl: './customdbclick.component.html',
   styles: [
     `
+      .hoverBg {
+        background-color: #117a8b !important;
+      }
       .hoverBg:hover {
-        background-color: #11798a !important;
+        background-color: #269abc !important;
         font-weight: 700;
       }
 
