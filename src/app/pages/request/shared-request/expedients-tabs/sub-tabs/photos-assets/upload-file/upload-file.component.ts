@@ -28,6 +28,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
   idGood: number = 0;
   date: string = '';
   userLogName: string = '';
+  goodProg: any;
   constructor(
     private bsModalRef: BsModalRef,
     private requestService: RequestService,
@@ -39,7 +40,6 @@ export class UploadFileComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.idGood = this.data.id;
     if (this.idRequest) this.infoRequest();
     this.obtainDate();
     this.getInfoUserLog();
@@ -77,7 +77,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
             xfolioProgramacion: this.programming.folio,
             xnoProgramacion: this.programming.id,
             xidTransferente: this.programming.tranferId,
-            xidBien: this.idGood,
+            xidBien: this.goodProg,
             xnombreProceso: 'Ejecutar Recepcion',
           };
 
@@ -101,7 +101,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
         });
       } else {
         const { index, fileEvents } = uploadEvent;
-
+        this.idGood = this.data.id;
         fileEvents.forEach(fileEvent => {
           const formData = {
             xidcProfile: 'NSBDB_Gral',
