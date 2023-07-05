@@ -52,7 +52,18 @@ import { GoodsTableService } from './goods-table.service';
 })
 export class GoodsTableComponent extends BasePage implements OnInit {
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
-  @Input() goods: ITrackedGood[] = [];
+  goodsList: ITrackedGood[] = [];
+
+  @Input() set goods(good: ITrackedGood[]) {
+    if (good.length > 0) {
+      this.goodsList = good;
+      this.setterColorRow();
+    }
+  }
+
+  get goods(): ITrackedGood[] {
+    return this.goodsList;
+  }
   @Input() totalItems: number = 0;
   @Input() params: BehaviorSubject<ListParams>;
   @Input() override loading: boolean = false;
@@ -97,6 +108,22 @@ export class GoodsTableComponent extends BasePage implements OnInit {
           this.setColumnsFromOrigin();
         },
       });
+  }
+
+  setterColorRow(ev?: any) {
+    setTimeout(() => {
+      const table = document.getElementById('t-rastreador');
+      const thead = table.children[0].children[0].children[0].children;
+      const tbody = table.children[0].children[1].children;
+      for (let i = 0; i < tbody.length; i++) {
+        const cell = tbody[i].children;
+        for (let x = 0; x < cell.length; x++) {
+          const th = thead[x].classList[thead[x].classList.length - 1];
+          const tr = cell[x];
+          tr.classList.add(th.includes('bg-') ? th : 'x');
+        }
+      }
+    }, 300);
   }
 
   setColumnsFromOrigin() {

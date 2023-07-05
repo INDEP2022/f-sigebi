@@ -24,7 +24,8 @@
       </div>
       <app-columns-select
         class="mx-1"
-        [(settings)]="settings"></app-columns-select>
+        [(settings)]="settings"
+        (settingsChange)="setterColorRow($event)"></app-columns-select>
       <div class="btn-group mx-1" dropdown>
         <button
           id="button-basic"
@@ -98,6 +99,7 @@
     <div class="row" [ngClass]="{ 'table-loading': loading }">
       <div class="col-md-12 table-responsive">
         <ng2-smart-table
+          id="t-rastreador"
           [settings]="settings"
           [source]="goods"></ng2-smart-table>
       </div>

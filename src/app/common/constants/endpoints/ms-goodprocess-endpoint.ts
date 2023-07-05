@@ -19,4 +19,5 @@ export enum GoodprocessEndpoints {
   GetGoodProceedings = 'application/get-good-proceedings',
   AppliesControl = 'update-good-status/appliesControl',
   consultationScreenGood = 'factadbsolcamnume/consultation-post-query-good',
+  AppVWheel = 'application/get-v-steeringwheel-number',
 }
