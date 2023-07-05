@@ -167,7 +167,6 @@ export class NotifyAssetsImproprietyFormComponent
     if (typeTransference != 'SAT_SAE' || generaXML) {
       // if (
       //   this.typeClarifications == 2 &&
-      //   typeTransference != 'SAT_SAE' &&
       //   typeTransference != 'PGR_SAE'
       // ) {
       //   this.improcedenciaTransferentesVoluntarias(); //Aclaración Manual tipo 2
@@ -193,10 +192,23 @@ export class NotifyAssetsImproprietyFormComponent
 
       if (
         this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
-        this.dataClarifications2.chatClarification.idClarificationType == '2'
+        (this.dataClarifications2.chatClarification.idClarificationType == '2' || this.dataClarifications2.chatClarification.idClarificationType == '1' ) && typeTransference == 'MANUAL'
       ) {
-        this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
+        console.log('Se ejecutará aclaracionTransferentesVoluntarias')
+        this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1 y 2
+
       }
+
+      if (
+        this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
+        this.dataClarifications2.chatClarification.clarificationStatus == 'IMPROCEDENCIA'  && typeTransference == 'MANUAL'
+      ) {
+        console.log('Se ejecutará aclaracionTransferentesVoluntarias')
+        this.oficioImprocedencia(); //IMPROCEDENCIA  MANUAL 
+
+      }
+
+      
     }
 
     if (typeTransference == 'SAT_SAE' && this.typeClarifications == 2) {

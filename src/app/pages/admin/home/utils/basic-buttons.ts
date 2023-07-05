@@ -6,9 +6,15 @@ export const BASIC_BUTTONS = [
               </button>`,
   },
   {
-    name: 'Nuevo / Agregar',
-    code: `<button type="button" tooltip="Agregar" containerClass="tooltip-style" class="btn btn-info btn-sm active ml-2 mr-2">
+    name: 'Nuevo',
+    code: `<button type="button" tooltip="Nuevo" containerClass="tooltip-style" class="btn btn-info btn-sm active ml-2 mr-2">
                 Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>`,
+  },
+  {
+    name: 'Agregar',
+    code: `<button type="button" tooltip="Agregar" containerClass="tooltip-style" class="btn btn-info btn-sm active ml-2 mr-2">
+                Agregar <i class="bx bx-plus bx-sm float-icon"></i>
               </button>`,
   },
   {
@@ -188,5 +194,75 @@ export const BASIC_BUTTONS = [
     code: `<button  class="btn btn-primary active btn-sm"> 
     Turnar <i aria-hidden="true" class="fa fa-share-square"></i>
     </button>`,
+  },
+  {
+    name: 'Importar Excel',
+    code: `<button
+            type="button"
+            class="btn btn-sm btn-success active m-3">
+            Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
+          </button>`,
+  },
+  {
+    name: 'Seleccionar',
+    code: `<button
+          type="button"
+          class="btn btn-primary active btn-sm">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>`,
+  },
+  {
+    name: 'Aceptar',
+    code: `<button
+            class="btn btn-primary btn-sm active mr-3">
+            Aceptar
+          </button>`,
+  },
+  {
+    name: 'Cancelar',
+    code: `<button
+            class="btn btn-danger btn-sm active mr-3">
+            Cancelar
+          </button>`,
+  },
+  {
+    name: 'Cerrar',
+    code: `<button
+            class="btn btn-primary btn-sm active mr-3">
+            Cerrar
+          </button>`,
+  },
+  {
+    name: 'Procesar',
+    code: `<button
+          type="button"
+          class="btn btn-primary active btn-sm">
+          Procesar
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>`,
+  },
+  {
+    name: 'Continuar',
+    code: `<button
+          type="button"
+          class="btn btn-primary active btn-sm">
+          Continuar
+        </button>`,
+  },
+  {
+    name: 'Firmar reporte',
+    code: `<button
+          type="button"
+          class="btn btn-primary active btn-sm">
+          <i class="bx bx-edit-alt"></i>
+          Firmar Reporte
+        </button>`,
+  },
+  {
+    name: 'Rechazar',
+    code: `<button
+            class="btn btn-danger btn-sm active mr-3">
+            Rechazar
+          </button>`,
   },
 ];

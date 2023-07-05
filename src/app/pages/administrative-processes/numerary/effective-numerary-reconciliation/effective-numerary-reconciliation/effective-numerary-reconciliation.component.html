@@ -10,7 +10,7 @@
           <div class="col-md-6 pt-3">
             <form-field [control]="form.get('currency')">
               <ngx-select
-                (fetchItems)="getRegCurrency()"
+                (fetchItems)="getRegCurrency($event, true)"
                 [data]="currencies"
                 [form]="form"
                 value="cve_moneda"
@@ -32,6 +32,7 @@
               [control]="form.get('fileFrom')"
               label="Del Expediente:">
               <input
+                max="9999999999"
                 type="number"
                 formControlName="fileFrom"
                 class="form-control" />
@@ -40,6 +41,7 @@
           <div class="col-md-6">
             <form-field [control]="form.get('fileTo')" label="Al:">
               <input
+                max="9999999999"
                 type="number"
                 formControlName="fileTo"
                 class="form-control" />

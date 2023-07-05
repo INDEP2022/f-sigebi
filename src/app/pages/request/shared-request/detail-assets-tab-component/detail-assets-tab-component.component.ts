@@ -357,7 +357,7 @@ export class DetailAssetsTabComponentComponent
   ngOnInit(): void {
     this.detailAssetsInfo = this.detailAssets.value;
     this.initForm();
-    this.getDestinyTransfer(new ListParams(), this.detailAssetsInfo.requestId);
+    //this.getDestinyTransfer(new ListParams(), this.detailAssetsInfo.requestId);
     this.getPhysicalState(new ListParams());
     this.getConcervationState(new ListParams());
     this.getTransferentUnit(new ListParams());
@@ -708,6 +708,11 @@ export class DetailAssetsTabComponentComponent
           'Error',
           `El formulario no se puede actualizar ${error.error.message}`
         );
+        // this.onLoadToast(
+        //   'error',
+        //   'Error',
+        //   `El formulario no se puede actualizar ${error.error.message}`
+        // );
       },
     });
 

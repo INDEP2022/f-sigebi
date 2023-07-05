@@ -10,10 +10,10 @@
           <div class="col-md-6 pt-3">
             <form-field [control]="form.get('currency')">
               <ngx-select
-                (fetchItems)="getRegCurrency($event)"
+                (fetchItems)="getRegCurrency($event, true)"
                 [data]="currencies"
                 [form]="form"
-                value="nmtabla"
+                value="cve_moneda"
                 bindLabel="desc_moneda"
                 label="Moneda"
                 control="currency">

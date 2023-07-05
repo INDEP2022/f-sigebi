@@ -8,6 +8,7 @@
         type="number"
         (change)="fractionChange()"
         formControlName="satDepartureNum"
+        oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16)"
         class="form-control" />
     </form-field>
 
@@ -24,18 +25,39 @@
       [control]="form.get('clasifNum')"
       label="N&uacute;mero Clasificaci&oacute;n de Bien"
       class="col-md-2">
-      <input type="number" formControlName="clasifNum" class="form-control" />
+      <input
+        type="number"
+        formControlName="clasifNum"
+        class="form-control"
+        oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16)" />
     </form-field>
+    <div class="col-1 mx-0 px-0">
+      <button
+        (click)="searchClasif()"
+        type="button"
+        class="btn btn-primary active btn-sm">
+        <i class="bx bx-search-alt bx-sm float-icon"></i>
+      </button>
+    </div>
 
-    <!-- <form-field
+    <form-field
       [control]="form.get('alternativeClasifNum')"
       label="Clasificaci&oacute;n Alterna del Bien"
       class="col-md-4">
       <input
         type="text"
+        readonly
         formControlName="alternativeClasifNum"
         class="form-control" />
-    </form-field> -->
+    </form-field>
+    <div class="col-1 mx-0 px-0">
+      <button
+        (click)="openAlternClasification()"
+        type="button"
+        class="btn btn-primary btn-sm active">
+        <i class="bx bx-list-plus bx-sm float-icon"></i>
+      </button>
+    </div>
   </div>
 
   <div class="row pt-3">
@@ -49,6 +71,7 @@
         label="Tipo"
         [data]="types"
         bindLabel="nameGoodType"
+        className="scroll-line"
         (fetchItems)="getTypes($event)"
         (change)="typesChange($event)"></ngx-select>
     </form-field>
@@ -62,6 +85,7 @@
         label="Subtipo"
         [data]="subtypes"
         bindLabel="nameSubtypeGood"
+        className="scroll-line"
         (fetchItems)="getSubtypes($event)"
         (change)="subtypesChange($event)"></ngx-select>
     </form-field>
@@ -77,6 +101,7 @@
         label="Ssubtipo"
         [data]="ssubtypes"
         bindLabel="description"
+        className="scroll-line"
         (fetchItems)="getSsubtypes($event)"
         (change)="ssubtypesChange($event)"></ngx-select>
     </form-field>
@@ -90,6 +115,7 @@
         label="Sssubtipo"
         [data]="sssubtypes"
         value="numClasifGoods"
+        className="scroll-line"
         bindLabel="description"
         (fetchItems)="getSssubtypes($event)"
         (change)="sssubtypesChange($event)"></ngx-select>
@@ -97,10 +123,17 @@
   </div>
 
   <div class="row pt-3">
-    <div class="col-md-12">
-      <button class="btn btn-primary active btn-sm">
+    <div class="col-md-12 d-inline">
+      <button class="btn btn-primary active btn-sm mr-3">
         Buscar
         <i class="bx bx-search-alt bx-sm float-icon"></i>
+      </button>
+
+      <button
+        type="button"
+        (click)="cleanFilter()"
+        class="btn btn-danger btn-sm active mr-3">
+        Limpiar <i class="fas fa-eraser"> </i>
       </button>
     </div>
   </div>

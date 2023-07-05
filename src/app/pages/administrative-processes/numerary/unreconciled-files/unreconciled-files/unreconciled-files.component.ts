@@ -24,6 +24,7 @@ export class UnreconciledFilesComponent implements OnInit {
   isLoading = false;
   maxDate = new Date();
   currencies = new DefaultSelect<IMoneda>([], 0);
+  types = new DefaultSelect<IMoneda>([], 0);
   fromF: string = '';
   toT: string = '';
   import: number = 0;
@@ -78,6 +79,7 @@ export class UnreconciledFilesComponent implements OnInit {
       PN_EXPFIN: this.form.controls['fileTo'].value,
     };
 
+    console.log('params', params);
     this.siabService
       .fetchReport('RGERADBEXPESCONCI', params)
       // .fetchReportBlank('blank')

@@ -83,7 +83,8 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
       this.rowData.deposit
     ) {
       let obj = {
-        diCurrency: this.rowData.currency,
+        diCurrency:
+          this.rowData.currency == "'M'" ? 'M' : this.rowData.currency,
         tiBank: this.rowData.bank,
         fecMovement: this.rowData.motiondate,
         diAccount: this.rowData.cveAccount,
@@ -92,35 +93,38 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
       const can: any = await this.getGoodSelectClasif(obj);
       console.log('can', can);
 
-      for (let i = 0; i < can.length; i++) {
-        if (can[i].val2 != null) {
-          var canVal2 = can[i].val2;
-          var number = parseFloat(canVal2.replace(',', ''));
-          console.log('number', number);
-          console.log('this.rowData.deposito', this.rowData.deposit);
-          if (number == Number(this.rowData.deposit)) {
-            console.log('SI');
+      if (can != null) {
+        for (let i = 0; i < can.length; i++) {
+          if (can[i].val2 != null) {
+            var canVal2 = can[i].val2;
+            var number = parseFloat(canVal2.replace(',', ''));
+            console.log('number', number);
+            console.log('this.rowData.deposito', this.rowData.deposit);
+            if (number == Number(this.rowData.deposit)) {
+              console.log('SI');
 
-            vb_encontrado = await this.getGoodMovimientosCuentas(can[i]);
-            console.log('vb_encontrado', vb_encontrado);
-            if (vb_encontrado) {
-              V_BIEN_VALIDO = await this.getGoodMovimientosCuentas1(can[i]);
-              if (V_BIEN_VALIDO == 0) {
-                let obj: any = {
-                  numberMotion: this.rowData.motionnumber,
-                  numberAccount: this.rowData.accountnumber,
-                  numberGood: can[i].goodnumber,
-                  numberProceedings: can[i].proceedingsnumber,
-                };
-                const validUpdate = await this.updateAccountMovement(obj);
-                if (validUpdate) {
-                  return;
+              vb_encontrado = await this.getGoodMovimientosCuentas(can[i]);
+              console.log('vb_encontrado', vb_encontrado);
+              if (vb_encontrado) {
+                V_BIEN_VALIDO = await this.getGoodMovimientosCuentas1(can[i]);
+                if (V_BIEN_VALIDO == 0) {
+                  let obj: any = {
+                    numberMotion: this.rowData.motionnumber,
+                    numberAccount: this.rowData.accountnumber,
+                    numberGood: can[i].no_bien,
+                    numberProceedings: can[i].no_expediente,
+                  };
+                  const validUpdate = await this.updateAccountMovement(obj);
+                  if (validUpdate) {
+                    return;
+                  }
                 }
               }
             }
           }
         }
       }
+
       if (!vb_encontrado) {
         this.alert(
           'warning',

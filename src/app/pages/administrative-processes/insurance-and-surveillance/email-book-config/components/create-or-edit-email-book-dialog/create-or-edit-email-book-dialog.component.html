@@ -7,13 +7,6 @@
           : 'AGREGANDO LIBRETA DE DIRECCIONES ELECTRÓNICAS'
       }}
     </h4>
-    <button
-      type="button"
-      class="close pull-right"
-      aria-label="Close"
-      (click)="closeDialog()">
-      <span aria-hidden="true">×</span>
-    </button>
   </div>
   <form class="modal-body form-material" [formGroup]="form">
     <form-field
@@ -40,9 +33,9 @@
         formControlName="bookName"
         class="form-control" />
     </form-field>
-    <form-field [control]="form.get('id')" label="ID">
+    <!--  <form-field [control]="form.get('id')" label="ID">
       <input type="text" formControlName="id" class="form-control" />
-    </form-field>
+    </form-field>-->
     <form-field [control]="form.get('bookEmail')" label="Correo electrónico">
       <input type="email" formControlName="bookEmail" class="form-control" />
     </form-field>
@@ -52,7 +45,7 @@
         <option value="P">Para</option>
       </select>
     </form-field>
-    <form-field [control]="form.get('bookStatus')" label="Status">
+    <form-field [control]="form.get('bookStatus')" label="Estatus">
       <select class="form-control" required formControlName="bookStatus">
         <option value="0">Inactivo</option>
         <option value="1">Activo</option>
@@ -63,17 +56,16 @@
     <button
       [disabled]="isLoading"
       type="button"
-      class="btn btn-default btn-sm btn-success font-weight-bold shadow-none"
+      class="btn btn-primary active btn-sm ml-3"
       (click)="saveInServer()">
       Guardar
-      <i class="fas fa-paper-plane"></i>
+      <i aria-hidden="true" class="fa fa-save"></i>
     </button>
     <button
       type="button"
-      class="bg-danger btn btn-sm font-weight-bold shadow-none text-white"
+      class="btn btn-danger active btn-sm ml-3"
       (click)="closeDialog()">
       Cerrar
-      <i class="fas fa-times"></i>
     </button>
   </div>
 </ng-template>

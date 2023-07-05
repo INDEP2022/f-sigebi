@@ -51,9 +51,7 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this._params.pipe(takeUntil(this.$unSubscribe), skip(1)).subscribe(next => {
-      this.params.limit = next.limit;
-      this.params.page = next.page;
-      this.getGoods();
+      this.getGoods(next);
     });
   }
 
@@ -74,7 +72,9 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
       );
       return;
     }
-    this.getGoods();
+    const _params = new ListParams();
+    this._params.next(_params);
+    // this.getGoods();
     this.showTable = true;
   }
 
@@ -107,15 +107,17 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     return _val;
   }
 
-  getGoods() {
+  getGoods(params?: ListParams) {
     this.loading = true;
     this.filters = new GoodTrackerMap();
     this.mapFilters();
     this.scrollTable.nativeElement.scrollIntoView();
     this.goodTrackerService
-      .trackGoods(this.filters, this._params.getValue())
+      .trackGoods(this.filters, params ?? new ListParams())
       .subscribe({
         next: res => {
+          console.log(res);
+
           this.loading = false;
           this.goods = res.data;
           this.totalItems = res.count;
@@ -133,6 +135,8 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
             );
             return;
           }
+          console.log('xd');
+
           this.goods = [];
           this.totalItems = 0;
         },
@@ -200,9 +204,9 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     }
     if (transmitters.length) {
       this.filters.global.selecStation = 'S';
-      this.filters.global.csTransfereeNumber = transmitters;
+      this.filters.global.csStationNumber = transmitters;
     } else {
-      this.filters.global.csTransfereeNumber = null;
+      this.filters.global.csStationNumber = null;
     }
     if (autorities.length) {
       this.filters.global.selecAuthority = 'S';
@@ -359,5 +363,9 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     this.showTable = true;
     this.params.removeAllFilters();
     this.getGoods();
+  }
+
+  resetFilters() {
+    this.form = this.fb.group(new GoodTrackerForm());
   }
 }

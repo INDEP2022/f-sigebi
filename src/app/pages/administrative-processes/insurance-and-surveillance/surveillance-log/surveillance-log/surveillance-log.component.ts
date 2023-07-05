@@ -139,10 +139,11 @@ export class SurveillanceLogComponent extends BasePage implements OnInit {
         this.totalItems = res.count || 0;
         this.sources.load(res.data);
         this.loading = false;
-        console.log('res', res);
+        //console.log('res', res);
       },
       error: err => {
-        this.onLoadToast('error', err.error.message, '');
+        //this.onLoadToast('error', err.error.message, '');
+        this.alert('error', 'No se encontraron registros', '');
         this.loading = false;
         this.sources.load([]);
         this.sources.refresh();

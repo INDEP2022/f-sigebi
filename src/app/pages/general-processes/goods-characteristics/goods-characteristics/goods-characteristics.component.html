@@ -197,7 +197,11 @@
               </div>
             </tab>
             <tab heading="Datos Generales del Bien">
+              <div *ngIf="errorMessage" class="errorMessage">
+                {{ errorMessage }}
+              </div>
               <div
+                *ngIf="!disabledBienes || di_numerario_conciliado"
                 class="mb-5"
                 style="
                   display: flex;
@@ -445,7 +449,7 @@
             <tab heading="Fotos">
               <app-photos-tabs
                 [goodNumber]="actualGoodNumber + ''"
-                [disabled]="disabledBienes"></app-photos-tabs>
+                [disabled]="false"></app-photos-tabs>
               <!-- <app-good-photos
                 *ngIf="actualGoodNumber"
                 [showPhoto]="showPhoto"

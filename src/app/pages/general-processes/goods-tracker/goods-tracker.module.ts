@@ -9,8 +9,10 @@ import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/docu
 import { SelectFractionComponent } from 'src/app/@standalone/modals/select-fraction/select-fraction.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
+import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ActaHistoComponent } from './components/acta-histo/acta-histo.component';
+import { AlternClasficationListComponent } from './components/altern-clasfication-list/altern-clasfication-list.component';
 import { CertificatesFilterComponent } from './components/certificates-filter/certificates-filter.component';
 import { ClasificationFilterComponent } from './components/clasification-filter/clasification-filter.component';
 import { DataFilterComponent } from './components/data-filter/data-filter.component';
@@ -36,11 +38,13 @@ import { trackedGoodsReducer } from './store/goods-tracker.reducer';
     ViewPhotosComponent,
     ActaHistoComponent,
     GTrackerDocumentsComponent,
+    AlternClasficationListComponent,
   ],
   imports: [
     CommonModule,
     GoodsTrackerRoutingModule,
     SharedModule,
+    LinkCellComponent,
     GoodsTypesSharedComponent,
     DocumentsListComponent,
     ModalModule.forChild(),

@@ -1,0 +1,86 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Selección de Bienes</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mt-3">
+        <!--Delegation Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+          <app-delegation-shared
+            [form]="form"
+            (emitDelegation)="emitDelegation($event)"
+            labelDelegation="Coordinación"
+            [showSubdelegation]="false"></app-delegation-shared>
+        </div>
+        <!--Goods Classification Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+          <app-goods-classification-shared
+            [form]="form"></app-goods-classification-shared>
+        </div>
+        <!--Target Tags Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+          <app-target-tags-shared [form]="form"></app-target-tags-shared>
+        </div>
+        <!--Goods Status Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+          <app-goods-status-shared [form]="form"></app-goods-status-shared>
+        </div>
+        <!--Measurement Units Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+          <app-measurement-units-shared
+            [form]="form"></app-measurement-units-shared>
+        </div>
+        <!--Transference Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+          <app-transferente-shared [form]="form"></app-transferente-shared>
+        </div>
+        <!--warehouse Component-->
+        <div class="col-md-12 col-sm-12 col-xs-12 mt-3">
+          <app-warehouse-shared
+            [form]="form"
+            [showWarehouseType]="false"></app-warehouse-shared>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <div class="col text-center">
+          <button class="btn btn-primary btn-sm active mr-3" (click)="filter()">
+            Filtrar Bienes
+          </button>
+          <button class="btn btn-success btn-sm active mr-3">
+            Listado de Bienes <i class="bi bi-file-earmark-excel-fill"></i>
+          </button>
+          <button class="btn btn-primary btn-sm active mr-3" (click)="enterGoods()">
+            Ingresar Bienes
+          </button>
+          <button class="btn btn-sm btn-success active mr-3">
+            Exportar a Excel
+            <i class="bx bx-download float-icon"></i>
+          </button>
+          <button class="btn btn-danger btn-sm active" (click)="closeModal()">
+            Salir
+          </button>
+        </div>
+      </div>
+      <hr class="row mt-3" />
+      <div class="ch-content" header>
+        <h5 class="title">Lista de Bienes</h5>
+        <div class="col-md-5 buttons">
+          <app-columns-select
+            (settingsChange)="settingChange($event)"
+            [settings]="settingsTable"></app-columns-select>
+        </div>
+      </div>
+      <div [class]="loading ? 'table-loading' : 'row'">
+        <ng2-smart-table
+          class="col-md-12 table-responsive table-bordered"
+          [settings]="settingsTable"
+          [source]="data"></ng2-smart-table>
+        <app-pagination
+          [params]="params"
+          [limit]="limit"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </form>
+  </div>
+</app-modal>

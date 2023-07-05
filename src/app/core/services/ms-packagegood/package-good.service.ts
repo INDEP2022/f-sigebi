@@ -6,7 +6,7 @@ import {
   IpackageValidGood,
   PrepDestinationPackage,
 } from '../../models/catalogs/Ipackage-valid-good';
-import { IPackage } from '../../models/catalogs/package.model';
+import { IFoliovInvoice, IPackage } from '../../models/catalogs/package.model';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +17,12 @@ export class PackageGoodService extends HttpService {
     this.microservice = PackageGoodEndpoints.BasePath;
   }
 
-  getPaqDestinationEnc(params?: ListParams) {
+  insertPaqDestionarioEnc(body: IPackage) {
+    const route = `${PackageGoodEndpoints.paqDestinationEnc}`;
+    return this.post(route, body);
+  }
+
+  getPaqDestinationEnc(params?: any) {
     const route = `${PackageGoodEndpoints.paqDestinationEnc}`;
     return this.get(route, params);
   }
@@ -27,8 +32,13 @@ export class PackageGoodService extends HttpService {
     return this.put(route, good);
   }
 
+  getFolio(model: IFoliovInvoice) {
+    const route = `application/get-vInvoice`;
+    return this.post(route, model);
+  }
+
   //paq-destination - det
-  getPaqDestinationDet(params?: ListParams) {
+  getPaqDestinationDet(params?: any) {
     const route = `${PackageGoodEndpoints.paqDestinationDet}`;
     return this.get(route, params);
   }

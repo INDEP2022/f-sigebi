@@ -463,7 +463,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
             };
-            this.onLoadToast('success', '', 'Reporte generado');
+            this.alert('success', '', 'Reporte generado');
             this.cleanForm();
             this.modalService.show(PreviewDocumentsComponent, config);
           }
@@ -483,9 +483,38 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     try {
       const excelImport = this.excelService.getData<any>(binaryExcel);
       console.log('excelImport', excelImport);
-      this.createDataVigilanceMtp(excelImport);
+
+      if (excelImport.length == 0) {
+        this.clearInput();
+        this.alert('warning', 'El archivo se encuentra vacío', '');
+        return;
+      } else {
+        let arr: any = [];
+
+        let result = excelImport.map(item => {
+          if (
+            item.recordId &&
+            item.goodNumber &&
+            item.address &&
+            item.delegationType &&
+            item.user
+          ) {
+            arr.push(item);
+          }
+        });
+
+        if (arr.length == 0) {
+          this.clearInput();
+          this.alert('warning', 'No hay registros válidos para insertar.', '');
+          return;
+        } else {
+          Promise.all(result).then(item => {
+            this.createDataVigilanceMtp(arr);
+          });
+        }
+      }
     } catch (error) {
-      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+      this.alert('error', 'Ocurrió un error al leer el archivo', 'Error');
     }
   }
 
@@ -840,7 +869,6 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
                 pTypeDelaga: this.delegationDefault.typeDelegation,
                 pInitialDate: fromTwo,
                 pEndDate: toTwo,
-                cvRecord: 100,
               };
 
               const createRegisterRandom: any = await this.createRegisterRandom(
@@ -1015,8 +1043,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     const fecha = new Date(fromTwo);
     const year = fecha.getFullYear();
     const month = fecha.getMonth() + 1;
-    const formattedDate = `${year}${month.toString()}`;
-    // const formattedDate = `${year}${month.toString().padStart(2, '0')}`;
+    // const formattedDate = `${year}${month.toString()}`;
+    const formattedDate = `${year}${month.toString().padStart(2, '0')}`;
 
     console.log(formattedDate);
     let obj = {
