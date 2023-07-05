@@ -71,6 +71,7 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   @Input() labelTemplate: TemplateRef<any>;
   @Input() optionTemplate: TemplateRef<any>;
   @Input() loadingInit = false;
+  @Input() className = '';
   @ViewChild(NgSelectComponent) ngSelect: NgSelectComponent;
 
   buffer: any[] = [];

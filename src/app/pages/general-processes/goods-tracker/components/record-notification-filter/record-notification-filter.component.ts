@@ -35,6 +35,7 @@ export class RecordNotificationFilterComponent implements OnInit {
   @Output() subloadingChange = new EventEmitter<boolean>();
   courts = new DefaultSelect();
   publicMins = new DefaultSelect();
+  @Output() cleanFilters = new EventEmitter<void>();
   constructor(
     private courtService: CourtService,
     private minPubService: MinPubService,

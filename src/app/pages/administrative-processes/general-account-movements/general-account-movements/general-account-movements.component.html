@@ -116,6 +116,7 @@
           <div class="col-md-6">
             <form-field [control]="form.get('good')" label="Número de Bien:">
               <input
+                max="9999999999"
                 type="number"
                 formControlName="good"
                 class="form-control" />
@@ -124,6 +125,7 @@
           <div class="col-md-6">
             <form-field [control]="form.get('fileFrom')" label="Expediente:">
               <input
+                max="9999999999"
                 type="number"
                 formControlName="fileFrom"
                 class="form-control" />
@@ -135,7 +137,7 @@
           <div class="col-md-6 pt-3">
             <form-field [control]="form.get('currency')">
               <ngx-select
-                (fetchItems)="getRegCurrency()"
+                (fetchItems)="getRegCurrency($event, true)"
                 [data]="currencies"
                 [form]="form"
                 value="cve_moneda"
@@ -174,6 +176,7 @@
           <div class="col-md-6">
             <form-field [control]="form.get('deposito')" label="Depósito:">
               <input
+                max="999999999999999"
                 type="number"
                 formControlName="deposito"
                 class="form-control" />
