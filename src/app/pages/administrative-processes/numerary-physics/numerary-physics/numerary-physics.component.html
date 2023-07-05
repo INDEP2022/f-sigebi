@@ -37,6 +37,7 @@
             <form-field [control]="form.get('type')">
               <ngx-select
                 (fetchItems)="getTvalTable1Service($event)"
+                [searchOnInit]="true"
                 [data]="types"
                 [form]="form"
                 value="otvalor"
