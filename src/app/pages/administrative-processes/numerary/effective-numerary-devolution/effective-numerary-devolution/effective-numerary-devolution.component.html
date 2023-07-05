@@ -13,6 +13,7 @@
               [control]="form.get('fileFrom')"
               label="Del Expediente:">
               <input
+                max="9999999999"
                 type="number"
                 formControlName="fileFrom"
                 class="form-control" />
@@ -21,6 +22,7 @@
           <div class="col-md-6">
             <form-field [control]="form.get('fileTo')" label="al:">
               <input
+                max="9999999999"
                 type="number"
                 formControlName="fileTo"
                 class="form-control" />
@@ -31,14 +33,16 @@
           <div class="col-md-6">
             <form-field [control]="form.get('goodFrom')" label="Del Bien:">
               <input
+                max="9999999999"
                 type="number"
                 formControlName="goodFrom"
                 class="form-control" />
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('goodTo')" label="al:">
+            <form-field [control]="form.get('goodTo')" label="Al:">
               <input
+                max="9999999999"
                 type="number"
                 formControlName="goodTo"
                 class="form-control" />
@@ -49,7 +53,7 @@
           <div class="col-md-6">
             <form-field
               [control]="form.get('from')"
-              label="Fecha de Devolución del:">
+              label="Fecha De Devolución Del:">
               <input
                 [maxDate]="maxDate"
                 formControlName="from"
@@ -58,7 +62,7 @@
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('to')" label="al:">
+            <form-field [control]="form.get('to')" label="Al:">
               <input
                 [maxDate]="maxDate"
                 formControlName="to"

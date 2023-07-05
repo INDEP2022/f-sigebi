@@ -219,4 +219,44 @@ export const BASIC_BUTTONS = [
             Cancelar
           </button>`,
   },
+  {
+    name: 'Cerrar',
+    code: `<button
+            class="btn btn-primary btn-sm active mr-3">
+            Cerrar
+          </button>`,
+  },
+  {
+    name: 'Procesar',
+    code: `<button
+          type="button"
+          class="btn btn-primary active btn-sm">
+          Procesar
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>`,
+  },
+  {
+    name: 'Continuar',
+    code: `<button
+          type="button"
+          class="btn btn-primary active btn-sm">
+          Continuar
+        </button>`,
+  },
+  {
+    name: 'Firmar reporte',
+    code: `<button
+          type="button"
+          class="btn btn-primary active btn-sm">
+          <i class="bx bx-edit-alt"></i>
+          Firmar Reporte
+        </button>`,
+  },
+  {
+    name: 'Rechazar',
+    code: `<button
+            class="btn btn-danger btn-sm active mr-3">
+            Rechazar
+          </button>`,
+  },
 ];
