@@ -753,7 +753,6 @@ export class RegistrationOfRequestsComponent
   /* Fin guardar captura de solicitud */
 
   getResponse(event: any) {
-    console.log('respuesta: ', event);
     this.verifyResp = event;
   }
 
@@ -764,7 +763,6 @@ export class RegistrationOfRequestsComponent
     const url = 'pages/request/transfer-request/classify-assets';
     const from = 'VERIFICAR_CUMPLIMIENTO';
     const to = 'CLASIFICAR_BIEN';
-    console.log(this.task);
     const user: any = this.authService.decodeToken();
     const taskRes = await this.createTaskOrderService(
       this.requestData,
@@ -1044,7 +1042,6 @@ export class RegistrationOfRequestsComponent
 
   /** Proceso de aprobacion */
   async approveRequest() {
-    console.log(this.requestApproved);
     if (this.requestApproved == true) {
       this.onLoadToast(
         'error',

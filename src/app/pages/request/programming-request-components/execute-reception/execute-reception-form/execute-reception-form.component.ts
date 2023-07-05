@@ -1086,7 +1086,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.goodService.updateByBody(GoodData).subscribe(() => {
-          this.onLoadToast('success', 'Bien actualizado correctamente', '');
+          this.alert('success', 'Bien actualizado correctamente', '');
           //this.getReportGoods();
         });
       }
@@ -1159,7 +1159,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      this.onLoadToast(
+      this.alert(
         'warning',
         'Acción inválida',
         'Se necesita tener un bien seleccionado'
@@ -1180,7 +1180,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      this.onLoadToast(
+      this.alert(
         'warning',
         'Acción inválida',
         'Se necesita tener un bien seleccionado'
@@ -1201,7 +1201,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      this.onLoadToast(
+      this.alert(
         'warning',
         'Acción inválida',
         'Se necesita tener un bien seleccionado'
@@ -1288,7 +1288,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   assingMinuteWarehouse() {
     if (this.selectGood.length > 0) {
       this.alertQuestion(
-        'warning',
+        'question',
         'Confirmación',
         '¿Seguro que quiere asignar los bienes  a una acta?',
         'Aceptar'
@@ -1298,7 +1298,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      this.onLoadToast(
+      this.alert(
         'warning',
         'Acción inválida',
         'Se necesita tener un bien seleccionado'
