@@ -22,9 +22,8 @@
                 <button
                   (click)="addMovement()"
                   type="button"
-                  tooltip="Agregar"
                   containerClass="tooltip-style"
-                  class="btn btn-primary btn-sm active ml-2 mr-2">
+                  class="btn btn-info btn-sm active ml-2 mr-2">
                   Agregar
                   <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
@@ -112,7 +111,7 @@
                   type="button"
                   (click)="file.click()">
                   Importar CSV
-                  <i class="bx bx-download float-icon"></i>
+                  <i class="bi bi-file-earmark-excel-fill"></i>
                 </button>
                 <input
                   type="file"
@@ -125,6 +124,7 @@
               <div class="col-md-12 mt-3 text-center">
                 <button
                   (click)="exportar()"
+                  style="font-size: 12px"
                   class="btn btn-success btn-sm active w-100">
                   Exportar CSV
                   <i class="bx bx-upload float-icon"></i>
@@ -135,7 +135,7 @@
                 <button
                   (click)="actualizarFunc()"
                   class="btn btn-primary btn-sm active w-100">
-                  Recargar
+                  Actualizar
                   <i class="fas fa-sync-alt"> </i>
                 </button>
               </div>
