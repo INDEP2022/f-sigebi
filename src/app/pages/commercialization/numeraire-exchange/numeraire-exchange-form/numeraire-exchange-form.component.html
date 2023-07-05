@@ -587,7 +587,7 @@
           </form>
         </tab>
         <tab
-          (selectTab)="isMassive = false"
+          (selectTab)="isMassive = true"
           heading="Conversión Masiva"
           id="tabMassiveConversion">
           <div class="row d-flex justify-content-center">
@@ -746,7 +746,8 @@
                     path="accountmvmnt/api/v1/aplication/get-data-bank"
                     (valueChange)="selectAccount($event)">
                     <ng-template let-item
-                      >{{ item.cve_banco }} - {{ item.nombre }}
+                      >#CTA:{{ item.no_cuenta }} -- CVE BAN:
+                      {{ item.cve_banco }} - {{ item.nombre }}
                     </ng-template>
                   </ng-custom-select>
                 </div>
@@ -838,14 +839,14 @@
                     bsDatepicker />
                   <!-- </ng-template>  -->
                 </form-field>
-                <button
+                <!-- <button
                   (click)="isSearchDate = !isSearchDate"
                   class="btn btn-primary active btn-sm w-auto">
                   <i
                     class="bx bx-{{
                       !isSearchDate ? 'search-alt' : 'x'
                     }} bx-sm float-icon"></i>
-                </button>
+                </button> -->
               </div>
             </div>
             <div class="col-md-4">

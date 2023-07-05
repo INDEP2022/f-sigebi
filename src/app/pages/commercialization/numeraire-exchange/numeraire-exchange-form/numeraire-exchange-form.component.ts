@@ -370,21 +370,32 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   generateParamsSearchDate() {
     const dateMotion = this.formBlkControl.value.tiNewDate;
     console.log({ dateMotion });
-    return { 'filter.dateMotion': dateMotion };
+    return {
+      'filter.dateMotion': formatDate(dateMotion, 'yyyy-MM-dd', 'en-US'),
+      'filter.isFileDeposit': 'S',
+      'filter.numberGood': '$null',
+      'filter.numberAccount': this.formBlkControl.value.diNumberAccountDeposit,
+    };
   }
 
   getInfoDeposit() {
     const deposit = this.formBlkControl.value.tiNewDate;
+    this.changeDeposit(null);
     const params = new ListParams();
     params['filter.dateMotion'] = formatDate(deposit, 'yyyy-MM-dd', 'en-US');
+    params['filter.isFileDeposit'] = 'S';
+    params['filter.numberGood'] = '$null';
+    params['filter.numberAccount'] =
+      this.formBlkControl.value.diNumberAccountDeposit;
     params.limit = 1;
     console.log({ params });
-    this.accountMovementService.getAllAccountMovement(params).subscribe({
+    this.accountMovementService.getAccountMovements(params).subscribe({
       next: res => {
         if (res.count > 1) {
           this.openMoreOneResults(res);
         } else {
           this.changeDeposit(res.data[0]);
+          this.onLoadToast('success', 'Éxito', 'Depósito encontrado');
         }
       },
       error: () => {
@@ -436,7 +447,8 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     modalRef.content.onClose.pipe(take(1)).subscribe(result => {
       console.log({ result });
       if (result) {
-        console.log({ result });
+        this.changeDeposit(result);
+        // console.log({ result });
         // this.loadValuesDictation(result);
       }
     });
@@ -454,30 +466,6 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     });
     return convertExpense;
   }
-
-  // changeGood(event: any) {
-  //   if (!event?.goodId) {
-  //     showToast({
-  //       icon: 'warning',
-  //       text: 'Este bien no posee identificador (goodId)',
-  //     });
-  //     event = null;
-  //   }
-
-  //   this.form.patchValue({
-  //     status: event?.status || null,
-  //     identificator: event?.identifier || null,
-  //     processExt: event?.extDomProcess || null,
-  //     delegationNumber: event?.delegationNumber?.id || null,
-  //     subDelegationNumber: event?.subDelegationNumber?.id || null,
-  //     flier: event?.flyerNumber || null,
-  //     fileNumber: event?.expediente?.id || null,
-  //     expAssociated: event?.associatedFileNumber || null,
-  //   });
-  //   this.selectedGood = event;
-
-  //   if (event) this.validateGood(event.goodId);
-  // }
 
   async validateGood(good: number) {
     /*
@@ -700,7 +688,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        'Debe especificar el bien que se quiere cambiar a numerario'
+        'Debe cargar los bienes que desea cambiar a numerario'
       );
       return;
     } else if (!this.formGood.value.id && this.dataTableMassive.length < 1) {
@@ -926,6 +914,29 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
             available: item.disponible,
             goodNumber: item.no_bien,
             sellPrice: item.precio_venta,
+            screenKey: 'FACTADBCAMBIONUME',
+            salePrice: item.precio_venta,
+            typeConv: this.formBlkControl.value.typeConversion,
+            // spentId,
+            ivavta: item.ivavta,
+            amount: item.importe,
+            commission: item.comision,
+            ivacom: item.ivacom,
+            goodTransP: this.getTransGood(),
+            identificator: item.identificador,
+            description: item.descripcion,
+            statusGood: item.estatus,
+            Comment: item.comentario,
+            bankNew: this.formBlkControl.value.tiNewBank,
+            moneyNew: this.formBlkControl.value.diNewCurrency.replaceAll(
+              "'",
+              ''
+            ),
+            accountNew: this.formBlkControl.value.diNewAccount,
+            user: this.infoToken.preferred_username.toUpperCase(),
+            token: this.formBlkControl.value.tiNewFile,
+            // amountevta,
+            // fileNumber
           };
         }),
         diCoinNew: this.formBlkControl.value.diNewCurrency.replaceAll("'", ''),
@@ -951,10 +962,10 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   checkedMovBan = false;
   isSearchDate = false;
 
-  changeDeposit(event: IAccountMovement): void {
+  changeDeposit(event: IAccountMovement | null): void {
     console.log(event);
     this.isSearchDate = false;
-    this.formBlkControl.get('tiNewDate').setValue(event?.dateMotion || null);
+    // this.formBlkControl.get('tiNewDate').setValue(event?.dateMotion || null);
     this.formBlkControl.get('diDeposit').setValue(event?.deposit || null);
     this.formBlkControl.get('tiNewFile').setValue(event?.InvoiceFile || null);
     this.formBlkControl
