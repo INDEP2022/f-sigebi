@@ -42,6 +42,7 @@ export class GeneralAccountMovementsComponent implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getRegCurrency(new ListParams(), false);
   }
 
   prepareForm() {
@@ -79,6 +80,7 @@ export class GeneralAccountMovementsComponent implements OnInit {
       PC_FEC_FIN: this.toT,
     };
 
+    console.log('params', params);
     this.siabService
       .fetchReport('RGERADBMOVCUEGEN', params)
       // .fetchReportBlank('blank')
@@ -117,8 +119,14 @@ export class GeneralAccountMovementsComponent implements OnInit {
       });
   }
 
-  getRegCurrency() {
-    this.tableServ.getReg4WidthFilters().subscribe({
+  getRegCurrency(_params?: ListParams, val?: boolean) {
+    const params = new FilterParams();
+
+    params.page = _params.page;
+    params.limit = _params.limit;
+    if (val) params.addFilter3('filter.desc_moneda', _params.text);
+
+    this.tableServ.getReg4WidthFilters(params.getParams()).subscribe({
       next: data => {
         data.data.map(data => {
           data.desc_moneda = `${data.cve_moneda}- ${data.desc_moneda}`;
