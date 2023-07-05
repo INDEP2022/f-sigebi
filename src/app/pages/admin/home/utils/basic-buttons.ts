@@ -265,4 +265,27 @@ export const BASIC_BUTTONS = [
             Rechazar
           </button>`,
   },
+  {
+    name: 'Asociar',
+    code: `<button
+              tooltip="Asociar"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active">
+              <i class="fa fa-link" aria-hidden="true"></i>
+            </button>`,
+  },
+  {
+    name: 'Ver Documento',
+    code: `<button  
+            class="btn btn-primary btn-sm active">
+            Ver documentos <i class="fa fa-eye" aria-hidden="true"></i>
+          </button>`,
+  },
+  {
+    name: 'Nuevo Documento',
+    code: `<button
+             class="btn btn-success btn-sm active">
+            Nuevo expediente <i class="fa fa-file"></i>
+          </button>`,
+  },
 ];
