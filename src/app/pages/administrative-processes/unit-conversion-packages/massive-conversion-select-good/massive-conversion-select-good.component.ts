@@ -6,10 +6,11 @@ import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { GOODS_SELECTIONS_COLUMNS } from '../massive-conversion/columns';
+import { UnitConversionPackagesDataService } from '../services/unit-conversion-packages-data.service';
 
 @Component({
   selector: 'app-massive-conversion-select-good',
-  templateUrl: './massive-conversion-select-good.html',
+  templateUrl: './massive-conversion-select-good.component.html',
   styleUrls: [],
 })
 export class MassiveConversionSelectGoodComponent
@@ -17,34 +18,34 @@ export class MassiveConversionSelectGoodComponent
   implements OnInit
 {
   //Forma
-  form: FormGroup = new FormGroup({});
+  form: FormGroup;
 
   get delegation() {
-    return this.form.get('delegation');
+    return this.form ? this.form.get('delegation') : null;
   }
 
   get goodClassification() {
-    return this.form.get('goodClassification');
+    return this.form ? this.form.get('goodClassification') : null;
   }
 
   get targetTag() {
-    return this.form.get('targetTag');
+    return this.form ? this.form.get('targetTag') : null;
   }
 
   get goodStatus() {
-    return this.form.get('goodStatus');
+    return this.form ? this.form.get('goodStatus') : null;
   }
 
   get measurementUnit() {
-    return this.form.get('measurementUnit');
+    return this.form ? this.form.get('measurementUnit') : null;
   }
 
   get transferent() {
-    return this.form.get('transferent');
+    return this.form ? this.form.get('transferent') : null;
   }
 
   get warehouse() {
-    return this.form.get('warehouse');
+    return this.form ? this.form.get('warehouse') : null;
   }
 
   //Delegacion
@@ -63,14 +64,14 @@ export class MassiveConversionSelectGoodComponent
 
   constructor(
     private fb: FormBuilder,
-    private delegationService: DelegationService
+    private delegationService: DelegationService,
+    private unitConversionPackagesDataService: UnitConversionPackagesDataService
   ) {
     super();
-  }
-
-  ngOnInit(): void {
     this.prepareForm();
   }
+
+  ngOnInit(): void {}
 
   private prepareForm(): void {
     this.form = this.fb.group({
@@ -90,6 +91,28 @@ export class MassiveConversionSelectGoodComponent
 
   settingChange($event: any): void {
     this.settingsTable = $event;
+  }
+
+  async pbIngresar() {
+    console.log('Agregar bienes');
+    this.clearPrevisualizationData();
+  }
+
+  private async clearPrevisualizationData() {
+    let eliminateGoods: boolean = false;
+    if (
+      this.unitConversionPackagesDataService.dataPrevisualization.length > 0
+    ) {
+      this.alertQuestion(
+        'warning',
+        'Paquete con bienes',
+        '¿Desea eliminarlos?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          eliminateGoods = true;
+        }
+      });
+    }
   }
 
   filter() {
