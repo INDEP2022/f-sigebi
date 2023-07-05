@@ -139,7 +139,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
       this.goodService.getById(this.formGood.get('goodId').value)
     );
     if (!good) {
-      this.onLoadToast('error', 'Bien', 'No encontrado');
+      this.alert('error', 'Bien', 'No encontrado');
       return;
     }
     console.log('Encontrado');
@@ -170,7 +170,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
     };
     this.detailService.create(newGood).subscribe({
       next: response => {
-        this.onLoadToast('success', 'Bien', 'Agregado exitosamente');
+        this.alert('success', 'Bien', 'Agregado exitosamente');
         this.updateTable.emit();
       },
       error: err => {
@@ -178,7 +178,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
         if (err.message === 'El registro ya existe.') {
           message = 'Bien ya registrado';
         }
-        this.onLoadToast('error', 'Error', message);
+        this.alert('error', 'Error', message);
       },
     });
 
@@ -354,15 +354,17 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
               .subscribe({
                 next: response => {
                   // debugger;
-                  this.onLoadToast('success', 'Bienes Actualizados', message);
+                  this.alert('success', 'Bienes Actualizados', message);
                   this.updateTable.emit();
                 },
               });
           } else {
-            this.onLoadToast(
+            this.alert(
               'error',
-              'No se pudo actualizar bienes',
-              message + ' porque ya están registrados'
+              'Actualización de Bienes',
+              'No se pudo actualizar bienes ' +
+                message +
+                ' porque ya están registrados'
             );
           }
         },
@@ -387,7 +389,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
   updateGoodStatusMassive(goods: number[], status: string, message: string) {
     this.goodService.updateGoodStatusMassive(goods, status).subscribe({
       next: response => {
-        this.onLoadToast('success', 'Estados Actualizados', message);
+        this.alert('success', 'Estados Actualizados', message);
 
         this.updateTable.emit();
       },
@@ -439,7 +441,7 @@ export class GoodActionsComponent extends AlertButton implements OnInit {
           this.updateTable.emit();
         },
         error: err => {
-          this.onLoadToast('error', 'Error', 'Bienes no actualizados');
+          this.alert('error', 'Error', 'Bienes no actualizados');
         },
       });
   }

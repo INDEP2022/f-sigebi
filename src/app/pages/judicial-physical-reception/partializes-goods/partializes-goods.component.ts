@@ -98,7 +98,7 @@ export class PartializesGoodsComponent extends BasePage implements OnInit {
         next: response => {
           console.log(response);
           if (response[0].subItems.length === 0) {
-            this.onLoadToast(
+            this.alert(
               'error',
               'Bien ' + goodNumber,
               'No tiene bienes parcializados'
