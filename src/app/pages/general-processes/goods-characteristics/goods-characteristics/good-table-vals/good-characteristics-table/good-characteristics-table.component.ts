@@ -246,7 +246,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
               this.dataTemp = [...this.data];
               this.getPaginated(this.params.value);
               this.loading = false;
-              // console.log(this.data);
+              console.log(this.data);
             }
           } else {
             this.clearTable();
@@ -297,6 +297,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.onSelect.subscribe(data => {
+      console.log(this.data);
       if (data) callback(data, this);
     });
   }

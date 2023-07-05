@@ -75,6 +75,8 @@
       <div class="col-md-10">
         <button (click)="add()" class="btn btn-secondary active btn-sm">
           {{ textButon }}
+          <i *ngIf="textButon.includes('Actualizar')" class="fas fa-sync-alt">
+          </i>
         </button>
       </div>
     </div>

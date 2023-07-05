@@ -354,7 +354,7 @@ export class InventoryDataComponent
     this.getAtribute();
     this.disableGetAtribute = false;
     this.generateAtri = true;
-    this.textButon = 'Actualizar atributos';
+    this.textButon = 'Actualizar Atributos';
   }
 
   async add() {

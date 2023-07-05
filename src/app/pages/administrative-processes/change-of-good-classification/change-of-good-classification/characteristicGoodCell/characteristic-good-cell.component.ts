@@ -20,6 +20,7 @@ export class CharacteristicGoodCellComponent extends CharacteristicEditorCell {
         x.value = secondFormatDate(value);
       }
     });
+    console.log(this.service.data);
   }
 
   updateCell(value: any) {
