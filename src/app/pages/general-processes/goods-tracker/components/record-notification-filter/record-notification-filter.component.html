@@ -57,14 +57,7 @@
       [control]="form.get('flyerType')"
       label="Tipo de Volante"
       class="col-md-2">
-      <select
-        formControlName="flyerType"
-        class="form-control"
-        (change)="flyerTypeChange()">
-        <option value="">Todos</option>
-        <option value="T">T</option>
-        <option value="P">P</option>
-      </select>
+      <input type="text" formControlName="flyerType" class="form-control" />
     </form-field>
     <form-field
       [control]="form.get('officeDate')"
@@ -72,7 +65,7 @@
       class="col-md-2">
       <input
         type="text"
-        (ngModelChange)="fecChange()"
+        oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3)"
         formControlName="officeDate"
         class="form-control"
         bsDatepicker />
@@ -85,6 +78,7 @@
       <input
         type="text"
         formControlName="protection"
+        oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)"
         class="form-control"
         (change)="protectionChange()" />
     </form-field>
@@ -96,6 +90,7 @@
       <input
         type="text"
         formControlName="criminalCase"
+        oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)"
         (change)="criminalCaseChange()"
         class="form-control" />
     </form-field>
@@ -106,7 +101,11 @@
       [control]="form.get('indicatedName')"
       label="Nombre Indiciado"
       class="col-md-4">
-      <input type="text" formControlName="indicatedName" class="form-control" />
+      <input
+        type="text"
+        formControlName="indicatedName"
+        class="form-control"
+        oninput="if(this.value.length > 100) this.value = this.value.slice(0, 100)" />
     </form-field>
 
     <form-field [control]="form.get('publicMin')" class="col-md-4">
@@ -127,7 +126,11 @@
       [control]="form.get('extOfficeNum')"
       label="Oficio Ext&#46; No&#46;"
       class="col-md-4">
-      <input type="text" formControlName="extOfficeNum" class="form-control" />
+      <input
+        type="text"
+        formControlName="extOfficeNum"
+        class="form-control"
+        oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
     </form-field>
   </div>
 
@@ -138,6 +141,7 @@
       class="col-md-4">
       <input
         type="text"
+        oninput="if(this.value.length > 200) this.value = this.value.slice(0, 200)"
         formControlName="previusInvestigation"
         class="form-control" />
     </form-field>
@@ -146,22 +150,37 @@
       [control]="form.get('dictum')"
       label="Dictamen"
       class="col-md-4">
-      <input type="text" formControlName="dictum" class="form-control" />
+      <input
+        type="text"
+        formControlName="dictum"
+        oninput="if(this.value.length > 200) this.value = this.value.slice(0, 200)"
+        class="form-control" />
     </form-field>
 
     <form-field
       [control]="form.get('criminalCause')"
       label="Causa Penal"
       class="col-md-4">
-      <input type="text" formControlName="criminalCause" class="form-control" />
+      <input
+        type="text"
+        oninput="if(this.value.length > 40) this.value = this.value.slice(0, 40)"
+        formControlName="criminalCause"
+        class="form-control" />
     </form-field>
   </div>
 
-  <div class="row">
-    <div class="col-md-12">
-      <button class="btn btn-primary active btn-sm">
+  <div class="row pt-3">
+    <div class="col-md-12 d-inline">
+      <button class="btn btn-primary active btn-sm mr-3">
         Buscar
         <i class="bx bx-search-alt bx-sm float-icon"></i>
+      </button>
+
+      <button
+        type="button"
+        (click)="cleanFilters.emit()"
+        class="btn btn-danger btn-sm active mr-3">
+        Limpiar <i class="fas fa-eraser"> </i>
       </button>
     </div>
   </div>
