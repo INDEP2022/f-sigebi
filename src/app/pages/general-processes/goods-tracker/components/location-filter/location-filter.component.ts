@@ -24,6 +24,7 @@ export class LocationFilterComponent implements OnInit {
   delegations = new DefaultSelect();
   autorityStates = new DefaultSelect();
   goodStates = new DefaultSelect();
+  @Output() cleanFilters = new EventEmitter<void>();
   constructor(
     private fb: FormBuilder,
     private warehouseService: WarehouseService,
