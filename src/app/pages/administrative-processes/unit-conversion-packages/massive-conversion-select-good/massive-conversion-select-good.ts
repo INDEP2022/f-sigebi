@@ -20,7 +20,7 @@ import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-t
 import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { V_GOOD_COLUMNS, goodCheck } from './columns.component';
+import { goodCheck, V_GOOD_COLUMNS } from './columns.component';
 
 @Component({
   selector: 'app-massive-conversion-select-good',
@@ -32,8 +32,8 @@ export class MassiveConversionSelectGoodComponent
   implements OnInit
 {
   //Variables que recibe
-  paqDestinationGoodLenght: number
-  clearPaqDestination: boolean
+  paqDestinationGoodLenght: number;
+  clearPaqDestination: boolean;
   //Params para navegación
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -275,24 +275,27 @@ export class MassiveConversionSelectGoodComponent
     }
   }
 
-  enterGoods(){
-    let v_bani: boolean
-      
-      if(goodCheck.length > 0){
-        if(this.paqDestinationGoodLenght > 0){
-          this.alertQuestion('question','¿El paquete tiene bienes, se eliminan?','','Eliminar').then(
-            q => {
-              if(q.isConfirmed){
-                this.clearPaqDestination = true
-                v_bani = false
-              }else{
-                v_bani = true
-              }
-            }
-          )
-        }
-      }else{
-        this.alert('warning','No seleccionó ningún bien','')
+  enterGoods() {
+    let v_bani: boolean;
+
+    if (goodCheck.length > 0) {
+      if (this.paqDestinationGoodLenght > 0) {
+        this.alertQuestion(
+          'question',
+          '¿El paquete tiene bienes, se eliminan?',
+          '',
+          'Eliminar'
+        ).then(q => {
+          if (q.isConfirmed) {
+            this.clearPaqDestination = true;
+            v_bani = false;
+          } else {
+            v_bani = true;
+          }
+        });
       }
+    } else {
+      this.alert('warning', 'No seleccionó ningún bien', '');
+    }
   }
 }
