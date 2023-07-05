@@ -248,8 +248,15 @@ export const BASIC_BUTTONS = [
     code: `<button
           type="button"
           class="btn btn-primary active btn-sm">
-          <i class="bx bxs-pencil"></i>
+          <i class="bx bx-edit-alt"></i>
           Firmar Reporte
         </button>`,
+  },
+  {
+    name: 'Rechazar',
+    code: `<button
+            class="btn btn-danger btn-sm active mr-3">
+            Rechazar
+          </button>`,
   },
 ];
