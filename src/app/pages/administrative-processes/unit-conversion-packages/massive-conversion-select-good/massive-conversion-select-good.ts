@@ -1,8 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -14,8 +20,7 @@ import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-t
 import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { V_GOOD_COLUMNS } from './columns.component';
-import { BehaviorSubject } from 'rxjs';
+import { V_GOOD_COLUMNS, goodCheck } from './columns.component';
 
 @Component({
   selector: 'app-massive-conversion-select-good',
@@ -26,6 +31,9 @@ export class MassiveConversionSelectGoodComponent
   extends BasePage
   implements OnInit
 {
+  //Variables que recibe
+  paqDestinationGoodLenght: number
+  clearPaqDestination: boolean
   //Params para navegación
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -235,7 +243,7 @@ export class MassiveConversionSelectGoodComponent
       generalParams.addFilter('numberStore', this.warehouse.value);
     }
 
-    const whereNoGoods = await this.goodsWhere()
+    const whereNoGoods = await this.goodsWhere();
     console.log(JSON.parse(JSON.stringify(whereNoGoods)).res);
     generalParams.addFilter(
       'goodNumber',
@@ -250,7 +258,7 @@ export class MassiveConversionSelectGoodComponent
           res => {
             console.log(res);
             this.data.load(res.data);
-            this.totalItems = res.count
+            this.totalItems = res.count;
             this.alert('success', 'Se encontraron registros', '');
             this.loading = false;
           },
@@ -265,5 +273,26 @@ export class MassiveConversionSelectGoodComponent
           }
         );
     }
+  }
+
+  enterGoods(){
+    let v_bani: boolean
+      
+      if(goodCheck.length > 0){
+        if(this.paqDestinationGoodLenght > 0){
+          this.alertQuestion('question','¿El paquete tiene bienes, se eliminan?','','Eliminar').then(
+            q => {
+              if(q.isConfirmed){
+                this.clearPaqDestination = true
+                v_bani = false
+              }else{
+                v_bani = true
+              }
+            }
+          )
+        }
+      }else{
+        this.alert('warning','No seleccionó ningún bien','')
+      }
   }
 }

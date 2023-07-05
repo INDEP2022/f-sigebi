@@ -1,5 +1,6 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
+export let goodCheck: any[] = [];
 export const V_GOOD_COLUMNS = {
   turnSelect: {
     title: 'Selección',
@@ -11,7 +12,12 @@ export const V_GOOD_COLUMNS = {
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
-        data.row.turnSelect = data.toggle;
+        if (data.toggle) {
+          console.log(goodCheck);
+          goodCheck.push(data);
+        } else {
+          goodCheck = goodCheck.filter(valor => valor.row.id != data.row.id);
+        }
       });
     },
   },
@@ -42,3 +48,7 @@ export const V_GOOD_COLUMNS = {
   }
 
 };
+
+export function clearGoodCheck() {
+  goodCheck = [];
+}
