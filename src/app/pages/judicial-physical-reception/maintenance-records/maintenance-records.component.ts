@@ -129,7 +129,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
           .deleteById(event.numberGood, +(this.infoForm.id + ''))
           .subscribe({
             next: response => {
-              this.onLoadToast(
+              this.alert(
                 'success',
                 'Bien' + event.numberGood,
                 'Eliminado exitosamente'
@@ -137,7 +137,7 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
               this.getGoods();
             },
             error: err => {
-              this.onLoadToast(
+              this.alert(
                 'error',
                 'Bien' + event.numberGood,
                 'No se pudo eliminar'
@@ -174,11 +174,11 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
                 goods.forEach((good, index) => {
                   message += good + (index < goods.length - 1 ? ',' : '');
                 });
-                this.onLoadToast('success', 'Bienes Agregados', message);
+                this.alert('success', 'Bienes Agregados', message);
                 this.getGoods();
               },
               error: err => {
-                this.onLoadToast('error', 'Bienes', 'No Agregados');
+                this.alert('error', 'Bienes', 'No Agregados');
               },
             });
           // this.service.dataForAdd = [
@@ -242,13 +242,13 @@ export class MaintenanceRecordsComponent extends BasePage implements OnInit {
           } else {
             this.loading = false;
             this.loadingGoods = false;
-            this.onLoadToast('error', 'Actas', 'No encontradas');
+            this.alert('error', 'Actas', 'No encontradas');
           }
         },
         error: error => {
           this.loading = false;
           this.loadingGoods = false;
-          this.onLoadToast('error', 'Actas', 'No encontradas');
+          this.alert('error', 'Actas', 'No encontradas');
         },
       });
     }

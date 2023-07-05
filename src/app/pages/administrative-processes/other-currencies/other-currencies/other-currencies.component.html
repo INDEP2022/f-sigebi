@@ -8,7 +8,7 @@
         <app-delegation-shared [form]="form"></app-delegation-shared>
         <form-field [control]="form.get('currency')" class="form-control">
           <ngx-select
-            (fetchItems)="getRegCurrency()"
+            (fetchItems)="getRegCurrency($event, true)"
             [data]="currencies"
             [form]="form"
             value="cve_moneda"

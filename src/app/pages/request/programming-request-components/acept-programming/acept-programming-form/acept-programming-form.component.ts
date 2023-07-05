@@ -804,7 +804,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           resolve(resp);
         },
         error: error => {
-          this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
+          this.alert('error', 'Error', 'No se pudo crear la tarea');
           reject(false);
         },
       });
