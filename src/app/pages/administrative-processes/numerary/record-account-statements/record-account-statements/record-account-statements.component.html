@@ -6,33 +6,31 @@
     <div class="row mt-3 mb-3">
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
-          <div class="col-md-3">
-            <form-field [control]="form.get('bank')">
-              <ngx-select
-                [form]="form"
-                [data]="itemsBancos"
-                label="Banco"
-                bindLabel="name"
-                value="bankCode"
-                (fetchItems)="getBancos($event)"
-                control="bank"
-                (change)="ChangeBanco($event)">
-              </ngx-select>
-            </form-field>
+          <div class="row mt-5">
+            <div class="col-12">
+              <form-field [control]="form.get('bankSelect')">
+                <ngx-select
+                  [data]="banks"
+                  [form]="form"
+                  bindLabel="name"
+                  label="Seleccione un banco"
+                  [control]="'bankSelect'"
+                  (change)="onBankSelectChange($event)"></ngx-select>
+              </form-field>
+            </div>
           </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('account')">
-              <ngx-select
-                [form]="form"
-                [data]="itemsCuentas"
-                label="Cuenta"
-                bindLabel="accountNumber"
-                value="accountNumber"
-                (fetchItems)="getCuentas($event)"
-                control="account"
-                (change)="ChangeCuenta($event)">
-              </ngx-select>
-            </form-field>
+          <div class="row mt-5">
+            <div class="col-12">
+              <form-field [control]="form.get('bankSelect')">
+                <ngx-select
+                  [data]="bankAccountSelect"
+                  [form]="form"
+                  bindLabel="accountNumber"
+                  label="Seleccione una cuenta"
+                  [control]="'account'"
+                  (change)="onBankAccountSelectChange($event)"></ngx-select>
+              </form-field>
+            </div>
           </div>
           <div class="col-md-3">
             <form-field [control]="form.get('square')" label="Plaza">
@@ -40,7 +38,8 @@
                 type="text"
                 class="form-control"
                 formControlName="square"
-                id="square" />
+                maxlength="30"
+                readonly />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -49,7 +48,8 @@
                 type="text"
                 class="form-control"
                 formControlName="branch"
-                id="branch" />
+                maxlength="30"
+                readonly />
             </form-field>
           </div>
         </div>
@@ -62,7 +62,8 @@
                 type="text"
                 class="form-control"
                 formControlName="accountType"
-                id="account" />
+                maxlength="13"
+                readonly />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -71,7 +72,8 @@
                 type="text"
                 class="form-control"
                 formControlName="currency"
-                id="currency" />
+                maxlength="15"
+                readonly />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -80,54 +82,28 @@
                 type="text"
                 class="form-control"
                 formControlName="description"
-                id="description" />
+                readonly />
             </form-field>
-          </div>
-        </div>
-        <hr />
-        <div class="row mt-4">
-          <div class="col-md-3">
-            <form-field [control]="form.get('balanceAt')" label="Saldo al">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="balanceAt"
-                bsDatepicker />
-            </form-field>
-            <!-- <form-field [control]="form.get('balanceAt')" label="Saldo al">
-              <input type="text" class="form-control" formControlName="balanceAt" />
-            </form-field> -->
           </div>
           <div class="col-md-3">
             <form-field [control]="form.get('balanceOf')" label="Saldo de">
               <input
                 type="text"
                 class="form-control"
-                formControlName="balanceOf"
-                bsDatepicker />
-            </form-field>
-            <!-- <form-field [control]="form.get('balanceOf')" label="Saldo de">
-              <input type="text" class="form-control" formControlName="balanceOf" />
-            </form-field> -->
-          </div>
-          <div class="col-md-3" *ngIf="validation">
-            <form-field [control]="form.get('total')" label="Total">
-              <input type="text" class="form-control" formControlName="total" />
+                bsDatepicker
+                formControlName="balanceOf" />
             </form-field>
           </div>
+        </div>
+        <div class="row mt-4">
           <div class="col-md-3">
-            <button
-              type="button"
-              class="btn btn-primary active btn-sm"
-              style="margin-left: 5vh"
-              (click)="search()"
-              [disabled]="
-                form.get('balanceAt').value == null ||
-                form.get('balanceOf').value == null
-              ">
-              Buscar
-              <i class="bx bx-search-alt bx-sm float-icon"></i>
-            </button>
+            <form-field [control]="form.get('balanceAt')" label="Saldo al">
+              <input
+                type="text"
+                class="form-control"
+                bsDatepicker
+                formControlName="balanceAt" />
+            </form-field>
           </div>
         </div>
       </form>
@@ -137,8 +113,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="data1"
-              (userRowSelect)="selectData($event.data)">
+              [source]="data1">
             </ng2-smart-table>
           </div>
         </div>
