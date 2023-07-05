@@ -137,7 +137,6 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
 
   async confirm() {
     //Si es improcedencia, no debe llevar tipo de aclaracion
-    debugger;
     if (
       this.clarificationForm.controls['clarificationType'].value ==
       'SOLICITAR_IMPROCEDENCIA'
