@@ -452,24 +452,27 @@ export class ResquestNumberingChangeComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    //params['filter.goodClassNumber'] = `$eq:1115`;
-    params['filter.goodClassNumber'] = `$eq:${this.form.get('type').value}`;
-    params['filter.status'] = `$in:${this.form.get('legalStatus').value}`;
-    params['filter.storeNumber'] = `$eq:${this.form.get('warehouse').value}`;
-    params['filter.vaultNumber'] = `$eq:${this.form.get('vault').value}`;
-    params['filter.delegationNumber'] = `$eq:${
-      this.form.get('delegation').value
-    }`;
-    this.goodServices.getByExpedientAndParams__(params).subscribe({
-      next: async (response: any) => {
-        this.dataGood = response.data;
-        this.totalItems = response.count;
-        this.data.load(response.data);
-        this.data.refresh();
-        this.loading = false;
-      },
-      error: err => {},
-    });
+    params['filter.goodClassNumber'] = `$eq:${this.form.get('type')}`;
+    params['filter.status'] = `$in:${this.form.get('legalStatus')}`;
+    params['filter.storeNumber'] = `$eq:${this.form.get('warehouse')}`;
+    params['filter.vaultNumber'] = `$eq:${this.form.get('vault')} `;
+    params['filter.delegationNumber'] = `$eq:${this.form.get('delegation')}`;
+    if (this.form.get('type').value != null)
+      this.goodServices.getByExpedientAndParams__(params).subscribe({
+        next: async (response: any) => {
+          console.log(response);
+          this.dataGood = response.data;
+          this.totalItems = response.count;
+          this.data.load(response.data);
+          this.data.refresh();
+          this.loading = false;
+        },
+        error: err => {
+          console.log('error', err);
+          this.loading = false;
+          this.alert('error', 'No se encontraron registros', '');
+        },
+      });
     this.loading = false;
   }
 
@@ -526,10 +529,9 @@ export class ResquestNumberingChangeComponent
         this.loading = false;
       },
       error: err => {
-        console.log('ERROR', err);
-        this.totalItems1 = 0;
-        this.data1.load([]);
-        this.data1.refresh();
+        //console.log('ERROR', err);
+        this.loading = false;
+        this.alert('error', 'No se encontraron registros', '');
       },
     });
     this.loading = false;
