@@ -434,14 +434,14 @@ export class ScheduledMaintenanceDetailComponent
                 //     selected.no_bien + (index < newData.length - 1 ? ',' : '');
                 // });
                 this.data = [...newData];
-                this.onLoadToast(
+                this.alert(
                   'success',
                   'Fechas',
                   'Se actualizaron las fechas correctamente'
                 );
               },
               error: err => {
-                this.onLoadToast(
+                this.alert(
                   'error',
                   'Fechas',
                   'No se pudieron actualizar las fechas'
@@ -591,7 +591,7 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   alertTableRangeError() {
-    this.onLoadToast(
+    this.alert(
       'error',
       'Campos no concuerdan',
       'Fecha final no puede ser menor a inicial'
@@ -599,7 +599,7 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   alertTableIncompleteFields() {
-    this.onLoadToast(
+    this.alert(
       'error',
       'Campos incompletos',
       'Complete todos los campos para agregar un registro'
@@ -616,18 +616,14 @@ export class ScheduledMaintenanceDetailComponent
       removeds.forEach((selected, index) => {
         message += selected + (index < this.selecteds.length - 1 ? ',' : '');
       });
-      this.onLoadToast(
+      this.alert(
         'success',
         'Bienes',
         `Se ${text} los bienes No. ${message} ` +
           this.showMessageNotRemoved(notRemoveds, 'pero no')
       );
     } else {
-      this.onLoadToast(
-        'error',
-        'Bienes',
-        this.showMessageNotRemoved(notRemoveds)
-      );
+      this.alert('error', 'Bienes', this.showMessageNotRemoved(notRemoveds));
     }
   }
 
@@ -803,7 +799,7 @@ export class ScheduledMaintenanceDetailComponent
           this.loading = false;
         },
         error: err => {
-          this.onLoadToast('error', 'Bienes', 'Bienes no válidos para agregar');
+          this.alert('error', 'Bienes', 'Bienes no válidos para agregar');
           this.loading = false;
         },
       });
@@ -838,7 +834,7 @@ export class ScheduledMaintenanceDetailComponent
                 this.fillColumnsGoods();
               },
               error: err => {
-                this.onLoadToast('error', 'Bienes', 'No Agregados');
+                this.alert('error', 'Bienes', 'No Agregados');
                 this.fillColumnsGoods();
               },
             });

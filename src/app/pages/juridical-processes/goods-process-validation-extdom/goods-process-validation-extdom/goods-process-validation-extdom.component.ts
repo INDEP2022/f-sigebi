@@ -16,6 +16,7 @@ import {
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GoodsProcessValidationExtdomService } from '../services/goods-process-validation-extdom.service';
 import { COLUMNS_GOODS_LIST_EXTDOM } from './process-extdoom-columns';
+
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -42,8 +43,6 @@ export class GoodsProcessValidationExtdomComponent
     ...this.settings,
   };
   dataTable2 = new BehaviorSubject<ListParams>(new ListParams());
-  // SELECTS
-  selectAsunto = new DefaultSelect();
 
   tableSettingsHistorico = {
     actions: {
@@ -87,6 +86,17 @@ export class GoodsProcessValidationExtdomComponent
   origin: string = '';
   P_NO_TRAMITE: number = null;
   P_GEST_OK: number = null;
+  // SELECTS
+  selectAffairkey = new DefaultSelect();
+  selectIndiciadoNumber = new DefaultSelect();
+  selectMinpubNumber = new DefaultSelect();
+  selectCourtNumber = new DefaultSelect();
+  selectDelegationNumber = new DefaultSelect();
+  selectEntFedKey = new DefaultSelect();
+  selectCityNumber = new DefaultSelect();
+  selectTransference = new DefaultSelect();
+  selectStationNumber = new DefaultSelect();
+  selectAuthority = new DefaultSelect();
 
   constructor(
     private fb: FormBuilder,
@@ -130,15 +140,15 @@ export class GoodsProcessValidationExtdomComponent
       preliminaryInquiry: ['', [Validators.pattern(STRING_PATTERN)]], //* AVERIGUACION PREVIA
       criminalCase: ['', [Validators.pattern(STRING_PATTERN)]], //* CAUSA PENAL
       affairKey: [null, [Validators.pattern(STRING_PATTERN)]], // extenso ASUNTO SELECT
-      indiciadoNumber: ['', [Validators.pattern(STRING_PATTERN)]], // extenso INDICIADO
-      minpubNumber: ['', [Validators.pattern(STRING_PATTERN)]], // extenso MINISTERIO PUBLICO
-      courtNumber: ['', [Validators.pattern(STRING_PATTERN)]], // extenso JUZGADO
-      delegationNumber: ['', [Validators.pattern(STRING_PATTERN)]], // extenso DELEGACION
-      entFedKey: ['', [Validators.pattern(STRING_PATTERN)]], // extenso ENTIDAD FEDERATIVA
-      cityNumber: ['', [Validators.pattern(STRING_PATTERN)]], // extenso CIUDAD
-      transference: ['', [Validators.pattern(STRING_PATTERN)]], // extenso TRANSFERENTE
-      stationNumber: ['', [Validators.pattern(STRING_PATTERN)]], // extenso EMISORA
-      authority: ['', [Validators.pattern(STRING_PATTERN)]], // extenso AUROTIDAD
+      indiciadoNumber: [null, [Validators.pattern(STRING_PATTERN)]], // extenso INDICIADO
+      minpubNumber: [null, [Validators.pattern(STRING_PATTERN)]], // extenso MINISTERIO PUBLICO
+      courtNumber: [null, [Validators.pattern(STRING_PATTERN)]], // extenso JUZGADO
+      delegationNumber: [null, [Validators.pattern(STRING_PATTERN)]], // extenso DELEGACION
+      entFedKey: [null, [Validators.pattern(STRING_PATTERN)]], // extenso ENTIDAD FEDERATIVA
+      cityNumber: [null, [Validators.pattern(STRING_PATTERN)]], // extenso CIUDAD
+      transference: [null, [Validators.pattern(STRING_PATTERN)]], // extenso TRANSFERENTE
+      stationNumber: [null, [Validators.pattern(STRING_PATTERN)]], // extenso EMISORA
+      authority: [null, [Validators.pattern(STRING_PATTERN)]], // extenso AUROTIDAD
     });
     this.formEscaneo = this.fb.group({
       folioEscaneo: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
@@ -197,5 +207,159 @@ export class GoodsProcessValidationExtdomComponent
    * SELECTS PANTALLA
    */
 
-  getAffair(paramsData: ListParams, getByValue: boolean = false) {}
+  getAffair(paramsData: ListParams, getByValue: boolean = false) {
+    const params: any = new FilterParams();
+    if (paramsData['search'] == undefined || paramsData['search'] == null) {
+      paramsData['search'] = '';
+    }
+    params.removeAllFilters();
+    if (getByValue) {
+      params.addFilter('id', this.form.get('affairKey').value);
+    } else {
+      params.search = paramsData['search'];
+    }
+    params['sortBy'] = 'description:ASC';
+    this.svGoodsProcessValidationExtdomService
+      .getAffair(params.getParams())
+      .subscribe({
+        next: data => {
+          this.selectAffairkey = new DefaultSelect(
+            data.data.map((i: any) => {
+              i['dataDesc'] = i.id + ' -- ' + i.description;
+              return i;
+            }),
+            data.count
+          );
+          console.log(data, this.selectAffairkey);
+        },
+        error: error => {
+          this.selectAffairkey = new DefaultSelect();
+        },
+      });
+  }
+  getIndiciadoNumber(paramsData: ListParams, getByValue: boolean = false) {
+    const params: any = new FilterParams();
+    if (paramsData['search'] == undefined || paramsData['search'] == null) {
+      paramsData['search'] = '';
+    }
+    params.removeAllFilters();
+    if (getByValue) {
+      params.addFilter('id', this.form.get('indiciadoNumber').value);
+    } else {
+      params.search = paramsData['search'];
+    }
+    params['sortBy'] = 'name:ASC';
+    this.svGoodsProcessValidationExtdomService
+      .getIndiciados(params.getParams())
+      .subscribe({
+        next: data => {
+          this.selectIndiciadoNumber = new DefaultSelect(
+            data.data.map((i: any) => {
+              i['dataDesc'] = i.id + ' -- ' + i.name;
+              return i;
+            }),
+            data.count
+          );
+          console.log(data, this.selectIndiciadoNumber);
+        },
+        error: error => {
+          this.selectIndiciadoNumber = new DefaultSelect();
+        },
+      });
+  }
+  getMinpubNumber(paramsData: ListParams, getByValue: boolean = false) {
+    const params: any = new FilterParams();
+    if (paramsData['search'] == undefined || paramsData['search'] == null) {
+      paramsData['search'] = '';
+    }
+    params.removeAllFilters();
+    if (getByValue) {
+      params.addFilter('id', this.form.get('minpubNumber').value);
+    } else {
+      params.search = paramsData['search'];
+    }
+    params['sortBy'] = 'description:ASC';
+    this.svGoodsProcessValidationExtdomService
+      .getMinpub(params.getParams())
+      .subscribe({
+        next: data => {
+          this.selectMinpubNumber = new DefaultSelect(
+            data.data.map((i: any) => {
+              i['dataDesc'] = i.id + ' -- ' + i.description;
+              return i;
+            }),
+            data.count
+          );
+          console.log(data, this.selectMinpubNumber);
+        },
+        error: error => {
+          this.selectMinpubNumber = new DefaultSelect();
+        },
+      });
+  }
+  getCourtNumber(paramsData: ListParams, getByValue: boolean = false) {
+    const params: any = new FilterParams();
+    if (paramsData['search'] == undefined || paramsData['search'] == null) {
+      paramsData['search'] = '';
+    }
+    params.removeAllFilters();
+    if (getByValue) {
+      params.addFilter('id', this.form.get('courtNumber').value);
+    } else {
+      params.search = paramsData['search'];
+    }
+    params['sortBy'] = 'description:ASC';
+    this.svGoodsProcessValidationExtdomService
+      .getCourt(params.getParams())
+      .subscribe({
+        next: data => {
+          this.selectCourtNumber = new DefaultSelect(
+            data.data.map((i: any) => {
+              i['dataDesc'] = i.id + ' -- ' + i.description;
+              return i;
+            }),
+            data.count
+          );
+          console.log(data, this.selectCourtNumber);
+        },
+        error: error => {
+          this.selectCourtNumber = new DefaultSelect();
+        },
+      });
+  }
+  getDelegationNumber(paramsData: ListParams, getByValue: boolean = false) {
+    const params: any = new FilterParams();
+    if (paramsData['search'] == undefined || paramsData['search'] == null) {
+      paramsData['search'] = '';
+    }
+    params.removeAllFilters();
+    if (getByValue) {
+      params.addFilter('id', this.form.get('delegationNumber').value);
+    } else {
+      params.search = paramsData['search'];
+    }
+    params['sortBy'] = 'description:ASC';
+    this.svGoodsProcessValidationExtdomService
+      .getDelegation(params.getParams())
+      .subscribe({
+        next: data => {
+          this.selectDelegationNumber = new DefaultSelect(
+            data.data.map((i: any) => {
+              i['dataDesc'] = i.id + ' -- ' + i.description;
+              return i;
+            }),
+            data.count
+          );
+          console.log(data, this.selectDelegationNumber);
+        },
+        error: error => {
+          this.selectDelegationNumber = new DefaultSelect();
+        },
+      });
+  }
+  getEntFedKey(paramsData: ListParams, getByValue: boolean = false) {}
+  getCityNumber(paramsData: ListParams, getByValue: boolean = false) {}
+  getTransference(paramsData: ListParams, getByValue: boolean = false) {}
+  getStationNumber(paramsData: ListParams, getByValue: boolean = false) {}
+  getAuthority(paramsData: ListParams, getByValue: boolean = false) {}
 }

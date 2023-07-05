@@ -13,6 +13,7 @@
               label="Del Expediente:">
               <input
                 type="number"
+                max="9999999999"
                 formControlName="fileFrom"
                 class="form-control" />
             </form-field>
@@ -21,6 +22,7 @@
             <form-field [control]="form.get('fileTo')" label="Al:">
               <input
                 type="number"
+                max="9999999999"
                 formControlName="fileTo"
                 class="form-control" />
             </form-field>
