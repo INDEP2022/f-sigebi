@@ -60,6 +60,21 @@
 </div>
 <div class="row">
   <div class="col-md-3">
+    <<<<<<< HEAD
+    <!--  <button
+      class="btn btn-primary btn-sm active"
+      (click)="getAtribute()"
+      >
+      Obtener Atributos
+    </button> -->
+    <button
+      [disabled]="generateAtri"
+      class="btn btn-secondary btn-sm active mt-2"
+      (click)="generateAtribute()">
+      Generar Atributos
+    </button>
+    <!-- [disabled]="disableGetAtribute" -->
+    =======
     <div class="row">
       <div class="col-md-10">
         <button
@@ -81,6 +96,7 @@
       </div>
     </div>
     <br />
+    >>>>>>> 7563eb767473b032460bcee082c28dcfc2d6ef5b
   </div>
   <div class="col">
     <div class="row" *ngIf="viewAct">

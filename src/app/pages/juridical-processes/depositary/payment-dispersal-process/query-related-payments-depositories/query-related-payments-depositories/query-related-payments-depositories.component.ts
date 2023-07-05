@@ -683,7 +683,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
             'Se mostrará un excel con detalles de los errores por cada registro procesado'
           );
         } else {
-          this.alert('success', 'PROCESO TERMINADO ', '');
+          this.alert('success', 'Proceso Terminado ', '');
         }
       }
     }
