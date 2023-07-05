@@ -4,14 +4,8 @@
 
 export const environment = {
   production: true,
-<<<<<<< HEAD
   API_URL: 'http://sigebimstest.indep.gob.mx/', //'http://localhost:3000/api/v1/', // ********** SOLO CAMBIAR ESTA PARTE
   API_URL2: 'http://sigebimstest.indep.gob.mx/', // ********** SOLO CAMBIAR ESTA PARTE
-=======
-  API_URL: 'http://sigebimsdev.indep.gob.mx/', //'http://localhost:3000/api/v1/', // ********** SOLO CAMBIAR ESTA PARTE
-  API_URL2: 'http://sigebimsdev.indep.gob.mx/', // ********** SOLO CAMBIAR ESTA PARTE
-
->>>>>>> 303843d7666691cf31fcaeb608d940e71ebd60ef
   URL_PREFIX: 'api/v1/',
   API_REPORTS_BASE: 'http://reports-qa.indep.gob.mx/jasperserver/',
   API_REPORTS:
