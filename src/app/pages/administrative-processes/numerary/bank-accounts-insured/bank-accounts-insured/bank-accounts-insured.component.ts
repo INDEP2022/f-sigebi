@@ -42,6 +42,7 @@ export class BankAccountsInsuredComponent implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getRegCurrency(new ListParams(), false);
   }
 
   prepareForm() {
@@ -78,6 +79,7 @@ export class BankAccountsInsuredComponent implements OnInit {
       PF_FIN: this.toT,
     };
 
+    console.log('params', params);
     this.siabService
       .fetchReport('RGENADBCTASASEGBA', params)
       // .fetchReportBlank('blank')
@@ -116,29 +118,25 @@ export class BankAccountsInsuredComponent implements OnInit {
       });
   }
 
-  getRegCurrency(params?: ListParams) {
-    console.log('params', this.form);
+  getRegCurrency(_params?: ListParams, val?: boolean) {
+    const params = new FilterParams();
 
-    var text = params!.text;
-    console.log('text', text);
-    if (text !== '' && text !== null) {
-      params['filter.cve_moneda'] = `$ilike:${text}`;
-      params['filter.desc_moneda'] = `$ilike:${text}`;
-    }
-    this.tableServ
-      .getReg4WidthFilters(this.filterParams.getValue().getParams())
-      .subscribe({
-        next: data => {
-          data.data.map(data => {
-            data.desc_moneda = `${data.cve_moneda}- ${data.desc_moneda}`;
-            return data;
-          });
-          this.currencies = new DefaultSelect(data.data, data.count);
-        },
-        error: () => {
-          this.currencies = new DefaultSelect();
-        },
-      });
+    params.page = _params.page;
+    params.limit = _params.limit;
+    if (val) params.addFilter3('filter.desc_moneda', _params.text);
+
+    this.tableServ.getReg4WidthFilters(params.getParams()).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.desc_moneda = `${data.cve_moneda}- ${data.desc_moneda}`;
+          return data;
+        });
+        this.currencies = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.currencies = new DefaultSelect();
+      },
+    });
   }
 
   cleanForm() {

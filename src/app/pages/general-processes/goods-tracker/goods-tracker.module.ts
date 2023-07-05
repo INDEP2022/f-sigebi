@@ -12,6 +12,7 @@ import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/good
 import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ActaHistoComponent } from './components/acta-histo/acta-histo.component';
+import { AlternClasficationListComponent } from './components/altern-clasfication-list/altern-clasfication-list.component';
 import { CertificatesFilterComponent } from './components/certificates-filter/certificates-filter.component';
 import { ClasificationFilterComponent } from './components/clasification-filter/clasification-filter.component';
 import { DataFilterComponent } from './components/data-filter/data-filter.component';
@@ -37,6 +38,7 @@ import { trackedGoodsReducer } from './store/goods-tracker.reducer';
     ViewPhotosComponent,
     ActaHistoComponent,
     GTrackerDocumentsComponent,
+    AlternClasficationListComponent,
   ],
   imports: [
     CommonModule,
