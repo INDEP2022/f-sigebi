@@ -42,7 +42,6 @@ export class BankAccountsInsuredComponent implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getRegCurrency(new ListParams(), false);
   }
 
   prepareForm() {
@@ -118,14 +117,22 @@ export class BankAccountsInsuredComponent implements OnInit {
       });
   }
 
-  getRegCurrency(_params?: ListParams, val?: boolean) {
-    const params = new FilterParams();
+  getCurrencies($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    if ($params.text) params.search = $params.text;
+    this.getRegCurrency(params);
+  }
 
-    params.page = _params.page;
-    params.limit = _params.limit;
-    if (val) params.addFilter3('filter.desc_moneda', _params.text);
+  getRegCurrency(_params?: FilterParams, val?: boolean) {
+    // const params = new FilterParams();
 
-    this.tableServ.getReg4WidthFilters(params.getParams()).subscribe({
+    // params.page = _params.page;
+    // params.limit = _params.limit;
+    // if (val) params.addFilter3('filter.desc_moneda', _params.text);
+
+    this.tableServ.getReg4WidthFilters(_params.getParams()).subscribe({
       next: data => {
         data.data.map(data => {
           data.desc_moneda = `${data.cve_moneda}- ${data.desc_moneda}`;

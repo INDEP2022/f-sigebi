@@ -514,7 +514,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'question',
         'Aprobar Programación',
-        `¿Esta seguro de aprobar la programación con folio: ${this.programmingId}`
+        `¿Esta seguro de aprobar la programación con folio: ${this.programming.folio}?`
       ).then(question => {
         if (question.isConfirmed) {
           this.sendEmailUsers();
@@ -791,7 +791,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     if (taskResult) {
       this.msgGuardado(
         'success',
-        'Creación de tarea exitosa',
+        'Creación de tarea correcta',
         `Se creó la tarea Ejecutar Recepción con el folio: ${this.programming.folio}`
       );
     }
