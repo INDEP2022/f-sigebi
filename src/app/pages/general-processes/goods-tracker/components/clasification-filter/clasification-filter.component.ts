@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { tap } from 'rxjs';
+import { catchError, tap, throwError } from 'rxjs';
 import { SelectFractionComponent } from 'src/app/@standalone/modals/select-fraction/select-fraction.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
@@ -14,11 +14,13 @@ import { IGoodSsubType } from 'src/app/core/models/catalogs/good-ssubtype.model'
 import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { ITypesByClasification } from 'src/app/core/models/catalogs/types-by-clasification';
+import { IAlternativeClasification } from 'src/app/core/models/ms-good/alternative-clasification.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { TypesByClasificationService } from 'src/app/core/services/catalogs/types-by-clasification.service';
+import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   SSSUBTYPES_CLASIF,
@@ -26,19 +28,21 @@ import {
   TYPES_CLASIF,
 } from '../../utils/constants/filter-match';
 import { GoodTrackerForm } from '../../utils/goods-tracker-form';
+import { AlternClasficationListComponent } from '../altern-clasfication-list/altern-clasfication-list.component';
 
 @Component({
   selector: 'clasification-filter',
   templateUrl: './clasification-filter.component.html',
   styles: [],
 })
-export class ClasificationFilterComponent implements OnInit {
+export class ClasificationFilterComponent extends BasePage implements OnInit {
   @Output() onSubmit = new EventEmitter<any>();
   @Input() form: FormGroup<GoodTrackerForm>;
   @Input() params: FilterParams;
   @Input() subloading: boolean;
   @Output() subloadingChange = new EventEmitter<boolean>();
-
+  @Output() cleanFilters = new EventEmitter<void>();
+  alternClasifications: IAlternativeClasification[] = [];
   types = new DefaultSelect();
   subtypes = new DefaultSelect();
   ssubtypes = new DefaultSelect();
@@ -54,7 +58,9 @@ export class ClasificationFilterComponent implements OnInit {
     private goodSssubtypeService: GoodSssubtypeService,
     private modalService: BsModalService,
     private typesByClasificationService: TypesByClasificationService
-  ) {}
+  ) {
+    super();
+  }
 
   changeSubloading(value: boolean) {
     this.subloading = value;
@@ -64,6 +70,37 @@ export class ClasificationFilterComponent implements OnInit {
   ngOnInit(): void {}
 
   fractionChange() {}
+
+  searchClasif() {
+    const { sssubtypes, ssubtypes, subtypes, types, alternativeClasifNum } =
+      this.form.controls;
+    if (!this.form.controls.clasifNum.value) {
+      this.alert('error', 'Error', 'Ingrese un número de clasificación');
+      return;
+    }
+    this.alternClasifications = [];
+    alternativeClasifNum.reset();
+    sssubtypes.setValue([]);
+    ssubtypes.setValue([]);
+    subtypes.setValue([]);
+    types.setValue([]);
+    const clasif = this.form.controls.clasifNum.value;
+    const params = new FilterParams();
+    params.addFilter('numClasifGoods', clasif);
+    this.getSssubtypesByClasif(params.getParams()).subscribe(response => {
+      this.getTypesByClasif(response.data[0].numClasifGoods);
+    });
+  }
+
+  getSssubtypesByClasif(params: string) {
+    return this.goodSssubtypeService.getAll2(params).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', 'No se encontró el clasificador');
+        this.ssubtypes = new DefaultSelect([], 0);
+        return throwError(() => error);
+      })
+    );
+  }
 
   search() {
     this.onSubmit.emit(this.form.value);
@@ -211,6 +248,55 @@ export class ClasificationFilterComponent implements OnInit {
 
   sssubtypesChange(sssubtypes: IGoodSssubtype[]) {}
 
+  openAlternClasification() {
+    const modalConfig: any = {
+      ...MODAL_CONFIG,
+      initialState: {
+        selectedClasifications: this.alternClasifications,
+        callback: (alternClasifications: IAlternativeClasification[]) => {
+          const { sssubtypes, ssubtypes, subtypes, types, clasifNum } =
+            this.form.controls;
+          if (!alternClasifications.length) {
+            this.alternClasifications = [];
+            sssubtypes.setValue([]);
+          }
+          clasifNum.reset();
+          sssubtypes.setValue([]);
+          ssubtypes.setValue([]);
+          subtypes.setValue([]);
+          types.setValue([]);
+          this.alternClasifications = alternClasifications;
+          this.alternClasifChange();
+        },
+      },
+    };
+    this.modalService.show(AlternClasficationListComponent, modalConfig);
+  }
+
+  alternClasifChange() {
+    const alternClasif = this.alternClasifications
+      .map(clas => clas.id)
+      .join(',');
+    this.form.controls.alternativeClasifNum.setValue(alternClasif);
+    const params = new FilterParams();
+    params.addFilter('numClasifAlterna', alternClasif, SearchFilter.IN);
+    params.limit = 100;
+    this.getSssubtypesByClasif(params.getParams()).subscribe(response => {
+      this.form.controls.alternativeClasifNum.setValue(alternClasif);
+      this.form.controls.sssubtypes.setValue(
+        response.data.map(sss => sss.numClasifGoods + '')
+      );
+      console.log(this.form.controls.sssubtypes.value);
+      console.log(response.data);
+      this.sssubtypes = new DefaultSelect(
+        response.data.map(sss => {
+          return { ...sss, numClasifGoods: sss.numClasifGoods + '' };
+        }),
+        response.count
+      );
+    });
+  }
+
   selectFraction() {
     const modalConfig = {
       ...MODAL_CONFIG,
@@ -243,5 +329,10 @@ export class ClasificationFilterComponent implements OnInit {
     ];
     this.sssubtypes = new DefaultSelect(sssubtypes, 1);
     this.formControls.sssubtypes.setValue([`${types.id}`]);
+  }
+
+  cleanFilter() {
+    this.alternClasifications = [];
+    this.cleanFilters.emit();
   }
 }

@@ -70,6 +70,10 @@ export class GoodTrackerService extends HttpService {
     );
   }
 
+  getTvGoodTrackerFilter(params:any){
+    return this.get('t-v-goods-tracker',params)
+  }
+
   getAllModal(
     self?: GoodTrackerService,
     params?: _Params
