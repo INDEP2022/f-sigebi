@@ -1,0 +1,41 @@
+<div class="row">
+  <div class="col-md-12 my-2">
+    <div class="col-md-4 d-flex justify-content-center align-items-center">
+      <div>
+        <img class="w-100" [src]="imgSrc" alt="" srcset="" />
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="row">
+        <div class="col-md-12 d-flex justify-content-between">
+          <div><b>Expediente:</b> {{ good?.fileNumber }}</div>
+          <div><b>Bien:</b> {{ good?.goodNumber }}</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12"><b>Sssubtipo: </b>{{ good?.goodSssType }}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <b>Descripción:</b> {{ good?.goodDescription }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <b>Descripción del transferente:</b> {{ good?.transfereeDesc }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 d-flex justify-content-between">
+          <div><b>Cantidad:</b> {{ good?.quantity }}</div>
+          <div><b>Estatus: </b> {{ good?.status }}</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <b>Ubicación Almacen:</b> {{ good?.fileNumber }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
