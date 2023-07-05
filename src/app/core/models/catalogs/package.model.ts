@@ -48,6 +48,6 @@ export interface IPackageInfo {
 }
 
 export interface IFoliovInvoice {
-  vExecute: string,
-  vYear: number
+  vExecute: string;
+  vYear: number;
 }
