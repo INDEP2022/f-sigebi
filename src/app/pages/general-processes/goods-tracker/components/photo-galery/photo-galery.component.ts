@@ -10,7 +10,7 @@ import { BasePage } from 'src/app/core/shared';
   styles: [
     `
       .photo-container {
-        border: 1px solid #aeb6bf;
+        background-color: #f5f5f5;
         border-radius: 10px;
       }
     `,
