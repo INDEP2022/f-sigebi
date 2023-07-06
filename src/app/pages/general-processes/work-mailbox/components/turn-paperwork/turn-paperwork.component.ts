@@ -129,10 +129,12 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
         return;
       }
       this.loadingText = 'Generando reporte ...';
-      this.downloadReport(userTurn).subscribe({
-        next: res => (this.loading = false),
-        error: error => (this.loading = false),
-      });
+      if (response == 'S') {
+        this.downloadReport(userTurn).subscribe({
+          next: res => (this.loading = false),
+          error: error => (this.loading = false),
+        });
+      }
     });
   }
 
