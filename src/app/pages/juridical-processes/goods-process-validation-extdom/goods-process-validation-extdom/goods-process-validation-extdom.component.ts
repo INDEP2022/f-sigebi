@@ -51,7 +51,11 @@ export class GoodsProcessValidationExtdomComponent
   tableSettings2 = {
     ...this.settings,
   };
-  dataTable2 = new BehaviorSubject<ListParams>(new ListParams());
+  dataTable2: LocalDataSource = new LocalDataSource();
+  dataTableParams2 = new BehaviorSubject<ListParams>(new ListParams());
+  loadingGoods2: boolean = false;
+  totalGoods2: number = 0;
+  goodData2: IGood;
 
   tableSettingsHistorico = {
     actions: {
@@ -265,6 +269,9 @@ export class GoodsProcessValidationExtdomComponent
           this.dataTableParams
             .pipe(takeUntil(this.$unSubscribe))
             .subscribe(() => this.loadGoods());
+          this.dataTableParams2
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.loadGoods2());
         },
         error: error => {
           console.log(error);
@@ -339,6 +346,34 @@ export class GoodsProcessValidationExtdomComponent
           console.log(error);
           this.dataTable.load([]);
           this.dataTable.refresh();
+        },
+      });
+  }
+
+  loadGoods2() {
+    this.loadingGoods2 = true;
+    this.totalGoods2 = 0;
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('fileNumber', this.notificationData.expedientNumber);
+    // params.addFilter('extDomProcess', 'ASEG_EXTDOM', SearchFilter.NOT);
+    params.limit = this.dataTableParams2.value.limit;
+    params.page = this.dataTableParams2.value.page;
+    this.svGoodsProcessValidationExtdomService
+      .getGoods(params.getParams())
+      .subscribe({
+        next: res => {
+          this.loadingGoods2 = false;
+          console.log('GOODS 2', res);
+          this.totalGoods2 = res.count;
+          this.dataTable2.load(res.data);
+          this.dataTable2.refresh();
+        },
+        error: error => {
+          this.loadingGoods2 = false;
+          console.log(error);
+          this.dataTable2.load([]);
+          this.dataTable2.refresh();
         },
       });
   }
