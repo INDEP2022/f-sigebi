@@ -107,7 +107,6 @@ export class ClarificationsComponent
 
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
 
     this.settings = {
       ...TABLE_SETTINGS,
@@ -122,10 +121,10 @@ export class ClarificationsComponent
       columns: ASSETS_COLUMNS,
     };
 
-    this.columns.select = {
-      ...this.columns.select,
+    /*this.columns.selected = {
+      ...this.columns.selected,
       onComponentInitFunction: this.selectGoods.bind(this),
-    };
+    };*/
     this.prepareForm();
   }
   private prepareForm() {
@@ -439,33 +438,40 @@ export class ClarificationsComponent
   }
 
   selectGoods(event: any) {
-    event.toggle.subscribe((data: any) => {
-      const index = this.goodsSelected.indexOf(data.row);
+    /* event.toggle.subscribe((data: any) => { */
+    /* const index = this.goodsSelected.indexOf(data.row);
       if (index == -1 && data.toggle == true) {
         this.goodsSelected.push(data.row);
       } else if (index != -1 && data.toggle == false) {
         this.goodsSelected.splice(index, 1);
-      }
-      if (this.goodsSelected.length === 1) {
+      } */
+    this.goodsSelected = [];
+    this.goodsSelected.push(event);
+    if (this.goodsSelected.length === 1) {
+      this.rowSelected = null;
+      this.paragraphs = [];
+      this.goodForm.reset();
+      setTimeout(() => {
         this.showClarificationButtons =
           this.goodsSelected[0].processStatus != 'SOLICITAR_ACLARACION'
             ? true
             : false;
         this.good = this.goodsSelected;
-        this.goodForm.reset();
+
         this.goodForm.patchValue({ ...this.good[0] });
         this.rowSelected = this.good;
 
         this.getClarifications();
-      } else if (this.goodsSelected.length > 1) {
-        this.rowSelected = null;
-        this.paragraphs = [];
-        this.onLoadToast('error', 'Solo se puede seleccionar un bien');
-      } else {
-        this.rowSelected = null;
-        this.paragraphs = [];
-      }
-    });
+      }, 1000);
+    } else if (this.goodsSelected.length > 1) {
+      this.rowSelected = null;
+      this.paragraphs = [];
+      this.onLoadToast('error', 'Solo se puede seleccionar un bien');
+    } else {
+      this.rowSelected = null;
+      this.paragraphs = [];
+    }
+    /* }); */
   }
 
   getClarifications() {

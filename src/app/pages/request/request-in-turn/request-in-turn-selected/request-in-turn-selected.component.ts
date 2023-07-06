@@ -242,7 +242,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
 
   showRequestsTurned(list: any) {
     Swal.fire({
-      title: 'Turnado exitoso',
+      title: 'Turnado Correctamente',
       html: `Se turnaron las siguientes solicitudes exitosamente <strong>${list}</strong>`,
       icon: 'success',
       showCancelButton: false,
