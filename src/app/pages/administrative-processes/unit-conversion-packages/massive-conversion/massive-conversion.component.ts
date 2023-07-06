@@ -47,7 +47,9 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { MassiveConversionErrorsModalComponent } from '../massive-conversion-erros-list/massive-conversion-errors-modal/massive-conversion-errors-modal.component';
 import { MassiveConversionModalGoodComponent } from '../massive-conversion-modal-good/massive-conversion-modal-good.component';
-import { MassiveConversionSelectGoodComponent } from '../massive-conversion-select-good/massive-conversion-select-good';
+import { MassiveConversionSelectGoodComponent } from '../massive-conversion-select-good/massive-conversion-select-good.component';
+import { UnitConversionPackagesDataService } from '../services/unit-conversion-packages-data.service';
+
 interface ValidaButton {
   PB_VALIDA: boolean;
   PB_AUTORIZA: boolean;
@@ -167,7 +169,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     private rNomenclaService: ParametersService,
     private userService: UsersService,
     private packageGoodService: PackageGoodService,
-    private delegationService: DelegationService
+    private delegationService: DelegationService,
+    private unitConversionDataService: UnitConversionPackagesDataService
   ) {
     super();
 
@@ -182,14 +185,33 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.prepareForm();
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoods());
-
-    this.prepareForm();
     this.checkPer();
     this.fillDataByPackage();
     this.getDataUser();
+    this.unitConversionDataService.clearPrevisualizationData
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.dataPrevisualization = [];
+            this.data.load([]);
+            this.data.refresh();
+          }
+        },
+      });
+    this.unitConversionDataService.updatePrevisualizationData
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.getGoods();
+          }
+        },
+      });
   }
 
   //Gets del formulario de paquete
@@ -296,6 +318,14 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   get paragraph3() {
     return this.form.get('paragraph3');
+  }
+
+  get dataPrevisualization() {
+    return this.unitConversionDataService.dataPrevisualization;
+  }
+
+  set dataPrevisualization(value) {
+    this.unitConversionDataService.dataPrevisualization = value;
   }
 
   private prepareForm(): void {
@@ -432,6 +462,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   searchNoPackage(params: any) {
     const paramsF = new FilterParams();
     paramsF.addFilter('numberPackage', params.text);
+    this.unitConversionDataService.selectedPackage = params.text;
     this.packageGoodService.getPaqDestinationEnc(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -599,6 +630,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         };
       });
     }
+    this.dataPrevisualization = dataRes;
     this.data.load(dataRes);
     this.totalItems = this.data.count();
   }
@@ -667,11 +699,13 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           );
           this.totalItems = response.count || 0;
           this.data.load(dataMap);
+          this.dataPrevisualization = dataMap;
           this.loading = false;
         },
         error => {
           this.totalItems = 0;
           this.data.load([]);
+          this.dataPrevisualization = [];
           this.loading = false;
         }
       );

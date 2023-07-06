@@ -123,7 +123,7 @@ export class EmailBookConfigComponent
     console.log(event);
     this.alertQuestion(
       'warning',
-      'Eliminar',
+      'Libreta de Direcciones Electrónicas',
       '¿Desea eliminar este registro?'
     ).then(result => {
       if (!result?.isConfirmed) {
