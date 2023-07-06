@@ -29,24 +29,23 @@ export const V_GOOD_COLUMNS = {
   description: {
     title: 'Descripción',
     type: 'string',
-    sort: false
+    sort: false,
   },
   amount: {
     title: 'Cantidad',
     type: 'string',
-    sort: false
+    sort: false,
   },
   unitExtent: {
     title: 'Unidad Medida',
     type: 'string',
-    sort: false
+    sort: false,
   },
   numberProceedings: {
     title: 'Expediente',
     type: 'number',
-    sort: false
-  }
-
+    sort: false,
+  },
 };
 
 export function clearGoodCheck() {

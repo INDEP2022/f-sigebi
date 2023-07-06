@@ -56,12 +56,25 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
+          *ngIf="!edit"
           [disabled]="!userForm.valid"
           [loading]="loading"
           [btnSmall]="true"
           [text]="'Agregar'"
           [loadingText]="'Agregando'"
           [icon]="'bx bx-plus'"
+          [className]="'btn-primary'"
+          (confirm)="confirm()"></confirm-button>
+
+        <confirm-button
+          *ngIf="edit"
+          [disabled]="!userForm.valid"
+          [loading]="loading"
+          [btnSmall]="true"
+          [text]="'Actualizar'"
+          [loadingText]="'Actualizando'"
+          [icon]="'fas fa-sync-alt'"
+          [className]="'btn-primary'"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
@@ -69,7 +82,7 @@
           type="button"
           class="btn btn-danger btn-sm active"
           (click)="close()">
-          Cancelar <i class="fas fa-arrow-circle-left"></i>
+          Cancelar
         </button>
       </div>
     </div>

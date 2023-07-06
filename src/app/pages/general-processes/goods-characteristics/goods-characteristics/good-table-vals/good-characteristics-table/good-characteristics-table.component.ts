@@ -203,7 +203,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
               });
               this.totalItems = this.data.length;
               this.dataTemp = [...this.data];
-              console.log(this.dataTemp);
+              console.log('Data temporal', this.dataTemp);
               this.getPaginated(this.params.value);
               this.loading = false;
             } else {
@@ -246,7 +246,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
               this.dataTemp = [...this.data];
               this.getPaginated(this.params.value);
               this.loading = false;
-              // console.log(this.data);
+              console.log(this.data);
             }
           } else {
             this.clearTable();
@@ -297,6 +297,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.onSelect.subscribe(data => {
+      console.log(this.data);
       if (data) callback(data, this);
     });
   }
@@ -427,22 +428,26 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     if (item.dataType === 'D' || item.attribute.includes('FECHA')) {
       // debugger;
     }
-    return good[column]
+    const response = good[column]
       ? item.dataType === 'D' || item.attribute.includes('FECHA')
         ? formatForIsoDate(good[column], 'string')
         : good[column] === 'NULL'
         ? ''
         : good[column]
       : null;
+    console.log(column + ' -> ' + response);
+    return response;
   }
 
   private getValueInventary(isFecha: boolean, item: any) {
     if (isFecha) {
       if (item) {
-        return formatForIsoDate(item, 'string');
+        return formatForIsoDate(item, 'string') === null
+          ? ''
+          : formatForIsoDate(item, 'string');
       } else {
         console.log(formatForIsoDate(item, 'string'));
-        return null;
+        return '';
       }
     } else {
       return item;
