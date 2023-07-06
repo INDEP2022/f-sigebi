@@ -137,8 +137,8 @@ export class VerifyComplianceTabComponent
     this.settings.columns = VERIRY_COMPLIANCE_COLUMNS;
     this.goodSettings.columns = DETAIL_ESTATE_COLUMNS;
 
-    this.columns.select = {
-      ...this.columns.select,
+    this.columns.selected = {
+      ...this.columns.selected,
       onComponentInitFunction: this.selectGood.bind(this),
     };
 
@@ -591,6 +591,11 @@ export class VerifyComplianceTabComponent
     const filter = this.params.getValue().getParams();
     this.goodFinderService.goodFinder(filter).subscribe({
       next: resp => {
+        resp.data.map((item: any) => {
+          const value = this.goodsSelected.filter((x: any) => x.id == item.id);
+          item['selected'] = value.length == 0 ? false : true;
+        });
+
         this.goodData.load(resp.data); //load  new LocalDataSource()
         this.totalItems = resp.count;
         this.loading = false;
@@ -708,11 +713,10 @@ export class VerifyComplianceTabComponent
   }
 
   selectGood(event: any) {
-    //if (event.isSelected === true) {
-
     event.toggle.subscribe((data: any) => {
       const index = this.goodsSelected.indexOf(data.row);
       if (index == -1 && data.toggle == true) {
+        data.row['selected'] = true;
         this.goodsSelected.push(data.row);
       } else if (index != -1 && data.toggle == false) {
         this.goodsSelected.splice(index, 1);
