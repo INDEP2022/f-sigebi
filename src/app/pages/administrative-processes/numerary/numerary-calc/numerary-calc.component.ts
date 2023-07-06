@@ -12,7 +12,7 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import {
   IProccesNum,
-  IRequesNumeraryEnc,
+  IRequestNumeraryEnc,
 } from 'src/app/core/models/ms-numerary/numerary.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -57,13 +57,13 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
 
   loading2 = this.loading;
   settings1 = { ...this.settings, actions: false };
-  data2: any[] = [];
+  data2: LocalDataSource = new LocalDataSource();
   params1 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems1: number = 0;
 
   loading3 = this.loading;
   settings2 = { ...this.settings, actions: false };
-  data3: any[] = [];
+  data3: LocalDataSource = new LocalDataSource();
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems2: number = 0;
 
@@ -101,8 +101,9 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   textButton: string = 'Calcula Intereses';
 
   blkSolicitudesNumeDe: any = {};
+  requestNumeEnc: IRequestNumeraryEnc;
+  process: IProccesNum;
 
-  proceso: IProccesNum;
   get userAuth() {
     return this.authService.decodeToken().preferred_username;
   }
@@ -148,6 +149,21 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     /* this.params2
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getRequestNumeCal()); */
+
+    this.processService.getProcess().subscribe(data => {
+      this.form.reset();
+      this.process = data;
+      console.log(this.process);
+      this.form.get('idProcess').patchValue(this.process.procnumId);
+      this.form
+        .get('date')
+        .patchValue(this.formatDate(this.process.procnumDate));
+      this.form.get('type').patchValue(this.process.procnumType);
+      this.form.get('concept').patchValue(this.process.description);
+      this.form.get('totalInterests').patchValue(this.process.interestAll);
+      this.form.get('totalImport').patchValue(this.process.numeraryAll);
+      console.log('Consumiendo observable Desde el PADRE', this.process);
+    });
   }
 
   getProcesosNum(params: ListParams) {
@@ -176,7 +192,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   onProcesosNum(event: IProccesNum) {
     if (event) {
       this.processService.process(event);
-      this.proceso = event;
+      this.process = event;
       this.form
         .get('date')
         .patchValue(
@@ -199,11 +215,6 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       type: [null],
       concept: [null, [Validators.pattern(STRING_PATTERN)]],
       totalInterests: [null],
-      currency: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      bankComision: [null],
       totalImport: [null, Validators.required],
       user: [null, Validators.required],
     });
@@ -231,7 +242,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       });
   }
 
-  getRequestNumeDet(idProcess?: number) {
+  getRequestNumeDet(idProcess?: number | string) {
     this.loading2 = true;
     this.params1.getValue()['filter.solnumId'] = `$eq:${idProcess}`;
     this.numeraryService
@@ -239,12 +250,14 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           console.log('DET....', resp.data);
-          this.data2 = resp.data.map(item => {
+          const data2 = resp.data.map(item => {
             return {
               ...item,
               description: item.good ? item.good.description : '',
             };
           });
+          this.data2.load(data2);
+          this.data2.refresh();
           this.totalItems1 = resp.count;
           this.loading2 = false;
         },
@@ -263,16 +276,20 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           console.log('CAL....', resp.data);
-          this.data3 = resp.data.map(item => {
+          const data3 = resp.data.map(item => {
             return {
               ...item,
               total: Number(item.amount) + Number(item.interest),
             };
           });
+          this.data3.load(data3);
+          this.data3.refresh();
           this.totalItems2 = resp.count;
           this.loading3 = false;
         },
         error: err => {
+          this.data3.load([]);
+          this.data3.refresh();
           this.loading3 = false;
         },
       });
@@ -371,11 +388,21 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     const response = await this.alertQuestion(
       'question',
       'Cálculo de numerario',
-      'Se eliminara proceso de numerario. ¿Deseas continuar?'
+      'Se eliminará proceso de numerario. ¿Deseas continuar?'
     );
     if (response.isConfirmed) {
-      const deleteExi: boolean = await this.deleteSoli(0);
+      const deleteExi: boolean = await this.deleteSoli(
+        Number(this.process.procnumId)
+      );
       if (deleteExi) {
+        this.form.reset();
+        this.formBlkControl.reset();
+        this.data.load([]);
+        this.data.refresh();
+        this.data2.load([]);
+        this.data2.refresh();
+        this.data3.load([]);
+        this.data3.refresh();
         this.alert(
           'success',
           'Cálculo de numerario',
@@ -398,6 +425,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           res(true);
         },
         error: err => {
+          console.error(err);
           res(false);
         },
       });
@@ -407,13 +435,12 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   openModal() {
     let config: ModalOptions = {
       initialState: {
-        process: this.proceso,
+        process: this.process,
+        userAuth: this.userAuth,
+        type: this.form.get('type').value,
         callback: (next: any) => {
           if (next) {
-            if (next === 'preInsert') {
-              this.createProccesNum();
-              return;
-            }
+            this.requestNumeEnc = next[0];
             this.totalItems = next.length;
             this.data.load(next);
             this.data.refresh();
@@ -426,7 +453,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     this.modalService.show(ModalRequestComponent, config);
   }
 
-  async onChangeProcces(event: IRequesNumeraryEnc) {
+  async onChangeProcces(event: IRequestNumeraryEnc) {
     console.log(event);
     this.getRequestNumeDet(event.solnumId);
     //const proce: IProccesNum = await this.getProccesNum(event.procnumId);
@@ -448,18 +475,21 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     if (this.formBlkControl.get('tMoneda').value === 'P') {
       this.formBlkControl.get('commisionBanc').reset();
     }
-    const res = await this.pupSonDelDate(102, 129, 125);
+    const res = await this.pupSonDelDate(
+      this.requestNumeEnc.solnumId,
+      this.form.get('idProcess').value,
+      2227
+    );
     if (this.form.get('idProcess').value !== null) {
-      if (this.data2[0].IdSolNum !== null) {
+      if (this.requestNumeEnc.solnumId !== null) {
         const response = await this.alertQuestion(
           'question',
           '¿Desea continuar?',
           '¿Se ejecuta el cálculo?'
         );
         if (response.isConfirmed) {
-          const vResul = await this.fCalculaNume(
-            this.form.get('idProcess').value,
-            200
+          const vResul = await this.pupElimCalculNume(
+            this.form.get('idProcess').value
           );
           if (vResul === 'Error') {
             this.alert('error', 'Ha ocurrido un error', '');
@@ -500,7 +530,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     });
   }
 
-  fCalculaNume(pIdProcNum: number, commisionBanc: number) {
+  fCalculaNume(pIdProcNum: number | string, commisionBanc: number) {
     return new Promise((res, rej) => {
       const model = {
         pIdProcNum,
@@ -519,8 +549,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   }
 
   pupSonDelDate(
-    lvIdSolnum: number,
-    lvIdProcnum: number,
+    lvIdSolnum: number | string,
+    lvIdProcnum: number | string,
     lvBpParcializado: number | string
   ) {
     return new Promise<boolean>((res, rej) => {
@@ -549,31 +579,36 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     if (['CN', 'CD'].includes(this.formBlkControl.get('tMoneda').value)) {
       null;
     } else {
-      const res = await this.pupSonDelDate(102, 129, 125);
+      const res = await this.pupSonDelDate(
+        this.requestNumeEnc.solnumId,
+        this.form.get('idProcess').value,
+        2227
+      );
     }
 
     if (this.form.get('idProcess').value !== null) {
-      if (this.data2[0].IdSolNum !== null) {
+      if (this.requestNumeEnc.solnumId !== null) {
         const response = await this.alertQuestion(
           'question',
           '¿Desea continuar?',
           '¿Se ejecuta el cálculo?'
         );
         if (response.isConfirmed) {
-          const vResul = await this.pupElimCalculNume(
-            this.form.get('idProcess').value
+          const vResul = await this.fCalculaNume(
+            this.form.get('idProcess').value,
+            this.formBlkControl.get('commisionBanc').value
           );
           if (vResul === 'Error') {
             this.alert(
               'error',
               'Ha ocurrido un error',
-              'No se pudo eliminar el cálculo numerario.'
+              'No se calculó el numerario'
             );
           } else {
             this.alert(
               'success',
               'Cálculo de numerario',
-              'Se eliminó el cálculo numerario correctamente'
+              'Se calculó el numerario correctamente'
             );
           }
         }
@@ -603,7 +638,6 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       const res: ICurrencyRes = await this.getIndMoneda(
         this.form.get('idProcess').value
       );
-      console.error(res);
       if (res.registers === 0) {
         this.alert(
           'warning',
@@ -624,7 +658,6 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
         this.formBlkControl.get('tMoneda').patchValue(res.data.ind_moneda);
       }
       this.formBlkControl.get('tMoneda').disable();
-      console.error(this.formBlkControl.get('tMoneda').value);
     }
   }
 
@@ -727,41 +760,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     this.form.get('user').setValue(this.userAuth);
   }
 
-  createProccesNum() {
-    const model: IProccesNum = {
-      procnumDate: this.obtenerFechaActual(),
-      description: '  ',
-      interestAll: 0,
-      numeraryAll: 0,
-      procnumType: this.form.get('type').value,
-      user: this.userAuth,
-    };
-    console.log(model);
-    this.numeraryService.createProccesNum(model).subscribe({
-      next: (response: any) => {
-        console.log(response);
-        this.processService.process(response);
-        this.alert(
-          'success',
-          'Cálculo de numerario',
-          'Se ha creado el cálculo de numeratio correctamente'
-        );
-      },
-      error: err => {
-        this.alert(
-          'error',
-          'Ha ocurrido un error',
-          'No se ha podido crear el cálculo de numeratio'
-        );
-      },
-    });
-  }
-
-  obtenerFechaActual(): string {
-    const fechaActual = new Date();
-    const year = fechaActual.getFullYear();
-    const month = String(fechaActual.getMonth() + 1).padStart(2, '0');
-    const day = String(fechaActual.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+  formatDate(fecha: string) {
+    return fecha.split('T')[0].split('-').reverse().join('/');
   }
 }

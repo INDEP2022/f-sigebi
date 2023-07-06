@@ -2,10 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IRecordAccountStatements } from 'src/app/core/models/catalogs/record-account-statements.model';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RecordAccountStatementsAccountsService } from 'src/app/core/services/catalogs/record-account-statements-accounts.service';
-import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
-import { GenerateCveService } from 'src/app/core/services/ms-security/application-generate-clave';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -28,9 +25,6 @@ export class RecordAccountStatementsModalComponent
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private accountBank: GenerateCveService,
-    private accountService: BankAccountService,
-    private authService: AuthService,
     private recordAccountStatementsAccountsService: RecordAccountStatementsAccountsService
   ) {
     super();
@@ -64,9 +58,7 @@ export class RecordAccountStatementsModalComponent
     });
   }
 
-  showCreateAlert(event: any) {
-    const movimentAccount = event;
-    console.log('movimentAccount', movimentAccount);
+  showCreateAlert() {
     this.alertQuestion(
       'warning',
       'Transferir',

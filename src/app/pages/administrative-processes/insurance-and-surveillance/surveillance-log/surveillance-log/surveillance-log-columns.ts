@@ -46,17 +46,17 @@ export const SURVEILLANCE_LOG_COLUMNS: any = {
     sort: false,
   },
   usrRequest: {
-    title: 'Solicita',
+    title: 'Usuario Solicita',
     type: 'number',
     sort: false,
   },
   usrRun: {
-    title: 'Ejecuta',
+    title: 'Usuario Ejecuta',
     type: 'number',
     sort: false,
   },
   usrAuthorize: {
-    title: 'Autoriza',
+    title: 'Usuario Autoriza',
     type: 'number',
     sort: false,
   },
