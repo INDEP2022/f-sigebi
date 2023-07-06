@@ -41,7 +41,7 @@ export class PrintMassiveAccountComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getExpediente(new ListParams(), false);
+    // this.getExpediente(new ListParams());
   }
 
   prepareForm() {
@@ -58,14 +58,16 @@ export class PrintMassiveAccountComponent extends BasePage implements OnInit {
     });
     console.log('formmm', this.form);
   }
+  getExpedientes($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    if ($params.text) params.addFilter('id', $params.text, SearchFilter.EQ);
+    this.getExpediente(params);
+  }
 
-  getExpediente(_params?: ListParams, val?: boolean) {
-    const params = new FilterParams();
-
-    params.page = _params.page;
-    params.limit = _params.limit;
-    if (val) params.addFilter('id', _params.text, SearchFilter.EQ);
-    this.expedientService.getAll(params.getParams()).subscribe({
+  getExpediente(_params?: FilterParams) {
+    this.expedientService.getAll(_params.getParams()).subscribe({
       next: response => {
         console.log(response);
         this.expedientes = new DefaultSelect(response.data, response.count);

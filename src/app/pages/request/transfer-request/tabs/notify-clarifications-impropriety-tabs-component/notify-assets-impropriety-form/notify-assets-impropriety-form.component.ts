@@ -75,6 +75,10 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
+    this.modalService.onHide.subscribe(key => {
+      console.log(key);
+    });
+
     console.log('Delegación de la solicitud', this.delegationUser);
     this.dictamenSeq();
     this.withDocumentation = this.idAclara === '1' ? true : false;
@@ -183,6 +187,9 @@ export class NotifyAssetsImproprietyFormComponent
             break;
           }
           case 'AclaracionTransferentesVoluntarias': {
+            console.log(
+              'Se ejecutará aclaracionTransferentesVoluntarias primero'
+            );
             this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
 
             break;
@@ -190,25 +197,24 @@ export class NotifyAssetsImproprietyFormComponent
         }
       }
 
-      if (
+      /*if (
         this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
         (this.dataClarifications2.chatClarification.idClarificationType == '2' || this.dataClarifications2.chatClarification.idClarificationType == '1' ) && typeTransference == 'MANUAL'
       ) {
-        console.log('Se ejecutará aclaracionTransferentesVoluntarias')
+        console.log('Se ejecutará aclaracionTransferentesVoluntarias segundo')
         this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1 y 2
 
-      }
+      }*/
 
       if (
         this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
-        this.dataClarifications2.chatClarification.clarificationStatus == 'IMPROCEDENCIA'  && typeTransference == 'MANUAL'
+        this.dataClarifications2.chatClarification.clarificationStatus ==
+          'IMPROCEDENCIA' &&
+        typeTransference == 'MANUAL'
       ) {
-        console.log('Se ejecutará aclaracionTransferentesVoluntarias')
-        this.oficioImprocedencia(); //IMPROCEDENCIA  MANUAL 
-
+        console.log('Se ejecutará aclaracionTransferentesVoluntarias');
+        this.oficioImprocedencia(); //IMPROCEDENCIA  MANUAL
       }
-
-      
     }
 
     if (typeTransference == 'SAT_SAE' && this.typeClarifications == 2) {

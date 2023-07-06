@@ -28,6 +28,7 @@ import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.m
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
+import { PublicationPhotographsService } from 'src/app/core/services/ms-parametercomer/publication-photographs.service';
 import { PartializeGoodService } from 'src/app/core/services/ms-partializate-good/partializate-good.service';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
@@ -96,7 +97,8 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     private jasperServ: SiabService,
     private goodPartService: GoodPartializeService,
     private procedings: ProceedingsService,
-    private partializeGoodServ: PartializeGoodService
+    private partializeGoodServ: PartializeGoodService,
+    private photoService: PublicationPhotographsService
   ) {
     super();
     this.settings.actions = false;
@@ -460,7 +462,19 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     });
   }
 
-  insertListPhoto(goodNumber: number) {}
+  insertListPhoto(goodNumber: number) {
+    return firstValueFrom(
+      this.photoService
+        .pubPhoto({
+          pcNoGood: goodNumber,
+          lNuNoGood: goodNumber,
+        })
+        .pipe(
+          catchError(err => of(false)),
+          map(res => true)
+        )
+    );
+  }
 
   async callReport(lnu_good: number, lnu_identificador: number) {
     if (!lnu_identificador) {
@@ -494,7 +508,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       // if (!v_parcialization) return;
 
       this.jasperServ
-        .fetchReport('RCEDINFCONNUMERARIO', {
+        .fetchReport('blank' /*'RCEDINFCONNUMERARIO'*/, {
           P_NO_BIEN: lnu_good,
           P_IDENTIFICADOR: v_parcialization,
         })

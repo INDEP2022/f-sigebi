@@ -20,7 +20,7 @@ import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-t
 import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { V_GOOD_COLUMNS, goodCheck } from './columns.component';
+import { goodCheck, V_GOOD_COLUMNS } from './columns.component';
 
 @Component({
   selector: 'app-massive-conversion-select-good',
