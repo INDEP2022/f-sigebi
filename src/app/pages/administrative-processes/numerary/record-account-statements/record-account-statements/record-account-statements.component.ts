@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
@@ -10,9 +11,11 @@ import {
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RECORDS_ACCOUNT_STATEMENTS_COLUMNS } from './record-account-statements-columns';
 
+import { IRecordAccountStatements } from 'src/app/core/models/catalogs/record-account-statements.model';
 import { RecordAccountStatementsAccountsService } from 'src/app/core/services/catalogs/record-account-statements-accounts.service';
 import { RecordAccountStatementsService } from 'src/app/core/services/catalogs/record-account-statements.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { RecordAccountStatementsModalComponent } from '../record-account-statements-modal/record-account-statements-modal.component';
 
 @Component({
   selector: 'app-record-account-statements',
@@ -39,6 +42,10 @@ export class RecordAccountStatementsComponent
   dataAccountPaginated: number;
   current: string;
 
+  factasStatusCta: any;
+
+  public showModal = false;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -49,8 +56,22 @@ export class RecordAccountStatementsComponent
     this.settings.columns = RECORDS_ACCOUNT_STATEMENTS_COLUMNS;
     this.settings.hideSubHeader = false;
     this.settings.actions.add = false;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
     this.settings.actions.edit = false;
+  }
+
+  private prepareForm() {
+    this.form = this.fb.group({
+      bankSelect: [null, Validators.required],
+      account: [null, Validators.required],
+      square: [null, Validators.nullValidator],
+      branch: [null, Validators.nullValidator],
+      accountType: [null, Validators.nullValidator],
+      currency: [null, Validators.nullValidator],
+      description: [null, Validators.nullValidator],
+      balanceOf: [null, Validators.nullValidator],
+      balanceAt: [null, Validators.nullValidator],
+    });
   }
 
   ngOnInit(): void {
@@ -106,20 +127,6 @@ export class RecordAccountStatementsComponent
     });
   }
 
-  private prepareForm() {
-    this.form = this.fb.group({
-      bankSelect: [null, Validators.required],
-      account: [null, Validators.required],
-      square: [null, Validators.nullValidator],
-      branch: [null, Validators.nullValidator],
-      accountType: [null, Validators.nullValidator],
-      currency: [null, Validators.nullValidator],
-      description: [null, Validators.nullValidator],
-      balanceOf: [null, Validators.nullValidator],
-      balanceAt: [null, Validators.nullValidator],
-    });
-  }
-
   // Trae la lista de bancos
   searchBanks() {
     this.recordAccountStatementsService
@@ -156,6 +163,7 @@ export class RecordAccountStatementsComponent
             response.data,
             response.count
           );
+          console.log(response.data);
           this.loading = false;
         },
         error: (err: any) => {
@@ -165,7 +173,7 @@ export class RecordAccountStatementsComponent
       });
   }
 
-  // Establece los valores en los input de datos de la cuenta
+  // Establece los valores en los inputs de datos de la cuenta seleccionada
   onBankAccountSelectChange(value: any) {
     const accountNumber = value.accountNumber;
     this.searchDataAccount(accountNumber);
@@ -196,16 +204,10 @@ export class RecordAccountStatementsComponent
       .subscribe({
         next: response => {
           this.loading = true;
-          const dataSource = new LocalDataSource(response.data); // Crear una nueva instancia de LocalDataSource con los datos
-          this.dataAccount = dataSource; // Asignar la instancia de LocalDataSource a dataAccount
+          const dataSource = new LocalDataSource(response.data);
+          this.dataAccount = dataSource;
           this.totalItems = response.count;
           this.loading = false;
-
-          // Imprimir los valores de numberGood en el console.log
-          const numberGoodValues = response.data.map(
-            (item: any) => item.numberGood
-          );
-          console.log('Valores de numberGood:', numberGoodValues);
         },
         error: (err: any) => {
           this.loading = false;
@@ -216,6 +218,38 @@ export class RecordAccountStatementsComponent
           );
         },
       });
+    this.searchFactasStatusCta(accountNumber);
+  }
+
+  searchFactasStatusCta(accountNumber: number) {
+    this.recordAccountStatementsAccountsService
+      .getFactasStatusCta(accountNumber)
+      .subscribe({
+        next: response => {
+          this.factasStatusCta = response;
+          this.loading = false;
+        },
+        error: (err: any) => {
+          this.loading = false;
+          this.alert('warning', 'No existen bancos', ``);
+        },
+      });
+  }
+
+  openModal(movimentAccount: IRecordAccountStatements) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      ignoreBackdropClick: false,
+      movimentAccount: {
+        ...movimentAccount,
+        factasStatusCta: this.factasStatusCta,
+      },
+      dataAccountPaginated: this.dataAccountPaginated,
+      callback: (next: boolean) => {
+        if (next) this.searchDataAccount(this.dataAccountPaginated);
+      },
+    };
+    this.modalService.show(RecordAccountStatementsModalComponent, modalConfig);
   }
 
   cleandInfoGoods() {
@@ -226,5 +260,18 @@ export class RecordAccountStatementsComponent
     this.form.get('branch').reset();
     this.form.get('accountType').reset();
     this.form.get('currency').reset();
+  }
+
+  cleandInfo() {
+    this.form.reset();
+    this.searchBanks();
+    this.loading = false;
+    this.dataAccount = null;
+    this.totalItems = 0;
+  }
+
+  cleandInfoDate() {
+    this.form.get('balanceOf').reset();
+    this.form.get('balanceAt').reset();
   }
 }

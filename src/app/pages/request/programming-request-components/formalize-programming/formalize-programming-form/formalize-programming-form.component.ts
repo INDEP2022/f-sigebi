@@ -311,9 +311,7 @@ export class FormalizeProgrammingFormComponent
 
         this.totalItemsProceedings = response.count;
       },
-      error: error => {
-        console.log('error actas', error);
-      },
+      error: error => {},
     });
   }
 
@@ -349,10 +347,11 @@ export class FormalizeProgrammingFormComponent
   }
 
   getState(programming: Iprogramming) {
-    this.stateService.getById(programming.stateKey).subscribe({
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = this.programming.stateKey;
+    this.stateService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('estado', response);
-        this.stateName = response.descCondition;
+        this.stateName = response.data[0].descCondition;
       },
       error: error => {},
     });
@@ -389,21 +388,21 @@ export class FormalizeProgrammingFormComponent
   }
 
   getTypeRelevant() {
-    return this.typeRelevantService
-      .getById(this.programming.typeRelevantId)
-      .subscribe(data => {
-        this.typeRelevantName = data.description;
-      });
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = this.programming.typeRelevantId;
+    this.typeRelevantService.getAll(params.getValue()).subscribe(data => {
+      this.typeRelevantName = data.data[0].description;
+    });
   }
 
   getwarehouse() {
-    return this.warehouseService
-      .getById(this.programming.storeId)
-      .subscribe(data => {
-        this.nameWarehouse = data.description;
-        this.ubicationWarehouse = data.ubication;
-        this.formLoading = false;
-      });
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.idWarehouse'] = this.programming.storeId;
+    this.warehouseService.getAll(params.getValue()).subscribe(data => {
+      this.nameWarehouse = data.data[0].description;
+      this.ubicationWarehouse = data.data[0].ubication;
+      this.formLoading = false;
+    });
   }
   /*getUsersProgramming() {
     this.loading = true;
@@ -648,7 +647,7 @@ export class FormalizeProgrammingFormComponent
             observationProceedings:
               this.proceeding.value[0].observationProceedings,
           };
-          console.log('formData', formData);
+
           this.proceedingService.updateProceeding(formData).subscribe({
             next: () => {
               this.alertInfo(
@@ -691,7 +690,7 @@ export class FormalizeProgrammingFormComponent
         let elect: boolean = false;
         let OIC: boolean = false;
         let uvfv: boolean = false;
-        console.log('proceeding', proceeding);
+
         const nomFun1 = proceeding.nameWorker1;
         const nomFun2 = proceeding.nameWorker2;
         const nomOic = proceeding.nameWorkerOic;
@@ -780,7 +779,6 @@ export class FormalizeProgrammingFormComponent
           .getSignatoriesFilter(learnedType, learnedId)
           .subscribe({
             next: async response => {
-              console.log('firmantes');
               response.data.map(async item => {
                 this.signatoriesService
                   .deleteFirmante(Number(item.signatoryId))
@@ -846,8 +844,6 @@ export class FormalizeProgrammingFormComponent
                 );
 
                 if (createSigned && tranType != 'CE') {
-                  console.log('firmantes creados');
-
                   if (nomReport) {
                     this.loadDocument(nomReport, proceeding.id, idTypeDoc);
                   }
@@ -907,7 +903,6 @@ export class FormalizeProgrammingFormComponent
               }
             },
             error: async error => {
-              console.log('No hay Firmantes');
               if (firmFun1) {
                 await this.createFirm(
                   keyDoc,
@@ -964,8 +959,6 @@ export class FormalizeProgrammingFormComponent
                 );
 
                 if (createSigned && tranType != 'CE') {
-                  console.log('firmantes creados');
-
                   if (nomReport) {
                     this.loadDocument(nomReport, this.actId, idTypeDoc);
                   }
@@ -1105,7 +1098,6 @@ export class FormalizeProgrammingFormComponent
   }
 
   showProceeding(proceeding: IProceedings) {
-    console.log('proceeding', this.proceedingData);
     this.wcontentService.obtainFile(this.proceedingData.id_content).subscribe({
       next: response => {
         let blob = this.dataURItoBlob(response);

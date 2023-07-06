@@ -108,6 +108,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     FormLoaderComponent,
     HttpClientModule,
     TooltipModule,
+    TooltipModule,
   ],
   exports: [VerifyComplianceTabComponent],
 })

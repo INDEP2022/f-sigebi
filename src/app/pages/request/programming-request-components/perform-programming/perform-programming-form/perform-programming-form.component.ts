@@ -494,7 +494,6 @@ export class PerformProgrammingFormComponent
                   regDelData,
                   callback: (next: boolean) => {
                     if (next) {
-                      console.log('next', next);
                       this.performForm
                         .get('regionalDelegationNumber')
                         .setValue(this.delegation);
@@ -2347,8 +2346,10 @@ export class PerformProgrammingFormComponent
 
       this.paramsAuthority.getValue()['filter.idTransferer'] =
         this.transferentId;
+      this.paramsAuthority.getValue()['filter.idAuthority'] = this.autorityId;
       this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
         next: response => {
+          console.log('response', response);
           const nameAndId = `${response.data[0].idAuthority} - ${response.data[0].authorityName}`;
           this.performForm.get('autorityId').setValue(nameAndId);
           this.idStation = this.dataProgramming.stationId;
