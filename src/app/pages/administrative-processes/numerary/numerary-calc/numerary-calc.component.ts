@@ -12,6 +12,7 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import {
   IProccesNum,
+  IRequesNumeraryCal,
   IRequestNumeraryEnc,
 } from 'src/app/core/models/ms-numerary/numerary.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -378,8 +379,10 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
 
   calculInteres() {
     if (this.global.process === 'D') {
+      console.log('Descalcula....');
       this.PUP_DESCALCULA();
     } else if (this.global.process === 'C') {
+      console.log('Calcula....');
       this.PUP_CALCULA();
     }
   }
@@ -484,17 +487,25 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       if (this.requestNumeEnc.solnumId !== null) {
         const response = await this.alertQuestion(
           'question',
-          '¿Desea continuar?',
-          '¿Se ejecuta el cálculo?'
+          '¿Se ejecuta el cálculo?',
+          '¿Desea continuar?'
         );
         if (response.isConfirmed) {
           const vResul = await this.pupElimCalculNume(
             this.form.get('idProcess').value
           );
+          const process = await this.getProccesNum(
+            this.form.get('idProcess').value
+          );
+          this.processService.process(process);
           if (vResul === 'Error') {
             this.alert('error', 'Ha ocurrido un error', '');
           } else {
-            this.alert('success', 'Cálculo de numerario', '');
+            this.alert(
+              'success',
+              'Cálculo de numerario',
+              'El proceso se realizó correctamente.'
+            );
           }
         }
       } else {
@@ -532,19 +543,17 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
 
   fCalculaNume(pIdProcNum: number | string, commisionBanc: number) {
     return new Promise((res, rej) => {
-      const model = {
-        pIdProcNum,
-        commisionBanc,
-      };
-      this.numeraryService.fCalculaNume(model).subscribe({
-        next: resp => {
-          console.log(resp);
-          res(res);
-        },
-        error: err => {
-          res('Error');
-        },
-      });
+      this.survillanceService
+        .fCalculaNume(pIdProcNum, commisionBanc)
+        .subscribe({
+          next: resp => {
+            console.log(resp);
+            res(res);
+          },
+          error: err => {
+            res('Error');
+          },
+        });
     });
   }
 
@@ -576,9 +585,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       this.formBlkControl.get('commisionBanc').reset();
     }
 
-    if (['CN', 'CD'].includes(this.formBlkControl.get('tMoneda').value)) {
-      null;
-    } else {
+    if (!['CN', 'CD'].includes(this.formBlkControl.get('tMoneda').value)) {
       const res = await this.pupSonDelDate(
         this.requestNumeEnc.solnumId,
         this.form.get('idProcess').value,
@@ -590,14 +597,18 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       if (this.requestNumeEnc.solnumId !== null) {
         const response = await this.alertQuestion(
           'question',
-          '¿Desea continuar?',
-          '¿Se ejecuta el cálculo?'
+          '¿Se ejecuta el cálculo?',
+          '¿Desea continuar?'
         );
         if (response.isConfirmed) {
           const vResul = await this.fCalculaNume(
             this.form.get('idProcess').value,
             this.formBlkControl.get('commisionBanc').value
           );
+          const process = await this.getProccesNum(
+            this.form.get('idProcess').value
+          );
+          this.processService.process(process);
           if (vResul === 'Error') {
             this.alert(
               'error',
@@ -695,7 +706,9 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       return;
     }
     const filename: string = 'Numerario Prorraneo';
-    const jsonToCsv = await this.returnJsonToCsv(8);
+    const jsonToCsv = await this.returnJsonToCsv(
+      Number(this.process.procnumId)
+    );
     console.log('jsonToCsv', jsonToCsv);
     if (jsonToCsv.length === 0) {
       this.alert(
@@ -724,7 +737,9 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
 
   async exportarTotal() {
     const filename: string = 'Numerario Total';
-    const jsonToCsv = await this.returnJsonToTotalCsv(8);
+    const jsonToCsv = await this.returnJsonToTotalCsv(
+      Number(this.process.procnumId)
+    );
     console.log('jsonToCsv', jsonToCsv);
     if (jsonToCsv.length === 0) {
       this.alert(
@@ -762,5 +777,16 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
 
   formatDate(fecha: string) {
     return fecha.split('T')[0].split('-').reverse().join('/');
+  }
+
+  postQuery(event: IRequesNumeraryCal) {}
+
+  subtractTwoDaysAndFormatDate() {
+    const currentDate = new Date(); // Obtener la fecha actual
+    currentDate.setDate(currentDate.getDate() - 2); // Restar dos días
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const year = String(currentDate.getFullYear());
+    return `${day}/${month}/${year}`; // Formato DD/MM/YYYY
   }
 }

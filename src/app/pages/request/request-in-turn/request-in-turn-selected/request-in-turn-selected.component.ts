@@ -21,7 +21,7 @@ import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
 })
 export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   requestForm: FormGroup;
-  title: string = 'TURNAR LAS SOLICITUDES SELECCIONAS';
+  title: string = 'TURNAR LAS SOLICITUDES SELECCIONADAS';
   paragraphs: any[] = [];
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
@@ -242,7 +242,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
 
   showRequestsTurned(list: any) {
     Swal.fire({
-      title: 'Turnado exitoso',
+      title: 'Turnado Correctamente',
       html: `Se turnaron las siguientes solicitudes exitosamente <strong>${list}</strong>`,
       icon: 'success',
       showCancelButton: false,
