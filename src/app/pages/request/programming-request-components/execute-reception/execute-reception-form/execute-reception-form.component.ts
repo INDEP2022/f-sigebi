@@ -24,6 +24,7 @@ import { IGoodProgramming } from 'src/app/core/models/good-programming/good-prog
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import {
   IReceipt,
   IRecepitGuard,
@@ -282,6 +283,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   receipts: LocalDataSource = new LocalDataSource();
   search: FormControl = new FormControl({});
   programming: Iprogramming;
+  task: ITask;
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
@@ -336,6 +338,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.getReceipts();
     this.getReceiptsGuard();
     this.getTypeTransferent();
+    this.getTask();
+  }
+
+  getTask() {
+    const task = JSON.parse(localStorage.getItem('Task'));
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = task.id;
+    this.taskService.getAll(params.getValue()).subscribe({
+      next: response => {
+        this.task = response.data[0];
+      },
+      error: error => {},
+    });
   }
 
   prepareForm() {

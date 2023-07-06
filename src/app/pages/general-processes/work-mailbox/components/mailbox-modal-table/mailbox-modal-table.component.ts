@@ -67,7 +67,7 @@ export class MailboxModalTableComponent<T = any>
       catchError(error => {
         this.loading = false;
         if (error.status >= 500) {
-          this.onLoadToast(
+          this.alertInfo(
             'error',
             'Error',
             'Ocurrió un error al obtener los datos'
