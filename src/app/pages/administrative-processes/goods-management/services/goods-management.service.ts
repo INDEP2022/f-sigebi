@@ -13,11 +13,18 @@ export class GoodsManagementService {
   clear = new Subject<boolean>();
   data: ITrackerGoodSocialCabinet[] = [];
   loading: boolean = false;
+  sinAsignarCant = 0;
+  susceptibleCant = 0;
+  asignadoCant = 0;
+  entregadoCant = 0;
+  liberadoCant = 0;
   constructor() {}
 
   getByProcess(process: ETypeGabinetProcess) {
     return this.data.filter(row =>
-      row.socialCabinet ? +row.socialCabinet === process : false
+      row.socialCabinet
+        ? +row.socialCabinet === process
+        : process === ETypeGabinetProcess['Sin Asignar']
     );
   }
 }

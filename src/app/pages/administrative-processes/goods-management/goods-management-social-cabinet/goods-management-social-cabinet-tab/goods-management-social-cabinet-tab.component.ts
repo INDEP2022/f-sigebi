@@ -48,13 +48,22 @@ export class GoodsManagementSocialCabinetTabComponent
       });
   }
 
-  // get option() {
-  //   return this.form
-  //     ? this.form.get('option')
-  //       ? this.form.get('option').value
-  //       : null
-  //     : null;
-  // }
+  cantByProcess(process: ETypeGabinetProcess) {
+    switch (process) {
+      case ETypeGabinetProcess['Sin Asignar']:
+        return this.goodsManagementService.sinAsignarCant;
+      case ETypeGabinetProcess.Susceptible:
+        return this.goodsManagementService.susceptibleCant;
+      case ETypeGabinetProcess.Liberado:
+        return this.goodsManagementService.liberadoCant;
+      case ETypeGabinetProcess.Entregado:
+        return this.goodsManagementService.entregadoCant;
+      case ETypeGabinetProcess.Asignado:
+        return this.goodsManagementService.asignadoCant;
+      default:
+        return 0;
+    }
+  }
 
   ngOnInit() {}
 
