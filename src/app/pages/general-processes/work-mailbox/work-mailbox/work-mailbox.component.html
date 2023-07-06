@@ -12,7 +12,9 @@
               <div>
                 <button
                   [disabled]="managementAreaF.value == null"
-                  [ngClass]="priority$ === 'toDo' ? 'btn-primary' : 'btn-light'"
+                  [ngClass]="
+                    priority$ === 'toDo' ? 'btn-primary' : 'btn-primary'
+                  "
                   class="btn btn-sm active"
                   (click)="priority$ = 'toDo'; buildFilters()">
                   Ingresados
@@ -29,7 +31,7 @@
                 <button
                   [disabled]="managementAreaF.value == null"
                   [ngClass]="
-                    priority$ === 'inProgress' ? 'btn-info' : 'btn-light'
+                    priority$ === 'inProgress' ? 'btn-info' : 'btn-info'
                   "
                   class="btn btn-sm active"
                   (click)="priority$ = 'inProgress'; buildFilters()">
@@ -43,7 +45,9 @@
               <div>
                 <button
                   [disabled]="managementAreaF.value == null"
-                  [ngClass]="priority$ === 'done' ? 'btn-success' : 'btn-light'"
+                  [ngClass]="
+                    priority$ === 'done' ? 'btn-success' : 'btn-success'
+                  "
                   class="btn btn-sm active"
                   (click)="priority$ = 'done'; buildFilters()">
                   Salida
@@ -57,7 +61,7 @@
                 <button
                   [disabled]="managementAreaF.value == null"
                   [ngClass]="
-                    priority$ === 'delayed' ? 'btn-warning' : 'btn-light'
+                    priority$ === 'delayed' ? 'btn-warning' : 'btn-warning'
                   "
                   class="btn btn-sm active"
                   (click)="priority$ = 'delayed'; buildFilters()">
@@ -365,9 +369,10 @@
           </ul>
         </div>
       </div>
-      <div class="col-3 text-end">
+      <div class="col-3 text-end d-flex flex-row-reverse">
         <app-columns-select
           [(settings)]="settings"
+          [leftList]="true"
           [defaultColumns]="6"></app-columns-select>
       </div>
     </div>

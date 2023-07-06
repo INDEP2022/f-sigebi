@@ -23,7 +23,6 @@ export class RecordAccountStatementsModalComponent
   dataGrilla: any;
   movimentAccount: IRecordAccountStatements;
   factasStatusCta: any;
-  accountNumber: number;
   dataAccountPaginated: any;
 
   constructor(
@@ -39,10 +38,9 @@ export class RecordAccountStatementsModalComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.searchFactasStatusCta();
   }
 
-  prepareForm() {
+  private prepareForm() {
     this.form = this.fb.group({
       bank: [
         this.movimentAccount.factasStatusCta.nombre,
@@ -64,22 +62,6 @@ export class RecordAccountStatementsModalComponent
         Validators.nullValidator,
       ],
     });
-  }
-
-  // Trae la lista de bancos
-  searchFactasStatusCta() {
-    this.recordAccountStatementsAccountsService
-      .getFactasStatusCta(this.dataAccountPaginated)
-      .subscribe({
-        next: response => {
-          this.factasStatusCta = response;
-          this.loading = false;
-        },
-        error: (err: any) => {
-          this.loading = false;
-          this.alert('warning', 'No existen bancos', ``);
-        },
-      });
   }
 
   showCreateAlert(event: any) {
