@@ -346,8 +346,10 @@
         <div class="card">
           <div class="card-body">
             <div class="row">
-              <div class="col-12 col-sm-12 col-md-12">
+              <div
+                class="col-12 col-sm-12 col-md-12 text-end d-flex flex-row-reverse">
                 <app-columns-select
+                  [leftList]="true"
                   [(settings)]="tableSettings"></app-columns-select>
               </div>
               <div
@@ -390,10 +392,35 @@
         </div>
       </div>
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-        <ng2-smart-table
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12">
+                <app-columns-select
+                  [(settings)]="tableSettings2"></app-columns-select>
+              </div>
+              <div
+                class="col-sm-12 col-12 col-md-12 table-responsive p-5"
+                style="max-height: 500px; overflow-y: scroll">
+                <div [class]="loadingGoods2 ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="tableSettings2"
+                    [source]="dataTable2"></ng2-smart-table>
+                </div>
+              </div>
+              <div class="col-sm-12 col-12 col-md-12">
+                <app-pagination
+                  [params]="dataTableParams2"
+                  [totalItems]="totalGoods2"></app-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <ng2-smart-table
           [attr.class]="'table-bordered'"
           [settings]="tableSettings2"
-          [source]="dataTable2"></ng2-smart-table>
+          [source]="dataTable2"></ng2-smart-table> -->
       </div>
     </div>
     <!-- tabla Bienes -->

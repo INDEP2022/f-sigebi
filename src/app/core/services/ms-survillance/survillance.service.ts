@@ -20,6 +20,12 @@ export class SurvillanceService extends HttpService {
     this.microservice = this.route.Survillance;
   }
 
+  getVCuentaNoBien(no_bien: number | string) {
+    return this.get<IListResponse<{ count: number }>>(
+      this.route.VCuentaPaqDestion + '?no_bien=' + no_bien
+    );
+  }
+
   getVigProcessPercentages(params?: _Params) {
     return this.get<IListResponse<IVigProcessPercentages>>(
       this.route.VigProcessPercentages,

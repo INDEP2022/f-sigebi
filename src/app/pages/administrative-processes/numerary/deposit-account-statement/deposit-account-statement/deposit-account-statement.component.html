@@ -59,6 +59,15 @@
           </div>
         </div>-->
         <h5 class="title">Datos del Depósito</h5>
+
+        <app-pagination
+          [params]="paramsActNavigate"
+          [totalItems]="totalItemsNavigate"
+          [limit]="newLimitparamsActNavigate"
+          [paginatorPageSize]="false"
+          [pageSizeOptions]="[1]"
+          [paginatorRangeLabel]="false"
+          [maxSize]="1"></app-pagination>
         <div class="row pt-4 mt-4">
           <div class="col-md-3">
             <form-field [control]="form.get('account')">
@@ -189,15 +198,24 @@
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-md-3">
-            <form-field
-              [control]="form.get('transferDate')"
-              label="Fecha de tranferencia">
+            <app-date-initial-finish
+              *ngIf="form"
+              [form]="form"
+              [form2]="form"
+              formInitial="depositDate"
+              formFin="transferDate"
+              labelInicioName="Fecha de Depósito"
+              labelFinName="al"
+              (formEmit)="(form)">
+            </app-date-initial-finish>
+            <!--<form-field
+              [control]="form.get('transferDate')" label="Fecha de Transferencia">
               <input
                 type="text"
                 formControlName="transferDate"
                 class="form-control"
-                bsDatepicker />
-            </form-field>
+                bsDatepicker/>
+            </form-field>-->
           </div>
           <div class="col-md-3">
             <form-field
@@ -247,7 +265,7 @@
           <div class="col-md-3">
             <form-field
               [control]="form.get('costsAdmon')"
-              label="Gastos de admon">
+              label="Gastos de Admon.">
               <input
                 type="number"
                 class="form-control"
@@ -259,7 +277,7 @@
           <div class="col-md-3">
             <form-field
               [control]="form.get('associatedCosts')"
-              label="Costos asociados">
+              label="Costos Asociados">
               <input
                 type="number"
                 class="form-control"
@@ -285,6 +303,7 @@
           <div class="col-md-2">
             <button
               class="btn btn-secondary btn-sm active"
+              [disabled]="!validDetail"
               (click)="detailCalculation()">
               Edo. de Cta.
             </button>
@@ -297,7 +316,10 @@
             </button>
           </div>
           <div class="col-md-2">
-            <button class="btn btn-secondary btn-sm active">
+            <button
+              class="btn btn-secondary btn-sm active"
+              [disabled]="!validCheck"
+              (click)="interestCheck()">
               Cheque Compl.
             </button>
           </div>
@@ -357,7 +379,6 @@
               <input
                 type="text"
                 formControlName="expeditionDate"
-                placeholder="Fecha"
                 class="form-control"
                 bsDatepicker />
             </form-field>
@@ -369,7 +390,6 @@
               <input
                 type="text"
                 formControlName="collectionDate"
-                placeholder="Fecha"
                 class="form-control"
                 bsDatepicker />
             </form-field>
@@ -389,10 +409,12 @@
           <div class="col-md-2">
             <button
               class="btn btn-secondary btn-sm active"
-              (click)="openForm()">
+              (click)="openForm()"
+              [disabled]="!validTras">
               Traspasar
             </button>
           </div>
+          <span>{{ transferred }}</span>
         </div>
       </form>
     </div>

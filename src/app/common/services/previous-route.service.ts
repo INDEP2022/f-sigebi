@@ -11,7 +11,11 @@ export class PreviousRouteService {
   constructor(private router: Router, private location: Location) {
     router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
+        console.log(event);
         this.history.push(event.urlAfterRedirects);
+        // if (event.url !== event.urlAfterRedirects) {
+        //   this.history.push(event.urlAfterRedirects);
+        // }
       }
     });
   }
