@@ -14,7 +14,7 @@
             (click)="showSearchForm = true"
             *ngIf="!showSearchForm">
             <i class="fa fa-angle-right" aria-hidden="true"></i> Filtrar
-            solicitudes</a
+            Solicitudes</a
           >
         </p>
 
@@ -24,7 +24,7 @@
             (click)="showSearchForm = false"
             *ngIf="showSearchForm">
             <i class="fa fa-angle-down" aria-hidden="true"></i> Filtrar
-            solicitudes</a
+            Solicitudes</a
           >
         </p>
       </h5>
@@ -60,7 +60,7 @@
           <div class="col-md-4">
             <form-field
               [control]="searchForm.get('dateRequest')"
-              label="Fecha de solicitud">
+              label="Fecha de Solicitud">
               <input
                 type="text"
                 class="form-control"
@@ -92,7 +92,7 @@
           <div class="col-md-4">
             <form-field
               [control]="searchForm.get('dateJob')"
-              label="Fecha de oficio">
+              label="Fecha de Oficio">
               <input
                 type="text"
                 class="form-control"
@@ -115,7 +115,7 @@
           <div class="col-md-4">
             <form-field
               [control]="searchForm.get('ascertainment')"
-              label="Averiguación previa">
+              label="Averiguación Previa">
               <input
                 type="text"
                 class="form-control"
@@ -132,13 +132,13 @@
               (fetchItems)="getRegionalDelegationId($event)"
               [data]="selectRegDele"
               bindLabel="description"
-              label="Delegación Regional"
+              label="Delegaci&oacute;n Regional"
               value="id"></ngx-select>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="searchForm.get('expedient')"
-              label="Expediente transferente/PAMA">
+              label="Expediente Transferente/PAMA">
               <input
                 type="text"
                 class="form-control"
@@ -147,7 +147,7 @@
           </div>
 
           <div class="col-md-4">
-            <form-field [control]="searchForm.get('cause')" label="Causa penal">
+            <form-field [control]="searchForm.get('cause')" label="Causa Penal">
               <input type="text" class="form-control" formControlName="cause" />
             </form-field>
           </div>
