@@ -137,7 +137,11 @@ export class EmailBookConfigComponent
     this.loading = true;
     this.emailService.deleteEmailBook(data.id).subscribe({
       next: () => {
-        this.alert('success', 'Registro eliminado correctamente', '');
+        this.alert(
+          'success',
+          'Dirección de correo electronico',
+          'Eliminado correctamente'
+        );
         this.emailsBook.remove(data);
         this.loading = false;
       },

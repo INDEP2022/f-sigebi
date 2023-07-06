@@ -20,7 +20,7 @@ import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
   styleUrls: ['./good-photos.component.scss'],
 })
 export class GoodPhotosComponent extends BasePage implements OnInit {
-  origin: number = null;
+  origin: string = null;
   form: FormGroup;
   actualGoodNumber: string = null;
   good: IGoodDesc;
@@ -72,38 +72,33 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
     this.activatedRoute.queryParams.subscribe({
       next: param => {
         console.log(param);
-        if (param['numberGood']) {
-          this.noBienControl = param['numberGood'] || null;
-          this.searchGood();
-          return;
-        }
         if (this.previousRouteService.getHistory().length > 1) {
-          this.origin = 1;
+          if (localStorage.getItem('selectedGoodsForPhotos')) {
+            this.selectedGoodsForPhotos = JSON.parse(
+              localStorage.getItem('selectedGoodsForPhotos')
+            );
+          }
+          if (param['numberGood']) {
+            this.origin = '';
+            this.noBienControl = param['numberGood'];
+            this.searchGood();
+            return;
+          }
+          if (localStorage.getItem('selectedGoodsForPhotos')) {
+            this.origin = '';
+            this.totalItems = this.selectedGoodsForPhotos.length;
+            this.noBienControl = this.selectedGoodsForPhotos[0];
+            this.searchGood();
+            return;
+          }
+          if (param['origin']) {
+            this.origin = param['origin'];
+          }
+        } else {
+          this.origin = null;
         }
       },
     });
-    if (localStorage.getItem('selectedGoodsForPhotos')) {
-      this.selectedGoodsForPhotos = JSON.parse(
-        localStorage.getItem('selectedGoodsForPhotos')
-      );
-    }
-    this.activatedRoute.queryParams.subscribe({
-      next: param => {
-        console.log(param);
-        if (
-          this.previousRouteService.getHistory().length > 1 &&
-          localStorage.getItem('selectedGoodsForPhotos')
-        ) {
-          this.origin = 1;
-        }
-      },
-    });
-    if (this.selectedGoodsForPhotos && this.selectedGoodsForPhotos.length > 0) {
-      this.totalItems = this.selectedGoodsForPhotos.length;
-      this.noBienControl = this.selectedGoodsForPhotos[0];
-      this.searchGood();
-      return;
-    }
   }
 
   clear() {

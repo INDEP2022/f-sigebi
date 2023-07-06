@@ -664,7 +664,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.filterForm.get('startDate').invalid ||
       this.filterForm.get('endDate').invalid
     ) {
-      this.onLoadToast(
+      this.alertInfo(
         'warning',
         'Fechas incorrectas',
         'Ingrese Fechas correctas para realizar la búsqueda.'
@@ -684,7 +684,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       //   Date.parse(endDate)
       // );
       if (Date.parse(dateNow.toISOString()) < Date.parse(endDate)) {
-        this.onLoadToast(
+        this.alertInfo(
           'warning',
           'Fechas incorrectas',
           'La Fecha "Hasta" no debe ser MAYOR al día de hoy'
@@ -710,14 +710,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           } else {
             mensaje = 'Ingrese Fechas correctas para realizar la búsqueda.';
           }
-          this.onLoadToast('warning', 'Fechas incorrectas', mensaje);
+          this.alertInfo('warning', 'Fechas incorrectas', mensaje);
           return;
         }
       }
     } else {
       if (endDate || startDate) {
         // console.log(startDate, endDate);
-        this.onLoadToast(
+        this.alertInfo(
           'warning',
           'Fechas incorrectas',
           'Si desea realizar una búsqueda por Fechas, ingrese la Fecha "Desde" y la Fecha "Hasta"'
@@ -955,7 +955,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.dataTable.load([]);
         this.totalItems = 0;
         this.dataTable.refresh();
-        //this.onLoadToast('warning', 'Advertencia','No se encontrarón registros');
+        //this.alertInfo('warning', 'Advertencia','No se encontrarón registros');
         this.loading = false;
       },
     });
@@ -1028,7 +1028,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                         error: error => (this.loading = false),
                       });
                   } else {
-                    /*this.onLoadToast(
+                    /*this.alertInfo(
                       'warning',
                       '',
                       'No se pudo cargar la fecha de captura'
@@ -1070,10 +1070,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     //Substring 2 FIRST LETTER STATUS
     let processStatus = this.selectedRow.processStatus.substring(0, 2);
     //console.log(processStatus);
+    this.loader.load = true;
     this.procedureManagementService
       .getManagamentArea({ 'filter.id': processStatus })
       .subscribe({
         next: (resp: any) => {
+          this.loader.load = false;
           //console.log(resp);
           if (resp) {
             if (resp.data[0].screenKey === 'FACTJURDICTAMASG') {
@@ -1100,7 +1102,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 );
               } else {
                 this.alert(
-                  'info',
+                  'warning',
                   `${resp.data[0].screenKey}`,
                   'No se encuentra disponible en este momento'
                 );
@@ -1131,12 +1133,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             } else {
               resp.data[0].screenKey !== null
                 ? this.alert(
-                    'info',
+                    'warning',
                     `${resp.data[0].screenKey}`,
                     'No se encuentra disponible en este momento'
                   )
                 : this.alert(
-                    'info',
+                    'warning',
                     `Pantalla`,
                     'No disponible en este momento'
                   );
@@ -1144,6 +1146,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               //TODO:MAP SCREENS AND ROUTING
             }
           }
+        },
+        error: () => {
+          this.loader.load = false;
         },
       });
   }
@@ -1153,8 +1158,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.selectedRow;
 
     if (processStatus !== 'FNI') {
+      this.loader.load = true;
       this.workService.getSatOfficeType(officeNumber).subscribe({
         next: (resp: any) => {
+          this.loader.load = false;
           if (resp.data) {
             //console.log(resp.data);
             this.P_SAT_TIPO_EXP = resp.data[0]?.satTypeProceedings || null;
@@ -1168,7 +1175,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 folio !== 0
                   ? this.work2()
                   : this.alert(
-                      'info',
+                      'warning',
                       'Este trámite es un asunto SAT',
                       'No se puede trabajar hasta que se genere un folio de recepción'
                     );
@@ -1177,7 +1184,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 folio !== 0
                   ? this.work2()
                   : this.alert(
-                      'info',
+                      'warning',
                       'Este trámite es un asunto PGR',
                       'No se puede trabajar hasta que se genere un folio de recepción'
                     );
@@ -1191,7 +1198,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             //this.router.navigateByUrl('/pages/documents-reception/flyers-registration')
           } else {
             this.alert(
-              'info',
+              'warning',
               'Proceso incompleto',
               'Este trámite no se puede trabajar'
             );
@@ -1199,17 +1206,20 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           this.loading = false;
           /*} else {
             this.alert(
-              'info',
+              'warning',
               'Sin clave de pantalla',
               'La clave de pantalla no ha sido encontrada'
             );
           }*/
         },
-        error: error => (this.loading = false),
+        error: error => {
+          this.loading = false;
+          this.loader.load = false;
+        },
       });
     } else {
       this.alert(
-        'info',
+        'warning',
         'No permitido',
         'Este oficio no se puede trabajar, el estatus está finalizado'
       );
@@ -1259,8 +1269,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           this.buildFilters(true);
         } else {
           this.buildFilters();
-          this.onLoadToast(
-            'info',
+          this.alertInfo(
+            'warning',
             'Sin área predeterminada',
             'Este usuario no cuenta con un área predeterminada'
           );
@@ -1335,8 +1345,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             this.buildFilters();
             this.areas$ = new DefaultSelect();
             this.filterForm.controls['managementArea'].setValue(null);
-            /*this.onLoadToast(
-              'info',
+            /*this.alertInfo(
+              'warning',
               'Sin áreas asignadas',
               'Este usuario no cuenta con  áreas asignadas')*/
           },
@@ -1433,7 +1443,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       isEmpty(this.selectedRow.proceedingsNumber) &&
       isEmpty(this.selectedRow.flierNumber)
     ) {
-      this.onLoadToast('warning', 'Advertencia', NO_INDICATORS_FOUND);
+      this.alertInfo('warning', 'Advertencia', NO_INDICATORS_FOUND);
       return;
     }
 
@@ -1463,7 +1473,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   viewPictures() {
     if (!this.selectedRow?.flierNumber) {
-      this.onLoadToast('error', 'Error', NO_FLYER_NUMBER);
+      this.alertInfo('error', 'Error', NO_FLYER_NUMBER);
       return;
     }
     this.getDocumentsByFlyer(this.selectedRow.flierNumber);
@@ -1629,7 +1639,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     // TODO: descomentar cuando los permisos esten habilitados
     // if(!this.turnar) {
-    //   this.onLoadToast('error', 'Error', TURN_PAPERWORK_UNAVAILABLE);
+    //   this.alertInfo('error', 'Error', TURN_PAPERWORK_UNAVAILABLE);
     //   return
     // }
   }
@@ -1651,7 +1661,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   async onCancelPaperwork() {
     if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
+      this.alertInfo('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
     const result = await this.alertQuestion(
@@ -1668,7 +1678,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   async onSavePaperwork() {
     console.log(this.selectedRow);
     if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
+      this.alertInfo('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
     if (this.selectedRow.areaATurn && this.selectedRow.userATurn) {
@@ -1724,7 +1734,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   async onFinishPaperwork() {
     if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
+      this.alertInfo('error', 'Error', 'Primero selecciona un trámite');
       return;
     }
     const result = await this.alertQuestion(
@@ -1757,7 +1767,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
     return this.procedureManagementService.update(processNumber, body).pipe(
       catchError(error => {
-        this.onLoadToast(
+        this.alertInfo(
           'error',
           'Error',
           'Ocurrio un error al enviar el trámite'
@@ -1765,7 +1775,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(() => {
-        this.onLoadToast('success', 'El trámite se envío correctamente', '');
+        this.alertInfo('success', 'El trámite se envío correctamente', '');
         this.getData();
       })
     );
@@ -1780,7 +1790,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     };
     return this.procedureManagementService.update(processNumber, body).pipe(
       catchError(error => {
-        this.onLoadToast(
+        this.alertInfo(
           'error',
           'Error',
           'Ocurrio un error al cancelar el trámite'
@@ -1788,7 +1798,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(() => {
-        this.onLoadToast('success', 'El trámite se canceló correctamente', '');
+        this.alertInfo('success', 'El trámite se canceló correctamente', '');
         this.getData();
       })
     );
@@ -1803,7 +1813,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     };
     return this.procedureManagementService.update(processNumber, body).pipe(
       catchError(error => {
-        this.onLoadToast(
+        this.alertInfo(
           'error',
           'Error',
           'Ocurrio un error al cancelar el trámite'
@@ -1811,7 +1821,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(() => {
-        this.onLoadToast('success', 'El trámite se finalizo correctamente', '');
+        this.alertInfo('success', 'El trámite se finalizo correctamente', '');
         this.getData();
       })
     );
@@ -1822,7 +1832,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     //console.log(this.selectedRow);
     if (!flierNumber && !proceedingsNumber) {
       this.alert(
-        'info',
+        'warning',
         'Aviso',
         'El Oficio no tiene volante relacionado, sólo se visualizarán los documentos'
       );
@@ -1867,7 +1877,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           if (error.status < 500) {
             this.determinatePgr(null, 'I');
           } else {
-            this.onLoadToast('error', 'Error', 'Ocurrio un error inesperado');
+            this.alertInfo('error', 'Error', 'Ocurrio un error inesperado');
           }
         },
       });
@@ -1890,7 +1900,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     } else if (action == 'C' || action == 'I' || action == 'S') {
       this.exportPgrDocs(folio, action);
     } else {
-      this.onLoadToast(
+      this.alertInfo(
         'error',
         'Error',
         'Ocurrio un error al obtener el Folio Universal'
@@ -1976,7 +1986,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     const { officeNumber } = this.selectedRow;
     if (action == 'I' || action == 'S') {
       this.alert(
-        'info',
+        'warning',
         'Aviso',
         'El Oficio tiene No. Volante relacionado, se guardarán los documentos.'
       );
@@ -1993,7 +2003,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
           this.modalService.show(PgrFilesComponent, config);
         },
         error: () => {
-          this.onLoadToast(
+          this.alertInfo(
             'error',
             'Error',
             'Ocurrio un error al copiar los documentos'
@@ -2030,7 +2040,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   getValidDocParamter() {
     return this.goodsParamerterService.getById('PATHVALDOCSAT').pipe(
       catchError(error => {
-        this.onLoadToast(
+        this.alertInfo(
           'error',
           'Error',
           'Error al Obtener el link para validar el archivo'
@@ -2043,7 +2053,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   scanDocuments() {
     if (!this.selectedRow?.flierNumber) {
-      this.onLoadToast('error', 'Error', NO_FLYER_NUMBER);
+      this.alertInfo('error', 'Error', NO_FLYER_NUMBER);
       return;
     }
     const params = new FilterParams();
@@ -2091,11 +2101,11 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   replicate() {
     if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero elige un trámite');
+      this.alertInfo('error', 'Error', 'Primero elige un trámite');
       return;
     }
     if (!this.selectedRow.flierNumber) {
-      this.onLoadToast(
+      this.alertInfo(
         'error',
         'Error',
         'El trámite no tiene un número de volante'
@@ -2233,7 +2243,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         if (error.status < 500) {
           return of({ count: 0 });
         }
-        this.onLoadToast(
+        this.alertInfo(
           'error',
           'Error',
           'Ocurrio un error al replicar el folio'
@@ -2273,6 +2283,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     //     //console.log(resp);
     //   }
     // })
+    if (!this.selectedRow?.proceedingsNumber) {
+      this.alert(
+        'error',
+        'Error',
+        'No existe un número de expediente asociado al trámite'
+      );
+      return;
+    }
     const $obs = this.workService.getViewAntecedente;
     const service = this.workService;
     const columns = WORK_ANTECEDENTES_COLUMNS;
@@ -2385,7 +2403,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   notAvailable(): void {
     this.alertQuestion(
-      'info',
+      'warning',
       'No disponible',
       'Funcionalidad no disponible en este momento'
     );
@@ -2522,7 +2540,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             break;
           default:
             this.alertQuestion(
-              'info',
+              'warning',
               'No disponible',
               'Funcionalidad no disponible en este momento'
             );
@@ -2530,7 +2548,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         }
       } else {
         this.alertQuestion(
-          'info',
+          'warning',
           'No ha seleccionado ningún registro',
           'Por favor seleccione un registro, para poder ejecutar la acción'
         );
@@ -2540,7 +2558,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   async takeOneProcess(turnSelects: any) {
     return this.alertInfo(
-      'info',
+      'warning',
       'Más de un trámite seleccionado',
       'Se tomará el último registro seleccionado'
     ).then(data => {
@@ -2567,7 +2585,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       );
     } else {
       this.alert(
-        'info',
+        'warning',
         'Aviso',
         'El Oficio no tiene volante relacionado, no puede generarse una solicitud de digitalización'
       );
@@ -2600,9 +2618,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         P_DEF_WHERE: 'WHERE ', //||:T_WHERE);
       };
       const report = 'RGESTBUZONTRAMITE';
-      this.onLoadToast(
-        'info',
-        'RGESTBUZONTRAMITE No disponible',
+      console.log('RGESTBUZONTRAMITE No disponible');
+      this.alertInfo(
+        'warning',
+        'Atención',
         'Reporte no disponible en este momento'
       );
       //console.log(report);
@@ -2632,16 +2651,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               this.modalService.show(PreviewDocumentsComponent, config);
             },
             error: error => {
-              this.onLoadToast(
-                'error',
-                'No disponible',
-                'Reporte no disponible'
-              );
+              this.alertInfo('error', 'No disponible', 'Reporte no disponible');
             },
           });
       } else {
         this.alertQuestion(
-          'info',
+          'warning',
           'No permitido',
           'El reporte para los trámites con estatus diferente a "OPI", no está disponible'
         );
@@ -2671,7 +2686,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
               },
               error: error => {
                 this.loading = false;
-                this.onLoadToast(
+                this.alertInfo(
                   'warning',
                   'Ocurrió un error',
                   'No se pudo guardar la información del identificador, solo se visualizará el primer volante'
@@ -2683,7 +2698,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loading = false;
-          this.onLoadToast(
+          this.alertInfo(
             'warning',
             'Ocurrió un error',
             'No se pudo generar un identificador, solo se visualizará el primer volante'
@@ -2694,7 +2709,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     } else {
       this.loading = false;
       this.alert(
-        'info',
+        'warning',
         'Aviso',
         'El Oficio no tiene volante relacionado, el reporte no puede generarse'
       );
@@ -2738,14 +2753,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 this.getFlyersReport(resp.nextval);
               } else if (isSaveTmp.length > 0) {
                 this.alertInfo(
-                  'info',
+                  'warning',
                   'Aviso',
                   'Solo se visualizará el reporte de los Oficios con volantes relacionados'
                 );
                 this.getFlyersReport(resp.nextval);
               } else {
                 this.alertInfo(
-                  'info',
+                  'warning',
                   'Aviso',
                   'El Oficio no tiene volante relacionado, el reporte no puede generarse'
                 );
@@ -2767,7 +2782,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         } else {
           this.loading = false;
           this.alertInfo(
-            'info',
+            'warning',
             'Aviso',
             'El Oficio no tiene volante relacionado, el reporte no puede generarse'
           );
@@ -2812,7 +2827,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
-        this.onLoadToast('error', 'No disponible', 'Reporte no disponible');
+        this.alertInfo('error', 'No disponible', 'Reporte no disponible');
       },
     });
   }
@@ -2825,7 +2840,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     });
     modalRef.content.refresh.subscribe(next => {
       if (next) {
-        this.onLoadToast('success', 'Elemento Actualizado', '');
+        this.alertInfo('success', 'Elemento Actualizado', '');
         this.getData();
       }
     });
@@ -2838,6 +2853,6 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   onSaveConfirm(event: any) {
     event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Actualizado', '');
+    this.alertInfo('success', 'Elemento Actualizado', '');
   }
 }

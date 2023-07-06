@@ -411,7 +411,7 @@ export class GoodService extends HttpService {
   getByExpedientAndParams__(
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
-    const route = GoodEndpoints.Good;
+    const route = GoodEndpoints.Sgood;
     return this.get<IListResponse<IGood>>(route, params);
   }
 

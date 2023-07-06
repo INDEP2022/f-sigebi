@@ -10,7 +10,7 @@ import {
   IProccesNum,
   IRequesNumeraryCal,
   IRequesNumeraryDet,
-  IRequesNumeraryEnc,
+  IRequestNumeraryEnc,
 } from '../../models/ms-numerary/numerary.model';
 
 @Injectable({
@@ -78,7 +78,7 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
   }
 
   getNumeraryRequestNumeEnc(params?: ListParams) {
-    return this.get<IListResponse<IRequesNumeraryEnc>>(
+    return this.get<IListResponse<IRequestNumeraryEnc>>(
       NumeraryEndpoints.RequestEnc,
       params
     );
@@ -139,7 +139,13 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
       params
     );
   }
+
   getAllCloseNumerary(params?: ListParams): Observable<IListResponse<any>> {
     return this.get(NumeraryEndpoints.CloseNumerary, params);
+  }
+
+  updateNumeraryRequestNumeEnc(model: IRequestNumeraryEnc) {
+    const route = `${NumeraryEndpoints.RequestEnc}/${model.solnumId}`;
+    return this.put<IRequestNumeraryEnc>(route, model);
   }
 }

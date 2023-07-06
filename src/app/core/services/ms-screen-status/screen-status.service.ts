@@ -58,6 +58,13 @@ export class ScreenStatusService extends HttpService {
     return this.post('application/check-status-good', data);
   }
 
+  getGetGoodScreenStatus(params: any) {
+    return this.post<IListResponse<IStatusXScreen>>(
+      `${this.endpoint.GetGoodScreenStatus}`,
+      params
+    );
+  }
+
   postPermissionByScreenAndUser(body: { screen: string; user: string }) {
     return this.post(this.endpoint.PermissionsByScreenAndUser, body);
   }

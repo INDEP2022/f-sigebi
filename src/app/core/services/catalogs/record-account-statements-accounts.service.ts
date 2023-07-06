@@ -7,6 +7,7 @@ import { Repository } from '../../../common/repository/repository';
 
 import { HttpService } from '../../../common/services/http.service';
 import {
+  IDateAccountBalance,
   IFactasStatusCta,
   IRecordAccountStatements,
 } from '../../models/catalogs/record-account-statements.model';
@@ -34,7 +35,6 @@ export class RecordAccountStatementsAccountsService
   ): Observable<IRecordAccountStatements> {
     const route = `${this.route}?filter.cveBank=$eq:${bankCode}`;
     return this.get(route, params);
-    // return this.recordAccountStatementsServiceRepository.getById02(route, params); //Usando este repositorio, me encadena para usar el microservicio de 'catalog'
   }
 
   getDataAccount(
@@ -51,21 +51,18 @@ export class RecordAccountStatementsAccountsService
   }
 
   getAccountBalanceDate(
-    noAccount: number,
-    tiDateCalc: string,
-    tiDateCalcEnd: string
-  ): Observable<IFactasStatusCta> {
-    const route = `${this.route3}/get-factas-status-cta`;
-    return this.post(route, noAccount);
+    model: IDateAccountBalance
+  ): Observable<IDateAccountBalance> {
+    const route = `${this.route3}/get-facta-db-status-cta`;
+    return this.post(route, model);
   }
 
   create(
     model: IRecordAccountStatements
   ): Observable<IRecordAccountStatements> {
     console.log('Creado', model);
-    return this.post(this.route, model);
+    const route = `${this.route2}`;
+    console.log('route', route);
+    return this.post(route, model);
   }
 }
-//http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/bank-account?filter.cveBank=$eq:SANTAND
-//http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/account-movements?filter.numberAccount=$eq:17448178
-//http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/aplication/get-factas-status-cta/4
