@@ -232,6 +232,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
           `Solicitud de alta de almacén con folio: ${this.programmingId}`
         );
         this.close();
+        this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
       }
     }
   }

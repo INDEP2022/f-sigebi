@@ -44,6 +44,7 @@ import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
+import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -287,7 +288,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     protected goodprocessService: GoodProcessService,
     protected serviceOficces: GoodsJobManagementService,
     private changeDetectorRef: ChangeDetectorRef,
-    private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService
+    private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
+    private screenStatusService: ScreenStatusService
   ) {
     super();
     this.procs = new LocalDataSource();
@@ -301,7 +303,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       rowClassFunction: (row: any) => {
         if (row.data.status === 'CNE') {
           return 'bg-success text-white';
-        } else if (row.data.status === 'RRE' || 'VXR' || 'DON') {
+        } else if (
+          row.data.status === 'RRE' ||
+          row.data.status === 'VXR' ||
+          row.data.status === 'DON'
+        ) {
           return 'bg-dark text-white';
         } else {
           return 'bg-success text-white';
@@ -532,6 +538,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       .getById(body.PAR_IDCONV)
       .subscribe({
         next: (res: IConvertiongood) => {
+          console.log(res);
           this.loading = false;
           this.fileNumber = res.fileNumber.id;
           this.conversion = res.id;
@@ -659,16 +666,43 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       next: data => {
         this.bienes = data.data;
         this.loading = false;
-        console.log(this.bienes);
-        this.dataTableGood.load(this.bienes);
-        this.dataTableGood.refresh();
-        // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
-        this.totalItems = data.count;
-        console.log(this.bienes);
+        console.log('Bienes', this.bienes);
+
+        let result = data.data.map(async (item: any) => {
+          let obj = {
+            cveShape: 'FACTDBCONVBIEN',
+            goodNumber: item.id,
+          };
+          // const di_dispo = await this.getStatusScreen(obj)
+          // console.log("di_dispo", di_dispo)
+          // item['di_disponible'] = di_dispo;
+        });
+
+        Promise.all(result).then(item => {
+          this.dataTableGood.load(this.bienes);
+          this.dataTableGood.refresh();
+          // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
+          this.totalItems = data.count;
+          console.log(this.bienes);
+        });
       },
       error: error => {
         this.loading = false;
       },
+    });
+  }
+
+  async getStatusScreen(body: any) {
+    return new Promise((resolve, reject) => {
+      this.screenStatusService.getGetGoodScreenStatus(body).subscribe({
+        next: async (state: any) => {
+          console.log('di_dispo', state);
+          resolve('S');
+        },
+        error: () => {
+          resolve('N');
+        },
+      });
     });
   }
 
@@ -750,14 +784,14 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       null;
     } else {
       if (this.delete == true) {
-        this.alertQuestion('warning', 'Eliminar', 'Desea cerrar el acta?').then(
+        this.alertQuestion('warning', '¿Desea Cerrar el Acta?', '').then(
           question => {
             if (question.isConfirmed) {
               this.expedientService.getDeleteTeacher(father).subscribe({
                 next: data => {
                   this.loading = false;
                   this.alert('success', 'Acta cerrada', '');
-                  this.alert('success', 'Acta cerrada', '');
+                  // this.alert('success', 'Acta cerrada', '');
                   this.initForm();
                 },
                 error: error => {
@@ -772,7 +806,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.alert(
             'warning',
             'El Usuario no está autorizado para cerrar acta',
-            'El Usuario no está autorizado para cerrar acta',
+            // 'El Usuario no está autorizado para cerrar acta',
             ''
           );
         }
@@ -780,7 +814,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.alert(
             'warning',
             'El Usuario no está autorizado para cerrar acta',
-            'El Usuario no está autorizado para cerrar acta',
+            // 'El Usuario no está autorizado para cerrar acta',
             ''
           );
         }
@@ -796,11 +830,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   //   this.edit ? this.update() : this.create();
   // }
 
-  Generar() {
+  async Generar() {
     this.isLoading = true;
     // this.createConversion();
     // this.createConversion();
-    this.updateConversion();
+    await this.updateConversion();
     // this.edit ? this.update() : this.create();
     let params = {
       id_conv: this.conversion,
@@ -899,9 +933,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  selectData(data: IGood) {
-    this.selectedRow = data;
+  selectData(event: { data: IGood; selected: any }) {
+    this.selectedRow = event.data;
     console.log(this.selectedRow);
+    this.selectedGooods = event.selected;
     this.changeDetectorRef.detectChanges();
     // let params: IDetailProceedingsDeliveryReception = {
     //   numberProceedings: this.conversion,
@@ -1204,6 +1239,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   create() {
     this.loading = true;
     this.mover.emit(this.registro);
+    console.log(this.registro);
     this.proceedingsDeliveryReceptionService
       .createDetail(this.createCon)
       .subscribe({
@@ -1250,7 +1286,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   //     });
   // }
 
-  updateConversion() {
+  async updateConversion() {
     this.loading = true;
     this.loading = true;
     this.convertiongoodService
@@ -1342,7 +1378,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     let modalRef = this.modalService.show(FindActaGoodComponent, modalConfig);
     modalRef.content.onSave.subscribe((next: any) => {
       console.log(next);
-
+      this.fCreate = this.datePipe.transform(
+        next.dateElaborationReceipt,
+        'dd/MM/yyyy'
+      );
+      this.statusConv = next.statusProceedings;
       this.actaRecepttionForm.patchValue({
         acta: next.id,
         administra: next.approvedXAdmon,
@@ -1353,7 +1393,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         cveActa: next.keysProceedings,
         // mes: next.dateElaborationReceipt,
         cveReceived: next.receiptKey,
-        anio: new Date(next.dateElaborationReceipt),
+        // anio: new Date(next.dateElaborationReceipt),
         direccion: next.address,
         // parrafo1: next.parrafo1,
         // parrafo2: next.parrafo2,
@@ -1437,6 +1477,18 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     console.log(event);
   }
   toggleDisabled() {}
+
+  selectedGooods: any[] = [];
+  goodsValid: any;
+  addSelect() {
+    if (this.selectedGooods.length > 0) {
+      this.selectedGooods.forEach((good: any) => {
+        if (!this.goodsValid.some((v: any) => v === good)) {
+          let indexGood = this.goods.findIndex(_good => _good.id == good.id);
+        }
+      });
+    }
+  }
 }
 
 export interface IParamsProceedingsParamsActasConvertion {

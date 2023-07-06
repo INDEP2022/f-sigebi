@@ -376,7 +376,7 @@ export interface IGood {
   opinion?: string;
   appraisedValue?: number;
   drawerNumber?: number;
-  vaultNumber?: number;
+  vaultNumber?: string | number;
   goodReferenceNumber?: number;
   appraisalCurrencyKey?: string;
   appraisalVigDate?: Date;
