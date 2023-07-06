@@ -30,6 +30,14 @@ export class ExcelService {
 
   export(json: any[], { type = 'xlsx', filename }: IXLSXExportConfig) {
     const workSheet = utils.json_to_sheet(json);
+
+    workSheet['!cols'] = Object.keys(json[0]).map(x => {
+      const max_width = json.reduce((acumulator, r) => {
+        return Math.max(acumulator, (r[x] + '').length);
+      }, x.length);
+      return { wch: max_width };
+    });
+
     const workBook: WorkBook = {
       Sheets: { 'Hoja 1': workSheet },
       SheetNames: ['Hoja 1'],
