@@ -71,16 +71,19 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3" *ngIf="!selectOnClick">
-        <confirm-button
-          [disabled]="!rowSelected"
-          [loading]="loading"
-          text="Seleccionar"
-          (confirm)="confirm()">
-        </confirm-button>
+        <button
+          (click)="confirm()"
+          type="button"
+          class="btn btn-primary active btn-sm">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
+          &nbsp;&nbsp;&nbsp;&nbsp; Cancelar &nbsp;&nbsp;&nbsp;&nbsp;
         </button>
       </div>
     </div>

@@ -32,6 +32,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
@@ -99,7 +100,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   paramsReception = new BehaviorSubject<ListParams>(new ListParams());
   paramsGuard = new BehaviorSubject<ListParams>(new ListParams());
   paramsGoodsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
-  //goodsWarehouse: LocalDataSource = new LocalDataSource();
   paramsTransportableGoods = new BehaviorSubject<ListParams>(new ListParams());
 
   nameWarehouse: string = '';
@@ -125,6 +125,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   transferentName: string = '';
   tranType: string = '';
   stationName: string = '';
+  stateName: string = '';
   authorityName: string = '';
   typeRelevantName: string = '';
   formLoading: boolean = false;
@@ -305,7 +306,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     private authService: AuthService,
     private taskService: TaskService,
     private typeTransferentService: TransferenteService,
-    private regionalDelegationService: RegionalDelegationService
+    private regionalDelegationService: RegionalDelegationService,
+    private stateService: StateOfRepublicService
   ) {
     super();
     this.settings = {
@@ -549,6 +551,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         this.getTypeRelevant();
         this.getwarehouse();
         this.typeTransferent();
+        this.getState();
         this.getUsersProgramming();
         this.params
           .pipe(takeUntil(this.$unSubscribe))
@@ -603,22 +606,34 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       });
   }
 
+  getState() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = this.programming.stateKey;
+    this.stateService.getAll(params.getValue()).subscribe({
+      next: response => {
+        console.log('estado', response);
+        this.stateName = response.data[0].descCondition;
+      },
+      error: error => {},
+    });
+  }
+
   getTypeRelevant() {
-    return this.typeRelevantService
-      .getById(this.programming.typeRelevantId)
-      .subscribe(data => {
-        this.typeRelevantName = data.description;
-      });
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = this.programming.typeRelevantId;
+    this.typeRelevantService.getAll(params.getValue()).subscribe(data => {
+      this.typeRelevantName = data.data[0].description;
+    });
   }
 
   getwarehouse() {
-    return this.warehouseService
-      .getById(this.programming.storeId)
-      .subscribe(data => {
-        this.nameWarehouse = data.description;
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.idWarehouse'] = this.programming.storeId;
+    this.warehouseService.getAll(params.getValue()).subscribe(data => {
+      this.nameWarehouse = data.data[0].description;
 
-        this.ubicationWarehouse = data.ubication;
-      });
+      this.ubicationWarehouse = data.data[0].ubication;
+    });
   }
 
   /*----------Show info goods programming --------- */
@@ -769,6 +784,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           });
         },
         error: error => {
+          this.goodsReception.clear();
           this.formLoading = false;
         },
       });
@@ -834,49 +850,51 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   filterStatusWarehouse(data: IGoodProgramming[]) {
+    const _data: any[] = [];
     const goodWarehouse = data.filter(items => {
       return items.status == 'EN_ALMACEN_TMP';
     });
+    console.log('Bienea a almacén', goodWarehouse);
 
-    goodWarehouse.map(items => {
+    goodWarehouse.forEach(items => {
       this.params.getValue()['filter.id'] = items.goodId;
       this.goodService.getAll(this.params.getValue()).subscribe({
-        next: data => {
-          data.data.map(response => {
-            if (response.physicalStatus == 1) {
-              response.physicalStatusName = 'BUENO';
-            } else if (response.physicalStatus == 2) {
-              response.physicalStatusName = 'MALO';
+        next: response => {
+          _data.push(response.data[0]);
+          this.goodsWarehouse.clear();
+          _data.forEach(item => {
+            if (item.physicalStatus == 1) {
+              item.physicalStatusName = 'BUENO';
+            } else if (item.physicalStatus == 2) {
+              item.physicalStatusName = 'MALO';
             }
-            if (response.stateConservation == 1) {
-              response.stateConservationName = 'BUENO';
-            } else if (response.stateConservation == 2) {
-              response.stateConservationName = 'MALO';
+            if (item.stateConservation == 1) {
+              item.stateConservationName = 'BUENO';
+            } else if (item.stateConservation == 2) {
+              item.stateConservationName = 'MALO';
             }
-            this.goodsWarehouse.clear();
-            this.goodData = response;
 
+            this.goodData = item;
             const form = this.fb.group({
-              id: [response?.id],
-              goodId: [response?.goodId],
-              uniqueKey: [response?.uniqueKey],
-              fileNumber: [response?.fileNumber],
-              goodDescription: [response?.goodDescription],
-              quantity: [response?.quantity],
-              unitMeasure: [response?.unitMeasure],
-              descriptionGoodSae: [response?.descriptionGoodSae],
-              quantitySae: [response?.quantitySae],
-              saeMeasureUnit: [response?.saeMeasureUnit],
-              physicalStatus: [response?.physicalStatus],
-              physicalStatusName: [response?.physicalStatusName],
-              saePhysicalState: [response?.saePhysicalState],
-              stateConservation: [response?.stateConservation],
-              stateConservationName: [response?.stateConservationName],
-              stateConservationSae: [response?.stateConservationSae],
-              regionalDelegationNumber: [response?.regionalDelegationNumber],
+              id: [item?.id],
+              goodId: [item?.goodId],
+              uniqueKey: [item?.uniqueKey],
+              fileNumber: [item?.fileNumber],
+              goodDescription: [item?.goodDescription],
+              quantity: [item?.quantity],
+              unitMeasure: [item?.unitMeasure],
+              descriptionGoodSae: [item?.descriptionGoodSae],
+              quantitySae: [item?.quantitySae],
+              saeMeasureUnit: [item?.saeMeasureUnit],
+              physicalStatus: [item?.physicalStatus],
+              physicalStatusName: [item?.physicalStatusName],
+              saePhysicalState: [item?.saePhysicalState],
+              stateConservation: [item?.stateConservation],
+              stateConservationName: [item?.stateConservationName],
+              stateConservationSae: [item?.stateConservationSae],
+              regionalDelegationNumber: [item?.regionalDelegationNumber],
             });
             this.goodsWarehouse.push(form);
-            this.goodsWarehouse.updateValueAndValidity();
             this.formLoading = false;
             this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
             this.showWarehouse = true;
@@ -1372,6 +1390,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       }
     } else if (type == 'almacen') {
       if (this.receipts.count() > 0) {
+        console.log('Soy un recibo almacén con acta creada');
         this.receipts.getElements().then(async receipt => {
           const createReceiptGood: any = await this.createReceiptWarehouse(
             receipt[0]
@@ -1387,10 +1406,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
               if (updateProgrammingGood) {
                 const updateGood = await this.updateGoodWarehouse();
-                this.goodsWarehouse.clear();
-                this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
-                this.getReceiptsGuard();
-                this.getInfoGoodsProgramming();
+                if (updateGood) {
+                  this.goodsWarehouse.clear();
+                  this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+                  this.getReceiptsGuard();
+                  this.getInfoGoodsProgramming();
+                }
               }
             }
           }
@@ -1974,6 +1995,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       callback: (data: boolean) => {
         if (data) {
           this.getReceipts();
+          this.getInfoGoodsProgramming();
         }
       },
     };
@@ -2235,7 +2257,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         this.getInfoGoodsProgramming();
         this.goodIdSelect = null;
         this.selectGood = [];
-        this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+        //this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
       }
     });
   }
