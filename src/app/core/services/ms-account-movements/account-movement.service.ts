@@ -121,6 +121,10 @@ export class AccountMovementService extends HttpService {
   ): Observable<IListResponse<IAccountMovement>> {
     return this.get<IListResponse<any>>('account-movements', params);
   }
+
+  postMassNumeraryGenerate(body: any) {
+    return this.post('aplication/massNumeraryGenerate', body);
+  }
 }
 
 //``

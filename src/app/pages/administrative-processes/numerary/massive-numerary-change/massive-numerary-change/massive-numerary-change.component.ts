@@ -17,6 +17,7 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { ISpentConcept } from 'src/app/core/models/ms-spent/spent.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { UtilComerV1Service } from 'src/app/core/services/ms-prepareevent/util-comer-v1.service';
@@ -86,7 +87,8 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     private accountMovementService: AccountMovementService,
     private spentService: SpentService,
     private excelService: ExcelService,
-    private prepareEventService: UtilComerV1Service
+    private prepareEventService: UtilComerV1Service,
+    private authService: AuthService
   ) {
     super();
     this.settings = {
@@ -293,11 +295,12 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
 
     /** @description vdescripcion, vestatus, vno_exp_asociado, vno_expediente, vcantidad,
                       vno_delegacion, vno_subdelegacion, videntificador, vno_volante, vno_clasif_bien, vno_bien_padre_parcializacion */
-    let good = null;
+    let good: IGood | null = null;
     /** @description no_bien: vno_bienn, estatus: vestatusn */
-    let vGoodStatus: IGood = null;
+    let vGoodStatus: IGood | null = null;
 
     // let vnoGoodN = null;
+    let vSpent = null;
     let vcveProcess = null;
     let vIndNume: number;
     let vActaOk = null;
@@ -403,15 +406,14 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                       vItem = 'COL' + vColgu;
                       vType = item[vItem];
                       try {
-                        vdSpent = Number(
+                        vSpent = Number(
                           Math.round(
                             parseFloat(String(vType).replace(',', '.'))
                           )
-                        ).toFixed(2); //TODO: verificar | vgasto := NVL(ROUND(TO_NUMBER(REPLACE(v_tipo,',','.'),'99999999999999.9999999999'),2),0);
+                        ).toFixed(2); //:TODO verificar | vgasto := NVL(ROUND(TO_NUMBER(REPLACE(v_tipo,',','.'),'99999999999999.9999999999'),2),0);
                         vItem = 'GAS' + vColgu;
                         vdSpent = this.formGas.get(vItem)?.value;
-                        vTotalSpent =
-                          vTotalSpent + Number(this.nvl(vdSpent, 0));
+                        vTotalSpent = vTotalSpent + Number(this.nvl(vSpent, 0));
                         vItem = 'GAD' + vColgu;
                         vDescription = this.formGad.get(vItem)?.value;
                         if (!vDescription) {
@@ -433,7 +435,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                         const blkSpent = {
                           noGood: vNoGood,
                           cveie: vdSpent,
-                          amount: vdSpent,
+                          amount: vSpent as any,
                           description: vDescription,
                           status: good.status,
                           type: 'E',
@@ -453,6 +455,10 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                       type: 'i',
                     };
                     this.dataTableSmall.push(blkSpent);
+                    console.log({
+                      dataTableSmall: this.dataTableSmall,
+                      blkSpent,
+                    });
 
                     const prevDataTableSpent: IMassiveNumeraryChangeSpent = {
                       noGood: vNoGood,
@@ -471,7 +477,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                       noFlier: good.flyerNumber,
                       indNume: vIndNume,
                       cveEvent: vcveProcess,
-                      npNUm: vGoodStatus.id,
+                      npNUm: vGoodStatus?.id,
                     };
 
                     if (vIndNume !== 1) {
@@ -520,16 +526,19 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
 
     await Promise.all(mapAsync);
 
-    this.dataTableSpent = [];
-    this.dataTableSmall = [];
     this.isLoadingProcessExtraction = false;
     this.modalService.show(MassiveNumeraryChangeModalComponent, {
       initialState: {
-        BLK_BIENES: new LocalDataSource(this.dataTableSpent),
-        BLK_GASTOS: new LocalDataSource(this.dataTableSmall),
+        dataTableGoods: this.dataTableSpent,
+        dataTableSpents: this.dataTableSmall,
+        user: this.getUser().preferred_username.toUpperCase(),
       },
       class: 'modal-lg',
     });
+  }
+
+  getUser() {
+    return this.authService.decodeToken();
   }
 
   selectMovementAccount(numberGoodn: number): Promise<any> {
