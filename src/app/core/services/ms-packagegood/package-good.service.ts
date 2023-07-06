@@ -5,7 +5,11 @@ import {
   IpackageValidGood,
   PrepDestinationPackage,
 } from '../../models/catalogs/Ipackage-valid-good';
-import { IFoliovInvoice, IPackage } from '../../models/catalogs/package.model';
+import {
+  IDecPackage,
+  IFoliovInvoice,
+  IPackage,
+} from '../../models/catalogs/package.model';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +22,11 @@ export class PackageGoodService extends HttpService {
 
   insertPaqDestionarioEnc(body: IPackage) {
     const route = `${PackageGoodEndpoints.paqDestinationEnc}`;
+    return this.post(route, body);
+  }
+
+  insertPaqDestDec(body: IDecPackage) {
+    const route = `${PackageGoodEndpoints.paqDestinationDet}`;
     return this.post(route, body);
   }
 
