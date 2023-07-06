@@ -57,7 +57,7 @@ export class LogTableComponent extends BasePage implements OnInit, OnChanges {
     this.hideError();
     this.loading = true;
     return this.seraLogService
-      .getAllByRegisterNum(this.registerNum, params.getParams())
+      .getAllByRegisterCod(this.registerNum, params.getParams())
       .pipe(
         catchError(error => {
           this.loading = false;

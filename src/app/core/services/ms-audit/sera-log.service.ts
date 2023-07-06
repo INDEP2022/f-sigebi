@@ -24,4 +24,9 @@ export class SeraLogService extends HttpService {
     const route = `sera-log/get-info-audit-by-register-number/${registerNum}`;
     return this.get<IListResponse<IBinnacle>>(route, params);
   }
+
+  getAllByRegisterCod(registerNum: string | number, params: _Params) {
+    const route = `application/pupGetRegBinnacle/${registerNum}`;
+    return this.get<IListResponse<IBinnacle>>(route, params);
+  }
 }
