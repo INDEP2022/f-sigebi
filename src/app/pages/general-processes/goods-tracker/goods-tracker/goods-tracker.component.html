@@ -3,27 +3,27 @@
     <div class="col-md-5">
       <h5 class="title">RASTREADOR POR BIENES Y NOTIFICACIONES</h5>
     </div>
-    <!-- <div class="buttons d-flex">
+    <div class="buttons d-flex">
       <form
         [formGroup]="formCheckbox"
         class="form-material d-flex justify-content-end">
-        <form-check for="irregular-goods" label="Bienes Irregulares">
+        <!-- <form-check for="irregular-goods" label="Bienes Irregulares">
           <input
             type="checkbox"
             id="irregular-goods"
             formControlName="goodIrre" />
-        </form-check>
+        </form-check> -->
         <form-check for="galery" label="Ver Fotos">
           <input type="checkbox" id="galery" formControlName="lookPhoto" />
         </form-check>
         <div>
-          <button (click)="getAll()" class="btn btn-primary btn-sm active">
+          <!-- <button (click)="getAll()" class="btn btn-primary btn-sm active">
             Todos los registros
             <i class="bx bx-search-alt bx-sm float-icon"></i>
-          </button>
+          </button> -->
         </div>
       </form>
-    </div> -->
+    </div>
   </div>
 
   <div body>
@@ -115,10 +115,16 @@
 <div #scrollTable></div>
 <goods-table
   [loading]="loading"
-  *ngIf="showTable"
+  *ngIf="showTable && !formCheckbox.controls.lookPhoto.value"
   [goods]="goods"
   [params]="_params"
   [formData]="form"
   [totalItems]="totalItems"
   [fomrCheck]="formCheckbox"
   [filters]="filters"></goods-table>
+<photo-galery
+  *ngIf="showTable && formCheckbox.controls.lookPhoto.value"
+  [goods]="goods"
+  [loading]="loading"
+  [params]="_params"
+  [totalItems]="totalItems"></photo-galery>

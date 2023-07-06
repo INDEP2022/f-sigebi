@@ -254,14 +254,14 @@
 
 <div class="form-inline justify-content-end btn-toolbar">
   <button class="btn btn-primary btn-sm active" (click)="search()">
-    <i class="fa fa-search"></i> Buscar
+    Buscar <i class="fa fa-search"></i>
   </button>
 
   <button
     *ngIf="showSearchForm"
     class="btn btn-danger btn-sm active"
     (click)="clean()">
-    Limpiar
+    Limpiar <i class="fas fa-eraser"> </i>
   </button>
 </div>
 
@@ -269,7 +269,7 @@
   <div class="btn-toolbar pt-5">
     <app-columns-select [(settings)]="settings"></app-columns-select>
     <button (click)="newDocument()" class="btn btn-primary btn-sm active">
-      <i class="fa fa-file-archive"></i> Nuevo documento
+      Nuevo documento <i class="fa fa-file"></i>
     </button>
   </div>
 

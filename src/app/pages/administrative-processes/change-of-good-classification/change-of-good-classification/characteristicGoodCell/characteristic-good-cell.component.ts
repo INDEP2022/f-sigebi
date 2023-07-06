@@ -14,12 +14,14 @@ export class CharacteristicGoodCellComponent extends CharacteristicEditorCell {
     super();
   }
   updateDate(value: any) {
+    console.log('Esta es la fila', this.row.column);
     console.log(value, secondFormatDate(value));
     this.service.data.forEach(x => {
       if (x.column === this.row.column) {
         x.value = secondFormatDate(value);
       }
     });
+    console.log(this.service.data);
   }
 
   updateCell(value: any) {
