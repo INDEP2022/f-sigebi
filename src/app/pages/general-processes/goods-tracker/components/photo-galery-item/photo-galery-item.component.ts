@@ -7,7 +7,49 @@ const NO_IMAGE_FOUND = 'assets/images/documents-icons/not-found.jpg';
 @Component({
   selector: 'photo-galery-item',
   templateUrl: './photo-galery-item.component.html',
-  styles: [],
+  styles: [
+    `
+      .info {
+        max-height: 200px;
+        min-height: 200px;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .labe-circle-red {
+        border-radius: 4px;
+        background-color: rgba(157, 36, 73, 0.6);
+      }
+      .labe-circle-turq {
+        border-radius: 4px;
+        background-color: rgb(23, 162, 184, 0.53);
+      }
+      .labe-circle-green {
+        border-radius: 4px;
+        background-color: rgb(30, 126, 52, 0.66);
+      }
+      .labe-circle-lime {
+        border-radius: 4px;
+        background-color: rgb(34, 174, 66, 0.66);
+      }
+      .labe-circle-purple {
+        border-radius: 4px;
+        background-color: rgb(139, 8, 176, 0.55);
+      }
+      .labe-circle-gray {
+        border-radius: 4px;
+        background-color: rgb(120, 130, 134, 0.55);
+      }
+      .labe-circle-silver {
+        border-radius: 4px;
+        background-color: rgb(120, 130, 134, 0.55);
+      }
+      .labe-circle-blue {
+        border-radius: 4px;
+        background-color: rgb(50, 164, 216, 0.55);
+      }
+    `,
+  ],
 })
 export class PhotoGaleryItemComponent implements OnInit {
   @Input() good: ITrackedGood = null;
