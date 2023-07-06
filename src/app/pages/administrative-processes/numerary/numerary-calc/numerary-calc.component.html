@@ -117,6 +117,7 @@
               class="btn btn-sm btn-primary active m-3"
               (click)="selectRequest()">
               Selecciona Solicitudes
+              <i class="fas fa-edit bx-sm float-icon"></i>
             </button>
             <button
               type="button"
@@ -128,21 +129,22 @@
               type="button"
               class="btn btn-sm btn-primary active m-3"
               (click)="printStatusAccount()">
-              Estado de Cuenta
+              Estado de Cuenta <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
             <button
               type="button"
               class="btn btn-sm btn-primary active m-3"
               (click)="printDetailMovi()">
-              Detalle Movimiento
+              Detalle Movimiento <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
             <button
               type="button"
               class="btn btn-sm btn-primary active m-3"
               (click)="printProrraComission()">
-              Prorrateo Comisión
+              Prorrateo Comisión <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
             <button
+              [disabled]="!process"
               class="btn btn-red btn-sm active m-3"
               (click)="deleteRequest()">
               Eliminar Proceso <i class="fa fa-trash" aria-hidden="true"></i>

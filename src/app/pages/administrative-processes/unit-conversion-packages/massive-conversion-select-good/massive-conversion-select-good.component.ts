@@ -173,7 +173,7 @@ export class MassiveConversionSelectGoodComponent
 
   private async fillGoodPaqDestino(v_bani: boolean) {
     let V_BANR = true;
-    goodCheck.forEach(async good => {
+    await goodCheck.forEach(async good => {
       console.log(good);
       if (v_bani) {
         const filterParams = new FilterParams();
@@ -209,23 +209,24 @@ export class MassiveConversionSelectGoodComponent
             V_NO_TRANSFERENTE = await firstValueFrom(
               this.obtainTransferent(transferentSplit[0])
             );
+            // V_NO_TRANSFERENTE = transferentSplit[0];
           }
         }
 
-        // const V_NO_DELEGACION = await firstValueFrom(
-        //   this.obtainDelegation(good.coord_admin)
-        // );
+        const V_NO_DELEGACION = await firstValueFrom(
+          this.obtainDelegation(good.coord_admin)
+        );
         // console.log(V_NO_DELEGACION);
 
-        // if (V_NO_DELEGACION) {
-        //   await firstValueFrom(
-        //     this.goodService.update({
-        //       id: good.id,
-        //       goodNumber: good.goodNumber,
-        //       delegationNumber: V_NO_DELEGACION,
-        //     })
-        //   );
-        // }
+        if (V_NO_DELEGACION) {
+          await firstValueFrom(
+            this.goodService.update({
+              id: good.id,
+              goodNumber: good.goodNumber,
+              delegationNumber: V_NO_DELEGACION,
+            })
+          );
+        }
 
         if (V_NO_TRANSFERENTE) {
           await firstValueFrom(
@@ -244,6 +245,9 @@ export class MassiveConversionSelectGoodComponent
             numberRecord: good.numFile,
             nbOrigin: null,
           })
+        );
+        this.unitConversionPackagesDataService.updatePrevisualizationData.next(
+          true
         );
         this.closeModal();
       }
