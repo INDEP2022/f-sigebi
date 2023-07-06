@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -185,32 +185,12 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoods());
+    // this.params
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() => this.getGoods());
     this.checkPer();
     this.fillDataByPackage();
     this.getDataUser();
-    this.unitConversionDataService.clearPrevisualizationData
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: response => {
-          if (response) {
-            this.dataPrevisualization = [];
-            this.data.load([]);
-            this.data.refresh();
-          }
-        },
-      });
-    this.unitConversionDataService.updatePrevisualizationData
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: response => {
-          if (response) {
-            this.getGoods();
-          }
-        },
-      });
   }
 
   //Gets del formulario de paquete
@@ -452,7 +432,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.paragraph2.setValue(res.paragraph2);
         this.paragraph3.setValue(res.paragraph3);
         //Traer los bienes de pack_det
-        this.getGoods();
+        this.unitConversionDataService.updatePrevisualizationData.next(true);
       }
     });
   }
@@ -546,7 +526,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       good: {
         config: {
           data: {
-            goodDet: this.goodsList,
+            goodDet: this.dataPrevisualization,
             infoPack: { ...this.form.value, ...this.descPaq },
           },
         },
@@ -635,79 +615,47 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   // Aquí puedes realizar las acciones necesarias con la información recibida
 
-  validateGood(item: any) {
-    const packVal = this.noPackage.value;
-    return new Promise((resolve, reject) => {
-      if (item.delegationNumber != packVal.numberDelegation) {
-        resolve({ available: false });
-      } else if (item.bienes.numberClassifyGood != packVal.numberClassifyGood) {
-        resolve({ available: false });
-      } else if (item.bienes.labelNumber != packVal.labelNumber) {
-        resolve({ available: false });
-      } else if (item.bienes.status != packVal.status) {
-        resolve({ available: false });
-      } //!Busqueda de no_transferente por el no_expediente
-      else if (item.bienes.storeNumber != packVal.numberStore) {
-        resolve({ available: false });
-      } else if (this.packageType.value != 3) {
-        if (item.bienes.storeNumber != packVal.numberStore) {
-          resolve({ available: false });
-        } else {
-          console.log('Entro aquí');
-        }
-      } else if (this.packageType.value == 3) {
-        if (item.bienes.val24 == null) {
-          resolve({ available: false });
-        } else {
-          console.log('Entro aquí');
-        }
-      } else {
-        resolve({ available: true });
-      }
-    });
-  }
-
   selectRow(e: any) {
     console.log(e);
   }
 
-  getGoods() {
-    if (!this.noPackage.value) return;
-    this.loading = true;
-    const newParams = new ListParams();
-    newParams['filter.numberPackage'] = this.noPackage.value.numberPackage;
-    this.params.getValue()['filter.numberPackage'] =
-      this.noPackage.value.numberPackage;
-    this.packageGoodService
-      .getPaqDestinationDet(this.params.getValue())
-      .subscribe(
-        async response => {
-          this.goodsList = response.data;
-          let dataMap = await Promise.all(
-            response.data.map(async (item: any) => {
-              const respAvailable = await this.validateGood(item);
-              let disponible = JSON.parse(
-                JSON.stringify(respAvailable)
-              ).available;
-              return {
-                ...item,
-                available: disponible,
-              };
-            })
-          );
-          this.totalItems = response.count || 0;
-          this.data.load(dataMap);
-          this.dataPrevisualization = dataMap;
-          this.loading = false;
-        },
-        error => {
-          this.totalItems = 0;
-          this.data.load([]);
-          this.dataPrevisualization = [];
-          this.loading = false;
-        }
-      );
-  }
+  // getGoods() {
+  //   if (!this.noPackage.value) return;
+  //   this.loading = true;
+  //   const newParams = new ListParams();
+  //   newParams['filter.numberPackage'] = this.noPackage.value.numberPackage;
+  //   this.params.getValue()['filter.numberPackage'] =
+  //     this.noPackage.value.numberPackage;
+  //   this.packageGoodService
+  //     .getPaqDestinationDet(this.params.getValue())
+  //     .subscribe(
+  //       async response => {
+  //         this.goodsList = response.data;
+  //         let dataMap = await Promise.all(
+  //           response.data.map(async (item: any) => {
+  //             const respAvailable = await this.validateGood(item);
+  //             let disponible = JSON.parse(
+  //               JSON.stringify(respAvailable)
+  //             ).available;
+  //             return {
+  //               ...item,
+  //               available: disponible,
+  //             };
+  //           })
+  //         );
+  //         this.totalItems = response.count || 0;
+  //         this.data.load(dataMap);
+  //         this.dataPrevisualization = dataMap;
+  //         this.loading = false;
+  //       },
+  //       error => {
+  //         this.totalItems = 0;
+  //         this.data.load([]);
+  //         this.dataPrevisualization = [];
+  //         this.loading = false;
+  //       }
+  //     );
+  // }
 
   chargeForm2(noGoodFather: string) {
     let params = new ListParams();
