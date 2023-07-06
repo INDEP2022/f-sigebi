@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsModalRef,
@@ -159,6 +160,7 @@ export class ResquestNumberingChangeComponent
 
   //Reactive Forms
   form: FormGroup;
+  authorizeDate: any;
 
   get legalStatus() {
     return this.form.get('legalStatus');
@@ -1001,5 +1003,28 @@ export class ResquestNumberingChangeComponent
       ],
       authorizeDate: [null, [Validators.required]],
     });
+    this.formaplicationData
+      .get('dateRequestChangeNumerary')
+      .valueChanges.subscribe((date: Date) => {
+        if (date) {
+          const formattedDate = moment(date).format('DD-MM-YYYY');
+          this.formaplicationData.patchValue(
+            { dateRequestChangeNumerary: formattedDate },
+            { emitEvent: false }
+          );
+        }
+      });
+
+    this.formaplicationData
+      .get('authorizeDate')
+      .valueChanges.subscribe((date: Date) => {
+        if (date) {
+          const formattedDate = moment(date).format('DD-MM-YYYY');
+          this.formaplicationData.patchValue(
+            { authorizeDate: formattedDate },
+            { emitEvent: false }
+          );
+        }
+      });
   }
 }

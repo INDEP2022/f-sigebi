@@ -22,6 +22,11 @@ interface ISettings {
         transform: translate3d(0px, 34px, 0px) !important;
         margin-right: 0px !important;
       }
+      #dropdown-basic.left {
+        inset: 100% auto auto -100% !important;
+        width: 200px !important;
+        max-width: 200px !important;
+      }
     `,
   ],
 })
@@ -37,6 +42,9 @@ export class ColumnsSelectComponent implements OnInit {
   @Output() settingsChange = new EventEmitter<any>();
   private allColumns: any = {};
   columns: IColumns[] = [];
+  @Input()
+  leftList: boolean = false;
+
   constructor() {}
 
   ngOnInit(): void {
