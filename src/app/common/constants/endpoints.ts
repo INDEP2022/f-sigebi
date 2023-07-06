@@ -74,6 +74,7 @@ export enum ENDPOINT_LINKS {
   Parameter = 'catalog/parameter',
   ParametersIndicators = 'catalog/parameters-indicators',
   PaymentConcept = 'payments-concept',
+  PaymentService = 'paymentservices',
   Penalty = 'catalog/penalty',
   Person = 'catalog/person',
   Proeficient = 'catalog/proficient',
