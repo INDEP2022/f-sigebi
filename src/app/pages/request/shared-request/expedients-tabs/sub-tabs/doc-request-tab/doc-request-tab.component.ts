@@ -100,11 +100,9 @@ export class DocRequestTabComponent
   }
 
   ngOnInit(): void {
-    //console.log('MODULO', this.typeModule);
     // DISABLED BUTTON - FINALIZED //
     this.task = JSON.parse(localStorage.getItem('Task'));
     this.statusTask = this.task.status;
-    //console.log('statustask', this.statusTask);
 
     this.prepareForm();
     this.getRegDelegation(new ListParams());
@@ -274,10 +272,8 @@ export class DocRequestTabComponent
 
             Promise.all(filterDoc).then(data => {
               this.paragraphs1 =
-                res.data.length > 10
-                  ? this.setPaginate([...res.data])
-                  : res.data;
-              this.totalItems = res.data.length;
+                res.data.length > 10 ? this.setPaginate([...data]) : data;
+              this.totalItems = data.length;
 
               //this.allDataDocReq = x;
               //this.paragraphs.load(x);
@@ -322,10 +318,8 @@ export class DocRequestTabComponent
 
             Promise.all(info).then(data => {
               this.paragraphs1 =
-                res.data.length > 10
-                  ? this.setPaginate([...res.data])
-                  : res.data;
-              this.totalItems = res.data.length;
+                res.data.length > 10 ? this.setPaginate([...data]) : data;
+              this.totalItems = data.length;
 
               //this.allDataDocReq = x;
               //this.paragraphs.load(x);
@@ -398,7 +392,6 @@ export class DocRequestTabComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: data => {
-            console.log('Método getRegionalDelegation');
             resolve(data?.description);
           },
           error: error => {},
@@ -413,7 +406,6 @@ export class DocRequestTabComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: data => {
-            console.log('Método getStateDoc');
             resolve(data?.descCondition);
           },
           error: error => {
@@ -444,8 +436,6 @@ export class DocRequestTabComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: (resp: any) => {
-          console.log('Método getDocType');
-          console.log();
           this.typesDocuments = resp.data; //= new DefaultSelect(resp.data, resp.length);
         },
       });
@@ -811,7 +801,6 @@ export class DocRequestTabComponent
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(data => {
-        console.log('Método getTransfe');
         this.selectTransfe = new DefaultSelect(data.data, data.count);
       });
   }

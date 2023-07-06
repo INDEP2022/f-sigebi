@@ -61,11 +61,9 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.task = JSON.parse(localStorage.getItem('Task'));
-    console.log('task', this.task);
 
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
 
     this.showHideErrorInterceptorService.showHideError(false);
     this.settings = {
@@ -110,7 +108,6 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
       this.params.getValue()['filter.requestId'] = this.idRequest;
       this.goodFinderService.goodFinder(this.params.getValue()).subscribe({
         next: async (data: any) => {
-          console.log('Fotos de bienes, data: ', data);
           const filterGoodType = data.data.map(async (item: any) => {
             //const goodType = await this.getGoodType(item.goodTypeId);
             //item['goodTypeId'] = goodType;
