@@ -26,6 +26,7 @@
           [attr.class]="'table-bordered table-responsive'"
           [settings]="goodSetting"
           [source]="assetsArray"
+          (rowSelect)="selectGoods($event.data)"
           ><!-- (userRowSelect)="selectGoods($event)" -->
         </ng2-smart-table>
       </div>
