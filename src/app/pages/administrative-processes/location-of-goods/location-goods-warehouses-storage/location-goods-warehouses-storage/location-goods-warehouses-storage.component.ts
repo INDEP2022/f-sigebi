@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { takeUntil } from 'rxjs';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -24,6 +25,7 @@ export class LocationGoodsWarehousesStorageComponent
   //Reactive Forms
   form: FormGroup;
   formWarehouse: FormGroup;
+  mostrarAlmacen = true;
   formVault: FormGroup;
   typeLocation: string = '';
   good: IGood;
@@ -31,6 +33,17 @@ export class LocationGoodsWarehousesStorageComponent
   warehouseDisable: boolean = true;
   vaultDisable: boolean = true;
   nullDisable: boolean = true;
+  paramsScreen: IParamsUbicationGood = {
+    PAR_MASIVO: '',
+    origin: '',
+  };
+  paramsCurrentScreen = {
+    TIPO_PROC: '',
+    NO_INDICADOR: '',
+  };
+  screenKey: string = 'FACTADBUBICABIEN'; // Clave de la pantalla actual
+  origin: string = null;
+
   get numberGood() {
     return this.form.get('good');
   }
@@ -70,7 +83,8 @@ export class LocationGoodsWarehousesStorageComponent
     private readonly goodServices: GoodService,
     private token: AuthService,
     private warehouseService: WarehouseService,
-    private safeService: SafeService
+    private safeService: SafeService,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
@@ -83,6 +97,34 @@ export class LocationGoodsWarehousesStorageComponent
     this.buildFormVault();
     this.form.disable();
     this.numberGood.enable();
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(paramsQuery => {
+        this.origin = paramsQuery['origin'] ?? null;
+        this.paramsScreen.PAR_MASIVO = paramsQuery['PAR_MASIVO'] ?? null;
+        if (this.origin == 'FACTADBUBICABIEN') {
+          for (const key in this.paramsScreen) {
+            if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
+              this.paramsScreen[key as keyof typeof this.paramsScreen] =
+                paramsQuery[key] ?? null;
+            }
+          }
+          // this.origin2 = paramsQuery['origin2'] ?? null;
+          // this.origin3 = paramsQuery['origin3'] ?? null;
+        }
+      });
+    if (this.paramsScreen) {
+      if (this.paramsScreen.PAR_MASIVO) {
+        this.loadGood();
+      } else {
+        console.log('SIN PARAMETROS');
+        if (!this.origin) {
+          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de Actas
+          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de Actas
+        } else {
+        }
+      }
+    }
   }
 
   private buildForm() {
@@ -149,29 +191,36 @@ export class LocationGoodsWarehousesStorageComponent
     this.loading = true;
     this.warehouseDisable = true;
     this.vaultDisable = true;
-    this.goodServices.getById(this.numberGood.value).subscribe({
-      next: response => {
-        console.log(response);
-        this.good = response;
-        this.validRadio(this.good);
-        this.loadDescriptionStatus(this.good);
-        this.loadDescriptionWarehouse(this.good.storeNumber);
-        this.loadDescriptionVault(this.good.vaultNumber);
-        this.setGood(this.good);
-        this.radio.enable();
-        this.currentLocationWare.disable();
-        this.currentDescriptionWare.disable();
-        this.currentLocationVault.disable();
-        this.currentDescriptionVault.disable();
-        this.loading = false;
-      },
-      error: err => {
-        console.log(err);
-      },
-    });
+    let body: IParamsUbicationGoodBody = {
+      PAR_MASIVO: this.paramsScreen.PAR_MASIVO,
+    };
+    let subscription = this.goodServices
+      .getByIdAndGoodId(body.PAR_MASIVO, body.PAR_MASIVO)
+      .subscribe({
+        next: response => {
+          this.loading = false;
+          console.log(response);
+          this.good = response;
+          this.validRadio(this.good);
+          this.loadDescriptionStatus(this.good);
+          this.loadDescriptionWarehouse(this.good.storeNumber);
+          this.loadDescriptionVault(this.good.vaultNumber);
+          this.setGood(this.good);
+          this.radio.enable();
+          this.currentLocationWare.disable();
+          this.currentDescriptionWare.disable();
+          this.currentLocationVault.disable();
+          this.currentDescriptionVault.disable();
+          subscription.unsubscribe();
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
   }
 
   setGood(good: IGood) {
+    this.numberGood.setValue(good.id);
     this.description.setValue(good.description);
     this.radio.setValue(good.ubicationType);
     this.currentLocationWare.setValue(good.storeNumber);
@@ -289,4 +338,17 @@ export class LocationGoodsWarehousesStorageComponent
     good.storeNumber === null ? (this.warehouseDisable = false) : '';
     good.vaultNumber === null ? (this.vaultDisable = false) : '';
   }
+
+  apagaAlmacenes() {
+    this.mostrarAlmacen = false;
+  }
+}
+
+export interface IParamsUbicationGood {
+  PAR_MASIVO: string;
+  origin: string;
+}
+
+export interface IParamsUbicationGoodBody {
+  PAR_MASIVO: string;
 }
