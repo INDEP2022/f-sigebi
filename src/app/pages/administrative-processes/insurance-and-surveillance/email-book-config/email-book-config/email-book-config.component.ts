@@ -71,6 +71,7 @@ export class EmailBookConfigComponent
       }
       if (res.action === 'create') {
         this.emailsBook.prepend(res.newData);
+        this.getVigMailBook();
       } else {
         this.emailsBook.update(res.oldData, res.newData);
       }

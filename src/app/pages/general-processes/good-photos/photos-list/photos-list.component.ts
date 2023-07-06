@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import {
   catchError,
-  concat,
   debounceTime,
   firstValueFrom,
   map,
@@ -198,8 +197,9 @@ export class PhotosListComponent extends BasePage implements OnInit {
                 const noActa = await this.pufValidaProcesoBien();
                 if (noActa) {
                   this.errorMessage =
-                    'No puede alterar las fotos, el bien ya fue recibido por el acta ' +
-                    noActa;
+                    'No tiene permisos de escritura debio a que el bien ya fue recibido por el acta ' +
+                    noActa +
+                    ' y esta se encuentra cerrada';
                   console.log(this.errorMessage);
                 } else {
                   this.errorMessage = null;
@@ -239,41 +239,74 @@ export class PhotosListComponent extends BasePage implements OnInit {
 
   private async deleteSelectedFiles() {
     this.errorImages = [];
-    const obs = this.filesToDelete.map(filename => {
-      const index = filename.indexOf('F');
-      const finish = filename.indexOf('.');
-      return this.deleteFile(
-        +filename.substring(index + 1, finish),
-        filename
-      ).pipe(debounceTime(500));
-    });
-    concat(...obs)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        complete: () => {
-          // this.files = [];
-          this.alert(
-            'success',
-            'Eliminación de Fotos',
-            'Se eliminaron las fotos correctamente'
-          );
-          this.filesToDelete = [];
-          this.service.deleteEvent.next(true);
-          this.getData();
-        },
-        error: err => {
-          this.alert(
-            'error',
-            'Imagenes sin eliminar',
+    const results = await Promise.all(
+      this.filesToDelete.map(async filename => {
+        const index = filename.indexOf('F');
+        const finish = filename.indexOf('.');
+        return await firstValueFrom(
+          this.deleteFile(
+            +filename.substring(index + 1, finish),
+            filename
+          ).pipe(debounceTime(500))
+        );
+      })
+    );
+    if (this.errorImages.length === this.filesToDelete.length) {
+      this.alert('error', 'ERROR', 'No se pudieron eliminar las fotos');
+    } else {
+      if (this.errorImages.length > 0) {
+        this.alert(
+          'warning',
+          'Fotos Eliminadas',
+          'pero no se puediero eliminar las siguientes fotos ' +
             this.errorImages.toString()
-          );
-          if (this.errorImages.length < this.filesToDelete.length) {
-            this.filesToDelete = [];
-            this.service.deleteEvent.next(true);
-            this.getData();
-          }
-        },
-      });
+        );
+      } else {
+        this.alert(
+          'success',
+          'Eliminación de Fotos',
+          'Se eliminaron las fotos correctamente'
+        );
+      }
+    }
+    this.filesToDelete = [];
+    this.service.deleteEvent.next(true);
+    this.getData();
+    // const obs = this.filesToDelete.map(filename => {
+    //   const index = filename.indexOf('F');
+    //   const finish = filename.indexOf('.');
+    //   return this.deleteFile(
+    //     +filename.substring(index + 1, finish),
+    //     filename
+    //   ).pipe(debounceTime(500));
+    // });
+    // concat(...obs)
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe({
+    //     complete: () => {
+    //       // this.files = [];
+    //       this.alert(
+    //         'success',
+    //         'Eliminación de Fotos',
+    //         'Se eliminaron las fotos correctamente'
+    //       );
+    //       this.filesToDelete = [];
+    //       this.service.deleteEvent.next(true);
+    //       this.getData();
+    //     },
+    //     error: err => {
+    //       this.alert(
+    //         'error',
+    //         'Imagenes sin eliminar',
+    //         this.errorImages.toString()
+    //       );
+    //       if (this.errorImages.length < this.filesToDelete.length) {
+    //         this.filesToDelete = [];
+    //         this.service.deleteEvent.next(true);
+    //         this.getData();
+    //       }
+    //     },
+    //   });
   }
 
   private deleteFile(consecNumber: number, filename: string) {
@@ -287,7 +320,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
           //   'Ocurrió un error al eliminar la imagen'
           // );
           this.errorImages.push(filename);
-          return null;
+          return of(null);
         })
       );
   }
