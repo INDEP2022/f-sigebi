@@ -32,6 +32,7 @@ export enum GoodEndpoints {
   PAValidaCambioEstatus = 'good/testValid',
   GetMassiveSearch = 'good/getMassiveSearch',
   GoodsMotivesrev2 = 'goods-motivesrev',
+  Sgood = `good/searchGoods`,
 }
 
 export enum GoodProcessPoints {
