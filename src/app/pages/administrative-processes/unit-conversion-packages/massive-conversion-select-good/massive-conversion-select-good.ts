@@ -32,7 +32,7 @@ export class MassiveConversionSelectGoodComponent
   implements OnInit
 {
   //Variables que recibe
-  paqDestinationGoodLenght: number
+  DataPaqDestinationGood: any[]
   clearPaqDestination: boolean
   //Params para navegación
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -279,7 +279,7 @@ export class MassiveConversionSelectGoodComponent
     let v_bani: boolean
       
       if(goodCheck.length > 0){
-        if(this.paqDestinationGoodLenght > 0){
+        if(this.DataPaqDestinationGood.length > 0){
           this.alertQuestion('question','¿El paquete tiene bienes, se eliminan?','','Eliminar').then(
             q => {
               if(q.isConfirmed){
@@ -287,6 +287,7 @@ export class MassiveConversionSelectGoodComponent
                 v_bani = false
               }else{
                 v_bani = true
+                this.DataPaqDestinationGood.length
               }
             }
           )
