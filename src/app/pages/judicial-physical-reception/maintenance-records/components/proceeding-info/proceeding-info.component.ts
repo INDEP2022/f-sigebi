@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import {
+  NUMBERS_PATTERN,
   NUM_POSITIVE,
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
@@ -144,7 +145,7 @@ export class ProceedingInfoComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      id: [null, Validators.pattern(NUM_POSITIVE)],
+      id: [null, Validators.pattern(NUMBERS_PATTERN)],
       numFile: [null, Validators.pattern(NUM_POSITIVE)],
       cveActa: [null, [Validators.pattern(STRING_PATTERN)]],
       tipoActa: [null],
