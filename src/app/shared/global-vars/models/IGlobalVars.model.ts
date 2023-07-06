@@ -36,4 +36,5 @@ export interface IGlobalVars {
   REL_BIENES: number;
   IMP_OF: any;
   NO_EXPEDIENTE_F?: string | number;
+  TIPO_DICTA_F?: string;
 }

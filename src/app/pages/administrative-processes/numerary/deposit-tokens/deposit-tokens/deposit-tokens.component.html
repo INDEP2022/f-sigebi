@@ -22,9 +22,8 @@
                 <button
                   (click)="addMovement()"
                   type="button"
-                  tooltip="Agregar"
                   containerClass="tooltip-style"
-                  class="btn btn-primary btn-sm active ml-2 mr-2">
+                  class="btn btn-info btn-sm active ml-2 mr-2">
                   Agregar
                   <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
@@ -107,12 +106,12 @@
             <div class="row">
               <div class="col-md-12 mt-3 text-center">
                 <button
-                  class="btn btn-success btn-sm w-100"
+                  class="btn btn-success btn-sm active w-100"
                   style="font-size: 12px"
                   type="button"
                   (click)="file.click()">
                   Importar CSV
-                  <i class="bx bx-download float-icon"></i>
+                  <i class="bi bi-file-earmark-excel-fill"></i>
                 </button>
                 <input
                   type="file"
@@ -125,8 +124,9 @@
               <div class="col-md-12 mt-3 text-center">
                 <button
                   (click)="exportar()"
-                  class="btn btn-success btn-sm w-100">
-                  Exportar
+                  style="font-size: 12px"
+                  class="btn btn-success btn-sm active w-100">
+                  Exportar CSV
                   <i class="bx bx-upload float-icon"></i>
                 </button>
               </div>
@@ -135,14 +135,14 @@
                 <button
                   (click)="actualizarFunc()"
                   class="btn btn-primary btn-sm active w-100">
-                  Actualizar
+                  Recargar
                   <i class="fas fa-sync-alt"> </i>
                 </button>
               </div>
               <div class="col-md-12 mt-3 text-center">
                 <button
                   (click)="desconciliarFunc()"
-                  class="btn btn-secondary btn-sm active w-100">
+                  class="btn btn-primary btn-sm active w-100">
                   Desconciliar
                 </button>
               </div>

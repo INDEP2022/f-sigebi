@@ -47,7 +47,7 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
 
   confirm() {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Estás seguro que desea confirmar el alta de almacén?'
     ).then(async question => {
@@ -76,7 +76,7 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
                 const closeTaskCreateWarehouse =
                   await this.closeTaskWarehouse();
                 if (closeTaskCreateWarehouse) {
-                  this.onLoadToast(
+                  this.alert(
                     'success',
                     'Acción correcta',
                     'Alta de almacén confirmada correctamente'

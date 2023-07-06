@@ -17,6 +17,7 @@ import { CardComponent } from './components/card/card.component';
 import { CheckboxColumnComponent } from './components/checkbox-column/checkbox-column.component';
 import { CheckboxDisabledElementComponent } from './components/checkbox-element-smarttable/checkbox-disabled-element';
 import { CheckboxElementComponent } from './components/checkbox-element-smarttable/checkbox-element';
+import { CheckboxElementRecordAccountStatementsComponent } from './components/checkbox-element-smarttable/checkbox-element-record-account-statements';
 import { ColumnsSelectComponent } from './components/columns-select/columns-select.component';
 import { ConfirmButtonComponent } from './components/confirm-button/confirm-button.component';
 import { DividerComponent } from './components/divider/divider.component';
@@ -61,6 +62,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     SearchBarSimpleComponent,
     DividerComponent,
     CheckboxElementComponent,
+    CheckboxElementRecordAccountStatementsComponent,
     CheckboxDisabledElementComponent,
     PermissionsDirective,
     MaxLengthDirective,
@@ -106,6 +108,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     FormRadioComponent,
     CommonModule,
     CheckboxElementComponent,
+    CheckboxElementRecordAccountStatementsComponent,
     CheckboxDisabledElementComponent,
     CheckboxColumnComponent,
     NgScrollbarModule,

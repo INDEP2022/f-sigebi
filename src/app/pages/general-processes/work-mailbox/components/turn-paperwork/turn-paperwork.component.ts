@@ -139,6 +139,8 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
   downloadReport(user: string) {
     return this.getPaperwork().pipe(
       switchMap(paperwork => {
+        console.log(paperwork);
+
         const params = {
           PFOLIO: paperwork.folio,
           PTURNADOA: user,

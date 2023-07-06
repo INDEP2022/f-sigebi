@@ -5,13 +5,20 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import {
   IProccesNum,
   IRequesNumeraryEnc,
 } from 'src/app/core/models/ms-numerary/numerary.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
+import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -21,9 +28,17 @@ import {
   REQUESTS_COLUMNS,
   TOTALS_COLUMNS,
 } from './numerary-calc-columns';
+import { ProcessService } from './process.service';
 
 interface IGloval {
   process: string;
+}
+
+interface ICurrencyRes {
+  data: {
+    ind_moneda: string;
+  };
+  registers: number;
 }
 
 @Component({
@@ -53,34 +68,55 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   totalItems2: number = 0;
 
   global: IGloval = {
-    process: '',
+    process: 'C',
   };
 
   DATA: any[] = [
     {
-      label: 'Tipo 1',
-      value: 'Tipo 1',
+      label: 'PESOS',
+      value: 'P',
     },
     {
-      label: 'Tipo 1',
-      value: 'Tipo 1',
+      label: 'DOLARES',
+      value: 'D',
     },
     {
-      label: 'Tipo 1',
-      value: 'Tipo 1',
+      label: 'EUROS',
+      value: 'E',
+    },
+    {
+      label: 'CONV/PESOS',
+      value: 'C',
+    },
+    {
+      label: 'CONV/DOLARES',
+      value: 'CD',
     },
   ];
 
   dataSelect = new DefaultSelect<any>();
+  procesosNums = new DefaultSelect<IProccesNum[]>();
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
+  textButton: string = 'Calcula Intereses';
 
+  blkSolicitudesNumeDe: any = {};
+
+  proceso: IProccesNum;
+  get userAuth() {
+    return this.authService.decodeToken().preferred_username;
+  }
   constructor(
     private fb: FormBuilder,
     private readonly numeraryService: NumeraryService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
-    private siabService: SiabService
+    private siabService: SiabService,
+    private survillanceService: SurvillanceService,
+    private excelService: ExcelService,
+    private goodProcessService: GoodProcessService,
+    private authService: AuthService,
+    private readonly processService: ProcessService
   ) {
     super();
     this.settings = {
@@ -100,6 +136,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.form.disable();
     this.form.get('type').enable();
+    this.form.get('idProcess').enable();
     /* this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getRequestNumeEnc()); */
@@ -113,22 +150,62 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       .subscribe(() => this.getRequestNumeCal()); */
   }
 
+  getProcesosNum(params: ListParams) {
+    const field = `filter.name`;
+    if (params.text !== '' && params.text !== null) {
+      this.columnFilters[field] = `${SearchFilter.ILIKE}:${params.text}`;
+    } else {
+      delete this.columnFilters[field];
+    }
+    let paramsValue = { ...params, ...this.columnFilters };
+    this.numeraryService.getAllProccesNum(paramsValue).subscribe({
+      next: resp =>
+        (this.procesosNums = new DefaultSelect(resp.data, resp.count)),
+      error: err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+        //this.onLoadToast('error', 'Error', error);
+      },
+    });
+  }
+
+  onProcesosNum(event: IProccesNum) {
+    if (event) {
+      this.processService.process(event);
+      this.proceso = event;
+      this.form
+        .get('date')
+        .patchValue(
+          event.procnumDate.split('T')[0].split('-').reverse().join('/')
+        );
+      this.form.get('concept').patchValue(event.description);
+      this.form.get('totalInterests').patchValue(event.interestAll);
+      this.form.get('totalImport').patchValue(event.numeraryAll);
+      this.tCurrency();
+    } else {
+      this.form.reset();
+      this.formBlkControl.reset();
+    }
+  }
+
   prepareForm() {
     this.form = this.fb.group({
-      idProcess: [null, Validators.required],
-      date: [null, Validators.required],
-      type: [null, Validators.required],
-      concept: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      totalInterests: [null, Validators.required],
+      idProcess: [null],
+      date: [null],
+      type: [null],
+      concept: [null, [Validators.pattern(STRING_PATTERN)]],
+      totalInterests: [null],
       currency: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      bankComision: [null, Validators.required],
+      bankComision: [null],
       totalImport: [null, Validators.required],
+      user: [null, Validators.required],
     });
     this.formBlkControl = this.fb.group({
       tMoneda: [null, Validators.required],
@@ -297,19 +374,18 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       'Se eliminara proceso de numerario. ¿Deseas continuar?'
     );
     if (response.isConfirmed) {
-      //// abrir el modal
       const deleteExi: boolean = await this.deleteSoli(0);
       if (deleteExi) {
         this.alert(
           'success',
           'Cálculo de numerario',
-          'Fue eliminado el calculo solicitado'
+          'Fue eliminado el cálculo solicitado correctamente'
         );
       } else {
         this.alert(
           'error',
           'Ha ocurrido un error',
-          'No fue posible eliminar el calculo colicitado'
+          'No fue posible eliminar el cálculo colicitado'
         );
       }
     }
@@ -331,9 +407,13 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   openModal() {
     let config: ModalOptions = {
       initialState: {
+        process: this.proceso,
         callback: (next: any) => {
           if (next) {
-            console.error('Aca esta la data', next);
+            if (next === 'preInsert') {
+              this.createProccesNum();
+              return;
+            }
             this.totalItems = next.length;
             this.data.load(next);
             this.data.refresh();
@@ -348,21 +428,9 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
 
   async onChangeProcces(event: IRequesNumeraryEnc) {
     console.log(event);
-    const proce: IProccesNum = await this.getProccesNum(event.procnumId);
-    console.log(proce);
-    console.log(proce.numeraryAll);
-    if (proce) {
-      this.form.get('idProcess').patchValue(event.procnumId);
-      this.form
-        .get('date')
-        .patchValue(
-          proce.procnumDate.split('T')[0].split('-').reverse().join('/')
-        );
-      this.form.get('concept').patchValue(proce.description);
-      this.form.get('totalInterests').patchValue(proce.interestAll);
-      this.form.get('totalImport').patchValue(proce.numeraryAll);
-      this.getRequestNumeDet(event.solnumId);
-    }
+    this.getRequestNumeDet(event.solnumId);
+    //const proce: IProccesNum = await this.getProccesNum(event.procnumId);
+    this.global.process = 'C';
   }
 
   getProccesNum(procnumId: number) {
@@ -528,5 +596,172 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   onChangeTable2(event: any) {
     console.log(event);
     this.getRequestNumeCal(event.solnumId, event.goodNumber);
+  }
+
+  async tCurrency() {
+    if (this.form.get('idProcess').value !== null) {
+      const res: ICurrencyRes = await this.getIndMoneda(
+        this.form.get('idProcess').value
+      );
+      console.error(res);
+      if (res.registers === 0) {
+        this.alert(
+          'warning',
+          'Cálculo de numerario',
+          'No se encontro el tipo de moneda en este proceso.'
+        );
+        return;
+      }
+      if (res.registers > 1) {
+        this.alert(
+          'warning',
+          'Cálculo de numerario',
+          'Se encontraron mas tipos de moneda.'
+        );
+        return;
+      }
+      if (res.data.ind_moneda) {
+        this.formBlkControl.get('tMoneda').patchValue(res.data.ind_moneda);
+      }
+      this.formBlkControl.get('tMoneda').disable();
+      console.error(this.formBlkControl.get('tMoneda').value);
+    }
+  }
+
+  getIndMoneda(idProcnum: number | string) {
+    return new Promise<ICurrencyRes>((res, _rej) => {
+      this.survillanceService.getIndMoneda(idProcnum).subscribe({
+        next: resp => {
+          console.log(resp);
+          const data: ICurrencyRes = {
+            data: resp.data[0],
+            registers: resp.data.length,
+          };
+          res(data);
+        },
+        error: err => {
+          const data: ICurrencyRes = {
+            data: {
+              ind_moneda: '',
+            },
+            registers: 0,
+          };
+          res(data);
+        },
+      });
+    });
+  }
+
+  async exportar() {
+    if (this.formBlkControl.get('tMoneda').value === 'P') {
+      this.alert(
+        'warning',
+        'Cálculo de numerario',
+        'El proceso no presenta ninguna comisión bancaria'
+      );
+      return;
+    }
+    const filename: string = 'Numerario Prorraneo';
+    const jsonToCsv = await this.returnJsonToCsv(8);
+    console.log('jsonToCsv', jsonToCsv);
+    if (jsonToCsv.length === 0) {
+      this.alert(
+        'warning',
+        'Cálculo de numerario',
+        'No hay información para descargar'
+      );
+      return;
+    }
+    this.excelService.export(jsonToCsv, { type: 'csv', filename });
+  }
+
+  async returnJsonToCsv(idProcnum: number) {
+    return new Promise<any[]>((res, rej) => {
+      this.goodProcessService.getNumeProrraCsv(idProcnum).subscribe({
+        next: resp => {
+          console.log(resp);
+          res(resp.data);
+        },
+        error: err => {
+          res([]);
+        },
+      });
+    });
+  }
+
+  async exportarTotal() {
+    const filename: string = 'Numerario Total';
+    const jsonToCsv = await this.returnJsonToTotalCsv(8);
+    console.log('jsonToCsv', jsonToCsv);
+    if (jsonToCsv.length === 0) {
+      this.alert(
+        'warning',
+        'Cálculo de numerario',
+        'No hay información para descargar'
+      );
+      return;
+    }
+    this.excelService.export(jsonToCsv, { type: 'csv', filename });
+  }
+
+  async returnJsonToTotalCsv(idProcnum: number) {
+    return new Promise<any[]>((res, rej) => {
+      this.goodProcessService
+        .getFproSolNumerarioProdnumCsv(idProcnum, 10000)
+        .subscribe({
+          next: resp => {
+            console.log(resp);
+            res(resp.data);
+          },
+          error: err => {
+            res([]);
+          },
+        });
+    });
+  }
+
+  preInsert() {
+    this.form.get('date').setValue(new Date());
+    this.form.get('totalInterests').setValue(0);
+    this.form.get('totalImport').setValue(0);
+    this.form.get('user').setValue(this.userAuth);
+  }
+
+  createProccesNum() {
+    const model: IProccesNum = {
+      procnumDate: this.obtenerFechaActual(),
+      description: '  ',
+      interestAll: 0,
+      numeraryAll: 0,
+      procnumType: this.form.get('type').value,
+      user: this.userAuth,
+    };
+    console.log(model);
+    this.numeraryService.createProccesNum(model).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        this.processService.process(response);
+        this.alert(
+          'success',
+          'Cálculo de numerario',
+          'Se ha creado el cálculo de numeratio correctamente'
+        );
+      },
+      error: err => {
+        this.alert(
+          'error',
+          'Ha ocurrido un error',
+          'No se ha podido crear el cálculo de numeratio'
+        );
+      },
+    });
+  }
+
+  obtenerFechaActual(): string {
+    const fechaActual = new Date();
+    const year = fechaActual.getFullYear();
+    const month = String(fechaActual.getMonth() + 1).padStart(2, '0');
+    const day = String(fechaActual.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 }
