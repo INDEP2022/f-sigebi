@@ -39,7 +39,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   @Input() subdelegationField: string = 'subdelegation';
 
   @Input() labelDelegation: string = 'Delegación';
-  @Input() labelSubdelegation: string = 'Sub Delegación';
+  @Input() labelSubdelegation: string = 'Subdelegación';
 
   @Input() showSubdelegation: boolean = true;
   @Input() showDelegation: boolean = true;
@@ -98,7 +98,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        this.alert('warning', 'No se encontraron registros', '');
       },
       () => {}
     );
@@ -123,8 +123,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
           } else {
             error = err.message;
           }
-
-          this.onLoadToast('error', 'Error', error);
+          this.alert('warning', 'No se encontraron registros', '');
         },
       });
     } else {
@@ -140,7 +139,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
             error = err.message;
           }
 
-          this.onLoadToast('error', 'Error', error);
+          this.alert('warning', 'No se encontraron registros', '');
         }
       );
     }
