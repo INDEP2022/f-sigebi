@@ -124,4 +124,9 @@ export class SurvillanceService extends HttpService {
   createVigSupervisionTmp(params?: ListParams) {
     return this.post<IListResponse<any>>(this.route.VigSupervisionTMP, params);
   }
+
+  getIndMoneda(idProcnum: number | string) {
+    const route = `application/get-getIndMoneda?id_procnum=${idProcnum}`;
+    return this.get<IListResponse<any>>(route);
+  }
 }

@@ -112,9 +112,9 @@ export class PerformProgrammingFormComponent
   localities = new DefaultSelect<ILocality>();
   warehouseUbication: string = '';
   tranportableItems: number = 0;
-  headingTransportable: string = `Transportables(0)`;
-  headingGuard: string = `Resguardo(0)`;
-  headingWarehouse: string = `Almacén INDEP(0)`;
+  headingTransportable: string = `Transportables (0)`;
+  headingGuard: string = `Resguardo (0)`;
+  headingWarehouse: string = `Almacén INDEP (0)`;
   idProgramming: number = 0;
   idAuthority: string = '';
   idState: number = 0;
@@ -494,7 +494,6 @@ export class PerformProgrammingFormComponent
                   regDelData,
                   callback: (next: boolean) => {
                     if (next) {
-                      console.log('next', next);
                       this.performForm
                         .get('regionalDelegationNumber')
                         .setValue(this.delegation);
@@ -1290,7 +1289,7 @@ export class PerformProgrammingFormComponent
   sendTransportable() {
     if (this.goodSelect.length) {
       this.alertQuestion(
-        'info',
+        'warning',
         'Acción',
         'Los bienes seleccionados serán enviados a transportable'
       ).then(async question => {
@@ -1392,7 +1391,7 @@ export class PerformProgrammingFormComponent
                 this.goodsTranportables.load(showTransportable);
                 this.totalItemsTransportableGoods =
                   this.goodsTranportables.count();
-                this.headingTransportable = `Transportable(${this.goodsTranportables.count()})`;
+                this.headingTransportable = `Transportable (${this.goodsTranportables.count()})`;
                 resolve(true);
               });
             },
@@ -1578,7 +1577,7 @@ export class PerformProgrammingFormComponent
 
               this.goodsGuards.load(showGuards);
               this.totalItemsTransportableGuard = this.goodsGuards.count();
-              this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+              this.headingGuard = `Resguardo (${this.goodsGuards.count()})`;
               resolve(true);
             });
           },
@@ -1591,7 +1590,7 @@ export class PerformProgrammingFormComponent
   sendWarehouse() {
     if (this.goodSelect.length) {
       this.alertQuestion(
-        'info',
+        'warning',
         'Acción',
         'Los bienes seleccionados serán enviado a almacén'
       ).then(question => {
@@ -1712,7 +1711,7 @@ export class PerformProgrammingFormComponent
               this.goodsWarehouse.load(showWarehouse);
               this.totalItemsTransportableWarehouse =
                 this.goodsWarehouse.count();
-              this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
+              this.headingWarehouse = `Almacén INDEP (${this.goodsWarehouse.count()})`;
               resolve(true);
             });
           },
@@ -1890,7 +1889,7 @@ export class PerformProgrammingFormComponent
 
     this.performForm.get('delregAttentionId').setValue(this.delegationId);
     this.alertQuestion(
-      'info',
+      'question',
       'Confirmación',
       '¿Desea guardar la información de la programación?'
     ).then(async question => {
@@ -2049,7 +2048,7 @@ export class PerformProgrammingFormComponent
         .setValue(this.delegationId);
       this.performForm.get('delregAttentionId').setValue(this.delegationId);
       this.alertQuestion(
-        'info',
+        'question',
         'Confirmación',
         `¿Esta seguro de enviar la programación ${this.dataProgramming.id}?`
       ).then(async question => {
@@ -2161,7 +2160,7 @@ export class PerformProgrammingFormComponent
     if (taskResult) {
       this.msgGuardado(
         'success',
-        'Creación de tarea exitosa',
+        'Creación de tarea correcta',
         `Se creó la tarea Aceptar Programación con el folio: ${folio}`
       );
     }
@@ -2347,8 +2346,10 @@ export class PerformProgrammingFormComponent
 
       this.paramsAuthority.getValue()['filter.idTransferer'] =
         this.transferentId;
+      this.paramsAuthority.getValue()['filter.idAuthority'] = this.autorityId;
       this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
         next: response => {
+          console.log('response', response);
           const nameAndId = `${response.data[0].idAuthority} - ${response.data[0].authorityName}`;
           this.performForm.get('autorityId').setValue(nameAndId);
           this.idStation = this.dataProgramming.stationId;

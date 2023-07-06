@@ -428,7 +428,7 @@ export class MassiveConversionSelectGoodComponent
   }
 
   pbIngresar() {
-    debugger;
+    // debugger;
     if (goodCheck.length > 0) {
       this.clearPrevisualizationData();
     } else {

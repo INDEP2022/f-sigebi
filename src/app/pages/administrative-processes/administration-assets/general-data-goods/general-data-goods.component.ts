@@ -103,6 +103,20 @@ export class GeneralDataGoodsComponent
   }
 
   updateGood() {
+    let required: boolean = false;
+    this.dataAtribute.forEach((item: any) => {
+      if (item.required && (item.value === null || item.value === '')) {
+        required = true;
+      }
+    });
+    if (required) {
+      this.alert(
+        'warning',
+        'Datos inventario',
+        'Debe llenar los valores requeridos.'
+      );
+      return;
+    }
     const patron: RegExp =
       /^(0[1-9]|1[0-9]|2[0-9]|3[01])\/(0[1-9]|1[0-2])\/((19|20)\d\d)$/;
     let body: any = {};
