@@ -240,9 +240,10 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true, //ignora el click fuera del modal
     };
     const count = await this.countAct(trackedGood.goodNumber);
-    console.log({ count });
     if (count > 0) {
       this.modalService.show(GTrackerDocumentsComponent, config);
+    } else {
+      await this.otDocuments(trackedGood);
     }
   }
 
@@ -257,7 +258,50 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     );
   }
 
-  otDocuments() {}
+  async otDocuments(trackedGood: ITrackedGood) {
+    const params = new FilterParams();
+    params.addFilter('numberProceedings', trackedGood.fileNumber);
+    const documents = await this.getDocumentsFilter(params);
+    if (documents.count == 0) {
+      this.alert('error', 'Error', 'No existen documentos para el expediente');
+    } else if (documents.count == 1) {
+      const d = await this.getOtDocs(trackedGood.fileNumber);
+      if (!d.data.length) {
+        this.defaultDocuments(trackedGood);
+      }
+      const { folio_universal, id_medio } = d.data[0];
+      if (folio_universal > 0) {
+      } else {
+        this.defaultDocuments(trackedGood);
+      }
+    } else {
+      this.defaultDocuments(trackedGood);
+    }
+  }
+
+  satDocs() {}
+
+  defaultDocuments(trackedGood: ITrackedGood) {}
+
+  getOtDocs(expedient: string | number) {
+    return firstValueFrom(
+      this.documentsService.otDocuments(expedient).pipe(
+        catchError(() => {
+          return of({ data: [], count: 0 });
+        })
+      )
+    );
+  }
+
+  getDocumentsFilter(params: FilterParams) {
+    return firstValueFrom(
+      this.documentsService.getAllFilter(params.getParams()).pipe(
+        catchError(() => {
+          return of({ data: [], count: 0 });
+        })
+      )
+    );
+  }
 
   async takeOneProcess(turnSelects: any) {
     await this.alertInfo(
