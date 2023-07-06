@@ -129,4 +129,9 @@ export class SurvillanceService extends HttpService {
     const route = `application/get-getIndMoneda?id_procnum=${idProcnum}`;
     return this.get<IListResponse<any>>(route);
   }
+
+  fCalculaNume(idProcnum: number | string, commisionBanc: number) {
+    const route = `${this.route.FCalculaNume}/${idProcnum}/${commisionBanc}`;
+    return this.get<IListResponse<any>>(route);
+  }
 }

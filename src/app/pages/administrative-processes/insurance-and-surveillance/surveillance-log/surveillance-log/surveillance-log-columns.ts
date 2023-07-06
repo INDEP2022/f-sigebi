@@ -11,9 +11,13 @@ export const SURVEILLANCE_LOG_COLUMNS: any = {
     title: 'Fecha Solicitud',
     sort: false,
     valuePrepareFunction: (text: string) => {
-      return `
-        ${text ? text.split('T')[0].split('-').reverse().join('-') : ''}
-      `;
+      if (text) {
+        const parts = text.split('-');
+        if (parts.length === 3) {
+          return parts.reverse().join('/');
+        }
+      }
+      return '';
     },
     filter: {
       type: 'custom',
@@ -25,9 +29,13 @@ export const SURVEILLANCE_LOG_COLUMNS: any = {
     type: 'number',
     sort: false,
     valuePrepareFunction: (text: string) => {
-      return `
-        ${text ? text.split('T')[0].split('-').reverse().join('-') : ''}
-      `;
+      if (text) {
+        const parts = text.split('-');
+        if (parts.length === 3) {
+          return parts.reverse().join('/');
+        }
+      }
+      return '';
     },
     filter: {
       type: 'custom',

@@ -5,7 +5,7 @@ export const TURN_SELECTED_COLUMNS = {
     sort: false,
   },
   email: {
-    title: 'Correo electrónico',
+    title: 'Correo Electrónico',
     type: 'string',
     sort: false,
   },
