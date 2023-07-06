@@ -17,14 +17,12 @@ export class GoodsManagementSocialCabinetTabComponent
   implements OnInit
 {
   // @Input() selectedGoodstxt: number[];
-  @Input() override loading: boolean = false;
   @Input() identifier: number;
   @Input() process: ETypeGabinetProcess = ETypeGabinetProcess['Sin Asignar'];
   @Input() disabledProcess = true;
   typeGabinetProcess = ETypeGabinetProcess;
   form: FormGroup = new FormGroup({});
   processErrors = 0;
-  pageLoading = false;
   user: string;
   constructor(
     private fb: FormBuilder,
@@ -35,6 +33,7 @@ export class GoodsManagementSocialCabinetTabComponent
     this.form = this.fb.group({
       // option: [null, [Validators.required]],
       excuse: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      excuse2: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.user = localStorage.getItem('username').toUpperCase();
     this.goodsManagementService.clear
@@ -46,6 +45,14 @@ export class GoodsManagementSocialCabinetTabComponent
           }
         },
       });
+  }
+
+  get pageLoading() {
+    return this.goodsManagementService.pageLoading;
+  }
+
+  set pageLoading(value) {
+    this.goodsManagementService.pageLoading = value;
   }
 
   cantByProcess(process: ETypeGabinetProcess) {
@@ -122,7 +129,7 @@ export class GoodsManagementSocialCabinetTabComponent
         },
         error: err => {
           this.pageLoading = false;
-          this.form.get('option').setValue(null);
+          // this.form.get('option').setValue(null);
           this.alert('error', 'ERROR', 'Bienes no procesados correctamente');
           // this.selectedGoodstxt = [...this.selectedGoodstxt];
           this.processErrors++;

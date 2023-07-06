@@ -3,7 +3,7 @@
     <h5 class="title">GESTIÓN DE BIENES GABINETE SOCIAL</h5>
   </div>
   <div body>
-    <form-loader *ngIf="loading" [greater]="true"></form-loader>
+    <form-loader *ngIf="pageLoading" [greater]="true"></form-loader>
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <!--Options-->
@@ -77,16 +77,12 @@
           <tabset #staticTabs>
             <tab heading="Sin Asignar">
               <app-goods-management-social-cabinet-tab
-                *ngIf="sinAsignarCant"
-                [loading]="loading"
                 [identifier]="identifier"
                 [disabledProcess]="disabledProcess"
                 [process]="0"></app-goods-management-social-cabinet-tab>
             </tab>
             <tab heading="Susceptible">
               <app-goods-management-social-cabinet-tab
-                *ngIf="susceptibleCant"
-                [loading]="loading"
                 [identifier]="identifier"
                 [disabledProcess]="disabledProcess"
                 [process]="
@@ -95,8 +91,6 @@
             </tab>
             <tab heading="Asignado">
               <app-goods-management-social-cabinet-tab
-                *ngIf="asignadoCant"
-                [loading]="loading"
                 [identifier]="identifier"
                 [disabledProcess]="disabledProcess"
                 [process]="
@@ -105,8 +99,6 @@
             </tab>
             <tab heading="Entregado">
               <app-goods-management-social-cabinet-tab
-                *ngIf="entregadoCant"
-                [loading]="loading"
                 [identifier]="identifier"
                 [disabledProcess]="disabledProcess"
                 [process]="
@@ -115,8 +107,6 @@
             </tab>
             <tab heading="Liberado">
               <app-goods-management-social-cabinet-tab
-                *ngIf="liberadoCant"
-                [loading]="loading"
                 [identifier]="identifier"
                 [disabledProcess]="disabledProcess"
                 [process]="

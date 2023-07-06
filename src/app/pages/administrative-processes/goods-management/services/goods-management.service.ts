@@ -12,7 +12,7 @@ export class GoodsManagementService {
   refreshTable = new Subject<boolean>();
   clear = new Subject<boolean>();
   data: ITrackerGoodSocialCabinet[] = [];
-  loading: boolean = false;
+  pageLoading: boolean = false;
   sinAsignarCant = 0;
   susceptibleCant = 0;
   asignadoCant = 0;

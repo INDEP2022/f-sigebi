@@ -72,6 +72,14 @@ export class GoodsManagementSocialCabinetComponent
     this.goodsManagementService.asignadoCant = value;
   }
 
+  get pageLoading() {
+    return this.goodsManagementService.pageLoading;
+  }
+
+  set pageLoading(value) {
+    this.goodsManagementService.pageLoading = value;
+  }
+
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
@@ -157,7 +165,7 @@ export class GoodsManagementSocialCabinetComponent
   }
 
   async onFileChange(event: any) {
-    this.loading = true;
+    this.pageLoading = true;
     const file = event.target.files[0];
     let fileReader = new FileReader();
     fileReader.onload = async e => {
@@ -197,32 +205,22 @@ export class GoodsManagementSocialCabinetComponent
     this.sinAsignarCant = this.getSinAsignarCant();
     if (this.sinAsignarCant > 0) {
       this.staticTabs.tabs[0].disabled = false;
-    } else {
-      this.staticTabs.tabs[0].disabled = true;
     }
     this.susceptibleCant = this.getSusceptible();
     if (this.susceptibleCant > 0) {
       this.staticTabs.tabs[1].disabled = false;
-    } else {
-      this.staticTabs.tabs[1].disabled = true;
     }
     this.asignadoCant = this.getAsignado();
     if (this.asignadoCant > 0) {
       this.staticTabs.tabs[2].disabled = false;
-    } else {
-      this.staticTabs.tabs[2].disabled = true;
     }
     this.entregadoCant = this.getEntregado();
     if (this.entregadoCant > 0) {
       this.staticTabs.tabs[3].disabled = false;
-    } else {
-      this.staticTabs.tabs[3].disabled = true;
     }
     this.liberadoCant = this.getLiberado();
     if (this.liberadoCant > 0) {
       this.staticTabs.tabs[4].disabled = false;
-    } else {
-      this.staticTabs.tabs[4].disabled = true;
     }
   }
 
@@ -242,7 +240,12 @@ export class GoodsManagementSocialCabinetComponent
       this.alert('error', 'Error', 'Bienes no encontrados');
       this.goodsManagementService.data = [];
       this.goodsManagementService.refreshTable.next(false);
-      this.activateTabs();
+      this.sinAsignarCant = 0;
+      this.susceptibleCant = 0;
+      this.asignadoCant = 0;
+      this.entregadoCant = 0;
+      this.liberadoCant = 0;
+      this.desactivateTabs();
     } else {
       this.totalItems = response.count;
       this.notLoadedGoods = [];
@@ -262,7 +265,7 @@ export class GoodsManagementSocialCabinetComponent
         this.goodsManagementService.refreshTable.next(true);
       }, 500);
     }
-    this.loading = false;
+    this.pageLoading = false;
   }
 
   private getByProcessCant(process: ETypeGabinetProcess) {
