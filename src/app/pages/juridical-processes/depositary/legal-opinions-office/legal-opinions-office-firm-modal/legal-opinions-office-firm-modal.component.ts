@@ -186,8 +186,9 @@ export class LegalOpinionsOfficeFirmModalComponent
           console.log(data);
           this.alertInfo(
             'success',
-            'Se Realizó el Proceso de Firmar el Dictamen Correctamente',
-            data.message
+            '¡Archivo Firmado Correctamente!',
+            'Se Realizó el Proceso de Firmar del Dictamen Correctamente'
+            // data.message
           ).then(() => {
             this.fileForm.controls['signature'] = data.signature;
             this.fileForm.controls['fileData'] = data.fileData;
