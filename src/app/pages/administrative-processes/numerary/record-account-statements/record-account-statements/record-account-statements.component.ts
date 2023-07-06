@@ -57,8 +57,6 @@ export class RecordAccountStatementsComponent
   variableOf: Date;
   variableAt: Date;
 
-  public showModal = false;
-
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -143,6 +141,7 @@ export class RecordAccountStatementsComponent
 
   // Trae la lista de bancos
   searchBanks() {
+    this.dataAccount = new LocalDataSource();
     this.recordAccountStatementsService
       .getAll(this.params.getValue())
       .subscribe({
@@ -159,11 +158,20 @@ export class RecordAccountStatementsComponent
 
   // Asigna el valor del banco seleccionado a la función "searchBankAccount"
   onBankSelectChange(value: any) {
+    this.form.get('account').reset();
+    this.form.get('accountType').reset();
+    this.form.get('square').reset();
+    this.form.get('branch').reset();
+    this.form.get('currency').reset();
+    this.form.get('description').reset();
+    this.cleandInfoDate();
+    this.bankAccountSelect = new DefaultSelect();
+    this.dataAccount = new LocalDataSource();
     if (value && value.bankCode) {
       const bankCode = value.bankCode;
       this.searchBankAccount(bankCode);
     } else {
-      this.cleandInfoGoods();
+      this.cleandInfoAll();
     }
   }
 
@@ -210,8 +218,30 @@ export class RecordAccountStatementsComponent
     this.current = current;
   }
 
+  // Genera el saldo de la cuenta seleccionada al escoger un rango de fechas
+  DateAccountBalance() {
+    const balanceOf = this.datePipe.transform(this.variableOf, 'dd/MM/yyyy');
+    const balanceAt = this.datePipe.transform(this.variableAt, 'dd/MM/yyyy');
+    const model: IDateAccountBalance = {
+      noAccount: this.accountDate,
+      tiDateCalc: balanceOf,
+      tiDateCalcEnd: balanceAt,
+    };
+    this.recordAccountStatementsAccountsService
+      .getAccountBalanceDate(model)
+      .subscribe({
+        next: response => {
+          this.balance = response.result;
+        },
+        error: error => {
+          this.alert('warning', 'Error', 'No se puede generar el saldo');
+        },
+      });
+  }
+
   // Establece los valores de movimientos de la cuenta seleccionada a la tabla
   searchDataAccount(accountNumber: number) {
+    this.loading = true;
     this.dataAccountPaginated = accountNumber;
     this.recordAccountStatementsAccountsService
       .getDataAccount(accountNumber, this.params.getValue())
@@ -233,33 +263,6 @@ export class RecordAccountStatementsComponent
         },
       });
     this.searchFactasStatusCta(accountNumber);
-  }
-
-  // Muestra el saldo de la cuenta cuando se selecciona el rango de fechas
-
-  // SeatearFechas() {
-  //   // Guardar los valores de balanceOf y balanceAt en las variables correspondientes
-  // }
-
-  DateAccountBalance() {
-    const balanceOf = this.datePipe.transform(this.variableOf, 'dd/MM/yyyy');
-    const balanceAt = this.datePipe.transform(this.variableAt, 'dd/MM/yyyy');
-    const model: IDateAccountBalance = {
-      noAccount: this.accountDate,
-      tiDateCalc: balanceOf,
-      tiDateCalcEnd: balanceAt,
-    };
-    console.log(model);
-    this.recordAccountStatementsAccountsService
-      .getAccountBalanceDate(model)
-      .subscribe({
-        next: response => {
-          this.balance = response.result;
-        },
-        error: error => {
-          this.alert('warning', 'Error', 'No se puede generar el saldo');
-        },
-      });
   }
 
   // Trae el nombre del banco y número de cuenta que se establece en el modal de transferencia
@@ -295,22 +298,15 @@ export class RecordAccountStatementsComponent
     this.modalService.show(RecordAccountStatementsModalComponent, modalConfig);
   }
 
-  cleandInfoGoods() {
-    this.banks = null;
-    this.bankAccountSelect = null;
-    this.form.get('account').reset();
-    this.form.get('square').reset();
-    this.form.get('branch').reset();
-    this.form.get('accountType').reset();
-    this.form.get('currency').reset();
+  cleandInfoAll() {
+    this.form.reset();
+    this.searchBanks();
+    this.balance = null;
   }
 
   cleandInfo() {
     this.form.reset();
     this.searchBanks();
-    this.loading = false;
-    this.dataAccount = null;
-    this.totalItems = 0;
   }
 
   cleandInfoDate() {
