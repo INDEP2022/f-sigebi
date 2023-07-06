@@ -1,6 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { catchError, firstValueFrom, map, of, tap } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
+import { PublicationPhotographsService } from 'src/app/core/services/ms-parametercomer/publication-photographs.service';
+import { BasePage } from 'src/app/core/shared';
 
 const LOADING_GIF = 'assets/images/loader-button.gif  ';
 const NO_IMAGE_FOUND = 'assets/images/documents-icons/not-found.jpg';
@@ -51,10 +58,18 @@ const NO_IMAGE_FOUND = 'assets/images/documents-icons/not-found.jpg';
     `,
   ],
 })
-export class PhotoGaleryItemComponent implements OnInit {
+export class PhotoGaleryItemComponent extends BasePage implements OnInit {
   @Input() good: ITrackedGood = null;
   imgSrc: string = null;
-  constructor(private filePhotoService: FilePhotoService) {}
+  constructor(
+    private filePhotoService: FilePhotoService,
+    private photoService: PublicationPhotographsService,
+    private jasperServ: SiabService,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.imgSrc = LOADING_GIF;
@@ -83,5 +98,55 @@ export class PhotoGaleryItemComponent implements OnInit {
         this.imgSrc = NO_IMAGE_FOUND;
       },
     });
+  }
+
+  async callReport(good: ITrackedGood) {
+    if (good.goodNumber) {
+      await this.insertListPhoto(Number(good.goodNumber));
+      this.callReportR(Number(good.goodNumber), null);
+    } else {
+      this.alert('error', 'Error', 'Se requiere de un bien');
+    }
+  }
+
+  async insertListPhoto(goodNumber: number) {
+    return firstValueFrom(
+      this.photoService
+        .pubPhoto({
+          pcNoGood: goodNumber,
+          lNuNoGood: goodNumber,
+        })
+        .pipe(
+          catchError(err => of(false)),
+          map(res => true)
+        )
+    );
+  }
+
+  async callReportR(lnu_good: number, lnu_identificador: number) {
+    this.jasperServ
+      .fetchReport('FICHATECNICA', {
+        P_NO_BIEN: lnu_good,
+        P_IDENTIFICADOR: lnu_identificador,
+      })
+      .pipe(
+        tap(response => {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            },
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        })
+      )
+      .subscribe();
   }
 }

@@ -40,6 +40,7 @@ import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/c
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
@@ -289,7 +290,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     protected serviceOficces: GoodsJobManagementService,
     private changeDetectorRef: ChangeDetectorRef,
     private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
-    private screenStatusService: ScreenStatusService
+    private screenStatusService: ScreenStatusService,
+    private GoodprocessService_: GoodprocessService
   ) {
     super();
     this.procs = new LocalDataSource();
@@ -301,17 +303,23 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       selectMode: 'multi',
       columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
       rowClassFunction: (row: any) => {
-        if (row.data.status === 'CNE') {
+        if (row.data.di_disponible == 'S') {
           return 'bg-success text-white';
-        } else if (
-          row.data.status === 'RRE' ||
-          row.data.status === 'VXR' ||
-          row.data.status === 'DON'
-        ) {
-          return 'bg-dark text-white';
         } else {
-          return 'bg-success text-white';
+          return 'bg-dark text-white';
         }
+
+        // if (row.data.status === 'CNE') {
+        //   return 'bg-success text-white';
+        // } else if (
+        //   row.data.status === 'RRE' ||
+        //   row.data.status === 'VXR' ||
+        //   row.data.status === 'DON'
+        // ) {
+        //   return 'bg-dark text-white';
+        // } else {
+        //   return 'bg-success text-white';
+        // }
       },
     };
     this.settings2 = {
@@ -670,12 +678,12 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
         let result = data.data.map(async (item: any) => {
           let obj = {
-            cveShape: 'FACTDBCONVBIEN',
-            goodNumber: item.id,
+            vcScreen: 'FACTDBCONVBIEN',
+            pNumberGood: item.id,
           };
-          // const di_dispo = await this.getStatusScreen(obj)
-          // console.log("di_dispo", di_dispo)
-          // item['di_disponible'] = di_dispo;
+          const di_dispo = await this.getStatusScreen(obj);
+          console.log('di_dispo', di_dispo);
+          item['di_disponible'] = di_dispo;
         });
 
         Promise.all(result).then(item => {
@@ -694,10 +702,15 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   async getStatusScreen(body: any) {
     return new Promise((resolve, reject) => {
-      this.screenStatusService.getGetGoodScreenStatus(body).subscribe({
+      this.GoodprocessService_.getScreenGood(body).subscribe({
         next: async (state: any) => {
-          console.log('di_dispo', state);
-          resolve('S');
+          if (state.data) {
+            console.log('di_dispo', state);
+            resolve('S');
+          } else {
+            console.log('di_dispo', state);
+            resolve('N');
+          }
         },
         error: () => {
           resolve('N');
@@ -1368,6 +1381,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       },
     });
   }
+  actasDefault: any = null;
   searchActas(actas?: string) {
     actas = this.cveActa;
     const modalConfig = MODAL_CONFIG;
@@ -1378,6 +1392,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     let modalRef = this.modalService.show(FindActaGoodComponent, modalConfig);
     modalRef.content.onSave.subscribe((next: any) => {
       console.log(next);
+      this.actasDefault = next;
       this.fCreate = this.datePipe.transform(
         next.dateElaborationReceipt,
         'dd/MM/yyyy'
@@ -1482,11 +1497,29 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   goodsValid: any;
   addSelect() {
     if (this.selectedGooods.length > 0) {
-      this.selectedGooods.forEach((good: any) => {
-        if (!this.goodsValid.some((v: any) => v === good)) {
-          let indexGood = this.goods.findIndex(_good => _good.id == good.id);
+      if (this.actasDefault == null) {
+        this.alert(
+          'warning',
+          'No existe un acta en la cual asignar el bien.',
+          'Debe capturar un acta.'
+        );
+        return;
+      } else {
+        if (this.statusConv == 'CERRADA') {
         }
-      });
+        this.selectedGooods.forEach((good: any) => {
+          console.log('GOOD', good);
+          if (good.di_disponible == 'N') {
+            this.onLoadToast('warning', `${good.id} `);
+            return;
+          }
+          // if (!this.goodsValid.some((v: any) => v === good)) {
+          //   // let indexGood = this.goods.findIndex(_good => _good.id == good.id);
+          // }
+        });
+      }
+    } else {
+      this.alert('warning', 'Seleccione primero el bien a asignar.', '');
     }
   }
 }

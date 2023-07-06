@@ -41,6 +41,7 @@ export const SPECIAL2_STRING_PATTERN =
 export const TEST_NUMBER = '^[0-9]{1,3}([,][0-9]{3})*[.]?[0-9]{2}$';
 export const NUM_COMA_TWO_DECIMAL_PATTERN =
   '^[0-9]{1,3}([,][0-9]{3})*[.]?[0-9]{2}$';
+export const LATITUDE_LONGITUDE_PATTERN = '^[0-9.,]+';
 
 export const VALID_VALUE_REGEXP = (
   value: string,

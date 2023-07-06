@@ -60,31 +60,6 @@
   </form>
   <div class="container">
     <div class="row">
-      <div class="d-flex justify-content-end">
-        <div class="m-3">
-          <button
-            [disabled]="disableUpdate"
-            type="button"
-            class="btn btn-primary btn-sm active"
-            (click)="update()">
-            Actualizar <i class="fas fa-sync-alt"> </i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="row" *ngIf="!viewAct">
-      <app-good-characteristics-table
-        [goodChange]="goodChange"
-        [clasification]="classificationOfGoods"
-        [settings]="atributActSettings"
-        [avaluo]="false"
-        [good]="good"
-        [disabled]="true"
-        [service]="service"
-        [initValue]="true"></app-good-characteristics-table>
-    </div>
-    <div class="row" *ngIf="viewAct">
       <app-characteristics-legend></app-characteristics-legend>
       <app-good-characteristics-table
         [goodChange]="goodChange"
@@ -98,3 +73,29 @@
     </div>
   </div>
 </div>
+
+<!--     <div class="row">
+      <div class="d-flex justify-content-end">
+        <div class="m-3">
+           [disabled]="disableUpdate"
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="update()">
+            Refrescar <i class="fas fa-sync-alt"> </i>
+          </button>
+        </div>
+      </div>
+    </div> -->
+
+<!--     <div class="row" *ngIf="!viewAct">
+      <app-good-characteristics-table
+        [goodChange]="goodChange"
+        [clasification]="classificationOfGoods"
+        [settings]="atributActSettings"
+        [avaluo]="false"
+        [good]="good"
+        [disabled]="true"
+        [service]="service"
+        [initValue]="true"></app-good-characteristics-table>
+    </div> -->
