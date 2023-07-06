@@ -28,7 +28,7 @@
         <div class="col-6">
           <div class="d-inline mx-2">
             <button
-              [disabled]="!dictNumber"
+              [disabled]="!dictNumber || !disabledSend"
               style="float: right"
               type="button"
               class="btn btn-primary btn-sm active"
@@ -221,6 +221,8 @@
                 [control]="dictaminacionesForm.get('fechaPPFF')"
                 [label]="label">
                 <input
+                  [ngClass]="{ 'not-press bg-gray': !disabledSend }"
+                  #datepickerElement
                   class="form-control"
                   formControlName="fechaPPFF"
                   bsDatepicker
@@ -296,6 +298,7 @@
                   [form]="dictaminacionesForm"
                   [data]="users$"
                   (change)="userChange($event)"
+                  [readonly]="!disabledSend"
                   (fetchItems)="getUsers($event)"
                   bindLabel="userAndName"
                   control="autoriza_remitente"

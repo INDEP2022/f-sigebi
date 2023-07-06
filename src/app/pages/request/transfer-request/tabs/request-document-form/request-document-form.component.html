@@ -86,11 +86,11 @@
 </div>
 <div class="form-inline justify-content-end btn-toolbar">
   <button class="btn btn-primary btn-sm active" (click)="search()">
-    <i class="fa fa-search"></i> Buscar
+    Buscar <i class="fa fa-search"></i>
   </button>
 
   <button class="btn btn-danger btn-sm active" (click)="resetForm()">
-    Limpiar
+    Limpiar <i class="fas fa-eraser"> </i>
   </button>
 </div>
 
@@ -98,7 +98,7 @@
   <div class="btn-toolbar pt-5">
     <app-columns-select [(settings)]="settings"></app-columns-select>
     <button (click)="showDocsEst()" class="btn btn-primary btn-sm active">
-      <i class="fa fa-file-archive"></i> Ver documentos
+      Ver documentos <i class="fa fa-eye" aria-hidden="true"></i>
     </button>
   </div>
 

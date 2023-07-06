@@ -9,12 +9,11 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { IMoneda } from 'src/app/core/models/catalogs/tval-Table5.model';
+import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-numerary-physics',
@@ -30,10 +29,10 @@ export class NumeraryPhysicsComponent extends BasePage implements OnInit {
   toT: string = '';
   @Input() goodTypeShow: boolean = true;
   import: number = 0;
-  @Input() typeField: string = 'type';
+  // @Input() typeField: string = 'type';
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
-  @Input() types = new DefaultSelect<Partial<IGoodType>>();
+  types = new DefaultSelect<Partial<any>>();
   @Output() submit = new EventEmitter();
 
   constructor(
@@ -42,13 +41,15 @@ export class NumeraryPhysicsComponent extends BasePage implements OnInit {
     private datePipe: DatePipe,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private tvalTable1Service: TvalTable1Service
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getTvalTable1Service(new ListParams());
   }
 
   prepareForm() {
@@ -56,7 +57,7 @@ export class NumeraryPhysicsComponent extends BasePage implements OnInit {
       delegation: [null, Validators.required],
       from: [null, Validators.required],
       to: [null, Validators.required],
-      type: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      type: [null, Validators.required],
     });
   }
   getTypes(params: ListParams, id: any = null) {
@@ -90,6 +91,7 @@ export class NumeraryPhysicsComponent extends BasePage implements OnInit {
       PC_TIPO: this.form.controls['type'].value,
     };
 
+    console.log('params', params);
     this.siabService
       .fetchReport('RGENADBNUMEFISICO', params)
       // .fetchReportBlank('blank')
@@ -143,11 +145,26 @@ export class NumeraryPhysicsComponent extends BasePage implements OnInit {
     });
   }
 
+  getTvalTable1Service(params?: ListParams) {
+    params['filter.nmtable'] = `$eq:348`;
+    if (params.text) params['filter.otvalor'] = `$eq:${params.text}`;
+
+    this.tvalTable1Service.getAlls(params).subscribe({
+      next: (data: any) => {
+        console.log('data', data);
+        this.types = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.types = new DefaultSelect();
+      },
+    });
+  }
+
   cleanForm() {
     this.form.reset();
   }
 
-  get type() {
-    return this.form.get(this.typeField);
-  }
+  // get type() {
+  //   return this.form.get(this.typeField);
+  // }
 }

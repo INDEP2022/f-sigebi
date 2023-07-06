@@ -11,6 +11,7 @@
             [text]="'Turnar'"
             [loadingText]="'Turnando'"
             [btnSmall]="true"
+            [icon]="'fa fa-check'"
             (confirm)="confirm()"></confirm-button>
         </div>
         <div class="m-2">
@@ -68,9 +69,11 @@
         </div>
         <div class="col-md-1">
           <button
-            class="btn btn-info active btn-sm ml-3"
-            (click)="openModalSelectUser()">
+            (click)="openModalSelectUser()"
+            type="button"
+            class="btn btn-primary active btn-sm ml-3">
             Seleccionar
+            <i class="fas fa-edit bx-sm float-icon"></i>
           </button>
         </div>
       </div>

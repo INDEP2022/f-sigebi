@@ -278,18 +278,23 @@
             </div>
           </div>
           <div class="row">
-            <div class="col align-self-end">
-              <button
-                (click)="search()"
-                class="btn btn-primary active btn-sm ml-3"
-                style="height: 36px">
-                <i class="bx bx-search-alt-2"></i> Buscar
-              </button>
-              <button
-                (click)="cleanForm()"
-                class="btn btn-danger active btn-sm ml-3">
-                <i class="bx bx-reset"></i> Limpiar
-              </button>
+            <div class="d-flex justify-content-end">
+              <div class="mr-auto p-2"></div>
+              <div class="p-2">
+                <button
+                  (click)="search()"
+                  class="btn btn-primary active btn-sm"
+                  style="height: 36px">
+                  Buscar <i class="bx bx-search-alt-2"></i>
+                </button>
+              </div>
+              <div class="p-2">
+                <button
+                  (click)="cleanForm()"
+                  class="btn btn-danger active btn-sm">
+                  Limpiar <i class="fas fa-eraser"> </i>
+                </button>
+              </div>
             </div>
           </div>
         </form>
@@ -302,9 +307,11 @@
           <div class="ml-auto p-2">
             <button
               [disabled]="statusTask == 'FINALIZADA'"
-              class="btn btn-primary btn-sm active"
+              tooltip="Agregar"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active"
               (click)="openNewDocument()">
-              Nuevo
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
             <!--<button
               class="btn btn-info btn-sm active ml-2"

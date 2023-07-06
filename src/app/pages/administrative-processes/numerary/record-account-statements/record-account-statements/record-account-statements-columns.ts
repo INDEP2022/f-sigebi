@@ -1,7 +1,20 @@
-import { CheckboxDisabledElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-disabled-element';
-export let goodCheck: any[] = [];
+// import { CheckboxDisabledElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-disabled-element';
+// import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { CheckboxElementRecordAccountStatementsComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element-record-account-statements';
 
 export const RECORDS_ACCOUNT_STATEMENTS_COLUMNS = {
+  turnSelect: {
+    title: 'Selección',
+    sort: false,
+    showAlways: true,
+    filter: false,
+    editable: false,
+    type: 'custom',
+    renderComponent: CheckboxElementRecordAccountStatementsComponent,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.numberGood !== null;
+    },
+  },
   dateMotion: {
     title: 'Movimiento',
     type: 'date',
@@ -12,43 +25,14 @@ export const RECORDS_ACCOUNT_STATEMENTS_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  postDiverse: {
+  withdrawal: {
     title: 'Cargo',
     type: 'number',
     sort: false,
   },
-  // numberGood: {
-  //   title: 'Concepto',
-  //   type: 'string',
-  //   sort: false,
-  // },
-  // numberGood: {
-  //   title: 'Concepto',
-  //   type: 'custom',
-  //   renderComponent: CheckboxElementComponent,
-  //   onComponentInitFunction(instance: any) {
-  //     instance.toggle.subscribe((data: any) => {
-  //       if (data.toggle) {
-  //         goodCheck.push(data);
-  //       }
-  //     });
-  //   },
-  //   sort: false,
-  // },
-  numberGood: {
+  cveConcept: {
     title: 'Concepto',
+    type: 'string',
     sort: false,
-    type: 'custom',
-    renderComponent: CheckboxDisabledElementComponent,
-    valuePrepareFunction: (value: any, row: any) => {
-      return {
-        checked: value === null ? false : true,
-        disabled: true,
-      };
-    },
-    editor: {
-      type: 'custom',
-      component: CheckboxDisabledElementComponent,
-    },
   },
 };

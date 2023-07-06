@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -8,12 +8,14 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { BankService } from 'src/app/core/services/catalogs/bank.service';
-import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { RECORDS_ACCOUNT_STATEMENTS_COLUMNS } from './record-account-statements-columns';
+
+import { IRecordAccountStatements } from 'src/app/core/models/catalogs/record-account-statements.model';
+import { RecordAccountStatementsAccountsService } from 'src/app/core/services/catalogs/record-account-statements-accounts.service';
+import { RecordAccountStatementsService } from 'src/app/core/services/catalogs/record-account-statements.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { RecordAccountStatementsModalComponent } from '../record-account-statements-modal/record-account-statements-modal.component';
-import { RECORDS_ACCOUNT_STATEMENTS_COLUMNS } from './record-account-statements-columns';
 
 @Component({
   selector: 'app-record-account-statements',
@@ -33,29 +35,34 @@ export class RecordAccountStatementsComponent
   columnFilters: any = [];
   validation: boolean = false;
 
+  banks = new DefaultSelect();
+  bankAccountSelect = new DefaultSelect();
+
+  dataAccount: LocalDataSource = new LocalDataSource();
+  dataAccountPaginated: number;
+  current: string;
+
+  factasStatusCta: any;
+
+  public showModal = false;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private bankService: BankService,
-    private bankAccountService: BankAccountService,
-    private render: Renderer2
+    private recordAccountStatementsService: RecordAccountStatementsService,
+    private recordAccountStatementsAccountsService: RecordAccountStatementsAccountsService
   ) {
     super();
-    this.settings = {
-      ...this.settings,
-      actions: false,
-      hideSubHeader: false,
-      columns: RECORDS_ACCOUNT_STATEMENTS_COLUMNS,
-    };
+    this.settings.columns = RECORDS_ACCOUNT_STATEMENTS_COLUMNS;
+    this.settings.hideSubHeader = false;
+    this.settings.actions.add = false;
+    this.settings.actions.delete = false;
+    this.settings.actions.edit = false;
   }
 
-  ngOnInit(): void {
-    this.prepareForm();
-    this.getBancos(new ListParams());
-  }
-  prepareForm() {
+  private prepareForm() {
     this.form = this.fb.group({
-      bank: [null, Validators.required],
+      bankSelect: [null, Validators.required],
       account: [null, Validators.required],
       square: [null, Validators.nullValidator],
       branch: [null, Validators.nullValidator],
@@ -64,184 +71,207 @@ export class RecordAccountStatementsComponent
       description: [null, Validators.nullValidator],
       balanceOf: [null, Validators.nullValidator],
       balanceAt: [null, Validators.nullValidator],
-      total: [null, Validators.nullValidator],
-    });
-    const fieldsquare = document.getElementById('square');
-    const fieldbranch = document.getElementById('branch');
-    const fieldaccount = document.getElementById('account');
-    const fieldcurrency = document.getElementById('currency');
-    const fielddescription = document.getElementById('description');
-
-    this.render.addClass(fieldsquare, 'disabled');
-    this.render.addClass(fieldbranch, 'disabled');
-    this.render.addClass(fieldaccount, 'disabled');
-    this.render.addClass(fieldcurrency, 'disabled');
-    this.render.addClass(fielddescription, 'disabled');
-  }
-  openForm(data?: any) {
-    // const modalConfig = MODAL_CONFIG;
-    // modalConfig.initialState = {
-    //   data,
-    //   callback: (next: boolean) => {
-    //     if (next) this.getAttributes();
-    //   },
-    // };
-    // this.modalService.show(RecordAccountStatementsModalComponent, modalConfig);
-  }
-
-  selectData(data: any) {
-    if (data.deposit != null) {
-      this.warningAlert(
-        'No es posible hacer movimientos intercuentas para aquellos que sean abonos'
-      );
-      return;
-    }
-    if (data.genero_transferencia == 'S') {
-      this.warningAlert('Ese movimiento ya ha sido transferido');
-      return;
-    }
-    if (this.form.get('bank').value == null) {
-      this.warningAlert('Debe especificar primero la cuenta a ser cerrada');
-      return;
-    }
-    if (data.accountNumber.accountNumberTransfer == null) {
-      this.warningAlert('No tiene una cuenta para transferir');
-      return;
-    }
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      data,
-      callback: (next: boolean) => {
-        if (next) this.getFiltroData(data.accountNumber.accountNumber);
-      },
-    };
-    this.modalService.show(RecordAccountStatementsModalComponent, modalConfig);
-  }
-
-  getBancos(params: ListParams, id?: string) {
-    if (id) {
-      params['filter.id'] = `$eq:${id}`;
-    }
-    this.bankService.getAll(params).subscribe((data: any) => {
-      this.itemsBancos = new DefaultSelect(data.data, data.count);
     });
   }
 
-  getCuentas(params: ListParams, id?: string) {
-    this.itemsCuentas = new DefaultSelect([], 0);
-    if (id) {
-      params['filter.cveBank'] = `$eq:${id}`;
-    }
-    this.bankAccountService.getAll(params).subscribe((data: any) => {
-      this.itemsCuentas = new DefaultSelect(data.data, data.count);
-    });
-  }
-
-  getFiltroData(id?: string) {
-    this.totalItems = 0;
-    this.loading = true;
-    this.data1
+  ngOnInit(): void {
+    this.prepareForm();
+    this.searchBanks();
+    this.dataAccount
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
             switch (filter.field) {
-              case 'id':
+              case 'dateMotion':
                 searchFilter = SearchFilter.EQ;
+                break;
+              case 'deposit':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'withdrawal':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'cveConcept':
+                searchFilter = SearchFilter.ILIKE;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
             if (filter.search !== '') {
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
-          this.params = this.pageFilter(this.params);
-          this.getData(id);
+          this.params.value.page = 1;
+          if (this.dataAccountPaginated) {
+            this.searchDataAccount(this.dataAccountPaginated);
+          }
         }
       });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData(id));
-  }
-
-  getData(id?: string) {
-    this.loading = true;
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-    if (id) {
-      params['filter.numberAccount'] = `$eq:${id}`;
-    }
-    this.bankAccountService.getAllWithFiltersAccount(params).subscribe({
-      next: async (response: any) => {
-        this.totalItems = response.count;
-        this.data1.load(response.data);
-        this.data1.refresh();
-        this.loading = false;
-      },
-      error: err => {},
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (this.dataAccountPaginated) {
+        this.searchDataAccount(this.dataAccountPaginated);
+      }
     });
-    this.loading = false;
   }
 
-  ChangeBanco(event: any) {
-    this.form.get('account').setValue('');
-    this.form.get('square').setValue('');
-    this.form.get('branch').setValue('');
-    this.form.get('accountType').setValue('');
-    this.form.get('currency').setValue('');
-    this.validation = false;
-    this.getCuentas(new ListParams(), event.bankCode);
-    this.totalItems = 0;
-    this.data1.load([]);
-    this.data1.refresh();
-  }
-
-  ChangeCuenta(event: any) {
-    console.log('DATAAA', event);
-    this.form.get('square').setValue(event.square);
-    this.form.get('branch').setValue(event.branch);
-    this.form.get('accountType').setValue(event.accountType);
-    this.form.get('currency').setValue(event.cveCurrency);
-    this.validation = false;
-    this.totalItems = 0;
-    this.data1.load([]);
-    this.data1.refresh();
-    this.getFiltroData(event.accountNumber);
-  }
-
-  search() {
-    if (this.form.get('account').value != null) {
-      const payload = {
-        noAccount: this.form.get('account').value,
-        tiDateCalc: this.form.get('balanceAt').value,
-        tiDateCalcEnd: this.form.get('balanceOf').value,
-      };
-      this.bankAccountService.getStatusCta(payload).subscribe({
-        next: async (response: any) => {
-          this.form.get('total').setValue(response.result);
-          this.validation = true;
-        },
-        error: err => {
+  // Trae la lista de bancos
+  searchBanks() {
+    this.recordAccountStatementsService
+      .getAll(this.params.getValue())
+      .subscribe({
+        next: (response: { data: any[]; count: number }) => {
+          this.banks = new DefaultSelect(response.data, response.count);
           this.loading = false;
         },
+        error: (err: any) => {
+          this.loading = false;
+          this.alert('warning', 'No existen bancos', ``);
+        },
       });
+  }
+
+  // Asigna el valor del banco seleccionado a la función "searchBankAccount"
+  onBankSelectChange(value: any) {
+    if (value && value.bankCode) {
+      const bankCode = value.bankCode;
+      this.searchBankAccount(bankCode);
     } else {
-      this.warningAlert('Debe seleccionar una cuenta');
+      this.cleandInfoGoods();
     }
   }
-  warningAlert(message: any) {
-    this.alert('warning', message, '');
+
+  // Toma el banco seleccionado y busca todas las cuentas pertenecientes a ese banco
+  searchBankAccount(bankCode: string) {
+    this.recordAccountStatementsAccountsService
+      .getById(bankCode, this.params.getValue())
+      .subscribe({
+        next: (response: { data: any[]; count: number }) => {
+          this.bankAccountSelect = new DefaultSelect(
+            response.data,
+            response.count
+          );
+          console.log(response.data);
+          this.loading = false;
+        },
+        error: (err: any) => {
+          this.loading = false;
+          this.alert('warning', 'No existen cuentas', ``);
+        },
+      });
+  }
+
+  // Establece los valores en los inputs de datos de la cuenta seleccionada
+  onBankAccountSelectChange(value: any) {
+    const accountNumber = value.accountNumber;
+    this.searchDataAccount(accountNumber);
+
+    // Obtener los valores correspondientes de la cuenta seleccionada
+    const square = value?.square ?? 'Sin datos';
+    const branch = value?.branch ?? 'Sin datos';
+    const accountType = value?.accountType ?? 'Sin datos';
+    let currency = value?.cveCurrency ?? 'Sin datos';
+
+    // Quitar las comillas simples del valor de currency, si existen
+    currency = currency.replace(/'/g, '');
+
+    // Asignar los valores al formulario
+    this.form.get('square').setValue(square);
+    this.form.get('branch').setValue(branch);
+    this.form.get('accountType').setValue(accountType);
+    this.form.get('currency').setValue(currency);
+    const current = this.form.get('currency').value;
+    this.current = current;
+  }
+
+  // Establece los valores de movimientos de la cuenta seleccionada a la tabla
+  searchDataAccount(accountNumber: number) {
+    this.dataAccountPaginated = accountNumber;
+    this.recordAccountStatementsAccountsService
+      .getDataAccount(accountNumber, this.params.getValue())
+      .subscribe({
+        next: response => {
+          this.loading = true;
+          const dataSource = new LocalDataSource(response.data);
+          this.dataAccount = dataSource;
+          this.totalItems = response.count;
+          this.loading = false;
+        },
+        error: (err: any) => {
+          this.loading = false;
+          this.alert(
+            'warning',
+            'No existen datos de la cuenta seleccionada',
+            ``
+          );
+        },
+      });
+    this.searchFactasStatusCta(accountNumber);
+  }
+
+  searchFactasStatusCta(accountNumber: number) {
+    this.recordAccountStatementsAccountsService
+      .getFactasStatusCta(accountNumber)
+      .subscribe({
+        next: response => {
+          this.factasStatusCta = response;
+          this.loading = false;
+        },
+        error: (err: any) => {
+          this.loading = false;
+          this.alert('warning', 'No existen bancos', ``);
+        },
+      });
+  }
+
+  openModal(movimentAccount: IRecordAccountStatements) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      ignoreBackdropClick: false,
+      movimentAccount: {
+        ...movimentAccount,
+        factasStatusCta: this.factasStatusCta,
+      },
+      dataAccountPaginated: this.dataAccountPaginated,
+      callback: (next: boolean) => {
+        if (next) this.searchDataAccount(this.dataAccountPaginated);
+      },
+    };
+    this.modalService.show(RecordAccountStatementsModalComponent, modalConfig);
+  }
+
+  cleandInfoGoods() {
+    this.banks = null;
+    this.bankAccountSelect = null;
+    this.form.get('account').reset();
+    this.form.get('square').reset();
+    this.form.get('branch').reset();
+    this.form.get('accountType').reset();
+    this.form.get('currency').reset();
+  }
+
+  cleandInfo() {
+    this.form.reset();
+    this.searchBanks();
+    this.loading = false;
+    this.dataAccount = null;
+    this.totalItems = 0;
+  }
+
+  cleandInfoDate() {
+    this.form.get('balanceOf').reset();
+    this.form.get('balanceAt').reset();
   }
 }

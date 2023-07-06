@@ -1,6 +1,7 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
@@ -32,7 +33,7 @@ export class PercentagesSurveillanceComponent
 
   delegationTypes = [
     { name: 'Ferronal', value: '1' },
-    { name: 'Indep', value: '2' },
+    { name: 'INDEP', value: '2' },
   ];
 
   totalItems: number = 0;
@@ -55,6 +56,7 @@ export class PercentagesSurveillanceComponent
   delegations = new DefaultSelect<any>();
   columnFilters: any = [];
   disabledEdit: boolean = false;
+  @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   constructor(
     private survillanceService: SurvillanceService,
     private dialogService: BsModalService
@@ -84,7 +86,7 @@ export class PercentagesSurveillanceComponent
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               cveProcess: () => (searchFilter = SearchFilter.EQ),
-              delegation: () => (searchFilter = SearchFilter.EQ),
+              delegation_: () => (searchFilter = SearchFilter.EQ),
               delegationType: () => (searchFilter = SearchFilter.EQ),
               percentage: () => (searchFilter = SearchFilter.EQ),
             };
@@ -94,7 +96,7 @@ export class PercentagesSurveillanceComponent
             if (filter.search !== '') {
               console.log('filter.search', filter.search);
 
-              if (filter.field == 'delegation') {
+              if (filter.field == 'delegation_') {
                 this.columnFilters[field] = `${filter.search}`;
               } else {
                 this.columnFilters[field] = `${searchFilter}:${filter.search}`;
@@ -131,6 +133,21 @@ export class PercentagesSurveillanceComponent
     // });
   }
 
+  async clearSubheaderFields() {
+    const subheaderFields: any = this.table.grid.source;
+
+    const filterConf = subheaderFields.filterConf;
+    console.log('this.table', this.table.grid);
+    filterConf.filters = [];
+    this.columnFilters = [];
+    // this.sources.load([]);
+    // this.sources.refresh();
+    // this.paramsList.getValue().limit = 10;
+    // this.paramsList.getValue().page = 1;
+    console.log('this.paramsList.getValue()', this.paramsList.getValue());
+    await this.getPercentages();
+  }
+
   generateFilterDynamically(
     data: { field: string; search: string; filter: any }[]
   ): void {
@@ -150,34 +167,45 @@ export class PercentagesSurveillanceComponent
     this.filters = params;
   }
 
-  getPercentages(): void {
+  async getPercentages() {
     this.loading = true;
     let params = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
 
-    if (params['filter.delegation']) {
-      if (!isNaN(parseInt(params['filter.delegation']))) {
-        params['filter.delegation.id'] = `$eq:${params['filter.delegation']}`;
-        delete params['filter.delegation'];
+    console.log('this.columnFilters', this.columnFilters);
+    if (params['filter.delegation_']) {
+      if (!isNaN(parseInt(params['filter.delegation_']))) {
+        console.log('SI');
+        params['filter.delegation.id'] = `$eq:${params['filter.delegation_']}`;
+        delete params['filter.delegation_'];
       } else {
+        console.log('NO');
         params[
           'filter.delegation.description'
-        ] = `$ilike:${params['filter.delegation']}`;
-        delete params['filter.delegation'];
+        ] = `$ilike:${params['filter.delegation_']}`;
+        delete params['filter.delegation_'];
       }
     }
 
     // delegation
     this.survillanceService.getVigProcessPercentages(params).subscribe({
       next: response => {
+        const data = response.data;
         console.log('responseresponse', response);
-        let result = response.data.map(item => {});
-        this.sources.load(response.data);
-        this.sources.refresh();
-        this.totalItems = response.count;
-        this.loading = false;
+        let result = data.map(async (item: any) => {
+          item['delegation_'] =
+            item.delegationView.delegationNumber +
+            ' - ' +
+            item.delegationView.description;
+        });
+        Promise.all(result).then(item => {
+          this.sources.load(data);
+          this.sources.refresh();
+          this.totalItems = response.count;
+          this.loading = false;
+        });
       },
       error: () => {
         this.loading = false;
@@ -225,7 +253,7 @@ export class PercentagesSurveillanceComponent
   }
 
   deleteInServerPercentage(data: any): void {
-    this.loading = true;
+    // this.loading = true;
     this.survillanceService.deleteVigProcessPercentages(data).subscribe({
       next: response => {
         console.log(response);

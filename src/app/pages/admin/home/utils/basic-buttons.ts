@@ -6,9 +6,15 @@ export const BASIC_BUTTONS = [
               </button>`,
   },
   {
-    name: 'Nuevo / Agregar',
-    code: `<button type="button" tooltip="Agregar" containerClass="tooltip-style" class="btn btn-info btn-sm active ml-2 mr-2">
+    name: 'Nuevo',
+    code: `<button type="button" tooltip="Nuevo" containerClass="tooltip-style" class="btn btn-info btn-sm active ml-2 mr-2">
                 Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>`,
+  },
+  {
+    name: 'Agregar',
+    code: `<button type="button" tooltip="Agregar" containerClass="tooltip-style" class="btn btn-info btn-sm active ml-2 mr-2">
+                Agregar <i class="bx bx-plus bx-sm float-icon"></i>
               </button>`,
   },
   {
@@ -182,5 +188,133 @@ export const BASIC_BUTTONS = [
     code: `<button  class="btn btn-info active btn-sm"> 
     Escanear <i  class="bx bx-file bx-sm float-icon"></i>
     </button>`,
+  },
+  {
+    name: 'Turnar',
+    code: `<button  class="btn btn-primary active btn-sm"> 
+    Turnar <i aria-hidden="true" class="fa fa-share-square"></i>
+    </button>`,
+  },
+  {
+    name: 'Importar Excel',
+    code: `<button
+            type="button"
+            class="btn btn-sm btn-success active m-3">
+            Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
+          </button>`,
+  },
+  {
+    name: 'Seleccionar',
+    code: `<button
+          type="button"
+          class="btn btn-primary active btn-sm">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>`,
+  },
+  {
+    name: 'Aceptar',
+    code: `<button
+            class="btn btn-primary btn-sm active mr-3">
+            Aceptar
+          </button>`,
+  },
+  {
+    name: 'Cancelar',
+    code: `<button
+            class="btn btn-danger btn-sm active mr-3">
+            Cancelar
+          </button>`,
+  },
+  {
+    name: 'Cerrar',
+    code: `<button
+            class="btn btn-primary btn-sm active mr-3">
+            Cerrar
+          </button>`,
+  },
+  {
+    name: 'Procesar',
+    code: `<button
+          type="button"
+          class="btn btn-primary active btn-sm">
+          Procesar
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>`,
+  },
+  {
+    name: 'Continuar',
+    code: `<button
+          type="button"
+          class="btn btn-primary active btn-sm">
+          Continuar
+        </button>`,
+  },
+  {
+    name: 'Firmar reporte',
+    code: `<button
+          type="button"
+          class="btn btn-primary active btn-sm">
+          <i class="bx bx-edit-alt"></i>
+          Firmar Reporte
+        </button>`,
+  },
+  {
+    name: 'Rechazar',
+    code: `<button
+            class="btn btn-danger btn-sm active mr-3">
+            Rechazar
+          </button>`,
+  },
+  {
+    name: 'Asociar',
+    code: `<button
+              tooltip="Asociar"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active">
+              <i class="fa fa-link" aria-hidden="true"></i>
+            </button>`,
+  },
+  {
+    name: 'Nuevo Documento',
+    code: `<button
+             class="btn btn-success btn-sm active">
+            Nuevo expediente <i class="fa fa-file"></i>
+          </button>`,
+  },
+  {
+    name: 'Ver (Oficio, Acta etc...)',
+    code: `<button
+            class="btn btn-primary btn-sm active mr-3">
+            Ver  <i class="fa fa-eye" aria-hidden="true"></i>
+          </button>`,
+  },
+  {
+    name: 'Actualizar',
+    code: `<button
+            class="btn btn-primary btn-sm active mr-3">
+            Actualizar <i class="fas fa-sync-alt"> </i>
+          </button>`,
+  },
+
+  {
+    name: 'Turnar',
+    code: `<button
+              class="btn btn-primary btn-sm active m-3">
+              Turnar  <i class="fa fa-check" aria-hidden="true"></i>
+            </button>`,
+  },
+  {
+    name: 'Aprobar',
+    code: `<button
+              class="btn btn-primary btn-sm active m-3">
+              Aprobar  
+            </button>`,
+  },
+  {
+    name: 'Consultar',
+    code: `<button
+              class="btn btn-primary btn-sm active m-3">
+              Consultar 
+            </button>`,
   },
 ];

@@ -56,6 +56,7 @@ import { WarehouseFormComponent } from '../../../shared-request/warehouse-form/w
 import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
 import { SearchUserFormComponent } from '../../schedule-reception/search-user-form/search-user-form.component';
 import { userData } from '../../schedule-reception/search-user-form/users-data';
+import { DetailGoodProgrammingFormComponent } from '../../shared-components-programming/detail-good-programming-form/detail-good-programming-form.component';
 import { DomicileFormComponent } from '../../shared-components-programming/domicile-form/domicile-form.component';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { IEstateSearch } from '../estate-search-form/estate-search.interface';
@@ -111,9 +112,9 @@ export class PerformProgrammingFormComponent
   localities = new DefaultSelect<ILocality>();
   warehouseUbication: string = '';
   tranportableItems: number = 0;
-  headingTransportable: string = `Transportables(0)`;
-  headingGuard: string = `Resguardo(0)`;
-  headingWarehouse: string = `Almacén INDEP(0)`;
+  headingTransportable: string = `Transportables (0)`;
+  headingGuard: string = `Resguardo (0)`;
+  headingWarehouse: string = `Almacén INDEP (0)`;
   idProgramming: number = 0;
   idAuthority: string = '';
   idState: number = 0;
@@ -468,32 +469,66 @@ export class PerformProgrammingFormComponent
         .setValue(this.delegationId);
 
       this.performForm.get('delregAttentionId').setValue(this.delegationId);
+      if (
+        this.transferentId &&
+        this.typeRelevant &&
+        this.regionalDelegationUser
+      ) {
+        const folio: any = await this.generateFolio(this.performForm.value);
+        this.performForm.get('folio').setValue(folio);
+        const task = JSON.parse(localStorage.getItem('Task'));
+        const updateTask = await this.updateTask(folio, task.id);
+        if (updateTask) {
+          this.programmingGoodService
+            .updateProgramming(this.idProgramming, this.performForm.value)
+            .subscribe({
+              next: async () => {
+                this.loading = false;
+                const regDelData = this.regionalDelegationUser;
+                let config = {
+                  ...MODAL_CONFIG,
+                  class: 'modal-lg modal-dialog-centered',
+                };
+                config.initialState = {
+                  programmingId: this.idProgramming,
+                  regDelData,
+                  callback: (next: boolean) => {
+                    if (next) {
+                      this.performForm
+                        .get('regionalDelegationNumber')
+                        .setValue(this.delegation);
+                      //this.setDataProgramming();
+                    }
+                  },
+                };
 
-      const folio: any = await this.generateFolio(this.performForm.value);
-      this.performForm.get('folio').setValue(folio);
-      const task = JSON.parse(localStorage.getItem('Task'));
-      const updateTask = await this.updateTask(folio, task.id);
-      if (updateTask) {
-        this.programmingGoodService
-          .updateProgramming(this.idProgramming, this.performForm.value)
-          .subscribe({
-            next: async () => {
-              this.loading = false;
-              const regDelData = this.regionalDelegationUser;
-              let config = {
-                ...MODAL_CONFIG,
-                class: 'modal-lg modal-dialog-centered',
-              };
-              config.initialState = {
-                programmingId: this.idProgramming,
-                regDelData,
-                callback: (next: boolean) => {},
-              };
+                this.modalService.show(WarehouseFormComponent, config);
+              },
+              error: error => {},
+            });
+        }
+      } else {
+        this.loading = false;
+        const regDelData = this.regionalDelegationUser;
+        let config = {
+          ...MODAL_CONFIG,
+          class: 'modal-lg modal-dialog-centered',
+        };
+        config.initialState = {
+          programmingId: this.idProgramming,
+          regDelData,
+          callback: (next: boolean) => {
+            if (next) {
+              console.log('next', next);
+              this.performForm
+                .get('regionalDelegationNumber')
+                .setValue(this.delegation);
+              //this.setDataProgramming();
+            }
+          },
+        };
 
-              this.modalService.show(WarehouseFormComponent, config);
-            },
-            error: error => {},
-          });
+        this.modalService.show(WarehouseFormComponent, config);
       }
     } else {
       this.onLoadToast(
@@ -515,17 +550,20 @@ export class PerformProgrammingFormComponent
       delegationUserLog,
       callback: (data: boolean) => {
         if (data) {
-          this.onLoadToast(
+          this.alertInfo(
             'success',
-            'Correcto',
-            'Usuarios agregados a la programación correctamente'
-          );
-          this.showUsersProgramming();
+            'Registro guardado',
+            'Usuario agregado correctmante'
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.showUsersProgramming();
+            }
+          });
         }
       },
     };
 
-    const searchUser = this.modalService.show(SearchUserFormComponent, config);
+    this.modalService.show(SearchUserFormComponent, config);
   }
 
   //Mostrar lista de uusarios afiliados a la programación
@@ -1199,7 +1237,7 @@ export class PerformProgrammingFormComponent
 
           this.estatesList.load(goodsFilter);
           this.totalItems = response.count;
-          this.loadingGoods = false; */
+           */
           //
         },
         error: error => (this.loadingGoods = false),
@@ -1231,12 +1269,13 @@ export class PerformProgrammingFormComponent
           this.loadingGoods = false;
         } else {
           this.alert(
-            'info',
+            'warning',
             'Advertencía',
             'No hay bienes disponibles para programar'
           );
           this.estatesList.load([]);
           this.totalItems = filter.length;
+          this.loadingGoods = false;
         }
       });
   }
@@ -1250,7 +1289,7 @@ export class PerformProgrammingFormComponent
   sendTransportable() {
     if (this.goodSelect.length) {
       this.alertQuestion(
-        'info',
+        'warning',
         'Acción',
         'Los bienes seleccionados serán enviados a transportable'
       ).then(async question => {
@@ -1352,7 +1391,7 @@ export class PerformProgrammingFormComponent
                 this.goodsTranportables.load(showTransportable);
                 this.totalItemsTransportableGoods =
                   this.goodsTranportables.count();
-                this.headingTransportable = `Transportable(${this.goodsTranportables.count()})`;
+                this.headingTransportable = `Transportable (${this.goodsTranportables.count()})`;
                 resolve(true);
               });
             },
@@ -1406,7 +1445,7 @@ export class PerformProgrammingFormComponent
   sendGuard() {
     if (this.goodSelect.length) {
       this.alertQuestion(
-        'info',
+        'warning',
         'Acción',
         'Los bienes seleccionados serán enviados a resguardo'
       ).then(async question => {
@@ -1538,7 +1577,7 @@ export class PerformProgrammingFormComponent
 
               this.goodsGuards.load(showGuards);
               this.totalItemsTransportableGuard = this.goodsGuards.count();
-              this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+              this.headingGuard = `Resguardo (${this.goodsGuards.count()})`;
               resolve(true);
             });
           },
@@ -1551,7 +1590,7 @@ export class PerformProgrammingFormComponent
   sendWarehouse() {
     if (this.goodSelect.length) {
       this.alertQuestion(
-        'info',
+        'warning',
         'Acción',
         'Los bienes seleccionados serán enviado a almacén'
       ).then(question => {
@@ -1672,7 +1711,7 @@ export class PerformProgrammingFormComponent
               this.goodsWarehouse.load(showWarehouse);
               this.totalItemsTransportableWarehouse =
                 this.goodsWarehouse.count();
-              this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
+              this.headingWarehouse = `Almacén INDEP (${this.goodsWarehouse.count()})`;
               resolve(true);
             });
           },
@@ -1688,7 +1727,7 @@ export class PerformProgrammingFormComponent
       item,
       callback: () => {},
     };
-    this.modalService.show(DomicileFormComponent, config);
+    this.modalService.show(DetailGoodProgrammingFormComponent, config);
   }
   // Visualizar información de alias almacen //
   // showDomicile(item: any) {
@@ -1699,6 +1738,15 @@ export class PerformProgrammingFormComponent
   //   };
   //   this.modalService.show(DomicileFormComponent, config);
   // }
+
+  showGoodWarehouse(item: IGoodProgrammingSelect) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      item,
+      callback: () => {},
+    };
+    this.modalService.show(DomicileFormComponent, config);
+  }
 
   removeGoodTrans(item: IGood) {
     this.alertQuestion(
@@ -1841,7 +1889,7 @@ export class PerformProgrammingFormComponent
 
     this.performForm.get('delregAttentionId').setValue(this.delegationId);
     this.alertQuestion(
-      'info',
+      'question',
       'Confirmación',
       '¿Desea guardar la información de la programación?'
     ).then(async question => {
@@ -2000,7 +2048,7 @@ export class PerformProgrammingFormComponent
         .setValue(this.delegationId);
       this.performForm.get('delregAttentionId').setValue(this.delegationId);
       this.alertQuestion(
-        'info',
+        'question',
         'Confirmación',
         `¿Esta seguro de enviar la programación ${this.dataProgramming.id}?`
       ).then(async question => {
@@ -2112,7 +2160,7 @@ export class PerformProgrammingFormComponent
     if (taskResult) {
       this.msgGuardado(
         'success',
-        'Creación de tarea exitosa',
+        'Creación de tarea correcta',
         `Se creó la tarea Aceptar Programación con el folio: ${folio}`
       );
     }
@@ -2194,11 +2242,7 @@ export class PerformProgrammingFormComponent
         },
         error: error => {
           this.loadingReport = false;
-          this.onLoadToast(
-            'info',
-            'Error',
-            'Error al visualizar los bienes disponibles a programar'
-          );
+          this.alert('error', 'Error', 'Error al generar reporte');
         },
       });
   }
@@ -2209,7 +2253,7 @@ export class PerformProgrammingFormComponent
     downloadLink.href = linkSource;
     downloadLink.target = '_blank';
     downloadLink.click();
-    this.alertInfo('success', 'Acción Correcta', 'Archivo generado').then();
+    this.alert('success', 'Acción Correcta', 'Archivo generado');
   }
 
   close() {
@@ -2302,8 +2346,10 @@ export class PerformProgrammingFormComponent
 
       this.paramsAuthority.getValue()['filter.idTransferer'] =
         this.transferentId;
+      this.paramsAuthority.getValue()['filter.idAuthority'] = this.autorityId;
       this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
         next: response => {
+          console.log('response', response);
           const nameAndId = `${response.data[0].idAuthority} - ${response.data[0].authorityName}`;
           this.performForm.get('autorityId').setValue(nameAndId);
           this.idStation = this.dataProgramming.stationId;

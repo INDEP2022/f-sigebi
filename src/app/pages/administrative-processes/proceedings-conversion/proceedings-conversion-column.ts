@@ -301,7 +301,7 @@ export const COUNT_ACTAS_COLUMNS = {
     sort: false,
   },
   witnessOic: {
-    title: 'Testigo de la Contraloria',
+    title: 'Testigo de la Contraloría',
     type: 'number',
     sort: false,
   },

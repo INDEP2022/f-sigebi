@@ -1,16 +1,18 @@
+import { Location } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { takeUntil } from 'rxjs';
 import { TreeViewService } from 'src/app/@standalone/tree-view/tree-view.service';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { PreviousRouteService } from 'src/app/common/services/previous-route.service';
 import { ITreeItem } from 'src/app/core/interfaces/menu.interface';
-import { IPartializedGoodList } from 'src/app/core/models/ms-partialize-goods/partialize-good.model';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { PartializesGoodsService } from './services/partializes-goods.service';
 
 @Component({
   selector: 'app-partializes-goods',
@@ -21,47 +23,51 @@ export class PartializesGoodsComponent extends BasePage implements OnInit {
   elementToExport: any[];
   form: FormGroup;
   itemsTree: ITreeItem[] = [];
+  origin: number = 0;
   loadingTree = false;
   loadingExcel = false;
   flagDownload = false;
-  params = new BehaviorSubject<ListParams>(new ListParams());
-  items: IPartializedGoodList[];
   @ViewChild('sideMenu') sideMenu: ElementRef;
-  totalItems: number;
+  totalItems: number = 0;
+
+  get items() {
+    return this.serviceData.items;
+  }
+
   constructor(
     private fb: FormBuilder,
+    private serviceData: PartializesGoodsService,
     private treeViewService: TreeViewService,
-    private service: GoodPartializeService
+    private service: GoodPartializeService,
+    private location: Location,
+    private activatedRoute: ActivatedRoute,
+    private previousRouteService: PreviousRouteService
   ) {
     super();
-    // super();
-    // this.service = this.goodPartializeService;
-    this.settings = {
-      ...this.settings,
-      actions: false,
-      hideSubHeader: true,
-      columns: {
-        goodNumber: {
-          title: 'No. Bien',
-          type: 'string',
-          sort: false,
-        },
-        description: {
-          title: 'Descripción',
-          type: 'string',
-          sort: false,
-        },
-      },
-    };
-    // this.ilikeFilters.push('goodNumber');
     this.prepareForm();
   }
 
   ngOnInit() {
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(x => {
-      // console.log(x);
-      this.getData();
+    this.activatedRoute.queryParams.subscribe({
+      next: param => {
+        if (param['numberGood']) {
+          if (this.previousRouteService.getHistory().length > 1) {
+            this.origin = 1;
+            this.serviceData.numberGoodQueryParams = param['numberGood'];
+            this.select(param['numberGood']);
+          }
+          // this.select(param['numberGood']);
+          // this.origin = 1;
+        } else {
+          this.serviceData.numberGoodQueryParams = null;
+          this.origin = 0;
+        }
+      },
     });
+  }
+
+  back() {
+    return this.location.back();
   }
 
   exportExcel() {
@@ -77,96 +83,12 @@ export class PartializesGoodsComponent extends BasePage implements OnInit {
     });
     this.elementToExport = [...arrayDetails];
     this.flagDownload = !this.flagDownload;
-    // console.log(x);
     this.loadingExcel = false;
-    // this.service.getExcel(this.filterParams).subscribe(x => {
-
-    // });
-    // console.log(this.table);
-  }
-
-  getData(params?: ListParams) {
-    this.loading = true;
-    // console.log(params);
-    if (!params) {
-      params = {
-        ...this.params.getValue(),
-      };
-    }
-    // console.log(params, this.columnFilters);
-    // debugger;
-    // if (
-    //   this.columnFilters['filter.goodNumber'] ||
-    //   this.columnFilters['filter.description']
-    // ) {
-    //   params.page = 1;
-    // }
-    if (this.service) {
-      this.service.getAll(params).subscribe({
-        next: (response: any) => {
-          if (response) {
-            this.totalItems = response.count || 0;
-            this.items = response.data;
-            // this.data.load(response.data);
-            // debugger;
-            // if (
-            //   (this.columnFilters['filter.goodNumber'] ||
-            //     this.columnFilters['filter.description']) &&
-            //   response.data &&
-            //   response.data.length > 0
-            // ) {
-            //   this.select(response.data[0].goodNumber);
-            //   this.data.setPage(1, true);
-            // }
-            // this.data.refresh();
-
-            this.loading = false;
-          }
-        },
-        error: err => {
-          this.totalItems = 0;
-          this.items = [];
-          // this.data.load([]);
-          // this.data.refresh();
-          this.loading = false;
-        },
-      });
-    } else {
-      this.totalItems = 0;
-      this.items = [];
-      this.loading = false;
-    }
-  }
-
-  searchGood() {
-    let params = {
-      ...this.params.getValue(),
-    };
-    if (this.form.get('noBien').value || this.form.get('description').value) {
-      if (this.form.get('noBien').value) {
-        params = {
-          ...params,
-          'filter.goodNumber': '$eq:' + this.form.get('noBien').value,
-        };
-      }
-      if (this.form.get('description').value) {
-        params = {
-          ...params,
-          'filter.description': '$ilike:' + this.form.get('description').value,
-        };
-      }
-      params = { ...params, page: 1 };
-    }
-    this.getData(params);
-    // if (this.form.get('noBien').value) {
-    //   this.getData()
-    // } else {
-    //   this.onLoadToast('error','No Bien','Debe escribir')
-    // }
   }
 
   select(goodNumber: number) {
     // console.log(row);
+    // debugger;
     this.loadingTree = true;
     this.treeViewService.selected = null;
     this.service
@@ -176,7 +98,7 @@ export class PartializesGoodsComponent extends BasePage implements OnInit {
         next: response => {
           console.log(response);
           if (response[0].subItems.length === 0) {
-            this.onLoadToast(
+            this.alert(
               'error',
               'Bien ' + goodNumber,
               'No tiene bienes parcializados'
