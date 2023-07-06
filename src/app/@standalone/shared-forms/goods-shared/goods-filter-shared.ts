@@ -100,7 +100,7 @@ export class GoodsFilterSharedComponent
         this.data = data.data.map(clasi => {
           return {
             ...clasi,
-            info: `${clasi.id} - ${clasi.description}`,
+            info: `${clasi.id} - ${clasi.description ?? ''}`,
           };
         });
         this.goods = new DefaultSelect(this.data, data.count);

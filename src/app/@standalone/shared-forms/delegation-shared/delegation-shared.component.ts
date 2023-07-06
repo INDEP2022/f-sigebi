@@ -123,6 +123,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
           } else {
             error = err.message;
           }
+          this.subdelegations = new DefaultSelect([], 0);
           this.alert('warning', 'No se encontraron registros', '');
         },
       });
@@ -138,7 +139,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
           } else {
             error = err.message;
           }
-
+          this.subdelegations = new DefaultSelect([], 0);
           this.alert('warning', 'No se encontraron registros', '');
         }
       );
