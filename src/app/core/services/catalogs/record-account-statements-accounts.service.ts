@@ -6,7 +6,11 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 
 import { HttpService } from '../../../common/services/http.service';
-import { IRecordAccountStatements } from '../../models/catalogs/record-account-statements.model';
+import {
+  IDateAccountBalance,
+  IFactasStatusCta,
+  IRecordAccountStatements,
+} from '../../models/catalogs/record-account-statements.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -16,6 +20,7 @@ export class RecordAccountStatementsAccountsService
 {
   private readonly route: string = ENDPOINT_LINKS.BankAccount;
   private readonly route2: string = ENDPOINT_LINKS.AccountMovements;
+  private readonly route3: string = ENDPOINT_LINKS.Aplication;
 
   constructor(
     private recordAccountStatementsServiceRepository: Repository<IRecordAccountStatements>
@@ -40,6 +45,27 @@ export class RecordAccountStatementsAccountsService
     const route = `${this.route2}?filter.numberAccount=$eq:${accountNumber}`;
     return this.get(route, params);
   }
+
+  getFactasStatusCta(accountNumber: number): Observable<IFactasStatusCta> {
+    const route = `${this.route3}/get-factas-status-cta/${accountNumber}`;
+    return this.get(route);
+  }
+
+  getAccountBalanceDate(
+    model: IDateAccountBalance
+  ): Observable<IDateAccountBalance> {
+    const route = `${this.route3}/get-facta-db-status-cta`;
+    return this.post(route, model);
+  }
+
+  create(
+    model: IRecordAccountStatements
+  ): Observable<IRecordAccountStatements> {
+    console.log('Creado', model);
+    return this.post(this.route, model);
+  }
 }
-//http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/bank-account?filter.cveBank=$ilike:SANTAND
-//http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/account-movements?filter.numberAccount=$ilike:17448178
+//http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/bank-account?filter.cveBank=$eq:SANTAND
+//http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/account-movements?filter.numberAccount=$eq:17448178
+//http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/aplication/get-factas-status-cta/4
+//http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/aplication/get-facta-db-status-cta

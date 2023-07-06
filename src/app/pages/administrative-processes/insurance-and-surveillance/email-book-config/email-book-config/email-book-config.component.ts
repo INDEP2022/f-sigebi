@@ -123,7 +123,7 @@ export class EmailBookConfigComponent
     console.log(event);
     this.alertQuestion(
       'warning',
-      'Eliminar',
+      'Libreta de Direcciones Electrónicas',
       '¿Desea eliminar este registro?'
     ).then(result => {
       if (!result?.isConfirmed) {
@@ -137,7 +137,11 @@ export class EmailBookConfigComponent
     this.loading = true;
     this.emailService.deleteEmailBook(data.id).subscribe({
       next: () => {
-        this.alert('success', 'Registro eliminado correctamente', '');
+        this.alert(
+          'success',
+          'Dirección de correo electronico',
+          'Eliminado correctamente'
+        );
         this.emailsBook.remove(data);
         this.loading = false;
       },

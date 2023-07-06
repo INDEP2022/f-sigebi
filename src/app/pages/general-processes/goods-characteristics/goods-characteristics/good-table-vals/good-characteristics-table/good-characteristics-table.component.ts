@@ -86,47 +86,47 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
             const newData = response.data.sort((a, b) => {
               return a.columnNumber - b.columnNumber;
             });
-            /* this.data = newData.map(item => {
-              const column = 'val' + item.columnNumber;
-              if (item.attribute === 'SITUACION JURIDICA') {
-                if (good[column]) {
-                  good.val35 = secondFormatDate(new Date());
-                } else {
-                  good.val35 = null;
-                }
-              }
-              // validar si existe tipo con goodClassNumber
-              let v_val_entfed;
-              this.val_atributos_inmuebles++;
-              if (this.v_bien_inm) {
-                if (
-                  item.attribute === 'ESTADO' &&
-                  this.val_atributos_inmuebles > 4
-                ) {
-                }
-              }
-              return {
-                column,
-                attribute: item.attribute,
-                value:
-                  this.initValue === true ? this.getValue(good, item) : null,
-                required: item.required === 'S',
-                update: this.haveUpdate(item.update),
-                requiredAva: item.attribute
-                  ? this.haveRequiredAva(item.attribute)
-                  : false,
-                tableCd: item.tableCd,
-                editing: false,
-                length: item.length,
-                dataType: item.dataType,
-              };
-            });
-            console.log(this.data);
+            // this.data = newData.map(item => {
+            //   const column = 'val' + item.columnNumber;
+            //   if (item.attribute === 'SITUACION JURIDICA') {
+            //     if (good[column]) {
+            //       good.val35 = secondFormatDate(new Date());
+            //     } else {
+            //       good.val35 = null;
+            //     }
+            //   }
+            //   // validar si existe tipo con goodClassNumber
+            //   let v_val_entfed;
+            //   this.val_atributos_inmuebles++;
+            //   if (this.v_bien_inm) {
+            //     if (
+            //       item.attribute === 'ESTADO' &&
+            //       this.val_atributos_inmuebles > 4
+            //     ) {
+            //     }
+            //   }
+            //   return {
+            //     column,
+            //     attribute: item.attribute,
+            //     value:
+            //       this.initValue === true ? this.getValue(good, item) : null,
+            //     required: item.required === 'S',
+            //     update: this.haveUpdate(item.update),
+            //     requiredAva: item.attribute
+            //       ? this.haveRequiredAva(item.attribute)
+            //       : false,
+            //     tableCd: item.tableCd,
+            //     editing: false,
+            //     length: item.length,
+            //     dataType: item.dataType,
+            //   };
+            // });
+            // console.log(this.data);
 
-            this.totalItems = this.data.length;
-            this.dataTemp = [...this.data];
-            this.getPaginated(this.params.value);
-            this.loading = false; */
+            // this.totalItems = this.data.length;
+            // this.dataTemp = [...this.data];
+            // this.getPaginated(this.params.value);
+            // this.loading = false;
             if (this.loadInventary) {
               this.data = newData.map((item, index) => {
                 const column = 'val' + item.columnNumber;
@@ -203,7 +203,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
               });
               this.totalItems = this.data.length;
               this.dataTemp = [...this.data];
-              console.log('Data temporal', this.dataTemp);
+              console.log(this.dataTemp);
               this.getPaginated(this.params.value);
               this.loading = false;
             } else {
@@ -246,7 +246,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
               this.dataTemp = [...this.data];
               this.getPaginated(this.params.value);
               this.loading = false;
-              console.log(this.data);
+              // console.log(this.data);
             }
           } else {
             this.clearTable();
@@ -425,29 +425,26 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
 
   private getValue(good: any, item: IAttribClassifGoods) {
     const column = 'val' + item.columnNumber;
-    if (item.dataType === 'D' || item.attribute.includes('FECHA')) {
-      // debugger;
-    }
-    const response = good[column]
-      ? item.dataType === 'D' || item.attribute.includes('FECHA')
-        ? formatForIsoDate(good[column], 'string')
+    // if (item.dataType === 'D' || item.attribute.includes('FECHA')) {
+    //   debugger;
+    // }
+    const value =
+      item.dataType === 'D' || item.attribute.includes('FECHA')
+        ? (good[column] + '').trim().length > 0
+          ? formatForIsoDate(good[column], 'string')
+          : null
         : good[column] === 'NULL'
-        ? ''
-        : good[column]
-      : null;
-    console.log(column + ' -> ' + response);
-    return response;
+        ? null
+        : good[column];
+    return value;
   }
 
   private getValueInventary(isFecha: boolean, item: any) {
     if (isFecha) {
       if (item) {
-        return formatForIsoDate(item, 'string') === null
-          ? ''
-          : formatForIsoDate(item, 'string');
+        return formatForIsoDate(item, 'string');
       } else {
-        console.log(formatForIsoDate(item, 'string'));
-        return '';
+        return null;
       }
     } else {
       return item;
