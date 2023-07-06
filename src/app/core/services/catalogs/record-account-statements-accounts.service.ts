@@ -7,6 +7,7 @@ import { Repository } from '../../../common/repository/repository';
 
 import { HttpService } from '../../../common/services/http.service';
 import {
+  IDateAccountBalance,
   IFactasStatusCta,
   IRecordAccountStatements,
 } from '../../models/catalogs/record-account-statements.model';
@@ -51,12 +52,10 @@ export class RecordAccountStatementsAccountsService
   }
 
   getAccountBalanceDate(
-    noAccount: number,
-    tiDateCalc: string,
-    tiDateCalcEnd: string
-  ): Observable<IFactasStatusCta> {
-    const route = `${this.route3}/get-factas-status-cta`;
-    return this.post(route, noAccount);
+    model: IDateAccountBalance
+  ): Observable<IDateAccountBalance> {
+    const route = `${this.route3}/get-facta-db-status-cta`;
+    return this.post(route, model);
   }
 
   create(
@@ -69,3 +68,4 @@ export class RecordAccountStatementsAccountsService
 //http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/bank-account?filter.cveBank=$eq:SANTAND
 //http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/account-movements?filter.numberAccount=$eq:17448178
 //http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/aplication/get-factas-status-cta/4
+//http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/aplication/get-facta-db-status-cta
