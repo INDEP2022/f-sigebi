@@ -556,4 +556,8 @@ export class ClassificationAssetsTabComponent
       saeMeasureUnit: [null],
     });
   }
+
+   selectRow(row?: any) {
+    console.log('Información de la fila seleccionada, ' , row);
+  }
 }
