@@ -6,12 +6,8 @@
     <form-loader *ngIf="loading"></form-loader>
     <div class="row" *ngIf="!loading">
       <div class="col-md-6 px-5 py-3" *ngFor="let good of goods">
-        <div class="row photo-container h-100">
-          <div class="row">
-            <div class="col-md-12">
-              <photo-galery-item [good]="good"></photo-galery-item>
-            </div>
-          </div>
+        <div class="row photo-container shadow h-100 p-0 m-0 bg-white">
+          <photo-galery-item [good]="good"></photo-galery-item>
         </div>
       </div>
     </div>
