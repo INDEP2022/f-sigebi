@@ -19,6 +19,7 @@ import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
@@ -124,6 +125,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   nameStation: string = '';
   authorityName: string = '';
   typeRelevantName: string = '';
+  nameState: string = '';
   nameWarehouse: string = '';
   // goodId: any;
   // uniqueKey: any;
@@ -152,7 +154,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     private taskService: TaskService,
     private router: Router,
     private wcontentService: WContentService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private stateService: StateOfRepublicService
   ) {
     super();
     this.settings = {
@@ -193,6 +196,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         this.idStation = data.stationId;
         this.getRegionalDelegation();
         this.getTransferent();
+        this.getState();
         this.getStation();
         this.getAuthority();
         this.getTypeRelevant();
@@ -221,6 +225,15 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       });
   }
 
+  getState() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = this.programming.stateKey;
+    this.stateService.getAll(params.getValue()).subscribe({
+      next: response => {
+        this.nameState = response.data[0].descCondition;
+      },
+    });
+  }
   getTransferent() {
     this.transferentService
       .getById(this.programming.tranferId)
@@ -258,20 +271,20 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   }
 
   getTypeRelevant() {
-    return this.typeRelevantService
-      .getById(this.programming.typeRelevantId)
-      .subscribe(data => {
-        this.typeRelevantName = data.description;
-      });
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = this.programming.typeRelevantId;
+    this.typeRelevantService.getAll(params.getValue()).subscribe(data => {
+      this.typeRelevantName = data.data[0].description;
+    });
   }
 
   getwarehouse() {
-    return this.warehouseService
-      .getById(this.programming.storeId)
-      .subscribe(data => {
-        this.nameWarehouse = data.description;
-        this.formLoading = false;
-      });
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.idWarehouse'] = this.programming.storeId;
+    this.warehouseService.getAll(params.getValue()).subscribe(data => {
+      this.nameWarehouse = data.data[0].description;
+      this.formLoading = false;
+    });
   }
 
   getUsersProgramming() {

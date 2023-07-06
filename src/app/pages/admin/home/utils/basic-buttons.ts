@@ -266,6 +266,22 @@ export const BASIC_BUTTONS = [
           </button>`,
   },
   {
+    name: 'Asociar',
+    code: `<button
+              tooltip="Asociar"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active">
+              <i class="fa fa-link" aria-hidden="true"></i>
+            </button>`,
+  },
+  {
+    name: 'Nuevo Documento',
+    code: `<button
+             class="btn btn-success btn-sm active">
+            Nuevo expediente <i class="fa fa-file"></i>
+          </button>`,
+  },
+  {
     name: 'Ver (Oficio, Acta etc...)',
     code: `<button
             class="btn btn-primary btn-sm active mr-3">
@@ -300,5 +316,14 @@ export const BASIC_BUTTONS = [
               class="btn btn-primary btn-sm active m-3">
               Consultar 
             </button>`,
+  },
+  {
+    name: 'Filtrar',
+    code: `<button
+            class="btn btn-primary btn-sm active"
+            (click)="buildFilters()">
+            Filtrar
+            <i class="fa fa-filter" aria-hidden="true"></i>
+          </button>`,
   },
 ];
