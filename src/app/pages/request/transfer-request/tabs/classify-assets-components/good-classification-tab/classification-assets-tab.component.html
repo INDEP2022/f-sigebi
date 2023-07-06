@@ -23,8 +23,10 @@
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
-            [settings]="settingsGood"
-            [source]="paragraphs">
+            [settings]="settingsGood" 
+            [source]="paragraphs"
+            (rowSelect)="selectRow($event.data)"
+            >
           </ng2-smart-table>
         </div>
         <!-- (userRowSelect)="selectGood($event)" -->

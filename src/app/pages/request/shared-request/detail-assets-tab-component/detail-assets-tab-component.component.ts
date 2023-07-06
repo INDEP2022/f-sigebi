@@ -692,7 +692,7 @@ export class DetailAssetsTabComponentComponent
   }
 
   getDestinyTransfer(params: ListParams, idSolicitud?: string | number) {
-    let params2 = new ListParams();
+    /*let params2 = new ListParams();
     params['filter.requestId'] = `$eq:${idSolicitud}`;
 
     this.goodService.getAll(params2).subscribe({
@@ -714,7 +714,7 @@ export class DetailAssetsTabComponentComponent
         //   `El formulario no se puede actualizar ${error.error.message}`
         // );
       },
-    });
+    });*/
 
     params['filter.name'] = '$eq:Destino';
     this.genericService

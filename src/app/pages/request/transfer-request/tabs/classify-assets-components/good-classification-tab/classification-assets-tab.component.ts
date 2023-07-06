@@ -107,10 +107,10 @@ export class ClassificationAssetsTabComponent
     this.prepareForm();
     this.tablePaginator();
     this.settingsGood.columns = REQUEST_OF_ASSETS_COLUMNS;
-    this.columns.select = {
+    /*this.columns.select = {
       ...this.columns.select,
       onComponentInitFunction: this.selectGood.bind(this),
-    };
+    };*/
     this.initForm();
     this.request = this.requestObject.getRawValue();
   }
@@ -554,5 +554,9 @@ export class ClassificationAssetsTabComponent
       fractionId: [null],
       saeMeasureUnit: [null],
     });
+  }
+
+   selectRow(row?: any) {
+    console.log('Información de la fila seleccionada, ' , row);
   }
 }
