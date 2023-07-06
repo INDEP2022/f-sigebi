@@ -168,6 +168,7 @@
                 "
                 (click)="file.click()">
                 Abrir archivo Excel / CSV
+                <i class="bi bi-file-earmark-excel-fill"></i>
               </button>
               <input
                 type="file"
@@ -186,6 +187,7 @@
                 "
                 class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
                 Ejecutar proceso
+                <i class="fa fa-check" aria-hidden="true"></i>
               </button>
               <button
                 (click)="resetProcess()"
@@ -196,7 +198,8 @@
                   DeclarationsUploadValidationMassive
                 "
                 class="ml-2 mb-0 m-4 btn btn-danger btn-sm active">
-                Limpiar Proceso
+                Limpiar
+                <i class="fas fa-eraser"> </i>
               </button>
               <button
                 *ngIf="
@@ -209,7 +212,8 @@
                 (click)="goPageVolante()"
                 type="button"
                 class="ml-2 mb-0 m-4 btn btn-primary btn-sm active">
-                Regresar al proceso anterior
+                Regresar
+                <i class="fas fa-arrow-circle-left"></i>
               </button>
             </div>
           </div>
@@ -371,10 +375,11 @@
               <button
                 type="button"
                 [disabled]="procesandoPreload"
-                class="ml-2 mr-2 mt-4 btn btn-success btn-sm text-wrap"
+                class="ml-2 mr-2 mt-4 btn btn-success btn-sm text-wrap active"
                 (click)="exportXlsx()">
                 Exportar Errores Encontrados en el Proceso de Validación del
-                archivo<i class="fa fa-file-excel ml-1"></i>
+                archivo
+                <i class="bx bx-download float-icon"></i>
               </button>
             </div>
           </div>
@@ -640,10 +645,11 @@
               <button
                 type="button"
                 [disabled]="procesandoPreload"
-                class="ml-2 mr-2 mt-4 btn btn-success btn-sm text-wrap"
+                class="ml-2 mr-2 mt-4 btn btn-success btn-sm text-wrap active"
                 (click)="exportErrorUploadXlsx()">
                 Exportar Errores Encontrados en el Proceso de Validación del
-                archivo<i class="fa fa-file-excel ml-1"></i>
+                archivo
+                <i class="bx bx-download float-icon"></i>
               </button>
             </div>
           </div>
