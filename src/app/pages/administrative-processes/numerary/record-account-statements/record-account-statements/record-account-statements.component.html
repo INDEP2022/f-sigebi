@@ -105,23 +105,28 @@
                 type="text"
                 class="form-control"
                 bsDatepicker
-                formControlName="balanceOf" />
+                formControlName="balanceOf"
+                [(ngModel)]="variableOf" />
             </form-field>
           </div>
+
           <div class="col-md-3">
             <form-field [control]="form.get('balanceAt')" label="Saldo al">
               <input
                 type="text"
                 class="form-control"
                 bsDatepicker
-                formControlName="balanceAt" />
+                formControlName="balanceAt"
+                [(ngModel)]="variableAt" />
             </form-field>
           </div>
+
           <div class="col-md-4">
             <button
-              type="submit"
+              type="button"
               class="btn btn-sm btn-info active mr-4"
-              style="background-color: #9d2449">
+              style="background-color: #9d2449"
+              (click)="DateAccountBalance()">
               Consultar
             </button>
             <button
@@ -132,8 +137,9 @@
               Limpiar <i class="fa fa-eraser"></i>
             </button>
           </div>
+
           <div class="col-md-2">
-            <span>Saldo</span>
+            <span>Saldo: {{ balance }}</span>
           </div>
         </div>
       </form>

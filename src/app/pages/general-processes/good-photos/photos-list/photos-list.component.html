@@ -1,4 +1,4 @@
-<div class="errorMessage" *ngIf="errorMessage && !this.userPermisions">
+<div class="errorMessage" *ngIf="errorMessage && errorMessage.length > 0">
   {{ errorMessage }}
 </div>
 <div class="photoGoods mt-3 mb-3">
@@ -6,7 +6,7 @@
     <button
       class="btn btn-primary btn-sm active"
       type="button"
-      [disabled]="disabled || !this.userPermisions"
+      [disabled]="disabled || errorMessage !== null"
       (click)="openFileUploader()">
       Subir Fotos
       <i class="fa fa-upload"></i>
@@ -33,7 +33,7 @@
           formControlName="typedblClickAction"
           [clearable]="false"
           [searchable]="false"
-          [readonly]="files.length < 1 || disabled || !this.userPermisions">
+          [readonly]="files.length < 1 || disabled || errorMessage !== null">
           <ng-option [value]="1">Visualizar</ng-option>
           <ng-option [value]="2">Editar</ng-option>
         </ng-select>
@@ -55,7 +55,7 @@
           id="button-basic"
           dropdownToggle
           class="btn btn-primary dropdown-toggle btn-sm active"
-          [class]="disabled || !this.userPermisions ? 'disabled' : ''"
+          [class]="disabled || errorMessage !== null ? 'disabled' : ''"
           type="button"
           aria-controls="dropdown-basic">
           <div class="d-flex align-items-center">

@@ -2,10 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IRecordAccountStatements } from 'src/app/core/models/catalogs/record-account-statements.model';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RecordAccountStatementsAccountsService } from 'src/app/core/services/catalogs/record-account-statements-accounts.service';
-import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
-import { GenerateCveService } from 'src/app/core/services/ms-security/application-generate-clave';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -23,15 +20,11 @@ export class RecordAccountStatementsModalComponent
   dataGrilla: any;
   movimentAccount: IRecordAccountStatements;
   factasStatusCta: any;
-  accountNumber: number;
   dataAccountPaginated: any;
 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private accountBank: GenerateCveService,
-    private accountService: BankAccountService,
-    private authService: AuthService,
     private recordAccountStatementsAccountsService: RecordAccountStatementsAccountsService
   ) {
     super();
@@ -39,10 +32,9 @@ export class RecordAccountStatementsModalComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.searchFactasStatusCta();
   }
 
-  prepareForm() {
+  private prepareForm() {
     this.form = this.fb.group({
       bank: [
         this.movimentAccount.factasStatusCta.nombre,
@@ -66,25 +58,7 @@ export class RecordAccountStatementsModalComponent
     });
   }
 
-  // Trae la lista de bancos
-  searchFactasStatusCta() {
-    this.recordAccountStatementsAccountsService
-      .getFactasStatusCta(this.dataAccountPaginated)
-      .subscribe({
-        next: response => {
-          this.factasStatusCta = response;
-          this.loading = false;
-        },
-        error: (err: any) => {
-          this.loading = false;
-          this.alert('warning', 'No existen bancos', ``);
-        },
-      });
-  }
-
-  showCreateAlert(event: any) {
-    const movimentAccount = event;
-    console.log('movimentAccount', movimentAccount);
+  showCreateAlert() {
     this.alertQuestion(
       'warning',
       'Transferir',

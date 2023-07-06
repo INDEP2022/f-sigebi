@@ -8,7 +8,14 @@ import {
 import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  firstValueFrom,
+  map,
+  of,
+  takeUntil,
+} from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -16,15 +23,20 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { goodCheck, V_GOOD_COLUMNS } from './columns.component';
+import { UnitConversionPackagesDataService } from '../services/unit-conversion-packages-data.service';
+import { goodCheck, V_GOOD_COLUMNS } from './columns';
 
 @Component({
   selector: 'app-massive-conversion-select-good',
-  templateUrl: './massive-conversion-select-good.html',
+  templateUrl: './massive-conversion-select-good.component.html',
   styleUrls: [],
 })
 export class MassiveConversionSelectGoodComponent
@@ -32,6 +44,7 @@ export class MassiveConversionSelectGoodComponent
   implements OnInit
 {
   //Variables que recibe
+  goodCheckValues = goodCheck;
   paqDestinationGoodLenght: number;
   clearPaqDestination: boolean;
   //Params para navegación
@@ -39,34 +52,34 @@ export class MassiveConversionSelectGoodComponent
   totalItems: number = 0;
   limit = new FormControl(10);
   //Forma
-  form: FormGroup = new FormGroup({});
+  form: FormGroup;
 
   get delegation() {
-    return this.form.get('delegation');
+    return this.form ? this.form.get('delegation') : null;
   }
 
   get goodClassification() {
-    return this.form.get('goodClassification');
+    return this.form ? this.form.get('goodClassification') : null;
   }
 
   get targetTag() {
-    return this.form.get('targetTag');
+    return this.form ? this.form.get('targetTag') : null;
   }
 
   get goodStatus() {
-    return this.form.get('goodStatus');
+    return this.form ? this.form.get('goodStatus') : null;
   }
 
   get measurementUnit() {
-    return this.form.get('measurementUnit');
+    return this.form ? this.form.get('measurementUnit') : null;
   }
 
   get transferent() {
-    return this.form.get('transferent');
+    return this.form ? this.form.get('transferent') : null;
   }
 
   get warehouse() {
-    return this.form.get('warehouse');
+    return this.form ? this.form.get('warehouse') : null;
   }
 
   //Delegacion
@@ -83,20 +96,32 @@ export class MassiveConversionSelectGoodComponent
 
   data = new LocalDataSource();
 
+  get selectedPackage() {
+    return this.unitConversionPackagesDataService.selectedPackage;
+  }
+
+  get dataPrevisualization() {
+    return this.unitConversionPackagesDataService.dataPrevisualization;
+  }
+
   constructor(
     private fb: FormBuilder,
     private delegationService: DelegationService,
+    private unitConversionPackagesDataService: UnitConversionPackagesDataService,
     private rNomenclaService: ParametersService,
     private packageGoodService: PackageGoodService,
     private trackerGoodService: GoodTrackerService,
+    private transferentService: TransferenteService,
+    private survillanceService: SurvillanceService,
+    private expedientService: ExpedientService,
+    private goodService: GoodService,
     private bsModel: BsModalRef
   ) {
     super();
-  }
-
-  ngOnInit(): void {
     this.prepareForm();
   }
+
+  ngOnInit(): void {}
 
   private prepareForm(): void {
     this.form = this.fb.group({
@@ -111,11 +136,142 @@ export class MassiveConversionSelectGoodComponent
   }
 
   emitDelegation(delegation: any) {
-    this.descData.descDelegation = delegation;
+    console.log(delegation);
+
+    this.descData.descDelegation = delegation.description;
   }
 
   settingChange($event: any): void {
     this.settingsTable = $event;
+  }
+
+  private obtainVCuenta(numberGood: number) {
+    return this.survillanceService.getVCuentaNoBien(numberGood).pipe(
+      takeUntil(this.$unSubscribe),
+      catchError(x => of({ data: [] })),
+      map(x => (x.data.length > 0 ? 0 : x.data[0].count))
+    );
+  }
+
+  private obtainTransferent(transferent: string) {
+    return this.transferentService.getById(transferent).pipe(
+      takeUntil(this.$unSubscribe),
+      catchError(x => of(null)),
+      map(x => (x ? x.id : null))
+    );
+  }
+
+  private obtainDelegation(coord_admin: string) {
+    const filterParams = new FilterParams();
+    filterParams.addFilter('description', coord_admin);
+    return this.delegationService.getAll(filterParams.getParams()).pipe(
+      takeUntil(this.$unSubscribe),
+      catchError(x => of({ data: [] })),
+      map(x => (x.data.length > 0 ? x.data[0].id : null))
+    );
+  }
+
+  private async fillGoodPaqDestino(v_bani: boolean) {
+    let V_BANR = true;
+    await goodCheck.forEach(async good => {
+      console.log(good);
+      if (v_bani) {
+        const filterParams = new FilterParams();
+        filterParams.addFilter('numberPackage', this.selectedPackage);
+        filterParams.addFilter('numberGood', good.goodNumber);
+        const encontro = await firstValueFrom(
+          this.packageGoodService
+            .getPaqDestinationDet(filterParams.getParams())
+            .pipe(
+              catchError(x => of({ data: [] })),
+              map(x => x.data.length > 0)
+            )
+        );
+        if (encontro) {
+          V_BANR = false;
+        }
+      }
+
+      if (V_BANR) {
+        const V_CUENTA = await firstValueFrom(
+          this.obtainVCuenta(good.goodNumber)
+        );
+        if (V_CUENTA > 0) {
+          V_BANR = false;
+        }
+      }
+      if (V_BANR) {
+        console.log('Entro a registrar');
+        let V_NO_TRANSFERENTE;
+        if (good.dTransferee) {
+          const transferentSplit = good.dTransferee.split('-');
+          if (transferentSplit.length > 0) {
+            V_NO_TRANSFERENTE = await firstValueFrom(
+              this.obtainTransferent(transferentSplit[0])
+            );
+            // V_NO_TRANSFERENTE = transferentSplit[0];
+          }
+        }
+
+        const V_NO_DELEGACION = await firstValueFrom(
+          this.obtainDelegation(good.coord_admin)
+        );
+        // console.log(V_NO_DELEGACION);
+
+        if (V_NO_DELEGACION) {
+          await firstValueFrom(
+            this.goodService.update({
+              id: good.id,
+              goodNumber: good.goodNumber,
+              delegationNumber: V_NO_DELEGACION,
+            })
+          );
+        }
+
+        if (V_NO_TRANSFERENTE) {
+          await firstValueFrom(
+            this.expedientService.update(good.fileNumber, {
+              id: good.fileNumber,
+              transferNumber: V_NO_TRANSFERENTE,
+            })
+          );
+        }
+        await firstValueFrom(
+          this.packageGoodService.insertPaqDestDec({
+            numberPackage: this.selectedPackage,
+            numberGood: good.goodNumber,
+            amount: good.quantity,
+            amountConv: null,
+            numberRecord: good.numFile,
+            nbOrigin: null,
+          })
+        );
+        this.unitConversionPackagesDataService.updatePrevisualizationData.next(
+          true
+        );
+        this.closeModal();
+      }
+    });
+  }
+
+  private clearPrevisualizationData() {
+    let v_bani: boolean;
+    if (this.dataPrevisualization.length > 0) {
+      this.alertQuestion(
+        'question',
+        '¿El paquete tiene bienes, se eliminan?',
+        '',
+        'Eliminar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.clearPaqDestination = true;
+          v_bani = false;
+        } else {
+          v_bani = true;
+        }
+        this.fillGoodPaqDestino(v_bani);
+      });
+    }
   }
 
   closeModal() {
@@ -157,7 +313,7 @@ export class MassiveConversionSelectGoodComponent
     });
   }
 
-  goodsWhere() {
+  private goodsWhere() {
     return new Promise((resolve, reject) => {
       const paramsEnc = new FilterParams();
       paramsEnc.addFilter('statuspack', 'X', SearchFilter.NOT);
@@ -275,25 +431,10 @@ export class MassiveConversionSelectGoodComponent
     }
   }
 
-  enterGoods() {
-    let v_bani: boolean;
-
+  pbIngresar() {
+    // debugger;
     if (goodCheck.length > 0) {
-      if (this.paqDestinationGoodLenght > 0) {
-        this.alertQuestion(
-          'question',
-          '¿El paquete tiene bienes, se eliminan?',
-          '',
-          'Eliminar'
-        ).then(q => {
-          if (q.isConfirmed) {
-            this.clearPaqDestination = true;
-            v_bani = false;
-          } else {
-            v_bani = true;
-          }
-        });
-      }
+      this.clearPrevisualizationData();
     } else {
       this.alert('warning', 'No seleccionó ningún bien', '');
     }

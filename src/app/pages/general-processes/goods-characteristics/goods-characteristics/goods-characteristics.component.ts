@@ -1131,7 +1131,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.disabledTable = true;
     this.disabledNoClasifBien = true;
     this.errorMessage =
-      'El estatus ' + this.good.status + 'no es válido para editar';
+      'El estatus ' + this.good.status + ' no es válido para editar';
   }
 
   private disactivateForUser() {

@@ -28,3 +28,10 @@ export interface IFactasStatusCta {
   nombre?: string;
   cve_cuenta?: number;
 }
+
+export interface IDateAccountBalance {
+  noAccount?: number;
+  tiDateCalc?: string;
+  tiDateCalcEnd?: string;
+  result?: number;
+}

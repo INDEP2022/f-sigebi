@@ -267,11 +267,7 @@ export class KeyProceedingsFormComponent
       this.eventProgrammingService.getFolio(body).pipe(
         catchError(error => {
           if (error.status >= 500) {
-            this.onLoadToast(
-              'error',
-              'Error',
-              'Error en la localización del folio'
-            );
+            this.alert('error', 'Error', 'Error en la localización del folio');
           }
           return throwError(() => error);
         }),
@@ -475,11 +471,7 @@ export class KeyProceedingsFormComponent
 
   invalidTransfer() {
     this.tempTrans = null;
-    this.onLoadToast(
-      'error',
-      'Error',
-      'La transferente no es válida para este tipo'
-    );
+    this.alert('error', 'Error', 'La transferente no es válida para este tipo');
   }
 
   validateTransfer(_type: string, transfer: string) {

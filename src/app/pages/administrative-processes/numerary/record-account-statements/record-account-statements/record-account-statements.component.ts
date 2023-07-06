@@ -11,7 +11,12 @@ import {
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RECORDS_ACCOUNT_STATEMENTS_COLUMNS } from './record-account-statements-columns';
 
-import { IRecordAccountStatements } from 'src/app/core/models/catalogs/record-account-statements.model';
+import { DatePipe } from '@angular/common';
+import {
+  IDateAccountBalance,
+  IRecordAccountStatements,
+} from 'src/app/core/models/catalogs/record-account-statements.model';
+
 import { RecordAccountStatementsAccountsService } from 'src/app/core/services/catalogs/record-account-statements-accounts.service';
 import { RecordAccountStatementsService } from 'src/app/core/services/catalogs/record-account-statements.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -43,14 +48,21 @@ export class RecordAccountStatementsComponent
   current: string;
 
   factasStatusCta: any;
+  selectedDateBalanceOf: Date;
+  selectedDateBalanceAt: Date;
+  balanceDateAccount: IDateAccountBalance;
+  balance: number;
+  accountDate: number;
 
-  public showModal = false;
+  variableOf: Date;
+  variableAt: Date;
 
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private recordAccountStatementsService: RecordAccountStatementsService,
-    private recordAccountStatementsAccountsService: RecordAccountStatementsAccountsService
+    private recordAccountStatementsAccountsService: RecordAccountStatementsAccountsService,
+    private datePipe: DatePipe
   ) {
     super();
     this.settings.columns = RECORDS_ACCOUNT_STATEMENTS_COLUMNS;
@@ -129,6 +141,7 @@ export class RecordAccountStatementsComponent
 
   // Trae la lista de bancos
   searchBanks() {
+    this.dataAccount = new LocalDataSource();
     this.recordAccountStatementsService
       .getAll(this.params.getValue())
       .subscribe({
@@ -145,11 +158,20 @@ export class RecordAccountStatementsComponent
 
   // Asigna el valor del banco seleccionado a la función "searchBankAccount"
   onBankSelectChange(value: any) {
+    this.form.get('account').reset();
+    this.form.get('accountType').reset();
+    this.form.get('square').reset();
+    this.form.get('branch').reset();
+    this.form.get('currency').reset();
+    this.form.get('description').reset();
+    this.cleandInfoDate();
+    this.bankAccountSelect = new DefaultSelect();
+    this.dataAccount = new LocalDataSource();
     if (value && value.bankCode) {
       const bankCode = value.bankCode;
       this.searchBankAccount(bankCode);
     } else {
-      this.cleandInfoGoods();
+      this.cleandInfoAll();
     }
   }
 
@@ -163,7 +185,6 @@ export class RecordAccountStatementsComponent
             response.data,
             response.count
           );
-          console.log(response.data);
           this.loading = false;
         },
         error: (err: any) => {
@@ -176,6 +197,7 @@ export class RecordAccountStatementsComponent
   // Establece los valores en los inputs de datos de la cuenta seleccionada
   onBankAccountSelectChange(value: any) {
     const accountNumber = value.accountNumber;
+    this.accountDate = value.accountNumber;
     this.searchDataAccount(accountNumber);
 
     // Obtener los valores correspondientes de la cuenta seleccionada
@@ -196,8 +218,30 @@ export class RecordAccountStatementsComponent
     this.current = current;
   }
 
+  // Genera el saldo de la cuenta seleccionada al escoger un rango de fechas
+  DateAccountBalance() {
+    const balanceOf = this.datePipe.transform(this.variableOf, 'dd/MM/yyyy');
+    const balanceAt = this.datePipe.transform(this.variableAt, 'dd/MM/yyyy');
+    const model: IDateAccountBalance = {
+      noAccount: this.accountDate,
+      tiDateCalc: balanceOf,
+      tiDateCalcEnd: balanceAt,
+    };
+    this.recordAccountStatementsAccountsService
+      .getAccountBalanceDate(model)
+      .subscribe({
+        next: response => {
+          this.balance = response.result;
+        },
+        error: error => {
+          this.alert('warning', 'Error', 'No se puede generar el saldo');
+        },
+      });
+  }
+
   // Establece los valores de movimientos de la cuenta seleccionada a la tabla
   searchDataAccount(accountNumber: number) {
+    this.loading = true;
     this.dataAccountPaginated = accountNumber;
     this.recordAccountStatementsAccountsService
       .getDataAccount(accountNumber, this.params.getValue())
@@ -221,6 +265,7 @@ export class RecordAccountStatementsComponent
     this.searchFactasStatusCta(accountNumber);
   }
 
+  // Trae el nombre del banco y número de cuenta que se establece en el modal de transferencia
   searchFactasStatusCta(accountNumber: number) {
     this.recordAccountStatementsAccountsService
       .getFactasStatusCta(accountNumber)
@@ -236,6 +281,7 @@ export class RecordAccountStatementsComponent
       });
   }
 
+  //Abre el modal de transferencia de saldos
   openModal(movimentAccount: IRecordAccountStatements) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
@@ -252,26 +298,20 @@ export class RecordAccountStatementsComponent
     this.modalService.show(RecordAccountStatementsModalComponent, modalConfig);
   }
 
-  cleandInfoGoods() {
-    this.banks = null;
-    this.bankAccountSelect = null;
-    this.form.get('account').reset();
-    this.form.get('square').reset();
-    this.form.get('branch').reset();
-    this.form.get('accountType').reset();
-    this.form.get('currency').reset();
+  cleandInfoAll() {
+    this.form.reset();
+    this.searchBanks();
+    this.balance = null;
   }
 
   cleandInfo() {
     this.form.reset();
     this.searchBanks();
-    this.loading = false;
-    this.dataAccount = null;
-    this.totalItems = 0;
   }
 
   cleandInfoDate() {
     this.form.get('balanceOf').reset();
     this.form.get('balanceAt').reset();
+    this.balance = null;
   }
 }
