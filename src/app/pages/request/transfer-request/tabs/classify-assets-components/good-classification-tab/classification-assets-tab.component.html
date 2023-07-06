@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-md-12">
       <h5 class="title">
-        <strong>{{ title }}</strong>
+        <strong>{{ title }} PRUEBA</strong>
       </h5>
     </div>
   </div>
@@ -24,7 +24,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settingsGood"
-            [source]="paragraphs">
+            [source]="paragraphs"
+            (rowSelect)="selectGood($event.data)">
           </ng2-smart-table>
         </div>
         <!-- (userRowSelect)="selectGood($event)" -->

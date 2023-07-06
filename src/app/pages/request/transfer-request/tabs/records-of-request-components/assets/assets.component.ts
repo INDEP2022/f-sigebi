@@ -1038,9 +1038,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   assignAllAddress() {
     Swal.fire({
-      title: 'Asignacion Masiva de domicilio',
-      html: 'Se asignara a todos los bienes el domicio que se seleccionara',
-      icon: 'info',
+      title: 'Asignación Masiva de domicilio',
+      html: 'Se asignará a todos los bienes el domicilio que se seleccione',
+      icon: 'warning',
       showCancelButton: false,
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
@@ -1103,8 +1103,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   classifyAllGoods() {
     Swal.fire({
       title: 'Clasificación Masiva',
-      html: 'Se asignara a todos los bienes la fraccion que se seleccionara',
-      icon: 'info',
+      html: 'Se asignará a todos los bienes la fracción que se seleccione',
+      icon: 'warning',
       showCancelButton: false,
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
