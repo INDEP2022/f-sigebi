@@ -11,6 +11,8 @@ import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 
@@ -30,7 +32,9 @@ export class GoodsProcessValidationExtdomService {
     private msCityService: CityService,
     private msTransferenteService: TransferenteService,
     private msStationService: StationService,
-    private msAuthorityService: AuthorityService
+    private msAuthorityService: AuthorityService,
+    private msGoodService: GoodService,
+    private msHistoryGoodService: HistoryGoodService
   ) {}
   getNotificationByFilters(params: _Params) {
     return this.msNotificationService.getAllFilter(params);
@@ -67,5 +71,13 @@ export class GoodsProcessValidationExtdomService {
   }
   getAuthority(params: ListParams) {
     return this.msAuthorityService.getAll(params);
+  }
+  getGoods(params: string) {
+    return this.msGoodService.getAllFilter(params);
+  }
+  getHistoryGood(params: _Params) {
+    return this.msHistoryGoodService.getAllFilterHistoricGoodsAsegExtdom(
+      params
+    );
   }
 }

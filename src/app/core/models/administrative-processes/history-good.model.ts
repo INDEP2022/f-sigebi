@@ -25,3 +25,16 @@ export interface IReturnStatusProcess {
   pGoodNumber: number;
   pStatus: string;
 }
+export interface IHistoricGoodsAsegExtdom {
+  proceedingsNumber: number;
+  goodNumber: number;
+  dateChange: Date;
+  userChange: string;
+  datefree: Date;
+  userfree: string;
+  processExtSun: string;
+  recordNumber: number;
+  invoiceUnivChange: number;
+  invoiceUnivfree: number;
+  nbOrigin: string;
+}

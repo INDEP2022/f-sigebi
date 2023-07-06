@@ -57,4 +57,11 @@ export class ScreenStatusService extends HttpService {
   getStatusCheck(data: any) {
     return this.post('application/check-status-good', data);
   }
+
+  getGetGoodScreenStatus(params: any) {
+    return this.post<IListResponse<IStatusXScreen>>(
+      `${this.endpoint.GetGoodScreenStatus}`,
+      params
+    );
+  }
 }

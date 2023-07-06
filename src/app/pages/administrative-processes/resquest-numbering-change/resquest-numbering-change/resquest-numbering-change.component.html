@@ -8,7 +8,7 @@
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('legalStatus')"
-            label="Situación Jurídica">
+            label="Situación jurídica">
             <ng-select
               formControlName="legalStatus"
               [searchable]="false"
@@ -25,7 +25,7 @@
             <ngx-select
               [form]="form"
               [data]="tiposData"
-              label="Tipo &#45; Subtipo &#45; Descripci&oacute;n"
+              label="Tipo &#45; subtipo &#45; descripci&oacute;n"
               value="clasifGoodNumber"
               bindLabel="tipoSupbtipoDescription"
               (fetchItems)="getTodos($event)"
@@ -125,7 +125,7 @@
 <form [formGroup]="formaplicationData" class="form-material">
   <app-card [header]="true" [footer]="true">
     <div class="ch-content" header>
-      <h5 class="title">Datos de la Solicitud y sus Bienes</h5>
+      <h5 class="title">Datos de la solicitud y sus bienes</h5>
     </div>
     <div body>
       <div class="row">
@@ -136,7 +136,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="applicationChangeCashNumber" />
+              formControlName="applicationChangeCashNumber"
+              maxlength="7" />
           </form-field>
           <button
             type="button"
@@ -157,7 +158,7 @@
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('dateRequestChangeNumerary')"
-            label="Fecha Solicitud">
+            label="Fecha solicitud">
             <input
               type="text"
               class="form-control"
@@ -173,7 +174,8 @@
               type="text"
               class="form-control"
               formControlName="userRequestChangeNumber"
-              placeholder="Rol" />
+              placeholder="Rol"
+              maxlength="30" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -197,13 +199,14 @@
             <input
               type="text"
               class="form-control"
-              formControlName="delegationRequestcamnum" />
+              formControlName="delegationRequestcamnum"
+              maxlength="200" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('procedureProposal')"
-            label="Procedimiento Propuesto">
+            label="Procedimiento propuesto">
             <select class="form-control" formControlName="procedureProposal">
               <option [value]="null">Seleccione un valor</option>
               <option value="LICITACION PUBLICA">LICITACION PUBLICA</option>
@@ -246,7 +249,7 @@
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('authorizeDate')"
-            label="Fecha Autoriza">
+            label="Fecha autoriza">
             <input
               type="text"
               class="form-control"
@@ -273,6 +276,12 @@
                 (click)="clean()"
                 style="margin: 1vh">
                 Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+              <button
+                class="btn btn-success btn-sm active"
+                style="margin: 1vh"
+                [disabled]="!formaplicationData.invalid">
+                Actualizar
               </button>
             </div>
           </div>

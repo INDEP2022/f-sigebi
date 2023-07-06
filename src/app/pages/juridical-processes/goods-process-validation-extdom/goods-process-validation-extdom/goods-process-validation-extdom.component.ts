@@ -3,11 +3,14 @@ import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -40,11 +43,19 @@ export class GoodsProcessValidationExtdomComponent
   tableSettings = {
     ...this.settings,
   };
-  dataTable = new BehaviorSubject<ListParams>(new ListParams());
+  dataTable: LocalDataSource = new LocalDataSource();
+  dataTableParams = new BehaviorSubject<ListParams>(new ListParams());
+  loadingGoods: boolean = false;
+  totalGoods: number = 0;
+  goodData: IGood;
   tableSettings2 = {
     ...this.settings,
   };
-  dataTable2 = new BehaviorSubject<ListParams>(new ListParams());
+  dataTable2: LocalDataSource = new LocalDataSource();
+  dataTableParams2 = new BehaviorSubject<ListParams>(new ListParams());
+  loadingGoods2: boolean = false;
+  totalGoods2: number = 0;
+  goodData2: IGood;
 
   tableSettingsHistorico = {
     actions: {
@@ -99,6 +110,10 @@ export class GoodsProcessValidationExtdomComponent
   selectTransference = new DefaultSelect();
   selectStationNumber = new DefaultSelect();
   selectAuthority = new DefaultSelect();
+  // Goods Selects
+  selectedGooods: IGood[] = [];
+  goods: IGood[] | any[] = [];
+  goodsValid: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -255,6 +270,12 @@ export class GoodsProcessValidationExtdomComponent
           this.notificationData = data.data[0];
           this.loading = false;
           this.setDataNotification();
+          this.dataTableParams
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.loadGoods());
+          this.dataTableParams2
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.loadGoods2());
         },
         error: error => {
           console.log(error);
@@ -305,6 +326,66 @@ export class GoodsProcessValidationExtdomComponent
     }, 200);
   }
 
+  loadGoods() {
+    this.loadingGoods = true;
+    this.totalGoods = 0;
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('fileNumber', this.notificationData.expedientNumber);
+    params.addFilter('extDomProcess', 'ASEG_EXTDOM', SearchFilter.NOT);
+    params.limit = this.dataTableParams.value.limit;
+    params.page = this.dataTableParams.value.page;
+    this.svGoodsProcessValidationExtdomService
+      .getGoods(params.getParams())
+      .subscribe({
+        next: res => {
+          this.loadingGoods = false;
+          console.log('GOODS', res);
+          this.totalGoods = res.count;
+          this.dataTable.load(res.data);
+          this.dataTable.refresh();
+        },
+        error: error => {
+          this.loadingGoods = false;
+          console.log(error);
+          this.dataTable.load([]);
+          this.dataTable.refresh();
+        },
+      });
+  }
+
+  loadGoods2() {
+    this.loadingGoods2 = true;
+    this.totalGoods2 = 0;
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter(
+      'proceedingsNumber',
+      this.notificationData.expedientNumber
+    );
+    params.addFilter('userfree', SearchFilter.NULL);
+    params.addFilter('datefree', SearchFilter.NULL);
+    params.limit = this.dataTableParams2.value.limit;
+    params.page = this.dataTableParams2.value.page;
+    this.svGoodsProcessValidationExtdomService
+      .getHistoryGood(params.getParams())
+      .subscribe({
+        next: res => {
+          this.loadingGoods2 = false;
+          console.log('GOODS 2', res);
+          this.totalGoods2 = res.count;
+          this.dataTable2.load(res.data);
+          this.dataTable2.refresh();
+        },
+        error: error => {
+          this.loadingGoods2 = false;
+          console.log(error);
+          this.dataTable2.load([]);
+          this.dataTable2.refresh();
+        },
+      });
+  }
+
   btnAgregar() {
     console.log('Agregar');
   }
@@ -324,6 +405,58 @@ export class GoodsProcessValidationExtdomComponent
   btnSalir() {
     console.log('Salir');
     this.listadoHistorico = false;
+  }
+
+  addSelectedGoods() {
+    console.log('this.selectedGooods', this.selectedGooods);
+    if (this.selectedGooods.length > 0) {
+      this.selectedGooods.forEach((good: any) => {
+        if (!this.goodsValid.some(v => v === good)) {
+          let indexGood = this.goods.findIndex(_good => _good.id == good.id);
+          console.log('aaa', this.goods);
+          console.log('indexGood', indexGood);
+          if (indexGood != -1) {
+            // if (this.goods[indexGood].goodDictaminado == true) {
+            //   this.onLoadToast(
+            //     'warning',
+            //     `El bien ${this.goods[indexGood].id} ya se encuentra dictaminado`,
+            //     ''
+            //   );
+            //   return;
+            // } else if (
+            //   this.goods[indexGood].est_disponible == 'N' ||
+            //   this.goods[indexGood].di_disponible == 'N'
+            // ) {
+            //   return;
+            // } else if (
+            //   this.goods[indexGood].di_es_numerario == 'S' &&
+            //   this.goods[indexGood].di_esta_conciliado == 'N' &&
+            //   typeDict
+            // ) {
+            //   this.onLoadToast(
+            //     'warning',
+            //     'El numerario no está conciliado',
+            //     ''
+            //   );
+            //   return;
+            // }
+
+            // IF: bienes.DI_ES_NUMERARIO = 'S' AND: bienes.DI_ESTA_CONCILIADO = 'N' AND: VARIABLES.TIPO_DICTA = 'PROCEDENCIA' THEN
+            // LIP_MENSAJE('El numerario no está conciliado', 'S');
+            this.goods[indexGood].est_disponible = 'N';
+            this.goods[indexGood].di_disponible = 'N';
+          }
+
+          this.goodsValid.push(good);
+          this.goodsValid = [...this.goodsValid];
+          // this.totalItems3 = this.goodsValid.length;
+        } else {
+          if (good.di_disponible == 'N') {
+            this.alert('warning', `El bien ${good.goodId} ya existe`, '');
+          }
+        }
+      });
+    }
   }
 
   /**

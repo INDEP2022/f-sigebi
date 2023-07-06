@@ -1,9 +1,27 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import {
+  addMonths,
+  differenceInDays,
+  differenceInMonths,
+  endOfMonth,
+  format,
+  lastDayOfMonth,
+  parse,
+  startOfDay,
+  startOfMonth,
+} from 'date-fns';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { GoodService } from 'src/app/core/services/good/good.service';
@@ -12,6 +30,7 @@ import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-a
 import { DetailInterestReturnService } from 'src/app/core/services/ms-deposit/detail-interest-return.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
+import { PaymentServicesService } from 'src/app/core/services/ms-paymentservices/payment-services.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -48,11 +67,33 @@ export class DepositAccountStatementComponent
   bodyDep: any;
   bodyPost: any;
   instrument: string;
+  transferred: string = '';
   ok: boolean = false;
   instrumentAccount: string;
   scheduledFecReturn: string;
   userChecks: any;
   rea: any;
+  accountPayReturn: number;
+  transferAccount: number;
+  validDetail: boolean = false;
+  validCheck: boolean = false;
+  validTras: boolean = false;
+  setAccount: boolean = false;
+  realInterest: number;
+  estimatedInterest: number;
+  estimatedRate: string;
+  paramsActNavigate = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsNavigate: number = 0;
+  newLimitparamsActNavigate = new FormControl(1);
+  tasa: number;
+  anio: number;
+  mes: number;
+  dataGoodAct = new LocalDataSource();
+  noReturn: number;
+  dateEnd: Date;
+  balance: number;
+  interestaccredited: number;
+
   constructor(
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
@@ -64,7 +105,8 @@ export class DepositAccountStatementComponent
     private datePipe: DatePipe,
     private bankAccountService: BankAccountService,
     private expedientService: ExpedientService,
-    private detailInterestReturnService: DetailInterestReturnService
+    private detailInterestReturnService: DetailInterestReturnService,
+    private paymentServicesService: PaymentServicesService
   ) {
     super();
   }
@@ -72,9 +114,63 @@ export class DepositAccountStatementComponent
   ngOnInit(): void {
     this.prepareForm();
     //this.getGood(new ListParams());
+    /*this.paramsActNavigate
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        console.log(params);
+        this.newLimitparamsActNavigate = new FormControl(params.limit);
+        //this.getGoodsActFn();
+        //console.log();
+        this.returnChecks(new ListParams());
+      });*/
+
+    /////////////////////////////////////////////////////////////
+    /*
+    this.paramsActNavigate
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.loading = true;
+        this.dataGoodAct.load([]);
+        //this.clearInputs();
+        const paramsF = new FilterParams();
+        paramsF.page = params.page;
+        paramsF.limit = 1;
+        paramsF.addFilter('numFile', this.form.get('expediente').value);
+        paramsF.addFilter(
+          'typeProceedings',
+          'ENTREGA,DECOMISO',
+          SearchFilter.IN
+        ); //!Un in
+
+        this.accountMovementService.getAllUsersChecks(paramsF.getParams()).subscribe({
+          next: data => {
+            console.log(data.data);
+            console.log(data);
+            const dataRes = JSON.parse(JSON.stringify(data.data[0]));
+            this.fillIncomeProceeding(dataRes, '');
+            this.accountChecksSelect = new DefaultSelect(data.data, data.count);
+          },
+          error: error => {
+            this.accountChecksSelect = new DefaultSelect();
+          },
+        });
+
+
+        this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
+          res => {
+            console.log(res);
+            const dataRes = JSON.parse(JSON.stringify(res.data[0]));
+            this.fillIncomeProceeding(dataRes, '');
+          },
+          err => {
+            this.loading = false;
+          }
+        );
+      });*/
   }
   prepareForm() {
     this.form = this.fb.group({
+      movementNumber: [null, Validators.required],
       account: [null, Validators.required],
       bank: [null, Validators.nullValidator],
       currency: [null, Validators.nullValidator],
@@ -110,6 +206,28 @@ export class DepositAccountStatementComponent
     });
     this.returnChecks(new ListParams());
     this.getParameters();
+    this.form.controls['depositDate'].disable();
+    //this.validation();
+  }
+
+  clean() {
+    for (const controlName in this.form.controls) {
+      if (this.form.controls.hasOwnProperty(controlName)) {
+        this.form.controls[controlName].setValue(null);
+        //this.form.controls[controlName].enable();
+      }
+    }
+  }
+
+  validation() {
+    for (const controlName in this.form.controls) {
+      if (this.form.controls.hasOwnProperty(controlName)) {
+        if (controlName != 'account') {
+          this.form.controls[controlName].disable();
+          //console.log(controlName);
+        }
+      }
+    }
   }
 
   getAttributes() {
@@ -179,13 +297,62 @@ export class DepositAccountStatementComponent
 
   changeChecks(event: any) {
     console.log(event);
-    this.userChecks = event;
-    this.getFilterAccount(
-      this.userChecks.accountOriginDepositNumber,
-      this.userChecks.motionOriginDepositNumber
+    if (event) {
+      this.validCheck = true;
+      this.validDetail = true;
+      this.validTras = true;
+      //this.setAccount = true;
+      this.userChecks = event;
+      //this.getSetReturn();
+      this.getFilterAccount(
+        this.userChecks.accountOriginDepositNumber,
+        this.userChecks.motionOriginDepositNumber
+      );
+      //this.getAccountMovement();
+      this.accountDeposit();
+      //this.validDate();
+    } else if (event == undefined) {
+      this.validCheck = false;
+      this.validDetail = false;
+      this.validTras = false;
+      this.clean();
+    }
+  }
+
+  getSetReturn() {
+    console.log(this.userChecks.amountWithoutInterest);
+    this.accountPayReturn = this.userChecks.accountPayReturnNumber;
+    this.form.controls['cutoffDate'].setValue(
+      this.formatDate(this.userChecks.courtReturnDate)
     );
-    //this.getAccountMovement();
-    this.accountDeposit();
+    this.form.controls['toReturn'].setValue(
+      this.userChecks.amountWithoutInterest
+    );
+    this.form.controls['associatedCosts'].setValue(
+      this.userChecks.billsAssociates
+    );
+    this.form.controls['costsAdmon'].setValue(this.userChecks.billsadmin);
+    this.form.controls['checkAmount'].setValue(this.userChecks.amountReturn);
+    this.form.controls['interestCredited'].setValue(
+      this.userChecks.interestaccredited
+    );
+    this.form.controls['checkType'].setValue(this.userChecks.checkType);
+    this.form.controls['check'].setValue(this.userChecks.InvoiceCheck);
+    this.form.controls['beneficiary'].setValue(
+      this.userChecks.beneficiaryCheck
+    );
+    this.form.controls['expeditionDate'].setValue(
+      this.formatDate(this.userChecks.expeditionCheckDate)
+    );
+    this.form.controls['collectionDate'].setValue(
+      this.formatDate(this.userChecks.paymentCheckDate)
+    );
+  }
+
+  formatDate(date: string) {
+    const formatFecTrans = date;
+    const formatTrans = this.datePipe.transform(formatFecTrans, 'yyyy/MM/dd');
+    return formatTrans;
   }
 
   accountDeposit() {
@@ -193,25 +360,35 @@ export class DepositAccountStatementComponent
       this.userChecks.accountOriginDepositNumber,
       this.userChecks.motionOriginDepositNumber
     );
-    const noCuentaDeposito = this.userChecks.accountOriginDepositNumber;
-    if (noCuentaDeposito == null) {
-      //this.alert('warning', 'Debe seleccionar los datos de la lista de valores', '');
+    //const noCuentaDeposito = this.userChecks.accountOriginDepositNumber;
+    if (!this.userChecks.accountOriginDepositNumber) {
+      this.alert(
+        'warning',
+        'Debe seleccionar los datos de la lista de valores',
+        ''
+      );
     }
+    /* VALIDAR ESTA PARTE CON FORM 
     let acount: number;
     //llamar al endpoint de cheque devolucion
     const params = new ListParams();
-    params[
-      'filter.motionOriginDepositNumber'
-    ] = `$eq:${this.userChecks.motionOriginDepositNumber}`;
+    params['filter.motionOriginDepositNumber'] = `$eq:${this.userChecks.motionOriginDepositNumber}`;
     this.accountMovementService.getAllUsersChecks(params).subscribe({
       next: data => {
-        console.log(data.data);
-        if (data.data) {
-          //this.alert('warning', 'Ya se tienen registrados cheques de devolucion', 'para el movimiento seleccionado');
-        }
+        acount = data.count;
       },
       error: error => {},
     });
+    if (acount > 0){
+      this.alert(
+        'warning',
+        'Ya se tienen registrados cheques de devolucion',
+        'para el movimiento seleccionado'
+      );
+      this.form.controls['account'].setValue('');
+      this.validation();
+
+    }*/
 
     if (this.form.controls['good'].value != null) {
       const params = new ListParams();
@@ -231,6 +408,7 @@ export class DepositAccountStatementComponent
         },
       });
     }
+    console.log(this.instrumentAccount);
     if (this.instrumentAccount == null) {
       this.alert(
         'warning',
@@ -257,7 +435,7 @@ export class DepositAccountStatementComponent
     this.form.controls['transferDate'].setValue(
       this.form.controls['transfDate'].value
     );
-    this.form.controls['toReturn'].setValue(this.form.controls['amount'].value);
+    //this.form.controls['toReturn'].setValue(this.form.controls['amount'].value);
   }
 
   enableSearchMode() {
@@ -312,7 +490,7 @@ export class DepositAccountStatementComponent
       const params = { estatus: statusBien, vc_pantalla: 'FCONADBEDOCTAXIND' };
       this.screenStatusService.getAllFiltro(params).subscribe({
         next: data => {
-          if (data.data) {
+          if (data.count > 0) {
             this.vb_valid = true;
           }
         },
@@ -324,19 +502,21 @@ export class DepositAccountStatementComponent
         'No tiene definido un bien estatus',
         'El cual es necesario para registrar la devolución'
       );
+      // INTERRUMPIR EL FLUJO
     }
-    if (this.vb_valid === false) {
+    if (this.vb_valid == false) {
       this.alert(
         'warning',
         'El bien se encuentra en un estatus',
         'En el cual no se permite registrar la devolucion'
       );
+      // INTERRUMPIR EL FLUJO
     }
 
     // VERIFICAR SI VA no-devolucion
 
     if (this.form.controls['transfDate'].value === null) {
-      if (this.form.controls['transfDate'].value != null) {
+      if (this.form.controls['transferDate'].value != null) {
         //actualizar movimiento de cuentas
         //this.accountMovementService.update();
         //vf_fecha_interses:= : blk_dev.ti_fec_inicio_interes ;
@@ -441,7 +621,9 @@ export class DepositAccountStatementComponent
     this.form.controls['transfDate'].setValue(formatTrans);
     this.form.controls['depositDate'].setValue(formatMov);
     this.form.controls['transferDate'].setValue(formatTrans);
-    this.form.controls['account'].setValue(this.bodyPost[0].cve_cuenta);
+    this.form.controls['account'].setValue(
+      this.userChecks.accountOriginDepositNumber
+    );
     console.log(this.bodyPost[0].no_cuenta_traspaso);
     this.instrumentAccount = this.bodyPost[0].no_cuenta_traspaso;
     if (this.instrumentAccount != null) {
@@ -450,17 +632,25 @@ export class DepositAccountStatementComponent
       this.bankAccountService.getCveBank(params).subscribe({
         next: resp => {
           this.instrument = resp.data[0].cveInterestCalcRate;
-          //console.log(this.instrument);
+          console.log(this.instrument);
         },
       });
     }
     //Averiguar no_cuenta_paga_devolucion
-
-    const noCuenta = 0;
-    if (noCuenta != null) {
+    console.log(this.userChecks.accountPayReturnNumber);
+    if (this.userChecks.accountPayReturnNumber != null) {
       const params = new ListParams();
-      params['filter.accountNumber'] = `$eq:${noCuenta}`;
+      params[
+        'filter.accountNumber'
+      ] = `$eq:${this.userChecks.accountPayReturnNumber}`;
       this.bankAccountService.getCveBank(params).subscribe({
+        next: resp => {
+          console.log(resp);
+          this.form.controls['bankAccount'].setValue(resp.data[0].cveAccount);
+          this.transferAccount = resp.data[0].accountNumberTransfer;
+          this.form.controls['bank'].setValue(resp.data[0].cveBank);
+        },
+        error: err => {},
         //SETEAR A LAS ETIQUETAS
         //cve_cuenta no_cuenta_traspaso cve_banco
       });
@@ -471,7 +661,8 @@ export class DepositAccountStatementComponent
         next: resp => {
           console.log(resp);
           this.getGood(new ListParams(), this.bodyPost[0].no_bien);
-          //this.form.controls['good'].setValue(resp.description);
+
+          this.form.controls['good'].setValue(this.bodyPost[0].no_bien);
           this.form.controls['status'].setValue(resp.status);
           this.form.controls['proceedings'].setValue(resp.fileNumber);
           this.scheduledFecReturn = resp.scheduledDateDecoDev;
@@ -483,11 +674,13 @@ export class DepositAccountStatementComponent
       });
     }
     // buscar el dato de expediente_deposito
-    if (this.form.controls['fileNumber'].value != null) {
+    console.log(this.form.controls['proceedings'].value);
+    if (this.form.controls['proceedings'].value != null) {
       const params = new ListParams();
-      params['filter.id'] = `$eq:${this.form.controls['fileNumber'].value}`;
-      this.expedientService.getAll().subscribe({
+      params['filter.id'] = `$eq:${this.form.controls['proceedings'].value}`;
+      this.expedientService.getAll(params).subscribe({
         next: resp => {
+          console.log(resp);
           this.form.controls['indicated'].setValue(resp.data[0].indicatedName);
           this.form.controls['avPrevious'].setValue(
             resp.data[0].preliminaryInquiry
@@ -499,12 +692,11 @@ export class DepositAccountStatementComponent
         },
       });
     }
-    const subTotal =
-      this.form.controls['toReturn'].value +
-      (this.form.controls['interestCredited'].value ?? 0);
-
+    let subTotal: number =
+      Number(this.form.controls['toReturn'].value) +
+      (Number(this.form.controls['interestCredited'].value) ?? 0);
     this.form.controls['subTotal'].setValue(subTotal);
-
+    console.log(subTotal);
     // setear a di_subtotal := :blk_dev.importe_sin_interes + NVL(:blk_dev.interes_acreditado,0);
   }
 
@@ -521,60 +713,49 @@ export class DepositAccountStatementComponent
 
   validComplementary() {
     this.ok = true;
-    const noMovimientoOrigenDeposito = 0;
-    if (noMovimientoOrigenDeposito === null) {
+    if (this.userChecks.motionOriginDepositNumber === null) {
       this.alert(
         'warning',
         'Debe registrar primero un movimiento normal',
         'Para hacer un cheque complementario'
       );
     }
-    const importeDevolucion = 0;
-    if (importeDevolucion == 0) {
+    if ((this.form.controls['checkAmount'].value ?? 0) == 0) {
       this.alert('warning', 'Debe haber algun importe para el cheque', '');
     }
-    const tiCuentaDevolucion = 0;
-    if (tiCuentaDevolucion === null) {
+    if (this.form.controls['account'].value == null) {
       this.alert(
         'warning',
         'Debe especificar la cuenta',
         'De donde se hace la salida del cheque'
       );
     }
-    const folioCheque = 0;
-    if (folioCheque === null) {
+    if (this.form.controls['check'].value == null) {
       this.alert(
         'warning',
         'Debe especificar',
         'El folio del cheque a devolver'
       );
     }
-    const fecExpedicionCheque = 0;
-    if (fecExpedicionCheque === null) {
+    if (this.form.controls['expeditionDate'].value == null) {
       this.alert(
         'warning',
         'Debe especificar',
         'La fecha de expedicion del cheque'
       );
     }
-
-    const beneficiarioCheque = 0;
-    if (fecExpedicionCheque === null) {
+    if (this.form.controls['beneficiary'].value == null) {
       this.alert('warning', 'Debe especificar', 'El beneficiario del cheque');
     }
 
-    const fecCorteDevolucion = 0;
-    const diFecProgramadaDevolucion = 0;
-    if (fecCorteDevolucion != diFecProgramadaDevolucion) {
+    if (this.form.controls['cutoffDate'].value != this.scheduledFecReturn) {
       this.alert(
         'warning',
         'Especifico una fecha de corte',
         'Diferente a la programada'
       );
     }
-
-    const tipoCheque = 'INTERES';
-    if (tipoCheque == 'INTERES') {
+    if (this.form.controls['checkType'].value == 'INTERES') {
       this.alert(
         'warning',
         'Se encuentra en un cheque complementario',
@@ -582,7 +763,17 @@ export class DepositAccountStatementComponent
       );
     } else {
       //GO_BLOCK('blk_dev')
-
+      const params = new ListParams();
+      params[
+        'filter.motionOriginDepositNumber'
+      ] = `$eq:${this.userChecks.motionOriginDepositNumber}`;
+      params['filter.checkType'] = `$eq:INTERES`;
+      this.accountMovementService.getAllUsersChecks(params).subscribe({
+        next: data => {
+          this.ok = false;
+        },
+        error: error => {},
+      });
       if (!this.ok) {
         this.alert(
           'warning',
@@ -594,7 +785,7 @@ export class DepositAccountStatementComponent
   }
 
   calculateReturn() {
-    let hoy = this.form.controls['cutoffDate'].value;
+    let hoy: Date = this.form.controls['cutoffDate'].value;
     let months: number;
     let annual: number;
     let currentMonth: number;
@@ -613,8 +804,8 @@ export class DepositAccountStatementComponent
     let realRate: boolean;
     let estimatedRate: string = '';
 
-    console.log(this.instrument);
-    if (this.form.controls['transferDate'].value != null) {
+    console.log(this.form.controls['transfDate'].value);
+    if (this.form.controls['transfDate'].value != null) {
       accruedInterest = 0;
       estimatedInterest = 0;
       capitalization = this.form.controls['toReturn'].value;
@@ -629,115 +820,71 @@ export class DepositAccountStatementComponent
           anualBasis = Number(resp.initialValue);
         },
       });
-
-      const monthsBetween: number = this.calculateMonthsBetween(
-        this.form.controls['cutoffDate'].value,
+      // Calcula la diferencia en meses entre vf_hoy y la fecha de inicio de interés
+      const differenceMonths = differenceInMonths(
+        hoy,
         this.form.controls['transferDate'].value
       );
-      const monthsComplete = Math.floor(monthsBetween);
-      const result = monthsComplete + 1;
-      months = result;
+      // Agrega 1 mes a la diferencia para incluir el mes inicial
+      months = differenceMonths + 1;
       console.log(months);
       for (let i_mes_actual = 0; i_mes_actual < months; i_mes_actual++) {
-        //const mes_actual = i_mes_actual + 1;
-        //console.log(`Revisando mes actual: ${mes_actual}`);
-        const fechaInicioInteres: Date = new Date(
-          this.form.controls['transferDate'].value
-        ); // Convertir la fecha a un objeto Date
-        const month: Date = new Date(
-          fechaInicioInteres.setMonth(
-            fechaInicioInteres.getMonth() + i_mes_actual
-          )
-        ); // Agregar i_mes_actual meses a la fecha
-        currentMonth = month.getMonth() + 1;
+        currentMonth = this.form.controls['transferDate'].value.getMonth() + 1;
+        currentYear = this.form.controls['transferDate'].value.getFullYear();
+        let bodyFromRates = {
+          diCoinDeposit: this.form.controls['currency'].value,
+          vnActualYear: currentYear,
+          vnMonthYear: currentMonth,
+          diInstrument: this.instrument,
+        };
+        this.getTasas(bodyFromRates);
 
-        const year: Date = new Date(
-          fechaInicioInteres.setMonth(
-            fechaInicioInteres.getMonth() + i_mes_actual
-          )
-        ); // Agregar i_mes_actual meses a la fecha
-        currentYear = year.getFullYear();
-        console.log(this.instrument);
-        /*
-        this.getTasas(body);
-        if(){
+        if (this.anio == currentYear && this.mes == currentMonth) {
           realRate = true;
-        }else{
-          realRate =false;
-          annual = anualBasis;
-          estimatedRate = annual; 
-        }*/
+          annual = this.tasa;
+        } else {
+          realRate = false;
+          annual = points;
+          estimatedRate = annual.toString();
+        }
 
         if ((i_mes_actual = 0)) {
           if (months > 1) {
-            const ti_fec_inicio_interes: Date = new Date(); // Asigna aquí la fecha de inicio del período de interés
-
-            const ultimoDiaMes: Date = new Date(
-              this.form.controls['transferDate'].value.getFullYear(),
-              this.form.controls['transferDate'].value.getMonth() + 1,
-              0
+            // Calcula la diferencia en días entre el último día del mes y ti_fec_inicio_interes
+            const lastDayMonth = endOfMonth(
+              this.form.controls['transferDate'].value
             );
-            // El código anterior crea una nueva fecha que representa el último día del mes correspondiente a 'ti_fec_inicio_interes'
-
-            const diferenciaMilisegundos: number =
-              ultimoDiaMes.getTime() -
-              this.form.controls['transferDate'].value.getTime();
-            const diferenciaDias: number = Math.floor(
-              diferenciaMilisegundos / (1000 * 60 * 60 * 24)
+            calculateDays = differenceInDays(
+              lastDayMonth,
+              this.form.controls['transferDate'].value
             );
-            // Calcula la diferencia de días dividiendo la diferencia en milisegundos entre ambos días por la cantidad de milisegundos en un día (24 * 60 * 60 * 1000)
-
-            calculateDays = diferenciaDias;
           } else {
-            const trunc_vf_hoy: Date = new Date(
-              hoy.getFullYear(),
-              hoy.getMonth(),
-              hoy.getDate()
+            calculateDays = differenceInDays(
+              hoy,
+              this.form.controls['transferDate'].value
             );
-            // Crea una nueva fecha que representa la fecha actual sin la parte de tiempo (hora, minutos, segundos y milisegundos)
-
-            const trunc_ti_fec_inicio_interes: Date = new Date(
-              this.form.controls['transferDate'].value.getFullYear(),
-              this.form.controls['transferDate'].value.getMonth(),
-              this.form.controls['transferDate'].value.getDate()
-            );
-            // Crea una nueva fecha que representa la fecha de inicio de interés sin la parte de tiempo
-
-            const diferenciaMilisegundos: number =
-              trunc_vf_hoy.getTime() - trunc_ti_fec_inicio_interes.getTime();
-            const diferenciaDias: number = Math.floor(
-              diferenciaMilisegundos / (1000 * 60 * 60 * 24)
-            );
-            // Calcula la diferencia de días dividiendo la diferencia en milisegundos entre las dos fechas por la cantidad de milisegundos en un día (24 * 60 * 60 * 1000)
-
-            calculateDays = diferenciaDias;
           }
         } else if (i_mes_actual > 0 && i_mes_actual < months - 1) {
-          const fechaInicio = new Date(currentYear, currentMonth - 1, 1); // Crea la fecha de inicio del mes actual
-          const ultimoDiaMes = new Date(currentYear, currentMonth, 0).getDate(); // Obtiene el último día del mes actual
-          const fechaFin = new Date(
-            currentYear,
-            currentMonth - 1,
-            ultimoDiaMes
-          ); // Crea la fecha de fin del mes actual
-          const diferenciaDias =
-            Math.floor(
-              (fechaFin.getTime() - fechaInicio.getTime()) /
-                (1000 * 60 * 60 * 24)
-            ) + 1;
-          // Calcula la diferencia en días entre las dos fechas y le suma 1
-          calculateDays = diferenciaDias;
+          // Obtén la fecha inicial en formato 'ddmmyyyy'
+          const initialDate =
+            '01' + currentMonth.toString().padStart(2, '0') + currentYear;
+          // Convierte la fecha inicial en objetos de tipo Date
+          const startDate = new Date(initialDate);
+          // Obtén el último día del mes correspondiente a la fecha inicial
+          const lastDayMonth = endOfMonth(startDate);
+          // Calcula la diferencia en días entre el último día del mes y la fecha inicial
+          const differencedays = differenceInDays(lastDayMonth, startDate);
+          // Agrega 1 día a la diferencia para incluir el día inicial
+          calculateDays = differencedays + 1;
         } else if ((i_mes_actual = months - 1)) {
           const diaActual: number = hoy.getDate(); // Obtiene el día actual como un número
           calculateDays = diaActual;
         }
-
         dailyRate = annual / anualBasis / 100;
         const resultado: number = capitalization * dailyRate * calculateDays;
         const resultadoRedondeado: number = +resultado.toFixed(2); // Redondea el resultado a 2 decimales
         periodInterest = resultadoRedondeado;
         capitalization = capitalization + periodInterest;
-
         if (realRate) {
           accruedInterest = (accruedInterest ?? 0) + (periodInterest ?? 0);
           accumulatedCap = (accumulatedCap ?? 0) + (periodInterest ?? 0);
@@ -746,38 +893,42 @@ export class DepositAccountStatementComponent
         }
       }
 
-      this.getPayment();
-      /* SETEAR A LAS SIGUIENTES VARIABLES
-      interes_real
-      interes_estimado
-      interes_acreditado
-      di_subtotal
-      importe_devolucion
-      tasa_estimda
-      */
+      this.getPayment(this.form.controls['good'].value);
+      this.realInterest = Number(accruedInterest);
+      this.estimatedInterest = Number(estimatedInterest);
+      const sumInterest = accruedInterest + estimatedInterest;
+      this.form.controls['interestCredited'].setValue(sumInterest);
+      const sumSubTot =
+        Number(this.form.controls['toReturn'].value) + (sumInterest ?? 0);
+      this.form.controls['subTotal'].setValue(sumSubTot);
+      const returnCheck =
+        Number(sumSubTot) -
+        Number(this.form.controls['costsAdmon'].value) -
+        Number(this.form.controls['associatedCosts'].value);
+      this.form.controls['checkAmount'].setValue(returnCheck);
+      this.estimatedRate = estimatedRate;
     }
   }
 
-  calculateMonthsBetween(date1: Date, date2: Date): number {
-    const monthsDiff = (date2.getFullYear() - date1.getFullYear()) * 12;
-    return monthsDiff + (date2.getMonth() - date1.getMonth());
-  }
-
   getTasas(body: any) {
-    /*let body{
-      diCoinDeposit: 'di_moneda_deposito',
-      vnActualYear: 'vn_anio_actual',
-      vnMonthYear: 'vn_mes_actual',
-      diInstrument: 'di_instrumento',
-    };
     this.goodParametersService.createAccount(body).subscribe({
-      next: resp=>{
-        return resp.tas, resp.mes
-      }
-    });*/
+      next: resp => {
+        this.tasa = resp.data[0].tasa;
+        this.anio = resp.data[0].anio;
+        this.mes = resp.data[0].mes;
+      },
+    });
   }
 
-  getPayment() {}
+  getPayment(good: string | number) {
+    this.paymentServicesService.getById(good).subscribe({
+      next: resp => {
+        //: blk_dev.gastos_admon, : blk_dev.gastos_asociados
+        this.form.controls['costsAdmon'].setValue(resp.spent);
+        this.form.controls['associatedCosts'].setValue(resp.cost);
+      },
+    });
+  }
 
   detailReturn() {
     let today: Date = this.form.controls['cutoffDate'].value;
@@ -811,21 +962,28 @@ export class DepositAccountStatementComponent
     let pivotStart: Date;
     let pivotAmount: number;
 
-    const noDevolucion = 0;
-    if (noDevolucion === null) {
-      // Obtener un valor de auto incrementable y setearlo a noDevolucion
+    if (!this.noReturn) {
+      //Le da un nuevo valor
     } else {
-      //ejecutar la funcion de delete enviando noDevolucion  en la tabla detalle_interes_devolucion
+      let bodyDelete = {
+        returnNumber: this.noReturn,
+        row: row,
+      };
+      this.detailInterestReturnService.remove(bodyDelete).subscribe({
+        next: resp => {},
+      });
     }
 
-    if (this.form.controls['transferDate'].value != null) {
+    if (this.form.controls['transferDate'].value) {
       if (this.form.controls['checkType'].value == 'NORMAL') {
         pivotStart = this.form.controls['transferDate'].value;
         pivotAmount = this.form.controls[' toReturn'].value;
       } else {
-        this.getCheck();
-        /*pivotStart = bus.fec_fin + 1;
-        pivotAmount = bus.saldo;*/
+        this.getCheck(this.userChecks.motionOriginDepositNumber);
+        const sumDate = new Date(this.dateEnd);
+        sumDate.setDate(this.dateEnd.getDate() + 1);
+        pivotStart = sumDate;
+        pivotAmount = this.balance;
       }
       interestCumulative = 0;
       interestEstimation = 0;
@@ -847,116 +1005,84 @@ export class DepositAccountStatementComponent
           porcExpensesAdmVos = +(Number(resp.initialValue) / 100).toFixed(2);
         },
       });
-
-      const fechaPivoteInicio: Date = new Date(
-        '01' + this.getFormattedMonthYear(pivotStart)
-      );
-
-      const monthsBetween: number = this.calculateMonthsBetween(
-        today,
-        fechaPivoteInicio
-      );
-      const monthsComplete = Math.floor(monthsBetween);
-      const result = monthsComplete + 1;
-      monthsReview = result;
+      const fechaInicio = startOfMonth(
+        parse(
+          '01' +
+            pivotStart.toLocaleString('en-US', {
+              month: '2-digit',
+              year: 'numeric',
+            }),
+          'ddMMyyyy',
+          new Date()
+        )
+      ); // Convertir vf_pivote_inicio a formato '01mmyyyy' y obtener el primer día del mes
+      monthsReview = differenceInMonths(today, fechaInicio) + 1; // Calcular la diferencia en meses y agregar 1
 
       for (let i_mes_actual = 0; i_mes_actual < monthsReview; i_mes_actual++) {
-        const fechaCalculada: Date = this.addMonths(pivotStart, i_mes_actual);
-        const resultado: number = this.getMonthFromDate(fechaCalculada);
-        currentMonth = resultado;
-        const resultado1: number = this.getYearFromDate(fechaCalculada);
-        currentYear = resultado1;
-        /*let body{
-          diCoinDeposit: '',
-          vnActualYear: ,
-          vnMonthYear: ,
-          diInstrument: 
+        currentMonth = parseInt(
+          format(addMonths(pivotStart, i_mes_actual), 'MM'),
+          10
+        );
+        currentYear = parseInt(
+          format(addMonths(pivotStart, i_mes_actual), 'yyyy'),
+          10
+        );
+        let bodyFromRates = {
+          diCoinDeposit: this.form.controls['currency'].value,
+          vnActualYear: currentYear,
+          vnMonthYear: currentMonth,
+          diInstrument: this.instrument,
         };
-        this.getTasas(body);
-        if(tas.anio == currentYear && tas.mes = currentMonth){
+        this.getTasas(bodyFromRates);
+        if (this.anio == currentYear && this.mes == currentMonth) {
           isActualRate = true;
-          annualRate = tas.tasa;
-        }else{
+          annualRate = this.tasa;
+        } else {
           isActualRate = false;
           annualRate = points;
         }
-        */
+
         if (i_mes_actual == 0) {
           if (monthsReview > 1) {
-            const ultimoDiaMes: number = this.getLastDayOfMonth(pivotStart);
-            const resultado: number = ultimoDiaMes - pivotStart.getDate();
-            daysCalculation = resultado;
+            const lastDayMonth = lastDayOfMonth(pivotStart); // Obtener el último día del mes de vf_pivote_inicio
+            daysCalculation = differenceInDays(lastDayMonth, pivotStart);
             start = pivotStart;
-            const ultimoDiaMes1: Date = this.getLastDayOfMonthDate(pivotStart);
-            end = ultimoDiaMes1;
+            end = lastDayMonth;
           } else {
-            const truncFechaHoy: Date = new Date(
-              today.getFullYear(),
-              today.getMonth(),
-              today.getDate()
-            );
-            const truncFechaPivoteInicio: Date = new Date(
-              pivotStart.getFullYear(),
-              pivotStart.getMonth(),
-              pivotStart.getDate()
-            );
-            const resultado: number = Math.floor(
-              (truncFechaHoy.getTime() - truncFechaPivoteInicio.getTime()) /
-                (1000 * 60 * 60 * 24)
-            );
-            daysCalculation = resultado;
+            const inicioTruncado = startOfDay(pivotStart); // Obtener el inicio del día de vf_pivote_inicio
+            const hoyTruncado = startOfDay(today); // Obtener el inicio del día de vf_hoy
+            daysCalculation = differenceInDays(hoyTruncado, inicioTruncado);
             start = pivotStart;
-            end = truncFechaHoy;
+            end = today;
           }
           if (this.form.controls['checkType'].value == 'INTERES') {
             daysCalculation = daysCalculation + 1;
           }
         } else if (i_mes_actual > 0 && i_mes_actual < monthsReview - 1) {
-          const fechaInicio: Date = new Date(currentYear, currentMonth - 1, 1);
-          const ultimoDiaMes: number = new Date(
-            currentYear,
-            currentMonth,
-            0
-          ).getDate();
-          const resultado: number = ultimoDiaMes - fechaInicio.getDate() + 1;
-          daysCalculation = resultado;
-          const fechaString: string =
-            '01' +
-            currentMonth.toString().padStart(2, '0') +
-            currentYear.toString().padStart(4, '0');
-          const fechaResultado: Date = new Date(
-            +fechaString.substring(4, 8),
-            +fechaString.substring(2, 4) - 1,
-            +fechaString.substring(0, 2)
-          );
-          start = fechaResultado;
-          //const fechaInicio1: Date = new Date(currentYear, currentMonth - 1, 1);
-          const ultimoDiaMes1: Date = new Date(currentYear, currentMonth, 0);
-          //end = ultimoDiaMes1;
-          end = today;
+          const startDate = startOfMonth(
+            new Date(currentYear, currentMonth - 1, 1)
+          ); // Crear fecha inicial con el primer día del mes
+          const endDate = endOfMonth(
+            new Date(currentYear, currentMonth - 1, 1)
+          ); // Crear fecha final con el último día del mes
+          daysCalculation = differenceInDays(endDate, startDate) + 1;
+          start = startOfMonth(new Date(currentYear, currentMonth - 1, 1));
+          end = endDate;
         } else if (i_mes_actual == monthsReview - 1) {
-          const dia: number = today.getDate();
-          daysCalculation = dia;
-          const mes: string = (today.getMonth() + 1)
-            .toString()
-            .padStart(2, '0');
-          const anio: string = today.getFullYear().toString();
-          const fechaString: string = '01' + mes + anio;
-          const fechaResultado: Date = new Date(
-            +fechaString.substring(4, 8),
-            +fechaString.substring(2, 4) - 1,
-            +fechaString.substring(0, 2)
-          );
-          start = fechaResultado;
+          daysCalculation = parseInt(format(today, 'dd'), 10);
+          start = startOfMonth(today);
           end = today;
         }
         row = row + 1;
         dailyRate = annualRate / annulBasis / 100;
+        periodInterest =
+          Math.round(capitalization * dailyRate * daysCalculation * 100) / 100;
         capitalx = capitalization;
         capitalization = capitalization + periodInterest;
-        const anioString: string = currentYear.toString();
-        const mesString: string = currentMonth.toString().padStart(2, '0');
-        periodx = anioString + '-' + mesString;
+        periodx =
+          currentYear.toString() +
+          '-' +
+          currentMonth.toString().padStart(2, '0');
         daysx = daysCalculation;
         retex = annualRate;
         interestx = periodInterest;
@@ -966,66 +1092,40 @@ export class DepositAccountStatementComponent
         } else {
           interestTypex = 'ESTIMADO';
         }
-
-        /*let body = {
-          returnNumber: 
-          row:
-          interestType:
-          period:
-          startDate:
-          endDate:
-          days:
-          capital:
-          rate:
-          interest:
-          balance:
-          recordNumber: [null],
-          originNb: [null],
-        };*/
-        //this.postDetailInterestReturn(body);
+        let bodyDetail = {
+          returnNumber: this.noReturn,
+          row: row,
+          interestType: interestTypex,
+          period: periodx,
+          startDate: start,
+          endDate: end,
+          days: daysx,
+          capital: capitalx,
+          rate: retex,
+          interest: interestx,
+          balance: balancex,
+        };
+        this.createDetailInterestReturn(bodyDetail);
       }
     }
   }
 
-  postDetailInterestReturn(body: any) {
-    //Crearse el servicio de deposit y ahcer la Insercion
+  createDetailInterestReturn(body: any) {
+    this.detailInterestReturnService.create(body).subscribe({
+      next: data => {
+        //this.alert('success', 'Detalle de Interes de Devolucion', `Guardado Correctamente`);
+      },
+      error: err => {},
+    });
   }
 
-  getFormattedMonthYear(date: Date): string {
-    const month: string = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year: string = date.getFullYear().toString();
-    return month + year;
-  }
-
-  addMonths(date: Date, months: number): Date {
-    return new Date(
-      date.getFullYear(),
-      date.getMonth() + months,
-      date.getDate()
-    );
-  }
-
-  getMonthFromDate(date: Date): number {
-    return date.getMonth() + 1;
-  }
-
-  getYearFromDate(date: Date): number {
-    return date.getFullYear();
-  }
-
-  getLastDayOfMonth(date: Date): number {
-    const ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-    return ultimoDia.getDate();
-  }
-
-  getLastDayOfMonthDate(date: Date): Date {
-    const year: number = date.getFullYear();
-    const month: number = date.getMonth();
-    const ultimoDia: number = new Date(year, month + 1, 0).getDate();
-    return new Date(year, month, ultimoDia);
-  }
-
-  getCheck() {
+  getCheck(noOriginMov: number | string) {
+    this.detailInterestReturnService.getDepOriginMov(noOriginMov).subscribe({
+      next: resp => {
+        this.dateEnd = resp.data[0].fec_fin;
+        this.balance = resp.data[0].saldo;
+      },
+    });
     //endpoint http://sigebimsdev.indep.gob.mx/deposit/api/v1/detail-interest-return/pubReturnDetail/{depOriginMovNumber}
     //return data;
   }
@@ -1033,11 +1133,12 @@ export class DepositAccountStatementComponent
   interestCheck() {
     let priorInterest: number;
     this.validComplementary();
-    //priorInterest = blk_dev.interes_acreditado;
-    /*blk_dev.folio_cheque          = NULL;
-    blk_dev.fec_expedicion_cheque = NULL;
-    blk_dev.fec_cobro_cheque      = NULL;
-    blk_dev.traspasado_a_cuenta   = NULL;*/
+
+    priorInterest = this.form.controls['interestCredited'].value;
+    this.form.controls['check'].setValue('');
+    this.form.controls['expeditionDate'].setValue('');
+    this.form.controls['collectionDate'].setValue('');
+    this.transferred = '';
     this.calculateReturn();
     if ((priorInterest = this.form.controls['interestCredited'].value)) {
       this.alert(
@@ -1051,13 +1152,23 @@ export class DepositAccountStatementComponent
       FROM dual;*/
       this.form.controls['checkType'].setValue('INTERES');
       this.detailReturn();
+      this.detailInterestReturnService.getById(this.noReturn).subscribe({
+        next: resp => {
+          for (let i = 0; i < resp.data.length; i++) {
+            this.interestaccredited = resp.data[i].interest;
+          }
+          this.form.controls['interestCredited'].setValue(
+            this.interestaccredited
+          );
+        },
+      });
     }
     // llamar al servicio de deposit
 
     this.form.controls['transferDate'].setValue(0);
-    this.form.controls['subTotal'].setValue(
+    /*this.form.controls['subTotal'].setValue(
       this.form.controls['interestCredited'].value
-    );
+    );*/
     this.form.controls['costsAdmon'].setValue(0);
     this.form.controls['associatedCosts'].setValue(0);
     this.form.controls['checkAmount'].setValue(
@@ -1073,6 +1184,8 @@ export class DepositAccountStatementComponent
     if (cuenta_origen_deposito === null) {
       this.alert('warning', 'Debe seleccionar un deposito primero', '');
     } else {
+      this.getReturnNumber(this.userChecks.returnNumber);
+
       this.detailInterestReturnService
         .getById(this.userChecks.returnNumber)
         .subscribe({
@@ -1085,6 +1198,15 @@ export class DepositAccountStatementComponent
 
       // LLAMAR A ENDPOINT http://sigebimsdev.indep.gob.mx/deposit/api/v1/detail-interest-return/pbCalculateDetail/{returnNumber}
     }
+  }
+  getReturnNumber(returnNumber: number | string) {
+    this.detailInterestReturnService.getById(returnNumber).subscribe({
+      next: resp => {
+        this.rea = resp.data;
+        this.rea = returnNumber;
+        this.openForm(this.rea);
+      },
+    });
   }
 
   transferMov() {
@@ -1139,13 +1261,30 @@ export class DepositAccountStatementComponent
       '¿Seguro que desea traspasar el movimiento?'
     ).then(question => {
       if (question.isConfirmed) {
-        //this.postMovementsAccounts(deductive.id);
+        /*let bodyMov = {
+          numberMotion: ,
+          dateMotion: this.form.controls['collectionDate'].value,
+          userinsert:
+          numberAccount:
+          postDiverse:
+          dateInsertion:
+          numberReturnPayCheck:,
+          cveConcept: ,
+        }
+        this.createMovementsAccounts(bodyMov);*/
       }
     });
     // el valor de la etiqueta que se va a crear cambia a un estado de TRASPASADO
   }
 
-  postMovementsAccounts(body: any) {
-    //this.accountMovementService.
-  }
+  /*createMovementsAccounts(body: any) {
+    //this.accountMovementService.create
+    this.accountMovementService.create(body).subscribe({
+      next: data => {
+
+      },
+      error: error => {
+      },
+    });
+  }*/
 }
