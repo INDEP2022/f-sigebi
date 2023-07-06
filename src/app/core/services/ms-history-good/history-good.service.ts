@@ -5,6 +5,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
+  IHistoricGoodsAsegExtdom,
   IHistoryGood,
   IReturnStatusProcess,
   ISentSirsae,
@@ -119,5 +120,12 @@ export class HistoryGoodService extends HttpService {
   updateGoodStatusWhenDelete(body: any) {
     const route = HistoryGoodEndpoints.UpdateGoodStatusWhenDelete;
     return this.post(`${route}`, body);
+  }
+  getAllFilterHistoricGoodsAsegExtdom(
+    params?: _Params
+  ): Observable<IListResponse<IHistoricGoodsAsegExtdom>> {
+    return this.get<IListResponse<IHistoricGoodsAsegExtdom>>(
+      `${HistoryGoodEndpoints.HistoricGoodsAsegExtdom}?${params}`
+    );
   }
 }

@@ -102,6 +102,10 @@ export class GeneralDataGoodsComponent
     this.prepareForm();
   }
 
+  esTipoFecha(variable: any): boolean {
+    return variable instanceof Date;
+  }
+
   updateGood() {
     let required: boolean = false;
     this.dataAtribute.forEach((item: any) => {
@@ -128,9 +132,19 @@ export class GeneralDataGoodsComponent
       body[row.column] = row.value;
     });
     body['quantitySae'] = this.generalDataForm.get('cantidad').value;
-    body['judicialDate'] = this.convertirFecha2(
-      this.generalDataForm.get('fechaFe').value
-    );
+    if (this.generalDataForm.get('fechaFe').value === null) {
+      body['judicialDate'] = this.generalDataForm.get('fechaFe').value;
+    } else {
+      if (this.esTipoFecha(this.generalDataForm.get('fechaFe').value)) {
+        body['judicialDate'] = this.obtenerFecha(
+          this.generalDataForm.get('fechaFe').value
+        );
+      } else {
+        body['judicialDate'] = this.formatDate2(
+          this.generalDataForm.get('fechaFe').value
+        );
+      }
+    }
     body['observations'] = this.generalDataForm.get('observacion').value;
     body['description'] = this.generalDataForm.get('descripcion').value;
     body['id'] = Number(this.good.id);
@@ -168,13 +182,11 @@ export class GeneralDataGoodsComponent
 
   convertirFecha2(fecha: string | Date): string {
     let fechaObj: Date;
-
     if (typeof fecha === 'string') {
       fechaObj = new Date(fecha);
     } else {
       fechaObj = fecha;
     }
-
     const anio = fechaObj.getFullYear();
     const mes = (fechaObj.getMonth() + 1).toString().padStart(2, '0');
     const dia = fechaObj.getDate().toString().padStart(2, '0');
@@ -209,7 +221,7 @@ export class GeneralDataGoodsComponent
             this.good.judicialDate === undefined ||
               this.good.judicialDate === null
               ? null
-              : this.formatearFecha(this.good.judicialDate.toString())
+              : this.formatDate(this.good.judicialDate.toString())
           );
         this.generalDataForm
           .get('observacion')
@@ -237,6 +249,21 @@ export class GeneralDataGoodsComponent
     setTimeout(() => {
       this.goodChange++;
     }, 100);
+  }
+
+  formatDate(fecha: string) {
+    return fecha.split('T')[0].split('-').reverse().join('/');
+  }
+  formatDate2(fecha: string) {
+    return fecha.split('T')[0].split('/').reverse().join('-');
+  }
+  obtenerFecha(fecha: string): string {
+    const fechaActual = new Date(fecha);
+    const year = fechaActual.getFullYear();
+    const month = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
+    const day = fechaActual.getDate().toString().padStart(2, '0');
+    const fechaFormateada = `${year}-${month}-${day}`;
+    return fechaFormateada;
   }
 }
 
