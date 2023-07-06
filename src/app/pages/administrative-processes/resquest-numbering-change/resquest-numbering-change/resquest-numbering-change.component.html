@@ -266,7 +266,7 @@
                 type="button"
                 class="btn btn-primary btn-sm active"
                 (click)="guardarSolicitud()"
-                [disabled]="!formaplicationData.valid"
+                [disabled]="!formaplicationData.invalid"
                 style="margin: 1vh">
                 Guardar
                 <i aria-hidden="true" class="fa fa-save"></i>
@@ -280,7 +280,7 @@
               <button
                 class="btn btn-success btn-sm active"
                 style="margin: 1vh"
-                [disabled]="!formaplicationData.invalid">
+                [disabled]="formaplicationData.valid">
                 Actualizar
               </button>
             </div>

@@ -148,4 +148,12 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
     const route = `${NumeraryEndpoints.RequestEnc}/${model.solnumId}`;
     return this.put<IRequestNumeraryEnc>(route, model);
   }
+
+  getSolNumerary(model: any, params?: ListParams) {
+    return this.post<IListResponse<IRequestNumeraryEnc>>(
+      NumeraryEndpoints.GetSolNumerario,
+      model,
+      params
+    );
+  }
 }
