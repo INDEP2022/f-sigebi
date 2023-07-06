@@ -227,6 +227,10 @@ export class DocumentsService extends HttpService {
     return this.get(route, $params);
   }
 
+  otDocuments(expedient: string | number) {
+    return this.get('application/pup-documents-ot/' + expedient);
+  }
+
   getFolio(
     body: { expedientNumber: string; goodNumber: string },
     params?: _Params
