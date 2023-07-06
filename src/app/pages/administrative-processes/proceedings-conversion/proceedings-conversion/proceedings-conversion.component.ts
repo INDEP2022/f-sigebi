@@ -532,6 +532,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       .getById(body.PAR_IDCONV)
       .subscribe({
         next: (res: IConvertiongood) => {
+          console.log(res);
           this.loading = false;
           this.fileNumber = res.fileNumber.id;
           this.conversion = res.id;
@@ -1204,6 +1205,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   create() {
     this.loading = true;
     this.mover.emit(this.registro);
+    console.log(this.registro);
     this.proceedingsDeliveryReceptionService
       .createDetail(this.createCon)
       .subscribe({
@@ -1342,7 +1344,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     let modalRef = this.modalService.show(FindActaGoodComponent, modalConfig);
     modalRef.content.onSave.subscribe((next: any) => {
       console.log(next);
-
+      this.fCreate = this.datePipe.transform(
+        next.dateElaborationReceipt,
+        'dd/MM/yyyy'
+      );
+      this.statusConv = next.statusProceedings;
       this.actaRecepttionForm.patchValue({
         acta: next.id,
         administra: next.approvedXAdmon,
@@ -1353,7 +1359,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         cveActa: next.keysProceedings,
         // mes: next.dateElaborationReceipt,
         cveReceived: next.receiptKey,
-        anio: new Date(next.dateElaborationReceipt),
+        // anio: new Date(next.dateElaborationReceipt),
         direccion: next.address,
         // parrafo1: next.parrafo1,
         // parrafo2: next.parrafo2,
