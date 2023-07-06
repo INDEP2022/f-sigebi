@@ -371,7 +371,11 @@
       </div>
       <div class="col-md-3 mt-3">
         <form-check label="Bienes Correctos" for="checkGood">
-          <input id="checkGood" type="checkbox" formControlName="check" [readOnly]="true" />
+          <input
+            id="checkGood"
+            type="checkbox"
+            formControlName="check"
+            [readOnly]="true" />
         </form-check>
       </div>
     </div>
@@ -379,7 +383,11 @@
 </app-card>
 
 <!--Data Previsualization-->
-<app-card [header]="true" [footer]="true">
+<app-paq-destion-det
+  [packageType]="packageType"
+  [noPackage]="noPackage"></app-paq-destion-det>
+
+<!-- <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Previsualización de Datos</h5>
     <div class="col-md-5 buttons">
@@ -406,7 +414,7 @@
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
   </div>
-</app-card>
+</app-card> -->
 
 <!--Scan Folio-->
 

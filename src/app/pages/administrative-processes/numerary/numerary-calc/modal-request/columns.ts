@@ -1,5 +1,4 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export let goodCheck: any[] = [];
 export const REQUESTS_COLUMNS_MODAL = {
@@ -35,7 +34,7 @@ export const REQUESTS_COLUMNS_MODAL = {
       component: CustomDateFilterComponent,
     },
   },
-  check: {
+  /*   check: {
     title: 'Seleccionar',
     type: 'custom',
     filter: false,
@@ -54,7 +53,7 @@ export const REQUESTS_COLUMNS_MODAL = {
       });
     },
     sort: false,
-  },
+  }, */
 };
 
 export function clearGoodCheck() {
