@@ -3,11 +3,14 @@ import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -40,7 +43,11 @@ export class GoodsProcessValidationExtdomComponent
   tableSettings = {
     ...this.settings,
   };
-  dataTable = new BehaviorSubject<ListParams>(new ListParams());
+  dataTable: LocalDataSource = new LocalDataSource();
+  dataTableParams = new BehaviorSubject<ListParams>(new ListParams());
+  loadingGoods: boolean = false;
+  totalGoods: number = 0;
+  goodData: IGood;
   tableSettings2 = {
     ...this.settings,
   };
@@ -255,6 +262,9 @@ export class GoodsProcessValidationExtdomComponent
           this.notificationData = data.data[0];
           this.loading = false;
           this.setDataNotification();
+          this.dataTableParams
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.loadGoods());
         },
         error: error => {
           console.log(error);
@@ -303,6 +313,34 @@ export class GoodsProcessValidationExtdomComponent
         this.getAuthority(new ListParams(), true);
       }
     }, 200);
+  }
+
+  loadGoods() {
+    this.loadingGoods = true;
+    this.totalGoods = 0;
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('fileNumber', this.notificationData.expedientNumber);
+    params.addFilter('extDomProcess', 'ASEG_EXTDOM', SearchFilter.NOT);
+    params.limit = this.dataTableParams.value.limit;
+    params.page = this.dataTableParams.value.page;
+    this.svGoodsProcessValidationExtdomService
+      .getGoods(params.getParams())
+      .subscribe({
+        next: res => {
+          this.loadingGoods = false;
+          console.log('GOODS', res);
+          this.totalGoods = res.count;
+          this.dataTable.load(res.data);
+          this.dataTable.refresh();
+        },
+        error: error => {
+          this.loadingGoods = false;
+          console.log(error);
+          this.dataTable.load([]);
+          this.dataTable.refresh();
+        },
+      });
   }
 
   btnAgregar() {

@@ -58,40 +58,6 @@
       </form-field>
     </div>
   </form>
-  <!-- ng-scrollbar style="height: calc(100vh - 700px)"> -->
-  <!-- <div class="container">
-    <div class="container">
-      <div class="css-table">
-        <div class="css-table-header">
-          <div>Atributo</div>
-          <div>Valores</div>
-        </div>
-  
-        <div class="css-table-body">
-          <div class="css-table-row" *ngFor="let item of list">
-            <div class="mr-2" style="text-align: end">
-              {{ item.atributo }}
-            </div>
-            <div class="ml-2">
-              <input
-                type="text"
-                class="form-control"
-                [value]="
-                  item.valor === null ||
-                  item.valor === 'NULL' ||
-                  item.valor === 'null'
-                    ? ''
-                    : item.valor
-                "
-                style="background-color: #dff8f8" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
-  <!-- </ng-scrollbar> -->
-
   <div class="container">
     <div class="row">
       <div class="d-flex justify-content-end">
@@ -99,9 +65,9 @@
           <button
             [disabled]="disableUpdate"
             type="button"
-            class="btn btn-info btn-sm active"
+            class="btn btn-primary btn-sm active"
             (click)="update()">
-            Actualizar
+            Actualizar <i class="fas fa-sync-alt"> </i>
           </button>
         </div>
       </div>

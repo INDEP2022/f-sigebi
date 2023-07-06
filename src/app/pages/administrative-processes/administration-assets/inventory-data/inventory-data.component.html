@@ -60,21 +60,6 @@
 </div>
 <div class="row">
   <div class="col-md-3">
-    <<<<<<< HEAD
-    <!--  <button
-      class="btn btn-primary btn-sm active"
-      (click)="getAtribute()"
-      >
-      Obtener Atributos
-    </button> -->
-    <button
-      [disabled]="generateAtri"
-      class="btn btn-secondary btn-sm active mt-2"
-      (click)="generateAtribute()">
-      Generar Atributos
-    </button>
-    <!-- [disabled]="disableGetAtribute" -->
-    =======
     <div class="row">
       <div class="col-md-10">
         <button
@@ -88,13 +73,14 @@
     <br />
     <div class="row">
       <div class="col-md-10">
-        <button (click)="add()" class="btn btn-secondary active btn-sm">
+        <button (click)="add()" class="btn btn-primary active btn-sm">
           {{ textButon }}
+          <i *ngIf="textButon.includes('Actualizar')" class="fas fa-sync-alt">
+          </i>
         </button>
       </div>
     </div>
     <br />
-    >>>>>>> 7563eb767473b032460bcee082c28dcfc2d6ef5b
   </div>
   <div class="col">
     <div class="row" *ngIf="viewAct">
@@ -116,12 +102,13 @@
       <app-good-characteristics-table
         [goodChange]="goodChange"
         [clasification]="classificationOfGoods"
-        [settings]="atributNewSettings"
+        [settings]="atributActSettings"
         [avaluo]="false"
         [good]="good"
         [disabled]="false"
         [loadInventary]="loadInventary"
         [inventary]="inventary"
+        [initValue]="false"
         [service]="service"></app-good-characteristics-table>
     </div>
   </div>
