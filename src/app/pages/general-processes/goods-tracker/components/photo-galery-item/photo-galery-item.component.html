@@ -1,7 +1,11 @@
 <div class="row p-3">
   <div class="col-md-3 d-flex justify-content-center align-items-center">
     <div class="d-inline">
-      <img class="w-100" [src]="imgSrc" style="border-radius: 8px" />
+      <img
+        class="w-100"
+        (dblclick)="callReport(good)"
+        [src]="imgSrc"
+        style="border-radius: 8px; cursor: pointer" />
     </div>
   </div>
   <div class="col-md-9 info p-2">

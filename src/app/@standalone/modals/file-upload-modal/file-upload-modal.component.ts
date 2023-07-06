@@ -40,7 +40,7 @@ export interface IServiceUpload {
 export class FileUploadModalComponent extends BasePage implements OnInit {
   accept: string = '*';
   identificator: any = '3429238';
-  uploadFiles = true;
+  uploadFiles = false;
   refresh: boolean = false;
   successCount: number = 0;
   totalDocs: number = 0;
@@ -63,6 +63,7 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
   }
 
   testFiles(uploadEvent: IUploadEvent) {
+    this.uploadFiles = true;
     const { index, fileEvents } = uploadEvent;
     console.log(uploadEvent);
     this.fileEvents = fileEvents;
@@ -77,6 +78,7 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
       concat(...obs).subscribe({
         error: error => {
           this.loading = false;
+          this.uploadFiles = false;
         },
         complete: async () => {
           this.loading = false;
@@ -85,7 +87,7 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
             'Archivos cargados correctamente',
             '¿Desea subir más archivos?'
           );
-
+          this.uploadFiles = false;
           if (!result.isConfirmed) {
             this.close();
           }
