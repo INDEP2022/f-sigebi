@@ -17,7 +17,7 @@ import { COLUMNS } from './columns';
 })
 export class GoodsManagementSocialTable extends BasePage {
   // private _selectedGoods: number[];
-  data: ITrackerGoodSocialCabinet[] = [];
+  @Input() data: ITrackerGoodSocialCabinet[] = [];
   dataTemp: ITrackerGoodSocialCabinet[] = [];
   dataPaginated: LocalDataSource = new LocalDataSource();
   // notLoadedGoods: { good: number }[] = [];
@@ -73,11 +73,7 @@ export class GoodsManagementSocialTable extends BasePage {
         if (response) {
           // debugger;
           this.data = [
-            ...this.goodsManagementService.data.filter(row =>
-              row.socialCabinet
-                ? +row.socialCabinet === this.process
-                : this.process === ETypeGabinetProcess['Sin Asignar']
-            ),
+            ...this.goodsManagementService.getByProcess(this.process),
           ];
           this.dataTemp = [...this.data];
           this.getPaginated(this.params.value);

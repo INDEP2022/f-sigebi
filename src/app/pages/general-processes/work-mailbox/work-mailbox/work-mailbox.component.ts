@@ -2618,9 +2618,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         P_DEF_WHERE: 'WHERE ', //||:T_WHERE);
       };
       const report = 'RGESTBUZONTRAMITE';
+      console.log('RGESTBUZONTRAMITE No disponible');
       this.alertInfo(
         'warning',
-        'RGESTBUZONTRAMITE No disponible',
+        'Atención',
         'Reporte no disponible en este momento'
       );
       //console.log(report);

@@ -69,33 +69,32 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   ngOnInit() {
-    if (localStorage.getItem('selectedGoodsForPhotos')) {
-      this.selectedGoodsForPhotos = JSON.parse(
-        localStorage.getItem('selectedGoodsForPhotos')
-      );
-    }
     this.activatedRoute.queryParams.subscribe({
       next: param => {
         console.log(param);
         if (this.previousRouteService.getHistory().length > 1) {
-          if (
-            localStorage.getItem('selectedGoodsForPhotos') ||
-            param['numberGood']
-          ) {
+          if (localStorage.getItem('selectedGoodsForPhotos')) {
+            this.selectedGoodsForPhotos = JSON.parse(
+              localStorage.getItem('selectedGoodsForPhotos')
+            );
+          }
+          if (param['numberGood']) {
             this.origin = 1;
+            this.noBienControl = param['numberGood'];
             this.searchGood();
+            return;
+          }
+          if (localStorage.getItem('selectedGoodsForPhotos')) {
+            this.totalItems = this.selectedGoodsForPhotos.length;
+            this.noBienControl = this.selectedGoodsForPhotos[0];
+            this.searchGood();
+            return;
           }
         } else {
           this.origin = 0;
         }
       },
     });
-    if (this.selectedGoodsForPhotos && this.selectedGoodsForPhotos.length > 0) {
-      this.totalItems = this.selectedGoodsForPhotos.length;
-      this.noBienControl = this.selectedGoodsForPhotos[0];
-      this.searchGood();
-      return;
-    }
   }
 
   clear() {
