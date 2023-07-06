@@ -460,7 +460,6 @@ export class ClarificationsComponent
 
         this.goodForm.patchValue({ ...this.good[0] });
         this.rowSelected = this.good;
-
         this.getClarifications();
       }, 1000);
     } else if (this.goodsSelected.length > 1) {
