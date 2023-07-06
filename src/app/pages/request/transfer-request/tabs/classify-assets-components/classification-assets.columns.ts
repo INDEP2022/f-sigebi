@@ -1,5 +1,3 @@
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-
 export const REQUEST_OF_ASSETS_COLUMNS = {
   /*select: {
     title: '',

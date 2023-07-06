@@ -1,7 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import {
   IProccesNum,
   IRequestNumeraryEnc,
@@ -17,13 +21,14 @@ import { clearGoodCheck, goodCheck, REQUESTS_COLUMNS_MODAL } from './columns';
   styles: [],
 })
 export class ModalRequestComponent extends BasePage implements OnInit {
-  data1: any[] = [];
+  data1: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   @Input() process: IProccesNum;
   @Input() userAuth: string;
   @Input() type: string;
   requestNumeEnc: IRequestNumeraryEnc;
+  columnFilters: any = [];
 
   constructor(
     private modalRef: BsModalRef,
@@ -36,10 +41,48 @@ export class ModalRequestComponent extends BasePage implements OnInit {
       actions: false,
       columns: REQUESTS_COLUMNS_MODAL,
     };
-    //this.settings.hideSubHeader = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
+    this.data1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'solnumId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'solnumDate':
+                if (filter.search != null) {
+                  filter.search = this.returnParseDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              this.params.value.page = 1;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getRequestNumeEnc();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getRequestNumeEnc());
@@ -52,19 +95,25 @@ export class ModalRequestComponent extends BasePage implements OnInit {
 
   getRequestNumeEnc() {
     this.loading = true;
-    this.numeraryService
-      .getNumeraryRequestNumeEnc(this.params.getValue())
-      .subscribe({
-        next: resp => {
-          console.log(resp.data);
-          this.data1 = resp.data;
-          this.totalItems = resp.count;
-          this.loading = false;
-        },
-        error: err => {
-          this.loading = false;
-        },
-      });
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.numeraryService.getNumeraryRequestNumeEnc(params).subscribe({
+      next: resp => {
+        console.log(resp.data);
+        //this.data1 = resp.data;
+        this.data1.load(resp.data);
+        this.data1.refresh();
+        this.totalItems = resp.count;
+        this.loading = false;
+      },
+      error: err => {
+        this.data1.load([]);
+        this.data1.refresh();
+        this.loading = false;
+      },
+    });
   }
 
   close() {
