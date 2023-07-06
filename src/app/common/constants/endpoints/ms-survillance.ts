@@ -16,4 +16,5 @@ export enum SurvillanceEndpoints {
   VigSupervisionTMP = 'vig-supervision-tmp',
   DeleteVigSupervisionTMP = 'application/delete-vig-supervision-tmp',
   VCuentaPaqDestion = 'application/get-v-cuenta',
+  FCalculaNume = 'application/fCalculateNum',
 }
