@@ -189,4 +189,10 @@ export class ProceedingsService extends HttpService {
   }) {
     return this.post('application/get-v-steeringwheel-number', body);
   }
+
+  getGetFactDbConvBien(good: any, exp: any) {
+    return this.get<IResponse>(
+      `${ProceedingsEndpoints.GetFactDbConvBien}?no_bien=${good}&no_expediente=${exp}`
+    );
+  }
 }
