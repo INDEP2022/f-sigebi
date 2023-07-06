@@ -160,7 +160,6 @@ BEGIN
                      v_contm := v_contm+1;
                      vcve_proceso := 'Más de una ref.';
                   WHEN OTHERS THEN
--- Validación de transferente convertido a numerario -- 040408 JAC --
                      IF videntificador = 'TRANS' AND vestatus IN ('CNE','CBD','CDS','CNS','CNR') THEN
                         v_ind_nume := 2;
                         vcve_proceso := PUF_BUSCA_EVENTO(vno_bien);
@@ -169,7 +168,6 @@ BEGIN
                         IF videntificador = 'TRANS' THEN
                            v_ind_nume := 4;
                         END IF;	
--- Validación para verificar que el bien esté en acta de entrega recepción -- 04-04-08 JAC --
                         v_acta_ok := PUF_VALIDA_ACTA_RECEP(vno_bien);
                         IF NOT v_acta_ok AND NVL(vno_bien_padre_parcializacion,0) > 0 THEN
                            v_acta_ok := PUF_VALIDA_ACTA_RECEP(vno_bien_padre_parcializacion);
@@ -264,7 +262,6 @@ BEGIN
                            :BLK_BIENES.IDENTIFICADOR := videntificador;
                            :BLK_BIENES.NO_VOLANTE := vno_volante;
                            :BLK_BIENES.IND_NUME := v_ind_nume;
---*** cambio atributos para v_ind_nume diferente de 1 
                            IF v_ind_nume <> 1 THEN
                               IF v_ind_nume = 0 THEN
                                  v_color := 'VA_ROJO';

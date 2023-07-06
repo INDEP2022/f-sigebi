@@ -282,6 +282,8 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     colV: number,
     colG: string
   ) {
+    this.dataTableSpent = [];
+    this.dataTableSmall = [];
     let cont = 0;
     let vItem = null;
 
@@ -289,10 +291,13 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     let vNoGood;
     let vContm = 0;
 
+    /** @description vdescripcion, vestatus, vno_exp_asociado, vno_expediente, vcantidad,
+                      vno_delegacion, vno_subdelegacion, videntificador, vno_volante, vno_clasif_bien, vno_bien_padre_parcializacion */
     let good = null;
-    let vGoodStatus = null;
+    /** @description no_bien: vno_bienn, estatus: vestatusn */
+    let vGoodStatus: IGood = null;
 
-    let vnoGoodN = null;
+    // let vnoGoodN = null;
     let vcveProcess = null;
     let vIndNume: number;
     let vActaOk = null;
@@ -303,7 +308,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     let vColgu;
     let vdSpent = null;
     let vDescription = null;
-    this.dataPrevious.forEach(async (item, index) => {
+    const mapAsync = await this.dataPrevious.map(async (item, index) => {
       if (index === 0) {
         return;
       }
@@ -315,14 +320,15 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
         try {
           vNoGood = Number(String(vType).replace(',', '.'));
           try {
+            /** @description no_bien */
             good = await this.selectGoodForId(vNoGood);
-            vnoGoodN = null;
+            // vnoGoodN = null;
             vcveProcess = null;
             try {
               vGoodStatus = await this.selectGoodFilterNoGoodReferenceAndNoGood(
                 vNoGood
               );
-              vnoGoodN = vGoodStatus?.id;
+              // vnoGoodN = vGoodStatus?.id;
               if (vGoodStatus?.status !== 'ADM') {
                 vIndNume = 0;
                 vContm++;
@@ -330,13 +336,14 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
               } else {
                 try {
                   const accountMovement = await this.selectMovementAccount(
-                    vnoGoodN
+                    vGoodStatus.id // vnoGoodN
                   );
                   vIndNume = 3;
                   vContm++;
                   vcveProcess = 'Numerario conciliado.';
                 } catch (ex) {
-                  vContm++;
+                  // vContm++;
+                  vIndNume = 2;
                 }
               }
               vcveProcess = await this.pufSearchEvent(vNoGood);
@@ -380,29 +387,27 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
             if (vType) {
               try {
                 vIncome = Number(
-                  Math.round(parseFloat((vType as string).replace(',', '.')))
+                  Math.round(parseFloat(String(vType).replace(',', '.')))
                 ).toFixed(2);
                 vItem = 'COL' + colV;
                 vType = item[vItem];
                 if (vType) {
                   try {
                     vTax = Number(
-                      Math.round(
-                        parseFloat((vType as string).replace(',', '.'))
-                      )
+                      Math.round(parseFloat(String(vType).replace(',', '.')))
                     ).toFixed(2);
                     vColg1 = colG;
                     vTotalSpent = 0;
                     while (vColg1) {
-                      vColgu = vColg1.substring(0, vColg1.indexOf(','));
+                      vColgu = vColg1.substring(0, vColg1.indexOf(',')); //TODO: verificar | v_colgu := SUBSTR(v_colg1,1,INSTR(v_colg1,',',1)-1);
                       vItem = 'COL' + vColgu;
                       vType = item[vItem];
                       try {
                         vdSpent = Number(
                           Math.round(
-                            parseFloat((vType as string).replace(',', '.'))
+                            parseFloat(String(vType).replace(',', '.'))
                           )
-                        ).toFixed(2);
+                        ).toFixed(2); //TODO: verificar | vgasto := NVL(ROUND(TO_NUMBER(REPLACE(v_tipo,',','.'),'99999999999999.9999999999'),2),0);
                         vItem = 'GAS' + vColgu;
                         vdSpent = this.formGas.get(vItem)?.value;
                         vTotalSpent =
@@ -439,6 +444,15 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                       }
                       vColg1 = vColg1.substring(vColg1.indexOf(',') + 1);
                     }
+                    const blkSpent = {
+                      noGood: vNoGood,
+                      cveie: 0,
+                      amount: vTax,
+                      description: 'I.V.A.',
+                      status: good.status,
+                      type: 'i',
+                    };
+                    this.dataTableSmall.push(blkSpent);
 
                     const prevDataTableSpent: IMassiveNumeraryChangeSpent = {
                       noGood: vNoGood,
@@ -457,7 +471,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                       noFlier: good.flyerNumber,
                       indNume: vIndNume,
                       cveEvent: vcveProcess,
-                      npNUm: vnoGoodN,
+                      npNUm: vGoodStatus.id,
                     };
 
                     if (vIndNume !== 1) {
@@ -504,7 +518,10 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       this.registerIncorrect = vContm;
     });
 
-    // await test({ COL1: '7349', COL2: '10', COL3: '10', COL4: '10' });
+    await Promise.all(mapAsync);
+
+    this.dataTableSpent = [];
+    this.dataTableSmall = [];
     this.isLoadingProcessExtraction = false;
     this.modalService.show(MassiveNumeraryChangeModalComponent, {
       initialState: {
