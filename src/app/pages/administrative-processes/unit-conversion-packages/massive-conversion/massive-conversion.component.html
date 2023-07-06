@@ -370,8 +370,12 @@
         </button>
       </div>
       <div class="col-md-3 mt-3">
-        <form-check label="Bienes Correctos" for="label">
-          <input id="label" type="checkbox" formControlName="check" />
+        <form-check label="Bienes Correctos" for="checkGood">
+          <input
+            id="checkGood"
+            type="checkbox"
+            formControlName="check"
+            [readOnly]="true" />
         </form-check>
       </div>
     </div>
