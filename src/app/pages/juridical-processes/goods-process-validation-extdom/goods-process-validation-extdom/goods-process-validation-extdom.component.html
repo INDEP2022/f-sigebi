@@ -44,6 +44,13 @@
                     Buscar
                     <i class="bx bx-search-alt bx-sm float-icon"></i>
                   </button>
+                  <button
+                    type="button"
+                    class="btn btn-danger active btn-sm m-2"
+                    (click)="cleanDataform()">
+                    Limpiar
+                    <i class="fa fa-eraser ml-1"></i>
+                  </button>
                 </div>
               </div>
               <div class="row">
@@ -141,8 +148,8 @@
                 </div>
                 <div class="col-sm-12 col-12 col-md-3 p-2">
                   <ngx-select
-                    [data]="selectAsunto"
-                    bindLabel="name"
+                    [data]="selectAffairkey"
+                    bindLabel="dataDesc"
                     label="Autoriza Dictaminaci&oacute;n"
                     value="id"
                     (fetchItems)="getAffair($event)"
@@ -156,75 +163,174 @@
                   </form-field> -->
                 </div>
                 <div class="col-sm-12 col-12 col-md-3 p-2">
-                  <form-field
+                  <ngx-select
+                    [data]="selectIndiciadoNumber"
+                    bindLabel="dataDesc"
+                    label="Indiciado"
+                    value="id"
+                    (fetchItems)="getIndiciadoNumber($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="indiciadoNumber"></ngx-select>
+                  <!-- <form-field
                     [control]="form.get('indiciadoNumber')"
                     label="Indiciado">
                     <input
                       class="form-control"
                       formControlName="indiciadoNumber" />
-                  </form-field>
+                  </form-field> -->
                 </div>
                 <div class="col-sm-12 col-12 col-md-3 p-2">
-                  <form-field
+                  <ngx-select
+                    [data]="selectMinpubNumber"
+                    bindLabel="dataDesc"
+                    label="Ministerio P&uacute;blico"
+                    value="id"
+                    (fetchItems)="getMinpubNumber($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="minpubNumber"></ngx-select>
+                  <!-- <form-field
                     [control]="form.get('minpubNumber')"
                     label="Ministerio P&uacute;blico">
                     <input
                       class="form-control"
                       formControlName="minpubNumber" />
-                  </form-field>
+                  </form-field> -->
                 </div>
                 <div class="col-sm-12 col-12 col-md-3 p-2">
-                  <form-field
+                  <ngx-select
+                    [data]="selectCourtNumber"
+                    bindLabel="dataDesc"
+                    label="Juzgado"
+                    value="id"
+                    (fetchItems)="getCourtNumber($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="courtNumber"></ngx-select>
+                  <!-- <form-field
                     [control]="form.get('courtNumber')"
                     label="Juzgado">
                     <input class="form-control" formControlName="courtNumber" />
-                  </form-field>
+                  </form-field> -->
                 </div>
-                <div class="col-sm-12 col-12 col-md-3 p-2">
-                  <form-field
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <ngx-select
+                    [data]="selectDelegationNumber"
+                    bindLabel="dataDesc"
+                    label="Delegaci&oacute;n"
+                    value="id"
+                    (fetchItems)="getDelegationNumber($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="delegationNumber"></ngx-select>
+                  <!-- <form-field
                     [control]="form.get('delegationNumber')"
                     label="Delegaci&oacute;n">
                     <input
                       class="form-control"
                       formControlName="delegationNumber" />
-                  </form-field>
+                  </form-field> -->
                 </div>
-                <div class="col-sm-12 col-12 col-md-3 p-2">
-                  <form-field
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <ngx-select
+                    [data]="selectEntFedKey"
+                    bindLabel="dataDesc"
+                    label="Entidad Federativa"
+                    value="id"
+                    (fetchItems)="getEntFedKey($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="entFedKey"></ngx-select>
+                  <!-- <form-field
                     [control]="form.get('entFedKey')"
                     label="Entidad Federativa">
                     <input class="form-control" formControlName="entFedKey" />
-                  </form-field>
+                  </form-field> -->
                 </div>
-                <div class="col-sm-12 col-12 col-md-3 p-2">
-                  <form-field [control]="form.get('cityNumber')" label="Ciudad">
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <ngx-select
+                    [data]="selectCityNumber"
+                    bindLabel="dataDesc"
+                    label="Ciudad"
+                    value="idCity"
+                    (fetchItems)="getCityNumber($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="cityNumber"></ngx-select>
+                  <!-- <form-field [control]="form.get('cityNumber')" label="Ciudad">
                     <input class="form-control" formControlName="cityNumber" />
-                  </form-field>
+                  </form-field> -->
                 </div>
-                <div class="col-sm-12 col-12 col-md-3 p-2">
-                  <form-field
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <ngx-select
+                    [data]="selectTransference"
+                    bindLabel="dataDesc"
+                    label="Transferente"
+                    value="id"
+                    (fetchItems)="getTransference($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="transference"></ngx-select>
+                  <!-- <form-field
                     [control]="form.get('transference')"
                     label="Transferente">
                     <input
                       class="form-control"
                       formControlName="transference" />
-                  </form-field>
+                  </form-field> -->
                 </div>
-                <div class="col-sm-12 col-12 col-md-3 p-2">
-                  <form-field
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <ngx-select
+                    [data]="selectStationNumber"
+                    bindLabel="dataDesc"
+                    label="Emisora"
+                    value="id"
+                    (fetchItems)="getStationNumber($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="stationNumber"></ngx-select>
+                  <!-- <form-field
                     [control]="form.get('stationNumber')"
                     label="Emisora">
                     <input
                       class="form-control"
                       formControlName="stationNumber" />
-                  </form-field>
+                  </form-field> -->
                 </div>
-                <div class="col-sm-12 col-12 col-md-3 p-2">
-                  <form-field
+                <div class="col-sm-12 col-12 col-md-4 p-2">
+                  <ngx-select
+                    [data]="selectAuthority"
+                    bindLabel="dataDesc"
+                    label="Autoridad"
+                    value="idAuthority"
+                    (fetchItems)="getAuthority($event)"
+                    [form]="form"
+                    [showTooltip]="true"
+                    [searchOnInit]="true"
+                    termMaxLength="80"
+                    control="authority"></ngx-select>
+                  <!-- <form-field
                     [control]="form.get('authority')"
                     label="Autoridad">
                     <input class="form-control" formControlName="authority" />
-                  </form-field>
+                  </form-field> -->
                 </div>
               </div>
             </div>

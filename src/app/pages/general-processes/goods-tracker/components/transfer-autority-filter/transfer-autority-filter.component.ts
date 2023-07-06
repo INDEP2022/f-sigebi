@@ -24,6 +24,7 @@ export class TransferAutorityFilterComponent implements OnInit {
   autorities = new DefaultSelect();
   transmitterParams = new FilterParams();
   autoritiesParams = new FilterParams();
+  @Output() cleanFilters = new EventEmitter<void>();
 
   constructor(
     private trasnferService: TransferenteService,

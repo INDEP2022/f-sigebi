@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
@@ -111,13 +111,6 @@ export class IncomeOrdersDepositoryGoodsComponent
   }
 
   ngOnInit(): void {
-    this.activatedRoute.queryParams
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(params => {
-        this.noBienParams = params['p_bien'] ? Number(params['p_bien']) : null;
-        this.origin = params['origin'] ?? null;
-        this.origin2 = params['origin2'] ?? null;
-      });
     // this.getUserDepositary();
     this.valorBien.SharingNumbien.subscribe({
       next: res => {
@@ -208,8 +201,8 @@ export class IncomeOrdersDepositoryGoodsComponent
     };
 
     this.siabService
-      .fetchReport('RDEPINGXBIEN.', params)
-      //.fetchReport('blank', params)
+      //.fetchReport('RDEPINGXBIEN.', params)
+      .fetchReport('blank', params)
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });

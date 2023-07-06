@@ -115,28 +115,45 @@ export class GenerateDictumComponent extends BasePage implements OnInit {
     });
   }
 
-  signDictum(): void {
-    console.log('id de solicitud', this.requestData.id);
-    const requestInfo = this.requestData;
-    const idReportAclara = this.idSolicitud;
-    const typeAnnex = 'approval-request';
-    const idTypeDoc = this.idTypeDoc;
-    const nameTypeDoc = 'DictamenProcendecia';
+  newDataRequest: IRequest;
 
-    let config: ModalOptions = {
-      initialState: {
-        idReportAclara,
-        idTypeDoc,
-        typeAnnex,
-        requestInfo,
-        nameTypeDoc,
-        callback: (next: boolean) => {},
+  signDictum(): void {
+    this.requestService.getById(this.requestData.id).subscribe({
+      next: resp => {
+        this.newDataRequest = resp;
+        console.log(
+          'Información de solicitud actualizada: ',
+          this.newDataRequest
+        );
+        console.log('id de solicitud', this.requestData.id);
+        const requestInfo = this.newDataRequest;
+        const idReportAclara = this.idSolicitud;
+        const typeAnnex = 'approval-request';
+        const idTypeDoc = this.idTypeDoc;
+        const nameTypeDoc = 'DictamenProcendecia';
+
+        let config: ModalOptions = {
+          initialState: {
+            idReportAclara,
+            idTypeDoc,
+            typeAnnex,
+            requestInfo,
+            nameTypeDoc,
+            callback: (next: boolean) => {},
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PrintReportModalComponent, config);
+        //this.modalService.show(PrintReportModalComponent,  config);
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(PrintReportModalComponent, config);
-    //this.modalService.show(PrintReportModalComponent,  config);
+      error: error => {
+        this.onLoadToast(
+          'warning',
+          'Hay un error con la solicitud, inténtelo de nuevo'
+        );
+      },
+    });
   }
 
   close(): void {

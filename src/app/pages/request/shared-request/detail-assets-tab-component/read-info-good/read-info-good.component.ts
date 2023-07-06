@@ -478,7 +478,7 @@ export class ReadInfoGoodComponent
         good.goodId = this.goodData.goodId;
         good.userModification = user.username;
         good.modificationDate = new Date().toISOString();
-
+        debugger;
         this.goodService.update(good).subscribe({
           next: resp => {
             const body: any = {};
@@ -497,11 +497,15 @@ export class ReadInfoGoodComponent
             );
           },
           error: error => {
-            this.onLoadToast(
-              'error',
-              'Error',
-              `El formulario no se puede actualizar ${error.error.message}`
+            console.log(
+              'El formulario no se puede actualizar',
+              error.error.message
             );
+            // this.onLoadToast(
+            //   'error',
+            //   'Error',
+            //   `El formulario no se puede actualizar ${error.error.message}`
+            // );
           },
         });
       }

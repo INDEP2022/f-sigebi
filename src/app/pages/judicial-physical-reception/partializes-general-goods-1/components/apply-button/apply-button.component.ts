@@ -588,14 +588,14 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
           // this.fillPagedRow.emit();
           return bien.no_bien;
         } else {
-          this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
+          this.alert('error', 'Inserta Bien', 'No se pudo parcializar');
           // this.loading = false;
           this.loader.load = false;
           return null;
         }
       } catch (x: any) {
         console.log(x);
-        this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
+        this.alert('error', 'Inserta Bien', 'No se pudo parcializar');
         // this.loading = false;
         this.loader.load = false;
         return null;
@@ -646,14 +646,14 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     try {
       // this.good.status = 'PEA';
       await firstValueFrom(this.goodService.updateCustom(this.good));
-      this.onLoadToast(
+      this.alert(
         'success',
         'Parcialización',
         'La parcialización de bienes se realizo correctamente'
       );
       this.service.haveAply = false;
     } catch (x) {
-      this.onLoadToast(
+      this.alert(
         'error',
         'Parcialización',
         'Error al actualizar el bien ' + this.good.goodId
@@ -675,7 +675,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       v_verif_des: number = 0;
     if (this.version === 1) {
       if (this.bienesPar.length === 0) {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Error',
           'No se tienen cantidades a parcializar...'
@@ -845,7 +845,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
           },
           error: error => {
             console.log(error);
-            this.onLoadToast('error', 'Inserta Bien', 'No se pudo parcializar');
+            this.alert('error', 'Inserta Bien', 'No se pudo parcializar');
             this.loader.load = false;
             return;
           },

@@ -75,6 +75,10 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
+    this.modalService.onHide.subscribe(key => {
+      console.log(key);
+    });
+
     console.log('Delegación de la solicitud', this.delegationUser);
     this.dictamenSeq();
     this.withDocumentation = this.idAclara === '1' ? true : false;
@@ -167,7 +171,6 @@ export class NotifyAssetsImproprietyFormComponent
     if (typeTransference != 'SAT_SAE' || generaXML) {
       // if (
       //   this.typeClarifications == 2 &&
-      //   typeTransference != 'SAT_SAE' &&
       //   typeTransference != 'PGR_SAE'
       // ) {
       //   this.improcedenciaTransferentesVoluntarias(); //Aclaración Manual tipo 2
@@ -184,6 +187,9 @@ export class NotifyAssetsImproprietyFormComponent
             break;
           }
           case 'AclaracionTransferentesVoluntarias': {
+            console.log(
+              'Se ejecutará aclaracionTransferentesVoluntarias primero'
+            );
             this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
 
             break;
@@ -191,11 +197,23 @@ export class NotifyAssetsImproprietyFormComponent
         }
       }
 
+      /*if (
+        this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
+        (this.dataClarifications2.chatClarification.idClarificationType == '2' || this.dataClarifications2.chatClarification.idClarificationType == '1' ) && typeTransference == 'MANUAL'
+      ) {
+        console.log('Se ejecutará aclaracionTransferentesVoluntarias segundo')
+        this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1 y 2
+
+      }*/
+
       if (
         this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
-        this.dataClarifications2.chatClarification.idClarificationType == '2'
+        this.dataClarifications2.chatClarification.clarificationStatus ==
+          'IMPROCEDENCIA' &&
+        typeTransference == 'MANUAL'
       ) {
-        this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
+        console.log('Se ejecutará aclaracionTransferentesVoluntarias');
+        this.oficioImprocedencia(); //IMPROCEDENCIA  MANUAL
       }
     }
 
