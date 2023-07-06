@@ -42,13 +42,19 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
+        <button
           [disabled]="!inventoryDataForm.valid"
-          [loading]="loading"
-          (confirm)="create()"></confirm-button>
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="create()">
+          Guardar <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
           Cancelar
         </button>
       </div>

@@ -31,7 +31,8 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { getClassColour } from 'src/app/pages/general-processes/goods-characteristics/goods-characteristics/good-table-vals/good-table-vals.component';
 import { CharacteristicGoodCellComponent } from '../../change-of-good-classification/change-of-good-classification/characteristicGoodCell/characteristic-good-cell.component';
 import { ATRIBUT_ACT_COLUMNS } from '../general-data-goods/columns';
-import { ChangeOfGoodCharacteristicService } from '../general-data-goods/services/change-of-good-classification.service';
+//import { ChangeOfGoodCharacteristicService } from '../general-data-goods/services/change-of-good-classification.service';
+import { ChangeOfGoodCharacteristicService } from '../../change-of-good-classification/services/change-of-good-classification.service';
 import { RegisterModalComponent } from './register-modal/register-modal.component';
 
 @Component({
@@ -354,20 +355,16 @@ export class InventoryDataComponent
     this.getAtribute();
     this.disableGetAtribute = false;
     this.generateAtri = true;
-    this.textButon = 'Actualizar atributos';
+    this.textButon = 'Actualizar Atributos';
   }
 
   async add() {
     if (this.dataIn) {
-      console.log('ESTA ES LA DATA INV', this.dataIn);
       if (this.inventorySelect) {
         let required: boolean = false;
         this.dataIn.forEach((item: any) => {
-          console.log(!item.attribute.includes('FECHA'));
-          if (!item.attribute.includes('FECHA')) {
-            if (item.required && item.value === null) {
-              required = true;
-            }
+          if (item.required && item.value === null) {
+            required = true;
           }
         });
         if (required) {
