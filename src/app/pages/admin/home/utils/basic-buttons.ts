@@ -265,4 +265,13 @@ export const BASIC_BUTTONS = [
             Rechazar
           </button>`,
   },
+  {
+    name: 'Filtrar',
+    code: `<button
+            class="btn btn-primary btn-sm active"
+            (click)="buildFilters()">
+            Filtrar
+            <i class="fa fa-filter" aria-hidden="true"></i>
+          </button>`,
+  },
 ];

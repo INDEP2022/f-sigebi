@@ -4650,7 +4650,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           });
           if (validCreateMenaje) {
             this.alertInfo(
-              'info',
+              'warning',
               'Actualización de menaje',
               'Es un bien inmueble con Menaje, se van a asociar los bienes hijos al bien padre'
             ).then(() => {
@@ -4757,7 +4757,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             // this.validDataUploadMassivePgr(); // Comenzar la cargar de la información
           }
           this.alertInfo(
-            'info',
+            'warning',
             'Datos del Volante',
             'Ya existe un registro del Volante. Se va a actualizar el registro para el Volante: ' +
               this.paramsGeneral.p_no_volante
@@ -4862,7 +4862,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           console.log('DATA VOLANTE UPDATE', res);
           this.paramsGeneral.p_no_volante = bodyData.wheelNumber.toString();
           this.alertInfo(
-            'info',
+            'success',
             'Datos del Volante',
             'Se actualizó correctamente el Volante: ' +
               this.paramsGeneral.p_no_volante
@@ -4900,7 +4900,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           // this.getTempPgrExpedientByFilter(onlyCreate);
           this.wheelCount++;
           this.alertInfo(
-            'info',
+            'success',
             'Datos del Volante',
             'Se creó correctamente el Volante: ' +
               this.paramsGeneral.p_no_volante
@@ -4959,7 +4959,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       next: res => {
         console.log('DATA EXPEDIENTE', res);
         this.alertInfo(
-          'info',
+          'warning',
           'Datos del Expediente',
           'Ya existe un registro del expediente. Se va a actualizar el registro para el Expediente: ' +
             this.paramsGeneral.p_no_expediente
@@ -5058,7 +5058,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         if (update == false) {
           this.fileNumberCount++;
           this.alertInfo(
-            'info',
+            'success',
             'Datos del Expediente',
             'Se creó correctamente el Expediente: ' +
               this.paramsGeneral.p_no_expediente
@@ -5067,7 +5067,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           });
         } else {
           this.alertInfo(
-            'info',
+            'success',
             'Datos del Expediente',
             'Se actualizó correctamente el Expediente: ' +
               this.paramsGeneral.p_no_expediente
