@@ -28,7 +28,7 @@ import { GoodPhotosService } from '../services/good-photos.service';
   styleUrls: ['./photos-list.component.scss'],
 })
 export class PhotosListComponent extends BasePage implements OnInit {
-  @Input() disabled: boolean;
+  @Input() disabled: boolean = true;
   @Input() origin: number;
   @Input()
   get goodNumber() {
@@ -40,11 +40,11 @@ export class PhotosListComponent extends BasePage implements OnInit {
       this.getData();
     } else {
       this.files = [];
+      this.errorMessage = '';
     }
   }
   private _goodNumber: string | number;
-  errorMessage: string;
-  userPermisions = false;
+  errorMessage: string = '';
   // lastConsecutive: number = 1;
   filesToDelete: string[] = [];
   files: string[] = [];
@@ -77,6 +77,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         next: response => {
           if (response && response.length > 0) {
             console.log('Entro');
+            this.errorMessage = null;
           } else {
             this.validRastrer();
           }
@@ -134,7 +135,9 @@ export class PhotosListComponent extends BasePage implements OnInit {
 
   private validRastrer() {
     if (localStorage.getItem('username').toUpperCase() !== 'SERA') {
-      this.userPermisions = false;
+      // this.userPermisions = false;
+      this.errorMessage =
+        'Solo el usuario SERA tiene permisos de escritura desde el rastreador';
     }
   }
 
@@ -159,7 +162,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   disabledDeleteAllPhotos() {
-    return this.files.length < 1 || !this.userPermisions;
+    return this.files.length < 1 || this.errorMessage;
   }
 
   selectFile(image: string, event: Event) {
@@ -190,7 +193,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
               // this.lastConsecutive += +last.substring(index + 1, index + 5);
               const pufValidaUsuario = await this.pufValidaUsuario();
               if (pufValidaUsuario === 1) {
-                this.userPermisions = true;
+                this.errorMessage = null;
               } else {
                 const noActa = await this.pufValidaProcesoBien();
                 if (noActa) {
@@ -198,11 +201,8 @@ export class PhotosListComponent extends BasePage implements OnInit {
                     'No puede alterar las fotos, el bien ya fue recibido por el acta ' +
                     noActa;
                   console.log(this.errorMessage);
-
-                  this.userPermisions = false;
-                  // this.userPermisions = true;
                 } else {
-                  this.userPermisions = true;
+                  this.errorMessage = null;
                 }
               }
             }
