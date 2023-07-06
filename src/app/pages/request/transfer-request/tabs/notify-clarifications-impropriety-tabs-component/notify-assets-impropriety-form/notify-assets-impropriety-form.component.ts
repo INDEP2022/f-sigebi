@@ -199,7 +199,11 @@ export class NotifyAssetsImproprietyFormComponent
 
       /*if (
         this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
-        (this.dataClarifications2.chatClarification.idClarificationType == '2' || this.dataClarifications2.chatClarification.idClarificationType == '1' ) && typeTransference == 'MANUAL'
+        (this.dataClarifications2.chatClarification.idClarificationType ==
+          '2' ||
+          this.dataClarifications2.chatClarification.idClarificationType ==
+            '1') &&
+        typeTransference == 'MANUAL'
       ) {
         console.log('Se ejecutará aclaracionTransferentesVoluntarias segundo')
         this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1 y 2
