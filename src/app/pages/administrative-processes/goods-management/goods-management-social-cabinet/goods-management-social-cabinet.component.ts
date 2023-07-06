@@ -38,7 +38,6 @@ export class GoodsManagementSocialCabinetComponent
     private goodsManagementService: GoodsManagementService
   ) {
     super();
-
     // this.settings.columns = COLUMNS;
   }
 
@@ -171,6 +170,10 @@ export class GoodsManagementSocialCabinetComponent
       this.goodsManagementService.refreshTable.next(true);
     }
     this.loading = false;
+  }
+
+  private getByProcessCant(process: ETypeGabinetProcess) {
+    return this.goodsManagementService.getByProcess(process).length;
   }
 
   delete(data: any) {
