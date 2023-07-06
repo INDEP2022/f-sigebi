@@ -20,7 +20,7 @@ import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
   styleUrls: ['./good-photos.component.scss'],
 })
 export class GoodPhotosComponent extends BasePage implements OnInit {
-  origin: number = null;
+  origin: number = 0;
   form: FormGroup;
   actualGoodNumber: string = null;
   good: IGoodDesc;
@@ -69,19 +69,6 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   ngOnInit() {
-    this.activatedRoute.queryParams.subscribe({
-      next: param => {
-        console.log(param);
-        if (param['numberGood']) {
-          this.noBienControl = param['numberGood'] || null;
-          this.searchGood();
-          return;
-        }
-        if (this.previousRouteService.getHistory().length > 1) {
-          this.origin = 1;
-        }
-      },
-    });
     if (localStorage.getItem('selectedGoodsForPhotos')) {
       this.selectedGoodsForPhotos = JSON.parse(
         localStorage.getItem('selectedGoodsForPhotos')
@@ -90,11 +77,16 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
     this.activatedRoute.queryParams.subscribe({
       next: param => {
         console.log(param);
-        if (
-          this.previousRouteService.getHistory().length > 1 &&
-          localStorage.getItem('selectedGoodsForPhotos')
-        ) {
-          this.origin = 1;
+        if (this.previousRouteService.getHistory().length > 1) {
+          if (
+            localStorage.getItem('selectedGoodsForPhotos') ||
+            param['numberGood']
+          ) {
+            this.origin = 1;
+            this.searchGood();
+          }
+        } else {
+          this.origin = 0;
         }
       },
     });
