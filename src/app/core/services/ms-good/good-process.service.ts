@@ -169,4 +169,14 @@ export class GoodProcessService extends HttpService {
   }): Observable<IListResponse<any>> {
     return this.post('application/getExistsGoodxStatus', body);
   }
+
+  getNumeProrraCsv(idProcnum: number) {
+    const route = GoodProcessPoints.GetNumeProrraCsv;
+    return this.get(`${route}/${idProcnum}`);
+  }
+
+  getFproSolNumerarioProdnumCsv(idProcnum: number, limit: number) {
+    const route = `${GoodProcessPoints.GetNumeProrraCsv}/${idProcnum}`;
+    return this.get(`${route}?limit=${limit}`);
+  }
 }

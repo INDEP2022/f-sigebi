@@ -77,7 +77,7 @@ export const GP_GOODS_COLUMNS = {
     sort: false,
     class: 'bg-primary',
   },
-  goodStatus: {
+  status: {
     title: 'Estatus',
     sort: false,
     class: 'bg-primary',
@@ -119,6 +119,11 @@ export const GP_GOODS_COLUMNS = {
   },
   goodSsType: {
     title: 'Ssubtipo de Bien',
+    sort: false,
+    class: 'bg-primary',
+  },
+  goodSssType: {
+    title: 'Sssubtipo de Bien',
     sort: false,
     class: 'bg-primary',
   },

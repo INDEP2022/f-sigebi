@@ -31,6 +31,8 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
   keyDoc: string = '';
   programming: Iprogramming;
   closeModal: boolean = false;
+  createDelivery: unknown;
+  createReceipt: unknown;
 
   dataReceipt: IReceipt;
   constructor(
@@ -139,7 +141,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
 
   confirm() {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Estás seguro que desea crear los firmantes?'
     ).then(question => {
@@ -260,7 +262,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
 
   async formInfoSignature(signatures: IReceipt) {
     if (signatures.electronicSignatureEnt) {
-      const createDelivery = await this.createSign(
+      this.createDelivery = await this.createSign(
         this.idProgramming,
         103,
         'RECIBOS',
@@ -268,40 +270,34 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
         signatures.nameDelivery,
         signatures.chargeDelivery
       );
+    }
 
-      if (createDelivery) {
-        if (signatures.electronicSignatureReceipt) {
-          const createReceipt = await this.createSign(
-            this.idProgramming,
-            103,
-            'RECIBOS',
-            'FIRMA_ELECTRONICA_REC',
-            signatures.nameReceipt,
-            signatures.chargeReceipt
-          );
-          if (createReceipt) {
-            if (this.paragraphs.count() > 0) {
-              this.paragraphs.getElements().then(item => {
-                item.map(async (data: IReceiptwitness) => {
-                  const createReceiptWitness = await this.createSign(
-                    this.idProgramming,
-                    103,
-                    'RECIBOS_TESTIGOS',
-                    'FIRMA_ELECTRONICA',
-                    data.nameWitness,
-                    data.chargeWitness
-                  );
-                  if (createReceiptWitness) {
-                    this.modalRef.content.callback(
-                      this.proceeding,
-                      this.idProgramming
-                    );
-                    this.close();
-                    this.loading = false;
-                  }
-                });
-              });
-            } else {
+    if (this.createDelivery || !this.createDelivery) {
+      if (signatures.electronicSignatureReceipt) {
+        this.createReceipt = await this.createSign(
+          this.idProgramming,
+          103,
+          'RECIBOS',
+          'FIRMA_ELECTRONICA_REC',
+          signatures.nameReceipt,
+          signatures.chargeReceipt
+        );
+      }
+    }
+
+    if (this.createReceipt || !this.createReceipt) {
+      if (this.paragraphs.count() > 0) {
+        this.paragraphs.getElements().then(item => {
+          item.map(async (data: IReceiptwitness) => {
+            const createReceiptWitness = await this.createSign(
+              this.idProgramming,
+              103,
+              'RECIBOS_TESTIGOS',
+              'FIRMA_ELECTRONICA',
+              data.nameWitness,
+              data.chargeWitness
+            );
+            if (createReceiptWitness) {
               this.modalRef.content.callback(
                 this.proceeding,
                 this.idProgramming
@@ -309,8 +305,12 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
               this.close();
               this.loading = false;
             }
-          }
-        }
+          });
+        });
+      } else {
+        this.modalRef.content.callback(this.proceeding, this.idProgramming);
+        this.close();
+        this.loading = false;
       }
     }
   }

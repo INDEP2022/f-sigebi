@@ -4,6 +4,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
+import { map } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -307,47 +308,58 @@ export class RegistrationOfRequestsComponent
   }
 
   getRequest(id: any) {
-    this.requestService.getById(id).subscribe({
-      next: async (data: any) => {
-        this.infoRequest = data;
-        this.setRequiredFields(data);
-        await this.getTransferent(data.transferenceId);
-        await this.getRegionalDelegation(data.regionalDelegationId);
-        await this.getStation(data.transferenceId, data.stationId);
-        await this.getStateOfRepublic(data.keyStateOfRepublic);
-        await this.getAuthority(
-          data.transferenceId,
-          data.stationId,
-          data.authorityId
-        );
-        if (data.urgentPriority === null) data.urgentPriority = 'N';
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    this.requestService
+      .getAll(params)
+      .pipe(
+        map(x => {
+          return x.data[0];
+        })
+      )
+      .subscribe({
+        next: async (data: any) => {
+          this.infoRequest = data;
+          this.setRequiredFields(data);
+          await this.getTransferent(data.transferenceId);
+          await this.getRegionalDelegation(data.regionalDelegationId);
+          await this.getStation(data.transferenceId, data.stationId);
+          await this.getAuthority(
+            data.transferenceId,
+            data.stationId,
+            data.authorityId
+          );
+          if (data.keyStateOfRepublic) {
+            this.stateOfRepublicName = data.state.descCondition;
+          }
+          if (data.urgentPriority === null) data.urgentPriority = 'N';
 
-        /* verifica si existe un dictamen en la solicitud */
-        if (this.typeDocument === 'proceso-aprovacion') {
-          await this.getDictamen(data.id);
-        }
+          /* verifica si existe un dictamen en la solicitud */
+          if (this.typeDocument === 'proceso-aprovacion') {
+            await this.getDictamen(data.id);
+          }
 
-        this.verifyTransDelegaStatiAuthoExist(data);
+          this.verifyTransDelegaStatiAuthoExist(data);
 
-        //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
-        this.isExpedient = data.recordId ? true : false;
-        this.registRequestForm.patchValue(data);
-        if (!data?.typeOfTransfer) {
-          data.typeOfTransfer = 'MANUAL';
-        }
-        this.requestData = data as IRequest;
-        this.formLoading = false;
-        /*request.receptionDate = new Date().toISOString();
+          //verifica si la solicitud tiene expediente, si tiene no muestra el tab asociar expediente
+          this.isExpedient = data.recordId ? true : false;
+          this.registRequestForm.patchValue(data);
+          if (!data?.typeOfTransfer) {
+            data.typeOfTransfer = 'MANUAL';
+          }
+          this.requestData = data as IRequest;
+          this.formLoading = false;
+          /*request.receptionDate = new Date().toISOString();
         this.object = request as IRequest;
         this.requestData = request as IRequest;
         this.getData(request); */
-      },
-      error: error => {
-        this.formLoading = false;
-        this.onLoadToast('error', 'Error', 'No se encontro la solicitud');
-        console.log(error.error.message);
-      },
-    });
+        },
+        error: error => {
+          this.formLoading = false;
+          this.onLoadToast('error', 'Error', 'No se encontro la solicitud');
+          console.log(error.error.message);
+        },
+      });
   }
 
   verifyTransDelegaStatiAuthoExist(data: any) {
@@ -412,15 +424,6 @@ export class RegistrationOfRequestsComponent
     return new Promise((resolve, reject) => {
       this.delegationService.getById(idDelegation).subscribe(data => {
         this.delegationName = data.description;
-        resolve(true);
-      });
-    });
-  }
-
-  getStateOfRepublic(idState: number) {
-    return new Promise((resolve, reject) => {
-      this.stateOfRepublicService.getById(idState).subscribe(data => {
-        this.stateOfRepublicName = data.descCondition;
         resolve(true);
       });
     });
@@ -753,7 +756,6 @@ export class RegistrationOfRequestsComponent
   /* Fin guardar captura de solicitud */
 
   getResponse(event: any) {
-    console.log('respuesta: ', event);
     this.verifyResp = event;
   }
 
@@ -764,7 +766,6 @@ export class RegistrationOfRequestsComponent
     const url = 'pages/request/transfer-request/classify-assets';
     const from = 'VERIFICAR_CUMPLIMIENTO';
     const to = 'CLASIFICAR_BIEN';
-    console.log(this.task);
     const user: any = this.authService.decodeToken();
     const taskRes = await this.createTaskOrderService(
       this.requestData,
@@ -1044,7 +1045,6 @@ export class RegistrationOfRequestsComponent
 
   /** Proceso de aprobacion */
   async approveRequest() {
-    console.log(this.requestApproved);
     if (this.requestApproved == true) {
       this.onLoadToast(
         'error',

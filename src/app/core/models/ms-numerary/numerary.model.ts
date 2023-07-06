@@ -65,12 +65,12 @@ export interface IRequesNumeraryCal {
 }
 
 export interface IProccesNum {
-  procnumId: string | number;
+  procnumId?: string | number;
   procnumDate: string;
   description: string;
   user: string;
   procnumType: string;
   interestAll: string | number;
   numeraryAll: string | number;
-  recordNumber: string | number;
+  recordNumber?: string | number;
 }

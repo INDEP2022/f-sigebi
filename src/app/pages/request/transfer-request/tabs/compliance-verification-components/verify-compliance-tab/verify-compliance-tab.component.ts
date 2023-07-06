@@ -69,7 +69,8 @@ export class VerifyComplianceTabComponent
   existArt: number = 0;
   isGoodSelected: boolean = false;
 
-  goodSettings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
+  //goodSettings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
+  goodSettings = { ...TABLE_SETTINGS, actions: false };
   //paragraphsEstate = new BehaviorSubject<FilterParams>(new FilterParams());
   goodData = new LocalDataSource();
   //detallesBienes: IDetailEstate[] = [];
@@ -100,6 +101,7 @@ export class VerifyComplianceTabComponent
   showClarificationButtons: boolean = true;
 
   goodsModified: any = [];
+  listGoodSelected: any = [];
 
   constructor(
     private fb: FormBuilder,
@@ -134,6 +136,11 @@ export class VerifyComplianceTabComponent
     this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = VERIRY_COMPLIANCE_COLUMNS;
     this.goodSettings.columns = DETAIL_ESTATE_COLUMNS;
+
+    this.columns.select = {
+      ...this.columns.select,
+      onComponentInitFunction: this.selectGood.bind(this),
+    };
 
     this.columns.descriptionGoodSae = {
       ...this.columns.descriptionGoodSae,
@@ -510,7 +517,7 @@ export class VerifyComplianceTabComponent
       delete clarify[0].clarificationName;
       this.openForm(clarify[0]);
     } else {
-      this.alert('warning', 'Error', 'Seleccione solo una aclaración!');
+      this.alert('warning', 'Error', 'Solo se puede editar un bien a la vez!');
     }
   }
 
@@ -520,7 +527,7 @@ export class VerifyComplianceTabComponent
     let config: ModalOptions = {
       initialState: {
         docClarification: docClarification,
-        goodTransfer: this.goodsSelected[0],
+        goodTransfer: this.goodsSelected,
         request: this.requestObject,
         callback: (next: boolean) => {
           this.clarificationData = [];
@@ -563,14 +570,6 @@ export class VerifyComplianceTabComponent
         this.addGoodModified(item);
       }
     });
-    /*this.goodData.getElements().then(data => {
-      data.map((item: any) => {
-        if (item.id === descriptionInput.data.id) {
-          item.descriptionGoodSae = descriptionInput.text;
-        }
-        this.goodData.load(data)
-      });
-    });*/
   }
 
   addGoodModified(good: any) {
@@ -710,37 +709,50 @@ export class VerifyComplianceTabComponent
 
   selectGood(event: any) {
     //if (event.isSelected === true) {
-    this.formLoading = true;
 
-    this.clarificationData = [];
-    this.detailArray.reset();
-    this.goodsSelected = event.selected;
+    event.toggle.subscribe((data: any) => {
+      const index = this.goodsSelected.indexOf(data.row);
+      if (index == -1 && data.toggle == true) {
+        this.goodsSelected.push(data.row);
+      } else if (index != -1 && data.toggle == false) {
+        this.goodsSelected.splice(index, 1);
+      }
 
-    if (this.goodsSelected.length === 1) {
-      //verifica si el bien ya fue aclarado para desabilitar
-      this.showClarificationButtons =
-        this.goodsSelected[0].processStatus != 'SOLICITAR_ACLARACION'
-          ? true
-          : false;
-      this.loadingClarification = true;
-      this.getClarifications(this.goodsSelected[0].id);
-      setTimeout(() => {
-        this.goodsSelected[0].quantity = Number(this.goodsSelected[0].quantity);
-        this.detailArray.patchValue(this.goodsSelected[0] as IGood);
-        this.getDomicilieGood(this.goodsSelected[0].addressId);
-        if (this.detailArray.controls['id'].value !== null) {
-          this.isGoodSelected = true;
-        }
-        this.formLoading = false;
-      }, 1000);
+      this.formLoading = true;
 
-      //console.log("Información de domicilio ",);
-    } else {
       this.clarificationData = [];
-      this.isGoodSelected = false;
       this.detailArray.reset();
-      this.formLoading = false;
-    }
+      //this.goodsSelected = event.selected;
+
+      if (this.goodsSelected.length === 1) {
+        //verifica si el bien ya fue aclarado para desabilitar
+        this.showClarificationButtons =
+          this.goodsSelected[0].processStatus != 'SOLICITAR_ACLARACION'
+            ? true
+            : false;
+        this.loadingClarification = true;
+        this.getClarifications(this.goodsSelected[0].id);
+        setTimeout(() => {
+          this.goodsSelected[0].quantity = Number(
+            this.goodsSelected[0].quantity
+          );
+          this.detailArray.patchValue(this.goodsSelected[0] as IGood);
+          this.getDomicilieGood(this.goodsSelected[0].addressId);
+          if (this.detailArray.controls['id'].value !== null) {
+            this.isGoodSelected = true;
+          }
+          this.formLoading = false;
+        }, 1000);
+
+        //console.log("Información de domicilio ",);
+      } else {
+        this.clarificationData = [];
+        this.isGoodSelected = false;
+        this.detailArray.reset();
+        this.formLoading = false;
+        this.clarifyRowSelected = [];
+      }
+    });
   }
 
   /*  Metodo para traer las solicitudes de un bien  */

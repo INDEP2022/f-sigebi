@@ -15,4 +15,5 @@ export enum NumeraryEndpoints {
   RequestDSolCamNum = 'application/del-d-sol-cam-num',
   NumeraryCategories = 'numerary-categories',
   Application = 'application/del-solicitudes-nume-det-por-id-solnum',
+  CloseNumerary = 'close-numerary',
 }

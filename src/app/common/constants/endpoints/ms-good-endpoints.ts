@@ -61,6 +61,8 @@ export enum GoodProcessPoints {
   pup_change_impro = 'application/pup-change-impro',
   GetDescDep = 'application/getDestDepBan',
   GetGoodSituation = 'update-good-status/pupMakeQuery2',
+  GetNumeProrraCsv = 'application/get-f-proc-sol-numerario',
+  GetFproSolNumerarioProdnumCsv = 'application/get-fpro-sol-numerario-prodnum',
 }
 
 export enum GoodFinderEndpoint {
