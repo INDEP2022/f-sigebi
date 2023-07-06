@@ -75,9 +75,8 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
-
-    this.modalService.onHide.subscribe((key) => {
-      console.log(key);    
+    this.modalService.onHide.subscribe(key => {
+      console.log(key);
     });
 
     console.log('Delegación de la solicitud', this.delegationUser);
@@ -188,7 +187,9 @@ export class NotifyAssetsImproprietyFormComponent
             break;
           }
           case 'AclaracionTransferentesVoluntarias': {
-            console.log('Se ejecutará aclaracionTransferentesVoluntarias primero')
+            console.log(
+              'Se ejecutará aclaracionTransferentesVoluntarias primero'
+            );
             this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
 
             break;
@@ -207,14 +208,13 @@ export class NotifyAssetsImproprietyFormComponent
 
       if (
         this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
-        this.dataClarifications2.chatClarification.clarificationStatus == 'IMPROCEDENCIA'  && typeTransference == 'MANUAL'
+        this.dataClarifications2.chatClarification.clarificationStatus ==
+          'IMPROCEDENCIA' &&
+        typeTransference == 'MANUAL'
       ) {
-        console.log('Se ejecutará aclaracionTransferentesVoluntarias')
-        this.oficioImprocedencia(); //IMPROCEDENCIA  MANUAL 
-
+        console.log('Se ejecutará aclaracionTransferentesVoluntarias');
+        this.oficioImprocedencia(); //IMPROCEDENCIA  MANUAL
       }
-
-      
     }
 
     if (typeTransference == 'SAT_SAE' && this.typeClarifications == 2) {
