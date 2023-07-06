@@ -21,7 +21,7 @@ import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
 })
 export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   requestForm: FormGroup;
-  title: string = 'TURNAR LAS SOLICITUDES SELECCIONAS';
+  title: string = 'TURNAR LAS SOLICITUDES SELECCIONADAS';
   paragraphs: any[] = [];
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
