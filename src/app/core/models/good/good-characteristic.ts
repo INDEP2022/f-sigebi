@@ -204,9 +204,6 @@ export class CharacteristicEditorCell extends DefaultEditor {
     if (!row) {
       return true;
     }
-    if (row.attribute.includes('FECHA')) {
-      row.value = this.formatDate(row.value);
-    }
     return (
       row.required && (!row.value || (row.value && row.value.trim() == ''))
     );

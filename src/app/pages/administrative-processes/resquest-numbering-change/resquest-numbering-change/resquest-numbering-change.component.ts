@@ -1,4 +1,11 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -130,7 +137,7 @@ export class ResquestNumberingChangeComponent
         sort: false,
       },
       situationlegal: {
-        title: 'Situación Jurídica',
+        title: 'Situación jurídica',
         width: '30%',
         sort: false,
       },
@@ -253,7 +260,7 @@ export class ResquestNumberingChangeComponent
           sort: false,
         },
         appraisedValue: {
-          title: 'Avaluó Vigente',
+          title: 'Avaluó vigente',
           width: '10%',
           sort: false,
         },
@@ -263,12 +270,12 @@ export class ResquestNumberingChangeComponent
           sort: false,
         },
         totalExpenses: {
-          title: 'Total Gastos',
+          title: 'Total gastos',
           width: '20%',
           sort: false,
         },
         expedienteid: {
-          title: 'Número de Expediente',
+          title: 'Número de expediente',
           width: '10%',
           sort: false,
           valuePrepareFunction: (cell: any, row: any) => {
@@ -281,7 +288,7 @@ export class ResquestNumberingChangeComponent
         },
 
         expedientepreliminaryInquiry: {
-          title: 'Averiguación Previa',
+          title: 'Averiguación previa',
           width: '10%',
           sort: false,
           valuePrepareFunction: (cell: any, row: any) => {
@@ -293,7 +300,7 @@ export class ResquestNumberingChangeComponent
           },
         },
         expedientecriminalCase: {
-          title: 'Causa Penal',
+          title: 'Causa penal',
           width: '40%',
           sort: false,
           valuePrepareFunction: (cell: any, row: any) => {
@@ -448,6 +455,7 @@ export class ResquestNumberingChangeComponent
   getDataTableDos() {
     this.loading = true;
     this.dataGood = [];
+
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -475,7 +483,6 @@ export class ResquestNumberingChangeComponent
       });
     this.loading = false;
   }
-
   getDataTableNum() {
     this.totalItems1 = 0;
     this.data1
@@ -529,7 +536,7 @@ export class ResquestNumberingChangeComponent
         this.loading = false;
       },
       error: err => {
-        //console.log('ERROR', err);
+        console.log('ERROR', err);
         this.loading = false;
         this.alert('error', 'No se encontraron registros', '');
       },
@@ -734,9 +741,9 @@ export class ResquestNumberingChangeComponent
   }
   handleSuccess(message: any) {
     if (message == 'Se creo correctamente') {
-      this.onLoadToast('success', `${message}`);
+      this.alert('success', `${message}`, '');
     } else {
-      this.onLoadToast('warning', `${message}`);
+      this.alert('warning', `${message}`, '');
     }
     // this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
@@ -785,11 +792,30 @@ export class ResquestNumberingChangeComponent
       }
     }
 
+    if (valor == 0) {
+      if (this.dataGood[0].expedienteid == null) {
+        message = 'El bien NO tiene número de expediente';
+        this.handleSuccess(message);
+      }
+    }
+
+    if (valor == 0) {
+      if (this.dataGood[0].expedientepreliminaryInquiry == null) {
+        message = 'El bien NO tiene averiguación previa';
+        this.handleSuccess(message);
+      }
+    }
+
     if (valor == 1) {
       for (let index = 0; index < this.dataGood.length; index++) {
         if (this.dataGood[index].appraisedValue == null) {
           message =
             'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enejenación';
+          this.handleSuccess(message);
+        }
+
+        if (this.dataGood[index].expedienteid == null) {
+          message = 'El bien NO tiene número de expediente';
           this.handleSuccess(message);
         }
       }
@@ -830,6 +856,19 @@ export class ResquestNumberingChangeComponent
       next: async (response: any) => {
         this.formaplicationData.patchValue(response);
         this.loading = false;
+        function setReadonly(
+          renderer: Renderer2,
+          elementRef: ElementRef,
+          readonly: boolean
+        ): void {
+          const element = elementRef.nativeElement as HTMLInputElement;
+
+          if (readonly) {
+            renderer.setAttribute(element, 'readonly', 'readonly');
+          } else {
+            renderer.removeAttribute(element, 'readonly');
+          }
+        }
       },
       error: err => {
         this.loading = false;
@@ -904,9 +943,9 @@ export class ResquestNumberingChangeComponent
   private buildForm() {
     this.form = this.fb.group({
       legalStatus: [null, [Validators.required]],
-      delegation: [null, [Validators.required]],
-      warehouse: [null, [Validators.required]],
-      vault: [null, [Validators.required]],
+      delegation: [null],
+      warehouse: [null],
+      vault: [null],
       type: [null, [Validators.required]],
     });
   }
@@ -917,7 +956,11 @@ export class ResquestNumberingChangeComponent
       applicationChangeCashNumber: [null],
       userRequestChangeNumber: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
       postUserRequestCamnum: [
         null,
@@ -925,20 +968,36 @@ export class ResquestNumberingChangeComponent
       ],
       delegationRequestcamnum: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+        ],
       ],
       procedureProposal: [null, [Validators.required]],
       authorizeUser: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
       authorizePostUser: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       authorizeDelegation: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+        ],
       ],
       authorizeDate: [null, [Validators.required]],
     });
