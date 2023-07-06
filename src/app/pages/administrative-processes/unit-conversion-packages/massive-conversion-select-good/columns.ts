@@ -26,12 +26,12 @@ export const V_GOOD_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  goodDescription: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  quantity: {
+  amount: {
     title: 'Cantidad',
     type: 'string',
     sort: false,
@@ -41,7 +41,7 @@ export const V_GOOD_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  fileNumber: {
+  numberProceedings: {
     title: 'Expediente',
     type: 'number',
     sort: false,

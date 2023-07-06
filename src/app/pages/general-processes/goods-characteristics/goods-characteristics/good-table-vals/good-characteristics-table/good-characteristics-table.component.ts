@@ -86,7 +86,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
             const newData = response.data.sort((a, b) => {
               return a.columnNumber - b.columnNumber;
             });
-            /* this.data = newData.map(item => {
+            this.data = newData.map(item => {
               const column = 'val' + item.columnNumber;
               if (item.attribute === 'SITUACION JURIDICA') {
                 if (good[column]) {
@@ -126,128 +126,128 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
             this.totalItems = this.data.length;
             this.dataTemp = [...this.data];
             this.getPaginated(this.params.value);
-            this.loading = false; */
-            if (this.loadInventary) {
-              this.data = newData.map((item, index) => {
-                const column = 'val' + item.columnNumber;
-                if (item.attribute === 'SITUACION JURIDICA') {
-                  if (good[column]) {
-                    good.val35 = secondFormatDate(new Date());
-                  } else {
-                    good.val35 = null;
-                  }
-                }
-                let fecha: boolean = false;
-                if (item.dataType === 'D' || item.attribute.includes('FECHA')) {
-                  fecha = true;
-                  console.log(item.attribute);
-                }
-                this.val_atributos_inmuebles++;
-                if (good.no_tipo && good.no_tipo + '' === '6') {
-                  if (
-                    item.attribute === 'ESTADO' &&
-                    this.val_atributos_inmuebles > 4
-                  ) {
-                  }
-                }
+            this.loading = false;
+            // if (this.loadInventary) {
+            //   this.data = newData.map((item, index) => {
+            //     const column = 'val' + item.columnNumber;
+            //     if (item.attribute === 'SITUACION JURIDICA') {
+            //       if (good[column]) {
+            //         good.val35 = secondFormatDate(new Date());
+            //       } else {
+            //         good.val35 = null;
+            //       }
+            //     }
+            //     let fecha: boolean = false;
+            //     if (item.dataType === 'D' || item.attribute.includes('FECHA')) {
+            //       fecha = true;
+            //       console.log(item.attribute);
+            //     }
+            //     this.val_atributos_inmuebles++;
+            //     if (good.no_tipo && good.no_tipo + '' === '6') {
+            //       if (
+            //         item.attribute === 'ESTADO' &&
+            //         this.val_atributos_inmuebles > 4
+            //       ) {
+            //       }
+            //     }
 
-                if (this.inventary) {
-                  return {
-                    column,
-                    attribute: item.attribute,
-                    value:
-                      this.initValue === true
-                        ? this.inventary[index]
-                          ? this.getValueInventary(
-                              fecha,
-                              this.inventary[index].valueAttributeInventory
-                            )
-                          : null
-                        : null,
-                    required: item.required === 'S',
-                    update: this.haveUpdate(item.update),
-                    requiredAva: item.attribute
-                      ? this.haveRequiredAva(item.attribute)
-                      : false,
-                    tableCd: item.tableCd,
-                    editing: false,
-                    length: item.length,
-                    dataType: item.dataType,
-                    numColumn: item.columnNumber,
-                  };
-                } else {
-                  return {
-                    column,
-                    attribute: item.attribute,
-                    value:
-                      this.initValue === true
-                        ? this.inventary
-                          ? this.getValueInventary(
-                              fecha,
-                              this.inventary[index].valueAttributeInventory
-                            )
-                          : null
-                        : null,
-                    required: item.required === 'S',
-                    update: this.haveUpdate(item.update),
-                    requiredAva: item.attribute
-                      ? this.haveRequiredAva(item.attribute)
-                      : false,
-                    tableCd: item.tableCd,
-                    editing: false,
-                    length: item.length,
-                    dataType: item.dataType,
-                    numColumn: item.columnNumber,
-                  };
-                }
-              });
-              this.totalItems = this.data.length;
-              this.dataTemp = [...this.data];
-              console.log(this.dataTemp);
-              this.getPaginated(this.params.value);
-              this.loading = false;
-            } else {
-              this.data = newData.map(item => {
-                const column = 'val' + item.columnNumber;
-                if (item.attribute === 'SITUACION JURIDICA') {
-                  if (good[column]) {
-                    good.val35 = secondFormatDate(new Date());
-                  } else {
-                    good.val35 = null;
-                  }
-                }
-                // validar si existe tipo con goodClassNumber
-                let v_val_entfed;
-                this.val_atributos_inmuebles++;
-                if (this.v_bien_inm) {
-                  if (
-                    item.attribute === 'ESTADO' &&
-                    this.val_atributos_inmuebles > 4
-                  ) {
-                  }
-                }
-                return {
-                  column,
-                  attribute: item.attribute,
-                  value:
-                    this.initValue === true ? this.getValue(good, item) : null,
-                  required: item.required === 'S',
-                  update: this.haveUpdate(item.update),
-                  requiredAva: item.attribute
-                    ? this.haveRequiredAva(item.attribute)
-                    : false,
-                  tableCd: item.tableCd,
-                  editing: false,
-                  length: item.length,
-                  dataType: item.dataType,
-                };
-              });
-              this.totalItems = this.data.length;
-              this.dataTemp = [...this.data];
-              this.getPaginated(this.params.value);
-              this.loading = false;
-              // console.log(this.data);
-            }
+            //     if (this.inventary) {
+            //       return {
+            //         column,
+            //         attribute: item.attribute,
+            //         value:
+            //           this.initValue === true
+            //             ? this.inventary[index]
+            //               ? this.getValueInventary(
+            //                   fecha,
+            //                   this.inventary[index].valueAttributeInventory
+            //                 )
+            //               : null
+            //             : null,
+            //         required: item.required === 'S',
+            //         update: this.haveUpdate(item.update),
+            //         requiredAva: item.attribute
+            //           ? this.haveRequiredAva(item.attribute)
+            //           : false,
+            //         tableCd: item.tableCd,
+            //         editing: false,
+            //         length: item.length,
+            //         dataType: item.dataType,
+            //         numColumn: item.columnNumber,
+            //       };
+            //     } else {
+            //       return {
+            //         column,
+            //         attribute: item.attribute,
+            //         value:
+            //           this.initValue === true
+            //             ? this.inventary
+            //               ? this.getValueInventary(
+            //                   fecha,
+            //                   this.inventary[index].valueAttributeInventory
+            //                 )
+            //               : null
+            //             : null,
+            //         required: item.required === 'S',
+            //         update: this.haveUpdate(item.update),
+            //         requiredAva: item.attribute
+            //           ? this.haveRequiredAva(item.attribute)
+            //           : false,
+            //         tableCd: item.tableCd,
+            //         editing: false,
+            //         length: item.length,
+            //         dataType: item.dataType,
+            //         numColumn: item.columnNumber,
+            //       };
+            //     }
+            //   });
+            //   this.totalItems = this.data.length;
+            //   this.dataTemp = [...this.data];
+            //   console.log(this.dataTemp);
+            //   this.getPaginated(this.params.value);
+            //   this.loading = false;
+            // } else {
+            //   this.data = newData.map(item => {
+            //     const column = 'val' + item.columnNumber;
+            //     if (item.attribute === 'SITUACION JURIDICA') {
+            //       if (good[column]) {
+            //         good.val35 = secondFormatDate(new Date());
+            //       } else {
+            //         good.val35 = null;
+            //       }
+            //     }
+            //     // validar si existe tipo con goodClassNumber
+            //     let v_val_entfed;
+            //     this.val_atributos_inmuebles++;
+            //     if (this.v_bien_inm) {
+            //       if (
+            //         item.attribute === 'ESTADO' &&
+            //         this.val_atributos_inmuebles > 4
+            //       ) {
+            //       }
+            //     }
+            //     return {
+            //       column,
+            //       attribute: item.attribute,
+            //       value:
+            //         this.initValue === true ? this.getValue(good, item) : null,
+            //       required: item.required === 'S',
+            //       update: this.haveUpdate(item.update),
+            //       requiredAva: item.attribute
+            //         ? this.haveRequiredAva(item.attribute)
+            //         : false,
+            //       tableCd: item.tableCd,
+            //       editing: false,
+            //       length: item.length,
+            //       dataType: item.dataType,
+            //     };
+            //   });
+            //   this.totalItems = this.data.length;
+            //   this.dataTemp = [...this.data];
+            //   this.getPaginated(this.params.value);
+            //   this.loading = false;
+            //   // console.log(this.data);
+            // }
           } else {
             this.clearTable();
           }
@@ -424,16 +424,20 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
 
   private getValue(good: any, item: IAttribClassifGoods) {
     const column = 'val' + item.columnNumber;
-    if (item.dataType === 'D' || item.attribute.includes('FECHA')) {
-      // debugger;
-    }
-    return good[column]
-      ? item.dataType === 'D' || item.attribute.includes('FECHA')
-        ? formatForIsoDate(good[column], 'string')
+    // if (item.dataType === 'D' || item.attribute.includes('FECHA')) {
+    //   debugger;
+    // }
+    const value =
+      item.dataType === 'D' || item.attribute.includes('FECHA')
+        ? good[column] && (good[column] + '').trim().length > 0
+          ? formatForIsoDate(good[column], 'string')
+          : null
         : good[column] === 'NULL'
-        ? ''
-        : good[column]
-      : null;
+        ? null
+        : good[column];
+    console.log(value);
+
+    return value;
   }
 
   private getValueInventary(isFecha: boolean, item: any) {

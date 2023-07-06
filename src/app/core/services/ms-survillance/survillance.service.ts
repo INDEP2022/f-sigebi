@@ -21,7 +21,7 @@ export class SurvillanceService extends HttpService {
   }
 
   getVCuentaNoBien(no_bien: number | string) {
-    return this.get<number>(
+    return this.get<IListResponse<{ count: number }>>(
       this.route.VCuentaPaqDestion + '?no_bien=' + no_bien
     );
   }

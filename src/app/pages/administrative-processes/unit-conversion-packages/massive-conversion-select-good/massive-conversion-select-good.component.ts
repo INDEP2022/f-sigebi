@@ -24,7 +24,9 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
@@ -42,6 +44,7 @@ export class MassiveConversionSelectGoodComponent
   implements OnInit
 {
   //Variables que recibe
+  goodCheckValues = goodCheck;
   paqDestinationGoodLenght: number;
   clearPaqDestination: boolean;
   //Params para navegación
@@ -93,6 +96,14 @@ export class MassiveConversionSelectGoodComponent
 
   data = new LocalDataSource();
 
+  get selectedPackage() {
+    return this.unitConversionPackagesDataService.selectedPackage;
+  }
+
+  get dataPrevisualization() {
+    return this.unitConversionPackagesDataService.dataPrevisualization;
+  }
+
   constructor(
     private fb: FormBuilder,
     private delegationService: DelegationService,
@@ -102,6 +113,8 @@ export class MassiveConversionSelectGoodComponent
     private trackerGoodService: GoodTrackerService,
     private transferentService: TransferenteService,
     private survillanceService: SurvillanceService,
+    private expedientService: ExpedientService,
+    private goodService: GoodService,
     private bsModel: BsModalRef
   ) {
     super();
@@ -123,7 +136,9 @@ export class MassiveConversionSelectGoodComponent
   }
 
   emitDelegation(delegation: any) {
-    this.descData.descDelegation = delegation;
+    console.log(delegation);
+
+    this.descData.descDelegation = delegation.description;
   }
 
   settingChange($event: any): void {
@@ -133,14 +148,16 @@ export class MassiveConversionSelectGoodComponent
   private obtainVCuenta(numberGood: number) {
     return this.survillanceService.getVCuentaNoBien(numberGood).pipe(
       takeUntil(this.$unSubscribe),
-      catchError(x => of(0))
+      catchError(x => of({ data: [] })),
+      map(x => (x.data.length > 0 ? 0 : x.data[0].count))
     );
   }
 
-  private obtainTransferent(transferent: any) {
+  private obtainTransferent(transferent: string) {
     return this.transferentService.getById(transferent).pipe(
       takeUntil(this.$unSubscribe),
-      catchError(x => of(null))
+      catchError(x => of(null)),
+      map(x => (x ? x.id : null))
     );
   }
 
@@ -150,21 +167,29 @@ export class MassiveConversionSelectGoodComponent
     return this.delegationService.getAll(filterParams.getParams()).pipe(
       takeUntil(this.$unSubscribe),
       catchError(x => of({ data: [] })),
-      map(x => (x.data.length > 0 ? x.data[0] : null))
+      map(x => (x.data.length > 0 ? x.data[0].id : null))
     );
   }
 
   private async fillGoodPaqDestino(v_bani: boolean) {
     let V_BANR = true;
     goodCheck.forEach(async good => {
+      console.log(good);
       if (v_bani) {
-        this.unitConversionPackagesDataService.dataPrevisualization.forEach(
-          rowPq => {
-            if (rowPq.numberGood === good.goodNumber) {
-              V_BANR = false;
-            }
-          }
+        const filterParams = new FilterParams();
+        filterParams.addFilter('numberPackage', this.selectedPackage);
+        filterParams.addFilter('numberGood', good.goodNumber);
+        const encontro = await firstValueFrom(
+          this.packageGoodService
+            .getPaqDestinationDet(filterParams.getParams())
+            .pipe(
+              catchError(x => of({ data: [] })),
+              map(x => x.data.length > 0)
+            )
         );
+        if (encontro) {
+          V_BANR = false;
+        }
       }
 
       if (V_BANR) {
@@ -176,19 +201,58 @@ export class MassiveConversionSelectGoodComponent
         }
       }
       if (V_BANR) {
-        const V_NO_TRANSFERENTE = await firstValueFrom(
-          this.obtainTransferent(good.transferent)
+        console.log('Entro a registrar');
+        let V_NO_TRANSFERENTE;
+        if (good.dTransferee) {
+          const transferentSplit = good.dTransferee.split('-');
+          if (transferentSplit.length > 0) {
+            V_NO_TRANSFERENTE = await firstValueFrom(
+              this.obtainTransferent(transferentSplit[0])
+            );
+          }
+        }
+
+        // const V_NO_DELEGACION = await firstValueFrom(
+        //   this.obtainDelegation(good.coord_admin)
+        // );
+        // console.log(V_NO_DELEGACION);
+
+        // if (V_NO_DELEGACION) {
+        //   await firstValueFrom(
+        //     this.goodService.update({
+        //       id: good.id,
+        //       goodNumber: good.goodNumber,
+        //       delegationNumber: V_NO_DELEGACION,
+        //     })
+        //   );
+        // }
+
+        if (V_NO_TRANSFERENTE) {
+          await firstValueFrom(
+            this.expedientService.update(good.fileNumber, {
+              id: good.fileNumber,
+              transferNumber: V_NO_TRANSFERENTE,
+            })
+          );
+        }
+        await firstValueFrom(
+          this.packageGoodService.insertPaqDestDec({
+            numberPackage: this.selectedPackage,
+            numberGood: good.goodNumber,
+            amount: good.quantity,
+            amountConv: null,
+            numberRecord: good.numFile,
+            nbOrigin: null,
+          })
         );
-        const V_NO_DELEGACION = await firstValueFrom(
-          this.obtainDelegation(good.coord_admin)
-        );
+        this.closeModal();
       }
     });
   }
 
   private clearPrevisualizationData() {
     let v_bani: boolean;
-    if (this.paqDestinationGoodLenght > 0) {
+    if (this.dataPrevisualization.length > 0) {
       this.alertQuestion(
         'question',
         '¿El paquete tiene bienes, se eliminan?',
@@ -364,6 +428,7 @@ export class MassiveConversionSelectGoodComponent
   }
 
   pbIngresar() {
+    debugger;
     if (goodCheck.length > 0) {
       this.clearPrevisualizationData();
     } else {

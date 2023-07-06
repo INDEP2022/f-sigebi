@@ -49,6 +49,7 @@ import { MassiveConversionErrorsModalComponent } from '../massive-conversion-err
 import { MassiveConversionModalGoodComponent } from '../massive-conversion-modal-good/massive-conversion-modal-good.component';
 import { MassiveConversionSelectGoodComponent } from '../massive-conversion-select-good/massive-conversion-select-good.component';
 import { UnitConversionPackagesDataService } from '../services/unit-conversion-packages-data.service';
+
 interface ValidaButton {
   PB_VALIDA: boolean;
   PB_AUTORIZA: boolean;
@@ -194,8 +195,20 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          this.data.load([]);
-          this.data.refresh();
+          if (response) {
+            this.dataPrevisualization = [];
+            this.data.load([]);
+            this.data.refresh();
+          }
+        },
+      });
+    this.unitConversionDataService.updatePrevisualizationData
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.getGoods();
+          }
         },
       });
   }
@@ -304,6 +317,14 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   get paragraph3() {
     return this.form.get('paragraph3');
+  }
+
+  get dataPrevisualization() {
+    return this.unitConversionDataService.dataPrevisualization;
+  }
+
+  set dataPrevisualization(value) {
+    this.unitConversionDataService.dataPrevisualization = value;
   }
 
   private prepareForm(): void {
@@ -439,6 +460,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   searchNoPackage(params: any) {
     const paramsF = new FilterParams();
     paramsF.addFilter('numberPackage', params.text);
+    this.unitConversionDataService.selectedPackage = params.text;
     this.packageGoodService.getPaqDestinationEnc(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -606,7 +628,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         };
       });
     }
-    this.unitConversionDataService.dataPrevisualization = dataRes;
+    this.dataPrevisualization = dataRes;
     this.data.load(dataRes);
     this.totalItems = this.data.count();
   }
@@ -675,13 +697,13 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           );
           this.totalItems = response.count || 0;
           this.data.load(dataMap);
-          this.unitConversionDataService.dataPrevisualization = dataMap;
+          this.dataPrevisualization = dataMap;
           this.loading = false;
         },
         error => {
           this.totalItems = 0;
           this.data.load([]);
-          this.unitConversionDataService.dataPrevisualization = [];
+          this.dataPrevisualization = [];
           this.loading = false;
         }
       );
