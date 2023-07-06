@@ -13,6 +13,7 @@ import { IGoodProgramming } from 'src/app/core/models/good-programming/good-prog
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { IReceipt } from 'src/app/core/models/receipt/receipt.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
@@ -108,6 +109,7 @@ export class FormalizeProgrammingFormComponent
   actId: number = 0;
   observation: string = '';
   proceedingData: IProceedings;
+  task: ITask;
   settingsGuardGoods = {
     ...this.settings,
     actions: false,
@@ -331,11 +333,24 @@ export class FormalizeProgrammingFormComponent
         this.getAuthority();
         this.getTypeRelevant();
         this.getwarehouse();
+        this.getTask();
         //this.getUsersProgramming();
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getInfoGoodsProgramming());
       });
+  }
+
+  getTask() {
+    const task = JSON.parse(localStorage.getItem('Task'));
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = task.id;
+    this.taskService.getAll(params.getValue()).subscribe({
+      next: response => {
+        this.task = response.data[0];
+      },
+      error: error => {},
+    });
   }
 
   getRegionalDelegation(data: Iprogramming) {
