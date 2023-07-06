@@ -1,70 +1,38 @@
-//CheckboxElementRecordAccountStatementsComponent
-
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 interface CheckboxElementData {
-  numberGood: any; // Reemplaza 'any' con el tipo correcto de numberGood
-  // Otras propiedades necesarias para el componente
+  numberGood: any;
 }
-
 @Component({
   selector: 'app-checkbox-element',
   template: `
     <div class="row justify-content-center">
       <input
         [disabled]="disabled"
-        #box
-        [checked]="checked"
-        (change)="onToggle($event)"
-        type="checkbox" />
+        [(ngModel)]="checked"
+        type="checkbox"
+        (change)="onToggle($event)" />
     </div>
   `,
   styles: [],
 })
-export class CheckboxElementRecordAccountStatementsComponent<
-  T extends CheckboxElementData = any
-> implements OnInit, OnChanges
-{
+export class CheckboxElementRecordAccountStatementsComponent {
   checked: boolean;
   disabled: boolean;
-  @ViewChild('box', { static: true }) box: ElementRef<HTMLInputElement>;
-  @Input() value: boolean;
-  @Input() rowData: T;
 
-  @Output() toggle: EventEmitter<{ row: T; toggle: boolean }> =
-    new EventEmitter();
-
-  constructor() {}
-
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
-  }
+  @Input() rowData: CheckboxElementData;
+  @Output() toggle: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   ngOnInit(): void {
-    this.checked = this.value;
-    console.log(this.checked);
-    console.log(this.rowData.numberGood); // Verifica el valor de numberGood
-    this.disabled = this.rowData.numberGood === null; // Asigna el valor de "disabled" basado en "numberGood"
-    console.log(this.disabled); // Verifica el valor de disabled
+    this.checked = this.rowData.numberGood !== null;
+    this.disabled = true;
   }
 
-  onToggle($event: Event) {
-    let row: any = this.rowData;
-    let toggle = ($event.currentTarget as HTMLInputElement).checked;
-    this.toggle.emit({ row, toggle });
-  }
-
-  setValue(value: boolean) {
-    this.checked = value;
+  onToggle(event: any) {
+    const checked = event.target.checked;
+    if (this.rowData.numberGood !== null) {
+      this.checked = checked;
+      this.toggle.emit(this.checked);
+    }
   }
 }

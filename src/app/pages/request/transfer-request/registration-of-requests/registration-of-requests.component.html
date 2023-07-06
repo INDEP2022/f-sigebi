@@ -83,6 +83,12 @@
           <i class="bx bx-minus"></i> Rechazar
         </button>
       </div>
+      <div class="p-2">
+        <button class="btn btn-primary active btn-sm" (click)="close()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
     </div>
   </div>
   <div body>
@@ -109,7 +115,7 @@
                 <div class="col-md-4">
                   <div>
                     <label for="">Fecha de Solicitud&#58;</label>
-                    {{ infoRequest?.applicationDate | date : 'dd/MM/yyyy' }}
+                    {{ infoRequest?.applicationDate | date: 'dd/MM/yyyy' }}
                   </div>
                 </div>
                 <div class="col-md-4">
@@ -293,25 +299,6 @@
             </tabset>
           </div>
         </form>
-      </div>
-    </div>
-    <div class="d-flex justify-content-center">
-      <!-- <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-primary active"
-          [disabled]="registRequestForm.invalid"
-          (click)="confirm()">
-          <i class="bx bxs-right-arrow-square"></i> {{ btnTitle }}
-        </button>
-      </div> -->
-      <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-danger btn-sm active"
-          (click)="close()">
-          Salir
-        </button>
       </div>
     </div>
   </div>
