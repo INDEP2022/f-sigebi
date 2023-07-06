@@ -35,6 +35,14 @@
 
 <ng-container *ngIf="plain">
   <div class="row pt-4">
+    <div class="col-md-8 mt-3 mb-3">
+      <h6>Ejemplo de Bot&oacute;n de columnas al final</h6>
+    </div>
+    <div class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+      <app-columns-select
+        [(settings)]="settings"
+        [leftList]="true"></app-columns-select>
+    </div>
     <div class="col-md-12">
       <form-loader *ngIf="loading"></form-loader>
       <ng-scrollbar

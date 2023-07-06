@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -136,6 +136,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   chValidateGood = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   goodsList: any;
+  VALIDA_VAL24: string;
 
   //VARIABLES PARA PAQUETES
   dataPackage = new DefaultSelect();
@@ -185,32 +186,12 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoods());
+    // this.params
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() => this.getGoods());
     this.checkPer();
     this.fillDataByPackage();
     this.getDataUser();
-    this.unitConversionDataService.clearPrevisualizationData
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: response => {
-          if (response) {
-            this.dataPrevisualization = [];
-            this.data.load([]);
-            this.data.refresh();
-          }
-        },
-      });
-    this.unitConversionDataService.updatePrevisualizationData
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: response => {
-          if (response) {
-            this.getGoods();
-          }
-        },
-      });
   }
 
   //Gets del formulario de paquete
@@ -452,7 +433,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.paragraph2.setValue(res.paragraph2);
         this.paragraph3.setValue(res.paragraph3);
         //Traer los bienes de pack_det
-        this.getGoods();
+        this.unitConversionDataService.updatePrevisualizationData.next(true);
+        this.validateButtons(res.statuspack.toString().toLocaleUpperCase());
       }
     });
   }
@@ -546,7 +528,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       good: {
         config: {
           data: {
-            goodDet: this.goodsList,
+            goodDet: this.dataPrevisualization,
             infoPack: { ...this.form.value, ...this.descPaq },
           },
         },
@@ -635,79 +617,47 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   // Aquí puedes realizar las acciones necesarias con la información recibida
 
-  validateGood(item: any) {
-    const packVal = this.noPackage.value;
-    return new Promise((resolve, reject) => {
-      if (item.delegationNumber != packVal.numberDelegation) {
-        resolve({ available: false });
-      } else if (item.bienes.numberClassifyGood != packVal.numberClassifyGood) {
-        resolve({ available: false });
-      } else if (item.bienes.labelNumber != packVal.labelNumber) {
-        resolve({ available: false });
-      } else if (item.bienes.status != packVal.status) {
-        resolve({ available: false });
-      } //!Busqueda de no_transferente por el no_expediente
-      else if (item.bienes.storeNumber != packVal.numberStore) {
-        resolve({ available: false });
-      } else if (this.packageType.value != 3) {
-        if (item.bienes.storeNumber != packVal.numberStore) {
-          resolve({ available: false });
-        } else {
-          console.log('Entro aquí');
-        }
-      } else if (this.packageType.value == 3) {
-        if (item.bienes.val24 == null) {
-          resolve({ available: false });
-        } else {
-          console.log('Entro aquí');
-        }
-      } else {
-        resolve({ available: true });
-      }
-    });
-  }
-
   selectRow(e: any) {
     console.log(e);
   }
 
-  getGoods() {
-    if (!this.noPackage.value) return;
-    this.loading = true;
-    const newParams = new ListParams();
-    newParams['filter.numberPackage'] = this.noPackage.value.numberPackage;
-    this.params.getValue()['filter.numberPackage'] =
-      this.noPackage.value.numberPackage;
-    this.packageGoodService
-      .getPaqDestinationDet(this.params.getValue())
-      .subscribe(
-        async response => {
-          this.goodsList = response.data;
-          let dataMap = await Promise.all(
-            response.data.map(async (item: any) => {
-              const respAvailable = await this.validateGood(item);
-              let disponible = JSON.parse(
-                JSON.stringify(respAvailable)
-              ).available;
-              return {
-                ...item,
-                available: disponible,
-              };
-            })
-          );
-          this.totalItems = response.count || 0;
-          this.data.load(dataMap);
-          this.dataPrevisualization = dataMap;
-          this.loading = false;
-        },
-        error => {
-          this.totalItems = 0;
-          this.data.load([]);
-          this.dataPrevisualization = [];
-          this.loading = false;
-        }
-      );
-  }
+  // getGoods() {
+  //   if (!this.noPackage.value) return;
+  //   this.loading = true;
+  //   const newParams = new ListParams();
+  //   newParams['filter.numberPackage'] = this.noPackage.value.numberPackage;
+  //   this.params.getValue()['filter.numberPackage'] =
+  //     this.noPackage.value.numberPackage;
+  //   this.packageGoodService
+  //     .getPaqDestinationDet(this.params.getValue())
+  //     .subscribe(
+  //       async response => {
+  //         this.goodsList = response.data;
+  //         let dataMap = await Promise.all(
+  //           response.data.map(async (item: any) => {
+  //             const respAvailable = await this.validateGood(item);
+  //             let disponible = JSON.parse(
+  //               JSON.stringify(respAvailable)
+  //             ).available;
+  //             return {
+  //               ...item,
+  //               available: disponible,
+  //             };
+  //           })
+  //         );
+  //         this.totalItems = response.count || 0;
+  //         this.data.load(dataMap);
+  //         this.dataPrevisualization = dataMap;
+  //         this.loading = false;
+  //       },
+  //       error => {
+  //         this.totalItems = 0;
+  //         this.data.load([]);
+  //         this.dataPrevisualization = [];
+  //         this.loading = false;
+  //       }
+  //     );
+  // }
 
   chargeForm2(noGoodFather: string) {
     let params = new ListParams();
@@ -946,47 +896,133 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     }
   }
 
-  async pubValidaFilters(): Promise<boolean> {
-    const fields = [
-      {
-        name: 'delegation',
-        message: 'Debe ingresar la Coordinación que administra...',
-      },
-      {
-        name: 'goodClassification',
-        message: 'Debe ingresar el Clasificador...',
-      },
-      { name: 'targetTag', message: 'Debe ingresar la Etiqueta de destino...' },
-      { name: 'goodStatus', message: 'Debe ingresar el Estatus...' },
-      { name: 'transferent', message: 'Debe ingresar la Transferente...' },
-      { name: 'warehouse', message: 'Debe ingresar el Almacén...' },
-    ];
+  async verifyGoods() {
+    console.log(this.data['data']);
+    console.log('Sí');
+    if (!['L', 'X'].includes(this.status.value)) {
+      let _status: string;
 
-    for (const field of fields) {
-      if (this.form.get(field.name).value === null) {
-        await Swal.fire(field.message, 'A', 'error');
-        return false;
+      this.status.value == null
+        ? (_status = 'Z')
+        : (_status = this.status.value);
+      //Validacion de filtros
+      if (this.delegation.value == null) {
+        this.alert(
+          'warning',
+          'Debe ingresar la Coordinación que administra',
+          ''
+        );
+      } else if (this.goodClassification.value == null) {
+        this.alert('warning', 'Debe ingresar el Clasificador', '');
+      } else if (this.targetTag.value == null) {
+        this.alert('warning', 'Debe ingresar la Etiqueta de destino', '');
+      } else if (this.goodStatus.value == null) {
+        this.alert('warning', 'Debe ingresar el Estatus', '');
+      } else if (this.transferent.value == null) {
+        this.alert('warning', 'Debe ingresar la Transferente', '');
+      } else if (this.packageType.value == 3 && this.warehouse.value == null) {
+        this.alert('warning', 'Debe ingresar el Almacén', '');
+      } else {
+        //Validacion de bienes
+        if (this.data['data'].length > 0) {
+          const check = document.getElementById(
+            'checkGood'
+          ) as HTMLInputElement;
+          check.checked = true;
+          const ch_bienes_ok = 1;
+          this.VALIDA_VAL24 = 'S';
+          for (const data of this.data['data']) {
+            const resp = await this.validateGoods(data);
+            const available = JSON.parse(JSON.stringify(resp)).res;
+            const message = JSON.parse(JSON.stringify(resp)).msg;
+            console.log(JSON.parse(JSON.stringify(resp)).res);
+          }
+        } else {
+          this.alert('warning', 'No hay Bienes que verificar', '');
+        }
       }
     }
-
-    return true;
   }
 
-  async verifyGoods() {
-    await this.pubValidaFilters();
-    await this.pubValidaGoods();
+  validateGoods(good: any) {
+    return new Promise((resolve, reject) => {
+      const noPack = this.noPackage.value;
+      let lv_valida: string;
+
+      if (noPack.numberDelegation != good.bienes.delegationNumber) {
+        console.log({
+          valpack: noPack.numberDelegation,
+          valgood: good.bienes.delegationNumber,
+          good: good.bienes.goodId,
+        });
+        resolve({ res: false, msg: 'delegation' });
+      } else if (noPack.numberClassifyGood != good.bienes.goodClassNumber) {
+        console.log({
+          valpack: noPack.numberClassifyGood,
+          valgood: good.bienes.goodClassNumber,
+          good: good.bienes.goodId,
+        });
+        resolve({ res: false, msg: 'classify' });
+      } else if (noPack.numberLabel != good.bienes.labelNumber) {
+        console.log({
+          valpack: noPack.numberLabel,
+          valgood: good.bienes.labelNumber,
+          good: good.bienes.goodId,
+        });
+        resolve({ res: false, msg: 'label' });
+      } else if (noPack.status != good.bienes.status) {
+        console.log({
+          valpack: noPack.status,
+          valgood: good.bienes.status,
+          good: good.bienes.goodId,
+        });
+        resolve({ res: false, msg: 'status' });
+      } else if (
+        noPack.typePackage != 3 &&
+        noPack.numberStore != good.bienes.storeNumber
+      ) {
+        console.log({
+          valpack: noPack.numberStore,
+          valgood: good.bienes.storeNumber,
+          good: good.bienes.goodId,
+        });
+        resolve({ res: false, msg: 'store' });
+      } else if (noPack.typePackage == 3) {
+        /* if (this.VALIDA_VAL24 == 'S') {
+        lv_valida = 'S';
+        this.VALIDA_VAL24 = 'N';
+        const check = document.getElementById(
+          'checkGood'
+        ) as HTMLInputElement;
+        check.checked = false;
+      }
+      if (lv_valida != good.bienes.val24) {
+        console.log({
+          valpack: lv_valida,
+          valgood: good.bienes.val24,
+          good: good.bienes.goodId,
+        });
+      }else if(good.bienes.val24 == null){
+        console.log('Es nulo')
+      }*/
+        resolve({ res: false, msg: 'break' });
+      } else {
+        resolve({ res: true, msg: 'correct' });
+      }
+    });
   }
-  pubValidaGoods(): Promise<boolean> {
+
+  pubValidaGoods(val24: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       let IpackageValidGoods: IpackageValidGood = {
-        pAlmacenNumber: this.form.get('warehouse').value,
-        pDelegationNumber: this.form.get('delegation').value,
-        pGoodClasifNumber: this.form.get('goodClassification').value,
-        pEtiquetaNumber: this.form.get('targetTag').value,
-        pPaqueteNumber: this.form.get('package').value,
-        pStatus: this.form.get('goodStatus').value,
-        pTypePaquete: this.form.get('packageType').value,
-        pValidVal24: 21,
+        pAlmacenNumber: this.warehouse.value,
+        pDelegationNumber: this.delegation.value,
+        pGoodClasifNumber: this.goodClassification.value,
+        pEtiquetaNumber: this.targetTag.value,
+        pPaqueteNumber: this.noPackage.value.numberPackage,
+        pStatus: this.goodStatus.value,
+        pTypePaquete: this.packageType.value,
+        pValidVal24: val24.toString(),
       };
 
       this.packageGoodService.pubValidGood(IpackageValidGoods).subscribe(
@@ -994,16 +1030,16 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           this.goodErrors = response.data;
           if (this.goodErrors.length > 0) {
             this.chValidateGood = false;
-            Swal.fire('Existe inconsistencia en los bienes...', 'A', 'error');
+            this.alert('warning', 'Existe inconsistencia en los bienes', '');
           } else {
             this.chValidateGood = true;
-            Swal.fire('Validación de bienes correcta...', 'A', 'success');
+            this.alert('warning', 'Validación de bienes correcta', '');
           }
 
           resolve(true); // Resuelve la promesa con valor `true`
         },
         error => {
-          Swal.fire('Error', 'Error Al Validar los bienes', 'error');
+          this.alert('error', 'Error Al Validar los bienes', '');
           reject(error); // Rechaza la promesa en caso de error
         }
       );

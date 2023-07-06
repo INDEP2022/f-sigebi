@@ -227,7 +227,7 @@ export class HomeComponent extends BasePage implements OnInit {
   }
 
   successAlert() {
-    this.alert('success', 'Registro guardado', '');
+    this.alert('success', 'El registro se ha guardado', '');
   }
   openModal() {
     let config: ModalOptions = {
