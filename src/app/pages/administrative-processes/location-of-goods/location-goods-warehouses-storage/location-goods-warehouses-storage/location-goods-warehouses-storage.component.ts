@@ -34,6 +34,7 @@ export class LocationGoodsWarehousesStorageComponent
   goods: IGood[] = [];
   newWarehouse: number = 0;
   fileNum: number = 0;
+  selectedOption: string = 'B';
   disableConsultLocation: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   warehouseDisable: boolean = true;
@@ -106,6 +107,7 @@ export class LocationGoodsWarehousesStorageComponent
     this.buildFormVault();
     this.form.disable();
     this.numberGood.enable();
+    // this.formWarehouse.value.warehouse = this.formWarehouse.get('warehouse').value != null ? this.formWarehouse.get('warehouse').value : 9999;
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
@@ -221,6 +223,7 @@ export class LocationGoodsWarehousesStorageComponent
           this.currentDescriptionWare.disable();
           this.currentLocationVault.disable();
           this.currentDescriptionVault.disable();
+          this.validarGood();
           subscription.unsubscribe();
         },
         error: err => {
@@ -345,30 +348,41 @@ export class LocationGoodsWarehousesStorageComponent
   validarGood(): boolean {
     if (this.radio.value === 'A') {
       if (Number(this.good.type) === 5 && Number(this.good.subTypeId) === 16) {
-        this.warehouseDisable = false;
-        this.vaultDisable = false;
-        this.alert('error', 'ERROR', 'El bien no puede estar en un almacen');
+        this.warehouseDisable = true;
+        this.vaultDisable = true;
+        // this.good.ubicationType = 'A';
         return true;
       } else if (Number(this.good.type) === 7) {
+        // this.good.ubicationType = 'A';
         this.vaultDisable = false;
+        this.formVault.disable();
       } else {
         this.warehouseDisable = false;
+        this.vaultDisable = false;
         this.good.storeNumber = this.warehouse.value;
-        this.good.ubicationType = 'A';
+        this.good.ubicationType = '';
         this.good.dateIn = new Date();
       }
     } else {
       if (Number(this.good.type) === 5 && Number(this.good.subTypeId) === 16) {
-        this.good.vaultNumber = 9999;
-        this.good.storeNumber = null;
-        this.good.ubicationType = 'B';
+        this.warehouseDisable = true;
+        this.vaultDisable = true;
+        // this.good.ubicationType = 'B';
+        // this.good.vaultNumber = 9999;
+        // this.good.storeNumber = null;
+      } else if (Number(this.good.type) === 7) {
+        this.warehouseDisable = false;
+        this.formWarehouse.disable();
+        // this.good.ubicationType = 'B';
       } else {
+        this.warehouseDisable = true;
+        this.vaultDisable = true;
         this.good.vaultNumber = this.safe.value;
-        this.good.ubicationType = 'B';
+        this.good.ubicationType = '';
         this.good.dateIn = new Date();
+        // this.good.ubicationType = 'B';
       }
     }
-
     return false;
   }
   validLocationsConsult(warehouse: IWarehouse) {
