@@ -124,9 +124,21 @@ export class GoodsProcessValidationExtdomComponent
     super();
     this.tableSettings = {
       ...this.settings,
+      actions: {
+        columnTitle: '',
+        add: false,
+        edit: false,
+        delete: false,
+      },
       columns: COLUMNS_GOODS_LIST_EXTDOM,
     };
     this.tableSettings2 = {
+      actions: {
+        columnTitle: '',
+        add: false,
+        edit: false,
+        delete: false,
+      },
       ...this.settings,
       columns: COLUMNS_GOODS_LIST_EXTDOM,
     };
