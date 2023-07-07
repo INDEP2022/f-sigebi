@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { catchError, firstValueFrom, of, takeUntil } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
@@ -31,6 +32,54 @@ export class GoodsManagementSocialCabinetComponent
   identifier: number;
   typeGabinetProcess = ETypeGabinetProcess;
   totalItems = 0;
+  @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
+
+  get sinAsignarCant() {
+    return this.goodsManagementService.sinAsignarCant;
+  }
+
+  set sinAsignarCant(value) {
+    this.goodsManagementService.sinAsignarCant = value;
+  }
+
+  get susceptibleCant() {
+    return this.goodsManagementService.susceptibleCant;
+  }
+
+  set susceptibleCant(value) {
+    this.goodsManagementService.susceptibleCant = value;
+  }
+
+  get liberadoCant() {
+    return this.goodsManagementService.liberadoCant;
+  }
+
+  set liberadoCant(value) {
+    this.goodsManagementService.liberadoCant = value;
+  }
+  get entregadoCant() {
+    return this.goodsManagementService.entregadoCant;
+  }
+
+  set entregadoCant(value) {
+    this.goodsManagementService.entregadoCant = value;
+  }
+  get asignadoCant() {
+    return this.goodsManagementService.asignadoCant;
+  }
+
+  set asignadoCant(value) {
+    this.goodsManagementService.asignadoCant = value;
+  }
+
+  get pageLoading() {
+    return this.goodsManagementService.pageLoading;
+  }
+
+  set pageLoading(value) {
+    this.goodsManagementService.pageLoading = value;
+  }
+
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
@@ -57,10 +106,24 @@ export class GoodsManagementSocialCabinetComponent
       });
   }
 
+  ngAfterViewInit() {
+    // this.desactivateTabs();
+  }
+
+  private desactivateTabs() {
+    if (this.staticTabs?.tabs) {
+      this.staticTabs.tabs.forEach(x => {
+        x.disabled = true;
+      });
+    }
+  }
+
   clear() {
     this.form.reset();
     this.selectedGoodstxt = [];
     this.goodsManagementService.clear.next(true);
+    this.goodsManagementService.data = [];
+    this.activateTabs();
   }
 
   showNotLoads() {
@@ -102,7 +165,7 @@ export class GoodsManagementSocialCabinetComponent
   }
 
   async onFileChange(event: any) {
-    this.loading = true;
+    this.pageLoading = true;
     const file = event.target.files[0];
     let fileReader = new FileReader();
     fileReader.onload = async e => {
@@ -138,6 +201,29 @@ export class GoodsManagementSocialCabinetComponent
     fileReader.readAsText(file);
   }
 
+  private activateTabs() {
+    this.sinAsignarCant = this.getSinAsignarCant();
+    // if (this.sinAsignarCant > 0) {
+    //   this.staticTabs.tabs[0].disabled = false;
+    // }
+    this.susceptibleCant = this.getSusceptible();
+    // if (this.susceptibleCant > 0) {
+    //   this.staticTabs.tabs[1].disabled = false;
+    // }
+    this.asignadoCant = this.getAsignado();
+    // if (this.asignadoCant > 0) {
+    //   this.staticTabs.tabs[2].disabled = false;
+    // }
+    this.entregadoCant = this.getEntregado();
+    // if (this.entregadoCant > 0) {
+    //   this.staticTabs.tabs[3].disabled = false;
+    // }
+    this.liberadoCant = this.getLiberado();
+    // if (this.liberadoCant > 0) {
+    //   this.staticTabs.tabs[4].disabled = false;
+    // }
+  }
+
   private async getData() {
     const filterParams = new FilterParams();
     filterParams.limit = 20000;
@@ -152,7 +238,14 @@ export class GoodsManagementSocialCabinetComponent
     if (response.data.length === 0) {
       this.notLoadedGoods = [];
       this.alert('error', 'Error', 'Bienes no encontrados');
+      this.goodsManagementService.data = [];
       this.goodsManagementService.refreshTable.next(false);
+      this.sinAsignarCant = 0;
+      this.susceptibleCant = 0;
+      this.asignadoCant = 0;
+      this.entregadoCant = 0;
+      this.liberadoCant = 0;
+      this.desactivateTabs();
     } else {
       this.totalItems = response.count;
       this.notLoadedGoods = [];
@@ -167,13 +260,32 @@ export class GoodsManagementSocialCabinetComponent
         }
       });
       this.goodsManagementService.data = response.data;
+      this.activateTabs();
       this.goodsManagementService.refreshTable.next(true);
     }
-    this.loading = false;
+    this.pageLoading = false;
   }
 
   private getByProcessCant(process: ETypeGabinetProcess) {
     return this.goodsManagementService.getByProcess(process).length;
+  }
+
+  getSinAsignarCant() {
+    return this.getByProcessCant(ETypeGabinetProcess['Sin Asignar']);
+  }
+
+  getSusceptible() {
+    return this.getByProcessCant(ETypeGabinetProcess.Susceptible);
+  }
+  getAsignado() {
+    return this.getByProcessCant(ETypeGabinetProcess.Asignado);
+  }
+
+  getEntregado() {
+    return this.getByProcessCant(ETypeGabinetProcess.Entregado);
+  }
+  getLiberado() {
+    return this.getByProcessCant(ETypeGabinetProcess.Liberado);
   }
 
   delete(data: any) {

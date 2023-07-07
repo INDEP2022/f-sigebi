@@ -110,6 +110,10 @@ export class GoodsProcessValidationExtdomComponent
   selectTransference = new DefaultSelect();
   selectStationNumber = new DefaultSelect();
   selectAuthority = new DefaultSelect();
+  // Goods Selects
+  selectedGooods: IGood[] = [];
+  goods: IGood[] | any[] = [];
+  goodsValid: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -120,9 +124,21 @@ export class GoodsProcessValidationExtdomComponent
     super();
     this.tableSettings = {
       ...this.settings,
+      actions: {
+        columnTitle: '',
+        add: false,
+        edit: false,
+        delete: false,
+      },
       columns: COLUMNS_GOODS_LIST_EXTDOM,
     };
     this.tableSettings2 = {
+      actions: {
+        columnTitle: '',
+        add: false,
+        edit: false,
+        delete: false,
+      },
       ...this.settings,
       columns: COLUMNS_GOODS_LIST_EXTDOM,
     };
@@ -355,12 +371,16 @@ export class GoodsProcessValidationExtdomComponent
     this.totalGoods2 = 0;
     const params = new FilterParams();
     params.removeAllFilters();
-    params.addFilter('fileNumber', this.notificationData.expedientNumber);
-    // params.addFilter('extDomProcess', 'ASEG_EXTDOM', SearchFilter.NOT);
+    params.addFilter(
+      'proceedingsNumber',
+      this.notificationData.expedientNumber
+    );
+    params.addFilter('userfree', SearchFilter.NULL);
+    params.addFilter('datefree', SearchFilter.NULL);
     params.limit = this.dataTableParams2.value.limit;
     params.page = this.dataTableParams2.value.page;
     this.svGoodsProcessValidationExtdomService
-      .getGoods(params.getParams())
+      .getHistoryGood(params.getParams())
       .subscribe({
         next: res => {
           this.loadingGoods2 = false;
@@ -397,6 +417,58 @@ export class GoodsProcessValidationExtdomComponent
   btnSalir() {
     console.log('Salir');
     this.listadoHistorico = false;
+  }
+
+  addSelectedGoods() {
+    console.log('this.selectedGooods', this.selectedGooods);
+    if (this.selectedGooods.length > 0) {
+      this.selectedGooods.forEach((good: any) => {
+        if (!this.goodsValid.some(v => v === good)) {
+          let indexGood = this.goods.findIndex(_good => _good.id == good.id);
+          console.log('aaa', this.goods);
+          console.log('indexGood', indexGood);
+          if (indexGood != -1) {
+            // if (this.goods[indexGood].goodDictaminado == true) {
+            //   this.onLoadToast(
+            //     'warning',
+            //     `El bien ${this.goods[indexGood].id} ya se encuentra dictaminado`,
+            //     ''
+            //   );
+            //   return;
+            // } else if (
+            //   this.goods[indexGood].est_disponible == 'N' ||
+            //   this.goods[indexGood].di_disponible == 'N'
+            // ) {
+            //   return;
+            // } else if (
+            //   this.goods[indexGood].di_es_numerario == 'S' &&
+            //   this.goods[indexGood].di_esta_conciliado == 'N' &&
+            //   typeDict
+            // ) {
+            //   this.onLoadToast(
+            //     'warning',
+            //     'El numerario no está conciliado',
+            //     ''
+            //   );
+            //   return;
+            // }
+
+            // IF: bienes.DI_ES_NUMERARIO = 'S' AND: bienes.DI_ESTA_CONCILIADO = 'N' AND: VARIABLES.TIPO_DICTA = 'PROCEDENCIA' THEN
+            // LIP_MENSAJE('El numerario no está conciliado', 'S');
+            this.goods[indexGood].est_disponible = 'N';
+            this.goods[indexGood].di_disponible = 'N';
+          }
+
+          this.goodsValid.push(good);
+          this.goodsValid = [...this.goodsValid];
+          // this.totalItems3 = this.goodsValid.length;
+        } else {
+          if (good.di_disponible == 'N') {
+            this.alert('warning', `El bien ${good.goodId} ya existe`, '');
+          }
+        }
+      });
+    }
   }
 
   /**

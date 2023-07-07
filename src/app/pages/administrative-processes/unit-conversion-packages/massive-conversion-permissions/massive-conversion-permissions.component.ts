@@ -4,15 +4,17 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ITvaltables1 } from 'src/app/core/models/catalogs/tvaltable-model';
+import {
+  ITvaltable1,
+  ITvaltables1,
+} from 'src/app/core/models/catalogs/tvaltable-model';
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { SelectElementComponent } from 'src/app/shared/components/select-element-smarttable/select-element';
 import { MasiveConversionPermissionsDeleteComponent } from '../masive-conversion-permissions-delete/masive-conversion-permissions-delete.component';
-import {
-  PERMISSIONSUSER_COLUMNS,
-  PRIVILEGESUSER_COLUMNS,
-} from './massive-conversion-permissions-columns';
+import { PRIVILEGESUSER_COLUMNS } from './massive-conversion-permissions-columns';
 interface permissions {
   proy: boolean;
   val: boolean;
@@ -48,14 +50,80 @@ export class MassiveConversionPermissionsComponent
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: PERMISSIONSUSER_COLUMNS,
+      columns: {
+        value: {
+          title: 'Usuario',
+          sort: false,
+        },
+        user: {
+          title: 'Nombre',
+          sort: false,
+        },
+        abbreviation: {
+          title: 'Valida',
+          sort: false,
+          type: 'custom',
+          renderComponent: SelectElementComponent,
+          /* OnComponentInitFunction: (instance: SelectElementComponent) => {
+            this.onSelectRow(instance);
+          }, */
+          onComponentInitFunction: (instance: any) => {
+            const values = ['S', 'N', ''];
+            instance.values.emit(values);
+            instance.toggle.subscribe((data: any) => {
+              data.row.abbreviation = data.toggle == '' ? null : data.toggle
+              const model:ITvaltables1 = {
+                nmtable: 422,
+                otkey: data.row.otKey.toString(),
+                otvalor: data.row.value,
+                registerNumber: data.row.numRegister,
+                abbreviation: data.row.abbreviation
+              }
+              console.log(model)
+              this.tvalTable1Service.updateTvalTable1(model).subscribe(
+                res => {
+                  this.alert('success','Fue actualizado el dato de usuario','')
+                },
+                err => {
+                  this.alert('error','Se presentó un error inesperado','')
+                }
+              );
+            });
+          },
+        },
+      },
     };
     this.settings2.columns = PRIVILEGESUSER_COLUMNS;
+  }
+
+  onSelectRow(instance: SelectElementComponent) {
+    instance.values.emit(['S', 'N', ''])
+
+    instance.toggle.subscribe((data: any) => {
+      data.row.abbreviation = data.toggle == '' ? null : data.toggle;
+      const model: ITvaltable1 = {
+        table: 422,
+        otKey: data.row.otKey,
+        value: data.row.value,
+        numRegister: data.row.numRegister,
+        abbreviation: data.row.abbreviation,
+      };
+      console.log(model);
+      this.tvalTable1Service.updateTvalTable1(model).subscribe(
+        res => {
+          this.alert('success','Fue actualizado el dato de usuario','')
+        },
+        err => {
+          this.alert('error','Se presentó un error inesperado','')
+        }
+      );
+    });
   }
 
   selectEvent(data: any) {
     this.permissions = data.data;
   }
+
   ngOnInit(): void {
     this.data1
       .onChanged()
@@ -82,6 +150,7 @@ export class MassiveConversionPermissionsComponent
 
     this.tvalTable1Service.getById5All(params).subscribe({
       next: response => {
+        console.log(response.data);
         this.data1.load(response.data);
 
         this.totalItems = response.count;
@@ -108,7 +177,7 @@ export class MassiveConversionPermissionsComponent
 
   selectUserPermissions(event: any) {
     let otkey = event.data.otKey;
-
+    console.log(event);
     this.tvalTable1Service.getById6(otkey).subscribe({
       next: response => {
         if (response) {
@@ -169,6 +238,7 @@ export class MassiveConversionPermissionsComponent
   convertirStringAObjeto(cadena: string): permissions {
     const letras = ['P', 'V', 'A', 'C', 'X'];
     const valores = cadena.split('-');
+
     const objeto: any = {
       proy: false,
       val: false,
@@ -181,10 +251,10 @@ export class MassiveConversionPermissionsComponent
       const valor = valores[index];
       if (valor === letra || valor === letra + 'X') {
         const propiedad = Object.keys(objeto)[index];
-        objeto[propiedad] = valor.length === 2 ? true : false;
+        objeto[propiedad] = valor.length === 2 ? false : true;
       }
     });
-
+    console.log(objeto);
     return objeto;
   }
 

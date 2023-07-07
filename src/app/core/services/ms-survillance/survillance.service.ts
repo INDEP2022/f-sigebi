@@ -134,4 +134,8 @@ export class SurvillanceService extends HttpService {
     const route = `${this.route.FCalculaNume}/${idProcnum}/${commisionBanc}`;
     return this.get<IListResponse<any>>(route);
   }
+
+  PostInsertSupervisionTmp(formData?: any) {
+    return this.post(this.route.PostInsertSupervisionTmp, formData);
+  }
 }

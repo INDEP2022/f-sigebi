@@ -27,11 +27,17 @@ export class SelectElementComponent<T = any> implements OnInit {
 
   constructor() {
     this.values.subscribe(data => {
+      console.log(data)
       this.data = data;
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.values.subscribe(data => {
+      console.log(data)
+      this.data = data;
+    });
+  }
 
   onToggle($event: Event) {
     let row = this.rowData;

@@ -933,9 +933,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           this.VALIDA_VAL24 = 'S';
           for (const data of this.data['data']) {
             const resp = await this.validateGoods(data);
-            const available = JSON.parse(JSON.stringify(resp)).res;
-            const message = JSON.parse(JSON.stringify(resp)).msg;
-            console.log(JSON.parse(JSON.stringify(resp)).res);
+            const available = JSON.parse(JSON.stringify(resp)).res
+            const message = JSON.parse(JSON.stringify(resp)).msg
+            console.log(JSON.parse(JSON.stringify(resp)).res)
           }
         } else {
           this.alert('warning', 'No hay Bienes que verificar', '');
@@ -945,50 +945,50 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   validateGoods(good: any) {
-    return new Promise((resolve, reject) => {
-      const noPack = this.noPackage.value;
-      let lv_valida: string;
+return new Promise((resolve, reject) =>{
+  const noPack = this.noPackage.value;
+    let lv_valida: string;
 
-      if (noPack.numberDelegation != good.bienes.delegationNumber) {
-        console.log({
-          valpack: noPack.numberDelegation,
-          valgood: good.bienes.delegationNumber,
-          good: good.bienes.goodId,
-        });
-        resolve({ res: false, msg: 'delegation' });
-      } else if (noPack.numberClassifyGood != good.bienes.goodClassNumber) {
-        console.log({
-          valpack: noPack.numberClassifyGood,
-          valgood: good.bienes.goodClassNumber,
-          good: good.bienes.goodId,
-        });
-        resolve({ res: false, msg: 'classify' });
-      } else if (noPack.numberLabel != good.bienes.labelNumber) {
-        console.log({
-          valpack: noPack.numberLabel,
-          valgood: good.bienes.labelNumber,
-          good: good.bienes.goodId,
-        });
-        resolve({ res: false, msg: 'label' });
-      } else if (noPack.status != good.bienes.status) {
-        console.log({
-          valpack: noPack.status,
-          valgood: good.bienes.status,
-          good: good.bienes.goodId,
-        });
-        resolve({ res: false, msg: 'status' });
-      } else if (
-        noPack.typePackage != 3 &&
-        noPack.numberStore != good.bienes.storeNumber
-      ) {
-        console.log({
-          valpack: noPack.numberStore,
-          valgood: good.bienes.storeNumber,
-          good: good.bienes.goodId,
-        });
-        resolve({ res: false, msg: 'store' });
-      } else if (noPack.typePackage == 3) {
-        /* if (this.VALIDA_VAL24 == 'S') {
+    if (noPack.numberDelegation != good.bienes.delegationNumber) {
+      console.log({
+        valpack: noPack.numberDelegation,
+        valgood: good.bienes.delegationNumber,
+        good: good.bienes.goodId,
+      });
+      resolve({res: false, msg: 'delegation'})
+    } else if (noPack.numberClassifyGood != good.bienes.goodClassNumber) {
+      console.log({
+        valpack: noPack.numberClassifyGood,
+        valgood: good.bienes.goodClassNumber,
+        good: good.bienes.goodId,
+      });
+      resolve({res: false, msg: 'classify'})
+    } else if (noPack.numberLabel != good.bienes.labelNumber) {
+      console.log({
+        valpack: noPack.numberLabel,
+        valgood: good.bienes.labelNumber,
+        good: good.bienes.goodId,
+      });
+      resolve({res: false, msg: 'label'})
+    } else if (noPack.status != good.bienes.status) {
+      console.log({
+        valpack: noPack.status,
+        valgood: good.bienes.status,
+        good: good.bienes.goodId,
+      });
+      resolve({res: false, msg: 'status'})
+    } else if (
+      noPack.typePackage != 3 &&
+      noPack.numberStore != good.bienes.storeNumber
+    ) {
+      console.log({
+        valpack: noPack.numberStore,
+        valgood: good.bienes.storeNumber,
+        good: good.bienes.goodId,
+      });
+      resolve({res: false, msg: 'store'})
+    } else if (noPack.typePackage == 3) {
+      /* if (this.VALIDA_VAL24 == 'S') {
         lv_valida = 'S';
         this.VALIDA_VAL24 = 'N';
         const check = document.getElementById(
@@ -1005,11 +1005,12 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       }else if(good.bienes.val24 == null){
         console.log('Es nulo')
       }*/
-        resolve({ res: false, msg: 'break' });
-      } else {
-        resolve({ res: true, msg: 'correct' });
-      }
-    });
+      resolve({res: false, msg: 'break'})
+    }else{
+      resolve({res: true, msg: 'correct'})
+    }
+})
+
   }
 
   pubValidaGoods(val24: string): Promise<boolean> {
@@ -1068,7 +1069,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       }
     );
   }
-
+  
   delete(data: any) {
     this.alertQuestion(
       'warning',
