@@ -1,6 +1,14 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { map } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
@@ -13,9 +21,22 @@ export class ApplyLifComponent extends BasePage implements OnInit {
   public form: FormGroup;
   public disabled: boolean = true;
 
-  constructor(private fb: FormBuilder, private datePipe: DatePipe) {
+  constructor(
+    private fb: FormBuilder,
+    private datePipe: DatePipe,
+    private goodService: GoodService
+  ) {
     super();
   }
+
+  formGood = new FormGroup({
+    id: new FormControl(''),
+    description: new FormControl(''),
+    status: new FormControl(''),
+    fileNumber: new FormControl(''),
+    identifier: new FormControl(''),
+    extDomProcess: new FormControl(''),
+  });
 
   ngOnInit(): void {
     this.handleForm();
@@ -46,6 +67,25 @@ export class ApplyLifComponent extends BasePage implements OnInit {
       totalIva: [null],
       total: [null],
     });
+  }
+
+  getGood() {
+    const listParams = new ListParams();
+    const values: { [key: string]: any } = this.formGood.value;
+    Object.keys(values).forEach(key => {
+      if (values[key]) {
+        listParams[`filter.${key}`] = values[key];
+      }
+    });
+    // listParams['filter.id'] = 1;
+    this.goodService
+      .getAll(listParams)
+      .pipe(map(x => x.data[0]))
+      .subscribe({
+        next: good => {
+          this.formGood.patchValue(good as any);
+        },
+      });
   }
 
   public send() {
