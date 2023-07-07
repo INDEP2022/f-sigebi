@@ -21,10 +21,16 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
+        <button
+          type="button"
+          (click)="select()"
+          class="btn btn-primary active btn-sm">
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
+        <!-- confirm-button
           [btnSmall]="true"
           (click)="select()"
-          [text]="'Seleccional'"></confirm-button>
+          [text]="'Seleccional'"></confirm-button> -->
       </div>
       <div class="m-3">
         <button
