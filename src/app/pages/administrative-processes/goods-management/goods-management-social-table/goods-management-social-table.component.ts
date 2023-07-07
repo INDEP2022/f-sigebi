@@ -17,7 +17,7 @@ import { COLUMNS } from './columns';
 })
 export class GoodsManagementSocialTable extends BasePage {
   // private _selectedGoods: number[];
-  @Input() data: ITrackerGoodSocialCabinet[] = [];
+  data: ITrackerGoodSocialCabinet[] = [];
   dataTemp: ITrackerGoodSocialCabinet[] = [];
   dataPaginated: LocalDataSource = new LocalDataSource();
   // notLoadedGoods: { good: number }[] = [];
@@ -70,8 +70,8 @@ export class GoodsManagementSocialTable extends BasePage {
       });
     this.goodsManagementService.refreshTable.subscribe({
       next: response => {
+        // debugger;
         if (response) {
-          // debugger;
           this.data = [
             ...this.goodsManagementService.getByProcess(this.process),
           ];
