@@ -29,10 +29,12 @@ export class LocationGoodsWarehousesStorageComponent
   formVault: FormGroup;
   typeLocation: string = '';
   good: IGood;
+  newWarehouse: number = 0;
   disableConsultLocation: boolean = false;
   warehouseDisable: boolean = true;
   vaultDisable: boolean = true;
   nullDisable: boolean = true;
+
   paramsScreen: IParamsUbicationGood = {
     PAR_MASIVO: '',
     origin: '',
@@ -81,6 +83,7 @@ export class LocationGoodsWarehousesStorageComponent
     private router: Router,
     private modalService: BsModalService,
     private readonly goodServices: GoodService,
+    private serviceGood: GoodService,
     private token: AuthService,
     private warehouseService: WarehouseService,
     private safeService: SafeService,
@@ -277,39 +280,95 @@ export class LocationGoodsWarehousesStorageComponent
     this.typeLocation = event;
   }
 
+  // changeLocation() {
+  //   console.log(this.good);
+  //   if (this.validarGood()) return;
+  //   console.log('nuevo -->', this.good);
+  //   let body: IGoodUpdateWarehouse = {
+  //     goodClassNumber: this.good.goodClassNumber,
+  //     id: this.good.id,
+  //     storeNumber: this.formWarehouse.get('warehouse').value
+  //   }
+  //   this.goodServices.update(body).subscribe({
+  //     next: response => {
+  //       console.log(response);
+  //       this.alert(
+  //         'success',
+  //         'Exitoso',
+  //         'Se ha cambiado la ubicacion del bien'
+  //       );
+  //       this.loadGood();
+  //     },
+  //     error: err => {
+  //       console.log(err);
+  //       this.alert(
+  //         'error',
+  //         'ERROR',
+  //         'Ha ocurrido un error al cambiar la ubicacion del bien'
+  //       );
+  //     },
+  //   });
+  // }
+
   changeLocation() {
-    console.log(this.good);
+    const data = {
+      id: this.good.id,
+      goodId: this.good.goodId,
+      observations: this.good.observations,
+      quantity: this.good.quantity,
+      goodClassNumber: this.good.goodClassNumber,
+      unit: this.good.unit,
+      labelNumber: this.good.labelNumber,
+      storeNumber: this.formWarehouse.get('warehouse').value,
+    };
     if (this.validarGood()) return;
     console.log('nuevo -->', this.good);
-    this.goodServices.update(this.good).subscribe({
-      next: response => {
-        console.log(response);
-        this.onLoadToast(
-          'success',
-          'Exitoso',
-          'Se ha cambiado la ubicacion del bien'
-        );
+    this.serviceGood.update(data).subscribe(
+      res => {
+        this.alert('success', 'Bien', `Actualizado correctamente`);
         this.loadGood();
       },
-      error: err => {
-        console.log(err);
-        this.onLoadToast(
+      err => {
+        this.alert(
           'error',
-          'ERROR',
-          'Ha ocurrido un error al cambiar la ubicacion del bien'
+          'Bien',
+          'No se pudo actualizar el bien, por favor intentelo nuevamente'
         );
+      }
+    );
+  }
+
+  changeLocationVault() {
+    const data = {
+      id: this.good.id,
+      goodId: this.good.goodId,
+      observations: this.good.observations,
+      quantity: this.good.quantity,
+      goodClassNumber: this.good.goodClassNumber,
+      unit: this.good.unit,
+      labelNumber: this.good.labelNumber,
+      vaultNumber: this.formVault.get('safe').value,
+    };
+    if (this.validarGood()) return;
+    console.log('nuevo -->', this.good);
+    this.serviceGood.update(data).subscribe(
+      res => {
+        this.alert('success', 'Bien', `Actualizado correctamente`);
       },
-    });
+      err => {
+        this.alert(
+          'error',
+          'Bien',
+          'No se pudo actualizar el bien, por favor intentelo nuevamente'
+        );
+      }
+    );
   }
 
   validarGood(): boolean {
     if (this.radio.value === 'A') {
       if (Number(this.good.type) === 5 && Number(this.good.subTypeId) === 16) {
-        this.onLoadToast(
-          'error',
-          'ERROR',
-          'El bien no puede estar en un almacen'
-        );
+        this.alert('error', 'ERROR', 'El bien no puede estar en un almacen');
         return true;
       } else {
         this.good.storeNumber = this.warehouse.value;
