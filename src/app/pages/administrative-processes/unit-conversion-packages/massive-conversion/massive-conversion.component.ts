@@ -478,8 +478,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         }
 
         //Traer los bienes de pack_det
-        this.unitConversionDataService.updatePrevisualizationData.next(true);
         this.validateButtons(res.statuspack.toString().toLocaleUpperCase());
+        this.unitConversionDataService.updatePrevisualizationData.next(true);
       }
     });
   }
@@ -731,7 +731,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       '¿Está seguro de que el Paquete ya ha sido validado?'
     ).then(async question => {
       if (question.isConfirmed) {
-        await this.verifyGoods();
+        this.verifyGoods();
         if (!this.chValidateGood) {
           this.alert('warning','Existe inconsistencia en los bienes', '');
         } else {
@@ -1484,7 +1484,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       numberClassifyGood: this.goodClassification.value,
       numberLabel: this.targetTag.value,
       unit: this.measurementUnit.value,
-      numberStore: null,
+      numberStore: this.warehouse.value,
       numberRecord: null,
       status: this.goodStatus.value,
       numbertrainemiaut: this.transferent.value,
