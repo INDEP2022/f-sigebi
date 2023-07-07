@@ -209,9 +209,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     if (this.selectedFile?.size > 100000000) {
       this.validateSizePDF = true;
       this.alertInfo(
-        'info',
+        'warning',
         'Acción Inválida',
-        'Se debe cargar un documentos menor a 100MB'
+        'Se debe cargar un documento menor a 100MB'
       ).then(question => {
         if (question.isConfirmed) {
           this.newDocForm.get('docFile').reset;
