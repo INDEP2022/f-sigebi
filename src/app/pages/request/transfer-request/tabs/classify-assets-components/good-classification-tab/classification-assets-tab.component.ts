@@ -557,7 +557,7 @@ export class ClassificationAssetsTabComponent
     });
   }
 
-   selectRow(row?: any) {
-    console.log('Información de la fila seleccionada, ' , row);
+  selectRow(row?: any) {
+    console.log('Información de la fila seleccionada, ', row);
   }
 }

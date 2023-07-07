@@ -18,3 +18,19 @@ export interface IIdentifierCount {
   fec_cargamasiv: string;
   count: string;
 }
+
+export interface IPupValidMassive {
+  no_bien: string;
+  comentario: string;
+  comision: number;
+  descripcion: string;
+  disponible: 'N' | 'S';
+  estatus: string;
+  identificador: string;
+  importe: number;
+  ivacom: number;
+  ivavta: number;
+  precio_venta: number;
+  proceso_ext_dom: string;
+  valor_avaluo: string;
+}

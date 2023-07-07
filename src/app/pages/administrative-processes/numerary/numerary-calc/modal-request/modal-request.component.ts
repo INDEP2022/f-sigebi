@@ -27,6 +27,7 @@ export class ModalRequestComponent extends BasePage implements OnInit {
   @Input() process: IProccesNum;
   @Input() userAuth: string;
   @Input() type: string;
+  @Input() typeMoney: string;
   requestNumeEnc: IRequestNumeraryEnc;
   columnFilters: any = [];
 
@@ -99,9 +100,13 @@ export class ModalRequestComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.numeraryService.getNumeraryRequestNumeEnc(params).subscribe({
+    const model = {
+      pTypeProcNum: this.type,
+      pTMoney: this.typeMoney,
+    };
+    this.numeraryService.getSolNumerary(model, params).subscribe({
       next: resp => {
-        console.log(resp.data);
+        console.log(resp);
         //this.data1 = resp.data;
         this.data1.load(resp.data);
         this.data1.refresh();

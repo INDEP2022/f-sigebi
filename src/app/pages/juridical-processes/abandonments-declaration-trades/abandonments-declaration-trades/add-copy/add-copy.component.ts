@@ -11,6 +11,7 @@ import { CopiesOfficialOpinionService } from 'src/app/core/services/ms-dictation
 import { MJobManagementService } from 'src/app/core/services/ms-office-management/m-job-management.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -56,7 +57,14 @@ export class AddCopyComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       typePerson_I: [null, Validators.required],
       senderUser_I: [''],
-      personaExt_I: ['', Validators.required],
+      personaExt_I: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1500),
+        ],
+      ],
     });
 
     this.form.get('typePerson_I').valueChanges.subscribe(value => {

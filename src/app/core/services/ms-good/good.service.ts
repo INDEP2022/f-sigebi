@@ -449,4 +449,8 @@ export class GoodService extends HttpService {
 
     return this.http.post<any>(URL, payload).pipe(map(res => res));
   }
+
+  pupValidMasiv(body: any) {
+    return this.post<any>('good/pupValidMasiv2', body);
+  }
 }
