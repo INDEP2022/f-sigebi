@@ -58,6 +58,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
       this.searchTabForm.get('noBien').setValue(newForm.noBien);
       localStorage.removeItem('formSearch');
       this.goodSelect = await this.getGood();
+      this.reloadGood = this.goodSelect;
       //console.error(this.goodSelect);
       this.search();
     }
@@ -184,10 +185,10 @@ export class SearchTabComponent extends BasePage implements OnInit {
       this.searchTabForm.get('situacion').patchValue(this.goodSelect.situation);
       this.searchTabForm.get('destino').patchValue(this.goodSelect.destiny);
     }
-    if (this.reloadGood) {
+    /* if (this.reloadGood) {
       this.searchTabForm.get('situacion').patchValue(this.reloadGood.situation);
       this.searchTabForm.get('destino').patchValue(this.reloadGood.destiny);
-    }
+    } */
   }
 
   searchNotifications() {
