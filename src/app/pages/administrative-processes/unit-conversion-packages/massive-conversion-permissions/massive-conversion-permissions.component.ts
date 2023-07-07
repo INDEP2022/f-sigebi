@@ -4,15 +4,17 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ITvaltables1 } from 'src/app/core/models/catalogs/tvaltable-model';
+import {
+  ITvaltable1,
+  ITvaltables1,
+} from 'src/app/core/models/catalogs/tvaltable-model';
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { SelectElementComponent } from 'src/app/shared/components/select-element-smarttable/select-element';
 import { MasiveConversionPermissionsDeleteComponent } from '../masive-conversion-permissions-delete/masive-conversion-permissions-delete.component';
-import {
-  PERMISSIONSUSER_COLUMNS,
-  PRIVILEGESUSER_COLUMNS,
-} from './massive-conversion-permissions-columns';
+import { PRIVILEGESUSER_COLUMNS, newData } from './massive-conversion-permissions-columns';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 interface permissions {
   proy: boolean;
   val: boolean;
@@ -48,14 +50,243 @@ export class MassiveConversionPermissionsComponent
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: PERMISSIONSUSER_COLUMNS,
+      columns: {
+        value: {
+          title: 'Usuario',
+          sort: false,
+        },
+        user: {
+          title: 'Nombre',
+          sort: false,
+        },
+        abbreviation: {
+          title: 'Valida',
+          sort: false,
+          type: 'custom',
+          renderComponent: SelectElementComponent,
+          /* OnComponentInitFunction: (instance: SelectElementComponent) => {
+            this.onSelectRow(instance);
+          }, */
+          onComponentInitFunction: (instance: any) => {
+            const values = ['S', 'N', ''];
+            instance.values.emit(values);
+            instance.toggle.subscribe((data: any) => {
+              data.row.abbreviation = data.toggle == '' ? null : data.toggle;
+              const model: ITvaltables1 = {
+                nmtable: 422,
+                otkey: data.row.otKey.toString(),
+                otvalor: data.row.value,
+                registerNumber: data.row.numRegister,
+                abbreviation: data.row.abbreviation,
+              };
+              console.log(model);
+              this.tvalTable1Service.updateTvalTable1(model).subscribe(
+                res => {
+                  this.alert(
+                    'success',
+                    'Fue actualizado el dato de usuario',
+                    ''
+                  );
+                },
+                err => {
+                  this.alert('error', 'Se presentó un error inesperado', '');
+                }
+              );
+            });
+          },
+        },
+          proy: {
+            title: 'PROY.',
+            width: '5%',
+            sort: false,
+            showAlways: true,
+            filter: false,
+            editable: false,
+            type: 'custom',
+            renderComponent: CheckboxElementComponent,
+            onComponentInitFunction:(instance: any) => {
+              instance.toggle.subscribe((data: any) => {
+                data.row.proy = data.toggle;
+                const cve = this.createPer(
+                  data.row.proy,
+                  data.row.val,
+                  data.row.aut,
+                  data.row.cerr,
+                  data.row.can
+                );
+                console.log(cve);
+                this.update423(data.row, cve)
+              });
+            },
+          },
+          val: {
+            title: 'VAL.',
+            width: '5%',
+            sort: false,
+            showAlways: true,
+            filter: false,
+            editable: false,
+            type: 'custom',
+            renderComponent: CheckboxElementComponent,
+            onComponentInitFunction:(instance: any) => {
+              instance.toggle.subscribe((data: any) => {
+                data.row.val = data.toggle;
+                const cve = this.createPer(
+                  data.row.proy,
+                  data.row.val,
+                  data.row.aut,
+                  data.row.cerr,
+                  data.row.can
+                );
+                console.log(cve);
+                this.update423(data.row, cve)
+              });
+            },
+          },
+          aut: {
+            title: 'AUT.',
+            width: '5%',
+            sort: false,
+            showAlways: true,
+            filter: false,
+            editable: false,
+            type: 'custom',
+            renderComponent: CheckboxElementComponent,
+            onComponentInitFunction:(instance: any) => {
+              instance.toggle.subscribe((data: any) => {
+                data.row.aut = data.toggle;
+                const cve = this.createPer(
+                  data.row.proy,
+                  data.row.val,
+                  data.row.aut,
+                  data.row.cerr,
+                  data.row.can
+                );
+                console.log(cve);
+                this.update423(data.row, cve)
+              });
+            },
+          },
+          cerr: {
+            title: 'CERR.',
+            width: '5%',
+            sort: false,
+            showAlways: true,
+            filter: false,
+            editable: false,
+            type: 'custom',
+            renderComponent: CheckboxElementComponent,
+            onComponentInitFunction:(instance: any) => {
+              instance.toggle.subscribe((data: any) => {
+                data.row.cerr = data.toggle;
+                const cve = this.createPer(
+                  data.row.proy,
+                  data.row.val,
+                  data.row.aut,
+                  data.row.cerr,
+                  data.row.can
+                );
+                console.log(cve);
+                this.update423(data.row, cve)
+              });
+            },
+          },
+          can: {
+            title: 'CAN.',
+            width: '5%',
+            sort: false,
+            showAlways: true,
+            filter: false,
+            editable: false,
+            type: 'custom',
+            renderComponent: CheckboxElementComponent,
+            onComponentInitFunction:(instance: any) => {
+              instance.toggle.subscribe((data: any) => {
+                data.row.can = data.toggle;
+                const cve = this.createPer(
+                  data.row.proy,
+                  data.row.val,
+                  data.row.aut,
+                  data.row.cerr,
+                  data.row.can
+                );
+                console.log(cve);
+                this.update423(data.row, cve)
+              });
+            },
+          },
+      },
     };
-    this.settings2.columns = PRIVILEGESUSER_COLUMNS;
+    /* this.settings2.columns = PRIVILEGESUSER_COLUMNS; */
+  }
+
+  createPer(
+  proy: boolean,
+  val: boolean,
+  aut: boolean,
+  cerr: boolean,
+  can: boolean
+) {
+  let newCve: string = '';
+  try {
+    proy ? (newCve = 'P') : (newCve = 'PX');
+    val ? (newCve = `${newCve}-V`) : newCve = `${newCve}-VX`;
+    aut ? (newCve = `${newCve}-A`) : newCve = `${newCve}-AX`;
+    cerr ? (newCve = `${newCve}-C`) : newCve = `${newCve}-CX`;
+    can ? (newCve = `${newCve}-X`) : newCve = `${newCve}-XX`;
+  } catch (error) {
+  } finally {
+    return newCve;
+  }
+}
+
+  update423(data: any, cve: string){
+    const model: ITvaltables1 = {
+      nmtable: 423,
+      otkey: data.otKey,
+      otvalor: cve,
+      registerNumber: data.numRegister,
+      abbreviation: data.abbreviation,
+    };
+    console.log(model)
+    this.tvalTable1Service.updateTvalTable1(model).subscribe(
+      res => {
+        this.alert('success', 'Fue actualizado el dato de usuario', '');
+      },
+      err => {
+        this.alert('error', 'Se presentó un error inesperado', '');
+      }
+    );
+  }
+
+  onSelectRow(instance: SelectElementComponent) {
+    instance.values.emit(['S', 'N', '']);
+
+    instance.toggle.subscribe((data: any) => {
+      data.row.abbreviation = data.toggle == '' ? null : data.toggle;
+      const model: ITvaltable1 = {
+        table: 422,
+        otKey: data.row.otKey,
+        value: data.row.value,
+        numRegister: data.row.numRegister,
+        abbreviation: data.row.abbreviation,
+      };
+      console.log(model);
+      this.tvalTable1Service.updateTvalTable1(model).subscribe(
+        res => {
+          this.alert('success', 'Fue actualizado el dato de usuario', '');
+        },
+        err => {
+          this.alert('error', 'Se presentó un error inesperado', '');
+        }
+      );
+    });
   }
 
   selectEvent(data: any) {
     this.permissions = data.data;
   }
+
   ngOnInit(): void {
     this.data1
       .onChanged()
@@ -66,9 +297,12 @@ export class MassiveConversionPermissionsComponent
           this.getValuesAll();
         }
       });
+
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getValuesAll());
+  
+  
   }
 
   close() {
@@ -76,14 +310,31 @@ export class MassiveConversionPermissionsComponent
   }
 
   getValuesAll() {
+    this.loading = true
     let params = {
       ...this.params.getValue(),
     };
 
     this.tvalTable1Service.getById5All(params).subscribe({
-      next: response => {
-        this.data1.load(response.data);
+      next: async response => {
+        console.log(response.data);
 
+        const perUser = await Promise.all(
+          response.data.map(async (e: any) => {
+            const dataResp = await this.selectUserPermissions(e);
+            const respPer = JSON.parse(JSON.stringify(dataResp));
+            return {
+              ...e,
+              proy: respPer.proy,
+              val: respPer.val,
+              aut: respPer.aut,
+              cerr: respPer.cerr,
+              can: respPer.can,
+            };
+          })
+        );
+        // this.data1.load(response.data);
+        this.data1.load(perUser);
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -106,47 +357,55 @@ export class MassiveConversionPermissionsComponent
     );
   }
 
-  selectUserPermissions(event: any) {
-    let otkey = event.data.otKey;
-
-    this.tvalTable1Service.getById6(otkey).subscribe({
-      next: response => {
-        if (response) {
-          // Se encontraron registros
-          this.permissions = this.convertirStringAObjeto(response.data.value);
-          this.data2.load([
-            {
+  async selectUserPermissions(event: any) {
+    return new Promise((resolve, reject) => {
+      let otkey = event.otKey;
+      console.log(event);
+      this.tvalTable1Service.getById6(otkey).subscribe({
+        next: response => {
+          if (response) {
+            // Se encontraron registros
+            this.permissions = this.convertirStringAObjeto(response.data.value);
+            resolve({
               proy: this.permissions.proy,
               val: this.permissions.val,
               aut: this.permissions.aut,
               cerr: this.permissions.cerr,
               can: this.permissions.can,
-              otkey,
-            },
-          ]);
-        } else {
-          // No se encontraron registros
-          this.insertDataInTable(otkey);
-        }
-      },
-      error: error => {
-        // Error al obtener los registros
-        this.insertDataInTable(otkey);
-      },
+            });
+            /* this.data2.load([
+              {
+                proy: this.permissions.proy,
+                val: this.permissions.val,
+                aut: this.permissions.aut,
+                cerr: this.permissions.cerr,
+                can: this.permissions.can,
+                otkey,
+              },
+            ]); */
+          } else {
+            // No se encontraron registros
+            resolve({
+              proy: false,
+              val: false,
+              aut: false,
+              cerr: false,
+              can: false,
+            });
+          }
+        },
+        error: error => {
+          // Error al obtener los registros
+          resolve({
+            proy: false,
+            val: false,
+            aut: false,
+            cerr: false,
+            can: false,
+          });
+        },
+      });
     });
-  }
-
-  insertDataInTable(id: string) {
-    this.data2.load([
-      {
-        proy: false,
-        val: false,
-        aut: false,
-        cerr: false,
-        can: false,
-        id,
-      },
-    ]);
   }
 
   convertirObjetoAString(objeto: any) {
@@ -169,6 +428,7 @@ export class MassiveConversionPermissionsComponent
   convertirStringAObjeto(cadena: string): permissions {
     const letras = ['P', 'V', 'A', 'C', 'X'];
     const valores = cadena.split('-');
+
     const objeto: any = {
       proy: false,
       val: false,
@@ -181,10 +441,10 @@ export class MassiveConversionPermissionsComponent
       const valor = valores[index];
       if (valor === letra || valor === letra + 'X') {
         const propiedad = Object.keys(objeto)[index];
-        objeto[propiedad] = valor.length === 2 ? true : false;
+        objeto[propiedad] = valor.length === 2 ? false : true;
       }
     });
-
+    console.log(objeto);
     return objeto;
   }
 
