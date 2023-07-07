@@ -57,8 +57,8 @@ export class SearchTabComponent extends BasePage implements OnInit {
       const newForm = JSON.parse(form);
       this.searchTabForm.get('noBien').setValue(newForm.noBien);
       localStorage.removeItem('formSearch');
-      this.reloadGood = await this.getGood();
-      console.log(this.goodSelect);
+      this.goodSelect = await this.getGood();
+      //console.error(this.goodSelect);
       this.search();
     }
     this.searchTabForm.get('noBien').valueChanges.subscribe({
@@ -254,7 +254,12 @@ export class SearchTabComponent extends BasePage implements OnInit {
       JSON.stringify(this.searchTabForm.value)
     );
     const route: string = 'pages/general-processes/good-photos';
-    this.router.navigate([route]);
+    this.router.navigate([route], {
+      queryParams: {
+        numberGood: this.searchTabForm.get('noBien').value,
+        origin: 'FACTADBREGCOMBIEN',
+      },
+    });
   }
 
   openModal(component: any, data?: any): void {

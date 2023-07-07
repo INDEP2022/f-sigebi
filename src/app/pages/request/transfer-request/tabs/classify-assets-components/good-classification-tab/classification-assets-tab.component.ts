@@ -107,10 +107,10 @@ export class ClassificationAssetsTabComponent
     this.prepareForm();
     this.tablePaginator();
     this.settingsGood.columns = REQUEST_OF_ASSETS_COLUMNS;
-    this.columns.select = {
+    /*this.columns.select = {
       ...this.columns.select,
       onComponentInitFunction: this.selectGood.bind(this),
-    };
+    };*/
     this.initForm();
     this.request = this.requestObject.getRawValue();
   }
@@ -194,44 +194,45 @@ export class ClassificationAssetsTabComponent
   }
 
   selectGood(event: any) {
-    event.toggle.subscribe((data: any) => {
-      const index = this.goodSelect.indexOf(data.row);
+    /* event.toggle.subscribe((data: any) => { */
+    /*const index = this.goodSelect.indexOf(data.row);
       if (index == -1 && data.toggle == true) {
         this.goodSelect.push(data.row);
       } else if (index != -1 && data.toggle == false) {
         this.goodSelect.splice(index, 1);
-      }
+      }*/
+    this.goodSelect = [];
+    this.goodSelect.push(event);
 
-      this.formLoading = true;
-      this.detailArray.reset();
-      //      this.goodSelect = event.selected;
-      this.goodObject = this.goodSelect[0];
-      this.goodForClarifi = this.goodSelect;
-      this.assetsId = this.goodSelect[0] ? this.goodSelect[0].id : null;
-      if (this.goodSelect.length === 1) {
-        setTimeout(() => {
-          this.goodSelect[0].quantity = Number(this.goodSelect[0].quantity);
-          this.detailArray.patchValue(this.goodSelect[0] as IGood);
-          this.getDomicilieGood(this.goodSelect[0].addressId);
-          if (this.detailArray.controls['id'].value !== null) {
-            this.isGoodSelected = true;
-          }
-          this.formLoading = false;
-        }, 1000);
-      } else if (this.goodSelect.length > 1) {
-        // this.goodSelect[0].quantity = 0;
-        this.detailArray.patchValue(null);
-        this.domicilieObject = null;
+    this.formLoading = true;
+    this.detailArray.reset();
+    this.goodObject = this.goodSelect[0];
+    this.goodForClarifi = this.goodSelect;
+    this.assetsId = this.goodSelect[0] ? this.goodSelect[0].id : null;
+    if (this.goodSelect.length === 1) {
+      setTimeout(() => {
+        this.goodSelect[0].quantity = Number(this.goodSelect[0].quantity);
+        this.detailArray.patchValue(this.goodSelect[0] as IGood);
+        this.getDomicilieGood(this.goodSelect[0].addressId);
+        if (this.detailArray.controls['id'].value !== null) {
+          this.isGoodSelected = true;
+        }
         this.formLoading = false;
-        this.goodForClarifi = [];
-        this.onLoadToast('error', 'Solo se puede seleccionar un bien', '');
-      } else {
-        this.detailArray.patchValue(null);
-        this.domicilieObject = null;
-        this.formLoading = false;
-        this.goodForClarifi = [];
-      }
-    });
+      }, 1000);
+    } else if (this.goodSelect.length > 1) {
+      // this.goodSelect[0].quantity = 0;
+      this.detailArray.patchValue(null);
+      this.domicilieObject = null;
+      this.formLoading = false;
+      this.goodForClarifi = [];
+      this.onLoadToast('error', 'Solo se puede seleccionar un bien', '');
+    } else {
+      this.detailArray.patchValue(null);
+      this.domicilieObject = null;
+      this.formLoading = false;
+      this.goodForClarifi = [];
+    }
+    /*  }); */
   }
 
   getDomicilieGood(id: number) {
@@ -554,5 +555,9 @@ export class ClassificationAssetsTabComponent
       fractionId: [null],
       saeMeasureUnit: [null],
     });
+  }
+
+  selectRow(row?: any) {
+    console.log('Información de la fila seleccionada, ', row);
   }
 }

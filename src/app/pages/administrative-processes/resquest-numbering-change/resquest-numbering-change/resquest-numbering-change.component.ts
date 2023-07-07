@@ -1,13 +1,12 @@
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import {
-  Component,
-  ElementRef,
-  Input,
-  OnInit,
-  Renderer2,
-  ViewChild,
-} from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsModalRef,
@@ -159,6 +158,7 @@ export class ResquestNumberingChangeComponent
 
   //Reactive Forms
   form: FormGroup;
+  authorizeDate: any;
 
   get legalStatus() {
     return this.form.get('legalStatus');
@@ -854,26 +854,36 @@ export class ResquestNumberingChangeComponent
     this.getDataTableNum();
     this.numeraryService.getSolById(this.idSolicitud).subscribe({
       next: async (response: any) => {
-        this.formaplicationData.patchValue(response);
-        this.loading = false;
-        function setReadonly(
-          renderer: Renderer2,
-          elementRef: ElementRef,
-          readonly: boolean
-        ): void {
-          const element = elementRef.nativeElement as HTMLInputElement;
+        /*const readonlyFields = [
+          'userRequestChangeNumber',
+          'authorizeUser',
 
-          if (readonly) {
-            renderer.setAttribute(element, 'readonly', 'readonly');
-          } else {
-            renderer.removeAttribute(element, 'readonly');
-          }
-        }
+        ];*/
+        this.formaplicationData.patchValue(response);
+        // Establecer los campos específicos como de solo lectura
+        /*readonlyFields.forEach(fieldName => {
+          const control = this.formaplicationData.get(fieldName);
+          control.disable();
+          control.setValue(this.convertToDate(control.value));*/
+
+        //this.loading = false;
+
+        this.loading = false;
       },
       error: err => {
         this.loading = false;
       },
     });
+  }
+  convertToDate(dateString: any) {
+    if (dateString && typeof dateString === 'string') {
+      const [day, month, year] = dateString.split('-');
+      const date = new FormControl(
+        new Date(Number(year), Number(month) - 1, Number(day))
+      );
+      return date.value;
+    }
+    return dateString;
   }
 
   clean() {
@@ -887,7 +897,10 @@ export class ResquestNumberingChangeComponent
     this.formaplicationData.get('authorizePostUser').setValue(null);
     this.formaplicationData.get('authorizeDelegation').setValue(null);
     this.formaplicationData.get('authorizeDate').setValue(null);
-    this.totalItems1 = 0;
+    Object.keys(this.formaplicationData.controls).forEach(controlName => {
+      this.formaplicationData.get(controlName).enable();
+    }),
+      (this.totalItems1 = 0);
     this.data1.load([]);
     this.data1.refresh();
   }
@@ -1001,5 +1014,28 @@ export class ResquestNumberingChangeComponent
       ],
       authorizeDate: [null, [Validators.required]],
     });
+    this.formaplicationData
+      .get('dateRequestChangeNumerary')
+      .valueChanges.subscribe((date: Date) => {
+        if (date) {
+          const formattedDate = moment(date).format('DD-MM-YYYY');
+          this.formaplicationData.patchValue(
+            { dateRequestChangeNumerary: formattedDate },
+            { emitEvent: false }
+          );
+        }
+      });
+
+    this.formaplicationData
+      .get('authorizeDate')
+      .valueChanges.subscribe((date: Date) => {
+        if (date) {
+          const formattedDate = moment(date).format('DD-MM-YYYY');
+          this.formaplicationData.patchValue(
+            { authorizeDate: formattedDate },
+            { emitEvent: false }
+          );
+        }
+      });
   }
 }

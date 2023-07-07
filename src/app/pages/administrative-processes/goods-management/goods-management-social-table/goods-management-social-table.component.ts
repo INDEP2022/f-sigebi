@@ -70,14 +70,10 @@ export class GoodsManagementSocialTable extends BasePage {
       });
     this.goodsManagementService.refreshTable.subscribe({
       next: response => {
+        // debugger;
         if (response) {
-          // debugger;
           this.data = [
-            ...this.goodsManagementService.data.filter(row =>
-              row.socialCabinet
-                ? +row.socialCabinet === this.process
-                : this.process === ETypeGabinetProcess['Sin Asignar']
-            ),
+            ...this.goodsManagementService.getByProcess(this.process),
           ];
           this.dataTemp = [...this.data];
           this.getPaginated(this.params.value);

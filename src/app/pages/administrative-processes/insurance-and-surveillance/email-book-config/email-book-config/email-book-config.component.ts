@@ -71,6 +71,7 @@ export class EmailBookConfigComponent
       }
       if (res.action === 'create') {
         this.emailsBook.prepend(res.newData);
+        this.getVigMailBook();
       } else {
         this.emailsBook.update(res.oldData, res.newData);
       }
@@ -123,7 +124,7 @@ export class EmailBookConfigComponent
     console.log(event);
     this.alertQuestion(
       'warning',
-      'Libreta de Direcciones Electrónicas',
+      'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(result => {
       if (!result?.isConfirmed) {
