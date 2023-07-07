@@ -900,7 +900,7 @@ export class VerifyComplianceTabComponent
       this.alert(
         'error',
         'Error',
-        'Es requerido seleccionar 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12'
+        'Es requerido seleccionar 3 cumplimientos del Articulo 3º y del Articulo 12º'
       );
       return;
     }

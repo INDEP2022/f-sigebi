@@ -104,7 +104,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   blkSolicitudesNumeDe: any = {};
   requestNumeEnc: IRequestNumeraryEnc;
   process: IProccesNum;
-
+  valido: string = null;
+  disableButton: boolean = false;
   get userAuth() {
     return this.authService.decodeToken().preferred_username;
   }
@@ -441,6 +442,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
         process: this.process,
         userAuth: this.userAuth,
         type: this.form.get('type').value,
+        typeMoney: this.formBlkControl.get('tMoneda').value,
         callback: (next: any) => {
           if (next) {
             this.requestNumeEnc = next[0];
@@ -480,8 +482,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     }
     const res = await this.pupSonDelDate(
       this.requestNumeEnc.solnumId,
-      this.form.get('idProcess').value,
-      2227
+      this.form.get('idProcess').value
     );
     if (this.form.get('idProcess').value !== null) {
       if (this.requestNumeEnc.solnumId !== null) {
@@ -557,16 +558,11 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     });
   }
 
-  pupSonDelDate(
-    lvIdSolnum: number | string,
-    lvIdProcnum: number | string,
-    lvBpParcializado: number | string
-  ) {
+  pupSonDelDate(lvIdSolnum: number | string, lvIdProcnum: number | string) {
     return new Promise<boolean>((res, rej) => {
       const model = {
         lvIdSolnum,
         lvIdProcnum,
-        lvBpParcializado,
       };
       this.numeraryService.pupSonDelDate(model).subscribe({
         next: resp => {
@@ -588,8 +584,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     if (!['CN', 'CD'].includes(this.formBlkControl.get('tMoneda').value)) {
       const res = await this.pupSonDelDate(
         this.requestNumeEnc.solnumId,
-        this.form.get('idProcess').value,
-        2227
+        this.form.get('idProcess').value
       );
     }
 
@@ -779,7 +774,28 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     return fecha.split('T')[0].split('-').reverse().join('/');
   }
 
-  postQuery(event: IRequesNumeraryCal) {}
+  async postQuery(event: IRequesNumeraryCal) {
+    console.log(event);
+    this.valido = await this.vValido(
+      this.process.procnumId,
+      this.process.procnumDate
+    );
+    if ((event.amount !== null || event.amount !== '') && this.valido === 'N') {
+      this.textButton = 'Elimina Cálculo';
+      this.disableButton = true;
+    } else if (
+      (event.amount !== null || event.amount !== '') &&
+      this.valido === 'S'
+    ) {
+      this.textButton = 'Elimina Cálculo';
+      this.disableButton = false;
+      this.global.process = 'D';
+    } else if (event.amount === null || event.amount === '') {
+      this.textButton = 'Calcula Intereses';
+      this.disableButton = false;
+      this.global.process = 'C';
+    }
+  }
 
   subtractTwoDaysAndFormatDate() {
     const currentDate = new Date(); // Obtener la fecha actual
@@ -787,6 +803,22 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     const day = String(currentDate.getDate()).padStart(2, '0');
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
     const year = String(currentDate.getFullYear());
-    return `${day}/${month}/${year}`; // Formato DD/MM/YYYY
+    return `${day}-${month}-${year}`; // Formato DD/MM/YYYY
+  }
+
+  vValido(procnumId: number | string, fechaProce: string) {
+    return new Promise<string>((res, rej) => {
+      const params: ListParams = {};
+      params['filter.procnumId'] = `$eq:${procnumId}`;
+      params[
+        'filter.procnumDate'
+      ] = `$gte:${this.subtractTwoDaysAndFormatDate()}`;
+      this.numeraryService.getProccesNum(params).subscribe({
+        next: response => {
+          res('S');
+        },
+        error: err => res('N'),
+      });
+    });
   }
 }

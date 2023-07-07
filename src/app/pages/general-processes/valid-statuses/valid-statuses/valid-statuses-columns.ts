@@ -6,7 +6,7 @@ export const VALID_STATUSES_COLUMNS = {
     sort: false,
   },
   status: {
-    title: 'Estatus inicial',
+    title: 'Estatus Inicial',
     sort: false,
     valuePrepareFunction: (goodStatus: IGoodStatus, row: any) =>
       goodStatus?.status,
@@ -18,7 +18,7 @@ export const VALID_STATUSES_COLUMNS = {
       row.status?.description,
   },
   statusFinal: {
-    title: 'Estatus final',
+    title: 'Estatus Final',
     sort: false,
     valuePrepareFunction: (goodStatus: IGoodStatus, row: any) =>
       goodStatus.status,
@@ -30,7 +30,7 @@ export const VALID_STATUSES_COLUMNS = {
       row.statusFinal.description,
   },
   processExtSun: {
-    title: 'Proceso ext. dominio',
+    title: 'Proceso Ext. Dominio',
     sort: false,
   },
 };

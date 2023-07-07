@@ -852,24 +852,23 @@ export class ResquestNumberingChangeComponent
       'applicationChangeCashNumber'
     ).value;
     this.getDataTableNum();
-    this.buildForm();
     this.numeraryService.getSolById(this.idSolicitud).subscribe({
       next: async (response: any) => {
-        const readonlyFields = [
+        /*const readonlyFields = [
           'userRequestChangeNumber',
           'authorizeUser',
-          'authorizeDate',
-        ];
+
+        ];*/
         this.formaplicationData.patchValue(response);
         // Establecer los campos específicos como de solo lectura
-        readonlyFields.forEach(fieldName => {
+        /*readonlyFields.forEach(fieldName => {
           const control = this.formaplicationData.get(fieldName);
           control.disable();
-          control.setValue(this.convertToDate(control.value));
+          control.setValue(this.convertToDate(control.value));*/
 
-          //this.loading = false;
-        }),
-          (this.loading = false);
+        //this.loading = false;
+
+        this.loading = false;
       },
       error: err => {
         this.loading = false;
