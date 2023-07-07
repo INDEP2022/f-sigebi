@@ -15,7 +15,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="BLK_BIENES">
+            [source]="dataTableGoods">
           </ng2-smart-table>
         </div>
         <app-pagination [params]="params" [totalItems]="totalItems">
@@ -28,7 +28,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
-            [source]="BLK_GASTOS">
+            [source]="dataTableSpents">
           </ng2-smart-table>
         </div>
         <app-pagination [params]="params" [totalItems]="totalItems">
@@ -45,7 +45,7 @@
       </div>
       <div class="col-md-4">
         <button
-          (click)="onClickGenerateNumeraries()"
+          (click)="onClickGenerateNumerareis()"
           class="btn btn-secondary btn-sm active">
           Genera Numerarios
         </button>
