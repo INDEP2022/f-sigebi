@@ -57,8 +57,8 @@ export class SearchTabComponent extends BasePage implements OnInit {
       const newForm = JSON.parse(form);
       this.searchTabForm.get('noBien').setValue(newForm.noBien);
       localStorage.removeItem('formSearch');
-      this.reloadGood = await this.getGood();
-      console.log(this.goodSelect);
+      this.goodSelect = await this.getGood();
+      //console.error(this.goodSelect);
       this.search();
     }
     this.searchTabForm.get('noBien').valueChanges.subscribe({

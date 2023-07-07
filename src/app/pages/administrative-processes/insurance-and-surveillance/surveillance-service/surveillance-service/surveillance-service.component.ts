@@ -300,6 +300,9 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         // resolve(response.data);
       },
       error: error => {
+        this.goods.load([]);
+        this.goods.refresh();
+        this.totalItems = 0;
         this.loading = false;
         // resolve(null);
       },
@@ -478,36 +481,45 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
-    fileReader.onload = () => this.readExcel(fileReader.result);
+    fileReader.onload = () => this.readExcel(files[0]);
   }
 
-  readExcel(binaryExcel: string | ArrayBuffer) {
+  async readExcel(binaryExcel: string | ArrayBuffer | any) {
     try {
-      const excelImport = this.excelService.getData<any>(binaryExcel);
-      console.log('excelImport', excelImport);
+      // const excelImport = this.excelService.getData<any>(binaryExcel);
+      // console.log('excelImport', excelImport);
 
-      if (excelImport.length == 0) {
+      const deleteVIG_SUPERVISION_TMP_ = await this.deleteVIG_SUPERVISION_TMP(
+        this.objectDelete
+      );
+
+      let objCreate = {
+        user: this.token.decodeToken().preferred_username,
+        Delegation: this.delegationDefault.delegationNumber,
+        NumPeriod: this.objectDelete.lvCvePeriod,
+        delegationType: this.delegationDefault.typeDelegation,
+      };
+
+      const formData = new FormData();
+      formData.append('file', binaryExcel);
+      formData.append('user', objCreate.user);
+      formData.append('Delegation', objCreate.Delegation);
+      formData.append('NumPeriod', objCreate.NumPeriod);
+      formData.append('delegationType', objCreate.delegationType);
+
+      const createVIG_SUPERVISION_TMP_: any =
+        await this.createVIG_SUPERVISION_TMP(formData);
+
+      if (createVIG_SUPERVISION_TMP_) {
+        this.alert('success', 'Archivo cargado correctamente', '');
         this.clearInput();
-        this.alert('warning', 'El archivo se encuentra vacío', '');
-        return;
       } else {
-        let arr: any = [];
-
-        let result = excelImport.map(item => {
-          if (item.CONSECUTIVO && item.BIEN) {
-            arr.push(item);
-          }
-        });
-
-        if (arr.length == 0) {
-          this.clearInput();
-          this.alert('warning', 'No hay registros válidos para insertar.', '');
-          return;
-        } else {
-          Promise.all(result).then(item => {
-            this.createDataVigilanceMtp(arr);
-          });
-        }
+        this.alert(
+          'error',
+          'Ha ocurrido un error al intentar crear los registros',
+          ''
+        );
+        this.clearInput();
       }
     } catch (error) {
       this.alert('error', 'Ocurrió un error al leer el archivo', 'Error');
@@ -634,56 +646,26 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
     // VALIDAMOS ANTES DE REALIZAR NUEVOS REGISTROS //
     if (excelImport.length > 0) {
-      let result = excelImport.map(async (item: any) => {
-        console.log('item', item);
-        try {
-          LV_VALCONSE = Number(item.recordId);
-          LV_REGVALIDO = 1;
-        } catch (error) {
-          LV_REGVALIDO = 0;
-        }
+      let objCreate = {
+        user: this.token.decodeToken().preferred_username,
+        Delegation: this.delegationDefault.delegationNumber,
+        NumPeriod: this.objectDelete.lvCvePeriod,
+        delegationType: this.delegationDefault.typeDelegation,
+      };
+      const createVIG_SUPERVISION_TMP_: any =
+        await this.createVIG_SUPERVISION_TMP(excelImport);
 
-        if (LV_REGVALIDO == 1) {
-          if (item.goodNumber) {
-            let objCreate = {
-              recordId: item.recordId,
-              delegationNumber: this.objectDelete.delegationNo,
-              cvePeriod: this.objectDelete.lvCvePeriod,
-              goodNumber: item.goodNumber,
-              address: item.address,
-              transferee: item.transferee,
-              delegationType: item.delegationType,
-              user: this.token.decodeToken().preferred_username,
-            };
-
-            const createVIG_SUPERVISION_TMP_: any =
-              await this.createVIG_SUPERVISION_TMP(objCreate);
-
-            if (createVIG_SUPERVISION_TMP_ === null) {
-              //ALMACENAMOS LA DATA QUE NO SE GUARDÓ //
-              arr.push(objCreate);
-            }
-          }
-        }
-      });
-
-      Promise.all(result).then(async (resp: any) => {
-        if (excelImport.length != arr.length) {
-          this.alertQuestion(
-            'success',
-            'Registros cargados correctamente',
-            '¿Quiere visualizarlos?'
-          ).then(async question => {
-            if (question.isConfirmed) {
-              console.log(getDatCreada);
-              this.openForm(getDatCreada);
-            }
-          });
-        }
-
-        this.objectDelete = null; // LIMPIAMOS OBJECTDELETE //
-        this.clearInput();
-      });
+      if (createVIG_SUPERVISION_TMP_) {
+        this.alert('warning', 'El archivo no contenía registros', '');
+      } else {
+        this.alert(
+          'error',
+          'Ha ocurrido un error al intentar crear los registros',
+          ''
+        );
+      }
+      this.objectDelete = null; // LIMPIAMOS OBJECTDELETE //
+      this.clearInput();
     } else {
       this.objectDelete = null; // LIMPIAMOS OBJECTDELETE //
       this.alert('warning', 'El archivo no contenía registros', '');
@@ -729,15 +711,13 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
   }
 
   // CREAMOS REGISTROS EN LA TABLA VIG_SUPERVISION_TMP //
-  async createVIG_SUPERVISION_TMP(params: any) {
+  async createVIG_SUPERVISION_TMP(excelImport: any) {
     return new Promise((resolve, reject) => {
-      this.survillanceService.createVigSupervisionTmp(params).subscribe({
+      this.survillanceService.PostInsertSupervisionTmp(excelImport).subscribe({
         next: async (response: any) => {
-          console.log('CREATE', response);
           resolve(response);
         },
         error: error => {
-          this.loading = false;
           resolve(null);
         },
       });
@@ -865,6 +845,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
                 pTypeDelaga: this.delegationDefault.typeDelegation,
                 pInitialDate: fromTwo,
                 pEndDate: toTwo,
+                user: this.token.decodeToken().preferred_username,
               };
 
               const createRegisterRandom: any = await this.createRegisterRandom(
@@ -882,7 +863,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
                 } else {
                   this.alert(
                     'warning',
-                    'No existen carga de bienes en este periodo para generarar aleatorios',
+                    'No existen carga de bienes en este período para generarar aleatorios',
                     ''
                   );
                   return;
@@ -951,13 +932,17 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     // return new Promise((resolve, reject) => {
     this.survillanceService.getVigSupervisionMae(params.getParams()).subscribe({
       next: async (response: any) => {
-        this.form.get('process').setValue(response.data[0].cveProcess);
+        this.form.patchValue({
+          cveProcess: response.data[0].cveProcess.toString(),
+        });
+        // this.form.get('process').setValue('Proceso ' + response.data[0].cveProcess);
         this.form.get('period').setValue(response.data[0].cvePeriod);
         this.form.get('from').setValue(response.data[0].initialDate);
         this.form.get('to').setValue(response.data[0].finalDate);
         this.form.get('total').setValue(null);
 
         console.log('RESPUESTA', response);
+        this.alert('success', 'Se generaron los aleatorios correctamente', '');
         this.delegationMae = response.data[0];
         // resolve(response.data[0]);
       },
@@ -996,8 +981,23 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     const filename: string = 'Servicio de Vigilancia';
     const jsonToCsv = await this.returnJsonToCsv();
     console.log('jsonToCsv', jsonToCsv);
-    this.jsonToCsv = jsonToCsv;
-    this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+    let arr: any = [];
+    jsonToCsv.map((item: any) => {
+      let obj = {
+        CONSECUTIVO: item.randomId,
+        NO_BIEN: item.goodNumber,
+        DIRECCIÓN: item.address,
+        TRANSFERENTE: item.transferee,
+      };
+      arr.push(obj);
+    });
+    // CONSECUTIVO	NO_BIEN	DIRECCIÓN	TRANSFERENTE
+
+    Promise.all(arr).then(item => {
+      this.jsonToCsv = arr;
+      console.log('this.jsonToCsv2', this.jsonToCsv);
+      this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+    });
   }
 
   async returnJsonToCsv() {
