@@ -1,7 +1,6 @@
 <div>
   <div>
-    <div class="row">
-      <!--CAN WORK1 TABLE-->
+    <!-- <div class="row">
       <div class="row pt-4">
         <div class="col-md-12">
           <div [class]="loading ? 'table-loading' : ''">
@@ -14,6 +13,24 @@
           </div>
         </div>
       </div>
+    </div> -->
+    <div body>
+      <div class="table-padding"></div>
+      <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            class="table-responsive"
+            [attr.class]="'table-responsive table-bordered'"
+            [settings]="settings"
+            [source]="allGoods"
+            (userRowSelect)="selectData($event)"
+            (delete)="deleteGood($event.data)">
+          </ng2-smart-table>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
+          <div class="table-padding"></div>
+        </div>
+      </ng-scrollbar>
     </div>
 
     <div class="row" *ngIf="goodsNotChange.length > 0">
@@ -26,9 +43,15 @@
       <div class="col-md-12 col-sm-12 col-xs-12 mt-3">
         <div class="d-flex justify-content-center">
           <div class="m-3">
-            <button (click)="goToGoodTracker()" class="btn btn-success active">
-              Rastreador de bienes
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="goToGoodTracker()">
+              Rastreador de bienes<i
+                class="fas fa-map-marker bx-sm float-icon"></i>
             </button>
+            <!-- <button (click)="goToGoodTracker()" class="btn btn-success active">
+              Rastreador de bienes
+            </button> -->
           </div>
         </div>
       </div>
@@ -69,7 +92,7 @@
                 [disabled]="goods.length === 0"
                 class="btn btn-info active"
                 (click)="asigLocation()">
-                Asignar Ubicación
+                Asignar Ubicación<i class="fas fa-fa-info bx-sm float-icon"></i>
               </button>
             </div>
           </div>

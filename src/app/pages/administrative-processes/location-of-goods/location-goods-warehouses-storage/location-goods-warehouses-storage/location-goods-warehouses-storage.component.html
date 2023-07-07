@@ -75,11 +75,20 @@
                   <div class="d-flex justify-content-center">
                     <div class="m-3">
                       <button
-                        [disabled]="good === undefined"
                         type="button"
                         class="btn btn-info active"
                         (click)="checkLocations()">
                         Consultar Ubicaciones
+                      </button>
+                    </div>
+                    <div class="m-3">
+                      <button
+                        class="btn btn-primary btn-sm active"
+                        [ngStyle]="{
+                          'background-color':
+                            this.di_desc_est === 'S' ? 'green' : 'black'
+                        }">
+                        <i aria-hidden="true" class="fa fa-save"></i>
                       </button>
                     </div>
                   </div>
@@ -126,9 +135,10 @@
                   <div class="d-flex justify-content-center">
                     <div class="m-3">
                       <button
-                        class="btn btn-primary active"
+                        class="btn btn-primary btn-sm active"
                         (click)="changeLocation()">
-                        Cambiar
+                        Actualizar
+                        <i class="fas fa-sync bx-sm float-icon"></i>
                       </button>
                     </div>
                   </div>
@@ -172,9 +182,9 @@
                   <div class="d-flex justify-content-center">
                     <div class="m-3">
                       <button
-                        class="btn btn-primary active"
+                        class="btn btn-primary btn-sm active"
                         (click)="changeLocationVault()">
-                        Cambiar
+                        Actualizar<i class="fas fa-sync bx-sm float-icon"></i>
                       </button>
                     </div>
                   </div>
@@ -183,7 +193,8 @@
             </app-card>
           </tab>
           <tab heading="Asignación masiva">
-            <app-modal-selects-goods></app-modal-selects-goods>
+            <app-modal-selects-goods
+              [allGoods]="goods"></app-modal-selects-goods>
           </tab>
         </tabset>
       </div>

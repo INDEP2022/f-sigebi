@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -14,7 +15,6 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModalSelectsGoodsComponent } from '../modal-selects-goods/modal-selects-goods.component';
-
 @Component({
   selector: 'app-location-goods-warehouses-storage',
   templateUrl: './location-goods-warehouses-storage.component.html',
@@ -26,6 +26,7 @@ export class LocationGoodsWarehousesStorageComponent
 {
   //Reactive Forms
   form: FormGroup;
+  totalItems: number = 0;
   formWarehouse: FormGroup;
   mostrarAlmacen = true;
   formVault: FormGroup;
@@ -41,6 +42,7 @@ export class LocationGoodsWarehousesStorageComponent
   vaultDisable: boolean = true;
   nullDisable: boolean = true;
   di_desc_est: string = '';
+  allGoods: LocalDataSource = new LocalDataSource();
   paramsScreen: IParamsUbicationGood = {
     PAR_MASIVO: '',
     origin: '',
@@ -112,6 +114,8 @@ export class LocationGoodsWarehousesStorageComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsQuery => {
         this.origin = paramsQuery['origin'] ?? null;
+        this.formVault.value.safe = this.formVault.value.safe ?? 9999;
+        this.formVault.value.safe = this.formVault.value.safe ?? 1;
         this.paramsScreen.PAR_MASIVO = paramsQuery['PAR_MASIVO'] ?? null;
         if (this.origin == 'FACTADBUBICABIEN') {
           for (const key in this.paramsScreen) {
@@ -190,9 +194,11 @@ export class LocationGoodsWarehousesStorageComponent
         ]);
   }
 
-  openModal(): void {
+  openModal(goods?: IGood[]): void {
     this.modalService.show(ModalSelectsGoodsComponent, {
-      initialState: {},
+      initialState: {
+        goods,
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
@@ -360,7 +366,7 @@ export class LocationGoodsWarehousesStorageComponent
         this.warehouseDisable = false;
         this.vaultDisable = false;
         this.good.storeNumber = this.warehouse.value;
-        this.good.ubicationType = '';
+        this.radio.setValue('A');
         this.good.dateIn = new Date();
       }
     } else {
@@ -380,7 +386,7 @@ export class LocationGoodsWarehousesStorageComponent
         this.good.vaultNumber = this.safe.value;
         this.good.ubicationType = '';
         this.good.dateIn = new Date();
-        // this.good.ubicationType = 'B';
+        this.radio.setValue('B');
       }
     }
     return false;
@@ -407,7 +413,7 @@ export class LocationGoodsWarehousesStorageComponent
           next: response => {
             const data = response.data;
             this.loading = false;
-            console.log(data);
+            this.totalItems = response.count;
             this.goods = data;
             data.map(async (good: any, index) => {
               if (index == 0) this.di_desc_est = good.estatus.descriptionStatus;
@@ -422,6 +428,8 @@ export class LocationGoodsWarehousesStorageComponent
                   proceso_ext_dom: good.extDomProcess ?? '',
                 };
                 resolve(body);
+                this.allGoods.load(response.data);
+                this.allGoods.refresh();
               });
             });
           },
