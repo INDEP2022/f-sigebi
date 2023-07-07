@@ -82,12 +82,9 @@
                       </button>
                     </div>
                     <div class="m-3">
-                      <span
-                        [ngStyle]="{
-                          color: this.di_desc_est === 'S' ? 'green' : 'black'
-                        }"
-                        >{{ this.di_desc_est }}</span
-                      >
+                      <span [style.color]="getEstatusColor(this.di_desc_est)">{{
+                        this.di_desc_est
+                      }}</span>
                     </div>
                   </div>
                 </div>
