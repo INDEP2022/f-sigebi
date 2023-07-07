@@ -57,7 +57,8 @@ export class CatFinancialIndicatorsModalComponent
   }
 
   //Teclado virtual
-  ngAfterViewInit() {
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     this.keyboard = new Keyboard({
       onChange: input => this.onChange(input),
       onKeyPress: (button: string) => this.onKeyPress(button),

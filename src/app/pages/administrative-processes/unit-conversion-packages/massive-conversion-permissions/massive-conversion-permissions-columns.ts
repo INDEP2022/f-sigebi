@@ -1,4 +1,27 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
+
+function createPer(
+  proy: boolean,
+  val: boolean,
+  aut: boolean,
+  cerr: boolean,
+  can: boolean
+) {
+  let newCve: string = '';
+  try {
+    proy ? (newCve = 'P') : (newCve = 'PX');
+    val ? (newCve = `${newCve}-V`) : newCve = `${newCve}-VX`;
+    aut ? (newCve = `${newCve}-A`) : newCve = `${newCve}-AX`;
+    cerr ? (newCve = `${newCve}-C`) : newCve = `${newCve}-CX`;
+    can ? (newCve = `${newCve}-X`) : newCve = `${newCve}-XX`;
+  } catch (error) {
+  } finally {
+    return newCve;
+  }
+}
+
+export let newData:any
 
 export const PERMISSIONSUSER_COLUMNS = {
   value: {
@@ -16,13 +39,32 @@ export const PERMISSIONSUSER_COLUMNS = {
     title: 'Nombre',
     sort: false,
   },
-  s: {
+  S: {
     title: 'S',
     sort: false,
+    type: 'html',
+    renderComponent: CheckboxElementComponent,
+    valuePrepareFunction: (isSelected: any, row: any) => {
+      return row.abbreviation == 'S' ? true : false;
+    },
   },
-  n: {
+  N: {
     title: 'N',
     sort: false,
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    valuePrepareFunction: (isSelected: any, row: any) => {
+      return row.abbreviation == 'N' ? true : false;
+    },
+  },
+  null: {
+    title: '',
+    sort: false,
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    valuePrepareFunction: (isSelected: any, row: any) => {
+      return row.abbreviation == null ? true : false;
+    },
   },
 };
 export const PRIVILEGESUSER_COLUMNS = {
@@ -38,6 +80,13 @@ export const PRIVILEGESUSER_COLUMNS = {
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.proy = data.toggle;
+        const cve = createPer(
+          data.row.proy,
+          data.row.val,
+          data.row.aut,
+          data.row.cerr,
+          data.row.can
+        );
       });
     },
   },
@@ -53,6 +102,14 @@ export const PRIVILEGESUSER_COLUMNS = {
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.val = data.toggle;
+        const cve = createPer(
+          data.row.proy,
+          data.row.val,
+          data.row.aut,
+          data.row.cerr,
+          data.row.can
+        );
+        console.log(cve);
       });
     },
   },
@@ -68,6 +125,14 @@ export const PRIVILEGESUSER_COLUMNS = {
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.aut = data.toggle;
+        const cve = createPer(
+          data.row.proy,
+          data.row.val,
+          data.row.aut,
+          data.row.cerr,
+          data.row.can
+        );
+        console.log(cve);
       });
     },
   },
@@ -83,6 +148,15 @@ export const PRIVILEGESUSER_COLUMNS = {
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.cerr = data.toggle;
+        const cve = createPer(
+          data.row.proy,
+          data.row.val,
+          data.row.aut,
+          data.row.cerr,
+          data.row.can
+        );
+        console.log(cve);
+
       });
     },
   },
@@ -98,7 +172,17 @@ export const PRIVILEGESUSER_COLUMNS = {
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.can = data.toggle;
+        const cve = createPer(
+          data.row.proy,
+          data.row.val,
+          data.row.aut,
+          data.row.cerr,
+          data.row.can
+        );
+        console.log(cve);
       });
     },
   },
+
 };
+
