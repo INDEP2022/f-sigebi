@@ -1,10 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -828,6 +823,11 @@ export class ResquestNumberingChangeComponent
 
   guardarSolicitud() {
     this.loading = true;
+    // Obtener la fecha actual
+    const currentDate = new Date();
+    this.formaplicationData
+      .get('dateRequestChangeNumerary')
+      .setValue(currentDate);
     this.formaplicationData.get('applicationChangeCashNumber').setValue(null);
     this.numeraryService
       .createChangeNumerary(this.formaplicationData.getRawValue())
@@ -854,17 +854,40 @@ export class ResquestNumberingChangeComponent
     this.getDataTableNum();
     this.numeraryService.getSolById(this.idSolicitud).subscribe({
       next: async (response: any) => {
-        /*const readonlyFields = [
+        const readonlyFields = [
           'userRequestChangeNumber',
           'authorizeUser',
+          'applicationChangeCashNumber',
+          'postUserRequestCamnum',
+          'delegationRequestcamnum',
+          'procedureProposal',
+          'authorizeUser',
+          'authorizePostUser',
+          'authorizeDelegation',
+        ];
 
-        ];*/
+        // Verificar y formatear los campos de fecha solo si son válidos
+        if (
+          moment(
+            response.dateRequestChangeNumerary,
+            'YYYY-MM-DD',
+            true
+          ).isValid()
+        ) {
+          response.dateRequestChangeNumerary = moment(
+            response.dateRequestChangeNumerary
+          ).format('DD-MM-YYYY');
+        }
+        if (moment(response.authorizeDate, 'YYYY-MM-DD', true).isValid()) {
+          response.authorizeDate = moment(response.authorizeDate).format(
+            'DD-MM-YYYY'
+          );
+        }
         this.formaplicationData.patchValue(response);
         // Establecer los campos específicos como de solo lectura
-        /*readonlyFields.forEach(fieldName => {
-          const control = this.formaplicationData.get(fieldName);
-          control.disable();
-          control.setValue(this.convertToDate(control.value));*/
+        readonlyFields.forEach(fieldName => {
+          this.formaplicationData.get(fieldName).disable();
+        });
 
         //this.loading = false;
 
@@ -874,16 +897,6 @@ export class ResquestNumberingChangeComponent
         this.loading = false;
       },
     });
-  }
-  convertToDate(dateString: any) {
-    if (dateString && typeof dateString === 'string') {
-      const [day, month, year] = dateString.split('-');
-      const date = new FormControl(
-        new Date(Number(year), Number(month) - 1, Number(day))
-      );
-      return date.value;
-    }
-    return dateString;
   }
 
   clean() {

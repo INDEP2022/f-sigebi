@@ -163,7 +163,12 @@
               type="text"
               class="form-control"
               formControlName="dateRequestChangeNumerary"
-              bsDatepicker />
+              ngModel
+              bsDatepicker
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: false
+              }" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -210,6 +215,10 @@
             <select class="form-control" formControlName="procedureProposal">
               <option [value]="null">Seleccione un valor</option>
               <option value="LICITACION PUBLICA">LICITACION PUBLICA</option>
+              <option value="INVITACION">INVITACION</option>
+              <option value="LICITACION DIRECTA">ADJUDICACION DIRECTA</option>
+              <option value="SUBASTA">SUBASTA</option>
+              <option value="REMATE">REMATE</option>
             </select>
           </form-field>
         </div>
