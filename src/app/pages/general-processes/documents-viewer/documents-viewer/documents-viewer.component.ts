@@ -101,11 +101,9 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
                 if (filter.search != null) {
                   filter.search = this.formatDate(filter.search);
                   searchFilter = SearchFilter.EQ;
-                  console.log(filter.search);
                 } else {
                   filter.search = '';
                 }
-                console.log('ddddccc', filter.search);
                 break;
               case 'flyerNumber':
                 searchFilter = SearchFilter.EQ;
