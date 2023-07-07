@@ -315,9 +315,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
           next: resp => {
             this.loading = false;
             this.alertInfo(
-              'info',
-              'Información',
-              `Documento agregado exitosamente con el id. ${resp.dDocName}`
+              'success',
+              `Documento agregado exitosamente con el id. ${resp.dDocName}`,
+              ''
             ).then(question => {
               if (question.isConfirmed) {
                 this.modalRef.content.callback(true);
