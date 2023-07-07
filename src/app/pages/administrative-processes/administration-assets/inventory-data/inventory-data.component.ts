@@ -362,8 +362,10 @@ export class InventoryDataComponent
     if (this.dataIn) {
       if (this.inventorySelect) {
         let required: boolean = false;
+        console.log('Data', this.dataIn);
         this.dataIn.forEach((item: any) => {
-          if (item.required && item.value === null) {
+          console.log(item);
+          if (item.required && (item.value === null || item.value === '')) {
             required = true;
           }
         });
@@ -371,7 +373,7 @@ export class InventoryDataComponent
           this.alert(
             'warning',
             'Datos inventario',
-            'Debe diligenciar los valores requeridos.'
+            'Debe llenar los valores requeridos.'
           );
           return;
         }
@@ -390,18 +392,15 @@ export class InventoryDataComponent
       } else {
         let required: boolean = false;
         this.dataIn.forEach((item: any) => {
-          console.log(item);
-          if (!item.attribute.includes('FECHA')) {
-            if (item.required && item.value === null) {
-              required = true;
-            }
+          if (item.required && (item.value === null || item.value === '')) {
+            required = true;
           }
         });
         if (required) {
           this.alert(
             'warning',
             'Datos inventario',
-            'Debe diligenciar los valores requeridos.'
+            'Debe llenar los valores requeridos.'
           );
           return;
         }

@@ -315,7 +315,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     });
   }
 
-  ngAfterViewInit() {
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     const selectedBadString = localStorage.getItem('selectedBad');
     const actualGoodNumberString = localStorage.getItem(
       'goodCharacteristicNumber'
@@ -1131,7 +1132,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.disabledTable = true;
     this.disabledNoClasifBien = true;
     this.errorMessage =
-      'El estatus ' + this.good.status + 'no es válido para editar';
+      'El estatus ' + this.good.status + ' no es válido para editar';
   }
 
   private disactivateForUser() {

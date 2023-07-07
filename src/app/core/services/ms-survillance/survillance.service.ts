@@ -20,6 +20,12 @@ export class SurvillanceService extends HttpService {
     this.microservice = this.route.Survillance;
   }
 
+  getVCuentaNoBien(no_bien: number | string) {
+    return this.get<IListResponse<{ count: number }>>(
+      this.route.VCuentaPaqDestion + '?no_bien=' + no_bien
+    );
+  }
+
   getVigProcessPercentages(params?: _Params) {
     return this.get<IListResponse<IVigProcessPercentages>>(
       this.route.VigProcessPercentages,
@@ -122,5 +128,14 @@ export class SurvillanceService extends HttpService {
   getIndMoneda(idProcnum: number | string) {
     const route = `application/get-getIndMoneda?id_procnum=${idProcnum}`;
     return this.get<IListResponse<any>>(route);
+  }
+
+  fCalculaNume(idProcnum: number | string, commisionBanc: number) {
+    const route = `${this.route.FCalculaNume}/${idProcnum}/${commisionBanc}`;
+    return this.get<IListResponse<any>>(route);
+  }
+
+  PostInsertSupervisionTmp(formData?: any) {
+    return this.post(this.route.PostInsertSupervisionTmp, formData);
   }
 }

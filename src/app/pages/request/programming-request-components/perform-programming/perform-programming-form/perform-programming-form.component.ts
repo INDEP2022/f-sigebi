@@ -310,6 +310,7 @@ export class PerformProgrammingFormComponent
     this.programmingService
       .getProgrammingId(this.idProgramming)
       .subscribe(data => {
+        console.log('info prog', data);
         this.dataProgramming = data;
         this.setDataProgramming();
       });
@@ -494,7 +495,6 @@ export class PerformProgrammingFormComponent
                   regDelData,
                   callback: (next: boolean) => {
                     if (next) {
-                      console.log('next', next);
                       this.performForm
                         .get('regionalDelegationNumber')
                         .setValue(this.delegation);
@@ -1902,6 +1902,7 @@ export class PerformProgrammingFormComponent
         const task = JSON.parse(localStorage.getItem('Task'));
         const updateTask = await this.updateTask(folio, task.id);
         if (updateTask) {
+          console.log('this.performForm.value', this.performForm.value);
           this.programmingGoodService
             .updateProgramming(this.idProgramming, this.performForm.value)
             .subscribe({
@@ -2347,8 +2348,10 @@ export class PerformProgrammingFormComponent
 
       this.paramsAuthority.getValue()['filter.idTransferer'] =
         this.transferentId;
+      this.paramsAuthority.getValue()['filter.idAuthority'] = this.autorityId;
       this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
         next: response => {
+          console.log('response', response);
           const nameAndId = `${response.data[0].idAuthority} - ${response.data[0].authorityName}`;
           this.performForm.get('autorityId').setValue(nameAndId);
           this.idStation = this.dataProgramming.stationId;

@@ -8,25 +8,28 @@
     {{ value }}
   </div>
 
-  <div tooltip="Agregar" containerClass="tooltip-style">
-    <button
-      *ngIf="!value"
-      type="button"
-      (click)="onCellClick($event)"
-      (contextmenu)="onContextMenu($event)"
+  <!-- <div>
+    <button [placement]="'top'" [tooltip]="tooltipVisible ? 'Agregar' : ''" (mouseenter)="setTooltipVisibility(true)"
+      (mouseleave)="setTooltipVisibility(false)" style="position: relative;" containerClass="tooltip-style"
+      *ngIf="!value" type="button" (click)="onCellClick($event)" (contextmenu)="onContextMenu($event)"
       class="btn btn-info btn-sm active ml-2 mr-2">
       <i class="bx bx-plus bx-sm float-icon"></i>
     </button>
-  </div>
+  </div> -->
 
-  <!-- <div *ngIf="!value" tooltip="Agregar" containerClass="tooltip-style" (click)="onCellClick($event)"
-    (contextmenu)="onContextMenu($event)" class="text-center hoverBg" style="
-      width: 35.5px;
-      height: 35px;
+  <div
+    *ngIf="!value"
+    (click)="onCellClick($event)"
+    (contextmenu)="onContextMenu($event)"
+    class="text-center hoverBg"
+    style="
+      width: 80px;
+      height: 25px;
       color: white;
       border-radius: 3px;
       font-size: 12px;
     ">
+    Agregar
     <i class="bx bx-plus bx-sm float-icon-md"></i>
-  </div> -->
+  </div>
 </div>

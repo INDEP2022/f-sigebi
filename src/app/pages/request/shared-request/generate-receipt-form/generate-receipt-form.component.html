@@ -149,10 +149,14 @@
         <confirm-button
           [disabled]="!generateReceiptForm.valid"
           [loading]="loading"
+          [btnSmall]="false"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

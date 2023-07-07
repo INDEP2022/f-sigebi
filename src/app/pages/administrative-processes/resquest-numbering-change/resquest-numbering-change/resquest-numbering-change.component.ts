@@ -1,6 +1,12 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsModalRef,
@@ -130,7 +136,7 @@ export class ResquestNumberingChangeComponent
         sort: false,
       },
       situationlegal: {
-        title: 'Situación Jurídica',
+        title: 'Situación jurídica',
         width: '30%',
         sort: false,
       },
@@ -152,6 +158,7 @@ export class ResquestNumberingChangeComponent
 
   //Reactive Forms
   form: FormGroup;
+  authorizeDate: any;
 
   get legalStatus() {
     return this.form.get('legalStatus');
@@ -253,7 +260,7 @@ export class ResquestNumberingChangeComponent
           sort: false,
         },
         appraisedValue: {
-          title: 'Avaluó Vigente',
+          title: 'Avaluó vigente',
           width: '10%',
           sort: false,
         },
@@ -263,12 +270,12 @@ export class ResquestNumberingChangeComponent
           sort: false,
         },
         totalExpenses: {
-          title: 'Total Gastos',
+          title: 'Total gastos',
           width: '20%',
           sort: false,
         },
         expedienteid: {
-          title: 'Número de Expediente',
+          title: 'Número de expediente',
           width: '10%',
           sort: false,
           valuePrepareFunction: (cell: any, row: any) => {
@@ -281,7 +288,7 @@ export class ResquestNumberingChangeComponent
         },
 
         expedientepreliminaryInquiry: {
-          title: 'Averiguación Previa',
+          title: 'Averiguación previa',
           width: '10%',
           sort: false,
           valuePrepareFunction: (cell: any, row: any) => {
@@ -293,7 +300,7 @@ export class ResquestNumberingChangeComponent
           },
         },
         expedientecriminalCase: {
-          title: 'Causa Penal',
+          title: 'Causa penal',
           width: '40%',
           sort: false,
           valuePrepareFunction: (cell: any, row: any) => {
@@ -448,6 +455,7 @@ export class ResquestNumberingChangeComponent
   getDataTableDos() {
     this.loading = true;
     this.dataGood = [];
+
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -475,7 +483,6 @@ export class ResquestNumberingChangeComponent
       });
     this.loading = false;
   }
-
   getDataTableNum() {
     this.totalItems1 = 0;
     this.data1
@@ -529,7 +536,7 @@ export class ResquestNumberingChangeComponent
         this.loading = false;
       },
       error: err => {
-        //console.log('ERROR', err);
+        console.log('ERROR', err);
         this.loading = false;
         this.alert('error', 'No se encontraron registros', '');
       },
@@ -734,9 +741,9 @@ export class ResquestNumberingChangeComponent
   }
   handleSuccess(message: any) {
     if (message == 'Se creo correctamente') {
-      this.onLoadToast('success', `${message}`);
+      this.alert('success', `${message}`, '');
     } else {
-      this.onLoadToast('warning', `${message}`);
+      this.alert('warning', `${message}`, '');
     }
     // this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
@@ -785,11 +792,30 @@ export class ResquestNumberingChangeComponent
       }
     }
 
+    if (valor == 0) {
+      if (this.dataGood[0].expedienteid == null) {
+        message = 'El bien NO tiene número de expediente';
+        this.handleSuccess(message);
+      }
+    }
+
+    if (valor == 0) {
+      if (this.dataGood[0].expedientepreliminaryInquiry == null) {
+        message = 'El bien NO tiene averiguación previa';
+        this.handleSuccess(message);
+      }
+    }
+
     if (valor == 1) {
       for (let index = 0; index < this.dataGood.length; index++) {
         if (this.dataGood[index].appraisedValue == null) {
           message =
             'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enejenación';
+          this.handleSuccess(message);
+        }
+
+        if (this.dataGood[index].expedienteid == null) {
+          message = 'El bien NO tiene número de expediente';
           this.handleSuccess(message);
         }
       }
@@ -828,13 +854,36 @@ export class ResquestNumberingChangeComponent
     this.getDataTableNum();
     this.numeraryService.getSolById(this.idSolicitud).subscribe({
       next: async (response: any) => {
+        /*const readonlyFields = [
+          'userRequestChangeNumber',
+          'authorizeUser',
+
+        ];*/
         this.formaplicationData.patchValue(response);
+        // Establecer los campos específicos como de solo lectura
+        /*readonlyFields.forEach(fieldName => {
+          const control = this.formaplicationData.get(fieldName);
+          control.disable();
+          control.setValue(this.convertToDate(control.value));*/
+
+        //this.loading = false;
+
         this.loading = false;
       },
       error: err => {
         this.loading = false;
       },
     });
+  }
+  convertToDate(dateString: any) {
+    if (dateString && typeof dateString === 'string') {
+      const [day, month, year] = dateString.split('-');
+      const date = new FormControl(
+        new Date(Number(year), Number(month) - 1, Number(day))
+      );
+      return date.value;
+    }
+    return dateString;
   }
 
   clean() {
@@ -848,7 +897,10 @@ export class ResquestNumberingChangeComponent
     this.formaplicationData.get('authorizePostUser').setValue(null);
     this.formaplicationData.get('authorizeDelegation').setValue(null);
     this.formaplicationData.get('authorizeDate').setValue(null);
-    this.totalItems1 = 0;
+    Object.keys(this.formaplicationData.controls).forEach(controlName => {
+      this.formaplicationData.get(controlName).enable();
+    }),
+      (this.totalItems1 = 0);
     this.data1.load([]);
     this.data1.refresh();
   }
@@ -904,9 +956,9 @@ export class ResquestNumberingChangeComponent
   private buildForm() {
     this.form = this.fb.group({
       legalStatus: [null, [Validators.required]],
-      delegation: [null, [Validators.required]],
-      warehouse: [null, [Validators.required]],
-      vault: [null, [Validators.required]],
+      delegation: [null],
+      warehouse: [null],
+      vault: [null],
       type: [null, [Validators.required]],
     });
   }
@@ -917,7 +969,11 @@ export class ResquestNumberingChangeComponent
       applicationChangeCashNumber: [null],
       userRequestChangeNumber: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
       postUserRequestCamnum: [
         null,
@@ -925,22 +981,61 @@ export class ResquestNumberingChangeComponent
       ],
       delegationRequestcamnum: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+        ],
       ],
       procedureProposal: [null, [Validators.required]],
       authorizeUser: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
       authorizePostUser: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       authorizeDelegation: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+        ],
       ],
       authorizeDate: [null, [Validators.required]],
     });
+    this.formaplicationData
+      .get('dateRequestChangeNumerary')
+      .valueChanges.subscribe((date: Date) => {
+        if (date) {
+          const formattedDate = moment(date).format('DD-MM-YYYY');
+          this.formaplicationData.patchValue(
+            { dateRequestChangeNumerary: formattedDate },
+            { emitEvent: false }
+          );
+        }
+      });
+
+    this.formaplicationData
+      .get('authorizeDate')
+      .valueChanges.subscribe((date: Date) => {
+        if (date) {
+          const formattedDate = moment(date).format('DD-MM-YYYY');
+          this.formaplicationData.patchValue(
+            { authorizeDate: formattedDate },
+            { emitEvent: false }
+          );
+        }
+      });
   }
 }

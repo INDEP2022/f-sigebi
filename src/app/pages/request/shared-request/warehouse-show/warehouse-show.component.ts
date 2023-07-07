@@ -116,23 +116,23 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
   }
 
   getStateOfRepublic(idState: string) {
-    this.stateOfRepublicService.getById(idState).subscribe({
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = idState;
+    this.stateOfRepublicService.getAll(params.getValue()).subscribe({
       next: response => {
-        this.stateOfRepublicName = response.descCondition;
+        this.stateOfRepublicName = response.data[0].descCondition;
       },
-      error: error => {},
     });
   }
 
   getMunicipality(idMunicipality: string, idState: string) {
-    const model: object = {
-      idMunicipality: idMunicipality,
-      stateKey: idState,
-    };
+    const params = new BehaviorSubject<ListParams>(new ListParams());
 
-    this.municipalityService.postById(model).subscribe({
+    params.getValue()['filter.idMunicipality'] = idMunicipality;
+    params.getValue()['filter.stateKey'] = idState;
+    this.municipalityService.getAll(params.getValue()).subscribe({
       next: response => {
-        this.municipalityName = response.nameMunicipality;
+        this.municipalityName = response.data[0].nameMunicipality;
       },
       error: error => {},
     });
@@ -161,9 +161,11 @@ export class WarehouseShowComponent extends BasePage implements OnInit {
   }
 
   getTypeWarehouse(idTypeWarehouse: number) {
-    this.typeWarehouseService.getById(idTypeWarehouse).subscribe({
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = idTypeWarehouse;
+    this.typeWarehouseService.getAll(params.getValue()).subscribe({
       next: response => {
-        this.typeWarehouseName = response.description;
+        this.typeWarehouseName = response.data[0].description;
       },
       error: error => {},
     });

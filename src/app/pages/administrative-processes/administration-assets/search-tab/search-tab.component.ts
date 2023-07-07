@@ -57,8 +57,8 @@ export class SearchTabComponent extends BasePage implements OnInit {
       const newForm = JSON.parse(form);
       this.searchTabForm.get('noBien').setValue(newForm.noBien);
       localStorage.removeItem('formSearch');
-      this.reloadGood = await this.getGood();
-      console.log(this.goodSelect);
+      this.goodSelect = await this.getGood();
+      //console.error(this.goodSelect);
       this.search();
     }
     this.searchTabForm.get('noBien').valueChanges.subscribe({
@@ -178,8 +178,8 @@ export class SearchTabComponent extends BasePage implements OnInit {
       data: this.searchTabForm.get('noBien').value,
       exist: true,
     });
-    const respStatus = await this.searchStatus();
     const respNotification = await this.searchNotifications();
+    const respStatus = await this.searchStatus();
     if (this.goodSelect) {
       this.searchTabForm.get('situacion').patchValue(this.goodSelect.situation);
       this.searchTabForm.get('destino').patchValue(this.goodSelect.destiny);
@@ -192,11 +192,12 @@ export class SearchTabComponent extends BasePage implements OnInit {
 
   searchNotifications() {
     return new Promise((res, rej) => {
-      if (this.expedientNumber) {
+      console.log('Bien select', this.goodSelect);
+      if (this.goodSelect) {
         this.loading = true;
         this.params1.getValue()[
           'filter.expedientNumber'
-        ] = `$eq:${this.expedientNumber}`;
+        ] = `$eq:${this.goodSelect.fileNumber}`;
         let params = {
           ...this.params1.getValue(),
           ...this.columnFilters,
@@ -208,11 +209,13 @@ export class SearchTabComponent extends BasePage implements OnInit {
             this.data.refresh();
             this.totalItems = data.count;
             this.loading = false;
+            res(true);
           },
           error: err => {
             this.data.load([]);
             this.data.refresh();
             this.loading = false;
+            res(false);
           },
         });
       }
@@ -231,6 +234,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
             this.expedientNumber = data.expedientNumber;
             res(data.status_descripcion);
           },
+          error: err => res(false),
         });
     });
   }
@@ -250,7 +254,12 @@ export class SearchTabComponent extends BasePage implements OnInit {
       JSON.stringify(this.searchTabForm.value)
     );
     const route: string = 'pages/general-processes/good-photos';
-    this.router.navigate([route]);
+    this.router.navigate([route], {
+      queryParams: {
+        numberGood: this.searchTabForm.get('noBien').value,
+        origin: 'FACTADBREGCOMBIEN',
+      },
+    });
   }
 
   openModal(component: any, data?: any): void {
@@ -282,7 +291,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
 
   onChangeGood(event: IGood) {
-    // this.searchTabForm.get('noBien').setValue(event.id);
+    console.log(event);
     this.goodSelect = event;
   }
 

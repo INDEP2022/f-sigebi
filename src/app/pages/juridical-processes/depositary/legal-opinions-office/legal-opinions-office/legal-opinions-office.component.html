@@ -253,11 +253,13 @@
             <div class="card">
               <div class="card-body">
                 <div class="row">
-                  <div class="col-12 col-sm-12 col-md-12">
+                  <div class="col-12 col-sm-12 col-md-8">
                     <h6>Bienes Asociados</h6>
                   </div>
-                  <div class="col-12 col-sm-12 col-md-12">
+                  <div
+                    class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
                     <app-columns-select
+                      [leftList]="true"
                       [(settings)]="settings"></app-columns-select>
                   </div>
                   <div
@@ -491,11 +493,19 @@
               <!--app-columns-select [(settings)]="settings"></app-columns-select-->
               <div *ngIf="officeDictationData">
                 <button
+                  type="button"
+                  class="btn btn-info btn-sm active ml-2 mr-2"
+                  [disabled]="officeDictationData.statusOf == 'ENVIADO'"
+                  (click)="openModalCopy(false)">
+                  Agregar C&#46;C&#46;P&#46;<i
+                    class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+                <!-- <button
                   [disabled]="officeDictationData.statusOf == 'ENVIADO'"
                   (click)="openModalCopy(false)"
                   class="btn btn-primary active btn-sm ml-3">
                   Agregar C&#46;C&#46;P&#46;
-                </button>
+                </button> -->
               </div>
             </div>
           </div>
