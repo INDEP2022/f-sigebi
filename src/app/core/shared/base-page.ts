@@ -128,24 +128,38 @@ export abstract class BasePage
       .subscribe();
   }
   ngAfterViewInit(): void {
-    this._tables.forEach(table => {
-      table.userRowSelect.subscribe(async row => {
-        if (!row) {
-          return;
-        }
-        const { isSelected, data } = row;
-
-        const global = await this._getGlobalVars();
-        let G_REGISTRO_BITACORA = null;
-        if (isSelected) {
-          G_REGISTRO_BITACORA = data?.registerNumber ?? null;
-          return;
-        }
+    const screen = this._screenCode.$id.getValue();
+    this._getGlobalVars().then(global => {
+      if (screen != 'FCONGENBITACORA') {
         this._store.updateGlobalVars({
           ...global,
-          G_REGISTRO_BITACORA,
+          G_REGISTRO_BITACORA: null,
         });
-        console.log('Actualizo var');
+      }
+
+      this._tables.forEach(table => {
+        table.userRowSelect.subscribe(async row => {
+          if (!row) {
+            return;
+          }
+          const { isSelected, data } = row;
+
+          const global = await this._getGlobalVars();
+          if (screen == 'FCONGENBITACORA') {
+            return;
+          }
+          let G_REGISTRO_BITACORA: string | number = null;
+          if (isSelected) {
+            G_REGISTRO_BITACORA =
+              data?.registerNumber ?? data?.numRegister ?? null;
+          } else {
+            G_REGISTRO_BITACORA = null;
+          }
+          this._store.updateGlobalVars({
+            ...global,
+            G_REGISTRO_BITACORA,
+          });
+        });
       });
     });
   }

@@ -546,7 +546,7 @@ export class EventCaptureComponent
       this.updateProceeding().subscribe();
       return;
     }
-    await this.createProceeding();
+    await this.createProceeding(true);
   }
 
   updateProceeding() {
