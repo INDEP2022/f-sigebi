@@ -947,37 +947,46 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   validateGoods(good: any) {
     return new Promise((resolve, reject) => {
       const noPack = this.noPackage.value;
-      let lv_valida: string;
-
+      let lv_DESC_ERROR = '';
       if (noPack.numberDelegation != good.bienes.delegationNumber) {
         console.log({
           valpack: noPack.numberDelegation,
           valgood: good.bienes.delegationNumber,
           good: good.bienes.goodId,
         });
-        resolve({ res: false, msg: 'delegation' });
-      } else if (noPack.numberClassifyGood != good.bienes.goodClassNumber) {
+        lv_DESC_ERROR += 'En la Delegación del bien.';
+      }
+      if (noPack.numberClassifyGood != good.bienes.goodClassNumber) {
         console.log({
           valpack: noPack.numberClassifyGood,
           valgood: good.bienes.goodClassNumber,
           good: good.bienes.goodId,
         });
-        resolve({ res: false, msg: 'classify' });
-      } else if (noPack.numberLabel != good.bienes.labelNumber) {
+        lv_DESC_ERROR +=
+          (lv_DESC_ERROR.length > 0 ? '/' : '') + 'En el Clasif. del bien.';
+        // resolve({ res: false, msg: 'classify' });
+      }
+      if (noPack.numberLabel != good.bienes.labelNumber) {
         console.log({
           valpack: noPack.numberLabel,
           valgood: good.bienes.labelNumber,
           good: good.bienes.goodId,
         });
-        resolve({ res: false, msg: 'label' });
-      } else if (noPack.status != good.bienes.status) {
+        lv_DESC_ERROR +=
+          (lv_DESC_ERROR.length > 0 ? '/' : '') + 'En la Etiqueta del bien.';
+        // resolve({ res: false, msg: 'label' });
+      }
+      if (noPack.status != good.bienes.status) {
         console.log({
           valpack: noPack.status,
           valgood: good.bienes.status,
           good: good.bienes.goodId,
         });
-        resolve({ res: false, msg: 'status' });
-      } else if (
+        lv_DESC_ERROR +=
+          (lv_DESC_ERROR.length > 0 ? '/' : '') + 'En el Estatus del bien.';
+        // resolve({ res: false, msg: 'status' });
+      }
+      if (
         noPack.typePackage != 3 &&
         noPack.numberStore != good.bienes.storeNumber
       ) {
@@ -986,8 +995,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           valgood: good.bienes.storeNumber,
           good: good.bienes.goodId,
         });
-        resolve({ res: false, msg: 'store' });
-      } else if (noPack.typePackage == 3) {
+        // resolve({ res: false, msg: 'store' });
+        lv_DESC_ERROR +=
+          (lv_DESC_ERROR.length > 0 ? '/' : '') + 'En el Almacén del bien.';
+      }
+      if (noPack.typePackage == 3) {
         /* if (this.VALIDA_VAL24 == 'S') {
         lv_valida = 'S';
         this.VALIDA_VAL24 = 'N';
@@ -1006,8 +1018,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         console.log('Es nulo')
       }*/
         resolve({ res: false, msg: 'break' });
+      }
+      if (lv_DESC_ERROR.length > 0) {
+        resolve({ res: false, msg: lv_DESC_ERROR });
       } else {
-        resolve({ res: true, msg: 'correct' });
+        resolve({ res: true, msg: '' });
       }
     });
   }
