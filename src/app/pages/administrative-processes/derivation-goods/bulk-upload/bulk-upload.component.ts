@@ -5,7 +5,10 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IbulkLoadGoods } from 'src/app/core/models/good/good.model';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { BasePage } from 'src/app/core/shared';
 
 interface NotData {
   id: number;
@@ -19,7 +22,7 @@ interface IDs {
   templateUrl: './bulk-upload.component.html',
   styles: [],
 })
-export class BulkUploadComponent implements OnInit {
+export class BulkUploadComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   pGoodFatherNumber: any;
   expedientNumber: any;
@@ -29,6 +32,8 @@ export class BulkUploadComponent implements OnInit {
   form: FormGroup;
   data: LocalDataSource = new LocalDataSource();
   ids: IDs[];
+  fileName: string = '';
+  good: IbulkLoadGoods;
 
   get numberGoodFather() {
     return this.form.get('numberGoodFather');
@@ -41,7 +46,7 @@ export class BulkUploadComponent implements OnInit {
   }
 
   //Data Table
-  settings = {
+  settings0 = {
     //selectMode: 'multi',
     actions: {
       add: false,
@@ -121,8 +126,10 @@ export class BulkUploadComponent implements OnInit {
     private router: Router,
     private excelService: ExcelService,
     private route: ActivatedRoute,
-    private serviceGood: GoodService
+    private serviceGood: GoodService,
+    private goodProcessService: GoodProcessService
   ) {
+    super();
     this.route.queryParams.subscribe(params => {
       this.pGoodFatherNumber = params['pGoodFatherNumber'] || null;
       this.expedientNumber = params['expedientNumber'] || null;
@@ -154,7 +161,7 @@ export class BulkUploadComponent implements OnInit {
         /*if (this.data.length < 0) {
 
         }*/
-        if (respuesta['data'].length < 0) {
+        if (respuesta['data'].length == 0) {
           alert('No se tiene bienes a ingresar S');
         }
         if (res['data'][0].status == 'CVD') {
@@ -167,6 +174,8 @@ export class BulkUploadComponent implements OnInit {
         const arrayMasive = respuesta['data'].map(
           (i: any) => i.CLASIFICADOR && i.DESCRIPCION && i.CANTIDAD
         );
+        //("Array Mavise: " + arrayMasive);
+
         //ejecutar loop
       },
       err => {
@@ -182,6 +191,7 @@ export class BulkUploadComponent implements OnInit {
   onFileChange(event: Event) {
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
+    this.fileName = files[0].name;
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
     fileReader.onload = () => this.readExcel(fileReader.result);
@@ -253,5 +263,43 @@ export class BulkUploadComponent implements OnInit {
         this.availableToAssing = true;
       }
     });*/
+  }
+
+  //Tabla de los bienes
+  rowsSelected(event: any) {
+    const mappedData: IbulkLoadGoods = {
+      noClasifGood: event.data.CLASIFICADOR,
+      noGoodFather: this.pGoodFatherNumber,
+      quantity: event.data.CANTIDAD,
+      description: event.data.DESCRIPCION,
+      unit: event.data.UNIDAD ?? null,
+      type: event.data.TIPO ?? null,
+      material: event.data.MATERIAL ?? null,
+      edoPhisical: event.data.EDOFISICO ?? null,
+      idGood: 5015409,
+    };
+
+    this.good = mappedData;
+    //console.log((JSON.stringify(event.data)));
+    //console.log("------------");
+    //console.log((JSON.stringify(mappedData)));
+    //console.log(this.good);
+  }
+
+  postDatatableItemBtn() {
+    if (!this.good) {
+      this.alert('error', 'No se tiene bienes a ingresar S', '');
+    } else {
+      this.goodProcessService.postGoodMasiveForm(this.good).subscribe(
+        async res => {
+          //console.log("res -> " + JSON.stringify(res));
+          const message = res['message'][0];
+          this.alert('success', 'Guardado', message);
+        },
+        err => {
+          this.alert('error', 'Error', err);
+        }
+      );
+    }
   }
 }

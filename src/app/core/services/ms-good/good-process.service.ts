@@ -169,4 +169,8 @@ export class GoodProcessService extends HttpService {
   }): Observable<IListResponse<any>> {
     return this.post('application/getExistsGoodxStatus', body);
   }
+
+  postGoodMasiveForm(body: any): Observable<IListResponse<any>> {
+    return this.post('application/get-conv-good-children', body);
+  }
 }

@@ -654,3 +654,15 @@ export interface IGoodAttribGoodBad {
   id: string | number;
   motive: string;
 }
+
+export interface IbulkLoadGoods {
+  noClasifGood: number;
+  noGoodFather: number;
+  quantity: number;
+  description: string;
+  unit?: string;
+  type?: string;
+  material?: string;
+  edoPhisical?: string;
+  idGood: number;
+}
