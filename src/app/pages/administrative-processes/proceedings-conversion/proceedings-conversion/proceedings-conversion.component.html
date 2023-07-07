@@ -429,7 +429,7 @@
                                   id="bienes"
                                   [attr.class]="'table-bordered my-table'"
                                   [settings]="settings"
-                                  [source]="dataTableGood"
+                                  [source]="dataTableGood_"
                                   (userRowSelect)="selectData($event)">
                                 </ng2-smart-table>
                                 <app-pagination
@@ -468,7 +468,7 @@
                                 <ng2-smart-table
                                   [attr.class]="'table-bordered my-table'"
                                   [settings]="settings2"
-                                  [source]="rececption">
+                                  [source]="dataRecepcion">
                                 </ng2-smart-table>
                                 <app-pagination
                                   [totalItems]="totalItems2"></app-pagination>

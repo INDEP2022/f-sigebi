@@ -6,7 +6,7 @@ import { RequestHelperService } from 'src/app/pages/request/request-helper-servi
 @Component({
   selector: 'app-open-description',
   templateUrl: './open-description.component.html',
-  styles: [],
+  styleUrls: ['./open-description.component.css'],
 })
 export class OpenDescriptionComponent implements OnInit {
   parameter: any = {};
@@ -17,9 +17,12 @@ export class OpenDescriptionComponent implements OnInit {
     private requestHelperService: RequestHelperService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.parameter);
+  }
 
   download() {
+    debugger;
     this.wcontentService.obtainFile(this.parameter.docName).subscribe({
       next: resp => {
         const base64 = resp;

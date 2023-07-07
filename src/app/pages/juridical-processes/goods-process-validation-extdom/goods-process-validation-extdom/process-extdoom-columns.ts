@@ -1,3 +1,5 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+
 export const COLUMNS_GOODS_LIST_EXTDOM = {
   goodId: { title: 'No. Bien' },
   description: { title: 'Descripción' },
@@ -5,4 +7,16 @@ export const COLUMNS_GOODS_LIST_EXTDOM = {
   quantity: { title: 'Cantidad' },
   status: { title: 'Estatus' },
   extDomProcess: { title: 'Proceso' },
+  selection: {
+    title: '',
+    sort: false,
+    type: 'custom',
+    showAlways: true,
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+  },
 };

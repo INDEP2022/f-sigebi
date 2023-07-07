@@ -266,7 +266,7 @@
                 type="button"
                 class="btn btn-primary btn-sm active"
                 (click)="guardarSolicitud()"
-                [disabled]="!formaplicationData.valid"
+                [disabled]="!formaplicationData.invalid"
                 style="margin: 1vh">
                 Guardar
                 <i aria-hidden="true" class="fa fa-save"></i>
@@ -276,6 +276,12 @@
                 (click)="clean()"
                 style="margin: 1vh">
                 Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+              <button
+                class="btn btn-success btn-sm active"
+                style="margin: 1vh"
+                [disabled]="formaplicationData.valid">
+                Actualizar
               </button>
             </div>
           </div>

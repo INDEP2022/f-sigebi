@@ -1070,10 +1070,12 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     //Substring 2 FIRST LETTER STATUS
     let processStatus = this.selectedRow.processStatus.substring(0, 2);
     //console.log(processStatus);
+    this.loader.load = true;
     this.procedureManagementService
       .getManagamentArea({ 'filter.id': processStatus })
       .subscribe({
         next: (resp: any) => {
+          this.loader.load = false;
           //console.log(resp);
           if (resp) {
             if (resp.data[0].screenKey === 'FACTJURDICTAMASG') {
@@ -1145,6 +1147,9 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             }
           }
         },
+        error: () => {
+          this.loader.load = false;
+        },
       });
   }
 
@@ -1153,8 +1158,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
       this.selectedRow;
 
     if (processStatus !== 'FNI') {
+      this.loader.load = true;
       this.workService.getSatOfficeType(officeNumber).subscribe({
         next: (resp: any) => {
+          this.loader.load = false;
           if (resp.data) {
             //console.log(resp.data);
             this.P_SAT_TIPO_EXP = resp.data[0]?.satTypeProceedings || null;
@@ -1205,7 +1212,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             );
           }*/
         },
-        error: error => (this.loading = false),
+        error: error => {
+          this.loading = false;
+          this.loader.load = false;
+        },
       });
     } else {
       this.alert(
@@ -2273,6 +2283,14 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     //     //console.log(resp);
     //   }
     // })
+    if (!this.selectedRow?.proceedingsNumber) {
+      this.alert(
+        'error',
+        'Error',
+        'No existe un número de expediente asociado al trámite'
+      );
+      return;
+    }
     const $obs = this.workService.getViewAntecedente;
     const service = this.workService;
     const columns = WORK_ANTECEDENTES_COLUMNS;
@@ -2600,9 +2618,10 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         P_DEF_WHERE: 'WHERE ', //||:T_WHERE);
       };
       const report = 'RGESTBUZONTRAMITE';
+      console.log('RGESTBUZONTRAMITE No disponible');
       this.alertInfo(
         'warning',
-        'RGESTBUZONTRAMITE No disponible',
+        'Atención',
         'Reporte no disponible en este momento'
       );
       //console.log(report);
