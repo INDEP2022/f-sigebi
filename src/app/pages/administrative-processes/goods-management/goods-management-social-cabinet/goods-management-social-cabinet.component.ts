@@ -107,7 +107,7 @@ export class GoodsManagementSocialCabinetComponent
   }
 
   ngAfterViewInit() {
-    this.desactivateTabs();
+    // this.desactivateTabs();
   }
 
   private desactivateTabs() {
@@ -203,25 +203,25 @@ export class GoodsManagementSocialCabinetComponent
 
   private activateTabs() {
     this.sinAsignarCant = this.getSinAsignarCant();
-    if (this.sinAsignarCant > 0) {
-      this.staticTabs.tabs[0].disabled = false;
-    }
+    // if (this.sinAsignarCant > 0) {
+    //   this.staticTabs.tabs[0].disabled = false;
+    // }
     this.susceptibleCant = this.getSusceptible();
-    if (this.susceptibleCant > 0) {
-      this.staticTabs.tabs[1].disabled = false;
-    }
+    // if (this.susceptibleCant > 0) {
+    //   this.staticTabs.tabs[1].disabled = false;
+    // }
     this.asignadoCant = this.getAsignado();
-    if (this.asignadoCant > 0) {
-      this.staticTabs.tabs[2].disabled = false;
-    }
+    // if (this.asignadoCant > 0) {
+    //   this.staticTabs.tabs[2].disabled = false;
+    // }
     this.entregadoCant = this.getEntregado();
-    if (this.entregadoCant > 0) {
-      this.staticTabs.tabs[3].disabled = false;
-    }
+    // if (this.entregadoCant > 0) {
+    //   this.staticTabs.tabs[3].disabled = false;
+    // }
     this.liberadoCant = this.getLiberado();
-    if (this.liberadoCant > 0) {
-      this.staticTabs.tabs[4].disabled = false;
-    }
+    // if (this.liberadoCant > 0) {
+    //   this.staticTabs.tabs[4].disabled = false;
+    // }
   }
 
   private async getData() {
@@ -261,9 +261,7 @@ export class GoodsManagementSocialCabinetComponent
       });
       this.goodsManagementService.data = response.data;
       this.activateTabs();
-      setTimeout(() => {
-        this.goodsManagementService.refreshTable.next(true);
-      }, 500);
+      this.goodsManagementService.refreshTable.next(true);
     }
     this.pageLoading = false;
   }
