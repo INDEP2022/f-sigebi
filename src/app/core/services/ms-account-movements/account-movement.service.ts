@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import {
@@ -64,6 +65,7 @@ export class AccountMovementService extends HttpService {
       params
     );
   }
+
   getAccountById(numberAccount: number | string) {
     return this.get<IListResponse<any>>(
       `aplication/get-search-deposit/${numberAccount}`
@@ -112,6 +114,16 @@ export class AccountMovementService extends HttpService {
       'aplication/movementAccountXBankAccount',
       params
     );
+  }
+
+  getAccountMovements(
+    params: ListParams
+  ): Observable<IListResponse<IAccountMovement>> {
+    return this.get<IListResponse<any>>('account-movements', params);
+  }
+
+  postMassNumeraryGenerate(body: any) {
+    return this.post('aplication/massNumeraryGenerate', body);
   }
 }
 
