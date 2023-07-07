@@ -64,4 +64,8 @@ export class ScreenStatusService extends HttpService {
       params
     );
   }
+
+  postPermissionByScreenAndUser(body: { screen: string; user: string }) {
+    return this.post(this.endpoint.PermissionsByScreenAndUser, body);
+  }
 }

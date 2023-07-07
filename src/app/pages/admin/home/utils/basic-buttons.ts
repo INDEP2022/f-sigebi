@@ -320,4 +320,11 @@ export const BASIC_BUTTONS = [
             <i class="fa fa-filter" aria-hidden="true"></i>
           </button>`,
   },
+  {
+    name: 'Regresar',
+    code: `<button class="btn btn-primary active btn-sm m-2">
+          Siguiente
+          <i class="fas fa-arrow-circle-right"></i>
+        </button>`,
+  },
 ];

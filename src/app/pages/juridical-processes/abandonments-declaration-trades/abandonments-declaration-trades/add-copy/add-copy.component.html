@@ -54,6 +54,7 @@
                 label="Nombre Persona">
                 <input
                   type="text"
+                  maxlength="1500"
                   class="form-control"
                   formControlName="personaExt_I"
                   [readonly]="!(form.get('typePerson_I').value === 'E')" />
@@ -69,16 +70,26 @@
       <div class="m-3">
         <button
           type="button"
+          class="btn btn-info btn-sm active ml-2 mr-2"
+          [disabled]="!form.valid"
+          (click)="agregarExterno()">
+          Agregar <i class="bx bx-plus bx-sm float-icon"></i>
+        </button>
+        <!-- <button
+          type="button"
           class="btn btn-info active"
           [disabled]="!form.valid"
           (click)="agregarExterno()">
           Agregar
-        </button>
+        </button> -->
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button class="btn btn-danger btn-sm active mr-3" (click)="close()">
           Cancelar
         </button>
+        <!-- <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button> -->
       </div>
     </div>
   </div>

@@ -11,9 +11,13 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
       {{ loading ? loadingText : text }}
       <i *ngIf="icon && !loading" aria-hidden="true" [class]="icon"></i
       ><i
-        *ngIf="!loading && text == 'Guardar'"
+        *ngIf="!loading && text.toLowerCase() == 'guardar'"
         aria-hidden="true"
-        class="fa fa-save"></i>
+        class="fa fa-save"></i
+      ><i
+        *ngIf="!loading && text.toLowerCase() == 'siguiente'"
+        aria-hidden="true"
+        class="fas fa-arrow-circle-right"></i>
       <img
         *ngIf="loading"
         src="assets/images/loader-button.gif"
@@ -51,7 +55,7 @@ export class ConfirmButtonComponent implements OnInit {
     if (this.btnSmall) {
       return `btn ${this.className} btn-sm active`;
     } else {
-      return `btn ${this.className} btn-sm active`;
+      return `btn ${this.className} active`;
     }
   }
 }
