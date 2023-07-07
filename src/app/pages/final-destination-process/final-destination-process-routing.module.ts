@@ -64,7 +64,7 @@ const routes: Routes = [
       ),
     data: {
       title: 'Programación de Entregas',
-      screen: 'FINDICA_0035V',
+      screen: 'FINDICA_0035_1',
     },
   },
   {
