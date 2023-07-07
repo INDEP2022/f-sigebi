@@ -15,6 +15,7 @@ import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
 import { RequestHelperService } from '../../../request-helper-services/request-helper.service';
 import { OpenDescriptionComponent } from './open-description/open-description.component';
 
@@ -144,12 +145,12 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   confirm() {
     let request = this.request;
     if (!request.regionalDelegationId) {
-      this.onLoadToast('error', '', 'No cuenta con una Delegación Regional');
+      this.onLoadToast('error', 'No cuenta con una Delegación Regional', '');
     } else if (!request.transferenceId) {
-      this.onLoadToast('error', '', 'No cuenta con una transferente');
+      this.onLoadToast('error', 'No cuenta con una transferente', '');
     }
     this.alertQuestion(
-      'warning',
+      'question',
       'Generar Carátula',
       '¿Está seguro de querer generar la carátula?'
     ).then(val => {
@@ -238,24 +239,36 @@ export class AssociateFileComponent extends BasePage implements OnInit {
             form,
             file
           );
+          this.loader.load = false;
           if (contentResult) {
-            const reporteName = contentResult.dDocName;
-            console.log(reporteName);
+            Swal.fire({
+              title: 'Carátula generada correctamente',
+              text: '',
+              icon: 'success',
+              showCancelButton: false,
+              confirmButtonColor: '#AD4766',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Aceptar',
+            }).then(result => {
+              if (result.isConfirmed) {
+                const reporteName = contentResult.dDocName;
+                console.log(reporteName);
 
-            const autoridad: any = this.authService.decodeToken();
-            const parameters = {
-              idExpedient: expedient.id,
-              expedientDate: this.setDate(
-                this.associateFileForm.controls['expedientDate'].value
-              ),
-              usrCreation: autoridad.username,
-              dateCreation: this.setDate(new Date()),
-              docName: reporteName,
-            };
-            this.loader.load = false;
-            this.openModal(OpenDescriptionComponent, parameters);
-            this.close();
-            this.onLoadToast('success', 'Carátula generada correctamente', '');
+                const autoridad: any = this.authService.decodeToken();
+                const parameters = {
+                  idExpedient: expedient.id,
+                  expedientDate: this.setDate(
+                    this.associateFileForm.controls['expedientDate'].value
+                  ),
+                  usrCreation: autoridad.username,
+                  dateCreation: this.setDate(new Date()),
+                  docName: reporteName,
+                };
+
+                this.openModal(OpenDescriptionComponent, parameters);
+                this.close();
+              }
+            });
           }
         }
       } else {
@@ -555,7 +568,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
           //if(next) this.getExample();
         },
       },
-      class: 'modal-sm modal-dialog-centered',
+      class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(component, config);
@@ -567,5 +580,21 @@ export class AssociateFileComponent extends BasePage implements OnInit {
 
   getUnit(event: any) {
     this.DscUnidad = event.DscUnidad;
+  }
+
+  confirmationModal() {
+    Swal.fire({
+      title: 'Carátula generada correctamente',
+      text: '',
+      icon: 'success',
+      showCancelButton: false,
+      confirmButtonColor: '#AD4766',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
+      }
+    });
   }
 }

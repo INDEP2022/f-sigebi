@@ -78,10 +78,12 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
       },
 
       edit: {
-        editButtonContent: '<i class="fa fa-eye text-primary mx-2" > Ver</i>',
+        editButtonContent:
+          '<i class="fa fa-eye tooltip="Ver" containerClass="tooltip-style" text-primary mx-2" ></i>',
       },
       delete: {
-        deleteButtonContent: '<i class="fa fa-image text-info mx-2"> Subir</i>',
+        deleteButtonContent:
+          '<i class="fa fa-upload tooltip="Subir" containerClass="tooltip-style" text-info mx-2"></i>',
       },
 
       selectMode: '',
