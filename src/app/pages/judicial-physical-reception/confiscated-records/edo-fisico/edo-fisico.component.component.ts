@@ -46,7 +46,7 @@ export class EdoFisicoComponent extends BasePage implements OnInit {
         },
       },
       estadoFisico: {
-        title: 'Edo.Fisico',
+        title: 'Estado Físico',
         type: 'custom',
         sort: false,
         valuePrepareFunction: (cell: any, row: any) => {
