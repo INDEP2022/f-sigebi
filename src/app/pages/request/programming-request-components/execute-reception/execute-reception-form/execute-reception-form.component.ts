@@ -2011,6 +2011,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         if (data) {
           this.getReceipts();
           this.getInfoGoodsProgramming();
+          this.goodsReception.clear();
         }
       },
     };

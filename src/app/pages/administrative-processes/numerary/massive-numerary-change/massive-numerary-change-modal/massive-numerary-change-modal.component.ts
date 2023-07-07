@@ -254,7 +254,6 @@ export class MassiveNumeraryChangeModalComponent
   vNoMovimiento: any;
 
   async onClickGenerateNumerareis(): Promise<void> {
-    debugger;
     const dataTableGoods: IMassiveNumeraryGood[] = this.dataTableGoods;
     if (dataTableGoods.length > 0) {
       if (this.chkMovBan) {

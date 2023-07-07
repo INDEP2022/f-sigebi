@@ -12,6 +12,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
+import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -39,6 +40,8 @@ export class GoodsProcessValidationExtdomComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  goodDataSelected: IGood | any[];
+  freeLabel: string = 'X';
   // TABLA DATA
   tableSettings = {
     ...this.settings,
@@ -47,7 +50,7 @@ export class GoodsProcessValidationExtdomComponent
   dataTableParams = new BehaviorSubject<ListParams>(new ListParams());
   loadingGoods: boolean = false;
   totalGoods: number = 0;
-  goodData: IGood;
+  goodData: IGood | any[];
   tableSettings2 = {
     ...this.settings,
   };
@@ -55,7 +58,7 @@ export class GoodsProcessValidationExtdomComponent
   dataTableParams2 = new BehaviorSubject<ListParams>(new ListParams());
   loadingGoods2: boolean = false;
   totalGoods2: number = 0;
-  goodData2: IGood;
+  goodData2: IGood | any[];
 
   tableSettingsHistorico = {
     actions: {
@@ -124,23 +127,36 @@ export class GoodsProcessValidationExtdomComponent
     super();
     this.tableSettings = {
       ...this.settings,
+      actions: {
+        columnTitle: '',
+        add: false,
+        edit: false,
+        delete: false,
+      },
       columns: COLUMNS_GOODS_LIST_EXTDOM,
     };
     this.tableSettings2 = {
+      actions: {
+        columnTitle: '',
+        add: false,
+        edit: false,
+        delete: false,
+      },
       ...this.settings,
       columns: COLUMNS_GOODS_LIST_EXTDOM,
     };
   }
 
   ngOnInit(): void {
+    this.prepareForm();
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe((params: any) => {
         this.origin = params['origin'] ?? null;
         this.P_NO_TRAMITE = params['P_NO_TRAMITE'] ?? null;
         this.P_GEST_OK = params['P_GEST_OK'] ?? null;
+        this.initForm();
       });
-    this.prepareForm();
   }
 
   private prepareForm() {
@@ -243,9 +259,63 @@ export class GoodsProcessValidationExtdomComponent
 
   initForm() {
     if (this.P_GEST_OK == 1) {
-      // GESTION TRAMITE UPDATE
-      // CONDICION DE VOLANTE O EXPEDIENTE
+      // const params = new FilterParams();
+      // params.removeAllFilters();
+      // params.addFilter('id', this.P_NO_TRAMITE);
+      // params.addFilter('status', 'AMI');
+      this.svGoodsProcessValidationExtdomService
+        .getProcedureManagementById(this.P_NO_TRAMITE)
+        .subscribe({
+          next: data => {
+            console.log('GESTION TRAMITE DATA ', data);
+            if (data.status == 'AMI') {
+              // GESTION TRAMITE UPDATE
+              let body: Partial<IProceduremanagement> = {
+                id: this.P_NO_TRAMITE,
+                status: 'AMP',
+              };
+              this.svGoodsProcessValidationExtdomService
+                .updateProcedureManagement(this.P_NO_TRAMITE, body)
+                .subscribe({
+                  next: data => {
+                    console.log('UPDATE GESTION TRAMITE DATA ', data);
+                  },
+                  error: error => {
+                    console.log(error);
+                    this.loading = false;
+                  },
+                });
+            }
+          },
+          error: error => {
+            console.log(error);
+            if (error.status >= 500) {
+              this.alert('error', 'Error', 'Error al búscar el trámite');
+            } else {
+              this.alert('warning', 'No se encontró el trámite', '');
+            }
+          },
+        });
     }
+  }
+
+  getProcedureManagement() {
+    this.svGoodsProcessValidationExtdomService
+      .getProcedureManagementById(this.P_NO_TRAMITE)
+      .subscribe({
+        next: data => {
+          console.log('GESTION TRAMITE DATA ', data);
+          // CONDICION DE VOLANTE O EXPEDIENTE
+        },
+        error: error => {
+          console.log(error);
+          if (error.status >= 500) {
+            this.alert('error', 'Error', 'Error al búscar el trámite');
+          } else {
+            this.alert('warning', 'No se encontró el trámite', '');
+          }
+        },
+      });
   }
 
   cleanDataform() {
@@ -342,14 +412,21 @@ export class GoodsProcessValidationExtdomComponent
           this.loadingGoods = false;
           console.log('GOODS', res);
           this.totalGoods = res.count;
-          this.dataTable.load(res.data);
+          let data = res.data.map((i: any) => {
+            i['disponible'] = this.freeLabel;
+            i['ch_selec'] = 0;
+            return i;
+          });
+          this.dataTable.load(data);
           this.dataTable.refresh();
+          this.goodData = data;
         },
         error: error => {
           this.loadingGoods = false;
           console.log(error);
           this.dataTable.load([]);
           this.dataTable.refresh();
+          this.goodData = [];
         },
       });
   }
@@ -376,12 +453,14 @@ export class GoodsProcessValidationExtdomComponent
           this.totalGoods2 = res.count;
           this.dataTable2.load(res.data);
           this.dataTable2.refresh();
+          this.goodData2 = res.data;
         },
         error: error => {
           this.loadingGoods2 = false;
           console.log(error);
           this.dataTable2.load([]);
           this.dataTable2.refresh();
+          this.goodData = [];
         },
       });
   }
@@ -408,7 +487,11 @@ export class GoodsProcessValidationExtdomComponent
   }
 
   addSelectedGoods() {
-    console.log('this.selectedGooods', this.selectedGooods);
+    console.log(
+      'this.selectedGooods',
+      this.selectedGooods,
+      this.goodDataSelected
+    );
     if (this.selectedGooods.length > 0) {
       this.selectedGooods.forEach((good: any) => {
         if (!this.goodsValid.some(v => v === good)) {

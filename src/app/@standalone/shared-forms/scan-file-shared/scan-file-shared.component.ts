@@ -363,26 +363,30 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
 
   //ESCANEAR
   scan() {
-    if (
-      !['CERRADO', 'CERRADA'].includes(this.statusProceeding) &&
-      this.statusProceeding != null
-    ) {
-      if (this.form.get(this.formControlName).value != null) {
-        this.alertQuestion(
-          'question',
-          'Se abrirá la pantalla de escaneo para el folio de escaneo del acta abierta',
-          '¿Deseas continuar?',
-          'Continuar'
-        ).then(q => {
-          if (q.isConfirmed) {
-            this.goToScan();
-          }
-        });
+    if (this.form.get(this.formControlName).value != null) {
+      if (
+        !['CERRADO', 'CERRADA'].includes(this.statusProceeding) &&
+        this.statusProceeding != null
+      ) {
+        if (this.form.get(this.formControlName).value != null) {
+          this.alertQuestion(
+            'question',
+            'Se abrirá la pantalla de escaneo para el folio de escaneo del acta abierta',
+            '¿Deseas continuar?',
+            'Continuar'
+          ).then(q => {
+            if (q.isConfirmed) {
+              this.goToScan();
+            }
+          });
+        } else {
+          this.alert('warning', 'No existe folio de escaneo a escanear', '');
+        }
       } else {
-        this.alert('warning', 'No existe folio de escaneo a escanear', '');
+        this.alert('warning', 'No se puede escanear un acta cerrada', '');
       }
     } else {
-      this.alert('warning', 'No se puede escanear un acta cerrada', '');
+      this.alert('warning', 'No se ha registrado un folio que escanear', '');
     }
   }
 

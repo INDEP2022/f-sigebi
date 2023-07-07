@@ -320,7 +320,7 @@
       <div class="d-flex justify-content-end">
         <div class="p-2">
           <button class="btn btn-primary btn-sm active" (click)="save()">
-            Guardar
+            Guardar <i aria-hidden="true" class="fa fa-save"></i>
           </button>
         </div>
       </div>
@@ -426,7 +426,7 @@
             <span class="fs-4">{{ goodData?.uniqueKey }}</span>
           </div>
           <div class="col-md-6">
-            <label>Volumen (m3): </label>
+            <label>Volumen &#40;m&#179;&#41;: </label>
             <span class="fs-4">{{ goodData?.volume }}</span>
           </div>
         </div>
@@ -583,7 +583,7 @@
             <span class="fs-4">{{ goodData?.fileNumber }}</span>
           </div>
           <div class="col-md-6">
-            <label>Capacidad (lts)</label>
+            <label>Capacidad &#41;lts&#41;</label>
             <span class="fs-4">{{ goodData?.capacity }}</span>
           </div>
         </div>
@@ -644,7 +644,7 @@
           <div class="col-md-6">
             <label>Fecha ingreso: </label>
             <span class="fs-4">
-              {{ goodData?.admissionDate | date : 'dd/MM/yyyy' }}
+              {{ goodData?.admissionDate | date: 'dd/MM/yyyy' }}
             </span>
           </div>
           <div class="col-md-6">

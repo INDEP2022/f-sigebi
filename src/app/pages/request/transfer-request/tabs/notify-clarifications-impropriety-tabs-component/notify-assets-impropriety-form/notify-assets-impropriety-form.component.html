@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ title }} hola</h5>
+    <h5 class="modal-title">{{ title }}</h5>
   </div>
   <div body class="body">
     <form [formGroup]="clarificationForm" class="form-material">
@@ -180,11 +180,15 @@
           [disabled]="clarificationForm.invalid"
           [text]="'Continuar'"
           [loading]="loading"
+          [btnSmall]="true"
           (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>
