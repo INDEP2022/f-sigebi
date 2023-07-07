@@ -1,18 +1,34 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, OnDestroy } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  OnDestroy,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { AES, enc } from 'crypto-js';
+import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, filter, Subject, takeUntil, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  filter,
+  firstValueFrom,
+  Subject,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { LoadingPercentService } from 'src/app/common/services/loading-percent.service';
 import { LoadingService } from 'src/app/common/services/loading.service';
 import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { SweetAlertIcon } from 'sweetalert2';
 import { ClassWidthAlert } from './alert-class';
 
@@ -71,21 +87,26 @@ const TABLE_SETTINGS: TableSettings = {
 @Component({
   template: '',
 })
-export abstract class BasePage extends ClassWidthAlert implements OnDestroy {
+export abstract class BasePage
+  extends ClassWidthAlert
+  implements OnDestroy, AfterViewInit
+{
   loading: boolean = false;
   $unSubscribe = new Subject<void>();
   minMode: BsDatepickerViewMode = 'day';
   bsConfig?: Partial<BsDatepickerConfig>;
   settings = { ...TABLE_SETTINGS };
+  @ViewChildren(Ng2SmartTableComponent)
+  _tables: QueryList<Ng2SmartTableComponent>;
   private readonly key = 'Pru3b4Cr1pt0S1G3B1';
   private _showHide = inject(showHideErrorInterceptorService);
   private _activatedRoute = inject(ActivatedRoute);
   private _router = inject(Router);
   private _screenCode = inject(ScreenCodeService);
-
   protected loader = inject(LoadingService);
   protected loaderProgress = inject(LoadingPercentService);
   protected _toastrService = inject(ToastrService);
+  private _store = inject(GlobalVarsService);
   constructor() {
     super();
     this.bsConfig = {
@@ -105,6 +126,32 @@ export abstract class BasePage extends ClassWidthAlert implements OnDestroy {
         })
       )
       .subscribe();
+  }
+  ngAfterViewInit(): void {
+    this._tables.forEach(table => {
+      table.userRowSelect.subscribe(async row => {
+        if (!row) {
+          return;
+        }
+        const { isSelected, data } = row;
+
+        const global = await this._getGlobalVars();
+        let G_REGISTRO_BITACORA = null;
+        if (isSelected) {
+          G_REGISTRO_BITACORA = data?.registerNumber ?? null;
+          return;
+        }
+        this._store.updateGlobalVars({
+          ...global,
+          G_REGISTRO_BITACORA,
+        });
+        console.log('Actualizo var');
+      });
+    });
+  }
+
+  private _getGlobalVars() {
+    return firstValueFrom(this._store.getGlobalVars$());
   }
 
   protected onLoadToast(icon: SweetAlertIcon, title: string, text?: string) {
