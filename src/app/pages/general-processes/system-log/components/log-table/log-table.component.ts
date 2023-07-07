@@ -44,6 +44,7 @@ export class LogTableComponent extends BasePage implements OnInit, OnChanges {
     if (changes['registerNum']) {
       console.log(this.registerNum);
       if (this.registerNum != null) {
+        console.log('Paso la valdiacion');
         const params = new FilterParams();
         this.params.next(params);
       } else {
@@ -51,9 +52,15 @@ export class LogTableComponent extends BasePage implements OnInit, OnChanges {
         this.totalItems = 0;
       }
     }
+
+    console.log(
+      'La lista con los elementos al final del metodo ngOnChanges: ',
+      this.binnacles
+    );
   }
 
   getBinnacleData(params: FilterParams) {
+    console.log('Prams aqui los valores: ', params);
     this.hideError();
     this.loading = true;
     return this.seraLogService
@@ -73,7 +80,9 @@ export class LogTableComponent extends BasePage implements OnInit, OnChanges {
         tap(response => {
           this.loading = false;
           this.binnacles = response.data;
+          console.log('La lista con los elementos: ', this.binnacles);
           this.totalItems = response.count;
+          console.log('La lista con los elementos: ', this.totalItems);
         })
       );
   }

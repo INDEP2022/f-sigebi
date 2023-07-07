@@ -14,6 +14,7 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { Registers } from 'src/app/core/models/ms-audit/registers.model';
 import { ITableField } from 'src/app/core/models/ms-audit/table-field.model';
 import { ITableLog } from 'src/app/core/models/ms-audit/table-log.model';
 import { SeraLogService } from 'src/app/core/services/ms-audit/sera-log.service';
@@ -32,10 +33,13 @@ import { TABLE_LOGS_COLUMNS } from '../utils/table-logs-columns';
   styles: [],
 })
 export class SystemLogComponent extends BasePage implements OnInit {
+  paramsTemporal: FilterParams = new FilterParams();
+  globalVars: any;
+  registers: Registers;
   params = new BehaviorSubject(new FilterParams());
   dynamicParams = new BehaviorSubject(new FilterParams());
   rowSelected: ITableLog = null;
-  tableLogs: ITableLog[] = [];
+  tableLogs: any[] = [];
   dynamicRegisters: any[] = [];
   totalLogs = 0;
   totalDynamic = 0;
@@ -77,11 +81,14 @@ export class SystemLogComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
         this.origin = params['screen'];
+        console.log('Esta es la clave de la pantalla: ', this.origin);
       });
+
+    this.registers = new Registers();
+    this.paramsTemporal = new FilterParams();
   }
 
-  ngOnInit(): void {
-    console.log(this.origin);
+  ngOnInit() {
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -114,6 +121,8 @@ export class SystemLogComponent extends BasePage implements OnInit {
         this.loading = false;
         this.tableLogs = response.data;
         this.totalLogs = response.count;
+        this.onSelectTable(this.tableLogs[0]);
+        this.getDynamicRegistersInit().subscribe();
       })
     );
   }
@@ -182,7 +191,31 @@ export class SystemLogComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'error',
               'Error',
-              'Ocurrio un error al obtener la informac'
+              'Ocurrio un error al obtener la informacion'
+            );
+          }
+          return throwError(() => error);
+        }),
+        tap(response => {
+          this.dynamicLoading = false;
+          this.dynamicRegisters = response.data;
+          this.totalDynamic = response.count;
+        })
+      );
+  }
+
+  getDynamicRegistersInit() {
+    this.registers.table = this.tableLogs[0].table;
+    return this.seraLogService
+      .getDynamicTables(this.paramsTemporal.getParams(), this.registers)
+      .pipe(
+        catchError(error => {
+          this.dynamicLoading = false;
+          if (error.status >= 500) {
+            this.onLoadToast(
+              'error',
+              'Error',
+              'Ocurrio un error al obtener la informacion'
             );
           }
           return throwError(() => error);
