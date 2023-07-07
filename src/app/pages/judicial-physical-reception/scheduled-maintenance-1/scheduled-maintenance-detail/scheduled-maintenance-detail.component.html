@@ -95,16 +95,12 @@
   <app-card [header]="true">
     <div class="ch-content" header>
       <h5 class="title">Bienes</h5>
-      <div class="buttons mt-2" style="column-gap: 10px">
+      <!-- <div class="buttons mt-2" style="column-gap: 10px">
         <app-columns-select
           *ngIf="data && data.length > 0"
           [(settings)]="settingsGoods"
           [defaultColumns]="6"></app-columns-select>
-        <app-excel-button
-          [form]="form"
-          [loading]="loading"
-          [goodsCant]="data.length"></app-excel-button>
-      </div>
+      </div> -->
     </div>
     <div body>
       <div class="row">
@@ -126,6 +122,10 @@
             [disabled]="true"
             [data]="data"
             [origin]="origin"></app-goodtracker-button>
+          <app-excel-button
+            [form]="form"
+            [loading]="loading"
+            [goodsCant]="data.length"></app-excel-button>
         </div>
         <div class="col-md-6 massiveDelete mt-4 mb-2">
           <app-massive-delete-button
@@ -140,6 +140,10 @@
             [selecteds]="selecteds"
             (finishDelete)="getData($event)">
           </app-massive-delete-button>
+          <app-columns-select
+            *ngIf="data && data.length > 0"
+            [(settings)]="settingsGoods"
+            [defaultColumns]="6"></app-columns-select>
         </div>
       </div>
       <!-- <div class="row" *ngIf="loadingRastrerGoods" style="margin-bottom: 5rem">
