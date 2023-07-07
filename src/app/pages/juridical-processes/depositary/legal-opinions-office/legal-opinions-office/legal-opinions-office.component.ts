@@ -225,6 +225,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.settings3 = {
       ...this.settings,
       actions: {
+        columnTitle: 'Acciones',
+        position: 'right',
         edit: false,
         add: false,
         delete: true,

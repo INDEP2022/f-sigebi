@@ -147,6 +147,7 @@ export enum ENDPOINT_LINKS {
   DocumentSeparators = 'documents/document-separator',
   DocumentsType = 'documents-types',
   DinamicTables = 'dynamiccatalog/api/v1/dinamic-tables',
+  DinamicTablesCurrent = 'tval-table-5',
   DinamicTablesType = 'dynamiccatalog/api/v1/dinamic-tables/get-tables-by-type-of-tdesccve',
   DinamicTablesName = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable1-by-name',
   DinamicTablesTable = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable5-by-table',

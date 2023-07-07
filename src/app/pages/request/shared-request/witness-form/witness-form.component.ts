@@ -47,7 +47,7 @@ export class WitnessFormComponent extends BasePage implements OnInit {
 
   confirm() {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Estás seguro que desea crear un nuevo testigo?'
     ).then(question => {
@@ -61,16 +61,13 @@ export class WitnessFormComponent extends BasePage implements OnInit {
           .createReceiptWitness(this.witnessForm.value)
           .subscribe({
             next: response => {
-              this.alertInfo(
+              this.alert(
                 'success',
                 'Registro Guardado',
                 'Testigo creado correctamente'
-              ).then(question => {
-                if (question.isConfirmed) {
-                  this.modalRef.content.callback(true);
-                  this.close();
-                }
-              });
+              );
+              this.modalRef.content.callback(true);
+              this.close();
             },
             error: error => {},
           });

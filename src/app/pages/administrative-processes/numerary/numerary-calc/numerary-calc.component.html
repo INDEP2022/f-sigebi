@@ -120,10 +120,15 @@
               <i class="fas fa-edit bx-sm float-icon"></i>
             </button>
             <button
+              [disabled]="disableButton"
               type="button"
               class="btn btn-sm btn-primary active m-3"
               (click)="calculInteres()">
               {{ textButton }}
+              <i
+                *ngIf="textButton.includes('Elimina')"
+                class="fa fa-trash"
+                aria-hidden="true"></i>
             </button>
             <button
               type="button"

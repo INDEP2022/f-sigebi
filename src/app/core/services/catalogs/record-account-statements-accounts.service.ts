@@ -35,7 +35,6 @@ export class RecordAccountStatementsAccountsService
   ): Observable<IRecordAccountStatements> {
     const route = `${this.route}?filter.cveBank=$eq:${bankCode}`;
     return this.get(route, params);
-    // return this.recordAccountStatementsServiceRepository.getById02(route, params); //Usando este repositorio, me encadena para usar el microservicio de 'catalog'
   }
 
   getDataAccount(
@@ -62,10 +61,8 @@ export class RecordAccountStatementsAccountsService
     model: IRecordAccountStatements
   ): Observable<IRecordAccountStatements> {
     console.log('Creado', model);
-    return this.post(this.route, model);
+    const route = `${this.route2}`;
+    console.log('route', route);
+    return this.post(route, model);
   }
 }
-//http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/bank-account?filter.cveBank=$eq:SANTAND
-//http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/account-movements?filter.numberAccount=$eq:17448178
-//http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/aplication/get-factas-status-cta/4
-//http://sigebimsqa.indep.gob.mx/accountmvmnt/api/v1/aplication/get-facta-db-status-cta

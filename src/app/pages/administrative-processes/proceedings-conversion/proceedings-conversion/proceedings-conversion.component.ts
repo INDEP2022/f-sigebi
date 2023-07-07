@@ -43,6 +43,7 @@ import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.ser
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { GoodsJobManagementService } from 'src/app/core/services/ms-office-management/goods-job-management.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
@@ -186,13 +187,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   loadingGoods = false;
   select: any;
   initialdisabled = false;
-  goods: IGood[] = [];
+  goods: any[] = [];
   expedient: IExpedient;
   columnFilters: any = [];
   isAllDisabled = false;
   cveActa: string = '';
   fileNumber: number = 0;
-  rececption: any;
+  rececption: any[] = [];
   conversion: number = 0;
   datos: any[] = [];
   goodFatherNumber: string | number = 0;
@@ -264,6 +265,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   witnessOic: string = '';
   acordionDetail: boolean = false;
   dataTableGood: LocalDataSource = new LocalDataSource();
+  dataRecepcion: any[] = [];
+  dataTableGood_: any[] = [];
+
   constructor(
     private authService: AuthService,
     protected flyerService: FlyersService,
@@ -291,7 +295,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     private changeDetectorRef: ChangeDetectorRef,
     private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
     private screenStatusService: ScreenStatusService,
-    private GoodprocessService_: GoodprocessService
+    private GoodprocessService_: GoodprocessService,
+    private proceedingsService: ProceedingsService
   ) {
     super();
     this.procs = new LocalDataSource();
@@ -682,13 +687,15 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             pNumberGood: item.id,
           };
           const di_dispo = await this.getStatusScreen(obj);
-          console.log('di_dispo', di_dispo);
+
+          const acta = await this.getActaGoodExp(item.id, item.fileNumber);
+          console.log('acta', acta);
           item['di_disponible'] = di_dispo;
         });
 
         Promise.all(result).then(item => {
-          this.dataTableGood.load(this.bienes);
-          this.dataTableGood.refresh();
+          this.dataTableGood_ = this.bienes;
+          // this.dataTableGood.refresh();
           // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
           this.totalItems = data.count;
           console.log(this.bienes);
@@ -697,6 +704,20 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       error: error => {
         this.loading = false;
       },
+    });
+  }
+
+  async getActaGoodExp(good: any, exp: any) {
+    return new Promise((resolve, reject) => {
+      this.proceedingsService.getGetFactDbConvBien(good, exp).subscribe({
+        next: async (state: any) => {
+          console.log('di_dispo', state);
+          resolve(state.data);
+        },
+        error: () => {
+          resolve('N');
+        },
+      });
     });
   }
 
@@ -1505,19 +1526,49 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         );
         return;
       } else {
-        if (this.statusConv == 'CERRADA') {
-        }
+        // if (this.statusConv == 'CERRADA') {
+        //   this.alert(
+        //     'warning',
+        //     'El acta ya esta cerrada, no puede realizar modificaciones a esta',
+        //     ''
+        //   );
+        //   return
+        // } else {
+
+        console.log('aaa', this.goods);
         this.selectedGooods.forEach((good: any) => {
-          console.log('GOOD', good);
-          if (good.di_disponible == 'N') {
-            this.onLoadToast('warning', `${good.id} `);
-            return;
+          if (good.di_acta != null) {
+            this.alert(
+              'warning',
+              `Ese bien ya se encuentra en la acta ${good.di_acta}`,
+              'Debe capturar un acta.'
+            );
+            // } else if (good.di_disponible == 'N') {
+            //   this.onLoadToast('warning', `El bien ${good.id} tiene un estatus inválido para ser asignado a alguna acta`);
+            //   return;
+          } else {
+            console.log('GOOD', good);
+
+            if (!this.dataRecepcion.some((v: any) => v === good)) {
+              let indexGood = this.dataTableGood_.findIndex(
+                _good => _good.id == good.id
+              );
+              console.log('indexGood', indexGood);
+              // if (indexGood != -1) {
+              this.dataTableGood_[indexGood].di_disponible = 'N';
+              // }
+
+              // this.dataTableGood_ = this.bienes;
+              this.dataRecepcion.push(good);
+              this.dataRecepcion = [...this.dataRecepcion];
+
+              // this.dataRecepcion
+            }
           }
-          // if (!this.goodsValid.some((v: any) => v === good)) {
-          //   // let indexGood = this.goods.findIndex(_good => _good.id == good.id);
-          // }
         });
       }
+
+      // }
     } else {
       this.alert('warning', 'Seleccione primero el bien a asignar.', '');
     }

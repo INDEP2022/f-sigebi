@@ -723,9 +723,9 @@ export class RegistrationOfRequestsComponent
       console.log('No Soy destino documental');
       this.msgSaveModal(
         'Aceptar',
+        '',
         'Asegúrese de haber guardado la información antes de turnar la solicitud',
-        'Confirmación',
-        undefined,
+        'question',
         this.typeDocument
       );
     }
