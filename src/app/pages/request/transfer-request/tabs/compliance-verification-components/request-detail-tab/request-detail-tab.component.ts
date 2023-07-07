@@ -106,7 +106,8 @@ export class RequestDetailTabComponent
     }
   }
 
-  ngAfterViewInit() {
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     //this.formLoading = false;
   }
 
