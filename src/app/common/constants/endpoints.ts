@@ -156,6 +156,7 @@ export enum ENDPOINT_LINKS {
   DinamicTable1 = 'dynamiccatalog/api/v1/dinamic-tables',
   Table1 = 'dynamiccatalog/tval-table-1',
   tavaltable1 = 'dynamiccatalog/api/v1/tval-table-1',
+  tavaltables1 = 'dynamiccatalog/tval-table-1',
   Currency = 'dinamic-tables/get-reg-monedas',
   AffairType = 'affair-type',
   FinancialInformation = 'parameterfinantial/financial-information',
