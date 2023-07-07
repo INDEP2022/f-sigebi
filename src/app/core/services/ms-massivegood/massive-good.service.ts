@@ -10,6 +10,7 @@ import { IPackageInfo } from '../../models/catalogs/package.model';
 import {
   IIdentifierCount,
   IMassiveGoodTracker,
+  IPupValidMassive,
 } from '../../models/ms-massivegood/massive-good-goods-tracker.model';
 import { IMassiveGood } from '../../models/ms-massivegood/massivegood.model';
 
@@ -143,5 +144,18 @@ export class MassiveGoodService extends HttpService {
       responseType: 'arraybuffer',
     };
     return this.post(this.route.GetFProRecPag2CSV, formData, params);
+  }
+
+  postPupCargaCsv(
+    file: File,
+    vc_pantalla: string
+  ): Observable<{
+    bienes: IPupValidMassive[];
+    errores: string[];
+  }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('vc_pantalla', vc_pantalla);
+    return this.post(this.route.PupCargaCsv, formData);
   }
 }

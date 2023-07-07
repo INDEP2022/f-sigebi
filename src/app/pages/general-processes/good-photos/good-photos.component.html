@@ -22,18 +22,18 @@
             <input
               class="form-control"
               formControlName="noBien"
-              [disabled]="origin > 0"
+              [readonly]="origin !== null"
               maxlength="10" />
           </form-field>
           <button
-            [disabled]="loading || form.invalid || origin > 0"
+            [disabled]="loading || form.invalid || origin !== null"
             class="btn btn-primary btn-sm active"
             type="button"
             (click)="searchGood()">
             Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
           <button
-            [disabled]="loading || origin > 0"
+            [disabled]="loading || origin !== null"
             class="btn btn-danger btn-sm active"
             type="button"
             (click)="clear()">
@@ -41,7 +41,7 @@
           </button>
           <button
             class="btn btn-primary active btn-sm"
-            *ngIf="origin > 0"
+            *ngIf="origin !== null"
             (click)="goBack()">
             Regresar
             <i class="fas fa-arrow-circle-left"></i>

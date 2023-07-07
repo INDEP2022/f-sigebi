@@ -119,40 +119,32 @@ export class RegistrationHelper extends BasePage {
     //Todo: verificar y obtener documentos de la solicitud
     if (request.recordId === null) {
       //Verifica si hay expediente
-      this.message(
-        'error',
-        'Error sin expediente',
-        'La solicitud no tiene expediente asociado'
-      );
+      this.message('error', 'La solicitud no tiene expediente asociado', '');
       validoOk = false;
     } else if (!lisDocument || lisDocument < 1) {
-      this.message(
-        'error',
-        'Error sin archivos',
-        'Se debe asociar un archivo a la solicitud'
-      );
+      this.message('error', 'Se debe asociar un archivo a la solicitud', '');
       validoOk = false;
     } else if (urgentPriority === 'Y' && priorityDate === null) {
       //TODO: Si lista de documentos es < 1 -> Se debe asociar un archivo a la solicitud
       this.message(
         'error',
-        'Error',
-        'Se marco la solicitud como urgente, se debe tener una fecha prioridad'
+        'Error se marco la solicitud como urgente, se debe tener una fecha prioridad',
+        ''
       );
       validoOk = false;
     } else if (idTrandference === 1) {
       if (paperNumber === '' || paperDate == null) {
         this.message(
           'error',
-          'Error',
-          'Para la transferente FGR los campos de No. Oficio y Fecha de Oficio no deben de ser nulos'
+          'Error para la transferente FGR/PGR los campos de No. Oficio y Fecha de Oficio no deben de ser nulos',
+          ''
         );
         validoOk = false;
       } else if (circumstantialRecord === '' && previousInquiry === '') {
         this.message(
           'error',
-          'Error',
-          'Para la transferente FGR se debe tener al menos Acta Circunstancial o Averiguación Previa'
+          'Error para la transferente FGR/PGR se debe tener al menos Acta Circunstancial o Averiguación Previa',
+          ''
         );
       } else {
         validoOk = true;
@@ -161,14 +153,14 @@ export class RegistrationHelper extends BasePage {
       if (paperNumber === '' || paperDate == null) {
         this.message(
           'error',
-          'Error',
-          'Para la transferente PJF los campos de No. Oficio y Fecha de Oficio no deben de ser nulos'
+          'Error para la transferente PJF los campos de No. Oficio y Fecha de Oficio no deben de ser nulos',
+          ''
         );
       } else if (lawsuit === '' && protectNumber === '' && tocaPenal === '') {
         this.message(
           'error',
-          'Error',
-          'Para la trasnferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal'
+          'Error para la trasnferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal',
+          ''
         );
       } else {
         validoOk = true;
@@ -186,8 +178,8 @@ export class RegistrationHelper extends BasePage {
       ) {
         this.message(
           'error',
-          'Error',
-          'Para la transferente SAT los campos Expediente Transferente, Tipo Expediente, No. Oficio y Fecha Oficio no pueden ser nulos'
+          'Error  para la transferente SAT los campos Expediente Transferente, Tipo Expediente, No. Oficio y Fecha Oficio no pueden ser nulos',
+          ''
         );
       } else {
         validoOk = true;
@@ -202,8 +194,8 @@ export class RegistrationHelper extends BasePage {
       if (paperNumber === '' || paperDate == null) {
         this.message(
           'error',
-          'Error',
-          'Para transferentes no obligadas los campos No. Oficio y Fecha Oficio no deben de ser nulos'
+          'Error para transferentes no obligadas los campos No. Oficio y Fecha Oficio no deben de ser nulos',
+          ''
         );
       } else {
         validoOk = true;
@@ -222,8 +214,8 @@ export class RegistrationHelper extends BasePage {
       if (goods.count < 1) {
         this.message(
           'error',
-          'Error en los bienes',
-          'La solicitud no cuenta con bienes a transferir'
+          'Error la solicitud no cuenta con bienes a transferir',
+          ''
         );
       } else {
         //validar bienes

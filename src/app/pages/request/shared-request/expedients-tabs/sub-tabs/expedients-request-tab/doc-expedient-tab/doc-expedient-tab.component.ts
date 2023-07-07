@@ -92,12 +92,11 @@ export class DocExpedientTabComponent extends BasePage implements OnInit {
       },
 
       edit: {
-        editButtonContent:
-          '<i class="fa fa-file text-primary mx-2"> Detalle</i>',
+        editButtonContent: '<i class="fa fa-file text-primary mx-2"></i>',
       },
 
       delete: {
-        deleteButtonContent: '<i class="fa fa-eye text-info mx-2"> Ver</i>',
+        deleteButtonContent: '<i class="fa fa-eye text-info mx-2"></i>',
       },
       columns: DOC_EXPEDIENT_COLUMNS,
     };
