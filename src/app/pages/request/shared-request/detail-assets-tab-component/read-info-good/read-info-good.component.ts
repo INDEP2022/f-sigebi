@@ -463,9 +463,9 @@ export class ReadInfoGoodComponent
 
   save() {
     Swal.fire({
-      title: 'Actualizando',
-      text: '¿Está seguro que desea actualizar la información del bien?',
-      icon: 'question',
+      title: '¿Está seguro que desea actualizar la información del bien?',
+      text: '',
+      icon: null,
       showCancelButton: true,
       confirmButtonColor: '#9d2449',
       cancelButtonColor: '#a78457',
@@ -490,11 +490,7 @@ export class ReadInfoGoodComponent
 
             this.dataToSend.id = resp.id;
             this.saveDetailInfo.emit(this.dataToSend);
-            this.onLoadToast(
-              'success',
-              'Actualizado',
-              'Formulario actualizado'
-            );
+            this.onLoadToast('success', 'Formulario actualizado', '');
           },
           error: error => {
             console.log(

@@ -51,7 +51,8 @@ export class RecordAccountStatementsComponent
   selectedDateBalanceOf: Date;
   selectedDateBalanceAt: Date;
   balanceDateAccount: IDateAccountBalance;
-  balance: number;
+  current: string;
+  balance: string;
   accountDate: number;
 
   variableOf: Date;
@@ -95,6 +96,7 @@ export class RecordAccountStatementsComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
+          console.log('Hola');
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
@@ -165,6 +167,7 @@ export class RecordAccountStatementsComponent
     this.form.get('branch').reset();
     this.form.get('currency').reset();
     this.form.get('description').reset();
+    this.totalItems = 0;
     this.cleandInfoDate();
     this.bankAccountSelect = new DefaultSelect();
     this.dataAccount = new LocalDataSource();
@@ -202,6 +205,7 @@ export class RecordAccountStatementsComponent
     this.form.get('branch').reset();
     this.form.get('currency').reset();
     this.form.get('description').reset();
+    this.totalItems = 0;
     this.cleandInfoDate();
     this.dataAccount = new LocalDataSource();
     const accountNumber = value.accountNumber;
@@ -209,10 +213,11 @@ export class RecordAccountStatementsComponent
     this.searchDataAccount(accountNumber);
 
     // Obtener los valores correspondientes de la cuenta seleccionada
-    const square = value?.square ?? 'Sin datos';
-    const branch = value?.branch ?? 'Sin datos';
-    const accountType = value?.accountType ?? 'Sin datos';
-    let currency = value?.cveCurrency ?? 'Sin datos';
+    const square = value?.square;
+    const branch = value?.branch;
+    const accountType = value?.accountType;
+    let currency = value.cveCurrency;
+    this.current = currency;
     this.searchCurrent(currency);
 
     // Quitar las comillas simples del valor de currency, si existen
@@ -233,10 +238,10 @@ export class RecordAccountStatementsComponent
         this.form.get('description').setValue(currentAccount);
         this.loading = false;
       },
-      error: (err: any) => {
-        this.loading = false;
-        this.alert('warning', 'No existen monedas', ``);
-      },
+      // error: (err: any) => {
+      //   this.loading = false;
+      //   this.alert('warning', 'No existen monedas', ``);
+      // },
     });
   }
 
@@ -253,7 +258,7 @@ export class RecordAccountStatementsComponent
       .getAccountBalanceDate(model)
       .subscribe({
         next: response => {
-          this.balance = response.result;
+          this.balance = response.result + ' ' + this.current;
         },
         error: error => {
           this.alert('warning', 'Error', 'No se puede generar el saldo');
@@ -322,11 +327,13 @@ export class RecordAccountStatementsComponent
 
   cleandInfoAll() {
     this.form.reset();
+    this.totalItems = 0;
     this.searchBanks();
     this.balance = null;
   }
 
   cleandInfo() {
+    this.totalItems = 0;
     this.form.reset();
     this.searchBanks();
   }
