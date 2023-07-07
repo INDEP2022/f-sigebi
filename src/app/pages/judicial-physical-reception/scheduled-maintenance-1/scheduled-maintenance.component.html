@@ -17,7 +17,7 @@
             [control]="form.get('tipoEvento')"
             label="Tipos de evento">
             <ng-select class="form-control" formControlName="tipoEvento">
-              <ng-option [value]="'TODOS'">TODOS</ng-option>
+              <!-- <ng-option [value]="'TODOS'">TODOS</ng-option> -->
               <ng-option
                 *ngFor="let event of typeEvents"
                 [value]="event.tipo_acta">
@@ -230,6 +230,7 @@
           Eliminar <i class="fa fa-trash" aria-hidden="true"></i>
         </button>
         <app-columns-select
+          [leftList]="true"
           [(settings)]="settings1"
           [defaultColumns]="5"></app-columns-select>
       </div>
