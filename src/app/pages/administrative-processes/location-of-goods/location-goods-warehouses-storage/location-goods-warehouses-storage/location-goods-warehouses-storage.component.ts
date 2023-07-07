@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
+import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -29,12 +31,15 @@ export class LocationGoodsWarehousesStorageComponent
   formVault: FormGroup;
   typeLocation: string = '';
   good: IGood;
+  goods: IGood[] = [];
   newWarehouse: number = 0;
+  fileNum: number = 0;
   disableConsultLocation: boolean = false;
+  params = new BehaviorSubject<ListParams>(new ListParams());
   warehouseDisable: boolean = true;
   vaultDisable: boolean = true;
   nullDisable: boolean = true;
-
+  di_desc_est: string = '';
   paramsScreen: IParamsUbicationGood = {
     PAR_MASIVO: '',
     origin: '',
@@ -84,6 +89,7 @@ export class LocationGoodsWarehousesStorageComponent
     private modalService: BsModalService,
     private readonly goodServices: GoodService,
     private serviceGood: GoodService,
+    private dictationServ: DictationService,
     private token: AuthService,
     private warehouseService: WarehouseService,
     private safeService: SafeService,
@@ -209,6 +215,7 @@ export class LocationGoodsWarehousesStorageComponent
           this.loadDescriptionWarehouse(this.good.storeNumber);
           this.loadDescriptionVault(this.good.vaultNumber);
           this.setGood(this.good);
+          this.onLoadGoodList();
           this.radio.enable();
           this.currentLocationWare.disable();
           this.currentDescriptionWare.disable();
@@ -280,36 +287,6 @@ export class LocationGoodsWarehousesStorageComponent
     this.typeLocation = event;
   }
 
-  // changeLocation() {
-  //   console.log(this.good);
-  //   if (this.validarGood()) return;
-  //   console.log('nuevo -->', this.good);
-  //   let body: IGoodUpdateWarehouse = {
-  //     goodClassNumber: this.good.goodClassNumber,
-  //     id: this.good.id,
-  //     storeNumber: this.formWarehouse.get('warehouse').value
-  //   }
-  //   this.goodServices.update(body).subscribe({
-  //     next: response => {
-  //       console.log(response);
-  //       this.alert(
-  //         'success',
-  //         'Exitoso',
-  //         'Se ha cambiado la ubicacion del bien'
-  //       );
-  //       this.loadGood();
-  //     },
-  //     error: err => {
-  //       console.log(err);
-  //       this.alert(
-  //         'error',
-  //         'ERROR',
-  //         'Ha ocurrido un error al cambiar la ubicacion del bien'
-  //       );
-  //     },
-  //   });
-  // }
-
   changeLocation() {
     const data = {
       id: this.good.id,
@@ -368,9 +345,14 @@ export class LocationGoodsWarehousesStorageComponent
   validarGood(): boolean {
     if (this.radio.value === 'A') {
       if (Number(this.good.type) === 5 && Number(this.good.subTypeId) === 16) {
+        this.warehouseDisable = false;
+        this.vaultDisable = false;
         this.alert('error', 'ERROR', 'El bien no puede estar en un almacen');
         return true;
+      } else if (Number(this.good.type) === 7) {
+        this.vaultDisable = false;
       } else {
+        this.warehouseDisable = false;
         this.good.storeNumber = this.warehouse.value;
         this.good.ubicationType = 'A';
         this.good.dateIn = new Date();
@@ -386,6 +368,7 @@ export class LocationGoodsWarehousesStorageComponent
         this.good.dateIn = new Date();
       }
     }
+
     return false;
   }
   validLocationsConsult(warehouse: IWarehouse) {
@@ -398,8 +381,41 @@ export class LocationGoodsWarehousesStorageComponent
     good.vaultNumber === null ? (this.vaultDisable = false) : '';
   }
 
-  apagaAlmacenes() {
-    this.mostrarAlmacen = false;
+  onLoadGoodList() {
+    this.loading = true;
+    let noExpediente = this.good.fileNumber || '';
+    this.params.getValue().page = 1;
+    this.params.getValue().limit = 10;
+    if (noExpediente !== '') {
+      this.goodServices
+        .getByExpedient(noExpediente, this.params.getValue())
+        .subscribe({
+          next: response => {
+            const data = response.data;
+            this.loading = false;
+            console.log(data);
+            this.goods = data;
+            data.map(async (good: any, index) => {
+              if (index == 0) this.di_desc_est = good.estatus.descriptionStatus;
+              good.di_disponible = 'S';
+              this.di_desc_est = good.di_disponible;
+              await new Promise((resolve, reject) => {
+                const body = {
+                  no_bien: good.id,
+                  estatus: good.status,
+                  identificador: good.identifier,
+                  vc_pantalla: 'FACTADBUBICABIEN',
+                  proceso_ext_dom: good.extDomProcess ?? '',
+                };
+                resolve(body);
+              });
+            });
+          },
+          error: err => {
+            console.log(err);
+          },
+        });
+    }
   }
 }
 
