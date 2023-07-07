@@ -1,4 +1,6 @@
+import { takeUntil } from 'rxjs';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+
 
 export const PERMISSIONSUSER_COLUMNS = {
   value: {
@@ -16,14 +18,36 @@ export const PERMISSIONSUSER_COLUMNS = {
     title: 'Nombre',
     sort: false,
   },
-  s: {
+  S: {
     title: 'S',
     sort: false,
+    type: 'html',
+    renderComponent: CheckboxElementComponent,
+    valuePrepareFunction: (isSelected: any, row: any) => {
+      return row.abbreviation == 'S' ? true : false;
+    },
+    
   },
-  n: {
+  N: {
     title: 'N',
     sort: false,
+    type: 'custom',
+    renderComponent:CheckboxElementComponent,
+    valuePrepareFunction: (isSelected: any, row: any) => {
+      return row.abbreviation == 'N' ? true : false;
+    },
+    
   },
+  null:{
+    title: '',
+    sort: false,
+    type: 'custom',
+    renderComponent:CheckboxElementComponent,
+    valuePrepareFunction: (isSelected: any, row: any) => {
+      return row.abbreviation == null ? true : false;
+    },
+    
+  }
 };
 export const PRIVILEGESUSER_COLUMNS = {
   proy: {
@@ -54,7 +78,7 @@ export const PRIVILEGESUSER_COLUMNS = {
       instance.toggle.subscribe((data: any) => {
         data.row.val = data.toggle;
       });
-    },
+    }
   },
   aut: {
     title: 'AUT.',
@@ -102,3 +126,4 @@ export const PRIVILEGESUSER_COLUMNS = {
     },
   },
 };
+
