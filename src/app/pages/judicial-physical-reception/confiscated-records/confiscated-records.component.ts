@@ -467,7 +467,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     });
     this.openModalSelect(
       {
-        title: 'Listado de bienes con información requerida nula',
+        title: 'Listado de Bienes con información requerida nula',
         columnsType: {
           id: {
             title: 'No. Bien',
@@ -1264,8 +1264,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             this.render.addClass(btn, 'enabled');
             this.alert(
               'warning',
-              'No hay bienes para este expediente',
-              'No existen bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
+              'No hay Bienes para este expediente',
+              'No existen Bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
             );
             this.blockExpedient = false;
           }
@@ -1276,8 +1276,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             this.render.addClass(btn, 'enabled');
             this.alert(
               'warning',
-              'No hay bienes para este expediente',
-              'No existen bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
+              'No hay Bienes para este expediente',
+              'No existen Bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
             );
           }
           this.blockExpedient = false;
@@ -1600,8 +1600,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               this.render.addClass(btn, 'enabled');
               this.alert(
                 'warning',
-                'No hay bienes para este expediente',
-                'No existen bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
+                'No hay Bienes para este expediente',
+                'No existen Bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
               );
               this.blockExpedient = false;
             }
@@ -1612,8 +1612,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               this.render.addClass(btn, 'enabled');
               this.alert(
                 'warning',
-                'No hay bienes para este expediente',
-                'No existen bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
+                'No hay Bienes para este expediente',
+                'No existen Bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
               );
             }
             this.blockExpedient = false;
@@ -2367,8 +2367,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               if (this.goodData.length <= 0) {
                 this.alert(
                   'warning',
-                  'No hay bienes registrados',
-                  'Necesita registrar bienes en el acta para crearla'
+                  'No hay Bienes registrados',
+                  'Necesita registrar Bienes en el acta para crearla'
                 );
               } else {
                 const paramsF = new FilterParams();
@@ -2461,8 +2461,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         if (this.goodData.length <= 0) {
           this.alert(
             'warning',
-            'No hay bienes registrados',
-            'Necesita registrar bienes en el acta para crearla'
+            'No hay Bienes registrados',
+            'Necesita registrar Bienes en el acta para crearla'
           );
         } else {
           const paramsF = new FilterParams();
@@ -2662,7 +2662,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
-        'No se registraron bienes',
+        'No se registraron Bienes',
         'El Acta no contiene Bienes, no se podrá Cerrar.'
       );
       this.loading = false;
@@ -2679,12 +2679,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       this.loading = false;
       this.alert(
         'warning',
-        'Hay bienes con estado físico requerido sin establecer',
+        'Hay Bienes con estado físico requerido sin establecer',
         ''
       );
     } else if (this.dataGoodAct['data'].find((e: any) => e.received != 'S')) {
       this.loading = false;
-      this.alert('warning', 'Hay bienes no marcados como recibido', '');
+      this.alert('warning', 'Hay Bienes no marcados como recibido', '');
     } else if (validate) {
       this.loading = false;
       this.alert(
@@ -2716,7 +2716,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               this.alert(
                 'warning',
                 'Bienes sin información requerida',
-                'Se encontraron bienes sin información requerida para este proceso'
+                'Se encontraron Bienes sin información requerida para este proceso'
               );
               localStorage.setItem('numberExpedient', this.numberExpedient);
               this.getNulls();
@@ -2937,7 +2937,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
-        'No se registraron bienes',
+        'No se registraron Bienes',
         'El Acta no contiene Bienes, no se podrá Cerrar.'
       );
     } else {
@@ -2950,27 +2950,27 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         ) {
           this.alert(
             'warning',
-            'Hay bienes con estado físico requerido sin establecer',
+            'Hay Bienes con estado físico requerido sin establecer',
             ''
           );
         } else if (
           this.dataGoodAct['data'].find((e: any) => e.received != 'S')
         ) {
-          this.alert('warning', 'Hay bienes no marcados como recibido', '');
+          this.alert('warning', 'Hay Bienes no marcados como recibido', '');
         } else if (
           this.dataGoodAct['data'].find(
             (e: any) => e.good.storeNumber == null
           ) &&
           this.isAlmacen
         ) {
-          this.alert('warning', 'Hay bienes no guardados en almacén', '');
+          this.alert('warning', 'Hay Bienes no guardados en almacén', '');
         } else if (
           this.dataGoodAct['data'].find(
             (e: any) => e.good.vaultNumber == null
           ) &&
           this.isBoveda
         ) {
-          this.alert('warning', 'Hay bienes no guardados en Bóveda', '');
+          this.alert('warning', 'Hay Bienes no guardados en Bóveda', '');
         } else {
           const paramsF = new FilterParams();
           paramsF.addFilter('numberProceedings', this.idProceeding);
@@ -3078,7 +3078,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   ) {
                     this.alert(
                       'warning',
-                      'Hay bienes con estado físico requerido sin establecer',
+                      'Hay Bienes con estado físico requerido sin establecer',
                       ''
                     );
                   } else if (
@@ -3086,7 +3086,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   ) {
                     this.alert(
                       'warning',
-                      'Hay bienes no marcados como recibido',
+                      'Hay Bienes no marcados como recibido',
                       ''
                     );
                   } else if (
@@ -3096,7 +3096,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   ) {
                     this.alert(
                       'warning',
-                      'Hay bienes no guardados en almacén',
+                      'Hay Bienes no guardados en almacén',
                       ''
                     );
                   } else if (
@@ -3107,7 +3107,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   ) {
                     this.alert(
                       'warning',
-                      'Hay bienes no guardados en Bóveda',
+                      'Hay Bienes no guardados en Bóveda',
                       ''
                     );
                   } else {
@@ -3141,7 +3141,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                 this.alert(
                                   'warning',
                                   'Bienes sin informacion requerida',
-                                  'Se encontraron bienes sin información requerida para este proceso'
+                                  'Se encontraron Bienes sin información requerida para este proceso'
                                 );
                               } else {
                                 const modelEdit: IProccedingsDeliveryReception =
@@ -3719,14 +3719,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Estatus no disponible',
-          'El bien tiene un estatus inválido para ser asignado a alguna acta'
+          'El Bien tiene un estatus inválido para ser asignado a alguna acta'
         );
       } else if (!this.act2Valid) {
         //Valida si hay clave de acta y es válida
         this.alert(
           'warning',
           'Error en el número de acta',
-          'Debe registrar un Acta antes de poder mover el bien'
+          'Debe registrar un Acta antes de poder mover el Bien'
         );
       }
       //Valida si el acta es diferente de RT
@@ -3735,13 +3735,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           this.alert(
             'warning',
             'Problema con el tipo de acta',
-            'Para este bien la Clave de Acta debe iniciar con " N "'
+            'Para este Bien la Clave de Acta debe iniciar con " N "'
           );
         } else if ([1424, 1426, 1590].includes(goodClass) && admin != 'CCB') {
           this.alert(
             'warning',
             'Problema con quien administra en la clave',
-            'En la parte de Quien Administra en la clave de acta debe ser para este bien " CCB "'
+            'En la parte de Quien Administra en la clave de acta debe ser para este Bien " CCB "'
           );
         } else if (
           goodClass != 1424 &&
@@ -3752,7 +3752,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
           this.alert(
             'warning',
             'Problema con el tipo de acta',
-            'Las actas con esta nomenclatura solo deben contener bienes de numerario efectivo'
+            'Las actas con esta nomenclatura solo deben contener Bienes de numerario efectivo'
           );
         } else {
           const newParams = `filter.numClasifGoods=$eq:${goodClass}`;
@@ -3770,7 +3770,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               if (admin === 'DEABI' && no_type != 6) {
                 this.alert(
                   'warning',
-                  'Error en el tipo de bien',
+                  'Error en el tipo de Bien',
                   'Bien con tipo inválido para el acta (INMUEBLE)'
                 );
               } else if (
@@ -3797,7 +3797,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 this.alert(
                   'warning',
                   'Falta fecha de elaboración',
-                  'Necesita registrar el dato de fecha de elaboración para agregar un bien al acta'
+                  'Necesita registrar el dato de fecha de elaboración para agregar un Bien al acta'
                 );
               } else if (
                 this.form.get('fecElab').value != null &&
@@ -3849,7 +3849,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                       this.alert(
                         'warning',
                         'Bien no valido',
-                        'El bien no es válido para esta acta'
+                        'El Bien no es válido para esta acta'
                       );
                     } else {
                       if (this.selectData.avalaible) {
@@ -3905,15 +3905,15 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                     this.selectData = null;
                                     this.alert(
                                       'success',
-                                      'El bien fue agregado',
+                                      'El Bien fue agregado',
                                       ''
                                     );
                                   },
                                   err => {
                                     this.alert(
                                       'error',
-                                      'Ocurrió un error inesperado al intentar mover el bien',
-                                      'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
+                                      'Ocurrió un error inesperado al intentar mover el Bien',
+                                      'Ocurrió un error inesperado al intentar mover el Bien. Por favor intentelo nuevamente'
                                     );
                                   }
                                 );
@@ -3921,7 +3921,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                             err => {
                               this.alert(
                                 'warning',
-                                'Debe registrar un Acta antes de poder mover el bien',
+                                'Debe registrar un Acta antes de poder mover el Bien',
                                 ''
                               );
                             }
@@ -3958,7 +3958,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             if (admin === 'DEABI' && no_type != 6) {
               this.alert(
                 'warning',
-                'Error en el tipo de bien',
+                'Error en el tipo de Bien',
                 'Bien con tipo inválido para el acta (INMUEBLE)'
               );
             } else if (
@@ -3985,7 +3985,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               this.alert(
                 'warning',
                 'Falta fecha de elaboración',
-                'Necesita registrar el dato de fecha de elaboración para agregar un bien al acta'
+                'Necesita registrar el dato de fecha de elaboración para agregar un Bien al acta'
               );
             } else if (
               this.form.get('fecElab').value != null &&
@@ -4037,7 +4037,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                     this.alert(
                       'warning',
                       'Bien no valido',
-                      'El bien no es válido para esta acta'
+                      'El Bien no es válido para esta acta'
                     );
                   } else {
                     if (this.selectData.avalaible) {
@@ -4093,15 +4093,15 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                   this.selectData = null;
                                   this.alert(
                                     'success',
-                                    'El bien fue agregado',
+                                    'El Bien fue agregado',
                                     ''
                                   );
                                 },
                                 err => {
                                   this.alert(
                                     'error',
-                                    'Ocurrió un error inesperado al intentar mover el bien',
-                                    'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
+                                    'Ocurrió un error inesperado al intentar mover el Bien',
+                                    'Ocurrió un error inesperado al intentar mover el Bien. Por favor intentelo nuevamente'
                                   );
                                 }
                               );
@@ -4109,7 +4109,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                           err => {
                             this.alert(
                               'warning',
-                              'Debe registrar un Acta antes de poder mover el bien',
+                              'Debe registrar un Acta antes de poder mover el Bien',
                               ''
                             );
                           }
@@ -4132,8 +4132,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'No selecciono bien',
-        'Debe seleccionar un bien para agregar al acta'
+        'No selecciono Bien',
+        'Debe seleccionar un Bien para agregar al acta'
       );
     }
   }
@@ -4161,14 +4161,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       if (this.selectActData == null) {
         this.alert(
           'warning',
-          'No selecciono bien del acta',
-          'Debe seleccionar un bien que forme parte del acta primero'
+          'No selecciono Bien del acta',
+          'Debe seleccionar un Bien que forme parte del acta primero'
         );
       } else if (!this.act2Valid) {
         this.alert(
           'warning',
           'Problemas con el número de acta',
-          'Debe especificar/buscar el acta para después eliminar el bien de esta'
+          'Debe especificar/buscar el acta para después eliminar el Bien de esta'
         );
       } else {
         //REGISTRAR EN HISTORICO ANTES DE BORRAR
@@ -4280,7 +4280,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               }
             );
           }
-          this.alert('success', 'Se registró el almacén en los bienes', '');
+          this.alert('success', 'Se registró el almacén en los Bienes', '');
         } else {
           this.alert(
             'warning',
@@ -4447,8 +4447,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       if (this.dataGoodAct['data'].length === 0) {
         this.alert(
           'warning',
-          'No hay bienes en el acta',
-          'No tiene bienes para poder modificar el estado físico'
+          'No hay Bienes en el acta',
+          'No tiene Bienes para poder modificar el estado físico'
         );
       } else {
         console.log(this.dataGoodAct['data']);

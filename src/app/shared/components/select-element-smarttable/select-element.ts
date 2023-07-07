@@ -34,7 +34,6 @@ export class SelectElementComponent<T = any> implements OnInit {
 
   ngOnInit(): void {
     this.values.subscribe(data => {
-      console.log(data)
       this.data = data;
     });
   }

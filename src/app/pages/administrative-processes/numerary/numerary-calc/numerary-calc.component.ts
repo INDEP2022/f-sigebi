@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   ListParams,
@@ -13,6 +13,7 @@ import { ExcelService } from 'src/app/common/services/excel.service';
 import {
   IProccesNum,
   IRequesNumeraryCal,
+  IRequesNumeraryDet,
   IRequestNumeraryEnc,
 } from 'src/app/core/models/ms-numerary/numerary.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -106,6 +107,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   process: IProccesNum;
   valido: string = null;
   disableButton: boolean = false;
+  requestNumeDet: IRequesNumeraryDet;
   get userAuth() {
     return this.authService.decodeToken().preferred_username;
   }
@@ -148,9 +150,14 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getRequestNumeDet()); */
 
-    /* this.params2
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getRequestNumeCal()); */
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (this.requestNumeDet) {
+        this.getRequestNumeCal(
+          this.requestNumeDet.solnumId,
+          this.requestNumeDet.good.id
+        );
+      }
+    });
 
     this.processService.getProcess().subscribe(data => {
       this.form.reset();
@@ -636,6 +643,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
 
   onChangeTable2(event: any) {
     console.log(event);
+    this.requestNumeDet = event;
     this.getRequestNumeCal(event.solnumId, event.goodNumber);
   }
 

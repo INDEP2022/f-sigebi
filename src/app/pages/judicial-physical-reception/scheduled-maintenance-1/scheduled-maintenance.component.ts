@@ -46,6 +46,7 @@ export class ScheduledMaintenanceComponent
       'filtersActa',
       'paramsActaProgramaciones'
     );
+
     // debugger;
 
     this.settings1 = {

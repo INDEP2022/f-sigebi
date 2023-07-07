@@ -28,6 +28,7 @@ export class TvalTable1Service
   private readonly route3: string = ENDPOINT_LINKS.DinamicTablesFind;
   private readonly route4: string = ENDPOINT_LINKS.Table1;
   private readonly route5: string = ENDPOINT_LINKS.tavaltable1;
+  private readonly route6: string = ENDPOINT_LINKS.tavaltables1;
   constructor(
     private Tvaltablas1Repository: Repository<ITvaltable1>,
     private Tvaltabla1Repository: Repository<ITvaltables1>,
@@ -85,6 +86,10 @@ export class TvalTable1Service
     );
   }
 
+  createTvalTable1(model:ITvaltables1): Observable<ITvaltables1>{
+    return this.Tvaltabla1Repository.create(`${this.route6}`, model)
+  }
+
   update(id: string | number, model: ITvaltable1): Observable<Object> {
     return this.Tvaltablas1Repository.update2(
       `${this.route1}/tval-table1/typeTable`,
@@ -93,7 +98,7 @@ export class TvalTable1Service
     );
   }
 
-  updateTvalTable1(model: Partial<ITvaltables1>): Observable<Object> {
+  updateTvalTable1(model: Partial<ITvaltables1> | Partial<ITvaltable1>): Observable<Object> {
     return this.Tvaltablas1Repository.update3(`${this.route5}`, model);
   }
 }
