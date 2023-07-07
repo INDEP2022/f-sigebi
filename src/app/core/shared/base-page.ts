@@ -167,8 +167,7 @@ export abstract class BasePage
   private _getGlobalVars() {
     return firstValueFrom(this._store.getGlobalVars$());
   }
-
-  protected onLoadToast(icon: SweetAlertIcon, title: string, text?: string) {
+  protected toast(icon: SweetAlertIcon, title: string, text?: string) {
     const throwToast = {
       success: (title: string, text: string) =>
         this._toastrService.success(text, title),
@@ -182,6 +181,24 @@ export abstract class BasePage
         this._toastrService.info(text, title),
     };
     return throwToast[icon](title, text);
+  }
+
+  protected onLoadToast(icon: SweetAlertIcon, title: string, text?: string) {
+    this.alert(icon, title, text);
+    // ? Se ha reemplazado lost toast por sweet alert
+    // const throwToast = {
+    //   success: (title: string, text: string) =>
+    //     this._toastrService.success(text, title),
+    //   info: (title: string, text: string) =>
+    //     this._toastrService.info(text, title),
+    //   warning: (title: string, text: string) =>
+    //     this._toastrService.warning(text, title),
+    //   error: (title: string, text: string) =>
+    //     this._toastrService.error(text, title),
+    //   question: (title: string, text: string) =>
+    //     this._toastrService.info(text, title),
+    // };
+    // return throwToast[icon](title, text);
   }
 
   protected encodeData<T>(data: T) {
