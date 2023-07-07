@@ -190,8 +190,8 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
       Promise.all(typeDoc).then(info => {
         if (info.length == 0) {
           this.alertInfo(
-            'info',
-            'Información',
+            'warning',
+            'Atención',
             'No se encontraron documentos'
           ).then(question => {
             if (question.isConfirmed) {
