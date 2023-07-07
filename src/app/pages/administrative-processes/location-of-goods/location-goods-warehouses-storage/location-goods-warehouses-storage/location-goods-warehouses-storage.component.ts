@@ -352,43 +352,52 @@ export class LocationGoodsWarehousesStorageComponent
   }
 
   validarGood(): boolean {
-    if (this.radio.value === 'A') {
-      if (Number(this.good.type) === 5 && Number(this.good.subTypeId) === 16) {
-        this.warehouseDisable = true;
-        this.vaultDisable = true;
-        // this.good.ubicationType = 'A';
-        return true;
-      } else if (Number(this.good.type) === 7) {
-        // this.good.ubicationType = 'A';
-        this.vaultDisable = false;
-        this.formVault.disable();
+    if (this.di_desc_est === 'S') {
+      if (this.radio.value === 'A') {
+        if (
+          Number(this.good.type) === 5 &&
+          Number(this.good.subTypeId) === 16
+        ) {
+          this.warehouseDisable = true;
+          this.vaultDisable = true;
+          // this.good.ubicationType = 'A';
+          return true;
+        } else if (Number(this.good.type) === 7) {
+          // this.good.ubicationType = 'A';
+          this.vaultDisable = false;
+          this.formVault.disable();
+        } else {
+          this.warehouseDisable = false;
+          this.vaultDisable = false;
+          this.good.storeNumber = this.warehouse.value;
+          this.radio.setValue('A');
+          this.good.dateIn = new Date();
+        }
       } else {
-        this.warehouseDisable = false;
-        this.vaultDisable = false;
-        this.good.storeNumber = this.warehouse.value;
-        this.radio.setValue('A');
-        this.good.dateIn = new Date();
-      }
-    } else {
-      if (Number(this.good.type) === 5 && Number(this.good.subTypeId) === 16) {
-        this.warehouseDisable = true;
-        this.vaultDisable = true;
-        // this.good.ubicationType = 'B';
-        // this.good.vaultNumber = 9999;
-        // this.good.storeNumber = null;
-      } else if (Number(this.good.type) === 7) {
-        this.warehouseDisable = false;
-        this.formWarehouse.disable();
-        // this.good.ubicationType = 'B';
-      } else {
-        this.warehouseDisable = true;
-        this.vaultDisable = true;
-        this.good.vaultNumber = this.safe.value;
-        this.good.ubicationType = '';
-        this.good.dateIn = new Date();
-        this.radio.setValue('B');
+        if (
+          Number(this.good.type) === 5 &&
+          Number(this.good.subTypeId) === 16
+        ) {
+          this.warehouseDisable = true;
+          this.vaultDisable = true;
+          // this.good.ubicationType = 'B';
+          // this.good.vaultNumber = 9999;
+          // this.good.storeNumber = null;
+        } else if (Number(this.good.type) === 7) {
+          this.warehouseDisable = false;
+          this.formWarehouse.disable();
+          // this.good.ubicationType = 'B';
+        } else {
+          this.warehouseDisable = true;
+          this.vaultDisable = true;
+          this.good.vaultNumber = this.safe.value;
+          this.good.ubicationType = '';
+          this.good.dateIn = new Date();
+          this.radio.setValue('B');
+        }
       }
     }
+    this.di_desc_est = 'N';
     return false;
   }
   validLocationsConsult(warehouse: IWarehouse) {
@@ -431,10 +440,12 @@ export class LocationGoodsWarehousesStorageComponent
                 this.allGoods.load(response.data);
                 this.allGoods.refresh();
               });
-            });
+            }),
+              (this.di_desc_est = 'N');
           },
           error: err => {
             console.log(err);
+            this.di_desc_est = 'N';
           },
         });
     }

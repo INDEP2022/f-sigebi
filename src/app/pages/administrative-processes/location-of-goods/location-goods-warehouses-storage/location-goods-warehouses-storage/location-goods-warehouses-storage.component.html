@@ -82,14 +82,12 @@
                       </button>
                     </div>
                     <div class="m-3">
-                      <button
-                        class="btn btn-primary btn-sm active"
+                      <span
                         [ngStyle]="{
-                          'background-color':
-                            this.di_desc_est === 'S' ? 'green' : 'black'
-                        }">
-                        <i aria-hidden="true" class="fa fa-save"></i>
-                      </button>
+                          color: this.di_desc_est === 'S' ? 'green' : 'black'
+                        }"
+                        >{{ this.di_desc_est }}</span
+                      >
                     </div>
                   </div>
                 </div>
