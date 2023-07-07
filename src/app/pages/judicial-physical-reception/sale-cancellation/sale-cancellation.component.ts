@@ -317,6 +317,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       if (['CERRADA', 'CERRADO'].includes(res)) {
         this.labelActa = 'Abrir acta';
         this.btnCSSAct = 'btn-success';
+        this.inputCloseProceeding()
       } else {
         this.labelActa = 'Cerrar acta';
         this.btnCSSAct = 'btn-primary';
@@ -1117,14 +1118,14 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 console.log(res);
                 this.alert(
                   'success',
-                  'Se modificaron los datos del acta de manera éxitosa',
+                  'Se modificaron los datos del acta',
                   ''
                 );
               },
               err => {
                 this.alert(
                   'error',
-                  'Se presento un error inesperado',
+                  'Se presentó un error inesperado',
                   'No se puedo guardar el acta'
                 );
               }
@@ -1193,13 +1194,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               this.initialBool = true;
               this.idProceeding = JSON.parse(JSON.stringify(res)).id;
               this.form.get('statusProceeding').setValue('ABIERTA');
-              this.alert('success', 'Se guardo el acta de manera éxitosa', '');
+              this.alert('success', 'Se guardó el acta', '');
               console.log(res);
             },
             err => {
               this.alert(
                 'error',
-                'Se presento un error inesperado',
+                'Se presentó un error inesperado',
                 'No se puedo guardar el acta'
               );
             }
@@ -1430,8 +1431,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             } else {
               this.alert(
                 'warning',
-                'Sin bienes válidos',
-                'El número de expediente registrado no tiene bienes válidos'
+                'Sin Bienes válidos',
+                'El número de expediente registrado no tiene Bienes válidos'
               );
               this.blockExpedient = false;
               this.loading = false;
@@ -1444,8 +1445,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             this.blockAllInputs();
             this.alert(
               'warning',
-              'No hay bienes para este expediente',
-              'No existen bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
+              'No hay Bienes para este expediente',
+              'No existen Bienes en este expediente, por favor revisa que el número que hayas ingresado sea el correcto.'
             );
           },
         });
@@ -1640,6 +1641,17 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     this.noRequireAct();
   }
 
+  inputCloseProceeding() {
+    this.initialBool = false;
+    this.isEnableEntrega = false;
+    this.isEnableFecElabRecibo = false;
+    this.isEnableFecEntrBien = false;
+    this.isEnableFecElab = false;
+    this.isEnableObservaciones = false;
+    this.isEnableRecibe = false;
+    this.isEnableTestigo = false;
+  }
+
   inputsnewProceeding() {
     this.initialBool = false;
     this.isEnableEntrega = true;
@@ -1731,7 +1743,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                           this.alert(
                             'warning',
                             'Error al abrir acta',
-                            'El estatus de los bienes no regresaron a su estado anterior, por favor volver a intentar abrir el acta'
+                            'El estatus de los Bienes no regresaron a su estado anterior, por favor volver a intentar abrir el acta'
                           );
                           this.loading = false;
                         }
@@ -1740,7 +1752,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                         this.alert(
                           'warning',
                           'Hubo un error al abrir el acta',
-                          'Lo bienes no regresaron a su estado anterior'
+                          'Lo Bienes no regresaron a su estado anterior'
                         );
                         this.loading = false;
                       }
@@ -1768,7 +1780,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
-        'No se registraron bienes',
+        'No se registraron Bienes',
         'El Acta no contiene Bienes, no se podrá Cerrar.'
       );
       this.loading = false;
@@ -1779,18 +1791,18 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     ) {
       this.alert(
         'warning',
-        'Hay bienes con estado físico requerido sin establecer',
+        'Hay Bienes con estado físico requerido sin establecer',
         ''
       );
       this.loading = false;
     } else if (this.dataGoodAct['data'].find((e: any) => e.received != 'S')) {
-      this.alert('warning', 'Hay bienes no marcados como recibido', '');
+      this.alert('warning', 'Hay Bienes no marcados como recibido', '');
       this.loading = false;
     } else if (
       this.isAlmacen &&
       this.dataGoodAct['data'].find((e: any) => e.good.storeNumber == null)
     ) {
-      this.alert('warning', 'Hay bienes no guardados en almacén', '');
+      this.alert('warning', 'Hay Bienes no guardados en almacén', '');
       this.loading = false;
     } else if (this.form.get('folioEscaneo').value == null) {
       this.alert('warning', 'No se ha ingresado un número de folio', '');
@@ -1970,7 +1982,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     if (this.dataGoodAct['data'].length == 0) {
       this.alert(
         'warning',
-        'No se registraron bienes',
+        'No se registraron Bienes',
         'El Acta no contiene Bienes, no se podrá Cerrar.'
       );
     } else {
@@ -2072,7 +2084,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               if (this.selectData.quantity < 1) {
                 this.alert(
                   'warning',
-                  'El bien no tiene una cantidad válida',
+                  'El Bien no tiene una cantidad válida',
                   ''
                 );
               } else {
@@ -2140,8 +2152,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                         err => {
                           this.alert(
                             'error',
-                            'Ocurrió un error inesperado al intentar mover el bien',
-                            'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
+                            'Ocurrió un error inesperado al intentar mover el Bien',
+                            'Ocurrió un error inesperado al intentar mover el Bien. Por favor intentelo nuevamente'
                           );
                         }
                       );
@@ -2176,8 +2188,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                           err => {
                             this.alert(
                               'error',
-                              'Ocurrió un error inesperado al intentar mover el bien',
-                              'Ocurrió un error inesperado al intentar mover el bien. Por favor intentelo nuevamente'
+                              'Ocurrió un error inesperado al intentar mover el Bien',
+                              'Ocurrió un error inesperado al intentar mover el Bien. Por favor intentelo nuevamente'
                             );
                           }
                         );
@@ -2195,7 +2207,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             err => {
               this.alert(
                 'warning',
-                'Debe registrar un Acta antes de poder mover el bien',
+                'Debe registrar un Acta antes de poder mover el Bien',
                 ''
               );
             }
@@ -2205,8 +2217,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'No selecciono bien',
-        'Debe seleccionar un bien para agregar al acta'
+        'No selecciono Bien',
+        'Debe seleccionar un Bien para agregar al acta'
       );
     }
   }
@@ -2271,8 +2283,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'No selecciono bien',
-        'Debe seleccionar un bien que forme parte del acta primero'
+        'No selecciono Bien',
+        'Debe seleccionar un Bien que forme parte del acta primero'
       );
     }
   }
@@ -2461,7 +2473,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                     this.form.get('expediente').setValue(this.numberExpedient);
                     this.clearInputs();
                     this.getGoodsByExpedient();
-                    this.alert('success', 'Acta eliminada con éxito', '');
+                    this.alert('success', 'Acta eliminada', '');
                     /* this.labelActa = 'Abrir acta';
                   this.btnCSSAct = 'btn-success'; */
                   },
@@ -2525,8 +2537,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     if (this.dataGoodAct['data'].length === 0) {
       this.alert(
         'warning',
-        'No hay bienes en el acta',
-        'No tiene bienes para poder modificar el estado físico'
+        'No hay Bienes en el acta',
+        'No tiene Bienes para poder modificar el estado físico'
       );
     } else {
       let modalConfig = MODAL_CONFIG;
@@ -2599,7 +2611,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             }
           );
         }
-        this.alert('success', 'Se registró el almacén en los bienes', '');
+        this.alert('success', 'Se registró el almacén en los Bienes', '');
       } else {
         this.alert(
           'warning',
