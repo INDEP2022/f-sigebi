@@ -156,6 +156,7 @@ export const PRIVILEGESUSER_COLUMNS = {
           data.row.can
         );
         console.log(cve);
+
       });
     },
   },
@@ -182,4 +183,6 @@ export const PRIVILEGESUSER_COLUMNS = {
       });
     },
   },
+
 };
+
