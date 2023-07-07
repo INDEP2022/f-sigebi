@@ -106,8 +106,8 @@ export class GoodsManagementSocialCabinetComponent
       });
   }
 
-  ngAfterViewInit() {
-    // this.desactivateTabs();
+  override ngAfterViewInit() {
+    super.ngAfterViewInit();
   }
 
   private desactivateTabs() {

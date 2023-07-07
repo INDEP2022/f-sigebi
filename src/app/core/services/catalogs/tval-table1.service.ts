@@ -93,7 +93,7 @@ export class TvalTable1Service
     );
   }
 
-  updateTvalTable1(model: Partial<ITvaltables1>): Observable<Object> {
+  updateTvalTable1(model: Partial<ITvaltables1> | Partial<ITvaltable1>): Observable<Object> {
     return this.Tvaltablas1Repository.update3(`${this.route5}`, model);
   }
 }
