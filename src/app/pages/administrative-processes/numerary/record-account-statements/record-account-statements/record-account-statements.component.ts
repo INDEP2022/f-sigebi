@@ -19,6 +19,7 @@ import {
 
 import { RecordAccountStatementsAccountsService } from 'src/app/core/services/catalogs/record-account-statements-accounts.service';
 import { RecordAccountStatementsService } from 'src/app/core/services/catalogs/record-account-statements.service';
+import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { RecordAccountStatementsModalComponent } from '../record-account-statements-modal/record-account-statements-modal.component';
 
@@ -45,7 +46,6 @@ export class RecordAccountStatementsComponent
 
   dataAccount: LocalDataSource = new LocalDataSource();
   dataAccountPaginated: number;
-  current: string;
 
   factasStatusCta: any;
   selectedDateBalanceOf: Date;
@@ -62,6 +62,7 @@ export class RecordAccountStatementsComponent
     private modalService: BsModalService,
     private recordAccountStatementsService: RecordAccountStatementsService,
     private recordAccountStatementsAccountsService: RecordAccountStatementsAccountsService,
+    private tvalTable5Service: TvalTable5Service,
     private datePipe: DatePipe
   ) {
     super();
@@ -196,6 +197,13 @@ export class RecordAccountStatementsComponent
 
   // Establece los valores en los inputs de datos de la cuenta seleccionada
   onBankAccountSelectChange(value: any) {
+    this.form.get('accountType').reset();
+    this.form.get('square').reset();
+    this.form.get('branch').reset();
+    this.form.get('currency').reset();
+    this.form.get('description').reset();
+    this.cleandInfoDate();
+    this.dataAccount = new LocalDataSource();
     const accountNumber = value.accountNumber;
     this.accountDate = value.accountNumber;
     this.searchDataAccount(accountNumber);
@@ -205,6 +213,7 @@ export class RecordAccountStatementsComponent
     const branch = value?.branch ?? 'Sin datos';
     const accountType = value?.accountType ?? 'Sin datos';
     let currency = value?.cveCurrency ?? 'Sin datos';
+    this.searchCurrent(currency);
 
     // Quitar las comillas simples del valor de currency, si existen
     currency = currency.replace(/'/g, '');
@@ -214,8 +223,21 @@ export class RecordAccountStatementsComponent
     this.form.get('branch').setValue(branch);
     this.form.get('accountType').setValue(accountType);
     this.form.get('currency').setValue(currency);
-    const current = this.form.get('currency').value;
-    this.current = current;
+  }
+
+  searchCurrent(currency: string) {
+    this.tvalTable5Service.getCurrent(currency).subscribe({
+      next: response => {
+        let current = response.data;
+        let currentAccount = current[0].otvalor02;
+        this.form.get('description').setValue(currentAccount);
+        this.loading = false;
+      },
+      error: (err: any) => {
+        this.loading = false;
+        this.alert('warning', 'No existen monedas', ``);
+      },
+    });
   }
 
   // Genera el saldo de la cuenta seleccionada al escoger un rango de fechas

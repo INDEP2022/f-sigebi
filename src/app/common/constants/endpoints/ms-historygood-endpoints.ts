@@ -11,4 +11,5 @@ export enum HistoryGoodEndpoints {
   ValidateDatesToUpdateStatus = 'application/delete-office',
   GetProcessExtDom = 'historical/getProcessExtDom',
   UpdateGoodStatusWhenDelete = 'application/loop-delete-office',
+  HistoricGoodsAsegExtdom = 'historic-goods-aseg-extdom',
 }

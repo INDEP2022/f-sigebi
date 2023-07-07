@@ -493,11 +493,19 @@
               <!--app-columns-select [(settings)]="settings"></app-columns-select-->
               <div *ngIf="officeDictationData">
                 <button
+                  type="button"
+                  class="btn btn-info btn-sm active ml-2 mr-2"
+                  [disabled]="officeDictationData.statusOf == 'ENVIADO'"
+                  (click)="openModalCopy(false)">
+                  Agregar C&#46;C&#46;P&#46;<i
+                    class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+                <!-- <button
                   [disabled]="officeDictationData.statusOf == 'ENVIADO'"
                   (click)="openModalCopy(false)"
                   class="btn btn-primary active btn-sm ml-3">
                   Agregar C&#46;C&#46;P&#46;
-                </button>
+                </button> -->
               </div>
             </div>
           </div>
