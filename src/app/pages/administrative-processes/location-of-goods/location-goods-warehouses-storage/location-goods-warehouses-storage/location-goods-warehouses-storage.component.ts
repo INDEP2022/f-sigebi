@@ -450,6 +450,9 @@ export class LocationGoodsWarehousesStorageComponent
         });
     }
   }
+  getEstatusColor(estatus: string): string {
+    return estatus === 'S' ? 'green' : 'black';
+  }
 }
 
 export interface IParamsUbicationGood {
