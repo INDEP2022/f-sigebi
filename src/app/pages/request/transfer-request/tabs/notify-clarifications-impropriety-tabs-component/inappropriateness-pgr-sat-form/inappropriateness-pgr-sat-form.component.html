@@ -8,7 +8,7 @@
         <div class="col-md-6">
           <form-field
             [control]="form.get('managedTo')"
-            label="Nombre destinatario">
+            label="Nombre Destinatario">
             <input
               type="text"
               class="form-control"
@@ -19,7 +19,7 @@
         <div class="col-md-6">
           <form-field
             [control]="form.get('positionAddressee')"
-            label="Cargo destinatario">
+            label="Cargo Destinatario">
             <input
               class="form-control"
               maxlength="50"
@@ -63,13 +63,16 @@
           [text]="'Continuar'"
           [disabled]="form.invalid"
           [loading]="loading"
-          [text]="'Aceptar'"
+          [text]="'Continuar'"
           (confirm)="confirm()">
         </confirm-button>
       </div>
 
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>
