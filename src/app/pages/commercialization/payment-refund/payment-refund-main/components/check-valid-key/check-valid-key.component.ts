@@ -28,7 +28,8 @@ export class CheckValidKeyComponent
     this.checkId = this.checkId + this.rowData.id.toString();
   }
 
-  ngAfterViewInit(): void {
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     this.changeState();
   }
 

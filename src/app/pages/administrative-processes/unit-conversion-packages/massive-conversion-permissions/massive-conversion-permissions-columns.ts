@@ -1,4 +1,5 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 
 function createPer(
   proy: boolean,
@@ -86,8 +87,6 @@ export const PRIVILEGESUSER_COLUMNS = {
           data.row.cerr,
           data.row.can
         );
-        console.log(cve);
-        newData = {data: data, cve: cve}
       });
     },
   },
@@ -111,7 +110,6 @@ export const PRIVILEGESUSER_COLUMNS = {
           data.row.can
         );
         console.log(cve);
-        newData = {data: data, cve: cve}
       });
     },
   },
@@ -135,7 +133,6 @@ export const PRIVILEGESUSER_COLUMNS = {
           data.row.can
         );
         console.log(cve);
-        newData = {data: data, cve: cve}
       });
     },
   },
@@ -159,7 +156,7 @@ export const PRIVILEGESUSER_COLUMNS = {
           data.row.can
         );
         console.log(cve);
-        newData = {data: data, cve: cve}
+
       });
     },
   },
@@ -186,4 +183,6 @@ export const PRIVILEGESUSER_COLUMNS = {
       });
     },
   },
+
 };
+
