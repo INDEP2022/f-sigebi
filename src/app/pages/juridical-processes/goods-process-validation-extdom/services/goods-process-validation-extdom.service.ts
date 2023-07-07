@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
+import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
@@ -15,6 +16,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 
 @Injectable({
   providedIn: 'root',
@@ -34,7 +36,8 @@ export class GoodsProcessValidationExtdomService {
     private msStationService: StationService,
     private msAuthorityService: AuthorityService,
     private msGoodService: GoodService,
-    private msHistoryGoodService: HistoryGoodService
+    private msHistoryGoodService: HistoryGoodService,
+    private msProcedureManagementService: ProcedureManagementService
   ) {}
   getNotificationByFilters(params: _Params) {
     return this.msNotificationService.getAllFilter(params);
@@ -79,5 +82,14 @@ export class GoodsProcessValidationExtdomService {
     return this.msHistoryGoodService.getAllFilterHistoricGoodsAsegExtdom(
       params
     );
+  }
+  updateProcedureManagement(id: number, body: Partial<IProceduremanagement>) {
+    return this.msProcedureManagementService.update(id, body);
+  }
+  getProcedureManagement(params: string) {
+    return this.msProcedureManagementService.getAllFiltered(params);
+  }
+  getProcedureManagementById(id: number) {
+    return this.msProcedureManagementService.getById(id);
   }
 }
