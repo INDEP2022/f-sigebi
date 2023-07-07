@@ -71,6 +71,7 @@ export class EmailBookConfigComponent
       }
       if (res.action === 'create') {
         this.emailsBook.prepend(res.newData);
+        this.getVigMailBook();
       } else {
         this.emailsBook.update(res.oldData, res.newData);
       }
@@ -137,7 +138,11 @@ export class EmailBookConfigComponent
     this.loading = true;
     this.emailService.deleteEmailBook(data.id).subscribe({
       next: () => {
-        this.alert('success', 'Registro eliminado correctamente', '');
+        this.alert(
+          'success',
+          'Dirección de correo electronico',
+          'Eliminado correctamente'
+        );
         this.emailsBook.remove(data);
         this.loading = false;
       },

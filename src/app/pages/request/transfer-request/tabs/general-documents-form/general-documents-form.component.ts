@@ -182,9 +182,9 @@ export class GeneralDocumentsFormComponent
   showDocsEst() {
     if (!this.rowSelected) {
       this.message(
-        'info',
-        'Error',
-        'Seleccione un data para poder ver sus documentos'
+        'warning',
+        'Seleccione una solicitud para poder ver sus documentos',
+        ''
       );
       return;
     }

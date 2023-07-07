@@ -340,14 +340,14 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        'No tiene permiso para borrar las imágenes. Sólo el usuario que escaneo puede borrar las imágenes.'
+        'No tiene permiso para borrar los archivos. Sólo el usuario que escaneo puede borrar los archivos.'
       );
       return;
     }
     const result = await this.alertQuestion(
       'warning',
       'Advertencia',
-      '¿Estás seguro que desea eliminar las imágenes seleccionadas?'
+      '¿Estás seguro que desea eliminar los archivos seleccionados?'
     );
 
     if (result.isConfirmed) {
@@ -402,7 +402,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error',
-            'Ocurrió un error al eliminar la imagen'
+            'Ocurrió un error al eliminar el archivo'
           );
           return throwError(() => error);
         })

@@ -1,7 +1,5 @@
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-
 export const ASSETS_COLUMNS = {
-  select: {
+  /*selected: {
     title: '',
     type: 'custom',
     renderComponent: CheckboxElementComponent,
@@ -12,7 +10,7 @@ export const ASSETS_COLUMNS = {
     },
     sort: false,
     hide: false,
-  },
+  },*/
   goodId: {
     title: 'No. Gestión',
     type: 'string',

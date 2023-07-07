@@ -3,7 +3,7 @@ import { SaeInputComponent } from './sae-input/sae-input.component';
 import { SelectInputComponent } from './select-input/select-input.component';
 
 export const DETAIL_ESTATE_COLUMNS = {
-  select: {
+  selected: {
     title: '',
     type: 'custom',
     renderComponent: CheckboxElementComponent,

@@ -657,7 +657,8 @@ custom-view-component {
 
 .ng-select.scroll-line.ng-select-multiple
   .ng-select-container
-  .ng-value-container::-webkit-scrollbar {
+  .ng-value-container::-webkit-scrollbar,
+.info::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
@@ -665,22 +666,25 @@ custom-view-component {
 /* Track */
 .ng-select.scroll-line.ng-select-multiple
   .ng-select-container
-  .ng-value-container::-webkit-scrollbar-track {
+  .ng-value-container::-webkit-scrollbar-track,
+.info::-webkit-scrollbar-track {
   background: #f1f1f1;
-  border-radius: 12px;
 }
 
 /* Handle */
 .ng-select.scroll-line.ng-select-multiple
   .ng-select-container
-  .ng-value-container::-webkit-scrollbar-thumb {
+  .ng-value-container::-webkit-scrollbar-thumb,
+.info::-webkit-scrollbar-thumb {
   background: #888;
+  border-radius: 12px;
 }
 
 /* Handle on hover */
 .ng-select.scroll-line.ng-select-multiple
   .ng-select-container
-  .ng-value-container::-webkit-scrollbar-thumb:hover {
+  .ng-value-container::-webkit-scrollbar-thumb:hover,
+.info::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
 
@@ -689,6 +693,9 @@ custom-view-component {
   border: 1px solid #d4d4d4 !important;
 }
 
+.swal2-html-container {
+  white-space: break-spaces;
+}
 .float-icon-md2 {
   top: 9px;
 }
