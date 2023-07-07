@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -10,20 +10,23 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
-
 @Component({
   selector: 'app-modal-selects-goods',
   templateUrl: './modal-selects-goods.component.html',
   styles: [],
 })
 export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
-  totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   form: FormGroup;
   goods: IGood[] = [];
   goodsNotChange: number[] = [];
+  selectedRow: IGood;
+  selectedGooods: IGood[] = [];
   $trackedGoods = this.store.select(getTrackedGoods);
   data: LocalDataSource = new LocalDataSource();
+  @Input() allGoods: IGood[] = [];
+  @Input() totalItems: number;
+
   //Data Table
 
   get radio() {
@@ -41,58 +44,80 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private readonly goodServices: GoodService,
     private router: Router,
-    private store: Store
+    private store: Store,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     super();
-    this.settings.columns = {
-      id: {
-        title: 'No Bien',
-        sort: false,
+
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      selectMode: 'multi',
+      actions: {
+        columnTitle: 'Acciones',
+        edit: false,
+        delete: false,
+        add: false,
+        position: 'right',
       },
-      description: {
-        title: 'Descripcion',
-        sort: false,
+      columns: {
+        id: {
+          title: 'No Bien',
+          sort: false,
+        },
+        description: {
+          title: 'Descripcion',
+          sort: false,
+        },
+        quantity: {
+          title: 'Cantidad',
+          sort: false,
+        },
+        fileNumber: {
+          title: 'Expediente',
+          sort: false,
+        },
+        goodClassNumber: {
+          title: 'Clasif Bien',
+          sort: false,
+        },
+        storeNumber: {
+          title: 'Almacen',
+          sort: false,
+        },
+        vaultNumber: {
+          title: 'Boveda',
+          sort: false,
+        },
       },
-      quantity: {
-        title: 'Cantidad',
-        sort: false,
-      },
-      fileNumber: {
-        title: 'Expediente',
-        sort: false,
-      },
-      goodClassNumber: {
-        title: 'Clasif Bien',
-        sort: false,
-      },
-      storeNumber: {
-        title: 'Almacen',
-        sort: false,
-      },
-      vaultNumber: {
-        title: 'Boveda',
-        sort: false,
+      rowClassFunction: (row: any) => {
+        if (row.data.di_disponible == 'S') {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
       },
     };
-    this.settings.actions.delete = true;
-    this.settings.actions.edit = false;
+    // this.settings.actions.delete = true;
+    // this.settings.actions.edit = false;
   }
 
   ngOnInit(): void {
     this.loading = true;
     this.buildForm();
-    this.$trackedGoods.subscribe({
-      next: response => {
-        response.forEach(good => {
-          this.getGoodByID(good.goodNumber);
-        });
-        this.loading = false;
-      },
-      error: err => {
-        console.log(err);
-        this.loading = false;
-      },
-    });
+    this.loading = false;
+    // this.$trackedGoods.subscribe({
+    //   next: response => {
+    //     response.forEach(good => {
+    //       this.getGoodByID(good.goodNumber);
+    //     });
+    //     this.loading = false;
+    //   },
+    //   error: err => {
+    //     console.log(err);
+    //     this.loading = false;
+    //   },
+    // });
   }
 
   returnModal() {
@@ -188,6 +213,13 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     this.data.load(this.goods);
     this.data.refresh();
   }
+  selectData(event: { data: IGood; selected: any }) {
+    this.selectedRow = event.data;
+    this.selectedGooods = event.selected;
+    console.log(this.selectedRow);
+    console.log(this.selectedGooods);
+    this.changeDetectorRef.detectChanges();
+  }
 
   goToGoodTracker() {
     this.bsModalRef.hide();
@@ -195,4 +227,5 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
       queryParams: { origin: 'FACTADBUBICABIEN' },
     });
   }
+  onUserRowSelect(event: any) {}
 }
