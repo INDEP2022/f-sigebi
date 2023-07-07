@@ -10,6 +10,7 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
+import { LocationGoodsWarehousesStorageComponent } from '../location-goods-warehouses-storage/location-goods-warehouses-storage.component';
 @Component({
   selector: 'app-modal-selects-goods',
   templateUrl: './modal-selects-goods.component.html',
@@ -23,9 +24,14 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   selectedRow: IGood;
   selectedGooods: IGood[] = [];
   $trackedGoods = this.store.select(getTrackedGoods);
+  formVau: FormGroup;
+  formAlm: FormGroup;
   data: LocalDataSource = new LocalDataSource();
   @Input() allGoods: IGood[] = [];
-  @Input() totalItems: number;
+  @Input() totalItems: number = 0;
+  @Input() validarGood: Function;
+  @Input() formVault: LocationGoodsWarehousesStorageComponent;
+  @Input() formWarehouse: LocationGoodsWarehousesStorageComponent;
 
   //Data Table
 
@@ -45,7 +51,8 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     private readonly goodServices: GoodService,
     private router: Router,
     private store: Store,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private serviceGood: GoodService
   ) {
     super();
 
@@ -56,7 +63,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: false,
-        delete: false,
+        delete: true,
         add: false,
         position: 'right',
       },
@@ -210,7 +217,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     });
   }
   add() {
-    this.data.load(this.goods);
+    this.data.load(this.allGoods);
     this.data.refresh();
   }
   selectData(event: { data: IGood; selected: any }) {
@@ -219,6 +226,67 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     console.log(this.selectedRow);
     console.log(this.selectedGooods);
     this.changeDetectorRef.detectChanges();
+  }
+
+  updateGoodsVault() {
+    // this.goods.forEach(good => {
+    const data = {
+      id: this.selectedRow.id,
+      goodId: this.selectedRow.goodId,
+      observations: this.selectedRow.observations,
+      quantity: this.selectedRow.quantity,
+      goodClassNumber: this.selectedRow.goodClassNumber,
+      unit: this.selectedRow.unit,
+      labelNumber: this.selectedRow.labelNumber,
+      vaultNumber: this.form.get('safe').value,
+      // estatus: this.selectedRow.estatus // incluir la propiedad estatus
+    };
+    // if (this.validarGood()) return;
+    console.log('nuevo -->', data);
+    this.serviceGood.update(data).subscribe(
+      res => {
+        this.alert('success', 'Bienes', `Actualizados correctamente`);
+        this.add();
+      },
+      err => {
+        this.alert(
+          'error',
+          'Bien',
+          'No se pudo actualizar el bien, por favor intentelo nuevamente'
+        );
+      }
+    );
+    // });
+  }
+  updateGoodsWareHouse() {
+    // this.goods.forEach(good => {
+    const data = {
+      id: this.selectedRow.id,
+      goodId: this.selectedRow.goodId,
+      observations: this.selectedRow.observations,
+      quantity: this.selectedRow.quantity,
+      goodClassNumber: this.selectedRow.goodClassNumber,
+      unit: this.selectedRow.unit,
+      labelNumber: this.selectedRow.labelNumber,
+      storeNumber: this.form.get('warehouse').value,
+      // estatus: this.selectedRow.estatus // incluir la propiedsad estatus
+    };
+    // if (this.validarGood()) return;
+    console.log('nuevo -->', data);
+    this.serviceGood.update(data).subscribe(
+      res => {
+        this.alert('success', 'Bienes', `Actualizados correctamente`);
+        this.add();
+      },
+      err => {
+        this.alert(
+          'error',
+          'Bien',
+          'No se pudo actualizar el bien, por favor intentelo nuevamente'
+        );
+      }
+    );
+    // });
   }
 
   goToGoodTracker() {

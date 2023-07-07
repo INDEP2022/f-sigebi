@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { PackageGoodEndpoints } from 'src/app/common/constants/endpoints/ms-package-good';
 import { HttpService } from 'src/app/common/services/http.service';
+import { IListResponseMessage } from '../../interfaces/list-response.interface';
 import {
   IpackageValidGood,
   PrepDestinationPackage,
@@ -10,6 +11,8 @@ import {
   IFoliovInvoice,
   IPackage,
 } from '../../models/catalogs/package.model';
+import { IPackageGoodDec } from '../../models/ms-package-good/package-good-dec';
+import { IPackageGoodEnc } from '../../models/ms-package-good/package-good-enc';
 
 @Injectable({
   providedIn: 'root',
@@ -32,7 +35,7 @@ export class PackageGoodService extends HttpService {
 
   getPaqDestinationEnc(params?: any) {
     const route = `${PackageGoodEndpoints.paqDestinationEnc}`;
-    return this.get(route, params);
+    return this.get<IListResponseMessage<IPackageGoodEnc>>(route, params);
   }
 
   updatePaqDestinationEnc(id: string | number, good: Partial<IPackage>) {
@@ -48,7 +51,7 @@ export class PackageGoodService extends HttpService {
   //paq-destination - det
   getPaqDestinationDet(params?: any) {
     const route = `${PackageGoodEndpoints.paqDestinationDet}`;
-    return this.get(route, params);
+    return this.get<IListResponseMessage<IPackageGoodDec>>(route, params);
   }
 
   pubValidGood(good: IpackageValidGood) {
