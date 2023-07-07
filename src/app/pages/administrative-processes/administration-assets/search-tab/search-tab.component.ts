@@ -254,7 +254,12 @@ export class SearchTabComponent extends BasePage implements OnInit {
       JSON.stringify(this.searchTabForm.value)
     );
     const route: string = 'pages/general-processes/good-photos';
-    this.router.navigate([route]);
+    this.router.navigate([route], {
+      queryParams: {
+        numberGood: this.searchTabForm.get('noBien').value,
+        origin: 'FACTADBREGCOMBIEN',
+      },
+    });
   }
 
   openModal(component: any, data?: any): void {

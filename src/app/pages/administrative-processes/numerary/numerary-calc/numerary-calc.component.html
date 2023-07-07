@@ -46,7 +46,7 @@
                   <input type="radio" formControlName="type" value="D" />
                 </form-radio>
                 <form-radio label="Decomiso">
-                  <input type="radio" formControlName="type" value="P" />
+                  <input type="radio" formControlName="type" value="E" />
                 </form-radio>
                 <form-radio label="Abandono">
                   <input type="radio" formControlName="type" value="A" />
@@ -120,10 +120,15 @@
               <i class="fas fa-edit bx-sm float-icon"></i>
             </button>
             <button
+              [disabled]="disableButton"
               type="button"
               class="btn btn-sm btn-primary active m-3"
               (click)="calculInteres()">
               {{ textButton }}
+              <i
+                *ngIf="textButton.includes('Elimina')"
+                class="fa fa-trash"
+                aria-hidden="true"></i>
             </button>
             <button
               type="button"
@@ -150,11 +155,13 @@
               Eliminar Proceso <i class="fa fa-trash" aria-hidden="true"></i>
             </button>
             <button
+              [disabled]="!process"
               (click)="exportarTotal()"
               class="btn btn-success active btn-sm m-3">
               Exportar Total CSV <i class="bx bx-download float-icon"></i>
             </button>
             <button
+              [disabled]="!process"
               (click)="exportar()"
               class="btn btn-success active btn-sm m-3">
               Exportar Prorra CSV <i class="bx bx-download float-icon"></i>
@@ -192,7 +199,7 @@
       </app-pagination>
       <div class="row">
         <form action="" class="form-material" [formGroup]="formBlkControl">
-          <div class="col-md-4">
+          <!-- <div class="col-md-4">
             <form-field
               [control]="formBlkControl.get('sumCommision')"
               label="Comisión Bancaria">
@@ -201,7 +208,7 @@
                 formControlName="sumCommision"
                 class="form-control" />
             </form-field>
-          </div>
+          </div> -->
         </form>
       </div>
     </div>
@@ -211,7 +218,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
-            [source]="data3">
+            [source]="data3"
+            (rowSelect)="postQuery($event.data)">
           </ng2-smart-table>
         </div>
       </div>
