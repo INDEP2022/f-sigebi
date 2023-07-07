@@ -21,16 +21,16 @@ export interface ICustomer {
   stateId: number;
   blackListDate: string;
   releaseDate: string;
-  penaltyId: number;
+  penaltyId: any;
   personType: string;
   approvedRfc: string;
-  userFree: string;
+  userFree: any;
   freeDate: string;
   registryNumber: number;
   economicAgreementKey: string;
-  identificationType: number;
+  identificationType: string;
   identificationNumber: string;
-  agentId: number;
+  agentId: any;
   outsideNumber: string;
   insideNumber: string;
   password: string;
@@ -50,7 +50,7 @@ export interface ISeller {
   id: string;
   outside: string;
   phone: string;
-  reasonName: string;
+  reasonName: any;
   rfc: string;
   street: string;
 }

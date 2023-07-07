@@ -75,7 +75,7 @@ export class CustomersRepresentantsListComponent
       console.log(this.client);
       this.loading = true;
       this.customerService
-        .getRepresentativeByClients(this.client.agentId)
+        .getRepresentativeByClients(this.client.agentId.id)
         .subscribe({
           next: response => {
             console.log(response);
@@ -84,7 +84,11 @@ export class CustomersRepresentantsListComponent
             //   item.dateBorn = this.datePipe.transform(data, 'dd/MM/yyyy');
             //   return item;
             // });
-            this.data.load(response.data);
+            let lista = [];
+            lista.push(response);
+            console.log('Lista: ', lista);
+            this.data.load(lista);
+            this.data.refresh();
             this.totalItems = 1;
             this.loading = false;
           },

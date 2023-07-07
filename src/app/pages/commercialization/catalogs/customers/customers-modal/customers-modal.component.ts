@@ -15,7 +15,6 @@ import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
 
 //Services
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ITPenalty } from 'src/app/core/models/ms-parametercomer/penalty-type.model';
 import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
 import { TPenaltyService } from 'src/app/core/services/ms-parametercomer/tpenalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -35,7 +34,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
 
   today: Date;
 
-  idPenality: ITPenalty;
+  //idPenality: ITPenalty;
   sellers = new DefaultSelect();
 
   constructor(
@@ -45,10 +44,12 @@ export class CustomersModalComponent extends BasePage implements OnInit {
     private penaltyService: TPenaltyService
   ) {
     super();
+    console.log('customers const ', this.customers);
     this.today = new Date();
   }
 
   ngOnInit(): void {
+    console.log('customers init ', this.customers);
     this.prepareForm();
   }
 
@@ -168,7 +169,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
       freeDate: [null, [Validators.pattern(STRING_PATTERN)]],
       registryNumber: [null, [Validators.pattern(STRING_PATTERN)]],
       economicAgreementKey: [null, [Validators.pattern(STRING_PATTERN)]],
-      identificationType: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      identificationType: [null, [Validators.pattern(STRING_PATTERN)]],
       identificationNumber: [null, [Validators.pattern(STRING_PATTERN)]],
       agentId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       outsideNumber: [
@@ -214,6 +215,11 @@ export class CustomersModalComponent extends BasePage implements OnInit {
     if (this.customers != null) {
       this.edit = true;
       this.customerForm.patchValue(this.customers);
+      this.customerForm
+        .get('penaltyId')
+        .setValue(this.customers.penaltyId.descPenalties);
+      this.customerForm.get('userFree').setValue(this.customers.userFree.name);
+      this.customerForm.get('agentId').setValue(this.customers.agentId.id);
     }
   }
 
@@ -230,16 +236,28 @@ export class CustomersModalComponent extends BasePage implements OnInit {
     this.customerService
       .updateCustomers(this.customers.id, this.customerForm.value)
       .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        next: data => {
+          console.log('data: ', data);
+          this.handleSuccess();
+        },
+        error: error => {
+          console.log('error: ', error);
+          this.loading = false;
+        },
       });
   }
 
   create() {
     this.loading = true;
     this.customerService.create(this.customerForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      next: data => {
+        console.log('data: ', data);
+        this.handleSuccess();
+      },
+      error: error => {
+        console.log('error: ', error);
+        this.loading = false;
+      },
     });
   }
 
