@@ -9,3 +9,12 @@
   color: #74788d;
   margin-bottom: 0px;
 }
+
+:host ::ng-deep form-field {
+  .form-control[readonly] {
+    &:focus ~ .form-bar:after,
+    &:focus ~ .form-bar:before {
+      width: 0% !important;
+    }
+  }
+}

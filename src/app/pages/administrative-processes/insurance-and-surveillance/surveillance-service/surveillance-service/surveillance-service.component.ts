@@ -12,6 +12,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
@@ -51,7 +52,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private token: AuthService
   ) {
     super();
     this.settings.columns = SURVEILLANCE_SERVICE_COLUMNS;
@@ -492,13 +494,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         let arr: any = [];
 
         let result = excelImport.map(item => {
-          if (
-            item.recordId &&
-            item.goodNumber &&
-            item.address &&
-            item.delegationType &&
-            item.user
-          ) {
+          if (item.CONSECUTIVO && item.BIEN) {
             arr.push(item);
           }
         });
@@ -657,7 +653,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
               address: item.address,
               transferee: item.transferee,
               delegationType: item.delegationType,
-              user: item.user,
+              user: this.token.decodeToken().preferred_username,
             };
 
             const createVIG_SUPERVISION_TMP_: any =

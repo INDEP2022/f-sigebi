@@ -310,6 +310,7 @@ export class PerformProgrammingFormComponent
     this.programmingService
       .getProgrammingId(this.idProgramming)
       .subscribe(data => {
+        console.log('info prog', data);
         this.dataProgramming = data;
         this.setDataProgramming();
       });
@@ -1901,6 +1902,7 @@ export class PerformProgrammingFormComponent
         const task = JSON.parse(localStorage.getItem('Task'));
         const updateTask = await this.updateTask(folio, task.id);
         if (updateTask) {
+          console.log('this.performForm.value', this.performForm.value);
           this.programmingGoodService
             .updateProgramming(this.idProgramming, this.performForm.value)
             .subscribe({

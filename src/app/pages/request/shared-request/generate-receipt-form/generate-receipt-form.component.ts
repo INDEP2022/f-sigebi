@@ -359,7 +359,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
         this.receptionGoodService.deleteReceiptWitness(formData).subscribe({
           next: response => {
             this.alertInfo(
-              'info',
+              'success',
               'Acción Correcta',
               'Testigo eliminado correctamente'
             ).then(question => {

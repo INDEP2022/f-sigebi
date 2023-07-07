@@ -87,7 +87,8 @@ export class SelectConceptSpentDialogComponent implements OnInit {
   }
 
   onUserRowSelect(event: any) {
-    // console.log(event.data);
+    console.log(event.data);
+
     this.selectedItem = event.data;
     this.modalRef.hide();
   }
