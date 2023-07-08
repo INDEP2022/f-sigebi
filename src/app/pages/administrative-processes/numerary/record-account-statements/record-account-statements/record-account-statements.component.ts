@@ -57,6 +57,7 @@ export class RecordAccountStatementsComponent
 
   variableOf: Date;
   variableAt: Date;
+  bankCode: string;
 
   constructor(
     private fb: FormBuilder,
@@ -158,6 +159,25 @@ export class RecordAccountStatementsComponent
       });
   }
 
+  onSearchName(inputElement: any) {
+    this.dataAccount = new LocalDataSource();
+    const name = inputElement.value;
+    setTimeout(() => {
+      this.recordAccountStatementsService
+        .getAllDinamicName(name, this.params.getValue())
+        .subscribe({
+          next: (response: { data: any[]; count: number }) => {
+            this.banks = new DefaultSelect(response.data, response.count);
+            this.loading = false;
+          },
+          error: (err: any) => {
+            this.loading = false;
+            this.alert('warning', 'No existen bancos', ``);
+          },
+        });
+    }, 3000);
+  }
+
   // Asigna el valor del banco seleccionado a la función "searchBankAccount"
   onBankSelectChange(value: any) {
     this.form.get('account').reset();
@@ -180,6 +200,7 @@ export class RecordAccountStatementsComponent
 
   // Toma el banco seleccionado y busca todas las cuentas pertenecientes a ese banco
   searchBankAccount(bankCode: string) {
+    this.bankCode = bankCode;
     this.recordAccountStatementsAccountsService
       .getById(bankCode, this.params.getValue())
       .subscribe({
@@ -195,6 +216,36 @@ export class RecordAccountStatementsComponent
           this.alert('warning', 'No existen cuentas', ``);
         },
       });
+  }
+
+  onClearSelection() {
+    this.searchBankAccount(this.bankCode);
+  }
+
+  onSearchAccount(inputElement: any) {
+    this.dataAccount = new LocalDataSource();
+    const account = inputElement.value;
+
+    setTimeout(() => {
+      this.recordAccountStatementsAccountsService
+        .getById2(this.bankCode, account, this.params.getValue())
+        .subscribe({
+          next: (response: { data: any[]; count: number }) => {
+            const filteredAccounts = response.data.filter(item =>
+              item.accountNumber.includes(account)
+            );
+            this.bankAccountSelect = new DefaultSelect(
+              filteredAccounts,
+              response.count
+            );
+            this.loading = false;
+          },
+          error: (err: any) => {
+            this.loading = false;
+            this.alert('warning', 'No existen bancos', ``);
+          },
+        });
+    }, 3000);
   }
 
   // Establece los valores en los inputs de datos de la cuenta seleccionada
@@ -283,7 +334,7 @@ export class RecordAccountStatementsComponent
           this.loading = false;
           this.alert(
             'warning',
-            'No existen datos de la cuenta seleccionada',
+            'No existen movimientos de la cuenta seleccionada',
             ``
           );
         },

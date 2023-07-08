@@ -31,7 +31,19 @@ export class RecordAccountStatementsService
       params
     );
   }
+
+  getAllDinamicName(
+    name: string | number,
+    params?: ListParams
+  ): Observable<IListResponse<IRecordAccountStatements>> {
+    const route = `${this.route}?filter.name=$ilike:${name}`;
+    return this.recordAccountStatementsServiceRepository.getAllPaginated(
+      route,
+      params
+    );
+  }
 }
 
 //http://sigebimsqa.indep.gob.mx/catalog/api/v1/bank
 //http://sigebimsqa.indep.gob.mx/catalog/api/v1/bank?filter.bankCode=$eq:TESOFE
+//http://sigebimsqa.indep.gob.mx/catalog/api/v1/bank?filter.name=$ilike:HSBC
