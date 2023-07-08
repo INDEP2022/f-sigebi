@@ -17,6 +17,7 @@ import { CardComponent } from './components/card/card.component';
 import { CheckboxColumnComponent } from './components/checkbox-column/checkbox-column.component';
 import { CheckboxDisabledElementComponent } from './components/checkbox-element-smarttable/checkbox-disabled-element';
 import { CheckboxElementComponent } from './components/checkbox-element-smarttable/checkbox-element';
+import { CheckboxElementRecordAccountStatementsComponent } from './components/checkbox-element-smarttable/checkbox-element-record-account-statements';
 import { ColumnsSelectComponent } from './components/columns-select/columns-select.component';
 import { ConfirmButtonComponent } from './components/confirm-button/confirm-button.component';
 import { DividerComponent } from './components/divider/divider.component';
@@ -37,6 +38,7 @@ import { PermissionsDirective } from './directives/permissions.directive';
 /*Redux NgRX Global Vars Store*/
 import { CustomSelectWidthLoading } from '../@standalone/shared-forms/custom-select-loading/custom-select-loading.component';
 import { CustomDateFilterComponent } from '../@standalone/shared-forms/filter-date-custom/custom-date-filter';
+import { CustomDateDayFilterComponent } from '../@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
 import { CustomDateMounthFilterComponent } from '../@standalone/shared-forms/filter-date-mounth-custom/custom-date-mounth-filter';
 import { DatePickerDirective } from './directives/date-picker.directive';
 import { UppercaseDirective } from './directives/uppercase.directive';
@@ -61,6 +63,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     SearchBarSimpleComponent,
     DividerComponent,
     CheckboxElementComponent,
+    CheckboxElementRecordAccountStatementsComponent,
     CheckboxDisabledElementComponent,
     PermissionsDirective,
     MaxLengthDirective,
@@ -70,6 +73,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     DatePickerDirective,
     CustomDateFilterComponent,
     CustomDateMounthFilterComponent,
+    CustomDateDayFilterComponent,
   ],
   imports: [
     CommonModule,
@@ -106,6 +110,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     FormRadioComponent,
     CommonModule,
     CheckboxElementComponent,
+    CheckboxElementRecordAccountStatementsComponent,
     CheckboxDisabledElementComponent,
     CheckboxColumnComponent,
     NgScrollbarModule,
@@ -118,6 +123,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     DatePickerDirective,
     CustomDateFilterComponent,
     CustomDateMounthFilterComponent,
+    CustomDateDayFilterComponent,
   ],
   providers: [{ provide: BsDatepickerConfig, useFactory: getDatepickerConfig }],
 })

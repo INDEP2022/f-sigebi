@@ -115,7 +115,7 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
           console.log('Respuesta: ', resp.data);
         },
         error: error => {
-          this.onLoadToast('warning', 'No hay documentos relacionados', '');
+          this.alert('warning', 'No hay documentos relacionados', '');
           console.log('Respuesta: ', error);
         },
       });
@@ -188,7 +188,7 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
       // VALIDAMOS LAS FECHAS //
       for (let i = 0; i < this.dataDocuments.length; i++) {
         if (this.dataDocuments[i].date == '') {
-          this.onLoadToast(
+          this.alert(
             'info',
             'Asegúrese de ingresar las fechas en los documentos',
             ''

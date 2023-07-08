@@ -19,6 +19,16 @@
           Agregar
           <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
+
+        <button
+          (click)="clearSubheaderFields()"
+          type="button"
+          tooltip="Limpiar Filtros"
+          containerClass="tooltip-style"
+          class="btn btn-danger btn-sm active ml-2 mr-2">
+          Limpiar
+          <i class="fa fa-eraser" aria-hidden="true"></i>
+        </button>
       </div>
     </div>
     <div class="row pt-4">
@@ -28,6 +38,7 @@
           [track]="'all'"
           [ngStyle]="{ height: loading ? '0px' : '300px' }">
           <ng2-smart-table
+            #myTable
             id="porcentajes"
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
@@ -61,14 +72,14 @@
             editDialogData ? 'Editando Porcentajes' : 'Agregando Porcentajes'
           }}
         </h5>
-        <div class="buttons">
-          <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
+        <!-- <div class="buttons">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
           <button
             class="btn btn-primary active btn-sm ml-3"
             (click)="closeDialogPercentage()">
             Cerrar
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
     <div body>
@@ -159,14 +170,28 @@
     </div>
     <div footer>
       <div class="d-flex justify-content-center">
-        <div class="m-3">
-          <button
-            [disabled]="!form.valid"
-            type="button"
-            class="btn btn-primary active"
-            (click)="saveInServerPercentage()">
-            {{ editDialogData ? 'Actualizar' : 'Guardar' }}
-          </button>
+        <div class="row m-3">
+          <div class="col-6">
+            <button
+              style="float: right"
+              [disabled]="!form.valid"
+              type="button"
+              class="btn btn-primary active mr-2"
+              (click)="saveInServerPercentage()">
+              {{ editDialogData ? 'Actualizar' : 'Guardar' }}
+              <span *ngIf="!editDialogData"
+                ><i aria-hidden="true" class="fa fa-save"></i
+              ></span>
+            </button>
+          </div>
+          <div class="col-6">
+            <button
+              style="float: left"
+              class="btn btn-danger active ml-2"
+              (click)="closeDialogPercentage()">
+              Cerrar
+            </button>
+          </div>
         </div>
       </div>
     </div>

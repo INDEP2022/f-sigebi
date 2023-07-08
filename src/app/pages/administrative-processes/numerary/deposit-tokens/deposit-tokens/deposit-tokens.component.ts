@@ -237,7 +237,7 @@ export class DepositTokensComponent
         motionnumber: {
           title: 'No. Movimiento',
           type: 'string',
-          sort: true,
+          sort: false,
         },
       },
       rowClassFunction: (row: any) => {
@@ -680,12 +680,14 @@ export class DepositTokensComponent
   getDetailsGood(id: any) {
     const params = new ListParams();
     params['filter.id'] = `$eq:${id}`;
-    this.goodServices.getByExpedientAndParams__(params).subscribe({
+    this.goodServices.getGoodById(id).subscribe({
       next: async (response: any) => {
-        this.form.get('descriptionGood').setValue(response.data[0].description);
+        this.form.get('descriptionGood').setValue(response.description);
       },
       error: err => {
-        this.form.get('descriptionGood').setValue('');
+        this.form
+          .get('descriptionGood')
+          .setValue('No se encontró la descripción del bien');
       },
     });
   }

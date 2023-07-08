@@ -79,8 +79,11 @@ export class ClassificationAssetsTabComponent
   goodSelect: any = [];
   idGood: string | number;
   formLoading: boolean = false;
-  settingsGood = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
+  settingsGood = { ...TABLE_SETTINGS, actions: false };
+  columns = REQUEST_OF_ASSETS_COLUMNS;
   isGoodSelected: boolean = false;
+  goodForClarifi: IGood[] = [];
+
   constructor(
     private goodService: GoodService,
     private activatedRoute: ActivatedRoute,
@@ -104,6 +107,10 @@ export class ClassificationAssetsTabComponent
     this.prepareForm();
     this.tablePaginator();
     this.settingsGood.columns = REQUEST_OF_ASSETS_COLUMNS;
+    /*this.columns.select = {
+      ...this.columns.select,
+      onComponentInitFunction: this.selectGood.bind(this),
+    };*/
     this.initForm();
     this.request = this.requestObject.getRawValue();
   }
@@ -145,7 +152,7 @@ export class ClassificationAssetsTabComponent
     this.goodFinderService.goodFinder(filter).subscribe({
       next: async (resp: any) => {
         this.totalItems = resp.count;
-        this.paragraphs = resp.data;
+        this.paragraphs.load(resp.data);
         this.loading = false;
       },
       error: error => {
@@ -187,10 +194,20 @@ export class ClassificationAssetsTabComponent
   }
 
   selectGood(event: any) {
+    /* event.toggle.subscribe((data: any) => { */
+    /*const index = this.goodSelect.indexOf(data.row);
+      if (index == -1 && data.toggle == true) {
+        this.goodSelect.push(data.row);
+      } else if (index != -1 && data.toggle == false) {
+        this.goodSelect.splice(index, 1);
+      }*/
+    this.goodSelect = [];
+    this.goodSelect.push(event);
+
     this.formLoading = true;
     this.detailArray.reset();
-    this.goodSelect = event.selected;
-    this.goodObject = event.selected[0];
+    this.goodObject = this.goodSelect[0];
+    this.goodForClarifi = this.goodSelect;
     this.assetsId = this.goodSelect[0] ? this.goodSelect[0].id : null;
     if (this.goodSelect.length === 1) {
       setTimeout(() => {
@@ -202,12 +219,20 @@ export class ClassificationAssetsTabComponent
         }
         this.formLoading = false;
       }, 1000);
-    } else {
+    } else if (this.goodSelect.length > 1) {
       // this.goodSelect[0].quantity = 0;
       this.detailArray.patchValue(null);
       this.domicilieObject = null;
       this.formLoading = false;
+      this.goodForClarifi = [];
+      this.onLoadToast('error', 'Solo se puede seleccionar un bien', '');
+    } else {
+      this.detailArray.patchValue(null);
+      this.domicilieObject = null;
+      this.formLoading = false;
+      this.goodForClarifi = [];
     }
+    /*  }); */
   }
 
   getDomicilieGood(id: number) {
@@ -530,5 +555,9 @@ export class ClassificationAssetsTabComponent
       fractionId: [null],
       saeMeasureUnit: [null],
     });
+  }
+
+  selectRow(row?: any) {
+    console.log('Información de la fila seleccionada, ', row);
   }
 }

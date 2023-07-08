@@ -73,8 +73,10 @@
     <br />
     <div class="row">
       <div class="col-md-10">
-        <button (click)="add()" class="btn btn-secondary active btn-sm">
+        <button (click)="add()" class="btn btn-primary active btn-sm">
           {{ textButon }}
+          <i *ngIf="textButon.includes('Actualizar')" class="fas fa-sync-alt">
+          </i>
         </button>
       </div>
     </div>
@@ -100,12 +102,13 @@
       <app-good-characteristics-table
         [goodChange]="goodChange"
         [clasification]="classificationOfGoods"
-        [settings]="atributNewSettings"
+        [settings]="atributActSettings"
         [avaluo]="false"
         [good]="good"
         [disabled]="false"
         [loadInventary]="loadInventary"
         [inventary]="inventary"
+        [initValue]="false"
         [service]="service"></app-good-characteristics-table>
     </div>
   </div>

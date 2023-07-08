@@ -6,7 +6,7 @@ export interface IpackageValidGood {
   pStatus: string;
   pAlmacenNumber: number;
   pTypePaquete: number;
-  pValidVal24: number;
+  pValidVal24: string;
 }
 
 export interface GoodsItem {

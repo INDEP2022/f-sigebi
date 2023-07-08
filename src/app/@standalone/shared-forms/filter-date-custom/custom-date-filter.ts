@@ -14,7 +14,10 @@ import { DefaultFilter } from 'ng2-smart-table';
         placeholder="Fecha"
         style="border-radius: 5px;padding: 8px;border: 1px solid #ccc;" />
       <span class="input-group-addon" *ngIf="this.query">
-        <i class="fa fa-trash" (click)="clearDate($event)"></i>
+        <i
+          class="fa fa-trash red-icon"
+          (click)="clearDate($event)"
+          style="color: #9D2449"></i>
       </span>
     </div>
   `,

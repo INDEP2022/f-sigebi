@@ -170,11 +170,7 @@ export class PartializeViewComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.onLoadToast(
-          'info',
-          'Parcialización',
-          'Eliminada la parcialización'
-        );
+        this.alert('success', 'Parcialización', 'Eliminada correctamente');
         if (row.index === 0) {
           this.bienesPar.shift();
         } else {

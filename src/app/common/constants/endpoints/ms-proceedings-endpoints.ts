@@ -21,4 +21,5 @@ export enum ProceedingsEndpoints {
   GoStatus = 'aplication/get-count-good',
   ExistProceedings = 'aplication/getExistsproceedings',
   GetUnion = 'aplication/getUnionTables',
+  GetFactDbConvBien = 'aplication/getFactDbConvBien',
 }

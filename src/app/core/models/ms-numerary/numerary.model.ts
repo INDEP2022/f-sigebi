@@ -23,6 +23,18 @@ export interface INumeraryEnc {
   registerNumber: number;
 }
 
+export interface IRequestNumeraryEnc {
+  solnumId?: string | number;
+  solnumDate: string;
+  description: string;
+  solnumType: string;
+  delegationNumber: string | number;
+  user: string;
+  solnumStatus: string;
+  procnumId: string | number;
+  recordNumber?: string | number;
+}
+
 export interface IRequesNumeraryEnc {
   solnumId: number;
   solnumDate: string;
@@ -31,7 +43,7 @@ export interface IRequesNumeraryEnc {
   delegationNumber: number;
   user: string;
   solnumStatus: string;
-  procnumId: number;
+  procnumId: number | string;
   recordNumber: number;
   currency?: string;
   name?: string;
@@ -65,12 +77,12 @@ export interface IRequesNumeraryCal {
 }
 
 export interface IProccesNum {
-  procnumId: string | number;
+  procnumId?: string | number;
   procnumDate: string;
   description: string;
   user: string;
   procnumType: string;
   interestAll: string | number;
   numeraryAll: string | number;
-  recordNumber: string | number;
+  recordNumber?: string | number;
 }

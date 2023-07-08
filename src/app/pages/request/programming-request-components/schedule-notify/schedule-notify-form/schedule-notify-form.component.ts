@@ -188,12 +188,12 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
   }
 
   getState(programming: Iprogramming) {
-    this.stateService.getById(programming.stateKey).subscribe({
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = this.programming.stateKey;
+    this.stateService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('estado', response);
-        this.stateName = response.descCondition;
+        this.stateName = response.data[0].descCondition;
       },
-      error: error => {},
     });
   }
 

@@ -1,54 +1,54 @@
-import { CheckboxDisabledElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-disabled-element';
-export let goodCheck: any[] = [];
+// import { CheckboxDisabledElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-disabled-element';
+// import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { CheckboxElementRecordAccountStatementsComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element-record-account-statements';
 
 export const RECORDS_ACCOUNT_STATEMENTS_COLUMNS = {
-  dateMotion: {
-    title: 'Movimiento',
-    type: 'date',
+  turnSelect: {
+    title: 'Selección',
     sort: false,
+    showAlways: true,
+    filter: false,
+    editable: false,
+    type: 'custom',
+    renderComponent: CheckboxElementRecordAccountStatementsComponent,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.numberGood !== null;
+    },
+  },
+  dateMotion: {
+    title: 'Fecha de Movimiento',
+    sort: false,
+    // filter: {
+    //   type: 'custom',
+    //   component: CustomDateDayFilterComponent,
+    // },
+    // valuePrepareFunction: (date: string) => formatDate(date),
+    valuePrepareFunction: (cell: any, row: any) => {
+      const date = new Date(cell);
+      const day = ('0' + date.getDate()).slice(-2); // Agregar cero inicial si el día tiene un solo dígito
+      const month = ('0' + (date.getMonth() + 1)).slice(-2); // Agregar cero inicial si el mes tiene un solo dígito
+      const year = date.getFullYear();
+      const formattedDate = `${day}/${month}/${year}`;
+      return formattedDate;
+    },
   },
   deposit: {
     title: 'Abono',
     type: 'number',
     sort: false,
   },
-  postDiverse: {
+  withdrawal: {
     title: 'Cargo',
     type: 'number',
     sort: false,
   },
-  // numberGood: {
-  //   title: 'Concepto',
-  //   type: 'string',
-  //   sort: false,
-  // },
-  // numberGood: {
-  //   title: 'Concepto',
-  //   type: 'custom',
-  //   renderComponent: CheckboxElementComponent,
-  //   onComponentInitFunction(instance: any) {
-  //     instance.toggle.subscribe((data: any) => {
-  //       if (data.toggle) {
-  //         goodCheck.push(data);
-  //       }
-  //     });
-  //   },
-  //   sort: false,
-  // },
-  numberGood: {
+  cveConcept: {
     title: 'Concepto',
+    type: 'string',
     sort: false,
-    type: 'custom',
-    renderComponent: CheckboxDisabledElementComponent,
-    valuePrepareFunction: (value: any, row: any) => {
-      return {
-        checked: value === null ? false : true,
-        disabled: true,
-      };
-    },
-    editor: {
-      type: 'custom',
-      component: CheckboxDisabledElementComponent,
-    },
   },
 };
+
+// function formatDate(date: string): string {
+//   return date.replace('-', '/');
+// }

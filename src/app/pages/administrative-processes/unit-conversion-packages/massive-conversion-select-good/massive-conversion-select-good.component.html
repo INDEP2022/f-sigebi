@@ -44,21 +44,23 @@
       </div>
       <div class="row mb-3 mt-3">
         <div class="col text-center">
-          <button class="btn btn-primary btn-sm active mr-3">
+          <button class="btn btn-primary btn-sm active mr-3" (click)="filter()">
             Filtrar Bienes
           </button>
-          <button class="btn btn-primary btn-sm active mr-3">
-            Listado de Bienes
-          </button>
-          <button class="btn btn-primary btn-sm active mr-3">
-            Ingresar Bienes
+          <button class="btn btn-success btn-sm active mr-3">
+            Listado de Bienes <i class="bi bi-file-earmark-excel-fill"></i>
           </button>
           <button
-            class="btn btn-sm btn-success active mr-3">
+            class="btn btn-primary btn-sm active mr-3"
+            [disabled]="goodCheckValues.length === 0"
+            (click)="pbIngresar()">
+            Ingresar Bienes
+          </button>
+          <button class="btn btn-sm btn-success active mr-3">
             Exportar a Excel
             <i class="bx bx-download float-icon"></i>
           </button>
-          <button class="btn btn-danger btn-sm active">
+          <button class="btn btn-danger btn-sm active" (click)="closeModal()">
             Salir
           </button>
         </div>
@@ -69,16 +71,18 @@
         <div class="col-md-5 buttons">
           <app-columns-select
             (settingsChange)="settingChange($event)"
-            [settings]="settingsTable"
-          ></app-columns-select>
+            [settings]="settingsTable"></app-columns-select>
         </div>
       </div>
       <div [class]="loading ? 'table-loading' : 'row'">
         <ng2-smart-table
           class="col-md-12 table-responsive table-bordered"
           [settings]="settingsTable"
-          [source]="data"
-        ></ng2-smart-table>
+          [source]="data"></ng2-smart-table>
+        <app-pagination
+          [params]="params"
+          [limit]="limit"
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </form>
   </div>

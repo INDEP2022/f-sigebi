@@ -4,41 +4,58 @@
   </div>
   <div body>
     <div class="row">
-      <div class="col-md-5">
+      <div class="col-md-6">
         <!-- <div class="col-md-4 mt-3"> -->
-        <i class="fa fa-square" style="color: #e2c103"></i
-        ><span style="font-weight: 500">
-          Movimientos Con Bienes Conciliados &nbsp;&nbsp;
-        </span>
+        <div class="row">
+          <div class="col-12">
+            <i class="fa fa-square" style="color: #e2c103"></i
+            ><span style="font-weight: 500">
+              Movimientos Con Bienes Conciliados &nbsp;&nbsp;
+            </span>
+          </div>
+          <div class="col-12">
+            <i class="fa fa-square" style="color: #686868"></i
+            ><span style="font-weight: 500">
+              Doble Click en la Columna de Depósito para Conciliar &nbsp;&nbsp;
+            </span>
+          </div>
+        </div>
         <!-- </div> -->
       </div>
-      <div class="col-md-7 text-end">
+      <div class="col-md-6 text-end">
         <div class="row">
           <div class="col-12 text-end">
             <div class="row">
-              <div class="col-10 justify-content-end">
+              <div class="col-10 justify-content-end align-items-end mt-3 mb-3">
                 <!-- <app-columns-select style="margin-right: -45px" [defaultColumns]="10"
                   [(settings)]="settings"></app-columns-select> -->
                 <button
                   (click)="addMovement()"
                   type="button"
-                  tooltip="Agregar"
                   containerClass="tooltip-style"
-                  class="btn btn-primary btn-sm active ml-2 mr-2">
+                  class="btn btn-info btn-sm active ml-2 mr-2">
                   Agregar
                   <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
                 <button
-                  class="btn btn-primary btn-sm active mr-3"
+                  class="btn btn-primary btn-sm active mr-5"
                   (click)="openForm()">
                   Movimientos
                 </button>
+
+                <!-- <app-columns-select
+                  [defaultColumns]="10"
+                  [(settings)]="settings"></app-columns-select> -->
               </div>
-              <div class="col-2 d-flex justify-content-end align-items-end">
+              <div class="col-md-2 text-end d-flex flex-row-reverse mt-3 mb-3">
                 <app-columns-select
                   [defaultColumns]="10"
-                  [(settings)]="settings"></app-columns-select>
+                  [(settings)]="settings"
+                  [leftList]="true"></app-columns-select>
               </div>
+              <!-- <div class="col-2 d-flex justify-content-end align-items-end">
+                
+              </div> -->
             </div>
           </div>
         </div>
@@ -62,6 +79,11 @@
           </ng-scrollbar>
         </div>
         <div class="row">
+          <!-- <div class="col-12">
+            <i class="fa fa-square" style="color: #686868"></i><span style="font-weight: 500">
+              Doble Click en la Columna de Depósito para Conciliar &nbsp;&nbsp;
+            </span>
+          </div> -->
           <!-- <div class="col-md-4 mt-3">
             <i class="fa fa-square" style="color: #e2c103"></i
             ><span style="font-weight: 500">
@@ -107,12 +129,12 @@
             <div class="row">
               <div class="col-md-12 mt-3 text-center">
                 <button
-                  class="btn btn-success btn-sm w-100"
+                  class="btn btn-success btn-sm active w-100"
                   style="font-size: 12px"
                   type="button"
                   (click)="file.click()">
                   Importar CSV
-                  <i class="bx bx-download float-icon"></i>
+                  <i class="bi bi-file-earmark-excel-fill"></i>
                 </button>
                 <input
                   type="file"
@@ -125,8 +147,9 @@
               <div class="col-md-12 mt-3 text-center">
                 <button
                   (click)="exportar()"
-                  class="btn btn-success btn-sm w-100">
-                  Exportar
+                  style="font-size: 12px"
+                  class="btn btn-success btn-sm active w-100">
+                  Exportar CSV
                   <i class="bx bx-upload float-icon"></i>
                 </button>
               </div>
@@ -135,14 +158,14 @@
                 <button
                   (click)="actualizarFunc()"
                   class="btn btn-primary btn-sm active w-100">
-                  Actualizar
+                  Recargar
                   <i class="fas fa-sync-alt"> </i>
                 </button>
               </div>
               <div class="col-md-12 mt-3 text-center">
                 <button
                   (click)="desconciliarFunc()"
-                  class="btn btn-secondary btn-sm active w-100">
+                  class="btn btn-primary btn-sm active w-100">
                   Desconciliar
                 </button>
               </div>

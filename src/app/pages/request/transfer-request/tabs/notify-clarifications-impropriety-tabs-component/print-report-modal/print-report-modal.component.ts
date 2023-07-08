@@ -113,6 +113,9 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.idSolicitud = this.requestInfo.id;
     this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
 
+    console.log('ID de solicitud', this.requestInfo);
+    console.log('DOC', this.idTypeDoc);
+
     //Borrar firmantes existentes
     this.verificateFirm();
     this.signParams();
@@ -574,7 +577,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         firma: true,
         tipoDocumento: nameTypeReport,
       };
-      console.log(formData);
+      console.log('Información del reporte', formData);
 
       this.firmReport(requestInfo.id, nameTypeReport, formData);
     }
@@ -653,7 +656,13 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
         next: data => {
           this.msjCheck = true;
           this.handleSuccess();
-          this.updateStatusclarifications();
+
+          if (nameTypeReport === 'DictamenProcendecia') {
+            //this.updateRequest();
+          } else {
+            this.updateStatusclarifications();
+          }
+
           //this.updateStatusSigned();
         },
         error: error => {
@@ -663,6 +672,25 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
             'Error al generar firma electronica'
           );
         },
+      });
+  }
+
+  updateRequest() {
+    this.requestService
+      .update(this.idReportAclara, this.requestInfo)
+      .subscribe({
+        next: data => {
+          //this.handleSuccess(), this.signDictum();
+          console.log('Se actualizó');
+        },
+        error: error => (
+          this.onLoadToast(
+            'warning',
+            'No se pudo actualizar',
+            error.error.message[0]
+          ),
+          (this.loading = false)
+        ),
       });
   }
 
@@ -728,7 +756,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   openMessage2(message: string): void {
-    this.alertQuestion(undefined, 'Confirmación', message, 'Aceptar').then(
+    this.alertQuestion('question', 'Confirmación', message, 'Aceptar').then(
       question => {
         if (question.isConfirmed) {
           this.validAttachDoc();
@@ -741,7 +769,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = 'Firmado';
-    this.alertInfo('success', 'Reporte firmado', `${message} Correctamente`);
+    this.alertInfo('success', 'Reporte Firmado', ``);
     this.loading = false;
     this.modalRef.content.callback(true);
   }

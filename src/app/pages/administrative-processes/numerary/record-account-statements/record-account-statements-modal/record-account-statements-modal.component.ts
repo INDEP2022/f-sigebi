@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
-import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
-import { GenerateCveService } from 'src/app/core/services/ms-security/application-generate-clave';
+import { IRecordAccountStatements } from 'src/app/core/models/catalogs/record-account-statements.model';
+import { RecordAccountStatementsAccountsService } from 'src/app/core/services/catalogs/record-account-statements-accounts.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -19,13 +18,14 @@ export class RecordAccountStatementsModalComponent
   form: FormGroup;
   data: any;
   dataGrilla: any;
+  movimentAccount: IRecordAccountStatements;
+  factasStatusCta: any;
+  dataAccountPaginated: any;
 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private accountBank: GenerateCveService,
-    private accountService: BankAccountService,
-    private authService: AuthService
+    private recordAccountStatementsAccountsService: RecordAccountStatementsAccountsService
   ) {
     super();
   }
@@ -33,95 +33,63 @@ export class RecordAccountStatementsModalComponent
   ngOnInit(): void {
     this.prepareForm();
   }
-  prepareForm() {
+
+  private prepareForm() {
     this.form = this.fb.group({
-      bank: [null, Validators.required],
-      account: [null, Validators.required],
-      date: [null, Validators.nullValidator],
-      amount: [null, Validators.nullValidator],
-      motion: [null, Validators.nullValidator],
-    });
-    this.validation();
-  }
-  close() {
-    this.modalRef.hide();
-  }
-
-  getAccountBank() {
-    var account = this.data.accountNumber.accountNumberTransfer;
-    this.accountBank.getAccountBank(account).subscribe({
-      next: async (response: any) => {
-        if (response.data.length > 0) {
-          this.form.get('bank').setValue(response.data[0].nombre);
-          this.form.get('account').setValue(response.data[0].cve_cuenta);
-        } else {
-          this.warningAlert(
-            'No se tiene definida una cuenta donde traspasar los movimientos'
-          );
-        }
-      },
-      error: err => {
-        this.loading = false;
-        this.warningAlert(
-          'No se tiene definida una cuenta donde traspasar los movimientos'
-        );
-      },
+      bank: [
+        this.movimentAccount.factasStatusCta.nombre,
+        Validators.nullValidator,
+      ],
+      account: [
+        this.movimentAccount.factasStatusCta.cve_cuenta,
+        Validators.nullValidator,
+      ],
+      date: [this.movimentAccount.dateMotion, Validators.nullValidator],
+      amount: [
+        this.movimentAccount.deposit
+          ? this.movimentAccount.deposit
+          : this.movimentAccount.withdrawal,
+        Validators.nullValidator,
+      ],
+      motion: [
+        this.movimentAccount.deposit ? 'Cargo' : 'Abono',
+        Validators.nullValidator,
+      ],
     });
   }
 
-  validation() {
-    if (this.data != null) {
-      this.dataGrilla = this.data;
-      this.form.get('bank').disable();
-      this.form.get('account').disable();
-      this.form.get('date').disable();
-
-      this.form.get('date').setValue(this.data.dateMotion);
-      if (this.data.deposit != null) {
-        this.form.get('amount').setValue(this.data.deposit);
-        this.form.get('motion').setValue('CARGO');
-      } else {
-        this.form.get('amount').setValue(this.data.postDiverse);
-        this.form.get('motion').setValue('ABONO');
+  showCreateAlert() {
+    this.alertQuestion(
+      'warning',
+      'Transferir',
+      '¿Desea transferir este movimiento?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        console.log('isConfirmed');
+        this.create();
       }
-      this.getAccountBank();
-    }
-  }
-  warningAlert(message: any) {
-    this.alert('warning', message, '');
-  }
-  successAlert() {
-    this.alert('success', 'Registro guardado', '');
+    });
   }
 
-  async save() {
-    const response = await this.alertQuestion(
-      'question',
-      '¿Esta seguro que desea traspasar este movimiento?',
-      ''
-    );
-    if (response.isConfirmed) {
-      const payload = {
-        withdrawal: this.dataGrilla.withdrawal,
-        deposit: this.form.get('amount').value,
-        dateMotion: this.form.get('date').value,
-        numberAccount: this.dataGrilla.accountNumber.accountNumberTransfer,
-        userinsert: this.authService.decodeToken().name,
-        dateInsertion: new Date(),
-      };
-      this.loading = true;
-      this.accountService.getTransferAccount(payload).subscribe({
-        next: async (response: any) => {
-          this.successAlert();
-          this.loading = false;
-          this.modalRef.content.callback(true);
-          this.modalRef.hide();
+  create() {
+    this.recordAccountStatementsAccountsService
+      .create(this.form.value)
+      .subscribe({
+        next: () => {
+          console.log('isConfirmed 2');
+          this.alert('success', 'Movimiento transferido', '');
         },
-        error: err => {
-          this.loading = false;
-          this.warningAlert('No se creo el registro');
+        error: error => {
+          this.alert(
+            'warning',
+            'Error',
+            'No se puede transferir el movimiento'
+          );
         },
       });
-    }
+  }
+
+  close() {
+    this.modalRef.hide();
   }
 }

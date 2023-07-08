@@ -206,7 +206,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
 
   extraOperations() {}
 
-  protected updateByPaginator() {
+  override searchParams() {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         localStorage.setItem(
@@ -258,7 +258,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     //     this.tiposEvento = response.data;
     //   },
     // });
-    this.updateByPaginator();
+    this.searchParams();
   }
 
   override dinamicFilterUpdate() {

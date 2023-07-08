@@ -280,9 +280,11 @@
     <form class="form-material" [formGroup]="form2">
       <div class="row mb-3 mt-3">
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
-          <form-field [control]="form2.get('numberGood')" label="No. Bien">
+          <form-field
+            [control]="form2.get('numberGoodFather')"
+            label="No. Bien">
             <input
-              formControlName="numberGood"
+              formControlName="numberGoodFather"
               type="text"
               class="form-control"
               type="number"
@@ -359,6 +361,7 @@
         </button>
         <button
           (click)="viewModal('error')"
+          [disabled]="widthErrors"
           class="btn btn-primary btn-sm active mr-3">
           Ver Error
         </button>
@@ -370,8 +373,12 @@
         </button>
       </div>
       <div class="col-md-3 mt-3">
-        <form-check label="Bienes Correctos" for="label">
-          <input id="label" type="checkbox" formControlName="check" />
+        <form-check label="Bienes Correctos" for="checkGood">
+          <input
+            id="checkGood"
+            type="checkbox"
+            formControlName="check"
+            [readOnly]="true" />
         </form-check>
       </div>
     </div>
@@ -379,7 +386,11 @@
 </app-card>
 
 <!--Data Previsualization-->
-<app-card [header]="true" [footer]="true">
+<app-paq-destion-det
+  [packageType]="packageType"
+  [noPackage]="noPackage"></app-paq-destion-det>
+
+<!-- <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Previsualización de Datos</h5>
     <div class="col-md-5 buttons">
@@ -406,7 +417,7 @@
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
   </div>
-</app-card>
+</app-card> -->
 
 <!--Scan Folio-->
 

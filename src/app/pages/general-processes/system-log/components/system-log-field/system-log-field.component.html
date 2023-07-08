@@ -3,23 +3,15 @@
     [control]="controls.value"
     [label]="controls.columnDescription.value"
     [ngSwitch]="controls.dataType.value">
-    <ng-select
-      class="form-control"
-      formControlName="value"
-      [placeholder]="controls.columnDescription.value"
-      [items]="[]"
-      [addTag]="true"
-      [multiple]="true"
-      [selectOnTab]="true"
-      [isOpen]="false"
-      *ngSwitchCase="'NUMBER'">
-    </ng-select>
-    <!-- <input
-      type="number"
+    <!-- <ng-select class="form-control" formControlName="value" [placeholder]="controls.columnDescription.value"
+      [items]="[]" [addTag]="true" [multiple]="true" [selectOnTab]="true" [isOpen]="false" *ngSwitchCase="'NUMBER'">
+    </ng-select> -->
+    <input
+      type="text"
       formControlName="value"
       class="form-control"
       [placeholder]="controls.columnDescription.value"
-      *ngSwitchCase="'NUMBER'" /> -->
+      *ngSwitchCase="'NUMBER'" />
     <input
       type="text"
       formControlName="value"

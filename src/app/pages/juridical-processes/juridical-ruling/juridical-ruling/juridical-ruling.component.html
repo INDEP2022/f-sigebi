@@ -142,6 +142,8 @@
                     [label]="label">
                     <input
                       class="form-control"
+                      [readOnly]="dictNumber"
+                      [ngClass]="{ 'not-press bg-gray': dictNumber }"
                       formControlName="fechaPPFF"
                       bsDatepicker
                       [maxDate]="maxDate" />
@@ -194,6 +196,7 @@
                     <ngx-select
                       label="Autoriza Dict."
                       [form]="legalForm"
+                      [readonly]="dictNumber ? true : false"
                       [data]="users$"
                       (fetchItems)="getUsers($event)"
                       bindLabel="userAndName"
@@ -440,7 +443,7 @@
             <button
               class="btn btn-info btn-sm active m-3 text-wrap w-100"
               (click)="btnDocumentos()">
-              Documentos
+              Documentos <i class="bx bx-file bx-sm float-icon"></i>
             </button>
           </div>
           <div

@@ -3,7 +3,10 @@ import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IResponse,
+} from '../../interfaces/list-response.interface';
 import { IProceedingDeliveryReception } from '../../models/ms-proceedings/proceeding-delivery-reception';
 import { IProccedingsDeliveryReception } from '../../models/ms-proceedings/proceedings-delivery-reception-model';
 import {
@@ -92,9 +95,11 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.get(`${this.endpoint2}/${id}`);
   }
   createDetail(model: IProceedingDeliveryReception) {
-    return this.post<{
-      message: string[];
-      data: IProceedingDeliveryReception;
-    }>('detail-proceedings-delivery-reception', model);
+    console.log(model);
+    return this.post<IResponse>('detail-proceedings-delivery-reception', model);
+    // return this.post<{
+    //   message: string[];
+    //   data: IProceedingDeliveryReception;
+    // }>('detail-proceedings-delivery-reception', model);
   }
 }

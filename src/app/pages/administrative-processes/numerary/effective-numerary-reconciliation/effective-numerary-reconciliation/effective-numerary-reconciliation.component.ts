@@ -1,10 +1,17 @@
 import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
 import {
   FilterParams,
   ListParams,
@@ -12,13 +19,17 @@ import {
 import { IMoneda } from 'src/app/core/models/catalogs/tval-Table5.model';
 import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-effective-numerary-reconciliation',
   templateUrl: './effective-numerary-reconciliation.component.html',
   styles: [],
 })
-export class EffectiveNumeraryReconciliationComponent implements OnInit {
+export class EffectiveNumeraryReconciliationComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup;
   isLoading = false;
   maxDate = new Date();
@@ -31,6 +42,7 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
 
   @Output() submit = new EventEmitter();
+  @ViewChild('deleRef', { static: false }) deleRef: DelegationSharedComponent;
   constructor(
     private fb: FormBuilder,
     private tableServ: TvalTable5Service,
@@ -38,10 +50,13 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
+    // this.getRegCurrency(new ListParams(), false);
   }
 
   prepareForm() {
@@ -50,8 +65,8 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
       subdelegation: [null, Validators.required],
       currency: [null, Validators.required],
       bank: [null, Validators.required],
-      fileFrom: [null, Validators.required],
-      fileTo: [null, Validators.required],
+      fileFrom: [null, [Validators.required, Validators.maxLength(10)]],
+      fileTo: [null, [Validators.required, Validators.maxLength(10)]],
       from: [null, Validators.required],
       to: [null, Validators.required],
       import: [null, Validators.required],
@@ -83,8 +98,20 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
       PN_IMP: this.form.controls['import'].value,
     };
 
+    console.log('params', params);
+    const start = new Date(this.form.get('from').value);
+    const end = new Date(this.form.get('to').value);
+
+    if (end < start) {
+      this.alert(
+        'warning',
+        'advertencia',
+        'Fecha final no puede ser menor a fecha de inicio'
+      );
+      return;
+    }
     this.siabService
-      // .fetchReport('FGERADBIMPRMASIVA', params)
+      // .fetchReport('RGERADBCONCNUMEFE', params)
       .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
@@ -121,8 +148,22 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
       });
   }
 
-  getRegCurrency() {
-    this.tableServ.getReg4WidthFilters().subscribe({
+  getCurrencies($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    if ($params.text) params.search = $params.text;
+    this.getRegCurrency(params);
+  }
+
+  getRegCurrency(_params?: FilterParams, val?: boolean) {
+    // const params = new FilterParams();
+
+    // params.page = _params.page;
+    // params.limit = _params.limit;
+    // if (val) params.addFilter3('filter.desc_moneda', _params.text);
+
+    this.tableServ.getReg4WidthFilters(_params.getParams()).subscribe({
       next: data => {
         data.data.map(data => {
           data.desc_moneda = `${data.cve_moneda}- ${data.desc_moneda}`;
