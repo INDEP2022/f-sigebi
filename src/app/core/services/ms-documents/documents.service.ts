@@ -102,6 +102,11 @@ export class DocumentsService extends HttpService {
     return this.post<IClarificationDocumentsImpro>(route, model);
   }
 
+  createClarDocGood(model: Object) {
+    const route = DocumentsEndpoints.ClarificationDocumentsGood;
+    return this.post(route, model);
+  }
+
   createDocReceipt(model: IReceipyGuardDocument) {
     const route = DocumentsEndpoints.ClarificationDocumentsImpro;
     return this.post<IClarificationDocumentsImpro>(route, model);

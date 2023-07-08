@@ -21,7 +21,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { format } from 'date-fns';
 import * as FileSaver from 'file-saver';
-import { LocalDataSource } from 'ng2-smart-table';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IpackageValidGood } from 'src/app/core/models/catalogs/Ipackage-valid-good';
@@ -31,6 +30,7 @@ import {
   IPackageInfo,
 } from 'src/app/core/models/catalogs/package.model';
 import { IPerUser } from 'src/app/core/models/expedient/expedient.model';
+import { IPackageGoodEnc } from 'src/app/core/models/ms-package-good/package-good-enc';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dynamic-catalogs.service';
@@ -79,6 +79,7 @@ interface DataUser {
 export class MassiveConversionComponent extends BasePage implements OnInit {
   modalRef: BsModalRef;
   loadingText: string = '';
+  widthErrors = false;
   validaButton: ValidaButton = {
     PB_VALIDA: false,
     PB_AUTORIZA: false,
@@ -128,7 +129,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     applicationUSU: '',
     cancellationUSU: '',
   };
-  data: LocalDataSource = new LocalDataSource();
   totalItems: number = 0;
   columnFilters: any = [];
   generateFo = true;
@@ -300,6 +300,31 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     return this.form.get('paragraph3');
   }
 
+  // Form 2
+  get numberGoodFather() {
+    return this.form2.get('numberGoodFather');
+  }
+
+  get record() {
+    return this.form2.get('record');
+  }
+
+  get goodDescription() {
+    return this.form2.get('description');
+  }
+
+  get amount() {
+    return this.form2.get('amount');
+  }
+
+  get unit() {
+    return this.form2.get('unit');
+  }
+
+  get statusGood() {
+    return this.form2.get('status');
+  }
+
   get dataPrevisualization() {
     return this.unitConversionDataService.dataPrevisualization;
   }
@@ -358,7 +383,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
     //Formulario "NUEVO BIEN"
     this.form2 = this.fb.group({
-      numberGood: [null, [Validators.required]],
+      numberGoodFather: [null, [Validators.required]],
       record: [null, [Validators.required]],
       description: [
         null,
@@ -400,7 +425,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   //Llenar valores por el no. paquete
   fillDataByPackage() {
-    this.noPackage.valueChanges.subscribe(res => {
+    this.noPackage.valueChanges.subscribe((res: IPackageGoodEnc) => {
       console.log(res);
       if (res != null) {
         //Seteo de la primera parte
@@ -432,9 +457,29 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.paragraph1.setValue(res.paragraph1);
         this.paragraph2.setValue(res.paragraph2);
         this.paragraph3.setValue(res.paragraph3);
+
+        // Form2
+        this.numberGoodFather.setValue(res.numberGoodFather);
+        this.record.setValue(res.numberRecord);
+        // this.goodDescription.setValue(res.numberGoodFather);
+        // this.amount.setValue(res.numberGoodFather);
+        this.unit.setValue(res.unit);
+        this.statusGood.setValue(res.status);
+        // this.status2.setValue(res.numberGoodFather);
+
+        if (
+          ['C', 'X', 'L'].includes(
+            res.statuspack.toString().toLocaleUpperCase()
+          )
+        ) {
+          this.form.disable({ onlySelf: true, emitEvent: false });
+        } else {
+          this.form.enable({ onlySelf: true, emitEvent: false });
+        }
+
         //Traer los bienes de pack_det
-        this.unitConversionDataService.updatePrevisualizationData.next(true);
         this.validateButtons(res.statuspack.toString().toLocaleUpperCase());
+        this.unitConversionDataService.updatePrevisualizationData.next(true);
       }
     });
   }
@@ -521,7 +566,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     const modals: Record<string, any> = {
       error: {
         config: {
-          data: this.goodErrors,
+          data: this.dataErrors,
         },
         component: MassiveConversionErrorsModalComponent,
       },
@@ -611,8 +656,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       });
     }
     this.dataPrevisualization = dataRes;
-    this.data.load(dataRes);
-    this.totalItems = this.data.count();
+    // this.data.load(dataRes);
+    this.totalItems = this.dataPrevisualization.length;
   }
 
   // Aquí puedes realizar las acciones necesarias con la información recibida
@@ -676,7 +721,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   showConfirmAlert() {
     if (!this.form.valid) {
-      Swal.fire(`Faltan datos necesarios para validar ${this.form}`);
+      this.alert(
+        'warning',
+        `Faltan datos necesarios para validar ${this.form}`,
+        ''
+      );
       return;
     }
 
@@ -684,11 +733,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       'info',
       'Confirmación',
       '¿Está seguro de que el Paquete ya ha sido validado?'
-    ).then(question => {
+    ).then(async question => {
       if (question.isConfirmed) {
         this.verifyGoods();
         if (!this.chValidateGood) {
-          Swal.fire('Existe inconsistencia en los bienes...', 'A', 'error');
+          this.alert('warning', 'Existe inconsistencia en los bienes', '');
         } else {
           let currentDate = new Date();
           let formattedDate = currentDate.toISOString().substring(0, 10);
@@ -816,7 +865,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           }
 
           if (statusMessage !== '') {
-            Swal.fire(statusMessage, '', 'success');
+            this.alert('warning', statusMessage, '');
           }
 
           this.form.patchValue({
@@ -859,7 +908,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
                   'error'
                 );
               } else {
-                let res = await this.data.getAll();
+                let res = this.dataPrevisualization;
                 let goods = res.map((good: { numberGood: any }) => {
                   return good.numberGood;
                 });
@@ -896,8 +945,12 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     }
   }
 
-  async verifyGoods() {
-    console.log(this.data['data']);
+  get dataErrors() {
+    return this.unitConversionDataService.dataErrors;
+  }
+
+  verifyGoods() {
+    // console.log(this.data['data']);
     console.log('Sí');
     if (!['L', 'X'].includes(this.status.value)) {
       let _status: string;
@@ -924,19 +977,42 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.alert('warning', 'Debe ingresar el Almacén', '');
       } else {
         //Validacion de bienes
-        if (this.data['data'].length > 0) {
+        if (this.dataPrevisualization.length > 0) {
           const check = document.getElementById(
             'checkGood'
           ) as HTMLInputElement;
           check.checked = true;
           const ch_bienes_ok = 1;
           this.VALIDA_VAL24 = 'S';
-          for (const data of this.data['data']) {
-            const resp = await this.validateGoods(data);
+          // debugger;
+          let availablePrincipal = true;
+          this.unitConversionDataService.dataErrors = [];
+
+          this.dataPrevisualization.forEach(data => {
+            const resp = this.validateGoods(data);
+            console.log(resp);
+
             const available = JSON.parse(JSON.stringify(resp)).res;
             const message = JSON.parse(JSON.stringify(resp)).msg;
-            console.log(JSON.parse(JSON.stringify(resp)).res);
+            if (!available) {
+              this.dataErrors.push({
+                numberGood: data.numberGood,
+                descError: message,
+              });
+            }
+            availablePrincipal = availablePrincipal && available;
+            // this.unitConversionDataService.descError = message;
+          });
+          if (availablePrincipal) {
+            this.form2.enable({ onlySelf: true, emitEvent: false });
+            this.alert('success', 'Verificar Bienes', 'Bienes Sin Errores');
+          } else {
+            this.form2.disable({ onlySelf: true, emitEvent: false });
+            this.alert('error', 'Verificar Bienes', 'Bienes con Errores');
           }
+          this.widthErrors = availablePrincipal;
+          check.checked = availablePrincipal;
+          // this.form2.get('check').setValue(false);
         } else {
           this.alert('warning', 'No hay Bienes que verificar', '');
         }
@@ -945,86 +1021,73 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   validateGoods(good: any) {
-    return new Promise((resolve, reject) => {
-      const noPack = this.noPackage.value;
-      let lv_DESC_ERROR = '';
-      if (noPack.numberDelegation != good.bienes.delegationNumber) {
-        console.log({
-          valpack: noPack.numberDelegation,
-          valgood: good.bienes.delegationNumber,
-          good: good.bienes.goodId,
-        });
-        lv_DESC_ERROR += 'En la Delegación del bien.';
-      }
-      if (noPack.numberClassifyGood != good.bienes.goodClassNumber) {
-        console.log({
-          valpack: noPack.numberClassifyGood,
-          valgood: good.bienes.goodClassNumber,
-          good: good.bienes.goodId,
-        });
-        lv_DESC_ERROR +=
-          (lv_DESC_ERROR.length > 0 ? '/' : '') + 'En el Clasif. del bien.';
-        // resolve({ res: false, msg: 'classify' });
-      }
-      if (noPack.numberLabel != good.bienes.labelNumber) {
-        console.log({
-          valpack: noPack.numberLabel,
-          valgood: good.bienes.labelNumber,
-          good: good.bienes.goodId,
-        });
-        lv_DESC_ERROR +=
-          (lv_DESC_ERROR.length > 0 ? '/' : '') + 'En la Etiqueta del bien.';
-        // resolve({ res: false, msg: 'label' });
-      }
-      if (noPack.status != good.bienes.status) {
-        console.log({
-          valpack: noPack.status,
-          valgood: good.bienes.status,
-          good: good.bienes.goodId,
-        });
-        lv_DESC_ERROR +=
-          (lv_DESC_ERROR.length > 0 ? '/' : '') + 'En el Estatus del bien.';
-        // resolve({ res: false, msg: 'status' });
-      }
-      if (
-        noPack.typePackage != 3 &&
-        noPack.numberStore != good.bienes.storeNumber
-      ) {
-        console.log({
-          valpack: noPack.numberStore,
-          valgood: good.bienes.storeNumber,
-          good: good.bienes.goodId,
-        });
-        // resolve({ res: false, msg: 'store' });
-        lv_DESC_ERROR +=
-          (lv_DESC_ERROR.length > 0 ? '/' : '') + 'En el Almacén del bien.';
-      }
-      if (noPack.typePackage == 3) {
-        /* if (this.VALIDA_VAL24 == 'S') {
-        lv_valida = 'S';
+    const noPack: IPackageGoodEnc = this.noPackage.value;
+    let LV_VALIDA: string;
+    let lv_DESC_ERROR = '';
+    if (noPack.numberDelegation != good.bienes.delegationNumber) {
+      console.log({
+        valpack: noPack.numberDelegation,
+        valgood: good.bienes.delegationNumber,
+        good: good.bienes.goodId,
+      });
+      lv_DESC_ERROR += 'En la Delegación del bien.';
+    }
+    if (noPack.numberClassifyGood != good.bienes.goodClassNumber) {
+      console.log({
+        valpack: noPack.numberClassifyGood,
+        valgood: good.bienes.goodClassNumber,
+        good: good.bienes.goodId,
+      });
+      lv_DESC_ERROR +=
+        (lv_DESC_ERROR.length > 0 ? '/' : '') + 'En el Clasif. del bien.';
+      // resolve({ res: false, msg: 'classify' });
+    }
+    if (noPack.numberLabel != good.bienes.labelNumber) {
+      console.log({
+        valpack: noPack.numberLabel,
+        valgood: good.bienes.labelNumber,
+        good: good.bienes.goodId,
+      });
+      lv_DESC_ERROR +=
+        (lv_DESC_ERROR.length > 0 ? '/' : '') + 'En la Etiqueta del bien.';
+      // resolve({ res: false, msg: 'label' });
+    }
+    if (noPack.status != good.bienes.status) {
+      console.log({
+        valpack: noPack.status,
+        valgood: good.bienes.status,
+        good: good.bienes.goodId,
+      });
+      lv_DESC_ERROR +=
+        (lv_DESC_ERROR.length > 0 ? '/' : '') + 'En el Estatus del bien.';
+      // resolve({ res: false, msg: 'status' });
+    }
+    if (
+      noPack.typePackage != '3' &&
+      noPack.numberStore != good.bienes.storeNumber
+    ) {
+      // resolve({ res: false, msg: 'store' });
+      lv_DESC_ERROR +=
+        (lv_DESC_ERROR.length > 0 ? '/' : '') + 'En el Almacén del bien.';
+    }
+    if (noPack.typePackage == '3') {
+      if (this.VALIDA_VAL24 === 'S') {
+        LV_VALIDA = this.VALIDA_VAL24;
         this.VALIDA_VAL24 = 'N';
-        const check = document.getElementById(
-          'checkGood'
-        ) as HTMLInputElement;
-        check.checked = false;
       }
-      if (lv_valida != good.bienes.val24) {
-        console.log({
-          valpack: lv_valida,
-          valgood: good.bienes.val24,
-          good: good.bienes.goodId,
-        });
-      }else if(good.bienes.val24 == null){
-        console.log('Es nulo')
-      }*/
-        resolve({ res: false, msg: 'break' });
+      if (LV_VALIDA !== this.VALIDA_VAL24) {
+        lv_DESC_ERROR +=
+          (lv_DESC_ERROR.length > 0 ? '/' : '') + 'El parametro del Val24.';
+      } else if (!this.VALIDA_VAL24) {
+        lv_DESC_ERROR +=
+          (lv_DESC_ERROR.length > 0 ? '/' : '') + 'El parametro del Val24.';
       }
-      if (lv_DESC_ERROR.length > 0) {
-        resolve({ res: false, msg: lv_DESC_ERROR });
-      } else {
-        resolve({ res: true, msg: '' });
-      }
-    });
+    }
+    if (lv_DESC_ERROR.length > 0) {
+      return { res: false, msg: lv_DESC_ERROR };
+    } else {
+      return { res: true, msg: '' };
+    }
   }
 
   pubValidaGoods(val24: string): Promise<boolean> {
@@ -1063,14 +1126,14 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   exportToExcel() {
     let iPackage: IPackageInfo = {
-      amountGood: this.form2.get('amount').value,
-      goodFatherNumber: this.form2.get('numberGood').value,
-      delegationNumber: this.form.get('delegation').value,
-      descGood: this.form2.get('description').value,
-      statusGood: this.form2.get('status').value,
-      packageNumber: this.form.get('package').value,
-      proceedingNumber: this.form2.get('record').value,
-      unitGood: this.form2.get('unit').value,
+      amountGood: this.amountKg.value,
+      goodFatherNumber: this.numberGoodFather.value,
+      delegationNumber: this.delegation.value,
+      descGood: this.descriptionPackage.value,
+      statusGood: this.statusGood.value,
+      packageNumber: this.noPackage.value.numberPackage,
+      proceedingNumber: this.record.value,
+      unitGood: this.unit.value,
     };
 
     this.massiveGoodService.pubExport(iPackage).subscribe(
@@ -1425,7 +1488,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       numberClassifyGood: this.goodClassification.value,
       numberLabel: this.targetTag.value,
       unit: this.measurementUnit.value,
-      numberStore: null,
+      numberStore: this.warehouse.value,
       numberRecord: null,
       status: this.goodStatus.value,
       numbertrainemiaut: this.transferent.value,

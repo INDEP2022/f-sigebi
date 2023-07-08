@@ -45,6 +45,7 @@ export const initialState: GlobalVarsState = {
     P_NO_TRAMITE: null,
     IMP_OF: null,
     NO_EXPEDIENTE_F: null,
+    G_REGISTRO_BITACORA: null,
   },
 };
 
