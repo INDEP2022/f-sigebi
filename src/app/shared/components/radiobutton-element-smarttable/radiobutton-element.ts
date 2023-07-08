@@ -13,18 +13,33 @@ import { FormGroup } from '@angular/forms';
   selector: 'app-radiobutton-element',
   template: `
     <div class="col">
-    <label class="mr-3">
-      <input type="radio" name="selection" value="S" [checked]="selectedOption === 'S'" (change)="selectOption('S')">
-      S
-    </label>
-    <label class="mr-3">
-      <input type="radio" name="selection" value="N" [checked]="selectedOption === 'N'" (change)="selectOption('N')">
-      N
-    </label>
-    <label class="mr-3">
-      <input type="radio" name="selection" value={{null}} [checked]="selectedOption === null" (change)="selectOption(null)">
-    </label>
-  </div>
+      <label class="mr-3">
+        <input
+          type="radio"
+          name="selection"
+          value="S"
+          [checked]="selectedOption === 'S'"
+          (change)="selectOption('S')" />
+        S
+      </label>
+      <label class="mr-3">
+        <input
+          type="radio"
+          name="selection"
+          value="N"
+          [checked]="selectedOption === 'N'"
+          (change)="selectOption('N')" />
+        N
+      </label>
+      <label class="mr-3">
+        <input
+          type="radio"
+          name="selection"
+          value="{{ null }}"
+          [checked]="selectedOption === null"
+          (change)="selectOption(null)" />
+      </label>
+    </div>
   `,
   styles: [],
 })
