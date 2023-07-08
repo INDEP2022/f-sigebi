@@ -46,6 +46,7 @@ export class ScheduledMaintenanceComponent
       'filtersActa',
       'paramsActaProgramaciones'
     );
+
     // debugger;
 
     this.settings1 = {
@@ -73,7 +74,7 @@ export class ScheduledMaintenanceComponent
         proceedings +=
           selected + (index < this.selecteds.length - 1 ? ',' : '');
       });
-      this.onLoadToast(
+      this.alert(
         'success',
         'Eliminación Acta',
         `Se eliminaron las actas No. ${proceedings} ` +
@@ -81,9 +82,9 @@ export class ScheduledMaintenanceComponent
       );
     } else {
       if (notRemoveds.length > 0) {
-        this.onLoadToast(
-          'warning',
-          'Eliminación',
+        this.alert(
+          'error',
+          'Eliminación Acta',
           `Elimine primero el detalle de las actas No. ${proceedings}`
         );
       }
@@ -136,9 +137,9 @@ export class ScheduledMaintenanceComponent
               actas +=
                 selected.id + (index < this.selecteds.length - 1 ? ',' : '');
             });
-            this.onLoadToast(
+            this.alert(
               'error',
-              'ERROR',
+              'Eliminación de Actas',
               `No se pudieron eliminar las actas° ${actas}`
             );
           },
@@ -168,7 +169,7 @@ export class ScheduledMaintenanceComponent
           next: response => {
             console.log(response);
             this.getData(true);
-            this.onLoadToast(
+            this.alert(
               'success',
               'Eliminación',
               `Se elimino el acta No. ${item.id}`
@@ -179,7 +180,7 @@ export class ScheduledMaintenanceComponent
             if (err.error.message.includes('detalle_acta_ent_recep')) {
               message = message + ` porque tiene detalles de acta`;
             }
-            this.onLoadToast('error', `Acta No. ${item.id}`, message);
+            this.alert('error', `Acta No. ${item.id}`, message);
           },
         });
       }
@@ -270,12 +271,12 @@ export class ScheduledMaintenanceComponent
         if (response.data && response.data[0]) {
           self.redirectDetailMaintenance(response.data[0]);
         } else {
-          self.onLoadToast('error', 'ERROR', `Data no encontrada`);
+          self.alert('error', 'ERROR', `Data no encontrada`);
         }
       },
       error: err => {
         console.log(err);
-        self.onLoadToast('error', 'ERROR', `Data no encontrada`);
+        self.alert('error', 'ERROR', `Data no encontrada`);
       },
     });
   }

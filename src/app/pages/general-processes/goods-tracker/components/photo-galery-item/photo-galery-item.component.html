@@ -1,0 +1,57 @@
+<div class="row p-3">
+  <div class="col-md-3 d-flex justify-content-center align-items-center">
+    <div class="d-inline">
+      <img
+        class="w-100"
+        (dblclick)="callReport(good)"
+        [src]="imgSrc"
+        style="border-radius: 8px; cursor: pointer" />
+    </div>
+  </div>
+  <div class="col-md-9 info p-2">
+    <div class="row m-auto">
+      <div class="col-md-12 d-flex flex-wrap">
+        <span class="labe-circle-red text-white px-2 mr-2 mb-2"
+          ><b>Expediente:</b> {{ good?.fileNumber }}</span
+        >
+        <span class="labe-circle-turq text-white px-2 mr-2 mb-2"
+          ><b>Bien:</b> {{ good?.goodNumber }}</span
+        >
+        <span class="labe-circle-green text-white px-2 mb-2"
+          ><b>Sssubtipo: </b>{{ good?.goodSssType }}</span
+        >
+      </div>
+    </div>
+    <div class="row m-auto">
+      <div class="col-md-12">
+        <div class="labe-circle-silver text-white px-2 mb-2">
+          <b>Descripción:</b> {{ good?.goodDescription }}
+        </div>
+      </div>
+    </div>
+    <div class="row m-auto">
+      <div class="col-md-12">
+        <div class="labe-circle-gray text-white px-2 mb-2">
+          <b>Descripción del Transferente:</b> {{ good?.transfereeDesc }}
+        </div>
+      </div>
+    </div>
+    <div class="row m-auto">
+      <div class="col-md-12 d-flex flex-wrap">
+        <span class="labe-circle-purple text-white px-2 mr-2 mb-2"
+          ><b>Cantidad:</b> {{ good?.quantity }}</span
+        >
+        <span class="labe-circle-blue text-white px-2 mr-2 mb-2"
+          ><b>Estatus: </b> {{ good?.status }}</span
+        >
+      </div>
+    </div>
+    <div class="row m-auto">
+      <div class="col-md-12">
+        <div class="labe-circle-lime text-white px-2 mr-2 mb-2">
+          <b>Ubicación Almacen:</b> {{ good?.warehouseUbication }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

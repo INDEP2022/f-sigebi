@@ -7,13 +7,17 @@
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-md-6">
-            <form-field [control]="form.get('idProcess')" label="Id Proceso">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="idProcess"
-                min="1"
-                pattern="^[0-9]+" />
+            <form-field [control]="form.get('idProcess')">
+              <ngx-select
+                (fetchItems)="getProcesosNum($event)"
+                [data]="procesosNums"
+                [form]="form"
+                value="procnumId"
+                bindLabel="procnumId"
+                [label]="'Id Proceso'"
+                [control]="'idProcess'"
+                (change)="onProcesosNum($event)">
+              </ngx-select>
             </form-field>
           </div>
           <div class="col-md-6">
@@ -39,36 +43,17 @@
             <div class="row">
               <div class="d-flex justify-content-around">
                 <form-radio label="Devolución">
-                  <input
-                    type="radio"
-                    formControlName="type"
-                    value="Devolucion" />
+                  <input type="radio" formControlName="type" value="D" />
                 </form-radio>
                 <form-radio label="Decomiso">
-                  <input type="radio" formControlName="type" value="Decomiso" />
+                  <input type="radio" formControlName="type" value="E" />
                 </form-radio>
                 <form-radio label="Abandono">
-                  <input type="radio" formControlName="type" value="Abandono" />
+                  <input type="radio" formControlName="type" value="A" />
                 </form-radio>
               </div>
             </div>
           </div>
-          <!-- <div class="col-md-3">
-            <form-radio label="Devolución">
-              <input type="radio" formControlName="devolution" value="value" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio label="Decomiso">
-              <input type="radio" formControlName="decomiso" value="value" />
-            </form-radio>
-          </div>
-          <div class="col-md-3">
-            <form-radio label="Abandono">
-              <input type="radio" formControlName="abandono" value="value" />
-            </form-radio>
-          </div>
-          -->
           <div class="col-md-3">
             <form-field
               [control]="form.get('totalInterests')"
@@ -132,35 +117,54 @@
               class="btn btn-sm btn-primary active m-3"
               (click)="selectRequest()">
               Selecciona Solicitudes
+              <i class="fas fa-edit bx-sm float-icon"></i>
             </button>
             <button
+              [disabled]="disableButton"
               type="button"
               class="btn btn-sm btn-primary active m-3"
               (click)="calculInteres()">
-              Calcula Interese
+              {{ textButton }}
+              <i
+                *ngIf="textButton.includes('Elimina')"
+                class="fa fa-trash"
+                aria-hidden="true"></i>
             </button>
             <button
               type="button"
               class="btn btn-sm btn-primary active m-3"
               (click)="printStatusAccount()">
-              Estado de Cuenta
+              Estado de Cuenta <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
             <button
               type="button"
               class="btn btn-sm btn-primary active m-3"
               (click)="printDetailMovi()">
-              Detalle Movimiento
+              Detalle Movimiento <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
             <button
               type="button"
               class="btn btn-sm btn-primary active m-3"
               (click)="printProrraComission()">
-              Prorrateo Comisión
+              Prorrateo Comisión <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
             <button
+              [disabled]="!process"
               class="btn btn-red btn-sm active m-3"
               (click)="deleteRequest()">
               Eliminar Proceso <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+            <button
+              [disabled]="!process"
+              (click)="exportarTotal()"
+              class="btn btn-success active btn-sm m-3">
+              Exportar Total CSV <i class="bx bx-download float-icon"></i>
+            </button>
+            <button
+              [disabled]="!process"
+              (click)="exportar()"
+              class="btn btn-success active btn-sm m-3">
+              Exportar Prorra CSV <i class="bx bx-download float-icon"></i>
             </button>
           </div>
         </div>
@@ -195,7 +199,7 @@
       </app-pagination>
       <div class="row">
         <form action="" class="form-material" [formGroup]="formBlkControl">
-          <div class="col-md-4">
+          <!-- <div class="col-md-4">
             <form-field
               [control]="formBlkControl.get('sumCommision')"
               label="Comisión Bancaria">
@@ -204,7 +208,7 @@
                 formControlName="sumCommision"
                 class="form-control" />
             </form-field>
-          </div>
+          </div> -->
         </form>
       </div>
     </div>
@@ -214,7 +218,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
-            [source]="data3">
+            [source]="data3"
+            (rowSelect)="postQuery($event.data)">
           </ng2-smart-table>
         </div>
       </div>

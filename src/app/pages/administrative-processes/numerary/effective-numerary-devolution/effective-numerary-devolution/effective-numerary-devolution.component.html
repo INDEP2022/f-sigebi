@@ -13,6 +13,7 @@
               [control]="form.get('fileFrom')"
               label="Del Expediente:">
               <input
+                max="9999999999"
                 type="number"
                 formControlName="fileFrom"
                 class="form-control" />
@@ -21,9 +22,16 @@
           <div class="col-md-6">
             <form-field [control]="form.get('fileTo')" label="al:">
               <input
+                max="9999999999"
                 type="number"
                 formControlName="fileTo"
-                class="form-control" />
+                class="form-control"
+                [min]="form.get('fileFrom').value"
+                [ngModel]="
+                  form.get('fileTo').value < form.get('fileFrom').value
+                    ? form.get('fileFrom').value
+                    : form.get('fileTo').value
+                " />
             </form-field>
           </div>
         </div>
@@ -31,6 +39,7 @@
           <div class="col-md-6">
             <form-field [control]="form.get('goodFrom')" label="Del Bien:">
               <input
+                max="9999999999"
                 type="number"
                 formControlName="goodFrom"
                 class="form-control" />
@@ -39,7 +48,14 @@
           <div class="col-md-6">
             <form-field [control]="form.get('goodTo')" label="al:">
               <input
+                max="9999999999"
                 type="number"
+                [min]="form.get('goodFrom').value"
+                [ngModel]="
+                  form.get('goodTo').value < form.get('goodFrom').value
+                    ? form.get('goodFrom').value
+                    : form.get('goodTo').value
+                "
                 formControlName="goodTo"
                 class="form-control" />
             </form-field>
@@ -49,7 +65,7 @@
           <div class="col-md-6">
             <form-field
               [control]="form.get('from')"
-              label="Fecha de Devolución del:">
+              label="Fecha De Devolución Del:">
               <input
                 [maxDate]="maxDate"
                 formControlName="from"

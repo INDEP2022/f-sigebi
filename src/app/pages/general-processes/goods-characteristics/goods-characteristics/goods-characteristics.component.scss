@@ -8,6 +8,14 @@
   // }
 }
 
+.errorMessage {
+  margin-bottom: 2em;
+  text-align: center;
+  color: #ba657f;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
 :host ::ng-deep form-field {
   .form-control[readonly] {
     &:focus ~ .form-bar:after,

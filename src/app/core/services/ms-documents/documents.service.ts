@@ -102,6 +102,11 @@ export class DocumentsService extends HttpService {
     return this.post<IClarificationDocumentsImpro>(route, model);
   }
 
+  createClarDocGood(model: Object) {
+    const route = DocumentsEndpoints.ClarificationDocumentsGood;
+    return this.post(route, model);
+  }
+
   createDocReceipt(model: IReceipyGuardDocument) {
     const route = DocumentsEndpoints.ClarificationDocumentsImpro;
     return this.post<IClarificationDocumentsImpro>(route, model);
@@ -225,6 +230,10 @@ export class DocumentsService extends HttpService {
   ): Observable<IListResponse<SeparatorsDocuments>> {
     const route = `/${DocumentsEndpoints.DocumentsSeparator}`;
     return this.get(route, $params);
+  }
+
+  otDocuments(expedient: string | number) {
+    return this.get('application/pup-documents-ot/' + expedient);
   }
 
   getFolio(

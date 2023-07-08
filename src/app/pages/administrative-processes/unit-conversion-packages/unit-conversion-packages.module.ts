@@ -23,7 +23,8 @@ import { MasiveConversionPermissionsDeleteComponent } from './masive-conversion-
 import { MassiveConversionErrorsModalComponent } from './massive-conversion-erros-list/massive-conversion-errors-modal/massive-conversion-errors-modal.component';
 import { MassiveConversionModalGoodComponent } from './massive-conversion-modal-good/massive-conversion-modal-good.component';
 import { MassiveConversionPermissionsComponent } from './massive-conversion-permissions/massive-conversion-permissions.component';
-import { MassiveConversionSelectGoodComponent } from './massive-conversion-select-good/massive-conversion-select-good';
+import { MassiveConversionSelectGoodComponent } from './massive-conversion-select-good/massive-conversion-select-good.component';
+import { PaqDestinoDetComponent } from './massive-conversion/paq-destino-det/paq-destino-det.component';
 
 @NgModule({
   declarations: [
@@ -31,8 +32,9 @@ import { MassiveConversionSelectGoodComponent } from './massive-conversion-selec
     MassiveConversionErrorsModalComponent,
     MassiveConversionPermissionsComponent,
     MasiveConversionPermissionsDeleteComponent,
-    MassiveConversionModalGoodComponent, 
-    MassiveConversionSelectGoodComponent
+    MassiveConversionModalGoodComponent,
+    MassiveConversionSelectGoodComponent,
+    PaqDestinoDetComponent,
   ],
   imports: [
     CommonModule,

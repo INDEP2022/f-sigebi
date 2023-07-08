@@ -7,7 +7,7 @@ import {
   BsModalService,
   ModalDirective,
 } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   ListParams,
@@ -21,6 +21,7 @@ import { GoodSpentService } from 'src/app/core/services/ms-expense/good-expense.
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -62,12 +63,18 @@ export class ResquestNumberingChangeComponent
   totalItems1: number = 0;
   totalItems2: number = 0;
   columnFilters: any = [];
+  people$: Observable<any[]>;
+  selectedPeople: any = [];
+
   //params = new BehaviorSubject<ListParams>(new ListParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
   params1 = new BehaviorSubject<ListParams>(new ListParams());
 
   itemsBoveda = new DefaultSelect();
   itemsDelegation = new DefaultSelect();
+  itemsUser = new DefaultSelect();
+  itemsUser1 = new DefaultSelect();
+  itemName = new DefaultSelect();
   itemsAlmacen = new DefaultSelect();
   columnFilters4: any = [];
   idSolicitud: string = '';
@@ -76,6 +83,8 @@ export class ResquestNumberingChangeComponent
   dataCamNum: any = [];
   dataGood: any = [];
   validate: boolean = false;
+  selectedCars = [3];
+
   params4 = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
   data1: LocalDataSource = new LocalDataSource();
@@ -152,6 +161,7 @@ export class ResquestNumberingChangeComponent
 
   //Reactive Forms
   form: FormGroup;
+  authorizeDate: any;
 
   get legalStatus() {
     return this.form.get('legalStatus');
@@ -214,7 +224,8 @@ export class ResquestNumberingChangeComponent
     private numeraryService: NumeraryService,
     private siabService: SiabService,
     private modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private securityService: SecurityService
   ) {
     super();
     this.settings = {
@@ -318,9 +329,14 @@ export class ResquestNumberingChangeComponent
     this.getDelegations(new ListParams());
     this.getAlmacen(new ListParams());
     this.getTodos(new ListParams());
+    this.getUsuario(new ListParams());
     this.getDataTable();
     if (this.modal?.isShown) {
     }
+    //this.people$ = this.goodprocessService.getTodos();
+  }
+  clearModel() {
+    this.selectedPeople = [];
   }
 
   /**
@@ -372,11 +388,115 @@ export class ResquestNumberingChangeComponent
   getDelegations(params: ListParams, id?: string) {
     if (id) {
       params['filter.id'] = `$eq:${id}`;
+      console.log('AQUI', params);
     }
     this.delegationService.getAllPaginated(params).subscribe((data: any) => {
       this.itemsDelegation = new DefaultSelect(data.data, data.count);
+      console.log('AQUI', this.itemsDelegation);
+      console.log('AQUI', data);
     });
   }
+
+  public searchUsuario(data: any) {
+    console.log(data);
+
+    const params = new ListParams();
+    params['filter.user'] = data.user;
+    console.log(data.user);
+    this.securityService.getAllUsersAccessTracking(params).subscribe({
+      next: (types: any) => {
+        this.itemsUser = new DefaultSelect(types.data, types.count);
+        console.log(types);
+        this.formaplicationData.controls['postUserRequestCamnum'].setValue(
+          types.data[0].user.name
+        );
+      },
+    });
+  }
+
+  public searchUsuario1(data: any) {
+    console.log(data);
+
+    const params = new ListParams();
+    params['filter.user'] = data.user;
+    console.log(data.user);
+    this.securityService.getAllUsersAccessTracking(params).subscribe({
+      next: (types: any) => {
+        this.itemsUser = new DefaultSelect(types.data, types.count);
+        console.log(types);
+        this.formaplicationData.controls['authorizePostUser'].setValue(
+          types.data[0].user.name
+        );
+        this.formaplicationData.controls['authorizeDelegation'].setValue(
+          types.data[0].user.profession
+        );
+      },
+    });
+  }
+
+  getUsuario(params: ListParams, user?: string) {
+    if (user) {
+      params['filter.user'] = `$in:${user}`;
+    }
+
+    this.securityService
+      .getAllUsersAccessTracking(params)
+      .subscribe((data: any) => {
+        const res: any = data.data.map((user: any) => {
+          return user.user;
+        });
+
+        this.itemsUser = new DefaultSelect(res, data.count);
+        console.log(this.itemsUser);
+        console.log(data);
+        //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
+        // Llamar a getNameUser solo si se proporcionó un usuario
+        if (user) {
+          this.getNameUser(params, user);
+          console.log(this.getNameUser(params, user));
+        }
+      });
+  }
+
+  getUsuario1(params: ListParams, user?: string) {
+    if (user) {
+      params['filter.user'] = `$in:${user}`;
+    }
+
+    this.securityService
+      .getAllUsersAccessTracking(params)
+      .subscribe((data: any) => {
+        const res: any = data.data.map((user: any) => {
+          return user.user;
+        });
+
+        this.itemsUser1 = new DefaultSelect(res, data.count);
+        console.log(this.itemsUser);
+        console.log(data);
+        //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
+        // Llamar a getNameUser solo si se proporcionó un usuario
+        if (user) {
+          this.getNameUser(params, user);
+          console.log(this.getNameUser(params, user));
+        }
+      });
+  }
+
+  getNameUser(params: ListParams, user?: string) {
+    if (user) {
+      params['filter.user'] = `$in:${user}`;
+    }
+
+    this.securityService.getAllUsersTracker(params).subscribe((data: any) => {
+      const res: any = data.data.map((name: any) => {
+        return name.name;
+      });
+
+      this.itemName = new DefaultSelect(data.data, data.count);
+      console.log(this.itemName);
+    });
+  }
+
   getAlmacen(params: ListParams, id?: string) {
     if (id) {
       params['filter.id'] = `$eq:${id}`;
@@ -407,6 +527,10 @@ export class ResquestNumberingChangeComponent
       },
       error => (console.log('ERR', error), (this.loading = false))
     );
+  }
+
+  onOptionsSelected(options: any[]) {
+    console.log('Opciones seleccionadas:', options);
   }
 
   getDataTable() {
@@ -448,31 +572,34 @@ export class ResquestNumberingChangeComponent
   getDataTableDos() {
     this.loading = true;
     this.dataGood = [];
+
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    //params['filter.goodClassNumber'] = `$eq:1115`;
-    params['filter.goodClassNumber'] = `$eq:${this.form.get('type').value}`;
-    params['filter.status'] = `$in:${this.form.get('legalStatus').value}`;
-    params['filter.storeNumber'] = `$eq:${this.form.get('warehouse').value}`;
-    params['filter.vaultNumber'] = `$eq:${this.form.get('vault').value}`;
-    params['filter.delegationNumber'] = `$eq:${
-      this.form.get('delegation').value
-    }`;
-    this.goodServices.getByExpedientAndParams__(params).subscribe({
-      next: async (response: any) => {
-        this.dataGood = response.data;
-        this.totalItems = response.count;
-        this.data.load(response.data);
-        this.data.refresh();
-        this.loading = false;
-      },
-      error: err => {},
-    });
+    params['filter.goodClassNumber'] = `$eq:${this.form.get('type')}`;
+    params['filter.status'] = `$in:${this.form.get('legalStatus')}`;
+    params['filter.storeNumber'] = `$eq:${this.form.get('warehouse')}`;
+    params['filter.vaultNumber'] = `$eq:${this.form.get('vault')} `;
+    params['filter.delegationNumber'] = `$eq:${this.form.get('delegation')}`;
+    if (this.form.get('type').value != null)
+      this.goodServices.getByExpedientAndParams__(params).subscribe({
+        next: async (response: any) => {
+          console.log(response);
+          this.dataGood = response.data;
+          this.totalItems = response.count;
+          this.data.load(response.data);
+          this.data.refresh();
+          this.loading = false;
+        },
+        error: err => {
+          console.log('error', err);
+          this.loading = false;
+          this.alert('error', 'No se encontraron registros', '');
+        },
+      });
     this.loading = false;
   }
-
   getDataTableNum() {
     this.totalItems1 = 0;
     this.data1
@@ -527,9 +654,8 @@ export class ResquestNumberingChangeComponent
       },
       error: err => {
         console.log('ERROR', err);
-        this.totalItems1 = 0;
-        this.data1.load([]);
-        this.data1.refresh();
+        this.loading = false;
+        this.alert('error', 'No se encontraron registros', '');
       },
     });
     this.loading = false;
@@ -732,9 +858,9 @@ export class ResquestNumberingChangeComponent
   }
   handleSuccess(message: any) {
     if (message == 'Se creo correctamente') {
-      this.onLoadToast('success', `${message}`);
+      this.alert('success', `${message}`, '');
     } else {
-      this.onLoadToast('warning', `${message}`);
+      this.alert('warning', `${message}`, '');
     }
     // this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
@@ -751,34 +877,48 @@ export class ResquestNumberingChangeComponent
     if (
       this.formaplicationData.get('dateRequestChangeNumerary').value == null
     ) {
-      message = 'La Fecha de Solicitud no debe estar vacia';
+      message = 'La Fecha de Solicitud no debe estar vacía';
       this.handleSuccess(message);
     }
     if (this.formaplicationData.get('userRequestChangeNumber').value == null) {
-      message = 'El Usuario Solicitante no debe estar vacio';
+      message = 'El Usuario Solicitante no debe estar vacío';
       this.handleSuccess(message);
     }
     if (this.formaplicationData.get('procedureProposal').value == null) {
-      message = 'El Procedimiento Propuesta no debe estar vacio';
+      message = 'Debe de seleccionar el campo Procedimiento Propuesto';
       this.handleSuccess(message);
     }
     if (this.formaplicationData.get('delegationRequestcamnum').value == null) {
-      message = 'El Cargo del Usuario no debe estar vacio';
+      message = 'El Cargo del Usuario no debe estar vacío';
       this.handleSuccess(message);
     }
     if (this.formaplicationData.get('authorizeUser').value == null) {
-      message = 'El Usuario Autoriza no debe estar vacio';
+      message = 'El campo Usuario Autoriza no debe estar vacío';
       this.handleSuccess(message);
     }
     if (this.formaplicationData.get('authorizeDate').value == null) {
-      message = 'La Fecha de Autorizacion no debe estar vacio';
+      message = 'La Fecha de Autorización no debe estar vacía';
       this.handleSuccess(message);
     }
     if (valor == 0) {
       if (this.dataGood[0].appraisedValue == null) {
         console.log('ENTRO AQUI');
         message =
-          'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enejenación';
+          'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
+        this.handleSuccess(message);
+      }
+    }
+
+    if (valor == 0) {
+      if (this.dataGood[0].expedienteid == null) {
+        message = 'El bien NO tiene Número de Expediente';
+        this.handleSuccess(message);
+      }
+    }
+
+    if (valor == 0) {
+      if (this.dataGood[0].expedientepreliminaryInquiry == null) {
+        message = 'El bien NO tiene averiguación previa';
         this.handleSuccess(message);
       }
     }
@@ -787,7 +927,12 @@ export class ResquestNumberingChangeComponent
       for (let index = 0; index < this.dataGood.length; index++) {
         if (this.dataGood[index].appraisedValue == null) {
           message =
-            'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enejenación';
+            'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
+          this.handleSuccess(message);
+        }
+
+        if (this.dataGood[index].expedienteid == null) {
+          message = 'El bien NO tiene Número de Expediente';
           this.handleSuccess(message);
         }
       }
@@ -800,6 +945,26 @@ export class ResquestNumberingChangeComponent
 
   guardarSolicitud() {
     this.loading = true;
+    // Obtener la fecha actual
+    const currentDate = new Date(); // Obtener la fecha actual
+
+    // Obtener la fecha seleccionada en el formulario
+    const fechaSeleccionada = this.formaplicationData.get(
+      'dateRequestChangeNumerary'
+    ).value;
+
+    // Comparar la fecha seleccionada con la fecha actual
+    if (fechaSeleccionada.toDateString() !== currentDate.toDateString()) {
+      // Si la fecha seleccionada no es la de hoy, mostrar un mensaje de error o realizar la acción que desees.
+      console.log('La fecha seleccionada debe ser la de hoy.');
+      this.loading = false;
+      return;
+    }
+
+    // Si la fecha seleccionada es la de hoy, continuar con el proceso de guardado
+    this.formaplicationData
+      .get('dateRequestChangeNumerary')
+      .setValue(currentDate);
     this.formaplicationData.get('applicationChangeCashNumber').setValue(null);
     this.numeraryService
       .createChangeNumerary(this.formaplicationData.getRawValue())
@@ -811,9 +976,11 @@ export class ResquestNumberingChangeComponent
             .setValue(response.applicationChangeNumeraryNumber);
           this.successAlert();
           this.loading = false;
+          console.log(response);
         },
         error: err => {
           this.loading = false;
+          console.log(err);
         },
       });
   }
@@ -826,7 +993,38 @@ export class ResquestNumberingChangeComponent
     this.getDataTableNum();
     this.numeraryService.getSolById(this.idSolicitud).subscribe({
       next: async (response: any) => {
+        //'userRequestChangeNumber',
+        const readonlyFields = [
+          'dateRequestChangeNumerary',
+          'applicationChangeCashNumber',
+          'userRequestChangeNumber',
+          'postUserRequestCamnum',
+          'delegationRequestcamnum',
+          'procedureProposal',
+          'authorizeUser',
+          'authorizePostUser',
+          'authorizeDelegation',
+          'authorizeDate',
+        ];
+
+        response.dateRequestChangeNumerary = new Date(
+          response.dateRequestChangeNumerary + 'T00:00:00'
+        );
+
+        response.authorizeDate = new Date(response.authorizeDate + 'T00:00:00');
+
+        // Formatear las fechas
+        // Verificar y formatear los campos de fecha solo si son válido
+
         this.formaplicationData.patchValue(response);
+        console.log('RES', this.formaplicationData.value);
+        // Establecer los campos específicos como de solo lectura
+        readonlyFields.forEach(fieldName => {
+          this.formaplicationData.get(fieldName).disable();
+        });
+
+        //this.loading = false;
+
         this.loading = false;
       },
       error: err => {
@@ -846,7 +1044,10 @@ export class ResquestNumberingChangeComponent
     this.formaplicationData.get('authorizePostUser').setValue(null);
     this.formaplicationData.get('authorizeDelegation').setValue(null);
     this.formaplicationData.get('authorizeDate').setValue(null);
-    this.totalItems1 = 0;
+    Object.keys(this.formaplicationData.controls).forEach(controlName => {
+      this.formaplicationData.get(controlName).enable();
+    }),
+      (this.totalItems1 = 0);
     this.data1.load([]);
     this.data1.refresh();
   }
@@ -902,9 +1103,9 @@ export class ResquestNumberingChangeComponent
   private buildForm() {
     this.form = this.fb.group({
       legalStatus: [null, [Validators.required]],
-      delegation: [null, [Validators.required]],
-      warehouse: [null, [Validators.required]],
-      vault: [null, [Validators.required]],
+      delegation: [null],
+      warehouse: [null],
+      vault: [null],
       type: [null, [Validators.required]],
     });
   }
@@ -913,32 +1114,89 @@ export class ResquestNumberingChangeComponent
     this.formaplicationData = this.fb.group({
       dateRequestChangeNumerary: [null, [Validators.required]],
       applicationChangeCashNumber: [null],
-      userRequestChangeNumber: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      userRequestChangeNumber: [null, [Validators.required]],
       postUserRequestCamnum: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       delegationRequestcamnum: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+        ],
       ],
       procedureProposal: [null, [Validators.required]],
       authorizeUser: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
       authorizePostUser: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       authorizeDelegation: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+        ],
       ],
       authorizeDate: [null, [Validators.required]],
     });
+    this.formaplicationData.controls['postUserRequestCamnum'].disable();
+    setTimeout(() => {
+      this.getUsuario(new ListParams());
+    }, 1000);
+
+    this.formaplicationData.controls;
+    /*this.formaplicationData
+      .get('dateRequestChangeNumerary')
+      .valueChanges.subscribe((date: Date) => {
+        if (date) {
+          const formattedDate = moment(date).format('DD-MM-YYYY');
+          this.formaplicationData.patchValue(
+            { dateRequestChangeNumerary: formattedDate },
+            { emitEvent: false }
+          );
+        }
+      });
+
+    /*this.formaplicationData
+      .get('authorizeDate')
+      .valueChanges.subscribe((date: Date) => {
+        if (date) {
+          const formattedDate = moment(date).format('DD-MM-YYYY');
+          this.formaplicationData.patchValue(
+            { authorizeDate: formattedDate },
+            { emitEvent: false }
+          );
+        }
+      });*/
   }
+  opcionSeleccionada: any[] = [];
+
+  dropdownSettings = {
+    // Configuración del dropdown
+    singleSelection: false, // Permitir selección múltiple
+    idField: 'id', // Nombre del campo que contiene el ID de cada opción
+    textField: 'name', // Nombre del campo que contiene el texto de cada opción
+    selectAllText: 'Seleccionar todo', // Texto para seleccionar todas las opciones
+    unSelectAllText: 'Deseleccionar todo', // Texto para deseleccionar todas las opciones
+    itemsShowLimit: 3, // Número máximo de opciones que se mostrarán antes de contraer la lista
+    allowSearchFilter: true, // Permitir búsqueda de opciones
+    closeDropDownOnSelection: false, // Mantener el dropdown abierto después de seleccionar una opción
+    showSelectedItemsAtTop: true, // Mostrar las opciones seleccionadas en la parte superior
+    noDataAvailablePlaceholderText: 'No hay datos disponibles',
+  };
 }

@@ -4,17 +4,6 @@
       Notificaci&oacute;n de Programaci&oacute;n con folio:
       {{ programming?.folio }}
     </h5>
-
-    <div class="justify-content-end" *ngIf="!formLoading">
-      <div class="m-3 btn-toolbar">
-        <button
-          type="button"
-          class="btn btn-danger btn-sm active"
-          (click)="backTask()">
-          Cancelar <i class="fas fa-arrow-circle-left"></i>
-        </button>
-      </div>
-    </div>
   </div>
 
   <div body>
@@ -23,6 +12,16 @@
     </div>
 
     <div *ngIf="!formLoading">
+      <div class="justify-content-end btn-toolbar" *ngIf="!formLoading">
+        <div class="m-3 btn-toolbar">
+          <button
+            type="button"
+            class="btn btn-danger btn-sm active"
+            (click)="backTask()">
+            Regresar <i class="fas fa-arrow-circle-left"></i>
+          </button>
+        </div>
+      </div>
       <h5 class="title">Programaci&oacute;n</h5>
 
       <div class="row pt-2">
@@ -32,7 +31,7 @@
               >Delegaci&oacute;n regional&#58;</label
             >
             <span class="fs-4">
-              {{ programming?.regionalDelegationName }}
+              {{ delegationName }}
             </span>
           </div>
         </div>

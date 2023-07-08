@@ -17,7 +17,6 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IRejectGood } from 'src/app/core/models/good-reject/good-reject.model';
-import { IGood } from 'src/app/core/models/good/good.model';
 import { ClarificationService } from 'src/app/core/services/catalogs/clarification.service';
 import { ChatClarificationsService } from 'src/app/core/services/ms-chat-clarifications/chat-clarifications.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -37,7 +36,7 @@ export class ClarificationListTabComponent
   extends BasePage
   implements OnInit, OnChanges
 {
-  @Input() good: IGood;
+  @Input() good: any[];
   @Input() request: any;
   paragraphs: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -61,7 +60,7 @@ export class ClarificationListTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.good) this.getData();
+    if (this.good.length > 0) this.getData();
   }
 
   ngOnInit(): void {
@@ -86,7 +85,7 @@ export class ClarificationListTabComponent
     if (this.good) {
       this.loading = true;
       this.paragraphs = new LocalDataSource();
-      this.params.getValue()['filter.goodId'] = this.good.id;
+      this.params.getValue()['filter.goodId'] = this.good[0].id;
       this.rejectedGoodService.getAllFilter(this.params.getValue()).subscribe({
         next: async (data: any) => {
           const length = data.count;
@@ -213,21 +212,21 @@ export class ClarificationListTabComponent
               //si existe solo una aclaracion
               if (this.clarificationsLength === 1) {
                 const goodResDev: any = await this.getGoodResDev(
-                  Number(this.good.id)
+                  Number(this.good[0].id)
                 );
                 await this.removeDevGood(Number(goodResDev));
 
-                body['id'] = this.good.id;
-                body['goodId'] = this.good.goodId;
+                body['id'] = this.good[0].id;
+                body['goodId'] = this.good[0].goodId;
                 body.processStatus = 'CLASIFICAR_BIEN';
                 body.goodStatus = 'CLASIFICAR_BIEN';
                 await this.updateGoods(body);
               } else {
                 //si existe mas de una aclaracion
-                body['id'] = this.good.id;
-                body['goodId'] = this.good.goodId;
+                body['id'] = this.good[0].id;
+                body['goodId'] = this.good[0].goodId;
                 body.goodStatus =
-                  this.good.goodStatus != 'ACLARADO'
+                  this.good[0].goodStatus != 'ACLARADO'
                     ? 'ACLARADO'
                     : 'CLASIFICAR_BIEN';
                 body.processStatus = 'CLASIFICAR_BIEN';

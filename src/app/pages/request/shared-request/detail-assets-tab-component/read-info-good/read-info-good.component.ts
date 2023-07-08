@@ -463,9 +463,9 @@ export class ReadInfoGoodComponent
 
   save() {
     Swal.fire({
-      title: 'Actualizando',
-      text: '¿Está seguro que desea actualizar la información del bien?',
-      icon: 'question',
+      title: '¿Está seguro que desea actualizar la información del bien?',
+      text: '',
+      icon: null,
       showCancelButton: true,
       confirmButtonColor: '#9d2449',
       cancelButtonColor: '#a78457',
@@ -478,7 +478,7 @@ export class ReadInfoGoodComponent
         good.goodId = this.goodData.goodId;
         good.userModification = user.username;
         good.modificationDate = new Date().toISOString();
-
+        debugger;
         this.goodService.update(good).subscribe({
           next: resp => {
             const body: any = {};
@@ -490,18 +490,18 @@ export class ReadInfoGoodComponent
 
             this.dataToSend.id = resp.id;
             this.saveDetailInfo.emit(this.dataToSend);
-            this.onLoadToast(
-              'success',
-              'Actualizado',
-              'Formulario actualizado'
-            );
+            this.onLoadToast('success', 'Formulario actualizado', '');
           },
           error: error => {
-            this.onLoadToast(
-              'error',
-              'Error',
-              `El formulario no se puede actualizar ${error.error.message}`
+            console.log(
+              'El formulario no se puede actualizar',
+              error.error.message
             );
+            // this.onLoadToast(
+            //   'error',
+            //   'Error',
+            //   `El formulario no se puede actualizar ${error.error.message}`
+            // );
           },
         });
       }

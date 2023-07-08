@@ -18,7 +18,7 @@
             <button
               (click)="signDocument()"
               class="btn btn-primary btn-sm active">
-              <i class="bx bx-edit-alt"></i>{{ btnTitle }}
+              {{ btnTitle }} <i class="bx bx-edit-alt"></i>
             </button>
           </div>
         </div>
@@ -60,21 +60,17 @@
           <h5 class="mr-auto p-2">Listado de Firmantes Electr&oacute;nicos</h5>
           <div class="p-2" *ngIf="showButtonFirm == true">
             <button class="btn btn-primary btn-sm active" (click)="sendSign()">
-              <i class="bx bxs-right-arrow-square"></i>Enviar a Firmar
+              Enviar a Firmar <i class="bx bxs-right-arrow-square"></i>
             </button>
           </div>
           <div class="p-2">
-            <button
-              (click)="backStep()"
-              class="btn btn-secondary btn-sm active">
-              <i class="bx bx-left-arrow-alt"></i> Anterior Paso
+            <button (click)="backStep()" class="btn btn-primary btn-sm active">
+              <i class="bx bx-left-arrow-alt"></i> Paso Anterior
             </button>
           </div>
           <div class="p-2" *ngIf="msjCheck == true">
-            <button
-              class="btn btn-secondary btn-sm active"
-              (click)="nextStep()">
-              <i class="bx bx-right-arrow-alt"></i> Siguiente Paso
+            <button class="btn btn-primary btn-sm active" (click)="nextStep()">
+              Paso Siguiente <i class="bx bx-right-arrow-alt"></i>
             </button>
           </div>
         </div>
@@ -97,7 +93,7 @@
             </div>
           </div>
           <span *ngIf="showButtonFirm == false"
-            >Complete la Información de los Firmantes</span
+            ><b>¡Complete la Información de los Firmantes!</b></span
           >
         </div>
       </div>

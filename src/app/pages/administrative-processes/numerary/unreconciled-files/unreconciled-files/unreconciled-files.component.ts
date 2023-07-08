@@ -12,18 +12,19 @@ import {
 import { IMoneda } from 'src/app/core/models/catalogs/tval-Table5.model';
 import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-
 @Component({
   selector: 'app-unreconciled-files',
   templateUrl: './unreconciled-files.component.html',
   styles: [],
 })
-export class UnreconciledFilesComponent implements OnInit {
+export class UnreconciledFilesComponent extends BasePage implements OnInit {
   form: FormGroup;
   isLoading = false;
   maxDate = new Date();
   currencies = new DefaultSelect<IMoneda>([], 0);
+  types = new DefaultSelect<IMoneda>([], 0);
   fromF: string = '';
   toT: string = '';
   import: number = 0;
@@ -38,7 +39,9 @@ export class UnreconciledFilesComponent implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -52,6 +55,9 @@ export class UnreconciledFilesComponent implements OnInit {
       fileTo: [null, Validators.required],
       from: [null, Validators.required],
       to: [null, Validators.required],
+      // currency: [null, Validators.required],
+      // bank: [null, Validators.required],
+      importe: [null, Validators.required],
     });
   }
 
@@ -67,20 +73,28 @@ export class UnreconciledFilesComponent implements OnInit {
       this.form.controls['to'].value,
       'dd/MM/yyyy'
     );
-
     let params = {
+      BANCO: this.form.controls['bank'].value,
+      MONEDA: this.form.controls['currency'].value,
       PF_FECINI: this.fromF,
       PF_FECFIN: this.toT,
-      PN_DELEG: this.form.controls['delegation'].value,
-      // PN_SUBDEL: this.form.controls['subdelegation'].value,
-      PN_SUBDEL: 1,
-      PN_EXPINI: this.form.controls['fileFrom'].value,
-      PN_EXPFIN: this.form.controls['fileTo'].value,
+      P_IMPORTE: this.form.controls['importe'].value,
     };
 
     console.log('params', params);
+    const start = new Date(this.form.get('from').value);
+    const end = new Date(this.form.get('to').value);
+
+    if (end < start) {
+      this.alert(
+        'warning',
+        'advertencia',
+        'Fecha final no puede ser menor a fecha de inicio'
+      );
+      return;
+    }
     this.siabService
-      .fetchReport('RGERADBEXPESCONCI', params)
+      .fetchReport('RGERADBFICHADEPOS', params)
       // .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
@@ -117,8 +131,22 @@ export class UnreconciledFilesComponent implements OnInit {
       });
   }
 
-  getRegCurrency() {
-    this.tableServ.getReg4WidthFilters().subscribe({
+  getCurrencies($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    if ($params.text) params.search = $params.text;
+    this.getRegCurrency(params);
+  }
+
+  getRegCurrency(_params?: FilterParams, val?: boolean) {
+    // const params = new FilterParams();
+
+    // params.page = _params.page;
+    // params.limit = _params.limit;
+    // if (val) params.addFilter3('filter.desc_moneda', _params.text);
+
+    this.tableServ.getReg4WidthFilters(_params.getParams()).subscribe({
       next: data => {
         data.data.map(data => {
           data.desc_moneda = `${data.cve_moneda}- ${data.desc_moneda}`;

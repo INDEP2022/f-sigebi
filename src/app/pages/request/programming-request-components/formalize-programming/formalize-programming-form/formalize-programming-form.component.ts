@@ -13,6 +13,7 @@ import { IGoodProgramming } from 'src/app/core/models/good-programming/good-prog
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
+import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { IReceipt } from 'src/app/core/models/receipt/receipt.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
@@ -108,6 +109,7 @@ export class FormalizeProgrammingFormComponent
   actId: number = 0;
   observation: string = '';
   proceedingData: IProceedings;
+  task: ITask;
   settingsGuardGoods = {
     ...this.settings,
     actions: false,
@@ -311,9 +313,7 @@ export class FormalizeProgrammingFormComponent
 
         this.totalItemsProceedings = response.count;
       },
-      error: error => {
-        console.log('error actas', error);
-      },
+      error: error => {},
     });
   }
 
@@ -333,11 +333,24 @@ export class FormalizeProgrammingFormComponent
         this.getAuthority();
         this.getTypeRelevant();
         this.getwarehouse();
+        this.getTask();
         //this.getUsersProgramming();
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getInfoGoodsProgramming());
       });
+  }
+
+  getTask() {
+    const task = JSON.parse(localStorage.getItem('Task'));
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = task.id;
+    this.taskService.getAll(params.getValue()).subscribe({
+      next: response => {
+        this.task = response.data[0];
+      },
+      error: error => {},
+    });
   }
 
   getRegionalDelegation(data: Iprogramming) {
@@ -349,10 +362,11 @@ export class FormalizeProgrammingFormComponent
   }
 
   getState(programming: Iprogramming) {
-    this.stateService.getById(programming.stateKey).subscribe({
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = this.programming.stateKey;
+    this.stateService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('estado', response);
-        this.stateName = response.descCondition;
+        this.stateName = response.data[0].descCondition;
       },
       error: error => {},
     });
@@ -389,21 +403,21 @@ export class FormalizeProgrammingFormComponent
   }
 
   getTypeRelevant() {
-    return this.typeRelevantService
-      .getById(this.programming.typeRelevantId)
-      .subscribe(data => {
-        this.typeRelevantName = data.description;
-      });
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.id'] = this.programming.typeRelevantId;
+    this.typeRelevantService.getAll(params.getValue()).subscribe(data => {
+      this.typeRelevantName = data.data[0].description;
+    });
   }
 
   getwarehouse() {
-    return this.warehouseService
-      .getById(this.programming.storeId)
-      .subscribe(data => {
-        this.nameWarehouse = data.description;
-        this.ubicationWarehouse = data.ubication;
-        this.formLoading = false;
-      });
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.idWarehouse'] = this.programming.storeId;
+    this.warehouseService.getAll(params.getValue()).subscribe(data => {
+      this.nameWarehouse = data.data[0].description;
+      this.ubicationWarehouse = data.data[0].ubication;
+      this.formLoading = false;
+    });
   }
   /*getUsersProgramming() {
     this.loading = true;
@@ -648,7 +662,7 @@ export class FormalizeProgrammingFormComponent
             observationProceedings:
               this.proceeding.value[0].observationProceedings,
           };
-          console.log('formData', formData);
+
           this.proceedingService.updateProceeding(formData).subscribe({
             next: () => {
               this.alertInfo(
@@ -691,7 +705,7 @@ export class FormalizeProgrammingFormComponent
         let elect: boolean = false;
         let OIC: boolean = false;
         let uvfv: boolean = false;
-        console.log('proceeding', proceeding);
+
         const nomFun1 = proceeding.nameWorker1;
         const nomFun2 = proceeding.nameWorker2;
         const nomOic = proceeding.nameWorkerOic;
@@ -780,7 +794,6 @@ export class FormalizeProgrammingFormComponent
           .getSignatoriesFilter(learnedType, learnedId)
           .subscribe({
             next: async response => {
-              console.log('firmantes');
               response.data.map(async item => {
                 this.signatoriesService
                   .deleteFirmante(Number(item.signatoryId))
@@ -846,8 +859,6 @@ export class FormalizeProgrammingFormComponent
                 );
 
                 if (createSigned && tranType != 'CE') {
-                  console.log('firmantes creados');
-
                   if (nomReport) {
                     this.loadDocument(nomReport, proceeding.id, idTypeDoc);
                   }
@@ -907,7 +918,6 @@ export class FormalizeProgrammingFormComponent
               }
             },
             error: async error => {
-              console.log('No hay Firmantes');
               if (firmFun1) {
                 await this.createFirm(
                   keyDoc,
@@ -964,8 +974,6 @@ export class FormalizeProgrammingFormComponent
                 );
 
                 if (createSigned && tranType != 'CE') {
-                  console.log('firmantes creados');
-
                   if (nomReport) {
                     this.loadDocument(nomReport, this.actId, idTypeDoc);
                   }
@@ -1105,7 +1113,6 @@ export class FormalizeProgrammingFormComponent
   }
 
   showProceeding(proceeding: IProceedings) {
-    console.log('proceeding', this.proceedingData);
     this.wcontentService.obtainFile(this.proceedingData.id_content).subscribe({
       next: response => {
         let blob = this.dataURItoBlob(response);
@@ -1145,29 +1152,35 @@ export class FormalizeProgrammingFormComponent
 
   async confirm() {
     if (this.proceedingData.statusProceeedings == 'CERRADO') {
-      console.log('this.proceeding', this.proceedingData);
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea formalizar la programación?'
+      ).then(async question => {
+        if (question.isConfirmed) {
+          const _task = JSON.parse(localStorage.getItem('Task'));
+          const user: any = this.authService.decodeToken();
+          let body: any = {};
+          body['idTask'] = _task.id;
+          body['userProcess'] = user.username;
+          body['type'] = 'SOLICITUD_PROGRAMACION';
+          body['subtype'] = 'Formalizar_Entrega';
+          body['ssubtype'] = 'ACCEPT';
 
-      const _task = JSON.parse(localStorage.getItem('Task'));
-      const user: any = this.authService.decodeToken();
-      let body: any = {};
-      body['idTask'] = _task.id;
-      body['userProcess'] = user.username;
-      body['type'] = 'SOLICITUD_PROGRAMACION';
-      body['subtype'] = 'Formalizar_Entrega';
-      body['ssubtype'] = 'ACCEPT';
-
-      const closeTask = await this.closeTaskExecuteRecepcion(body);
-      if (closeTask) {
-        this.alertInfo(
-          'success',
-          'Acción correcta',
-          'Se cerro la tarea formalizar entrega correctamente'
-        ).then(question => {
-          if (question.isConfirmed) {
-            this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+          const closeTask = await this.closeTaskExecuteRecepcion(body);
+          if (closeTask) {
+            this.alertInfo(
+              'success',
+              'Acción correcta',
+              'Se cerro la tarea formalizar entrega correctamente'
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+              }
+            });
           }
-        });
-      }
+        }
+      });
     } else {
       this.alertInfo(
         'info',
@@ -1190,4 +1203,6 @@ export class FormalizeProgrammingFormComponent
       });
     });
   }
+
+  documents() {}
 }

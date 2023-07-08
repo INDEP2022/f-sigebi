@@ -183,15 +183,15 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
 
       const typeDoc = info.map(async (items: any) => {
         const filter: any = await this.filterGoodDoc([items.xtipoDocumento]);
-        items.xtipoDocumento = filter[0].ddescription;
+        items.xtipoDocumento = filter[0]?.ddescription;
         return items;
       });
 
       Promise.all(typeDoc).then(info => {
         if (info.length == 0) {
           this.alertInfo(
-            'info',
-            'Información',
+            'warning',
+            'Atención',
             'No se encontraron documentos'
           ).then(question => {
             if (question.isConfirmed) {

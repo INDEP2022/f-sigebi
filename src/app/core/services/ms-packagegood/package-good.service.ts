@@ -1,12 +1,18 @@
 import { Injectable } from '@angular/core';
 import { PackageGoodEndpoints } from 'src/app/common/constants/endpoints/ms-package-good';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
+import { IListResponseMessage } from '../../interfaces/list-response.interface';
 import {
   IpackageValidGood,
   PrepDestinationPackage,
 } from '../../models/catalogs/Ipackage-valid-good';
-import { IFoliovInvoice, IPackage } from '../../models/catalogs/package.model';
+import {
+  IDecPackage,
+  IFoliovInvoice,
+  IPackage,
+} from '../../models/catalogs/package.model';
+import { IPackageGoodDec } from '../../models/ms-package-good/package-good-dec';
+import { IPackageGoodEnc } from '../../models/ms-package-good/package-good-enc';
 
 @Injectable({
   providedIn: 'root',
@@ -17,14 +23,19 @@ export class PackageGoodService extends HttpService {
     this.microservice = PackageGoodEndpoints.BasePath;
   }
 
-  insertPaqDestionarioEnc(body: IPackage){
+  insertPaqDestionarioEnc(body: IPackage) {
     const route = `${PackageGoodEndpoints.paqDestinationEnc}`;
-    return this.post(route, body)
+    return this.post(route, body);
+  }
+
+  insertPaqDestDec(body: IDecPackage) {
+    const route = `${PackageGoodEndpoints.paqDestinationDet}`;
+    return this.post(route, body);
   }
 
   getPaqDestinationEnc(params?: any) {
     const route = `${PackageGoodEndpoints.paqDestinationEnc}`;
-    return this.get(route, params);
+    return this.get<IListResponseMessage<IPackageGoodEnc>>(route, params);
   }
 
   updatePaqDestinationEnc(id: string | number, good: Partial<IPackage>) {
@@ -32,15 +43,15 @@ export class PackageGoodService extends HttpService {
     return this.put(route, good);
   }
 
-  getFolio(model: IFoliovInvoice){
-    const route = `application/get-vInvoice`
-    return this.post(route, model)
+  getFolio(model: IFoliovInvoice) {
+    const route = `application/get-vInvoice`;
+    return this.post(route, model);
   }
 
   //paq-destination - det
-  getPaqDestinationDet(params?: ListParams) {
+  getPaqDestinationDet(params?: any) {
     const route = `${PackageGoodEndpoints.paqDestinationDet}`;
-    return this.get(route, params);
+    return this.get<IListResponseMessage<IPackageGoodDec>>(route, params);
   }
 
   pubValidGood(good: IpackageValidGood) {

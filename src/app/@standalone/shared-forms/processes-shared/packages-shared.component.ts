@@ -45,7 +45,7 @@ export class ProcessesSharedComponent extends BasePage implements OnInit {
       .getByGoodAndProcess(this.idGood, this.process)
       .subscribe({
         next: response => {
-          console.log(response)
+          console.log(response);
           this.processes = new DefaultSelect(
             this.distinct(response.data, 'extDomProcess'),
             response.count
@@ -53,12 +53,12 @@ export class ProcessesSharedComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loading = false;
-          this.processes = new DefaultSelect();
+          /* this.processes = new DefaultSelect();
           this.alert(
             'warning',
             'No se encontró un proceso de extensión de dominio para actualizar en este Bien',
             ''
-          );
+          ); */
         },
       });
   }

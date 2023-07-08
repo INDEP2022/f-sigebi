@@ -26,7 +26,7 @@
 </div>
 <div class="row pt-4">
   <div class="col-md-12">
-    <div [class]="loading ? 'table-loading' : ''" #containerTable>
+    <div #containerTable>
       <ng2-smart-table
         #table
         [attr.class]="'table-bordered table-responsive'"
@@ -40,5 +40,5 @@
   [params]="params"
   [pageSizeOptions]="pageSizeOptions"
   [limit]="limit"
-  [totalItems]="data.length">
+  [totalItems]="totalItems">
 </app-pagination>
