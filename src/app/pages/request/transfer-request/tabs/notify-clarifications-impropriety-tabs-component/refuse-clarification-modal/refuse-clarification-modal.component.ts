@@ -99,7 +99,7 @@ export class RefuseClarificationModalComponent
 
     this.chatService.update(idChat, modelChatClarifications).subscribe({
       next: async data => {
-        this.onLoadToast('success', 'Actualizado', '');
+        this.alert('success', 'Actualizado', '');
         console.log('SE ACTUALIZÓ:', data);
         this.loading = false;
         this.modalRef.content.callback(true);
