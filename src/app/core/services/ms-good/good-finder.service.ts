@@ -19,6 +19,11 @@ export class GoodFinderService extends HttpService {
     return this.get(route, params);
   }
 
+  goodFinder2(name: string, params?: _Params) {
+    const route = `${GoodFinderEndpoint.GoodQuery}?filter.description=$ilike:${name}`;
+    return this.get(route, params);
+  }
+
   masiveClassificationGood(
     requestId: number | string,
     fractionId: number | string,
