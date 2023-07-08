@@ -19,13 +19,17 @@ import {
 import { IMoneda } from 'src/app/core/models/catalogs/tval-Table5.model';
 import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-effective-numerary-reconciliation',
   templateUrl: './effective-numerary-reconciliation.component.html',
   styles: [],
 })
-export class EffectiveNumeraryReconciliationComponent implements OnInit {
+export class EffectiveNumeraryReconciliationComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup;
   isLoading = false;
   maxDate = new Date();
@@ -46,7 +50,9 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -93,6 +99,17 @@ export class EffectiveNumeraryReconciliationComponent implements OnInit {
     };
 
     console.log('params', params);
+    const start = new Date(this.form.get('from').value);
+    const end = new Date(this.form.get('to').value);
+
+    if (end < start) {
+      this.alert(
+        'warning',
+        'advertencia',
+        'Fecha final no puede ser menor a fecha de inicio'
+      );
+      return;
+    }
     this.siabService
       // .fetchReport('RGERADBCONCNUMEFE', params)
       .fetchReportBlank('blank')

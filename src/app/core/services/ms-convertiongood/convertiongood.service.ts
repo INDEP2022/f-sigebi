@@ -109,4 +109,8 @@ export class ConvertiongoodService extends HttpService {
     const route = `${ConvertiongoodEndpoints.LisActas}?filter.minutesErNumber=${cve}`;
     return this.get(route, cve);
   }
+
+  createMinuteConversion(conversionActa: any) {
+    return this.put(ConvertiongoodEndpoints.LisActas, conversionActa);
+  }
 }
