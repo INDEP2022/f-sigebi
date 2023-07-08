@@ -20,3 +20,17 @@ export const COLUMNS_GOODS_LIST_EXTDOM = {
     },
   },
 };
+export const RELATED_FOLIO_COLUMNS = {
+  id: {
+    title: 'Folio',
+    sort: false,
+  },
+  sheets: {
+    title: 'Documentos',
+    sort: false,
+  },
+  descriptionDocument: {
+    title: 'Descripción del documento',
+    sort: false,
+  },
+};

@@ -26,12 +26,13 @@
           </form-field>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('fileLoad')" label="Archivo a cargar">
+          <input type="text" class="form-control" [value]="fileName" readonly />
+          <!--<form-field [control]="form.get('fileLoad')" label="Archivo a cargar">
             <input
               type="file"
               class="form-control"
               formControlName="fileLoad" />
-          </form-field>
+          </form-field>-->
         </div>
       </div>
     </div>
@@ -45,8 +46,9 @@
   <div body>
     <ng2-smart-table
       [attr.class]="'table-bordered'"
-      [settings]="settings"
-      [source]="data">
+      [settings]="settings0"
+      [source]="data"
+      (userRowSelect)="rowsSelected($event)">
     </ng2-smart-table>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
@@ -88,7 +90,9 @@
     </div>
 
     <div class="col-md-3 col-sm-6 col-xs-12">
-      <button class="btn btn-info btn-sm active" (click)="enterGoods()">
+      <button
+        class="btn btn-info btn-sm active"
+        (click)="postDatatableItemBtn()">
         Ingresar Bien
       </button>
     </div>
