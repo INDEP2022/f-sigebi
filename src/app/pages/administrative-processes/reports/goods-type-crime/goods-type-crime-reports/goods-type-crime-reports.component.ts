@@ -36,7 +36,7 @@ export class GoodsTypeCrimeReportsComponent extends BasePage implements OnInit {
     this.loading = true;
     //console.log(this.checkedListFA,this.checkedListFI)
     console.log(this.form.value);
-    setTimeout(st => {
+    setTimeout((st: any) => {
       this.loading = false;
     }, 5000);
   }
