@@ -12,7 +12,7 @@
     <div *ngIf="!formLoading">
       <div class="justify-content-end btn-toolbar">
         <confirm-button
-          *ngIf="!task.State"
+          *ngIf="!task?.State"
           [loading]="loading"
           [text]="'Formalizar'"
           [loadingText]="'Formalizando'"
@@ -21,7 +21,7 @@
           (confirm)="confirm()"></confirm-button>
 
         <confirm-button
-          *ngIf="task.State == 'FINALIZADA'"
+          *ngIf="task?.State == 'FINALIZADA'"
           [loading]="loading"
           [text]="'Formalizar'"
           [loadingText]="'Formalizando'"
@@ -155,37 +155,40 @@
       <h5 class="title">Actas</h5>
       <div class="btn-toolbar">
         <button
-          *ngIf="!task.State"
+          *ngIf="!task?.State"
           (click)="saveInfoProceeding()"
           class="btn btn-primary btn-sm active">
           Guardar <i class="fa fa-save"></i>
         </button>
 
         <button
-          *ngIf="task.State == 'FINALIZADA'"
+          *ngIf="task?.State == 'FINALIZADA'"
           class="btn btn-primary disabled btn-sm active">
           Guardar <i class="fa fa-save"></i>
         </button>
 
-        <button *ngIf="!task.State" class="btn btn-success btn-sm active">
+        <button
+          *ngIf="!task?.State"
+          (click)="documents()"
+          class="btn btn-success btn-sm active">
           Adjuntar documentos <i class="fa fa-file-archive"></i>
         </button>
 
         <button
-          *ngIf="task.State == 'FINALIZADA'"
+          *ngIf="task?.State == 'FINALIZADA'"
           class="btn btn-success disabled btn-sm active">
           Adjuntar documentos <i class="fa fa-file-archive"></i>
         </button>
 
         <button
-          *ngIf="!task.State"
-          (click)="this.getProccedings()"
+          *ngIf="!task?.State"
+          (click)="getProccedings()"
           class="btn btn-primary btn-sm active">
           Actualizar <i class="fa fa-retweet"></i>
         </button>
 
         <button
-          *ngIf="task.State == 'FINALIZADA'"
+          *ngIf="task?.State == 'FINALIZADA'"
           class="btn btn-primary disabled btn-sm active">
           Actualizar <i class="fa fa-retweet"></i>
         </button>

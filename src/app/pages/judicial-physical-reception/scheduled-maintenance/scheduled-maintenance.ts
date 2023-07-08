@@ -40,7 +40,6 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
   typeEvents: IAreaTramite[] = [];
   like = SearchFilter.LIKE;
   hoy = new Date();
-  count = 0;
   settings1 = {
     ...TABLE_SETTINGS,
     pager: {
@@ -207,15 +206,14 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
 
   extraOperations() {}
 
-  protected updateByPaginator() {
+  override searchParams() {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         localStorage.setItem(
           this.paramsActa,
           JSON.stringify({ limit: response.limit, page: response.page })
         );
-        if (this.count > 0) this.getData(true);
-        this.count++;
+        this.getData(true);
       },
     });
   }
@@ -260,7 +258,7 @@ export abstract class ScheduledMaintenance extends BasePageWidhtDinamicFiltersEx
     //     this.tiposEvento = response.data;
     //   },
     // });
-    this.updateByPaginator();
+    this.searchParams();
   }
 
   override dinamicFilterUpdate() {

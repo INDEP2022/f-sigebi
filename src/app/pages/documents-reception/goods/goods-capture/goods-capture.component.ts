@@ -88,7 +88,8 @@ export class GoodsCaptureComponent
       gpService
     );
   }
-  ngAfterViewInit(): void {
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     this.initPage.nativeElement.scroll(0, 0);
   }
 

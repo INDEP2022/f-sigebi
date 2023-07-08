@@ -51,11 +51,13 @@ export class RecordAccountStatementsComponent
   selectedDateBalanceOf: Date;
   selectedDateBalanceAt: Date;
   balanceDateAccount: IDateAccountBalance;
-  balance: number;
+  current: string;
+  balance: string;
   accountDate: number;
 
   variableOf: Date;
   variableAt: Date;
+  bankCode: string;
 
   constructor(
     private fb: FormBuilder,
@@ -157,6 +159,25 @@ export class RecordAccountStatementsComponent
       });
   }
 
+  onSearchName(inputElement: any) {
+    this.dataAccount = new LocalDataSource();
+    const name = inputElement.value;
+    setTimeout(() => {
+      this.recordAccountStatementsService
+        .getAllDinamicName(name, this.params.getValue())
+        .subscribe({
+          next: (response: { data: any[]; count: number }) => {
+            this.banks = new DefaultSelect(response.data, response.count);
+            this.loading = false;
+          },
+          error: (err: any) => {
+            this.loading = false;
+            this.alert('warning', 'No existen bancos', ``);
+          },
+        });
+    }, 3000);
+  }
+
   // Asigna el valor del banco seleccionado a la función "searchBankAccount"
   onBankSelectChange(value: any) {
     this.form.get('account').reset();
@@ -165,6 +186,7 @@ export class RecordAccountStatementsComponent
     this.form.get('branch').reset();
     this.form.get('currency').reset();
     this.form.get('description').reset();
+    this.totalItems = 0;
     this.cleandInfoDate();
     this.bankAccountSelect = new DefaultSelect();
     this.dataAccount = new LocalDataSource();
@@ -178,6 +200,7 @@ export class RecordAccountStatementsComponent
 
   // Toma el banco seleccionado y busca todas las cuentas pertenecientes a ese banco
   searchBankAccount(bankCode: string) {
+    this.bankCode = bankCode;
     this.recordAccountStatementsAccountsService
       .getById(bankCode, this.params.getValue())
       .subscribe({
@@ -195,6 +218,36 @@ export class RecordAccountStatementsComponent
       });
   }
 
+  onClearSelection() {
+    this.searchBankAccount(this.bankCode);
+  }
+
+  onSearchAccount(inputElement: any) {
+    this.dataAccount = new LocalDataSource();
+    const account = inputElement.value;
+
+    setTimeout(() => {
+      this.recordAccountStatementsAccountsService
+        .getById2(this.bankCode, account, this.params.getValue())
+        .subscribe({
+          next: (response: { data: any[]; count: number }) => {
+            const filteredAccounts = response.data.filter(item =>
+              item.accountNumber.includes(account)
+            );
+            this.bankAccountSelect = new DefaultSelect(
+              filteredAccounts,
+              response.count
+            );
+            this.loading = false;
+          },
+          error: (err: any) => {
+            this.loading = false;
+            this.alert('warning', 'No existen bancos', ``);
+          },
+        });
+    }, 3000);
+  }
+
   // Establece los valores en los inputs de datos de la cuenta seleccionada
   onBankAccountSelectChange(value: any) {
     this.form.get('accountType').reset();
@@ -202,6 +255,7 @@ export class RecordAccountStatementsComponent
     this.form.get('branch').reset();
     this.form.get('currency').reset();
     this.form.get('description').reset();
+    this.totalItems = 0;
     this.cleandInfoDate();
     this.dataAccount = new LocalDataSource();
     const accountNumber = value.accountNumber;
@@ -209,10 +263,11 @@ export class RecordAccountStatementsComponent
     this.searchDataAccount(accountNumber);
 
     // Obtener los valores correspondientes de la cuenta seleccionada
-    const square = value?.square ?? 'Sin datos';
-    const branch = value?.branch ?? 'Sin datos';
-    const accountType = value?.accountType ?? 'Sin datos';
-    let currency = value?.cveCurrency ?? 'Sin datos';
+    const square = value?.square;
+    const branch = value?.branch;
+    const accountType = value?.accountType;
+    let currency = value.cveCurrency;
+    this.current = currency;
     this.searchCurrent(currency);
 
     // Quitar las comillas simples del valor de currency, si existen
@@ -233,10 +288,10 @@ export class RecordAccountStatementsComponent
         this.form.get('description').setValue(currentAccount);
         this.loading = false;
       },
-      error: (err: any) => {
-        this.loading = false;
-        this.alert('warning', 'No existen monedas', ``);
-      },
+      // error: (err: any) => {
+      //   this.loading = false;
+      //   this.alert('warning', 'No existen monedas', ``);
+      // },
     });
   }
 
@@ -253,10 +308,10 @@ export class RecordAccountStatementsComponent
       .getAccountBalanceDate(model)
       .subscribe({
         next: response => {
-          this.balance = response.result;
+          this.balance = response.result + ' ' + this.current;
         },
         error: error => {
-          this.alert('warning', 'Error', 'No se puede generar el saldo');
+          this.alert('warning', 'Error', 'No es posible generar el saldo');
         },
       });
   }
@@ -279,7 +334,7 @@ export class RecordAccountStatementsComponent
           this.loading = false;
           this.alert(
             'warning',
-            'No existen datos de la cuenta seleccionada',
+            'No existen movimientos de la cuenta seleccionada',
             ``
           );
         },
@@ -322,11 +377,13 @@ export class RecordAccountStatementsComponent
 
   cleandInfoAll() {
     this.form.reset();
+    this.totalItems = 0;
     this.searchBanks();
     this.balance = null;
   }
 
   cleandInfo() {
+    this.totalItems = 0;
     this.form.reset();
     this.searchBanks();
   }

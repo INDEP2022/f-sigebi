@@ -526,17 +526,23 @@
             </div>
           </div>
         </div>
-        <div class="col-md-12 alert alert-warning" *ngIf="loadingSend">
+        <!-- <div class="col-md-12 alert alert-warning" *ngIf="loadingSend">
           Realizando el proceso de "Enviar" los "Bienes Asociados"
-          <!-- <strong>
-            {{ totalCurrent }}
-          </strong>
-          de <strong> {{ totalData }}</strong >-->
           , Espere un momento...
         </div>
         <div class="col-md-12 alert alert-warning" *ngIf="loadDetail">
           Realizando el proceso para mostrar el Reporte correspondiente, Espere
           un momento...
+        </div> -->
+        <div
+          class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+          *ngIf="loadingSend || loadDetail">
+          <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center">
+              <div class="loader"></div>
+              <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+            </div>
+          </div>
         </div>
         <!-- <div class="col-sm-12 col-12 col-md-12 text-center mt-3">
           <button

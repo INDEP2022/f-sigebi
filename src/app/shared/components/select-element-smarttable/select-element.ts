@@ -27,14 +27,13 @@ export class SelectElementComponent<T = any> implements OnInit {
 
   constructor() {
     this.values.subscribe(data => {
-      console.log(data)
+      console.log(data);
       this.data = data;
     });
   }
 
   ngOnInit(): void {
     this.values.subscribe(data => {
-      console.log(data)
       this.data = data;
     });
   }

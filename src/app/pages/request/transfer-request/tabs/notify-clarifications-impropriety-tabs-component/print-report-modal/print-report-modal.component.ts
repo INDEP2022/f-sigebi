@@ -114,6 +114,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
 
     console.log('ID de solicitud', this.requestInfo);
+    console.log('DOC', this.idTypeDoc);
 
     //Borrar firmantes existentes
     this.verificateFirm();
@@ -755,7 +756,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   openMessage2(message: string): void {
-    this.alertQuestion(undefined, 'Confirmación', message, 'Aceptar').then(
+    this.alertQuestion('question', 'Confirmación', message, 'Aceptar').then(
       question => {
         if (question.isConfirmed) {
           this.validAttachDoc();
@@ -768,7 +769,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = 'Firmado';
-    this.alertInfo('success', 'Reporte firmado', `${message} Correctamente`);
+    this.alertInfo('success', 'Reporte Firmado', ``);
     this.loading = false;
     this.modalRef.content.callback(true);
   }

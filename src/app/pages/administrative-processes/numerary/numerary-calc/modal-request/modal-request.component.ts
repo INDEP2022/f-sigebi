@@ -89,9 +89,18 @@ export class ModalRequestComponent extends BasePage implements OnInit {
       .subscribe(() => this.getRequestNumeEnc());
   }
 
-  onChangeSelect(event: IRequestNumeraryEnc) {
+  onChangeSelect(event: any) {
     console.log(event);
-    this.requestNumeEnc = event;
+    this.requestNumeEnc = {
+      solnumId: event.solnumid,
+      delegationNumber: event.delegationnumber,
+      description: event.description,
+      procnumId: event.procnumId,
+      solnumDate: event.solnumdate,
+      solnumStatus: event.solnumstatus,
+      solnumType: event.solnumtype,
+      user: event.user,
+    };
   }
 
   getRequestNumeEnc() {
