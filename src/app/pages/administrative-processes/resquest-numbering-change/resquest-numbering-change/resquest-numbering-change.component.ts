@@ -89,6 +89,7 @@ export class ResquestNumberingChangeComponent
   data: LocalDataSource = new LocalDataSource();
   data1: LocalDataSource = new LocalDataSource();
   data2: LocalDataSource = new LocalDataSource();
+  data3: LocalDataSource = new LocalDataSource();
   tiposData = new DefaultSelect();
   @ViewChild('modal', { static: false }) modal?: ModalDirective;
   loadingText = 'Cargando ...';
@@ -401,99 +402,75 @@ export class ResquestNumberingChangeComponent
     console.log(data);
 
     const params = new ListParams();
-    params['filter.user'] = data.user;
-    console.log(data.user);
-    this.securityService.getAllUsersAccessTracking(params).subscribe({
+    params['filter.usuario'] = data.usuario;
+    console.log(data.usuario);
+    this.securityService.getAllUser(params).subscribe({
       next: (types: any) => {
         this.itemsUser = new DefaultSelect(types.data, types.count);
         console.log(types);
         this.formaplicationData.controls['postUserRequestCamnum'].setValue(
-          types.data[0].user.name
+          types.data[0].otvalor
+        );
+        this.formaplicationData.controls['delegationRequestcamnum'].setValue(
+          types.data[0].no_delegacion
         );
       },
     });
   }
 
-  public searchUsuario1(data: any) {
-    console.log(data);
+  public searchUsuario1(dat: any) {
+    console.log(dat);
 
-    const params = new ListParams();
-    params['filter.user'] = data.user;
-    console.log(data.user);
-    this.securityService.getAllUsersAccessTracking(params).subscribe({
-      next: (types: any) => {
-        this.itemsUser = new DefaultSelect(types.data, types.count);
-        console.log(types);
+    const params1 = new ListParams();
+    params1['filter.usuario'] = dat.usuario;
+    console.log(dat.usuario);
+    this.securityService.getAllUser(params1).subscribe({
+      next: (type: any) => {
+        this.itemsUser1 = new DefaultSelect(type.data, type.count);
+        console.log(type);
         this.formaplicationData.controls['authorizePostUser'].setValue(
-          types.data[0].user.name
+          type.data[0].otvalor
         );
         this.formaplicationData.controls['authorizeDelegation'].setValue(
-          types.data[0].user.profession
+          type.data[0].no_delegacion
         );
       },
     });
   }
 
-  getUsuario(params: ListParams, user?: string) {
-    if (user) {
-      params['filter.user'] = `$in:${user}`;
+  getUsuario(params: ListParams, usuario?: string) {
+    if (usuario) {
+      params['filter.usuario'] = `$in:${usuario}`;
     }
 
-    this.securityService
-      .getAllUsersAccessTracking(params)
-      .subscribe((data: any) => {
-        const res: any = data.data.map((user: any) => {
-          return user.user;
-        });
-
-        this.itemsUser = new DefaultSelect(res, data.count);
-        console.log(this.itemsUser);
-        console.log(data);
-        //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
-        // Llamar a getNameUser solo si se proporcionó un usuario
-        if (user) {
-          this.getNameUser(params, user);
-          console.log(this.getNameUser(params, user));
-        }
+    this.securityService.getAllUser(params).subscribe((data: any) => {
+      const res: any = data.data.map((user: any) => {
+        return user.usuario;
       });
+
+      this.itemsUser = new DefaultSelect(res, data.count);
+      console.log(this.itemsUser);
+      console.log(data);
+      //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
+      // Llamar a getNameUser solo si se proporcionó un usuario
+    });
   }
 
-  getUsuario1(params: ListParams, user?: string) {
-    if (user) {
-      params['filter.user'] = `$in:${user}`;
+  getUsuario1(params1: ListParams, usuario?: string) {
+    if (usuario) {
+      params1['filter.usuario'] = `$in:${usuario}`;
     }
 
-    this.securityService
-      .getAllUsersAccessTracking(params)
-      .subscribe((data: any) => {
-        const res: any = data.data.map((user: any) => {
-          return user.user;
-        });
-
-        this.itemsUser1 = new DefaultSelect(res, data.count);
-        console.log(this.itemsUser);
-        console.log(data);
-        //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
-        // Llamar a getNameUser solo si se proporcionó un usuario
-        if (user) {
-          this.getNameUser(params, user);
-          console.log(this.getNameUser(params, user));
-        }
-      });
-  }
-
-  getNameUser(params: ListParams, user?: string) {
-    if (user) {
-      params['filter.user'] = `$in:${user}`;
-    }
-
-    this.securityService.getAllUsersTracker(params).subscribe((data: any) => {
-      const res: any = data.data.map((name: any) => {
-        return name.name;
+    this.securityService.getAllUser(params1).subscribe((dat: any) => {
+      const res: any = dat.data.map((userT: any) => {
+        return userT.usuario;
       });
 
-      this.itemName = new DefaultSelect(data.data, data.count);
-      console.log(this.itemName);
+      this.itemsUser1 = new DefaultSelect(res, dat.count);
+      console.log(this.itemsUser1);
+      console.log(dat);
+      //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
+      // Llamar a getNameUser solo si se proporcionó un usuario
     });
   }
 
@@ -693,7 +670,8 @@ export class ResquestNumberingChangeComponent
       }
       if (
         this.selectGood[0].status == 'CND' ||
-        this.selectGood[0].status == 'CNA'
+        this.selectGood[0].status == 'CNA' ||
+        this.selectGood[0].status == 'ADE'
       ) {
         situacionJuridica = 'ABANDONADO';
         motivo = 'BIEN ABANDONADO';
@@ -909,7 +887,7 @@ export class ResquestNumberingChangeComponent
       }
     }
 
-    if (valor == 0) {
+    /*if (valor == 0) {
       if (this.dataGood[0].expedienteid == null) {
         message = 'El bien NO tiene Número de Expediente';
         this.handleSuccess(message);
@@ -921,7 +899,7 @@ export class ResquestNumberingChangeComponent
         message = 'El bien NO tiene averiguación previa';
         this.handleSuccess(message);
       }
-    }
+    }*/
 
     if (valor == 1) {
       for (let index = 0; index < this.dataGood.length; index++) {
@@ -1051,6 +1029,20 @@ export class ResquestNumberingChangeComponent
     this.data1.load([]);
     this.data1.refresh();
   }
+  //data3
+  cleanFilter() {
+    this.form.get('legalStatus').setValue(null);
+    this.form.get('type').setValue(null);
+    this.form.get('delegation').setValue(null);
+    this.form.get('warehouse').setValue(null);
+    this.form.get('vault').setValue(null);
+    Object.keys(this.form.controls).forEach(controlName => {
+      this.form.get(controlName).enable();
+    }),
+      (this.totalItems1 = 0);
+    this.data3.load([]);
+    this.data3.refresh();
+  }
 
   printScanFile() {
     // if (this.form.get(this.formControlName).value != null) {
@@ -1155,8 +1147,12 @@ export class ResquestNumberingChangeComponent
       authorizeDate: [null, [Validators.required]],
     });
     this.formaplicationData.controls['postUserRequestCamnum'].disable();
+    this.formaplicationData.controls['delegationRequestcamnum'].disable();
+    this.formaplicationData.controls['authorizeDelegation'].disable();
+    this.formaplicationData.controls['authorizePostUser'].disable();
     setTimeout(() => {
       this.getUsuario(new ListParams());
+      this.getUsuario1(new ListParams());
     }, 1000);
 
     this.formaplicationData.controls;
