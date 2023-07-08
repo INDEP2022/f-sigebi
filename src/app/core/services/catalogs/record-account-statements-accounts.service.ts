@@ -37,6 +37,16 @@ export class RecordAccountStatementsAccountsService
     return this.get(route, params);
   }
 
+  getById2(
+    bankCode: string | number,
+    account: string | number,
+    params?: ListParams
+  ): Observable<IRecordAccountStatements> {
+    const regexPattern = `.*${account}.*`;
+    const route = `${this.route}?filter.cveBank=$eq:${bankCode}&filter.accountNumber=$ilike:${regexPattern}`;
+    return this.get(route, params);
+  }
+
   getDataAccount(
     accountNumber: string | number,
     params?: ListParams

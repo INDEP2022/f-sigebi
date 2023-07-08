@@ -15,9 +15,11 @@
                 bindLabel="name"
                 label="Seleccione un Banco"
                 [control]="'bankSelect'"
-                (change)="onBankSelectChange($event)"></ngx-select>
+                (change)="onBankSelectChange($event)"
+                (input)="onSearchName($event.target)"></ngx-select>
             </form-field>
           </div>
+
           <div class="col-6">
             <form-field [control]="form.get('account')">
               <ngx-select
@@ -26,7 +28,9 @@
                 bindLabel="accountNumber"
                 label="Seleccione una Cuenta"
                 [control]="'account'"
-                (change)="onBankAccountSelectChange($event)"></ngx-select>
+                (change)="onBankAccountSelectChange($event)"
+                (input)="onSearchAccount($event.target)"
+                (clear)="onClearSelection()"></ngx-select>
             </form-field>
           </div>
         </div>

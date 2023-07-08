@@ -887,7 +887,7 @@ export class ResquestNumberingChangeComponent
       }
     }
 
-    if (valor == 0) {
+    /*if (valor == 0) {
       if (this.dataGood[0].expedienteid == null) {
         message = 'El bien NO tiene Número de Expediente';
         this.handleSuccess(message);
@@ -899,7 +899,7 @@ export class ResquestNumberingChangeComponent
         message = 'El bien NO tiene averiguación previa';
         this.handleSuccess(message);
       }
-    }
+    }*/
 
     if (valor == 1) {
       for (let index = 0; index < this.dataGood.length; index++) {
