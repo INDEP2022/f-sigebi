@@ -61,13 +61,14 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
         this.status = new DefaultSelect(data.data, data.count);
       },
       err => {
-        let error = '';
+        this.loading=false
+        /* let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        this.onLoadToast('error', 'Error', error); */
       },
       () => {}
     );
@@ -87,12 +88,13 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
         this.status = new DefaultSelect(newData, data.count);
       },
       error: err => {
+        this.loading=false
         // this.alert(
         //   'warning',
         //   'No se encontraron datos',
         //   'Por favor revise haber registrado el nombre de estatus correcto e inténtelo nuevamente'
         // );
-        this.status = new DefaultSelect([], 0, true);
+        /* this.status = new DefaultSelect([], 0, true); */
         /* let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
