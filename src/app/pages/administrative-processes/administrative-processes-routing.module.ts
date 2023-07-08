@@ -102,6 +102,7 @@ const routes: Routes = [
         },
       },
       {
+        //!SIRVE
         path: 'change-destination-goods-indicators',
         loadChildren: async () =>
           (
@@ -110,7 +111,7 @@ const routes: Routes = [
             )
           ).PaMChangeDestinationGoodsIndicatorsModule,
         data: {
-          screen: '',
+          screen: 'FACTADBCAMBIOETIQ',
           title: 'Cambio de indicadores de destino de bienes',
         },
       },
@@ -196,7 +197,7 @@ const routes: Routes = [
           import('./reports/warehouse/warehouse.module').then(
             m => m.WarehouseModule
           ),
-        data: { screen: 'FGERADBALMACENES', title: 'Almacenes' },
+        data: { screen: 'FCONADBALMACENES', title: 'Almacenes' },
       },
       {
         //!SIRVE
@@ -207,25 +208,39 @@ const routes: Routes = [
       },
 
       {
+        //!SIRVE
         path: 'goods-type-crime-reports',
         loadChildren: async () =>
           (await import('./reports/goods-type-crime/goods-type-crime.module'))
             .GoodsTypeCrimeModule,
-        data: { screen: '', title: 'Reporte de Bienes por Tipo de Delito' },
+        data: {
+          screen: 'FCONADBBIENXDELIT',
+          title: 'Reporte de Bienes por Tipo de Delito',
+        }, //FCONADBBIENXDELIT
       },
       {
+        //?NO SIRVIO
         path: 'return-confiscation-property',
         loadChildren: () =>
           import(
             './reports/return-confiscation-property/return-confiscation-property.module'
           ).then(m => m.ReturnConfiscationPropertyModule),
+        data: {
+          screen: 'FGERADBDEVDECBIEN',
+          title: 'Reporte Devoluciones y Decomisos de Bienes',
+        }, //FGERADBDEVDECBIEN
       },
       {
+        //?NO SIRVIO
         path: 'generate-excel-file',
         loadChildren: () =>
           import(
             './reports/generate-excel-file/generate-excel-file.module'
           ).then(m => m.GenerateExcelFileModule),
+        data: {
+          screen: 'FGERADBFILEAEXCEL',
+          title: 'Genera archivo para excel',
+        }, //FGERADBFILEAEXCEL
       },
       {
         path: 'bills-good',
@@ -233,6 +248,7 @@ const routes: Routes = [
           import('./reports/bills-good/bills-good.module').then(
             m => m.BillsGoodModule
           ),
+        data: { screen: '', title: 'Gastos por Bien' },
       },
       {
         path: 'inventory-report',
@@ -240,6 +256,10 @@ const routes: Routes = [
           import('./inventory-report/inventory-report.module').then(
             m => m.InventoryReportModule
           ),
+        data: {
+          screen: '',
+          title: 'Informe del estado que guarda el activo fijo',
+        },
       },
       {
         path: 'unit-conversion-packages',
@@ -247,6 +267,7 @@ const routes: Routes = [
           import(
             './unit-conversion-packages/unit-conversion-packages.module'
           ).then(m => m.UnitConversionPackagesModule),
+        data: { screen: '', title: '' },
       },
       {
         path: 'goods-tracking',
@@ -254,6 +275,7 @@ const routes: Routes = [
           import('./goods-tracking/goods-tracking.module').then(
             m => m.GoodsTrackingModule
           ),
+        data: { screen: '', title: '' },
       },
       {
         path: 'goods-management',
@@ -261,7 +283,10 @@ const routes: Routes = [
           import('./goods-management/goods-management.module').then(
             m => m.GoodsManagementModule
           ),
-        data: { screen: '', title: 'Gestión de Bienes Gabinete Social' },
+        data: {
+          screen: 'FGESTIONBIENGABSOCIAL',
+          title: 'Gestión de Bienes Gabinete Social',
+        }, //FGESTIONBIENGABSOCIAL
       },
       {
         path: 'siab-sami-interaction',
@@ -269,27 +294,35 @@ const routes: Routes = [
           import('./siab-sami-interaction/siab-sami-interaction.module').then(
             m => m.SiabSamiInteractionModule
           ),
+        data: { screen: '', title: '' },
       },
       {
-        //?NO ENCONTRADA
+        //!SIRVIO
         path: 'returns-confiscations',
         loadChildren: async () =>
           (await import('./returns-confiscations/returns-confications.module'))
             .ReturnsConficationsModule,
-        data: { screen: '', title: 'Devoluciones y Decomisos' },
+        data: {
+          screen: 'FGERADBDEVDECBIEN',
+          title: 'Devoluciones y Decomisos',
+        },
       },
       {
-        //?NO ENCONTRADA
+        //!SIRVIO
         path: 'reg-warehouse-contract',
         loadChildren: async () =>
           (await import('./third-party-admin/warehouse/warehouse.module'))
             .WarehouseModule,
-        data: { screen: '', title: 'Alta de Almacenes por Contrato' },
+        data: {
+          screen: 'FALTAALMCONTRATO',
+          title: 'Alta de Almacenes por Contrato',
+        },
       },
       /**
        *Legaspi
        **/
       {
+        //!SIRVIO
         path: 'location-goods',
         loadChildren: async () =>
           (
@@ -297,27 +330,32 @@ const routes: Routes = [
               './location-of-goods/location-goods-warehouses-storage/location-goods-warehouses-storage.module'
             )
           ).PaLgMLocationGoodsWarehousesStorageModule,
-        data: { screen: '', title: 'Ubicacion de bienes' },
+        data: { screen: 'FACTADBUBICABIEN', title: 'Ubicacion de bienes' },
       },
       {
         path: 'warehouse-inquiries',
         loadChildren: async () =>
           (await import('./warehouse-inquiries/warehouse-inquiries.module'))
             .WarehouseInquiriesModule,
-        data: { screen: '', title: 'Consulta Almacenes' },
+        data: { screen: '', title: 'Consulta de Almacenes' },
       },
       {
+        //!SIRVIO
         path: 'vault-consultation',
         loadChildren: async () =>
           (await import('./vault-consultation/vault-consultation.module'))
             .VaultConsultationModule,
-        data: { screen: '', title: 'Consulta Bovedas' },
+        data: { screen: 'FCATCATBOVEDAS', title: 'Consulta Bovedas' }, //FCATCATBOVEDAS
       },
       {
+        //!SIRVIO
         path: 'property-registration',
         loadChildren: async () =>
           (await import('./kitchenware/kitchenware.module')).KitchenwareModule,
-        data: { screen: '', title: 'Registro de mensaje del bien' },
+        data: {
+          screen: 'FACTADBMENAJEBIEN',
+          title: 'Registro de mensaje del bien',
+        },
       },
       {
         path: 'appraisal-request',
@@ -327,18 +365,20 @@ const routes: Routes = [
         data: { screen: '', title: 'Solicitud de Avalúos' },
       },
       {
+        //!SIRVIO
         path: 'appraisal-registry',
         loadChildren: async () =>
           (await import('./appraisal-registry/appraisal-registry.module'))
             .AppraisalRegistryModule,
-        data: { screen: '', title: 'Registro de Avalúos' },
+        data: { screen: 'FACTADBAVALUOBIEN', title: 'Registro de Avalúos' },
       },
       {
+        //!SIRVIO
         path: 'appraisal-monitor',
         loadChildren: async () =>
           (await import('./appraisal-monitor/appraisal-monitor.module'))
             .AppraisalMonitorModule,
-        data: { screen: '', title: 'Monitor de Avalúos' },
+        data: { screen: 'FCONADBMONAVALUOS', title: 'Monitor de Avalúos' },
       },
       {
         path: 'appraisal-goods',
@@ -376,11 +416,12 @@ const routes: Routes = [
        * Services Pages Legaspi
        **/
       {
+        //^NO MUESTRA EL TITULO
         path: 'contracts',
         loadChildren: async () =>
           (await import('./administration-third/contracts/contracts.module'))
             .ContractsModule,
-        data: { screen: '', title: 'Registro de contratos' },
+        data: { screen: 'FESTCONTRATO', title: 'Registro de contratos' },
       },
       {
         path: 'unit-cost',
@@ -390,13 +431,18 @@ const routes: Routes = [
         data: { screen: '', title: 'Costo unitario' },
       },
       {
+        //!SIRVIO
         path: 'process',
         loadChildren: async () =>
           (await import('./administration-third/process/process.module'))
             .ProcessModule,
-        data: { screen: '', title: 'Procesos para precios unitarios' },
+        data: {
+          screen: 'FESTPROCESOS_0001',
+          title: 'Procesos para precios unitarios',
+        }, //FESTPROCESOS_0001
       },
       {
+        //!SIRVIO
         path: 'services-unit-prices',
         loadChildren: async () =>
           (
@@ -404,7 +450,10 @@ const routes: Routes = [
               './administration-third/services-unit-prices/services-unit-prices.module'
             )
           ).ServicesUnitPricesModule,
-        data: { screen: '', title: 'Servicios para precios unitarios' },
+        data: {
+          screen: 'FESTSERVICIOS_0001',
+          title: 'Servicios para precios unitarios',
+        }, //FESTSERVICIOS_0001 - FESTTIPOSERVICIO_0001
       },
       {
         path: 'specs',
@@ -414,13 +463,15 @@ const routes: Routes = [
         data: { screen: '', title: 'Especificaciones para precios unitarios' },
       },
       {
+        //!SIRVIO
         path: 'turn-type',
         loadChildren: async () =>
           (await import('./administration-third/turn-type/turn-type.module'))
             .TurnTypeModule,
-        data: { screen: '', title: 'Turno y tipo' },
+        data: { screen: 'FESTTURNO_TIPO_0001', title: 'Turno y tipo' }, //FESTTURNO_TIPO_0001
       },
       {
+        //!SIRVIO
         path: 'measurement-units',
         loadChildren: async () =>
           (
@@ -428,9 +479,10 @@ const routes: Routes = [
               './administration-third/measurement-units/measurement-units.module'
             )
           ).MeasurementUnitsModule,
-        data: { screen: '', title: 'Unidades de medida' },
+        data: { screen: 'FESTUNIDAD_MEDIDA_0001', title: 'Unidades de medida' }, //FESTUNIDAD_MEDIDA_0001
       },
       {
+        //!SIRVIO
         path: 'variable-cost',
         loadChildren: async () =>
           (
@@ -438,15 +490,18 @@ const routes: Routes = [
               './administration-third/variable-cost/variable-cost.module'
             )
           ).VariableCostModule,
-        data: { screen: '', title: 'Variable costo' },
+        data: { screen: 'FESTVARIABLE_COSTO_0001', title: 'Variable costo' }, //FESTVARIABLE_COSTO_0001
       },
-
       {
+        //!SIRVIO
         path: 'zones',
         loadChildren: async () =>
           (await import('./administration-third/zones/zones.module'))
             .ZonesModule,
-        data: { screen: '', title: 'Coordinacion por zonas' },
+        data: {
+          screen: 'FESTZONAS_COORD_0001',
+          title: 'Coordinacion por zonas',
+        }, //FESTZONAS_COORD_0001
       },
       {
         path: 'electronic-signature',
@@ -456,6 +511,7 @@ const routes: Routes = [
         data: { screen: '', title: 'Firma Electrónica' },
       },
       {
+        //!SIRVIO
         path: 'proceedings-conversion',
         loadChildren: async () =>
           (
@@ -463,7 +519,10 @@ const routes: Routes = [
               './proceedings-conversion/proceedings-conversion.module'
             )
           ).ProceedingsConversionModule,
-        data: { screen: '', title: 'Detalle de actas de conversión' },
+        data: {
+          screen: 'FACTDBCONVBIEN',
+          title: 'Detalle de actas de conversión',
+        },
       },
       {
         path: 'procedural-history',
@@ -473,7 +532,7 @@ const routes: Routes = [
               './reports/procedural-history/procedural-history.module'
             )
           ).ProceduralHistoryModule,
-        data: { screen: '', title: 'Histórico procesal' },
+        data: { screen: 'FGENADBSITPROCESB', title: 'Histórico procesal' }, //FGENADBSITPROCESB
       },
       {
         path: 'information-generation',
@@ -489,10 +548,11 @@ const routes: Routes = [
         },
       },
       {
+        //?NO SIRVIO
         path: 'vaults',
         loadChildren: async () =>
           (await import('./reports/vaults/vaults.module')).VaultsModule,
-        data: { screen: '', title: 'Bovedas y Gavetas' },
+        data: { screen: 'FGERADBBOVEDAS', title: 'Bovedas y Gavetas' },
       },
       {
         path: 'concentrate-goods-type',
@@ -505,6 +565,7 @@ const routes: Routes = [
         data: { screen: '', title: 'Concentrado de bienes por expendiente' },
       },
       {
+        //!SIRVIO
         path: 'flat-file-for-good',
         loadChildren: async () =>
           (
@@ -512,7 +573,10 @@ const routes: Routes = [
               './reports/flat-file-for-good/flat-file-for-good.module'
             )
           ).FlatFileForGoodModule,
-        data: { screen: '', title: 'Generación de archivo plano' },
+        data: {
+          screen: 'FGERADBFILEAEXCEL',
+          title: 'Generación de archivo plano',
+        },
       },
       {
         path: 'real-estate-analytical-report',
@@ -522,14 +586,15 @@ const routes: Routes = [
               './reports/real-estate-analytical-report/real-estate-analytical-report.module'
             )
           ).RealEstateAnalyticalReportModule,
-        data: { screen: '', title: 'Analitico de bienes inmuebles' },
+        data: { screen: '', title: 'Analítico de bienes inmuebles' },
       },
       {
+        //!SIRVIO
         path: 'warehouses',
         loadChildren: async () =>
           (await import('./administration-third/warehouses/warehouses.module'))
             .WarehousesModule,
-        data: { screen: '', title: 'Bienes en almacén' },
+        data: { screen: 'FINGBIENESALM', title: 'Bienes en almacén' },
       },
       {
         path: 'storehouse',
@@ -556,7 +621,7 @@ const routes: Routes = [
               './administration-third/control-service-orders/control-service-orders.module'
             )
           ).ControlServiceOrdersModule,
-        data: { screen: '', title: 'Control de las ordenes de servicio' },
+        data: { screen: '', title: 'Control de las órdenes de servicio' },
       },
       {
         path: 'service-orders-format',
@@ -566,9 +631,10 @@ const routes: Routes = [
               './administration-third/service-orders-format/service-orders-format.module'
             )
           ).ServiceOrdersFormatModule,
-        data: { screen: '', title: 'Formato ordenes de servicio ' },
+        data: { screen: '', title: 'Formato órdenes de servicio ' },
       },
       {
+        //^ NO MUESTRA EL TITULO
         path: 'performance-indicator',
         loadChildren: async () =>
           (
@@ -576,7 +642,7 @@ const routes: Routes = [
               './administration-third/performance-indicator/performance-indicator.module'
             )
           ).PerformanceIndicatorModule,
-        data: { screen: '', title: 'Indicador de desempeño' },
+        data: { screen: 'FESTREPIMPLE', title: 'Indicador de desempeño' },
       },
       {
         path: 'implementation-report',
@@ -586,7 +652,7 @@ const routes: Routes = [
               './administration-third/implementation-report/implementation-report.module'
             )
           ).ImplementationReportModule,
-        data: { screen: '', title: 'Reporte de implementacion' },
+        data: { screen: '', title: 'Reporte de implementación' },
       },
       {
         path: 'service-order-reports',
@@ -596,12 +662,13 @@ const routes: Routes = [
               './administration-third/service-order-reports/service-order-reports.module'
             )
           ).ServiceOrderReportsModule,
-        data: { screen: '', title: 'Reportes de Ordenes de Servicio' },
+        data: { screen: '', title: 'Reportes de Órdenes de Servicio' },
       },
       /**
        * Seguros David Lucas
        */
       {
+        //?NO SIRVIO
         path: 'policies-report',
         loadChildren: async () =>
           (await import('./policies-report/policies-report.module'))
@@ -609,6 +676,7 @@ const routes: Routes = [
         data: { screen: 'FREPORTBIENESSPOL', title: 'Reportes de Pólizas' },
       },
       {
+        //?NO SIRVIO
         path: 'accumulated-monthly-assets',
         loadChildren: async () =>
           (
@@ -616,7 +684,10 @@ const routes: Routes = [
               './accumulated-monthly-assets/accumulated-monthly-assets.module'
             )
           ).AccumulatedMonthlyAssetsModule,
-        data: { screen: '', title: 'Acumulado de bienes mensual' },
+        data: {
+          screen: 'FGENADBACUMBIENES',
+          title: 'Acumulado de bienes mensual',
+        },
       },
       {
         path: 'insured-numerary-account',
@@ -646,6 +717,7 @@ const routes: Routes = [
         data: { screen: '', title: 'Numerario' },
       },
       {
+        //!SIRVIO
         path: 'indicators-per-good',
         loadChildren: async () =>
           (await import('./indicators-per-good/indicators-per-good.module'))
@@ -653,6 +725,7 @@ const routes: Routes = [
         data: { screen: 'FACTADBINDICXBIEN', title: 'Indicadores por Bien' },
       },
       {
+        //?NO SIRVIO
         path: 'financial-information-report',
         loadChildren: async () =>
           (
@@ -661,11 +734,12 @@ const routes: Routes = [
             )
           ).FinancialInformationReportModule,
         data: {
-          title: 'Reporte de información financiera',
           screen: 'FCONADBINFORFINAN',
+          title: 'Reporte de información financiera',
         },
       },
       {
+        //!SIRVIO
         path: 'financial-information',
         loadChildren: async () =>
           (await import('./financial-information/financial-information.module'))
@@ -673,6 +747,7 @@ const routes: Routes = [
         data: { title: 'Información financiera', screen: 'FACTADBINFORFINAN' },
       },
       {
+        //!SIRVIO
         path: 'change-of-good-classification',
         loadChildren: async () =>
           (

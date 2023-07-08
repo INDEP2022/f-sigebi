@@ -69,9 +69,7 @@
                 </div>
               </div>
               <div class="row">
-                <div
-                  class="col-md-12 col-sm-12 col-xs-12"
-                  *ngIf="disableConsultLocation">
+                <div class="col-md-12 col-sm-12 col-xs-12">
                   <div class="d-flex justify-content-center">
                     <div class="m-3">
                       <button
@@ -82,12 +80,9 @@
                       </button>
                     </div>
                     <div class="m-3">
-                      <span
-                        [ngStyle]="{
-                          color: this.di_desc_est === 'S' ? 'green' : 'black'
-                        }"
-                        >{{ this.di_desc_est }}</span
-                      >
+                      <span [style.color]="getEstatusColor(this.di_desc_est)">{{
+                        this.di_desc_est
+                      }}</span>
                     </div>
                   </div>
                 </div>

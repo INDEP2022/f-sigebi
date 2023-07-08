@@ -2,7 +2,7 @@ import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filt
 
 export let goodCheck: any[] = [];
 export const REQUESTS_COLUMNS_MODAL = {
-  solnumId: {
+  solnumid: {
     title: 'Número Solicitud',
     type: 'string',
     sort: false,
@@ -12,7 +12,7 @@ export const REQUESTS_COLUMNS_MODAL = {
     type: 'string',
     sort: false,
   },
-  delegationNumber: {
+  delegationnumber: {
     title: 'Delegación',
     type: 'string',
     sort: false,
@@ -22,7 +22,7 @@ export const REQUESTS_COLUMNS_MODAL = {
     type: 'string',
     sort: false,
   },
-  solnumDate: {
+  solnumdate: {
     title: 'Fecha solicitud',
     sort: false,
     type: 'html',
