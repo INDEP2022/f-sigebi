@@ -81,7 +81,6 @@ export class SystemLogComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
         this.origin = params['screen'];
-        console.log('Esta es la clave de la pantalla: ', this.origin);
       });
 
     this.registers = new Registers();
@@ -187,7 +186,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
       .pipe(
         catchError(error => {
           this.dynamicLoading = false;
-          if (error.status >= 500) {
+          if (error.status >= 500 || error.status >= 400) {
             this.onLoadToast(
               'error',
               'Error',
