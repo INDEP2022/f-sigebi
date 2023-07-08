@@ -42,13 +42,13 @@ export class TargetTagsSharedComponent extends BasePage implements OnInit {
     this.service.getAll(params).subscribe(
       async data => {
         const newData = await Promise.all(
-          data['data'].map((e:any) => {
+          data['data'].map((e: any) => {
             return {
               ...e,
-              viewVal: `${e.id}-${e.description}`
-            }
+              viewVal: `${e.id}-${e.description}`,
+            };
           })
-        )
+        );
         this.targetTags = new DefaultSelect(newData, data.count);
       },
       err => {

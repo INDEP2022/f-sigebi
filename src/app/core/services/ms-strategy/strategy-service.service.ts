@@ -4,8 +4,8 @@ import { StrategyEndpoints } from 'src/app/common/constants/endpoints/ms-strateg
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IStrategyService } from '../../models/ms-strategy-service/strategy-service.model';
 import { IMeasurementUnits } from '../../models/catalogs/measurement-units.model';
+import { IStrategyService } from '../../models/ms-strategy-service/strategy-service.model';
 
 @Injectable({
   providedIn: 'root',
@@ -39,8 +39,8 @@ export class StrategyServiceService extends HttpService {
     return this.delete(route);
   }
 
-  getMedUnits(params?: ListParams | string){
-    const route = 'med-units'
-    return this.get<IListResponse<IMeasurementUnits>>(route,params)
+  getMedUnits(params?: ListParams | string) {
+    const route = 'med-units';
+    return this.get<IListResponse<IMeasurementUnits>>(route, params);
   }
 }

@@ -254,19 +254,15 @@ export class MassiveConversionPermissionsComponent
         this.alert('success', 'Fue actualizado el dato de usuario', '');
       },
       err => {
-          this.tvalTable1Service.createTvalTable1(model).subscribe(
-            res => {
-              this.alert(
-                'success',
-                'Se generaron permisos para el usuario',
-                ''
-              );
-            },
-            err => {
-              this.alert('error', 'Se presentó un error inesperado', '');
-              generalData.toggle = false;
-            }
-          );
+        this.tvalTable1Service.createTvalTable1(model).subscribe(
+          res => {
+            this.alert('success', 'Se generaron permisos para el usuario', '');
+          },
+          err => {
+            this.alert('error', 'Se presentó un error inesperado', '');
+            generalData.toggle = false;
+          }
+        );
       }
     );
   }
