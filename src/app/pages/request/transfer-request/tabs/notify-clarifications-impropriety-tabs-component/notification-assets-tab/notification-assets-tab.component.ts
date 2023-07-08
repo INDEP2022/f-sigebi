@@ -257,12 +257,10 @@ export class NotificationAssetsTabComponent
       params['filter.id'] = `$eq:${idStation}`;
       this.stationService.getAll(params).subscribe({
         next: data => {
-          console.log('Emisora si', data.data[0].stationName);
           this.nameStation = data.data[0].stationName;
           resolve(true);
         },
         error: error => {
-          console.log('Emisora no', error.error);
           this.nameStation = '';
           resolve(true);
         },
@@ -291,12 +289,10 @@ export class NotificationAssetsTabComponent
       params['filter.idAuthority'] = `$eq:${idAuthority}`;
       this.authorityService.getAll(params).subscribe({
         next: data => {
-          console.log('Autoridad si', data.data[0].authorityName);
           this.nameAuthority = data.data[0].authorityName;
           resolve(true);
         },
         error: error => {
-          console.log('Autoridad no', error.error);
           this.nameAuthority = '';
           resolve(true);
         },
@@ -310,11 +306,9 @@ export class NotificationAssetsTabComponent
     params['filter.nbOrigen'] = `$eq:SAMI`;
     this.affairService.getAll(params).subscribe({
       next: ({ data }) => {
-        console.log('asunto si', data[0].description);
         this.affairName = data[0].description;
       },
       error: error => {
-        console.log('Asunto no', error.error);
         this.affairName = '';
       },
     });
@@ -496,11 +490,9 @@ export class NotificationAssetsTabComponent
 
                 this.goodService.getAll(params).subscribe({
                   next: resp => {
-                    console.log('Si hay bienes, continuar flujo', resp);
                     this.createTaskVerifyCompliance();
                   },
                   error: error => {
-                    console.log('No hay bienes, terminar flujo', error);
                     this.msgGuardado2(
                       'warning',
                       'Atención',
@@ -521,12 +513,8 @@ export class NotificationAssetsTabComponent
     params['filter.requestId'] = this.idRequest;
 
     this.goodService.getAll(params).subscribe({
-      next: resp => {
-        console.log('callGoodFilterRequest', resp);
-      },
-      error: error => {
-        console.log('callGoodFilterRequest Error', error);
-      },
+      next: resp => {},
+      error: error => {},
     });
   }
 
@@ -534,7 +522,6 @@ export class NotificationAssetsTabComponent
     return new Promise((resolve, reject) => {
       this.goodsReject.getElements().then(data => {
         data.map((bien: IGoodresdev) => {
-          console.log('bien', bien);
           this.paramsCheckInfo.getValue()[
             'filter.goodId'
           ] = `$eq:${bien.goodid}`;
@@ -565,8 +552,6 @@ export class NotificationAssetsTabComponent
                     notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA'
                   ) {
                     if (notification.answered == 'IMPROCEDENTE') {
-                      console.log('IMPROCEDENTE', notification);
-
                       const updateStatusGood = await this.updateStatusGood(
                         'IMPROCEDENTE',
                         'IMPROCEDENTE',
@@ -1261,9 +1246,7 @@ export class NotificationAssetsTabComponent
         next: data => {
           this.getGoodsByRequest();
         },
-        error: error => {
-          console.log(error);
-        },
+        error: error => {},
       });
     }
   }
@@ -1298,9 +1281,7 @@ export class NotificationAssetsTabComponent
                             .update(notification.rejectNotificationId, data)
                             .subscribe({
                               next: () => {},
-                              error: error => {
-                                console.log(error);
-                              },
+                              error: error => {},
                             });
 
                           if (notification.clarification.type == 2) {
@@ -1321,9 +1302,7 @@ export class NotificationAssetsTabComponent
                             .update(notification.rejectNotificationId, data)
                             .subscribe({
                               next: () => {},
-                              error: error => {
-                                console.log(error);
-                              },
+                              error: error => {},
                             });
                         }
                       }
@@ -1419,9 +1398,7 @@ export class NotificationAssetsTabComponent
             }
           });
         },
-        error: error => {
-          console.log(error);
-        },
+        error: error => {},
       });
   }
 
@@ -1591,11 +1568,9 @@ export class NotificationAssetsTabComponent
           };
           this.goodService.update(good).subscribe({
             next: data => {
-              console.log('actualizado', data);
               resolve(true);
             },
             error: error => {
-              console.log(error);
               resolve(false);
             },
           });
@@ -1610,9 +1585,7 @@ export class NotificationAssetsTabComponent
           };
           this.goodService.update(good).subscribe({
             next: data => {},
-            error: error => {
-              console.log(error);
-            },
+            error: error => {},
           });
         }
       } else if (typeOrigin == 'DOC_COMPLEMENTARIA') {
@@ -1834,9 +1807,7 @@ export class NotificationAssetsTabComponent
                         this.getGoodsByRequest();
                         this.notificationsList = new LocalDataSource();
                       },
-                      error: error => {
-                        console.log(error);
-                      },
+                      error: error => {},
                     });
                   }
                 } else if (
@@ -1856,9 +1827,7 @@ export class NotificationAssetsTabComponent
                         this.getGoodsByRequest();
                         this.notificationsList = new LocalDataSource();
                       },
-                      error: error => {
-                        console.log(error);
-                      },
+                      error: error => {},
                     });
                   }
                 }

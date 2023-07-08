@@ -4,6 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
@@ -13,6 +14,7 @@ import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ConvertiongoodService } from '../../../../../core/services/ms-convertiongood/convertiongood.service';
 
 @Component({
   selector: 'app-acta-convertion-form',
@@ -44,7 +46,8 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
     private router: Router,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private convertiongoodService: ConvertiongoodService
   ) {
     super();
   }
@@ -112,6 +115,7 @@ Ultima página del Acta Administrativa de Validación y Conversión de Unidades 
         paragraph2: null,
         paragraph3: null,
       };
+      console.log('Acta a enviar: ', payload);
       this.serviceGood
         .createActaConversion(payload)
         .subscribe(_ => this.fetchItems());
@@ -169,9 +173,9 @@ Ultima página del Acta Administrativa de Validación y Conversión de Unidades 
   }
 
   fetchItems() {
-    console.log(this.tipoConv);
+    //console.log("tipoConv -> ",this.tipoConv);
     if (this.tipoConv === '2') {
-      console.log(this.tipoConv);
+      //console.log(this.tipoConv);
       if (this.actConvertion) {
         this.selectItem2 = this.actConvertion;
         console.log(this.actConvertion);
@@ -193,6 +197,7 @@ Ultima página del Acta Administrativa de Validación y Conversión de Unidades 
           this.selectedIndex = 0;
         });
       }
+      console.log('getActasConversion por -> ' + this.actConvertion);
       this.serviceGood
         .getActasConversion(this.actConvertion)
         .subscribe((item: any) => {
@@ -333,5 +338,29 @@ Ultima página del Acta Administrativa de Validación y Conversión de Unidades 
     let consecutivo = num.toString().padStart(5, '0');
 
     return `${parts[0]}/${parts[1]}/${parts[2]}/${parts[3]}/${parts[4]}/${consecutivo}/${parts[6]}/${parts[7]}`;
+  }
+
+  createMinuteConversion() {
+    const payload: any = {
+      cveActaConvId: this.selectItem2,
+      typeActa: null,
+      broadcaster: null,
+      administeredBy: null,
+      run: null,
+      universalFolio: null,
+      paragraph1: this.parrafo1,
+      paragraph2: this.parrafo2,
+      paragraph3: this.parrafo3,
+    };
+    console.log('minute-conversions -> ', payload);
+    this.convertiongoodService.createMinuteConversion(payload).subscribe({
+      next: (res: IListResponse<any>) => {
+        this.alert('success', null, `Registro guardado`);
+        console.log('minute-conversions res -> ', res);
+      },
+      error: error => {
+        this.alert('error', 'error', error.message);
+      },
+    });
   }
 }

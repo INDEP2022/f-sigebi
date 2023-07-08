@@ -478,8 +478,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         }
 
         //Traer los bienes de pack_det
-        this.unitConversionDataService.updatePrevisualizationData.next(true);
         this.validateButtons(res.statuspack.toString().toLocaleUpperCase());
+        this.unitConversionDataService.updatePrevisualizationData.next(true);
       }
     });
   }
@@ -721,7 +721,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   showConfirmAlert() {
     if (!this.form.valid) {
-      Swal.fire(`Faltan datos necesarios para validar ${this.form}`);
+      this.alert(
+        'warning',
+        `Faltan datos necesarios para validar ${this.form}`,
+        ''
+      );
       return;
     }
 
@@ -729,11 +733,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       'info',
       'Confirmación',
       '¿Está seguro de que el Paquete ya ha sido validado?'
-    ).then(question => {
+    ).then(async question => {
       if (question.isConfirmed) {
         this.verifyGoods();
         if (!this.chValidateGood) {
-          Swal.fire('Existe inconsistencia en los bienes...', 'A', 'error');
+          this.alert('warning', 'Existe inconsistencia en los bienes', '');
         } else {
           let currentDate = new Date();
           let formattedDate = currentDate.toISOString().substring(0, 10);
@@ -861,7 +865,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           }
 
           if (statusMessage !== '') {
-            Swal.fire(statusMessage, '', 'success');
+            this.alert('warning', statusMessage, '');
           }
 
           this.form.patchValue({
@@ -1484,7 +1488,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       numberClassifyGood: this.goodClassification.value,
       numberLabel: this.targetTag.value,
       unit: this.measurementUnit.value,
-      numberStore: null,
+      numberStore: this.warehouse.value,
       numberRecord: null,
       status: this.goodStatus.value,
       numbertrainemiaut: this.transferent.value,

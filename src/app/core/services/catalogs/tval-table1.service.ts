@@ -86,8 +86,8 @@ export class TvalTable1Service
     );
   }
 
-  createTvalTable1(model:ITvaltables1): Observable<ITvaltables1>{
-    return this.Tvaltabla1Repository.create(`${this.route6}`, model)
+  createTvalTable1(model: ITvaltables1): Observable<ITvaltables1> {
+    return this.Tvaltabla1Repository.create(`${this.route6}`, model);
   }
 
   update(id: string | number, model: ITvaltable1): Observable<Object> {
@@ -98,7 +98,9 @@ export class TvalTable1Service
     );
   }
 
-  updateTvalTable1(model: Partial<ITvaltables1> | Partial<ITvaltable1>): Observable<Object> {
+  updateTvalTable1(
+    model: Partial<ITvaltables1> | Partial<ITvaltable1>
+  ): Observable<Object> {
     return this.Tvaltablas1Repository.update3(`${this.route5}`, model);
   }
 }
