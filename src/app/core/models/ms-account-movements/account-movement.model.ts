@@ -87,3 +87,17 @@ export interface IUserChecks {
   registerNumber: number;
   nbOrigin: string;
 }
+
+export interface INumeraryTransfer {
+  reportDevNumber: string;
+  amountTotalDev: string;
+  accountDevKey: string;
+  delegationDevNumber?: string;
+  reportDevDate: string;
+  currencyDevKey: string;
+  depositDevDate: string;
+  checkNumber: string;
+  nbOrigin: string;
+}
+
+

@@ -25,7 +25,13 @@
                 max="9999999999"
                 type="number"
                 formControlName="fileTo"
-                class="form-control" />
+                class="form-control"
+                [min]="form.get('fileFrom').value"
+                [ngModel]="
+                  form.get('fileTo').value < form.get('fileFrom').value
+                    ? form.get('fileFrom').value
+                    : form.get('fileTo').value
+                " />
             </form-field>
           </div>
         </div>
@@ -44,6 +50,12 @@
               <input
                 max="9999999999"
                 type="number"
+                [min]="form.get('goodFrom').value"
+                [ngModel]="
+                  form.get('goodTo').value < form.get('goodFrom').value
+                    ? form.get('goodFrom').value
+                    : form.get('goodTo').value
+                "
                 formControlName="goodTo"
                 class="form-control" />
             </form-field>

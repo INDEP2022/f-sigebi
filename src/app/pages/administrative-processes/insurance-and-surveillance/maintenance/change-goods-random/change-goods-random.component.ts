@@ -13,8 +13,12 @@ export class ChangeGoodsRandomComponent implements OnInit {
 
   form: FormGroup;
   public delegations = new DefaultSelect();
-  public procesess = new DefaultSelect();
   @Output() eventChangeGoodsRandom = new EventEmitter();
+  processes = [
+    { value: 1, label: 'Supervisión' },
+    { value: 2, label: 'Validación' },
+  ];
+  public procesess = new DefaultSelect(this.processes, 2);
 
   ngOnInit(): void {
     this.prepareForm();
@@ -25,6 +29,7 @@ export class ChangeGoodsRandomComponent implements OnInit {
   }
 
   onClickChangeGoodRandom() {
+    console.log(this.form.value);
     this.eventChangeGoodsRandom.emit(this.form.value);
   }
 
@@ -38,14 +43,9 @@ export class ChangeGoodsRandomComponent implements OnInit {
       goodNumber: [null, Validators.required],
       description: [
         null,
-        Validators.required,
-        Validators.pattern(STRING_PATTERN),
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      transference: [
-        null,
-        Validators.required,
-        Validators.pattern(STRING_PATTERN),
-      ],
+      transference: [null, Validators.required],
     });
   }
 }

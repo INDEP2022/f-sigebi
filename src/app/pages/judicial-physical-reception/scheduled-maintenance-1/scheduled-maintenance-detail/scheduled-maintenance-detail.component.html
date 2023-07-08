@@ -140,10 +140,12 @@
             [selecteds]="selecteds"
             (finishDelete)="getData($event)">
           </app-massive-delete-button>
-          <app-columns-select
-            *ngIf="data && data.length > 0"
-            [(settings)]="settingsGoods"
-            [defaultColumns]="6"></app-columns-select>
+          <div>
+            <app-columns-select
+              *ngIf="data && data.length > 0"
+              [(settings)]="settingsGoods"
+              [defaultColumns]="6"></app-columns-select>
+          </div>
         </div>
       </div>
       <!-- <div class="row" *ngIf="loadingRastrerGoods" style="margin-bottom: 5rem">

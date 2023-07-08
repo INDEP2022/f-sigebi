@@ -544,10 +544,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   applyGood(event: any) {
-    /* if (
-      this.selectedRow.status === 'CVD' ||
-      this.selectedRow.status === 'CAN'
-    ) {
+    /*if (this.selectedRow.status == 'CVD' || this.selectedRow.status == 'CAN') {
       this.alert(
         'error',
         `El Bien estatus del bien con id: ${this.numberGoodFather.value}`,
@@ -558,7 +555,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       this.serviceGood.getGoods(this.goodFatherNumber$.getValue()).subscribe(
         res => {
           const data = res;
-          console.log(data);
+          console.log('respuesta de consulta -> ', data);
+          console.trace('getGoods -> ', data);
           this.filterGood$.next(data);
         },
         err => {
@@ -576,6 +574,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         return item;
       });
       delete payload.almacen;
+      console.log('crateGood -> ', payload[0]);
       this.serviceGood.crateGood(payload[0]).subscribe(
         res => {
           this.alert(
@@ -597,6 +596,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         res => {
           const data = res;
           this.filterGood$.next(data);
+          console.log('filterGood -> ', this.filterGood$.getValue);
         },
         err => {
           console.log(err);
@@ -606,7 +606,47 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       this.alert('warning', 'No bien hijo', 'Debe seleccionar un bien hijo');
     }
   }
-  deletGood(event: any) {}
+
+  //Eliminar bien hijo
+  deletGood(event: any) {
+    //console.log("el evento es -> ",this.selectedRow.data);
+    if (event != null && this.selectedRow != undefined) {
+      //console.log("el evento es -> ",JSON.stringify(this.selectedRow));
+      console.log('status->', this.selectedRow.status);
+      if (this.selectedRow.status === 'CVD') {
+        this.alert(
+          'error',
+          `El bien con id: ${this.numberGoodFather.value}`,
+          `ya ha sido convertido`
+        );
+      }
+
+      console.log('status2->', this.selectedRow);
+      this.alertQuestion(
+        'question',
+        `¿Se va a eliminar el bien ${this.selectedRow.goodId} ¿Desea continuar??`,
+        ''
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.serviceGood.removeGood(this.selectedRow.goodId).subscribe(
+            res => {
+              this.alert(
+                'success',
+                'Se Eliminó el Bien',
+                `El Bien con id: ${this.selectedRow.goodId}, fue Eliminado`
+              );
+            },
+            err => {
+              this.alert('error', 'error ', err.message);
+            }
+          );
+        }
+      });
+    } else {
+      this.alert('warning', 'No hay registro Seleccionado', '');
+    }
+  }
+
   onRowSelect(event: any) {
     this.numberGoodSon.setValue(event.data.goodId);
     this.observation.setValue(event.data.descriptionConv);
@@ -616,7 +656,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     this.unitOfMeasure.setValue(event.data.unit);
     this.destinationLabel.setValue(event.data.noLabel);
     this.selectedRow = event.data;
-
     this.getAttributesGood(event.data.noClassifGood);
   }
 
@@ -624,14 +663,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     this.serviceGood.getAllFilterClassification(event).subscribe(
       res => {
         this.attributes = [];
-        console.log(res);
+        console.log('getAllFilterClassification -> ', res);
         // delete res.goodNumber;
         // this.attributes = Object.entries(res.data).filter(([key, value]) => value.attribute);
         for (let i = 0; i < res.data.length; i++) {
           let value = '';
           for (const index in this.good) {
             if (index === `val${res.data[i].columnNumber}`) {
-              console.log(this.good[index]);
+              console.log('this.good -> ', this.good[index]);
               value = this.good[index];
             }
           }

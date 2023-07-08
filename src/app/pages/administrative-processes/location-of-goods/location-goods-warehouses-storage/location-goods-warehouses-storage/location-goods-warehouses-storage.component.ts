@@ -340,6 +340,7 @@ export class LocationGoodsWarehousesStorageComponent
     this.serviceGood.update(data).subscribe(
       res => {
         this.alert('success', 'Bien', `Actualizado correctamente`);
+        this.loadGood();
       },
       err => {
         this.alert(
@@ -360,12 +361,14 @@ export class LocationGoodsWarehousesStorageComponent
         ) {
           this.warehouseDisable = true;
           this.vaultDisable = true;
+          this.good.dateIn = new Date();
           // this.good.ubicationType = 'A';
           return true;
         } else if (Number(this.good.type) === 7) {
           // this.good.ubicationType = 'A';
           this.vaultDisable = false;
           this.formVault.disable();
+          this.good.dateIn = new Date();
         } else {
           this.warehouseDisable = false;
           this.vaultDisable = false;
@@ -383,9 +386,11 @@ export class LocationGoodsWarehousesStorageComponent
           // this.good.ubicationType = 'B';
           // this.good.vaultNumber = 9999;
           // this.good.storeNumber = null;
+          this.good.dateIn = new Date();
         } else if (Number(this.good.type) === 7) {
           this.warehouseDisable = false;
           this.formWarehouse.disable();
+          this.good.dateIn = new Date();
           // this.good.ubicationType = 'B';
         } else {
           this.warehouseDisable = true;
@@ -436,9 +441,9 @@ export class LocationGoodsWarehousesStorageComponent
                   vc_pantalla: 'FACTADBUBICABIEN',
                   proceso_ext_dom: good.extDomProcess ?? '',
                 };
-                resolve(body);
                 this.allGoods.load(response.data);
                 this.allGoods.refresh();
+                resolve(body);
               });
             }),
               (this.di_desc_est = 'N');
