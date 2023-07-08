@@ -85,6 +85,12 @@
             [disabled]="!form.valid">
             Ejecutar
           </button>
+          <button
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="cleanFilter()"
+            style="margin: 1vh">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
         </div>
       </div>
     </div>
@@ -175,8 +181,8 @@
               [form]="formaplicationData"
               [data]="itemsUser"
               label="Usuario Solicita"
-              value="user"
-              bindLabel="user"
+              value="usuario"
+              bindLabel="usuario"
               (fetchItems)="getUsuario($event)"
               (change)="searchUsuario($event)"
               control="userRequestChangeNumber">
@@ -185,7 +191,8 @@
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
-            [control]="formaplicationData.get('postUserRequestCamnum')">
+            [control]="formaplicationData.get('postUserRequestCamnum')"
+            label="Nombre">
             <input
               type="text"
               class="form-control"
@@ -227,8 +234,8 @@
               [form]="formaplicationData"
               [data]="itemsUser1"
               label="Usuario Autoriza"
-              value="user"
-              bindLabel="user"
+              value="usuario"
+              bindLabel="usuario"
               (fetchItems)="getUsuario1($event)"
               (change)="searchUsuario1($event)"
               control="authorizeUser">
