@@ -71,7 +71,13 @@
                 [maxDate]="maxDate"
                 formControlName="to"
                 class="form-control"
+                [min]="form.get('from').value"
                 [minDate]="form.get('from').value"
+                [ngModel]="
+                  form.get('to').value < form.get('from').value
+                    ? form.get('from').value
+                    : form.get('to').value
+                "
                 bsDatepicker />
             </form-field>
           </div>
