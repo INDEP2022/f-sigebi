@@ -61,7 +61,7 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
         this.status = new DefaultSelect(data.data, data.count);
       },
       err => {
-        this.loading=false
+        this.loading = false;
         /* let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
@@ -88,7 +88,7 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
         this.status = new DefaultSelect(newData, data.count);
       },
       error: err => {
-        this.loading=false
+        this.loading = false;
         // this.alert(
         //   'warning',
         //   'No se encontraron datos',

@@ -19,8 +19,14 @@ export class ChangePeriodComponent {
     processDestiny: new FormControl(null, Validators.required),
   });
 
+  processes = [
+    { value: 1, label: 'Supervisión' },
+    { value: 2, label: 'Validación' },
+  ];
+  public procesess = new DefaultSelect(this.processes, 2);
+  public procesess1 = new DefaultSelect(this.processes, 2);
+
   // public delegations = new DefaultSelect();
-  public procesess = new DefaultSelect();
   isLoading = false;
   @Output() eventChangePeriod = new EventEmitter();
 
@@ -48,7 +54,7 @@ export class ChangePeriodComponent {
   }
 
   changePeriod() {
-    // console.log(this.form.value);
+    console.log(this.form.value);
     this.eventChangePeriod.emit(this.form.value);
   }
 
