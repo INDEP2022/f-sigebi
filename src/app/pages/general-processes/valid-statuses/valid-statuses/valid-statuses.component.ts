@@ -137,9 +137,7 @@ import { ActivatedRoute } from '@angular/router';
 import {
   BehaviorSubject,
   catchError,
-  forkJoin,
   skip,
-  switchMap,
   takeUntil,
   tap,
   throwError,
@@ -187,14 +185,10 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.params
-      .pipe(
-        skip(1),
-        switchMap(params =>
-          forkJoin([this.getScreenStatuses(params), this.getHelpByScreen()])
-        )
-      )
-      .subscribe();
+    this.params.pipe(skip(1)).subscribe(params => {
+      this.getScreenStatuses(params).subscribe();
+      this.getHelpByScreen().subscribe();
+    });
     this.fillFromParams();
   }
 
@@ -248,6 +242,8 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(response => {
+        console.log(response);
+
         this.loading = false;
         this.statuses = response.data;
         this.totalItems = response.count;

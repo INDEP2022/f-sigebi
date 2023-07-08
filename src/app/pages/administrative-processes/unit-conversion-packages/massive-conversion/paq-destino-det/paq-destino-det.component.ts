@@ -3,10 +3,12 @@ import { AbstractControl } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IPackageGoodDec } from 'src/app/core/models/ms-package-good/package-good-dec';
 import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
 import { BasePage } from 'src/app/core/shared';
 import { UnitConversionPackagesDataService } from '../../services/unit-conversion-packages-data.service';
 import { COLUMNS } from './column';
+
 @Component({
   selector: 'app-paq-destion-det',
   templateUrl: './paq-destino-det.component.html',
@@ -16,7 +18,7 @@ export class PaqDestinoDetComponent extends BasePage {
   @Input() packageType: AbstractControl;
   @Input() noPackage: AbstractControl;
   totalItems = 0;
-  dataTemp: any[] = [];
+  dataTemp: IPackageGoodDec[] = [];
   dataPaginated: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
 

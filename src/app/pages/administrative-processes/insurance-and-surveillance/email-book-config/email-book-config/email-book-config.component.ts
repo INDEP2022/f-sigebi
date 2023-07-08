@@ -47,7 +47,8 @@ export class EmailBookConfigComponent
     });
   }
 
-  ngAfterViewInit(): void {
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     this.createOrEditEmailBookDialog.subject.subscribe(res => {
       /*showToast({
         text:

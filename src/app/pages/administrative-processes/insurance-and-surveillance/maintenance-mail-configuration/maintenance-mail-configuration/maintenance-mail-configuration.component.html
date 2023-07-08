@@ -40,8 +40,8 @@
       <h5 class="title">DATOS GENERALES DEL CORREO</h5>
     </div>
     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-      <button class="btn btn-primary btn-sm active mr-2" (click)="showData()">
-        Ver lista datos
+      <button class="btn btn-primary btn-sm active" (click)="showData()">
+        <i class="bx bx-list-plus bx-sm float-icon"></i>
       </button>
     </div>
 
@@ -93,11 +93,11 @@
         <div class="m-3">
           <button
             type="button"
-            class="btn btn-success btn-sm active ml-3"
+            class="btn btn-primary btn-sm active mr-3"
             [disabled]="false"
             (click)="update()"
             (click)="resetForm()">
-            Actualizar
+            Actualizar <i class="fas fa-sync-alt"> </i>
           </button>
         </div>
       </div>
