@@ -169,7 +169,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
       freeDate: [null, [Validators.pattern(STRING_PATTERN)]],
       registryNumber: [null, [Validators.pattern(STRING_PATTERN)]],
       economicAgreementKey: [null, [Validators.pattern(STRING_PATTERN)]],
-      identificationType: [null, [Validators.pattern(STRING_PATTERN)]],
+      identificationType: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       identificationNumber: [null, [Validators.pattern(STRING_PATTERN)]],
       agentId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       outsideNumber: [
@@ -214,12 +214,8 @@ export class CustomersModalComponent extends BasePage implements OnInit {
     });
     if (this.customers != null) {
       this.edit = true;
+
       this.customerForm.patchValue(this.customers);
-      this.customerForm
-        .get('penaltyId')
-        .setValue(this.customers.penaltyId.descPenalties);
-      this.customerForm.get('userFree').setValue(this.customers.userFree.name);
-      this.customerForm.get('agentId').setValue(this.customers.agentId.id);
     }
   }
 
@@ -236,28 +232,16 @@ export class CustomersModalComponent extends BasePage implements OnInit {
     this.customerService
       .updateCustomers(this.customers.id, this.customerForm.value)
       .subscribe({
-        next: data => {
-          console.log('data: ', data);
-          this.handleSuccess();
-        },
-        error: error => {
-          console.log('error: ', error);
-          this.loading = false;
-        },
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
       });
   }
 
   create() {
     this.loading = true;
     this.customerService.create(this.customerForm.value).subscribe({
-      next: data => {
-        console.log('data: ', data);
-        this.handleSuccess();
-      },
-      error: error => {
-        console.log('error: ', error);
-        this.loading = false;
-      },
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
     });
   }
 
@@ -265,6 +249,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
+    console.log('this.modalRef: {} ', this.modalRef);
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }

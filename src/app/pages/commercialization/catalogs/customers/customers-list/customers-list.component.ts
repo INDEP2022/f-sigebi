@@ -46,6 +46,7 @@ export class CustomersListComponent
       actions: {
         columnTitle: 'Acciones',
         edit: true,
+        add: false,
         delete: false,
         position: 'right',
       },
@@ -122,6 +123,12 @@ export class CustomersListComponent
     console.log(customers);
     if (customers) {
       customers = { ...customers, sellerId: customers.sellerId?.id ?? null };
+      customers = { ...customers, userFree: customers.userFree?.name ?? null };
+      customers = { ...customers, agentId: customers.agentId?.id ?? null };
+      customers = {
+        ...customers,
+        penaltyId: customers.penaltyId?.penaltyId ?? null,
+      };
     }
 
     modalConfig.initialState = {
