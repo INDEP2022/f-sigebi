@@ -214,6 +214,15 @@ $checkbox_image: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' v
   border-color: #9d2449;
 }
 
+.common-check {
+  border-radius: 0 !important;
+  &:checked {
+    background-image: url($checkbox_image);
+    background-color: #9d2449;
+    border-color: #9d2449;
+  }
+}
+
 .ng2-smart-actions input[type='checkbox'] {
   @extend %table-check;
 }
@@ -693,6 +702,9 @@ custom-view-component {
   border: 1px solid #d4d4d4 !important;
 }
 
+.swal2-html-container {
+  white-space: break-spaces;
+}
 .float-icon-md2 {
   top: 9px;
 }

@@ -12,14 +12,14 @@ import {
 import { IMoneda } from 'src/app/core/models/catalogs/tval-Table5.model';
 import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-
 @Component({
   selector: 'app-unreconciled-files',
   templateUrl: './unreconciled-files.component.html',
   styles: [],
 })
-export class UnreconciledFilesComponent implements OnInit {
+export class UnreconciledFilesComponent extends BasePage implements OnInit {
   form: FormGroup;
   isLoading = false;
   maxDate = new Date();
@@ -39,7 +39,9 @@ export class UnreconciledFilesComponent implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -47,14 +49,14 @@ export class UnreconciledFilesComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      // delegation: [null, Validators.required],
-      // subdelegation: [null, Validators.required],
-      // fileFrom: [null, Validators.required],
-      // fileTo: [null, Validators.required],
+      delegation: [null, Validators.required],
+      subdelegation: [null, Validators.required],
+      fileFrom: [null, Validators.required],
+      fileTo: [null, Validators.required],
       from: [null, Validators.required],
       to: [null, Validators.required],
-      currency: [null, Validators.required],
-      bank: [null, Validators.required],
+      // currency: [null, Validators.required],
+      // bank: [null, Validators.required],
       importe: [null, Validators.required],
     });
   }
@@ -80,6 +82,17 @@ export class UnreconciledFilesComponent implements OnInit {
     };
 
     console.log('params', params);
+    const start = new Date(this.form.get('from').value);
+    const end = new Date(this.form.get('to').value);
+
+    if (end < start) {
+      this.alert(
+        'warning',
+        'advertencia',
+        'Fecha final no puede ser menor a fecha de inicio'
+      );
+      return;
+    }
     this.siabService
       .fetchReport('RGERADBFICHADEPOS', params)
       // .fetchReportBlank('blank')

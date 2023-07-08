@@ -43,10 +43,15 @@
 
 .goodTracker {
   text-align: left;
+  display: flex;
+  column-gap: 10px;
 }
 
 .massiveDelete {
   text-align: right;
+  display: flex;
+  column-gap: 10px;
+  justify-content: flex-end;
 }
 
 app-cants {

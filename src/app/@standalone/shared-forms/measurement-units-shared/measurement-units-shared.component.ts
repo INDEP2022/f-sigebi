@@ -12,6 +12,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IMeasurementUnits } from 'src/app/core/models/catalogs/measurement-units.model';
 import { unitsData } from './data';
+import { LabelGoodService } from 'src/app/core/services/catalogs/label-good.service';
+import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 
 @Component({
   selector: 'app-measurement-units-shared',
@@ -35,7 +37,7 @@ export class MeasurementUnitsSharedComponent
     return this.form.get(this.measurementUnitField);
   }
 
-  constructor(/*private service: WarehouseService*/) {
+  constructor(private service: StrategyServiceService) {
     super();
   }
 
@@ -45,12 +47,13 @@ export class MeasurementUnitsSharedComponent
 
   getUnits(params: ListParams) {
     //Provisional data
-    let data = unitsData;
+    /* let data = unitsData;
     let count = data.length;
     console.log(data);
-    this.measurementUnits = new DefaultSelect(data, count);
-    /*this.service.getAll(params).subscribe(data => {
-        this.status = new DefaultSelect(data.data,data.count);
+    this.measurementUnits = new DefaultSelect(data, count); */
+    this.service.getMedUnits(params).subscribe(data => {
+      console.log(data)
+        this.measurementUnits = new DefaultSelect(data.data,data.count);
       },err => {
         let error = '';
         if (err.status === 0) {
@@ -61,7 +64,7 @@ export class MeasurementUnitsSharedComponent
         this.onLoadToast('error', 'Error', error);
 
       }, () => {}
-    );*/
+    );
   }
 
   onUnitsChange(type: any) {

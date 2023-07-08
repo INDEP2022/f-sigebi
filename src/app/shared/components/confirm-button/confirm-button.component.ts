@@ -55,7 +55,7 @@ export class ConfirmButtonComponent implements OnInit {
     if (this.btnSmall) {
       return `btn ${this.className} btn-sm active`;
     } else {
-      return `btn ${this.className} btn-sm active`;
+      return `btn ${this.className} active`;
     }
   }
 }
