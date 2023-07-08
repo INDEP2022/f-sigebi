@@ -721,7 +721,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   showConfirmAlert() {
     if (!this.form.valid) {
-      this.alert('warning',`Faltan datos necesarios para validar ${this.form}`,'');
+      this.alert(
+        'warning',
+        `Faltan datos necesarios para validar ${this.form}`,
+        ''
+      );
       return;
     }
 
@@ -733,7 +737,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.verifyGoods();
         if (!this.chValidateGood) {
-          this.alert('warning','Existe inconsistencia en los bienes', '');
+          this.alert('warning', 'Existe inconsistencia en los bienes', '');
         } else {
           let currentDate = new Date();
           let formattedDate = currentDate.toISOString().substring(0, 10);
@@ -861,7 +865,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           }
 
           if (statusMessage !== '') {
-            this.alert('warning',statusMessage, '');
+            this.alert('warning', statusMessage, '');
           }
 
           this.form.patchValue({

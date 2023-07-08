@@ -57,7 +57,7 @@ export class GoodsClasificationSharedComponent
     const paramsF = new FilterParams();
     Number.isNaN(parseInt(params.text))
       ? paramsF.addFilter('description', params.text, SearchFilter.ILIKE)
-      : paramsF.addFilter('numClasifGoods', parseInt(params.text)) ;
+      : paramsF.addFilter('numClasifGoods', parseInt(params.text));
     this.service.getAllSssubtype(paramsF.getParams()).subscribe(
       async data => {
         console.log(data);
