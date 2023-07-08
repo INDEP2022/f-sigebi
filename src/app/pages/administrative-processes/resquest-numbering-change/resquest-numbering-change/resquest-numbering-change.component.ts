@@ -670,8 +670,8 @@ export class ResquestNumberingChangeComponent
       }
       if (
         this.selectGood[0].status == 'CND' ||
-        this.selectGood[0].status == 'CNA' ||
-        this.selectGood[0].status == 'ADE'
+        this.selectGood[0].status == 'CNA'
+        //this.selectGood[0].status == 'ADE'
       ) {
         situacionJuridica = 'ABANDONADO';
         motivo = 'BIEN ABANDONADO';
