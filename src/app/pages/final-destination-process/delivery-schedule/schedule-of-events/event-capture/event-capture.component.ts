@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  AfterContentInit,
   AfterViewInit,
   Component,
   ElementRef,
@@ -174,7 +173,7 @@ interface IBlkProceeding {
 })
 export class EventCaptureComponent
   extends BasePage
-  implements OnInit, AfterViewInit, AfterContentInit
+  implements OnInit, AfterViewInit
 {
   @ViewChildren(SmartDateInputHeaderDirective, { read: ElementRef })
   private itemsElements: QueryList<ElementRef>;
@@ -547,7 +546,7 @@ export class EventCaptureComponent
       this.updateProceeding().subscribe();
       return;
     }
-    await this.createProceeding();
+    await this.createProceeding(true);
   }
 
   updateProceeding() {
@@ -774,8 +773,9 @@ export class EventCaptureComponent
     this.alert('error', 'Error', message);
   }
 
-  ngAfterContentInit(): void {}
-  ngAfterViewInit(): void {}
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+  }
 
   async transferClick() {
     const firstDetail = this.detail[0];

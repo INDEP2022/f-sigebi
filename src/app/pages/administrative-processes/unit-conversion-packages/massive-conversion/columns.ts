@@ -57,11 +57,11 @@ export const COLUMNS = {
 };
 
 export const ERRORCOLUMNS = {
-  no_bien: {
+  numberGood: {
     title: 'Bien',
     sort: false,
   },
-  DES_ERROR: {
+  descError: {
     title: 'Error',
     sort: false,
   },

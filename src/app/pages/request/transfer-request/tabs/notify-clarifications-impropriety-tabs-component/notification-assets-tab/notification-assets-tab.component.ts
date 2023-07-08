@@ -394,10 +394,10 @@ export class NotificationAssetsTabComponent
     const dataClarifications2 = this.dataNotificationSelected;
 
     if (this.rowSelected == false) {
-      this.message('Error', 'Seleccione notificación a rechazar');
+      this.message('', 'Error', 'Seleccione notificación a rechazar');
     } else {
       if (this.selectedRow.answered == 'RECHAZADA') {
-        this.message('Error', 'La notificación ya fue rechazada');
+        this.message('error', 'Error', 'La notificación ya fue rechazada');
       }
 
       if (
@@ -452,7 +452,7 @@ export class NotificationAssetsTabComponent
   verifyClarification() {
     if (this.goodsReject.count() < this.columns.length) {
       this.onLoadToast(
-        'warning',
+        'info',
         'Para verificar el cumplimiento se necesita tener todos los bienes seleccionados',
         ''
       );
@@ -477,7 +477,7 @@ export class NotificationAssetsTabComponent
           );
         } else {
           this.alertQuestion(
-            'info',
+            'warning',
             'Acción',
             'Los bienes seleccionados regresarán al proceso de verificar cumplimiento'
           ).then(async question => {
@@ -631,7 +631,7 @@ export class NotificationAssetsTabComponent
           resolve(task);
         },
         error: error => {
-          this.message('error', 'Error al obtener la tarea antigua');
+          this.message('error', 'error', 'Error al obtener la tarea antigua');
           reject(error.error.message);
         },
       });
@@ -913,8 +913,8 @@ export class NotificationAssetsTabComponent
         } else {
           this.onLoadToast(
             'info',
-            'Acción invalida',
-            'Se necesita tener la aclaración en status: EN ACLARACION'
+            'Acción inválida',
+            'El estatus de la aclaración debe estar en: EN ACLARACION'
           );
         }
       } else if (notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA') {
@@ -923,8 +923,8 @@ export class NotificationAssetsTabComponent
         } else {
           this.onLoadToast(
             'info',
-            'Acción invalida',
-            'Se necesita tener la aclaración en status: EN ACLARACION'
+            'Acción inválida',
+            'El estatus de la aclaración debe estar en: EN ACLARACION'
           );
         }
       }
@@ -953,7 +953,7 @@ export class NotificationAssetsTabComponent
         }
       }
     } else {
-      this.onLoadToast('info', 'Error', 'Seleccione al menos un registro');
+      this.onLoadToast('error', 'Error', 'Seleccione al menos un registro');
     }
   }
 
@@ -1011,11 +1011,11 @@ export class NotificationAssetsTabComponent
     }
   }
 
-  message(title: string, text: string) {
+  message(icon: any, title: string, text: string) {
     Swal.fire({
       title: title,
       text: text,
-      icon: undefined,
+      icon: icon,
       width: 300,
       showCancelButton: false,
       confirmButtonColor: '#9D2449',
@@ -1116,16 +1116,20 @@ export class NotificationAssetsTabComponent
   //Respuesta del SAT
   satAnswer() {
     if (this.rowSelected == false) {
-      this.message('Error', 'Primero seleccione una notificación');
+      this.message(undefined, 'Error', 'Primero seleccione una notificación');
     } else {
       if (this.selectedRow.answered == 'RECHAZADA') {
-        this.message('Error', 'La notificación ya fue rechazada');
+        this.message('error', 'Error', 'La notificación ya fue rechazada');
       } else {
         if (this.selectedRow.chatClarification == null) {
-          this.message('Aviso', 'Aún no hay una respuesta del SAT');
+          this.message(undefined, 'Aviso', 'Aún no hay una respuesta del SAT');
         } else {
           if (this.selectedRow.chatClarification.satClarification == null) {
-            this.message('Aviso', 'Aún no hay una respuesta del SAT');
+            this.message(
+              undefined,
+              'Aviso',
+              'Aún no hay una respuesta del SAT'
+            );
           } else {
             const idNotify = { ...this.notificationsGoods };
             const idAclaracion = this.selectedRow.clarification.id; //ID de la aclaración para mandar al reporte del sat
@@ -1614,7 +1618,7 @@ export class NotificationAssetsTabComponent
 
   changeStatuesTmp() {
     if (this.rowSelected == false) {
-      this.message('Error', 'Primero seleccione una notificación');
+      this.message('info', 'Error', 'Primero seleccione una notificación');
     } else {
       if (
         this.selectedRow.answered == 'ACLARADA' &&
@@ -1627,10 +1631,10 @@ export class NotificationAssetsTabComponent
         );
       }
       if (this.selectedRow.answered == 'RECHAZADA') {
-        this.message('Error', 'La notificación ya fue rechazada');
+        this.message('error', 'Error', 'La notificación ya fue rechazada');
       } else {
         if (this.selectedRow.chatClarification == null) {
-          this.message('Aviso', 'Aún no hay una respuesta del SAT');
+          this.message('info', 'Aviso', 'Aún no hay una respuesta del SAT');
         }
 
         if (
