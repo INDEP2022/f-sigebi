@@ -56,6 +56,7 @@ import { WarehouseFormComponent } from '../../../shared-request/warehouse-form/w
 import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
 import { SearchUserFormComponent } from '../../schedule-reception/search-user-form/search-user-form.component';
 import { userData } from '../../schedule-reception/search-user-form/users-data';
+import { DetailGoodProgrammingFormComponent } from '../../shared-components-programming/detail-good-programming-form/detail-good-programming-form.component';
 import { DomicileFormComponent } from '../../shared-components-programming/domicile-form/domicile-form.component';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { IEstateSearch } from '../estate-search-form/estate-search.interface';
@@ -1445,7 +1446,7 @@ export class PerformProgrammingFormComponent
   sendGuard() {
     if (this.goodSelect.length) {
       this.alertQuestion(
-        'info',
+        'warning',
         'Acción',
         'Los bienes seleccionados serán enviados a resguardo'
       ).then(async question => {
@@ -1727,7 +1728,7 @@ export class PerformProgrammingFormComponent
       item,
       callback: () => {},
     };
-    this.modalService.show(DomicileFormComponent, config);
+    this.modalService.show(DetailGoodProgrammingFormComponent, config);
   }
   // Visualizar información de alias almacen //
   // showDomicile(item: any) {
@@ -1738,6 +1739,15 @@ export class PerformProgrammingFormComponent
   //   };
   //   this.modalService.show(DomicileFormComponent, config);
   // }
+
+  showGoodWarehouse(item: IGoodProgrammingSelect) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      item,
+      callback: () => {},
+    };
+    this.modalService.show(DomicileFormComponent, config);
+  }
 
   removeGoodTrans(item: IGood) {
     this.alertQuestion(
