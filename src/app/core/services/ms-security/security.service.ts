@@ -10,6 +10,7 @@ import {
   IAccesTrackingXArea,
   IPupUser,
   ITrackingAcces,
+  Iuser,
   IUsersTracking,
 } from '../../models/ms-security/pup-user.model';
 
@@ -46,6 +47,10 @@ export class SecurityService extends HttpService {
       SecurityEndpoints.AccessTrackingXArea,
       params
     );
+  }
+
+  getAllUser(params?: _Params): Observable<IListResponse<Iuser>> {
+    return this.get<IListResponse<Iuser>>(SecurityEndpoints.User, params);
   }
 
   getAllFilterAssigned(params: any) {

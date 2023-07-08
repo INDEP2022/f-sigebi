@@ -104,11 +104,16 @@
           </div>
 
           <div class="row" *ngIf="addGood">
-            <app-goods-shared
+            <ngx-select
+              [data]="goodsList"
               [form]="formGood"
-              (good)="addMenage($event)"
-              label="Menaje">
-            </app-goods-shared>
+              value="id"
+              bindLabel="description"
+              label="Menajes"
+              [control]="'goodsList'"
+              (input)="goodsListChange($event.target)"
+              (change)="onSelect($event)">
+            </ngx-select>
           </div>
 
           <div class="row">
