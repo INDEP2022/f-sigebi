@@ -39,7 +39,7 @@ export interface IServiceUpload {
 })
 export class FileUploadModalComponent extends BasePage implements OnInit {
   accept: string = '*';
-  identificator: any = '3429238';
+  identificator: any = null;
   uploadFiles = false;
   refresh: boolean = false;
   successCount: number = 0;
@@ -62,6 +62,66 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
     console.log(this.accept);
   }
 
+  private async completeLoadFiles() {
+    this.loading = false;
+    const result = await this.alertQuestion(
+      'question',
+      'Archivos cargados correctamente',
+      '¿Desea subir más archivos?'
+    );
+    this.uploadFiles = false;
+    if (!result.isConfirmed) {
+      this.close();
+      return false;
+    }
+    if (result.isConfirmed) {
+      this.totalDocs = 0;
+      this.successCount = 0;
+      return true;
+    }
+    return false;
+  }
+
+  private async completeWidthErrors() {
+    const result = await this.alertQuestion(
+      'question',
+      'No se puedieron cargar todos los archivos revise su formato',
+      '¿Desea subir más archivos?'
+    );
+    this.uploadFiles = false;
+    if (!result.isConfirmed) {
+      this.close();
+      return false;
+    }
+    if (result.isConfirmed) {
+      this.totalDocs = 0;
+      this.successCount = 0;
+      return true;
+    }
+    return false;
+  }
+
+  private async loadZipFiles(response: any) {
+    console.log(response);
+    const body = response.body;
+    if (body.rejectedPhotos && body.rejectedPhotos.length > 0) {
+      if (body.approvedPhotos && body.approvedPhotos.length > 0) {
+        return this.completeWidthErrors();
+      } else {
+        this.loading = false;
+        this.uploadFiles = false;
+        this.alert(
+          'error',
+          'Error',
+          'No se pudieron cargar los archivos formato incorrecto'
+        );
+        return false;
+      }
+    } else {
+      return this.completeLoadFiles();
+    }
+  }
+
   testFiles(uploadEvent: IUploadEvent) {
     this.uploadFiles = true;
     const { index, fileEvents } = uploadEvent;
@@ -80,21 +140,20 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
           this.loading = false;
           this.uploadFiles = false;
         },
-        complete: async () => {
-          this.loading = false;
-          const result = await this.alertQuestion(
-            'question',
-            'Archivos cargados correctamente',
-            '¿Desea subir más archivos?'
-          );
-          this.uploadFiles = false;
-          if (!result.isConfirmed) {
-            this.close();
+        next: async (response: any) => {
+          if (this.identificator && this.accept === '.zip') {
+            const result = await this.loadZipFiles(response);
+            if (result) {
+              uploadEvent.fileEvents.length = 0;
+            }
           }
-          if (result.isConfirmed) {
-            this.totalDocs = 0;
-            this.successCount = 0;
-            uploadEvent.fileEvents.length = 0;
+        },
+        complete: async () => {
+          if (this.identificator === null || this.accept !== '.zip') {
+            const result = await this.completeLoadFiles();
+            if (result) {
+              uploadEvent.fileEvents.length = 0;
+            }
           }
         },
       });
