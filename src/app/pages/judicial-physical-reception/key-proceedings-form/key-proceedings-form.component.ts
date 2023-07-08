@@ -158,7 +158,7 @@ export class KeyProceedingsFormComponent
     return lastValueFrom(
       this.indicatorParametersService.getAll(params.getParams()).pipe(
         catchError(() => of(null)),
-        map(res => res.data[0].procedureArea.id)
+        map(res => (res ? res.data[0].procedureArea.id : null))
       )
     );
   }

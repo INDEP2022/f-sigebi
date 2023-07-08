@@ -25,12 +25,12 @@ export class SystemLogFormComponent implements OnInit, OnChanges {
   @Input() form: FormGroup<{
     filter: FormArray<
       FormGroup<{
-        registerNumber: FormControl<string | number>;
-        table: FormControl<string>;
-        column: FormControl<string>;
-        columnDescription: FormControl<string>;
-        dataType: FormControl<string>;
-        value: FormControl<string>;
+        registerNumber: FormControl<any>;
+        table: FormControl<any>;
+        column: FormControl<any>;
+        columnDescription: FormControl<any>;
+        dataType: FormControl<any>;
+        value: FormControl<any>;
       }>
     >;
   }>;

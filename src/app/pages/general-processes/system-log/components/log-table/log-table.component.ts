@@ -33,7 +33,6 @@ export class LogTableComponent extends BasePage implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
-      console.log(this.registerNum);
       if (this.registerNum) {
         this.getBinnacleData(params).subscribe();
       }
@@ -42,7 +41,6 @@ export class LogTableComponent extends BasePage implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['registerNum']) {
-      console.log(this.registerNum);
       if (this.registerNum != null) {
         const params = new FilterParams();
         this.params.next(params);
@@ -61,12 +59,9 @@ export class LogTableComponent extends BasePage implements OnInit, OnChanges {
       .pipe(
         catchError(error => {
           this.loading = false;
-          if (error.status >= 500) {
-            this.onLoadToast(
-              'error',
-              'Error',
-              'Ocurrio un error al obtener los registros de la bitacora'
-            );
+          if (error.status >= 500 || error.status >= 400) {
+            this.onLoadToast('error', 'Warn', error.error.message);
+            this.binnacles = [];
           }
           return throwError(() => error);
         }),

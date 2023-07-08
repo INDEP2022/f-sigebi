@@ -150,8 +150,7 @@ export abstract class BasePage
           }
           let G_REGISTRO_BITACORA: string | number = null;
           if (isSelected) {
-            G_REGISTRO_BITACORA =
-              data?.registerNumber ?? data?.numRegister ?? null;
+            G_REGISTRO_BITACORA = this.getRegisterNum(data);
           } else {
             G_REGISTRO_BITACORA = null;
           }
@@ -164,11 +163,37 @@ export abstract class BasePage
     });
   }
 
+  private getRegisterNum(data: any) {
+    return (
+      data?.registerNumber ??
+      data?.noRegister ??
+      data?.iDoNotRegister ??
+      data?.registryNumber ??
+      data?.registrationNumber ??
+      data?.registryNum ??
+      data?.noRegistration ??
+      data?.numberRegister ??
+      data?.no_registro ??
+      data?.noRegistry ??
+      data?.noRegistro ??
+      data?.registerNo ??
+      data?.register_number ??
+      data?.numRegister ??
+      data?.registrationId ??
+      data?.notRecord ??
+      data?.recordNot ??
+      data?.numRegistre ??
+      data?.registerId ??
+      data?.numberRecord ??
+      data?.id ??
+      null
+    );
+  }
+
   private _getGlobalVars() {
     return firstValueFrom(this._store.getGlobalVars$());
   }
-
-  protected onLoadToast(icon: SweetAlertIcon, title: string, text?: string) {
+  protected toast(icon: SweetAlertIcon, title: string, text?: string) {
     const throwToast = {
       success: (title: string, text: string) =>
         this._toastrService.success(text, title),
@@ -182,6 +207,24 @@ export abstract class BasePage
         this._toastrService.info(text, title),
     };
     return throwToast[icon](title, text);
+  }
+
+  protected onLoadToast(icon: SweetAlertIcon, title: string, text?: string) {
+    this.alert(icon, title, text);
+    // ? Se ha reemplazado lost toast por sweet alert
+    // const throwToast = {
+    //   success: (title: string, text: string) =>
+    //     this._toastrService.success(text, title),
+    //   info: (title: string, text: string) =>
+    //     this._toastrService.info(text, title),
+    //   warning: (title: string, text: string) =>
+    //     this._toastrService.warning(text, title),
+    //   error: (title: string, text: string) =>
+    //     this._toastrService.error(text, title),
+    //   question: (title: string, text: string) =>
+    //     this._toastrService.info(text, title),
+    // };
+    // return throwToast[icon](title, text);
   }
 
   protected encodeData<T>(data: T) {
