@@ -276,7 +276,6 @@ export class BulkUploadComponent extends BasePage implements OnInit {
       type: event.data.TIPO ?? null,
       material: event.data.MATERIAL ?? null,
       edoPhisical: event.data.EDOFISICO ?? null,
-      idGood: 5015409,
     };
 
     this.good = mappedData;

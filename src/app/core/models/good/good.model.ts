@@ -664,5 +664,4 @@ export interface IbulkLoadGoods {
   type?: string;
   material?: string;
   edoPhisical?: string;
-  idGood: number;
 }
