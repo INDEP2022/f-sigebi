@@ -23,8 +23,7 @@
             [attr.class]="'table-responsive table-bordered'"
             [settings]="settings"
             [source]="allGoods"
-            (userRowSelect)="selectData($event)"
-            (delete)="deleteGood($event.data)">
+            (userRowSelect)="selectData($event)">
           </ng2-smart-table>
           <app-pagination [params]="params" [totalItems]="totalItems">
           </app-pagination>

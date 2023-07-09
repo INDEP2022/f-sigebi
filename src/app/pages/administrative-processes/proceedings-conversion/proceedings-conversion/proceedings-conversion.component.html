@@ -253,7 +253,6 @@
                                       </form-field>
                                     </div>
                                   </div>
-
                                   <div class="col-md-4">
                                     <div>
                                       <form-field
@@ -420,24 +419,37 @@
                         <div class="row mt-12 d-flex justify-content-center">
                           <div class="col-md-12 justify-content-center">
                             <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
-                            <ng-scrollbar
-                              track="horizontal"
-                              [autoHeightDisabled]="false">
-                              <div
-                                [class]="loading ? 'table-loading' : ''"
-                                class="overflow-auto">
-                                <ng2-smart-table
-                                  id="bienes"
-                                  [attr.class]="'table-bordered my-table'"
-                                  [settings]="settings"
-                                  [source]="dataTableGood_"
-                                  (userRowSelect)="selectData($event)">
-                                </ng2-smart-table>
-                                <app-pagination
-                                  [params]="paramsList"
-                                  [totalItems]="totalItems"></app-pagination>
+
+                            <div class="row">
+                              <form-loader *ngIf="loading"></form-loader>
+                              <div class="col-md-12">
+                                <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+                                <ng-scrollbar
+                                  [track]="'all'"
+                                  [ngStyle]="{
+                                    height: loading ? '0px' : '400px'
+                                  }">
+                                  <ng2-smart-table
+                                    id="bienes"
+                                    [attr.class]="'table-bordered my-table'"
+                                    [settings]="settings"
+                                    [source]="dataTableGood_"
+                                    (userRowSelect)="selectData($event)">
+                                  </ng2-smart-table>
+                                </ng-scrollbar>
+                                <!-- </div> -->
                               </div>
-                            </ng-scrollbar>
+                              <app-pagination
+                                [params]="paramsList"
+                                [totalItems]="totalItems"></app-pagination>
+                            </div>
+
+                            <!-- <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
+                              <div [class]="loading ? 'table-loading' : ''" class="overflow-auto">
+                                
+                                
+                              </div>
+                            </ng-scrollbar> -->
                           </div>
                           <div class="row pt-2">
                             <div class="col-md-12 text-center mt-4 mb-4">
@@ -489,22 +501,38 @@
                           </div> -->
                           <div class="col-md-12">
                             <h6>BIENES RELACIONADOS CON EL ACTA</h6>
-                            <ng-scrollbar
-                              track="horizontal"
-                              [autoHeightDisabled]="false">
-                              <div
-                                [class]="loading2 ? 'table-loading' : ''"
-                                class="overflow-auto">
-                                <ng2-smart-table
-                                  [attr.class]="'table-bordered my-table'"
-                                  [settings]="settings2"
-                                  (userRowSelect)="rowsSelected($event)"
-                                  [source]="dataRecepcion">
+                            <div class="row">
+                              <form-loader *ngIf="loading2"></form-loader>
+                              <div class="col-md-12">
+                                <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+                                <ng-scrollbar
+                                  [track]="'all'"
+                                  [ngStyle]="{
+                                    height: loading2 ? '0px' : '400px'
+                                  }">
+                                  <ng2-smart-table
+                                    [attr.class]="'table-bordered my-table'"
+                                    [settings]="settings2"
+                                    (userRowSelect)="rowsSelected($event)"
+                                    [source]="dataRecepcion">
+                                  </ng2-smart-table>
+                                </ng-scrollbar>
+                                <!-- </div> -->
+                              </div>
+                              <app-pagination
+                                *ngIf="ocultarPaginado"
+                                [params]="paramsList2"
+                                [totalItems]="totalItems2"></app-pagination>
+                            </div>
+                            <!-- <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
+                              <div [class]="loading2 ? 'table-loading' : ''" class="overflow-auto">
+                                <ng2-smart-table [attr.class]="'table-bordered my-table'" [settings]="settings2"
+                                  (userRowSelect)="rowsSelected($event)" [source]="dataRecepcion">
                                 </ng2-smart-table>
-                                <app-pagination
+                                <app-pagination *ngIf="ocultarPaginado" [params]="paramsList2"
                                   [totalItems]="totalItems2"></app-pagination>
                               </div>
-                            </ng-scrollbar>
+                            </ng-scrollbar> -->
                           </div>
                         </div>
                       </form>
@@ -524,16 +552,13 @@
                     <i class="fas fa-edit bx-sm float-icon"></i>
                   </button>
                 </div> -->
-                <div class="m-3">
-                  <button
-                    *ngIf="dataTableGoodsConvertion"
-                    type="button"
-                    class="btn btn-primary btn-sm active"
+                <!-- <div class="m-3">
+                  <button *ngIf="dataTableGoodsConvertion" type="button" class="btn btn-primary btn-sm active"
                     (click)="savActa()">
                     Guardar
                     <i aria-hidden="true" class="fa fa-save"></i>
                   </button>
-                </div>
+                </div> -->
                 <div class="m-3">
                   <button
                     class="btn btn-secondary btn-sm active"
@@ -554,6 +579,7 @@
                 </div>
                 <div class="m-3">
                   <button
+                    [disabled]="!disabledBtnCerrar"
                     type="button"
                     class="btn btn-primary active btn-sm"
                     (click)="cerrarActa(goodFatherNumber)">
@@ -565,8 +591,13 @@
             </div>
           </accordion-group>
 
-          <accordion-group [isOpen]="acordionDetail" (click)="closeDetail()">
-            <div accordion-heading class="d-flex justify-content-between">
+          <accordion-group
+            [isOpen]="acordionDetail"
+            [class.disabled]="!disabledBtnCerrar">
+            <div
+              accordion-heading
+              class="d-flex justify-content-between"
+              (click)="closeDetail()">
               <div>
                 <h5>
                   <i class="fa fa-edit" aria-hidden="true"></i>
