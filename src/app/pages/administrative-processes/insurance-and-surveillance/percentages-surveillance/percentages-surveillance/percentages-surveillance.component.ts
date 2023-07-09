@@ -276,6 +276,7 @@ export class PercentagesSurveillanceComponent
       this.dialogPercentageTemplateRef,
       {
         class: 'modal-xl',
+        ignoreBackdropClick: true,
       }
     );
   }

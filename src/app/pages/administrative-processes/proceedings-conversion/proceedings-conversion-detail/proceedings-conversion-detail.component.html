@@ -35,7 +35,7 @@
       </div>
       <div class="row margin-input">
         <div class="col-md-4">
-          <form-field [control]="header.get('city')">
+          <form-field [control]="header.get('city')" label="Ciudad">
             <!-- <ngx-select [form]="header" [data]="cities" (fetchItems)="getCities($event)" bindLabel="nameAndId"
               control="city" label="Ciudad" [searchOnInit]="false" [showTooltip]="true" termMaxLength="30">
             </ngx-select> -->
@@ -78,7 +78,9 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="header.get('appointedBy')">
+          <form-field
+            [control]="header.get('appointedBy')"
+            label="Designado por">
             <!-- <ngx-select [form]="header" [data]="appointedBy" (fetchItems)="getSenders($event)" bindLabel="userAndName"
               control="appointedBy" label="Designado por" [searchOnInit]="true" [showTooltip]="true" termMaxLength="30">
             </ngx-select> -->
