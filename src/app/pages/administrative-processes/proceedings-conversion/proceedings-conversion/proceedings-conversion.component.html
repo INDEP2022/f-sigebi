@@ -524,16 +524,13 @@
                     <i class="fas fa-edit bx-sm float-icon"></i>
                   </button>
                 </div> -->
-                <div class="m-3">
-                  <button
-                    *ngIf="dataTableGoodsConvertion"
-                    type="button"
-                    class="btn btn-primary btn-sm active"
+                <!-- <div class="m-3">
+                  <button *ngIf="dataTableGoodsConvertion" type="button" class="btn btn-primary btn-sm active"
                     (click)="savActa()">
                     Guardar
                     <i aria-hidden="true" class="fa fa-save"></i>
                   </button>
-                </div>
+                </div> -->
                 <div class="m-3">
                   <button
                     class="btn btn-secondary btn-sm active"
@@ -565,8 +562,11 @@
             </div>
           </accordion-group>
 
-          <accordion-group [isOpen]="acordionDetail" (click)="closeDetail()">
-            <div accordion-heading class="d-flex justify-content-between">
+          <accordion-group [isOpen]="acordionDetail">
+            <div
+              accordion-heading
+              class="d-flex justify-content-between"
+              (click)="closeDetail()">
               <div>
                 <h5>
                   <i class="fa fa-edit" aria-hidden="true"></i>

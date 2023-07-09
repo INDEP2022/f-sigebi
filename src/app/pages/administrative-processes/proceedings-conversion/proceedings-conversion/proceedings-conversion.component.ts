@@ -1297,10 +1297,14 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
   getDetail() {
     this.acordionDetail = true;
-    this.actasConvertionCommunicationService.enviarDatos(this.conversion);
+    // this.actasConvertionCommunicationService.enviarDatos(this.conversion);
   }
+  valDeta: boolean = false;
   closeDetail() {
+    this.valDeta = !this.valDeta;
     this.acordionDetail = false;
+    if (this.valDeta)
+      this.actasConvertionCommunicationService.enviarDatos(this.conversion);
   }
 
   cargarData(binaryExcel: any) {
@@ -1649,6 +1653,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.proceedingsService.creaDetailProceedingsDevollution(body).subscribe({
         next: data => {
+          this.alert('success', 'Bien agregado correctamente', '');
           resolve(true);
         },
         error: error => {
