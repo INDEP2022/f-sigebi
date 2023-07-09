@@ -4,6 +4,7 @@ import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IMenageWrite } from 'src/app/core/models/ms-menage/menage.model';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -30,6 +31,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   goods = new DefaultSelect<IGood>();
+  goodsList = new DefaultSelect<IGood>();
   expedient: IExpedient;
   numberGoodSelect: number;
   addGood: boolean = false;
@@ -67,6 +69,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     private readonly expedientServices: ExpedientService,
     private readonly goodServices: GoodService,
     private readonly menageServices: MenageService,
+    private readonly goodFinderService: GoodFinderService,
     private repositoryService: Repository<IGood>
   ) {
     super();
@@ -77,6 +80,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.settings.actions.edit = false;
   }
   ngOnInit(): void {
+    this.searchGood();
     this.buildForm();
     this.form.disable();
     this.formGood.disable();
@@ -128,9 +132,14 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
+      goodsList: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.formGood = this.fb.group({
       goodId: [null, [Validators.required]],
+      goodsList: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 
@@ -275,8 +284,42 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     });
   }
 
-  addMenage(good: IGood) {
-    this.createMenage(this.numberGoodSelect, good.id);
+  //Lista los menajes en el select
+  searchGood() {
+    this.goodServices.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        this.goodsList = new DefaultSelect(response.data, response.count);
+        this.loading = false;
+      },
+      error: (err: any) => {
+        this.loading = false;
+        this.alert('warning', 'No existen bienes', ``);
+      },
+    });
+  }
+
+  //Busca en los menajes, lo que el usuario escribe para filtrar
+  goodsListChange(inputElement: any) {
+    const name = inputElement.value;
+    setTimeout(() => {
+      this.goodFinderService
+        .goodFinder2(name, this.params.getValue())
+        .subscribe({
+          next: response => {
+            this.goodsList = new DefaultSelect(response.data, response.count);
+            this.loading = false;
+          },
+          error: (err: any) => {
+            this.loading = false;
+            this.alert('warning', 'No existen bienes', ``);
+          },
+        });
+    }, 4000);
+  }
+
+  onSelect(event: any) {
+    const selectedValue = event;
+    this.createMenage(this.numberGoodSelect, selectedValue.id);
     this.isSelected = true;
   }
 
@@ -362,3 +405,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       : (this.textButton = 'Agregar menaje');
   }
 }
+
+//sigebimsqa.indep.gob.mx/good/api/v1/good?filter.goodDescription=$ilike:MOBILIARIO DEL HOGAR Y APARATO
+//sigebimsqa.indep.gob.mx/goodfinder/api/v1/good-query?filter.goodDescription=$ilike:CAMA

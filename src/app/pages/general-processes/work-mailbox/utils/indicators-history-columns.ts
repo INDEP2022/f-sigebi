@@ -16,7 +16,7 @@ export const INDICATORS_HISTORY_COLUMNS = {
       if (!value) {
         return '';
       }
-      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
     },
   },
   workDate: {
@@ -26,7 +26,7 @@ export const INDICATORS_HISTORY_COLUMNS = {
       if (!value) {
         return '';
       }
-      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
     },
   },
   maxDate: {
@@ -36,7 +36,7 @@ export const INDICATORS_HISTORY_COLUMNS = {
       if (!value) {
         return '';
       }
-      return new DatePipe('en-US').transform(value, 'dd-MM-yyyy');
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
     },
   },
   complied: {

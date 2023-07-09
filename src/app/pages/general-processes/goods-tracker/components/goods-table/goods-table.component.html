@@ -6,12 +6,21 @@
         <confirm-button
           *ngIf="showInclude"
           type="button"
-          [loading]="includeLoading"
+          [loading]="includeAllLoading"
           text="Incluir"
           loadingText="Cargando..."
           className="btn-secondary"
           [btnSmall]="true"
           (confirm)="include()"></confirm-button>
+        <confirm-button
+          *ngIf="showInclude"
+          type="button"
+          [loading]="includeLoading"
+          text="Incluir Todos"
+          loadingText="Cargando..."
+          className="btn-secondary ml-2"
+          [btnSmall]="true"
+          (confirm)="includeAll()"></confirm-button>
         <confirm-button
           type="button"
           [loading]="excelLoading"

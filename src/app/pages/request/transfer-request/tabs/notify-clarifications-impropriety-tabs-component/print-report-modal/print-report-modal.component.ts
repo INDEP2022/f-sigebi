@@ -114,6 +114,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.idRegionalDelegation = this.requestInfo.regionalDelegationId;
 
     console.log('ID de solicitud', this.requestInfo);
+    console.log('DOC', this.idTypeDoc);
 
     //Borrar firmantes existentes
     this.verificateFirm();

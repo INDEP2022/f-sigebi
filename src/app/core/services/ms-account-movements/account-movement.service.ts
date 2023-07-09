@@ -9,8 +9,14 @@ import {
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IAccountMovement,
+  INumeraryTransfer,
   IUserChecks,
 } from '../../models/ms-account-movements/account-movement.model';
+import { AccountmvmntEndpoint } from 'src/app/common/constants/endpoints/accountmvmnt-endpoint';
+import { IDelegation } from '../../models/catalogs/delegation.model';
+import { DelegationsEndpoints } from 'src/app/common/constants/endpoints/delegation-endpoints';
+import { IDetailTransfer } from '../../models/ms-accountmvmnt/accountmvmnt.model';
+import { IAccountBank } from '../../models/catalogs/bank-account.model';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +24,7 @@ import {
 export class AccountMovementService extends HttpService {
   constructor() {
     super();
-    this.microservice = 'accountmvmnt';
+    this.microservice = AccountmvmntEndpoint.BasePath;
   }
 
   getAllFiltered(params: _Params) {
@@ -115,6 +121,32 @@ export class AccountMovementService extends HttpService {
       params
     );
   }
+  
+  getByReportDataToTurn(reporte: number) {
+    return this.get<IListResponse<INumeraryTransfer>>(
+      `${AccountmvmntEndpoint.getNoReport}?filter.reportDevNumber=$eq:${reporte}`
+    );
+  }
+
+  getByNumberReport(reporte: number) {
+    return this.get<IListResponse<IDetailTransfer>>(
+      `${AccountmvmntEndpoint.getNumberReport}?filter.numberReportDev=$eq:${reporte}`
+    );
+  }
+
+  getbyDelegationCurrency(delegacion: string | number, currency: string) {
+    return this.get<IListResponse<IAccountBank>>(
+      `${AccountmvmntEndpoint.getAccount}?filter.delegationNumber=$eq:${delegacion}&filter.cveCurrency=$eq:${currency}`
+    );
+  }
+
+  getDataFile(request: any) {
+    return this.post<any>(
+      AccountmvmntEndpoint.getDataFile,
+      request
+    );
+  }
+
 
   getAccountMovements(
     params: ListParams
@@ -125,6 +157,7 @@ export class AccountMovementService extends HttpService {
   postMassNumeraryGenerate(body: any) {
     return this.post('aplication/massNumeraryGenerate', body);
   }
+
 }
 
 //``

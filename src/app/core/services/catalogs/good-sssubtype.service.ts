@@ -25,7 +25,10 @@ export class GoodSssubtypeService
   }
 
   getAllSssubtype(params?: string): Observable<IListResponse<IGoodSssubtype>> {
-    return this.get<IListResponse<IGoodSssubtype>>('good-sssubtype/getAllGoodSssubtypeCustom',params)
+    return this.get<IListResponse<IGoodSssubtype>>(
+      'good-sssubtype/getAllGoodSssubtypeCustom',
+      params
+    );
   }
 
   getFilter(params?: string): Observable<IListResponse<IGoodSssubtype>> {

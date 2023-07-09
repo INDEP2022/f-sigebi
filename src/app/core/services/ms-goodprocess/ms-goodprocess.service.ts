@@ -150,4 +150,8 @@ export class GoodprocessService extends HttpService {
   getVSteeringWhel(data: any) {
     return this.post(GoodprocessEndpoints.AppVWheel, data);
   }
+
+  postFMasInsNumerario(data: any) {
+    return this.post('application/fMasInsNumerario', data);
+  }
 }

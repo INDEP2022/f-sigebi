@@ -700,16 +700,16 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   async saveInServer(): Promise<void> {
     console.log(this.formBlkControl.value);
     this.loading = true;
-    const permissionWrite = await this.hasPermissionWrite();
-    if (!permissionWrite) {
-      this.alert(
-        'warning',
-        'Advertencia',
-        'No tiene permiso de escritura para ejecutar el cambio de numerario'
-      );
-      this.loading = false;
-      return;
-    }
+    // const permissionWrite = await this.hasPermissionWrite();
+    // if (!permissionWrite) {
+    //   this.alert(
+    //     'warning',
+    //     'Advertencia',
+    //     'No tiene permiso de escritura para ejecutar el cambio de numerario'
+    //   );
+    //   this.loading = false;
+    //   return;
+    // }
     this.loading = false;
     if (!this.formGood.value.id && !this.isMassive) {
       this.alert(
@@ -900,9 +900,9 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   //     this.alert('error', 'Error', 'Ocurrió un error al validar el masivo');
   //   }
   // }
-
+  pGoodTrans = 0;
   getTransGood(): string | number {
-    return '';
+    return this.pGoodTrans;
   }
 
   selectedTab(e: any) {
@@ -980,7 +980,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       const body = {
         availableMasive: this.dataTableMassive.map(item => {
           return {
-            status: item.estatus,
+            statusGood: item.estatus,
             comment: item.comentario,
             salePrice: item.precio_venta,
             identificador: item.identificador,
@@ -993,13 +993,14 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
             user: this.infoToken.preferred_username.toUpperCase(),
           };
         }),
-        token: this.formBlkControl.value.tiNewFile,
-        dateNew: this.formBlkControl.value.tiNewDate,
-        moneyNew: this.formBlkControl.value.diNewCurrency?.replaceAll("'", ''),
-        accountNew: this.formBlkControl.value.diNewAccount,
-        bankNew: this.formBlkControl.value.tiNewBank,
+        token: this.formBlkControl.value.tiNewFile || '',
+        dateNew: this.formBlkControl.value.tiNewDate || '',
+        moneyNew:
+          this.formBlkControl.value.diNewCurrency?.replaceAll("'", '') || '',
+        accountNew: this.formBlkControl.value.diNewAccount || '',
+        bankNew: this.formBlkControl.value.tiNewBank || '',
         screenKey: 'FACTADBCAMBIONUME',
-        typeConv: this.formBlkControl.value.typeConversion,
+        convType: this.formBlkControl.value.typeConversion,
         pTransGood: this.getTransGood(),
       };
       await firstValueFrom(
@@ -1022,6 +1023,13 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
             }
           }),
           catchError(err => {
+            if (err.error.message.include('insertar')) {
+              this.alert(
+                'error',
+                'Error',
+                'Ocurrió un error insertar los datos asegúrese de que los datos sean correctos y no estén duplicados'
+              );
+            }
             console.log('err', err);
             throw err;
           })

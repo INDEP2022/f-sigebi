@@ -12,9 +12,12 @@ import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModalSelectsGoodsComponent } from '../modal-selects-goods/modal-selects-goods.component';
+
 @Component({
   selector: 'app-location-goods-warehouses-storage',
   templateUrl: './location-goods-warehouses-storage.component.html',
@@ -27,6 +30,7 @@ export class LocationGoodsWarehousesStorageComponent
   //Reactive Forms
   form: FormGroup;
   totalItems: number = 0;
+  noExpediente: number | string;
   formWarehouse: FormGroup;
   mostrarAlmacen = true;
   formVault: FormGroup;
@@ -36,6 +40,7 @@ export class LocationGoodsWarehousesStorageComponent
   newWarehouse: number = 0;
   fileNum: number = 0;
   selectedOption: string = 'B';
+  dataTableGood_: any[] = [];
   disableConsultLocation: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   warehouseDisable: boolean = true;
@@ -96,7 +101,9 @@ export class LocationGoodsWarehousesStorageComponent
     private token: AuthService,
     private warehouseService: WarehouseService,
     private safeService: SafeService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private GoodprocessService_: GoodprocessService,
+    private proceedingsService: ProceedingsService
   ) {
     super();
   }
@@ -340,6 +347,7 @@ export class LocationGoodsWarehousesStorageComponent
     this.serviceGood.update(data).subscribe(
       res => {
         this.alert('success', 'Bien', `Actualizado correctamente`);
+        this.loadGood();
       },
       err => {
         this.alert(
@@ -360,12 +368,14 @@ export class LocationGoodsWarehousesStorageComponent
         ) {
           this.warehouseDisable = true;
           this.vaultDisable = true;
+          this.good.dateIn = new Date();
           // this.good.ubicationType = 'A';
           return true;
         } else if (Number(this.good.type) === 7) {
           // this.good.ubicationType = 'A';
           this.vaultDisable = false;
           this.formVault.disable();
+          this.good.dateIn = new Date();
         } else {
           this.warehouseDisable = false;
           this.vaultDisable = false;
@@ -383,9 +393,11 @@ export class LocationGoodsWarehousesStorageComponent
           // this.good.ubicationType = 'B';
           // this.good.vaultNumber = 9999;
           // this.good.storeNumber = null;
+          this.good.dateIn = new Date();
         } else if (Number(this.good.type) === 7) {
           this.warehouseDisable = false;
           this.formWarehouse.disable();
+          this.good.dateIn = new Date();
           // this.good.ubicationType = 'B';
         } else {
           this.warehouseDisable = true;
@@ -412,46 +424,63 @@ export class LocationGoodsWarehousesStorageComponent
 
   onLoadGoodList() {
     this.loading = true;
-    let noExpediente = this.good.fileNumber || '';
+    this.noExpediente = this.good.fileNumber || '';
     this.params.getValue().page = 1;
     this.params.getValue().limit = 10;
-    if (noExpediente !== '') {
-      this.goodServices
-        .getByExpedient(noExpediente, this.params.getValue())
+    if (this.noExpediente !== '') {
+      this.serviceGood
+        .getByExpedient(this.noExpediente, this.params.getValue())
         .subscribe({
-          next: response => {
-            const data = response.data;
+          next: data => {
+            this.goods = data.data;
             this.loading = false;
-            this.totalItems = response.count;
-            this.goods = data;
-            data.map(async (good: any, index) => {
-              if (index == 0) this.di_desc_est = good.estatus.descriptionStatus;
-              good.di_disponible = 'S';
-              this.di_desc_est = good.di_disponible;
-              await new Promise((resolve, reject) => {
-                const body = {
-                  no_bien: good.id,
-                  estatus: good.status,
-                  identificador: good.identifier,
-                  vc_pantalla: 'FACTADBUBICABIEN',
-                  proceso_ext_dom: good.extDomProcess ?? '',
-                };
-                resolve(body);
-                this.allGoods.load(response.data);
-                this.allGoods.refresh();
-              });
-            }),
-              (this.di_desc_est = 'N');
+            console.log('Bienes', this.goods);
+
+            let result = data.data.map(async (item: any) => {
+              let obj = {
+                vcScreen: 'FACTADBUBICABIEN',
+                pNumberGood: item.id,
+              };
+              const di_dispo = await this.getStatusScreen(obj);
+              console.log(di_dispo);
+            });
+
+            Promise.all(result).then(item => {
+              this.dataTableGood_ = this.goods;
+              this.allGoods.load(this.dataTableGood_);
+              this.allGoods.refresh();
+              this.totalItems = data.count;
+              console.log(this.goods);
+            });
           },
-          error: err => {
-            console.log(err);
-            this.di_desc_est = 'N';
+          error: error => {
+            this.loading = false;
           },
         });
     }
   }
   getEstatusColor(estatus: string): string {
     return estatus === 'S' ? 'green' : 'black';
+  }
+  async getStatusScreen(body: any) {
+    return new Promise((resolve, reject) => {
+      this.GoodprocessService_.getScreenGood(body).subscribe({
+        next: async (state: any) => {
+          if (state.data) {
+            console.log('di_dispo', state);
+            resolve('S');
+            this.di_desc_est = 'S';
+          } else {
+            console.log('di_dispo', state);
+            resolve('N');
+            this.di_desc_est = 'N';
+          }
+        },
+        error: () => {
+          resolve('N');
+        },
+      });
+    });
   }
 }
 

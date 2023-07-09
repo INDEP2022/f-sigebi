@@ -11,8 +11,6 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IMeasurementUnits } from 'src/app/core/models/catalogs/measurement-units.model';
-import { unitsData } from './data';
-import { LabelGoodService } from 'src/app/core/services/catalogs/label-good.service';
 import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 
 @Component({
@@ -51,10 +49,12 @@ export class MeasurementUnitsSharedComponent
     let count = data.length;
     console.log(data);
     this.measurementUnits = new DefaultSelect(data, count); */
-    this.service.getMedUnits(params).subscribe(data => {
-      console.log(data)
-        this.measurementUnits = new DefaultSelect(data.data,data.count);
-      },err => {
+    this.service.getMedUnits(params).subscribe(
+      data => {
+        console.log(data);
+        this.measurementUnits = new DefaultSelect(data.data, data.count);
+      },
+      err => {
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
@@ -62,8 +62,8 @@ export class MeasurementUnitsSharedComponent
           error = err.message;
         }
         this.onLoadToast('error', 'Error', error);
-
-      }, () => {}
+      },
+      () => {}
     );
   }
 
