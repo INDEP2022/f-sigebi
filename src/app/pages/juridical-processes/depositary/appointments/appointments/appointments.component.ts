@@ -511,21 +511,77 @@ export class AppointmentsComponent
       return;
     }
     if (this.depositaryAppointment) {
-      // AGREGAR MS FALTANTE QUE ESTA EN REVISION
-      console.log('NO ESTA LISTO');
-    } else {
-      if (this.good) {
-        console.log('TRAER INFO DE BIENES');
-        // this.getFromGoodsAndExpedients(false, true);
-        this.validFielddGoodNumber();
+      if (this.depositaryAppointment.numberAppointment == null) {
+        this.getGoodByExpedientAndDiferentGood();
       } else {
+        // AGREGAR MS FALTANTE QUE ESTA EN REVISION
+        console.log('NO ESTA LISTO');
+        this.alert('warning', 'No se encontró Bien disponible', '');
+      }
+    } else {
+      this.getGoodByExpedientAndDiferentGood();
+      // if (this.good) {
+      //   console.log('TRAER INFO DE BIENES');
+      //   // this.getFromGoodsAndExpedients(false, true);
+      //   // this.validFielddGoodNumber();
+      // } else {
+      //   this.alert(
+      //     'warning',
+      //     'Se requiere ingresar un Bien correcto para realizar esta acción',
+      //     ''
+      //   );
+      // }
+    }
+  }
+
+  async getGoodByExpedientAndDiferentGood() {
+    const params = new ListParams();
+    // this.params.getValue().getParams();
+    params['filter.goodId'] = '$not:' + this.noBien;
+    params['filter.fileNumber'] = '$eq:' + this.form.get('noExpedient').value;
+    params['sortBy'] = 'goodId:ASC';
+    await this.appointmentsService.getGoodByParams(params).subscribe({
+      next: res => {
+        console.log(res);
+        if (res.data.length > 0) {
+          this.noBien = res.data[0].goodId;
+          this.noBienReadOnly = res.data[0].goodId;
+          this.form.get('descriptionGood').setValue(res.data[0].description);
+          this.form.get('noExpedient').setValue(res.data[0].fileNumber);
+          this.form
+            .get('fechaAcuerdoAsegurado')
+            .setValue(
+              res.data[0].agreementDate
+                ? new Date(res.data[0].agreementDate)
+                : null
+            );
+          this.form.updateValueAndValidity();
+          this.getStatusGoodByStatus(res.data[0].id);
+          this.getDataExpedientByNoExpedient(res.data[0].fileNumber);
+          setTimeout(() => {
+            this.form.get('noBien').setValue(res.data[0].goodId);
+          }, 200);
+        } else {
+          this.alert(
+            'warning',
+            'Verificar el Número de Bien',
+            'El No. de Bien ' +
+              this.noBien +
+              ' no existe ó el estatus para depositarias no es el adecuado.'
+          );
+        }
+      },
+      error: err => {
+        console.log(err);
         this.alert(
           'warning',
-          'Se requiere ingresar un Bien correcto para realizar esta acción',
-          ''
+          'Verificar el Número de Bien',
+          'El No. de Bien ' +
+            this.noBien +
+            ' no existe ó el estatus para depositarias no es el adecuado.'
         );
-      }
-    }
+      },
+    });
   }
 
   btnCatalogoDepositarias() {
@@ -810,7 +866,11 @@ export class AppointmentsComponent
             this.form.get('noExpedient').setValue(res.data[0].fileNumber);
             this.form
               .get('fechaAcuerdoAsegurado')
-              .setValue(res.data[0].agreementDate);
+              .setValue(
+                res.data[0].agreementDate
+                  ? new Date(res.data[0].agreementDate)
+                  : null
+              );
             this.form.updateValueAndValidity();
             this.getStatusGoodByStatus(res.data[0].id);
             this.getDataExpedientByNoExpedient(res.data[0].fileNumber);
@@ -868,7 +928,9 @@ export class AppointmentsComponent
           console.log(res);
           this.form.get('averiguacionPrevia').setValue(res.preliminaryInquiry);
           this.form.get('causaPenal').setValue(res.keyPenalty);
-          this.form.get('fechaRecepcion').setValue(res.receptionDate);
+          this.form
+            .get('fechaRecepcion') //.setValue(res.receptionDate);
+            .setValue(res.receptionDate ? new Date(res.receptionDate) : null);
           this.form.updateValueAndValidity();
         },
         error: err => {

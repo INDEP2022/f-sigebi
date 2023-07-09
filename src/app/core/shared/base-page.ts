@@ -150,8 +150,7 @@ export abstract class BasePage
           }
           let G_REGISTRO_BITACORA: string | number = null;
           if (isSelected) {
-            G_REGISTRO_BITACORA =
-              data?.registerNumber ?? data?.numRegister ?? null;
+            G_REGISTRO_BITACORA = this.getRegisterNum(data);
           } else {
             G_REGISTRO_BITACORA = null;
           }
@@ -162,6 +161,33 @@ export abstract class BasePage
         });
       });
     });
+  }
+
+  private getRegisterNum(data: any) {
+    return (
+      data?.registerNumber ??
+      data?.noRegister ??
+      data?.iDoNotRegister ??
+      data?.registryNumber ??
+      data?.registrationNumber ??
+      data?.registryNum ??
+      data?.noRegistration ??
+      data?.numberRegister ??
+      data?.no_registro ??
+      data?.noRegistry ??
+      data?.noRegistro ??
+      data?.registerNo ??
+      data?.register_number ??
+      data?.numRegister ??
+      data?.registrationId ??
+      data?.notRecord ??
+      data?.recordNot ??
+      data?.numRegistre ??
+      data?.registerId ??
+      data?.numberRecord ??
+      data?.id ??
+      null
+    );
   }
 
   private _getGlobalVars() {

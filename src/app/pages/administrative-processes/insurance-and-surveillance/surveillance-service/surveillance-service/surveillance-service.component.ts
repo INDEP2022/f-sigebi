@@ -932,18 +932,30 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     // return new Promise((resolve, reject) => {
     this.survillanceService.getVigSupervisionMae(params.getParams()).subscribe({
       next: async (response: any) => {
+        this.delegationMae = response.data[0];
+
         this.form.patchValue({
           cveProcess: response.data[0].cveProcess.toString(),
         });
+
         // this.form.get('process').setValue('Proceso ' + response.data[0].cveProcess);
         this.form.get('period').setValue(response.data[0].cvePeriod);
         this.form.get('from').setValue(response.data[0].initialDate);
         this.form.get('to').setValue(response.data[0].finalDate);
         this.form.get('total').setValue(null);
 
+        let obj = {
+          delegationNumber: this.delegationMae.delegationNumber,
+          cveProcess: this.form.value.process,
+          cvePeriod: this.form.value.period,
+          delegationType: this.delegationMae.delegationType,
+        };
+        this.objGetSupervionDet = obj;
+        this.getVigSupervisionDet_();
+
         console.log('RESPUESTA', response);
         this.alert('success', 'Se generaron los aleatorios correctamente', '');
-        this.delegationMae = response.data[0];
+
         // resolve(response.data[0]);
       },
       error: error => {
