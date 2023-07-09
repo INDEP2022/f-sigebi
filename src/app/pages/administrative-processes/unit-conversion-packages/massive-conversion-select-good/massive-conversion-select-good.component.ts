@@ -33,6 +33,7 @@ import { SurvillanceService } from 'src/app/core/services/ms-survillance/survill
 import { BasePage } from 'src/app/core/shared/base-page';
 import { UnitConversionPackagesDataService } from '../services/unit-conversion-packages-data.service';
 import { goodCheck, V_GOOD_COLUMNS } from './columns';
+import { GoodTrackerMap } from 'src/app/pages/general-processes/goods-tracker/utils/good-tracker-map';
 
 @Component({
   selector: 'app-massive-conversion-select-good',
@@ -357,7 +358,59 @@ export class MassiveConversionSelectGoodComponent
     });
   }
 
-  async filter() {
+  async filter(){
+    console.log(this.goodClassification.value)
+    this.loading = true
+      let modelFilter = new GoodTrackerMap()
+      if(this.delegation.value != null){
+        const whereDelegation = await this.delegationWhere()
+        modelFilter.global.gstSelecDeleg = 'S';
+        modelFilter.global.delegationNumber = [this.delegation.value]
+      }
+
+      if(this.goodClassification.value != null){
+        modelFilter.clasifGood.selecSsstype = 'S';
+      modelFilter.clasifGood.clasifGoodNumber = [this.goodClassification.value]
+      }
+
+      if(this.targetTag.value != null){
+        modelFilter.parval.label = this.targetTag.value
+      }
+
+      if(this.goodStatus.value != null){
+        modelFilter.parval.status = this.goodStatus.value
+      }
+
+      if(this.measurementUnit.value != null){
+
+      }
+
+      if(this.warehouse.value != null){
+        modelFilter.global.gstSelecStore = 'S'
+        modelFilter.global.cstStoreNumber= [this.warehouse.value]
+      }
+
+      if(this.transferent.value != null){
+        modelFilter.global.gstSelecProced = 'S'
+        modelFilter.global.caTransfereeNumber = [this.transferent.value]
+      }
+
+      this.trackerGoodService
+      .trackGoods(modelFilter, new ListParams()).subscribe(
+        res =>{
+          console.log(res);
+            this.data.load(res.data);
+            this.totalItems = res.count;
+            this.alert('success', 'Se encontraron registros', '');
+            this.loading = false;
+        },
+        err => {
+
+        }
+        )
+  }
+
+  /* async filter() {
     this.loading = true;
     const generalParams = new FilterParams();
 
@@ -408,6 +461,9 @@ export class MassiveConversionSelectGoodComponent
     );
 
     if (generalParams.getParams().length > 0) {
+
+      this.t
+
       this.trackerGoodService
         .getTvGoodTrackerFilter(generalParams.getParams())
         .subscribe(
@@ -429,7 +485,7 @@ export class MassiveConversionSelectGoodComponent
           }
         );
     }
-  }
+  } */
 
   pbIngresar() {
     // debugger;

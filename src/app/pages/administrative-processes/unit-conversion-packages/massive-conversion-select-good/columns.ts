@@ -26,22 +26,22 @@ export const V_GOOD_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  description: {
+  goodDescription: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  amount: {
+  quantity: {
     title: 'Cantidad',
     type: 'string',
     sort: false,
   },
-  unitExtent: {
+  measurementUnit: {
     title: 'Unidad Medida',
     type: 'string',
     sort: false,
   },
-  numberProceedings: {
+  fileNumber: {
     title: 'Expediente',
     type: 'number',
     sort: false,
