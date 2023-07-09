@@ -19,6 +19,7 @@ import { ClasificationFilterComponent } from './components/clasification-filter/
 import { DataFilterComponent } from './components/data-filter/data-filter.component';
 import { GTrackerDocumentsComponent } from './components/g-tracker-documents/g-tracker-documents.component';
 import { GoodsTableComponent } from './components/goods-table/goods-table.component';
+import { GtDocumentsListComponent } from './components/gt-documents-list/gt-documents-list.component';
 import { LocationFilterComponent } from './components/location-filter/location-filter.component';
 import { PhotoGaleryItemComponent } from './components/photo-galery-item/photo-galery-item.component';
 import { PhotoGaleryComponent } from './components/photo-galery/photo-galery.component';
@@ -44,6 +45,7 @@ import { trackedGoodsReducer } from './store/goods-tracker.reducer';
     AlternClasficationListComponent,
     PhotoGaleryComponent,
     PhotoGaleryItemComponent,
+    GtDocumentsListComponent,
   ],
   imports: [
     CommonModule,

@@ -63,7 +63,7 @@
     </div>
     <div class="row mt-4">
       <form-loader *ngIf="loading"></form-loader>
-      <div class="col-md-12">
+      <div *ngIf="!validExcel" class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng-scrollbar
             [track]="'all'"
@@ -95,6 +95,29 @@
               *ngIf="showPagination"
               [params]="paramsList"
               [totalItems]="totalItems">
+            </app-pagination>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="validExcel" class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading ? '0px' : '500px' }">
+            <ng2-smart-table
+              id="fichas"
+              (delete)="showDeleteAlert($event.data)"
+              (userRowSelect)="onCustomAction2($event)"
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="data2">
+            </ng2-smart-table>
+          </ng-scrollbar>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <app-pagination [params]="paramsList2" [totalItems]="totalItems2">
             </app-pagination>
           </div>
         </div>
@@ -158,7 +181,7 @@
                 <button
                   (click)="actualizarFunc()"
                   class="btn btn-primary btn-sm active w-100">
-                  Recargar
+                  Actualizar
                   <i class="fas fa-sync-alt"> </i>
                 </button>
               </div>

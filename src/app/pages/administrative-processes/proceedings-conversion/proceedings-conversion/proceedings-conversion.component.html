@@ -332,7 +332,8 @@
                                         type="button"
                                         class="btn btn-primary active btn-sm"
                                         (click)="searchActas()">
-                                        Estatus Actas<i
+                                        Estatus Actas
+                                        <i
                                           class="bx bx-search bx-sm float-icon"></i>
                                       </button>
                                     </div>
@@ -433,41 +434,71 @@
                                   (userRowSelect)="selectData($event)">
                                 </ng2-smart-table>
                                 <app-pagination
+                                  [params]="paramsList"
                                   [totalItems]="totalItems"></app-pagination>
                               </div>
                             </ng-scrollbar>
                           </div>
-                          <div class="d-flex justify-content-center">
-                            <div class="text-center">
-                              <!-- WILMER -->
+                          <div class="row pt-2">
+                            <div class="col-md-12 text-center mt-4 mb-4">
                               <button
-                                (click)="addSelect()"
-                                class="btn btn-success btn-sm active"
-                                type="button">
+                                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                                type="button"
+                                (click)="addSelect()">
+                                <!-- Mover uno -->
+                                <i class="bx bx-chevron-down bx-md"></i>
+                              </button>
+                              <button
+                                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                                type="button"
+                                (click)="addAll()">
+                                <!-- Mover todos -->
+                                <i class="bx bx-chevrons-down bx-md"></i>
+                              </button>
+                              <button
+                                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                                type="button"
+                                (click)="removeAll()">
+                                <!-- Quitar todos -->
+                                <i class="bx bx-chevrons-up bx-md"></i>
+                              </button>
+                              <button
+                                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                                type="button"
+                                (click)="removeSelect()">
+                                <!-- Quitar uno -->
+                                <i class="bx bx-chevron-up bx-md"></i>
+                              </button>
+                            </div>
+                          </div>
+                          <!-- <div class="d-flex justify-content-center">
+                            <div class="text-center">
+                              <button (click)="addSelect()" class="btn btn-success btn-sm active" type="button">
                                 Agregar <i class="fa fa-plus float-icon"></i>
                               </button>
-                              <!-- <button (click)="create()" class="btn btn-success btn-sm active" type="button">
+                              <button (click)="create()" class="btn btn-success btn-sm active" type="button">
                                 Agregar <i class="fa fa-plus float-icon"></i>
-                              </button> -->
+                              </button>
                               <br />
-                              <!-- <button (click)="deleteGoodActa($event)" [disabled]="isAllDisabled"
+                              <button (click)="deleteGoodActa($event)" [disabled]="isAllDisabled"
                                                         class="btn btn-secondary btn-sm active bg-danger m-3 p-3" type="button">
                                                         Mover uno
                                                         <i class="bx bxs-left-arrow-circle bx-md"></i>
-                                                      </button> -->
+                                                      </button>
                             </div>
-                          </div>
+                          </div> -->
                           <div class="col-md-12">
                             <h6>BIENES RELACIONADOS CON EL ACTA</h6>
                             <ng-scrollbar
                               track="horizontal"
                               [autoHeightDisabled]="false">
                               <div
-                                [class]="loading ? 'table-loading' : ''"
+                                [class]="loading2 ? 'table-loading' : ''"
                                 class="overflow-auto">
                                 <ng2-smart-table
                                   [attr.class]="'table-bordered my-table'"
                                   [settings]="settings2"
+                                  (userRowSelect)="rowsSelected($event)"
                                   [source]="dataRecepcion">
                                 </ng2-smart-table>
                                 <app-pagination
@@ -493,16 +524,13 @@
                     <i class="fas fa-edit bx-sm float-icon"></i>
                   </button>
                 </div> -->
-                <div class="m-3">
-                  <button
-                    *ngIf="dataTableGoodsConvertion"
-                    type="button"
-                    class="btn btn-primary btn-sm active"
+                <!-- <div class="m-3">
+                  <button *ngIf="dataTableGoodsConvertion" type="button" class="btn btn-primary btn-sm active"
                     (click)="savActa()">
                     Guardar
                     <i aria-hidden="true" class="fa fa-save"></i>
                   </button>
-                </div>
+                </div> -->
                 <div class="m-3">
                   <button
                     class="btn btn-secondary btn-sm active"
@@ -534,8 +562,11 @@
             </div>
           </accordion-group>
 
-          <accordion-group [isOpen]="acordionDetail" (click)="closeDetail()">
-            <div accordion-heading class="d-flex justify-content-between">
+          <accordion-group [isOpen]="acordionDetail">
+            <div
+              accordion-heading
+              class="d-flex justify-content-between"
+              (click)="closeDetail()">
               <div>
                 <h5>
                   <i class="fa fa-edit" aria-hidden="true"></i>
