@@ -40,6 +40,12 @@
                 formControlName="to"
                 class="form-control"
                 [minDate]="form.get('from').value"
+                [min]="form.get('from').value"
+                [ngModel]="
+                  form.get('to').value < form.get('from').value
+                    ? form.get('from').value
+                    : form.get('to').value
+                "
                 bsDatepicker />
             </form-field>
           </div>
