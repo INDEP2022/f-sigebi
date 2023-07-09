@@ -1,4 +1,4 @@
-export interface IRadiobutton{
-    label: string,
-    value: any
+export interface IRadiobutton {
+  label: string;
+  value: any;
 }

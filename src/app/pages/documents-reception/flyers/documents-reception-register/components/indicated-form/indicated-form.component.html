@@ -36,10 +36,14 @@
         <confirm-button
           [disabled]="!indicatedForm.valid"
           [loading]="loading"
+          [btnSmall]="true"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

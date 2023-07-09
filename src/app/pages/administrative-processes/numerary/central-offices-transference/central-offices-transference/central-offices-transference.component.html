@@ -16,7 +16,7 @@
                 pattern="^[0-9]+" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <form-field
               [control]="form.get('dateDevolution')"
               label="fecha devolución">
@@ -29,11 +29,42 @@
           <div
             class="col-md-4"
             style="display: flex; justify-content: start; align-items: center">
-            <button type="button" class="btn btn-sm btn-secondary active m-3">
-              CONSULTAR
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="getDataNoReport()">
+              <i class="bx bx-search-alt bx-sm float-icon"></i></button
+            >`
+            <button
+              type="button"
+              tooltip="Nuevo"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2"
+              (click)="scrollToDiv()">
+              NUEVO <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
-            <button type="button" class="btn btn-sm btn-success active m-3">
-              IMPORTAR
+            <input
+              type="file"
+              name="file"
+              #file
+              class="d-none"
+              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              (change)="onFileChange($event)" />
+            <button
+              type="button"
+              class="btn btn-sm btn-success active m-2"
+              (click)="file.click()">
+              Importar
+            </button>
+            <input
+              type="file"
+              name="file"
+              #file
+              class="d-none"
+              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              (change)="onFileChange($event)" />
+            <button type="button" class="btn btn-sm btn-secondary active m-2">
+              ENVIAR
             </button>
           </div>
         </div>
@@ -44,7 +75,7 @@
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settings"
-                [source]="data1">
+                [source]="dataTabla">
               </ng2-smart-table>
             </div>
           </div>
@@ -52,7 +83,7 @@
           </app-pagination>
         </div>
 
-        <div class="ch-content">
+        <div class="ch-content" id="miDiv">
           <h5 class="title">DATOS A TURNAR</h5>
         </div>
         <div class="row mt-4">
@@ -62,11 +93,10 @@
                 [control]="form.get('currencyType')"
                 label="Tipo moneda de cuenta">
                 <input
-                  type="number"
+                  type="string"
                   class="form-control"
                   formControlName="currencyType"
-                  min="1"
-                  pattern="^[0-9]+" />
+                  min="1" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
@@ -101,8 +131,7 @@
                   type="number"
                   class="form-control"
                   formControlName="cveAccount"
-                  min="1"
-                  pattern="^[0-9]+" />
+                  min="1" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
@@ -134,7 +163,21 @@
                 $ {{ total }}
               </p>
             </div>
+            <!---   <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+            <app-delegation-shared [form]="form" [showDelegation]="false"></app-delegation-shared>
+          </div>-->
           </div>
+        </div>
+        <div
+          class="col-md-12"
+          style="display: flex; justify-content: center; align-items: center">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="guardar()">
+            Guardar
+            <i aria-hidden="true" class="fa fa-save"></i>
+          </button>
         </div>
       </form>
     </div>
