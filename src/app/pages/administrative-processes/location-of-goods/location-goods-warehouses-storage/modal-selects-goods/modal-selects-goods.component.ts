@@ -1,11 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -33,12 +26,12 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   $trackedGoods = this.store.select(getTrackedGoods);
   formVau: FormGroup;
   formAlm: FormGroup;
-  @Input() allGoods: LocalDataSource;
+  @Input() allGoods = new LocalDataSource();
   @Input() totalItems: number;
   @Input() validarGood: Function;
   @Input() formVault: LocationGoodsWarehousesStorageComponent;
   @Input() formWarehouse: LocationGoodsWarehousesStorageComponent;
-  @Output() allGoodsTable = new EventEmitter<LocalDataSource>();
+
   //Data Table
 
   get radio() {
@@ -116,7 +109,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    this.allGoodsTable.emit(this.allGoods);
+    this.allGoods.refresh();
     console.log(this.totalItems);
     this.buildForm();
     this.loading = false;
@@ -224,7 +217,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     });
   }
   add() {
-    this.allGoods.refresh();
+    this.settings;
   }
   selectData(event: { data: IGood; selected: any }) {
     this.selectedRow = event.data;
@@ -266,7 +259,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
         );
       });
       this.alert('success', 'Bienes', `Actualizados correctamente`);
-      this.allGoodsTable.emit(this.allGoods);
+      this.add();
     } catch (err) {
       console.error(err);
     }
@@ -304,7 +297,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
         );
       });
       this.alert('success', 'Bienes', `Actualizados correctamente`);
-      this.allGoodsTable.emit(this.allGoods);
+      this.add();
     } catch (err) {
       console.error(err);
     }
