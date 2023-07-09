@@ -133,7 +133,6 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
 
   async postQueryGood1() {
     let TOT: number;
-    debugger;
     // let FCAMBIO: Date;
     try {
       TOT = await this.getCountGoodByReference(this.formGood.value.id);
@@ -230,7 +229,6 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
   }
 
   async onClickApplyLif() {
-    debugger;
     let VLIF: number;
     let VEST: string;
     let GAST: number;
