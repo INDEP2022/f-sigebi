@@ -9,26 +9,37 @@ import {
 import { map } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { HistoryNumeraryService } from 'src/app/core/services/ms-historynumerary/historynumerary.service';
+import { MassiveNumeraryService } from 'src/app/core/services/ms-massivenumerary/massivenumerary.service';
+import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { ApplyLifRequest } from './apply-lif-requests';
 
 @Component({
   selector: 'app-apply-lif',
   templateUrl: './apply-lif.component.html',
   styles: [],
 })
-export class ApplyLifComponent extends BasePage implements OnInit {
+export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
   public form: FormGroup;
   public disabled: boolean = true;
 
   constructor(
     private fb: FormBuilder,
     private datePipe: DatePipe,
-    private goodService: GoodService
+    protected goodService: GoodService,
+    protected massiveNumeraryService: MassiveNumeraryService,
+    protected historyNumeraryService: HistoryNumeraryService,
+    protected parameterModService: ParameterModService
   ) {
     super();
   }
 
+  isVisibleMotive = true;
+  isContConvVisible = true;
+  isVisibleVal15 = true;
+  isEnableBtnLif = true;
+  isEnableBtnRvlif = true;
   formGood = new FormGroup({
     id: new FormControl(''),
     description: new FormControl(''),
@@ -36,6 +47,24 @@ export class ApplyLifComponent extends BasePage implements OnInit {
     fileNumber: new FormControl(''),
     identifier: new FormControl(''),
     extDomProcess: new FormControl(''),
+  });
+
+  formGood1 = new FormGroup({
+    goodReferenceNumber: new FormControl(''),
+    id: new FormControl(''),
+    goodId: new FormControl(''),
+    val2: new FormControl(null),
+    val10: new FormControl(null),
+    val13: new FormControl(null),
+    val15: new FormControl(null),
+    contConv: new FormControl(),
+    status: new FormControl(''),
+  });
+
+  formBlkControl = new FormGroup({
+    dateChange: new FormControl(null),
+    motive: new FormControl(''),
+    tTotal: new FormControl(null),
   });
 
   ngOnInit(): void {
@@ -70,22 +99,100 @@ export class ApplyLifComponent extends BasePage implements OnInit {
   }
 
   getGood() {
+    if (!this.formGood.value.id) return;
+    this.loading = true;
     const listParams = new ListParams();
-    const values: { [key: string]: any } = this.formGood.value;
-    Object.keys(values).forEach(key => {
-      if (values[key]) {
-        listParams[`filter.${key}`] = values[key];
-      }
-    });
-    // listParams['filter.id'] = 1;
+    listParams['filter.id'] = this.formGood.value.id;
     this.goodService
       .getAll(listParams)
       .pipe(map(x => x.data[0]))
       .subscribe({
         next: good => {
           this.formGood.patchValue(good as any);
+          this.formGood1.get('goodReferenceNumber').setValue(good.id as any);
+          this.getGood1(good.id);
+        },
+        error: () => {
+          this.loading = false;
         },
       });
+  }
+
+  getGood1(goodId: number) {
+    this.getGoodByReference(goodId).subscribe({
+      next: async good => {
+        this.formGood1.patchValue(good as any);
+        await this.postQueryGood1();
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      },
+    });
+  }
+
+  async postQueryGood1() {
+    let TOT: number;
+    debugger;
+    // let FCAMBIO: Date;
+    try {
+      TOT = await this.getCountGoodByReference(this.formGood.value.id);
+      try {
+        const { dateChange } = await this.getChangeNumeraryByGood(
+          this.formGood.value.id,
+          this.formGood1.value.id
+        );
+        this.formBlkControl.get('dateChange').setValue(new Date(dateChange));
+      } catch (error) {
+        try {
+          const params = new ListParams();
+          params['filter.originalGood'] = this.formGood.value.id;
+          params['filter.goodNumeraryNumber'] = this.formGood1.value.id;
+          const { dateChange } = await this.getHistoricalNumeraryByGood(params);
+          this.formBlkControl.get('dateChange').setValue(new Date(dateChange));
+        } catch (error) {
+          this.formBlkControl.get('dateChange').setValue(null);
+        }
+      }
+
+      try {
+        const params = new ListParams();
+        params['filter.originalGood'] = this.formGood.value.id;
+        params['filter.goodNumeraryNumber'] = this.formGood1.value.id;
+        const { reason } = await this.getHistoricalNumeraryByGood(params);
+        this.formBlkControl.get('motive').setValue(reason);
+        this.isVisibleMotive = true;
+      } catch (error) {
+        this.isVisibleMotive = false;
+      }
+
+      this.formGood1.get('contConv').setValue(TOT);
+      const tTotal =
+        this.formGood1.value.val2 -
+        this.formGood1.value.val13 -
+        (this.formGood1.value.val10 || 0);
+      this.formBlkControl.get('tTotal').setValue(tTotal);
+      if (TOT == 0) {
+        this.isContConvVisible = false;
+      } else {
+        this.isContConvVisible = true;
+      }
+
+      const val15 = this.formGood1.value.val15;
+      if (val15 == 0) {
+        this.isVisibleVal15 = false;
+        this.formGood1.get('val15').disable();
+        this.isEnableBtnLif = true;
+        this.isEnableBtnRvlif = false;
+      } else {
+        this.isVisibleVal15 = true;
+        this.formGood1.get('val15').enable();
+        this.isEnableBtnLif = false;
+        this.isEnableBtnRvlif = true;
+      }
+    } catch (error) {
+      this.onLoadToast('error', 'Error', 'Err. PQ');
+    }
   }
 
   public send() {
@@ -120,5 +227,100 @@ export class ApplyLifComponent extends BasePage implements OnInit {
     }
     this.onLoadToast('success', '', 'Reporte generado');
     this.loading = false;
+  }
+
+  async onClickApplyLif() {
+    debugger;
+    let VLIF: number;
+    let VEST: string;
+    let GAST: number;
+    try {
+      GAST = this.formGood1.value.val13;
+      let params = new ListParams();
+      params['filter.id'] = this.formGood1.value.id;
+      const { status } = await this.getGoodParams(params, true);
+      VEST = status;
+
+      if (VEST != 'ADM') {
+        this.alert(
+          'error',
+          '',
+          'El Bien Numerario no se encuentra en un estatus valido para esta operación',
+          'S'
+        );
+      } else {
+        params = new ListParams();
+        params['filter.parameter'] = 'LIF';
+        const { value } = await this.getComerParameterMod(params);
+        VLIF = Number(value);
+        this.formGood1
+          .get('val15')
+          .setValue(
+            (this.formGood1.value.val2 - this.formGood1.value.val10) * VLIF
+          );
+        GAST = GAST + this.formGood1.value.val15;
+        this.formBlkControl
+          .get('tTotal')
+          .setValue(this.formGood1.value.val2 - (GAST || 0));
+        this.commit();
+      }
+    } catch (error) {
+      this.alert('error', '', 'Err:');
+    }
+  }
+
+  async onClickApplyRvlif() {
+    // DECLARE
+    let VLIF: number;
+    let VEST: string;
+    try {
+      let params = new ListParams();
+      params['filter.id'] = this.formGood1.value.id;
+      const { status } = await this.getGoodParams(params, true);
+      VEST = status;
+      if (VEST != 'ADM') {
+        this.alert(
+          'error',
+          'Error',
+          'El Bien Numerario no se encuentra en un estatus valido para esta operación'
+        );
+      } else {
+        params = new ListParams();
+        params['filter.parameter'] = 'LIF';
+        const { value } = await this.getComerParameterMod(params);
+        VLIF = Number(value);
+        this.formGood1
+          .get('val13')
+          .setValue(this.formGood1.value.val13 - this.formGood1.value.val15);
+        this.formGood1.get('val15').setValue(0);
+        this.formBlkControl
+          .get('tTotal')
+          .setValue(
+            this.formGood1.value.val2 -
+              this.formGood1.value.val13 -
+              (this.formGood1.value.val10 || 0)
+          );
+        // LIP_COMMIT_SILENCIOSO;
+        this.commit();
+      }
+      // GO_BLOCK('BIENES1');
+      // EXECUTE_QUERY;
+    } catch (error) {}
+  }
+
+  commit() {
+    const auxBody = { ...this.formGood1.getRawValue() };
+    delete auxBody.contConv;
+    auxBody.val15 = String(auxBody?.val15) || null;
+
+    this.goodService.update(auxBody).subscribe({
+      next: () => {
+        this.onLoadToast('success', '', 'Bien actualizado');
+        this.postQueryGood1();
+      },
+      error: () => {
+        this.onLoadToast('error', '', 'Error al actualizar Bien');
+      },
+    });
   }
 }
