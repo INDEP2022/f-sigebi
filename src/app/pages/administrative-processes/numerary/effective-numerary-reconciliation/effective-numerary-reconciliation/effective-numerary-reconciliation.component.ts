@@ -99,17 +99,7 @@ export class EffectiveNumeraryReconciliationComponent
     };
 
     console.log('params', params);
-    const start = new Date(this.form.get('from').value);
-    const end = new Date(this.form.get('to').value);
 
-    if (end < start) {
-      this.alert(
-        'warning',
-        'advertencia',
-        'Fecha final no puede ser menor a fecha de inicio'
-      );
-      return;
-    }
     this.siabService
       // .fetchReport('RGERADBCONCNUMEFE', params)
       .fetchReportBlank('blank')
