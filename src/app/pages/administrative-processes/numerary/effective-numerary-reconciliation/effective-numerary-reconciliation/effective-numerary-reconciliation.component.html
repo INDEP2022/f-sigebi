@@ -41,7 +41,7 @@
           </div>
           <div class="col-md-6">
             <form-field [control]="form.get('fileTo')" label="al:">
-              <input
+              <!-- <input
                 max="9999999999"
                 type="number"
                 formControlName="fileTo"
@@ -51,7 +51,13 @@
                   form.get('fileTo').value < form.get('fileFrom').value
                     ? form.get('fileFrom').value
                     : form.get('fileTo').value
-                " />
+                " /> -->
+              <input
+                max="9999999999"
+                type="number"
+                formControlName="fileTo"
+                class="form-control"
+                [min]="form.get('fileFrom').value" />
             </form-field>
           </div>
         </div>

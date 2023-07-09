@@ -69,89 +69,109 @@ export class ProceedingsConversionDetailComponent
     this.actasConvertionCommunicationService
       .getInputValue2()
       .subscribe(value => {
-        this.convertiongoodService.getConvertionActaById(1).subscribe({
-          next: (res: any) => {
-            const data = res;
-            this.valUpdate = true;
+        if (value) {
+          this.idConversion = value;
 
-            // if (data.encabDesignatedx.toString()) {
-            //   const paramsRecipient: any = new ListParams();
-            //   paramsRecipient.text = data.encabDesignatedx.toString();
-            //   this.getappointedBy(paramsRecipient);
-            // }
+          console.log('AQUII2222', value);
+          this.header.get('idConversion').setValue(value);
 
-            this.header.patchValue({
-              destiny: data.encabDestination.toString(),
-              city: data.encabCity.toString(),
-              status: data.encabState.toString(),
-              hour: data.encabDateMinutes.toString(),
-              date: data.encabDesignatedx.toString(),
-              appointedBy: data.encabDesignatedx.toString(),
-              titleOf: data.encabdesignatedXArea.toString(),
-              officeNumber: data.encabOfficeNumber.toString(),
-              dateOfOffice: data.encabOfficeDate.toString(),
-            });
+          this.convertiongoodService.getConvertionActaById(value).subscribe({
+            next: async (res: any) => {
+              const data = res;
+              this.valUpdate = true;
+              this.inputDisabled = false;
 
-            this.antecedent.patchValue({
-              tradeEntity: data.antec1OfficeEntity,
-              officialDate: data.antec1OfficeDate,
-              signedBy: data.antec1SubscribedX,
-              position: data.antec1Charge,
-              dependence: data.antec1Dependence,
-              customs: data.antec1Aduana,
-              container: data.antec1Customs,
-              noContainer: data.antec1ContainerNumber,
-            });
+              // if (data.encabDesignatedx.toString()) {
+              //   const paramsRecipient: any = new ListParams();
+              //   paramsRecipient.text = data.encabDesignatedx.toString();
+              //   this.getappointedBy(paramsRecipient);
+              // }
 
-            this.antecedentTwo.patchValue({
-              job: data.antec2OOffice,
-              officialDate: data.antec2OfDate,
-              signedBy: data.antec2OfSubscribedX,
-              position: data.actec2OfSubscribedxCharge,
-              propertyOf: data.antec2OwnedBy,
-            });
+              await this.llenarInputs(data);
 
-            this.antecedentThree.patchValue({
-              date: data.antec3PropertyDate,
-              subscribe1: data.antec3Subscribes1,
-              position1: data.antec3Charge1,
-              attachedA: data.antec3Adscritoa1,
-              subscribe2: data.antec3Subscribes2,
-              position2: data.antec3Charge2,
-              attachedB: data.antec3Adscritoa2,
-              wineriesSAE: data.antec3WinerySae,
-              verificationOf: data.antec3Verification,
-              consistsIn: data.antec3Weight,
-              correspondentA: data.antec3Amount,
-              description: data.antec3Description,
-              status: data.antec3State,
-            });
-
-            this.first.patchValue({
-              authorizedBy: data.primeraAutorizadoX,
-              addressee: data.firstAddressee,
-            });
-
-            this.closureOfMinutes.patchValue({
-              date: data.closingDate,
-              hour: data.closingSheet,
-              closePages: data.closingFojas,
-            });
-            console.log(res);
-          },
-          error: error => {
-            this.valUpdate = false;
-            console.log(error);
-          },
-        });
-        this.idConversion = value;
-
-        console.log('AQUII2222', value);
-        this.header.get('idConversion').setValue(value);
-        this.inputDisabled = false;
-
-        this.getCities(new ListParams());
+              console.log(res);
+            },
+            error: error => {
+              this.valUpdate = false;
+              console.log(error);
+            },
+          });
+        }
       });
+  }
+
+  async llenarInputs(data: any) {
+    this.header.patchValue({
+      destiny: data.encabDestination,
+      city: data.encabCity,
+      status: data.encabState,
+      hour: data.encabTimeRecord,
+      date: await this.getDate(data.encabDateMinutes),
+      appointedBy: data.encabDesignatedx,
+      titleOf: data.encabdesignatedXArea,
+      officeNumber: data.encabOfficeNumber,
+      dateOfOffice: await this.getDate(data.encabOfficeDate),
+    });
+
+    this.antecedent.patchValue({
+      tradeEntity: data.antec1OfficeEntity,
+      officialDate: await this.getDate(data.antec1OfficeDate),
+      signedBy: data.antec1SubscribedX,
+      position: data.antec1Charge,
+      dependence: data.antec1Dependence,
+      customs: data.antec1Aduana,
+      container: data.antec1Customs,
+      noContainer: data.antec1ContainerNumber,
+    });
+
+    this.antecedentTwo.patchValue({
+      job: data.antec2OOffice,
+      officialDate: await this.getDate(data.antec2OfDate),
+      signedBy: data.antec2OfSubscribedX,
+      position: data.actec2OfSubscribedxCharge,
+      propertyOf: data.antec2OwnedBy,
+    });
+
+    this.antecedentThree.patchValue({
+      date: await this.getDate(data.antec3PropertyDate),
+      subscribe1: data.antec3Subscribes1,
+      position1: data.antec3Charge1,
+      attachedA: data.antec3Adscritoa1,
+      subscribe2: data.antec3Subscribes2,
+      position2: data.antec3Charge2,
+      attachedB: data.antec3Adscritoa2,
+      wineriesSAE: data.antec3WinerySae,
+      verificationOf: data.antec3Verification,
+      consistsIn: data.antec3Weight,
+      correspondentA: data.antec3Amount,
+      description: data.antec3Description,
+      status: data.antec3State,
+    });
+
+    this.first.patchValue({
+      authorizedBy: data.primeraAutorizadoX,
+      addressee: data.firstAddressee,
+    });
+
+    this.closureOfMinutes.patchValue({
+      date: await this.getDate(data.closingDate),
+      hour: data.closingSheet,
+      closePages: data.closingFojas,
+    });
+  }
+  async getDate(date: any) {
+    console.log('date', date);
+    // const formattedDate = moment(date).format('DD-MM-YYYY');
+    if (date) {
+      const fechaEscritura: any = new Date(date);
+      fechaEscritura.setUTCDate(fechaEscritura.getUTCDate());
+      const _fechaEscritura: any = new Date(fechaEscritura.toISOString());
+      return date ? _fechaEscritura : null;
+    } else {
+      return null;
+    }
+    // { authorizeDate: formattedDate }
+    // { emitEvent: false }
   }
   private prepareForm() {
     this.header = this.fb.group({
@@ -299,51 +319,56 @@ export class ProceedingsConversionDetailComponent
       // UPDATE
       console.log('form', this.header);
       let obj: any = {
-        id: this.idConversion,
-        encabDestination: 'DONACION',
-        encabCity: 'WER2',
-        encabState: 'WER',
-        encabTimeRecord: '1212',
-        encabDateMinutes: '23-12-2004',
-        encabDesignatedx: 'ALFONSO',
-        encabdesignatedXArea: 'DFG',
-        encabOfficeNumber: 'ASDF',
-        encabOfficeDate: '23-12-2004',
-        antec1OfficeEntity: 'SDFGSADF',
-        antec1OfficeDate: '23-12-2004',
-        antec1SubscribedX: 'ERWTERT',
-        antec1Charge: 'WERTWET',
-        antec1Dependence: 'WERTWET',
-        antec1Aduana: 'WERWERT',
-        antec1Customs: 'ERWTERT',
-        antec1ContainerNumber: null,
-        antec2OOffice: null,
-        antec2OfDate: null,
-        antec2OfSubscribedX: null,
-        actec2OfSubscribedxCharge: null,
-        antec2OwnedBy: null,
-        antec3PropertyDate: null,
-        antec3Subscribes1: null,
-        antec3Charge1: null,
-        antec3Adscritoa1: null,
-        antec3Subscribes2: null,
-        antec3Charge2: null,
-        antec3Adscritoa2: null,
-        antec3WinerySae: null,
-        antec3Verification: null,
-        antec3Weight: null,
-        antec3Amount: null,
-        antec3Description: null,
-        antec3State: null,
-        primeraAutorizadoX: null,
-        firstAddressee: null,
-        closingSheet: null,
-        closingDate: null,
-        closingFojas: null,
+        id: Number(this.idConversion),
+        encabDestination: this.header.value.destiny,
+        encabCity: this.header.value.city,
+        encabState: this.header.value.status,
+        encabTimeRecord: this.header.value.hour,
+        encabDateMinutes: this.header.value.date,
+        encabDesignatedx: this.header.value.appointedBy,
+        encabdesignatedXArea: this.header.value.titleOf,
+        encabOfficeNumber: this.header.value.officeNumber,
+        encabOfficeDate: this.header.value.dateOfOffice,
+
+        antec1OfficeEntity: this.antecedent.value.tradeEntity,
+        antec1OfficeDate: this.antecedent.value.officialDate,
+        antec1SubscribedX: this.antecedent.value.signedBy,
+        antec1Charge: this.antecedent.value.position,
+        antec1Dependence: this.antecedent.value.dependence,
+        antec1Aduana: this.antecedent.value.customs,
+        antec1Customs: this.antecedent.value.container,
+        antec1ContainerNumber: this.antecedent.value.noContainer,
+
+        antec2OOffice: this.antecedentTwo.value.job,
+        antec2OfDate: this.antecedentTwo.value.officialDate,
+        antec2OfSubscribedX: this.antecedentTwo.value.signedBy,
+        actec2OfSubscribedxCharge: this.antecedentTwo.value.position,
+        antec2OwnedBy: this.antecedentTwo.value.propertyOf,
+
+        antec3PropertyDate: this.antecedentThree.value.date,
+        antec3Subscribes1: this.antecedentThree.value.subscribe1,
+        antec3Charge1: this.antecedentThree.value.position1,
+        antec3Adscritoa1: this.antecedentThree.value.attachedA,
+        antec3Subscribes2: this.antecedentThree.value.subscribe2,
+        antec3Charge2: this.antecedentThree.value.position2,
+        antec3Adscritoa2: this.antecedentThree.value.attachedB,
+        antec3WinerySae: this.antecedentThree.value.wineriesSAE,
+        antec3Verification: this.antecedentThree.value.verificationOf,
+        antec3Weight: this.antecedentThree.value.consistsIn,
+        antec3Amount: this.antecedentThree.value.correspondentA,
+        antec3Description: this.antecedentThree.value.description,
+        antec3State: this.antecedentThree.value.status,
+
+        primeraAutorizadoX: this.first.value.authorizedBy,
+        firstAddressee: this.first.value.addressee,
+
+        closingSheet: this.closureOfMinutes.value.hour,
+        closingDate: this.closureOfMinutes.value.date,
+        closingFojas: this.closureOfMinutes.value.closePages,
       };
 
       this.convertiongoodService
-        .updateConvertionActa(obj, this.idConversion)
+        .updateConvertionActa(obj, Number(this.idConversion))
         .subscribe({
           next: (res: any) => {
             this.valUpdate = true;
@@ -361,7 +386,7 @@ export class ProceedingsConversionDetailComponent
       console.log('form', this.header);
 
       let obj: any = {
-        id: this.idConversion,
+        id: Number(this.idConversion),
         encabDestination: this.header.value.destiny,
         encabCity: this.header.value.city,
         encabState: this.header.value.status,
@@ -371,41 +396,47 @@ export class ProceedingsConversionDetailComponent
         encabdesignatedXArea: this.header.value.titleOf,
         encabOfficeNumber: this.header.value.officeNumber,
         encabOfficeDate: this.header.value.dateOfOffice,
-        antec1OfficeEntity: 'SDFGSADF',
-        antec1OfficeDate: '23-12-2004',
-        antec1SubscribedX: 'ERWTERT',
-        antec1Charge: 'WERTWET',
-        antec1Dependence: 'WERTWET',
-        antec1Aduana: 'WERWERT',
-        antec1Customs: 'ERWTERT',
-        antec1ContainerNumber: null,
-        antec2OOffice: null,
-        antec2OfDate: null,
-        antec2OfSubscribedX: null,
-        actec2OfSubscribedxCharge: null,
-        antec2OwnedBy: null,
-        antec3PropertyDate: null,
-        antec3Subscribes1: null,
-        antec3Charge1: null,
-        antec3Adscritoa1: null,
-        antec3Subscribes2: null,
-        antec3Charge2: null,
-        antec3Adscritoa2: null,
-        antec3WinerySae: null,
-        antec3Verification: null,
-        antec3Weight: null,
-        antec3Amount: null,
-        antec3Description: null,
-        antec3State: null,
-        primeraAutorizadoX: null,
-        firstAddressee: null,
-        closingSheet: null,
-        closingDate: null,
-        closingFojas: null,
+
+        antec1OfficeEntity: this.antecedent.value.tradeEntity,
+        antec1OfficeDate: this.antecedent.value.officialDate,
+        antec1SubscribedX: this.antecedent.value.signedBy,
+        antec1Charge: this.antecedent.value.position,
+        antec1Dependence: this.antecedent.value.dependence,
+        antec1Aduana: this.antecedent.value.customs,
+        antec1Customs: this.antecedent.value.container,
+        antec1ContainerNumber: this.antecedent.value.noContainer,
+
+        antec2OOffice: this.antecedentTwo.value.job,
+        antec2OfDate: this.antecedentTwo.value.officialDate,
+        antec2OfSubscribedX: this.antecedentTwo.value.signedBy,
+        actec2OfSubscribedxCharge: this.antecedentTwo.value.position,
+        antec2OwnedBy: this.antecedentTwo.value.propertyOf,
+
+        antec3PropertyDate: this.antecedentThree.value.date,
+        antec3Subscribes1: this.antecedentThree.value.subscribe1,
+        antec3Charge1: this.antecedentThree.value.position1,
+        antec3Adscritoa1: this.antecedentThree.value.attachedA,
+        antec3Subscribes2: this.antecedentThree.value.subscribe2,
+        antec3Charge2: this.antecedentThree.value.position2,
+        antec3Adscritoa2: this.antecedentThree.value.attachedB,
+        antec3WinerySae: this.antecedentThree.value.wineriesSAE,
+        antec3Verification: this.antecedentThree.value.verificationOf,
+        antec3Weight: this.antecedentThree.value.consistsIn,
+        antec3Amount: this.antecedentThree.value.correspondentA,
+        antec3Description: this.antecedentThree.value.description,
+        antec3State: this.antecedentThree.value.status,
+
+        primeraAutorizadoX: this.first.value.authorizedBy,
+        firstAddressee: this.first.value.addressee,
+
+        closingSheet: this.closureOfMinutes.value.hour,
+        closingDate: this.closureOfMinutes.value.date,
+        closingFojas: this.closureOfMinutes.value.closePages,
       };
 
       this.convertiongoodService.creatConvertionActa(obj).subscribe({
         next: (res: any) => {
+          this.valUpdate = true;
           this.alert('success', 'El acta se creó correctamente', '');
           console.log(res);
         },
