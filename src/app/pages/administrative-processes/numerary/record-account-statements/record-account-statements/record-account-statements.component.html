@@ -128,6 +128,17 @@
             </form-field>
           </div>
 
+          <div class="col-md-3">
+            <form-field [control]="form.get('balance')" label="Saldo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="balance"
+                [value]="balance"
+                readonly />
+            </form-field>
+          </div>
+
           <div class="col-md-4">
             <button
               type="button"
@@ -143,10 +154,6 @@
               (click)="cleandInfoDate()">
               Limpiar <i class="fa fa-eraser"></i>
             </button>
-          </div>
-
-          <div class="col-md-2">
-            <span>Saldo: {{ balance }}</span>
           </div>
         </div>
       </form>
@@ -177,7 +184,8 @@
               [attr.class]="'table-bordered'"
               [settings]="settings"
               [source]="dataAccount"
-              (userRowSelect)="openModal($event.data)">
+              (userRowSelect)="openModal($event.data)"
+              (delete)="showDeleteAlert($event.data)">
             </ng2-smart-table>
           </div>
         </div>
