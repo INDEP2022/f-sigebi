@@ -1,6 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, catchError, firstValueFrom, map, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  firstValueFrom,
+  map,
+  of,
+  takeUntil,
+} from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -46,6 +53,7 @@ import { SecurityService } from 'src/app/core/services/ms-security/security.serv
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { firstFormatDate } from 'src/app/shared/utils/date';
+import { EmailModalComponent } from '../massive-conversion-email-modal/email-modal.component';
 import { MassiveConversionErrorsModalComponent } from '../massive-conversion-erros-list/massive-conversion-errors-modal/massive-conversion-errors-modal.component';
 import { MassiveConversionModalGoodComponent } from '../massive-conversion-modal-good/massive-conversion-modal-good.component';
 import { MassiveConversionSelectGoodComponent } from '../massive-conversion-select-good/massive-conversion-select-good.component';
@@ -138,8 +146,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   goodsList: any;
   VALIDA_VAL24: string;
-
+  V_EMAIL: string = null;
   //VARIABLES PARA PAQUETES
+  P_ASUNTO: string;
+  P_MENSAJE: string;
   dataPackage = new DefaultSelect();
   statusPackage = new DefaultSelect([
     { name: 'Proyecto', value: 'P' },
@@ -193,6 +203,27 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.checkPer();
     this.fillDataByPackage();
     this.getDataUser();
+    this.getEmail();
+  }
+
+  private getEmail() {
+    const filter = new FilterParams();
+    filter.addFilter('user', localStorage.getItem('username'));
+    this.securityService
+      .getAllUsersTracker(filter.getParams())
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response && response.data) {
+            this.V_EMAIL = response.data[0].mail;
+          } else {
+            this.V_EMAIL = null;
+          }
+        },
+        error: err => {
+          this.V_EMAIL = null;
+        },
+      });
   }
 
   //Gets del formulario de paquete
@@ -593,6 +624,23 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         },
         component: MassiveConversionModalGoodComponent,
       },
+      email: {
+        config: {
+          form: this.fb.group({
+            para: [null, [Validators.required]],
+            cc: [this.V_EMAIL],
+            asunto: [
+              this.P_ASUNTO,
+              [Validators.required, Validators.pattern(STRING_PATTERN)],
+            ],
+            mensaje: [
+              this.P_MENSAJE,
+              [Validators.required, Validators.pattern(STRING_PATTERN)],
+            ],
+          }),
+        },
+        component: EmailModalComponent,
+      },
     };
 
     const activeModal = modals[type];
@@ -829,20 +877,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           let statusMessage = '';
           this.validaButton.PB_AUTORIZA = false;
           this.validaButton.PB_CERRAR = true;
-          const V_ASUNTO =
-            'Autorización de Paquete de Conversión de Unidades No. ' +
-            packageUpdate.numberPackage;
-          const V_MENSAJE =
-            'Para informar que el Paquete de Conversión de Unidades No. ' +
-            packageUpdate.numberPackage +
-            ' fué marcado como autorizado el día ' +
-            firstFormatDate(new Date()) +
-            '.' +
-            '\n\n' +
-            'Atentamente,' +
-            '\n\n\n' +
-            localStorage.getItem('username');
-          this.pupIniCorreo(V_ASUNTO, V_MENSAJE);
+
+          this.pupIniCorreo(packageUpdate.numberPackage);
           // switch (status) {
           //   case 'V':
           //     statusMessage = 'Validado';
@@ -1092,8 +1128,21 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     }
   }
 
-  pupIniCorreo(V_ASUNTO: string, V_MENSAJE: string) {
-    console.log(V_MENSAJE);
+  pupIniCorreo(numberPackage: any) {
+    // console.log(V_MENSAJE);
+    this.P_ASUNTO =
+      'Autorización de Paquete de Conversión de Unidades No. ' + numberPackage;
+    this.P_MENSAJE =
+      'Para informar que el Paquete de Conversión de Unidades No. ' +
+      numberPackage +
+      ' fué marcado como autorizado el día ' +
+      firstFormatDate(new Date()) +
+      '.' +
+      '\n\n' +
+      'Atentamente,' +
+      '\n\n\n' +
+      localStorage.getItem('username');
+    this.viewModal('email');
   }
 
   pubValidaGoods(val24: string): Promise<boolean> {
