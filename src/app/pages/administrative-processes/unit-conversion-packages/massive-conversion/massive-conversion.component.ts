@@ -523,7 +523,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.packageGoodService.getPaqDestinationEnc(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
-        this.dataPackage = new DefaultSelect(res.data);
+        if (res && res.data && res.data.length > 0) {
+          this.dataPackage = new DefaultSelect(res.data);
+        } else {
+          // this.dataPackageEnc = null;
+        }
       },
       err => {
         console.log(err);
@@ -659,9 +663,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
     this.modalRef = this.modalService.show(activeModal.component, modalConfig);
 
-    this.modalRef.content.onSentGoods.subscribe((result: any) => {
-      this.modalEvent(result);
-    });
+    // this.modalRef.content.onSentGoods.subscribe((result: any) => {
+    //   this.modalEvent(result);
+    // });
   }
 
   /* validateButtons(status: string) {
@@ -782,14 +786,14 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   showConfirmAlert() {
-    if (!this.form.valid) {
-      this.alert(
-        'warning',
-        `Faltan datos necesarios para validar ${this.form}`,
-        ''
-      );
-      return;
-    }
+    // if (!this.form.valid) {
+    //   this.alert(
+    //     'warning',
+    //     `Faltan datos necesarios para validar ${this.form.value}`,
+    //     ''
+    //   );
+    //   return;
+    // }
 
     this.alertQuestion(
       'info',
@@ -797,22 +801,34 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       '¿Está seguro de que el Paquete ya ha sido validado?'
     ).then(async question => {
       if (question.isConfirmed) {
-        this.verifyGoods();
-        if (!this.chValidateGood) {
-          this.alert('warning', 'Existe inconsistencia en los bienes', '');
-        } else {
-          let currentDate = new Date();
-          let formattedDate = currentDate.toISOString().substring(0, 10);
+        const result = this.verifyGoods();
+        if (!result) return;
+        let currentDate = new Date();
+        let formattedDate = currentDate.toISOString().substring(0, 10);
 
-          let packageUpdate: Partial<IPackage> = {
-            numberPackage: this.form.value.package,
-            statuspack: 'V',
-            dateValid: formattedDate,
-            useValid: 'USER',
-          };
+        let packageUpdate: Partial<IPackage> = {
+          numberPackage: this.form.value.package,
+          statuspack: 'V',
+          dateValid: formattedDate,
+          useValid: 'USER',
+        };
 
-          this.updatePackage(packageUpdate, 'V');
-        }
+        this.updatePackage(packageUpdate, 'V');
+        // if (!this.chValidateGood) {
+        //   this.alert('warning', 'Existe inconsistencia en los bienes', '');
+        // } else {
+        //   let currentDate = new Date();
+        //   let formattedDate = currentDate.toISOString().substring(0, 10);
+
+        //   let packageUpdate: Partial<IPackage> = {
+        //     numberPackage: this.form.value.package,
+        //     statuspack: 'V',
+        //     dateValid: formattedDate,
+        //     useValid: 'USER',
+        //   };
+
+        //   this.updatePackage(packageUpdate, 'V');
+        // }
       }
     });
   }
@@ -1025,12 +1041,13 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           ) as HTMLInputElement;
           check.checked = true;
           const ch_bienes_ok = 1;
-          this.VALIDA_VAL24 = 'S';
+
           // debugger;
           let availablePrincipal = true;
           this.unitConversionDataService.dataErrors = [];
 
           this.dataPrevisualization.forEach(data => {
+            this.VALIDA_VAL24 = 'S';
             const resp = this.validateGoods(data);
             console.log(resp);
 
@@ -1054,15 +1071,19 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           }
           this.widthErrors = availablePrincipal;
           check.checked = availablePrincipal;
+          return availablePrincipal;
           // this.form2.get('check').setValue(false);
         } else {
           this.alert('warning', 'No hay Bienes que verificar', '');
+          return false;
         }
       }
     }
+    return false;
   }
 
   validateGoods(good: any) {
+    debugger;
     const noPack: IPackageGoodEnc = this.noPackage.value;
     let LV_VALIDA: string;
     let lv_DESC_ERROR = '';
@@ -1117,10 +1138,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         LV_VALIDA = this.VALIDA_VAL24;
         this.VALIDA_VAL24 = 'N';
       }
-      if (LV_VALIDA !== this.VALIDA_VAL24) {
+      if (LV_VALIDA !== good.bienes.val24) {
         lv_DESC_ERROR +=
           (lv_DESC_ERROR.length > 0 ? '/' : '') + 'El parametro del Val24.';
-      } else if (!this.VALIDA_VAL24) {
+      } else if (!good.bienes.val24) {
         lv_DESC_ERROR +=
           (lv_DESC_ERROR.length > 0 ? '/' : '') + 'El parametro del Val24.';
       }
@@ -1637,6 +1658,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     let modalConfig = MODAL_CONFIG;
     modalConfig = {
       class: 'modal-lg modal-dialog-centered',
+      initialState: {
+        noPackage: this.noPackage,
+      },
+      ignoreBackdropClick: true,
     };
     this.modalService.show(MassiveConversionSelectGoodComponent, modalConfig);
   }

@@ -364,7 +364,7 @@
         </button>
         <button
           (click)="viewModal('error')"
-          [disabled]="widthErrors"
+          [disabled]="widthErrors || dataErrors.length === 0"
           class="btn btn-primary btn-sm active mr-3">
           Ver Error
         </button>

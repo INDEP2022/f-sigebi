@@ -9,14 +9,16 @@ import { IUsersTracking } from 'src/app/core/models/ms-security/pup-user.model';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-email-modal',
   templateUrl: './email-modal.component.html',
-  styles: ['./email-modal.component.scss'],
+  styleUrls: ['./email-modal.component.scss'],
 })
 export class EmailModalComponent extends BasePage implements OnInit {
   dataUsers: IUsersTracking[] = [];
+  dataSelect: DefaultSelect;
   form: FormGroup;
   constructor(
     private modalRef: BsModalRef,
@@ -47,12 +49,15 @@ export class EmailModalComponent extends BasePage implements OnInit {
       next: response => {
         if (response && response.data) {
           this.dataUsers = response.data;
+          this.dataSelect = new DefaultSelect(response.data);
         } else {
           this.dataUsers = [];
+          this.dataSelect = new DefaultSelect(response.data);
         }
       },
       error: err => {
         this.dataUsers = [];
+        this.dataSelect = new DefaultSelect([]);
       },
     });
   }

@@ -52,11 +52,14 @@ export interface IFoliovInvoice {
   vYear: number;
 }
 
-export interface IDecPackage {
-  numberPackage: string;
-  numberGood: number;
+export interface IDecPackage extends IPrincipalPackageDec {
   amount: number;
   amountConv: number;
   numberRecord: number;
   nbOrigin: string;
+}
+
+export interface IPrincipalPackageDec {
+  numberPackage: string;
+  numberGood: number;
 }
