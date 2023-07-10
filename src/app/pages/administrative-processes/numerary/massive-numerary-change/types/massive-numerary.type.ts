@@ -1,4 +1,4 @@
-export interface IMassiveNumeraryChangeSpent {
+export interface IMassiveNumeraryGood {
   noGood: number; // NO_BIEN // good.id
   /**@description NO_BIEN_NUME || numeGoodNumber */
   npNUm: number; //  // good.id
@@ -42,4 +42,42 @@ export interface IMassiveNumeraryTableSmall {
   description?: string; // DESCRIPCION
   status?: string; // ESTATUS
   type?: string; // TIPO
+}
+
+export interface IFMasInsNumerarioGood {
+  associatedExpNum: string;
+  delegationNumber: string;
+  description: string;
+  fileNumber: string;
+  flyerNumber: string;
+  goodNumber: number;
+  goodNumberNum: string;
+  identifier: string;
+  income: number;
+  indNume: number;
+  iva: string;
+  processKey: string;
+  quantity: string;
+  spent: number;
+  status: string;
+  subdelegationNumber: string;
+  vColor: string;
+  valueAppraisalm: number;
+}
+
+export interface IFMasInsNumerarioSpent {
+  amount: string;
+  description: string;
+  goodNumber: number;
+  spentConceptNumber: number;
+  status: string;
+  type: string;
+}
+
+export interface IResponseFMasInsNumerarioSpent {
+  T_REG_CORRECTOS: number;
+  T_REG_ERRONEOS: number;
+  T_REG_PROCESADOS: number;
+  bienes: IFMasInsNumerarioGood[];
+  gastos: IFMasInsNumerarioSpent[];
 }
