@@ -17,6 +17,7 @@
   window["env"].api_external_userInfo ='http://52.142.23.169/realms/indep/protocol/openid-connect/userinfo';
   window["env"].api_external_typeUser = 'http://168.61.50.112:3003/api/v1/user/userType/';
   window["env"].api_external_rolesUser = 'http://168.61.50.112:3003/api/v1/user/roles';
+  window["env"].SOCKET_URL = 'http://socket.indep.gob.mx';
 
   
   
