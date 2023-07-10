@@ -2436,8 +2436,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       ) {
         this.alert(
           'error',
-          'No puede elimar acta',
-          'No puede eliminar un Acta cerrada'
+          'No puede eliminar un acta cerrada',
+          ''
         );
       } else if (
         format(this.form.get('fecElab').value, 'MM-yyyy') !=

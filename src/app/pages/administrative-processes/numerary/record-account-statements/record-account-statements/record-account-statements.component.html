@@ -179,14 +179,16 @@
       <div class="row">
         <div class="col-12 mt-6">
           <p class="row ml-2">(Click para traspasar movimientos)</p>
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="dataAccount"
-              (userRowSelect)="openModal($event.data)"
-              (delete)="showDeleteAlert($event.data)">
-            </ng2-smart-table>
+          <div class="table-responsive">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="dataAccount"
+                (userRowSelect)="openModal($event.data)"
+                (delete)="showDeleteAlert($event.data)">
+              </ng2-smart-table>
+            </div>
           </div>
         </div>
         <app-pagination

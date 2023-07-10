@@ -29,21 +29,40 @@
           <div
             class="col-md-4"
             style="display: flex; justify-content: start; align-items: center">
-            <button type="button" class="btn btn-primary active btn-sm" (click)="getDataNoReport()">
-              <i class="bx bx-search-alt bx-sm float-icon"></i>
-            </button>`
-            <button type="button" tooltip="Nuevo" containerClass="tooltip-style" class="btn btn-info btn-sm active ml-2 mr-2" (click)="scrollToDiv()">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="getDataNoReport()">
+              <i class="bx bx-search-alt bx-sm float-icon"></i></button
+            >`
+            <button
+              type="button"
+              tooltip="Nuevo"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2"
+              (click)="scrollToDiv()">
               NUEVO <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
-            <input type="file" name="file" #file class="d-none"
+            <input
+              type="file"
+              name="file"
+              #file
+              class="d-none"
               accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
               (change)="onFileChange($event)" />
-              <button type="button" class="btn btn-sm btn-success active m-2" (click)="file.click()">
-                Importar
-              </button>
-              <input type="file" name="file" #file class="d-none"
-                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                (change)="onFileChange($event)" />
+            <button
+              type="button"
+              class="btn btn-sm btn-success active m-2"
+              (click)="file.click()">
+              Importar
+            </button>
+            <input
+              type="file"
+              name="file"
+              #file
+              class="d-none"
+              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              (change)="onFileChange($event)" />
             <button type="button" class="btn btn-sm btn-secondary active m-2">
               ENVIAR
             </button>
@@ -69,7 +88,7 @@
         </div>
         <div class="row mt-4">
           <div class="col-md-6">
-            <div >
+            <div>
               <form-field
                 [control]="form.get('currencyType')"
                 label="Tipo moneda de cuenta">
@@ -112,7 +131,7 @@
                   type="number"
                   class="form-control"
                   formControlName="cveAccount"
-                  min="1"/>
+                  min="1" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
@@ -139,17 +158,23 @@
             <div style="margin-top: 30px">
               <p>
                 <span style="font-weight: bold; margin-right: 5px"
-                  >Monto total:</span>
+                  >Monto total:</span
+                >
                 $ {{ total }}
               </p>
             </div>
-       <!---   <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+            <!---   <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
             <app-delegation-shared [form]="form" [showDelegation]="false"></app-delegation-shared>
           </div>-->
           </div>
         </div>
-        <div class="col-md-12" style="display: flex; justify-content: center; align-items: center">
-          <button type="button" class="btn btn-primary btn-sm active" (click)="guardar()">
+        <div
+          class="col-md-12"
+          style="display: flex; justify-content: center; align-items: center">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="guardar()">
             Guardar
             <i aria-hidden="true" class="fa fa-save"></i>
           </button>
