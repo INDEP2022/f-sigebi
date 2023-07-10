@@ -100,11 +100,24 @@ export class RecordAccountStatementsComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
+          console.log('filter');
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
+
+            // filter.field == 'dateMotion' ||
+            // filter.field == 'deposit' ||
+            // filter.field == 'withdrawal' ||
+            // filter.field == 'cveConcept'
+            //   ? (searchFilter = SearchFilter.EQ)
+            //   : (searchFilter = SearchFilter.ILIKE);
+            // if (filter.search !== '') {
+            //   this.columnFilters = filters;
+            // } else {
+            //   delete this.columnFilters;
+            // }
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'dateMotion':
@@ -133,6 +146,7 @@ export class RecordAccountStatementsComponent
             }
           });
           this.params.value.page = 1;
+          this.params = this.pageFilter(this.params);
           if (this.dataAccountPaginated) {
             this.searchDataAccount(this.dataAccountPaginated);
           }
@@ -147,7 +161,7 @@ export class RecordAccountStatementsComponent
 
   // Trae la lista de bancos por defecto
   searchBanks() {
-    this.dataAccount = new LocalDataSource();
+    // this.dataAccount = new LocalDataSource();
     this.recordAccountStatementsService
       .getAll(this.params.getValue())
       .subscribe({
@@ -164,7 +178,7 @@ export class RecordAccountStatementsComponent
 
   // Permite buscar los bancos por nombre
   onSearchName(inputElement: any) {
-    this.dataAccount = new LocalDataSource();
+    // this.dataAccount = new LocalDataSource();
     const name = inputElement.value;
     setTimeout(() => {
       this.recordAccountStatementsService
@@ -193,7 +207,7 @@ export class RecordAccountStatementsComponent
     this.totalItems = 0;
     this.cleandInfoDate();
     this.bankAccountSelect = new DefaultSelect();
-    this.dataAccount = new LocalDataSource();
+    // this.dataAccount = new LocalDataSource();
     if (value && value.bankCode) {
       const bankCode = value.bankCode;
       this.searchBankAccount(bankCode);
@@ -227,7 +241,7 @@ export class RecordAccountStatementsComponent
   }
 
   onSearchAccount(inputElement: any) {
-    this.dataAccount = new LocalDataSource();
+    // this.dataAccount = new LocalDataSource();
     const account = inputElement.value;
 
     setTimeout(() => {
@@ -261,7 +275,7 @@ export class RecordAccountStatementsComponent
     this.form.get('description').reset();
     this.totalItems = 0;
     this.cleandInfoDate();
-    this.dataAccount = new LocalDataSource();
+    // this.dataAccount = new LocalDataSource();
     const accountNumber = value.accountNumber;
     this.accountDate = value.accountNumber;
     this.searchDataAccount(accountNumber);
@@ -324,14 +338,21 @@ export class RecordAccountStatementsComponent
   // Establece los valores de movimientos de la cuenta seleccionada a la tabla
   searchDataAccount(accountNumber: number) {
     this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
     this.dataAccountPaginated = accountNumber;
     this.recordAccountStatementsAccountsService
-      .getDataAccount(accountNumber, this.params.getValue())
+      .getDataAccount(accountNumber, params)
       .subscribe({
         next: response => {
-          this.loading = true;
-          const dataSource = new LocalDataSource(response.data);
-          this.dataAccount = dataSource;
+          // this.loading = true;
+          const data = response.data;
+          this.dataAccount.load(data);
+          this.dataAccount.refresh();
+          // const dataSource = new LocalDataSource(response.data);
+          // this.dataAccount = dataSource;
           this.totalItems = response.count;
           this.loading = false;
         },
