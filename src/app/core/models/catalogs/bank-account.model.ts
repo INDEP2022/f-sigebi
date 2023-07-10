@@ -13,7 +13,7 @@ export interface IBankAccount {
   isReference?: any;
 }
 
-export interface IAccountBank{
+export interface IAccountBank {
   accountNumber: string;
   accountNumberTransfer?: any;
   registerNumber: string;
