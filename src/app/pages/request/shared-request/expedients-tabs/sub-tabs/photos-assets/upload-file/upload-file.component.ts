@@ -94,7 +94,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
             )
             .subscribe({
               next: data => {
-                this.bsModalRef.content.callBack(true);
+                this.bsModalRef.content.callback(true);
                 this.close();
               },
               error: error => {},
