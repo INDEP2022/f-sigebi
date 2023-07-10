@@ -219,6 +219,7 @@ input[type='checkbox']:checked {
   appearance: none;
   -webkit-appearance: none;
   -o-appearance: none;
+  border: 1px solid #ccc;
 }
 
 input[type='checkbox'] {

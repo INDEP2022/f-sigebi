@@ -87,8 +87,8 @@ export class GoodsClasificationSharedComponent
   onGoodClassificationChange(type: any) {
     //this.resetFields([this.subdelegation]);
     this.form.updateValueAndValidity();
-    console.log(this.form)
-    console.log(type)
+    console.log(this.form);
+    console.log(type);
   }
 
   resetFields(fields: AbstractControl[]) {

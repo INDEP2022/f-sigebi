@@ -51,7 +51,11 @@ export class RackFormComponent extends BasePage implements OnInit {
       idBatch: [null, [Validators.required]],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
       status: [null, Validators.maxLength(1)],
       registerNumber: [null],
