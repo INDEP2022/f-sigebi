@@ -177,7 +177,9 @@ export class MassiveConversionSelectGoodComponent
   private async fillGoodPaqDestino(v_bani: boolean) {
     let V_BANR = true;
     let packageEnc: IPackageGoodEnc = this.noPackage.value;
-    await goodCheck.forEach(async good => {
+
+    debugger;
+    const results = await goodCheck.map(async good => {
       console.log(good);
       debugger;
       const row = good.row;
@@ -188,11 +190,13 @@ export class MassiveConversionSelectGoodComponent
       let quantity = row.goods.quantity;
       const delegation = row.goods.numbercoordinatesadmin;
       quantity = quantity ? +quantity : null;
+      let encontro;
+      let V_CUENTA;
       if (v_bani) {
         const filterParams = new FilterParams();
         filterParams.addFilter('numberPackage', this.selectedPackage);
         filterParams.addFilter('numberGood', goodNumber);
-        const encontro = await firstValueFrom(
+        encontro = await firstValueFrom(
           this.packageGoodService
             .getPaqDestinationDet(filterParams.getParams())
             .pipe(
@@ -206,7 +210,7 @@ export class MassiveConversionSelectGoodComponent
       }
 
       if (V_BANR) {
-        const V_CUENTA = await firstValueFrom(this.obtainVCuenta(goodNumber));
+        V_CUENTA = await firstValueFrom(this.obtainVCuenta(goodNumber));
         if (V_CUENTA > 0) {
           V_BANR = false;
         }
@@ -254,6 +258,10 @@ export class MassiveConversionSelectGoodComponent
           body = { ...body, status: packageEnc.status };
           change++;
         }
+        if (packageEnc.numberStore) {
+          body = { ...body, storeNumber: packageEnc.numberStore };
+          change++;
+        }
         await firstValueFrom(this.goodService.update(body));
 
         await firstValueFrom(
@@ -266,12 +274,84 @@ export class MassiveConversionSelectGoodComponent
             nbOrigin: packageEnc.nbOrigin,
           })
         );
+        // return await new Promise<any>((resolve, reject) => {
+        //   resolve(null);
+        // });
+        return null;
+      } else {
+        if (encontro) {
+          return {
+            id: goodNumber,
+            message: 'No puede agregar bienes ya registrados',
+          };
+          // return await new Promise<any>((resolve, reject) => {
+          //   resolve({
+          //     id: goodNumber,
+          //     message: 'No puede agregar bienes ya registrados',
+          //   });
+          // });
+          // this.alert(
+          //   'error',
+          //   'ERROR',
+          //   'No puede agregar bienes ya registrados'
+          // );
+        } else {
+          return {
+            id: goodNumber,
+            message:
+              'No puede agregar bienes cuyo paquete no está en ESTATUS_PAQ X',
+          };
+          // return await new Promise<any>((resolve, reject) => {
+          //   resolve({
+          //     id: goodNumber,
+          //     message:
+          //       'No puede agregar bienes cuyo paquete no está en ESTATUS_PAQ X',
+          //   });
+          // });
+          // return {
+          //   id: goodNumber,
+          //   message:
+          //     'No puede agregar bienes cuyo paquete no está en ESTATUS_PAQ X',
+          // };
+          // this.alert(
+          //   'error',
+          //   'ERROR',
+          //   'No puede agregar bienes cuyo paquete no está en ESTATUS_PAQ X'
+          // );
+        }
       }
     });
-    this.unitConversionPackagesDataService.updatePrevisualizationData.next(
-      true
-    );
-    this.closeModal();
+
+    // this.unitConversionPackagesDataService.updatePrevisualizationData.next(
+    //   true
+    // );
+    // this.closeModal();
+
+    Promise.all(results)
+      .then(array => {
+        let message = '';
+        array.forEach(x => {
+          if (x && x.message) {
+            if (message.length > 0) {
+              message += '/';
+            }
+            if (!message.includes(x.message)) {
+              message += x.message;
+            }
+          }
+        });
+        if (message.length > 0) {
+          this.alert('error', 'ERROR', message);
+        } else {
+          this.unitConversionPackagesDataService.updatePrevisualizationData.next(
+            true
+          );
+          this.closeModal();
+        }
+      })
+      .catch(error => {
+        this.alert('error', 'ERROR', 'No se pudo ingresar los bienes');
+      });
   }
 
   private clearPrevisualizationData() {
@@ -339,6 +419,7 @@ export class MassiveConversionSelectGoodComponent
     return new Promise((resolve, reject) => {
       const paramsEnc = new FilterParams();
       paramsEnc.addFilter('statuspack', 'X', SearchFilter.NOT);
+      paramsEnc.limit = 10000000;
       this.packageGoodService
         .getPaqDestinationEnc(paramsEnc.getParams())
         .subscribe(
@@ -355,6 +436,7 @@ export class MassiveConversionSelectGoodComponent
               arrayNoPack.toString(),
               SearchFilter.IN
             );
+            paramsDet.limit = 1000000;
             this.packageGoodService
               .getPaqDestinationDet(paramsDet.getParams())
               .subscribe(
@@ -365,7 +447,7 @@ export class MassiveConversionSelectGoodComponent
                     })
                   );
 
-                  resolve({ res: arrayNoGood.toString() });
+                  resolve({ res: arrayNoGood });
                 },
                 err => {
                   console.log(err);
@@ -444,12 +526,21 @@ export class MassiveConversionSelectGoodComponent
       generalParams.addFilter('numberStore', this.warehouse.value);
     }
 
-    const whereNoGoods: any = await this.goodsWhere();
-    console.log(whereNoGoods.res);
-    if (whereNoGoods.res) {
+    const whereNoGoods1: any = await this.goodsWhere();
+    const whereSelectedGoods = this.dataPrevisualization.map(x => x.numberGood);
+    let whereNoGoods: string[] = [];
+    console.log(whereNoGoods1.res);
+    if (whereNoGoods1.res) {
+      whereNoGoods = [...whereNoGoods1.res];
+    }
+    if (whereSelectedGoods) {
+      whereNoGoods = whereNoGoods.concat(whereSelectedGoods);
+    }
+
+    if (whereNoGoods.length > 0) {
       generalParams.addFilter(
         'goodNumber',
-        whereNoGoods.res,
+        whereNoGoods.toString(),
         SearchFilter.NOTIN
       );
     }

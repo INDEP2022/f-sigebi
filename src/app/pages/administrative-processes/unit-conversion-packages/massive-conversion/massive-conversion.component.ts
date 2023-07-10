@@ -799,21 +799,26 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       'info',
       'Confirmación',
       '¿Está seguro de que el Paquete ya ha sido validado?'
-    ).then(async question => {
+    ).then(question => {
       if (question.isConfirmed) {
-        const result = this.verifyGoods();
+        let result = true;
+        const check = document.getElementById('checkGood') as HTMLInputElement;
+        console.log(this.form.value);
+        const noPack: IPackageGoodEnc = this.noPackage.value;
+        if (!check.checked) {
+          result = this.verifyGoods();
+        }
         if (!result) return;
         let currentDate = new Date();
         let formattedDate = currentDate.toISOString().substring(0, 10);
-
         let packageUpdate: Partial<IPackage> = {
-          numberPackage: this.form.value.package,
+          numberPackage: +noPack.numberPackage,
           statuspack: 'V',
           dateValid: formattedDate,
           useValid: 'USER',
         };
-
-        this.updatePackage(packageUpdate, 'V');
+        this.pupIniCorreo(packageUpdate.numberPackage);
+        // this.updatePackage(packageUpdate, 'V');
         // if (!this.chValidateGood) {
         //   this.alert('warning', 'Existe inconsistencia en los bienes', '');
         // } else {
@@ -877,8 +882,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           } else {
             let currentDate = new Date();
             let formattedDate = currentDate.toISOString().substring(0, 10);
+            const noPack: IPackageGoodEnc = this.noPackage.value;
             let packageUpdate: Partial<IPackage> = {
-              numberPackage: this.form.value.package,
+              numberPackage: +noPack.numberPackage,
               statuspack: 'A',
               dateValid: formattedDate,
             };
@@ -1083,7 +1089,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   validateGoods(good: any) {
-    debugger;
+    // debugger;
     const noPack: IPackageGoodEnc = this.noPackage.value;
     let LV_VALIDA: string;
     let lv_DESC_ERROR = '';
