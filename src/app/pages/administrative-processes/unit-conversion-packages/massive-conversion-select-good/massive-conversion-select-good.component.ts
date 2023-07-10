@@ -122,7 +122,13 @@ export class MassiveConversionSelectGoodComponent
     this.prepareForm();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.params.pipe(takeUntil(this.$unSubscribe))
+    .subscribe(params => {
+      console.log(params);
+      this.filterByPage()
+    });
+  }
 
   private prepareForm(): void {
     this.form = this.fb.group({
@@ -358,6 +364,58 @@ export class MassiveConversionSelectGoodComponent
     });
   }
 
+  async filterByPage(){
+    console.log(this.goodClassification.value)
+    this.loading = true
+      let modelFilter = new GoodTrackerMap()
+      if(this.delegation.value != null){
+        const whereDelegation = await this.delegationWhere()
+        modelFilter.global.gstSelecDeleg = 'S';
+        modelFilter.global.delegationNumber = [this.delegation.value]
+      }
+
+      if(this.goodClassification.value != null){
+        modelFilter.clasifGood.selecSsstype = 'S';
+      modelFilter.clasifGood.clasifGoodNumber = [this.goodClassification.value]
+      }
+
+      if(this.targetTag.value != null){
+        modelFilter.parval.label = this.targetTag.value
+      }
+
+      if(this.goodStatus.value != null){
+        modelFilter.parval.status = [this.goodStatus.value]
+      }
+
+      if(this.measurementUnit.value != null){
+
+      }
+
+      if(this.warehouse.value != null){
+        modelFilter.global.gstSelecStore = 'S'
+        modelFilter.global.cstStoreNumber= [this.warehouse.value]
+      }
+
+      if(this.transferent.value != null){
+        modelFilter.global.gstSelecProced = 'S'
+        modelFilter.global.caTransfereeNumber = [this.transferent.value]
+      }
+
+      this.trackerGoodService
+      .trackGoods(modelFilter,this.params.getValue()).subscribe(
+        res =>{
+          console.log(res);
+            this.data.load(res.data);
+            this.totalItems = res.count;
+            this.loading = false;
+        },
+        err => {
+          this.data.load([])
+          this.loading = false
+        }
+        )
+  }
+
   async filter(){
     console.log(this.goodClassification.value)
     this.loading = true
@@ -378,7 +436,7 @@ export class MassiveConversionSelectGoodComponent
       }
 
       if(this.goodStatus.value != null){
-        modelFilter.parval.status = this.goodStatus.value
+        modelFilter.parval.status = [this.goodStatus.value]
       }
 
       if(this.measurementUnit.value != null){
@@ -396,7 +454,7 @@ export class MassiveConversionSelectGoodComponent
       }
 
       this.trackerGoodService
-      .trackGoods(modelFilter, new ListParams()).subscribe(
+      .trackGoods(modelFilter,new ListParams()).subscribe(
         res =>{
           console.log(res);
             this.data.load(res.data);
@@ -405,7 +463,9 @@ export class MassiveConversionSelectGoodComponent
             this.loading = false;
         },
         err => {
-
+          this.data.load([])
+          this.alert('error','No se encontraron registros con los filtros seleccionados','')
+          this.loading = false
         }
         )
   }

@@ -31,6 +31,11 @@ export const V_GOOD_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  clasif:{
+    title: 'No. Clasificación',
+    type: 'string',
+    sort: false
+  },
   quantity: {
     title: 'Cantidad',
     type: 'string',
@@ -46,6 +51,31 @@ export const V_GOOD_COLUMNS = {
     type: 'number',
     sort: false,
   },
+  labelNumber: {
+    title: 'Etiqueta',
+    type: 'string',
+    sort: false
+  },
+  status :{
+    title: 'Estatus',
+    type: 'string',
+    sort: false
+  },
+  transfereeD:{
+    title: 'Transferente',
+    type: 'string',
+    sort: false
+  },
+  warehouseNumber: {
+    title: 'No. Almacen',
+    type: 'string',
+    sort: false
+  },
+  vaultNumber: {
+    title: 'No. Bodega',
+    type: 'string',
+    sort: false
+  }
 };
 
 export function clearGoodCheck() {
