@@ -3299,8 +3299,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
             console.log(1);
             this.alert(
               'warning',
-              'No puede elimar acta',
-              'No puede eliminar un Acta cerrada'
+              'No puede eliminar un acta cerrada',
+              ''
             );
           } else if (
             this.form.get('fecElab').value != null &&
