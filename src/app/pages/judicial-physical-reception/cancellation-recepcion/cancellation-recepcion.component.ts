@@ -2701,8 +2701,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
         ) {
           this.alert(
             'error',
-            'No puede elimar acta',
-            'No puede eliminar un Acta cerrada'
+            'No puede eliminar un acta cerrada',
+            ''
           );
         } else if (
           this.form.get('fecElab').value != null &&
