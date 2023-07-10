@@ -1,4 +1,10 @@
-import { Component, Input, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -19,6 +25,9 @@ import { COLUMNS } from './column';
 export class PaqDestinoDetComponent extends BasePage {
   @Input() noPackage: AbstractControl;
   @Input() packageType: AbstractControl;
+
+  @Output() dataEmit: EventEmitter<any> = new EventEmitter();
+
   totalItems = 0;
   dataTemp: IPackageGoodDec[] = [];
   dataPaginated: LocalDataSource = new LocalDataSource();
@@ -131,6 +140,7 @@ export class PaqDestinoDetComponent extends BasePage {
     this.dataTemp = [];
     this.dataPaginated.load([]);
     this.dataPaginated.refresh();
+    this.dataEmit.emit(this.dataPaginated)
     this.loading = false;
   }
 
@@ -263,6 +273,7 @@ export class PaqDestinoDetComponent extends BasePage {
         cantidad > this.dataTemp.length ? this.dataTemp.length : cantidad
       ),
     ]);
+    this.dataEmit.emit(this.dataPaginated);
     this.dataPaginated.refresh();
   }
 
