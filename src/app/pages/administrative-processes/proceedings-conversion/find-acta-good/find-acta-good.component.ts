@@ -24,6 +24,7 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   //Data Table
   actas: string;
+  expedienteNumber: any;
   columnFilters: any = [];
   pageParams: IInitFormProceedingsBody = null;
   conversionGood: IActasConversion;

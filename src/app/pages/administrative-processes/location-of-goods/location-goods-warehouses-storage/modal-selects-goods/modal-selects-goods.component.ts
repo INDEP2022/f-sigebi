@@ -10,6 +10,7 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
+import { LocationGoodsWarehousesStorageComponent } from '../location-goods-warehouses-storage/location-goods-warehouses-storage.component';
 @Component({
   selector: 'app-modal-selects-goods',
   templateUrl: './modal-selects-goods.component.html',
@@ -23,9 +24,13 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   selectedRow: IGood;
   selectedGooods: IGood[] = [];
   $trackedGoods = this.store.select(getTrackedGoods);
-  data: LocalDataSource = new LocalDataSource();
-  @Input() allGoods: IGood[] = [];
+  formVau: FormGroup;
+  formAlm: FormGroup;
+  @Input() allGoods = new LocalDataSource();
   @Input() totalItems: number;
+  @Input() validarGood: Function;
+  @Input() formVault: LocationGoodsWarehousesStorageComponent;
+  @Input() formWarehouse: LocationGoodsWarehousesStorageComponent;
 
   //Data Table
 
@@ -45,10 +50,10 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     private readonly goodServices: GoodService,
     private router: Router,
     private store: Store,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private serviceGood: GoodService
   ) {
     super();
-
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
@@ -104,6 +109,8 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
+    this.allGoods.refresh();
+    console.log(this.totalItems);
     this.buildForm();
     this.loading = false;
     // this.$trackedGoods.subscribe({
@@ -194,10 +201,10 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   }
 
   deleteGood(good: IGood) {
-    this.goods = this.goods.filter(item => item.id != good.id);
+    this.goods = this.selectedGooods.filter(item => item.id != good.id);
     this.add();
   }
-  /////////// Temporal
+  /////////// Temporal2222222222222222222222222222222222222
   getGoodByID(idGood: number | string) {
     this.goodServices.getById(idGood).subscribe({
       next: response => {
@@ -210,8 +217,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     });
   }
   add() {
-    this.data.load(this.goods);
-    this.data.refresh();
+    this.settings;
   }
   selectData(event: { data: IGood; selected: any }) {
     this.selectedRow = event.data;
@@ -219,6 +225,82 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     console.log(this.selectedRow);
     console.log(this.selectedGooods);
     this.changeDetectorRef.detectChanges();
+  }
+
+  updateGoodsVault() {
+    try {
+      this.selectedGooods.forEach(good => {
+        const data = {
+          id: good.id,
+          goodId: good.goodId,
+          observations: good.observations,
+          quantity: good.quantity,
+          goodClassNumber: good.goodClassNumber,
+          unit: good.unit,
+          labelNumber: good.labelNumber,
+          vaultNumber: this.form.get('safe').value,
+          // estatus: good.estatus // incluir la propiedad estatus
+        };
+        // if (this.validarGood()) return;
+        console.log('nuevo -->', data);
+        this.serviceGood.update(data).subscribe(
+          res => {
+            // this.alert('success', 'Bienes', `Actualizados correctamente`);
+            // this.add();
+            console.log(res);
+          },
+          err => {
+            this.alert(
+              'error',
+              'Bien',
+              'No se pudo actualizar el bien, por favor intentelo nuevamente'
+            );
+          }
+        );
+      });
+      this.alert('success', 'Bienes', `Actualizados correctamente`);
+      this.add();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  updateGoodsWareHouse() {
+    try {
+      this.selectedGooods.forEach(good => {
+        const data = {
+          id: good.id,
+          goodId: good.goodId,
+          observations: good.observations,
+          quantity: good.quantity,
+          goodClassNumber: good.goodClassNumber,
+          unit: good.unit,
+          labelNumber: good.labelNumber,
+          storeNumber: this.form.get('warehouse').value,
+          // estatus: this.selectedRow.estatus // incluir la propiedsad estatus
+        };
+        // if (this.validarGood()) return;
+        console.log('nuevo -->', data);
+        this.serviceGood.update(data).subscribe(
+          res => {
+            // this.alert('success', 'Bienes', `Actualizados correctamente`);
+            // this.add();
+            console.log(res);
+          },
+          err => {
+            this.alert(
+              'error',
+              'Bien',
+              'No se pudo actualizar el bien, por favor intentelo nuevamente'
+            );
+          }
+        );
+      });
+      this.alert('success', 'Bienes', `Actualizados correctamente`);
+      this.add();
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   goToGoodTracker() {

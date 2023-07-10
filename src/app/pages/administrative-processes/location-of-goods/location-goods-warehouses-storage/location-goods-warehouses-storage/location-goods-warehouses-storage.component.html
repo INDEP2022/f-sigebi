@@ -42,6 +42,15 @@
                           formControlName="statusGoods" />
                       </form-field>
                     </div>
+                    <div class="m-3">
+                      <label for="statusGoods">Disponible</label>&nbsp;&nbsp;
+                      <span
+                        [style.background-color]="
+                          getEstatusColor(this.di_desc_est)
+                        "
+                        >{{ this.di_desc_est }}</span
+                      >
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-3 col-sm-12 col-xs-12">
@@ -69,25 +78,16 @@
                 </div>
               </div>
               <div class="row">
-                <div
-                  class="col-md-12 col-sm-12 col-xs-12"
-                  *ngIf="disableConsultLocation">
+                <div class="col-md-12 col-sm-12 col-xs-12">
                   <div class="d-flex justify-content-center">
                     <div class="m-3">
                       <button
                         type="button"
+                        *ngIf="form.get('good').value != null"
                         class="btn btn-info active"
                         (click)="checkLocations()">
                         Consultar Ubicaciones
                       </button>
-                    </div>
-                    <div class="m-3">
-                      <span
-                        [ngStyle]="{
-                          color: this.di_desc_est === 'S' ? 'green' : 'black'
-                        }"
-                        >{{ this.di_desc_est }}</span
-                      >
                     </div>
                   </div>
                 </div>
@@ -192,7 +192,8 @@
           </tab>
           <tab heading="Asignación masiva">
             <app-modal-selects-goods
-              [allGoods]="goods"></app-modal-selects-goods>
+              [allGoods]="allGoods"
+              [totalItems]="totalItems"></app-modal-selects-goods>
           </tab>
         </tabset>
       </div>

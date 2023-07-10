@@ -96,6 +96,9 @@
       <div class="row mb-3 mt-3">
         <!--Actions-->
         <div class="col text-center">
+          <button class="btn btn-danger btn-sm active mr-2" (click)="clear()">
+            Limpiar <i class="fas fa-eraser"></i>
+          </button>
           <button
             [disabled]="!validaButton.PB_VALIDA"
             class="btn btn-primary btn-sm active mr-3"
@@ -280,9 +283,11 @@
     <form class="form-material" [formGroup]="form2">
       <div class="row mb-3 mt-3">
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
-          <form-field [control]="form2.get('numberGood')" label="No. Bien">
+          <form-field
+            [control]="form2.get('numberGoodFather')"
+            label="No. Bien">
             <input
-              formControlName="numberGood"
+              formControlName="numberGoodFather"
               type="text"
               class="form-control"
               type="number"
@@ -359,6 +364,7 @@
         </button>
         <button
           (click)="viewModal('error')"
+          [disabled]="widthErrors || dataErrors.length === 0"
           class="btn btn-primary btn-sm active mr-3">
           Ver Error
         </button>

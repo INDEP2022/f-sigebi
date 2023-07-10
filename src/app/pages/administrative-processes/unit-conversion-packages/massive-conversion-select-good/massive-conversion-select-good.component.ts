@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {
+  AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -22,6 +23,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IPackageGoodEnc } from 'src/app/core/models/ms-package-good/package-good-enc';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
@@ -44,6 +46,7 @@ export class MassiveConversionSelectGoodComponent
   implements OnInit
 {
   //Variables que recibe
+  noPackage: AbstractControl;
   goodCheckValues = goodCheck;
   paqDestinationGoodLenght: number;
   clearPaqDestination: boolean;
@@ -148,8 +151,8 @@ export class MassiveConversionSelectGoodComponent
   private obtainVCuenta(numberGood: number) {
     return this.survillanceService.getVCuentaNoBien(numberGood).pipe(
       takeUntil(this.$unSubscribe),
-      catchError(x => of({ data: [] })),
-      map(x => (x.data.length > 0 ? 0 : x.data[0].count))
+      catchError(x => of({ data: [{ count: 0 }] })),
+      map(x => (x.data.length > 0 ? x.data[0].count : 0))
     );
   }
 
@@ -173,12 +176,22 @@ export class MassiveConversionSelectGoodComponent
 
   private async fillGoodPaqDestino(v_bani: boolean) {
     let V_BANR = true;
+    let packageEnc: IPackageGoodEnc = this.noPackage.value;
     await goodCheck.forEach(async good => {
       console.log(good);
+      debugger;
+      const row = good.row;
+      const goodNumber = row.goodNumber;
+      const numberTransferee = row.numberTransferee;
+      const id = row.goods.id;
+      const fileNumber = row.goods.fileNumber;
+      let quantity = row.goods.quantity;
+      const delegation = row.goods.numbercoordinatesadmin;
+      quantity = quantity ? +quantity : null;
       if (v_bani) {
         const filterParams = new FilterParams();
         filterParams.addFilter('numberPackage', this.selectedPackage);
-        filterParams.addFilter('numberGood', good.goodNumber);
+        filterParams.addFilter('numberGood', goodNumber);
         const encontro = await firstValueFrom(
           this.packageGoodService
             .getPaqDestinationDet(filterParams.getParams())
@@ -193,9 +206,7 @@ export class MassiveConversionSelectGoodComponent
       }
 
       if (V_BANR) {
-        const V_CUENTA = await firstValueFrom(
-          this.obtainVCuenta(good.goodNumber)
-        );
+        const V_CUENTA = await firstValueFrom(this.obtainVCuenta(goodNumber));
         if (V_CUENTA > 0) {
           V_BANR = false;
         }
@@ -203,55 +214,64 @@ export class MassiveConversionSelectGoodComponent
       if (V_BANR) {
         console.log('Entro a registrar');
         let V_NO_TRANSFERENTE;
-        if (good.dTransferee) {
-          const transferentSplit = good.dTransferee.split('-');
-          if (transferentSplit.length > 0) {
-            V_NO_TRANSFERENTE = await firstValueFrom(
-              this.obtainTransferent(transferentSplit[0])
-            );
-            // V_NO_TRANSFERENTE = transferentSplit[0];
-          }
-        }
+        // if (numberTransferee) {
+        //   // const transferentSplit = transfer
+        //   V_NO_TRANSFERENTE = await firstValueFrom(
+        //     this.obtainTransferent(numberTransferee)
+        //   );
+        // }
 
-        const V_NO_DELEGACION = await firstValueFrom(
-          this.obtainDelegation(good.coord_admin)
-        );
+        // const V_NO_DELEGACION = await firstValueFrom(
+        //   this.obtainDelegation(delegation)
+        // );
         // console.log(V_NO_DELEGACION);
-
-        if (V_NO_DELEGACION) {
+        if (packageEnc.numbertrainemiaut) {
           await firstValueFrom(
-            this.goodService.update({
-              id: good.id,
-              goodNumber: good.goodNumber,
-              delegationNumber: V_NO_DELEGACION,
+            this.expedientService.update(fileNumber, {
+              id: fileNumber,
+              transferNumber: +packageEnc.numbertrainemiaut,
             })
           );
         }
-
-        if (V_NO_TRANSFERENTE) {
-          await firstValueFrom(
-            this.expedientService.update(good.fileNumber, {
-              id: good.fileNumber,
-              transferNumber: V_NO_TRANSFERENTE,
-            })
-          );
+        let change = 0;
+        let body: any = {
+          id: id,
+          goodId: goodNumber,
+        };
+        if (packageEnc.numberDelegation) {
+          body = { ...body, delegationNumber: packageEnc.numberDelegation };
+          change++;
         }
+        if (packageEnc.numberClassifyGood) {
+          body = { ...body, goodClassNumber: packageEnc.numberClassifyGood };
+          change++;
+        }
+        if (packageEnc.numberLabel) {
+          body = { ...body, labelNumber: packageEnc.numberLabel };
+          change++;
+        }
+        if (packageEnc.status) {
+          body = { ...body, status: packageEnc.status };
+          change++;
+        }
+        await firstValueFrom(this.goodService.update(body));
+
         await firstValueFrom(
           this.packageGoodService.insertPaqDestDec({
             numberPackage: this.selectedPackage,
-            numberGood: good.goodNumber,
-            amount: good.quantity,
+            numberGood: goodNumber,
+            amount: quantity,
             amountConv: null,
-            numberRecord: good.numFile,
-            nbOrigin: null,
+            numberRecord: fileNumber,
+            nbOrigin: packageEnc.nbOrigin,
           })
         );
-        this.unitConversionPackagesDataService.updatePrevisualizationData.next(
-          true
-        );
-        this.closeModal();
       }
     });
+    this.unitConversionPackagesDataService.updatePrevisualizationData.next(
+      true
+    );
+    this.closeModal();
   }
 
   private clearPrevisualizationData() {
@@ -271,6 +291,8 @@ export class MassiveConversionSelectGoodComponent
         }
         this.fillGoodPaqDestino(v_bani);
       });
+    } else {
+      this.fillGoodPaqDestino(false);
     }
   }
 
@@ -347,11 +369,13 @@ export class MassiveConversionSelectGoodComponent
                 },
                 err => {
                   console.log(err);
+                  resolve({ res: null });
                 }
               );
           },
           err => {
             console.log(err);
+            resolve({ res: null });
           }
         );
     });
@@ -360,7 +384,28 @@ export class MassiveConversionSelectGoodComponent
   async filter() {
     this.loading = true;
     const generalParams = new FilterParams();
-
+    let packageEnc: IPackageGoodEnc = this.noPackage.value;
+    console.log(this.noPackage.value);
+    // if (packageEnc.numberDelegation) {
+    //   generalParams.addFilter(
+    //     'coordinateadmin',
+    //     packageEnc.numberDelegation,
+    //     SearchFilter.IN
+    //   );
+    // }
+    // if (packageEnc.numberClassifyGood)
+    //   generalParams.addFilter(
+    //     'numberClassifyGood',
+    //     packageEnc.numberClassifyGood
+    //   );
+    // if (packageEnc.numberLabel)
+    //   generalParams.addFilter('numberLabel', packageEnc.numberLabel);
+    // if (packageEnc.unit) generalParams.addFilter('unitExtent', packageEnc.unit);
+    // if (packageEnc.numbertrainemiaut)
+    //   generalParams.addFilter('dTransferee', packageEnc.numbertrainemiaut);
+    // if (packageEnc.numberStore)
+    //   generalParams.addFilter('numberStore', packageEnc.numberStore);
+    // return;
     if (this.delegation.value != null) {
       const whereDelegation = await this.delegationWhere();
       console.log(JSON.parse(JSON.stringify(whereDelegation)).res);
@@ -399,26 +444,28 @@ export class MassiveConversionSelectGoodComponent
       generalParams.addFilter('numberStore', this.warehouse.value);
     }
 
-    const whereNoGoods = await this.goodsWhere();
-    console.log(JSON.parse(JSON.stringify(whereNoGoods)).res);
-    generalParams.addFilter(
-      'goodNumber',
-      JSON.parse(JSON.stringify(whereNoGoods)).res,
-      SearchFilter.NOTIN
-    );
+    const whereNoGoods: any = await this.goodsWhere();
+    console.log(whereNoGoods.res);
+    if (whereNoGoods.res) {
+      generalParams.addFilter(
+        'goodNumber',
+        whereNoGoods.res,
+        SearchFilter.NOTIN
+      );
+    }
 
     if (generalParams.getParams().length > 0) {
       this.trackerGoodService
         .getTvGoodTrackerFilter(generalParams.getParams())
-        .subscribe(
-          res => {
-            console.log(res);
-            this.data.load(res.data);
-            this.totalItems = res.count;
+        .subscribe({
+          next: response => {
+            console.log(response);
+            this.data.load(response.data);
+            this.totalItems = response.count;
             this.alert('success', 'Se encontraron registros', '');
             this.loading = false;
           },
-          err => {
+          error: err => {
             console.log(err);
             this.alert(
               'warning',
@@ -426,13 +473,15 @@ export class MassiveConversionSelectGoodComponent
               ''
             );
             this.loading = false;
-          }
-        );
+          },
+        });
+    } else {
+      this.loading = false;
     }
   }
 
   pbIngresar() {
-    // debugger;
+    debugger;
     if (goodCheck.length > 0) {
       this.clearPrevisualizationData();
     } else {

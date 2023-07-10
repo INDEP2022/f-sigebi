@@ -11,10 +11,9 @@ import {
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { SelectElementComponent } from 'src/app/shared/components/select-element-smarttable/select-element';
 import { MasiveConversionPermissionsDeleteComponent } from '../masive-conversion-permissions-delete/masive-conversion-permissions-delete.component';
-import { PRIVILEGESUSER_COLUMNS, newData } from './massive-conversion-permissions-columns';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 interface permissions {
   proy: boolean;
   val: boolean;
@@ -95,152 +94,153 @@ export class MassiveConversionPermissionsComponent
             });
           },
         },
-          proy: {
-            title: 'PROY.',
-            width: '5%',
-            sort: false,
-            showAlways: true,
-            filter: false,
-            editable: false,
-            type: 'custom',
-            renderComponent: CheckboxElementComponent,
-            onComponentInitFunction:(instance: any) => {
-              instance.toggle.subscribe((data: any) => {
-                data.row.proy = data.toggle;
-                const cve = this.createPer(
-                  data.row.proy,
-                  data.row.val,
-                  data.row.aut,
-                  data.row.cerr,
-                  data.row.can
-                );
-                console.log(cve);
-                this.update423(data.row, cve)
-              });
-            },
+        proy: {
+          title: 'PROY.',
+          width: '5%',
+          sort: false,
+          showAlways: true,
+          filter: false,
+          editable: false,
+          type: 'custom',
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.toggle.subscribe((data: any) => {
+              data.row.proy = data.toggle;
+              const cve = this.createPer(
+                data.row.proy,
+                data.row.val,
+                data.row.aut,
+                data.row.cerr,
+                data.row.can
+              );
+              console.log(cve);
+              this.update423(data, cve);
+            });
           },
-          val: {
-            title: 'VAL.',
-            width: '5%',
-            sort: false,
-            showAlways: true,
-            filter: false,
-            editable: false,
-            type: 'custom',
-            renderComponent: CheckboxElementComponent,
-            onComponentInitFunction:(instance: any) => {
-              instance.toggle.subscribe((data: any) => {
-                data.row.val = data.toggle;
-                const cve = this.createPer(
-                  data.row.proy,
-                  data.row.val,
-                  data.row.aut,
-                  data.row.cerr,
-                  data.row.can
-                );
-                console.log(cve);
-                this.update423(data.row, cve)
-              });
-            },
+        },
+        val: {
+          title: 'VAL.',
+          width: '5%',
+          sort: false,
+          showAlways: true,
+          filter: false,
+          editable: false,
+          type: 'custom',
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.toggle.subscribe((data: any) => {
+              data.row.val = data.toggle;
+              const cve = this.createPer(
+                data.row.proy,
+                data.row.val,
+                data.row.aut,
+                data.row.cerr,
+                data.row.can
+              );
+              console.log(cve);
+              this.update423(data, cve);
+            });
           },
-          aut: {
-            title: 'AUT.',
-            width: '5%',
-            sort: false,
-            showAlways: true,
-            filter: false,
-            editable: false,
-            type: 'custom',
-            renderComponent: CheckboxElementComponent,
-            onComponentInitFunction:(instance: any) => {
-              instance.toggle.subscribe((data: any) => {
-                data.row.aut = data.toggle;
-                const cve = this.createPer(
-                  data.row.proy,
-                  data.row.val,
-                  data.row.aut,
-                  data.row.cerr,
-                  data.row.can
-                );
-                console.log(cve);
-                this.update423(data.row, cve)
-              });
-            },
+        },
+        aut: {
+          title: 'AUT.',
+          width: '5%',
+          sort: false,
+          showAlways: true,
+          filter: false,
+          editable: false,
+          type: 'custom',
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.toggle.subscribe((data: any) => {
+              data.row.aut = data.toggle;
+              const cve = this.createPer(
+                data.row.proy,
+                data.row.val,
+                data.row.aut,
+                data.row.cerr,
+                data.row.can
+              );
+              console.log(cve);
+              this.update423(data, cve);
+            });
           },
-          cerr: {
-            title: 'CERR.',
-            width: '5%',
-            sort: false,
-            showAlways: true,
-            filter: false,
-            editable: false,
-            type: 'custom',
-            renderComponent: CheckboxElementComponent,
-            onComponentInitFunction:(instance: any) => {
-              instance.toggle.subscribe((data: any) => {
-                data.row.cerr = data.toggle;
-                const cve = this.createPer(
-                  data.row.proy,
-                  data.row.val,
-                  data.row.aut,
-                  data.row.cerr,
-                  data.row.can
-                );
-                console.log(cve);
-                this.update423(data.row, cve)
-              });
-            },
+        },
+        cerr: {
+          title: 'CERR.',
+          width: '5%',
+          sort: false,
+          showAlways: true,
+          filter: false,
+          editable: false,
+          type: 'custom',
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.toggle.subscribe((data: any) => {
+              data.row.cerr = data.toggle;
+              const cve = this.createPer(
+                data.row.proy,
+                data.row.val,
+                data.row.aut,
+                data.row.cerr,
+                data.row.can
+              );
+              console.log(cve);
+              this.update423(data, cve);
+            });
           },
-          can: {
-            title: 'CAN.',
-            width: '5%',
-            sort: false,
-            showAlways: true,
-            filter: false,
-            editable: false,
-            type: 'custom',
-            renderComponent: CheckboxElementComponent,
-            onComponentInitFunction:(instance: any) => {
-              instance.toggle.subscribe((data: any) => {
-                data.row.can = data.toggle;
-                const cve = this.createPer(
-                  data.row.proy,
-                  data.row.val,
-                  data.row.aut,
-                  data.row.cerr,
-                  data.row.can
-                );
-                console.log(cve);
-                this.update423(data.row, cve)
-              });
-            },
+        },
+        can: {
+          title: 'CAN.',
+          width: '5%',
+          sort: false,
+          showAlways: true,
+          filter: false,
+          editable: false,
+          type: 'custom',
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.toggle.subscribe((data: any) => {
+              data.row.can = data.toggle;
+              const cve = this.createPer(
+                data.row.proy,
+                data.row.val,
+                data.row.aut,
+                data.row.cerr,
+                data.row.can
+              );
+              console.log(cve);
+              this.update423(data, cve);
+            });
           },
+        },
       },
     };
     /* this.settings2.columns = PRIVILEGESUSER_COLUMNS; */
   }
 
   createPer(
-  proy: boolean,
-  val: boolean,
-  aut: boolean,
-  cerr: boolean,
-  can: boolean
-) {
-  let newCve: string = '';
-  try {
-    proy ? (newCve = 'P') : (newCve = 'PX');
-    val ? (newCve = `${newCve}-V`) : newCve = `${newCve}-VX`;
-    aut ? (newCve = `${newCve}-A`) : newCve = `${newCve}-AX`;
-    cerr ? (newCve = `${newCve}-C`) : newCve = `${newCve}-CX`;
-    can ? (newCve = `${newCve}-X`) : newCve = `${newCve}-XX`;
-  } catch (error) {
-  } finally {
-    return newCve;
+    proy: boolean,
+    val: boolean,
+    aut: boolean,
+    cerr: boolean,
+    can: boolean
+  ) {
+    let newCve: string = '';
+    try {
+      proy ? (newCve = 'P') : (newCve = 'PX');
+      val ? (newCve = `${newCve}-V`) : (newCve = `${newCve}-VX`);
+      aut ? (newCve = `${newCve}-A`) : (newCve = `${newCve}-AX`);
+      cerr ? (newCve = `${newCve}-C`) : (newCve = `${newCve}-CX`);
+      can ? (newCve = `${newCve}-X`) : (newCve = `${newCve}-XX`);
+    } catch (error) {
+    } finally {
+      return newCve;
+    }
   }
-}
 
-  update423(data: any, cve: string){
+  update423(generalData: any, cve: string) {
+    const data = generalData.row;
     const model: ITvaltables1 = {
       nmtable: 423,
       otkey: data.otKey,
@@ -248,13 +248,21 @@ export class MassiveConversionPermissionsComponent
       registerNumber: data.numRegister,
       abbreviation: data.abbreviation,
     };
-    console.log(model)
+    console.log(model);
     this.tvalTable1Service.updateTvalTable1(model).subscribe(
       res => {
         this.alert('success', 'Fue actualizado el dato de usuario', '');
       },
       err => {
-        this.alert('error', 'Se presentó un error inesperado', '');
+        this.tvalTable1Service.createTvalTable1(model).subscribe(
+          res => {
+            this.alert('success', 'Se generaron permisos para el usuario', '');
+          },
+          err => {
+            this.alert('error', 'Se presentó un error inesperado', '');
+            generalData.toggle = false;
+          }
+        );
       }
     );
   }
@@ -301,8 +309,6 @@ export class MassiveConversionPermissionsComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getValuesAll());
-  
-  
   }
 
   close() {
@@ -310,7 +316,7 @@ export class MassiveConversionPermissionsComponent
   }
 
   getValuesAll() {
-    this.loading = true
+    this.loading = true;
     let params = {
       ...this.params.getValue(),
     };

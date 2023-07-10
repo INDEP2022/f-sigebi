@@ -193,11 +193,6 @@
           </button>
         </div>
         <div class="col-md-4 righButtons">
-          <div [class]="loading || items.length === 0 ? 'disabled' : ''">
-            <app-columns-select
-              [(settings)]="settings1"
-              [defaultColumns]="5"></app-columns-select>
-          </div>
           <button
             class="btn btn-success btn-sm active"
             type="submit"
@@ -207,6 +202,12 @@
             <i class="bx bx-download float-icon"></i>
             Exportar Excel
           </button>
+          <div [class]="loading || items.length === 0 ? 'disabled' : ''">
+            <app-columns-select
+              [leftList]="true"
+              [(settings)]="settings1"
+              [defaultColumns]="5"></app-columns-select>
+          </div>
           <!-- <div
             [class]="
               loading || loadingExcel || items.length === 0 ? 'disabled' : ''

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { AuditEndpoints } from 'src/app/common/constants/endpoints/ms-audit-endpoint';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
@@ -24,7 +25,12 @@ export class SeraLogService extends HttpService {
   }
 
   getAllByRegisterNum(registerNum: string | number, params: _Params) {
-    const route = `sera-log/get-info-audit-by-register-number/${registerNum}`;
+    const route = `${AuditEndpoints.GetAllByRegisterNum} ${registerNum}`;
+    return this.get<IListResponse<IBinnacle>>(route, params);
+  }
+
+  getAllByRegisterCod(registerNum: string | number, params: _Params) {
+    const route = `${AuditEndpoints.GetAllByRegisterCod} ${registerNum}`;
     return this.get<IListResponse<IBinnacle>>(route, params);
   }
   getObtnObtenUnidadesResp(params: _Params) {

@@ -23,8 +23,7 @@
             [attr.class]="'table-responsive table-bordered'"
             [settings]="settings"
             [source]="allGoods"
-            (userRowSelect)="selectData($event)"
-            (delete)="deleteGood($event.data)">
+            (userRowSelect)="selectData($event)">
           </ng2-smart-table>
           <app-pagination [params]="params" [totalItems]="totalItems">
           </app-pagination>
@@ -72,31 +71,51 @@
         </form>
       </div>
       <div class="col-md-8 col-sm-12 col-xs-12">
-        <form
-          [formGroup]="form"
-          class="form-material"
-          *ngIf="radio.value != null">
+        <form [formGroup]="form" class="form-material">
           <div class="row" *ngIf="radio.value === 'A'">
             <app-warehouse-shared
               [form]="form"
               [showWarehouseType]="false"></app-warehouse-shared>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <button
+                    *ngIf="radio.value === 'A'"
+                    class="btn btn-info active"
+                    (click)="updateGoodsWareHouse()">
+                    Asignar Ubicación<i
+                      class="fas fa-fa-info bx-sm float-icon"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="row" *ngIf="radio.value === 'B'">
             <app-safe-shared [form]="form"></app-safe-shared>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <button
+                    *ngIf="radio.value === 'B'"
+                    class="btn btn-info active"
+                    (click)="updateGoodsVault()">
+                    Asignar Ubicación<i
+                      class="fas fa-fa-info bx-sm float-icon"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </form>
-        <div class="col-md-12 col-sm-12 col-xs-12">
+        <!-- <div class="col-md-12 col-sm-12 col-xs-12">
           <div class="d-flex justify-content-center">
             <div class="m-3">
-              <button
-                [disabled]="goods.length === 0"
-                class="btn btn-info active"
-                (click)="asigLocation()">
+              <button [disabled]="goods.length === 0" class="btn btn-info active" (click)="asigLocation()">
                 Asignar Ubicación<i class="fas fa-fa-info bx-sm float-icon"></i>
               </button>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

@@ -7,6 +7,7 @@
       <div class="row pt-4">
         <div class="col-md-6 text-wrap">
           <label> Documento a Firmar&#58;&nbsp; </label>
+          <br />
           <span class="fs-4">&nbsp;{{ nameFileDictation }}</span>
         </div>
         <div class="col-md-6">
@@ -25,6 +26,7 @@
               {{ hide ? 'Mostrar' : 'Ocultar' }}
               <i class="fa fa-eye" aria-hidden="true"></i>
             </button>
+            <span>Máximo 40 carácteres</span>
             <!-- <button
               class="btn btn-secondary btn-sm active"
               (click)="hide = !hide"
@@ -81,8 +83,8 @@
           (click)="confirm()"
           type="button"
           class="btn btn-primary active btn-sm">
-          <i class="bx bx-edit-alt"></i>
           Firmar
+          <i class="bx bx-edit-alt"></i>
         </button>
         <!-- <button
           class="btn btn-primary btn-sm active"
