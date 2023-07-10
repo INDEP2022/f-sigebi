@@ -182,6 +182,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   checkSelectTable: boolean = false;
   proceedingsConversionForm: FormGroup;
   actaRecepttionForm: FormGroup;
+  statusGoodForm: FormGroup;
   actaGoodForm: FormGroup;
   dataActa: LocalDataSource = new LocalDataSource();
   dataGoodTable: LocalDataSource = new LocalDataSource();
@@ -276,6 +277,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   ocultarPaginado: boolean = false;
   disabledBtnCerrar: boolean = true;
   disabledBtnActas: boolean = true;
+  statusGood_: any;
   constructor(
     private authService: AuthService,
     protected flyerService: FlyersService,
@@ -441,6 +443,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       // testigoTree: [null, [Validators.pattern(STRING_PATTERN)]],
       // testigoOIC: [null, [Validators.pattern(STRING_PATTERN)]],
     });
+
+    this.statusGoodForm = this.fb.group({
+      statusGood: [null],
+    });
   }
 
   private actaForm() {
@@ -472,6 +478,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   private goodForm() {
     this.actaGoodForm = this.fb.group({
       goodId: [null],
+      statusGood: [null],
     });
   }
 
@@ -716,7 +723,6 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-
     this.goodService.getByExpedient_(id, params).subscribe({
       next: data => {
         this.bienes = data.data;
@@ -729,12 +735,12 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             pNumberGood: item.id,
           };
           const di_dispo = await this.getStatusScreen(obj);
-          const diii = await this.getScreenStatus(item);
           item['di_disponible'] = di_dispo;
-          // const acta = await this.getActaGoodExp(item.id, item.fileNumber);
-          const acta = await this.getActaGood(item);
+          const acta = await this.getActaGoodExp(item.id, item.fileNumber);
+          // const acta = await this.getActaGood(item);
           console.log('acta', acta);
-          item.di_disponible = acta != null ? 'N' : 'S';
+          item['acta'] = acta;
+          item.di_disponible = acta != null ? 'N' : di_dispo;
         });
 
         Promise.all(result).then(item => {
@@ -756,11 +762,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.proceedingsService.getGetFactDbConvBien(good, exp).subscribe({
         next: async (state: any) => {
-          console.log('di_dispo', state);
+          console.log('acta', state);
           resolve(state.data);
         },
         error: () => {
-          resolve('N');
+          resolve(null);
         },
       });
     });
@@ -906,13 +912,21 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                   );
                   return;
                 }
-                await this.createDET();
+                // await this.createDET();
                 this.actasDefault.statusProceedings = 'CERRADA';
                 this.proceedingsDeliveryReceptionService
                   .editProceeding(this.actasDefault.id, this.actasDefault)
                   .subscribe({
                     next: async data => {
                       // this.loading = false;
+                      // let obj = {
+                      //   pGoodNumber: "",
+                      //   pStatusActa: "CERRADA",
+                      //   pVcScreen: "FACTDBCONVBIEN",
+                      //   pUser: this.authService.decodeToken().preferred_username
+                      // }
+
+                      // await this.updateGood(this.actasDefault.id);
 
                       this.alertInfo(
                         'success',
@@ -925,7 +939,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                       await this.getDetailProceedingsDevollution(
                         this.actasDefault.id
                       );
-                      this.initForm();
+                      // this.initForm();
                     },
                     error: error => {
                       this.alert(
@@ -965,47 +979,6 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         // 'El Usuario no está autorizado para cerrar acta',
         ''
       );
-    }
-  }
-
-  async createDET() {
-    if (this.dataRecepcion.length > 0) {
-      this.dataRecepcion.map(async good => {
-        let obj: any = {
-          numberProceedings: this.actasDefault.id,
-          numberGood: good.id,
-          amount: good.quantity,
-          received: null,
-          approvedXAdmon: null,
-          approvedDateXAdmon: null,
-          approvedUserXAdmon: null,
-          dateIndicatesUserApproval: null,
-          numberRegister: null,
-          reviewIndft: null,
-          correctIndft: null,
-          idftUser: null,
-          idftDate: null,
-          numDelegationIndft: null,
-          yearIndft: null,
-          monthIndft: null,
-          idftDateHc: null,
-          packageNumber: null,
-          exchangeValue: null,
-        };
-
-        await this.saveGoodActas(obj);
-
-        let obj_: any = {
-          id: good.id,
-          goodId: good.id,
-          status: await this.getScreenStatus(good),
-        };
-        // UPDATE BIENES
-        await this.updateGood(obj_);
-
-        // INSERT HISTORIC
-        await this.saveHistoric(obj_);
-      });
     }
   }
 
@@ -1149,9 +1122,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  selectData(event: { data: IGood; selected: any }) {
+  async selectData(event: { data: IGood; selected: any }) {
     this.selectedRow = event.data;
     console.log(this.selectedRow);
+    await this.getStatusGoodService(this.selectedRow.status);
     this.selectedGooods = event.selected;
     this.changeDetectorRef.detectChanges();
     // let params: IDetailProceedingsDeliveryReception = {
@@ -1734,7 +1708,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           return;
         } else {
           console.log('aaa', this.goods);
-          this.selectedGooods.forEach(async (good: any) => {
+
+          let result = this.selectedGooods.map(async (good: any) => {
             if (good.di_acta != null) {
               this.alert(
                 'warning',
@@ -1749,7 +1724,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
               return;
             } else {
               console.log('GOOD', good);
-
+              this.loading2 = true;
               if (!this.dataRecepcion.some((v: any) => v === good)) {
                 let indexGood = this.dataTableGood_.findIndex(
                   _good => _good.id == good.id
@@ -1758,32 +1733,23 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                 // if (indexGood != -1) {
                 this.dataTableGood_[indexGood].di_disponible = 'N';
 
+                await this.createDET(good);
                 // this.dataTableGood_ = this.bienes;
-                this.dataRecepcion.push(good);
-                this.dataRecepcion = [...this.dataRecepcion];
+                // this.dataRecepcion.push(good);
+                // this.dataRecepcion = [...this.dataRecepcion];
               }
             }
+          });
+
+          Promise.all(result).then(async item => {
+            this.getGoodsByStatus(this.fileNumber);
+            await this.getDetailProceedingsDevollution(this.actasDefault.id);
           });
         }
       }
     } else {
       this.alert('warning', 'Seleccione primero el bien a asignar.', '');
     }
-  }
-
-  async saveGoodActas(body: any) {
-    return new Promise((resolve, reject) => {
-      this.detailProceeDelRecService.addGoodToProceedings(body).subscribe({
-        next: data => {
-          // this.alert('success', 'Bien agregado correctamente', '');
-          resolve(true);
-        },
-        error: error => {
-          // this.authorityName = '';
-          resolve(false);
-        },
-      });
-    });
   }
 
   // OBTENER DATOS DE LA TABLA DET
@@ -1815,24 +1781,6 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     });
   }
 
-  async deleteDetailProceedingsDevollution(params: any) {
-    return new Promise((resolve, reject) => {
-      this.proceedingsService
-        .deleteDetailProceedingsDevollution(params)
-        .subscribe({
-          next: data => {
-            console.log('data', data);
-            this.loading2 = false;
-            resolve(true);
-          },
-          error: error => {
-            this.loading2 = false;
-            resolve(false);
-          },
-        });
-    });
-  }
-
   addAll() {
     if (this.actasDefault == null) {
       this.alert(
@@ -1851,27 +1799,31 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         return;
       } else {
         if (this.dataTableGood_.length > 0) {
-          this.dataTableGood_.forEach(_g => {
+          this.loading2 = true;
+          let result = this.dataTableGood_.map(_g => {
             console.log(_g);
 
             if (_g.di_disponible == 'N') {
-              // this.onLoadToast(
-              //   'warning',
-              //   `Nro. Bien: ${_g.id}`,
-              //   ''
-              // );
               return;
             }
 
             if (_g.di_disponible == 'S') {
               _g.di_disponible = 'N';
-              _g.name = false;
-              let valid = this.dataRecepcion.some(goodV => goodV == _g);
+              let valid = this.dataRecepcion.some(
+                goodV => goodV.numberGood == _g.id
+              );
 
+              console.log('valid', valid);
+              this.createDET(_g);
               if (!valid) {
-                this.dataRecepcion = [...this.dataRecepcion, _g];
+                // this.dataRecepcion = [...this.dataRecepcion, _g];
               }
             }
+          });
+
+          Promise.all(result).then(async item => {
+            this.getGoodsByStatus(this.fileNumber);
+            await this.getDetailProceedingsDevollution(this.actasDefault.id);
           });
         }
       }
@@ -1902,19 +1854,28 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         );
         return;
       } else {
+        this.loading2 = true;
         if (this.selectedGooodsValid.length > 0) {
           // this.goods = this.goods.concat(this.selectedGooodsValid);
-          this.selectedGooodsValid.forEach(good => {
+          let result = this.selectedGooodsValid.map(async good => {
             console.log('good', good);
             this.dataRecepcion = this.dataRecepcion.filter(
               (_good: any) => _good.id != good.id
             );
-            let index = this.dataTableGood_.findIndex(g => g.id === good.id);
+            let index = this.dataTableGood_.findIndex(
+              g => g.id === good.numberGood
+            );
             if (index != -1) {
               this.dataTableGood_[index].di_disponible = 'S';
+              this.dataTableGood_[index].acta = null;
             }
-
+            await this.deleteDET(good);
             // this.selectedGooods = [];
+          });
+
+          Promise.all(result).then(async item => {
+            this.getGoodsByStatus(this.fileNumber);
+            await this.getDetailProceedingsDevollution(this.actasDefault.id);
           });
           this.selectedGooodsValid = [];
         }
@@ -1966,6 +1927,112 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.selectedGooodsValid = event.selected;
   }
 
+  async createDET(good: any) {
+    // if (this.dataRecepcion.length > 0) {
+    // let result = this.dataRecepcion.map(async good => {
+    let obj: any = {
+      numberProceedings: this.actasDefault.id,
+      numberGood: good.id,
+      amount: good.quantity,
+      received: null,
+      approvedXAdmon: null,
+      approvedDateXAdmon: null,
+      approvedUserXAdmon: null,
+      dateIndicatesUserApproval: null,
+      numberRegister: null,
+      reviewIndft: null,
+      correctIndft: null,
+      idftUser: null,
+      idftDate: null,
+      numDelegationIndft: null,
+      yearIndft: null,
+      monthIndft: null,
+      idftDateHc: null,
+      packageNumber: null,
+      exchangeValue: null,
+    };
+
+    await this.saveGoodActas(obj);
+
+    // let obj_: any = {
+    //   id: good.id,
+    //   goodId: good.id,
+    //   status: await this.getScreenStatus(good),
+    // };
+    // // UPDATE BIENES
+    // await this.updateGood(obj_);
+
+    // // INSERT HISTORIC
+    // await this.saveHistoric(obj_);
+    // });
+
+    // }
+  }
+
+  async saveGoodActas(body: any) {
+    return new Promise((resolve, reject) => {
+      this.detailProceeDelRecService.addGoodToProceedings(body).subscribe({
+        next: data => {
+          // this.alert('success', 'Bien agregado correctamente', '');
+          resolve(true);
+        },
+        error: error => {
+          // this.authorityName = '';
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  async deleteDET(good: any) {
+    // if (this.selectedGooodsValid.length > 0) {
+    //   this.loading2 = true;
+    //   let result = this.selectedGooodsValid.map(async good => {
+
+    const valid: any = await this.getGoodsDelete(good.numberGood);
+    if (valid != null) {
+      let obj: any = {
+        numberGood: good.numberGood,
+        numberProceedings: this.actasDefault.id,
+      };
+
+      await this.deleteDetailProcee(obj);
+    }
+
+    // let obj_: any = {
+    //   id: good.id,
+    //   goodId: good.id,
+    //   status: await this.getScreenStatus(good),
+    // };
+    // // UPDATE BIENES
+    // await this.updateGood(obj_);
+
+    // // INSERT HISTORIC
+    // await this.saveHistoric(obj_);
+    //   });
+
+    //   Promise.all(result).then(async (item) => {
+    //     await this.getDetailProceedingsDevollution(this.actasDefault.id);
+    //   })
+    // }
+  }
+
+  async deleteDetailProcee(params: any) {
+    return new Promise((resolve, reject) => {
+      this.detailProceeDelRecService.deleteDetailProcee(params).subscribe({
+        next: data => {
+          console.log('data', data);
+          // this.loading2 = false;
+          resolve(true);
+        },
+        error: error => {
+          // this.loading2 = false;
+          resolve(false);
+        },
+      });
+    });
+  }
+
   async saveHistoric(good: any) {
     const historyGood: IHistoryGood = {
       propertyNum: good.id,
@@ -1988,12 +2055,98 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     });
   }
 
-  // SELECT estatus_final
-  //   FROM   bienes    bie,
-  //           estatus_x_pantalla exp
-  //   WHERE  bie.estatus = exp.estatus
-  //     AND  exp.cve_pantalla = vc_pantalla
-  //     AND  bie.no_bien = :blk_det.no_bien
+  async getGoodsDelete(id: any) {
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    return new Promise((resolve, reject) => {
+      this.goodService.getByExpedient_(this.fileNumber, params).subscribe({
+        next: data => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getStatusGoodService(status: any) {
+    this.statusGoodService.getById(status).subscribe({
+      next: async (resp: any) => {
+        console.log('resp.data', resp);
+        this.statusGood_ = resp.description;
+        // this.statusGoodForm.get('statusGood').setValue(resp.description)
+      },
+      error: err => {
+        this.statusGood_ = '';
+        // this.statusGoodForm.get('statusGood').setValue('')
+      },
+    });
+  }
+
+  agregarActa() {
+    console.log(this.authService.decodeToken());
+    // IF: blk_act.estatus_acta IS NULL THEN
+    // : estatus_acta:= 'ABIERTA';
+    // END IF;
+    //     --: fec_elaboracion:= sysdate;
+    // : elaboro:= : toolbar_usuario;
+    // : tipo_acta:= 'CONVERSION';
+    // : NO_DELEGACION_1:= : TOOLBAR_NO_DELEGACION;
+    // : fec_captura:= sysdate;
+    let obj: any = {
+      keysProceedings: null,
+      elaborationDate: new Date(),
+      datePhysicalReception: null,
+      address: null,
+      statusProceedings: 'ABIERTA',
+      elaborate: this.authService.decodeToken().preferred_username,
+      numFile: this.fileNumber,
+      witness1: null,
+      witness2: null,
+      typeProceedings: 'CONVERSION',
+      dateElaborationReceipt: null,
+      dateDeliveryGood: null,
+      responsible: null,
+      destructionMethod: null,
+      observations: null,
+      approvedXAdmon: null,
+      approvalDateXAdmon: null,
+      approvalUserXAdmon: null,
+      numRegister: null,
+      captureDate: new Date(),
+      numDelegation1: this.authService.decodeToken().delegacionreg,
+      numDelegation2: null,
+      identifier: null,
+      label: null,
+      universalFolio: null,
+      numeraryFolio: null,
+      numTransfer: null,
+      idTypeProceedings: null,
+      receiptKey: null,
+      comptrollerWitness: this.witnessOic,
+      numRequest: null,
+      closeDate: null,
+      maxDate: null,
+      indFulfilled: null,
+      dateCaptureHc: null,
+      dateCloseHc: null,
+      dateMaxHc: null,
+      receiveBy: null,
+      affair: null,
+      numDelegation_1: null,
+      numDelegation_2: null,
+      numDelegation1Description: null,
+      numDelegation2Description: null,
+      file: this.fileNumber,
+    };
+    this.proceedingsDeliveryReceptionService
+      .createDeliveryReception(obj)
+      .subscribe({
+        next: (data: any) => {},
+        error: error => {},
+      });
+  }
 }
 
 export interface IParamsProceedingsParamsActasConvertion {
