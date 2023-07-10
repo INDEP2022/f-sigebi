@@ -1606,6 +1606,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.packageGoodService.insertPaqDestionarioEnc(model).subscribe(
       res => {
         console.log(res);
+        this.noPackage.setValue(res)
         this.alert('success', 'Se creo nuevo paquete', '');
       },
       err => {
