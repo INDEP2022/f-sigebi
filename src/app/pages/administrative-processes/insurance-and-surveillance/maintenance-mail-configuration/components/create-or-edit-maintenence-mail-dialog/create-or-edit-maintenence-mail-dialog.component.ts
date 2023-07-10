@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IVigEmailSend } from 'src/app/core/models/ms-email/email-model';
@@ -40,17 +40,18 @@ export class CreateOrEditEmailMaintenencekDialogComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      id: [],
-      emailSend: [],
-      nameSend: [],
-      postSend: [null],
-      status: [],
+      id: [null, [Validators.required]],
+      emailSend: [null, [Validators.required]],
+      nameSend: [null, [Validators.required]],
+      postSend: [null, [Validators.required]],
+      status: [null, [Validators.required]],
     });
     if (this.valEdit === true) {
       this.edit = true;
       console.log('VAINA', this.emailSend);
       //console.log(this.state);
       this.form.patchValue(this.emailSend);
+      this.form.controls['id'].disable();
     }
   }
 

@@ -63,7 +63,10 @@
               class="d-none"
               accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
               (change)="onFileChange($event)" />
-            <button type="button" class="btn btn-sm btn-secondary active m-2">
+            <button
+              type="button"
+              class="btn btn-sm btn-secondary active m-2"
+              (click)="openForm()">
               ENVIAR
             </button>
           </div>
@@ -73,7 +76,7 @@
           <div class="col-md-12">
             <div [class]="loading ? 'table-loading' : ''">
               <ng2-smart-table
-                [attr.class]="'table-bordered'"
+                [attr.class]="'table-bordered table-responsive'"
                 [settings]="settings"
                 [source]="dataTabla">
               </ng2-smart-table>
@@ -92,16 +95,23 @@
               <form-field
                 [control]="form.get('currencyType')"
                 label="Tipo moneda de cuenta">
-                <input
-                  type="string"
-                  class="form-control"
-                  formControlName="currencyType"
-                  min="1" />
+                <select class="form-control" formControlName="currencyType">
+                  <option [value]="1">MN</option>
+                  <option [value]="0">USD</option>
+                </select>
               </form-field>
             </div>
             <div style="margin-top: 30px">
-              <form-field [control]="form.get('delegation')" label="Delegación">
-                <input formControlName="delegation" class="form-control" />
+              <form-field [control]="form.get('delegation')">
+                <ngx-select
+                  [form]="form"
+                  [data]="itemsDelegation"
+                  label="Delegación"
+                  value="id"
+                  bindLabel="description"
+                  (fetchItems)="getDelegations($event)"
+                  control="delegation">
+                </ngx-select>
               </form-field>
             </div>
             <div style="margin-top: 30px">
@@ -118,7 +128,11 @@
               <form-field
                 [control]="form.get('depositDate')"
                 label="Fecha deposito">
-                <input formControlName="depositDate" class="form-control" />
+                <input
+                  formControlName="depositDate"
+                  class="form-control"
+                  bsDatepicker
+                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
               </form-field>
             </div>
           </div>
