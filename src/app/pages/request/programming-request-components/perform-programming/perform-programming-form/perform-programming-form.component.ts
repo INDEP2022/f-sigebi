@@ -1751,7 +1751,7 @@ export class PerformProgrammingFormComponent
 
   removeGoodTrans(item: IGood) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Desea eliminar el bien de transportable?'
     ).then(async question => {
@@ -1801,7 +1801,7 @@ export class PerformProgrammingFormComponent
 
   removeGoodGuard(item: IGood) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Desea eliminar el bien de resguardo?'
     ).then(async question => {
@@ -1833,7 +1833,7 @@ export class PerformProgrammingFormComponent
 
   removeGoodWarehouse(item: IGood) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Desea eliminar el bien de almacén?'
     ).then(async question => {

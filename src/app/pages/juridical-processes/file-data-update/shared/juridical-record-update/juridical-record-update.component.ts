@@ -2341,6 +2341,10 @@ export class JuridicalRecordUpdateComponent
     params['CVE_OFICIO_EXTERNO'] = this.formControls.officeExternalKey.value;
     this.fileUpdateService.postFindDescriptionOpinion(params).subscribe({
       next: (data: { data: any[]; count: number }) => {
+        //order for id
+        data.data.sort((a, b) => {
+          return a.id - b.id;
+        });
         this.dictums = new DefaultSelect(data.data, data.count);
         this.isLoadingDictums = false;
       },
