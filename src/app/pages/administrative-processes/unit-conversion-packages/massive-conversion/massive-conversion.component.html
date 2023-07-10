@@ -96,6 +96,9 @@
       <div class="row mb-3 mt-3">
         <!--Actions-->
         <div class="col text-center">
+          <button class="btn btn-danger btn-sm active mr-2" (click)="clear()">
+            Limpiar <i class="fas fa-eraser"></i>
+          </button>
           <button
             [disabled]="!validaButton.PB_VALIDA"
             class="btn btn-primary btn-sm active mr-3"
@@ -361,7 +364,7 @@
         </button>
         <button
           (click)="viewModal('error')"
-          [disabled]="widthErrors"
+          [disabled]="widthErrors || dataErrors.length === 0"
           class="btn btn-primary btn-sm active mr-3">
           Ver Error
         </button>

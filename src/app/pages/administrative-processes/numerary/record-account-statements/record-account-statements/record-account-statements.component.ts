@@ -58,6 +58,7 @@ export class RecordAccountStatementsComponent
   variableOf: Date;
   variableAt: Date;
   bankCode: string;
+  checks: any;
 
   constructor(
     private fb: FormBuilder,
@@ -71,7 +72,7 @@ export class RecordAccountStatementsComponent
     this.settings.columns = RECORDS_ACCOUNT_STATEMENTS_COLUMNS;
     this.settings.hideSubHeader = false;
     this.settings.actions.add = false;
-    this.settings.actions.delete = false;
+    this.settings.actions.delete = true;
     this.settings.actions.edit = false;
   }
 
@@ -86,22 +87,37 @@ export class RecordAccountStatementsComponent
       description: [null, Validators.nullValidator],
       balanceOf: [null, Validators.nullValidator],
       balanceAt: [null, Validators.nullValidator],
+      balance: [null, Validators.nullValidator],
     });
   }
 
   ngOnInit(): void {
     this.prepareForm();
     this.searchBanks();
+    this.searchCheck();
     this.dataAccount
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
+          console.log('filter');
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
+
+            // filter.field == 'dateMotion' ||
+            // filter.field == 'deposit' ||
+            // filter.field == 'withdrawal' ||
+            // filter.field == 'cveConcept'
+            //   ? (searchFilter = SearchFilter.EQ)
+            //   : (searchFilter = SearchFilter.ILIKE);
+            // if (filter.search !== '') {
+            //   this.columnFilters = filters;
+            // } else {
+            //   delete this.columnFilters;
+            // }
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'dateMotion':
@@ -121,15 +137,13 @@ export class RecordAccountStatementsComponent
                 break;
             }
             if (filter.search !== '') {
-              console.log(
-                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
-              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
           this.params.value.page = 1;
+          this.params = this.pageFilter(this.params);
           if (this.dataAccountPaginated) {
             this.searchDataAccount(this.dataAccountPaginated);
           }
@@ -142,9 +156,9 @@ export class RecordAccountStatementsComponent
     });
   }
 
-  // Trae la lista de bancos
+  // Trae la lista de bancos por defecto
   searchBanks() {
-    this.dataAccount = new LocalDataSource();
+    // this.dataAccount = new LocalDataSource();
     this.recordAccountStatementsService
       .getAll(this.params.getValue())
       .subscribe({
@@ -159,8 +173,9 @@ export class RecordAccountStatementsComponent
       });
   }
 
+  // Permite buscar los bancos por nombre
   onSearchName(inputElement: any) {
-    this.dataAccount = new LocalDataSource();
+    // this.dataAccount = new LocalDataSource();
     const name = inputElement.value;
     setTimeout(() => {
       this.recordAccountStatementsService
@@ -189,7 +204,7 @@ export class RecordAccountStatementsComponent
     this.totalItems = 0;
     this.cleandInfoDate();
     this.bankAccountSelect = new DefaultSelect();
-    this.dataAccount = new LocalDataSource();
+    // this.dataAccount = new LocalDataSource();
     if (value && value.bankCode) {
       const bankCode = value.bankCode;
       this.searchBankAccount(bankCode);
@@ -204,7 +219,7 @@ export class RecordAccountStatementsComponent
     this.recordAccountStatementsAccountsService
       .getById(bankCode, this.params.getValue())
       .subscribe({
-        next: (response: { data: any[]; count: number }) => {
+        next: response => {
           this.bankAccountSelect = new DefaultSelect(
             response.data,
             response.count
@@ -223,14 +238,13 @@ export class RecordAccountStatementsComponent
   }
 
   onSearchAccount(inputElement: any) {
-    this.dataAccount = new LocalDataSource();
+    // this.dataAccount = new LocalDataSource();
     const account = inputElement.value;
-
     setTimeout(() => {
       this.recordAccountStatementsAccountsService
         .getById2(this.bankCode, account, this.params.getValue())
         .subscribe({
-          next: (response: { data: any[]; count: number }) => {
+          next: response => {
             const filteredAccounts = response.data.filter(item =>
               item.accountNumber.includes(account)
             );
@@ -257,7 +271,7 @@ export class RecordAccountStatementsComponent
     this.form.get('description').reset();
     this.totalItems = 0;
     this.cleandInfoDate();
-    this.dataAccount = new LocalDataSource();
+    // this.dataAccount = new LocalDataSource();
     const accountNumber = value.accountNumber;
     this.accountDate = value.accountNumber;
     this.searchDataAccount(accountNumber);
@@ -280,6 +294,7 @@ export class RecordAccountStatementsComponent
     this.form.get('currency').setValue(currency);
   }
 
+  // Permite buscar la descripcion de la moneda
   searchCurrent(currency: string) {
     this.tvalTable5Service.getCurrent(currency).subscribe({
       next: response => {
@@ -308,7 +323,7 @@ export class RecordAccountStatementsComponent
       .getAccountBalanceDate(model)
       .subscribe({
         next: response => {
-          this.balance = response.result + ' ' + this.current;
+          this.balance = response.result + ' ' + this.current.replace(/'/g, '');
         },
         error: error => {
           this.alert('warning', 'Error', 'No es posible generar el saldo');
@@ -319,14 +334,19 @@ export class RecordAccountStatementsComponent
   // Establece los valores de movimientos de la cuenta seleccionada a la tabla
   searchDataAccount(accountNumber: number) {
     this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
     this.dataAccountPaginated = accountNumber;
     this.recordAccountStatementsAccountsService
-      .getDataAccount(accountNumber, this.params.getValue())
+      .getDataAccount(accountNumber, params)
       .subscribe({
         next: response => {
           this.loading = true;
-          const dataSource = new LocalDataSource(response.data);
-          this.dataAccount = dataSource;
+          const data = response.data;
+          this.dataAccount.load(data);
+          this.dataAccount.refresh();
           this.totalItems = response.count;
           this.loading = false;
         },
@@ -358,7 +378,7 @@ export class RecordAccountStatementsComponent
       });
   }
 
-  //Abre el modal de transferencia de saldos
+  // Abre el modal de transferencia de saldos
   openModal(movimentAccount: IRecordAccountStatements) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
@@ -373,6 +393,90 @@ export class RecordAccountStatementsComponent
       },
     };
     this.modalService.show(RecordAccountStatementsModalComponent, modalConfig);
+  }
+
+  searchCheck() {
+    this.recordAccountStatementsAccountsService
+      .getChecks(this.params.getValue())
+      .subscribe({
+        next: response => {
+          (this.checks = response.data), response.count;
+          this.loading = false;
+        },
+        error: (err: any) => {
+          this.loading = false;
+          this.alert('warning', 'No existen cheques devueltos', ``);
+        },
+      });
+  }
+
+  showDeleteAlert(movimentAccount: IRecordAccountStatements) {
+    const modal = {
+      numberAccount: movimentAccount.numberAccount,
+      numberMotion: movimentAccount.numberMotion,
+    };
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este movimiento?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(movimentAccount, modal);
+      }
+    });
+  }
+
+  delete(movimentAccount: IRecordAccountStatements, modal: any) {
+    if (
+      movimentAccount.numberMotionTransfer !== null ||
+      movimentAccount.numberReturnPayCheck !== null ||
+      movimentAccount.numberGood !== null ||
+      movimentAccount.genderTransfer !== null
+    ) {
+      if (movimentAccount.numberMotionTransfer !== null) {
+        this.alert(
+          'warning',
+          'No se puede eliminar el movimiento porque proviene de una transferencia',
+          ``
+        );
+      }
+      if (movimentAccount.numberReturnPayCheck !== null) {
+        this.alert(
+          'warning',
+          'No se puede eliminar el movimiento porque proviene de un cobro de cheque debido a una devolución',
+          ``
+        );
+      }
+      if (movimentAccount.numberGood !== null) {
+        this.alert(
+          'warning',
+          'No se puede eliminar el movimiento porque está asociado a un bien',
+          ``
+        );
+      }
+    }
+
+    const chequeEncontrado = this.checks.find(
+      (cheque: { accountOriginDepositNumber: number }) =>
+        cheque.accountOriginDepositNumber === movimentAccount.numberMotion
+    );
+
+    if (chequeEncontrado) {
+      this.alert(
+        'warning',
+        'No se puede eliminar el movimiento mientras tenga devoluciones registradas',
+        ``
+      );
+    } else {
+      this.recordAccountStatementsAccountsService.remove(modal).subscribe({
+        next: response => {
+          this.alert('success', 'Movimiento eliminado', '');
+        },
+        error: err => {
+          this.alert('error', 'No es posible eliminar el movimiento', '');
+        },
+      });
+    }
   }
 
   cleandInfoAll() {
