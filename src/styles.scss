@@ -214,14 +214,15 @@ $checkbox_image: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' v
   border-color: #9d2449;
 }
 
-input[type='checkbox'],
-input[type='checkbox']:checked {
+input[type=checkbox],
+input[type=checkbox]:checked {
   appearance: none;
   -webkit-appearance: none;
   -o-appearance: none;
+  border: 1px solid #ccc;
 }
 
-input[type='checkbox'] {
+input[type=checkbox] {
   border-radius: 0 !important;
   &:checked {
     background-image: url($checkbox_image);
@@ -230,7 +231,7 @@ input[type='checkbox'] {
   }
 }
 
-input[type='checkbox'] {
+input[type=checkbox] {
   border-radius: 0 !important;
   &:focus {
     outline: none !important;
