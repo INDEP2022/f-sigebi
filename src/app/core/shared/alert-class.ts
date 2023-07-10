@@ -28,8 +28,6 @@ export class SweetalertModel implements SweetAlertOptions {
   html?: string;
   timerProgressBar: boolean;
   position: SweetAlertPosition;
-  backdrop: string; //Propiedad para cerrar el alert cuando se presione en "Cancelar"
-  allowOutsideClick: boolean; //Propiedad para cerrar el alert cuando se presione en "Cancelar"
   constructor() {
     this.icon = 'success';
     this.toast = false;
@@ -88,29 +86,6 @@ export class ClassWidthAlert {
     cancelButtonText ? (sweetalert.cancelButtonText = cancelButtonText) : '';
     sweetalert.showConfirmButton = true;
     sweetalert.showCancelButton = true;
-
-    // Configurar SweetAlert para deshabilitar el cierre al hacer clic fuera del modal
-    sweetalert.backdrop = 'static';
-    sweetalert.allowOutsideClick = false;
-
     return Swal.fire(sweetalert);
   }
-
-  // protected alertQuestion(
-  //   icon: SweetAlertIcon,
-  //   title: string,
-  //   text: string,
-  //   confirmButtonText?: string,
-  //   cancelButtonText: string = 'Cancelar'
-  // ): Promise<SweetAlertResult> {
-  //   let sweetalert = new SweetalertModel();
-  //   sweetalert.title = title;
-  //   sweetalert.text = text;
-  //   sweetalert.icon = icon;
-  //   confirmButtonText ? (sweetalert.confirmButtonText = confirmButtonText) : '';
-  //   cancelButtonText ? (sweetalert.cancelButtonText = cancelButtonText) : '';
-  //   sweetalert.showConfirmButton = true;
-  //   sweetalert.showCancelButton = true;
-  //   return Swal.fire(sweetalert);
-  // }
 }
