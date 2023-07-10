@@ -2644,13 +2644,14 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
 
   getPicturesFromFolio(document: IDocuments) {
     let folio = document.id;
-    if (document.id != this.dictationData.folioUniversal) {
-      folio = this.dictationData.folioUniversal;
-    }
+    // if (document.id != this.dictationData.folioUniversal) {
+    // if (document.id) {
+    //   folio = this.dictationData.folioUniversal;
+    // }
     if (document.associateUniversalFolio) {
       folio = document.associateUniversalFolio;
     }
-    if (!folio) {
+    if (!folio && this.folio) {
       folio = this.folio;
     }
     console.log('PICTURES ', folio, document);

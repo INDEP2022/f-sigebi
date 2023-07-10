@@ -12,14 +12,26 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { GoodsProcessValidationExtdomRoutingModule } from './goods-process-validation-extdom-routing.module';
 
 /** COMPONENTS IMPORTS */
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { GoodsProcessValidationExtdomComponent } from './goods-process-validation-extdom/goods-process-validation-extdom.component';
+import { HistoricalGoodsExtDomComponent } from './historical-goods-extdom/historical-goods-extdom.component';
+import { ModalScanningFoilTableHistoricalGoodsComponent } from './modal-scanning-foil/modal-scanning-foil.component';
+import { ScanningFoilHistoricalGoodsExtDomComponent } from './scanning-foil/scanning-foil.component';
 
 @NgModule({
-  declarations: [GoodsProcessValidationExtdomComponent],
+  declarations: [
+    GoodsProcessValidationExtdomComponent,
+    HistoricalGoodsExtDomComponent,
+    ModalScanningFoilTableHistoricalGoodsComponent,
+    ScanningFoilHistoricalGoodsExtDomComponent,
+  ],
   imports: [
     CommonModule,
     GoodsProcessValidationExtdomRoutingModule,
     SharedModule,
+    FormLoaderComponent,
+    TooltipModule.forRoot(),
   ],
 })
 export class GoodsProcessValidationExtdomModule {}
