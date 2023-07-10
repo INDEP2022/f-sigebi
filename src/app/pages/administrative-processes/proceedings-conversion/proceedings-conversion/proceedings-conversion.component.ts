@@ -740,7 +740,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           // const acta = await this.getActaGood(item);
           console.log('acta', acta);
           item['acta'] = acta;
-          // item.di_disponible = acta != null ? 'N' : di_dispo;
+          item.di_disponible = acta != null ? 'N' : di_dispo;
         });
 
         Promise.all(result).then(item => {
