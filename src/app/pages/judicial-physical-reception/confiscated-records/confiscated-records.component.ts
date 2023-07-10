@@ -2811,7 +2811,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                       this.alert(
                                         'success',
                                         'Acta cerrada',
-                                        'El acta fue cerrada'
+                                        '' //Era repetivo el msj
                                       );
                                       this.loading = false;
                                       this.inputsInProceedingClose();
@@ -2820,7 +2820,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                                       console.log(err);
                                       this.alert(
                                         'error',
-                                        'Ocurrió un error',
+                                        'Ocurrió un error', //Son repetitivos los msj de alerta, solo mostrar uno en general, doble "Ocurrió un error"
                                         'Ocurrió un error inesperado que no permitió cerrar el acta'
                                       );
                                       this.loading = false;

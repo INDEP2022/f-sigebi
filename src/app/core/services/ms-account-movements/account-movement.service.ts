@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { AccountmvmntEndpoint } from 'src/app/common/constants/endpoints/accountmvmnt-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import {
@@ -7,16 +8,13 @@ import {
   ICuentaInsert,
 } from 'src/app/core/models/catalogs/bank-modelo-type-cuentas';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IAccountBank } from '../../models/catalogs/bank-account.model';
 import {
   IAccountMovement,
   INumeraryTransfer,
   IUserChecks,
 } from '../../models/ms-account-movements/account-movement.model';
-import { AccountmvmntEndpoint } from 'src/app/common/constants/endpoints/accountmvmnt-endpoint';
-import { IDelegation } from '../../models/catalogs/delegation.model';
-import { DelegationsEndpoints } from 'src/app/common/constants/endpoints/delegation-endpoints';
 import { IDetailTransfer } from '../../models/ms-accountmvmnt/accountmvmnt.model';
-import { IAccountBank } from '../../models/catalogs/bank-account.model';
 
 @Injectable({
   providedIn: 'root',
@@ -121,7 +119,7 @@ export class AccountMovementService extends HttpService {
       params
     );
   }
-  
+
   getByReportDataToTurn(reporte: number) {
     return this.get<IListResponse<INumeraryTransfer>>(
       `${AccountmvmntEndpoint.getNoReport}?filter.reportDevNumber=$eq:${reporte}`
@@ -141,12 +139,8 @@ export class AccountMovementService extends HttpService {
   }
 
   getDataFile(request: any) {
-    return this.post<any>(
-      AccountmvmntEndpoint.getDataFile,
-      request
-    );
+    return this.post<any>(AccountmvmntEndpoint.getDataFile, request);
   }
-
 
   getAccountMovements(
     params: ListParams
@@ -157,7 +151,6 @@ export class AccountMovementService extends HttpService {
   postMassNumeraryGenerate(body: any) {
     return this.post('aplication/massNumeraryGenerate', body);
   }
-
 }
 
 //``
