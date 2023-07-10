@@ -1404,7 +1404,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
   actasDefault: any = null;
   searchActas(actas?: string) {
-    actas = this.cveActa;
+    actas = this.fileNumber.toString();
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       actas,

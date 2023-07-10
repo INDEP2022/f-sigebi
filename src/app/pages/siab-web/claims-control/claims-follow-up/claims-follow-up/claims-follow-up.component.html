@@ -1,10 +1,10 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div header>
     <div class="ch-content">
       <h5 class="title">Siniestros Seguimiento</h5>
       <div class="col-md-5 buttons">
         <app-columns-select [(settings)]="settings"></app-columns-select>
-        <div>
+        <div *ngIf="newSiniester">
           <button (click)="add()" class="btn btn-primary active btn-sm ml-3">
             Nuevo
           </button>
@@ -15,7 +15,6 @@
   <div body>
     <form [formGroup]="claimsFollowUpForm" class="form-material">
       <div class="row margin-input">
-        <div class="col-md-2"></div>
         <div class="col-md-3">
           <form-field
             label="Numero de Bien"
@@ -26,27 +25,41 @@
               type="number" />
           </form-field>
         </div>
+        <div class="col-md-3">
+          <button
+            class="btn btn-primary btn-sm active m-3"
+            (click)="validGood()">
+            Validar el Bien
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-12">
+          <form-field
+            [control]="claimsFollowUpForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="description"></textarea>
+          </form-field>
+        </div>
       </div>
     </form>
-    <div class="row margin-input">
-      <div class="col-md-3"></div>
-      <div class="col-md-3">
-        <button type="button" class="btn btn-primary active">
-          Validar el Bien
-        </button>
-      </div>
-    </div>
     <br />
     <div class="row pt-4">
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="lawyers"
-            (edit)="edit($event.data)"
-            (delete)="delete($event.data)">
-          </ng2-smart-table>
+        <div class="col-md-12 table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="lawyers"
+              (edit)="edit($event.data)"
+              (delete)="delete($event.data)">
+            </ng2-smart-table>
+          </div>
         </div>
       </div>
       <app-pagination

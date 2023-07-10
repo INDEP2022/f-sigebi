@@ -1,95 +1,100 @@
 export const CLAIMSFOLLOWUP_COLUMNS = {
-  idSinister: {
+  idsiniestro: {
     title: 'Id Siniestro',
     type: 'number',
     sort: false,
   },
-  noGood: {
+  nobien: {
     title: 'No.Bien',
     type: 'number',
     sort: false,
   },
-  sinister: {
+  siniestro: {
     title: 'Siniestro',
     type: 'string',
     sort: false,
   },
-  affectedPolicy: {
+  polizaafectada: {
     title: 'Poliza afectada',
     type: 'string',
     sort: false,
   },
-  typeSiniester: {
+  tiposiniestro: {
     title: 'Tipo Siniestro',
     type: 'string',
     sort: false,
   },
-  wellAffected: {
+  detallebienoafectadas: {
     title: 'Det.Bien o Afectadas',
     type: 'string',
     sort: false,
   },
-  dateSiniester: {
+  fechasiniestro: {
     title: 'Fecha Siniestro',
     type: 'string',
     sort: false,
   },
-  dateRepInsurance: {
+  fechareporteaseguradora: {
     title: 'Fec.Rep.Aseguradora',
     type: 'string',
     sort: false,
   },
-  fecRepCabi: {
+  fechareportecabi: {
     title: 'Fec.Rep.Cabi',
     type: 'string',
     sort: false,
   },
-  unitAdminUser: {
+  unidadadminusuaria: {
     title: 'Unidad Admin Usuario',
     type: 'string',
     sort: false,
   },
-  reclaimedAmount: {
+  montoreclamado: {
     title: 'Monto reclamado',
     sort: false,
   },
-  adjustedAmount: {
+  montoajustado: {
     title: 'Monto ajustado',
     type: 'string',
     sort: false,
   },
-  deductible: {
+  deducible: {
     title: 'Deducible',
     type: 'string',
     sort: false,
   },
-  coasSecure: {
+  coaseguro: {
     title: 'Coas Seguro',
     type: 'string',
     sort: false,
   },
-  compensationAmount: {
+  montoindemnizado: {
     title: 'Monto Indemnización',
     type: 'string',
     sort: false,
   },
-  formConclusion: {
+  formaconclusion: {
     title: 'Forma conclusión',
     type: 'string',
     sort: false,
   },
-  claimLetter: {
+  cartareclamacion: {
     title: 'Carta Reclamación',
     type: 'string',
     sort: false,
   },
-  entryOrder: {
+  ordendeingreso: {
     title: 'Orden de Ingreso',
     type: 'string',
     sort: false,
   },
-  firstSecondLayer: {
+  primersegundacapa: {
     title: 'Primer Segunda Capa',
+    type: 'string',
+    sort: false,
+  },
+  estatus: {
+    title: 'Estatus',
     type: 'string',
     sort: false,
   },
@@ -98,34 +103,29 @@ export const CLAIMSFOLLOWUP_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  officialDocumentConclusion: {
-    title: 'Doc.Oficio minuta conclusion',
-    type: 'string',
-    sort: false,
-  },
+  // officialDocumentConclusion: {
+  //   title: 'Doc.Oficio minuta conclusion',
+  //   type: 'string',
+  //   sort: false,
+  // },
   officeMail: {
     title: 'Ver oficio correo',
     type: 'string',
     sort: false,
   },
-  docOfficeMail: {
-    title: 'Doc.Oficio correo',
-    type: 'string',
-    sort: false,
-  },
+  // docOfficeMail: {
+  //   title: 'Doc.Oficio correo',
+  //   type: 'string',
+  //   sort: false,
+  // },
   seeClaimLetter: {
     title: 'Ver carta reclamación',
     type: 'string',
     sort: false,
   },
-  docClaimLetter: {
-    title: 'Doc.Carta reclamación',
-    type: 'string',
-    sort: false,
-  },
-  status: {
-    title: 'Estatus',
-    type: 'string',
-    sort: false,
-  },
+  // docClaimLetter: {
+  //   title: 'Doc.Carta reclamación',
+  //   type: 'string',
+  //   sort: false,
+  // },
 };

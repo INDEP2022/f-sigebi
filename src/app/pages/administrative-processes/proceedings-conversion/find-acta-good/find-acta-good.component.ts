@@ -111,7 +111,7 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
     // console.log(this.providerForm.value.cveActa.replace(/\//g, ''));
     // console.log(nuevaCadena);
     // console.log(this.providerForm.value.cve);
-    this.params.getValue()['filter.keysProceedings'] = this.actas;
+    this.params.getValue()['filter.numFile'] = this.actas;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
