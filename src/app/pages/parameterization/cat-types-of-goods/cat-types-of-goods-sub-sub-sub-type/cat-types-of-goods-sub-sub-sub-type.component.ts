@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-cat-types-of-goods-sub-sub-sub-type',
@@ -34,8 +35,11 @@ export class CatTypesOfGoodsSubSubSubTypeComponent
   }
   prepareForm() {
     this.typeGoodsForm = this.fb.group({
-      id: [null],
-      description: ['', Validators.compose([Validators.required])],
+      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      description: [
+        '',
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       //numClasifGoods: [null],
       numSsubType: [null],
       numSubType: [null],
@@ -74,35 +78,64 @@ export class CatTypesOfGoodsSubSubSubTypeComponent
   }
   update() {
     this.loading = true;
-    const ids = {
-      numClasifGoods: this.typeGoodsForm.controls['numClasifGoods'].value,
-      id: this.typeGoodsForm.controls['id'].value,
-      numSsubType: this.typeGoodsForm.controls['numSsubType'].value,
-      numSubType: this.typeGoodsForm.controls['numSubType'].value,
-      numType: this.typeGoodsForm.controls['numType'].value,
-    };
-    this.goodSssubtypeService
-      .updateByIds(ids, this.typeGoodsForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.typeGoodsForm.controls['id'].value.trim() == '' ||
+      this.typeGoodsForm.controls['description'].value.trim() == '' ||
+      (this.typeGoodsForm.controls['id'].value.trim() == '' &&
+        this.typeGoodsForm.controls['description'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      const ids = {
+        numClasifGoods: this.data.numClasifGoods,
+        id: this.typeGoodsForm.controls['id'].value,
+        numSsubType: this.typeGoodsForm.controls['numSsubType'].value,
+        numSubType: this.typeGoodsForm.controls['numSubType'].value,
+        numType: this.typeGoodsForm.controls['numType'].value,
+      };
+      this.goodSssubtypeService
+        .updateByIds(ids, this.typeGoodsForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
   create() {
     this.loading = true;
+    if (
+      this.typeGoodsForm.controls['id'].value.trim() == '' ||
+      this.typeGoodsForm.controls['description'].value.trim() == '' ||
+      (this.typeGoodsForm.controls['id'].value.trim() == '' &&
+        this.typeGoodsForm.controls['description'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.goodSssubtypeService
+        .create(this.typeGoodsForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => {
+            this.alert(
+              'warning',
+              'Ya existe un registro con los mismo identificador',
+              ``
+            );
+            this.loading = false;
+          },
+        });
+    }
     // this.typeGoodsForm.controls['id'].setValue(1614);
-    this.goodSssubtypeService
-      .create(this.typeGoodsForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast(
       'success',
-      'Sub Sub Sub Tipo de bienes',
+      'Sub Sub Sub Tipo de bien',
       `${message} Correctamente`
     );
     this.loading = false;
