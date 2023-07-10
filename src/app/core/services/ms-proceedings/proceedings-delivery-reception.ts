@@ -102,4 +102,9 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     //   data: IProceedingDeliveryReception;
     // }>('detail-proceedings-delivery-reception', model);
   }
+
+  createDeliveryReception(model: any) {
+    console.log(model);
+    return this.post<IResponse>('proceedings-delivery-reception', model);
+  }
 }

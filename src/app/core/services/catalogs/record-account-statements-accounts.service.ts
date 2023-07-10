@@ -4,8 +4,8 @@ import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
-
 import { HttpService } from '../../../common/services/http.service';
+import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDateAccountBalance,
   IFactasStatusCta,
@@ -56,7 +56,7 @@ export class RecordAccountStatementsAccountsService
   getDataAccount(
     accountNumber: string | number,
     params?: ListParams
-  ): Observable<IRecordAccountStatements> {
+  ): Observable<IListResponse<IRecordAccountStatements>> {
     const route = `${this.route2}?filter.numberAccount=$eq:${accountNumber}`;
     return this.get(route, params);
   }
@@ -76,9 +76,7 @@ export class RecordAccountStatementsAccountsService
   create(
     model: IRecordAccountStatements
   ): Observable<IRecordAccountStatements> {
-    console.log('Creado', model);
     const route = `${this.route2}`;
-    console.log('route', route);
     return this.post(route, model);
   }
 
