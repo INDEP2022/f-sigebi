@@ -1,104 +1,75 @@
-PROCEDURE GENERA_ARCHIVO IS
-   L_PATH              VARCHAR2(4000);
-   vc_filtro           VARCHAR2(200);
-   LFiarchivo          Text_IO.File_Type;
-   LSt_archivo_destino VARCHAR2(4000);
-   lnu_reg_act         NUMBER(10);
-   lnu_ciclo           NUMBER(1);
-   V_DESC_NUM          BIENES.DESCRIPCION%TYPE;
-   V_ESTATUS_NUM       BIENES.ESTATUS%TYPE;
-   V_MONEDA_NUM        BIENES.VAL1%TYPE;
-   V_INGRESO_NUM       BIENES.VAL2%TYPE;
-   V_IVA_NUM           BIENES.VAL10%TYPE;
-   V_GASTO_NUM         BIENES.VAL13%TYPE;
-   V_VALOR_AVALUO_NUM  BIENES.VALOR_AVALUO%TYPE;
+DECLARE
+	TOT NUMBER;	
+	FCAMBIO DATE;
 BEGIN
-   BEGIN
-      LFiarchivo := Text_IO.Fopen('c:\siabtmp\'||:GLOBAL.VG_DIRUSR||'\siabexcelpathrastr.pth', 'r');
-      IF Text_IO.Is_Open(LFiarchivo) then 
-         Text_IO.get_Line(LFiarchivo, L_PATH);
-         Text_IO.fclose(LFiarchivo);
-      END IF;
-   EXCEPTION
-      WHEN OTHERS THEN
-         l_path := 'c:\siabtmp\'||:GLOBAL.VG_DIRUSR||'\';
-   END;
-   vc_filtro := 'Todos (*.*)|*.*|';
-   vc_filtro := 'Archivos de Microsoft Excel (*.xls)|*.xls|';
-   LSt_archivo_destino := 'c:\siabtmp\'||:GLOBAL.VG_DIRUSR||'\hoja1.xls';
-   L_PATH := Get_path_name(LSt_archivo_destino);
-   LFiarchivo := Text_IO.Fopen('c:\siabtmp\'||:GLOBAL.VG_DIRUSR||'\siabexcelpathrastr.pth', 'w');
-   Text_IO.Put_Line(LFiarchivo, L_PATH);  
-   Text_IO.fclose(LFiarchivo);
-   BEGIN
-      LSt_archivo_destino := REPLACE(LOWER(LSt_archivo_destino), 'xls', 'csv'); 
-      LFiarchivo := Text_IO.Fopen(LSt_archivo_destino, 'w');
-      Text_IO.Put_Line(LFiarchivo,'NO_BIEN,DESCRIPCION,ESTATUS,INGRESO,GASTO,IVA,VALOR_CALC,NO_BIEN_NUM,DESCRIPCION_NUM,ESTATUS_NUM,CVE_EVENTO,MONEDA_NUM,INGRESO_NUM,IVA_NUM,GASTO_NUM,VALOR_AVALUO_NUM');  
-      GO_BLOCK('BLK_BIENES');
-      lnu_reg_act := :SYSTEM.cursor_record;
-      FIRST_RECORD;
-      IF :BLK_BIENES.NO_BIEN IS NOT NULL THEN
-         LOOP
-            IF :BLK_BIENES.IND_NUME = 3 THEN
-               BEGIN
-                  SELECT DESCRIPCION,
-                         ESTATUS,
-                         VAL1,
-                         VAL2,
-                         VAL10,
-                         VAL13,
-                         VALOR_AVALUO
-                    INTO V_DESC_NUM,
-                         V_ESTATUS_NUM,
-                         V_MONEDA_NUM,
-                         V_INGRESO_NUM,
-                         V_IVA_NUM,
-                         V_GASTO_NUM,
-                         V_VALOR_AVALUO_NUM
-                    FROM BIENES
-                   WHERE NO_BIEN = :BLK_BIENES.NO_BIEN_NUME;
-               EXCEPTION
-                  WHEN OTHERS THEN
-                     V_DESC_NUM := NULL;
-                     V_ESTATUS_NUM := NULL;
-                     V_MONEDA_NUM := NULL;
-                     V_INGRESO_NUM := NULL;
-                     V_IVA_NUM := NULL;
-                     V_GASTO_NUM := NULL;
-                     V_VALOR_AVALUO_NUM := NULL;
-               END;
-               Text_IO.Put_Line(LFiarchivo,NVL(TO_CHAR(:BLK_BIENES.NO_BIEN),'')||','||
-                                           '"'||:BLK_BIENES.DESCRIPCION||'",'||
-                                           '"'||:BLK_BIENES.ESTATUS||'",'||
-                                           NVL(TO_CHAR(:BLK_BIENES.INGRESO),'')||','||
-                                           NVL(TO_CHAR(:BLK_BIENES.GASTO),'')||','||
-                                           NVL(TO_CHAR(:BLK_BIENES.IVA),'')||','||
-                                           NVL(TO_CHAR(:BLK_BIENES.VALOR_AVALUO),'')||','||
-                                           NVL(TO_CHAR(:BLK_BIENES.NO_BIEN_NUME),'')||','||
-                                           '"'||V_DESC_NUM||'",'||
-                                           '"'||V_ESTATUS_NUM||'",'||
-                                           '"'||:BLK_BIENES.CVE_PROCESO||'",'||
-                                           '"'||V_MONEDA_NUM||'",'||
-                                           NVL(V_INGRESO_NUM,'')||','||
-                                           NVL(V_IVA_NUM,'')||','||
-                                           NVL(V_GASTO_NUM,'')||','||
-                                           NVL(TO_CHAR(V_VALOR_AVALUO_NUM),''));
-            END IF;
-            EXIT WHEN :SYSTEM.LAST_RECORD = 'TRUE';
-            NEXT_RECORD;
-         END LOOP;	
-      END IF;
-      GO_RECORD(lnu_reg_act);
-      Text_IO.fclose(LFiarchivo);
-      -- Generar un archivo bat, con el dir de las imágenes con la ruta global
-      LFiarchivo := Text_IO.Fopen('c:\siabtmp\'||:GLOBAL.VG_DIRUSR||'\archonume.bat', 'w');
-      Text_IO.Put_Line(LFiarchivo, 'Start "" "'||LSt_archivo_destino||'"');  
-      Text_IO.fclose(LFiarchivo);
-      -- Ejecutar el archivo bat generado     
-      Lip_mensaje('Se abrirá el archivo en Excel, una vez abierto, en el menú "Archivo\Guardar como...", proceda a guardarlo como libro de MS Excel.','A');
-      Host('c:\siabtmp\'||:GLOBAL.VG_DIRUSR||'\archonume.bat',NO_SCREEN);  
-   EXCEPTION
-      WHEN NO_DATA_FOUND THEN
-         lip_mensaje('No se puede copiar el archivo de excel.','A');
-   END;	
+	-- CUENTA LAS VECES QUE HA SIDO CONVERTIDO A NUMERARIO
+	SELECT COUNT(0)INTO TOT
+	  FROM BIENES
+	 WHERE NO_BIEN_REFERENCIA = :BIENES.NO_BIEN;
+	 
+	-- OBTEN LA FECHA EN QUE CAMBIO A NUMERARIO
+  BEGIN 
+	  --LIP_MENSAJE('D1: '||:BIENES1.NO_BIEN,'A');
+	  SELECT FEC_CAMBIO INTO :BLK_CTR.FEC_CAMBIO
+	    FROM CAMBIO_NUMERARIO
+     WHERE NO_BIEN_ORIGINAL  = :BIENES.NO_BIEN
+       AND NO_BIEN_NUMERARIO = :BIENES1.NO_BIEN;
+	EXCEPTION
+		WHEN NO_DATA_FOUND THEN
+		  -- EN CASO DE QUE NO SE INDIQUE EN LA TABLA, BUSCA EN EL HISTORICO
+	    BEGIN
+		    --LIP_MENSAJE('D2 '||:BIENES1.NO_BIEN,'A');
+	      SELECT FECHA_CAMBIO INTO :BLK_CTR.FEC_CAMBIO
+	        FROM HISTORICO_NUMERARIOS
+         WHERE BIEN_ORIGINAL     = :BIENES.NO_BIEN
+           AND NO_BIEN_NUMERARIO = :BIENES1.NO_BIEN;
+		  EXCEPTION 
+		  	WHEN NO_DATA_FOUND THEN
+		  	    --LIP_MENSAJE('D3 '||:BIENES1.NO_BIEN,'A');
+		  	   :BLK_CTR.FEC_CAMBIO := NULL;
+		  END;
+	END;
+	
+	-- RAZON DEL CAMBIO A NUMERARIO
+	BEGIN 
+    SELECT MOTIVO 
+      INTO :BLK_CTR.MOTIVO
+      FROM HISTORICO_NUMERARIOS
+     WHERE BIEN_ORIGINAL = :BIENES.NO_BIEN
+       AND NO_BIEN_NUMERARIO = :BIENES1.NO_BIEN;
+    SET_ITEM_PROPERTY('BLK_CTR.MOTIVO',VISIBLE,PROPERTY_TRUE);
+	EXCEPTION 
+		WHEN OTHERS THEN 
+		  SET_ITEM_PROPERTY('BLK_CTR.MOTIVO',VISIBLE,PROPERTY_FALSE);
+	END;
+	
+	
+	 --lip_mensaje(tot,'a');
+	 
+	 :BIENES1.CONT_CONV := TOT;
+	 :BLK_CTR.T_TOTAL  := :BIENES1.VAL2  - :BIENES1.VAL13 - NVL(:BIENES1.VAL10,0);
+	 IF TOT = 0 THEN
+	 	 SET_ITEM_PROPERTY('BIENES1.CONT_CONV',VISIBLE,PROPERTY_FALSE);
+	 ELSE 
+	 	 SET_ITEM_PROPERTY('BIENES1.CONT_CONV',VISIBLE,PROPERTY_TRUE);
+	 END IF;
+	 
+	 
+	 
+	 IF NVL(:BIENES1.VAL15,0) = 0 THEN
+	 	 SET_ITEM_PROPERTY('BIENES1.VAL15',VISIBLE,PROPERTY_FALSE);
+	 	 SET_ITEM_PROPERTY('BIENES1.VAL15',ENABLED,PROPERTY_FALSE);
+	 	 SET_ITEM_PROPERTY('BLK_CTR.T_TOTAL',POSITION,361,260);
+	 	 SET_ITEM_PROPERTY('BLK_CTR.PB_ALIF',ENABLED,PROPERTY_TRUE);
+	 	 SET_ITEM_PROPERTY('BLK_CTR.PB_RVLIF',ENABLED,PROPERTY_FALSE);
+	 ELSE
+	 	 SET_ITEM_PROPERTY('BIENES1.VAL15',VISIBLE,PROPERTY_TRUE);
+	 	 SET_ITEM_PROPERTY('BIENES1.VAL15',ENABLED,PROPERTY_TRUE);
+	 	 SET_ITEM_PROPERTY('BLK_CTR.PB_ALIF',ENABLED,PROPERTY_FALSE);
+	   SET_ITEM_PROPERTY('BLK_CTR.PB_RVLIF',ENABLED,PROPERTY_TRUE);
+	   SET_ITEM_PROPERTY('BLK_CTR.T_TOTAL',POSITION,361,279);
+	 END IF;	 
+	 EXCEPTION 
+	 	WHEN OTHERS THEN
+	 	  LIP_MENSAJE('Err. PQ: '||SQLERRM,'S');	 	
 END;

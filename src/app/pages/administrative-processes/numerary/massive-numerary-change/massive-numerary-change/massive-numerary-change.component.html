@@ -3,13 +3,8 @@
     <h5 class="title">Proceso de Inserción masiva de gastos y numerario</h5>
   </div>
   <div body>
-    <div class="row mt-4">
-      <div class="col-md-2">
-        <!-- <input
-          type="file"
-          class="btn btn-secondary btn-sm active"
-          (change)="onClickBtnFileExcel($event)" /> -->
-
+    <div class="d-flex gap-2 mt-4">
+      <div class="">
         <a
           class="btn btn-secondary btn-sm active"
           (click)="btnFileExcel.click()"
@@ -21,7 +16,7 @@
             (change)="onClickBtnFileExcel($event)" />
         </a>
       </div>
-      <div class="col-md-2">
+      <div class="">
         <a class="btn btn-secondary btn-sm active" (click)="btnFileCsv.click()"
           >Abrir archivo de Texto CSV<input
             #btnFileCsv
@@ -31,12 +26,15 @@
             (change)="onClickBtnFileExcel($event)" />
         </a>
       </div>
-      <div class="col-md-2">
+      <div class="">
         <button
           [disabled]="isLoadingProcessExtraction"
           (click)="onClickBtnProcessExtraction()"
           class="btn btn-secondary btn-sm active">
           Proceso de extracción
+          <ng-container *ngIf="isLoadingProcessExtraction">
+            <i class="fas fa-spinner fa-spin"></i>
+          </ng-container>
         </button>
       </div>
     </div>
