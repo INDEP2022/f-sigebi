@@ -716,6 +716,16 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   async saveInServer(): Promise<void> {
     console.log(this.formBlkControl.value);
     this.loading = true;
+    const permissionWrite = await this.hasPermissionWrite();
+    if (!permissionWrite) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'No tiene permiso de escritura para ejecutar el cambio de numerario'
+      );
+      this.loading = false;
+      return;
+    }
     this.loading = false;
     if (!this.formGood.value.id && !this.isMassive) {
       this.alert(

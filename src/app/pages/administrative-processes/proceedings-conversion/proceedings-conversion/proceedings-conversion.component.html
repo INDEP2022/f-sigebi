@@ -33,15 +33,12 @@
               </h5>
             </div>
             <form [formGroup]="proceedingsConversionForm" class="form-material">
-              <div class="float-right pl-3">
-                <button
-                  (click)="searchProcs()"
-                  class="btn btn-primary btn-sm active m-1"
-                  tooltip="Conversiones"
+              <!-- <div class="float-right pl-3">
+                <button (click)="searchProcs()" class="btn btn-primary btn-sm active m-1" tooltip="Conversiones"
                   containerClass="tooltip-style">
                   <i class="bx bx-list-plus bx-sm float-icon"></i>
                 </button>
-              </div>
+              </div> -->
 
               <div class="form-material">
                 <!-- apppcatd **************************************************************-->
@@ -96,7 +93,7 @@
                                   <div class="col-md-3">
                                     <div>
                                       <label for="">Hora de creación: </label>
-                                      {{ time | date : 'hh:mm' }}
+                                      {{ time | date: 'hh:mm' }}
                                     </div>
                                   </div>
                                 </div>
@@ -131,6 +128,25 @@
                         </div>
                       </div>
                     </div>
+                    <div class="row m-3">
+                      <div class="col-7"></div>
+                      <div class="col-md-5 text-end">
+                        <button
+                          (click)="agregarActa()"
+                          type="button"
+                          class="btn btn-info active btn-sm mr-3">
+                          Agregar
+                          <i class="bx bx-plus bx-sm float-icon"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-primary active btn-sm mr-2"
+                          (click)="searchActas()">
+                          Estatus Actas
+                          <i class="bx bx-search bx-sm float-icon"></i>
+                        </button>
+                      </div>
+                    </div>
                     <form
                       [formGroup]="actaRecepttionForm"
                       class="form-material">
@@ -140,7 +156,7 @@
                             <div class="col-md-12">
                               <div class="card">
                                 <div class="card-body">
-                                  <div class="col-md-4">
+                                  <div class="col-md-4 mt-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -157,7 +173,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-4">
+                                  <div class="col-md-4 mt-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -173,7 +189,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-4">
+                                  <div class="col-md-4 mt-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -189,7 +205,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-4">
+                                  <div class="col-md-4 mt-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -205,7 +221,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-4">
+                                  <div class="col-md-4 mt-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -221,7 +237,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-4">
+                                  <div class="col-md-4 mt-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -237,7 +253,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-4">
+                                  <div class="col-md-4 mt-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -253,7 +269,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-4">
+                                  <div class="col-md-4 mt-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -269,7 +285,7 @@
                                       </form-field>
                                     </div>
                                   </div>
-                                  <div class="col-md-4">
+                                  <div class="col-md-4 mt-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -298,7 +314,7 @@
                                       </form-field>
                                     </div>
                                   </div> -->
-                                  <div class="col-md-8">
+                                  <div class="col-md-8 mt-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -324,19 +340,6 @@
                                       </form-field>
                                     </div>
                                   </div> -->
-
-                                  <div class="float-right">
-                                    <div class="col-md-2">
-                                      <button
-                                        type="button"
-                                        class="btn btn-primary active btn-sm"
-                                        (click)="searchActas()">
-                                        Estatus Actas
-                                        <i
-                                          class="bx bx-search bx-sm float-icon"></i>
-                                      </button>
-                                    </div>
-                                  </div>
                                 </div>
                                 <div class="row mt-5">
                                   <div class="col-md-12 col-sm-12 col-xs-12">
@@ -439,9 +442,24 @@
                                 </ng-scrollbar>
                                 <!-- </div> -->
                               </div>
+
                               <app-pagination
                                 [params]="paramsList"
                                 [totalItems]="totalItems"></app-pagination>
+                              <div class="row">
+                                <div class="col-6 mt-4">
+                                  <form-field
+                                    [control]="actaGoodForm.get('statusGood')"
+                                    label="Estatus Bien">
+                                    <input
+                                      [(ngModel)]="statusGood_"
+                                      type="text"
+                                      class="form-control"
+                                      formControlName="statusGood"
+                                      readonly />
+                                  </form-field>
+                                </div>
+                              </div>
                             </div>
 
                             <!-- <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
@@ -467,13 +485,11 @@
                                 <!-- Mover todos -->
                                 <i class="bx bx-chevrons-down bx-md"></i>
                               </button>
-                              <button
-                                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-                                type="button"
+                              <!-- <button class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button"
                                 (click)="removeAll()">
-                                <!-- Quitar todos -->
+                                
                                 <i class="bx bx-chevrons-up bx-md"></i>
-                              </button>
+                              </button> -->
                               <button
                                 class="btn btn-secondary btn-sm active m-3 p-1 pointer"
                                 type="button"
@@ -520,7 +536,6 @@
                                 <!-- </div> -->
                               </div>
                               <app-pagination
-                                *ngIf="ocultarPaginado"
                                 [params]="paramsList2"
                                 [totalItems]="totalItems2"></app-pagination>
                             </div>

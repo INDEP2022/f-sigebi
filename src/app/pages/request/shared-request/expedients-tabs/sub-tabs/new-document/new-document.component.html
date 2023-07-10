@@ -1,4 +1,4 @@
-<<app-modal>
+<app-modal>
   <div header>
     <h5 class="modal-title">{{ title }}</h5>
   </div>
@@ -633,6 +633,7 @@
         <confirm-button
           [disabled]="newDocForm.invalid"
           [loading]="loading"
+          [btnSmall]="true"
           (confirm)="validatePDF()">
         </confirm-button>
       </div>
