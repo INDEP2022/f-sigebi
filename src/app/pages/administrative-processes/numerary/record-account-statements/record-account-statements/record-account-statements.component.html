@@ -15,9 +15,11 @@
                 bindLabel="name"
                 label="Seleccione un Banco"
                 [control]="'bankSelect'"
-                (change)="onBankSelectChange($event)"></ngx-select>
+                (change)="onBankSelectChange($event)"
+                (input)="onSearchName($event.target)"></ngx-select>
             </form-field>
           </div>
+
           <div class="col-6">
             <form-field [control]="form.get('account')">
               <ngx-select
@@ -26,7 +28,9 @@
                 bindLabel="accountNumber"
                 label="Seleccione una Cuenta"
                 [control]="'account'"
-                (change)="onBankAccountSelectChange($event)"></ngx-select>
+                (change)="onBankAccountSelectChange($event)"
+                (input)="onSearchAccount($event.target)"
+                (clear)="onClearSelection()"></ngx-select>
             </form-field>
           </div>
         </div>
@@ -98,6 +102,9 @@
           </div>
         </div>
 
+        <h5 class="row ml-0 mt-5">
+          Consulta movimientos de cuenta por rango de fecha
+        </h5>
         <div class="row mt-5">
           <div class="col-md-3">
             <form-field [control]="form.get('balanceOf')" label="Saldo de">
@@ -105,24 +112,40 @@
                 type="text"
                 class="form-control"
                 bsDatepicker
-                formControlName="balanceOf" />
+                formControlName="balanceOf"
+                [(ngModel)]="variableOf" />
             </form-field>
           </div>
+
           <div class="col-md-3">
             <form-field [control]="form.get('balanceAt')" label="Saldo al">
               <input
                 type="text"
                 class="form-control"
                 bsDatepicker
-                formControlName="balanceAt" />
+                formControlName="balanceAt"
+                [(ngModel)]="variableAt" />
             </form-field>
           </div>
+
+          <div class="col-md-3">
+            <form-field [control]="form.get('balance')" label="Saldo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="balance"
+                [value]="balance"
+                readonly />
+            </form-field>
+          </div>
+
           <div class="col-md-4">
             <button
-              type="submit"
+              type="button"
               class="btn btn-sm btn-info active mr-4"
-              style="background-color: #9d2449">
-              Consultar
+              style="background-color: #9d2449"
+              (click)="DateAccountBalance()">
+              Consultar <i class="bx bx-search float-icon"></i>
             </button>
             <button
               type="button"
@@ -132,44 +155,45 @@
               Limpiar <i class="fa fa-eraser"></i>
             </button>
           </div>
-          <div class="col-md-2">
-            <span>Saldo</span>
-          </div>
         </div>
       </form>
 
       <div class="row mt-5">
-        <p class="row ml-2 mb-2">(Doble click para traspasar movimientos)</p>
+        <div class="col-md-12 d-flex align-items-center justify-content-center">
+          <p>
+            <span class="text-success mr-5"
+              ><i class="fa fa-square"></i> Movimiento de transferencia
+              (Padre)</span
+            >
+            <span class="mr-5" style="color: #bc955c"
+              ><i class="fa fa-square"></i> Movimiento de transferencia
+              (Hijo)</span
+            >
+            <span style="color: #564ab1"
+              ><i class="fa fa-square"></i> Cobro de Cheque x Dev</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <div class="row">
         <div class="col-12 mt-6">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="dataAccount"
-              (userRowSelect)="openModal($event.data)">
-            </ng2-smart-table>
+          <p class="row ml-2">(Click para traspasar movimientos)</p>
+          <div class="table-responsive">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="dataAccount"
+                (userRowSelect)="openModal($event.data)"
+                (delete)="showDeleteAlert($event.data)">
+              </ng2-smart-table>
+            </div>
           </div>
         </div>
         <app-pagination
           [params]="params"
           [totalItems]="totalItems"></app-pagination>
-      </div>
-
-      <div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-md-10">
-          <p>
-            <span class="text-success mr-5"
-              ><i class="fa fa-square"></i> Movimiento de transferencia(Padre)
-            </span>
-            <span class="text-yellow mr-5"
-              ><i class="fa fa-square"></i> Movimiento de transferencia(Hijo)
-            </span>
-            <span class="text-blue"
-              ><i class="fa fa-square"></i> Cobro de Cheque x Dev
-            </span>
-          </p>
-        </div>
       </div>
     </div>
   </div>

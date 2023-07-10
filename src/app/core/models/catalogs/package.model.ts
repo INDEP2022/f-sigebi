@@ -51,3 +51,15 @@ export interface IFoliovInvoice {
   vExecute: string;
   vYear: number;
 }
+
+export interface IDecPackage extends IPrincipalPackageDec {
+  amount: number;
+  amountConv: number;
+  numberRecord: number;
+  nbOrigin: string;
+}
+
+export interface IPrincipalPackageDec {
+  numberPackage: string;
+  numberGood: number;
+}

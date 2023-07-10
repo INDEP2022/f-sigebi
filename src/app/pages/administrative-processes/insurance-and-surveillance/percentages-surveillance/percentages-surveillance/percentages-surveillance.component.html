@@ -179,6 +179,9 @@
               class="btn btn-primary active mr-2"
               (click)="saveInServerPercentage()">
               {{ editDialogData ? 'Actualizar' : 'Guardar' }}
+              <span *ngIf="editDialogData"
+                ><i class="fas fa-sync-alt"> </i
+              ></span>
               <span *ngIf="!editDialogData"
                 ><i aria-hidden="true" class="fa fa-save"></i
               ></span>

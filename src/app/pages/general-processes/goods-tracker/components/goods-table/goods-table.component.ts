@@ -19,6 +19,7 @@ import {
   throwError,
 } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -79,6 +80,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   ngGlobal: any = null;
   $trackedGoods = this.store.select(getTrackedGoods);
   includeLoading: boolean = false;
+  includeAllLoading: boolean = false;
   excelLoading: boolean = false;
   showInclude = false;
 
@@ -234,15 +236,16 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   async getDocuments(trackedGood: ITrackedGood) {
     let config = {
       initialState: {
-        trackedGood: trackedGood,
+        trackedGood,
       }, //pasar datos por aca
       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
     };
     const count = await this.countAct(trackedGood.goodNumber);
-    console.log({ count });
     if (count > 0) {
       this.modalService.show(GTrackerDocumentsComponent, config);
+    } else {
+      await this.otDocuments(trackedGood);
     }
   }
 
@@ -257,7 +260,71 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     );
   }
 
-  otDocuments() {}
+  async otDocuments(trackedGood: ITrackedGood) {
+    console.log('ot docs');
+
+    const params = new FilterParams();
+    params.addFilter('numberProceedings', trackedGood.fileNumber);
+    const documents = await this.getDocumentsFilter(params);
+    if (documents.count == 0) {
+      this.alert('error', 'Error', 'No existen documentos para el expediente');
+    } else if (documents.count == 1) {
+      const d = await this.getOtDocs(trackedGood.fileNumber);
+      if (!d.data.length) {
+        await this.defaultDocuments(trackedGood);
+      }
+      const { folio_universal, id_medio } = d.data[0];
+      if (folio_universal > 0) {
+        await this.defaultDocuments(trackedGood);
+      } else {
+        await this.defaultDocuments(trackedGood);
+      }
+    } else {
+      await this.defaultDocuments(trackedGood);
+    }
+  }
+
+  satDocs() {}
+
+  async defaultDocuments(trackedGood: ITrackedGood) {
+    const params = new FilterParams();
+    params.addFilter('numberProceedings', trackedGood.fileNumber);
+    const response = await this.getDocumentsFilter(params);
+    if (response.count == 0) {
+      this.alert('error', 'Error', 'No tiene Documentos Digitalizados');
+      return;
+    }
+    const byExpedient = true;
+    const config = {
+      ...MODAL_CONFIG,
+      ignoreBackdropClick: false,
+      initialState: {
+        trackedGood,
+        byExpedient,
+      },
+    };
+    this.modalService.show(GTrackerDocumentsComponent, config);
+  }
+
+  getOtDocs(expedient: string | number) {
+    return firstValueFrom(
+      this.documentsService.otDocuments(expedient).pipe(
+        catchError(() => {
+          return of({ data: [], count: 0 });
+        })
+      )
+    );
+  }
+
+  getDocumentsFilter(params: FilterParams) {
+    return firstValueFrom(
+      this.documentsService.getAllFilter(params.getParams()).pipe(
+        catchError(() => {
+          return of({ data: [], count: 0 });
+        })
+      )
+    );
+  }
 
   async takeOneProcess(turnSelects: any) {
     await this.alertInfo(
@@ -388,6 +455,31 @@ export class GoodsTableComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.includeLoading = false;
+          this.onLoadToast('error', 'Error', 'Ocurrió un error');
+        },
+      });
+  }
+
+  includeAll() {
+    this.includeAllLoading = true;
+    this.getTmpNextVal()
+      .pipe(
+        switchMap(identifier =>
+          this.goodTrackerService.includeAll({
+            ...this.filters,
+            identifier,
+          })
+        )
+      )
+      .subscribe({
+        next: identificator => {
+          this.includeAllLoading = false;
+          this.ngGlobal.REL_BIENES = identificator;
+          this.globalVarService.updateGlobalVars(this.ngGlobal);
+          this.backTo();
+        },
+        error: error => {
+          this.includeAllLoading = false;
           this.onLoadToast('error', 'Error', 'Ocurrió un error');
         },
       });

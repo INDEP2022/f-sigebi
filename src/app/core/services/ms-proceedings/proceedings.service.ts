@@ -189,4 +189,31 @@ export class ProceedingsService extends HttpService {
   }) {
     return this.post('application/get-v-steeringwheel-number', body);
   }
+
+  getGetFactDbConvBien(good: any, exp: any) {
+    return this.get<IResponse>(
+      `${ProceedingsEndpoints.GetFactDbConvBien}?no_bien=${good}&no_expediente=${exp}`
+    );
+  }
+
+  creaDetailProceedingsDevollution(good: any) {
+    return this.post<IResponse>(
+      `${ProceedingsEndpoints.DetailProceedingsDevollution}`,
+      good
+    );
+  }
+
+  getDetailProceedingsDevollution(params: any) {
+    return this.get<IResponse>(
+      `${ProceedingsEndpoints.DetailProceedingsDevollution}`,
+      params
+    );
+  }
+
+  deleteDetailProceedingsDevollution(params: any) {
+    return this.delete<IResponse>(
+      `${ProceedingsEndpoints.DetailProceedingsDevollution}`,
+      params
+    );
+  }
 }

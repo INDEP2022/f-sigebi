@@ -253,11 +253,13 @@
             <div class="card">
               <div class="card-body">
                 <div class="row">
-                  <div class="col-12 col-sm-12 col-md-12">
+                  <div class="col-12 col-sm-12 col-md-8">
                     <h6>Bienes Asociados</h6>
                   </div>
-                  <div class="col-12 col-sm-12 col-md-12">
+                  <div
+                    class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
                     <app-columns-select
+                      [leftList]="true"
                       [(settings)]="settings"></app-columns-select>
                   </div>
                   <div
@@ -491,11 +493,19 @@
               <!--app-columns-select [(settings)]="settings"></app-columns-select-->
               <div *ngIf="officeDictationData">
                 <button
+                  type="button"
+                  class="btn btn-info btn-sm active ml-2 mr-2"
+                  [disabled]="officeDictationData.statusOf == 'ENVIADO'"
+                  (click)="openModalCopy(false)">
+                  Agregar C&#46;C&#46;P&#46;<i
+                    class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+                <!-- <button
                   [disabled]="officeDictationData.statusOf == 'ENVIADO'"
                   (click)="openModalCopy(false)"
                   class="btn btn-primary active btn-sm ml-3">
                   Agregar C&#46;C&#46;P&#46;
-                </button>
+                </button> -->
               </div>
             </div>
           </div>
@@ -516,17 +526,23 @@
             </div>
           </div>
         </div>
-        <div class="col-md-12 alert alert-warning" *ngIf="loadingSend">
+        <!-- <div class="col-md-12 alert alert-warning" *ngIf="loadingSend">
           Realizando el proceso de "Enviar" los "Bienes Asociados"
-          <!-- <strong>
-            {{ totalCurrent }}
-          </strong>
-          de <strong> {{ totalData }}</strong >-->
           , Espere un momento...
         </div>
         <div class="col-md-12 alert alert-warning" *ngIf="loadDetail">
           Realizando el proceso para mostrar el Reporte correspondiente, Espere
           un momento...
+        </div> -->
+        <div
+          class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+          *ngIf="loadingSend || loadDetail">
+          <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center">
+              <div class="loader"></div>
+              <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+            </div>
+          </div>
         </div>
         <!-- <div class="col-sm-12 col-12 col-md-12 text-center mt-3">
           <button
@@ -569,18 +585,22 @@
           </div>
         </div>
         <div class="col-12 col-sm-12 col-md-3">
-          <label for="imp">Imp.</label>
           <button
             name="imp"
+            data-toggle="tooltip"
+            tooltip="Imprimir"
+            containerClass="tooltip-style"
             (click)="btnDetail()"
             [disabled]="loadingSend || loadDetail"
             class="btn btn-secondary btn-sm active ml-2 mr-2">
             <i class="bx bxs-printer"></i>
           </button>
 
-          <label for="env">Envia</label>
           <button
             name="env"
+            data-toggle="tooltip"
+            containerClass="tooltip-style"
+            tooltip="Enviar"
             (click)="sendOffice()"
             [disabled]="loadingSend || blockSender || loadDetail"
             class="btn btn-danger btn-sm active ml-2 mr-2">

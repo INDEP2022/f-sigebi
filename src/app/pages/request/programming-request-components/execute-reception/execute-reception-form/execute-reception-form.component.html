@@ -8,8 +8,15 @@
   <div body>
     <div class="justify-content-end btn-toolbar" *ngIf="!formLoading">
       <button
+        *ngIf="!task?.State"
         (click)="aprobateReception()"
         class="btn btn-primary btn-sm active">
+        Terminar Ejecución <i class="fa fa-check" aria-hidden="true"></i>
+      </button>
+
+      <button
+        *ngIf="task?.State == 'FINALIZADA'"
+        class="btn btn-primary btn-sm active disabled">
         Terminar Ejecución <i class="fa fa-check" aria-hidden="true"></i>
       </button>
       <button (click)="close()" class="btn btn-primary btn-sm active">
@@ -247,11 +254,27 @@
       <div class="d-flex justify-content-end">
         <div class="mt-3 btn-toolbar">
           <button
+            *ngIf="!task?.State"
             (click)="uploadDocuments()"
             class="btn btn-primary btn-sm active">
             Adjuntar Documentos <i class="fa fa-file-archive"></i>
           </button>
-          <button (click)="uploadPicture()" class="btn btn-info btn-sm active">
+          <button
+            *ngIf="task?.State == 'FINALIZADA'"
+            class="btn btn-primary disabled btn-sm active">
+            Adjuntar Documentos <i class="fa fa-file-archive"></i>
+          </button>
+
+          <button
+            *ngIf="!task?.State"
+            (click)="uploadPicture()"
+            class="btn btn-info btn-sm active">
+            Adjuntar Fotografias <i class="fa fa-camera"></i>
+          </button>
+
+          <button
+            *ngIf="task?.State == 'FINALIZADA'"
+            class="btn btn-info btn-sm active disabled">
             Adjuntar Fotografias <i class="fa fa-camera"></i>
           </button>
         </div>
@@ -259,22 +282,58 @@
       <div class="row">
         <div class="btn-toolbar pt-5">
           <button
+            *ngIf="!task?.State"
             (click)="assignReceipt()"
             class="btn btn-primary btn-sm active">
             Asignar recibo
           </button>
-          <button (click)="sendGoodGuard()" class="btn btn-info btn-sm active">
+          <button
+            *ngIf="task?.State == 'FINALIZADA'"
+            class="btn btn-primary btn-sm active disabled">
+            Asignar recibo
+          </button>
+          <button
+            *ngIf="!task?.State"
+            (click)="sendGoodGuard()"
+            class="btn btn-info btn-sm active">
             Resguardo
           </button>
           <button
+            *ngIf="task?.State == 'FINALIZADA'"
+            class="btn btn-info btn-sm active disabled">
+            Resguardo
+          </button>
+          <button
+            *ngIf="!task?.State"
             (click)="sendWarehouse()"
             class="btn btn-primary btn-sm active">
             Almacén
           </button>
-          <button (click)="rescheduling()" class="btn btn-info btn-sm active">
+          <button
+            *ngIf="task?.State == 'FINALIZADA'"
+            class="btn btn-primary btn-sm active disabled">
+            Almacén
+          </button>
+          <button
+            *ngIf="!task?.State"
+            (click)="rescheduling()"
+            class="btn btn-info btn-sm active">
             Reprogramaci&oacute;n
           </button>
-          <button (click)="cancelGood()" class="btn btn-danger btn-sm active">
+          <button
+            *ngIf="task?.State == 'FINALIZADA'"
+            class="btn btn-info btn-sm active disabled">
+            Reprogramaci&oacute;n
+          </button>
+          <button
+            *ngIf="!task?.State"
+            (click)="cancelGood()"
+            class="btn btn-danger btn-sm active">
+            Cancelaci&oacute;n
+          </button>
+          <button
+            *ngIf="task?.State == 'FINALIZADA'"
+            class="btn btn-danger btn-sm active disabled">
             Cancelaci&oacute;n
           </button>
         </div>
@@ -573,20 +632,39 @@
                 <div class="row pt-5">
                   <div class="justify-content-start">
                     <button
+                      *ngIf="!task?.State"
                       (click)="uploadPicture()"
                       class="btn btn-info btn-sm active ml-2">
                       Adjuntar fotografias <i class="fa fa-camera"></i>
                     </button>
 
                     <button
+                      *ngIf="task?.State == 'FINALIZADA'"
+                      class="btn btn-info disabled btn-sm active ml-2">
+                      Adjuntar fotografias <i class="fa fa-camera"></i>
+                    </button>
+
+                    <button
+                      *ngIf="!task?.State"
                       (click)="uploadDocuments()"
                       class="btn btn-primary btn-sm active ml-2">
                       Adjuntar documentos <i class="fa fa-file-archive"></i>
                     </button>
+                    <button
+                      *ngIf="task?.State == 'FINALIZADA'"
+                      class="btn btn-primary disabled btn-sm active ml-2">
+                      Adjuntar documentos <i class="fa fa-file-archive"></i>
+                    </button>
 
                     <button
+                      *ngIf="!task?.State"
                       (click)="deleteGoodReceipt()"
                       class="btn btn-danger btn-sm active ml-2 mr-2">
+                      Eliminar selección <i class="fa fa-trash"></i>
+                    </button>
+                    <button
+                      *ngIf="task?.State == 'FINALIZADA'"
+                      class="btn btn-danger disabled btn-sm active ml-2 mr-2">
                       Eliminar selección <i class="fa fa-trash"></i>
                     </button>
 
@@ -872,27 +950,56 @@
             <tab [heading]="headingGuard">
               <div class="justify-content-start">
                 <button
+                  *ngIf="!task?.State"
                   (click)="assingMinute()"
                   class="btn btn-primary btn-sm active ml-2">
-                  Asignar Acta
+                  Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
 
                 <button
+                  *ngIf="task?.State == 'FINALIZADA'"
+                  class="btn btn-primary disabled btn-sm active ml-2">
+                  Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+
+                <button
+                  *ngIf="!task?.State"
                   (click)="uploadPicture()"
                   class="btn btn-info btn-sm active ml-2">
-                  Adjuntar fotografias
+                  Adjuntar fotografias <i class="fa fa-camera"></i>
                 </button>
 
                 <button
+                  *ngIf="task?.State == 'FINALIZADA'"
+                  class="btn btn-info disabled btn-sm active ml-2">
+                  Adjuntar fotografias <i class="fa fa-camera"></i>
+                </button>
+
+                <button
+                  *ngIf="!task?.State"
                   (click)="uploadDocuments()"
                   class="btn btn-primary btn-sm active ml-2">
-                  Adjuntar documentos
+                  Adjuntar documentos <i class="fa fa-file-archive"></i>
                 </button>
 
                 <button
+                  *ngIf="task?.State == 'FINALIZADA'"
+                  (click)="uploadDocuments()"
+                  class="btn btn-primary disabled btn-sm active ml-2">
+                  Adjuntar documentos <i class="fa fa-file-archive"></i>
+                </button>
+
+                <button
+                  *ngIf="!task?.State"
                   (click)="deleteGoodGuard()"
                   class="btn btn-danger btn-sm active ml-2 mr-2">
-                  Eliminar selección
+                  Eliminar selección <i class="fa fa-trash"></i>
+                </button>
+
+                <button
+                  *ngIf="task?.State == 'FINALIZADA'"
+                  class="btn btn-danger disabled btn-sm active ml-2 mr-2">
+                  Eliminar selección <i class="fa fa-trash"></i>
                 </button>
 
                 <app-columns-select
@@ -1161,26 +1268,54 @@
             <tab [heading]="headingWarehouse">
               <div class="justify-content-start">
                 <button
+                  *ngIf="!task?.State"
                   (click)="assingMinuteWarehouse()"
                   class="btn btn-primary btn-sm active ml-2">
                   Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
 
                 <button
+                  *ngIf="task?.State == 'FINALIZADA'"
+                  class="btn btn-primary disabled btn-sm active ml-2">
+                  Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+
+                <button
+                  *ngIf="!task?.State"
                   (click)="uploadPicture()"
                   class="btn btn-info btn-sm active ml-2">
                   Adjuntar fotografias <i class="fa fa-camera"></i>
                 </button>
 
                 <button
+                  *ngIf="task?.State == 'FINALIZADA'"
+                  class="btn btn-info btn-sm disabled active ml-2">
+                  Adjuntar fotografias <i class="fa fa-camera"></i>
+                </button>
+
+                <button
+                  *ngIf="!task?.State"
                   (click)="uploadDocuments()"
                   class="btn btn-primary btn-sm active ml-2">
                   Adjuntar documentos <i class="fa fa-file-archive"></i>
                 </button>
 
                 <button
+                  *ngIf="task?.State == 'FINALIZADA'"
+                  class="btn btn-primary disabled btn-sm active ml-2">
+                  Adjuntar documentos <i class="fa fa-file-archive"></i>
+                </button>
+
+                <button
+                  *ngIf="!task?.State"
                   (click)="deleteGoodWarehouse()"
                   class="btn btn-danger btn-sm active ml-2 mr-2">
+                  Eliminar selección <i class="fa fa-trash"></i>
+                </button>
+
+                <button
+                  *ngIf="task?.State == 'FINALIZADA'"
+                  class="btn btn-danger disabled btn-sm active ml-2 mr-2">
                   Eliminar selección <i class="fa fa-trash"></i>
                 </button>
 
@@ -1444,7 +1579,7 @@
                   [settings]="settingsReceiptWarehouseClose"
                   [source]="receiptWarehouse"
                   (edit)="showGoodsReceiptWarehouse($event.data)"
-                  (delete)="generateReceiptWarehouse($event.data)">
+                  (delete)="showReceipt($event.data)">
                 </ng2-smart-table>
               </div>
             </tab>
@@ -1460,26 +1595,54 @@
               <div *ngIf="!formLoadingReprog">
                 <div class="justify-content-start">
                   <button
+                    *ngIf="!task?.State"
                     (click)="assingMinuteReprogramation()"
                     class="btn btn-primary btn-sm active ml-2">
                     Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
                   </button>
 
                   <button
+                    *ngIf="task?.State == 'FINALIZADA'"
+                    class="btn btn-primary disabled btn-sm active ml-2">
+                    Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
+                  </button>
+
+                  <button
+                    *ngIf="!task?.State"
                     (click)="uploadPicture()"
                     class="btn btn-info btn-sm active ml-2">
                     Adjuntar fotografias <i class="fa fa-camera"></i>
                   </button>
 
                   <button
+                    *ngIf="task?.State == 'FINALIZADA'"
+                    class="btn btn-info btn-sm disabled active ml-2">
+                    Adjuntar fotografias <i class="fa fa-camera"></i>
+                  </button>
+
+                  <button
+                    *ngIf="!task?.State"
                     (click)="uploadDocuments()"
                     class="btn btn-primary btn-sm active ml-2">
                     Adjuntar documentos <i class="fa fa-file-archive"></i>
                   </button>
 
                   <button
+                    *ngIf="task?.State == 'FINALIZADA'"
+                    class="btn btn-primary disabled btn-sm active ml-2">
+                    Adjuntar documentos <i class="fa fa-file-archive"></i>
+                  </button>
+
+                  <button
+                    *ngIf="!task?.State"
                     (click)="deleteGoodRep()"
                     class="btn btn-danger btn-sm active ml-2 mr-2">
+                    Eliminar selección <i class="fa fa-trash"></i>
+                  </button>
+
+                  <button
+                    *ngIf="task?.State == 'FINALIZADA'"
+                    class="btn btn-danger disabled btn-sm active ml-2 mr-2">
                     Eliminar selección <i class="fa fa-trash"></i>
                   </button>
 
@@ -1722,26 +1885,41 @@
             <tab [heading]="headingCancelation">
               <div class="justify-content-start">
                 <button
+                  *ngIf="!task?.State"
                   (click)="assingMinuteCancelation()"
                   class="btn btn-primary btn-sm active ml-2">
                   Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
 
                 <button
+                  *ngIf="task?.State == 'FINALIZADA'"
+                  class="btn btn-primary disabled btn-sm active ml-2">
+                  Asignar Acta <i class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+
+                <button
+                  *ngIf="!task?.State"
                   (click)="uploadPicture()"
                   class="btn btn-info btn-sm active ml-2">
                   Adjuntar fotografias <i class="fa fa-camera"></i>
                 </button>
 
                 <button
-                  (click)="uploadDocuments()"
+                  *ngIf="task?.State == 'FINALIZADA'"
+                  class="btn btn-info btn-sm disabled active ml-2">
+                  Adjuntar fotografias <i class="fa fa-camera"></i>
+                </button>
+
+                <button
+                  *ngIf="!task?.State"
+                  (click)="deleteGoodCancelation()"
                   class="btn btn-primary btn-sm active ml-2">
                   Adjuntar documentos <i class="fa fa-file-archive"></i>
                 </button>
 
                 <button
-                  (click)="deleteGoodCancelation()"
-                  class="btn btn-danger btn-sm active ml-2 mr-2">
+                  *ngIf="task?.State == 'FINALIZADA'"
+                  class="btn btn-danger disabled btn-sm active ml-2 mr-2">
                   Eliminar selección <i class="fa fa-trash"></i>
                 </button>
 

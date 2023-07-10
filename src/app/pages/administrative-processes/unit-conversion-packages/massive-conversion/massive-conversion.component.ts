@@ -1,6 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  firstValueFrom,
+  map,
+  of,
+  takeUntil,
+} from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -21,7 +28,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { format } from 'date-fns';
 import * as FileSaver from 'file-saver';
-import { LocalDataSource } from 'ng2-smart-table';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IpackageValidGood } from 'src/app/core/models/catalogs/Ipackage-valid-good';
@@ -31,6 +37,7 @@ import {
   IPackageInfo,
 } from 'src/app/core/models/catalogs/package.model';
 import { IPerUser } from 'src/app/core/models/expedient/expedient.model';
+import { IPackageGoodEnc } from 'src/app/core/models/ms-package-good/package-good-enc';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dynamic-catalogs.service';
@@ -45,9 +52,13 @@ import { ParametersService } from 'src/app/core/services/ms-parametergood/parame
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { firstFormatDate } from 'src/app/shared/utils/date';
+import { EmailModalComponent } from '../massive-conversion-email-modal/email-modal.component';
 import { MassiveConversionErrorsModalComponent } from '../massive-conversion-erros-list/massive-conversion-errors-modal/massive-conversion-errors-modal.component';
 import { MassiveConversionModalGoodComponent } from '../massive-conversion-modal-good/massive-conversion-modal-good.component';
-import { MassiveConversionSelectGoodComponent } from '../massive-conversion-select-good/massive-conversion-select-good';
+import { MassiveConversionSelectGoodComponent } from '../massive-conversion-select-good/massive-conversion-select-good.component';
+import { UnitConversionPackagesDataService } from '../services/unit-conversion-packages-data.service';
+
 interface ValidaButton {
   PB_VALIDA: boolean;
   PB_AUTORIZA: boolean;
@@ -77,6 +88,7 @@ interface DataUser {
 export class MassiveConversionComponent extends BasePage implements OnInit {
   modalRef: BsModalRef;
   loadingText: string = '';
+  widthErrors = false;
   validaButton: ValidaButton = {
     PB_VALIDA: false,
     PB_AUTORIZA: false,
@@ -126,7 +138,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     applicationUSU: '',
     cancellationUSU: '',
   };
-  data: LocalDataSource = new LocalDataSource();
   totalItems: number = 0;
   columnFilters: any = [];
   generateFo = true;
@@ -134,8 +145,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   chValidateGood = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   goodsList: any;
-
+  VALIDA_VAL24: string;
+  V_EMAIL: string = null;
   //VARIABLES PARA PAQUETES
+  P_ASUNTO: string;
+  P_MENSAJE: string;
   dataPackage = new DefaultSelect();
   statusPackage = new DefaultSelect([
     { name: 'Proyecto', value: 'P' },
@@ -166,7 +180,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     private rNomenclaService: ParametersService,
     private userService: UsersService,
     private packageGoodService: PackageGoodService,
-    private delegationService: DelegationService
+    private delegationService: DelegationService,
+    private unitConversionDataService: UnitConversionPackagesDataService
   ) {
     super();
 
@@ -181,13 +196,34 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoods());
     this.prepareForm();
+    // this.params
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() => this.getGoods());
     this.checkPer();
     this.fillDataByPackage();
     this.getDataUser();
+    this.getEmail();
+  }
+
+  private getEmail() {
+    const filter = new FilterParams();
+    filter.addFilter('user', localStorage.getItem('username'));
+    this.securityService
+      .getAllUsersTracker(filter.getParams())
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response && response.data) {
+            this.V_EMAIL = response.data[0].mail;
+          } else {
+            this.V_EMAIL = null;
+          }
+        },
+        error: err => {
+          this.V_EMAIL = null;
+        },
+      });
   }
 
   //Gets del formulario de paquete
@@ -296,6 +332,39 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     return this.form.get('paragraph3');
   }
 
+  // Form 2
+  get numberGoodFather() {
+    return this.form2.get('numberGoodFather');
+  }
+
+  get record() {
+    return this.form2.get('record');
+  }
+
+  get goodDescription() {
+    return this.form2.get('description');
+  }
+
+  get amount() {
+    return this.form2.get('amount');
+  }
+
+  get unit() {
+    return this.form2.get('unit');
+  }
+
+  get statusGood() {
+    return this.form2.get('status');
+  }
+
+  get dataPrevisualization() {
+    return this.unitConversionDataService.dataPrevisualization;
+  }
+
+  set dataPrevisualization(value) {
+    this.unitConversionDataService.dataPrevisualization = value;
+  }
+
   private prepareForm(): void {
     this.form = this.fb.group({
       //Primer form
@@ -346,7 +415,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
     //Formulario "NUEVO BIEN"
     this.form2 = this.fb.group({
-      numberGood: [null, [Validators.required]],
+      numberGoodFather: [null, [Validators.required]],
       record: [null, [Validators.required]],
       description: [
         null,
@@ -388,7 +457,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   //Llenar valores por el no. paquete
   fillDataByPackage() {
-    this.noPackage.valueChanges.subscribe(res => {
+    this.noPackage.valueChanges.subscribe((res: IPackageGoodEnc) => {
       console.log(res);
       if (res != null) {
         //Seteo de la primera parte
@@ -420,8 +489,29 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.paragraph1.setValue(res.paragraph1);
         this.paragraph2.setValue(res.paragraph2);
         this.paragraph3.setValue(res.paragraph3);
+
+        // Form2
+        this.numberGoodFather.setValue(res.numberGoodFather);
+        this.record.setValue(res.numberRecord);
+        // this.goodDescription.setValue(res.numberGoodFather);
+        // this.amount.setValue(res.numberGoodFather);
+        this.unit.setValue(res.unit);
+        this.statusGood.setValue(res.status);
+        // this.status2.setValue(res.numberGoodFather);
+
+        if (
+          ['C', 'X', 'L'].includes(
+            res.statuspack.toString().toLocaleUpperCase()
+          )
+        ) {
+          this.form.disable({ onlySelf: true, emitEvent: false });
+        } else {
+          this.form.enable({ onlySelf: true, emitEvent: false });
+        }
+
         //Traer los bienes de pack_det
-        this.getGoods();
+        this.validateButtons(res.statuspack.toString().toLocaleUpperCase());
+        this.unitConversionDataService.updatePrevisualizationData.next(true);
       }
     });
   }
@@ -429,13 +519,20 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   searchNoPackage(params: any) {
     const paramsF = new FilterParams();
     paramsF.addFilter('numberPackage', params.text);
+    this.unitConversionDataService.selectedPackage = params.text;
     this.packageGoodService.getPaqDestinationEnc(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
-        this.dataPackage = new DefaultSelect(res.data);
+        if (res && res.data && res.data.length > 0) {
+          this.dataPackage = new DefaultSelect(res.data);
+        } else {
+          // this.dataPackageEnc = null;
+        }
       },
       err => {
         console.log(err);
+        this.dataPackage = new DefaultSelect([]);
+        this.alert('error', 'ERROR', 'Paquete no encontrado');
       }
     );
   }
@@ -472,20 +569,31 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           : localStorage.getItem('username').toLocaleUpperCase(),
     };
 
-    this.dynamicCatalogService.getPerUser(model).subscribe(
-      res => {
-        const resPer = res['data'][0]['otvalor'].split('-');
-        const gPer = this.generalPermissions;
-        gPer.Proyecto = resPer[0] == 'P' ? true : false;
-        gPer.Validar = resPer[1] == 'V' ? true : false;
-        gPer.Autorizar = resPer[2] == 'A' ? true : false;
-        gPer.Cerrar = resPer[3] == 'C' ? true : false;
-        gPer.Cancelar = resPer[4] == 'X' ? true : false;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.dynamicCatalogService
+      .getPerUser(model)
+      .pipe(
+        catchError(x => of({ data: [] })),
+        map(x => x.data)
+      )
+      .subscribe({
+        next: res => {
+          if (res && res.length > 0) {
+            const resPer = res[0]['otvalor'].split('-');
+            const gPer = this.generalPermissions;
+            gPer.Proyecto = resPer[0] == 'P' ? true : false;
+            gPer.Validar = resPer[1] == 'V' ? true : false;
+            gPer.Autorizar = resPer[2] == 'A' ? true : false;
+            gPer.Cerrar = resPer[3] == 'C' ? true : false;
+            gPer.Cancelar = resPer[4] == 'X' ? true : false;
+          } else {
+            this.generalPermissions.Proyecto = true;
+            this.generalPermissions.Validar = true;
+            this.generalPermissions.Autorizar = true;
+            this.generalPermissions.Cerrar = true;
+            this.generalPermissions.Cancelar = true;
+          }
+        },
+      });
   }
 
   goToGoodTracker() {
@@ -507,18 +615,35 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     const modals: Record<string, any> = {
       error: {
         config: {
-          data: this.goodErrors,
+          data: this.dataErrors,
         },
         component: MassiveConversionErrorsModalComponent,
       },
       good: {
         config: {
           data: {
-            goodDet: this.goodsList,
+            goodDet: this.dataPrevisualization,
             infoPack: { ...this.form.value, ...this.descPaq },
           },
         },
         component: MassiveConversionModalGoodComponent,
+      },
+      email: {
+        config: {
+          form: this.fb.group({
+            para: [null, [Validators.required]],
+            cc: [this.V_EMAIL],
+            asunto: [
+              this.P_ASUNTO,
+              [Validators.required, Validators.pattern(STRING_PATTERN)],
+            ],
+            mensaje: [
+              this.P_MENSAJE,
+              [Validators.required, Validators.pattern(STRING_PATTERN)],
+            ],
+          }),
+        },
+        component: EmailModalComponent,
       },
     };
 
@@ -538,9 +663,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
     this.modalRef = this.modalService.show(activeModal.component, modalConfig);
 
-    this.modalRef.content.onSentGoods.subscribe((result: any) => {
-      this.modalEvent(result);
-    });
+    // this.modalRef.content.onSentGoods.subscribe((result: any) => {
+    //   this.modalEvent(result);
+    // });
   }
 
   /* validateButtons(status: string) {
@@ -596,83 +721,54 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         };
       });
     }
-    this.data.load(dataRes);
-    this.totalItems = this.data.count();
+    this.dataPrevisualization = dataRes;
+    // this.data.load(dataRes);
+    this.totalItems = this.dataPrevisualization.length;
   }
 
   // Aquí puedes realizar las acciones necesarias con la información recibida
-
-  validateGood(item: any) {
-    const packVal = this.noPackage.value;
-    return new Promise((resolve, reject) => {
-      if (item.delegationNumber != packVal.numberDelegation) {
-        resolve({ available: false });
-      } else if (item.bienes.numberClassifyGood != packVal.numberClassifyGood) {
-        resolve({ available: false });
-      } else if (item.bienes.labelNumber != packVal.labelNumber) {
-        resolve({ available: false });
-      } else if (item.bienes.status != packVal.status) {
-        resolve({ available: false });
-      } //!Busqueda de no_transferente por el no_expediente
-      else if (item.bienes.storeNumber != packVal.numberStore) {
-        resolve({ available: false });
-      } else if (this.packageType.value != 3) {
-        if (item.bienes.storeNumber != packVal.numberStore) {
-          resolve({ available: false });
-        } else {
-          console.log('Entro aquí');
-        }
-      } else if (this.packageType.value == 3) {
-        if (item.bienes.val24 == null) {
-          resolve({ available: false });
-        } else {
-          console.log('Entro aquí');
-        }
-      } else {
-        resolve({ available: true });
-      }
-    });
-  }
 
   selectRow(e: any) {
     console.log(e);
   }
 
-  getGoods() {
-    if (!this.noPackage.value) return;
-    this.loading = true;
-    const newParams = new ListParams();
-    newParams['filter.numberPackage'] = this.noPackage.value.numberPackage;
-    this.params.getValue()['filter.numberPackage'] =
-      this.noPackage.value.numberPackage;
-    this.packageGoodService
-      .getPaqDestinationDet(this.params.getValue())
-      .subscribe(
-        async response => {
-          this.goodsList = response.data;
-          let dataMap = await Promise.all(
-            response.data.map(async (item: any) => {
-              const respAvailable = await this.validateGood(item);
-              let disponible = JSON.parse(
-                JSON.stringify(respAvailable)
-              ).available;
-              return {
-                ...item,
-                available: disponible,
-              };
-            })
-          );
-          this.totalItems = response.count || 0;
-          this.data.load(dataMap);
-          this.loading = false;
-        },
-        error => {
-          this.totalItems = 0;
-          this.data.load([]);
-          this.loading = false;
-        }
-      );
-  }
+  // getGoods() {
+  //   if (!this.noPackage.value) return;
+  //   this.loading = true;
+  //   const newParams = new ListParams();
+  //   newParams['filter.numberPackage'] = this.noPackage.value.numberPackage;
+  //   this.params.getValue()['filter.numberPackage'] =
+  //     this.noPackage.value.numberPackage;
+  //   this.packageGoodService
+  //     .getPaqDestinationDet(this.params.getValue())
+  //     .subscribe(
+  //       async response => {
+  //         this.goodsList = response.data;
+  //         let dataMap = await Promise.all(
+  //           response.data.map(async (item: any) => {
+  //             const respAvailable = await this.validateGood(item);
+  //             let disponible = JSON.parse(
+  //               JSON.stringify(respAvailable)
+  //             ).available;
+  //             return {
+  //               ...item,
+  //               available: disponible,
+  //             };
+  //           })
+  //         );
+  //         this.totalItems = response.count || 0;
+  //         this.data.load(dataMap);
+  //         this.dataPrevisualization = dataMap;
+  //         this.loading = false;
+  //       },
+  //       error => {
+  //         this.totalItems = 0;
+  //         this.data.load([]);
+  //         this.dataPrevisualization = [];
+  //         this.loading = false;
+  //       }
+  //     );
+  // }
 
   chargeForm2(noGoodFather: string) {
     let params = new ListParams();
@@ -690,38 +786,54 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   showConfirmAlert() {
-    if (!this.form.valid) {
-      Swal.fire(`Faltan datos necesarios para validar ${this.form}`);
-      return;
-    }
+    // if (!this.form.valid) {
+    //   this.alert(
+    //     'warning',
+    //     `Faltan datos necesarios para validar ${this.form.value}`,
+    //     ''
+    //   );
+    //   return;
+    // }
 
     this.alertQuestion(
       'info',
       'Confirmación',
       '¿Está seguro de que el Paquete ya ha sido validado?'
-    ).then(question => {
+    ).then(async question => {
       if (question.isConfirmed) {
-        this.verifyGoods();
-        if (!this.chValidateGood) {
-          Swal.fire('Existe inconsistencia en los bienes...', 'A', 'error');
-        } else {
-          let currentDate = new Date();
-          let formattedDate = currentDate.toISOString().substring(0, 10);
+        const result = this.verifyGoods();
+        if (!result) return;
+        let currentDate = new Date();
+        let formattedDate = currentDate.toISOString().substring(0, 10);
 
-          let packageUpdate: Partial<IPackage> = {
-            numberPackage: this.form.value.package,
-            statuspack: 'V',
-            dateValid: formattedDate,
-            useValid: 'USER',
-          };
+        let packageUpdate: Partial<IPackage> = {
+          numberPackage: this.form.value.package,
+          statuspack: 'V',
+          dateValid: formattedDate,
+          useValid: 'USER',
+        };
 
-          this.updatePackage(packageUpdate, 'V');
-        }
+        this.updatePackage(packageUpdate, 'V');
+        // if (!this.chValidateGood) {
+        //   this.alert('warning', 'Existe inconsistencia en los bienes', '');
+        // } else {
+        //   let currentDate = new Date();
+        //   let formattedDate = currentDate.toISOString().substring(0, 10);
+
+        //   let packageUpdate: Partial<IPackage> = {
+        //     numberPackage: this.form.value.package,
+        //     statuspack: 'V',
+        //     dateValid: formattedDate,
+        //     useValid: 'USER',
+        //   };
+
+        //   this.updatePackage(packageUpdate, 'V');
+        // }
       }
     });
   }
 
-  showAutorizateAlert() {
+  async showAutorizateAlert() {
     if (!this.form.valid) {
       Swal.fire(`Existe inconsistencia en los bienes ${this.form}`);
       return;
@@ -731,77 +843,46 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       'info',
       'Confirmación',
       '¿Está seguro de que el Paquete ya ha sido autorizado?'
-    ).then(question => {
+    ).then(async question => {
       if (question.isConfirmed) {
         let lnuInvoiceUnoversal = 0;
         if (this.form.get('packageType').value != 3) {
           const newParams = new ListParams();
           newParams['filter.id'] = this.form.get('scanFolio').value;
           newParams['filter.scanStatus'] = 'ESCANEADO';
-
-          const documentPromise = new Promise<void>((resolve, reject) => {
-            this.documentService.getAll(newParams).subscribe(
-              response => {
-                if (response.data.length > 0) {
-                  lnuInvoiceUnoversal = 1;
-                }
-                resolve();
-              },
-              error => {
-                reject(error);
-              }
-            );
-          });
-
-          documentPromise
-            .then(() => {
-              if (
-                lnuInvoiceUnoversal > 0 &&
-                this.form.get('status').value == 'V'
-              ) {
-                this.verifyGoods();
-                if (!this.chValidateGood) {
-                  Swal.fire(
-                    'Existe inconsistencia en los bienes...',
-                    'A',
-                    'error'
-                  );
-                } else {
-                  let currentDate = new Date();
-                  let formattedDate = currentDate
-                    .toISOString()
-                    .substring(0, 10);
-                  let packageUpdate: Partial<IPackage> = {
-                    numberPackage: this.form.value.package,
-                    status: 'A',
-                    dateValid: formattedDate,
-                  };
-
-                  this.updatePackage(packageUpdate, 'A');
-                }
-              }
-            })
-            .catch(error => {
-              Swal.fire('Error', 'Error Al Validar el Paquete', 'error');
-            });
+          const documentsResult = await firstValueFrom(
+            this.documentService
+              .getAll(newParams)
+              .pipe(catchError(x => of({ data: [] })))
+          );
+          if (documentsResult.data.length > 0) {
+            lnuInvoiceUnoversal = 1;
+          }
         } else if (this.form.get('packageType').value == 3) {
-          let lnuInvoiceUnoversal = 1;
+          lnuInvoiceUnoversal = 1;
+        }
 
-          if (lnuInvoiceUnoversal > 0 && this.form.get('status').value == 'V') {
-            this.verifyGoods();
-            if (!this.chValidateGood) {
-              Swal.fire('Existe inconsistencia en los bienes...', 'A', 'error');
-            } else {
-              let currentDate = new Date();
-              let formattedDate = currentDate.toISOString().substring(0, 10);
-              let packageUpdate: Partial<IPackage> = {
-                numberPackage: this.form.value.package,
-                statuspack: 'A',
-                dateValid: formattedDate,
-              };
+        if (lnuInvoiceUnoversal > 0 && this.form.get('status').value == 'V') {
+          this.verifyGoods();
+          const check = document.getElementById(
+            'checkGood'
+          ) as HTMLInputElement;
 
-              this.updatePackage(packageUpdate, 'A');
-            }
+          if (!check.checked) {
+            this.alert(
+              'error',
+              'Autoriza',
+              'Existe inconsistencia en los bienes...'
+            );
+          } else {
+            let currentDate = new Date();
+            let formattedDate = currentDate.toISOString().substring(0, 10);
+            let packageUpdate: Partial<IPackage> = {
+              numberPackage: this.form.value.package,
+              statuspack: 'A',
+              dateValid: formattedDate,
+            };
+            this.updatePackage(packageUpdate, 'A');
           }
         }
       }
@@ -811,39 +892,46 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   updatePackage(packageUpdate: Partial<IPackage>, status: string) {
     this.packageGoodService
       .updatePaqDestinationEnc(packageUpdate.numberPackage, packageUpdate)
-      .subscribe(
-        response => {
+      .subscribe({
+        next: response => {
           let statusMessage = '';
+          this.validaButton.PB_AUTORIZA = false;
+          this.validaButton.PB_CERRAR = true;
 
-          switch (status) {
-            case 'V':
-              statusMessage = 'Validado';
-              break;
-            case 'A':
-              statusMessage = 'Autorizado';
-              break;
-            case 'C':
-              statusMessage = 'Cierre';
-              break;
-            default:
-              statusMessage = '';
-              break;
-          }
+          this.pupIniCorreo(packageUpdate.numberPackage);
+          // switch (status) {
+          //   case 'V':
+          //     statusMessage = 'Validado';
+          //     break;
+          //   case 'A':
+          //     statusMessage = 'Autorizado';
+          //     break;
+          //   case 'C':
+          //     statusMessage = 'Cierre';
+          //     break;
+          //   default:
+          //     statusMessage = '';
+          //     break;
+          // }
 
-          if (statusMessage !== '') {
-            Swal.fire(statusMessage, '', 'success');
-          }
+          // if (statusMessage !== '') {
+          //   Swal.fire(statusMessage, '', 'success');
+          // }
 
-          this.form.patchValue({
-            status: status,
-          });
+          // this.form.patchValue({
+          //   status: status,
+          // });
 
-          this.validateButtons(status);
+          // this.validateButtons(status);
         },
-        error => {
-          Swal.fire('Error', 'Error al validar el paquete', 'error');
-        }
-      );
+        error: err => {
+          this.alert(
+            'error',
+            'Validar Paquete',
+            'Error al actualizar el paquete'
+          );
+        },
+      });
   }
 
   showCloseAlert() {
@@ -874,7 +962,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
                   'error'
                 );
               } else {
-                let res = await this.data.getAll();
+                let res = this.dataPrevisualization;
                 let goods = res.map((good: { numberGood: any }) => {
                   return good.numberGood;
                 });
@@ -911,47 +999,188 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     }
   }
 
-  async pubValidaFilters(): Promise<boolean> {
-    const fields = [
-      {
-        name: 'delegation',
-        message: 'Debe ingresar la Coordinación que administra...',
-      },
-      {
-        name: 'goodClassification',
-        message: 'Debe ingresar el Clasificador...',
-      },
-      { name: 'targetTag', message: 'Debe ingresar la Etiqueta de destino...' },
-      { name: 'goodStatus', message: 'Debe ingresar el Estatus...' },
-      { name: 'transferent', message: 'Debe ingresar la Transferente...' },
-      { name: 'warehouse', message: 'Debe ingresar el Almacén...' },
-    ];
+  get dataErrors() {
+    return this.unitConversionDataService.dataErrors;
+  }
 
-    for (const field of fields) {
-      if (this.form.get(field.name).value === null) {
-        await Swal.fire(field.message, 'A', 'error');
-        return false;
+  set dataErrors(value) {
+    this.unitConversionDataService.dataErrors = value;
+  }
+
+  verifyGoods() {
+    // console.log(this.data['data']);
+    console.log('Sí');
+    if (!['L', 'X'].includes(this.status.value)) {
+      let _status: string;
+
+      this.status.value == null
+        ? (_status = 'Z')
+        : (_status = this.status.value);
+      //Validacion de filtros
+      if (this.delegation.value == null) {
+        this.alert(
+          'warning',
+          'Debe ingresar la Coordinación que administra',
+          ''
+        );
+      } else if (this.goodClassification.value == null) {
+        this.alert('warning', 'Debe ingresar el Clasificador', '');
+      } else if (this.targetTag.value == null) {
+        this.alert('warning', 'Debe ingresar la Etiqueta de destino', '');
+      } else if (this.goodStatus.value == null) {
+        this.alert('warning', 'Debe ingresar el Estatus', '');
+      } else if (this.transferent.value == null) {
+        this.alert('warning', 'Debe ingresar la Transferente', '');
+      } else if (this.packageType.value == 3 && this.warehouse.value == null) {
+        this.alert('warning', 'Debe ingresar el Almacén', '');
+      } else {
+        //Validacion de bienes
+        if (this.dataPrevisualization.length > 0) {
+          const check = document.getElementById(
+            'checkGood'
+          ) as HTMLInputElement;
+          check.checked = true;
+          const ch_bienes_ok = 1;
+
+          // debugger;
+          let availablePrincipal = true;
+          this.unitConversionDataService.dataErrors = [];
+
+          this.dataPrevisualization.forEach(data => {
+            this.VALIDA_VAL24 = 'S';
+            const resp = this.validateGoods(data);
+            console.log(resp);
+
+            const available = JSON.parse(JSON.stringify(resp)).res;
+            const message = JSON.parse(JSON.stringify(resp)).msg;
+            if (!available) {
+              this.dataErrors.push({
+                numberGood: data.numberGood,
+                descError: message,
+              });
+            }
+            availablePrincipal = availablePrincipal && available;
+            // this.unitConversionDataService.descError = message;
+          });
+          if (availablePrincipal) {
+            this.form2.enable({ onlySelf: true, emitEvent: false });
+            this.alert('success', 'Verificar Bienes', 'Bienes Sin Errores');
+          } else {
+            this.form2.disable({ onlySelf: true, emitEvent: false });
+            this.alert('error', 'Verificar Bienes', 'Bienes con Errores');
+          }
+          this.widthErrors = availablePrincipal;
+          check.checked = availablePrincipal;
+          return availablePrincipal;
+          // this.form2.get('check').setValue(false);
+        } else {
+          this.alert('warning', 'No hay Bienes que verificar', '');
+          return false;
+        }
       }
     }
-
-    return true;
+    return false;
   }
 
-  async verifyGoods() {
-    await this.pubValidaFilters();
-    await this.pubValidaGoods();
+  validateGoods(good: any) {
+    debugger;
+    const noPack: IPackageGoodEnc = this.noPackage.value;
+    let LV_VALIDA: string;
+    let lv_DESC_ERROR = '';
+    if (noPack.numberDelegation != good.bienes.delegationNumber) {
+      console.log({
+        valpack: noPack.numberDelegation,
+        valgood: good.bienes.delegationNumber,
+        good: good.bienes.goodId,
+      });
+      lv_DESC_ERROR += 'En la Delegación del bien.';
+    }
+    if (noPack.numberClassifyGood != good.bienes.goodClassNumber) {
+      console.log({
+        valpack: noPack.numberClassifyGood,
+        valgood: good.bienes.goodClassNumber,
+        good: good.bienes.goodId,
+      });
+      lv_DESC_ERROR +=
+        (lv_DESC_ERROR.length > 0 ? '/' : '') + 'En el Clasif. del bien.';
+      // resolve({ res: false, msg: 'classify' });
+    }
+    if (noPack.numberLabel != good.bienes.labelNumber) {
+      console.log({
+        valpack: noPack.numberLabel,
+        valgood: good.bienes.labelNumber,
+        good: good.bienes.goodId,
+      });
+      lv_DESC_ERROR +=
+        (lv_DESC_ERROR.length > 0 ? '/' : '') + 'En la Etiqueta del bien.';
+      // resolve({ res: false, msg: 'label' });
+    }
+    if (noPack.status != good.bienes.status) {
+      console.log({
+        valpack: noPack.status,
+        valgood: good.bienes.status,
+        good: good.bienes.goodId,
+      });
+      lv_DESC_ERROR +=
+        (lv_DESC_ERROR.length > 0 ? '/' : '') + 'En el Estatus del bien.';
+      // resolve({ res: false, msg: 'status' });
+    }
+    if (
+      noPack.typePackage != '3' &&
+      noPack.numberStore != good.bienes.storeNumber
+    ) {
+      // resolve({ res: false, msg: 'store' });
+      lv_DESC_ERROR +=
+        (lv_DESC_ERROR.length > 0 ? '/' : '') + 'En el Almacén del bien.';
+    }
+    if (noPack.typePackage == '3') {
+      if (this.VALIDA_VAL24 === 'S') {
+        LV_VALIDA = this.VALIDA_VAL24;
+        this.VALIDA_VAL24 = 'N';
+      }
+      if (LV_VALIDA !== good.bienes.val24) {
+        lv_DESC_ERROR +=
+          (lv_DESC_ERROR.length > 0 ? '/' : '') + 'El parametro del Val24.';
+      } else if (!good.bienes.val24) {
+        lv_DESC_ERROR +=
+          (lv_DESC_ERROR.length > 0 ? '/' : '') + 'El parametro del Val24.';
+      }
+    }
+    if (lv_DESC_ERROR.length > 0) {
+      return { res: false, msg: lv_DESC_ERROR };
+    } else {
+      return { res: true, msg: '' };
+    }
   }
-  pubValidaGoods(): Promise<boolean> {
+
+  pupIniCorreo(numberPackage: any) {
+    // console.log(V_MENSAJE);
+    this.P_ASUNTO =
+      'Autorización de Paquete de Conversión de Unidades No. ' + numberPackage;
+    this.P_MENSAJE =
+      'Para informar que el Paquete de Conversión de Unidades No. ' +
+      numberPackage +
+      ' fué marcado como autorizado el día ' +
+      firstFormatDate(new Date()) +
+      '.' +
+      '\n\n' +
+      'Atentamente,' +
+      '\n\n\n' +
+      localStorage.getItem('username');
+    this.viewModal('email');
+  }
+
+  pubValidaGoods(val24: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       let IpackageValidGoods: IpackageValidGood = {
-        pAlmacenNumber: this.form.get('warehouse').value,
-        pDelegationNumber: this.form.get('delegation').value,
-        pGoodClasifNumber: this.form.get('goodClassification').value,
-        pEtiquetaNumber: this.form.get('targetTag').value,
-        pPaqueteNumber: this.form.get('package').value,
-        pStatus: this.form.get('goodStatus').value,
-        pTypePaquete: this.form.get('packageType').value,
-        pValidVal24: 21,
+        pAlmacenNumber: this.warehouse.value,
+        pDelegationNumber: this.delegation.value,
+        pGoodClasifNumber: this.goodClassification.value,
+        pEtiquetaNumber: this.targetTag.value,
+        pPaqueteNumber: this.noPackage.value.numberPackage,
+        pStatus: this.goodStatus.value,
+        pTypePaquete: this.packageType.value,
+        pValidVal24: val24.toString(),
       };
 
       this.packageGoodService.pubValidGood(IpackageValidGoods).subscribe(
@@ -959,16 +1188,16 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           this.goodErrors = response.data;
           if (this.goodErrors.length > 0) {
             this.chValidateGood = false;
-            Swal.fire('Existe inconsistencia en los bienes...', 'A', 'error');
+            this.alert('warning', 'Existe inconsistencia en los bienes', '');
           } else {
             this.chValidateGood = true;
-            Swal.fire('Validación de bienes correcta...', 'A', 'success');
+            this.alert('warning', 'Validación de bienes correcta', '');
           }
 
           resolve(true); // Resuelve la promesa con valor `true`
         },
         error => {
-          Swal.fire('Error', 'Error Al Validar los bienes', 'error');
+          this.alert('error', 'Error Al Validar los bienes', '');
           reject(error); // Rechaza la promesa en caso de error
         }
       );
@@ -977,14 +1206,14 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   exportToExcel() {
     let iPackage: IPackageInfo = {
-      amountGood: this.form2.get('amount').value,
-      goodFatherNumber: this.form2.get('numberGood').value,
-      delegationNumber: this.form.get('delegation').value,
-      descGood: this.form2.get('description').value,
-      statusGood: this.form2.get('status').value,
-      packageNumber: this.form.get('package').value,
-      proceedingNumber: this.form2.get('record').value,
-      unitGood: this.form2.get('unit').value,
+      amountGood: this.amountKg.value,
+      goodFatherNumber: this.numberGoodFather.value,
+      delegationNumber: this.delegation.value,
+      descGood: this.descriptionPackage.value,
+      statusGood: this.statusGood.value,
+      packageNumber: this.noPackage.value.numberPackage,
+      proceedingNumber: this.record.value,
+      unitGood: this.unit.value,
     };
 
     this.massiveGoodService.pubExport(iPackage).subscribe(
@@ -1339,7 +1568,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       numberClassifyGood: this.goodClassification.value,
       numberLabel: this.targetTag.value,
       unit: this.measurementUnit.value,
-      numberStore: null,
+      numberStore: this.warehouse.value,
       numberRecord: null,
       status: this.goodStatus.value,
       numbertrainemiaut: this.transferent.value,
@@ -1377,6 +1606,15 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         console.log(err);
       }
     );
+  }
+
+  clear() {
+    this.form.reset({}, { onlySelf: true, emitEvent: false });
+    this.form.enable({ onlySelf: true, emitEvent: false });
+    this.form2.reset({}, { onlySelf: true, emitEvent: false });
+    this.form2.enable({ onlySelf: true, emitEvent: false });
+    this.dataErrors = [];
+    this.dataPrevisualization = [];
   }
 
   validateButtons(status: string) {
@@ -1420,6 +1658,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     let modalConfig = MODAL_CONFIG;
     modalConfig = {
       class: 'modal-lg modal-dialog-centered',
+      initialState: {
+        noPackage: this.noPackage,
+      },
+      ignoreBackdropClick: true,
     };
     this.modalService.show(MassiveConversionSelectGoodComponent, modalConfig);
   }

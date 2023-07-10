@@ -9,7 +9,7 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
@@ -22,6 +22,7 @@ import { ICuentaDelete } from 'src/app/core/models/catalogs/bank-modelo-type-cue
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { MsMassiveAccountmvmntlineService } from 'src/app/core/services/ms-massiveaccountmvmnt/ms-massiveaccountmvmnt.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { AddMovementComponent } from '../add-movement/add-movement.component';
 import { CustomdbclickComponent } from '../customdbclick/customdbclick.component';
@@ -62,12 +63,15 @@ export class DepositTokensComponent
   form: FormGroup;
 
   data1: LocalDataSource = new LocalDataSource();
+  data2: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  totalItems2: number = 0;
   filter1 = new BehaviorSubject<FilterParams>(new FilterParams());
   dataMovements: any = null;
   columnFilters: any = [];
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
+  paramsList2 = new BehaviorSubject<ListParams>(new ListParams());
   jsonToCsv: any[] = [];
   showPagination: boolean = true;
   dateMovemInicio: Date;
@@ -77,6 +81,8 @@ export class DepositTokensComponent
   @ViewChild('file', { static: false }) myInput: ElementRef;
 
   testCompare: any;
+  validExcel: boolean = true;
+  settings2 = { ...this.settings };
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -84,7 +90,8 @@ export class DepositTokensComponent
     private datePipe: DatePipe,
     private readonly goodServices: GoodService,
     private dynamicCatalogsService: DynamicCatalogsService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private msMassiveAccountmvmntlineService: MsMassiveAccountmvmntlineService
   ) {
     super();
     this.settings = {
@@ -248,6 +255,168 @@ export class DepositTokensComponent
         }
       },
     };
+
+    this.settings2 = {
+      ...this.settings,
+      actions: {
+        columnTitle: 'Acciones',
+        delete: true,
+        edit: false,
+        add: false,
+      },
+      delete: {
+        deleteButtonContent:
+          '<i class="pl-4 fa fa-trash text-danger mx-2"></i>',
+        confirmDelete: true,
+      },
+      hideSubHeader: false,
+      columns: {
+        MOV: {
+          title: 'No. Movimiento',
+          type: 'string',
+          sort: false,
+        },
+        bank: {
+          title: 'Banco',
+          type: 'string',
+          sort: false,
+        },
+        cveAccount: {
+          title: 'Cuenta',
+          type: 'string',
+          sort: false,
+        },
+        FECHA: {
+          title: 'Fecha Depósito',
+          // type: 'string',
+          sort: false,
+          // width: '13%',
+          type: 'html',
+          valuePrepareFunction: (text: string) => {
+            console.log('text', text);
+            if (typeof text === 'number') {
+              let date = new Date((Number(text) - 25569) * 86400 * 1000);
+              let fechaString = date.toString();
+
+              let fecha = new Date(fechaString);
+
+              let dia = fecha.getDate();
+              let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
+              let año = fecha.getFullYear();
+
+              // Asegurarse de que el día y el mes tengan dos dígitos
+              let diaString = dia < 10 ? '0' + dia : dia;
+              let mesString = mes < 10 ? '0' + mes : mes;
+
+              let fechaFormateada = `${diaString}/${mesString}/${año}`;
+
+              return `${fechaFormateada}`;
+            } else {
+              return `${
+                text ? text.split('T')[0].split('-').reverse().join('/') : ''
+              }`;
+            }
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent,
+          },
+        },
+        invoicefile: {
+          title: 'Folio',
+          type: 'string',
+          sort: false,
+        },
+        calculationInterestsDate_: {
+          title: 'Fecha Transferencia',
+          // type: 'string',
+          sort: false,
+          // width: '13%',
+          type: 'html',
+          valuePrepareFunction: (text: string) => {
+            console.log('text', text);
+            if (typeof text === 'number') {
+              let date = new Date((Number(text) - 25569) * 86400 * 1000);
+              let fechaString = date.toString();
+
+              let fecha = new Date(fechaString);
+
+              let dia = fecha.getDate();
+              let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
+              let año = fecha.getFullYear();
+
+              // Asegurarse de que el día y el mes tengan dos dígitos
+              let diaString = dia < 10 ? '0' + dia : dia;
+              let mesString = mes < 10 ? '0' + mes : mes;
+
+              let fechaFormateada = `${diaString}/${mesString}/${año}`;
+
+              return `${fechaFormateada}`;
+            } else {
+              return `${
+                text ? text.split('T')[0].split('-').reverse().join('/') : ''
+              }`;
+            }
+          },
+          filter: {
+            type: 'custom',
+            component: CustomDateFilterComponent,
+          },
+        },
+        currency: {
+          title: 'Moneda',
+          type: 'string',
+          sort: false,
+          valuePrepareFunction: (_cell: any, row: any) => {
+            return row.currency == "'M'" ? 'M' : row.currency;
+          },
+        },
+        ABONO: {
+          title: 'Depósito',
+          type: 'custom',
+          sort: false,
+          renderComponent: CustomdbclickdepositComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.funcionEjecutada.subscribe(() => {
+              this.miFuncion();
+            });
+          },
+        },
+        di_expediente2: {
+          title: 'Expediente',
+          type: 'string',
+          sort: false,
+        },
+        no_bien: {
+          title: 'Bien',
+          type: 'custom',
+          sort: false,
+          renderComponent: CustomdbclickComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.funcionEjecutada.subscribe(() => {
+              this.miFuncion();
+            });
+          },
+        },
+        category: {
+          title: 'Categoría',
+          type: 'string',
+          sort: false,
+        },
+        ispartialization: {
+          title: 'Parcial',
+          type: 'string',
+          sort: false,
+        },
+      },
+      rowClassFunction: (row: any) => {
+        if (row.data.goodnumber != null) {
+          return 'bg-warning text-black';
+        } else {
+          return '';
+        }
+      },
+    };
   }
 
   ngOnInit(): void {
@@ -305,6 +474,70 @@ export class DepositTokensComponent
     this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       this.getAccount();
     });
+
+    // this.data2
+    //   .onChanged()
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(change => {
+    //     if (change.action === 'filter') {
+    //       let filters = change.filter.filters;
+    //       filters.map((filter: any) => {
+    //         let field = '';
+    //         //Default busqueda SearchFilter.ILIKE
+    //         let searchFilter = SearchFilter.ILIKE;
+    //         field = `filter.${filter.field}`;
+
+    //         //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+    //         const search: any = {
+    //           motionnumber: () => (searchFilter = SearchFilter.EQ),
+    //           bank: () => (searchFilter = SearchFilter.ILIKE),
+    //           cveAccount: () => (searchFilter = SearchFilter.EQ),
+    //           motionDate_: () => (searchFilter = SearchFilter.ILIKE),
+    //           invoicefile: () => (searchFilter = SearchFilter.ILIKE),
+    //           calculationInterestsDate_: () =>
+    //             (searchFilter = SearchFilter.ILIKE),
+    //           currency: () => (searchFilter = SearchFilter.ILIKE),
+    //           deposit: () => (searchFilter = SearchFilter.EQ),
+    //           proceedingsnumber: () => (searchFilter = SearchFilter.EQ),
+    //           goodnumber: () => (searchFilter = SearchFilter.EQ),
+    //           category: () => (searchFilter = SearchFilter.ILIKE),
+    //           ispartialization: () => (searchFilter = SearchFilter.EQ),
+    //         };
+
+    //         search[filter.field]();
+
+    //         if (filter.search !== '') {
+    //           this.columnFilters[field] = `${filter.search}`;
+    //           // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+
+    //           // console.log(
+    //           //   'this.columnFilters[field]',
+    //           //   this.columnFilters[field]
+    //           // );
+    //         } else {
+    //           delete this.columnFilters[field];
+    //         }
+    //       });
+    //       this.paramsList2 = this.pageFilter(this.paramsList2);
+    //       //Su respectivo metodo de busqueda de datos
+    //       if (this.excelFile)
+    //         this.getPupPreviewDatosCsv2(this.excelFile);
+    //     }
+    //   });
+
+    this.paramsList2
+      .pipe(
+        skip(1),
+        tap(() => {
+          // aquí colocas la función que deseas ejecutar
+          // this.getPupPreviewDatosCsv2(this.cargarDataStorage());
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {
+        this.readExcel(this.excelFile, 'no');
+        // this.getPupPreviewDatosCsv2(this.cargarDataStorage());
+      });
   }
   ngOnChanges() {}
   getAccount() {
@@ -416,11 +649,13 @@ export class DepositTokensComponent
             this.data1.load(response.data);
             this.data1.refresh();
             console.log('AQUI', response);
+            this.validExcel = false;
             this.loading = false;
           });
         },
         error: err => {
           this.loading = false;
+          this.validExcel = false;
           this.totalItems = 0;
           this.data1.load([]);
           this.data1.refresh();
@@ -462,6 +697,32 @@ export class DepositTokensComponent
   }
 
   async onCustomAction(event: any) {
+    this.dataMovements = event.data;
+    console.log('data', event);
+    // DESCRIPCIÓN DEL BIEN
+    if (event.data.goodnumber) {
+      this.getDetailsGood(event.data.goodnumber);
+    } else {
+      this.form.get('descriptionGood').setValue('');
+    }
+
+    // DETALLES DE LA CUENTA
+    if (event.data.bancoDetails) {
+      await this.insertDataBank(event.data.bancoDetails);
+
+      if (event.data.bancoDetails.cveCurrency) {
+        await this.getTvalTable5(event.data.bancoDetails.cveCurrency);
+      }
+    } else {
+      const aaaa: any = await this.returnDataBank(event.data.accountnumber);
+      if (aaaa != null) {
+        await this.insertDataBank(aaaa);
+        await this.getTvalTable5(aaaa.cveCurrency);
+      }
+    }
+  }
+
+  async onCustomAction2(event: any) {
     this.dataMovements = event.data;
     console.log('data', event);
     // DESCRIPCIÓN DEL BIEN
@@ -552,6 +813,11 @@ export class DepositTokensComponent
     this.showPagination = true;
     this.paramsList.getValue().limit = 10;
     this.paramsList.getValue().page = 1;
+    this.paramsList2.getValue().limit = 10;
+    this.paramsList2.getValue().page = 1;
+    this.data2.load([]);
+    this.data2.refresh();
+    this.excelFile = null;
     this.form.get('descriptionGood').setValue('');
     this.getAccount();
     if (this.dataMovements) {
@@ -567,56 +833,228 @@ export class DepositTokensComponent
   onFileChange(event: Event) {
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
-    const fileReader = new FileReader();
-    fileReader.readAsBinaryString(files[0]);
-    fileReader.onload = () => this.readExcel(fileReader.result);
+    // const fileReader = new FileReader();
+    // fileReader.readAsBinaryString(files[0]);
+    // fileReader.onload = () => this.readExcel(fileReader.result);
+    // fileReader.onload = () =>
+    this.readExcel(files[0], 'si');
   }
 
-  readExcel(binaryExcel: string | ArrayBuffer) {
+  excelFile: any = null;
+  async readExcel(binaryExcel: string | ArrayBuffer | any, filter: any) {
     try {
-      const excelImport = this.excelService.getData<any>(binaryExcel);
-      console.log('excelImport', excelImport);
-      let arr: any = [];
+      this.excelFile = binaryExcel;
+      const formData = new FormData();
+      formData.append('file', binaryExcel);
+      const excelImport = await this.getPupPreviewDatosCsv2(formData);
+      if (filter == 'si') {
+        this.alert('success', 'Archivo cargado correctamente', '');
+      }
 
-      let result = excelImport.map(async (item: any) => {
-        if (
-          item.motionnumber &&
-          item.motionDate_ &&
-          item.deposit &&
-          item.currency &&
-          // item.calculationinterestsdate &&
-          item.insertiondate &&
-          item.accountnumber &&
-          item.bank &&
-          item.cveAccount
-        ) {
-          arr.push(item);
-        }
-      });
+      this.clearInput();
+      // const excelImport = this.excelService.getData<any>(binaryExcel);
+      // console.log('excelImport', excelImport);
+      // let arr: any = [];
 
-      Promise.all(result).then(item => {
-        if (excelImport.length == 0) {
-          this.alert('warning', 'No hay registros en el archivo', '');
-          return;
-        } else if (arr.length == 0 && excelImport.length > 0) {
-          this.alert(
-            'warning',
-            'No hay registros en el archivo que cumplan con las condiciones de inserción',
-            ''
-          );
-          return;
-        } else if (arr.length > 0) {
-          this.alert('success', 'Archivo insertado correctamente', '');
-          this.data1.load(arr);
-          this.showPagination = false;
-          this.totalItems = this.data1.count();
-          this.clearInput();
-        }
-      });
+      // let result = excelImport.map(async (item: any) => {
+      //   if (
+      //     item.motionnumber &&
+      //     item.motionDate_ &&
+      //     item.deposit &&
+      //     item.currency &&
+      //     // item.calculationinterestsdate &&
+      //     item.insertiondate &&
+      //     item.accountnumber &&
+      //     item.bank &&
+      //     item.cveAccount
+      //   ) {
+      //     arr.push(item);
+      //   }
+      // });
+
+      // Promise.all(result).then(item => {
+      //   if (excelImport.length == 0) {
+      //     this.alert('warning', 'No hay registros en el archivo', '');
+      //     return;
+      //   } else if (arr.length == 0 && excelImport.length > 0) {
+      //     this.alert(
+      //       'warning',
+      //       'No hay registros en el archivo que cumplan con las condiciones de inserción',
+      //       ''
+      //     );
+      //     return;
+      //   } else if (arr.length > 0) {
+      //     this.alert('success', 'Archivo insertado correctamente', '');
+      //     this.data1.load(arr);
+      //     this.showPagination = false;
+      //     this.totalItems = this.data1.count();
+      //     this.clearInput();
+      //   }
+      // });
     } catch (error) {
       this.alert('warning', 'Ocurrio un error al leer el archivo', '');
       this.clearInput();
     }
+  }
+
+  async cargarDataStorage(data64: any) {
+    // const base64Data = localStorage.getItem('archivoBase64');
+    // console.log('console.log(base64Data)', base64Data);
+    if (this.excelFile == null) {
+      // Decodifica el archivo Base64 a un array de bytes
+      const byteCharacters = atob(data64);
+
+      // Crea un array de bytes utilizando el tamaño del archivo decodificado
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+
+      // Crea un Uint8Array a partir del array de bytes
+      const byteArray = new Uint8Array(byteNumbers);
+
+      const blob = new Blob([byteArray], { type: 'text/csv' });
+      // this.readExcel(blob);
+      this.excelFile = blob;
+    }
+    // return '';
+  }
+
+  async getPupPreviewDatosCsv2(formData: any) {
+    console.log('formData', formData);
+    this.loading = true;
+    let params: any = {
+      ...this.paramsList2.getValue(),
+      ...this.columnFilters,
+    };
+
+    console.log('params1', params);
+    if (params['filter.motionDate_']) {
+      var fecha = new Date(params['filter.motionDate_']);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var año = fecha.getFullYear();
+      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var día = ('0' + fecha.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada = año + '-' + mes + '-' + día;
+      params['motionDate'] = fechaFormateada;
+      delete params['filter.motionDate_'];
+    }
+    if (params['filter.deposit']) {
+      params['deposit'] = params['filter.deposit'];
+      delete params['filter.deposit'];
+    }
+    if (params['filter.calculationInterestsDate_']) {
+      var fecha = new Date(params['filter.calculationInterestsDate_']);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var año = fecha.getFullYear();
+      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var día = ('0' + fecha.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada = año + '-' + mes + '-' + día;
+      params['calculationInterestsDate'] = fechaFormateada;
+      delete params['filter.calculationInterestsDate_'];
+    }
+    if (params['filter.goodnumber']) {
+      params['goodNumber'] = params['filter.goodnumber'];
+      delete params['filter.goodnumber'];
+    }
+    if (params['filter.proceedingsnumber']) {
+      params['proceedingsNumber'] = params['filter.proceedingsnumber'];
+      delete params['filter.proceedingsnumber'];
+    }
+    if (params['filter.category']) {
+      params['category'] = params['filter.category'];
+      delete params['filter.category'];
+    }
+    if (params['filter.ispartialization']) {
+      params['ispartialization'] = params['filter.ispartialization'];
+      delete params['filter.ispartialization'];
+    }
+    if (params['filter.currency']) {
+      params['currencykey'] = params['filter.currency'];
+      delete params['filter.currency'];
+    }
+    if (params['filter.bank']) {
+      params['bankkey'] = params['filter.bank'];
+      delete params['filter.bank'];
+    }
+
+    if (params['filter.cveAccount']) {
+      params['accountkey'] = params['filter.cveAccount'];
+      delete params['filter.cveAccount'];
+    }
+
+    if (params['filter.motionnumber']) {
+      params['motionNumber'] = params['filter.motionnumber'];
+      delete params['filter.motionnumber'];
+    }
+
+    params['&sortBy=motionNumber:DESC&'];
+    console.log('params2', params);
+    this.msMassiveAccountmvmntlineService
+      .getPupPreviewDatosCsv2(formData, params)
+      .subscribe({
+        next: (response: any) => {
+          const data = response;
+          // console.log("resssponse", data)
+          this.validExcel = true;
+          // this.data2.load(data.result)
+          // this.data2.refresh()
+
+          let result = data.result.map(async (item: any) => {
+            // const detailsBank: any = await this.returnDataBank(
+            //   item.accountnumber
+            // );
+            // if (detailsBank.cveCurrency == "'M'") {
+            //   item['currency'] = 'M';
+            // } else {
+            //   item['currency'] = detailsBank ? detailsBank.cveCurrency : null;
+            // }
+            // item['bank'] = detailsBank ? detailsBank.cveBank : null;
+            // item['cveAccount'] = detailsBank ? detailsBank.cveAccount : null;
+            // item['motionDate_'] = item.motiondate
+            //   ? this.datePipe.transform(item.motiondate, 'dd/MM/yyyy')
+            //   : null;
+            // item['calculationInterestsDate_'] = item.calculationinterestsdate
+            //   ? this.datePipe.transform(
+            //     item.calculationinterestsdate,
+            //     'dd/MM/yyyy'
+            //   )
+            //   : null;
+            // item['bancoDetails'] = detailsBank ? detailsBank : null;
+          });
+
+          Promise.all(result).then((resp: any) => {
+            this.showPagination = true;
+            this.totalItems2 = response.count;
+            this.cargarDataStorage(response.base64.base64File);
+            // this.excelFile =
+            this.data2.load(response.result);
+            this.data2.refresh();
+            console.log('AQUI', response);
+            this.loading = false;
+          });
+
+          this.loading = false;
+        },
+        error: err => {
+          this.data2.load([]);
+          this.data2.refresh();
+          this.totalItems2 = 0;
+          this.validExcel = false;
+          this.loading = false;
+          this.alert(
+            'error',
+            'Ha ocurrido un error al intentar cargar el archivo',
+            ''
+          );
+        },
+      });
   }
 
   async exportar() {
@@ -680,12 +1118,14 @@ export class DepositTokensComponent
   getDetailsGood(id: any) {
     const params = new ListParams();
     params['filter.id'] = `$eq:${id}`;
-    this.goodServices.getByExpedientAndParams__(params).subscribe({
+    this.goodServices.getGoodById(id).subscribe({
       next: async (response: any) => {
-        this.form.get('descriptionGood').setValue(response.data[0].description);
+        this.form.get('descriptionGood').setValue(response.description);
       },
       error: err => {
-        this.form.get('descriptionGood').setValue('');
+        this.form
+          .get('descriptionGood')
+          .setValue('No se encontró la descripción del bien');
       },
     });
   }
@@ -727,6 +1167,55 @@ export class DepositTokensComponent
   }
 
   async showDeleteAlert(data: any) {
+    console.log(data);
+    let vb_hay_hijos: boolean = false;
+
+    if (data.goodnumber != null) {
+      this.alert(
+        'warning',
+        'No puede eliminar un movimiento que ya está asociado a un expediente-bien',
+        ''
+      );
+    } else {
+      // VERIFICAR CHEQUES
+      const val: any = await this.getChecksReturn(data.motionnumber);
+      vb_hay_hijos = val;
+
+      if (vb_hay_hijos) {
+        this.alert(
+          'warning',
+          'No se puede eliminar una ficha mientras tenga devoluciones registradas',
+          ''
+        );
+      } else {
+        this.alertQuestion(
+          'question',
+          'Se eliminará el movimiento',
+          '¿Desea Continuar?'
+        ).then(async question => {
+          if (question.isConfirmed) {
+            let obj: ICuentaDelete = {
+              numberAccount: Number(data.accountnumber),
+              numberMotion: Number(data.motionnumber),
+            };
+            this.accountMovementService.eliminarMovementAccount(obj).subscribe({
+              next: response => {
+                this.getAccount();
+                this.form.reset();
+                this.alert('success', 'Movimiento Eliminado Correctamente', '');
+                console.log('res', response);
+              },
+              error: err => {
+                this.alert('error', 'Error al eliminar el movimiento', '');
+              },
+            });
+          }
+        });
+      }
+    }
+  }
+
+  async showDeleteAlert2(data: any) {
     console.log(data);
     let vb_hay_hijos: boolean = false;
 

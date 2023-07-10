@@ -50,6 +50,7 @@ export class GoodService extends HttpService {
   }
 
   getAll(params?: ListParams | string): Observable<IListResponse<IGood>> {
+    console.log('Aquí');
     return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params);
   }
 
@@ -411,7 +412,7 @@ export class GoodService extends HttpService {
   getByExpedientAndParams__(
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
-    const route = GoodEndpoints.Good;
+    const route = GoodEndpoints.Sgood;
     return this.get<IListResponse<IGood>>(route, params);
   }
 
@@ -448,5 +449,9 @@ export class GoodService extends HttpService {
     const URL = `${environment.API_URL}/parametergood/api/v1/application/pup-weapon-key`;
 
     return this.http.post<any>(URL, payload).pipe(map(res => res));
+  }
+
+  pupValidMasiv(body: any) {
+    return this.post<any>('good/pupValidMasiv2', body);
   }
 }

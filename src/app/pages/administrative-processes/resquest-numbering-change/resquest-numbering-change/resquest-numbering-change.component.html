@@ -29,7 +29,8 @@
               value="clasifGoodNumber"
               bindLabel="tipoSupbtipoDescription"
               (fetchItems)="getTodos($event)"
-              control="type">
+              control="type"
+              [multiple]="true">
             </ngx-select>
           </form-field>
         </div>
@@ -84,6 +85,12 @@
             [disabled]="!form.valid">
             Ejecutar
           </button>
+          <button
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="cleanFilter()"
+            style="margin: 1vh">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
         </div>
       </div>
     </div>
@@ -125,7 +132,7 @@
 <form [formGroup]="formaplicationData" class="form-material">
   <app-card [header]="true" [footer]="true">
     <div class="ch-content" header>
-      <h5 class="title">Datos de la Solicitud y sus Bienes</h5>
+      <h5 class="title">Datos de la solicitud y sus bienes</h5>
     </div>
     <div body>
       <div class="row">
@@ -136,7 +143,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="applicationChangeCashNumber" />
+              formControlName="applicationChangeCashNumber"
+              maxlength="7" />
           </form-field>
           <button
             type="button"
@@ -157,23 +165,28 @@
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('dateRequestChangeNumerary')"
-            label="Fecha Solicitud">
+            label="Fecha solicitud">
             <input
               type="text"
               class="form-control"
               formControlName="dateRequestChangeNumerary"
-              bsDatepicker />
+              bsDatepicker
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
-            [control]="formaplicationData.get('userRequestChangeNumber')"
-            label="Usr. Solicita">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="userRequestChangeNumber"
-              placeholder="Rol" />
+            [control]="formaplicationData.get('userRequestChangeNumber')">
+            <ngx-select
+              [form]="formaplicationData"
+              [data]="itemsUser"
+              label="Usuario Solicita"
+              value="usuario"
+              bindLabel="usuario"
+              (fetchItems)="getUsuario($event)"
+              (change)="searchUsuario($event)"
+              control="userRequestChangeNumber">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -184,7 +197,7 @@
               type="text"
               class="form-control"
               formControlName="postUserRequestCamnum"
-              placeholder="Nombre" />
+              maxlength="200" />
           </form-field>
         </div>
       </div>
@@ -197,27 +210,36 @@
             <input
               type="text"
               class="form-control"
-              formControlName="delegationRequestcamnum" />
+              formControlName="delegationRequestcamnum"
+              maxlength="200" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('procedureProposal')"
-            label="Procedimiento Propuesto">
+            label="Procedimiento propuesto">
             <select class="form-control" formControlName="procedureProposal">
               <option [value]="null">Seleccione un valor</option>
               <option value="LICITACION PUBLICA">LICITACION PUBLICA</option>
+              <option value="INVITACION">INVITACION</option>
+              <option value="LICITACION DIRECTA">ADJUDICACION DIRECTA</option>
+              <option value="SUBASTA">SUBASTA</option>
+              <option value="REMATE">REMATE</option>
             </select>
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field
-            [control]="formaplicationData.get('authorizeUser')"
-            label="Usr. Autoriza">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="authorizeUser" />
+          <form-field [control]="formaplicationData.get('authorizeUser')">
+            <ngx-select
+              [form]="formaplicationData"
+              [data]="itemsUser1"
+              label="Usuario Autoriza"
+              value="usuario"
+              bindLabel="usuario"
+              (fetchItems)="getUsuario1($event)"
+              (change)="searchUsuario1($event)"
+              control="authorizeUser">
+            </ngx-select>
           </form-field>
         </div>
       </div>
@@ -246,12 +268,13 @@
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('authorizeDate')"
-            label="Fecha Autoriza">
+            label="Fecha autoriza">
             <input
               type="text"
               class="form-control"
               formControlName="authorizeDate"
-              bsDatepicker />
+              bsDatepicker
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
           </form-field>
         </div>
       </div>
@@ -279,41 +302,35 @@
         </div>
       </div>
       <hr />
-      <div class="row">
-        <div class="col-md-1 col-sm-12 col-xs-12" style="display: grid">
+      <div class="row mb-6 mt-6">
+        <div class="col-md-12">
           <button
-            type="submit"
+            type="button"
             class="btn btn-primary btn-sm active"
-            tooltip="Enviar"
-            containerClass="tooltip-style"
+            style="margin-left: 1vh"
             (click)="pasar()">
-            <i class="bx bx-chevron-right"></i>
+            Pasar
           </button>
           <button
-            type="submit"
             class="btn btn-primary btn-sm active"
-            tooltip="Enviar"
-            containerClass="tooltip-style"
+            style="margin-left: 1vh"
             (click)="pasarTodo()">
-            <i class="bx bx-chevrons-right"></i>
+            Pasar Todo
           </button>
           <button
-            type="submit"
             class="btn btn-primary btn-sm active"
-            tooltip="Enviar"
-            containerClass="tooltip-style"
+            style="margin-left: 1vh"
             (click)="quitarTodo()">
-            <i class="bx bx-chevrons-left"></i>
+            Borrar Todo
           </button>
           <button
-            type="submit"
             class="btn btn-primary btn-sm active"
-            tooltip="Enviar"
-            containerClass="tooltip-style"
+            style="margin-left: 1vh"
             (click)="quitar()">
-            <i class="bx bx-chevron-left"></i>
+            Borrar
           </button>
         </div>
+        <hr />
         <div class="col-md-11 col-sm-12 col-xs-12">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table

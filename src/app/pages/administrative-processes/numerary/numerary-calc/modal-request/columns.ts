@@ -1,9 +1,8 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export let goodCheck: any[] = [];
 export const REQUESTS_COLUMNS_MODAL = {
-  solnumId: {
+  solnumid: {
     title: 'Número Solicitud',
     type: 'string',
     sort: false,
@@ -13,7 +12,7 @@ export const REQUESTS_COLUMNS_MODAL = {
     type: 'string',
     sort: false,
   },
-  delegationNumber: {
+  delegationnumber: {
     title: 'Delegación',
     type: 'string',
     sort: false,
@@ -23,7 +22,7 @@ export const REQUESTS_COLUMNS_MODAL = {
     type: 'string',
     sort: false,
   },
-  solnumDate: {
+  solnumdate: {
     title: 'Fecha solicitud',
     sort: false,
     type: 'html',
@@ -35,7 +34,7 @@ export const REQUESTS_COLUMNS_MODAL = {
       component: CustomDateFilterComponent,
     },
   },
-  check: {
+  /*   check: {
     title: 'Seleccionar',
     type: 'custom',
     filter: false,
@@ -54,7 +53,7 @@ export const REQUESTS_COLUMNS_MODAL = {
       });
     },
     sort: false,
-  },
+  }, */
 };
 
 export function clearGoodCheck() {

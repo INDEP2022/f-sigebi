@@ -1,4 +1,5 @@
 export interface IRecordAccountStatements {
+  numberMotion?: number;
   square?: number;
   accountNumber?: number;
   numberAccount?: number;
@@ -12,6 +13,10 @@ export interface IRecordAccountStatements {
   count: number;
   dateMotion: string;
   deposit: number;
+  numberReturnPayCheck: number;
+  numberMotionTransfer: number;
+  numberGood: number;
+  genderTransfer: string;
   withdrawal: number;
   factasStatusCta?: {
     nombre: string;
@@ -27,4 +32,11 @@ export interface IBanks {
 export interface IFactasStatusCta {
   nombre?: string;
   cve_cuenta?: number;
+}
+
+export interface IDateAccountBalance {
+  noAccount?: number;
+  tiDateCalc?: string;
+  tiDateCalcEnd?: string;
+  result?: number;
 }

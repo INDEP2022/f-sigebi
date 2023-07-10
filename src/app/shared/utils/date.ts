@@ -124,6 +124,9 @@ export function secondFormatDateToDate(date: string) {
 
 export function secondFormatDateTofirstFormatDate(date: string) {
   if (date) {
+    if ((date + '').trim() === '') {
+      return null;
+    }
     const array = date.split('-');
     return array[2] + '/' + array[1] + '/' + array[0];
   } else {

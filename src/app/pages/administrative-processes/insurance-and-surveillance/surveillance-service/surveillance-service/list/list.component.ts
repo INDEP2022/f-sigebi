@@ -17,7 +17,7 @@ import { COLUMNS } from './columns';
   styles: [],
 })
 export class ListComponent extends BasePage implements OnInit {
-  title: string = 'Bienes No Atendidos';
+  title: string = 'Bienes Cargados';
   form: FormGroup;
   data: any;
   data1: LocalDataSource = new LocalDataSource();

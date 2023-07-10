@@ -3,6 +3,7 @@
     <button
       type="button"
       class="btn btn-primary active btn-sm"
+      tooltip="Comienza Buscar"
       (click)="enableSearchMode()">
       <i class="bx bx-search-alt bx-sm float-icon"></i>
     </button>
@@ -31,6 +32,8 @@
   <div class="d-inline mx-2" *ngIf="modalLoaded">
     <button
       type="button"
+      tooltip="Var mas coincidencias"
+      placement="left"
       class="btn btn-primary btn-sm active"
       [disabled]="this.loading"
       (click)="openModalSearch()">

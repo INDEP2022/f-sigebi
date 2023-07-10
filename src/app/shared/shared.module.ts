@@ -38,6 +38,7 @@ import { PermissionsDirective } from './directives/permissions.directive';
 /*Redux NgRX Global Vars Store*/
 import { CustomSelectWidthLoading } from '../@standalone/shared-forms/custom-select-loading/custom-select-loading.component';
 import { CustomDateFilterComponent } from '../@standalone/shared-forms/filter-date-custom/custom-date-filter';
+import { CustomDateDayFilterComponent } from '../@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
 import { CustomDateMounthFilterComponent } from '../@standalone/shared-forms/filter-date-mounth-custom/custom-date-mounth-filter';
 import { DatePickerDirective } from './directives/date-picker.directive';
 import { UppercaseDirective } from './directives/uppercase.directive';
@@ -72,6 +73,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     DatePickerDirective,
     CustomDateFilterComponent,
     CustomDateMounthFilterComponent,
+    CustomDateDayFilterComponent,
   ],
   imports: [
     CommonModule,
@@ -121,6 +123,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     DatePickerDirective,
     CustomDateFilterComponent,
     CustomDateMounthFilterComponent,
+    CustomDateDayFilterComponent,
   ],
   providers: [{ provide: BsDatepickerConfig, useFactory: getDatepickerConfig }],
 })

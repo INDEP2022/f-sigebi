@@ -4,19 +4,29 @@
   </div>
   <div body>
     <div class="row">
-      <div class="col-md-5">
+      <div class="col-md-6">
         <!-- <div class="col-md-4 mt-3"> -->
-        <i class="fa fa-square" style="color: #e2c103"></i
-        ><span style="font-weight: 500">
-          Movimientos Con Bienes Conciliados &nbsp;&nbsp;
-        </span>
+        <div class="row">
+          <div class="col-12">
+            <i class="fa fa-square" style="color: #e2c103"></i
+            ><span style="font-weight: 500">
+              Movimientos Con Bienes Conciliados &nbsp;&nbsp;
+            </span>
+          </div>
+          <div class="col-12">
+            <i class="fa fa-square" style="color: #686868"></i
+            ><span style="font-weight: 500">
+              Doble Click en la Columna de Depósito para Conciliar &nbsp;&nbsp;
+            </span>
+          </div>
+        </div>
         <!-- </div> -->
       </div>
-      <div class="col-md-7 text-end">
+      <div class="col-md-6 text-end">
         <div class="row">
           <div class="col-12 text-end">
             <div class="row">
-              <div class="col-10 justify-content-end">
+              <div class="col-10 justify-content-end align-items-end mt-3 mb-3">
                 <!-- <app-columns-select style="margin-right: -45px" [defaultColumns]="10"
                   [(settings)]="settings"></app-columns-select> -->
                 <button
@@ -28,16 +38,24 @@
                   <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
                 <button
-                  class="btn btn-primary btn-sm active mr-3"
+                  class="btn btn-primary btn-sm active mr-5"
                   (click)="openForm()">
                   Movimientos
                 </button>
+
+                <!-- <app-columns-select
+                  [defaultColumns]="10"
+                  [(settings)]="settings"></app-columns-select> -->
               </div>
-              <div class="col-2 d-flex justify-content-end align-items-end">
+              <div class="col-md-2 text-end d-flex flex-row-reverse mt-3 mb-3">
                 <app-columns-select
                   [defaultColumns]="10"
-                  [(settings)]="settings"></app-columns-select>
+                  [(settings)]="settings"
+                  [leftList]="true"></app-columns-select>
               </div>
+              <!-- <div class="col-2 d-flex justify-content-end align-items-end">
+                
+              </div> -->
             </div>
           </div>
         </div>
@@ -45,7 +63,7 @@
     </div>
     <div class="row mt-4">
       <form-loader *ngIf="loading"></form-loader>
-      <div class="col-md-12">
+      <div *ngIf="!validExcel" class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng-scrollbar
             [track]="'all'"
@@ -61,12 +79,11 @@
           </ng-scrollbar>
         </div>
         <div class="row">
-          <div class="col-12">
-            <i class="fa fa-square" style="color: #686868"></i
-            ><span style="font-weight: 500">
+          <!-- <div class="col-12">
+            <i class="fa fa-square" style="color: #686868"></i><span style="font-weight: 500">
               Doble Click en la Columna de Depósito para Conciliar &nbsp;&nbsp;
             </span>
-          </div>
+          </div> -->
           <!-- <div class="col-md-4 mt-3">
             <i class="fa fa-square" style="color: #e2c103"></i
             ><span style="font-weight: 500">
@@ -78,6 +95,29 @@
               *ngIf="showPagination"
               [params]="paramsList"
               [totalItems]="totalItems">
+            </app-pagination>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="validExcel" class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading ? '0px' : '500px' }">
+            <ng2-smart-table
+              id="fichas"
+              (delete)="showDeleteAlert($event.data)"
+              (userRowSelect)="onCustomAction2($event)"
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="data2">
+            </ng2-smart-table>
+          </ng-scrollbar>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <app-pagination [params]="paramsList2" [totalItems]="totalItems2">
             </app-pagination>
           </div>
         </div>
@@ -141,7 +181,7 @@
                 <button
                   (click)="actualizarFunc()"
                   class="btn btn-primary btn-sm active w-100">
-                  Recargar
+                  Actualizar
                   <i class="fas fa-sync-alt"> </i>
                 </button>
               </div>

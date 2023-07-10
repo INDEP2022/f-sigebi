@@ -149,8 +149,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       this.updateGoodRespDevRegister == false
     ) {
       this.onLoadToast(
-        'info',
-        'Bien Sin Aclarar',
+        'warning',
+        'Atención',
         'El bien cuenta con una aclaración'
       );
       return;
@@ -162,16 +162,12 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     clarification.creationUser = user.username;
     clarification.rejectionDate = new Date().toISOString();
     clarification['answered'] = 'NUEVA';
-    //clarification.goodId = this.goodTransfer.id;
-    //clarification.clarificationId = this.clarificationId;//no se usaba
 
     this.goodTransfer.map(async item => {
       clarification.goodId = item.id;
       if (this.edit === true) {
         this.update(clarification);
       } else {
-        console.log('have good res dev', this.haveGoodResDevRegister);
-        console.log('is update good res dev', this.updateGoodRespDevRegister);
         await this.save(clarification, item);
         if (this.haveGoodResDevRegister === false) {
           await this.createGoodResDev(item);
@@ -220,8 +216,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
           console.log(error);
           this.onLoadToast(
             'error',
-            'Error',
-            `Error al guardar la aclaracion ${error.error.message}`
+            `Error al guardar la aclaracion ${error.error.message}`,
+            ''
           );
         },
       });

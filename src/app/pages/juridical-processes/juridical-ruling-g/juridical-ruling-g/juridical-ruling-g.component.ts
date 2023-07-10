@@ -75,7 +75,6 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { environment } from 'src/environments/environment';
-import Swal from 'sweetalert2';
 import { AbandonmentsDeclarationTradesService } from '../../abandonments-declaration-trades/service/abandonments-declaration-trades.service';
 import { RDictaminaDocModalComponent } from '../r-dictamina-doc-modal/r-dictamina-doc-modal.component';
 import { TempGood } from './dataTemp';
@@ -4458,6 +4457,7 @@ export class JuridicalRulingGComponent
           let sender_ =
             this.dictaminacionesForm.get('autoriza_remitente').value;
           this.oficioDictamen.sender = sender_;
+          this.oficioDictamen.cveChargeRem = this.positionKeyCargo;
           this.oficioDictamen.typeDict = this.dictamen.typeDict;
           this.oficioDictamen.officialNumber = this.dictamen.id;
           this.oficioDictamen.delegacionRecipientNumber =
@@ -4472,37 +4472,39 @@ export class JuridicalRulingGComponent
             console.log('DSADS', this.documents[i]);
             await this.createDocumentDictum(this.documents[i]);
           }
-          Swal.fire('Dictamen creado correctamente', '', 'success').then(() => {
-            let cveOficio = this.dictaminacionesForm.get('cveOficio').value;
-            let tipo = this.expedientesForm.get('tipoDictaminacion').value;
-            let noDictaminacion =
-              this.expedientesForm.get('noDictaminacion').value;
-            let volante = this.dictaminacionesForm.get('wheelNumber').value;
-            this.router.navigate(
-              [baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link],
-              {
-                queryParams: {
-                  PAQUETE: 0,
-                  P_GEST_OK: '',
-                  CLAVE_OFICIO_ARMADA: this.dictamen.passOfficeArmy,
-                  P_NO_TRAMITE: this.P_NO_TRAMITE,
-                  TIPO: typeDict,
-                  P_VALOR: this.dictamen.id
-                    ? this.dictamen.id
-                    : this.dictNumber,
-                  TIPO_VO: this.TIPO_VO,
-                  // CLAVE_OFICIO_ARMADA: cveOficio,
-                  // TIPO: tipo,
-                  // P_VALOR: noDictaminacion,
-                  // PAQUETE: '',
-                  // P_GEST_OK: 1, // ..hardcoded - no llega de la pantalla anterior
-                  // P_NO_TRAMITE: 1044141, // ..hardcoded - no llega de la pantalla anterior
-                  origin: 'FACTJURDICTAMASG',
-                  origin3: 'FACTGENACTDATEX',
-                },
-              }
-            );
-          });
+          this.alertInfo('success', 'Dictamen creado correctamente', '').then(
+            () => {
+              let cveOficio = this.dictaminacionesForm.get('cveOficio').value;
+              let tipo = this.expedientesForm.get('tipoDictaminacion').value;
+              let noDictaminacion =
+                this.expedientesForm.get('noDictaminacion').value;
+              let volante = this.dictaminacionesForm.get('wheelNumber').value;
+              this.router.navigate(
+                [baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[0].link],
+                {
+                  queryParams: {
+                    PAQUETE: 0,
+                    P_GEST_OK: '',
+                    CLAVE_OFICIO_ARMADA: this.dictamen.passOfficeArmy,
+                    P_NO_TRAMITE: this.P_NO_TRAMITE,
+                    TIPO: typeDict,
+                    P_VALOR: this.dictamen.id
+                      ? this.dictamen.id
+                      : this.dictNumber,
+                    TIPO_VO: this.TIPO_VO,
+                    // CLAVE_OFICIO_ARMADA: cveOficio,
+                    // TIPO: tipo,
+                    // P_VALOR: noDictaminacion,
+                    // PAQUETE: '',
+                    // P_GEST_OK: 1, // ..hardcoded - no llega de la pantalla anterior
+                    // P_NO_TRAMITE: 1044141, // ..hardcoded - no llega de la pantalla anterior
+                    origin: 'FACTJURDICTAMASG',
+                    origin3: 'FACTGENACTDATEX',
+                  },
+                }
+              );
+            }
+          );
         },
         error: (err: any) => {
           console.log('erer', err);
@@ -4915,9 +4917,12 @@ export class JuridicalRulingGComponent
   }
   delegationNumberOficioDict: any = null;
   departamentNumberOficioDict: any = null;
+  positionKeyCargo: any = null;
+
   userChange(user: any) {
     // ..captura usuario
     console.log(user);
+    this.positionKeyCargo = user.positionKey;
     if (user.usuario)
       this.delegationNumberOficioDict = user.usuario.delegationNumber;
 
@@ -5033,6 +5038,7 @@ export class JuridicalRulingGComponent
       recipientDepartmentNumber: this.departamentNumberOficioDict,
       typeDict: this.oficioDictamen.typeDict,
       officialNumber: this.oficioDictamen.officialNumber,
+      cveChargeRem: this.positionKeyCargo,
     };
 
     await this.updateOficioDictamen(obj1);
@@ -5059,7 +5065,7 @@ export class JuridicalRulingGComponent
   async updateDictamen(obj: any) {
     this.dictationService.update(obj).subscribe({
       next: async (response: any) => {
-        this.alert('success', 'Dictamen actualizados correctamente', '');
+        this.alert('success', 'Dictamen actualizado correctamente', '');
       },
       error: (err: any) => {
         console.log('erer', err);
