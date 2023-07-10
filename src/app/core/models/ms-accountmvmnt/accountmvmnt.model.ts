@@ -1,4 +1,4 @@
-export interface IDetailTransfer{
+export interface IDetailTransfer {
   numberReportDev: string;
   numberGoodDev: string;
   val14Dev: string;

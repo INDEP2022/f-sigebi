@@ -206,7 +206,6 @@ const routes: Routes = [
           import('./reports/record/record.module').then(m => m.RecordModule),
         data: { screen: 'FGERADBDETAEXPEDI', title: 'Detalle de Expediente' },
       },
-
       {
         //!SIRVE
         path: 'goods-type-crime-reports',
@@ -278,6 +277,7 @@ const routes: Routes = [
         data: { screen: '', title: '' },
       },
       {
+        //!SIRVIO
         path: 'goods-management',
         loadChildren: () =>
           import('./goods-management/goods-management.module').then(
