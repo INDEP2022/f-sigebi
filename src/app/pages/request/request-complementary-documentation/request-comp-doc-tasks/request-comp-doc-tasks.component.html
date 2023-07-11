@@ -11,7 +11,7 @@
     </div>
     <div class="">
       <div class="d-flex flex-row-reverse mt-2" *ngIf="screenWidth >= 1200">
-        <div class="mx-1" *ngIf="turnReq">
+        <div class="mx-1" *ngIf="turnReq && !complementaryDoc">
           <button
             type="button"
             class="btn btn-primary btn-sm active"
@@ -20,6 +20,17 @@
             Turnar <i aria-hidden="true" class="fa fa-share-square"></i>
           </button>
         </div>
+
+        <div class="mx-1" *ngIf="complementaryDoc">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="endRequest()"
+            [disabled]="">
+            Finalizar <i aria-hidden="true" class="fa fa-check"></i>
+          </button>
+        </div>
+
         <div class="mx-1">
           <button
             type="button"
