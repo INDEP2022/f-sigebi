@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -31,7 +38,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   @Input() validarGood: Function;
   @Input() formVault: LocationGoodsWarehousesStorageComponent;
   @Input() formWarehouse: LocationGoodsWarehousesStorageComponent;
-
+  @Output() allGoodsUpdated = new EventEmitter();
   //Data Table
 
   get radio() {
@@ -109,8 +116,9 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    this.allGoods.refresh();
-    console.log(this.totalItems);
+    // this.allGoods.refresh();
+    // console.log(this.totalItems);
+    this.allGoodsUpdated.next(this.allGoods);
     this.buildForm();
     this.loading = false;
     // this.$trackedGoods.subscribe({
@@ -248,6 +256,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
             // this.alert('success', 'Bienes', `Actualizados correctamente`);
             // this.add();
             console.log(res);
+            this.allGoodsUpdated.emit(this.allGoods);
           },
           err => {
             this.alert(
@@ -258,8 +267,8 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           }
         );
       });
+
       this.alert('success', 'Bienes', `Actualizados correctamente`);
-      this.add();
     } catch (err) {
       console.error(err);
     }
@@ -286,6 +295,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
             // this.alert('success', 'Bienes', `Actualizados correctamente`);
             // this.add();
             console.log(res);
+            this.allGoodsUpdated.emit(this.allGoods);
           },
           err => {
             this.alert(
@@ -297,7 +307,6 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
         );
       });
       this.alert('success', 'Bienes', `Actualizados correctamente`);
-      this.add();
     } catch (err) {
       console.error(err);
     }
@@ -309,5 +318,4 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
       queryParams: { origin: 'FACTADBUBICABIEN' },
     });
   }
-  onUserRowSelect(event: any) {}
 }

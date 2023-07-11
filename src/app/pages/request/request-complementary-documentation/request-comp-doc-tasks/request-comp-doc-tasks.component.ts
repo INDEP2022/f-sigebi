@@ -98,18 +98,24 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
 
   getRequestInfo(requestId: number) {
     // Llamar servicio para obtener informacion de la solicitud
-    this.title = `RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria`;
+
     const param = new FilterParams();
     param.addFilter('id', requestId);
     const filter = param.getParams();
     this.requestService.getAll(filter).subscribe({
       next: resp => {
-        this.searchRequestSimGoods = resp.data[0].recordId ? false : true;
         this.requestInfo = resp.data[0];
+        this.titleView();
         this.requestId = resp.data[0].id;
       },
     });
     this.contributor = 'CARLOS G. PALMA';
+  }
+
+  titleView() {
+    if (this.requestInfo?.affair == 13) {
+      this.title = `DOCUMENTACIÓN COMPLEMENTARIA: Registro de Documentación Complementaria, No. Solicitud ${this.requestInfo.id}`;
+    }
   }
 
   expedientSelected(event: any) {

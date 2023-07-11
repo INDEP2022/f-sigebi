@@ -58,7 +58,6 @@ import { MassiveConversionErrorsModalComponent } from '../massive-conversion-err
 import { MassiveConversionModalGoodComponent } from '../massive-conversion-modal-good/massive-conversion-modal-good.component';
 import { MassiveConversionSelectGoodComponent } from '../massive-conversion-select-good/massive-conversion-select-good.component';
 import { UnitConversionPackagesDataService } from '../services/unit-conversion-packages-data.service';
-import { PaqDestinoDetComponent } from './paq-destino-det/paq-destino-det.component';
 
 interface ValidaButton {
   PB_VALIDA: boolean;
@@ -164,6 +163,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   dataArrive: any[]
   //Variables de folio de escaneo
   scanFolio: string = 'scanFolio'
+
 
   constructor(
     private fb: FormBuilder,
@@ -804,21 +804,26 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       'info',
       'Confirmación',
       '¿Está seguro de que el Paquete ya ha sido validado?'
-    ).then(async question => {
+    ).then(question => {
       if (question.isConfirmed) {
-        const result = this.verifyGoods();
+        let result = true;
+        const check = document.getElementById('checkGood') as HTMLInputElement;
+        console.log(this.form.value);
+        const noPack: IPackageGoodEnc = this.noPackage.value;
+        if (!check.checked) {
+          result = this.verifyGoods();
+        }
         if (!result) return;
         let currentDate = new Date();
         let formattedDate = currentDate.toISOString().substring(0, 10);
-
         let packageUpdate: Partial<IPackage> = {
-          numberPackage: this.form.value.package,
+          numberPackage: +noPack.numberPackage,
           statuspack: 'V',
           dateValid: formattedDate,
           useValid: 'USER',
         };
-
-        this.updatePackage(packageUpdate, 'V');
+        this.pupIniCorreo(packageUpdate.numberPackage);
+        // this.updatePackage(packageUpdate, 'V');
         // if (!this.chValidateGood) {
         //   this.alert('warning', 'Existe inconsistencia en los bienes', '');
         // } else {
@@ -882,8 +887,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           } else {
             let currentDate = new Date();
             let formattedDate = currentDate.toISOString().substring(0, 10);
+            const noPack: IPackageGoodEnc = this.noPackage.value;
             let packageUpdate: Partial<IPackage> = {
-              numberPackage: this.form.value.package,
+              numberPackage: +noPack.numberPackage,
               statuspack: 'A',
               dateValid: formattedDate,
             };
@@ -1088,7 +1094,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   validateGoods(good: any) {
-    debugger;
+    // debugger;
     const noPack: IPackageGoodEnc = this.noPackage.value;
     let LV_VALIDA: string;
     let lv_DESC_ERROR = '';
@@ -1342,11 +1348,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         };
         this.lotService.pubCancelPackage(data).subscribe(
           response => {
-            console.log(response)
+            console.log(response);
             Swal.fire('Exito', 'Se cancelo el paquete', 'success');
           },
           error => {
-            console.log(error)
+            console.log(error);
             Swal.fire('Error', 'Error Al cancelar el paquete', 'error');
           }
         );
@@ -1608,28 +1614,30 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
     this.packageGoodService.insertPaqDestionarioEnc(model).subscribe(
       res => {
-        console.log(res);    
-        console.log(res.numberPackage);    
+        console.log(res);
+        console.log(res.numberPackage);
 
         const paramsF = new FilterParams();
-    paramsF.addFilter('numberPackage', res.numberPackage);
-    this.unitConversionDataService.selectedPackage = res.numberPackage;
-    this.packageGoodService.getPaqDestinationEnc(paramsF.getParams()).subscribe(
-      res => {
-        console.log(res);
-        if (res && res.data && res.data.length > 0) {
-          this.noPackage.setValue(res.data[0])
-          this.alert('success', 'Se creo nuevo paquete', '');
-        } else {
-          // this.dataPackageEnc = null;
-        }
-      },
-      err => {
-        console.log(err);
-        this.dataPackage = new DefaultSelect([]);
-        this.alert('error', 'ERROR', 'Paquete no encontrado');
-      }
-    );
+        paramsF.addFilter('numberPackage', res.numberPackage);
+        this.unitConversionDataService.selectedPackage = res.numberPackage;
+        this.packageGoodService
+          .getPaqDestinationEnc(paramsF.getParams())
+          .subscribe(
+            res => {
+              console.log(res);
+              if (res && res.data && res.data.length > 0) {
+                this.noPackage.setValue(res.data[0]);
+                this.alert('success', 'Se creo nuevo paquete', '');
+              } else {
+                // this.dataPackageEnc = null;
+              }
+            },
+            err => {
+              console.log(err);
+              this.dataPackage = new DefaultSelect([]);
+              this.alert('error', 'ERROR', 'Paquete no encontrado');
+            }
+          );
       },
       err => {
         console.log(err);
@@ -1643,7 +1651,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.form2.reset({}, { onlySelf: true, emitEvent: false });
     this.form2.enable({ onlySelf: true, emitEvent: false });
     this.dataErrors = [];
-    this.dataPrevisualization = [];
+    this.unitConversionDataService.clearPrevisualizationData.next(true);
   }
 
   validateButtons(status: string) {
@@ -1695,31 +1703,38 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.modalService.show(MassiveConversionSelectGoodComponent, modalConfig);
   }
 
-  handleOutPut(e:any){
-    console.log(e.data)
-    this.dataArrive = e.data
+  handleOutPut(e: any) {
+    console.log(e.data);
+    this.dataArrive = e.data;
   }
 
   //Boton de Cancelar
-  cancelPackFunction(){
-    if(this.noPackage.value.numberPackage != null && !['L','C','X'].includes(this.status.value)){
-      this.alertQuestion('question','¿Está seguro en cancelar el Paquete?','').then(
-        q => {
-          if(q.isConfirmed){
-            if(this.dataArrive.length > 0){
-              this.alert('success','Funciona','')
-            }
+  cancelPackFunction() {
+    if (
+      this.noPackage.value.numberPackage != null &&
+      !['L', 'C', 'X'].includes(this.status.value)
+    ) {
+      this.alertQuestion(
+        'question',
+        '¿Está seguro en cancelar el Paquete?',
+        ''
+      ).then(q => {
+        if (q.isConfirmed) {
+          if (this.dataArrive.length > 0) {
+            this.alert('success', 'Funciona', '');
           }
         }
-      )
-    }else if(this.status.value == 'C'){
-      this.alertQuestion('question','¿Está seguro en cancelar el Paquete Cerrado?','').then(
-        q => {
-          if(q.isConfirmed){
-            this.alert('success','Funciona con paquete cerrado','')
-          }
+      });
+    } else if (this.status.value == 'C') {
+      this.alertQuestion(
+        'question',
+        '¿Está seguro en cancelar el Paquete Cerrado?',
+        ''
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.alert('success', 'Funciona con paquete cerrado', '');
         }
-      )
+      });
     }
   }
 }

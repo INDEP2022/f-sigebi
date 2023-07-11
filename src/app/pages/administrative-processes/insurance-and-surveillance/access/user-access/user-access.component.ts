@@ -103,9 +103,11 @@ export class UserAccessComponent extends BasePage implements OnInit {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
+    params[`sortBy`] = `userKey:DESC`;
 
     this.userService.getAccessUsers(params).subscribe({
       next: response => {
+        console.log('response', response);
         this.users.load(response.data);
         this.users.refresh();
         this.totalItems = response.count;
