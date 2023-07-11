@@ -24,6 +24,7 @@ interface ExampleData {
   IMPORTE: number;
   CVE_CONCEPTO_PAGO: string;
   OBSERVACION: string;
+  NO_NOMBRAMIENTO: string;
   JURIDICO: string;
   ADMINISTRA: string;
   VALIDADO: string;
@@ -32,7 +33,6 @@ interface ExampleData {
   APLICADO: string;
   APLJUR: string;
   APLADM: string;
-  NO_NOMBRAMIENTO: number;
 }
 
 export interface IVariables {
@@ -61,14 +61,16 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   assetsForm: FormGroup;
   fileName: string = 'Seleccionar archivo';
   totalItems: number = 0;
+  totalItems2: number = 0;
   ExcelData: any;
-  errorData: any;
+  // errorData: any;
   paginatedData: any[] = [];
   currentItemData: number = 0;
   totalItemsData: number = 0;
   loadingDataProcess: boolean = false;
   errorsData: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
   data: ExampleData[] = [];
   origin: string = '';
   no_bien: number = null;
@@ -97,6 +99,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   regCoradm: number = 0;
   disableApplyRecords: boolean = false;
   dateFormat: string = 'dd/MM/yyyy';
+  settings2 = { ...this.settings };
 
   constructor(
     private fb: FormBuilder,
@@ -111,6 +114,15 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     super();
     this.settings.columns = COLUMNS;
     this.settings.actions = false;
+    this.settings2 = {
+      ...this.settings,
+      columns: {
+        DESCRIPCION: {
+          title: 'Descripción',
+          sort: false,
+        },
+      },
+    };
   }
 
   ngOnInit(): void {
@@ -228,18 +240,18 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         : null,
     };
   }
-  tmpMistakes(params: ListParams) {
-    this.incidentMaintenanceService.getTmpErrores(params).subscribe({
-      next: data => {
-        //INSERTAR DATA PARA TABLA
-        console.log(data);
-        this.errorData = data.data;
-        this.totalItems = data.count | 0;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
-  }
+  // tmpMistakes(params: ListParams) {
+  //   this.incidentMaintenanceService.getTmpErrores(params).subscribe({
+  //     next: data => {
+  //       //INSERTAR DATA PARA TABLA
+  //       console.log(data);
+  //       this.errorData = data.data;
+  //       this.totalItems = data.count | 0;
+  //       this.loading = false;
+  //     },
+  //     error: error => (this.loading = false),
+  //   });
+  // }
   goBack() {
     if (this.origin == 'FACTJURREGDESTLEG') {
       this.router.navigate(
@@ -272,44 +284,94 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         if (this.data[i].VALIDADO === 'S' && this.data[i].APLICADO === 'N') {
           //insert
           //success
-          this.data[i].APLICADO = 'S';
-          VCONC = VCONC + 1;
-          //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
-          ERRTXT = `(PAGOS) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
-          VCONE = VCONE + 1;
-          this.data[i].VALIDADO = 'N';
-          if (this.errorData[i].description != null) {
-          } else {
-            this.errorData[i].description = ERRTXT;
-          }
+          let data = {
+            appointmentNum: this.data[i].NO_NOMBRAMIENTO,
+            datePay: this.data[i].FEC_PAGO,
+            conceptPayKey: this.data[i].CVE_CONCEPTO_PAGO,
+            amount: this.data[i].IMPORTE,
+            observation: this.data[i].OBSERVACION,
+          };
+          this.svJpDBldcCBulkLoadingDepositoryCargoService
+            .postDedPayDepositary(data)
+            .subscribe({
+              next: resp => {
+                this.data[i].APLICADO = 'S';
+                VCONC = VCONC + 1;
+              },
+              error: eror => {
+                // this.alert(
+                //   'warning',
+                //   'Carga masiva de carga de depositarias',
+                //   'Error intentelo de nuevo.'
+                // );
+                //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
+                ERRTXT = `(PAGOS) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
+                VCONE = VCONE + 1;
+                this.data[i].VALIDADO = 'N';
+                this.errorsData.push({ DESCRIPCION: ERRTXT });
+                // if (this.errorsData[i].description != null) {
+                // } else {
+                //   this.errorsData[i].description = ERRTXT;
+                // }
+              },
+            });
         }
         if (this.data[i].VALJUR === 'S' && this.data[i].APLJUR === 'N') {
           //insert
           //success
-          this.data[i].APLJUR = 'S';
-          VCONJ = VCONJ + 1;
-          //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
-          ERRTXT = `(JURIDICO) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
-          this.data[i].VALJUR = 'N';
-          if (this.errorData[i].description != null) {
-            //CREATE_RECORD;
-          } else {
-            this.errorData[i].description = ERRTXT;
-          }
+          let data = {
+            appointmentNum: this.data[i].NO_NOMBRAMIENTO,
+            dateRepo: this.data[i].FEC_PAGO,
+            reportKey: 1,
+            report: this.data[i].JURIDICO,
+          };
+          this.svJpDBldcCBulkLoadingDepositoryCargoService
+            .postDetrepoDepositary(data)
+            .subscribe({
+              next: resp => {
+                this.data[i].APLJUR = 'S';
+                VCONJ = VCONJ + 1;
+              },
+              error: eror => {
+                //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
+                ERRTXT = `(JURIDICO) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
+                this.data[i].VALJUR = 'N';
+                this.errorsData.push({ DESCRIPCION: ERRTXT });
+                // if (this.errorsData[i].description != null) {
+                //   //CREATE_RECORD;
+                // } else {
+                //   this.errorsData[i].description = ERRTXT;
+                // }
+              },
+            });
         }
         if (this.data[i].VALADM === 'S' && this.data[i].APLADM === 'N') {
           //insert
-          //success
-          this.data[i].APLADM = 'S';
-          VCONA = VCONA + 1;
-          //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
-          ERRTXT = `(ADMINISTRATIVO) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
-          this.data[i].VALADM = 'N';
-          if (this.errorData[i].description != null) {
-            //CREATE_RECORD;
-          } else {
-            this.errorData[i].description = ERRTXT;
-          }
+          let data = {
+            appointmentNum: this.data[i].NO_NOMBRAMIENTO,
+            dateRepo: this.data[i].FEC_PAGO,
+            reportKey: 2,
+            report: this.data[i].ADMINISTRA,
+          };
+          this.svJpDBldcCBulkLoadingDepositoryCargoService
+            .postDetrepoDepositary(data)
+            .subscribe({
+              next: resp => {
+                this.data[i].APLADM = 'S';
+                VCONA = VCONA + 1;
+              },
+              error: eror => {
+                //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
+                ERRTXT = `(ADMINISTRATIVO) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
+                this.data[i].VALADM = 'N';
+                this.errorsData.push({ DESCRIPCION: ERRTXT });
+                // if (this.errorsData[i].description != null) {
+                //   //CREATE_RECORD;
+                // } else {
+                //   this.errorsData[i].description = ERRTXT;
+                // }
+              },
+            });
         }
         VCONP = VCONP + 1;
       }
@@ -458,9 +520,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       .subscribe({
         next: async data => {
           console.log(data, data.data[0].no_nombramiento);
-          this.data[count].NO_NOMBRAMIENTO = Number(
-            data.data[0].no_nombramiento
-          );
+          this.data[count].NO_NOMBRAMIENTO = data.data[0].no_nombramiento;
           if (option == 'pays') {
             this.getVCheca(count, option);
           } else if (option == 'juridico') {
@@ -504,9 +564,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       .subscribe({
         next: async data => {
           console.log(data, data.data[0].no_nombramiento);
-          this.data[count].NO_NOMBRAMIENTO = Number(
-            data.data[0].no_nombramiento
-          );
+          this.data[count].NO_NOMBRAMIENTO = data.data[0].no_nombramiento;
           this.getVChecaPost(count, desc);
         },
         error: err => {
@@ -526,7 +584,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   }
   getVChecaPost(count: number, desc: string) {
     let body: IVChecaPost = {
-      appointmentNumber: this.data[count].NO_NOMBRAMIENTO,
+      appointmentNumber: Number(this.data[count].NO_NOMBRAMIENTO),
       payDate: new Date(this.data[count].FEC_PAGO), //"2009-05-14",
       conceptPayKey: Number(this.data[count].CVE_CONCEPTO_PAGO),
     };
@@ -534,7 +592,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       .getVChecaPost(body)
       .subscribe({
         next: async data => {
-          this.data[count].NO_NOMBRAMIENTO = Number(data.data[0].v_checa);
+          this.data[count].NO_NOMBRAMIENTO = data.data[0].v_checa.toString();
           this.V_BAN = false;
           desc =
             desc +
@@ -586,7 +644,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     option: string = 'juridico'
   ) {
     let body: IVChecaPostReport = {
-      appointmentNumber: this.data[count].NO_NOMBRAMIENTO,
+      appointmentNumber: Number(this.data[count].NO_NOMBRAMIENTO),
       payDate: new Date(this.data[count].FEC_PAGO), //"2009-05-14",
       reportKey: option == 'juridico' ? 1 : 2,
     };
@@ -594,7 +652,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       .getVChecaPostReport(body)
       .subscribe({
         next: async data => {
-          this.data[count].NO_NOMBRAMIENTO = Number(data.data[0].v_checa);
+          this.data[count].NO_NOMBRAMIENTO = data.data[0].v_checa.toString();
           this.V_BAN = false;
           desc =
             desc +
