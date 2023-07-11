@@ -33,4 +33,8 @@ export class DeletePeriodComponent {
   getFormDeletePeriod() {
     return this.form;
   }
+
+  onClickDeletePeriod2() {
+    console.log('SIII');
+  }
 }

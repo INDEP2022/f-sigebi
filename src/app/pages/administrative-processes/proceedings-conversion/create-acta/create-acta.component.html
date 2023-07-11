@@ -98,7 +98,8 @@
                 [control]="actaRecepttionForm.get('consec')"
                 label="Folio">
                 <input
-                  max="9999"
+                  [max-length]="4"
+                  pattern="^[0-9]+"
                   type="number"
                   class="form-control"
                   formControlName="consec" />
@@ -112,8 +113,8 @@
                 label="Año">
                 <input
                   #inputValue
-                  [max]="99"
-                  max="99"
+                  [max-length]="2"
+                  pattern="^[0-9]+"
                   type="number"
                   class="form-control"
                   formControlName="anio" />
@@ -126,6 +127,8 @@
                 <input
                   [max]="12"
                   [min]="1"
+                  [max-length]="2"
+                  pattern="^[0-9]+"
                   #inputValue
                   type="number"
                   class="form-control"
