@@ -482,6 +482,14 @@ export class LocationGoodsWarehousesStorageComponent
       });
     });
   }
+  goBack() {
+    this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
+      queryParams: {
+        origin: this.screenKey,
+        PAR_MASIVO: this.form.value.good,
+      },
+    });
+  }
 }
 
 export interface IParamsUbicationGood {

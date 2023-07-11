@@ -2,7 +2,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -33,6 +33,7 @@ import { ModalScanningFoilTableHistoricalGoodsComponent } from '../modal-scannin
 import { GoodsProcessValidationExtdomService } from '../services/goods-process-validation-extdom.service';
 import {
   COLUMNS_GOODS_LIST_EXTDOM,
+  COLUMNS_GOODS_LIST_EXTDOM_2,
   RELATED_FOLIO_COLUMNS,
 } from './process-extdoom-columns';
 
@@ -54,7 +55,10 @@ export class GoodsProcessValidationExtdomComponent
   implements OnInit, OnDestroy
 {
   goodDataSelected: IGood | any[];
+  screenKey: string = 'FADMAPROEXTDOM';
   freeLabel: string = 'X';
+  registerType: string = 'N';
+  universalFolio: number = null;
   // TABLA DATA
   tableSettings = {
     ...this.settings,
@@ -63,7 +67,7 @@ export class GoodsProcessValidationExtdomComponent
   dataTableParams = new BehaviorSubject<ListParams>(new ListParams());
   loadingGoods: boolean = false;
   totalGoods: number = 0;
-  goodData: IGood | any[];
+  goodData: IGood[] | any[] = [];
   tableSettings2 = {
     ...this.settings,
   };
@@ -71,7 +75,7 @@ export class GoodsProcessValidationExtdomComponent
   dataTableParams2 = new BehaviorSubject<ListParams>(new ListParams());
   loadingGoods2: boolean = false;
   totalGoods2: number = 0;
-  goodData2: IGood | any[];
+  goodData2: IGood[] | any[] = [];
   // Historico Modal
   params = new BehaviorSubject(new ListParams());
   filterParams = new BehaviorSubject(new FilterParams());
@@ -97,6 +101,7 @@ export class GoodsProcessValidationExtdomComponent
   selectAuthority = new DefaultSelect();
   // Goods Selects
   selectedGooods: IGood[] = [];
+  selectedDeleteGooods: IGood[] = [];
   goods: IGood[] | any[] = [];
   goodsValid: any[] = [];
   // Scanning
@@ -112,9 +117,14 @@ export class GoodsProcessValidationExtdomComponent
     private modalService: BsModalService,
     private documentsService: DocumentsService,
     private authService: AuthService,
-    private msUsersService: UsersService
+    private msUsersService: UsersService,
+    private router: Router
   ) {
     super();
+    COLUMNS_GOODS_LIST_EXTDOM.seleccion = {
+      ...COLUMNS_GOODS_LIST_EXTDOM.seleccion,
+      onComponentInitFunction: this.onClickSelect.bind(this),
+    };
     this.tableSettings = {
       ...this.settings,
       actions: {
@@ -123,17 +133,28 @@ export class GoodsProcessValidationExtdomComponent
         edit: false,
         delete: false,
       },
-      columns: COLUMNS_GOODS_LIST_EXTDOM,
+      columns: { ...COLUMNS_GOODS_LIST_EXTDOM },
+      rowClassFunction: (row: any) => {
+        if (row.data.disponible == this.freeLabel) {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+      },
+    };
+    COLUMNS_GOODS_LIST_EXTDOM_2.seleccion = {
+      ...COLUMNS_GOODS_LIST_EXTDOM_2.seleccion,
+      onComponentInitFunction: this.onClickSelect_ExtDom.bind(this),
     };
     this.tableSettings2 = {
+      ...this.settings,
       actions: {
         columnTitle: '',
         add: false,
         edit: false,
         delete: false,
       },
-      ...this.settings,
-      columns: COLUMNS_GOODS_LIST_EXTDOM,
+      columns: { ...COLUMNS_GOODS_LIST_EXTDOM_2 },
     };
   }
 
@@ -162,6 +183,63 @@ export class GoodsProcessValidationExtdomComponent
         this.P_GEST_OK = params['P_GEST_OK'] ?? null;
         this.initForm();
       });
+  }
+
+  onClickSelect(event: any) {
+    // console.log('EVENTO ', event);
+    if (event != undefined) {
+      event.toggle.subscribe((data: any) => {
+        console.log('DATA LOG #### ', data);
+        // data.row.selection = data.toggle;
+        if (data.row.disponible == this.freeLabel) {
+          let row: IGood = data.row;
+          const index = this.selectedGooods.findIndex(
+            _good => _good.goodId == row.goodId
+          ); //.indexOf(row);
+          console.log('INDICE ', index);
+          if (index == -1 && data.toggle == true) {
+            this.selectedGooods.push(row);
+          } else if (index != -1 && data.toggle == false) {
+            this.selectedGooods.splice(index, 1);
+          }
+        } else {
+          const index: number = this.selectedGooods.findIndex(
+            _good => _good.goodId == data.row.goodId
+          );
+          this.goodData[index].seleccion = 0;
+          this.dataTable.load(this.goodData);
+          this.dataTable.refresh();
+        }
+      });
+    }
+  }
+
+  onClickSelect_ExtDom(event: any) {
+    // console.log('EVENTO ', event);
+    if (event != undefined) {
+      event.toggle.subscribe((data: any) => {
+        console.log('DATA LOG #### ', data);
+        // data.row.selection = data.toggle;
+        if (data.row.register_type == this.registerType) {
+          let row: IGood = data.row;
+          const index = this.selectedDeleteGooods.findIndex(
+            _good => _good.goodId == row.goodId
+          ); //.indexOf(row);
+          console.log('INDICE ', index);
+          if (index == -1 && data.toggle == true) {
+            this.selectedDeleteGooods.push(row);
+          } else if (index != -1 && data.toggle == false) {
+            this.selectedDeleteGooods.splice(index, 1);
+          }
+        } else {
+          this.alert(
+            'warning',
+            'Este Registro no se puede Eliminar, sólo es posible Liberar',
+            ''
+          );
+        }
+      });
+    }
   }
 
   getUserDataLogged(userId: string) {
@@ -498,7 +576,8 @@ export class GoodsProcessValidationExtdomComponent
           this.totalGoods = res.count;
           let data = res.data.map((i: any) => {
             i['disponible'] = this.freeLabel;
-            i['ch_selec'] = 0;
+            // i['ch_selec'] = 0;
+            i['seleccion'] = 0;
             return i;
           });
           this.dataTable.load(data);
@@ -549,13 +628,76 @@ export class GoodsProcessValidationExtdomComponent
       });
   }
 
-  btnAgregar() {
+  addSelect() {
     console.log('Agregar');
+    this.selectedGooods.forEach((data: IGood) => {
+      const index2: number = this.goodData.findIndex(
+        (_good: IGood) => _good.goodId == data.goodId
+      );
+      console.log('INDICE 2 ADD SELECT ', index2);
+      if (index2 > -1) {
+        const index3: number = this.goodData2.findIndex(
+          (_good: IGood) => _good.goodId == data.goodId
+        );
+        console.log('INDICE 3 ADD SELECT ', index2);
+        // VALIDAR CON EL ENDPOINT IGUAL
+        if (index3 == -1) {
+          this.loadingGoods2 = true;
+          this.goodData2.push({ ...data, register_type: 'N' }); // Agregar registro a la data
+          this.dataTable2.add({ ...data, register_type: 'N' }); // Agregar registro a la tabla
+          this.totalGoods2++; // Aumentar si se agrego registro
+          this.dataTable2.refresh();
+          this.loadingGoods2 = false;
+          this.loadingGoods = true;
+          this.goodData[index2].disponible = 'N';
+          this.goodData[index2].seleccion = 0;
+          this.dataTable.load(this.goodData);
+          this.dataTable.refresh();
+          this.loadingGoods = false;
+        }
+      }
+    });
   }
 
-  btnEliminar() {
+  removeSelect() {
     console.log('Eliminar');
+    this.selectedGooods.forEach((data: IGood) => {
+      const index2: number = this.goodData2.findIndex(
+        (_good: IGood) => _good.goodId == data.goodId
+      );
+      console.log('INDICE 2 DELETE SELECT ', index2);
+      if (index2 > -1) {
+        const index3: number = this.goodData.findIndex(
+          (_good: IGood) => _good.goodId == data.goodId
+        );
+        console.log('INDICE 3 DELETE SELECT ', index2);
+        // VALIDAR CON EL ENDPOINT IGUAL
+        if (index3 == -1) {
+          this.loadingGoods2 = true;
+          this.goodData2.splice(index2, 1); // Eliminar registro del arreglo
+          this.dataTable2.remove(this.goodData2[index2]); // Eliminar de la tabla
+          this.totalGoods2--; // Restar si se quito el registro
+          this.dataTable2.refresh();
+          this.loadingGoods2 = false;
+          this.loadingGoods = true;
+          this.goodData[index3].disponible = this.freeLabel;
+          this.goodData[index3].seleccion = 0;
+          this.dataTable.load(this.goodData);
+          this.dataTable.refresh();
+          this.loadingGoods = false;
+        }
+      }
+    });
   }
+
+  addAll() {
+    console.log('Agregar Todos');
+  }
+
+  removeAll() {
+    console.log('Eliminar Todos');
+  }
+
   btnEjecutarCambios() {
     console.log('EjecutarCambios');
   }
@@ -606,9 +748,61 @@ export class GoodsProcessValidationExtdomComponent
     };
     this.modalService.show(HistoricalGoodsExtDomComponent, config);
   }
-  btnConocimiento() {}
+  btnConocimiento() {
+    if (this.notificationData == null) {
+      this.alert('warning', 'Realice una búsqueda para ver está opción', '');
+      return;
+    }
+    if (this.notificationData.wheelNumber == null) {
+      this.alert('warning', 'Se requiere de un Volante/Expediente', '');
+      return;
+    }
+    if (this.selectedGooods.length > 0) {
+      this.alert(
+        'warning',
+        'Se tiene al menos 1 bien amparado, no puede concluir por este medio',
+        ''
+      );
+      return;
+    }
+    if (!this.universalFolio) {
+      this.alert('warning', 'Se debe ingresar el Folio de Escaneo', '');
+    }
+    const params = new FilterParams();
+    params.addFilter('id', this.universalFolio);
+    params.addFilter('scanStatus', 'ESCANEADO');
+    this.documentsService.getAllFilter(params.getParams()).subscribe({
+      next: resp => {
+        console.log(resp);
+        // NOTIFICACIONES.RESERVADO
+      },
+      error: error => {
+        if (error.status >= 500) {
+          this.alert(
+            'error',
+            'Ocurrió un error al validar los Documentos relacionados al Folio Universal',
+            ''
+          );
+        } else {
+          if (['13', '14'].includes(this.form.get('affairKey').value)) {
+            this.alert('warning', 'Se debe ingresar el Folio de Escaneo', '');
+          }
+        }
+      },
+    });
+  }
   btnEnvioCorreos() {}
-  btnMantenimientoCorreo() {}
+  btnMantenimientoCorreo() {
+    this.router.navigate(['/pages/parameterization/mail'], {
+      queryParams: {
+        origin: this.screenKey,
+        origin2: this.origin ? this.origin : null,
+        P_CVE_PANTALLA: this.screenKey,
+        P_NO_TRAMITE: this.P_NO_TRAMITE,
+        P_GEST_OK: this.P_GEST_OK,
+      },
+    });
+  }
   addSelectedGoods() {
     console.log(
       'this.selectedGooods',
@@ -769,7 +963,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectAffairkey);
+          // console.log(data, this.selectAffairkey);
         },
         error: error => {
           this.selectAffairkey = new DefaultSelect();
@@ -799,7 +993,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectIndiciadoNumber);
+          // console.log(data, this.selectIndiciadoNumber);
         },
         error: error => {
           this.selectIndiciadoNumber = new DefaultSelect();
@@ -829,7 +1023,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectMinpubNumber);
+          // console.log(data, this.selectMinpubNumber);
         },
         error: error => {
           this.selectMinpubNumber = new DefaultSelect();
@@ -859,7 +1053,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectCourtNumber);
+          // console.log(data, this.selectCourtNumber);
         },
         error: error => {
           this.selectCourtNumber = new DefaultSelect();
@@ -898,7 +1092,7 @@ export class GoodsProcessValidationExtdomComponent
       .faStageCreda(dateStage)
       .subscribe({
         next: data => {
-          console.log(data);
+          // console.log(data);
           let stageDate = data.stagecreated;
           const params: any = new FilterParams();
           if (
@@ -926,7 +1120,7 @@ export class GoodsProcessValidationExtdomComponent
                   }),
                   data.count
                 );
-                console.log(data, this.selectDelegationNumber);
+                // console.log(data, this.selectDelegationNumber);
               },
               error: error => {
                 this.selectDelegationNumber = new DefaultSelect();
@@ -934,7 +1128,7 @@ export class GoodsProcessValidationExtdomComponent
             });
         },
         error: error => {
-          console.log(error);
+          // console.log(error);
           this.selectDelegationNumber = new DefaultSelect();
           this.onLoadToast(
             'error',
@@ -967,7 +1161,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectEntFedKey);
+          // console.log(data, this.selectEntFedKey);
         },
         error: error => {
           this.selectEntFedKey = new DefaultSelect();
@@ -997,7 +1191,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectCityNumber);
+          // console.log(data, this.selectCityNumber);
         },
         error: error => {
           this.selectCityNumber = new DefaultSelect();
@@ -1027,7 +1221,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectTransference);
+          // console.log(data, this.selectTransference);
         },
         error: error => {
           this.selectTransference = new DefaultSelect();
@@ -1069,7 +1263,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectStationNumber);
+          // console.log(data, this.selectStationNumber);
         },
         error: error => {
           this.selectStationNumber = new DefaultSelect();
@@ -1123,7 +1317,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectAuthority);
+          // console.log(data, this.selectAuthority);
         },
         error: error => {
           this.selectAuthority = new DefaultSelect();

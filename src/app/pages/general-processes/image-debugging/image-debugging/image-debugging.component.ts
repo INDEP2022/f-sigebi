@@ -27,8 +27,11 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   goodPhoto: IGoodPhoto[] = [];
   goods: IGood[] = [];
   isSearch: boolean = false;
+  idGood: number = 0;
   totalItems: number = 0;
   di_desc_est: string;
+  desGood: string;
+  lot: any;
   constructor(
     private fb: FormBuilder,
     private goodService: GoodService,
@@ -73,6 +76,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     ] = `$eq:${this.form.controls['goodNumber'].value}`;
     this.goodPhotoService.getFilterGoodPhoto(params).subscribe({
       next: response => {
+        this.idGood = this.form.controls['goodNumber'].value;
         console.log(response.data);
         this.goodPhoto = response.data;
         this.totalItems = response.count;
@@ -87,9 +91,12 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       next: response => {
         this.form.controls['goodStatus'].setValue(response.goodStatus);
         this.form.controls['fileNumber'].setValue(response.fileNumber);
-        this.form.controls['idEvent'].setValue(response);
+        this.getComerGoodAll(response);
+        this.form.controls['idEvent'].setValue(this.lot.id);
+        this.form.controls['lotDesc'].setValue(this.lot.description);
         this.form.controls['idLot'].setValue(null);
-        console.log(response);
+        this.desGood = response.description;
+        console.log(response.description);
         this.goods.push(response);
         this.getGoodPhoto(new ListParams());
       },
@@ -120,6 +127,34 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     }
   */
 
+  validatePhoto(body: IGoodPhoto) {
+    if (this.form.value.goodNumber != null) {
+      this.alertQuestion(
+        'warning',
+        'Validar',
+        'Desea realizar la validación de fotografías?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.goodPhotoService.save(body).subscribe({
+            next: data => {
+              this.loading = false;
+              this.onLoadToast('success', 'Registro eliminado', '');
+              this.getData();
+            },
+            error: error => {
+              this.onLoadToast('error', 'No se puede eliminar registro', '');
+              this.loading = false;
+            },
+          });
+        }
+      });
+    }
+    this.alert('info', ' no existen fotografías para validar', '');
+    return;
+  }
+
+  getData() {}
+
   estatusAndFileNumber(datos: any) {
     if (this.form.controls['goodNumber'].value === null) {
       this.form.controls['goodStatus'].setValue(null);
@@ -142,6 +177,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     console.log(this.form.controls['goodNumber'].value);
     this.comerEventService.getAllFilterComerGood(params).subscribe({
       next: resp => {
+        this.lot = resp;
         console.log(resp);
         this.lotIdSelected = new DefaultSelect(resp.data, resp.count);
       },
