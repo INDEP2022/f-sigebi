@@ -121,6 +121,7 @@ export class GoodsManagementSocialCabinetComponent
   clear() {
     this.form.reset();
     this.selectedGoodstxt = [];
+    this.notLoadedGoods = [];
     this.goodsManagementService.clear.next(true);
     this.goodsManagementService.data = [];
     this.activateTabs();
@@ -165,6 +166,7 @@ export class GoodsManagementSocialCabinetComponent
   }
 
   async onFileChange(event: any) {
+    this.notLoadedGoods = [];
     this.pageLoading = true;
     const file = event.target.files[0];
     let fileReader = new FileReader();
