@@ -23,16 +23,15 @@
               <input formControlName="idRequest" class="form-control" />
             </form-field>
           </div>
-          <div
-            class="col-md-4"
-            style="display: flex; justify-content: start; align-items: center">
-            <button type="button" class="btn btn-sm btn-secondary active m-3">
+          <!-- <div class="col-md-4" style="display: flex; justify-content: start; align-items: center">
+                        <button id="btn-consultar" type="button" class="btn btn-sm btn-secondary active m-3">
               CONSULTAR
             </button>
-            <button type="button" class="btn btn-sm btn-success active m-3">
+
+                        <button type="button" class="btn btn-sm btn-success active m-3">
               IMPORTAR
             </button>
-          </div>
+                    </div> -->
         </div>
 
         <div class="row mt-4">
@@ -58,12 +57,46 @@
                 bsDatepicker />
             </form-field>
           </div>
-          <div
-            class="col-md-4"
-            style="display: flex; justify-content: start; align-items: center">
-            <button type="button" class="btn btn-sm btn-secondary active m-3">
-              CONSULTAR
-            </button>
+          <div>
+            <div
+              class="col-md-4"
+              style="
+                display: flex;
+                justify-content: start;
+                align-items: center;
+              ">
+              <button
+                id="btn-consultar"
+                class="btn btn-sm btn-secondary active m-3"
+                type="button"
+                (click)="getTransNumerario()">
+                Consultar
+              </button>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-success active m-2"
+                    (click)="file.click()">
+                    Importar
+                  </button>
+                  <input
+                    type="file"
+                    name="file"
+                    #file
+                    class="d-none"
+                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                    (change)="onFileChange($event)" />
+                </div>
+              </div>
+
+              <div class="col-md-2 btn-group">
+                <button type="button" class="btn btn-primary btn-sm active">
+                  Enviar
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <form-check label="Marcar como historico">
@@ -79,7 +112,7 @@
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settings"
-                [source]="data1">
+                [source]="dataTable">
               </ng2-smart-table>
             </div>
           </div>

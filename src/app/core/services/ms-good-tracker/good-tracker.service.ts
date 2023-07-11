@@ -92,6 +92,10 @@ export class GoodTrackerService extends HttpService {
     return this.post(GoodTrackerEndpoints.TmpTracker, tmpTracker);
   }
 
+  includeAll(filters: any) {
+    return this.post('trackergood/apps/pup-consult-with-insert', filters);
+  }
+
   getExcel(tmp: GoodTrackerMap) {
     return this.post(GoodTrackerEndpoints.GoodExcel, tmp);
   }

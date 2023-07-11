@@ -20,14 +20,16 @@ import { ISpentConcept } from 'src/app/core/models/ms-spent/spent.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { UtilComerV1Service } from 'src/app/core/services/ms-prepareevent/util-comer-v1.service';
 import { SpentService } from 'src/app/core/services/ms-spent/spent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SelectConceptSpentDialogComponent } from '../components/select-concept-spent-dialog/select-concept-spent-dialog.component';
 import { MassiveNumeraryChangeModalComponent } from '../massive-numerary-change-modal/massive-numerary-change-modal.component';
 import {
-  IMassiveNumeraryChangeSpent,
+  IMassiveNumeraryGood,
   IMassiveNumeraryTableSmall,
+  IResponseFMasInsNumerarioSpent,
 } from '../types/massive-numerary.type';
 import {
   HELP_ARR,
@@ -39,7 +41,7 @@ import {
   templateUrl: './massive-numerary-change.component.html',
   styles: [
     `
-      .selects-origin-data select {
+      /* .selects-origin-data select {
         border: none;
         border-bottom: 1px solid black;
         margin-left: 5px;
@@ -58,6 +60,17 @@ import {
       .spent-inputs > div {
         display: flex;
         flex-direction: column;
+      } */
+      .spents input {
+        width: 150px;
+      }
+      select.selects-origin-data {
+        width: 105px;
+      }
+      .btn-custom-search {
+        position: absolute;
+        right: 3px;
+        top: 8px;
       }
     `,
   ],
@@ -88,7 +101,8 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     private spentService: SpentService,
     private excelService: ExcelService,
     private prepareEventService: UtilComerV1Service,
-    private authService: AuthService
+    private authService: AuthService,
+    private goodProcess: GoodprocessService
   ) {
     super();
     this.settings = {
@@ -178,11 +192,13 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     });
   }
 
-  //#region On click Button Process Extraction
   isLoadingProcessExtraction = false;
   async onClickBtnProcessExtraction() {
+    this.registerReads = 0;
+    this.registerProcessed = 0;
+    this.registerCorrect = 0;
+    this.registerIncorrect = 0;
     console.log('onClickBtnProcessExtraction');
-    this.isLoadingProcessExtraction = true;
     let vBanB = 0;
     let vBanI = 0;
     let vBanV = 0;
@@ -257,25 +273,81 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       this.alert('warning', 'Advertencia', messages.join('\n'));
     }
     if (vBan) {
-      this.isLoadingProcessExtraction = false;
       return;
     }
 
-    /*TODO: limpiar tablas 
-        GO_BLOCK('BLK_BIENES');
-        CLEAR_BLOCK;
-        GO_BLOCK('BLK_GASTOS');
-        CLEAR_BLOCK;
-        GO_BLOCK('BLK_PREVIEW');
-        FIRST_RECORD;
-    */
+    const dataPreviousAux = [...this.dataPrevious];
+    dataPreviousAux.shift();
+    const body = {
+      colB: vColB,
+      colI: vColI,
+      colV: vColV,
+      colG: vColG,
+      bienes: dataPreviousAux,
+      formG: this.formGas.value,
+      formGad: this.formGad.value,
+    };
+    console.log({ body });
+    this.isLoadingProcessExtraction = true;
 
-    //  const dataTablePreview = await this.dataPrevious.getAll();
-    //  console.log({ dataTablePreview });
-    this.processExtraction(vColB, vColI, vColV, vColG);
+    this.goodProcess.postFMasInsNumerario(body).subscribe({
+      next: (res: IResponseFMasInsNumerarioSpent) => {
+        this.isLoadingProcessExtraction = false;
+        this.registerReads = res.T_REG_PROCESADOS;
+        this.registerProcessed = res.T_REG_PROCESADOS;
+        this.registerCorrect = res.T_REG_CORRECTOS;
+        this.registerIncorrect = res.T_REG_ERRONEOS;
+        this.dataTableSpent = res.bienes.map(res => {
+          return {
+            costs: res.spent,
+            cveEvent: res.processKey,
+            description: res.description,
+            entry: res.income,
+            identifier: res.identifier,
+            impNumerary: res.valueAppraisalm,
+            indNume: res.indNume,
+            noDelegation: res.delegationNumber,
+            noExpAssociated: res.associatedExpNum,
+            noExpedient: res.fileNumber,
+            noFlier: res.flyerNumber,
+            noGood: res.goodNumber,
+            noSubDelegation: res.subdelegationNumber,
+            npNUm: res.goodNumberNum as any,
+            quantity: res.quantity as any,
+            status: res.status,
+            tax: res.iva as any,
+            color: res.vColor as any,
+          };
+        });
+
+        this.dataTableSmall = res.gastos.map(res => {
+          return {
+            amount: res.amount as any,
+            cveie: res.spentConceptNumber,
+            noGood: res.goodNumber,
+            description: res.description,
+            status: res.status,
+            type: res.type,
+          };
+        });
+        this.modalService.show(MassiveNumeraryChangeModalComponent, {
+          initialState: {
+            dataTableGoods: this.dataTableSpent,
+            dataTableSpents: this.dataTableSmall,
+            user: this.getUser().preferred_username.toUpperCase(),
+          },
+          class: 'modal-lg',
+        });
+      },
+      error: err => {
+        this.isLoadingProcessExtraction = false;
+      },
+      complete: () => {},
+    });
+    // this.processExtraction(vColB, vColI, vColV, vColG);
   }
 
-  dataTableSpent: IMassiveNumeraryChangeSpent[] = [];
+  dataTableSpent: IMassiveNumeraryGood[] = [];
   dataTableSmall: IMassiveNumeraryTableSmall[] = [];
   async processExtraction(
     // dataTablePreview: any[],
@@ -460,7 +532,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
                       blkSpent,
                     });
 
-                    const prevDataTableSpent: IMassiveNumeraryChangeSpent = {
+                    const prevDataTableSpent: IMassiveNumeraryGood = {
                       noGood: vNoGood,
                       description: good.description,
                       status: good.status,

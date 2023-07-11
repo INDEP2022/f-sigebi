@@ -1751,7 +1751,7 @@ export class PerformProgrammingFormComponent
 
   removeGoodTrans(item: IGood) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Desea eliminar el bien de transportable?'
     ).then(async question => {
@@ -1801,7 +1801,7 @@ export class PerformProgrammingFormComponent
 
   removeGoodGuard(item: IGood) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Desea eliminar el bien de resguardo?'
     ).then(async question => {
@@ -1833,7 +1833,7 @@ export class PerformProgrammingFormComponent
 
   removeGoodWarehouse(item: IGood) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Desea eliminar el bien de almacén?'
     ).then(async question => {
@@ -1868,12 +1868,20 @@ export class PerformProgrammingFormComponent
     if (this.performForm.get('startDate').value) {
       this.performForm
         .get('startDate')
-        .setValue(new Date(this.performForm.get('startDate').value));
+        .setValue(
+          moment(this.performForm.get('startDate').value).format(
+            'YYYY-MM-DD HH:mm:ssZ'
+          )
+        );
     }
     if (this.performForm.get('endDate').value) {
       this.performForm
         .get('endDate')
-        .setValue(new Date(this.performForm.get('endDate').value));
+        .setValue(
+          moment(this.performForm.get('endDate').value).format(
+            'YYYY-MM-DD HH:mm:ssZ'
+          )
+        );
     }
 
     if (this.transferentId)
@@ -2184,7 +2192,7 @@ export class PerformProgrammingFormComponent
 
   deleteUser(user: any) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Desea eliminar el usuario de la programación?'
     ).then(question => {
@@ -2284,12 +2292,12 @@ export class PerformProgrammingFormComponent
       this.performForm
         .get('startDate')
         .setValue(
-          moment(this.dataProgramming.startDate).format('YYYY/MM/DD HH:mm:ss')
+          moment(this.dataProgramming.startDate).format('YYYY-MM-DD HH:mm:ssZ')
         );
       this.performForm
         .get('endDate')
         .setValue(
-          moment(this.dataProgramming.endDate).format('YYYY/MM/DD HH:mm:ss')
+          moment(this.dataProgramming.endDate).format('YYYY-MM-DD HH:mm:ssZ')
         );
 
       this.transferentId = this.dataProgramming.tranferId;

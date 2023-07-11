@@ -317,7 +317,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       if (['CERRADA', 'CERRADO'].includes(res)) {
         this.labelActa = 'Abrir acta';
         this.btnCSSAct = 'btn-success';
-        this.inputCloseProceeding()
+        this.inputCloseProceeding();
       } else {
         this.labelActa = 'Cerrar acta';
         this.btnCSSAct = 'btn-primary';
@@ -1116,11 +1116,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
             this.serviceProcVal.editProceeding(resData.id, modelEdit).subscribe(
               res => {
                 console.log(res);
-                this.alert(
-                  'success',
-                  'Se modificaron los datos del acta',
-                  ''
-                );
+                this.alert('success', 'Se modificaron los datos del acta', '');
               },
               err => {
                 this.alert(
@@ -2438,11 +2434,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       if (
         ['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)
       ) {
-        this.alert(
-          'error',
-          'No puede elimar acta',
-          'No puede eliminar un Acta cerrada'
-        );
+        this.alert('error', 'No puede eliminar un acta cerrada', '');
       } else if (
         format(this.form.get('fecElab').value, 'MM-yyyy') !=
         format(new Date(), 'MM-yyyy')

@@ -1,5 +1,4 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 
 function createPer(
   proy: boolean,
@@ -11,17 +10,17 @@ function createPer(
   let newCve: string = '';
   try {
     proy ? (newCve = 'P') : (newCve = 'PX');
-    val ? (newCve = `${newCve}-V`) : newCve = `${newCve}-VX`;
-    aut ? (newCve = `${newCve}-A`) : newCve = `${newCve}-AX`;
-    cerr ? (newCve = `${newCve}-C`) : newCve = `${newCve}-CX`;
-    can ? (newCve = `${newCve}-X`) : newCve = `${newCve}-XX`;
+    val ? (newCve = `${newCve}-V`) : (newCve = `${newCve}-VX`);
+    aut ? (newCve = `${newCve}-A`) : (newCve = `${newCve}-AX`);
+    cerr ? (newCve = `${newCve}-C`) : (newCve = `${newCve}-CX`);
+    can ? (newCve = `${newCve}-X`) : (newCve = `${newCve}-XX`);
   } catch (error) {
   } finally {
     return newCve;
   }
 }
 
-export let newData:any
+export let newData: any;
 
 export const PERMISSIONSUSER_COLUMNS = {
   value: {
@@ -156,7 +155,6 @@ export const PRIVILEGESUSER_COLUMNS = {
           data.row.can
         );
         console.log(cve);
-
       });
     },
   },
@@ -183,6 +181,4 @@ export const PRIVILEGESUSER_COLUMNS = {
       });
     },
   },
-
 };
-

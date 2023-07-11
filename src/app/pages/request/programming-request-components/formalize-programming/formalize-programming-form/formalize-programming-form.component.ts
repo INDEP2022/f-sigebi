@@ -594,7 +594,7 @@ export class FormalizeProgrammingFormComponent
   }
 
   generateMinute(proceeding: IProceedings) {
-    if (this.receiptData.statusReceipt == 'CERRADO') {
+    if (this.receiptData.statusReceipt == 'ABIERTO') {
       if (this.proceeding.value[0].observationProceedings) {
         this.proceedingService.updateProceeding(proceeding).subscribe({
           next: () => {
@@ -1203,4 +1203,6 @@ export class FormalizeProgrammingFormComponent
       });
     });
   }
+
+  documents() {}
 }

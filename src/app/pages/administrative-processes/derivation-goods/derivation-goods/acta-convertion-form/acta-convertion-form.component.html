@@ -158,6 +158,16 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="createMinuteConversion()">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
+
+      <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
           Cancelar
         </button>
