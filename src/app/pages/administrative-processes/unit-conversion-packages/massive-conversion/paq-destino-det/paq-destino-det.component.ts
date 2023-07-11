@@ -140,7 +140,7 @@ export class PaqDestinoDetComponent extends BasePage {
     this.dataTemp = [];
     this.dataPaginated.load([]);
     this.dataPaginated.refresh();
-    this.dataEmit.emit(this.dataPaginated)
+    this.dataEmit.emit(this.dataPaginated);
     this.loading = false;
   }
 
