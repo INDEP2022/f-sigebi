@@ -321,10 +321,22 @@ export const BASIC_BUTTONS = [
           </button>`,
   },
   {
-    name: 'Regresar',
+    name: 'Siguiente',
     code: `<button class="btn btn-primary active btn-sm m-2">
           Siguiente
           <i class="fas fa-arrow-circle-right"></i>
+        </button>`,
+  },
+  {
+    name: 'Transferir',
+    code: `<button class="btn btn-success active btn-sm m-2">
+          Transferir
+        </button>`,
+  },
+  {
+    name: 'Replicar Folio',
+    code: `<button class="btn btn-primary active btn-sm m-2">
+          Replicar Folio
         </button>`,
   },
 ];
