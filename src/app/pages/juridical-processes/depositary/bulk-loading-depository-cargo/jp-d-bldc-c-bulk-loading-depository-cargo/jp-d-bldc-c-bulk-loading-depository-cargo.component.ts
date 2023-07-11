@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { compareDesc } from 'date-fns';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IncidentMaintenanceService } from 'src/app/core/services/ms-generalproc/incident-maintenance.service';
 import { MassiveDepositaryService } from 'src/app/core/services/ms-massivedepositary/massivedepositary.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { offlinePagination } from 'src/app/utils/functions/offline-pagination';
 import * as XLSX from 'xlsx';
 import { COLUMNS } from './columns';
 
@@ -25,6 +28,20 @@ interface ExampleData {
   APLADM: string;
 }
 
+export interface IVariables {
+  VCONP: number;
+  VCONC: number;
+  VCONE: number;
+  VCONJ: number;
+  VCONA: number;
+  T_REG_LEIDOS: number;
+  T_REG_PROCESADOS: number;
+  T_REG_CORRECTOS: number;
+  T_REG_ERRONEOS: number;
+  T_REG_CORJUR: number;
+  T_REG_CORADM: number;
+}
+
 @Component({
   selector: 'app-jp-d-bldc-c-bulk-loading-depository-cargo',
   templateUrl: './jp-d-bldc-c-bulk-loading-depository-cargo.component.html',
@@ -38,23 +55,47 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   fileName: string = 'Seleccionar archivo';
   totalItems: number = 0;
   ExcelData: any;
+  errorData: any;
+  paginatedData: any[] = [];
   currentItemData: number = 0;
   totalItemsData: number = 0;
   loadingDataProcess: boolean = false;
   errorsData: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
-  data: ExampleData[];
+  data: ExampleData[] = [];
   origin: string = '';
   no_bien: number = null;
   no_nom: number = null;
+  V_BAN: boolean = false;
+  countsData: IVariables = {
+    VCONP: 0,
+    VCONC: 0,
+    VCONE: 0,
+    VCONJ: 0,
+    VCONA: 0,
+    T_REG_LEIDOS: 0,
+    T_REG_PROCESADOS: 0,
+    T_REG_CORRECTOS: 0,
+    T_REG_ERRONEOS: 0,
+    T_REG_CORJUR: 0,
+    T_REG_CORADM: 0,
+  };
 
   form: FormGroup = new FormGroup({});
+  regRead: number = 0;
+  regProcessed: number = 0;
+  regCorrect: number = 0;
+  regWrong: number = 0;
+  regCorjur: number = 0;
+  regCoradm: number = 0;
+  disableApplyRecords: boolean = true;
   constructor(
     private fb: FormBuilder,
     private excelService: ExcelService,
     private router: Router,
     private massiveService: MassiveDepositaryService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private incidentMaintenanceService: IncidentMaintenanceService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -74,6 +115,12 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         console.log(params);
       });
     this.buildForm();
+
+    this.params.subscribe(params => {
+      const { page, limit } = params;
+      this.paginatedData = offlinePagination(this.data, limit, page);
+      console.log(this.paginatedData);
+    });
   }
 
   /**
@@ -129,8 +176,13 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   }
 
   loadData(formData: FormData) {
+    this.loading = true;
     this.massiveService.pupPreviewDataCSVForDepositary(formData).subscribe({
       next: resp => {
+        this.loading = false;
+        const params = new ListParams();
+        this.params.next(params);
+        this.totalItems = this.data.length;
         this.onLoadToast(
           'success',
           'La información se ha subido exitosamente.',
@@ -138,6 +190,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         );
       },
       error: eror => {
+        this.loading = false;
         this.onLoadToast('error', 'Error', eror.error.message);
       },
     });
@@ -152,7 +205,25 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       OBSERVACION: excelData.OBSERVACION,
       JURIDICO: excelData.JURIDICO,
       ADMINISTRA: excelData.ADMINISTRA,
+      VALIDADO: 'N',
+      VALJUR: 'N',
+      VALADM: 'N',
+      APLICADO: 'N',
+      APLJUR: 'N',
+      APLADM: 'N',
     };
+  }
+  tmpMistakes(params: ListParams) {
+    this.incidentMaintenanceService.getTmpErrores(params).subscribe({
+      next: data => {
+        //INSERTAR DATA PARA TABLA
+        console.log(data);
+        this.errorData = data.data;
+        this.totalItems = data.count | 0;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
   goBack() {
     if (this.origin == 'FACTJURREGDESTLEG') {
@@ -171,5 +242,137 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         ''
       );
     }
+  }
+  applyRecords() {
+    let VCONP: number = 0;
+    let VCONC: number = 0;
+    let VCONE: number = 0;
+    let VCONJ: number = 0;
+    let VCONA: number = 0;
+    let V_CHECA: number = 0;
+    let V_BAN: boolean = false;
+    let ERRTXT: string = '';
+    if (this.no_bien != null) {
+      for (let i = 0; i < this.data.length; i++) {
+        if (this.data[i].VALIDADO === 'S' && this.data[i].APLICADO === 'N') {
+          //insert
+          //success
+          this.data[i].APLICADO = 'S';
+          VCONC = VCONC + 1;
+          //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
+          ERRTXT = `(PAGOS) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
+          VCONE = VCONE + 1;
+          this.data[i].VALIDADO = 'N';
+          if (this.errorData[i].description != null) {
+          } else {
+            this.errorData[i].description = ERRTXT;
+          }
+        }
+        if (this.data[i].VALJUR === 'S' && this.data[i].APLJUR === 'N') {
+          //insert
+          //success
+          this.data[i].APLJUR = 'S';
+          VCONJ = VCONJ + 1;
+          //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
+          ERRTXT = `(JURIDICO) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
+          this.data[i].VALJUR = 'N';
+          if (this.errorData[i].description != null) {
+            //CREATE_RECORD;
+          } else {
+            this.errorData[i].description = ERRTXT;
+          }
+        }
+        if (this.data[i].VALADM === 'S' && this.data[i].APLADM === 'N') {
+          //insert
+          //success
+          this.data[i].APLADM = 'S';
+          VCONA = VCONA + 1;
+          //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
+          ERRTXT = `(ADMINISTRATIVO) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
+          this.data[i].VALADM = 'N';
+          if (this.errorData[i].description != null) {
+            //CREATE_RECORD;
+          } else {
+            this.errorData[i].description = ERRTXT;
+          }
+        }
+        VCONP = VCONP + 1;
+      }
+      this.regRead = VCONP;
+      this.regProcessed = VCONC + VCONE;
+      this.regCorrect = VCONC;
+      this.regWrong = VCONE;
+      this.regCorjur = VCONJ;
+      this.regCoradm = VCONA;
+      this.disableApplyRecords = false;
+    }
+  }
+  validRecords() {
+    this.V_BAN = false;
+    this.errorsData = [];
+    this.countsData = {
+      VCONP: 0,
+      VCONC: 0,
+      VCONE: 0,
+      VCONJ: 0,
+      VCONA: 0,
+      T_REG_LEIDOS: 0,
+      T_REG_PROCESADOS: 0,
+      T_REG_CORRECTOS: 0,
+      T_REG_ERRONEOS: 0,
+      T_REG_CORJUR: 0,
+      T_REG_CORADM: 0,
+    };
+    this.data.forEach((element, count) => {
+      if (element.APLICADO == 'N') {
+        element.VALIDADO = 'N';
+        this.V_BAN = true;
+      }
+      if (element.APLJUR == 'N') {
+        element.VALJUR = 'N';
+        this.V_BAN = true;
+      }
+      if (element.APLADM == 'N') {
+        element.VALADM = 'N';
+        this.V_BAN = true;
+      }
+      if (element.APLICADO == 'N') {
+        this.V_BAN = true;
+        let desc = ' (PAGOS) En el registro ' + (count + 1);
+        if (element.NO_BIEN == null) {
+          this.V_BAN = false;
+          desc = desc + ', el número de bien es nulo';
+        }
+        if (element.FEC_PAGO == null) {
+          this.V_BAN = false;
+          desc = desc + ', la fecha es nula';
+        }
+        if (element.FEC_PAGO) {
+          let validDate = null;
+          validDate = compareDesc(new Date(element.FEC_PAGO), new Date());
+          if (validDate < 0) {
+            this.V_BAN = false;
+            desc = desc + ', la fecha no puede mayor a la fecha actual';
+          }
+        }
+        if (element.CVE_CONCEPTO_PAGO == null) {
+          this.V_BAN = false;
+          desc = desc + ', el concepto de pago es nuloo';
+        }
+        if (element.CVE_CONCEPTO_PAGO == null) {
+          this.V_BAN = false;
+          desc = desc + ', el concepto de pago es nuloo';
+        }
+        if (element.IMPORTE == 0) {
+          this.V_BAN = false;
+          desc = desc + ', el importe es cero';
+        }
+        if (this.V_BAN == false) {
+          desc = desc + '.';
+          this.countsData.VCONE++;
+          this.errorsData.push({ DESCRIPCION: desc }); // Crear error
+        }
+      }
+    });
   }
 }
