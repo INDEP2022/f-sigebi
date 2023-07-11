@@ -38,6 +38,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { GoodTrackerMap } from 'src/app/pages/general-processes/goods-tracker/utils/good-tracker-map';
 import { UnitConversionPackagesDataService } from '../services/unit-conversion-packages-data.service';
 import { goodCheck, resetGoodCheck, V_GOOD_COLUMNS } from './columns';
+
 interface IExcelToJson {
   No_bien: string;
 }
@@ -272,7 +273,7 @@ export class MassiveConversionSelectGoodComponent
 
   private readTxt(txtData: string) {
     const array = txtData.replace(',', '').split('\r\n'); // saltos de linea
-    const newArray: number[] = [];
+    const newArray: string[] = [];
     if (array.length === 0) {
       this.alert('error', 'No se han cargado datos en archivo', '');
       this.loading = false;
@@ -283,7 +284,7 @@ export class MassiveConversionSelectGoodComponent
       console.log(array2);
       array2.forEach(item => {
         if (item.length > 0 && !isNaN(+item)) {
-          newArray.push(+item);
+          newArray.push(item);
         }
       });
     });
@@ -292,105 +293,109 @@ export class MassiveConversionSelectGoodComponent
       this.loading = false;
       return;
     }
-    const listParams = new ListParams();
-    let modelFilter = new GoodTrackerMap();
-    console.log(newArray);
-    modelFilter.parval.goodNumber = newArray;
-    this.trackerGoodService.trackGoods(modelFilter, listParams).subscribe({
-      next: res => {
-        // for (let j = 0; j < response.data.length; j++) {
-        //   let item = {
-        //     goodNumber: response.data[j].goodNumber,
-        //     description: response.data[j].description,
-        //     unitExtent: response.data[j].unitExtent,
-        //     numberProceedings: response.data[j].numberProceedings,
-        //     downloadLabel: response.data[j].downloadLabel,
-        //     status: response.data[j].status,
-        //     numberClassifyGood: response.data[j].numberClassifyGood,
-        //     downloadsssubtype: response.data[j].downloadsssubtype,
-        //     coordinateadmin: response.data[j].coordinateadmin,
-        //     numberStore: response.data[j].numberStore,
-        //     downloadLocationStore: response.data[j].downloadLocationStore,
-        //     storeCity: response.data[j].storeCity,
-        //     storeState: response.data[j].storeState,
-        //     dTransferee: response.data[j].dTransferee,
-        //     dstation: response.data[j].dstation,
-        //     dAuthority: response.data[j].dAuthority,
-        //     amount: response.data[j].amount,
-        //   };
-        //   list.push(item);
-        // }
-        if (res.data && res.data.length > 0) {
-          this.data.load(res.data);
-          this.totalItems = res.count;
-          this.data.refresh();
-          this.alert('success', 'Se encontraron registros', '');
-          this.loading = false;
-        } else {
-          this.data.load([]);
-          this.alert('error', 'No se encontraron registros', '');
-          this.loading = false;
-        }
-      },
-      error: err => {
-        console.error(err);
-        this.data.load([]);
-        this.alert('error', 'No se encontraron registros', '');
-        this.loading = false;
-      },
-    });
+    this.params.value.page = 1;
+    this.filter(newArray);
+    // const listParams = new ListParams();
+    // let modelFilter = new GoodTrackerMap();
+    // console.log(newArray);
+    // modelFilter.parval.goodNumber = newArray;
+    // this.trackerGoodService.trackGoods(modelFilter, listParams).subscribe({
+    //   next: res => {
+    //     // for (let j = 0; j < response.data.length; j++) {
+    //     //   let item = {
+    //     //     goodNumber: response.data[j].goodNumber,
+    //     //     description: response.data[j].description,
+    //     //     unitExtent: response.data[j].unitExtent,
+    //     //     numberProceedings: response.data[j].numberProceedings,
+    //     //     downloadLabel: response.data[j].downloadLabel,
+    //     //     status: response.data[j].status,
+    //     //     numberClassifyGood: response.data[j].numberClassifyGood,
+    //     //     downloadsssubtype: response.data[j].downloadsssubtype,
+    //     //     coordinateadmin: response.data[j].coordinateadmin,
+    //     //     numberStore: response.data[j].numberStore,
+    //     //     downloadLocationStore: response.data[j].downloadLocationStore,
+    //     //     storeCity: response.data[j].storeCity,
+    //     //     storeState: response.data[j].storeState,
+    //     //     dTransferee: response.data[j].dTransferee,
+    //     //     dstation: response.data[j].dstation,
+    //     //     dAuthority: response.data[j].dAuthority,
+    //     //     amount: response.data[j].amount,
+    //     //   };
+    //     //   list.push(item);
+    //     // }
+    //     if (res.data && res.data.length > 0) {
+    //       this.data.load(res.data);
+    //       this.totalItems = res.count;
+    //       this.data.refresh();
+    //       this.alert('success', 'Se encontraron registros', '');
+    //       this.loading = false;
+    //     } else {
+    //       this.data.load([]);
+    //       this.alert('error', 'No se encontraron registros', '');
+    //       this.loading = false;
+    //     }
+    //   },
+    //   error: err => {
+    //     console.error(err);
+    //     this.data.load([]);
+    //     this.alert('error', 'No se encontraron registros', '');
+    //     this.loading = false;
+    //   },
+    // });
   }
 
   readExcel(binaryExcel: string | ArrayBuffer) {
     console.log(binaryExcel);
-    let modelFilter = new GoodTrackerMap();
+    // let modelFilter = new GoodTrackerMap();
     this.dataExcel = this.excelService.getData<IExcelToJson>(binaryExcel);
     console.log(this.dataExcel);
-    modelFilter.parval.goodNumber = this.dataExcel.map(x => x.No_bien);
-    const listParams = new ListParams();
-    this.trackerGoodService.trackGoods(modelFilter, listParams).subscribe({
-      next: res => {
-        // for (let j = 0; j < response.data.length; j++) {
-        //   let item = {
-        //     goodNumber: response.data[j].goodNumber,
-        //     description: response.data[j].description,
-        //     unitExtent: response.data[j].unitExtent,
-        //     numberProceedings: response.data[j].numberProceedings,
-        //     downloadLabel: response.data[j].downloadLabel,
-        //     status: response.data[j].status,
-        //     numberClassifyGood: response.data[j].numberClassifyGood,
-        //     downloadsssubtype: response.data[j].downloadsssubtype,
-        //     coordinateadmin: response.data[j].coordinateadmin,
-        //     numberStore: response.data[j].numberStore,
-        //     downloadLocationStore: response.data[j].downloadLocationStore,
-        //     storeCity: response.data[j].storeCity,
-        //     storeState: response.data[j].storeState,
-        //     dTransferee: response.data[j].dTransferee,
-        //     dstation: response.data[j].dstation,
-        //     dAuthority: response.data[j].dAuthority,
-        //     amount: response.data[j].amount,
-        //   };
-        //   list.push(item);
-        // }
-        if (res.data && res.data.length > 0) {
-          this.data.load(res.data);
-          this.totalItems = res.count;
-          this.data.refresh();
-          this.alert('success', 'Se encontraron registros', '');
-          this.loading = false;
-        } else {
-          this.data.load([]);
-          this.alert('error', 'No se encontraron registros', '');
-          this.loading = false;
-        }
-      },
-      error: err => {
-        console.error(err);
-        this.data.load([]);
-        this.alert('error', 'No se encontraron registros', '');
-        this.loading = false;
-      },
-    });
+    this.params.value.page = 1;
+    this.filter(this.dataExcel.map(x => x.No_bien));
+    // modelFilter.parval.goodNumber = this.dataExcel.map(x => x.No_bien);
+    // const listParams = new ListParams();
+    // this.trackerGoodService.trackGoods(modelFilter, listParams).subscribe({
+    //   next: res => {
+    //     // for (let j = 0; j < response.data.length; j++) {
+    //     //   let item = {
+    //     //     goodNumber: response.data[j].goodNumber,
+    //     //     description: response.data[j].description,
+    //     //     unitExtent: response.data[j].unitExtent,
+    //     //     numberProceedings: response.data[j].numberProceedings,
+    //     //     downloadLabel: response.data[j].downloadLabel,
+    //     //     status: response.data[j].status,
+    //     //     numberClassifyGood: response.data[j].numberClassifyGood,
+    //     //     downloadsssubtype: response.data[j].downloadsssubtype,
+    //     //     coordinateadmin: response.data[j].coordinateadmin,
+    //     //     numberStore: response.data[j].numberStore,
+    //     //     downloadLocationStore: response.data[j].downloadLocationStore,
+    //     //     storeCity: response.data[j].storeCity,
+    //     //     storeState: response.data[j].storeState,
+    //     //     dTransferee: response.data[j].dTransferee,
+    //     //     dstation: response.data[j].dstation,
+    //     //     dAuthority: response.data[j].dAuthority,
+    //     //     amount: response.data[j].amount,
+    //     //   };
+    //     //   list.push(item);
+    //     // }
+    //     if (res.data && res.data.length > 0) {
+    //       this.data.load(res.data);
+    //       this.totalItems = res.count;
+    //       this.data.refresh();
+    //       this.alert('success', 'Se encontraron registros', '');
+    //       this.loading = false;
+    //     } else {
+    //       this.data.load([]);
+    //       this.alert('error', 'No se encontraron registros', '');
+    //       this.loading = false;
+    //     }
+    //   },
+    //   error: err => {
+    //     console.error(err);
+    //     this.data.load([]);
+    //     this.alert('error', 'No se encontraron registros', '');
+    //     this.loading = false;
+    //   },
+    // });
   }
 
   async onFileChange(event: Event) {
@@ -799,7 +804,7 @@ export class MassiveConversionSelectGoodComponent
   //     );
   // }
 
-  async filter() {
+  async filter(goodNumbers: string[] = []) {
     console.log(this.goodClassification.value);
     this.loading = true;
     let modelFilter = new GoodTrackerMap();
@@ -838,6 +843,10 @@ export class MassiveConversionSelectGoodComponent
         this.transferent.value.split('-')[0],
       ];
     }
+    if (goodNumbers && goodNumbers.length > 0) {
+      modelFilter.parval.goodNumber = goodNumbers;
+    }
+
     let packageEnc: IPackageGoodEnc = this.noPackage.value;
     const generalParams = new FilterParams();
     generalParams.limit = this.params.value.limit;
