@@ -414,6 +414,9 @@
             <a
               (click)="goParcializacion()"
               class="my-1 mx-2 btn btn-warning active btn-sm"
+              [class]="
+              form.get('statusProceeding').value != null && this.dataGoods['data'].length > 0 ? '' : 'disabled'
+            "
               size="small"
               >Parcializaci&oacute;n
             </a>
