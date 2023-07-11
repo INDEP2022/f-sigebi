@@ -41,7 +41,7 @@ import {
   templateUrl: './massive-numerary-change.component.html',
   styles: [
     `
-      .selects-origin-data select {
+      /* .selects-origin-data select {
         border: none;
         border-bottom: 1px solid black;
         margin-left: 5px;
@@ -60,6 +60,17 @@ import {
       .spent-inputs > div {
         display: flex;
         flex-direction: column;
+      } */
+      .spents input {
+        width: 150px;
+      }
+      select.selects-origin-data {
+        width: 105px;
+      }
+      .btn-custom-search {
+        position: absolute;
+        right: 3px;
+        top: 8px;
       }
     `,
   ],

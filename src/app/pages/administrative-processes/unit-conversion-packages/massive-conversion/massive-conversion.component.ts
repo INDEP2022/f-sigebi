@@ -58,6 +58,7 @@ import { MassiveConversionErrorsModalComponent } from '../massive-conversion-err
 import { MassiveConversionModalGoodComponent } from '../massive-conversion-modal-good/massive-conversion-modal-good.component';
 import { MassiveConversionSelectGoodComponent } from '../massive-conversion-select-good/massive-conversion-select-good.component';
 import { UnitConversionPackagesDataService } from '../services/unit-conversion-packages-data.service';
+import { PaqDestinoDetComponent } from './paq-destino-det/paq-destino-det.component';
 
 interface ValidaButton {
   PB_VALIDA: boolean;
@@ -159,6 +160,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     { name: 'Aplicado', value: 'S' },
     { name: 'Cancelado', value: 'X' },
   ]);
+  //VARIABLES DE DATA QUE SE RECIBE
+  dataArrive: any[]
 
   constructor(
     private fb: FormBuilder,
@@ -1337,9 +1340,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         };
         this.lotService.pubCancelPackage(data).subscribe(
           response => {
+            console.log(response)
             Swal.fire('Exito', 'Se cancelo el paquete', 'success');
           },
           error => {
+            console.log(error)
             Swal.fire('Error', 'Error Al cancelar el paquete', 'error');
           }
         );
@@ -1599,8 +1604,28 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
     this.packageGoodService.insertPaqDestionarioEnc(model).subscribe(
       res => {
+        console.log(res);    
+        console.log(res.numberPackage);    
+
+        const paramsF = new FilterParams();
+    paramsF.addFilter('numberPackage', res.numberPackage);
+    this.unitConversionDataService.selectedPackage = res.numberPackage;
+    this.packageGoodService.getPaqDestinationEnc(paramsF.getParams()).subscribe(
+      res => {
         console.log(res);
-        this.alert('success', 'Se creo nuevo paquete', '');
+        if (res && res.data && res.data.length > 0) {
+          this.noPackage.setValue(res.data[0])
+          this.alert('success', 'Se creo nuevo paquete', '');
+        } else {
+          // this.dataPackageEnc = null;
+        }
+      },
+      err => {
+        console.log(err);
+        this.dataPackage = new DefaultSelect([]);
+        this.alert('error', 'ERROR', 'Paquete no encontrado');
+      }
+    );
       },
       err => {
         console.log(err);
@@ -1664,5 +1689,33 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(MassiveConversionSelectGoodComponent, modalConfig);
+  }
+
+  handleOutPut(e:any){
+    console.log(e.data)
+    this.dataArrive = e.data
+  }
+
+  //Boton de Cancelar
+  cancelPackFunction(){
+    if(this.noPackage.value.numberPackage != null && !['L','C','X'].includes(this.status.value)){
+      this.alertQuestion('question','¿Está seguro en cancelar el Paquete?','').then(
+        q => {
+          if(q.isConfirmed){
+            if(this.dataArrive.length > 0){
+              this.alert('success','Funciona','')
+            }
+          }
+        }
+      )
+    }else if(this.status.value == 'C'){
+      this.alertQuestion('question','¿Está seguro en cancelar el Paquete Cerrado?','').then(
+        q => {
+          if(q.isConfirmed){
+            this.alert('success','Funciona con paquete cerrado','')
+          }
+        }
+      )
+    }
   }
 }
