@@ -1,66 +1,67 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">ONCEPTOS DE VIGILANCIA</h5>
+    <h5 class="title">CONCEPTOS DE VIGILANCIA</h5>
   </div>
 
   <div body>
     <div class="ch-content">
-      <h5 class="title">CONTRATOS</h5>
+      <h5 class="title">Incorporación a Pólizas de Seguros</h5>
     </div>
     <form [formGroup]="form" class="form-material">
       <div class="row mt-4">
-        <div class="col-md-3">
-          <form-field [control]="form.get('noContract')" label="No. Contrato">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="noContract"
-              min="1"
-              pattern="^[0-9]+" />
-          </form-field>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('from')" label="Fecha del:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="from"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('to')" label="al:">
+              <input
+                [maxDate]="maxDate"
+                formControlName="to"
+                class="form-control"
+                [minDate]="form.get('from').value"
+                bsDatepicker />
+            </form-field>
+          </div>
         </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('provider')" label="Proovedor">
-            <input
-              type="text"
-              formControlName="provider"
-              class="form-control" />
-          </form-field>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('noRequest')"
+              label="No. Solicitud:">
+              <input
+                type="number"
+                formControlName="noRequest"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('toRequest')" label="al:">
+              <input
+                type="number"
+                formControlName="toRequest"
+                class="form-control" />
+            </form-field>
+          </div>
         </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('licitation')" label="No. Licitación">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="licitation"
-              min="1"
-              pattern="^[0-9]+" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <button type="submit" class="btn btn-primary btn-sm active mx-4">
-            BUSCAR
-          </button>
-        </div>
-      </div>
-
-      <div class="ch-content">
-        <h5 class="title">CONCEPTOR DE VIGILANCIA</h5>
-      </div>
-      <div class="row pt-4">
-        <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="concepts">
-            </ng2-smart-table>
+        <div class="d-flex justify-content-center">
+          <div>
+            <button
+              [disabled]="form.invalid"
+              type="submit"
+              class="btn btn-primary active btn-sm"
+              (click)="generar()">
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
           </div>
         </div>
       </div>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
     </form>
   </div>
 </app-card>
