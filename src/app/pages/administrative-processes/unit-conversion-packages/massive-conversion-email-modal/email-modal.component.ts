@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
+  ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IUsersTracking } from 'src/app/core/models/ms-security/pup-user.model';
@@ -17,8 +18,9 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styleUrls: ['./email-modal.component.scss'],
 })
 export class EmailModalComponent extends BasePage implements OnInit {
-  dataUsers: IUsersTracking[] = [];
-  dataSelect: DefaultSelect;
+  selectedParaUsers: IUsersTracking[] = [];
+  selectedCCUsers: IUsersTracking[] = [];
+  paraSelect: DefaultSelect;
   form: FormGroup;
   constructor(
     private modalRef: BsModalRef,
@@ -43,23 +45,35 @@ export class EmailModalComponent extends BasePage implements OnInit {
         ],
       });
     }
+  }
+
+  searchUsersPara(params: ListParams) {
+    console.log(params);
     const filter = new FilterParams();
+    filter.page = params.page;
+    filter.limit = params.limit;
+
     filter.addFilter('mail', 'NULL', SearchFilter.NOT);
     this.usersService.getAllUsersTracker(filter.getParams()).subscribe({
       next: response => {
         if (response && response.data) {
-          this.dataUsers = response.data;
-          this.dataSelect = new DefaultSelect(response.data);
+          // this.dataUsers = response.data;
+          this.paraSelect = new DefaultSelect(response.data);
         } else {
-          this.dataUsers = [];
-          this.dataSelect = new DefaultSelect(response.data);
+          // this.dataUsers = [];
+          this.paraSelect = new DefaultSelect(response.data);
         }
       },
       error: err => {
-        this.dataUsers = [];
-        this.dataSelect = new DefaultSelect([]);
+        // this.dataUsers = [];
+        this.paraSelect = new DefaultSelect([]);
       },
     });
+  }
+
+  onParaChange(item: IUsersTracking) {
+    console.log(item);
+    this.selectedParaUsers.push(item);
   }
 
   close() {

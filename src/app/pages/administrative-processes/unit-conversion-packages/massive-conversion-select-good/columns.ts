@@ -1,6 +1,10 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export let goodCheck: any[] = [];
+
+export function resetGoodCheck() {
+  goodCheck = [];
+}
 export const V_GOOD_COLUMNS = {
   turnSelect: {
     title: 'Selección',
