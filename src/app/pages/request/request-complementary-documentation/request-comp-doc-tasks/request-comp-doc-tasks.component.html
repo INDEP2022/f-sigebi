@@ -1,7 +1,10 @@
 <app-card [header]="true">
   <div class="ch-content justify-content-between" header>
     <div class="">
-      <h5 class="title">
+      <h5 class="title" *ngIf="this.requestInfo?.affair == 13">
+        {{ title }}
+      </h5>
+      <h5 class="title" *ngIf="this.requestInfo?.affair != 13">
         {{ title }}
         {{ requestId }}&#44; Contribuyente&#58; {{ contributor }}
       </h5>

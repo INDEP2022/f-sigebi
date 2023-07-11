@@ -9,18 +9,21 @@ export interface IRecordAccountStatements {
   description?: number;
   balanceOf?: number;
   balanceAt?: number;
-  data: any[];
-  count: number;
-  dateMotion: string;
-  deposit: number;
-  numberReturnPayCheck: number;
-  numberMotionTransfer: number;
-  numberGood: number;
-  genderTransfer: string;
-  withdrawal: number;
+  data?: any[];
+  count?: number;
+  dateMotion?: string;
+  userinsert?: string;
+  deposit?: number;
+  dateInsertion?: string;
+  dateCalculationInterests?: Date | null;
+  numberReturnPayCheck?: number;
+  numberMotionTransfer?: number;
+  numberGood?: number;
+  genderTransfer?: string;
+  withdrawal?: number;
   factasStatusCta?: {
-    nombre: string;
-    cve_cuenta: string;
+    nombre?: string;
+    cve_cuenta?: string;
   };
 }
 

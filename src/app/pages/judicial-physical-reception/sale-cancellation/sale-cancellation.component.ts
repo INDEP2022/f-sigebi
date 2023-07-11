@@ -2434,11 +2434,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
       if (
         ['CERRADO', 'CERRADA'].includes(this.form.get('statusProceeding').value)
       ) {
-        this.alert(
-          'error',
-          'No puede eliminar un acta cerrada',
-          ''
-        );
+        this.alert('error', 'No puede eliminar un acta cerrada', '');
       } else if (
         format(this.form.get('fecElab').value, 'MM-yyyy') !=
         format(new Date(), 'MM-yyyy')

@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-cat-types-of-goods-sub-sub-type',
@@ -35,7 +36,10 @@ export class CatTypesOfGoodsSubSubTypeComponent
       id: [null],
       noSubType: [null],
       noType: [null],
-      description: ['', Validators.compose([Validators.required])],
+      description: [
+        '',
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       noRegister: [null],
     });
     if (this.data != null) {
@@ -57,26 +61,38 @@ export class CatTypesOfGoodsSubSubTypeComponent
   }
   update() {
     this.loading = true;
-    const ids = {
-      id: this.typeGoodsForm.controls['id'].value,
-      noSubType: this.typeGoodsForm.controls['noSubType'].value,
-      noType: this.typeGoodsForm.controls['noType'].value,
-    };
-    this.goodSsubtypeService
-      .updateByIds(ids, this.typeGoodsForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (this.typeGoodsForm.controls['description'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      const ids = {
+        id: this.typeGoodsForm.controls['id'].value,
+        noSubType: this.typeGoodsForm.controls['noSubType'].value,
+        noType: this.typeGoodsForm.controls['noType'].value,
+      };
+      this.goodSsubtypeService
+        .updateByIds(ids, this.typeGoodsForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
   create() {
     this.loading = true;
-    this.goodSsubtypeService
-      .create(this.typeGoodsForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (this.typeGoodsForm.controls['description'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.goodSsubtypeService
+        .create(this.typeGoodsForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
