@@ -393,7 +393,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
     if (this.claimsFollowUpForm.controls['numberGood'].value) {
       let data = {
         initDate: this.convertDate(this.dateDelAlForm.controls['del'].value),
-        endDate: this.convertDate(this.dateDelAlForm.controls['del'].value),
+        endDate: this.convertDate(this.dateDelAlForm.controls['al'].value),
       };
       this.seraLogService.postDateExport(data).subscribe(
         response => {

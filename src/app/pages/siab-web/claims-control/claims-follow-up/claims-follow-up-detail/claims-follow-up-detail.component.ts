@@ -62,7 +62,7 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       letterClaimIn: [null],
       orderOfEntryIn: [null],
       docOfficeMinConcluIn: [null],
-      statusIn: [null],
+      statusIn: [null, [Validators.required]],
       firstSecondLaterIn: [null],
       shapeConclusionIn: [null, [Validators.required]],
       dateIndemnizationIn: [null, [Validators.required]],
@@ -72,79 +72,122 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     if (this.siniester) {
       console.log(this.siniester);
       this.claimsFollowUpDetailForm.patchValue(this.siniester);
-      this.claimsFollowUpDetailForm.controls['sinisterInId'].setValue(
-        this.siniester.idsiniestro
-      );
+      if (this.siniester.idsiniestro) {
+        this.claimsFollowUpDetailForm.controls['sinisterInId'].setValue(
+          this.siniester.idsiniestro
+        );
+      }
       this.claimsFollowUpDetailForm.controls['operation'].setValue('2');
-      this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].setValue(
-        this.dateConvert(this.siniester.fechareportecabi)
-      );
-      this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].setValue(
-        this.dateConvert(this.siniester.fechareporteaseguradora)
-      );
-      this.claimsFollowUpDetailForm.controls['fecSinisterIn'].setValue(
-        this.dateConvert(this.siniester.fecSinisterIn)
-      );
-      this.claimsFollowUpDetailForm.controls['typeSinisterIn'].setValue(
-        this.siniester.tiposiniestroid
-      );
+      if (this.siniester.fechareportecabi) {
+        this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].setValue(
+          this.dateConvert(this.siniester.fechareportecabi)
+        );
+      }
+      if (this.siniester.fechareporteaseguradora) {
+        this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].setValue(
+          this.dateConvert(this.siniester.fechareporteaseguradora)
+        );
+      }
+      if (this.siniester.fecSinisterIn) {
+        this.claimsFollowUpDetailForm.controls['fecSinisterIn'].setValue(
+          this.dateConvert(this.siniester.fecSinisterIn)
+        );
+      }
+      if (this.siniester.tiposiniestroid) {
+        this.claimsFollowUpDetailForm.controls['typeSinisterIn'].setValue(
+          this.siniester.tiposiniestroid
+        );
+      }
+      if (this.siniester.siniestro) {
+        this.claimsFollowUpDetailForm.controls['sinisterIn'].setValue(
+          this.siniester.siniestro
+        );
+      }
       // this.claimsFollowUpDetailForm.controls['docOfficeMailIn'].setValue(this.siniester.docoficiocorreo);
-      this.claimsFollowUpDetailForm.controls['sinisterIn'].setValue(
-        this.siniester.siniestro
-      );
-      this.claimsFollowUpDetailForm.controls['policyAffectedIn'].setValue(
-        this.siniester.polizaafectada
-      );
-      this.claimsFollowUpDetailForm.controls['unitAdminUserIn'].setValue(
-        this.siniester.delegationnumber
-      );
-      this.claimsFollowUpDetailForm.controls['detGoodoAffectedIn'].setValue(
-        this.siniester.detallebienoafectadas
-      );
-      this.claimsFollowUpDetailForm.controls['claimedAmountIn'].setValue(
-        this.siniester.montoreclamado
-      );
-      this.claimsFollowUpDetailForm.controls['adjustedAmountIn'].setValue(
-        this.siniester.montoajustado
-      );
-      this.claimsFollowUpDetailForm.controls['deductibleIn'].setValue(
-        this.siniester.deducible
-      );
-      this.claimsFollowUpDetailForm.controls['coinsuranceIn'].setValue(
-        this.siniester.coaseguro
-      );
-      this.claimsFollowUpDetailForm.controls['amountIndemnizedIn'].setValue(
-        this.siniester.montoindemnizado
-      );
-      this.claimsFollowUpDetailForm.controls['letterClaimIn'].setValue(
-        this.dateConvert(this.siniester.cartareclamacion)
-      );
-      this.claimsFollowUpDetailForm.controls['orderOfEntryIn'].setValue(
-        this.siniester.ordendeingreso
-      );
-      // this.claimsFollowUpDetailForm.controls['docOfficeMinConcluIn'].setValue(this.siniester.docoficiominutaconclusion);
-      this.claimsFollowUpDetailForm.controls['statusIn'].setValue(
-        this.siniester.estatusid
-      );
-      this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].setValue(
-        this.siniester.primersegundacapa
-      );
-      this.claimsFollowUpDetailForm.controls['shapeConclusionIn'].setValue(
-        this.siniester.formaconclusionid
-      );
-      console.log(this.siniester.fechaindemnizacion);
-      this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].setValue(
-        this.dateConvert(this.siniester.fechaindemnizacion)
-      );
+      if (this.siniester.polizaafectada) {
+        this.claimsFollowUpDetailForm.controls['policyAffectedIn'].setValue(
+          this.siniester.polizaafectada
+        );
+      }
+      if (this.siniester.delegationnumber) {
+        this.claimsFollowUpDetailForm.controls['unitAdminUserIn'].setValue(
+          this.siniester.delegationnumber
+        );
+      }
+      if (this.siniester.detallebienoafectadas) {
+        this.claimsFollowUpDetailForm.controls['detGoodoAffectedIn'].setValue(
+          this.siniester.detallebienoafectadas
+        );
+      }
+      if (this.siniester.montoreclamado) {
+        this.claimsFollowUpDetailForm.controls['claimedAmountIn'].setValue(
+          this.siniester.montoreclamado
+        );
+      }
+      if (this.siniester.montoajustado) {
+        this.claimsFollowUpDetailForm.controls['adjustedAmountIn'].setValue(
+          this.siniester.montoajustado
+        );
+      }
+      if (this.siniester.deducible) {
+        this.claimsFollowUpDetailForm.controls['deductibleIn'].setValue(
+          this.siniester.deducible
+        );
+      }
+      if (this.siniester.coaseguro) {
+        this.claimsFollowUpDetailForm.controls['coinsuranceIn'].setValue(
+          this.siniester.coaseguro
+        );
+      }
+      if (this.siniester.montoindemnizado) {
+        this.claimsFollowUpDetailForm.controls['amountIndemnizedIn'].setValue(
+          this.siniester.montoindemnizado
+        );
+      }
+      if (this.siniester.cartareclamacion) {
+        this.claimsFollowUpDetailForm.controls['letterClaimIn'].setValue(
+          this.dateConvert(this.siniester.cartareclamacion)
+        );
+      }
+      if (this.siniester.ordendeingreso) {
+        this.claimsFollowUpDetailForm.controls['orderOfEntryIn'].setValue(
+          this.siniester.ordendeingreso
+        );
+      }
+      if (this.siniester.estatusid) {
+        // this.claimsFollowUpDetailForm.controls['docOfficeMinConcluIn'].setValue(this.siniester.docoficiominutaconclusion);
+        this.claimsFollowUpDetailForm.controls['statusIn'].setValue(
+          this.siniester.estatusid
+        );
+      }
+      if (this.siniester.primersegundacapa) {
+        this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].setValue(
+          this.siniester.primersegundacapa
+        );
+      }
+      if (this.siniester.formaconclusionid) {
+        this.claimsFollowUpDetailForm.controls['shapeConclusionIn'].setValue(
+          this.siniester.formaconclusionid
+        );
+      }
+      if (this.siniester.fechaindemnizacion) {
+        this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].setValue(
+          this.dateConvert(this.siniester.fechaindemnizacion)
+        );
+      }
 
       // this.claimsFollowUpDetailForm.controls['docAmountIndemnizedIn'].setValue(this.siniester.docmontoindemnizado);
       // this.claimsFollowUpDetailForm.controls['docLetterRelcamationIn'].setValue(this.siniester.doccartareclamacion);
-      this.claimsFollowUpDetailForm.controls['numberInGood'].setValue(
-        this.good.numberInGood
-      );
-      this.claimsFollowUpDetailForm.controls['description'].setValue(
-        this.good.description
-      );
+      if (this.good.numberInGood) {
+        this.claimsFollowUpDetailForm.controls['numberInGood'].setValue(
+          this.good.numberInGood
+        );
+      }
+      if (this.good.description) {
+        this.claimsFollowUpDetailForm.controls['description'].setValue(
+          this.good.description
+        );
+      }
       this.edit = true;
       this.getTipeSiniester(new ListParams(), this.siniester.tiposiniestroid);
     } else if (this.good) {
@@ -232,97 +275,123 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     );
     formData.append(
       'policyAffectedIn',
-      this.claimsFollowUpDetailForm.controls['policyAffectedIn'].value
+      this.claimsFollowUpDetailForm.controls['policyAffectedIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['policyAffectedIn'].value
+        : ''
     );
     formData.append(
       'typeSinisterIn',
-      this.claimsFollowUpDetailForm.controls['typeSinisterIn'].value
+      this.claimsFollowUpDetailForm.controls['typeSinisterIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['typeSinisterIn'].value
+        : ''
     );
     formData.append(
       'detGoodoAffectedIn',
-      this.claimsFollowUpDetailForm.controls['detGoodoAffectedIn'].value
+      this.claimsFollowUpDetailForm.controls['detGoodoAffectedIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['detGoodoAffectedIn'].value
+        : ''
     );
     formData.append(
       'fecSinisterIn',
-      this.convertDate(
-        this.claimsFollowUpDetailForm.controls['fecSinisterIn'].value != null
-          ? this.claimsFollowUpDetailForm.controls['fecSinisterIn'].value
-          : ''
-      )
+      this.claimsFollowUpDetailForm.controls['fecSinisterIn'].value != null
+        ? this.convertDate(
+            this.claimsFollowUpDetailForm.controls['fecSinisterIn'].value
+          )
+        : ''
     );
     formData.append(
       'fecRepAseguradoraIn',
-      this.convertDate(
-        this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].value !=
-          null
-          ? this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].value
-          : ''
-      )
+      this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].value !=
+        null
+        ? this.convertDate(
+            this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].value
+          )
+        : ''
     );
     formData.append(
       'fecRepCabiIn',
-      this.convertDate(
-        this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].value != null
-          ? this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].value
-          : ''
-      )
+      this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].value != null
+        ? this.convertDate(
+            this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].value
+          )
+        : ''
     );
     formData.append(
       'unitAdminUserIn',
-      this.claimsFollowUpDetailForm.controls['unitAdminUserIn'].value
+      this.claimsFollowUpDetailForm.controls['unitAdminUserIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['unitAdminUserIn'].value
+        : ''
     );
     formData.append(
       'claimedAmountIn',
-      this.claimsFollowUpDetailForm.controls['claimedAmountIn'].value
+      this.claimsFollowUpDetailForm.controls['claimedAmountIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['claimedAmountIn'].value
+        : ''
     );
     formData.append(
       'adjustedAmountIn',
-      this.claimsFollowUpDetailForm.controls['adjustedAmountIn'].value
+      this.claimsFollowUpDetailForm.controls['adjustedAmountIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['adjustedAmountIn'].value
+        : ''
     );
     formData.append(
       'deductibleIn',
-      this.claimsFollowUpDetailForm.controls['deductibleIn'].value
+      this.claimsFollowUpDetailForm.controls['deductibleIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['deductibleIn'].value
+        : ''
     );
     formData.append(
       'coinsuranceIn',
-      this.claimsFollowUpDetailForm.controls['coinsuranceIn'].value
+      this.claimsFollowUpDetailForm.controls['coinsuranceIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['coinsuranceIn'].value
+        : ''
     );
     formData.append(
       'amountIndemnizedIn',
-      this.claimsFollowUpDetailForm.controls['amountIndemnizedIn'].value
+      this.claimsFollowUpDetailForm.controls['amountIndemnizedIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['amountIndemnizedIn'].value
+        : ''
     );
     formData.append(
       'dateIndemnizationIn',
-      this.convertDate(
-        this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].value !=
-          null
-          ? this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].value
-          : ''
-      )
+      this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].value !=
+        null
+        ? this.convertDate(
+            this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].value
+          )
+        : ''
     );
     formData.append(
       'shapeConclusionIn',
-      this.claimsFollowUpDetailForm.controls['shapeConclusionIn'].value
+      this.claimsFollowUpDetailForm.controls['shapeConclusionIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['shapeConclusionIn'].value
+        : ''
     );
     formData.append(
       'letterClaimIn',
-      this.convertDate(
-        this.claimsFollowUpDetailForm.controls['letterClaimIn'].value != null
-          ? this.claimsFollowUpDetailForm.controls['letterClaimIn'].value
-          : ''
-      )
+      this.claimsFollowUpDetailForm.controls['letterClaimIn'].value != null
+        ? this.convertDate(
+            this.claimsFollowUpDetailForm.controls['letterClaimIn'].value
+          )
+        : ''
     );
     formData.append(
       'orderOfEntryIn',
-      this.claimsFollowUpDetailForm.controls['orderOfEntryIn'].value
+      this.claimsFollowUpDetailForm.controls['orderOfEntryIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['orderOfEntryIn'].value
+        : ''
     );
     formData.append(
       'firstSecondLaterIn',
-      this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].value
+      this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].value
+        : ''
     );
     formData.append(
       'statusIn',
-      this.claimsFollowUpDetailForm.controls['statusIn'].value
+      this.claimsFollowUpDetailForm.controls['statusIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['statusIn'].value
+        : ''
     );
     console.log('fromdata' + formData);
     this.seraLogService.postSaveSinisterRecord(formData).subscribe({
@@ -356,7 +425,9 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     // formData.append('sinisterInId', '39');
     formData.append(
       'sinisterIn',
-      this.claimsFollowUpDetailForm.controls['sinisterIn'].value
+      this.claimsFollowUpDetailForm.controls['sinisterIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['sinisterIn'].value
+        : ''
     );
     formData.append(
       'numberInGood',
@@ -364,97 +435,123 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     );
     formData.append(
       'policyAffectedIn',
-      this.claimsFollowUpDetailForm.controls['policyAffectedIn'].value
+      this.claimsFollowUpDetailForm.controls['policyAffectedIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['policyAffectedIn'].value
+        : ''
     );
     formData.append(
       'typeSinisterIn',
-      this.claimsFollowUpDetailForm.controls['typeSinisterIn'].value
+      this.claimsFollowUpDetailForm.controls['typeSinisterIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['typeSinisterIn'].value
+        : ''
     );
     formData.append(
       'detGoodoAffectedIn',
-      this.claimsFollowUpDetailForm.controls['detGoodoAffectedIn'].value
+      this.claimsFollowUpDetailForm.controls['detGoodoAffectedIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['detGoodoAffectedIn'].value
+        : ''
     );
     formData.append(
       'fecSinisterIn',
-      this.convertDate(
-        this.claimsFollowUpDetailForm.controls['fecSinisterIn'].value != null
-          ? this.claimsFollowUpDetailForm.controls['fecSinisterIn'].value
-          : ''
-      )
+      this.claimsFollowUpDetailForm.controls['fecSinisterIn'].value != null
+        ? this.convertDate(
+            this.claimsFollowUpDetailForm.controls['fecSinisterIn'].value
+          )
+        : ''
     );
     formData.append(
       'fecRepAseguradoraIn',
-      this.convertDate(
-        this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].value !=
-          null
-          ? this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].value
-          : ''
-      )
+      this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].value !=
+        null
+        ? this.convertDate(
+            this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].value
+          )
+        : ''
     );
     formData.append(
       'fecRepCabiIn',
-      this.convertDate(
-        this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].value != null
-          ? this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].value
-          : ''
-      )
+      this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].value != null
+        ? this.convertDate(
+            this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].value
+          )
+        : ''
     );
     formData.append(
       'unitAdminUserIn',
-      this.claimsFollowUpDetailForm.controls['unitAdminUserIn'].value
+      this.claimsFollowUpDetailForm.controls['unitAdminUserIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['unitAdminUserIn'].value
+        : ''
     );
     formData.append(
       'claimedAmountIn',
-      this.claimsFollowUpDetailForm.controls['claimedAmountIn'].value
+      this.claimsFollowUpDetailForm.controls['claimedAmountIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['claimedAmountIn'].value
+        : ''
     );
     formData.append(
       'adjustedAmountIn',
-      this.claimsFollowUpDetailForm.controls['adjustedAmountIn'].value
+      this.claimsFollowUpDetailForm.controls['adjustedAmountIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['adjustedAmountIn'].value
+        : ''
     );
     formData.append(
       'deductibleIn',
-      this.claimsFollowUpDetailForm.controls['deductibleIn'].value
+      this.claimsFollowUpDetailForm.controls['deductibleIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['deductibleIn'].value
+        : ''
     );
     formData.append(
       'coinsuranceIn',
-      this.claimsFollowUpDetailForm.controls['coinsuranceIn'].value
+      this.claimsFollowUpDetailForm.controls['coinsuranceIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['coinsuranceIn'].value
+        : ''
     );
     formData.append(
       'amountIndemnizedIn',
-      this.claimsFollowUpDetailForm.controls['amountIndemnizedIn'].value
+      this.claimsFollowUpDetailForm.controls['amountIndemnizedIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['amountIndemnizedIn'].value
+        : ''
     );
     formData.append(
       'dateIndemnizationIn',
-      this.convertDate(
-        this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].value !=
-          null
-          ? this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].value
-          : ''
-      )
+      this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].value !=
+        null
+        ? this.convertDate(
+            this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].value
+          )
+        : ''
     );
     formData.append(
       'shapeConclusionIn',
-      this.claimsFollowUpDetailForm.controls['shapeConclusionIn'].value
+      this.claimsFollowUpDetailForm.controls['shapeConclusionIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['shapeConclusionIn'].value
+        : ''
     );
     formData.append(
       'letterClaimIn',
-      this.convertDate(
-        this.claimsFollowUpDetailForm.controls['letterClaimIn'].value != null
-          ? this.claimsFollowUpDetailForm.controls['letterClaimIn'].value
-          : ''
-      )
+      this.claimsFollowUpDetailForm.controls['letterClaimIn'].value != null
+        ? this.convertDate(
+            this.claimsFollowUpDetailForm.controls['letterClaimIn'].value
+          )
+        : ''
     );
     formData.append(
       'orderOfEntryIn',
-      this.claimsFollowUpDetailForm.controls['orderOfEntryIn'].value
+      this.claimsFollowUpDetailForm.controls['orderOfEntryIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['orderOfEntryIn'].value
+        : ''
     );
     formData.append(
       'firstSecondLaterIn',
-      this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].value
+      this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].value
+        : ''
     );
     formData.append(
       'statusIn',
-      this.claimsFollowUpDetailForm.controls['statusIn'].value
+      this.claimsFollowUpDetailForm.controls['statusIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['statusIn'].value
+        : ''
     );
     this.seraLogService.postSaveSinisterRecord(formData).subscribe({
       next: resp => {
@@ -488,7 +585,7 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     this.fileDocAmountIndemnizedIn = event.target.files[0];
   }
   convertDate(date: Date): string {
-    const dateString: string = this.datePipe.transform(date, 'yyyy-MM-dd');
+    const dateString: string = this.datePipe.transform(date, 'dd/MM/yyyy');
     return dateString;
   }
   dateConvert(date: string): Date {
