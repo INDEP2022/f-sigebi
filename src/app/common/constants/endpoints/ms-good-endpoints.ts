@@ -63,6 +63,7 @@ export enum GoodProcessPoints {
   GetGoodSituation = 'update-good-status/pupMakeQuery2',
   GetNumeProrraCsv = 'application/get-f-proc-sol-numerario',
   GetFproSolNumerarioProdnumCsv = 'application/get-fpro-sol-numerario-prodnum',
+  PubPrevieData = 'application/pupPreviewData',
 }
 
 export enum GoodFinderEndpoint {

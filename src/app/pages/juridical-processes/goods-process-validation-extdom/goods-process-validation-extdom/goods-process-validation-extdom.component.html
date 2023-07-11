@@ -150,7 +150,7 @@
                   <ngx-select
                     [data]="selectAffairkey"
                     bindLabel="dataDesc"
-                    label="Autoriza Dictaminaci&oacute;n"
+                    label="Asunto"
                     value="id"
                     (fetchItems)="getAffair($event)"
                     [form]="form"
@@ -378,6 +378,34 @@
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 text-center">
         <div class="form-group">
           <button
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button"
+            (click)="addSelect()">
+            <!-- Mover uno -->
+            <i class="bx bx-chevron-down bx-md"></i>
+          </button>
+          <button
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button"
+            (click)="addAll()">
+            <!-- Mover todos -->
+            <i class="bx bx-chevrons-down bx-md"></i>
+          </button>
+          <button
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button"
+            (click)="removeAll()">
+            <!-- Quitar todos -->
+            <i class="bx bx-chevrons-up bx-md"></i>
+          </button>
+          <button
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button"
+            (click)="removeSelect()">
+            <!-- Quitar uno -->
+            <i class="bx bx-chevron-up bx-md"></i>
+          </button>
+          <!-- <button
             type="button"
             class="btn btn-primary btn-sm active m-3"
             (click)="btnAgregar()">
@@ -388,7 +416,7 @@
             class="btn btn-danger btn-sm active m-3"
             (click)="btnEliminar()">
             <i class="bx bxs-up-arrow-circle bx-md"></i>
-          </button>
+          </button> -->
         </div>
       </div>
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
@@ -455,7 +483,7 @@
         </div>
       </div>
       <!-- PARTE DE ESCANEO -->
-      <div class="col-md-6 col-12 col-sm-12" *ngIf="showScanForm">
+      <div class="col-md-7 col-12 col-sm-12" *ngIf="showScanForm">
         <app-scanning-foil-historical-goods-extdom
           [formScan]="formScan"
           [notificationData]="notificationData"
@@ -467,7 +495,7 @@
             viewPictures($event)
           "></app-scanning-foil-historical-goods-extdom>
       </div>
-      <div class="col-md-6 col-12 col-sm-12">
+      <div class="col-md-5 col-12 col-sm-12 text-center">
         <button
           tooltip="Ejecutar Cambios"
           containerClass="tooltip-style"
@@ -485,7 +513,7 @@
         <button
           class="btn btn-primary btn-sm active m-3"
           (click)="btnConocimiento()">
-          Conocimiento&nbsp;<i class="fa fa-check" aria-hidden="true"></i>
+          Conocimiento&nbsp;
         </button>
         <button
           class="btn btn-primary btn-sm active m-3"
@@ -497,10 +525,10 @@
         </button>
         <button
           class="btn btn-primary btn-sm active m-3"
-          (click)="btnMantenimientoCorreo()">
-          Mantenimiento Correos&nbsp;<i
-            class="fa fa-check"
-            aria-hidden="true"></i>
+          (click)="btnMantenimientoCorreo()"
+          tooltip="Mantenimiento de Correos"
+          containerClass="tooltip-style">
+          <i class="fa fa-toolbox"></i>
         </button>
       </div>
     </div>
