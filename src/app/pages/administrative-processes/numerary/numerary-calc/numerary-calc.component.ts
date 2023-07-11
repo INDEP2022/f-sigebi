@@ -328,31 +328,41 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       '¿Se continua con la selección?'
     );
     if (response.isConfirmed) {
-      //// abrir el modal
       this.openModal();
     }
   }
 
+  isLoadingStatusAccount = false;
   printStatusAccount() {
+    this.isLoadingStatusAccount = true;
     const params = {
       pn_folio: '',
     };
-    this.downloadReport('blank', params);
+    this.downloadReport('blank', params, () => {
+      this.isLoadingStatusAccount = false;
+    });
   }
 
+  isLoadingDetailMovi = false;
   printDetailMovi() {
+    this.isLoadingDetailMovi = true;
     const params = {
       pn_folio: '',
     };
-    this.downloadReport('blank', params);
+    this.downloadReport('blank', params, () => {
+      this.isLoadingDetailMovi = false;
+    });
   }
 
+  isLoadingProrraComission = false;
   printProrraComission() {
     if (this.formBlkControl.get('tMoneda').value === 'P') {
       const params = {
         pn_folio: '',
       };
-      this.downloadReport('blank', params);
+      this.downloadReport('blank', params, () => {
+        this.isLoadingProrraComission = false;
+      });
     } else {
       this.alert(
         'warning',
@@ -362,7 +372,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     }
   }
 
-  downloadReport(reportName: string, params: any) {
+  downloadReport(reportName: string, params: any, cb: () => void = null) {
     //this.loadingText = 'Generando reporte ...';
     this.siabService.fetchReport(reportName, params).subscribe({
       next: response => {
@@ -381,6 +391,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           ignoreBackdropClick: true, //ignora el click fuera del modal
         };
         this.modalService.show(PreviewDocumentsComponent, config);
+        cb && cb();
       },
     });
   }
