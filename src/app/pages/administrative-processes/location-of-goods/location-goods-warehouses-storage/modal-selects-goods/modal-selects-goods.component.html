@@ -45,7 +45,7 @@
             <button
               class="btn btn-primary btn-sm active"
               (click)="goToGoodTracker()">
-              Rastreador de bienes<i
+              Rastreador de bienes&nbsp;<i
                 class="fas fa-map-marker bx-sm float-icon"></i>
             </button>
             <!-- <button (click)="goToGoodTracker()" class="btn btn-success active">
@@ -81,9 +81,10 @@
                 <div class="m-3">
                   <button
                     *ngIf="radio.value === 'A'"
-                    class="btn btn-primary btn-sm active"
+                    class="btn btn-info btn-sm active"
                     (click)="updateGoodsWareHouse()">
-                    Asignar Almacén<i class="fas fa-sync bx-sm float-icon"></i>
+                    Asignar Almacén&nbsp;<i
+                      class="fas fa-sync bx-sm float-icon"></i>
                   </button>
                   <!-- <button *ngIf="radio.value === 'A'" class="btn btn-info active" (click)="updateGoodsWareHouse()">
                     Asignar Ubicación<i class="fas fa-fa-info bx-sm float-icon"></i>
@@ -99,9 +100,10 @@
                 <div class="m-3">
                   <button
                     *ngIf="radio.value === 'B'"
-                    class="btn btn-primary btn-sm active"
+                    class="btn btn-info btn-sm active"
                     (click)="updateGoodsVault()">
-                    Asignar Bóveda<i class="fas fa-sync bx-sm float-icon"></i>
+                    Asignar Bóveda&nbsp;<i
+                      class="fas fa-sync bx-sm float-icon"></i>
                   </button>
                   <!-- <button *ngIf="radio.value === 'B'" class="btn btn-info active" (click)="updateGoodsVault()">
                     Asignar Ubicación<i class="fas fa-fa-info bx-sm float-icon"></i>
