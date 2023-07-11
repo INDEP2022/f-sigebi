@@ -41,10 +41,15 @@
         </div>
       </div>
       <div class="col-md-4 col-sm-12 col-xs-12">
-        <div class="m-3">
-          <button class="btn btn-primary btn-sm active">
-            Validar registros <i class="fa fa-check" aria-hidden="true"></i>
-          </button>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              type="button"
+              class="btn btn-info btn-sm active"
+              (click)="validRecords()">
+              Validar registros
+            </button>
+          </div>
         </div>
       </div>
       <div class="col-md-4 col-sm-12 col-xs-12">
@@ -100,21 +105,22 @@
 
     <div class="row">
       <!--CAN WORK1 TABLE-->
-      <div class="ch-content">
-        <h5 class="title"></h5>
-        <div class="col-md-5 buttons">
-          <div>
-            <app-columns-select [settings]="settings"></app-columns-select>
+      <div class="row justify-content-end mr-1">
+        <div class="ch-content">
+          <div class="row justify-content-end pt-3 mr-3">
+            <app-columns-select
+              [(settings)]="settings"
+              class="row justify-content-end"></app-columns-select>
           </div>
         </div>
       </div>
       <div class="row pt-4">
-        <div class="col-md-12">
+        <div class="col-md-12 table-responsive">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="data">
+              [source]="paginatedData">
             </ng2-smart-table>
           </div>
         </div>
