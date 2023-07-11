@@ -52,7 +52,7 @@ export class MassiveNumeraryChangeModalComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Win Bienes';
+  title: string = 'Bienes';
   form: FormGroup;
   settings2 = { ...this.settings, actions: false };
   dataTableGoods: IMassiveNumeraryGood[] = [];
@@ -345,7 +345,11 @@ export class MassiveNumeraryChangeModalComponent
       };
       this.accountMovementService.postMassNumeraryGenerate(body).subscribe({
         next: (res: any) => {
-          this.alert('success', 'Operación exitosa', 'Proceso terminado');
+          this.alert(
+            'success',
+            'Operación terminada correctamente',
+            'Proceso terminado'
+          );
         },
         error: (err: any) => {
           this.alert('error', 'Error', 'Ocurrió un error al procesar');

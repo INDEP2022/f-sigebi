@@ -108,8 +108,10 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: false,
+      hideHeader: false,
+      hideSubHeader: false,
       columns: MASSIVE_NUMERARY_CHANGE_COLUMNS,
-    };
+    } as any;
   }
 
   ngOnInit(): void {
@@ -152,6 +154,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     this.formGas.get(`GAS${num}`).setValue('');
     const modal = this.modalService.show(SelectConceptSpentDialogComponent, {
       class: 'modal-lg',
+      ignoreBackdropClick: true,
     });
     modal.onHidden.pipe(take(1)).subscribe((res: any) => {
       console.log(res, modal.content);
