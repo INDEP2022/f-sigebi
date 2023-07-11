@@ -17,4 +17,5 @@ export enum NumeraryEndpoints {
   Application = 'application/del-solicitudes-nume-det-por-id-solnum',
   CloseNumerary = 'close-numerary',
   GetSolNumerario = 'application/get-sol-numerario',
+  TransReg = 'transfer-numerary-region',
 }
