@@ -321,7 +321,7 @@ export const BASIC_BUTTONS = [
           </button>`,
   },
   {
-    name: 'Regresar',
+    name: 'Siguiente',
     code: `<button class="btn btn-primary active btn-sm m-2">
           Siguiente
           <i class="fas fa-arrow-circle-right"></i>
