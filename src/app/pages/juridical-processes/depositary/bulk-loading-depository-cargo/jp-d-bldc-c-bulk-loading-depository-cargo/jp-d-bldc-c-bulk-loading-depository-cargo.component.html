@@ -3,63 +3,67 @@
     <div class="col-12 col-sm-12 col-md-6">
       <h5 class="title">Carga masiva de carga de depositarias</h5>
     </div>
-    <div *ngIf="origin" class="col-12 col-sm-12 col-md-6 text-end">
-      <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
-        Regresar
-        <i class="fas fa-arrow-circle-left"></i>
-      </button>
-    </div>
   </div>
   <div body>
+    <div class="ch-content">
+      <h5 class="title"></h5>
+      <div class="col-md-5 buttons">
+        <div>
+          <div *ngIf="origin" class="col-12 col-sm-12 col-md-6 text-end">
+            <button
+              class="btn btn-primary active btn-sm m-2"
+              (click)="goBack()">
+              Regresar
+              <i class="fas fa-arrow-circle-left"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="row pl-4">Proceso de Carga Masiva de pagos de Depositarías</div>
     <div class="row">
       <div class="col-md-4 col-sm-12 col-xs-12">
-        <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <button
-              class="btn btn-success btn-sm ml-2"
-              type="text"
-              (click)="file.click()">
-              Cargar archivo Excel / CSV
-            </button>
-            <input
-              type="file"
-              name="file"
-              #file
-              class="d-none"
-              accept=".xlsx, .xls, .csv, application/vnd.ms-excel"
-              (change)="onFileChange($event)" />
-          </div>
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-sm btn-success active"
+            (click)="file.click()">
+            Importar Excel / CSV <i class="bi bi-file-earmark-excel-fill"></i>
+          </button>
+          <input
+            type="file"
+            name="file"
+            #file
+            class="d-none"
+            accept=".xlsx, .xls, .csv, application/vnd.ms-excel"
+            (change)="onFileChange($event)" />
         </div>
       </div>
       <div class="col-md-4 col-sm-12 col-xs-12">
-        <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <button type="button" class="btn btn-info btn-sm active">
-              Validar registros
-            </button>
-          </div>
+        <div class="m-3">
+          <button class="btn btn-primary btn-sm active">
+            Validar registros <i class="fa fa-check" aria-hidden="true"></i>
+          </button>
         </div>
       </div>
       <div class="col-md-4 col-sm-12 col-xs-12">
-        <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <button type="button" class="btn btn-primary btn-sm active">
-              Aplicar Registros
-            </button>
-          </div>
+        <div class="m-3">
+          <button type="button" class="btn btn-primary btn-sm active">
+            Aplicar Registros
+            <i aria-hidden="true" class="fa fa-save"></i>
+          </button>
         </div>
       </div>
     </div>
     <hr />
     <div class="row">
       <!--CAN WORK1 TABLE-->
-      <div class="row justify-content-end mr-1">
-        <div class="ch-content">
-          <div class="row justify-content-end pt-3 mr-3">
-            <app-columns-select
-              [settings]="settings"
-              class="row justify-content-end"></app-columns-select>
+      <div class="ch-content">
+        <h5 class="title"></h5>
+        <div class="col-md-5 buttons">
+          <div>
+            <app-columns-select [settings]="settings"></app-columns-select>
           </div>
         </div>
       </div>

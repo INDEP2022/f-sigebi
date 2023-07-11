@@ -37,7 +37,7 @@ export class ColumnsSelectComponent implements OnInit {
     }
   }
   @Input()
-  defaultColumns: number = 10;
+  defaultColumns: number = 6;
   @Input() settings: ISettings = { columns: {} };
   @Output() settingsChange = new EventEmitter<any>();
   private allColumns: any = {};
