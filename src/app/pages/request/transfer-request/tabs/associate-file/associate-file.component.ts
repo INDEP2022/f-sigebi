@@ -162,7 +162,6 @@ export class AssociateFileComponent extends BasePage implements OnInit {
 
   async generateCaratula() {
     let request = this.request;
-    this.loader.load = true;
     const expedient: any = await this.saveExpedientSami();
     if (expedient.id) {
       let resevateDate = '';
@@ -239,7 +238,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
             form,
             file
           );
-          this.loader.load = false;
+
           if (contentResult) {
             Swal.fire({
               title: 'Carátula generada correctamente',
@@ -252,7 +251,6 @@ export class AssociateFileComponent extends BasePage implements OnInit {
             }).then(result => {
               if (result.isConfirmed) {
                 const reporteName = contentResult.dDocName;
-                console.log(reporteName);
 
                 const autoridad: any = this.authService.decodeToken();
                 const parameters = {
@@ -272,7 +270,6 @@ export class AssociateFileComponent extends BasePage implements OnInit {
           }
         }
       } else {
-        this.loader.load = false;
         this.onLoadToast('error', 'Error', 'No se pudo carga la caratula');
       }
     }
@@ -458,7 +455,6 @@ export class AssociateFileComponent extends BasePage implements OnInit {
             'Ocurrio un error al cargar los datos',
             e.error?.message
           );
-          console.log(e);
           throw e;
         })
       )

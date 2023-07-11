@@ -737,3 +737,7 @@ custom-view-component {
 .float-icon-md2 {
   top: 9px;
 }
+
+.hidden-paginate-default .ng2-smart-pagination-nav {
+  display: none !important;
+}

@@ -539,6 +539,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       form.affair = this.op == 2 ? form.affair : 37;
       let date = this.requestForm.controls['applicationDate'].value;
       form.applicationDate = date.toISOString();
+      form.typeOfTransfer = 'MANUAL';
 
       this.requestService.create(form).subscribe({
         next: resp => {

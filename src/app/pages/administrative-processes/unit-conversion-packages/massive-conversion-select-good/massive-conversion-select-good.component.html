@@ -106,25 +106,27 @@
             class="btn btn-success btn-sm active"
             [disabled]="loading"
             (click)="file.click()">
-            Listado de Bienes
-            <!-- <i class="bi bi-filetype-txt-fill"></i> -->
-            <i class="bi bi-file-earmark-excel-fill"></i>
+            <div class="upload-button">
+              Listado de Bienes
+              <!-- <i class="bi bi-filetype-txt-fill"></i> -->
+              <i class="bx bxs-file-txt"></i>
+            </div>
           </button>
-          <!-- <input
-            type="file"
-            name="file"
-            #file
-            class="d-none"
-            accept=".txt"
-            (change)="onFileChange($event)" /> -->
-
           <input
             type="file"
             name="file"
             #file
             class="d-none"
-            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            accept=".txt"
             (change)="onFileChange($event)" />
+
+          <!-- <input
+            type="file"
+            name="file"
+            #file
+            class="d-none"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            (change)="onFileChange($event)" /> -->
           <button
             class="btn btn-primary btn-sm active"
             [disabled]="goodCheckValues.length === 0 || loading"
