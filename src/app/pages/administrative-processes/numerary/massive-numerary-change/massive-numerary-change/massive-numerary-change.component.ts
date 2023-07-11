@@ -714,6 +714,10 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
 
   //#region On click Button File Excel
   onClickBtnFileExcel(e: Event) {
+    this.registerReads = 0;
+    this.registerProcessed = 0;
+    this.registerCorrect = 0;
+    this.registerIncorrect = 0;
     const file = (e.target as HTMLInputElement).files[0];
     try {
       readFile(file, 'BinaryString').then(data => {
