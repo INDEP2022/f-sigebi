@@ -212,6 +212,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
     this.openForm();
   }
   validGood() {
+    this.claimsFollowUpForm.markAllAsTouched();
     this.claimsFollowUpForm.controls['description'].setValue('');
 
     let data = {

@@ -132,6 +132,7 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       this.claimsFollowUpDetailForm.controls['shapeConclusionIn'].setValue(
         this.siniester.formaconclusionid
       );
+      console.log(this.siniester.fechaindemnizacion);
       this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].setValue(
         this.dateConvert(this.siniester.fechaindemnizacion)
       );
@@ -493,10 +494,10 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
   dateConvert(date: string): Date {
     if (date != 'null' && date != undefined) {
       console.log(date);
-      const dates = new Date(date);
-      const datePipe = new DatePipe('en-US');
-      const formatTrans = datePipe.transform(dates, 'dd/MM/yyyy', 'UTC');
-      const partesFecha1 = formatTrans.split('/');
+      // const dates = new Date(date);
+      // const datePipe = new DatePipe('en-US');
+      // const formatTrans = datePipe.transform(dates, 'dd/MM/yyyy', 'UTC');
+      const partesFecha1 = date.split('/');
       const dateConvert = new Date(
         Number(partesFecha1[2]),
         Number(partesFecha1[1]) - 1,

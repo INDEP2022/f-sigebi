@@ -284,10 +284,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
                 ERRTXT = `(PAGOS) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
                 VCONE = VCONE + 1;
                 this.data[i].VALIDADO = 'N';
-                if (this.errorsData[i].description != null) {
-                } else {
-                  this.errorsData[i].description = ERRTXT;
-                }
+                this.errorsData.push({ DESCRIPCION: ERRTXT });
               },
             });
         }
@@ -311,11 +308,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
                 //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
                 ERRTXT = `(JURIDICO) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
                 this.data[i].VALJUR = 'N';
-                if (this.errorsData[i].description != null) {
-                  //CREATE_RECORD;
-                } else {
-                  this.errorsData[i].description = ERRTXT;
-                }
+                this.errorsData.push({ DESCRIPCION: ERRTXT });
               },
             });
         }
@@ -338,11 +331,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
                 //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
                 ERRTXT = `(ADMINISTRATIVO) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
                 this.data[i].VALADM = 'N';
-                if (this.errorsData[i].description != null) {
-                  //CREATE_RECORD;
-                } else {
-                  this.errorsData[i].description = ERRTXT;
-                }
+                this.errorsData.push({ DESCRIPCION: ERRTXT });
               },
             });
         }
