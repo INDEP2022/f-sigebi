@@ -26,7 +26,6 @@ export class RequestInformationSimilarGoodsComponent
 
   constructor() {}
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.request);
     this.getRequestInfo();
   }
 
