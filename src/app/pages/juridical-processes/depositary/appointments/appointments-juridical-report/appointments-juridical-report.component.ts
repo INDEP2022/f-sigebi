@@ -68,7 +68,8 @@ export class AppointmentsJuridicalReportComponent
   }
 
   cleanDate() {
-    this.formGroup.get('dateRepo').reset();
+    // this.formGroup.get('dateRepo').reset();
+    this.formGroup.reset();
   }
 
   searchWithFilters() {

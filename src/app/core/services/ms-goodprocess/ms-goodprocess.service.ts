@@ -154,4 +154,10 @@ export class GoodprocessService extends HttpService {
   postFMasInsNumerario(data: any) {
     return this.post('application/fMasInsNumerario', data);
   }
+
+  getByGood_distinctElaborationDate(id: number) {
+    return this.get<IListResponse<any>>(
+      `${GoodprocessEndpoints.ApplicationDistinctElaborationDate}/${id}`
+    );
+  }
 }

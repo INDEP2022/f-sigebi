@@ -35,7 +35,7 @@
               </div>
               <div class="col-md-6 col-sm-12 col-xs-12 p-1">
                 <form-field
-                  label="Folio de Escaneo"
+                  label="Folio Acta Depositar&iacute;a"
                   [control]="formScan.get('scanningFoli')">
                   <input
                     type="text"
@@ -51,7 +51,7 @@
                     [disabled]="disabled"
                     (click)="replicate()"
                     type="button"
-                    class="btn btn-warning btn-sm active">
+                    class="btn btn-primary btn-sm active">
                     Replicar Folio
                   </button>
                 </div>
@@ -63,7 +63,7 @@
           <button
             [disabled]="disabled"
             (click)="showMessageDigitalization()"
-            tooltip="imprimir Solicitud de Escaneo"
+            tooltip="Imprimir Solicitud de Escaneo"
             containerClass="tooltip-style"
             class="btn btn-secondary btn-sm active m-1">
             <i class="bx bxs-file-find"></i>
@@ -71,7 +71,7 @@
           <button
             [disabled]="disabled"
             (click)="showScannerFoil()"
-            tooltip="Consulta de imágenes escaneadas"
+            tooltip="Consulta de Imágenes Escaneadas"
             containerClass="tooltip-style"
             class="btn btn-secondary btn-sm active m-1">
             <i class="bx bxs-file"></i>
