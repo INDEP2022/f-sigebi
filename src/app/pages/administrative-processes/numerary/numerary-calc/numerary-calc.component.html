@@ -132,21 +132,33 @@
             </button>
             <button
               type="button"
+              [disabled]="isLoadingStatusAccount"
               class="btn btn-sm btn-primary active m-3"
               (click)="printStatusAccount()">
               Estado de Cuenta <i class="bx bx-printer bx-sm float-icon"></i>
+              <ng-container *ngIf="isLoadingStatusAccount">
+                <i class="bx bx-loader bx-spin"></i>
+              </ng-container>
             </button>
             <button
               type="button"
+              [disabled]="isLoadingDetailMovi"
               class="btn btn-sm btn-primary active m-3"
               (click)="printDetailMovi()">
               Detalle Movimiento <i class="bx bx-printer bx-sm float-icon"></i>
+              <ng-container *ngIf="isLoadingDetailMovi">
+                <i class="bx bx-loader bx-spin"></i>
+              </ng-container>
             </button>
             <button
               type="button"
+              [disabled]="isLoadingProrraComission"
               class="btn btn-sm btn-primary active m-3"
               (click)="printProrraComission()">
               Prorrateo Comisión <i class="bx bx-printer bx-sm float-icon"></i>
+              <ng-container *ngIf="isLoadingProrraComission">
+                <i class="bx bx-loader bx-spin"></i>
+              </ng-container>
             </button>
             <button
               [disabled]="!process"
