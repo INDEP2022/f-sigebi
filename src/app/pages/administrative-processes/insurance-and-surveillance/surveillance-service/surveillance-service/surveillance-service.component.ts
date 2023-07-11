@@ -257,6 +257,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       delegationType: this.delegationMae.delegationType,
     };
     this.objGetSupervionDet = obj;
+    this.paramsList.getValue().page = 1;
+    this.paramsList.getValue().limit = 10;
     this.getVigSupervisionDet_();
   }
 
@@ -977,6 +979,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
           delegationType: this.delegationMae.delegationType,
         };
         this.objGetSupervionDet = obj;
+        this.paramsList.getValue().page = 1;
+        this.paramsList.getValue().limit = 10;
         this.getVigSupervisionDet_();
 
         console.log('RESPUESTA', response);
