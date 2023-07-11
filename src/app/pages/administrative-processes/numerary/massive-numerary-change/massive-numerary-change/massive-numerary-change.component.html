@@ -159,12 +159,13 @@
       </div>
     </div>
     <div class="row pt-4">
-      <div class="col-md-12">
+      <div class="col-md-12 hidden-paginate-default">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
+            #tableSpent
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="dataPrevious">
+            [source]="dataPreviousTable">
           </ng2-smart-table>
         </div>
       </div>

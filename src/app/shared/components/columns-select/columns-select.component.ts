@@ -36,12 +36,13 @@ export class ColumnsSelectComponent implements OnInit {
       this.initColumns();
     }
   }
+  @Input()
+  defaultColumns: number = 6;
   /* 
   ! Si se desea cambiar el numero de columnas para una pantalla en especifoco,
   ! se debe mandar el numero de columnas como input, 
   ! POR DEFECTO SIEMPRE SERA 6
   */
-  @Input() defaultColumns: number = 6;
   @Input() settings: ISettings = { columns: {} };
   @Output() settingsChange = new EventEmitter<any>();
   private allColumns: any = {};

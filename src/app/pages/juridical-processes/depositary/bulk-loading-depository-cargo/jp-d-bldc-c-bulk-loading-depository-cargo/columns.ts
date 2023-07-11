@@ -14,7 +14,7 @@ export const COLUMNS = {
     sort: false,
   },
   CVE_CONCEPTO_PAGO: {
-    title: 'Concepto de pago',
+    title: 'Concepto de Pago',
     sort: false,
   },
   OBSERVACION: {

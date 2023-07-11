@@ -161,6 +161,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   ]);
   //VARIABLES DE DATA QUE SE RECIBE
   dataArrive: any[];
+  //Variables de folio de escaneo
+  scanFolio: string = 'scanFolio';
 
   constructor(
     private fb: FormBuilder,
@@ -801,21 +803,26 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       'info',
       'Confirmación',
       '¿Está seguro de que el Paquete ya ha sido validado?'
-    ).then(async question => {
+    ).then(question => {
       if (question.isConfirmed) {
-        const result = this.verifyGoods();
+        let result = true;
+        const check = document.getElementById('checkGood') as HTMLInputElement;
+        console.log(this.form.value);
+        const noPack: IPackageGoodEnc = this.noPackage.value;
+        if (!check.checked) {
+          result = this.verifyGoods();
+        }
         if (!result) return;
         let currentDate = new Date();
         let formattedDate = currentDate.toISOString().substring(0, 10);
-
         let packageUpdate: Partial<IPackage> = {
-          numberPackage: this.form.value.package,
+          numberPackage: +noPack.numberPackage,
           statuspack: 'V',
           dateValid: formattedDate,
           useValid: 'USER',
         };
-
-        this.updatePackage(packageUpdate, 'V');
+        this.pupIniCorreo(packageUpdate.numberPackage);
+        // this.updatePackage(packageUpdate, 'V');
         // if (!this.chValidateGood) {
         //   this.alert('warning', 'Existe inconsistencia en los bienes', '');
         // } else {
@@ -879,8 +886,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           } else {
             let currentDate = new Date();
             let formattedDate = currentDate.toISOString().substring(0, 10);
+            const noPack: IPackageGoodEnc = this.noPackage.value;
             let packageUpdate: Partial<IPackage> = {
-              numberPackage: this.form.value.package,
+              numberPackage: +noPack.numberPackage,
               statuspack: 'A',
               dateValid: formattedDate,
             };
@@ -1085,7 +1093,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   validateGoods(good: any) {
-    debugger;
+    // debugger;
     const noPack: IPackageGoodEnc = this.noPackage.value;
     let LV_VALIDA: string;
     let lv_DESC_ERROR = '';
@@ -1221,10 +1229,12 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.massiveGoodService.pubExport(iPackage).subscribe(
       response => {
         this.convertAndDownloadExcel(response.base64File, response.fileName);
-        Swal.fire('Exito', 'Se genero el archivo excel', 'success');
+        this.alert('success', 'Exportación Excel', 'Generada correctamente');
+        // Swal.fire('Exito', 'Se genero el archivo excel', 'success');
       },
       error => {
-        Swal.fire('Error', 'Error Al generar el archivo excel', 'error');
+        this.alert('error', 'Error al generar el archivo excel', '');
+        // Swal.fire('Error', 'Error Al generar el archivo excel', 'error');
       }
     );
   }
@@ -1464,6 +1474,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   newCvePackage() {
+    debugger;
     //Variables
     let v_clave: string; //V_DESC_TRANS es el mismo valor
     let v_id_tipo_acta: string;
@@ -1494,6 +1505,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
             paramsF2.addFilter('stageedo', edo.stagecreated);
             this.rNomenclaService.getRNomencla(paramsF2.getParams()).subscribe(
               res => {
+                console.log(res);
                 v_administra = JSON.parse(
                   JSON.stringify(res['data'][0])
                 ).delegation;
@@ -1640,7 +1652,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.form2.reset({}, { onlySelf: true, emitEvent: false });
     this.form2.enable({ onlySelf: true, emitEvent: false });
     this.dataErrors = [];
-    this.dataPrevisualization = [];
+    this.unitConversionDataService.clearPrevisualizationData.next(true);
   }
 
   validateButtons(status: string) {

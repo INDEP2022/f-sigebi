@@ -1962,6 +1962,14 @@ export class AppointmentsComponent
   }
 
   messageDigitalization(event: any) {
+    if (this._saveDataDepositary == true) {
+      this.alert(
+        'warning',
+        'Se Requiere Guardar el Registro para Poder ver está Opción',
+        ''
+      );
+      return;
+    }
     if (!this.noBienReadOnly) {
       this.alert(
         'warning',
@@ -2038,6 +2046,14 @@ export class AppointmentsComponent
       );
       return;
     }
+    if (this._saveDataDepositary == true) {
+      this.alert(
+        'warning',
+        'Se Requiere Guardar el Registro para Poder ver está Opción',
+        ''
+      );
+      return;
+    }
     console.log(event);
     this.formRadioScan.get('scanningFolio').setValue('D');
     this.formRadioScan.get('scanningFolio').updateValueAndValidity();
@@ -2050,6 +2066,14 @@ export class AppointmentsComponent
       this.alert(
         'warning',
         'Se Requiere de una Búsqueda de Bien Primero para Poder ver está Opción',
+        ''
+      );
+      return;
+    }
+    if (this._saveDataDepositary == true) {
+      this.alert(
+        'warning',
+        'Se Requiere Guardar el Registro para Poder ver está Opción',
         ''
       );
       return;
@@ -2218,6 +2242,11 @@ export class AppointmentsComponent
       );
       return;
     }
+    console.log('APPOINTMENT DATA ', this.depositaryAppointment);
+    if (this.depositaryAppointment.numberAppointment == null) {
+      this.alert('warning', 'Se Requiere Guardar para Continuar', '');
+      return;
+    }
     this.appointmentsService.getCFlyer(this.good.fileNumber).subscribe({
       next: async data => {
         console.log('DATA ', data);
@@ -2261,6 +2290,14 @@ export class AppointmentsComponent
       this.alert(
         'warning',
         'Se Requiere de una Búsqueda de Bien Primero para Poder ver está Opción',
+        ''
+      );
+      return;
+    }
+    if (this._saveDataDepositary == true) {
+      this.alert(
+        'warning',
+        'Se Requiere Guardar el Registro para Poder ver está Opción',
         ''
       );
       return;

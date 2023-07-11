@@ -63,6 +63,15 @@ export class GoodTrackerService extends HttpService {
     );
   }
 
+  trackGoodsWidthNotGoods(filters: GoodTrackerMap, params: string) {
+    params = 'flag=true' + (params.length > 0 ? '&' + params : '');
+    return this.post<IListResponseMessage<ITrackedGood>>(
+      'trackergood/apps/pup-consult',
+      filters,
+      params
+    );
+  }
+
   getAllTmpTracker(params?: _Params): Observable<IListResponse<ITmpTracker>> {
     return this.get<IListResponse<ITmpTracker>>(
       GoodTrackerEndpoints.TmpTracker,
