@@ -86,3 +86,15 @@ export interface IProccesNum {
   numeraryAll: string | number;
   recordNumber?: string | number;
 }
+
+export interface TransferReg {
+  reportNumber: string;
+  transDate?: string;
+  amountAll?: string;
+  repDate?: string;
+  accountKey?: string;
+  delegationNumber?: string;
+  invoiceCwNumber?: string;
+  currencyKey?: string;
+  historical: string;
+}
