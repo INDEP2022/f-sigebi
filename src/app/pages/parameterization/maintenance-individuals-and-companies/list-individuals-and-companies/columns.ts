@@ -1,6 +1,6 @@
 export const COLUMNS = {
   id: {
-    title: 'No.Persona',
+    title: 'No. Persona',
     sort: false,
   },
   personName: {
@@ -36,11 +36,11 @@ export const COLUMNS = {
     },
   },
   rfc: {
-    title: 'R.F.C',
+    title: 'RFC',
     sort: false,
   },
   curp: {
-    title: 'C.U.R.P',
+    title: 'CURP',
     sort: false,
   },
   street: {
@@ -48,11 +48,11 @@ export const COLUMNS = {
     sort: false,
   },
   apartmentNumber: {
-    title: 'No.Interior',
+    title: 'No. Interior',
     sort: false,
   },
   streetNumber: {
-    title: 'No.Exterior',
+    title: 'No. Exterior',
     sort: false,
   },
   phone: {
@@ -88,7 +88,7 @@ export const COLUMNS = {
     sort: false,
   },
   numberDeep: {
-    title: 'No.Escritura',
+    title: 'No. Escritura',
     sort: false,
   },
   profile: {

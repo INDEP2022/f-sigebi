@@ -389,7 +389,10 @@
             <a
               class="my-1 mx-2 btn btn-warning active btn-sm"
               [class]="
-                form.get('statusProceeding').value != null ? '' : 'disabled'
+                form.get('statusProceeding').value != null &&
+                this.dataGoods['data'].length > 0
+                  ? ''
+                  : 'disabled'
               "
               size="small"
               (click)="goParcializacion()"

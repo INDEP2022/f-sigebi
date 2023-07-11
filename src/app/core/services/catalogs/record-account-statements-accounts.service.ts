@@ -76,9 +76,7 @@ export class RecordAccountStatementsAccountsService
   create(
     model: IRecordAccountStatements
   ): Observable<IRecordAccountStatements> {
-    console.log('Creado', model);
     const route = `${this.route2}`;
-    console.log('route', route);
     return this.post(route, model);
   }
 
