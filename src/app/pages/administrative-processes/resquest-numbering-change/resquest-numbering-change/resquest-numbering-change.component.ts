@@ -265,7 +265,7 @@ export class ResquestNumberingChangeComponent
           sort: false,
         },
         appraisedValue: {
-          title: 'Avaluó Vigente',
+          title: 'Avalúo Vigente',
           width: '10%',
           sort: false,
         },
@@ -554,11 +554,14 @@ export class ResquestNumberingChangeComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    params['filter.goodClassNumber'] = `$eq:${this.form.get('type')}`;
-    params['filter.status'] = `$in:${this.form.get('legalStatus')}`;
-    params['filter.storeNumber'] = `$eq:${this.form.get('warehouse')}`;
-    params['filter.vaultNumber'] = `$eq:${this.form.get('vault')} `;
-    params['filter.delegationNumber'] = `$eq:${this.form.get('delegation')}`;
+    //params['filter.goodClassNumber'] = `$eq:${this.form.get('type').value}`;
+    console.log(params);
+    //params['filter.status'] = `$in:${this.form.get('legalStatus').value}`;
+    //params['filter.storeNumber'] = `$eq:${this.form.get('warehouse').value}`;
+    //params['filter.vaultNumber'] = `$eq:${this.form.get('vault').value}`;
+    params['filter.delegationNumber'] = `$eq:${
+      this.form.get('delegation').value
+    }`;
     if (this.form.get('type').value != null)
       this.goodServices.getByExpedientAndParams__(params).subscribe({
         next: async (response: any) => {
@@ -1040,6 +1043,8 @@ export class ResquestNumberingChangeComponent
       this.form.get(controlName).enable();
     }),
       (this.totalItems1 = 0);
+    this.data.load([]);
+    this.data.refresh();
     this.data3.load([]);
     this.data3.refresh();
   }
@@ -1094,11 +1099,11 @@ export class ResquestNumberingChangeComponent
 
   private buildForm() {
     this.form = this.fb.group({
-      legalStatus: [null, [Validators.required]],
+      legalStatus: [null],
       delegation: [null],
       warehouse: [null],
       vault: [null],
-      type: [null, [Validators.required]],
+      type: [null],
     });
   }
 
