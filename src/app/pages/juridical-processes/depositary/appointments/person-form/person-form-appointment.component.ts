@@ -20,12 +20,18 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-person-form-appointment',
   templateUrl: './person-form-appointment.component.html',
-  styles: [],
+  styles: [
+    `
+      .opacidad_select {
+        opacity: 0.4 !important;
+      }
+    `,
+  ],
 })
 export class PersonFormComponentAppointment extends BasePage implements OnInit {
   personForm: ModelForm<IPerson>;
   person: IPerson;
-  title: string = 'Mantto. a administrador, depositario e interventor';
+  title: string = 'La Persona se creó correctamente'; //'Mantto. a administrador, depositario e interventor';
   edit: boolean = false;
   optionsTipoP: any[];
   optionsTipoR: any[];
@@ -176,7 +182,7 @@ export class PersonFormComponentAppointment extends BasePage implements OnInit {
   }
   handleSuccess(data: IPerson) {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.onLoadToast('success', this.title, ''); // `${message} Correctamente`);
     this.loading = false;
     // this.modalRef.content.callback(true);
     this.personCreateEmitter.emit(data);

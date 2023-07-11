@@ -8,7 +8,7 @@
         <div class="col-md-12">
           <form-field
             [control]="personForm.get('personName')"
-            label="Cve.Depositaría">
+            label="Clave Depositar&iacute;as">
             <input
               type="text"
               class="form-control"
@@ -39,7 +39,7 @@
         <div class="col-md-2">
           <form-field
             [control]="personForm.get('streetNumber')"
-            label="No.Exterior">
+            label="No.&nbsp;Exterior">
             <input
               type="text"
               class="form-control"
@@ -49,7 +49,7 @@
         <div class="col-md-2">
           <form-field
             [control]="personForm.get('apartmentNumber')"
-            label="No.Interior">
+            label="No.&nbsp;Interior">
             <input
               type="text"
               class="form-control"
@@ -61,7 +61,7 @@
         <div class="col-md-6">
           <form-field
             [control]="personForm.get('delegation')"
-            label="Delegci&oacute;n Municipal">
+            label="Delegaci&oacute;n Municipal">
             <input
               type="text"
               class="form-control"
@@ -191,7 +191,10 @@
           <form-field
             [control]="personForm.get('typePerson')"
             label="Tipo Persona">
-            <select class="form-control" formControlName="typePerson">
+            <select
+              class="form-control"
+              formControlName="typePerson"
+              [class.opacidad_select]="!personForm.get('typePerson').value">
               <option
                 *ngFor="let option of optionsTipoP"
                 [value]="option.value">
@@ -204,7 +207,12 @@
           <form-field
             [control]="personForm.get('typeResponsible')"
             label="Tipo Responsable">
-            <select class="form-control" formControlName="typeResponsible">
+            <select
+              class="form-control"
+              formControlName="typeResponsible"
+              [class.opacidad_select]="
+                !personForm.get('typeResponsible').value
+              ">
               <option
                 *ngFor="let option of optionsTipoR"
                 [value]="option.value">
@@ -260,6 +268,7 @@
       <div class="m-3">
         <confirm-button
           [disabled]="!personForm.valid"
+          [btnSmall]="true"
           [type]="'button'"
           (confirm)="confirm()">
         </confirm-button>
