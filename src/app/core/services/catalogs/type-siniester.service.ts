@@ -1,5 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService } from 'src/app/common/services/http.service';
+import { environment } from 'src/environments/environment';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -9,12 +12,26 @@ import { ITypeSiniester } from '../../models/catalogs/type-siniester.model';
 @Injectable({
   providedIn: 'root',
 })
-export class TypeSiniesterService implements ICrudMethods<ITypeSiniester> {
+export class TypeSiniesterService
+  extends HttpService
+  implements ICrudMethods<ITypeSiniester>
+{
   private readonly route: string = ENDPOINT_LINKS.TypeSiniesters;
-  constructor(private typeSiniesterRepository: Repository<ITypeSiniester>) {}
+  private readonly route1: string = ENDPOINT_LINKS.Conclusion;
+  constructor(
+    private typeSiniesterRepository: Repository<ITypeSiniester>,
+    private htpp: HttpClient
+  ) {
+    super();
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<ITypeSiniester>> {
     return this.typeSiniesterRepository.getAllPaginated(this.route, params);
+  }
+  getAllConclusion(params?: ListParams): Observable<any> {
+    const url = `${environment.API_URL}catalog/api/v1/apps/getConclusion`;
+    return this.htpp.get(url, { params });
+    // return this.get(this.route1, params);
   }
 
   getById(id: string | number): Observable<ITypeSiniester> {
