@@ -31,7 +31,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class PersonFormComponentAppointment extends BasePage implements OnInit {
   personForm: ModelForm<IPerson>;
   person: IPerson;
-  title: string = 'La Persona se creó correctamente'; //'Mantto. a administrador, depositario e interventor';
+  title: string = 'La persona se creó correctamente'; //'Mantto. a administrador, depositario e interventor';
   edit: boolean = false;
   optionsTipoP: any[];
   optionsTipoR: any[];

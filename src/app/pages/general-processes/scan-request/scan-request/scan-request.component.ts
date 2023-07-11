@@ -30,6 +30,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ListDocumentsComponent } from '../list-documents/list-documents.component';
 import { ListNotificationsComponent } from '../list-notifications/list-notifications.component';
+
 @Component({
   selector: 'app-scan-request',
   templateUrl: './scan-request.component.html',
@@ -164,10 +165,21 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   back() {
     if (this.origin == 'FACTJURREGDESTLEG') {
-      this.router.navigate([
-        `/pages/juridical/depositary/depositary-record/` +
-          this.paramsDepositaryAppointment.P_NB,
-      ]);
+      // this.router.navigate([
+      //   `/pages/juridical/depositary/depositary-record/` +
+      //     this.paramsDepositaryAppointment.P_NB,
+      // ]);
+      this.router.navigate(
+        [
+          '/pages/juridical/depositary/depositary-record/' +
+            this.paramsDepositaryAppointment.P_NB,
+        ],
+        {
+          queryParams: {
+            p_nom: this.paramsDepositaryAppointment.P_ND,
+          },
+        }
+      );
     } else {
       const location: any = {
         FGESTBUZONTRAMITE: () =>
@@ -476,7 +488,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
                       ? data.data[0].amountIVA
                       : 0,
                     personNumber: data.data[0].personNumber.id,
-                    iva: data.data[0].iva,
+                    iva: data.data[0].iva ? data.data[0].iva : 0,
                     folioReturn: data.data[0].folioReturn
                       ? Number(data.data[0].folioReturn)
                       : null,
@@ -551,7 +563,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     if (!isPresent) return false;
 
     if (this.idFolio) {
-      this.alert('error', 'ERROR', 'Ya ha sido solicitado ese documento');
+      this.alert('error', 'ERROR', 'Ya ha sido generada esta solicitud'); //'Ya ha sido solicitado ese documento');
       this.loadingDoc = false;
       return false;
     }
