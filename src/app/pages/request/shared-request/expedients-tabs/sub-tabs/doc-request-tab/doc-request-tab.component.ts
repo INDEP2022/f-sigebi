@@ -102,7 +102,7 @@ export class DocRequestTabComponent
   ngOnInit(): void {
     // DISABLED BUTTON - FINALIZED //
     this.task = JSON.parse(localStorage.getItem('Task'));
-    this.statusTask = this.task.status;
+    this.statusTask = this.task?.status;
 
     this.prepareForm();
     this.getRegDelegation(new ListParams());
@@ -229,10 +229,8 @@ export class DocRequestTabComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: async res => {
-          //console.log('docs', data);
           const transferent = await this.getInfoRequest();
           if (transferent == 1) {
-            console.log('transferente igual a 1');
             const filterDoc = res.data.filter((item: any) => {
               if (
                 item.dDocType == 'Document' &&
@@ -282,7 +280,6 @@ export class DocRequestTabComponent
           }
 
           if (transferent != 1) {
-            console.log('transferente diferente a 1');
             const filterDoc = res.data.filter((item: any) => {
               if (
                 (item.dDocType == 'Document' && item.xidBien == '         ') ||
