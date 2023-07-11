@@ -1303,6 +1303,18 @@ export class AppointmentsComponent
 
   setGoodData() {
     this.form.get('descriptionGood').setValue(this.good.description);
+    this.form
+      .get('fechaAcuerdoAsegurado')
+      .setValue(
+        this.good.agreementDate ? new Date(this.good.agreementDate) : null
+      );
+    this.form
+      .get('fechaRecepcion')
+      .setValue(
+        this.good.physicalReceptionDate
+          ? new Date(this.good.physicalReceptionDate)
+          : null
+      );
     if (this.good.expediente) {
       if (this.good.expediente.id) {
         this.form.get('causaPenal').setValue(this.good.expediente.criminalCase);
@@ -1317,13 +1329,6 @@ export class AppointmentsComponent
         //     this.dateFormat
         //   );
         // }
-        this.form
-          .get('fechaAcuerdoAsegurado')
-          .setValue(
-            this.good.expediente.dateAgreementAssurance
-              ? new Date(this.good.expediente.dateAgreementAssurance)
-              : null
-          );
         // .setValue(this.good.expediente.dateAgreementAssurance);
         // let dateReception: any;
         // if (this.good.expediente.receptionDate) {
@@ -1332,13 +1337,6 @@ export class AppointmentsComponent
         //     this.dateFormat
         //   );
         // }
-        this.form
-          .get('fechaRecepcion')
-          .setValue(
-            this.good.expediente.receptionDate
-              ? new Date(this.good.expediente.receptionDate)
-              : null
-          );
         // .setValue(this.good.expediente.receptionDate);
         // let dateConfiscate: any;
         // if (this.good.expediente.confiscateDictamineDate) {
@@ -1347,19 +1345,34 @@ export class AppointmentsComponent
         //     this.dateFormat
         //   );
         // }
-        this.form
-          .get('fechaDecomiso')
-          .setValue(
-            this.good.expediente.confiscateDictamineDate
-              ? new Date(this.good.expediente.confiscateDictamineDate)
-              : null
-          );
         // .setValue(this.good.expediente.confiscateDictamineDate);
       }
-    } else {
-      if (this.good.fileNumber) {
-      }
     }
+    //  else {
+    //   if (this.good.fileNumber) {
+    //   }
+    // }
+
+    this.appointmentsService
+      .getByGood_distinctElaborationDate(this.good.goodId)
+      .subscribe({
+        next: res => {
+          console.log('GOODS', res);
+          // EN ESPERA DE ENDPOINT
+          if (res.data[0]) {
+            this.form
+              .get('fechaDecomiso')
+              .setValue(
+                res.data[0].di_fec_decomiso
+                  ? new Date(res.data[0].di_fec_decomiso)
+                  : null
+              );
+          }
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
   }
 
   setOthers() {
@@ -1481,7 +1494,7 @@ export class AppointmentsComponent
       .getFromGoodsAndExpedients(params.getParams())
       .subscribe({
         next: res => {
-          console.log(res);
+          console.log('GOOD DATA ', res);
           this.good = res.data[0]; // Set data good
           if (this.good.expediente) {
             if (callNew) {
@@ -1499,7 +1512,7 @@ export class AppointmentsComponent
               .subscribe({
                 next: res => {
                   this.loadingGood = false;
-                  console.log('Expediente ', res);
+                  console.log('Expediente DATA ', res);
                   this.good.expediente = res.data[0]; // Set data good
                   this.setGoodData();
                   this.getStatusGoodByNoGood();
@@ -2554,6 +2567,48 @@ export class AppointmentsComponent
       );
       return;
     }
+    if (!this.depositaryAppointment) {
+      this.depositaryAppointment = {
+        ...this.depositaryAppointment,
+      };
+    }
+    if (
+      this.depositaryAppointment.InvoiceUniversal == null &&
+      this.depositaryAppointment.InvoiceReturn == null
+    ) {
+      this.alertInfo(
+        'info',
+        'No Cambiara el Estatus del Bien, Hasta que se Tenga el Folio Acta Depositaría y el Folio de Remoción',
+        ''
+      ).then(() => {
+        this._saveInfoData();
+      });
+    } else if (
+      this.depositaryAppointment.InvoiceUniversal == null &&
+      this.depositaryAppointment.InvoiceReturn != null
+    ) {
+      this.alertInfo(
+        'info',
+        'No Cambiara el Estatus del Bien, Hasta que se Tenga el Folio Acta Depositaría',
+        ''
+      ).then(() => {
+        this._saveInfoData();
+      });
+    } else if (
+      this.depositaryAppointment.InvoiceUniversal == null &&
+      this.depositaryAppointment.InvoiceReturn != null
+    ) {
+      this.alertInfo(
+        'info',
+        'No cambiara el Estatus del Bien, Hasta que se Tenga el Folio de Remoción',
+        ''
+      ).then(() => {
+        this._saveInfoData();
+      });
+    }
+  }
+
+  _saveInfoData() {
     if (this._saveDataDepositary == true) {
       if (!this.depositaryAppointment.personNumber) {
         this.alertInfo(
@@ -2616,14 +2671,21 @@ export class AppointmentsComponent
 
       console.log(bodySave, this.form.value);
       this.appointmentsService.createAppointment(bodySave).subscribe({
-        next: data => {
+        next: (data: any) => {
           this._saveDataDepositary = false;
-          console.log(data);
-          this.validGoodNumberInDepositaryAppointment(
-            true,
-            data.data[0].appointmentNum
-          );
           this.alertInfo('success', 'Registro Guardado Correctamente', '');
+          console.log(data);
+          if (data.data) {
+            this.validGoodNumberInDepositaryAppointment(
+              true,
+              data.data[0].appointmentNum
+            );
+          } else {
+            this.validGoodNumberInDepositaryAppointment(
+              true,
+              data.appointmentNum
+            );
+          }
         },
         error: error => {
           console.log(error);

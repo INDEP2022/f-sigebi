@@ -472,7 +472,9 @@ export class ScanRequestComponent extends BasePage implements OnInit {
                 next: data => {
                   let body: any = {
                     appointmentNumber: data.data[0].appointmentNumber,
-                    amountIVA: data.data[0].amountIVA,
+                    amountIVA: data.data[0].amountIVA
+                      ? data.data[0].amountIVA
+                      : 0,
                     personNumber: data.data[0].personNumber.id,
                     iva: data.data[0].iva,
                     folioReturn: data.data[0].folioReturn
