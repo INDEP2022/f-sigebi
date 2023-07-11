@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { compareDesc } from 'date-fns';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
@@ -25,6 +26,20 @@ interface ExampleData {
   APLADM: string;
 }
 
+export interface IVariables {
+  VCONP: number;
+  VCONC: number;
+  VCONE: number;
+  VCONJ: number;
+  VCONA: number;
+  T_REG_LEIDOS: number;
+  T_REG_PROCESADOS: number;
+  T_REG_CORRECTOS: number;
+  T_REG_ERRONEOS: number;
+  T_REG_CORJUR: number;
+  T_REG_CORADM: number;
+}
+
 @Component({
   selector: 'app-jp-d-bldc-c-bulk-loading-depository-cargo',
   templateUrl: './jp-d-bldc-c-bulk-loading-depository-cargo.component.html',
@@ -47,6 +62,20 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   origin: string = '';
   no_bien: number = null;
   no_nom: number = null;
+  V_BAN: boolean = false;
+  countsData: IVariables = {
+    VCONP: 0,
+    VCONC: 0,
+    VCONE: 0,
+    VCONJ: 0,
+    VCONA: 0,
+    T_REG_LEIDOS: 0,
+    T_REG_PROCESADOS: 0,
+    T_REG_CORRECTOS: 0,
+    T_REG_ERRONEOS: 0,
+    T_REG_CORJUR: 0,
+    T_REG_CORADM: 0,
+  };
 
   form: FormGroup = new FormGroup({});
   constructor(
@@ -152,6 +181,12 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       OBSERVACION: excelData.OBSERVACION,
       JURIDICO: excelData.JURIDICO,
       ADMINISTRA: excelData.ADMINISTRA,
+      VALIDADO: 'N',
+      VALJUR: 'N',
+      VALADM: 'N',
+      APLICADO: 'N',
+      APLJUR: 'N',
+      APLADM: 'N',
     };
   }
   goBack() {
@@ -171,5 +206,73 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         ''
       );
     }
+  }
+  validRecords() {
+    this.V_BAN = false;
+    this.errorsData = [];
+    this.countsData = {
+      VCONP: 0,
+      VCONC: 0,
+      VCONE: 0,
+      VCONJ: 0,
+      VCONA: 0,
+      T_REG_LEIDOS: 0,
+      T_REG_PROCESADOS: 0,
+      T_REG_CORRECTOS: 0,
+      T_REG_ERRONEOS: 0,
+      T_REG_CORJUR: 0,
+      T_REG_CORADM: 0,
+    };
+    this.data.forEach((element, count) => {
+      if (element.APLICADO == 'N') {
+        element.VALIDADO = 'N';
+        this.V_BAN = true;
+      }
+      if (element.APLJUR == 'N') {
+        element.VALJUR = 'N';
+        this.V_BAN = true;
+      }
+      if (element.APLADM == 'N') {
+        element.VALADM = 'N';
+        this.V_BAN = true;
+      }
+      if (element.APLICADO == 'N') {
+        this.V_BAN = true;
+        let desc = ' (PAGOS) En el registro ' + (count + 1);
+        if (element.NO_BIEN == null) {
+          this.V_BAN = false;
+          desc = desc + ', el número de bien es nulo';
+        }
+        if (element.FEC_PAGO == null) {
+          this.V_BAN = false;
+          desc = desc + ', la fecha es nula';
+        }
+        if (element.FEC_PAGO) {
+          let validDate = null;
+          validDate = compareDesc(new Date(element.FEC_PAGO), new Date());
+          if (validDate < 0) {
+            this.V_BAN = false;
+            desc = desc + ', la fecha no puede mayor a la fecha actual';
+          }
+        }
+        if (element.CVE_CONCEPTO_PAGO == null) {
+          this.V_BAN = false;
+          desc = desc + ', el concepto de pago es nuloo';
+        }
+        if (element.CVE_CONCEPTO_PAGO == null) {
+          this.V_BAN = false;
+          desc = desc + ', el concepto de pago es nuloo';
+        }
+        if (element.IMPORTE == 0) {
+          this.V_BAN = false;
+          desc = desc + ', el importe es cero';
+        }
+        if (this.V_BAN == false) {
+          desc = desc + '.';
+          this.countsData.VCONE++;
+          this.errorsData.push({ DESCRIPCION: desc }); // Crear error
+        }
+      }
+    });
   }
 }
