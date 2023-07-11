@@ -2242,6 +2242,11 @@ export class AppointmentsComponent
       );
       return;
     }
+    console.log('APPOINTMENT DATA ', this.depositaryAppointment);
+    if (this.depositaryAppointment.numberAppointment == null) {
+      this.alert('warning', 'Se Requiere Guardar para Continuar', '');
+      return;
+    }
     this.appointmentsService.getCFlyer(this.good.fileNumber).subscribe({
       next: async data => {
         console.log('DATA ', data);
