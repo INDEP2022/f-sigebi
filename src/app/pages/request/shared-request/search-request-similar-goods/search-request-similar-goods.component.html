@@ -17,23 +17,23 @@
       </button>
     </div>
   </div>
-  <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
-    <div [class]="loading ? 'table-loading' : ''">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings"
-        [source]="data"
-        (userRowSelect)="onUserRowSelect($event)"
-        (custom)="onCustom($event)">
-      </ng2-smart-table>
-      <div class="table-padding"></div>
-    </div>
-  </ng-scrollbar>
+
+  <div [class]="loading ? 'table-loading' : ''">
+    <ng2-smart-table
+      [attr.class]="'table-bordered table-responsive'"
+      [settings]="settings"
+      [source]="data"
+      (userRowSelect)="onUserRowSelect($event)"
+      (custom)="onCustom($event)">
+    </ng2-smart-table>
+    <div class="table-padding"></div>
+  </div>
   <app-pagination [filterParams]="params" [totalItems]="totalItems">
   </app-pagination>
 </div>
 
 <div
+  *ngIf="requestInfo?.affair != 13"
   class="ms-n2 mb-2 pointer"
   (click)="showDetails = !showDetails"
   [attr.aria-expanded]="!showDetails"
@@ -44,6 +44,7 @@
   <h6 class="d-inline">Bienes Similares Seleccionados</h6>
 </div>
 <div
+  *ngIf="requestInfo?.affair != 13"
   class="row mt-5"
   id="collapseSearch"
   [isAnimated]="true"
@@ -51,18 +52,17 @@
   <div class="d-flex justify-content-end mb-3 mt-3">
     <app-columns-select [(settings)]="settings2"> </app-columns-select>
   </div>
-  <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
-    <div [class]="loading ? 'table-loading' : ''">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settings2"
-        [source]="data2">
-      </ng2-smart-table>
-    </div>
-  </ng-scrollbar>
+  <div [class]="loading ? 'table-loading' : ''">
+    <ng2-smart-table
+      [attr.class]="'table-bordered table-responsive'"
+      [settings]="settings2"
+      [source]="data2">
+    </ng2-smart-table>
+  </div>
   <app-pagination [params]="params2" [totalItems]="totalItems2">
   </app-pagination>
 </div>
+
 <!--<h5 class="title">
   <p>
     <a class="text-color" (click)="showDetails = true" *ngIf="!showDetails">
