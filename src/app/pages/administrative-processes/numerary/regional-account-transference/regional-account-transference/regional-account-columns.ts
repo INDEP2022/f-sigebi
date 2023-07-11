@@ -4,7 +4,7 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  good: {
+  goodNumber: {
     title: 'No Bien',
     type: 'string',
     sort: false,
@@ -19,12 +19,12 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  import: {
+  val14: {
     title: 'Importe',
     type: 'string',
     sort: false,
   },
-  interests: {
+  allInterest: {
     title: 'Intereses',
     type: 'string',
     sort: false,
@@ -34,8 +34,8 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  currency: {
-    title: '',
+  val1: {
+    title: 'Moneda',
     type: 'string',
     sort: false,
   },
