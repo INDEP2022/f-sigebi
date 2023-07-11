@@ -1,26 +1,27 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 *ngIf="!origin && !showSearchAppointment" class="title">
+    <h5 class="title">OFICIO DE DICTAMINACIONES JUR&Iacute;DICAS</h5>
+    <!-- <h5 *ngIf="!origin && !showSearchAppointment" class="title">
       OFICIO DE DICTAMINACIONES JUR&Iacute;DICAS
-    </h5>
-    <div class="row w-100" *ngIf="origin || showSearchAppointment">
+    </h5> -->
+    <!-- <div class="row w-100" *ngIf="origin || showSearchAppointment">
       <div class="col-12 col-sm-12 col-md-6">
         <h5 class="title">OFICIO DE DICTAMINACIONES JUR&Iacute;DICAS</h5>
       </div>
       <div class="col-12 col-sm-12 col-md-6 text-end">
-        <!-- <button
+        <button
           *ngIf="dictationData && !showSearchAppointment"
           class="btn btn-danger active btn-sm m-2"
           (click)="cleanDataForm()">
           Limpiar Campos
           <i class="fas fa-trash-alt"></i>
-        </button> -->
+        </button>
         <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
           Regresar
           <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
-    </div>
+    </div> -->
   </div>
   <div body *ngIf="showSearchAppointment">
     <app-legal-opinions-office-find-appointment
@@ -104,6 +105,13 @@
                     (click)="saveDataForm()">
                     Guardar
                     <i aria-hidden="true" class="fa fa-save"></i>
+                  </button>
+                  <button
+                    *ngIf="origin"
+                    class="btn btn-primary active btn-sm m-2"
+                    (click)="goBack()">
+                    Regresar
+                    <i class="fas fa-arrow-circle-left"></i>
                   </button>
                 </div>
               </div>
