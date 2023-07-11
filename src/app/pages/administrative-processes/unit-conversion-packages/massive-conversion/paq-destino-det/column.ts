@@ -1,5 +1,3 @@
-import { CheckboxDisabledElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-disabled-element';
-
 export const COLUMNS = {
   numberGood: {
     title: 'Bien',
@@ -47,21 +45,21 @@ export const COLUMNS = {
     sort: false,
     editable: false,
   },
-  val24: {
-    title: 'Prog. Chatarra',
-    sort: false,
-    editable: true,
-    type: 'custom',
-    renderComponent: CheckboxDisabledElementComponent,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return {
-        checked: row.bienes && row.bienes.val24 ? true : false,
-        disabled: true,
-      };
-    },
-    editor: {
-      type: 'custom',
-      component: CheckboxDisabledElementComponent,
-    },
-  },
+  // val24: {
+  //   title: 'Prog. Chatarra',
+  //   sort: false,
+  //   editable: true,
+  //   type: 'custom',
+  //   renderComponent: CheckboxDisabledElementComponent,
+  //   valuePrepareFunction: (cell: any, row: any) => {
+  //     return {
+  //       checked: row.bienes && row.bienes.val24 ? true : false,
+  //       disabled: true,
+  //     };
+  //   },
+  //   editor: {
+  //     type: 'custom',
+  //     component: CheckboxDisabledElementComponent,
+  //   },
+  // },
 };

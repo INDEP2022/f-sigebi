@@ -790,11 +790,11 @@ export class DepositTokensComponent
       formData.append('file', binaryExcel);
       const excelImport = await this.getPupPreviewDatosCsv2(formData, filter);
       if (filter == 'si') {
-        this.alert(
-          'success',
-          'Archivo cargado correctamente',
-          'Espere mientras cargan los datos'
-        );
+        // this.alert(
+        //   'info',
+        //   'Se ha cargado el archivo',
+        //   'Espere mientras cargan los datos'
+        // );
       }
       this.clearInput();
     } catch (error) {
@@ -897,11 +897,19 @@ export class DepositTokensComponent
           this.totalItems2 = 0;
           this.validExcel = false;
           this.loading = false;
-          this.alert(
-            'error',
-            'Ha ocurrido un error al intentar cargar el archivo',
-            ''
-          );
+          if (err.error.message == 'No es el excel correcto') {
+            this.alert(
+              'error',
+              'El archivo no cumple con las condiciones de inserción',
+              ''
+            );
+          } else {
+            this.alert(
+              'error',
+              'Ha ocurrido un error al intentar cargar el archivo',
+              err.error.message
+            );
+          }
         },
       });
   }

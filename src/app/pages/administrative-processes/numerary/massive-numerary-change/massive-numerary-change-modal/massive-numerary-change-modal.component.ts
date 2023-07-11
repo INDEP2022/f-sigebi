@@ -1,8 +1,9 @@
 import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, firstValueFrom, map } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, map, skip } from 'rxjs';
 import { showQuestion } from 'src/app/common/helpers/helpers';
 import {
   ListParams,
@@ -52,12 +53,23 @@ export class MassiveNumeraryChangeModalComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Win Bienes';
+  title: string = 'Bienes';
   form: FormGroup;
-  settings2 = { ...this.settings, actions: false };
+  settings2 = {
+    ...this.settings,
+    actions: false,
+    hideSubHeader: false,
+    pager: {
+      perPage: 10,
+    },
+  };
   dataTableGoods: IMassiveNumeraryGood[] = [];
+  dataTableGoodsLocal = new LocalDataSource([]);
   dataTableSpents: any[] = [];
+  dataTableSpentsLocal = new LocalDataSource([]);
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsSpent = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsSpent = 0;
   totalItems: number = 0;
 
   constructor(
@@ -75,11 +87,33 @@ export class MassiveNumeraryChangeModalComponent
       rowClassFunction: (row: any) => {
         return row?.data?.color;
       },
+      hideSubHeader: false,
+      pager: {
+        perPage: 10,
+      },
     };
     this.settings2.columns = WIN_BIENES_MODAL_COLUMNS;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.dataTableGoods = this.dataTableGoods.map(item => {
+      return {
+        ...item,
+        entry: (item?.entry?.toFixed(2) || item) as any,
+      };
+    });
+    this.dataTableGoodsLocal.load(this.dataTableGoods);
+    this.dataTableSpentsLocal.load(this.dataTableSpents);
+    this.totalItems = this.dataTableGoods.length;
+    this.totalItemsSpent = this.dataTableSpents.length;
+    this.params.pipe(skip(1)).subscribe(params => {
+      this.dataTableGoodsLocal.setPaging(params.page, params.limit);
+    });
+    this.paramsSpent.pipe(skip(1)).subscribe(params => {
+      console.log(params);
+      this.dataTableSpentsLocal.setPaging(params.page, params.limit);
+    });
+  }
   close() {
     this.modalRef.hide();
   }
@@ -182,57 +216,6 @@ export class MassiveNumeraryChangeModalComponent
     }
     // END;
   }
-
-  // async exportExcel(goods: any[], goodsMore: any[]) {
-  //   const dataForExcel = goods.map(good => {
-  //     const goodMoreFilter = goodsMore.find(
-  //       goodMore => goodMore.noGood == good.noGood
-  //     );
-  //     const dataMoreExcel = {
-  //       DESCRIPCION_NUM: goodMoreFilter?.description,
-  //       ESTATUS_NUM: goodMoreFilter?.noExpedient,
-  //       CVE_EVENTO: good?.noExpedient,
-  //       MONEDA_NUM: goodMoreFilter?.val1,
-  //       INGRESO_NUM: goodMoreFilter?.val2,
-  //       IVA_NUM: goodMoreFilter?.val10,
-  //       GASTO_NUM: goodMoreFilter?.val13,
-  //       VALOR_AVALUO_NUM: goodMoreFilter?.appraisedValue,
-  //     };
-  //     const rowExcel = {
-  //       NO_BIEN: good.noGood,
-  //       DESCRIPCION: good.description,
-  //       ESTATUS: good.status,
-  //       INGRESO: good.entry,
-  //       GASTO: good.costs,
-  //       IVA: good.tax,
-  //       VALOR_CALC: good.impNumerary,
-  //       NO_BIEN_NUM: good.npNUm,
-  //       ...dataMoreExcel,
-  //     };
-  //     return rowExcel;
-  //   });
-  //   // console.log({ dataForExcel });
-  //   this.excelService.export(dataForExcel, { type: 'csv', filename: 'hoja1' });
-  // }
-
-  // async getGoodsIn(): Promise<{ goods: any[]; goodsMore: any[] }> {
-  //   const goods: IMassiveNumeraryGood[] = this.dataTableGoods;
-  //   const goodsFilter = goods.filter(item => item.indNume === 3);
-
-  //   const goodsNumber = goodsFilter.map((item: { noGood: any }) => item.noGood);
-  //   if (!goodsNumber || goodsNumber?.length < 1) {
-  //     return null;
-  //   }
-
-  //   const queryString = `?filter.id=${SearchFilter.IN}:${goodsNumber.join(
-  //     ','
-  //   )}`;
-  //   const goodsMore = await firstValueFrom(
-  //     this.goodServices.getAll(queryString).pipe(map(res => res.data || []))
-  //   );
-  //   console.log({ goodsMore });
-  //   return { goods: goodsFilter, goodsMore };
-  // }
 
   user: string;
   chkMovBan = false;
@@ -345,7 +328,11 @@ export class MassiveNumeraryChangeModalComponent
       };
       this.accountMovementService.postMassNumeraryGenerate(body).subscribe({
         next: (res: any) => {
-          this.alert('success', 'Operación exitosa', 'Proceso terminado');
+          this.alert(
+            'success',
+            'Operación terminada correctamente',
+            'Proceso terminado'
+          );
         },
         error: (err: any) => {
           this.alert('error', 'Error', 'Ocurrió un error al procesar');
