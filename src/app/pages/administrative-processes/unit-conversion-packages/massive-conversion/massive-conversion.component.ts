@@ -1227,10 +1227,12 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.massiveGoodService.pubExport(iPackage).subscribe(
       response => {
         this.convertAndDownloadExcel(response.base64File, response.fileName);
-        Swal.fire('Exito', 'Se genero el archivo excel', 'success');
+        this.alert('success', 'Exportación Excel', 'Generada correctamente');
+        // Swal.fire('Exito', 'Se genero el archivo excel', 'success');
       },
       error => {
-        Swal.fire('Error', 'Error Al generar el archivo excel', 'error');
+        this.alert('error', 'Error al generar el archivo excel', '');
+        // Swal.fire('Error', 'Error Al generar el archivo excel', 'error');
       }
     );
   }

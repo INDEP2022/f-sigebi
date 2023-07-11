@@ -20,3 +20,12 @@
 button {
   margin: 0 10px 10px;
 }
+
+.upload-button {
+  display: flex;
+  column-gap: 5px;
+  align-items: center;
+  i {
+    font-size: 20px;
+  }
+}
