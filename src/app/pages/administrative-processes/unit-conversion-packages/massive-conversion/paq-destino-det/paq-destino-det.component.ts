@@ -128,6 +128,7 @@ export class PaqDestinoDetComponent extends BasePage {
 
   private clearTable() {
     this.totalItems = 0;
+    this.dataPrevisualization = [];
     this.dataTemp = [];
     this.dataPaginated.load([]);
     this.dataPaginated.refresh();

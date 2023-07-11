@@ -1606,7 +1606,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.packageGoodService.insertPaqDestionarioEnc(model).subscribe(
       res => {
         console.log(res);
-        this.noPackage.setValue(res)
+        this.noPackage.setValue(res);
         this.alert('success', 'Se creo nuevo paquete', '');
       },
       err => {
@@ -1621,7 +1621,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.form2.reset({}, { onlySelf: true, emitEvent: false });
     this.form2.enable({ onlySelf: true, emitEvent: false });
     this.dataErrors = [];
-    this.dataPrevisualization = [];
+    this.unitConversionDataService.clearPrevisualizationData.next(true);
   }
 
   validateButtons(status: string) {
