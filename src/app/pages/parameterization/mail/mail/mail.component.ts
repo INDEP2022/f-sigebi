@@ -10,9 +10,11 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { MailModalComponent } from '../mail-modal/mail-modal.component';
 //Models
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { EMAIL_COLUMNS } from './email-columns';
+
 //servicios
 
 @Component({
@@ -26,10 +28,18 @@ export class MailComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
+  // Params
+  origin: string = '';
+  origin2: string = '';
+  P_CVE_PANTALLA: string = '';
+  P_NO_TRAMITE: number = null;
+  P_GEST_OK: number = null;
 
   constructor(
     private modalService: BsModalService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router
   ) {
     super();
 
@@ -57,6 +67,17 @@ export class MailComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params: any) => {
+        this.origin = params['origin'] ?? null;
+        this.P_CVE_PANTALLA = params['P_CVE_PANTALLA'] ?? null;
+        if (this.origin == 'FADMAPROEXTDOM') {
+          this.origin2 = params['origin2'] ?? null;
+          this.P_NO_TRAMITE = params['P_NO_TRAMITE'] ?? null;
+          this.P_GEST_OK = params['P_GEST_OK'] ?? null;
+        }
+      });
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -196,5 +217,20 @@ export class MailComponent extends BasePage implements OnInit {
       },
     };
     this.modalService.show(MailModalComponent, modalConfig);
+  }
+
+  goBack() {
+    if (this.origin == 'FADMAPROEXTDOM') {
+      this.router.navigate(
+        ['/pages/juridical/goods-process-validation-extdom'],
+        {
+          queryParams: {
+            origin: this.origin2 ? this.origin2 : null,
+            P_NO_TRAMITE: this.P_NO_TRAMITE,
+            P_GEST_OK: this.P_GEST_OK,
+          },
+        }
+      );
+    }
   }
 }
