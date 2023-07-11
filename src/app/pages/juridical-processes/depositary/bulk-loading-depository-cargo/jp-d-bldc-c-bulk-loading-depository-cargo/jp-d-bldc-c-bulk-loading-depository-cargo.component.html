@@ -49,7 +49,11 @@
       </div>
       <div class="col-md-4 col-sm-12 col-xs-12">
         <div class="m-3">
-          <button type="button" class="btn btn-primary btn-sm active">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="!disableApplyRecords"
+            (click)="applyRecords()">
             Aplicar Registros
             <i aria-hidden="true" class="fa fa-save"></i>
           </button>
@@ -57,6 +61,43 @@
       </div>
     </div>
     <hr />
+    <form class="form-material">
+      <div class="row">
+        <div class="col-md-3">
+          <label>Correctos Jurídico: </label>
+          &nbsp;&nbsp;
+          <span class="fs-4">{{ regCorjur }}</span>
+        </div>
+        <div class="col-md-3">
+          <label>Registros Leídos: </label>
+          &nbsp;&nbsp;
+          <span class="fs-4">{{ regRead }}</span>
+        </div>
+        <div class="col-md-3">
+          <label>Procesados: </label>
+          &nbsp;&nbsp;
+          <span class="fs-4">{{ regProcessed }}</span>
+        </div>
+        <div class="col-md-3">
+          <label>Correctos: </label>
+          &nbsp;&nbsp;
+          <span class="fs-4">{{ regCorrect }}</span>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <label>Erroneos: </label>
+          &nbsp;&nbsp;
+          <span class="fs-4">{{ regWrong }}</span>
+        </div>
+        <div class="col-md-3">
+          <label>Correctos Admon: </label>
+          &nbsp;&nbsp;
+          <span class="fs-4">{{ regCoradm }}</span>
+        </div>
+      </div>
+    </form>
+
     <div class="row">
       <!--CAN WORK1 TABLE-->
       <div class="ch-content">
