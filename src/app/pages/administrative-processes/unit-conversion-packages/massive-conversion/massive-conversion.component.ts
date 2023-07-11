@@ -1,13 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import {
-  BehaviorSubject,
-  catchError,
-  firstValueFrom,
-  map,
-  of,
-  takeUntil,
-} from 'rxjs';
+import { BehaviorSubject, catchError, map, of, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -789,141 +782,281 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     });
   }
 
+  showButtonAlert(status: string) {
+    let titleInit = '';
+    let messageInit = '';
+    switch (status) {
+      case 'V':
+        titleInit = 'Validación';
+        messageInit = 'validar';
+        break;
+      case 'A':
+        titleInit = 'Autorización';
+        messageInit = 'autorizar';
+        break;
+      case 'C':
+        titleInit = 'Cierre';
+        messageInit = 'cerrar';
+        break;
+      default:
+        break;
+    }
+    const noPackage = this.noPackage.value.numberPackage;
+    if (this.dataPrevisualization.length === 0) {
+      this.alert(
+        'error',
+        titleInit + ' de paquete ' + noPackage,
+        'No puede ' + messageInit + ' un paquete sin bienes'
+      );
+      return;
+    }
+    this.alertQuestion(
+      'info',
+      'Confirmación',
+      '¿Está seguro de ' + messageInit + ' el paquete ' + noPackage
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.updatePackageFirstBlock('V', titleInit);
+      }
+    });
+  }
+
   showConfirmAlert() {
+    this.showButtonAlert('V');
+    // this.alertQuestion(
+    //   'info',
+    //   'Confirmación',
+    //   '¿Está seguro de que el Paquete ya ha sido validado?'
+    // ).then(question => {
+    //   if (question.isConfirmed) {
+    //     this.updatePackageFirstBlock('V');
+    //   }
+    // });
+  }
+
+  showAutorizateAlert() {
+    this.showButtonAlert('A');
     // if (!this.form.valid) {
-    //   this.alert(
-    //     'warning',
-    //     `Faltan datos necesarios para validar ${this.form.value}`,
-    //     ''
-    //   );
+    //   Swal.fire(`Existe inconsistencia en los bienes ${this.form}`);
     //   return;
     // }
 
-    this.alertQuestion(
-      'info',
-      'Confirmación',
-      '¿Está seguro de que el Paquete ya ha sido validado?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        let result = true;
-        const check = document.getElementById('checkGood') as HTMLInputElement;
-        console.log(this.form.value);
-        const noPack: IPackageGoodEnc = this.noPackage.value;
-        if (!check.checked) {
-          result = this.verifyGoods();
-        }
-        if (!result) return;
-        let currentDate = new Date();
-        let formattedDate = currentDate.toISOString().substring(0, 10);
-        let packageUpdate: Partial<IPackage> = {
-          numberPackage: +noPack.numberPackage,
-          statuspack: 'V',
-          dateValid: formattedDate,
-          useValid: 'USER',
-        };
-        this.pupIniCorreo(packageUpdate.numberPackage);
-        // this.updatePackage(packageUpdate, 'V');
-        // if (!this.chValidateGood) {
-        //   this.alert('warning', 'Existe inconsistencia en los bienes', '');
-        // } else {
-        //   let currentDate = new Date();
-        //   let formattedDate = currentDate.toISOString().substring(0, 10);
+    // this.alertQuestion(
+    //   'info',
+    //   'Confirmación',
+    //   '¿Está seguro de que el Paquete ya ha sido autorizado?'
+    // ).then(async question => {
+    //   if (question.isConfirmed) {
+    //     let lnuInvoiceUnoversal = 0;
+    //     if (this.form.get('packageType').value != 3) {
+    //       const newParams = new ListParams();
+    //       newParams['filter.id'] = this.form.get('scanFolio').value;
+    //       newParams['filter.scanStatus'] = 'ESCANEADO';
+    //       const documentsResult = await firstValueFrom(
+    //         this.documentService
+    //           .getAll(newParams)
+    //           .pipe(catchError(x => of({ data: [] })))
+    //       );
+    //       if (documentsResult.data.length > 0) {
+    //         lnuInvoiceUnoversal = 1;
+    //       }
+    //     } else if (this.form.get('packageType').value == 3) {
+    //       lnuInvoiceUnoversal = 1;
+    //     }
 
-        //   let packageUpdate: Partial<IPackage> = {
-        //     numberPackage: this.form.value.package,
-        //     statuspack: 'V',
-        //     dateValid: formattedDate,
-        //     useValid: 'USER',
-        //   };
+    //     if (lnuInvoiceUnoversal > 0 && this.form.get('status').value == 'V') {
+    //       this.verifyGoods();
+    //       const check = document.getElementById(
+    //         'checkGood'
+    //       ) as HTMLInputElement;
 
-        //   this.updatePackage(packageUpdate, 'V');
-        // }
-      }
-    });
+    //       if (!check.checked) {
+    //         this.alert(
+    //           'error',
+    //           'Autoriza',
+    //           'Existe inconsistencia en los bienes...'
+    //         );
+    //       } else {
+    //         let currentDate = new Date();
+    //         let formattedDate = currentDate.toISOString().substring(0, 10);
+    //         const noPack: IPackageGoodEnc = this.noPackage.value;
+    //         let packageUpdate: Partial<IPackage> = {
+    //           numberPackage: +noPack.numberPackage,
+    //           statuspack: 'A',
+    //           dateValid: formattedDate,
+    //         };
+    //         this.updatePackage(packageUpdate, 'A');
+    //       }
+    //     }
+    //   }
+    // });
   }
 
-  async showAutorizateAlert() {
-    if (!this.form.valid) {
-      Swal.fire(`Existe inconsistencia en los bienes ${this.form}`);
-      return;
+  showCloseAlert() {
+    const noPackage = this.noPackage.value.numberPackage;
+    if (this.form.get('packageType').value != 3) {
+      if (this.form.get('amountKg').value <= 0) {
+        this.alert(
+          'error',
+          'Cierre de paquete ' + noPackage,
+          'Debe ingresar previamente la cantidad convertida.'
+        );
+        return;
+      }
+      if (this.form.get('scanFolio').value === null) {
+        this.alert(
+          'error',
+          'Cierre de paquete ' + noPackage,
+          'Se debe tener el folio de escaneo'
+        );
+      }
+      this.showButtonAlert('C');
+    } else {
+      this.alert(
+        'error',
+        'Cierre de paquete ' + noPackage,
+        'No puede cerrar paquetes chatarra'
+      );
     }
+    // Validar que todos los campos estén diligenciados
+    // console.log(this.noPackage.value);
+    // const noPackage = this.noPackage.value.numberPackage;
+    // // return;
+    // if (this.dataPrevisualization.length === 0) {
+    //   this.alert(
+    //     'error',
+    //     'Cierre de paquete ' + noPackage,
+    //     'No puede cerrar un paquete sin bienes'
+    //   );
+    //   return;
+    // }
+    // if (this.form.get('packageType').value != 3) {
+    //   if (this.form.get('amountKg').value <= 0) {
+    //     this.alert(
+    //       'error',
+    //       'Cierre de paquete ' + noPackage,
+    //       'Debe ingresar previamente la cantidad convertida.'
+    //     );
+    //     return;
+    //   }
+    //   if (this.form.get('scanFolio').value === null) {
+    //     this.alert(
+    //       'error',
+    //       'Cierre de paquete ' + noPackage,
+    //       'Se debe tener el folio de escaneo'
+    //     );
+    //   } else {
+    //     this.alertQuestion(
+    //       'info',
+    //       'Cierre de paquete ' + noPackage,
+    //       '¿Está seguro en cerrar el Paquete?'
+    //     ).then(async question => {
+    //       if (question.isConfirmed) {
+    //         const check = document.getElementById(
+    //           'checkGood'
+    //         ) as HTMLInputElement;
+    //         if (!check.checked) {
+    //           const verify = this.verifyGoods();
+    //           if (!verify) return;
+    //           // this.alert(
+    //           //   'error',
+    //           //   'Cierre de paquete ' + noPackage,
+    //           //   'Existe inconsistencia en los bienes...'
+    //           // );
+    //         }
+    //         let res = this.dataPrevisualization;
+    //         let goods = res.map((good: { numberGood: any }) => {
+    //           return good.numberGood;
+    //         });
+    //         let closeData = {
+    //           packageNumber: this.noPackage.value,
+    //           packageUnit: this.measurementUnit.value,
+    //           packageStatus: this.status.value,
+    //           packageType: this.packageType.value,
+    //           user: localStorage.getItem('username').toUpperCase(), // 'sigebiadmon',
+    //           screenKey: 'FMTOPAQUETE',
+    //           amount: this.amountKg.value,
+    //           goodNumberArray: goods,
+    //           goodClasifNumber: this.goodClassification.value,
+    //         };
 
-    this.alertQuestion(
-      'info',
-      'Confirmación',
-      '¿Está seguro de que el Paquete ya ha sido autorizado?'
-    ).then(async question => {
-      if (question.isConfirmed) {
-        let lnuInvoiceUnoversal = 0;
-        if (this.form.get('packageType').value != 3) {
-          const newParams = new ListParams();
-          newParams['filter.id'] = this.form.get('scanFolio').value;
-          newParams['filter.scanStatus'] = 'ESCANEADO';
-          const documentsResult = await firstValueFrom(
-            this.documentService
-              .getAll(newParams)
-              .pipe(catchError(x => of({ data: [] })))
-          );
-          if (documentsResult.data.length > 0) {
-            lnuInvoiceUnoversal = 1;
-          }
-        } else if (this.form.get('packageType').value == 3) {
-          lnuInvoiceUnoversal = 1;
-        }
-
-        if (lnuInvoiceUnoversal > 0 && this.form.get('status').value == 'V') {
-          this.verifyGoods();
-          const check = document.getElementById(
-            'checkGood'
-          ) as HTMLInputElement;
-
-          if (!check.checked) {
-            this.alert(
-              'error',
-              'Autoriza',
-              'Existe inconsistencia en los bienes...'
-            );
-          } else {
-            let currentDate = new Date();
-            let formattedDate = currentDate.toISOString().substring(0, 10);
-            const noPack: IPackageGoodEnc = this.noPackage.value;
-            let packageUpdate: Partial<IPackage> = {
-              numberPackage: +noPack.numberPackage,
-              statuspack: 'A',
-              dateValid: formattedDate,
-            };
-            this.updatePackage(packageUpdate, 'A');
-          }
-        }
-      }
-    });
+    //         let currentDate = new Date();
+    //         let formattedDate = currentDate.toISOString().substring(0, 10);
+    //         this.goodProcessService
+    //           .packageClose(closeData)
+    //           .subscribe(response => {
+    //             this.updatePackage(
+    //               {
+    //                 numberPackage: this.form.value.package,
+    //                 statuspack: 'C',
+    //                 dateValid: formattedDate,
+    //               },
+    //               'C'
+    //             );
+    //           });
+    //       }
+    //     });
+    //   }
+    // } else {
+    //   this.alert(
+    //     'error',
+    //     'Cierre de paquete ' + noPackage,
+    //     'No puede cerrar paquetes chatarra'
+    //   );
+    // }
   }
 
-  updatePackage(packageUpdate: Partial<IPackage>, status: string) {
+  updatePackageFirstBlock(status: string, pAsuntoInit: string) {
+    let result = true;
+    const check = document.getElementById('checkGood') as HTMLInputElement;
+    console.log(this.form.value);
+    const noPack: IPackageGoodEnc = this.noPackage.value;
+    if (!check.checked) {
+      result = this.verifyGoods();
+    }
+    if (!result) return;
+    let currentDate = new Date();
+    let formattedDate = currentDate.toISOString().substring(0, 10);
+    let packageUpdate: Partial<IPackage> = {
+      numberPackage: +noPack.numberPackage,
+      statuspack: 'V',
+      dateValid: formattedDate,
+      useValid: 'USER',
+    };
+
     this.packageGoodService
       .updatePaqDestinationEnc(packageUpdate.numberPackage, packageUpdate)
       .subscribe({
         next: response => {
-          let statusMessage = '';
-          this.validaButton.PB_AUTORIZA = false;
-          this.validaButton.PB_CERRAR = true;
+          let pMessageStatus = '';
 
-          this.pupIniCorreo(packageUpdate.numberPackage);
-          // switch (status) {
-          //   case 'V':
-          //     statusMessage = 'Validado';
-          //     break;
-          //   case 'A':
-          //     statusMessage = 'Autorizado';
-          //     break;
-          //   case 'C':
-          //     statusMessage = 'Cierre';
-          //     break;
-          //   default:
-          //     statusMessage = '';
-          //     break;
-          // }
-
+          switch (status) {
+            case 'V':
+              this.validaButton.PB_VALIDA = false;
+              this.validaButton.PB_AUTORIZA = true;
+              // pAsuntoInit = 'Validación';
+              pMessageStatus = 'validado';
+              break;
+            case 'A':
+              // pAsuntoInit = 'Autorización';
+              pMessageStatus = 'autorizado';
+              this.validaButton.PB_AUTORIZA = false;
+              this.validaButton.PB_CERRAR = true;
+              break;
+            case 'C':
+              // pAsuntoInit = 'Autorización';
+              this.validaButton.PB_CERRAR = false;
+              pMessageStatus = 'cerrado';
+              this.form.disable({ onlySelf: true, emitEvent: false });
+              break;
+            default:
+              break;
+          }
+          this.pupIniCorreo(
+            packageUpdate.numberPackage,
+            pAsuntoInit,
+            pMessageStatus
+          );
           // if (statusMessage !== '') {
           //   Swal.fire(statusMessage, '', 'success');
           // }
@@ -932,7 +1065,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           //   status: status,
           // });
 
-          // this.validateButtons(status);
+          this.validateButtons(status);
         },
         error: err => {
           this.alert(
@@ -942,71 +1075,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           );
         },
       });
-  }
-
-  showCloseAlert() {
-    // Validar que todos los campos estén diligenciados
-    if (this.form.get('packageType').value != 3) {
-      if (this.form.get('scanFolio').value === null) {
-        Swal.fire('Se debe tener el folio de escaneo', '', 'error');
-      } else {
-        this.alertQuestion(
-          'info',
-          'Confirmación',
-          '¿Está seguro en cerrar el Paquete?'
-        ).then(async question => {
-          if (question.isConfirmed)
-            if (this.form.get('amountKg').value <= 0) {
-              Swal.fire(
-                'Debe ingresar previamente la cantidad convertida.',
-                '',
-                'error'
-              );
-              // this.form.get('quantity').markAsTouched();
-              ////this.pubValidaGoods();
-            } else {
-              if (this.chValidateGood == true) {
-                Swal.fire(
-                  'Existe inconsistencia en los bienes...',
-                  'A',
-                  'error'
-                );
-              } else {
-                let res = this.dataPrevisualization;
-                let goods = res.map((good: { numberGood: any }) => {
-                  return good.numberGood;
-                });
-                let closeData = {
-                  packageNumber: this.form.value.package,
-                  packageUnit: this.form.value.measurementUnit,
-                  packageStatus: this.form.value.status,
-                  packageType: this.form.value.packageType,
-                  user: 'sigebiadmon',
-                  screenKey: 'FMTOPAQUETE',
-                  amount: this.form.value.amountKg,
-                  goodNumberArray: goods,
-                  goodClasifNumber: this.form.value.goodClassification,
-                };
-
-                let currentDate = new Date();
-                let formattedDate = currentDate.toISOString().substring(0, 10);
-                this.goodProcessService
-                  .packageClose(closeData)
-                  .subscribe(response => {
-                    this.updatePackage(
-                      {
-                        numberPackage: this.form.value.package,
-                        statuspack: 'C',
-                        dateValid: formattedDate,
-                      },
-                      'C'
-                    );
-                  });
-              }
-            }
-        });
-      }
-    }
   }
 
   get dataErrors() {
@@ -1163,14 +1231,23 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     }
   }
 
-  pupIniCorreo(numberPackage: any) {
+  pupIniCorreo(
+    numberPackage: any,
+    pAsuntoInit: string,
+    pMessageStatus: string
+  ) {
     // console.log(V_MENSAJE);
+
     this.P_ASUNTO =
-      'Autorización de Paquete de Conversión de Unidades No. ' + numberPackage;
+      pAsuntoInit +
+      ' de Paquete de Conversión de Unidades No. ' +
+      numberPackage;
     this.P_MENSAJE =
       'Para informar que el Paquete de Conversión de Unidades No. ' +
       numberPackage +
-      ' fué marcado como autorizado el día ' +
+      ' fué marcado como ' +
+      pMessageStatus +
+      ' el día ' +
       firstFormatDate(new Date()) +
       '.' +
       '\n\n' +
