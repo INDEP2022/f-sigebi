@@ -264,7 +264,7 @@
         Permisos
       </button>
       <button
-        (click)="cancelPackage()"
+        (click)="cancelPackFunction()"
         [disabled]="!validaButton.PB_CANCELA"
         type="button"
         class="btn btn-danger btn-sm active">
@@ -391,7 +391,8 @@
 <!--Data Previsualization-->
 <app-paq-destion-det
   [packageType]="packageType"
-  [noPackage]="noPackage"></app-paq-destion-det>
+  [noPackage]="noPackage"
+  (dataEmit)="handleOutPut($event)"></app-paq-destion-det>
 
 <!-- <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>

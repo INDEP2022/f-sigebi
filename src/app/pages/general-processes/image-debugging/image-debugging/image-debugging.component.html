@@ -2,109 +2,226 @@
   <div class="ch-content" header>
     <h5 class="title">Depuraci&oacute;n de Fotograf&iacute;as</h5>
   </div>
+  <div class="d-inline mr-2">
+    <button
+      type="button"
+      class="btn btn-primary active btn-sm"
+      (click)="isSearch = true; clearSearch()">
+      <i class="bx bx-search-alt bx-sm float-icon"></i>
+    </button>
+  </div>
+  <div class="d-inline mx-2" *ngIf="isSearch">
+    <div class="btn-group">
+      <button
+        type="button"
+        class="btn btn-primary btn-sm"
+        (click)="searchExp(); isSearch = false">
+        <i class="bx bx-check bx-sm float-icon"></i>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm"
+        (click)="clearSearch(); isSearch = false">
+        <i class="bx bx-x bx-sm float-icon"></i>
+      </button>
+    </div>
+  </div>
 
   <div body>
     <form [formGroup]="form" class="form-material">
-      <div class="row">
-        <!--<form-field
-          [control]="form.get('goodNumber')"
-          class="col-md-3"
-          label="No&#46; Bien">
-          <input type="number" class="form-control" formControlName="goodNumber" />
-        </form-field>-->
-        <form-field [control]="form.get('goodNumber')" class="col-md-4">
-          <ngx-select
-            [form]="form"
-            control="goodNumber"
-            (fetchItems)="getGoodNumberAll($event)"
-            [data]="selectGoodNumberSelected"
-            bindLabel="id"
-            value="id"
-            label="No&#46; Bien"
-            (change)="estatusAndFileNumber($event)"></ngx-select>
-        </form-field>
+      <accordion [isAnimated]="true">
+        <accordion-group [isOpen]="true">
+          <div accordion-heading class="d-flex justify-content-between">
+            <h5>
+              <i class="fa fa-filter" aria-hidden="true"></i>
+              Parámetros de búsqueda
+            </h5>
+          </div>
 
-        <form-field
-          [control]="form.get('goodStatus')"
-          class="col-md-4"
-          label="Estatus">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="goodStatus" />
-        </form-field>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div>
+                            <form-field
+                              [control]="form.get('goodNumber')"
+                              label="No. Bien">
+                              <input
+                                type="number"
+                                class="form-control"
+                                (keydown)="openButon()"
+                                formControlName="goodNumber" />
+                            </form-field>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div>
+                            <form-field
+                              [control]="form.get('goodStatus')"
+                              label="Estatus">
+                              <input
+                                type="text"
+                                class="form-control"
+                                formControlName="goodStatus" />
+                            </form-field>
+                          </div>
+                        </div>
+                      </div>
 
-        <form-field
-          [control]="form.get('fileNumber')"
-          class="col-md-4"
-          label="No&#46; Expediente">
-          <input
-            type="number"
-            class="form-control"
-            formControlName="fileNumber" />
-        </form-field>
+                      <div class="row">
+                        <!-- <div class="col-md-6">
+                          <div>
+                            <form-field [control]="form.get('goodStatus')" label="Descripción de Estatus">
+                              <input type="text" class="form-control" formControlName="goodStatus" />
+                            </form-field>
+                          </div>
+                        </div> -->
+                        <div class="col-md-6">
+                          <div>
+                            <form-field
+                              [control]="form.get('fileNumber')"
+                              label="No. Expediente">
+                              <input
+                                type="number"
+                                class="form-control"
+                                formControlName="fileNumber" />
+                            </form-field>
+                          </div>
+                        </div>
 
-        <!--<form-field [control]="form.get('idEvent')" class="col-md-4" label="Id Evento">
-          <ngx-select
-            [form]="form"
-            control="idEvent"
-            [data]=""
-            label="Id Evento"></ngx-select>
-            <input
-            type="text"
-            class="form-control"
-            formControlName="idEvent" />
-        </form-field>-->
-      </div>
+                        <div class="col-md-6">
+                          <div>
+                            <form-field
+                              [control]="form.get('idEvent')"
+                              label="Id. Evento">
+                              <input
+                                type="number"
+                                class="form-control"
+                                formControlName="idEvent" />
+                            </form-field>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div>
+                            <form-field
+                              [control]="form.get('eventDesc')"
+                              label="Descripción de Evento">
+                              <input
+                                type="text"
+                                class="form-control"
+                                formControlName="eventDesc" />
+                            </form-field>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div>
+                            <form-field
+                              [control]="form.get('idLot')"
+                              label="Id. Lote">
+                              <input
+                                type="number"
+                                class="form-control"
+                                formControlName="idLot" />
+                            </form-field>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div>
+                            <form-field
+                              [control]="form.get('lotDesc')"
+                              label="Descripción de Lote">
+                              <input
+                                type="text"
+                                class="form-control"
+                                formControlName="lotDesc" />
+                            </form-field>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <form-check
+                            for="goods-list"
+                            label="Listado de Bienes">
+                            <input
+                              type="checkbox"
+                              formControlName="exists"
+                              id="goods-list" />
+                          </form-check>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="card">
+                      <div class="card-body"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-      <div class="row pt-3">
+          <div footer>
+            <div class="d-flex justify-content-center">
+              <div class="m-3">
+                <!-- <button class="btn btn-secondary active mr-2" (click)="openButon()">
+                  Consultar</button><button class="btn btn-primary active">
+                </button> -->
+                <button
+                  type="button"
+                  class="btn btn-primary active btn-sm"
+                  (click)="isSearch = true; openButon()">
+                  Consultar<i class="bx bx-search-alt bx-sm float-icon"></i>
+                </button>
+              </div>
+              <div class="m-3">
+                <button
+                  type="button"
+                  class="btn btn-primary active btn-sm"
+                  (click)="isSearch = true; openButon()">
+                  Validar Fotograf&iacute;as
+                  <i class="bx bx-search-alt bx-sm float-icon"></i>
+                </button>
+              </div>
+              <div class="m-3">
+                <button
+                  type="button"
+                  class="btn btn-danger active btn-sm"
+                  (click)="resetALL()">
+                  Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <hr />
+        </accordion-group>
+      </accordion>
+      <!-- <div class="row pt-3">
         <form-field [control]="form.get('idLot')" class="col-md-6">
-          <ngx-select
-            [form]="form"
-            control="idLot"
-            bindLabel="lotDescription"
-            [data]="lotIdSelected"
-            label="Lote"
-            value="lotId"
-            (change)="idEvent($event)"></ngx-select>
-          <!--<input
-            type="text"
-            class="form-control"
-            formControlName="idLot" />-->
+          <ngx-select [form]="form" control="idLot" bindLabel="lotDescription" [data]="lotIdSelected" label="Lote"
+            value="lotId" (change)="idEvent($event)"></ngx-select>
+
         </form-field>
 
         <form-field [control]="form.get('idEvent')" class="col-md-6">
-          <ngx-select
-            [form]="form"
-            control="idEvent"
-            bindLabel="processKey"
-            [data]="eventIdSelected"
-            label="Evento"
+          <ngx-select [form]="form" control="idEvent" bindLabel="processKey" [data]="eventIdSelected" label="Evento"
             value="id"></ngx-select>
-          <!--<input
-            type="text"
-            class="form-control"
-            formControlName="idEvent" />-->
-        </form-field>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
-          <form-check for="goods-list" label="Listado de Bienes">
-            <input type="checkbox" formControlName="exists" id="goods-list" />
-          </form-check>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col-md-12">
-          <button class="btn btn-secondary active mr-2" (click)="openButon()">
-            Consultar</button
-          ><button class="btn btn-primary active">
-            Validar Fotograf&iacute;as
-          </button>
-        </div>
-      </div>
-      <hr />
+        </form-field>
+      </div> -->
 
       <div class="row">
         <div class="col-md-12">

@@ -17,33 +17,32 @@
                 maxLength="11"
                 bsDatepicker />
             </form-field>
-            <div class="col-sm-12 col-12 col-md-2 p-2 text-center">
-              <button
-                type="button"
-                tooltip="Limpiar Campo de Fecha"
-                containerClass="tooltip-style"
-                class="btn btn-danger active btn-sm"
-                (click)="cleanDate()">
-                <i class="fa fa-eraser ml-1"></i>
-              </button>
-            </div>
             <form-field
               class="col-sm-12 col-12 col-md-4 p-2"
               [control]="formGroup.get('conceptPayKey')"
-              label="CVE. Concepto Pago">
+              label="Clave Concepto Pago">
               <input
                 type="number"
                 class="form-control"
                 formControlName="conceptPayKey"
                 maxLength="4" />
             </form-field>
-            <div class="col-12 col-sm-4 col-md-3 p-2 text-center">
+            <div class="col-12 col-sm-12 col-md-5 p-2">
               <button
                 type="submit"
-                class="btn btn-primary active btn-sm"
+                class="btn btn-primary active btn-sm ml-3"
                 (click)="searchWithFilters()">
                 Buscar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <!-- </div>
+            <div class="col-sm-12 col-12 col-md-2 p-2 text-center"> -->
+              <button
+                type="button"
+                class="btn btn-danger active btn-sm ml-3"
+                (click)="cleanDate()">
+                Limpiar
+                <i class="fa fa-eraser ml-1"></i>
               </button>
             </div>
             <form-field
@@ -94,7 +93,7 @@
             type="button"
             class="btn btn-danger btn-sm active"
             (click)="close()">
-            Oprima para Regresar
+            Cerrar
           </button>
         </div>
       </div>
