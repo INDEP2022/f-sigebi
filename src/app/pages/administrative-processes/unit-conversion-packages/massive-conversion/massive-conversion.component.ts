@@ -160,7 +160,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     { name: 'Cancelado', value: 'X' },
   ]);
   //VARIABLES DE DATA QUE SE RECIBE
-  dataArrive: any[];
+  dataArrive: any[]
+  //Variables de folio de escaneo
+  scanFolio: string = 'scanFolio'
+
 
   constructor(
     private fb: FormBuilder,
@@ -1472,6 +1475,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   newCvePackage() {
+    debugger
     //Variables
     let v_clave: string; //V_DESC_TRANS es el mismo valor
     let v_id_tipo_acta: string;
@@ -1502,6 +1506,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
             paramsF2.addFilter('stageedo', edo.stagecreated);
             this.rNomenclaService.getRNomencla(paramsF2.getParams()).subscribe(
               res => {
+                console.log(res)
                 v_administra = JSON.parse(
                   JSON.stringify(res['data'][0])
                 ).delegation;
