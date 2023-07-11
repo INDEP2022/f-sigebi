@@ -6,7 +6,7 @@
     <div class="d-flex gap-2 mt-4">
       <div class="">
         <a
-          class="btn btn-secondary btn-sm active"
+          class="btn d-flex align-items-center btn-success btn-sm active"
           (click)="btnFileExcel.click()"
           >Abrir archivo de MS Excel 4.0<input
             #btnFileExcel
@@ -16,8 +16,10 @@
             (change)="onClickBtnFileExcel($event)" />
         </a>
       </div>
-      <div class="">
-        <a class="btn btn-secondary btn-sm active" (click)="btnFileCsv.click()"
+      <div>
+        <a
+          class="btn d-flex align-items-center btn-success btn-sm active"
+          (click)="btnFileCsv.click()"
           >Abrir archivo de Texto CSV<input
             #btnFileCsv
             hidden
@@ -30,7 +32,7 @@
         <button
           [disabled]="isLoadingProcessExtraction"
           (click)="onClickBtnProcessExtraction()"
-          class="btn btn-secondary btn-sm active">
+          class="btn btn-primary btn-sm active">
           Proceso de extracción
           <ng-container *ngIf="isLoadingProcessExtraction">
             <i class="fas fa-spinner fa-spin"></i>
@@ -64,34 +66,39 @@
         </div>
         <div class="row mt-4 m-0">
           <h5 class="title">Origen de Datos</h5>
-          <div [formGroup]="formTips" class="d-flex overflow-auto mb-3">
-            <div
-              class="selects-origin-data mb-4"
-              *ngFor="let item of columns; let i = index">
-              <label>{{ item }}:</label>
-              <select
-                (change)="changeTip($event, i + 1)"
-                formControlName="TIP{{ i + 1 }}">
-                <option selected>Opción {{ item }}</option>
-                <option value="O">Otro</option>
-                <option value="B">No. Bien</option>
-                <option value="G">Gasto</option>
-                <option value="I">Ingreso neto</option>
-                <option value="V">Iva</option>
-              </select>
+          <div class="overflow-auto pt-4">
+            <div [formGroup]="formTips" class="d-flex gap-4 mb-3 form-material">
+              <div *ngFor="let item of columns; let i = index">
+                <!-- <label>{{ item }}:</label> -->
+                <form-field
+                  [label]="item"
+                  [control]="formTips.get('TIP' + (i + 1))">
+                  <select
+                    class="form-control selects-origin-data"
+                    (change)="changeTip($event, i + 1)"
+                    formControlName="TIP{{ i + 1 }}">
+                    <option selected></option>
+                    <option value="O">Otro</option>
+                    <option value="B">No. Bien</option>
+                    <option value="G">Gasto</option>
+                    <option value="I">Ingreso neto</option>
+                    <option value="V">Iva</option>
+                  </select>
+                </form-field>
+              </div>
+              <!-- <div
+                class="selects-origin-data"
+                *ngFor="let item of columns; let i = index">
+                <ng-select formControlName="TIP{{ i + 1 }}">
+                  <ng-option default>Opción {{ item }}</ng-option>
+                  <ng-option value="O">Otro</ng-option>
+                  <ng-option value="B">No. Bien</ng-option>
+                  <ng-option value="G">Gasto</ng-option>
+                  <ng-option value="I">Ingreso neto</ng-option>
+                  <ng-option value="V">Iva</ng-option>
+                </ng-select>
+              </div> -->
             </div>
-            <!-- <div
-              class="selects-origin-data"
-              *ngFor="let item of columns; let i = index">
-              <ng-select formControlName="TIP{{ i + 1 }}">
-                <ng-option default>Opción {{ item }}</ng-option>
-                <ng-option value="O">Otro</ng-option>
-                <ng-option value="B">No. Bien</ng-option>
-                <ng-option value="G">Gasto</ng-option>
-                <ng-option value="I">Ingreso neto</ng-option>
-                <ng-option value="V">Iva</ng-option>
-              </ng-select>
-            </div> -->
           </div>
           <!-- <div class="col-md-3 pt-4">
             <form-field [control]="form.get('data')" label="Datos">
@@ -99,28 +106,43 @@
             </form-field>
           </div> -->
         </div>
-        <div [hidden]="!isVisibleSpent" class="row mt-4 mx-0">
+        <div [hidden]="!isVisibleSpent" class="row spents mt-4 mx-0">
           <h5 class="title">Gastos</h5>
-          <div class="overflow-auto">
-            <div [formGroup]="formGas" class="d-flex spent-inputs">
+          <div class="overflow-auto pt-4">
+            <div [formGroup]="formGas" class="d-flex gap-4">
               <div
                 [hidden]="formGas.get('GAS' + (i + 1)).disabled"
                 *ngFor="let item of columns; let i = index">
-                <label>Concepto {{ item }}:</label>
-                <input
-                  readonly
-                  (click)="onClickInputGas(i + 1)"
-                  [formControlName]="'GAS' + (i + 1)"
-                  type="text"
-                  class="" />
+                <!-- <label>Concepto {{ item }}:</label> -->
+                <form-field
+                  [label]="'Concepto ' + item"
+                  [control]="formGas.get('GAS' + (i + 1))">
+                  <input
+                    readonly
+                    [formControlName]="'GAS' + (i + 1)"
+                    type="text"
+                    class="form-control" />
+                  <button
+                    (click)="onClickInputGas(i + 1)"
+                    class="btn btn-sm btn-custom-search">
+                    <i class="bx bx-search-alt bx-sm float-icon"></i>
+                  </button>
+                </form-field>
               </div>
             </div>
-            <div [formGroup]="formGad" class="d-flex spent-inputs">
+            <div [formGroup]="formGad" class="d-flex gap-4 mt-3">
               <div
                 [hidden]="formGad.get('GAD' + (i + 1)).disabled"
                 *ngFor="let item of columns; let i = index">
-                <label>Descripción {{ item }}:</label>
-                <input type="text" class="" formControlName="GAD{{ i + 1 }}" />
+                <!-- <label>Descripción {{ item }}:</label> -->
+                <form-field
+                  [label]="'Descripción ' + item"
+                  [control]="formGad.get('GAD' + (i + 1))">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="GAD{{ i + 1 }}" />
+                </form-field>
               </div>
             </div>
           </div>
@@ -137,12 +159,13 @@
       </div>
     </div>
     <div class="row pt-4">
-      <div class="col-md-12">
+      <div class="col-md-12 hidden-paginate-default">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
+            #tableSpent
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="dataPrevious">
+            [source]="dataPreviousTable">
           </ng2-smart-table>
         </div>
       </div>

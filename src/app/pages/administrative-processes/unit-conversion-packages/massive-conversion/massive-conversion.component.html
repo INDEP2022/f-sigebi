@@ -264,7 +264,7 @@
         Permisos
       </button>
       <button
-        (click)="cancelPackage()"
+        (click)="cancelPackFunction()"
         [disabled]="!validaButton.PB_CANCELA"
         type="button"
         class="btn btn-danger btn-sm active">
@@ -391,7 +391,8 @@
 <!--Data Previsualization-->
 <app-paq-destion-det
   [packageType]="packageType"
-  [noPackage]="noPackage"></app-paq-destion-det>
+  [noPackage]="noPackage"
+  (dataEmit)="handleOutPut($event)"></app-paq-destion-det>
 
 <!-- <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
@@ -426,7 +427,11 @@
 
 <app-card>
   <div body>
-    <div class="row">
+    <app-scan-file-massive-conversion
+      [form]="form"
+      [formControlName]="scanFolio">
+    </app-scan-file-massive-conversion>
+    <!-- <div class="row">
       <div class="col-md-2 col-sm-12 col-xs-12">
         <div class="d-flex justify-content-center">
           <div class="m-3">
@@ -491,7 +496,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </app-card>
 

@@ -76,7 +76,6 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
     const requestId = Number(this.route.snapshot.paramMap.get('request'));
     const process = this.route.snapshot.paramMap.get('process');
     //this.route.paramMap.subscribe(params => {
-    //console.log(params);
     if (requestId) {
       //this.requestId = parseInt(params.get('request'));
       this.getRequestInfo(requestId);
@@ -98,18 +97,24 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
 
   getRequestInfo(requestId: number) {
     // Llamar servicio para obtener informacion de la solicitud
-    this.title = `RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria`;
+
     const param = new FilterParams();
     param.addFilter('id', requestId);
     const filter = param.getParams();
     this.requestService.getAll(filter).subscribe({
       next: resp => {
-        this.searchRequestSimGoods = resp.data[0].recordId ? false : true;
         this.requestInfo = resp.data[0];
+        this.titleView();
         this.requestId = resp.data[0].id;
       },
     });
     this.contributor = 'CARLOS G. PALMA';
+  }
+
+  titleView() {
+    if (this.requestInfo?.affair == 13) {
+      this.title = `DOCUMENTACIÓN COMPLEMENTARIA: Registro de Documentación Complementaria, No. Solicitud ${this.requestInfo.id}`;
+    }
   }
 
   expedientSelected(event: any) {
@@ -146,9 +151,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
     this.location.back();
   }
 
-  requestRegistered(request: any) {
-    console.log(request);
-  }
+  requestRegistered(request: any) {}
 
   openReport(context?: Partial<CreateReportComponent>): void {
     const modalRef = this.modalService.show(CreateReportComponent, {
@@ -158,7 +161,6 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
     });
     modalRef.content.refresh.subscribe(next => {
       if (next) {
-        console.log(next);
       } //this.getCities();
     });
   }
@@ -188,7 +190,6 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
     });
     modalRef.content.onReject.subscribe((data: boolean) => {
       if (data) {
-        console.log(data);
       }
     });
   }
@@ -227,7 +228,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.regDocForm = true;
         this.regDocView = false;
         this.searchRequestSimGoods = true;
-        this.selectGoods = true;
+        this.selectGoods = false;
         this.viewSelectedGoods = false;
         this.guidelines = false;
         this.docRequest = false;
