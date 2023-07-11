@@ -2,13 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IGoodsAvailableSale } from 'src/app/core/models/commercialization/goodsAvailableSale';
-import { GoodsAvailableSaleService } from 'src/app/core/services/ms-goods-available-sale/ms-goods-available-sale.service';
+//import { IGoodsAvailableSale } from 'src/app/core/models/commercialization/goodsAvailableSale';
+//import { GoodsAvailableSaleService } from 'src/app/core/services/ms-goods-available-sale/ms-goods-available-sale.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  NUMBERS_PATTERN,
-  STRING_PATTERN,
-} from '../../../../../core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'goods-available-sale-form',
@@ -19,15 +16,11 @@ export class GoodsAvailableSaleFormComponent
   extends BasePage
   implements OnInit
 {
-  goodsAvailableSaleForm: ModelForm<IGoodsAvailableSale>;
+  goodsAvailableSaleForm: ModelForm<any>;
   title: string = 'Estatus de bienes disponibles para comercializar';
   edit: boolean = false;
-  goodsAvailable: IGoodsAvailableSale;
-  constructor(
-    private modalRef: BsModalRef,
-    private fb: FormBuilder,
-    private goodsAvailableSaleService: GoodsAvailableSaleService
-  ) {
+  goodsAvailable: any;
+  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
   }
 
@@ -35,6 +28,7 @@ export class GoodsAvailableSaleFormComponent
     this.prepareForm();
   }
 
+  //private goodsAvailableSaleService: GoodsAvailableSaleService
   private prepareForm() {
     this.goodsAvailableSaleForm = this.fb.group({
       id: [null],
@@ -52,7 +46,7 @@ export class GoodsAvailableSaleFormComponent
   close() {
     this.modalRef.hide();
   }
-
+  /*
   confirm() {
     console.log('Confirmar');
     this.edit ? this.update() : this.create();
@@ -76,7 +70,7 @@ export class GoodsAvailableSaleFormComponent
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
-  }
+  }*/
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';

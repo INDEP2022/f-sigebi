@@ -340,6 +340,16 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     });
   }
 
+  isCleaning = false;
+  clear() {
+    this.isCleaning = true;
+    this.formGood.reset();
+    this.formBlkControl.reset();
+    this.dataTableMassive = [];
+    this.form.reset();
+    this.tableExpense.clearTable();
+  }
+
   isLoadingGood: boolean = false;
   searchGood() {
     const goodId = this.formGood.get('id').value;
@@ -352,6 +362,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     }
     const params = new ListParams();
     params['filter.id'] = goodId;
+    this.formGood.reset();
     params.limit = 1;
     params.page = 1;
     this.isLoadingGood = true;
@@ -359,6 +370,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       next: response => {
         this.isLoadingGood = false;
         this.formGood.patchValue(response.data[0]);
+
         this.validateGood(this.formGood.value.id);
       },
       error: () => {
@@ -402,6 +414,10 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   getInfoDeposit() {
     const deposit = this.formBlkControl.value.tiNewDate;
+    if (this.isCleaning) {
+      this.isCleaning = false;
+      return;
+    }
     this.changeDeposit(null);
     const params = new ListParams();
     params['filter.dateMotion'] = formatDate(deposit, 'yyyy-MM-dd', 'en-US');
@@ -563,7 +579,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       (validateNumerary && !availableGood)
     ) {
       this.onLoadToast(
-        'info',
+        'warning',
         'Advertencia',
         'El bien consultado también puede ser convertido a numerario por valores y divisas. \n Verifique su tipo de conversión antes de continuar con el proceso'
       );
@@ -700,16 +716,16 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   async saveInServer(): Promise<void> {
     console.log(this.formBlkControl.value);
     this.loading = true;
-    // const permissionWrite = await this.hasPermissionWrite();
-    // if (!permissionWrite) {
-    //   this.alert(
-    //     'warning',
-    //     'Advertencia',
-    //     'No tiene permiso de escritura para ejecutar el cambio de numerario'
-    //   );
-    //   this.loading = false;
-    //   return;
-    // }
+    const permissionWrite = await this.hasPermissionWrite();
+    if (!permissionWrite) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'No tiene permiso de escritura para ejecutar el cambio de numerario'
+      );
+      this.loading = false;
+      return;
+    }
     this.loading = false;
     if (!this.formGood.value.id && !this.isMassive) {
       this.alert(
@@ -858,9 +874,10 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.goodService.changeGoodToNumerary(body).pipe(
         map((resp: { message: []; data: null }) => {
           const message =
-            resp.message.length > 0
-              ? resp.message.join('.\n')
-              : 'Proceso terminado con éxito';
+            // resp.message.length > 0
+            //   ? resp.message.join('.\n')
+            //   :
+            'Proceso terminado con éxito';
 
           this.alert('success', 'Éxito', message);
         }),
