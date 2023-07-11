@@ -45,4 +45,16 @@ export class SeraLogService extends HttpService {
     const url = `${environment.API_URL}ldocument/api/v1/file-sinister-record/saveSinisterRecord`;
     return this.htpp.post(url, body);
   }
+  postSinisterRecordFile(body: FormData): Observable<any> {
+    const url = `${environment.API_URL}ldocument/api/v1/file-sinister-record/sinisterRecordFile`;
+    return this.htpp.post(url, body);
+  }
+  postDateExport(body: any): Observable<any> {
+    const url = `${environment.API_URL}massivedictation/api/v1/application/obtn-good-siniestro-fecha1-export`;
+    return this.htpp.post(url, body);
+  }
+  postExport(body: any): Observable<any> {
+    const url = `${environment.API_URL}massivedictation/api/v1/application/obtn-good-sinister-export`;
+    return this.htpp.post(url, body);
+  }
 }

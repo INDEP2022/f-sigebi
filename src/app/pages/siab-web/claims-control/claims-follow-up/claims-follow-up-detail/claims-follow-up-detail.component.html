@@ -25,7 +25,6 @@
             <textarea
               class="form-control pt-4"
               formControlName="description"
-              placeholder="Detalle del bien"
               readonly></textarea>
           </form-field>
         </div>
@@ -62,7 +61,6 @@
             <input
               type="text"
               formControlName="fecSinisterIn"
-              placeholder="Fecha de siniestro"
               class="form-control"
               bsDatepicker />
           </form-field>
@@ -137,8 +135,7 @@
             [control]="claimsFollowUpDetailForm.get('detGoodoAffectedIn')">
             <textarea
               class="form-control pt-4"
-              formControlName="detGoodoAffectedIn"
-              placeholder="Detalle del bien o las partes afectadas"></textarea>
+              formControlName="detGoodoAffectedIn"></textarea>
           </form-field>
         </div>
       </div>
@@ -238,7 +235,6 @@
             <input
               type="text"
               formControlName="dateIndemnizationIn"
-              placeholder="Fecha indemnización"
               class="form-control"
               bsDatepicker />
           </form-field>
@@ -252,9 +248,19 @@
             <input
               type="text"
               formControlName="letterClaimIn"
-              placeholder="Fecha cata reclamación"
               class="form-control"
               bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="claimsFollowUpDetailForm.get('statusIn')"
+            label="Estado">
+            <select class="form-control" formControlName="statusIn">
+              <option [value]="null">Seleccione un estado</option>
+              <option [value]="1">ABIERTO</option>
+              <option [value]="2">CERRADO</option>
+            </select>
           </form-field>
         </div>
       </div>

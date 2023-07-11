@@ -48,17 +48,17 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       fecRepCabiIn: [null],
       fecRepAseguradoraIn: [null],
       fecSinisterIn: [null],
-      typeSinisterIn: [null],
+      typeSinisterIn: [null, [Validators.required]],
       docOfficeMailIn: [null],
       sinisterIn: [null],
       policyAffectedIn: [null],
       unitAdminUserIn: [null, [Validators.required]],
       detGoodoAffectedIn: [null, [Validators.required]],
       claimedAmountIn: [null, [Validators.required]],
-      adjustedAmountIn: [null],
-      deductibleIn: [null],
-      coinsuranceIn: [null],
-      amountIndemnizedIn: [null],
+      adjustedAmountIn: [null, [Validators.required]],
+      deductibleIn: [null, [Validators.required]],
+      coinsuranceIn: [null, [Validators.required]],
+      amountIndemnizedIn: [null, [Validators.required]],
       letterClaimIn: [null],
       orderOfEntryIn: [null],
       docOfficeMinConcluIn: [null],
@@ -70,8 +70,82 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       docAmountIndemnizedIn: [null],
     });
     if (this.siniester) {
+      console.log(this.siniester);
       this.claimsFollowUpDetailForm.patchValue(this.siniester);
+      this.claimsFollowUpDetailForm.controls['sinisterInId'].setValue(
+        this.siniester.idsiniestro
+      );
+      this.claimsFollowUpDetailForm.controls['operation'].setValue('2');
+      this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].setValue(
+        this.dateConvert(this.siniester.fechareportecabi)
+      );
+      this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].setValue(
+        this.dateConvert(this.siniester.fechareporteaseguradora)
+      );
+      this.claimsFollowUpDetailForm.controls['fecSinisterIn'].setValue(
+        this.dateConvert(this.siniester.fecSinisterIn)
+      );
+      this.claimsFollowUpDetailForm.controls['typeSinisterIn'].setValue(
+        this.siniester.tiposiniestroid
+      );
+      // this.claimsFollowUpDetailForm.controls['docOfficeMailIn'].setValue(this.siniester.docoficiocorreo);
+      this.claimsFollowUpDetailForm.controls['sinisterIn'].setValue(
+        this.siniester.siniestro
+      );
+      this.claimsFollowUpDetailForm.controls['policyAffectedIn'].setValue(
+        this.siniester.polizaafectada
+      );
+      this.claimsFollowUpDetailForm.controls['unitAdminUserIn'].setValue(
+        this.siniester.delegationnumber
+      );
+      this.claimsFollowUpDetailForm.controls['detGoodoAffectedIn'].setValue(
+        this.siniester.detallebienoafectadas
+      );
+      this.claimsFollowUpDetailForm.controls['claimedAmountIn'].setValue(
+        this.siniester.montoreclamado
+      );
+      this.claimsFollowUpDetailForm.controls['adjustedAmountIn'].setValue(
+        this.siniester.montoajustado
+      );
+      this.claimsFollowUpDetailForm.controls['deductibleIn'].setValue(
+        this.siniester.deducible
+      );
+      this.claimsFollowUpDetailForm.controls['coinsuranceIn'].setValue(
+        this.siniester.coaseguro
+      );
+      this.claimsFollowUpDetailForm.controls['amountIndemnizedIn'].setValue(
+        this.siniester.montoindemnizado
+      );
+      this.claimsFollowUpDetailForm.controls['letterClaimIn'].setValue(
+        this.dateConvert(this.siniester.cartareclamacion)
+      );
+      this.claimsFollowUpDetailForm.controls['orderOfEntryIn'].setValue(
+        this.siniester.ordendeingreso
+      );
+      // this.claimsFollowUpDetailForm.controls['docOfficeMinConcluIn'].setValue(this.siniester.docoficiominutaconclusion);
+      this.claimsFollowUpDetailForm.controls['statusIn'].setValue(
+        this.siniester.estatusid
+      );
+      this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].setValue(
+        this.siniester.primersegundacapa
+      );
+      this.claimsFollowUpDetailForm.controls['shapeConclusionIn'].setValue(
+        this.siniester.formaconclusionid
+      );
+      this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].setValue(
+        this.dateConvert(this.siniester.fechaindemnizacion)
+      );
+
+      // this.claimsFollowUpDetailForm.controls['docAmountIndemnizedIn'].setValue(this.siniester.docmontoindemnizado);
+      // this.claimsFollowUpDetailForm.controls['docLetterRelcamationIn'].setValue(this.siniester.doccartareclamacion);
+      this.claimsFollowUpDetailForm.controls['numberInGood'].setValue(
+        this.good.numberInGood
+      );
+      this.claimsFollowUpDetailForm.controls['description'].setValue(
+        this.good.description
+      );
       this.edit = true;
+      this.getTipeSiniester(new ListParams(), this.siniester.tiposiniestroid);
     } else if (this.good) {
       this.claimsFollowUpDetailForm.controls['numberInGood'].setValue(
         this.good.numberInGood
@@ -80,6 +154,7 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
         this.good.description
       );
     }
+
     this.getTipeSiniester(new ListParams());
     this.getObtnObtenUnidadesResp(new ListParams());
     this.getshapeConclusion(new ListParams());
@@ -91,7 +166,10 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
   confirm() {
     this.edit === true ? this.updateSinister() : this.createSinister();
   }
-  getTipeSiniester(params: ListParams) {
+  getTipeSiniester(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = `$eq:${id}`;
+    }
     this.typeSinisterService.getAll(params).subscribe({
       next: response => {
         this.typeSiniester = new DefaultSelect(response.data, response.count);
@@ -114,6 +192,7 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
   getshapeConclusion(params: ListParams) {
     this.typeSinisterService.getAllConclusion(params).subscribe({
       next: response => {
+        console.log(response);
         this.shapeConclusion = new DefaultSelect(response.data, response.count);
       },
       error: error => {
@@ -123,19 +202,28 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
   }
   updateSinister() {
     const formData = new FormData();
-    formData.append('docOfficeMinConcluIn', this.fileDocOfficeMinConcluIn);
-    formData.append('docLetterRelcamationIn', this.fileLetterClaimIn);
-    formData.append('docOfficeMailIn', this.fileDocOfficeMailIn);
-    formData.append('docAmountIndemnizedIn', this.fileDocAmountIndemnizedIn);
+    if (this.fileDocOfficeMinConcluIn) {
+      formData.append('docOfficeMinConcluIn', this.fileDocOfficeMinConcluIn);
+    }
+    if (this.fileLetterClaimIn) {
+      formData.append('docLetterRelcamationIn', this.fileLetterClaimIn);
+    }
+    if (this.fileDocOfficeMailIn) {
+      formData.append('docOfficeMailIn', this.fileDocOfficeMailIn);
+    }
+    if (this.fileDocOfficeMailIn) {
+      formData.append('docAmountIndemnizedIn', this.fileDocAmountIndemnizedIn);
+    }
     formData.append(
       'sinisterInId',
       this.claimsFollowUpDetailForm.controls['sinisterInId'].value
     );
     formData.append('operation', '2');
-    formData.append('sinisterInId', '39');
     formData.append(
       'sinisterIn',
-      this.claimsFollowUpDetailForm.controls['sinisterIn'].value
+      this.claimsFollowUpDetailForm.controls['sinisterIn'].value != null
+        ? this.claimsFollowUpDetailForm.controls['sinisterIn'].value
+        : ''
     );
     formData.append(
       'numberInGood',
@@ -156,19 +244,26 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     formData.append(
       'fecSinisterIn',
       this.convertDate(
-        this.claimsFollowUpDetailForm.controls['fecSinisterIn'].value
+        this.claimsFollowUpDetailForm.controls['fecSinisterIn'].value != null
+          ? this.claimsFollowUpDetailForm.controls['fecSinisterIn'].value
+          : ''
       )
     );
     formData.append(
       'fecRepAseguradoraIn',
       this.convertDate(
-        this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].value
+        this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].value !=
+          null
+          ? this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].value
+          : ''
       )
     );
     formData.append(
       'fecRepCabiIn',
       this.convertDate(
-        this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].value
+        this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].value != null
+          ? this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].value
+          : ''
       )
     );
     formData.append(
@@ -198,7 +293,10 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     formData.append(
       'dateIndemnizationIn',
       this.convertDate(
-        this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].value
+        this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].value !=
+          null
+          ? this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].value
+          : ''
       )
     );
     formData.append(
@@ -208,7 +306,9 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     formData.append(
       'letterClaimIn',
       this.convertDate(
-        this.claimsFollowUpDetailForm.controls['letterClaimIn'].value
+        this.claimsFollowUpDetailForm.controls['letterClaimIn'].value != null
+          ? this.claimsFollowUpDetailForm.controls['letterClaimIn'].value
+          : ''
       )
     );
     formData.append(
@@ -219,24 +319,40 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       'firstSecondLaterIn',
       this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].value
     );
-    formData.append('statusIn', '1');
+    formData.append(
+      'statusIn',
+      this.claimsFollowUpDetailForm.controls['statusIn'].value
+    );
+    console.log('fromdata' + formData);
     this.seraLogService.postSaveSinisterRecord(formData).subscribe({
       next: resp => {
         this.handleSuccess();
       },
       error: eror => {
-        this.handleSuccess();
+        this.alert(
+          'warning',
+          'Siniestros Seguimiento',
+          'Error intentelo de nuevo.'
+        );
       },
     });
   }
   createSinister() {
     const formData = new FormData();
-    formData.append('docOfficeMinConcluIn', this.fileDocOfficeMinConcluIn);
-    formData.append('docLetterRelcamationIn', this.fileLetterClaimIn);
-    formData.append('docOfficeMailIn', this.fileDocOfficeMailIn);
-    formData.append('docAmountIndemnizedIn', this.fileDocAmountIndemnizedIn);
+    if (this.fileDocOfficeMinConcluIn) {
+      formData.append('docOfficeMinConcluIn', this.fileDocOfficeMinConcluIn);
+    }
+    if (this.fileLetterClaimIn) {
+      formData.append('docLetterRelcamationIn', this.fileLetterClaimIn);
+    }
+    if (this.fileDocOfficeMailIn) {
+      formData.append('docOfficeMailIn', this.fileDocOfficeMailIn);
+    }
+    if (this.fileDocOfficeMailIn) {
+      formData.append('docAmountIndemnizedIn', this.fileDocAmountIndemnizedIn);
+    }
     formData.append('operation', '1');
-    formData.append('sinisterInId', '39');
+    // formData.append('sinisterInId', '39');
     formData.append(
       'sinisterIn',
       this.claimsFollowUpDetailForm.controls['sinisterIn'].value
@@ -260,19 +376,26 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     formData.append(
       'fecSinisterIn',
       this.convertDate(
-        this.claimsFollowUpDetailForm.controls['fecSinisterIn'].value
+        this.claimsFollowUpDetailForm.controls['fecSinisterIn'].value != null
+          ? this.claimsFollowUpDetailForm.controls['fecSinisterIn'].value
+          : ''
       )
     );
     formData.append(
       'fecRepAseguradoraIn',
       this.convertDate(
-        this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].value
+        this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].value !=
+          null
+          ? this.claimsFollowUpDetailForm.controls['fecRepAseguradoraIn'].value
+          : ''
       )
     );
     formData.append(
       'fecRepCabiIn',
       this.convertDate(
-        this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].value
+        this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].value != null
+          ? this.claimsFollowUpDetailForm.controls['fecRepCabiIn'].value
+          : ''
       )
     );
     formData.append(
@@ -302,7 +425,10 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     formData.append(
       'dateIndemnizationIn',
       this.convertDate(
-        this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].value
+        this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].value !=
+          null
+          ? this.claimsFollowUpDetailForm.controls['dateIndemnizationIn'].value
+          : ''
       )
     );
     formData.append(
@@ -312,7 +438,9 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     formData.append(
       'letterClaimIn',
       this.convertDate(
-        this.claimsFollowUpDetailForm.controls['letterClaimIn'].value
+        this.claimsFollowUpDetailForm.controls['letterClaimIn'].value != null
+          ? this.claimsFollowUpDetailForm.controls['letterClaimIn'].value
+          : ''
       )
     );
     formData.append(
@@ -323,10 +451,13 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       'firstSecondLaterIn',
       this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].value
     );
-    formData.append('statusIn', '1');
+    formData.append(
+      'statusIn',
+      this.claimsFollowUpDetailForm.controls['statusIn'].value
+    );
     this.seraLogService.postSaveSinisterRecord(formData).subscribe({
       next: resp => {
-        if (resp.data === true) {
+        if (resp.data) {
           this.handleSuccess();
         }
       },
@@ -358,6 +489,23 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
   convertDate(date: Date): string {
     const dateString: string = this.datePipe.transform(date, 'yyyy-MM-dd');
     return dateString;
+  }
+  dateConvert(date: string): Date {
+    if (date != 'null' && date != undefined) {
+      console.log(date);
+      const dates = new Date(date);
+      const datePipe = new DatePipe('en-US');
+      const formatTrans = datePipe.transform(dates, 'dd/MM/yyyy', 'UTC');
+      const partesFecha1 = formatTrans.split('/');
+      const dateConvert = new Date(
+        Number(partesFecha1[2]),
+        Number(partesFecha1[1]) - 1,
+        Number(partesFecha1[0])
+      );
+      return dateConvert;
+    } else {
+      return null;
+    }
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
