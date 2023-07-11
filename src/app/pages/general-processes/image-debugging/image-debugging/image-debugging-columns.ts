@@ -1,7 +1,7 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 export const IMAGE_DEBUGGING_COLUMNS = {
   goodNumber: {
-    title: 'No Bien',
+    title: 'No. Bien',
     sort: false,
   },
   description: {

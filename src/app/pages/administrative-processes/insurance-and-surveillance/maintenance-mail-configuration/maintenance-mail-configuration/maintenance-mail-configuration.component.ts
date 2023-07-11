@@ -126,9 +126,9 @@ export class MaintenanceMailConfigurationComponent
   private prepareform2() {
     this.formCorreo = this.fb.group({
       id: ['', [Validators.required]],
-      bodyEmail: ['', [Validators.required]],
-      subjectEmail: ['', [Validators.required]],
-      status: ['', [Validators.required]],
+      bodyEmail: [{ value: '', disabled: true }, [Validators.required]],
+      subjectEmail: [{ value: '', disabled: true }, [Validators.required]],
+      status: [{ value: '', disabled: true }, [Validators.required]],
     });
     if (this.emailBody != null) {
       console.log(this.emailBody);
@@ -180,7 +180,14 @@ export class MaintenanceMailConfigurationComponent
         this.formCorreo.value
       )
       .subscribe({
-        next: data => this.handleSuccess(),
+        next: data => {
+          const readonlyFields = ['subjectEmail', 'bodyEmail', 'status'];
+
+          readonlyFields.forEach(fieldName => {
+            this.formCorreo.get(fieldName).disable();
+          });
+          this.handleSuccess();
+        },
         error: error => {
           this.loading = false;
           this.alert('warning', 'Error al actualizar registros', '');
@@ -209,6 +216,9 @@ export class MaintenanceMailConfigurationComponent
         );
         this.formCorreo.controls['bodyEmail'].setValue(this.event.bodyEmail);
         this.formCorreo.controls['status'].setValue(this.event.status);
+        Object.keys(this.formCorreo.controls).forEach(controlName => {
+          this.formCorreo.get(controlName).enable();
+        });
       }
     });
   }

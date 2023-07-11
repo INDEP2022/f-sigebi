@@ -119,4 +119,8 @@ export class TableExpensesComponent {
   isEdit(): boolean {
     return Boolean(this.idExpense);
   }
+
+  clearTable(): void {
+    this.expenses = [];
+  }
 }
