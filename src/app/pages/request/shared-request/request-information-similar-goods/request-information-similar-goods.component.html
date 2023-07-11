@@ -24,7 +24,7 @@
             <label class="label" for=""
               >Fecha de Solicitud&#58;
               <span>{{
-                requestInfo?.applicationDate | date : 'ddMMyyyy'
+                requestInfo?.applicationDate | date: 'ddMMyyyy'
               }}</span></label
             >
           </div>
@@ -78,7 +78,7 @@
             </label>
           </div>
         </div>
-        <div class="row pt-2">
+        <div class="row pt-2" *ngIf="requestInfo?.affair != 13">
           <div class="col-md-4">
             <label class="label">
               No&#46; Solicitud Bienes Similares&#58;
