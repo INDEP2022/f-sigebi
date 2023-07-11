@@ -61,18 +61,18 @@
         <div class="ch-content">
           <div class="row justify-content-end pt-3 mr-3">
             <app-columns-select
-              [settings]="settings"
+              [(settings)]="settings"
               class="row justify-content-end"></app-columns-select>
           </div>
         </div>
       </div>
       <div class="row pt-4">
-        <div class="col-md-12">
+        <div class="col-md-12 table-responsive">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="data">
+              [source]="paginatedData">
             </ng2-smart-table>
           </div>
         </div>

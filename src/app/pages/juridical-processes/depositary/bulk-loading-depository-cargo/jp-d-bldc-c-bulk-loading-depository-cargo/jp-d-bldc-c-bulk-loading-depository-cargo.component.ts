@@ -7,6 +7,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { MassiveDepositaryService } from 'src/app/core/services/ms-massivedepositary/massivedepositary.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { offlinePagination } from 'src/app/utils/functions/offline-pagination';
 import * as XLSX from 'xlsx';
 import { COLUMNS } from './columns';
 
@@ -53,12 +54,13 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   fileName: string = 'Seleccionar archivo';
   totalItems: number = 0;
   ExcelData: any;
+  paginatedData: any[] = [];
   currentItemData: number = 0;
   totalItemsData: number = 0;
   loadingDataProcess: boolean = false;
   errorsData: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
-  data: ExampleData[];
+  data: ExampleData[] = [];
   origin: string = '';
   no_bien: number = null;
   no_nom: number = null;
@@ -103,6 +105,12 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         console.log(params);
       });
     this.buildForm();
+
+    this.params.subscribe(params => {
+      const { page, limit } = params;
+      this.paginatedData = offlinePagination(this.data, limit, page);
+      console.log(this.paginatedData);
+    });
   }
 
   /**
@@ -158,8 +166,13 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   }
 
   loadData(formData: FormData) {
+    this.loading = true;
     this.massiveService.pupPreviewDataCSVForDepositary(formData).subscribe({
       next: resp => {
+        this.loading = false;
+        const params = new ListParams();
+        this.params.next(params);
+        this.totalItems = this.data.length;
         this.onLoadToast(
           'success',
           'La información se ha subido exitosamente.',
@@ -167,6 +180,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         );
       },
       error: eror => {
+        this.loading = false;
         this.onLoadToast('error', 'Error', eror.error.message);
       },
     });
