@@ -9,10 +9,10 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class DeletePeriodComponent {
   form = new FormGroup({
-    year: new FormControl(null),
+    year: new FormControl(null, Validators.required),
     period: new FormControl(null, Validators.required),
-    delegation: new FormControl(null),
-    process: new FormControl(null),
+    delegation: new FormControl(null, Validators.required),
+    process: new FormControl(null, Validators.required),
   });
   processes = [
     { value: 1, label: 'Supervisión' },

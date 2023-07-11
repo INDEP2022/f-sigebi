@@ -157,41 +157,56 @@ export class MaintenanceComponent extends BasePage implements OnInit {
     const controlTo = forms.emailInformation.get('to');
     const controlCc = forms.emailInformation.get('cc');
     const controlBody = forms.emailInformation.get('body');
+
     if (controlReasonForChange.invalid) {
       message.push(
-        'El motivo de cambio del bloque información de correo, es información obligatoria ...'
+        'El motivo de cambio del bloque información de correo, es información obligatoria'
       );
       controlReasonForChange.markAsTouched();
-    }
-    if (controlFrom.invalid) {
-      message.push(
-        'El identificador de envío del bloque información de correo, es información obligatoria ...'
-      );
-      controlFrom.markAsTouched();
-    }
-    if (controlTo.invalid) {
-      message.push(
-        'El correo electrónico del destino (Para) del bloque información de correo, es información obligatoria ...'
-      );
-      controlTo.markAsTouched();
-    }
-    if (controlCc.invalid) {
-      message.push(
-        'El correo electrónico del destino (CC) del bloque información de correo, es información obligatoria ...'
-      );
-      controlCc.markAsTouched();
-    }
-    if (controlBody.invalid) {
-      message.push(
-        'El identificador de tipo (Cuerpo de correo) del bloque información de correo, es información obligatoria ...'
-      );
-      controlBody.markAsTouched();
-    }
-
-    if (message.length > 0) {
       this.alert('warning', 'Información de Correo', message.join(',\n '));
       return false;
     }
+
+    if (controlFrom.invalid) {
+      message.push(
+        'El identificador de envío del bloque información de correo, es información obligatoria'
+      );
+      controlFrom.markAsTouched();
+      this.alert('warning', 'Información de Correo', message.join(',\n '));
+      return false;
+    }
+
+    if (controlTo.invalid) {
+      message.push(
+        'El correo electrónico del destino (Para) del bloque información de correo, es información obligatoria'
+      );
+      controlTo.markAsTouched();
+      this.alert('warning', 'Información de Correo', message.join(',\n '));
+      return false;
+    }
+
+    if (controlCc.invalid) {
+      message.push(
+        'El correo electrónico del destino (CC) del bloque información de correo, es información obligatoria'
+      );
+      controlCc.markAsTouched();
+      this.alert('warning', 'Información de Correo', message.join(',\n '));
+      return false;
+    }
+
+    if (controlBody.invalid) {
+      message.push(
+        'El identificador de tipo (Cuerpo de correo) del bloque información de correo, es información obligatoria'
+      );
+      controlBody.markAsTouched();
+      this.alert('warning', 'Información de Correo', message.join(',\n '));
+      return false;
+    }
+
+    // if (message.length > 0) {
+    //   this.alert('warning', 'Información de Correo', message.join(',\n '));
+    //   return false;
+    // }
     return true;
   }
 
