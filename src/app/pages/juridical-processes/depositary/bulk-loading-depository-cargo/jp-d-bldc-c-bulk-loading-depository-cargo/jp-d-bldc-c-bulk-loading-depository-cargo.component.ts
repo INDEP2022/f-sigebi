@@ -11,6 +11,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { offlinePagination } from 'src/app/utils/functions/offline-pagination';
 import * as XLSX from 'xlsx';
 import { COLUMNS } from './columns';
+import { JpDBldcCBulkLoadingDepositoryCargoService } from './jp-d-bldc-c-bulk-loading-depository-cargo.service';
 
 interface ExampleData {
   NO_BIEN: number;
@@ -18,6 +19,7 @@ interface ExampleData {
   IMPORTE: number;
   CVE_CONCEPTO_PAGO: string;
   OBSERVACION: string;
+  NO_NOMBRAMIENTO: string;
   JURIDICO: string;
   ADMINISTRA: string;
   VALIDADO: string;
@@ -55,7 +57,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   fileName: string = 'Seleccionar archivo';
   totalItems: number = 0;
   ExcelData: any;
-  errorData: any;
+  // errorData: any;
   paginatedData: any[] = [];
   currentItemData: number = 0;
   totalItemsData: number = 0;
@@ -95,7 +97,8 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     private router: Router,
     private massiveService: MassiveDepositaryService,
     private activatedRoute: ActivatedRoute,
-    private incidentMaintenanceService: IncidentMaintenanceService
+    private incidentMaintenanceService: IncidentMaintenanceService,
+    private jpDBldcCBulkLoadingDepositoryCargoService: JpDBldcCBulkLoadingDepositoryCargoService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -213,18 +216,18 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       APLADM: 'N',
     };
   }
-  tmpMistakes(params: ListParams) {
-    this.incidentMaintenanceService.getTmpErrores(params).subscribe({
-      next: data => {
-        //INSERTAR DATA PARA TABLA
-        console.log(data);
-        this.errorData = data.data;
-        this.totalItems = data.count | 0;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
-  }
+  // tmpMistakes(params: ListParams) {
+  //   this.incidentMaintenanceService.getTmpErrores(params).subscribe({
+  //     next: data => {
+  //       //INSERTAR DATA PARA TABLA
+  //       console.log(data);
+  //       this.errorData = data.data;
+  //       this.totalItems = data.count | 0;
+  //       this.loading = false;
+  //     },
+  //     error: error => (this.loading = false),
+  //   });
+  // }
   goBack() {
     if (this.origin == 'FACTJURREGDESTLEG') {
       this.router.navigate(
@@ -257,44 +260,91 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         if (this.data[i].VALIDADO === 'S' && this.data[i].APLICADO === 'N') {
           //insert
           //success
-          this.data[i].APLICADO = 'S';
-          VCONC = VCONC + 1;
-          //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
-          ERRTXT = `(PAGOS) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
-          VCONE = VCONE + 1;
-          this.data[i].VALIDADO = 'N';
-          if (this.errorData[i].description != null) {
-          } else {
-            this.errorData[i].description = ERRTXT;
-          }
+          let data = {
+            appointmentNum: this.data[i].NO_NOMBRAMIENTO,
+            datePay: this.data[i].FEC_PAGO,
+            conceptPayKey: this.data[i].CVE_CONCEPTO_PAGO,
+            amount: this.data[i].IMPORTE,
+            observation: this.data[i].OBSERVACION,
+          };
+          this.jpDBldcCBulkLoadingDepositoryCargoService
+            .postDedPayDepositary(data)
+            .subscribe({
+              next: resp => {
+                this.data[i].APLICADO = 'S';
+                VCONC = VCONC + 1;
+              },
+              error: eror => {
+                // this.alert(
+                //   'warning',
+                //   'Carga masiva de carga de depositarias',
+                //   'Error intentelo de nuevo.'
+                // );
+                //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
+                ERRTXT = `(PAGOS) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
+                VCONE = VCONE + 1;
+                this.data[i].VALIDADO = 'N';
+                if (this.errorsData[i].description != null) {
+                } else {
+                  this.errorsData[i].description = ERRTXT;
+                }
+              },
+            });
         }
         if (this.data[i].VALJUR === 'S' && this.data[i].APLJUR === 'N') {
           //insert
           //success
-          this.data[i].APLJUR = 'S';
-          VCONJ = VCONJ + 1;
-          //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
-          ERRTXT = `(JURIDICO) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
-          this.data[i].VALJUR = 'N';
-          if (this.errorData[i].description != null) {
-            //CREATE_RECORD;
-          } else {
-            this.errorData[i].description = ERRTXT;
-          }
+          let data = {
+            appointmentNum: this.data[i].NO_NOMBRAMIENTO,
+            dateRepo: this.data[i].FEC_PAGO,
+            reportKey: 1,
+            report: this.data[i].JURIDICO,
+          };
+          this.jpDBldcCBulkLoadingDepositoryCargoService
+            .postDetrepoDepositary(data)
+            .subscribe({
+              next: resp => {
+                this.data[i].APLJUR = 'S';
+                VCONJ = VCONJ + 1;
+              },
+              error: eror => {
+                //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
+                ERRTXT = `(JURIDICO) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
+                this.data[i].VALJUR = 'N';
+                if (this.errorsData[i].description != null) {
+                  //CREATE_RECORD;
+                } else {
+                  this.errorsData[i].description = ERRTXT;
+                }
+              },
+            });
         }
         if (this.data[i].VALADM === 'S' && this.data[i].APLADM === 'N') {
           //insert
-          //success
-          this.data[i].APLADM = 'S';
-          VCONA = VCONA + 1;
-          //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
-          ERRTXT = `(ADMINISTRATIVO) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
-          this.data[i].VALADM = 'N';
-          if (this.errorData[i].description != null) {
-            //CREATE_RECORD;
-          } else {
-            this.errorData[i].description = ERRTXT;
-          }
+          let data = {
+            appointmentNum: this.data[i].NO_NOMBRAMIENTO,
+            dateRepo: this.data[i].FEC_PAGO,
+            reportKey: 2,
+            report: this.data[i].ADMINISTRA,
+          };
+          this.jpDBldcCBulkLoadingDepositoryCargoService
+            .postDetrepoDepositary(data)
+            .subscribe({
+              next: resp => {
+                this.data[i].APLADM = 'S';
+                VCONA = VCONA + 1;
+              },
+              error: eror => {
+                //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
+                ERRTXT = `(ADMINISTRATIVO) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
+                this.data[i].VALADM = 'N';
+                if (this.errorsData[i].description != null) {
+                  //CREATE_RECORD;
+                } else {
+                  this.errorsData[i].description = ERRTXT;
+                }
+              },
+            });
         }
         VCONP = VCONP + 1;
       }
