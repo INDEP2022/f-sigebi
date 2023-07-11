@@ -60,9 +60,9 @@ export class PersonFormComponentAppointment extends BasePage implements OnInit {
       { value: 'A', label: 'Administrador' },
       { value: 'D', label: 'Depositario' },
       { value: 'I', label: 'Interventor' },
-      { value: 'C', label: 'COMODATARIO' },
-      { value: 'U', label: 'CUSTODIO' },
-      { value: 'O', label: 'OTRO' },
+      { value: 'C', label: 'Comodatario' },
+      { value: 'U', label: 'Custodio' },
+      { value: 'O', label: 'Otro' },
     ];
     this.prepareForm();
   }
@@ -72,18 +72,53 @@ export class PersonFormComponentAppointment extends BasePage implements OnInit {
       id: [null, []],
       personName: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      street: [null, [, Validators.pattern(STRING_PATTERN)]],
-      streetNumber: [null, []],
-      apartmentNumber: [null, []],
-      suburb: [null, [, Validators.pattern(STRING_PATTERN)]],
-      delegation: [null, [, Validators.pattern(STRING_PATTERN)]],
-      zipCode: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      rfc: [null, [Validators.pattern(RFC_PATTERN)]],
-      curp: [null, [Validators.pattern(CURP_PATTERN)]],
-      phone: [null, [Validators.pattern(STRING_PATTERN)]],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      street: [
+        null,
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+      ],
+      streetNumber: [
+        null,
+        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
+      ],
+      apartmentNumber: [
+        null,
+        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
+      ],
+      suburb: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      delegation: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+      ],
+      zipCode: [
+        null,
+        [Validators.maxLength(5), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      rfc: [null, [Validators.maxLength(20), Validators.pattern(RFC_PATTERN)]],
+      curp: [
+        null,
+        [Validators.maxLength(20), Validators.pattern(CURP_PATTERN)],
+      ],
+      phone: [
+        null,
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+      ],
       typePerson: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -92,21 +127,60 @@ export class PersonFormComponentAppointment extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      manager: [null, [, Validators.pattern(STRING_PATTERN)]],
-      numberDeep: [null, [, Validators.pattern(PHONE_PATTERN)]],
-      profesion: [null, [, Validators.pattern(STRING_PATTERN)]],
-      curriculum: [null, [, Validators.pattern(STRING_PATTERN)]],
-      keyEntFed: [null, [, Validators.pattern(KEYGENERATION_PATTERN)]],
-      keyOperation: [null, [, Validators.pattern(KEYGENERATION_PATTERN)]],
-      observations: [null, [, Validators.pattern(STRING_PATTERN)]],
-      profile: [null, [, Validators.pattern(STRING_PATTERN)]],
-      precedentSecodam: [null, [, Validators.pattern(STRING_PATTERN)]],
-      precedentPgr: [null, [, Validators.pattern(STRING_PATTERN)]],
-      precedentPff: [null, [, Validators.pattern(STRING_PATTERN)]],
-      precedentSera: [null, [, Validators.pattern(STRING_PATTERN)]],
-      precedent0ther: [null, [, Validators.pattern(STRING_PATTERN)]],
-      email: [null, [, Validators.email]],
-      blackList: [null, [, Validators.pattern(STRING_PATTERN)]],
+      manager: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+      ],
+      numberDeep: [
+        null,
+        [Validators.maxLength(20), Validators.pattern(PHONE_PATTERN)],
+      ],
+      profesion: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+      ],
+      curriculum: [null, [Validators.pattern(STRING_PATTERN)]],
+      keyEntFed: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      keyOperation: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      observations: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      profile: [
+        null,
+        [Validators.maxLength(500), Validators.pattern(STRING_PATTERN)],
+      ],
+      precedentSecodam: [
+        null,
+        [Validators.maxLength(500), Validators.pattern(STRING_PATTERN)],
+      ],
+      precedentPgr: [
+        null,
+        [Validators.maxLength(500), Validators.pattern(STRING_PATTERN)],
+      ],
+      precedentPff: [
+        null,
+        [Validators.maxLength(500), Validators.pattern(STRING_PATTERN)],
+      ],
+      precedentSera: [
+        null,
+        [Validators.maxLength(500), Validators.pattern(STRING_PATTERN)],
+      ],
+      precedent0ther: [
+        null,
+        [Validators.maxLength(500), Validators.pattern(STRING_PATTERN)],
+      ],
+      email: [null, [Validators.maxLength(60), Validators.email]],
+      blackList: [
+        null,
+        [Validators.maxLength(2), Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.person != null) {
       this.edit = true;
