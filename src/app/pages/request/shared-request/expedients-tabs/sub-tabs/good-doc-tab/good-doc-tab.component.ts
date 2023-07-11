@@ -75,8 +75,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
   ngOnInit(): void {
     // DISABLED BUTTON - FINALIZED //
     this.task = JSON.parse(localStorage.getItem('Task'));
-    this.statusTask = this.task.status;
-    console.log('statustask', this.statusTask);
+    this.statusTask = this.task?.status;
     this.getGoodTypeSelect(new ListParams());
     this.initForm();
     this.params
@@ -91,7 +90,10 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
         [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(30)],
       ],
       goodTypeId: [null],
-      requestId: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      requestId: [
+        this.idRequest,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       goodDescription: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
@@ -103,7 +105,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
       this.loading = true;
       this.params.getValue()['search'] = this.params.getValue().text;
       this.params.getValue()['filter.requestId'] = this.idRequest;
-      this.searchForm.get('requestId').setValue(this.idRequest);
+      //this.searchForm.get('requestId').setValue(this.idRequest);
       this.goodService.getAll(this.params.getValue()).subscribe({
         next: async (data: any) => {
           const filterGoodType = data.data.map(async (item: any) => {

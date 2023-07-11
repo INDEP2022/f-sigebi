@@ -17,7 +17,7 @@
             class="btn btn-primary btn-sm active"
             (click)="turnRequest()"
             [disabled]="">
-            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Turnar
+            Turnar <i aria-hidden="true" class="fa fa-share-square"></i>
           </button>
         </div>
         <div class="mx-1">
@@ -25,7 +25,7 @@
             type="button"
             class="btn btn-primary btn-sm active"
             [disabled]="">
-            <i class="bx bx-save mr-1 float-icon"></i> Guardar
+            Guardar <i class="fa fa-save mr-1 float-icon"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="rejectReq">
@@ -82,10 +82,10 @@
             <li role="menuitem">
               <a
                 class="dropdown-item bg-primary text-light"
-                (click)="turnRequest()"
-                ><i class="bx bxs-right-arrow-square mr-1 float-icon"></i>
+                (click)="turnRequest()">
                 Turnar</a
               >
+              <i aria-hidden="true" class="fa fa-share-square"></i>
             </li>
           </ul>
         </div>
