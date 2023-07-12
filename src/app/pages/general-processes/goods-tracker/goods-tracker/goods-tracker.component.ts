@@ -70,7 +70,7 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Atención',
-        'Debe ingresar almenos un parámetro de búsqueda'
+        'Debe ingresar al menos un parámetro de búsqueda'
       );
       return;
     }
@@ -133,7 +133,7 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
             this.alert(
               'warning',
               'Atención',
-              'Debe ingresar almenos un parámetro de búsqueda'
+              'Debe ingresar al menos un parámetro de búsqueda'
             );
             return;
           }

@@ -19,12 +19,12 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="eventForm.get('tpeventoId')">
+          <form-field [control]="eventForm.get('eventTpId')">
             <ngx-select
               [searchOnInit]="true"
               [form]="eventForm"
               [data]="eventTypes"
-              control="tpeventoId"
+              control="eventTpId"
               value="id"
               bindLabel="descCondition"
               label="Tipo de Evento">
@@ -33,8 +33,8 @@
         </div>
 
         <div class="col-md-4">
-          <form-field [control]="eventForm.get('address')" label="Lugar">
-            <input type="text" class="form-control" formControlName="address" />
+          <form-field [control]="eventForm.get('place')" label="Lugar">
+            <input type="text" class="form-control" formControlName="place" />
           </form-field>
         </div>
         <div class="col-md-2">
@@ -48,12 +48,12 @@
       </div>
       <div class="row pt-3">
         <div class="col-md-4">
-          <form-field [control]="eventForm.get('thirdComertializa')">
+          <form-field [control]="eventForm.get('thirdId')">
             <ngx-select
               [searchOnInit]="true"
               [form]="eventForm"
               [data]="eventTypes"
-              control="thirdComertializa"
+              control="thirdId"
               value="id"
               bindLabel="descCondition"
               label="Tercero Comercializa">
@@ -89,38 +89,40 @@
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="eventForm.get('failDate')"
+            [control]="eventForm.get('failureDate')"
             label="Fecha de Folio">
             <input
               type="text"
               placeholder=""
               class="form-control"
               bsDatepicker
-              formControlName="failDate"
+              formControlName="failureDate"
               [bsConfig]="{ isAnimated: true }" />
           </form-field>
         </div>
         <div class="col-md-2">
-          <ngx-select
-            [searchOnInit]="true"
-            [form]="eventForm"
-            [data]="eventTypes"
-            control="requestType"
-            value="id"
-            bindLabel="descCondition"
-            label="Tipo Solicitud Avalúo">
-          </ngx-select>
+          <form-field [control]="eventForm.get('tpsolavalId')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="eventForm"
+              [data]="eventTypes"
+              control="tpsolavalId"
+              value="id"
+              bindLabel="descCondition"
+              label="Tipo Solicitud Avalúo">
+            </ngx-select>
+          </form-field>
         </div>
       </div>
       <div class="row pt-3">
         <div class="col-md-5">
           <form-field
-            [control]="eventForm.get('description')"
+            [control]="eventForm.get('observations')"
             label="Descripción">
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="observations" />
           </form-field>
         </div>
         <div class="col-md-7">

@@ -12,18 +12,19 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   eventForm = this.fb.group({
     id: [{ value: null, disabled: true }],
     processKey: [null, []],
-    tpeventoId: [null, []],
-    address: [null],
-    description: [null],
+    eventTpId: [null, []],
+    place: [null],
+    observations: [null],
     eventDate: [null, []],
     username: [null, []],
     delegationNumber: [null, []],
-    thirdComertializa: [null],
+    thirdId: [null],
     baseCost: [null],
     closeDate: [null],
-    failDate: [null],
+    failureDate: [null],
     requestType: [null],
     statusvtaId: [null, []],
+    tpsolavalId: [null],
   });
   eventTypes = new DefaultSelect();
   constructor(private fb: FormBuilder) {

@@ -434,7 +434,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
 
   include() {
     if (this.selectedGooods.length == 0) {
-      this.onLoadToast('info', 'Info', 'Debe seleccionar almenos un bien');
+      this.onLoadToast('info', 'Info', 'Debe seleccionar al menos un bien');
       return;
     }
     const goodIds = this.selectedGooods.map(good => good.goodNumber);
@@ -535,7 +535,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
           this.insertListPhoto(Number(this.selectedGooods[0].goodNumber));
           this.callReport(Number(this.selectedGooods[0].goodNumber), null);
         } else {
-          this.alert('error', 'Error', 'Se requiere de almenos un bien');
+          this.alert('error', 'Error', 'Se requiere de al menos un bien');
         }
       }
     }

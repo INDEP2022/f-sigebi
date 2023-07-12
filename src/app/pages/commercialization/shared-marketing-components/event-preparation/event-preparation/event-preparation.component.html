@@ -5,15 +5,15 @@
     </div>
   </div>
   <div body>
-    <h6>MÓDULO COMERCIAL MUEBLES</h6>
+    <h6>MÓDULO COMERCIAL {{ blkTasks.tDirection }}</h6>
     <hr class="row" />
     <div class="row">
-      <event-data-form></event-data-form>
+      <event-data-form *ngIf="canvas.main"></event-data-form>
     </div>
     <div class="row">
       <div class="md-tabs">
-        <tabset class="vertical-tabs" [vertical]="true" type="pills">
-          <tab>
+        <tabset [justified]="true" class="fill-custom-tab">
+          <tab (selectTab)="newEvent()">
             <ng-template tabHeading>
               <div class="row">
                 <div class="col-md-12 d-flex justify-content-between">
@@ -24,11 +24,9 @@
                 </div>
               </div>
             </ng-template>
-            <div class="row">
-              <div class="col-md-12"></div>
-            </div>
+            <event-data-form></event-data-form>
           </tab>
-          <tab>
+          <tab [active]="true" (selectTab)="openEvent()">
             <ng-template tabHeading>
               <div class="row">
                 <div class="col-md-12 d-flex justify-content-between">
@@ -39,11 +37,8 @@
                 </div>
               </div>
             </ng-template>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt
-            adipisci, totam earum repudiandae illo aliquam quia deserunt
-            voluptate aperiam amet soluta? Sunt similique, eaque ullam aperiam
-            placeat facilis quidem corrupti.</tab
-          >
+            <commer-events-list></commer-events-list>
+          </tab>
           <tab>
             <ng-template tabHeading>
               <div class="row">
@@ -55,11 +50,8 @@
                 </div>
               </div>
             </ng-template>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt
-            adipisci, totam earum repudiandae illo aliquam quia deserunt
-            voluptate aperiam amet soluta? Sunt similique, eaque ullam aperiam
-            placeat facilis quidem corrupti.</tab
-          >
+            <commer-packages-lots></commer-packages-lots
+          ></tab>
           <tab>
             <ng-template tabHeading>
               <div class="row">
@@ -71,11 +63,8 @@
                 </div>
               </div>
             </ng-template>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt
-            adipisci, totam earum repudiandae illo aliquam quia deserunt
-            voluptate aperiam amet soluta? Sunt similique, eaque ullam aperiam
-            placeat facilis quidem corrupti.</tab
-          >
+            <commer-event-customers></commer-event-customers
+          ></tab>
           <tab>
             <ng-template tabHeading>
               <div class="row">
