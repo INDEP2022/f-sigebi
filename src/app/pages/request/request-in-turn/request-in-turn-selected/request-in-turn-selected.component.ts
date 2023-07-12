@@ -55,6 +55,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('Solicitudes a turnar, ', this.requestToTurn);
     this.prepareForm();
     this.removeUnNecessaryData();
     const storeData = this.authService.decodeToken();

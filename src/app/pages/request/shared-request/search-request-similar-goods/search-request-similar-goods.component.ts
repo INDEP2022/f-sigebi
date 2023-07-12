@@ -162,8 +162,8 @@ export class SearchRequestSimilarGoodsComponent
               next: resp => {
                 this.loading = false;
                 Swal.fire({
-                  title: `Se asocio la solicitud correctamente`,
-                  text: `La Solicitud ${requestAssociated.id} fue asociada al expediente ${requestAssociated.recordId}. Tiene que subir el reporte de la caratula INAI`,
+                  title: `Se asoció la solicitud correctamente`,
+                  text: `La Solicitud ${requestAssociated.id} fue asociada al expediente ${requestAssociated.recordId}. Tiene que subir el reporte de la carátula INAI`,
                   icon: 'success',
                   showDenyButton: false,
                   showCancelButton: false,
@@ -195,7 +195,7 @@ export class SearchRequestSimilarGoodsComponent
     /*this.selectedRows = $event.selected;
     this.data2.load($event.data.goods);
     this.showDetails = $event.isSelected ? true : false;*/
-    this.alert('warning', 'falta', 'falta implementar esta funcion');
+    //this.alert('warning', 'falta', 'falta implementar esta función');
   }
 
   getGoods() {

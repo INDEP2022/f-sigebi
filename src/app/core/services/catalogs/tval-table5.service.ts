@@ -75,8 +75,6 @@ export class TvalTable5Service
   }
 
   getCurrent(current: string) {
-    console.log(current);
-    console.log(`${this.route3}?filter.otkey1=$eq:${current}`);
     return this.get(`${this.route3}?filter.otkey1=$eq:${current}`);
   }
 }
