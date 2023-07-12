@@ -9,26 +9,28 @@ export const SELECT_GOODS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  key: {
+  uniqueKey: {
     title: 'Clave Única',
     type: 'string',
     sort: false,
   },
-  manageNo: {
+  goodId: {
     title: 'No. Gestión',
     type: 'number',
     sort: false,
   },
-  transferAmount: {
+  quantity: {
     title: 'Cantidad de Transferencia',
     type: 'number',
     sort: false,
   },
-  transactionAmount: {
+
+  /*quantity: {
     title: 'Cantidad de Transacción',
     type: 'number',
     sort: false,
-  },
+  }, */
+
   reservedAmount: {
     title: 'Cantidad Reservada',
     type: 'number',
@@ -39,17 +41,20 @@ export const SELECT_GOODS_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  destination: {
+
+  destiny: {
     title: 'Destino',
     type: 'string',
     sort: false,
   },
-  fileNo: {
+
+  fileNumber: {
     title: 'No. Expediente',
     type: 'number',
     sort: false,
   },
-  transferRequestNo: {
+
+  requestId: {
     title: 'No. Solicitud de Transferencia',
     type: 'string',
     sort: false,
