@@ -37,3 +37,10 @@ export interface IAccountBank {
     idProvider: string;
   };
 }
+
+export interface IBankCentral {
+  cveAccount: number | string;
+  typeAccount: string;
+  cveBank: string;
+  cveCurrency: string;
+}
