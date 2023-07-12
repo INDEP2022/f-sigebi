@@ -106,18 +106,6 @@ export class RecordAccountStatementsComponent
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-
-            // filter.field == 'dateMotion' ||
-            // filter.field == 'deposit' ||
-            // filter.field == 'withdrawal' ||
-            // filter.field == 'cveConcept'
-            //   ? (searchFilter = SearchFilter.EQ)
-            //   : (searchFilter = SearchFilter.ILIKE);
-            // if (filter.search !== '') {
-            //   this.columnFilters = filters;
-            // } else {
-            //   delete this.columnFilters;
-            // }
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'dateMotion':

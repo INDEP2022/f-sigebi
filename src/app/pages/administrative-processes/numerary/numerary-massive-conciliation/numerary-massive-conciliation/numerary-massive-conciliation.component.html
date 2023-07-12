@@ -7,7 +7,9 @@
     <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="form.get('dateTesofe')" label="Fecha Tesofe:">
+          <form-field
+            [control]="form.get('dateTesofe')"
+            label="Aplicar Fecha Tesofe:">
             <input
               type="text"
               class="form-control"
@@ -63,7 +65,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              (userRowSelect)="openModal()">
+              [source]="data">
             </ng2-smart-table>
           </div>
           <app-pagination
@@ -87,35 +89,48 @@
     <div class="row" style="margin-top: 50px">
       <h5 class="row ml-0 mb-5">Cuentas Bancarias</h5>
       <form [formGroup]="form2" class="form-material">
-        <div class="col-md-4">
-          <form-field [control]="form2.get('bank')" label="Banco">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="bank"
-              readonly />
-          </form-field>
+        <div class="row mt-4">
+          <div class="col-6">
+            <form-field [control]="form2.get('bank')">
+              <ngx-select
+                [data]="banks"
+                [form]="form2"
+                bindLabel="name"
+                label="Seleccione un Banco"
+                [control]="'bank'"
+                (change)="onBankSelectChange($event)"
+                (input)="onSearchName($event.target)"></ngx-select>
+            </form-field>
+          </div>
+          <div class="col-6">
+            <form-field [control]="form2.get('bankAccount')">
+              <ngx-select
+                [data]="bankAccountSelect"
+                [form]="form2"
+                bindLabel="accountNumber"
+                label="Seleccione una Cuenta"
+                [control]="'bankAccount'"
+                (change)="onBankAccountSelectChange($event)"
+                (input)="onSearchAccount($event.target)"
+                (clear)="onClearSelection()"></ngx-select>
+            </form-field>
+          </div>
         </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="form2.get('bankAccount')"
-            label="Cuenta Bancaria">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="bankAccount"
-              readonly />
-          </form-field>
-        </div>
+
         <div class="col-md-4">
           <form-field [control]="form2.get('deposit')" label="Depósito">
             <input type="text" class="form-control" formControlName="deposit" />
           </form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field [control]="form2.get('current')" label="Moneda">
-            <input type="text" class="form-control" formControlName="current" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="current"
+              maxlength="15"
+              readonly />
           </form-field>
         </div>
 
@@ -138,7 +153,7 @@
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settings2"
-                (userRowSelect)="openModal()">
+                [source]="data">
               </ng2-smart-table>
             </div>
             <app-pagination
