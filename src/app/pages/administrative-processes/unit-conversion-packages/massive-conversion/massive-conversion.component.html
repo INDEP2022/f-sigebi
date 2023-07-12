@@ -394,146 +394,40 @@
   [noPackage]="noPackage"
   (dataEmit)="handleOutPut($event)"></app-paq-destion-det>
 
-<!-- <app-card [header]="true" [footer]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Previsualización de Datos</h5>
-    <div class="col-md-5 buttons">
-      <app-columns-select
-        (settingsChange)="settingsChange($event)"
-        [settings]="settings"></app-columns-select>
-    </div>
-  </div>
-  <div body>
-    <div class="row pt-4">
-      <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data"
-            (userSelectRow)="selectRow($event)"
-            (edit)="edit($event.data)"
-            (delete)="delete($event.data)">
-          </ng2-smart-table>
-        </div>
-      </div>
-    </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
-  </div>
-</app-card> -->
 
-<!--Scan Folio-->
 
 <app-card>
   <div body>
     
     <app-scan-file-massive-conversion
     [form]="form"
-    [formControlName]="scanFolio">
+    [package]="form.get('noPackage').value"
+    [formControlName]="scanFolioString">
     </app-scan-file-massive-conversion>
-    <!-- <div class="row">
-      <div class="col-md-2 col-sm-12 col-xs-12">
-        <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <button
-              (click)="generateFoli()"
-              tooltip="Generar Folio de Escaneo y Solicitud"
-              containerclass="tooltip-style"
-              class="btn btn-secondary btn-sm active m-1">
-              <i class="bx bxs-file-find"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-2 col-sm-12 col-xs-12">
-        <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <button
-              tooltip="Escanear"
-              containerclass="tooltip-style"
-              class="btn btn-secondary btn-sm active m-1">
-              <i class="bx bxs-file"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4 col-sm-12 col-xs-12 mt-1">
-        <form [formGroup]="form" class="form-material">
-          <div class="col-md-full col-sm-12 col-xs-12">
-            <form-field
-              label="Folio de escaneo"
-              [control]="form.get('scanFolio')">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="scanFolio" />
-            </form-field>
-          </div>
-        </form>
-      </div>
-      <div class="col-md-2 col-sm-12 col-xs-12">
-        <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <button
-              (click)="generate()"
-              tooltip="Generar Folio de Escaneo y Solicitud"
-              containerclass="tooltip-style"
-              class="btn btn-secondary btn-sm active m-1">
-              <i class="bx bxs-file-find"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-2 col-sm-12 col-xs-12">
-        <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <button
-              tooltip="Generar Folio de Escaneo y Solicitud"
-              containerclass="tooltip-style"
-              class="btn btn-secondary btn-sm active m-1">
-              <i class="bx bxs-file-find"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div> -->
   </div>
 </app-card>
-
-<!--<div class="ch-content" header>
-      <h5 class="title">Escaneo</h5>
-    </div>
-    <div body>
-      <form class="form-material" [formGroup]="form">
-        <div class="row mb-3 mt-3">
-          <div class="col-lg-3 col-md-6 col-sm-6 col-6 mb-3 mt-3">
-            <form-field [control]="form.get('scanFolio')" label="Folio Escaneo">
-              <input formControlName="scanFolio" type="number" class="form-control" />
-            </form-field>
-          </div>
-          <div class="col-lg-3 col-md-6 col-sm-6 col-6 mb-3 mt-3 align-self-center">
-            <button class="btn btn-primary btn-sm active w-100">Escanear</button>
-          </div>
-        </div>
-      </form>
-    </div>-->
-<!--</app-card>-->
 
 <!--Paragraphs-->
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Párrafos</h5>
-    <div class="col-md-5 buttons">
-      <button
-        (click)="downloadReport()"
-        type="button"
-        class="btn btn-primary active btn-sm">
-        Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
-      </button>
-    </div>
   </div>
   <div body>
+    <div class="row">
+      <div class="col-md-5 buttons">
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm mr-3">
+          Insertar Párrafos
+        </button>
+        <button
+          (click)="downloadReport()"
+          type="button"
+          class="btn btn-primary active btn-sm">
+          Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
         <div class="col-12 mb-3 mt-3">

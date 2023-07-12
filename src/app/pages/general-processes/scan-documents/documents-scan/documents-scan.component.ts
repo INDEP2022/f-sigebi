@@ -506,5 +506,10 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         `pages/juridical/depositary/maintenance-of-coverages?processNumber=${this.processNumber}&wheelNumber=${this.wheelNumber}&proceedingsNumber=${this.expedientNumber}`
       );
     }
+    if(this.origin == 'FMTOPAQUETE') {
+      this.router.navigate([
+        `pages/administrative-processes/unit-conversion-packages`,
+      ]);
+    }
   }
 }

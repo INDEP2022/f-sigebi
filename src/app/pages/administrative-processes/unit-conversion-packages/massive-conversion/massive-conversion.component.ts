@@ -160,10 +160,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     { name: 'Cancelado', value: 'X' },
   ]);
   //VARIABLES DE DATA QUE SE RECIBE
-  dataArrive: any[]
+  dataArrive: any[];
   //Variables de folio de escaneo
-  scanFolio: string = 'scanFolio'
-
+  scanFolioString: string = 'scanFolio';
 
   constructor(
     private fb: FormBuilder,
@@ -209,6 +208,15 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.fillDataByPackage();
     this.getDataUser();
     this.getEmail();
+    this.initByLocalStorage()
+  }
+
+  initByLocalStorage(){
+    if (localStorage.getItem('noPackage')) {
+      this.loading = true;
+      this.researchNoPackage(localStorage.getItem('noPackage'))
+      localStorage.removeItem('noPackage');
+    }
   }
 
   private getEmail() {
@@ -366,6 +374,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     return this.unitConversionDataService.dataPrevisualization;
   }
 
+  get scanFolio(){
+    return this.form.get('scanFolio')
+  }
+
   set dataPrevisualization(value) {
     this.unitConversionDataService.dataPrevisualization = value;
   }
@@ -471,6 +483,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.packageType.setValue(res.typePackage);
         this.amountKg.setValue(res.amount);
         this.status.setValue(res.statuspack.toString().toLocaleUpperCase());
+        this.scanFolio.setValue(res.InvoiceUniversal)
         //Seteo de la segunda parte
         this.fecElab.setValue(res.dateElaboration);
         this.userElab.setValue(res.useElaboration);
@@ -1473,7 +1486,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   newCvePackage() {
-    debugger
     //Variables
     let v_clave: string; //V_DESC_TRANS es el mismo valor
     let v_id_tipo_acta: string;
@@ -1497,6 +1509,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.rNomenclaService
           .getPhaseEdo(`date=${format(new Date(), 'yyyy-MM-dd')}`)
           .subscribe(res => {
+            console.log(res);
             let edo = JSON.parse(JSON.stringify(res));
             console.log(edo);
             const paramsF2 = new FilterParams();
@@ -1504,7 +1517,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
             paramsF2.addFilter('stageedo', edo.stagecreated);
             this.rNomenclaService.getRNomencla(paramsF2.getParams()).subscribe(
               res => {
-                console.log(res)
+                console.log(res);
                 v_administra = JSON.parse(
                   JSON.stringify(res['data'][0])
                 ).delegation;
@@ -1512,14 +1525,17 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
                 const resJson = JSON.parse(JSON.stringify(res.data[0]));
                 const paramsF3 = new FilterParams();
                 paramsF3.addFilter('stageedo', edo.stagecreated);
-                paramsF3.addFilter3(
+                paramsF3.addFilter(
                   'numberDelegation2',
                   this.dataUser.delegation
                 );
+                console.log(paramsF3.getParams())
                 this.rNomenclaService
                   .getRNomencla(paramsF3.getParams())
                   .subscribe(
                     res => {
+                      console.log(res);
+                      console.log(res['data'][0]);
                       v_ejecuta = JSON.parse(
                         JSON.stringify(res['data'][0])
                       ).delegation;
@@ -1564,6 +1580,31 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         v_clave = 'XXX';
       }
     );
+  }
+
+  researchNoPackage(noPack: string){
+    const paramsF = new FilterParams();
+        paramsF.addFilter('numberPackage', noPack);
+        this.unitConversionDataService.selectedPackage = noPack;
+        this.packageGoodService
+          .getPaqDestinationEnc(paramsF.getParams())
+          .subscribe(
+            res => {
+              console.log(res);
+              if (res && res.data && res.data.length > 0) {
+                this.noPackage.setValue(res.data[0]);
+                this.loading = false
+              } else {
+                // this.dataPackageEnc = null;
+              }
+            },
+            err => {
+              console.log(err);
+              this.dataPackage = new DefaultSelect([]);
+              this.alert('error', 'ERROR', 'Paquete no encontrado');
+              this.loading = false
+            }
+          );
   }
 
   generate() {
@@ -1616,28 +1657,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       res => {
         console.log(res);
         console.log(res.numberPackage);
-
-        const paramsF = new FilterParams();
-        paramsF.addFilter('numberPackage', res.numberPackage);
-        this.unitConversionDataService.selectedPackage = res.numberPackage;
-        this.packageGoodService
-          .getPaqDestinationEnc(paramsF.getParams())
-          .subscribe(
-            res => {
-              console.log(res);
-              if (res && res.data && res.data.length > 0) {
-                this.noPackage.setValue(res.data[0]);
-                this.alert('success', 'Se creo nuevo paquete', '');
-              } else {
-                // this.dataPackageEnc = null;
-              }
-            },
-            err => {
-              console.log(err);
-              this.dataPackage = new DefaultSelect([]);
-              this.alert('error', 'ERROR', 'Paquete no encontrado');
-            }
-          );
+        this.researchNoPackage(res.numberPackage)
+        this.alert('success', 'Se creo nuevo paquete', '');
       },
       err => {
         console.log(err);
