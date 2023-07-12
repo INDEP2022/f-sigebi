@@ -640,7 +640,12 @@ export class RegistrationOfRequestsComponent
   }
 
   returnarMethod() {
-    this.openModal(SelectTypeUserComponent, this.requestData, 'returnado');
+    this.openModal(
+      SelectTypeUserComponent,
+      this.requestData,
+      'returnado',
+      this.task
+    );
   }
 
   confirm() {
