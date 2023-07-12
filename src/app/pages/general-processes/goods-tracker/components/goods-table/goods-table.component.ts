@@ -747,7 +747,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   }
 
   subscribeExcel() {
-    return this.socketService.test().pipe(
+    return this.socketService.goodsTrackerExcel().pipe(
       take(1),
       switchMap(() => this.getExcel())
     );
@@ -778,11 +778,11 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     this.excelLoading = true;
     this.goodTrackerService.getExcel(this.filters).subscribe({
       next: resp => {
-        this.loading = false;
+        this.excelLoading = false;
         this.alert(
           'info',
           'Aviso',
-          'El archivo excel se esta generando en cuanto este listo se descargará utomaticamente'
+          'El Archivo Excel esta en proceso de generación, favor de esperar la descarga'
         );
         this.subscribeExcel().subscribe();
       },
