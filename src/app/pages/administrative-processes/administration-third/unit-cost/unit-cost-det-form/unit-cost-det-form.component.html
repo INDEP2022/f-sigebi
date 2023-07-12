@@ -14,7 +14,22 @@
               value="id"
               bindLabel="description"
               label="Zona"
-              control="cveZoneContract">
+              control="cveZoneContract"
+              (change)="changeZone($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-4">
+          <form-field [control]="unitCostDetForm.get('contract')">
+            <ngx-select
+              (fetchItems)="getZoneContracts($event)"
+              [data]="contracts"
+              [form]="unitCostDetForm"
+              value="zoneContractKey"
+              bindLabel="contractKey"
+              label="Contrato"
+              control="contract"
+              (change)="changeContract($event)">
             </ngx-select>
           </form-field>
         </div>
@@ -23,8 +38,10 @@
             label="Fecha inicial"
             [control]="unitCostDetForm.get('startDate')">
             <input
-              class="form-control"
+              [maxDate]="maxDate"
               formControlName="startDate"
+              class="form-control"
+              [minDate]="minDate"
               bsDatepicker
               [bsConfig]="{
                 dateInputFormat: 'YYYY-MM-DD'
@@ -62,6 +79,16 @@
               type="number"
               class="form-control"
               formControlName="costUnitarian" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-4">
+          <form-field
+            label="Vigente"
+            [control]="unitCostDetForm.get('validity')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="validity" />
           </form-field>
         </div>
       </div>
