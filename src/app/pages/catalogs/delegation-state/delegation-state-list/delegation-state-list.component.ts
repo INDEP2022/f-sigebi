@@ -38,7 +38,7 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
         columnTitle: 'Acciones',
         edit: true,
         add: false,
-        delete: false,
+        delete: true,
         position: 'right',
       },
     };
@@ -146,12 +146,12 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
-      console.log(delegationSate.regionalDelegation.id);
+      console.log(delegationSate.regionalDelegation);
       console.log(delegationSate);
       if (question.isConfirmed) {
         this.delete(
-          delegationSate.regionalDelegation.id,
-          delegationSate.stateCode.codeCondition
+          delegationSate.regionalDelegation,
+          delegationSate.stateCode
         );
       }
     });
@@ -162,7 +162,7 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getData());
-        this.alert('success', 'Delegación estado', 'Borrado Correctamente');
+        this.alert('success', 'Delegación Estado', 'Borrado Correctamente');
       },
       error: err => {
         this.alert(
