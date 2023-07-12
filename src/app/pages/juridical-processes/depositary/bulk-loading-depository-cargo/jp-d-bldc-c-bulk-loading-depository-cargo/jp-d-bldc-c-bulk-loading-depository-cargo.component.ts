@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { compareDesc } from 'date-fns';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
@@ -100,6 +101,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   disableApplyRecords: boolean = false;
   dateFormat: string = 'dd/MM/yyyy';
   settings2 = { ...this.settings };
+  dataTable: LocalDataSource = new LocalDataSource();
 
   constructor(
     private fb: FormBuilder,
@@ -382,6 +384,9 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       this.regCorjur = VCONJ;
       this.regCoradm = VCONA;
       this.disableApplyRecords = false;
+      console.log(this.errorsData);
+      this.dataTable.load(this.errorsData);
+      this.dataTable.refresh();
     }
   }
   validRecords() {
@@ -420,53 +425,6 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         this.loopValidPays(0);
       }
     }, 500);
-  }
-
-  startValidLoop() {
-    if (this.V_BAN == true) {
-      // this.data.forEach((element, count) => {
-      //   if (element.APLICADO == 'N') {
-      //     this.V_BAN = true;
-      //     let desc = ' (PAGOS) En el registro ' + (count + 1);
-      //     if (element.NO_BIEN == null) {
-      //       this.V_BAN = false;
-      //       desc = desc + ', el número de bien es nulo';
-      //     }
-      //     if (element.FEC_PAGO == null) {
-      //       this.V_BAN = false;
-      //       desc = desc + ', la fecha es nula';
-      //     }
-      //     if (element.FEC_PAGO) {
-      //       let validDate = null;
-      //       validDate = compareDesc(new Date(element.FEC_PAGO), new Date());
-      //       if (validDate < 0) {
-      //         this.V_BAN = false;
-      //         desc = desc + ', la fecha no puede mayor a la fecha actual';
-      //       }
-      //     }
-      //     if (element.CVE_CONCEPTO_PAGO == null) {
-      //       this.V_BAN = false;
-      //       desc = desc + ', el concepto de pago es nuloo';
-      //     }
-      //     if (element.CVE_CONCEPTO_PAGO == null) {
-      //       this.V_BAN = false;
-      //       desc = desc + ', el concepto de pago es nuloo';
-      //     }
-      //     if (element.IMPORTE == 0) {
-      //       this.V_BAN = false;
-      //       desc = desc + ', el importe es cero';
-      //     }
-      //     if (this.V_BAN == false) {
-      //       desc = desc + '.';
-      //       this.countsData.VCONE++;
-      //       this.errorsData.push({ DESCRIPCION: desc }); // Crear error
-      //     }
-      //   }
-      // });
-      this.loopValidPays(0);
-      // setTimeout(() => {
-      // }, 500);
-    }
   }
 
   loopValidPays(count: number) {
@@ -508,6 +466,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       if (this.V_BAN == false) {
         desc = desc + '.';
         this.countsData.VCONE++;
+        console.log('DESC ######### ', desc);
         this.errorsData.push({ DESCRIPCION: desc }); // Crear error
       } else {
         this.getAppointmentNumber(count, desc);
@@ -522,11 +481,11 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
           console.log(data, data.data[0].no_nombramiento);
           this.data[count].NO_NOMBRAMIENTO = data.data[0].no_nombramiento;
           if (option == 'pays') {
-            this.getVCheca(count, option);
+            this.getVCheca(count, desc);
           } else if (option == 'juridico') {
-            this.getVChecaPostReport(count, option, 'juridico');
+            this.getVChecaPostReport(count, desc, 'juridico');
           } else if (option == 'admin') {
-            this.getVChecaPostReport(count, option, 'admin');
+            this.getVChecaPostReport(count, desc, 'admin');
           }
         },
         error: err => {
@@ -547,6 +506,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
             ') Bien: ' +
             this.data[count].NO_BIEN +
             '. No existe en Depositaría.';
+          console.log('DESC ######### ', desc);
           this.errorsData.push({ DESCRIPCION: desc }); // Crear error
           if (option == 'pays') {
             this.validJuridical(count);
@@ -563,8 +523,8 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       .getVCheca(Number(this.data[count].CVE_CONCEPTO_PAGO))
       .subscribe({
         next: async data => {
-          console.log(data, data.data[0].no_nombramiento);
-          this.data[count].NO_NOMBRAMIENTO = data.data[0].no_nombramiento;
+          console.log(data);
+          // this.data[count].NO_NOMBRAMIENTO = data.data[0].no_nombramiento;
           this.getVChecaPost(count, desc);
         },
         error: err => {
@@ -577,6 +537,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
             this.data[count].CVE_CONCEPTO_PAGO +
             '. Clave de Concepto de Pago inválido.';
           this.countsData.VCONE++;
+          console.log('DESC ######### ', desc);
           this.errorsData.push({ DESCRIPCION: desc }); // Crear error
           this.validJuridical(count);
         },
@@ -592,7 +553,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       .getVChecaPost(body)
       .subscribe({
         next: async data => {
-          this.data[count].NO_NOMBRAMIENTO = data.data[0].v_checa.toString();
+          // this.data[count].NO_NOMBRAMIENTO = data.data[0].v_checa.toString();
           this.V_BAN = false;
           desc =
             desc +
@@ -600,13 +561,14 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
             this.data[count].NO_BIEN +
             ', Fecha Pago: ' +
             this.datePipe.transform(
-              this.data[count].FEC_PAGO,
+              new Date(this.data[count].FEC_PAGO),
               this.dateFormat
             ) +
             ', Clave Pago: ' +
             this.data[count].CVE_CONCEPTO_PAGO +
             '. El pago ya fué aplicado.';
           this.countsData.VCONE++;
+          console.log('DESC ######### ', desc);
           this.errorsData.push({ DESCRIPCION: desc }); // Crear error
           this.validJuridical(count);
         },
@@ -624,13 +586,14 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
               this.data[count].NO_BIEN +
               ', Fecha Pago: ' +
               this.datePipe.transform(
-                this.data[count].FEC_PAGO,
+                new Date(this.data[count].FEC_PAGO),
                 this.dateFormat
               ) +
               ', Clave Pago: ' +
               this.data[count].CVE_CONCEPTO_PAGO +
               '. Error al verificar el pago.';
             this.countsData.VCONE++;
+            console.log('DESC ######### ', desc);
             this.errorsData.push({ DESCRIPCION: desc }); // Crear error
             this.validJuridical(count);
           }
@@ -652,7 +615,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       .getVChecaPostReport(body)
       .subscribe({
         next: async data => {
-          this.data[count].NO_NOMBRAMIENTO = data.data[0].v_checa.toString();
+          // this.data[count].NO_NOMBRAMIENTO = data.data[0].v_checa.toString();
           this.V_BAN = false;
           desc =
             desc +
@@ -660,11 +623,12 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
             this.data[count].NO_BIEN +
             ', Fecha Reporte: ' +
             this.datePipe.transform(
-              this.data[count].FEC_PAGO,
+              new Date(this.data[count].FEC_PAGO),
               this.dateFormat
             ) +
             '. El reporte ya fué ingresado.';
           // this.countsData.VCONE++;
+          console.log('DESC ######### ', desc);
           this.errorsData.push({ DESCRIPCION: desc }); // Crear error
 
           if (option == 'pays') {
@@ -695,11 +659,12 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
               this.data[count].NO_BIEN +
               ', Fecha Reporte: ' +
               this.datePipe.transform(
-                this.data[count].FEC_PAGO,
+                new Date(this.data[count].FEC_PAGO),
                 this.dateFormat
               ) +
               '. Error al verificar el reporte.';
             // this.countsData.VCONE++;
+            console.log('DESC ######### ', desc);
             this.errorsData.push({ DESCRIPCION: desc }); // Crear error
 
             if (option == 'pays') {
@@ -730,6 +695,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       if (this.V_BAN == false) {
         desc = desc + '.';
         this.countsData.VCONE++;
+        console.log('DESC ######### ', desc);
         this.errorsData.push({ DESCRIPCION: desc }); // Crear error
       } else {
         this.getAppointmentNumber(count, desc, 'juridico');
@@ -753,6 +719,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       if (this.V_BAN == false) {
         desc = desc + '.';
         this.countsData.VCONE++;
+        console.log('DESC ######### ', desc);
         this.errorsData.push({ DESCRIPCION: desc }); // Crear error
       } else {
         this.getAppointmentNumber(count, desc, 'admin');
@@ -767,6 +734,9 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     if (this.data[count]) {
       this.loopValidPays(count);
     } else {
+      console.log(this.errorsData);
+      this.dataTable.load(this.errorsData);
+      this.dataTable.refresh();
       this.countsData.T_REG_LEIDOS = this.countsData.VCONP;
       this.countsData.T_REG_PROCESADOS =
         this.countsData.VCONC + this.countsData.VCONE;
