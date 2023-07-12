@@ -99,6 +99,7 @@
                 label="Seleccione un Banco"
                 [control]="'bank'"
                 (change)="onBankSelectChange($event)"
+                (fetchItems)="searchBanks($event)"
                 (input)="onSearchName($event.target)"></ngx-select>
             </form-field>
           </div>

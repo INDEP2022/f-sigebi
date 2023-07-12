@@ -7,13 +7,21 @@
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="form.get('bank')" label="Banco">
-            <input type="text" class="form-control" formControlName="bank" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="bank"
+              readonly />
           </form-field>
         </div>
 
         <div class="col-md-6">
           <form-field [control]="form.get('account')" label="Cuenta">
-            <input type="text" class="form-control" formControlName="account" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="account"
+              readonly />
           </form-field>
         </div>
       </div>
@@ -21,13 +29,21 @@
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="form.get('date')" label="Fecha">
-            <input type="text" class="form-control" formControlName="date" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="date"
+              readonly />
           </form-field>
         </div>
 
         <div class="col-md-6">
           <form-field [control]="form.get('amount')" label="Importe">
-            <input type="text" class="form-control" formControlName="amount" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="amount"
+              readonly />
           </form-field>
         </div>
       </div>
@@ -35,7 +51,11 @@
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="form.get('motion')" label="Movimiento">
-            <input type="text" class="form-control" formControlName="motion" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="motion"
+              readonly />
           </form-field>
         </div>
       </div>

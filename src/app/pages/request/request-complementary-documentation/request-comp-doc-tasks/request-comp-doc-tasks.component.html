@@ -1,10 +1,18 @@
 <app-card [header]="true">
   <div class="ch-content justify-content-between" header>
     <div class="">
-      <h5 class="title" *ngIf="this.requestInfo?.affair == 13">
+      <h5
+        class="title"
+        *ngIf="
+          this.requestInfo?.affair == 13 || this.requestInfo?.affair == 10
+        ">
         {{ title }}
       </h5>
-      <h5 class="title" *ngIf="this.requestInfo?.affair != 13">
+      <h5
+        class="title"
+        *ngIf="
+          this.requestInfo?.affair != 13 && this.requestInfo?.affair != 10
+        ">
         {{ title }}
         {{ requestId }}&#44; Contribuyente&#58; {{ contributor }}
       </h5>
@@ -132,7 +140,7 @@
           *ngIf="selectGoods"
           heading="Seleccionar Bienes"
           id="selectGoodsTab">
-          <app-select-goods></app-select-goods>
+          <app-select-goods [idRequest]="requestId"></app-select-goods>
         </tab>
         <tab
           *ngIf="viewSelectedGoods"
