@@ -19,6 +19,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { ICuentaDelete } from 'src/app/core/models/catalogs/bank-modelo-type-cuentas';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -91,7 +92,8 @@ export class DepositTokensComponent
     private readonly goodServices: GoodService,
     private dynamicCatalogsService: DynamicCatalogsService,
     private excelService: ExcelService,
-    private msMassiveAccountmvmntlineService: MsMassiveAccountmvmntlineService
+    private msMassiveAccountmvmntlineService: MsMassiveAccountmvmntlineService,
+    private token: AuthService
   ) {
     super();
     this.settings = {
@@ -788,6 +790,7 @@ export class DepositTokensComponent
       this.excelFile = binaryExcel;
       const formData = new FormData();
       formData.append('file', binaryExcel);
+      formData.append('user', this.token.decodeToken().preferred_username);
       const excelImport = await this.getPupPreviewDatosCsv2(formData, filter);
       if (filter == 'si') {
         // this.alert(
@@ -876,12 +879,13 @@ export class DepositTokensComponent
             this.totalItems2 = response.count;
             this.cargarDataStorage(response.base64.base64File);
             // this.excelFile =
+
+            let str = response.msg;
+            console.log('substr1', str);
+            let substr = str[0].slice(0, Number(str.length) - 7);
+            console.log('substr', substr);
             if (filter == 'si') {
-              this.alert(
-                'success',
-                `Se procesaron ${response.count} registros, con 0 errores `,
-                ''
-              );
+              this.alert('success', substr, '');
             }
             this.data2.load(response.result);
             this.data2.refresh();

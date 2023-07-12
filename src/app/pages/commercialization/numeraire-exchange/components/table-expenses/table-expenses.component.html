@@ -68,6 +68,7 @@
         class="form-control"
         path="spent/api/v1/expense-concept"
         value="id"
+        paramSearch="filter.id"
         formControlName="id"
         [initOption]="initOptionExpenseConcept"
         (valueChange)="selectedExpenseType($event)">
@@ -93,7 +94,7 @@
       class="btn btn-sm btn-danger active ml-2"
       (click)="closeDialogExpense()">
       Cerrar
-      <i class="fas fa-times"></i>
+      <!-- <i class="fas fa-times"></i> -->
     </button>
   </div>
 </ng-template>

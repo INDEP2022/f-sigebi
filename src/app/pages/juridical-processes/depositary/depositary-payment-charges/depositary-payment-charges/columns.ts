@@ -26,7 +26,7 @@ export const COLUMNS = {
     sort: false,
   },
   sucursal: {
-    title: 'sucursal',
+    title: 'Sucursal',
     sort: false,
   },
 };
@@ -41,7 +41,7 @@ export const COLUMNS_EXTRAS = {
     sort: false,
   },
   validSystem: {
-    title: 'Valido',
+    title: 'Válido',
     sort: false,
   },
   payId: {

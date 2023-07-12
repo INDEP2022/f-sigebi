@@ -55,7 +55,6 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     this._params.pipe(takeUntil(this.$unSubscribe), skip(1)).subscribe(next => {
       this.getGoods(next);
     });
-    this.socketService.test().subscribe();
   }
 
   async searchGoods(params: any) {
