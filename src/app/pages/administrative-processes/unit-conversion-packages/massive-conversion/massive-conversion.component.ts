@@ -32,7 +32,10 @@ import {
 import { IPerUser } from 'src/app/core/models/expedient/expedient.model';
 import { IPackageGoodEnc } from 'src/app/core/models/ms-package-good/package-good-enc';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
+import { LabelOkeyService } from 'src/app/core/services/catalogs/label-okey.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dynamic-catalogs.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -157,6 +160,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   //Variables de folio de escaneo
   scanFolioString: string = 'scanFolio';
   contador = 0;
+  //Descripciones
+  descGoodClass: string;
+  descLabel: string;
+  descWarehouse: string;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -178,7 +186,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     private userService: UsersService,
     private packageGoodService: PackageGoodService,
     private delegationService: DelegationService,
-    private unitConversionDataService: UnitConversionPackagesDataService
+    private unitConversionDataService: UnitConversionPackagesDataService,
+    //Para las descripciones
+    private goodSssubtypeService: GoodSssubtypeService,
+    private tagService: LabelOkeyService,
+    private warehouseService: WarehouseService
   ) {
     super();
 
@@ -201,13 +213,17 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.fillDataByPackage();
     this.getDataUser();
     this.getEmail();
-    this.initByLocalStorage()
+    this.initByLocalStorage();
+    //Descripciones
+    this.getGoodClassDescriptions();
+    this.getWarehouseDescription();
+    this.getTagDescription();
   }
 
-  initByLocalStorage(){
+  initByLocalStorage() {
     if (localStorage.getItem('noPackage')) {
       this.loading = true;
-      this.researchNoPackage(localStorage.getItem('noPackage'))
+      this.researchNoPackage(localStorage.getItem('noPackage'));
       localStorage.removeItem('noPackage');
     }
     // this.packageType.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
@@ -387,8 +403,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     return this.unitConversionDataService.dataPrevisualization;
   }
 
-  get scanFolio(){
-    return this.form.get('scanFolio')
+  get scanFolio() {
+    return this.form.get('scanFolio');
   }
 
   set dataPrevisualization(value) {
@@ -490,6 +506,60 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     );
   }
 
+  //Descripciones
+  getTagDescription() {
+    this.targetTag.valueChanges.subscribe(res => {
+      if (this.targetTag.value != null) {
+        this.tagService.getById(this.targetTag.value).subscribe(
+          res => {
+            console.log(res);
+            this.descLabel = res.description
+          },
+          err => {
+            this.descLabel = null;
+          }
+        );
+      }
+    });
+  }
+
+  getWarehouseDescription() {
+    this.warehouse.valueChanges.subscribe(res => {
+      if (this.warehouse.value != null) {
+        let params = {text: `filter.idWarehouse=${this.warehouse.value}`}
+        this.warehouseService.getAll(params.text).subscribe(
+          res => {
+            console.log(res);
+            this.descWarehouse = res['data'][0].description
+          },
+          err => {
+            this.descLabel = null;
+          }
+        );
+      }
+    });
+  }
+
+  getGoodClassDescriptions() {
+    this.goodClassification.valueChanges.subscribe(res => {
+      if (this.goodClassification.value != null) {
+        const paramsF = new FilterParams();
+        paramsF.addFilter('numClasifGoods', this.goodClassification.value);
+        this.goodSssubtypeService
+          .getAllSssubtype(paramsF.getParams())
+          .subscribe(
+            res => {
+              console.log(res);
+              this.descGoodClass = res['data'][0].description
+            },
+            err => {
+              this.descGoodClass = null;
+            }
+          );
+      }
+    });
+  }
+
   //Llenar valores por el no. paquete
   fillDataByPackage() {
     this.noPackage.valueChanges.subscribe((res: IPackageGoodEnc) => {
@@ -502,7 +572,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.packageType.setValue(res.typePackage);
         this.amountKg.setValue(res.amount);
         this.status.setValue(res.statuspack.toString().toLocaleUpperCase());
-        this.scanFolio.setValue(res.InvoiceUniversal)
+        this.scanFolio.setValue(res.InvoiceUniversal);
         //Seteo de la segunda parte
         this.fecElab.setValue(res.dateElaboration);
         this.userElab.setValue(res.useElaboration);
@@ -1530,8 +1600,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   downloadReport() {
+    this.loading = true
     let params: any = {};
-    params['NO_PAQUETE'] = this.form.get('package').value;
+    params['NO_PAQUETE'] = this.form.get('noPackage').value.numberPackage;
 
     this.loadingText = 'Generando reporte ...';
     this.siabService.fetchReport('RGENACTACONVUNIDAD', params).subscribe({
@@ -1677,7 +1748,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
                   'numberDelegation2',
                   this.dataUser.delegation
                 );
-                console.log(paramsF3.getParams())
+                console.log(paramsF3.getParams());
                 this.rNomenclaService
                   .getRNomencla(paramsF3.getParams())
                   .subscribe(
@@ -1730,29 +1801,27 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     );
   }
 
-  researchNoPackage(noPack: string){
+  researchNoPackage(noPack: string) {
     const paramsF = new FilterParams();
-        paramsF.addFilter('numberPackage', noPack);
-        this.unitConversionDataService.selectedPackage = noPack;
-        this.packageGoodService
-          .getPaqDestinationEnc(paramsF.getParams())
-          .subscribe(
-            res => {
-              console.log(res);
-              if (res && res.data && res.data.length > 0) {
-                this.noPackage.setValue(res.data[0]);
-                this.loading = false
-              } else {
-                // this.dataPackageEnc = null;
-              }
-            },
-            err => {
-              console.log(err);
-              this.dataPackage = new DefaultSelect([]);
-              this.alert('error', 'ERROR', 'Paquete no encontrado');
-              this.loading = false
-            }
-          );
+    paramsF.addFilter('numberPackage', noPack);
+    this.unitConversionDataService.selectedPackage = noPack;
+    this.packageGoodService.getPaqDestinationEnc(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        if (res && res.data && res.data.length > 0) {
+          this.noPackage.setValue(res.data[0]);
+          this.loading = false;
+        } else {
+          // this.dataPackageEnc = null;
+        }
+      },
+      err => {
+        console.log(err);
+        this.dataPackage = new DefaultSelect([]);
+        this.alert('error', 'ERROR', 'Paquete no encontrado');
+        this.loading = false;
+      }
+    );
   }
 
   generate() {
@@ -1805,7 +1874,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       res => {
         console.log(res);
         console.log(res.numberPackage);
-        this.researchNoPackage(res.numberPackage)
+        this.researchNoPackage(res.numberPackage);
         this.alert('success', 'Se creo nuevo paquete', '');
       },
       err => {
@@ -1879,6 +1948,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   //Boton de Cancelar
   cancelPackFunction() {
+    console.log(this.noPackage.value.numberPackage);
     if (
       this.noPackage.value.numberPackage != null &&
       !['L', 'C', 'X'].includes(this.status.value)
@@ -1889,9 +1959,20 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         ''
       ).then(q => {
         if (q.isConfirmed) {
-          if (this.dataArrive.length > 0) {
-            this.alert('success', 'Funciona', '');
-          }
+          const model = {
+            noPackage: this.noPackage.value.numberPackage,
+          };
+
+          this.goodProcessService
+            .firstIfCancelMassiveConversion(model)
+            .subscribe(
+              res => {
+                console.log(res);
+              },
+              err => {
+                console.log(err);
+              }
+            );
         }
       });
     } else if (this.status.value == 'C') {
@@ -1905,5 +1986,85 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         }
       });
     }
+  }
+
+  //Insertar párrafos
+  insertParagraph() {
+    if (
+      this.noPackage.value.numberPackage != null &&
+      !['L', 'X'].includes(this.noPackage.value.statuspack.toString())
+    ) {
+      if (this.form.get('paragraph1').value != null) {
+        this.alertQuestion(
+          'question',
+          '¿El proceso reinicializa los párrafos, se continua?',
+          '',
+          'Continuar'
+        ).then(q => {
+          if (q.isConfirmed) {
+            this.insertParagraphFn();
+          }
+        });
+      } else {
+        this.insertParagraphFn();
+      }
+    }else{
+      this.alert('warning','No hay registrado un número de paquete o el estatus no es el correcto','')
+    }
+  }
+
+  insertParagraphFn() {
+    let V_DESC_TIP: string;
+
+    switch (this.noPackage.value.typePackage.toString()) {
+      case '1':
+        V_DESC_TIP = 'Destrucción';
+        break;
+      case '1':
+        V_DESC_TIP = 'Donación';
+        break;
+      case '1':
+        V_DESC_TIP = 'Chatarra';
+        break;
+      default:
+        V_DESC_TIP = 'Indeterminado';
+        break;
+    }
+
+    const p1 = `- - - En la Ciudad de ______________, siendo las _____ horas, del día ____de ________ de 200__, se encuentran presentes en la Bodega ubicada en la calle de ________________________ de esta Ciudad, el C. _____________________ con cargo de ___________________, de la empresa ______________ y el C. ________________ adscrito a _______________ del Servicio de Administración y Enajenación de Bienes (SAE), Organismo Descentralizado de la Administración Pública Federal; ambos con el fin de llevar a cabo la validación y conversión de los bienes transferidos al SAE.- - - - - - - - - - - - - - - - - - - - - - - - - - - - \n
+    - - -Intervienen como testigos de asistencia los CC. _______________________, y ___________________________, - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n
+    -------------------------------------------------- A N T E C E D E N T E S ------------------------------------------\n
+    
+    - - - l. Los bienes fueron transferidos al SAE por [_____________________________], con fundamento en los artículos 3 de la LFAEBSP, 12 y 13 del Reglamento de la ley en comento. - - \n
+    - - - II.- Los bienes sujetos ha validación y conversión de unidad, se encuentran en administración del SAE y bajo la custodia de _____________________ los cuales se incorporan a este procedimiento a efecto de facilitar la ejecución de su destino.- - - - - - - - - - - - '\n
+    ----------------------------------------------------- DECLARACIONES ---------------------------------------------'\n
+    - - - PRIMERA.- El C. _________________ manifiesta que los bienes que fueron transferidos al SAE se encuentran bajo su custodia y con el fin de dar cumplimento al destino final sugerido por la Entidad Transferente se sujetaran a un procedimiento de validación y conversión en virtud de que fueron puestos a disposición con un tipo de unidad diferente al de kilogramos.- - - \n
+    - - - SEGUNDA.- Que para realizar el proceso de validación y conversión se verifican las cantidades físicas, contra las cantidades señaladas en los documentos y registros oficiales para posteriormente determinar el valor de conversión a kilogramos. - - - - - - - - - - - - - - - - - - - - - - -'\n
+    - - - TERCERA.- La conversión integra un paquete de bienes, que puede estar conformado por uno o varios registros y que son consistentes en las siguientes características: a) Autoridad ${this.noPackage.value.numbertrainemiaut}, b) Clasificador del bien ${this.descGoodClass}, c) Estatus del bien ${this.noPackage.value.status}, d) Etiqueta de destino ${this.descLabel}, e) La custodia se encuentra a cargo del almacén ${this.descWarehouse}, y f) La administración de los bienes esta a cargo de la Coordinación (s) Regional (es)_________________________________.- - - - - - - - - - - - - `;
+
+    const p2 = `- - - CUARTA.- Una vez validada la existencia física de los bienes descritos en la declaratoria anterior, se determinó que su valor de conversión a kilogramos corresponde a: `;
+    const p3 = `- - - QUINTA.- El valor de conversión a kilogramos determinado en la Cláusula Cuarta es una referencia para ejecutar el destino de ${V_DESC_TIP} de los bienes  que conforman en paquete, por lo que cada registro conserva la referencia de cantidad y unidad recibidas del transferente - - - - - - - - - - -  -- - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - -'\n
+    '- - - - - - - - - - - - - - - - - - - - - - - - - - -  CIERRE DEL ACTA -------------------------------------------------'\n
+    'Se da por concluida la presente acta, siendo las ____ horas del día ____ de __________ de 200__, firmando  al margen y al calce por las personas que en ella intervienen, para todos los efectos a que haya lugar. - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'\n\n\n\n
+    \t\t\t'CUSTODIA, VALIDA Y EJECUTA CONVERSIÓN'\t\t\t'POR EL S.A.E.'\n\n\n\n\n\n
+    \t\t\t'C. _____________________'\t\t\t\t\t'C. _____________________'\n\n\n
+    'Ultima página del Acta Administrativa de Validación y Conversión de Bienes con Clave ${this.noPackage.value.cvePackage}' de fecha ___ de  _________ de 2008, constante de ____ fojas. - - - - - - - - - - - - `;
+
+    //Insertar en el parrafo
+    this.paragraph1.setValue(p1);
+    this.paragraph2.setValue(p2);
+    this.paragraph3.setValue(p3);
+
+    //Actualizar paq_dest_enc
+    const modelUpdate: Partial<IPackage> = {
+      paragraph1: this.paragraph1.value,
+      paragraph2: this.paragraph2.value,
+      paragraph3: this.paragraph3.value,
+    };
+
+    this.packageGoodService.updatePaqDestinationEnc(
+      this.noPackage.value.numberPackage,
+      modelUpdate
+    );
   }
 }

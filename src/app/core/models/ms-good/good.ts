@@ -868,3 +868,13 @@ export interface IServiceGood {
   good?: IGood;
   serviceCat?: IServiceCat;
 }
+
+export interface ISecondIfMC {
+  noPackage: number;
+  noGood: number;
+  encStatus: string;
+  lv_proc_ext_dom: string;
+  noGoodFather: number;
+  vcScreen: string;
+  lv_Accion: string;
+}
