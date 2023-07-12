@@ -45,7 +45,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   createReport: boolean = false;
   rejectReq: boolean = false;
 
-  requestId: number = NaN;
+  requestId: number = 0;
   contributor: string = '';
   title: string;
   requestInfo: any;
@@ -82,7 +82,6 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
       /**
        *MAP TASKS
        * */
-      this.mapTasks(process);
     }
     //});
 
@@ -97,7 +96,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
 
   getRequestInfo(requestId: number) {
     // Llamar servicio para obtener informacion de la solicitud
-
+    const process = this.route.snapshot.paramMap.get('process');
     const param = new FilterParams();
     param.addFilter('id', requestId);
     const filter = param.getParams();
@@ -106,6 +105,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.requestInfo = resp.data[0];
         this.titleView();
         this.requestId = resp.data[0].id;
+        this.mapTasks(process, resp.data[0].affair);
       },
     });
     this.contributor = 'CARLOS G. PALMA';
@@ -114,6 +114,9 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   titleView() {
     if (this.requestInfo?.affair == 13) {
       this.title = `DOCUMENTACIÓN COMPLEMENTARIA: Registro de Documentación Complementaria, No. Solicitud ${this.requestInfo.id}`;
+      this.complementaryDoc = true;
+    } else if (this.requestInfo?.affair == 10) {
+      this.title = `Devolución: Registro de documentación complementaria, No. Solicitud ${this.requestInfo.id}`;
       this.complementaryDoc = true;
     }
   }
@@ -195,7 +198,9 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
     });
   }
 
-  mapTasks(process: string): void {
+  mapTasks(process: string, affair: number): void {
+    console.log('process', process);
+    console.log('affair', affair);
     //REGISTRAR SOLICITUD
     /*regRequest
     associateReqSimGoods
@@ -226,20 +231,26 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
 
     switch (process) {
       case 'register-request':
-        this.regDocForm = true;
-        this.regDocView = false;
-        this.searchRequestSimGoods = true;
-        this.selectGoods = false;
-        this.viewSelectedGoods = false;
-        this.guidelines = false;
-        this.docRequest = false;
-        this.expRequest = true;
-        this.saveRequest = true;
-        this.dictumValidate = false;
+        if (affair == 13) {
+          this.regDocForm = true;
+          this.regDocView = false;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = false;
+          this.viewSelectedGoods = false;
+          this.guidelines = false;
+          this.docRequest = false;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.dictumValidate = false;
 
-        this.turnReq = true;
-        this.createReport = false;
-        this.rejectReq = false;
+          this.turnReq = true;
+          this.createReport = false;
+          this.rejectReq = false;
+        } else if (affair == 10) {
+          this.regDocForm = true;
+          this.selectGoods = true;
+          this.expRequest = true;
+        }
 
         break;
       case 'guidelines-review':
