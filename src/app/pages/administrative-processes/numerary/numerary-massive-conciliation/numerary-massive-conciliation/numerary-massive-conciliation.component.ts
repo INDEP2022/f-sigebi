@@ -94,7 +94,7 @@ export class NumeraryMassiveConciliationComponent
   ngOnInit(): void {
     this.prepareForm();
     this.prepareForm2();
-    this.searchBanks();
+    this.searchBanks(new ListParams());
     this.searchDataAccount();
     this.data
       .onChanged()
@@ -170,8 +170,7 @@ export class NumeraryMassiveConciliationComponent
   }
 
   // Trae la lista de bancos por defecto
-  searchBanks() {
-    console.log('Hola');
+  searchBanks(params: ListParams) {
     this.recordAccountStatementsService
       .getAll(this.params.getValue())
       .subscribe({
@@ -311,7 +310,7 @@ export class NumeraryMassiveConciliationComponent
   cleandInfoAll() {
     this.form.reset();
     this.totalItems = 0;
-    this.searchBanks();
+    this.searchBanks(new ListParams());
   }
 
   cleandInfoDate() {
