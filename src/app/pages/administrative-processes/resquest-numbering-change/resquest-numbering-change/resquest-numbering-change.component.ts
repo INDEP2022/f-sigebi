@@ -53,7 +53,19 @@ export interface ExampleData1 {
 @Component({
   selector: 'app-resquest-numbering-change',
   templateUrl: './resquest-numbering-change.component.html',
-  styles: [],
+  styles: [
+    `
+      .row-verde {
+        background-color: green;
+        font-weight: bold;
+      }
+
+      .row-negro {
+        background-color: black;
+        font-weight: bold;
+      }
+    `,
+  ],
 })
 export class ResquestNumberingChangeComponent
   extends BasePage
@@ -65,6 +77,9 @@ export class ResquestNumberingChangeComponent
   columnFilters: any = [];
   people$: Observable<any[]>;
   selectedPeople: any = [];
+
+  esta: string;
+  es: string;
 
   //params = new BehaviorSubject<ListParams>(new ListParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -84,6 +99,7 @@ export class ResquestNumberingChangeComponent
   dataGood: any = [];
   validate: boolean = false;
   selectedCars = [3];
+  rowClass: string = 'verde';
 
   params4 = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
@@ -229,11 +245,29 @@ export class ResquestNumberingChangeComponent
     private securityService: SecurityService
   ) {
     super();
+    this.esta = '';
+    this.es = '';
     this.settings = {
       ...this.settings,
-      rowClassFunction: (row: { data: { id: any } }) =>
-        //this.validationScreen(row.data.id),
-        row.data.id ? 'bg-dark text-white' : 'bg-success text-white',
+      rowClassFunction: (row: any) => {
+        if (row.data.di_disponible == 'S') {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+
+        // if (row.data.status === 'CNE') {
+        //   return 'bg-success text-white';
+        // } else if (
+        //   row.data.status === 'RRE' ||
+        //   row.data.status === 'VXR' ||
+        //   row.data.status === 'DON'
+        // ) {
+        //   return 'bg-dark text-white';
+        // } else {
+        //   return 'bg-success text-white';
+        // }
+      },
 
       actions: {
         columnTitle: 'Visualizar',
@@ -346,7 +380,7 @@ export class ResquestNumberingChangeComponent
    * @since: 27/09/2022
    */
 
-  validationScreen(id: any) {
+  /*validationScreen(id: any) {
     //row.data.id ? 'bg-dark text-white' : 'bg-success text-white'
     this.loading = true;
     const payload = {
@@ -362,6 +396,40 @@ export class ResquestNumberingChangeComponent
       },
     });
     this.loading = false;
+  }*/
+
+  async validationScreen(id: any): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.goodprocessService.getScreenGood2(id).subscribe({
+        next: async (response: any) => {
+          if (response.data) {
+            console.log('di_dispo', response);
+            resolve('S');
+          } else {
+            console.log('di_dispo', response);
+            resolve('N');
+          }
+        },
+        error: () => {
+          resolve('N');
+        },
+      });
+    });
+  }
+
+  onLegalStatusChange() {
+    const legalStatus = this.form.get('legalStatus').value;
+
+    if (legalStatus === 'AS') {
+      this.esta = 'ADM';
+      this.es = `ESTATUS = ${this.esta}`;
+    } else if (legalStatus === 'DE') {
+      this.esta = 'DEA,AXC';
+      this.es = `ESTATUS IN (${this.esta})`;
+    } else if (legalStatus === 'AB') {
+      this.esta = 'CND,CNA';
+      this.es = `ESTATUS IN (${this.esta})`;
+    }
   }
 
   showReceipt(event: any) {
@@ -554,18 +622,55 @@ export class ResquestNumberingChangeComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    //params['filter.goodClassNumber'] = `$eq:${this.form.get('type').value}`;
+
+    if (this.form.get('type').value !== null)
+      params['filter.goodClassNumber'] = `$eq:${this.form.get('type').value}`;
     console.log(params);
-    //params['filter.status'] = `$in:${this.form.get('legalStatus').value}`;
-    //params['filter.storeNumber'] = `$eq:${this.form.get('warehouse').value}`;
-    //params['filter.vaultNumber'] = `$eq:${this.form.get('vault').value}`;
-    params['filter.delegationNumber'] = `$eq:${
-      this.form.get('delegation').value
-    }`;
+    const legalStatus = this.form.get('legalStatus').value;
+
+    let estados: string[] = [];
+
+    if (legalStatus === 'AS') {
+      estados = ['ADM'];
+    } else if (legalStatus === 'DE') {
+      estados = ['DEA', 'AXC'];
+    } else if (legalStatus === 'AB') {
+      estados = ['CND', 'CNA'];
+    }
+    if (this.form.get('warehouse').value !== null)
+      params['filter.storeNumber'] = `$eq:${this.form.get('warehouse').value}`;
+
+    if (this.form.get('vault').value !== null)
+      params['filter.vaultNumber'] = `$eq:${this.form.get('vault').value}`;
+
+    if (this.form.get('delegation').value !== null)
+      params['filter.delegationNumber'] = `$eq:${
+        this.form.get('delegation').value
+      }`;
+
+    if (estados.length > 0) {
+      params['filter.status'] = `$in:${estados.join(',')}`;
+    } else {
+      params['filter.status'] = '';
+    }
     if (this.form.get('type').value != null)
       this.goodServices.getByExpedientAndParams__(params).subscribe({
         next: async (response: any) => {
-          console.log(response);
+          let result = response.data.map(async (item: any) => {
+            let obj = {
+              vcScreen: 'FACTADBSOLCAMNUME',
+              goodNumber: item.id,
+            };
+            const di_dispo = await this.validationScreen(obj);
+            item['di_disponible'] = di_dispo;
+
+            // const acta = await this.getActaGood(item);
+            //console.log('acta', acta);
+            //item['acta'] = acta;
+            //item.di_disponible = acta != null ? 'N' : di_dispo;
+          });
+
+          console.log('asaddasdasdasd', response.data);
           this.dataGood = response.data;
           this.totalItems = response.count;
           this.data.load(response.data);
@@ -680,14 +785,17 @@ export class ResquestNumberingChangeComponent
         motivo = 'BIEN ABANDONADO';
       }
       if (
-        this.selectGood[0].id == '316' ||
-        this.selectGood[0].id == '317' ||
-        this.selectGood[0].id == '1025' ||
-        this.selectGood[0].id == '1038'
+        this.selectGood[0].goodClassNumber == '316' ||
+        this.selectGood[0].goodClassNumber == '317' ||
+        this.selectGood[0].goodClassNumber == '1025' ||
+        this.selectGood[0].goodClassNumber == '1038'
       ) {
         motivo = 'ASEGURADO PERECEDERO';
       }
-      if (this.selectGood[0].id == '319' || this.selectGood[0].id == '1078') {
+      if (
+        this.selectGood[0].goodClassNumber == '319' ||
+        this.selectGood[0].goodClassNumber == '1078'
+      ) {
         motivo = 'ASEGURADO SEMOVIENTE';
       }
       const payload = {
@@ -743,21 +851,21 @@ export class ResquestNumberingChangeComponent
           motivo = 'BIEN ABANDONADO';
         }
         if (
-          this.dataGood[index].id == '316' ||
-          this.dataGood[index].id == '317' ||
-          this.dataGood[index].id == '1025' ||
-          this.dataGood[index].id == '1038'
+          this.dataGood[index].goodClassNumber == '316' ||
+          this.dataGood[index].goodClassNumber == '317' ||
+          this.dataGood[index].goodClassNumber == '1025' ||
+          this.dataGood[index].goodClassNumber == '1038'
         ) {
           motivo = 'ASEGURADO PERECEDERO';
         }
         if (
-          this.dataGood[index].id == '319' ||
-          this.dataGood[index].id == '1078'
+          this.dataGood[index].goodClassNumber == '319' ||
+          this.dataGood[index].goodClassNumber == '1078'
         ) {
           motivo = 'ASEGURADO SEMOVIENTE';
         }
         const payload = {
-          goodNumber: this.dataGood[index].id,
+          goodNumber: this.dataGood[index].goodClassNumber,
           applicationChangeCashNumber: this.idSolicitud,
           ProceedingsNumber: this.dataGood[index].fileNumber,
           situationlegal: situacionJuridica,
@@ -881,31 +989,33 @@ export class ResquestNumberingChangeComponent
       message = 'La Fecha de Autorización no debe estar vacía';
       this.handleSuccess(message);
     }
-    if (valor == 0) {
-      if (this.dataGood[0].appraisedValue == null) {
-        console.log('ENTRO AQUI');
-        message =
-          'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
-        this.handleSuccess(message);
-      }
-    }
 
-    /*if (valor == 0) {
-      if (this.dataGood[0].expedienteid == null) {
-        message = 'El bien NO tiene Número de Expediente';
-        this.handleSuccess(message);
-      }
-    }
+    for (let index = 0; index < this.dataGood.length; index++) {
+      if (valor == 0) {
+        if (this.dataGood[index].appraisedValue == null) {
+          console.log('ENTRO AQUI');
+          message =
+            'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
+          this.handleSuccess(message);
+        }
 
-    if (valor == 0) {
-      if (this.dataGood[0].expedientepreliminaryInquiry == null) {
-        message = 'El bien NO tiene averiguación previa';
-        this.handleSuccess(message);
-      }
-    }*/
+        console.log(this.dataGood[index].expediente);
+        if (this.dataGood[index].expediente.id == null) {
+          console.log(this.dataGood[index].expediente.id);
+          message = 'El bien NO tiene Número de Expediente';
+          this.handleSuccess(message);
+        }
 
-    if (valor == 1) {
-      for (let index = 0; index < this.dataGood.length; index++) {
+        if (
+          this.dataGood[index].expediente.preliminaryInquiry &&
+          this.dataGood[index].expediente.preliminaryInquiry === ''
+        ) {
+          message = 'El bien NO tiene averiguación previa';
+          this.handleSuccess(message);
+        }
+      }
+
+      if (valor == 1) {
         if (this.dataGood[index].appraisedValue == null) {
           message =
             'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
@@ -1099,7 +1209,7 @@ export class ResquestNumberingChangeComponent
 
   private buildForm() {
     this.form = this.fb.group({
-      legalStatus: [null],
+      legalStatus: [null, Validators.required],
       delegation: [null],
       warehouse: [null],
       vault: [null],

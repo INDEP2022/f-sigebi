@@ -14,11 +14,33 @@
               [searchable]="false"
               class="form-control"
               [clearable]="false">
-              <ng-option value="ADM">ASEGURADO</ng-option>
-              <ng-option value="DEA">DECOMISADO</ng-option>
-              <ng-option value="CND">ABANDONADO</ng-option>
+              <ng-option value="AS">ASEGURADO</ng-option>
+              <ng-option value="DE">DECOMISADO</ng-option>
+              <ng-option value="AB">ABANDONADO</ng-option>
             </ng-select>
           </form-field>
+          <ng-container *ngIf="form.get('legalStatus').value">
+            <ng-container *ngIf="form.get('legalStatus').value === 'AS'">
+              <ng-container *ngIf="true">
+                {{ esta }}
+                {{ es }}
+              </ng-container>
+            </ng-container>
+
+            <ng-container *ngIf="form.get('legalStatus').value === 'DE'">
+              <ng-container *ngIf="true">
+                {{ esta }}
+                {{ es }}
+              </ng-container>
+            </ng-container>
+
+            <ng-container *ngIf="form.get('legalStatus').value === 'AB'">
+              <ng-container *ngIf="true">
+                {{ esta }}
+                {{ es }}
+              </ng-container>
+            </ng-container>
+          </ng-container>
         </div>
         <div class="col-md-9 col-sm-12 col-xs-12">
           <form-field [control]="form.get('type')">

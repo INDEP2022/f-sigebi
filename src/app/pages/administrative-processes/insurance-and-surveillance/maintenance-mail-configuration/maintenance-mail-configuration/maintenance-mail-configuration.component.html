@@ -61,17 +61,16 @@
         </div>
         <div class="col-md-9">
           <form-field [control]="formCorreo.get('subjectEmail')" label="Asunto">
-            <textarea
-              class="form-control"
-              formControlName="subjectEmail"></textarea>
+            <textarea class="form-control" formControlName="subjectEmail">
+            </textarea>
           </form-field>
         </div>
       </div>
       <div class="row mt-4">
-        <div class="col-md-12">
+        <div class="col-md-12 mt-3">
           <form-field
             [control]="formCorreo.get('bodyEmail')"
-            label="Cuerpo del correo">
+            label="Cuerpo del Correo">
             <textarea
               class="form-control"
               formControlName="bodyEmail"></textarea>
