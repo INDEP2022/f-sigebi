@@ -279,16 +279,21 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
 
   /* returnar la solicitud */
   async ReturnRequest() {
+    debugger;
     const actualUser: any = this.authService.decodeToken();
     this.loader.load = true;
-    this.data.observations =
+    console.log(this.user);
+    console.log(this.data);
+    const body: any = {};
+    body.id = this.data.id;
+    body.observations =
       'Solicitud Returnada por la Delegacion Regional ' +
       this.user.delegationreg;
-    this.data.targetUserType = 'DR';
-    this.data.requestStatus = 'Captura';
-    this.data.targetUser = this.user.id;
+    body.targetUserType = 'DR';
+    body.requestStatus = 'Captura';
+    body.targetUser = this.user.id;
 
-    const requestResult = await this.saveRequest(this.data);
+    const requestResult = await this.saveRequest(body);
     if (requestResult === true) {
       this.loader.load = false;
 

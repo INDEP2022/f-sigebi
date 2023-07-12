@@ -452,8 +452,8 @@ export class AssociateFileComponent extends BasePage implements OnInit {
           }
           this.onLoadToast(
             'error',
-            'Ocurrio un error al cargar los datos',
-            e.error?.message
+            'Ocurrió un error al cargar los datos',
+            'Inténtelo más tarde'
           );
           throw e;
         })

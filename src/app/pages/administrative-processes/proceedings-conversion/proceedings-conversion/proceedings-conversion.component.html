@@ -93,7 +93,7 @@
                                   <div class="col-md-3">
                                     <div>
                                       <label for="">Hora de creación: </label>
-                                      {{ time | date: 'hh:mm' }}
+                                      {{ time | date : 'hh:mm' }}
                                     </div>
                                   </div>
                                 </div>
@@ -145,14 +145,14 @@
                           Estatus Actas
                           <i class="bx bx-search bx-sm float-icon"></i>
                         </button>
-                        <button
+                        <!-- <button
                           [disabled]="!actasDefault"
                           type="button"
                           class="btn btn-primary btn-sm active mr-2"
                           (click)="savActa()">
                           Guardar
                           <i aria-hidden="true" class="fa fa-save"></i>
-                        </button>
+                        </button> -->
                       </div>
                     </div>
                     <form
@@ -504,7 +504,7 @@
                 </div> -->
                 <div class="m-3">
                   <button
-                    class="btn btn-secondary btn-sm active"
+                    class="btn btn-primary btn-sm active"
                     type="button"
                     (click)="cargueMasive()">
                     Carga Masiva
