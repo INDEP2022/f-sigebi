@@ -339,50 +339,39 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
                 this.errorsData.push({ DESCRIPCION: ERRTXT });
                 // if (this.errorsData[i].description != null) {
                 //   //CREATE_RECORD;
-                // } else {
-                //   this.errorsData[i].description = ERRTXT;
                 // }
               },
             });
         }
-        if (this.data[i].VALADM === 'S' && this.data[i].APLADM === 'N') {
-          //insert
-          let data = {
-            appointmentNum: this.data[i].NO_NOMBRAMIENTO,
-            dateRepo: this.data[i].FEC_PAGO,
-            reportKey: 2,
-            report: this.data[i].ADMINISTRA,
-          };
-          this.svJpDBldcCBulkLoadingDepositoryCargoService
-            .postDetrepoDepositary(data)
-            .subscribe({
-              next: resp => {
-                this.data[i].APLADM = 'S';
-                VCONA = VCONA + 1;
-              },
-              error: eror => {
-                //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
-                ERRTXT = `(ADMINISTRATIVO) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
-                this.data[i].VALADM = 'N';
-                this.errorsData.push({ DESCRIPCION: ERRTXT });
-                // if (this.errorsData[i].description != null) {
-                //   //CREATE_RECORD;
-                // } else {
-                //   this.errorsData[i].description = ERRTXT;
-                // }
-              },
-            });
-        }
-        VCONP = VCONP + 1;
+        //insert
+        let data = {
+          appointmentNum: this.data[i].NO_NOMBRAMIENTO,
+          dateRepo: this.data[i].FEC_PAGO,
+          reportKey: 2,
+          report: this.data[i].ADMINISTRA,
+        };
+        this.svJpDBldcCBulkLoadingDepositoryCargoService
+          .postDetrepoDepositary(data)
+          .subscribe({
+            next: resp => {
+              //error . ERROR: ${this.cleanErrorText(this.dbmsErrorText)}
+              ERRTXT = `(ADMINISTRATIVO) Registro: ${i}. Bien: ${this.no_bien}, Fecha Pago: ${this.data[i].FEC_PAGO}, Clave Pago: ${this.data[i].CVE_CONCEPTO_PAGO}`;
+              this.data[i].VALADM = 'N';
+              this.errorsData.push({ DESCRIPCION: ERRTXT });
+              // if (this.errorsData[i].description != null) {
+              //   //CREATE_RECORD;
+              // }
+            },
+          });
       }
-      this.regRead = VCONP;
-      this.regProcessed = VCONC + VCONE;
-      this.regCorrect = VCONC;
-      this.regWrong = VCONE;
-      this.regCorjur = VCONJ;
-      this.regCoradm = VCONA;
-      this.disableApplyRecords = false;
     }
+    this.regRead = VCONP;
+    this.regProcessed = VCONC + VCONE;
+    this.regCorrect = VCONC;
+    this.regWrong = VCONE;
+    this.regCorjur = VCONJ;
+    this.regCoradm = VCONA;
+    this.disableApplyRecords = false;
   }
   validRecords() {
     this.V_BAN = false;
