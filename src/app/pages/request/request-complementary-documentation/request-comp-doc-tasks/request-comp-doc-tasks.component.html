@@ -1,28 +1,50 @@
 <app-card [header]="true">
   <div class="ch-content justify-content-between" header>
     <div class="">
-      <h5 class="title">
+      <h5
+        class="title"
+        *ngIf="
+          this.requestInfo?.affair == 13 || this.requestInfo?.affair == 10
+        ">
+        {{ title }}
+      </h5>
+      <h5
+        class="title"
+        *ngIf="
+          this.requestInfo?.affair != 13 && this.requestInfo?.affair != 10
+        ">
         {{ title }}
         {{ requestId }}&#44; Contribuyente&#58; {{ contributor }}
       </h5>
     </div>
     <div class="">
       <div class="d-flex flex-row-reverse mt-2" *ngIf="screenWidth >= 1200">
-        <div class="mx-1" *ngIf="turnReq">
+        <div class="mx-1" *ngIf="turnReq && !complementaryDoc">
           <button
             type="button"
             class="btn btn-primary btn-sm active"
             (click)="turnRequest()"
             [disabled]="">
-            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Turnar
+            Turnar <i aria-hidden="true" class="fa fa-share-square"></i>
           </button>
         </div>
+
+        <div class="mx-1" *ngIf="complementaryDoc">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="endRequest()"
+            [disabled]="">
+            Finalizar <i aria-hidden="true" class="fa fa-check"></i>
+          </button>
+        </div>
+
         <div class="mx-1">
           <button
             type="button"
             class="btn btn-primary btn-sm active"
             [disabled]="">
-            <i class="bx bx-save mr-1 float-icon"></i> Guardar
+            Guardar <i class="fa fa-save mr-1 float-icon"></i>
           </button>
         </div>
         <div class="mx-1" *ngIf="rejectReq">
@@ -79,10 +101,10 @@
             <li role="menuitem">
               <a
                 class="dropdown-item bg-primary text-light"
-                (click)="turnRequest()"
-                ><i class="bx bxs-right-arrow-square mr-1 float-icon"></i>
+                (click)="turnRequest()">
                 Turnar</a
               >
+              <i aria-hidden="true" class="fa fa-share-square"></i>
             </li>
           </ul>
         </div>
@@ -118,7 +140,7 @@
           *ngIf="selectGoods"
           heading="Seleccionar Bienes"
           id="selectGoodsTab">
-          <app-select-goods></app-select-goods>
+          <app-select-goods [idRequest]="requestId"></app-select-goods>
         </tab>
         <tab
           *ngIf="viewSelectedGoods"

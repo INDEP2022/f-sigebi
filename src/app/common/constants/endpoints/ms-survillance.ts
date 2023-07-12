@@ -21,4 +21,5 @@ export enum SurvillanceEndpoints {
   GetContract = 'application/getContract',
   VigilancePerGood = 'vigilance-per-good',
   PolVigilancePerGood = 'pol-vig-per-good',
+  GetTransNumerario = 'application/get-trans-numerario-reg',
 }

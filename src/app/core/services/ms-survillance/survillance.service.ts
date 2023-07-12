@@ -152,4 +152,9 @@ export class SurvillanceService extends HttpService {
   updatePolVigPerGood(model: IPolVigilancePerGood) {
     return this.put<IListResponse<any>>(this.route.PolVigilancePerGood, model);
   }
+
+  getTransNumerarioReg(id: string) {
+    let query = '?id_solnum=' + id;
+    return this.get<IListResponse<any>>(this.route.GetTransNumerario, query);
+  }
 }

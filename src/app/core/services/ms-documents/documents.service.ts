@@ -219,17 +219,19 @@ export class DocumentsService extends HttpService {
   }
 
   //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents-types --> Arroja el listado de Tipos de documento, toma el valor y lo busca como "id"
-  getDocumentsType($params?: any): Observable<IListResponse<TypesDocuments>> {
+  getDocumentsType(
+    params?: ListParams | string
+  ): Observable<IListResponse<TypesDocuments>> {
     const route = `/${DocumentsEndpoints.DocumentsType}`;
-    return this.get(route, $params);
+    return this.get(route, params);
   }
 
   //http://sigebimsqa.indep.gob.mx/documents/api/v1/document-separator  --> description
   getDocumentsSeparator(
-    $params?: any
+    params?: ListParams | string
   ): Observable<IListResponse<SeparatorsDocuments>> {
     const route = `/${DocumentsEndpoints.DocumentsSeparator}`;
-    return this.get(route, $params);
+    return this.get(route, params);
   }
 
   otDocuments(expedient: string | number) {

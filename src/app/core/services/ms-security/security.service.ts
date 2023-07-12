@@ -10,6 +10,7 @@ import {
   IAccesTrackingXArea,
   IPupUser,
   ITrackingAcces,
+  Iuser,
   IUsersTracking,
 } from '../../models/ms-security/pup-user.model';
 
@@ -46,6 +47,10 @@ export class SecurityService extends HttpService {
       SecurityEndpoints.AccessTrackingXArea,
       params
     );
+  }
+
+  getAllUser(params?: _Params): Observable<IListResponse<Iuser>> {
+    return this.get<IListResponse<Iuser>>(SecurityEndpoints.User, params);
   }
 
   getAllFilterAssigned(params: any) {
@@ -121,5 +126,9 @@ export class SecurityService extends HttpService {
   getFaDelResponsable(id: any) {
     const route = SecurityEndpoints.FaDelResponsable;
     return this.get(`${route}?noBien=${id}`);
+  }
+
+  getIniEmail(data: Object) {
+    return this.post(SecurityEndpoints.IniEmail, data);
   }
 }

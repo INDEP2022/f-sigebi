@@ -14,7 +14,7 @@ export class DepositAccountStatementParameterComponent
   implements OnInit
 {
   form: FormGroup = new FormGroup({});
-  title: string = 'Parametros';
+  title: string = 'Parámetros';
   rateDesc: string;
   daysDesc: string;
   spentDesc: string;

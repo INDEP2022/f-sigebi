@@ -15,22 +15,18 @@ export const RECORDS_ACCOUNT_STATEMENTS_COLUMNS = {
       return row.numberGood !== null;
     },
   },
+  // dateMotion: {
+  //   title: 'Fecha de Movimiento',
+  //   sort: false,
+  //   valuePrepareFunction: (cell: any, row: any) => {
+  //     const parts = cell.split('-');
+  //     const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+  //     return formattedDate;
+  //   }
+  // },
   dateMotion: {
     title: 'Fecha de Movimiento',
     sort: false,
-    // filter: {
-    //   type: 'custom',
-    //   component: CustomDateDayFilterComponent,
-    // },
-    // valuePrepareFunction: (date: string) => formatDate(date),
-    valuePrepareFunction: (cell: any, row: any) => {
-      const date = new Date(cell);
-      const day = ('0' + date.getDate()).slice(-2); // Agregar cero inicial si el día tiene un solo dígito
-      const month = ('0' + (date.getMonth() + 1)).slice(-2); // Agregar cero inicial si el mes tiene un solo dígito
-      const year = date.getFullYear();
-      const formattedDate = `${day}/${month}/${year}`;
-      return formattedDate;
-    },
   },
   deposit: {
     title: 'Abono',
@@ -49,6 +45,8 @@ export const RECORDS_ACCOUNT_STATEMENTS_COLUMNS = {
   },
 };
 
-// function formatDate(date: string): string {
-//   return date.replace('-', '/');
-// }
+function formatDate(date: string): string {
+  return date.replace('-', '/');
+}
+//2023-04-12
+//12/04/2023

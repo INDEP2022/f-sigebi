@@ -170,6 +170,9 @@ export class GoodProcessService extends HttpService {
     return this.post('application/getExistsGoodxStatus', body);
   }
 
+  postGoodMasiveForm(body: any): Observable<IListResponse<any>> {
+    return this.post('application/get-conv-good-children', body);
+  }
   getNumeProrraCsv(idProcnum: number) {
     const route = GoodProcessPoints.GetNumeProrraCsv;
     return this.get(`${route}/${idProcnum}`);
@@ -178,5 +181,9 @@ export class GoodProcessService extends HttpService {
   getFproSolNumerarioProdnumCsv(idProcnum: number, limit: number) {
     const route = `${GoodProcessPoints.GetNumeProrraCsv}/${idProcnum}`;
     return this.get(`${route}?limit=${limit}`);
+  }
+
+  getPubPrevieData(data: Object) {
+    return this.post(GoodProcessPoints.PubPrevieData, data);
   }
 }

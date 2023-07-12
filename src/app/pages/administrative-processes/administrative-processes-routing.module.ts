@@ -206,7 +206,6 @@ const routes: Routes = [
           import('./reports/record/record.module').then(m => m.RecordModule),
         data: { screen: 'FGERADBDETAEXPEDI', title: 'Detalle de Expediente' },
       },
-
       {
         //!SIRVE
         path: 'goods-type-crime-reports',
@@ -267,17 +266,24 @@ const routes: Routes = [
           import(
             './unit-conversion-packages/unit-conversion-packages.module'
           ).then(m => m.UnitConversionPackagesModule),
-        data: { screen: '', title: '' },
-      },
+        data: {
+          screen: 'FMTOPAQUETE_0001',
+          title: 'Conversión Masiva Parcialización Inversa',
+        },
+      }, // FMTOPAQUETE_0001
       {
         path: 'goods-tracking',
         loadChildren: () =>
           import('./goods-tracking/goods-tracking.module').then(
             m => m.GoodsTrackingModule
           ),
-        data: { screen: '', title: '' },
-      },
+        data: {
+          screen: 'FMATENCBIENESREV',
+          title: 'Atención de Bienes en Estatus Rev',
+        },
+      }, //FMATENCBIENESREV
       {
+        //!SIRVIO
         path: 'goods-management',
         loadChildren: () =>
           import('./goods-management/goods-management.module').then(
@@ -362,7 +368,7 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./appraisal-request/appraisal-request.module'))
             .AppraisalRequestModule,
-        data: { screen: '', title: 'Solicitud de Avalúos' },
+        data: { screen: 'FACTADBSOLIAVALUO', title: 'Solicitud de Avalúos' }, //FACTADBSOLIAVALUO
       },
       {
         //!SIRVIO
@@ -385,8 +391,8 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./appraisal-goods/appraisal-goods.module'))
             .AppraisalGoodsModule,
-        data: { screen: '', title: 'Bienes sin Avalúos' },
-      },
+        data: { screen: 'FCONADBBIENESSAVA', title: 'Bienes sin Avalúos' },
+      }, //FCONADBBIENESSAVA
       {
         path: 'monitor-unavoidable-assets',
         loadChildren: async () =>
@@ -508,8 +514,11 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./electronic-signature/electronic-signature.module'))
             .ElectronicSignatureModule,
-        data: { screen: '', title: 'Firma Electrónica' },
-      },
+        data: {
+          screen: 'FFIRMA_ELEC',
+          title: 'Firma Electrónica Dictamen de Procedencia',
+        },
+      }, //FFIRMA_ELEC
       {
         //!SIRVIO
         path: 'proceedings-conversion',
@@ -544,7 +553,7 @@ const routes: Routes = [
           ).InformationGenerationModule,
         data: {
           screen: '',
-          title: 'Generación de informacion para reporte coord',
+          title: 'Generación de información para reporte coord',
         },
       },
       {

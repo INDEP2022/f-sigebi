@@ -99,5 +99,3 @@ export interface INumeraryTransfer {
   checkNumber: string;
   nbOrigin: string;
 }
-
-

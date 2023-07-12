@@ -22,18 +22,13 @@ export class GoodsManagementSocialTableErrorsComponent
       this.getData();
     }
   }
-  @Input() set clear(value: number) {
-    if (value > 0) {
-      this.dataNotFound();
-    }
-  }
   pageSizeOptions = [5, 10, 15, 20];
   limit: FormControl = new FormControl(5);
   lastClickTime: number = 0;
   selected: ITmpValSocialLoadSocialCabinet[];
   constructor(
     private socialCabinetService: SocialCabinetService,
-    private goodManagementeService: GoodsManagementService
+    private goodManagementService: GoodsManagementService
   ) {
     super();
     this.params.value.limit = 5;
@@ -41,6 +36,15 @@ export class GoodsManagementSocialTableErrorsComponent
     this.service = this.socialCabinetService;
     this.ilikeFilters = ['valMessage'];
     this.settings = { ...this.settings, actions: null, columns: COLUMNS };
+    this.goodManagementService.clear
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.dataNotFound();
+          }
+        },
+      });
   }
 
   rowSelect(event: { selected: ITmpValSocialLoadSocialCabinet[] }) {
@@ -61,7 +65,7 @@ export class GoodsManagementSocialTableErrorsComponent
     // this.goodManagementeService.selectedGood = selected.goodNumber;
     console.log(selected);
     if (selected && selected.length > 0) {
-      this.goodManagementeService.selectedGoodSubject.next(
+      this.goodManagementService.selectedGoodSubject.next(
         selected[0].goodNumber
       );
     }
