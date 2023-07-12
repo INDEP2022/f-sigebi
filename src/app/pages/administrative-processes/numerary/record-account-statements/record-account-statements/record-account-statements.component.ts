@@ -100,7 +100,6 @@ export class RecordAccountStatementsComponent
     this.prepareForm();
     this.searchBanks(new ListParams());
     this.searchCheck();
-
     this.dataAccount
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -114,8 +113,6 @@ export class RecordAccountStatementsComponent
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'dateMotion':
-                console.log(filter.field);
-                console.log(searchFilter);
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'deposit':
@@ -132,7 +129,6 @@ export class RecordAccountStatementsComponent
                 break;
             }
             if (filter.search !== '') {
-              console.log(`${searchFilter}:${filter.search}`);
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
