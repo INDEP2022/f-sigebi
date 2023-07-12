@@ -51,6 +51,7 @@ import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-va
 import { AppointmentsAdministrativeReportComponent } from '../appointments-administrative-report/appointments-administrative-report.component';
 import { AppointmentsJuridicalReportComponent } from '../appointments-juridical-report/appointments-juridical-report.component';
 import { AppointmentsRelationsPaysComponent } from '../appointments-relations-pays/appointments-relations-pays.component';
+import { ListDataAppointmentGoodsComponent } from '../list-data-good/list-data-good.component';
 import { ListDataAppointmentComponent } from '../list-data/list-data.component';
 import { ModalScanningFoilAppointmentTableComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
 import { PersonFormComponentAppointment } from '../person-form/person-form-appointment.component';
@@ -512,14 +513,16 @@ export class AppointmentsComponent
     }
     if (this.depositaryAppointment) {
       if (this.depositaryAppointment.numberAppointment == null) {
-        this.getGoodByExpedientAndDiferentGood();
+        // this.getGoodByExpedientAndDiferentGood();
+        this.openModalGoods();
       } else {
         // AGREGAR MS FALTANTE QUE ESTA EN REVISION
         console.log('NO ESTA LISTO');
         this.alert('warning', 'No se Encontró Bien Disponible', '');
       }
     } else {
-      this.getGoodByExpedientAndDiferentGood();
+      this.openModalGoods();
+      // this.getGoodByExpedientAndDiferentGood();
       // if (this.good) {
       //   console.log('TRAER INFO DE BIENES');
       //   // this.getFromGoodsAndExpedients(false, true);
@@ -532,6 +535,38 @@ export class AppointmentsComponent
       //   );
       // }
     }
+  }
+
+  openModalGoods() {
+    this.filterParams.getValue().addFilter('numberGood', this.noBien);
+
+    const params: ListParams = {
+      page: 1,
+      limit: 10,
+    };
+    params['filter.numberGood'] = this.noBien;
+
+    let config: ModalOptions = {
+      initialState: {
+        noBien: this.noBien,
+        expedient: this.form.get('noExpedient').value,
+        callback: (next: boolean, data: IGood) => {
+          console.log(next, data);
+
+          if (next) {
+            //mostrar datos de la búsqueda
+            this.good = data;
+            console.log(this.good);
+            // this.setGoodData();
+            this.form.get('noBien').setValue(this.good.goodId);
+            this.validGoodNumberInDepositaryAppointment();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ListDataAppointmentGoodsComponent, config);
   }
 
   async getGoodByExpedientAndDiferentGood() {
@@ -2783,4 +2818,6 @@ export class AppointmentsComponent
       });
     }
   }
+
+  updateGoodStatus(status: string) {}
 }
