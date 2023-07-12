@@ -6,7 +6,9 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { map } from 'rxjs';
+import { HasMoreResultsComponent } from 'src/app/@standalone/has-more-results/has-more-results.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryNumeraryService } from 'src/app/core/services/ms-historynumerary/historynumerary.service';
@@ -30,7 +32,8 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
     protected goodService: GoodService,
     protected massiveNumeraryService: MassiveNumeraryService,
     protected historyNumeraryService: HistoryNumeraryService,
-    protected parameterModService: ParameterModService
+    protected parameterModService: ParameterModService,
+    protected modal: BsModalService
   ) {
     super();
   }
@@ -100,9 +103,11 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
 
   getGood() {
     if (!this.formGood.value.id) return;
+
     this.loading = true;
     const listParams = new ListParams();
     listParams['filter.id'] = this.formGood.value.id;
+    this.clean();
     this.goodService
       .getAll(listParams)
       .pipe(map(x => x.data[0]))
@@ -130,6 +135,38 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
       },
     });
   }
+
+  openSelectorGood() {
+    const option: Partial<HasMoreResultsComponent> = {
+      title: 'Seleccionar bien',
+      ms: 'good',
+      settingTable: {
+        columns: [
+          { name: 'id', title: 'No. Bien' },
+          { name: 'description', title: 'Descripción' },
+          { name: 'status', title: 'Estatus' },
+          { name: 'fileNumber', title: 'No. Expediente' },
+        ],
+      },
+      path: 'good',
+      queryParams: { 'filter.goodReferenceNumber': this.formGood.value.id },
+    };
+    this.modal
+      .show(HasMoreResultsComponent, {
+        class: 'modal-xl',
+        initialState: option,
+      })
+      .onHidden.subscribe({
+        next: (good: any) => {
+          console.log(good);
+        },
+      });
+  }
+
+  // async selectGood1(good: IGood) {
+  //   this.formGood1.patchValue(good as any);
+  //   await this.postQueryGood1();
+  // }
 
   async postQueryGood1() {
     let TOT: number;

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { CustomSelectComponent } from 'src/app/@standalone/shared-forms/custom-select/custom-select.component';
 import { SharedModule } from '../../../shared/shared.module';
 import { ApplyLifRoutingModule } from './apply-lif-routing.module';
 import { ApplyLifComponent } from './apply-lif/apply-lif.component';
@@ -14,6 +15,7 @@ import { ApplyLifComponent } from './apply-lif/apply-lif.component';
     ApplyLifRoutingModule,
     ReactiveFormsModule,
     SharedModule,
+    CustomSelectComponent,
     BsDatepickerModule.forRoot(),
   ],
 })
