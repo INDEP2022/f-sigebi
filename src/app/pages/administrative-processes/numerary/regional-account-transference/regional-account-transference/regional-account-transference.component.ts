@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
@@ -14,7 +15,10 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
+import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { RequestNumeraryDetService } from 'src/app/core/services/ms-numerary/request-numerary-det.service';
 import { TransRegService } from 'src/app/core/services/ms-numerary/transf-reg.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
@@ -25,6 +29,7 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { EmailComponent } from '../email/email.component';
 import { DetailNum } from './detail.model';
 import { REGIONAL_ACCOUNT_COLUMNS } from './regional-account-columns';
 interface IExcelToJson {
@@ -43,7 +48,7 @@ export class RegionalAccountTransferenceComponent
   form: FormGroup;
   total = '22,891.26';
   data1: any[] = [];
-  dataTable: DetailNum[] = [{} as DetailNum];
+  dataTable: DetailNum[] = [];
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   data: IExcelToJson[] = [];
@@ -60,6 +65,7 @@ export class RegionalAccountTransferenceComponent
   ];
   @ViewChild('file', { static: false }) files: ElementRef<HTMLInputElement>;
   isNew: boolean = false;
+  description: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -70,7 +76,11 @@ export class RegionalAccountTransferenceComponent
     private transferRegService: TransRegService,
     private datePipe: DatePipe,
     private transferGood: TranfergoodService,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private modalService: BsModalService,
+    private dictationService: DictationService,
+    private bankService: BankAccountService,
+    private requestNumDetService: RequestNumeraryDetService
   ) {
     super();
     this.settings = {
@@ -100,7 +110,7 @@ export class RegionalAccountTransferenceComponent
           this.loading = false;
           resp.data.map((trans: any) => {
             trans.file = trans.goods ? trans.goods.noProceedings : '';
-            trans.description = '';
+            trans.description = trans.goods ? trans.goods.description : '';
             trans.status = trans.goods ? trans.goods.status : '';
             trans.val1 = trans.goods ? trans.goods.val1 : '';
           });
@@ -155,18 +165,23 @@ export class RegionalAccountTransferenceComponent
             this.loading = false;
             resp.data.map((trans: any) => {
               trans.file = trans.noExpediente ? trans.noExpediente : '';
-              trans.description = '';
+              trans.description = trans.descripcion ? trans.descripcion : '';
               trans.status = trans.estatus ? trans.estatus : '';
               trans.val1 = trans.val1 ? trans.val1 : '';
               trans.goodNumber = trans.noBien ? trans.noBien : '';
               trans.allInterest = trans.totInteres ? trans.totInteres : '';
             });
 
+            const date = this.datePipe.transform(new Date(), 'dd/MM/yyyy');
+
+            this.form.get('dateReport').patchValue(date);
+
             this.dataTable = [...resp.data];
             this.totalItems = resp.data.length;
           },
           error: err => {
             this.alert('error', 'Error', err.error.message);
+            this.loading = false;
           },
         });
     } else {
@@ -183,10 +198,6 @@ export class RegionalAccountTransferenceComponent
         map(resp => resp.stagecreated)
       )
     );
-  }
-
-  onDelegationsChange(data: any) {
-    console.log(data);
   }
 
   searchRegional() {
@@ -211,7 +222,7 @@ export class RegionalAccountTransferenceComponent
     this.transferRegService.getAllFilter(filter.getParams()).subscribe({
       next: resp => {
         const data = resp.data[0];
-
+        this.isNew = true;
         this.form.get('transferenceReport').patchValue(data.reportNumber);
         this.form
           .get('dateReport')
@@ -241,8 +252,7 @@ export class RegionalAccountTransferenceComponent
           .addFilter('numberReport', data.reportNumber, SearchFilter.EQ);
 
         this.getTransDetail();
-
-        console.log(resp);
+        this.getAccount();
       },
       error: err => {
         this.alert('error', 'Error', err.error.message);
@@ -280,11 +290,12 @@ export class RegionalAccountTransferenceComponent
       cveBank: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       cveCurrency: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       total: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      monto2: [null],
     });
   }
 
   onFileChange(event: Event) {
-    console.log('Datos Ecxel');
+    this.loading = true;
     const file = (event.target as HTMLInputElement).files[0];
     let formData = new FormData();
     formData.append('file', file);
@@ -295,37 +306,35 @@ export class RegionalAccountTransferenceComponent
     this.data1 = [];
     this.tranfergoodService.getFileCSV(formData).subscribe({
       next: resp => {
-        console.log('resp excel ', resp); //resp excel
-        for (let i = 0; resp.data.length; i++) {
-          console.log('data JCH: ', resp.data[i]);
-          if (resp.data[i] != undefined) {
-            let item = {
-              file: resp.data[i].NO_EXPEDIENTE,
-              good: resp.data[i].NO_BIEN,
-              description: resp.data[i].DESCRIPCION,
-              status: resp.data[i].ESTATUS,
-            };
-            this.data1.push(item);
-            // this.dataTable.load(this.data1);
-          } else {
-            // this.dataTable.refresh();
-            break;
-          }
-        }
+        this.loading = false;
+        resp.data.map((trans: any) => {
+          trans.file = trans.NO_EXPEDIENTE ? trans.NO_EXPEDIENTE : '';
+          trans.description = trans.DESCRIPCION ? trans.DESCRIPCION : '';
+          trans.status = trans.ESTATUS ? trans.ESTATUS : '';
+          trans.val1 = trans.VAL1 ? trans.VAL1 : '';
+          trans.val14 = trans.VAL14 ? trans.VAL14 : '';
+          trans.goodNumber = trans.NO_BIEN ? trans.NO_BIEN : '';
+          trans.allInterest = trans.TOT_INTERES ? trans.TOT_INTERES : '';
+        });
+
+        const date = this.datePipe.transform(new Date(), 'dd/MM/yyyy');
+
+        this.form.get('dateReport').patchValue(date);
+
+        this.dataTable = [...(resp.data as any)];
+        this.totalItems = resp.data.length;
+        this.files.nativeElement.value = '';
       },
       error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.error.message;
-        }
-        this.onLoadToast('error', error, '');
+        this.loading = false;
+        this.alert('error', 'Error', err.error.message);
+        this.files.nativeElement.value = '';
       },
     });
   }
 
   clear() {
+    this.files.nativeElement.value = '';
     this.form.reset();
     this.totalItems = 0;
     this.dataTable = [];
@@ -336,6 +345,28 @@ export class RegionalAccountTransferenceComponent
 
     if (transferenceReport) {
       const email = await this.getDataMail();
+
+      if (email) {
+        const emailv2 = {
+          ...email,
+          REPORTE: transferenceReport,
+        };
+        let config: ModalOptions = {
+          initialState: {
+            email: emailv2,
+            report: this.form.value,
+            description: this.description,
+            delegations: this.delegations,
+            callback: async (next: boolean) => {
+              if (next) {
+              }
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(EmailComponent, config);
+      }
     } else {
       this.alert('error', 'Error', 'Primero debe guardar el reporte');
     }
@@ -344,8 +375,8 @@ export class RegionalAccountTransferenceComponent
   async getDataMail() {
     const { transferenceReport, delegation } = this.form.value;
     const data = {
-      pAffair: '',
-      pMessage: 'Déposito de Recursos para Devoluciones',
+      pAffair: 'Déposito de Recursos para Devoluciones',
+      pMessage: '',
       pFor: '',
       pCc: '',
       transNumeraryRegNoReport: Number(transferenceReport),
@@ -357,8 +388,334 @@ export class RegionalAccountTransferenceComponent
           this.alert('error', 'Error', error.error.message);
           return of(null);
         }),
-        map(resp => resp.data)
+        map(resp => resp)
       )
     );
+  }
+
+  async save() {
+    const {
+      delegation,
+      folioCash,
+      transactionDate,
+      dateReport,
+      transferenceReport,
+    } = this.form.value;
+
+    if (!transferenceReport) {
+      let total: number = 0;
+
+      for (let index = 0; index < this.dataTable.length; index++) {
+        const element: any = this.dataTable[index];
+        total = total + Number(element.total);
+      }
+
+      this.form.get('monto2').patchValue(total);
+
+      if (!delegation) {
+        this.alert('error', 'Error', 'No a ingresado el número de delegación');
+        return;
+      } else if (!folioCash) {
+        this.alert(
+          'error',
+          'Error',
+          'No a ingresado el número de folio CashWindows'
+        );
+        return;
+      } else if (!transactionDate) {
+        this.alert('error', 'Error', 'No a ingresado la fecha de transacción');
+        return;
+      } else if (
+        this.convertDate(transactionDate) > this.convertDate(dateReport)
+      ) {
+        this.alert(
+          'error',
+          'Error',
+          'La fecha de transacción no puede ser mayor a la fecha de reporte'
+        );
+        return;
+      }
+
+      let next: boolean = true;
+
+      for (let index = 0; index < this.dataTable.length; index++) {
+        const element: any = this.dataTable[index];
+
+        if (!element.val1) {
+          this.alertInfo(
+            'error',
+            'Error',
+            'No puede guardar el reporte si el número de bien no tiene tipo de moneda. Ingrese a la pantalla Características del Bien y agregue esta información (Siab/General/Características del Bien)'
+          );
+          next = false;
+          break;
+        }
+      }
+
+      if (!next) return;
+
+      this.pubInteres();
+    } else {
+    }
+  }
+
+  async createTransNumDet(data: any) {
+    const { transferenceReport } = this.form.value;
+    const body: any = {
+      numberReport: transferenceReport,
+      goodNumber: data.goodNumber,
+      val14: data.val14,
+      allInterest: data.allInterest,
+      total: data.total,
+    };
+
+    return new Promise((resolve, reject) => {
+      this.tranfergoodService.create(body).subscribe({
+        next: resp => {
+          resolve(true);
+        },
+        error: () => {
+          resolve(true);
+        },
+      });
+    });
+  }
+
+  convertDate(date: Date | string) {
+    let newDate;
+    const type = typeof date;
+    if (type == 'string') {
+      newDate = date.toString().split('/').reverse().join('/');
+    } else {
+      newDate = this.datePipe.transform(date, 'yyyy/MM/dd');
+    }
+    return new Date(newDate).valueOf();
+  }
+
+  pubInteres() {
+    const { currencyType, total, monto2, delegation } = this.form.value;
+
+    const good: any = this.dataTable.length > 0 ? this.dataTable[0] : null;
+
+    if (good.val1 != currencyType) {
+      this.form.get('delegation');
+      this.form.get('currencyType');
+      this.form.get('cveAccount');
+      this.form.get('accountType');
+      this.form.get('cveBank');
+      this.form.get('cveCurrency');
+
+      this.alert(
+        'error',
+        'Error',
+        'El tipo de moneda de los bienes ingresados es diferente al tipo de moneda de la cuenta, favor de verificar'
+      );
+
+      return;
+    }
+
+    let next: boolean = true;
+
+    for (let index = 0; index < this.dataTable.length; index++) {
+      const element: any = this.dataTable[index];
+
+      if (!element.allInterest) {
+        this.alertInfo(
+          'error',
+          'Error',
+          `Debe ingresar el intéres del bien: ${element.goodNumber}`
+        );
+        next = false;
+        break;
+      }
+    }
+
+    if (!next) return;
+
+    for (let index = 0; index < this.dataTable.length; index++) {
+      const element: any = this.dataTable[index];
+
+      if (!element.total) {
+        element.total = Number(element.val14) + Number(element.allInterest);
+      }
+    }
+
+    if (total != monto2) {
+      this.alert(
+        'error',
+        'Error',
+        'El monto ingresado no corresponde al monto calculado verfique'
+      );
+      return;
+    } else if (!total && total != 0) {
+      this.alert(
+        'error',
+        'Error',
+        'Debe ingresar el monto total de devolución'
+      );
+      return;
+    }
+
+    this.dataTable.map(async good => {
+      const ban = await this.pupRegAdm(
+        Number(good.goodNumber),
+        Number(delegation)
+      );
+    });
+
+    this.createTransferRegional();
+  }
+
+  async pupRegAdm(good: number, delegation: number) {
+    const body = {
+      F_NOBIEN: good,
+      F_NODEL: delegation,
+    };
+
+    return firstValueFrom(
+      this.dictationService.applicationPufRef(body).pipe(
+        catchError(error => {
+          this.alert('error', 'Error', error.error.message);
+          return of(null);
+        }),
+        map(resp => resp)
+      )
+    );
+  }
+
+  createTransferRegional() {
+    const {
+      currencyType,
+      transactionDate,
+      total,
+      dateReport,
+      cveAccount,
+      delegation,
+      folioCash,
+      historicCheck,
+    } = this.form.value;
+
+    const body: any = {
+      transDate: transactionDate,
+      amountAll: total,
+      repDate: dateReport,
+      accountKey: cveAccount,
+      delegationNumber: Number(delegation),
+      invoiceCwNumber: folioCash,
+      currencyKey: currencyType,
+      historical: historicCheck ? 'SI' : 'NO',
+    };
+
+    this.transferRegService.create(body).subscribe({
+      next: async resp => {
+        this.form.get('transferenceReport').patchValue(resp.reportNumber);
+        this.alert('success', 'Reporte', 'Creado correctamente');
+
+        this.dataTable.map(async good => {
+          await this.createTransNumDet(good);
+        });
+
+        this.filterParams.getValue().removeAllFilters();
+        this.filterParams.getValue().page = 1;
+        this.filterParams
+          .getValue()
+          .addFilter(
+            'numberReport',
+            this.form.get(resp.reportNumber).value,
+            SearchFilter.EQ
+          );
+
+        this.getTransDetail();
+      },
+      error: err => {
+        this.alert('error', 'Error', err.error.message);
+      },
+    });
+  }
+
+  getAccount() {
+    const { currencyType, delegation } = this.form.value;
+    const filter = new FilterParams();
+
+    filter.addFilter('cveCurrency', currencyType, SearchFilter.EQ);
+    filter.addFilter('delegationNumber', delegation, SearchFilter.EQ);
+
+    this.bankService.getAllWithFilters(filter.getParams()).subscribe({
+      next: resp => {
+        const data = resp.data[0];
+        this.form.get('cveBank').patchValue(data.cveBank);
+        this.form.get('accountType').patchValue(data.accountType);
+        this.form.get('cveCurrency').patchValue(data.cveCurrency);
+      },
+      error: err => {
+        this.alert('error', 'Error', err.error.message);
+      },
+    });
+  }
+
+  getIdSolum() {
+    const { noBien } = this.form.value;
+
+    if (!noBien) return;
+
+    const filter = new FilterParams();
+
+    filter.addFilter('goodNumber', noBien, SearchFilter.EQ);
+
+    this.requestNumDetService.getAllFilter(filter.getParams()).subscribe({
+      next: resp => {
+        this.form.get('idRequest').patchValue(resp.data[0].solnumId);
+        this.alert(
+          'info',
+          'Bien Encontrado',
+          `Con número de solicitud: ${resp.data[0].solnumId}`
+        );
+      },
+      error: err => {
+        if (err.status == 400) {
+          this.alert(
+            'error',
+            'Error',
+            'Este bien no se encuentra en una solicitud de numerario'
+          );
+        } else {
+          this.alert('error', 'Error', err.error.message);
+        }
+      },
+    });
+  }
+
+  changeSelect(del?: any) {
+    if (del) {
+      this.description = del.description;
+    }
+
+    const { currencyType, delegation, transactionDate } = this.form.value;
+
+    let date = '';
+    if (transactionDate) {
+      if (typeof transactionDate == 'string') {
+        date = transactionDate.split('/').reverse().join('-');
+      } else {
+        date = this.datePipe.transform(transactionDate, 'yyyy-MM-dd');
+      }
+    }
+
+    const body = {
+      delegationNumber: delegation,
+      coinkey: currencyType,
+      date,
+    };
+
+    this.bankService.getDetail(body).subscribe({
+      next: (resp: any) => {
+        const data = resp.data[0];
+        this.form.get('cveAccount').patchValue(data.accountkey);
+        this.form.get('cveBank').patchValue(data.bankkey);
+        this.form.get('accountType').patchValue(data.accounttype);
+        this.form.get('cveCurrency').patchValue(data.coinkey);
+      },
+      error: error => {},
+    });
   }
 }

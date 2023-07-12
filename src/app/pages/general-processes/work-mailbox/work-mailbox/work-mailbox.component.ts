@@ -1690,7 +1690,6 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         `Enviar`,
         `Buscar`
       );
-      
 
       if (result.isConfirmed) {
         const params = new FilterParams();
