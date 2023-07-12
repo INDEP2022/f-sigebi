@@ -78,6 +78,7 @@
               bindLabel="description"
               label="Seleccione un bien para ver sus menajes"
               [control]="'goodSelect'"
+              (fetchItems)="searchGoods(idExpedient, paramsSubject)"
               (change)="uploadTableMenaje($event)">
             </ngx-select>
           </form-field>
@@ -111,6 +112,7 @@
               bindLabel="description"
               label="Menajes"
               [control]="'goodsList'"
+              (fetchItems)="searchGood($event)"
               (input)="goodsListChange($event.target)"
               (change)="onSelect($event)">
             </ngx-select>
