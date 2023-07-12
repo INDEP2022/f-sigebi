@@ -5,6 +5,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IGeoreferencieObject,
+  IPolVigilancePerGood,
   IViewVigDelegations,
   IVigBinnacle,
   IVigProcessPercentages,
@@ -137,5 +138,18 @@ export class SurvillanceService extends HttpService {
 
   PostInsertSupervisionTmp(formData?: any) {
     return this.post(this.route.PostInsertSupervisionTmp, formData);
+  }
+
+  getContract(params?: ListParams) {
+    //const route = `${this.route.FCalculaNume}/${idProcnum}/${commisionBanc}`;
+    return this.get<IListResponse<any>>(this.route.GetContract, params);
+  }
+
+  createVigPerGood(model: any) {
+    return this.post<IListResponse<any>>(this.route.VigilancePerGood, model);
+  }
+
+  updatePolVigPerGood(model: IPolVigilancePerGood) {
+    return this.put<IListResponse<any>>(this.route.PolVigilancePerGood, model);
   }
 }
