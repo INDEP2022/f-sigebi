@@ -282,21 +282,15 @@ export class NumeraryMassiveConciliationComponent
 
   // Permite buscar la descripcion de la moneda
   searchCurrent(currency: string) {
-    console.log(currency);
     if (currency === `'M'`) {
-      console.log('Confirma');
-      currency = 'PESO MEXICANO';
       this.form2.get('current').setValue(currency);
     } else {
       let currenct = currency.replace(/'/g, '');
       this.tvalTable5Service.getCurrent(currenct).subscribe({
         next: response => {
           let current = response.data;
-          console.log(current);
           let currentAccount = current[0].otvalor02;
           let currentAccount2 = current[0].otvalor01;
-          console.log(currentAccount);
-          console.log(currentAccount2);
           if (currentAccount === 'M' || currentAccount === 'MM') {
             currentAccount = 'PESO MEXICANO';
           }

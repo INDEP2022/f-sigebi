@@ -74,7 +74,7 @@
             </div>
 
             <div [formGroup]="formGood" class="row py-5 rounded-4 shadow">
-              <div class="col-md-4 col-12">
+              <div class="col-md-6 col-12">
                 <!-- <i
                   class="bx bx-list-ul text-success me-2 d-inline float-icon"></i> -->
                 <h5 class="font-size-14 mb-2 d-inline">No. Bien</h5>
@@ -93,7 +93,7 @@
                   <button
                     [disabled]="!formGood.get('id').value || isLoadingGood"
                     (click)="searchGood()"
-                    class="btn btn-primary active btn-sm w-auto">
+                    class="btn btn-primary active btn-sm w-auto ml-4">
                     Buscar
                     <i class="bx bx-search-alt bx-sm float-icon"></i>
                   </button>
@@ -105,7 +105,7 @@
                 </div>
               </div>
               <ng-container>
-                <div class="col-sm-12 col-md-4">
+                <div class="col-sm-12 col-md-2">
                   <div>
                     <!-- <i
                       class="bx bx-font-family text-success me-2 d-inline float-icon"></i> -->
@@ -149,7 +149,9 @@
                   <div>
                     <!-- <i
                       class="bx bx-table text-success me-2 d-inline float-icon"></i> -->
-                    <h5 class="font-size-14 mb-2 d-inline">Ext. Dominio</h5>
+                    <h5 class="font-size-14 mb-2 d-inline">
+                      Dominio De Proceso Externo
+                    </h5>
                     <p class="text-muted">
                       {{ formGood.value?.extDomProcess }}
                     </p>
@@ -163,7 +165,7 @@
               class="row mt-3 py-5 px-3 rounded-4 shadow"
               @OnGoodSelected>
               <div class="ms-n2 mb-2">
-                <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
+                <!-- <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i> -->
                 <h6 class="d-inline">Datos de Venta</h6>
               </div>
               <hr class="mw-98" />
@@ -499,57 +501,19 @@
           </div>
           <hr class="mw-98" />
           <div [ngClass]="{ disabled: !selectedBank }" class="row">
-            <div class="col-sm-12 col-md-3">
+            <div class="col-sm-12 col-md-2">
               <div class="d-flex">
                 <form-field
                   class="col"
                   [control]="formBlkControl.get('tiNewDate')"
                   label="Fecha">
-                  <!-- <ng-container *ngIf="isSearchDate; else templateInputDate"> -->
-                  <!-- <ng-custom-select
-                    [moreParams]="{
-                      'filter.isFileDeposit': 'S',
-                      'filter.numberGood': '$null',
-                      'filter.numberMotion':
-                        formBlkControl.value.diNumberAccountDeposit
-                    }"
-                    [paramSearch]="'filter.deposit'"
-                    [isLikeSearch]="false"
-                    placeholder="Busca por # de movimiento"
-                    (valueChange)="changeDeposit($event)"
-                    value="numberMotion"
-                    class="form-control"
-                    path="/accountmvmnt/api/v1/account-movements">
-                    <ng-template let-item>
-                      {{
-                        '#' +
-                          item.numberMotion +
-                          ' - ' +
-                          item.dateMotion +
-                          ' - ' +
-                          '$' +
-                          item.deposit
-                      }}
-                    </ng-template>
-                  </ng-custom-select> -->
-                  <!-- </ng-container> -->
-                  <!-- <ng-template #templateInputDate> -->
                   <input
                     formControlName="tiNewDate"
                     class="form-control"
                     type="text"
                     (ngModelChange)="getInfoDeposit()"
                     bsDatepicker />
-                  <!-- </ng-template>  -->
                 </form-field>
-                <!-- <button
-                  (click)="isSearchDate = !isSearchDate"
-                  class="btn btn-primary active btn-sm w-auto">
-                  <i
-                    class="bx bx-{{
-                      !isSearchDate ? 'search-alt' : 'x'
-                    }} bx-sm float-icon"></i>
-                </button> -->
               </div>
             </div>
             <div class="col-md-4">
@@ -574,6 +538,13 @@
                   formControlName="diDeposit"
                   readonly />
               </form-field>
+            </div>
+            <div class="col-md-3">
+              <button
+                (click)="clearDateDeposit()"
+                class="btn btn-danger btn-sm active mr-3">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
             </div>
           </div>
         </div>

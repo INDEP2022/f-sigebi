@@ -51,6 +51,11 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   goodClassNumberIn: number;
   showSearchButton: boolean = true;
 
+  paramsSubject: BehaviorSubject<ListParams> = new BehaviorSubject<ListParams>(
+    new ListParams()
+  );
+  idExpedient: number | string;
+
   get numberFile() {
     return this.form.get('numberFile');
   }
@@ -80,7 +85,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.settings.actions.edit = false;
   }
   ngOnInit(): void {
-    this.searchGood();
+    this.searchGood(new ListParams());
     this.buildForm();
     this.form.disable();
     this.formGood.disable();
@@ -91,7 +96,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
-          console.log('filter');
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
@@ -157,9 +161,10 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.expedientServices.getById(numberFile).subscribe({
       next: response => {
         this.expedient = response;
+        this.idExpedient = this.expedient.id;
         this.causePenal.setValue(this.expedient.criminalCase);
         this.preliminaryInquiry.setValue(this.expedient.preliminaryInquiry);
-        this.searchGoods(this.expedient.id);
+        this.searchGoods(this.idExpedient, this.paramsSubject);
       },
       error: err => {
         this.alert('warning', 'No existe el registro', '');
@@ -191,22 +196,24 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   }
 
   //Busca el expediente
-  searchGoods(idExpedient: number | string) {
+  searchGoods(
+    idExpedient: number | string,
+    paramsSubject: BehaviorSubject<ListParams>
+  ) {
     this.idExpedientSearch = idExpedient;
-    this.goodServices
-      .getByExpedient(idExpedient, this.params.getValue())
-      .subscribe({
-        next: response => {
-          //Son todos los bienes listados en el input "Seleccione un bien para ver sus menajes"
-          this.goodSelect.enable();
-          this.goods = new DefaultSelect(response.data, response.count);
-          this.loading = false;
-        },
-        error: err => {
-          this.loading = false;
-          this.alert('warning', 'Expediente sin bienes asociados', ``);
-        },
-      });
+    const params = paramsSubject.getValue();
+    this.goodServices.getByExpedient(idExpedient, params).subscribe({
+      next: response => {
+        //Son todos los bienes listados en el input "Seleccione un bien para ver sus menajes"
+        this.goodSelect.enable();
+        this.goods = new DefaultSelect(response.data, response.count);
+        this.loading = false;
+      },
+      error: err => {
+        this.loading = false;
+        this.alert('warning', 'Expediente sin bienes asociados', ``);
+      },
+    });
   }
 
   searchGoodMenageOnInit = true;
@@ -272,21 +279,21 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
           this.alert('warning', 'Bien sin menajes asociados', ``);
           this.loading = false;
           this.totalItems = 0;
-          this.searchGoods(this.idExpedientSearch);
+          this.searchGoods(this.idExpedientSearch, this.paramsSubject);
         }
       },
       error: err => {
         this.alert('warning', 'Bien sin menajes asociados', ``);
         this.loading = false;
         this.totalItems = 0;
-        this.searchGoods(this.idExpedientSearch);
+        this.searchGoods(this.idExpedientSearch, this.paramsSubject);
       },
     });
   }
 
   //Lista los menajes en el select
-  searchGood() {
-    this.goodServices.getAll(this.params.getValue()).subscribe({
+  searchGood(params: ListParams) {
+    this.goodServices.getAll(params).subscribe({
       next: response => {
         this.goodsList = new DefaultSelect(response.data, response.count);
         this.loading = false;
@@ -371,7 +378,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.numberGoodSelect = null;
     this.goods = new DefaultSelect([], 0);
     this.params = new BehaviorSubject<ListParams>(new ListParams());
-    this.searchGoods(this.idExpedientSearch);
+    this.searchGoods(this.idExpedientSearch, this.paramsSubject);
     this.menajes.load([]);
     this.showSearchButton = false;
     this.textButton = 'Agregar menaje';
@@ -405,6 +412,3 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       : (this.textButton = 'Agregar menaje');
   }
 }
-
-//sigebimsqa.indep.gob.mx/good/api/v1/good?filter.goodDescription=$ilike:MOBILIARIO DEL HOGAR Y APARATO
-//sigebimsqa.indep.gob.mx/goodfinder/api/v1/good-query?filter.goodDescription=$ilike:CAMA
