@@ -579,8 +579,8 @@ export class RegistrationOfRequestsComponent
   returnar() {
     const typeCommit = 'returnar';
     this.msgSaveModal(
-      'Finalizar Solicitud',
-      '¿Está seguro de finalizar la solicitud actual?',
+      'Returnar la Solicitud',
+      '¿Está seguro de returnar la solicitud actual?',
       'Confirmación',
       undefined,
       typeCommit
@@ -603,17 +603,18 @@ export class RegistrationOfRequestsComponent
   }
 
   async finishMethod() {
-    const request = this.requestData;
-    request.requestStatus = 'FINALIZADA';
-    const updateReq = await this.updateRequest(this.requestData);
+    const body: any = {};
+    body['id'] = this.requestData.id;
+    body['requestStatus'] = 'FINALIZADA';
+    const updateReq = await this.updateRequest(body);
     if (updateReq) {
       //const oldTask: any = await this.getOldTask();
       //if (oldTask.assignees != '') {
       const user: any = this.authService.decodeToken();
       const title = `Registro de solicitud (Aprobar Solicitud) con folio: ${this.requestData.id}`;
       const url = 'pages/request/transfer-request/process-approval';
-      const from = 'DESTINO_DOCUMENTAL';
-      const to = 'SOLICITAR_APROBACION';
+      const from = 'REGISTRO_SOLICITUD';
+      const to = 'APROBAR_SOLICITUD';
       const taskRes = await this.createTaskOrderService(
         this.requestData,
         title,
