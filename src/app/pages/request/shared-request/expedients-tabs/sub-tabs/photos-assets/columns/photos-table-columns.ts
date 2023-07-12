@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { SeePhotoComponent } from '../actions/see-photo/see-photo.component';
 
 export const PHOTOS_TABLE_COLUMNS = {
@@ -20,6 +21,11 @@ export const PHOTOS_TABLE_COLUMNS = {
     title: 'Fecha Creación',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      return formatted;
+    },
   },
   xidBien: {
     title: 'No. Gestión',
