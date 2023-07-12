@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -9,7 +10,6 @@ import { ParametersService } from 'src/app/core/services/ms-parametergood/parame
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared';
-import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 @Component({
@@ -17,13 +17,13 @@ import { SharedModule } from 'src/app/shared/shared.module';
   templateUrl: './scan-file.component.html',
   standalone: true,
   imports: [CommonModule, SharedModule],
-  styleUrls: []
+  styleUrls: [],
 })
 export class ScanFileComponent extends BasePage implements OnInit {
   //Inputs
   @Input() form: FormGroup;
   @Input() formControlName: string = 'folioEscaneo';
-  @Input() package: any
+  @Input() package: any;
 
   ngOnInit(): void {
     throw new Error('Method not implemented.');
@@ -44,19 +44,20 @@ export class ScanFileComponent extends BasePage implements OnInit {
 
   //GENERAR FOLIO DE ESCANEO
   generateFolio() {
-    if(this.package.statuspack != 'A' && this.package.cvePackage != null){
-        if(this.form.get(this.formControlName).value != null){
-        this.alert('warning','El paquete ya tiene folio de escaneo','')
-        }else{
-            this.alertQuestion('question','Se generará un nuevo folio de escaneo para el paquete autorizado','¿Desea continuar?').then(
-                q=>{
-                    if(q.isConfirmed){
-                        let V_NO_EXPEDIENTE = 0
-                        
-                    }
-                }
-            )
-        }
+    if (this.package.statuspack != 'A' && this.package.cvePackage != null) {
+      if (this.form.get(this.formControlName).value != null) {
+        this.alert('warning', 'El paquete ya tiene folio de escaneo', '');
+      } else {
+        this.alertQuestion(
+          'question',
+          'Se generará un nuevo folio de escaneo para el paquete autorizado',
+          '¿Desea continuar?'
+        ).then(q => {
+          if (q.isConfirmed) {
+            let V_NO_EXPEDIENTE = 0;
+          }
+        });
+      }
     }
 
     /* if (['CERRADO', 'CERRADA', null].includes(this.statusProceeding)) {
