@@ -233,12 +233,12 @@
         </div>
         <!--Goods Status Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-goods-status-shared [form]="form"></app-goods-status-shared>
+          <app-goods-status-shared [form]="form2"></app-goods-status-shared>
         </div>
         <!--Measurement Units Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
           <app-measurement-units-shared
-            [form]="form"></app-measurement-units-shared>
+            [form]="form2"></app-measurement-units-shared>
         </div>
         <!--Transference Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
@@ -254,7 +254,9 @@
     </form>
   </div>
   <div footer class="row mb-3 mt-3">
-    <div class="col text-center">
+    <div
+      class="text-center"
+      style="display: flex; column-gap: 10px; justify-content: center">
       <button
         *ngIf="validaButton.PB_PERMISOS"
         type="button"
@@ -269,6 +271,12 @@
         type="button"
         class="btn btn-danger btn-sm active">
         Cancelar
+      </button>
+      <button
+        (click)="pbCorreo()"
+        type="button"
+        class="btn btn-primary btn-sm active">
+        Correo
       </button>
     </div>
   </div>

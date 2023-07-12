@@ -149,14 +149,14 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     { name: 'Validado', value: 'V' },
     { name: 'Autorizado', value: 'A' },
     { name: 'Cerrado', value: 'C' },
-    { name: 'Aplicado', value: 'S' },
+    { name: 'Aplicado', value: 'L' },
     { name: 'Cancelado', value: 'X' },
   ]);
   //VARIABLES DE DATA QUE SE RECIBE
   dataArrive: any[];
   //Variables de folio de escaneo
   scanFolio: string = 'scanFolio';
-
+  contador = 0;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -201,6 +201,30 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.fillDataByPackage();
     this.getDataUser();
     this.getEmail();
+    this.packageType.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        if (this.cvePackage.value) {
+          if (this.contador > 0) {
+            if (response === 3) {
+              this.amountKg.setValue(1);
+              this.statusGood.setValue('ROP');
+              this.unit.setValue('UNIDAD');
+              this.amountKg.disable({ onlySelf: true, emitEvent: false });
+              this.unit.disable({ onlySelf: true, emitEvent: false });
+              this.statusGood.disable({ onlySelf: true, emitEvent: false });
+            } else {
+              this.statusGood.setValue('');
+              this.amountKg.enable({ onlySelf: true, emitEvent: false });
+              this.unit.enable({ onlySelf: true, emitEvent: false });
+              this.statusGood.enable({ onlySelf: true, emitEvent: false });
+              this.validateButtons(this.status.value);
+            }
+          } else {
+            this.contador++;
+          }
+        }
+      },
+    });
   }
 
   private getEmail() {
@@ -301,13 +325,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     return this.form.get('targetTag');
   }
 
-  get goodStatus() {
-    return this.form.get('goodStatus');
-  }
-
-  get measurementUnit() {
-    return this.form.get('measurementUnit');
-  }
+  // get measurementUnit() {
+  //   return this.form.get('measurementUnit');
+  // }
 
   get transferent() {
     return this.form.get('transferent');
@@ -347,11 +367,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   get unit() {
-    return this.form2.get('unit');
+    return this.form2.get('measurementUnit');
   }
 
   get statusGood() {
-    return this.form2.get('status');
+    return this.form2.get('goodStatus');
   }
 
   get dataPrevisualization() {
@@ -385,7 +405,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       goodClassification: [null, [Validators.required]],
       targetTag: [null, [Validators.required]],
       goodStatus: [null, [Validators.required]],
-      measurementUnit: [null, [Validators.required]],
       transferent: [null, [Validators.required]],
       warehouse: [null, [Validators.required]],
 
@@ -419,8 +438,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       amount: [null, [Validators.required]],
-      unit: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      status: [null, [Validators.required]],
+      measurementUnit: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      goodStatus: [null, [Validators.required]],
       check: [false],
     });
   }
@@ -457,6 +479,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.noPackage.valueChanges.subscribe((res: IPackageGoodEnc) => {
       console.log(res);
       if (res != null) {
+        this.contador = 0;
         //Seteo de la primera parte
         this.cvePackage.setValue(res.cvePackage);
         this.descriptionPackage.setValue(res.description);
@@ -478,8 +501,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.delegation.setValue(res.numberDelegation);
         this.goodClassification.setValue(res.numberClassifyGood);
         this.targetTag.setValue(res.numberLabel);
-        this.goodStatus.setValue(res.status);
-        this.measurementUnit.setValue(res.unit);
         this.transferent.setValue(res.numbertrainemiaut);
         this.warehouse.setValue(res.numberStore);
         //Parrafos
@@ -776,8 +797,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         record: response.data[0].fileNumber,
         description: response.data[0].description,
         amount: response.data[0].quantity,
-        unit: response.data[0].unit,
-        status: response.data[0].status,
+        measurementUnit: response.data[0].unit,
+        goodStatus: response.data[0].status,
       });
     });
   }
@@ -1007,6 +1028,14 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   updatePackageFirstBlock(status: string, pAsuntoInit: string) {
+    if (['C', 'L'].includes(status) && this.amountKg.value <= 0) {
+      this.alert(
+        'error',
+        'Actualización de Paquete',
+        'Debe ingresar previamente la cantidad convertida'
+      );
+      return;
+    }
     let result = true;
     const check = document.getElementById('checkGood') as HTMLInputElement;
     console.log(this.form.value);
@@ -1085,6 +1114,43 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.unitConversionDataService.dataErrors = value;
   }
 
+  pbCorreo() {
+    if (this.status.value === 'V') {
+      this.alert(
+        'error',
+        'Envío de Correo',
+        'El paquete ya está validado ya no se puede enviar correos'
+      );
+      return;
+    }
+    if (this.status.value === 'A') {
+      this.alert(
+        'error',
+        'Envío de Correo',
+        'El paquete ya está autorizado ya no se puede enviar correos'
+      );
+      return;
+    }
+    if (this.status.value === 'L') {
+      this.alert(
+        'error',
+        'Envío de Correo',
+        'El paquete ya está aplicado ya no se puede enviar correos'
+      );
+      return;
+    }
+    const noPack: IPackageGoodEnc = this.noPackage.value;
+
+    if (noPack.numberPackage && this.status.value != 'L') {
+      // this.pupIniCorreo(noPack.numberPackage,);
+      this.P_ASUNTO =
+        'Paquete de Conversión de Unidades No. ' + noPack.numberPackage;
+      this.P_MENSAJE =
+        '\n\n' + 'Atentamente,' + '\n\n\n' + localStorage.getItem('username');
+      this.viewModal('email');
+    }
+  }
+
   verifyGoods() {
     // console.log(this.data['data']);
     console.log('Sí');
@@ -1105,7 +1171,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.alert('warning', 'Debe ingresar el Clasificador', '');
       } else if (this.targetTag.value == null) {
         this.alert('warning', 'Debe ingresar la Etiqueta de destino', '');
-      } else if (this.goodStatus.value == null) {
+      } else if (this.statusGood.value == null) {
         this.alert('warning', 'Debe ingresar el Estatus', '');
       } else if (this.transferent.value == null) {
         this.alert('warning', 'Debe ingresar la Transferente', '');
@@ -1265,7 +1331,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         pGoodClasifNumber: this.goodClassification.value,
         pEtiquetaNumber: this.targetTag.value,
         pPaqueteNumber: this.noPackage.value.numberPackage,
-        pStatus: this.goodStatus.value,
+        pStatus: this.statusGood.value,
         pTypePaquete: this.packageType.value,
         pValidVal24: val24.toString(),
       };
@@ -1516,7 +1582,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       this.alert('warning', 'Debe ingresar el Clasificador', '');
     } else if (this.targetTag.value == null) {
       this.alert('warning', 'Debe ingresar la Etiqueta de destino', '');
-    } else if (this.goodStatus.value == null) {
+    } else if (this.statusGood.value == null) {
       this.alert('warning', 'Debe ingresar el Estatus', '');
     } else if (this.transferent.value == null) {
       this.alert('warning', 'Debe ingresar la Transferente', '');
@@ -1660,10 +1726,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       statuspack: 'P',
       numberClassifyGood: this.goodClassification.value,
       numberLabel: this.targetTag.value,
-      unit: this.measurementUnit.value,
+      unit: this.unit.value,
       numberStore: this.warehouse.value,
       numberRecord: null,
-      status: this.goodStatus.value,
+      status: this.statusGood.value,
       numbertrainemiaut: this.transferent.value,
       dateValid: null,
       dateauthorize: null,
