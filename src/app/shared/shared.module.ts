@@ -40,6 +40,7 @@ import { CustomSelectWidthLoading } from '../@standalone/shared-forms/custom-sel
 import { CustomDateFilterComponent } from '../@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { CustomDateDayFilterComponent } from '../@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
 import { CustomDateMounthFilterComponent } from '../@standalone/shared-forms/filter-date-mounth-custom/custom-date-mounth-filter';
+import { ButtonColumnComponent } from './components/button-column/button-column.component';
 import { DatePickerDirective } from './directives/date-picker.directive';
 import { UppercaseDirective } from './directives/uppercase.directive';
 import { GlobalVarsModule } from './global-vars/global-vars.module';
@@ -74,6 +75,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     CustomDateFilterComponent,
     CustomDateMounthFilterComponent,
     CustomDateDayFilterComponent,
+    ButtonColumnComponent,
   ],
   imports: [
     CommonModule,
@@ -124,6 +126,7 @@ import { GlobalVarsModule } from './global-vars/global-vars.module';
     CustomDateFilterComponent,
     CustomDateMounthFilterComponent,
     CustomDateDayFilterComponent,
+    ButtonColumnComponent,
   ],
   providers: [{ provide: BsDatepickerConfig, useFactory: getDatepickerConfig }],
 })

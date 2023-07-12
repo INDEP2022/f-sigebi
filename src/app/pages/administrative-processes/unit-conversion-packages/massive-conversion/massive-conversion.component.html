@@ -254,7 +254,9 @@
     </form>
   </div>
   <div footer class="row mb-3 mt-3">
-    <div class="col text-center">
+    <div
+      class="text-center"
+      style="display: flex; column-gap: 10px; justify-content: center">
       <button
         *ngIf="validaButton.PB_PERMISOS"
         type="button"
@@ -264,11 +266,17 @@
         Permisos
       </button>
       <button
-        (click)="cancelPackage()"
+        (click)="cancelPackFunction()"
         [disabled]="!validaButton.PB_CANCELA"
         type="button"
         class="btn btn-danger btn-sm active">
         Cancelar
+      </button>
+      <button
+        (click)="pbCorreo()"
+        type="button"
+        class="btn btn-primary btn-sm active">
+        Correo
       </button>
     </div>
   </div>
@@ -325,18 +333,18 @@
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
-          <form-field label="Unidad" [control]="form2.get('unit')">
+          <form-field label="Unidad" [control]="form2.get('unitGood')">
             <input
-              formControlName="unit"
+              formControlName="unitGood"
               type="text"
               class="form-control"
               maxlength="25" />
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
-          <form-field label="Estatus" [control]="form2.get('status')">
+          <form-field label="Estatus" [control]="form2.get('statusGood')">
             <input
-              formControlName="status"
+              formControlName="statusGood"
               type="text"
               class="form-control"
               maxlength="25" />
@@ -391,7 +399,8 @@
 <!--Data Previsualization-->
 <app-paq-destion-det
   [packageType]="packageType"
-  [noPackage]="noPackage"></app-paq-destion-det>
+  [noPackage]="noPackage"
+  (dataEmit)="handleOutPut($event)"></app-paq-destion-det>
 
 <!-- <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
@@ -426,7 +435,11 @@
 
 <app-card>
   <div body>
-    <div class="row">
+    <app-scan-file-massive-conversion
+      [form]="form"
+      [formControlName]="scanFolio">
+    </app-scan-file-massive-conversion>
+    <!-- <div class="row">
       <div class="col-md-2 col-sm-12 col-xs-12">
         <div class="d-flex justify-content-center">
           <div class="m-3">
@@ -491,7 +504,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </app-card>
 

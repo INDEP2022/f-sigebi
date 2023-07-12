@@ -16,6 +16,7 @@
                 label="Seleccione un Banco"
                 [control]="'bankSelect'"
                 (change)="onBankSelectChange($event)"
+                (fetchItems)="searchBanks($event)"
                 (input)="onSearchName($event.target)"></ngx-select>
             </form-field>
           </div>
@@ -29,6 +30,7 @@
                 label="Seleccione una Cuenta"
                 [control]="'account'"
                 (change)="onBankAccountSelectChange($event)"
+                (fetchItems)="searchBankAccount(bankCode, paramsSubject)"
                 (input)="onSearchAccount($event.target)"
                 (clear)="onClearSelection()"></ngx-select>
             </form-field>
@@ -103,7 +105,7 @@
         </div>
 
         <h5 class="row ml-0 mt-5">
-          Consulta movimientos de cuenta por rango de fecha
+          Consulta Movimientos de Cuenta por Rango de Fecha
         </h5>
         <div class="row mt-5">
           <div class="col-md-3">
@@ -139,7 +141,7 @@
             </form-field>
           </div>
 
-          <div class="col-md-4">
+          <div class="col-md-6">
             <button
               type="button"
               class="btn btn-sm btn-info active mr-4"

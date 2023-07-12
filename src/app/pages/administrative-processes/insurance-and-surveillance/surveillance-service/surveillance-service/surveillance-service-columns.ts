@@ -5,7 +5,7 @@ export const SURVEILLANCE_SERVICE_COLUMNS = {
     sort: false,
   },
   goodNumber: {
-    title: 'No Bien',
+    title: 'No. Bien',
     type: 'number',
     sort: false,
   },
