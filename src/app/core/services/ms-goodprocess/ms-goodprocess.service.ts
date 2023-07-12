@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { GoodprocessEndpoints } from 'src/app/common/constants/endpoints/ms-goodprocess-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
@@ -46,6 +46,28 @@ export class GoodprocessService extends HttpService {
 
   getScreenGood(model: any): Observable<IListResponse<any>> {
     return this.post(`${GoodprocessEndpoints.consultationScreenGood}`, model);
+  }
+
+  getScreenGood2(model: any): Observable<IListResponse<any>> {
+    return this.post(`${GoodprocessEndpoints.consultationScreenGood2}`, model);
+  }
+  getScreenGoodList(payload: any): Observable<any[]> {
+    const url = `${GoodprocessEndpoints.consultationScreenGood2}`;
+    return this.post(url, payload).pipe(
+      map((response: any) => {
+        // La respuesta del servicio debe ser un array de objetos con los datos necesarios para actualizar la apariencia visual de las filas de la tabla
+        return response.data.map((item: any) => {
+          return {
+            goodNumber: item.goodNumber,
+            vcScreen: item.vcScreen,
+          };
+        });
+      }),
+      catchError(error => {
+        console.log('error', error);
+        return throwError(error);
+      })
+    );
   }
 
   getGoodType(params?: ListParams) {
