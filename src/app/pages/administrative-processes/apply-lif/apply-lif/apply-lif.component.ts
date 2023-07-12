@@ -36,10 +36,10 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
   }
 
   isVisibleMotive = true;
-  isContConvVisible = true;
+  isContConvVisible = false;
   isVisibleVal15 = true;
-  isEnableBtnLif = true;
-  isEnableBtnRvlif = true;
+  isEnableBtnLif = false;
+  isEnableBtnRvlif = false;
   formGood = new FormGroup({
     id: new FormControl(''),
     description: new FormControl(''),
@@ -133,7 +133,6 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
 
   async postQueryGood1() {
     let TOT: number;
-    // let FCAMBIO: Date;
     try {
       TOT = await this.getCountGoodByReference(this.formGood.value.id);
       try {
@@ -177,7 +176,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         this.isContConvVisible = true;
       }
 
-      const val15 = this.formGood1.value.val15;
+      const val15 = this.formGood1.getRawValue().val15;
       if (val15 == 0) {
         this.isVisibleVal15 = false;
         this.formGood1.get('val15').disable();
@@ -228,6 +227,14 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
     this.loading = false;
   }
 
+  clean() {
+    this.formBlkControl.reset();
+    this.formGood.reset();
+    this.formGood1.reset();
+    this.isEnableBtnLif = false;
+    this.isEnableBtnRvlif = false;
+  }
+
   async onClickApplyLif() {
     let VLIF: number;
     let VEST: string;
@@ -243,8 +250,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         this.alert(
           'error',
           '',
-          'El Bien Numerario no se encuentra en un estatus valido para esta operación',
-          'S'
+          'El Bien Numerario no se encuentra en un estatus valido para esta operación'
         );
       } else {
         params = new ListParams();
@@ -254,7 +260,10 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         this.formGood1
           .get('val15')
           .setValue(
-            (this.formGood1.value.val2 - this.formGood1.value.val10) * VLIF
+            (
+              (this.formGood1.value.val2 - this.formGood1.value.val10) *
+              VLIF
+            ).toFixed(2)
           );
         GAST = GAST + this.formGood1.value.val15;
         this.formBlkControl
@@ -270,10 +279,11 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
   async onClickApplyRvlif() {
     // DECLARE
     let VLIF: number;
+    const good1 = this.formGood1.getRawValue();
     let VEST: string;
     try {
       let params = new ListParams();
-      params['filter.id'] = this.formGood1.value.id;
+      params['filter.id'] = good1.id;
       const { status } = await this.getGoodParams(params, true);
       VEST = status;
       if (VEST != 'ADM') {
@@ -282,22 +292,17 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
           'Error',
           'El Bien Numerario no se encuentra en un estatus valido para esta operación'
         );
+        return;
       } else {
         params = new ListParams();
         params['filter.parameter'] = 'LIF';
         const { value } = await this.getComerParameterMod(params);
         VLIF = Number(value);
-        this.formGood1
-          .get('val13')
-          .setValue(this.formGood1.value.val13 - this.formGood1.value.val15);
+        this.formGood1.get('val13').setValue(good1.val13 - good1.val15);
         this.formGood1.get('val15').setValue(0);
         this.formBlkControl
           .get('tTotal')
-          .setValue(
-            this.formGood1.value.val2 -
-              this.formGood1.value.val13 -
-              (this.formGood1.value.val10 || 0)
-          );
+          .setValue(good1.val2 - good1.val13 - (good1.val10 || 0));
         // LIP_COMMIT_SILENCIOSO;
         this.commit();
       }

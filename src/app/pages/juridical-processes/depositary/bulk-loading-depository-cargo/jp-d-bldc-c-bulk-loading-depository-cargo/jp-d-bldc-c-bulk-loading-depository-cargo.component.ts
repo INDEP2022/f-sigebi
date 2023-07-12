@@ -42,12 +42,6 @@ export interface IVariables {
   VCONE: number;
   VCONJ: number;
   VCONA: number;
-  T_REG_LEIDOS: number;
-  T_REG_PROCESADOS: number;
-  T_REG_CORRECTOS: number;
-  T_REG_ERRONEOS: number;
-  T_REG_CORJUR: number;
-  T_REG_CORADM: number;
 }
 
 @Component({
@@ -66,6 +60,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   ExcelData: any;
   // errorData: any;
   paginatedData: any[] = [];
+  paginatedData2: any[] = [];
   currentItemData: number = 0;
   totalItemsData: number = 0;
   loadingDataProcess: boolean = false;
@@ -83,12 +78,6 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     VCONE: 0,
     VCONJ: 0,
     VCONA: 0,
-    T_REG_LEIDOS: 0,
-    T_REG_PROCESADOS: 0,
-    T_REG_CORRECTOS: 0,
-    T_REG_ERRONEOS: 0,
-    T_REG_CORJUR: 0,
-    T_REG_CORADM: 0,
   };
 
   form: FormGroup = new FormGroup({});
@@ -146,6 +135,12 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       this.paginatedData = offlinePagination(this.data, limit, page);
       console.log(this.paginatedData);
     });
+    this.params2.subscribe(params2 => {
+      const { page, limit } = params2;
+      this.paginatedData2 = offlinePagination(this.errorsData, limit, page);
+      // this.dataTable.load(this.paginatedData2);
+      // this.dataTable.refresh();
+    });
   }
 
   /**
@@ -183,9 +178,9 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
 
       this.data = [];
 
-      this.data = this.ExcelData.map((data: any) =>
-        this.setDataTableFromExcel(data)
-      );
+      // this.data = this.ExcelData.map((data: any) =>
+      //   this.setDataTableFromExcel(data)
+      // );
     };
 
     fileReader.onload = () => this.readExcel(fileReader.result);
@@ -193,8 +188,9 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   }
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
-      let tempData = this.excelService.getData(binaryExcel);
-      this.data = tempData.map((data: any) => this.setDataTableFromExcel(data));
+      // let tempData = this.excelService.getData(binaryExcel);
+      // console.log(tempData);
+      // this.data = tempData.map((data: any) => this.setDataTableFromExcel(data));
       // this.onLoadToast('success', 'Archivo subido con Exito', 'Exitoso');
     } catch (error) {
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
@@ -206,9 +202,18 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     this.massiveService.pupPreviewDataCSVForDepositary(formData).subscribe({
       next: resp => {
         this.loading = false;
+        console.log(resp);
+        this.data = resp.data;
         const params = new ListParams();
         this.params.next(params);
         this.totalItems = this.data.length;
+        // this.data = tempData.map((data: any) =>
+        //   this.setDataTableFromExcel(data)
+        // );
+
+        // this.data = this.ExcelData.map((data: any) =>
+        //   this.setDataTableFromExcel(data)
+        // );
         this.onLoadToast(
           'success',
           'La información se ha cargado exitosamente.',
@@ -281,6 +286,12 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     let V_CHECA: number = 0;
     let V_BAN: boolean = false;
     let ERRTXT: string = '';
+    this.regRead = 0;
+    this.regProcessed = 0;
+    this.regCorrect = 0;
+    this.regWrong = 0;
+    this.regCorjur = 0;
+    this.regCoradm = 0;
     if (this.no_bien != null) {
       for (let i = 0; i < this.data.length; i++) {
         if (this.data[i].VALIDADO === 'S' && this.data[i].APLICADO === 'N') {
@@ -374,6 +385,9 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     this.regCorjur = VCONJ;
     this.regCoradm = VCONA;
     this.disableApplyRecords = false;
+    console.log(this.errorsData);
+    this.dataTable.load(this.errorsData);
+    this.dataTable.refresh();
   }
   validRecords() {
     this.V_BAN = false;
@@ -384,13 +398,13 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       VCONE: 0,
       VCONJ: 0,
       VCONA: 0,
-      T_REG_LEIDOS: 0,
-      T_REG_PROCESADOS: 0,
-      T_REG_CORRECTOS: 0,
-      T_REG_ERRONEOS: 0,
-      T_REG_CORJUR: 0,
-      T_REG_CORADM: 0,
     };
+    this.regRead = 0;
+    this.regProcessed = 0;
+    this.regCorrect = 0;
+    this.regWrong = 0;
+    this.regCorjur = 0;
+    this.regCoradm = 0;
     console.log('DATA TABLA ', this.data);
     this.data.forEach(element => {
       if (element.APLICADO == 'N') {
@@ -454,6 +468,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         this.countsData.VCONE++;
         console.log('DESC ######### ', desc);
         this.errorsData.push({ DESCRIPCION: desc }); // Crear error
+        this.validJuridical(count);
       } else {
         this.getAppointmentNumber(count, desc);
       }
@@ -683,6 +698,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         this.countsData.VCONE++;
         console.log('DESC ######### ', desc);
         this.errorsData.push({ DESCRIPCION: desc }); // Crear error
+        this.validAdmin(count);
       } else {
         this.getAppointmentNumber(count, desc, 'juridico');
       }
@@ -707,6 +723,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         this.countsData.VCONE++;
         console.log('DESC ######### ', desc);
         this.errorsData.push({ DESCRIPCION: desc }); // Crear error
+        this.continueLoop(count);
       } else {
         this.getAppointmentNumber(count, desc, 'admin');
       }
@@ -720,21 +737,24 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     if (this.data[count]) {
       this.loopValidPays(count);
     } else {
-      console.log(this.errorsData);
-      this.dataTable.load(this.errorsData);
-      this.dataTable.refresh();
-      this.countsData.T_REG_LEIDOS = this.countsData.VCONP;
-      this.countsData.T_REG_PROCESADOS =
-        this.countsData.VCONC + this.countsData.VCONE;
-      this.countsData.T_REG_CORRECTOS = this.countsData.VCONC;
-      this.countsData.T_REG_ERRONEOS = this.countsData.VCONE;
-      this.countsData.T_REG_CORJUR = this.countsData.VCONJ;
-      this.countsData.T_REG_CORADM = this.countsData.VCONA;
-      if (
-        this.countsData.T_REG_CORRECTOS > 0 ||
-        this.countsData.T_REG_CORJUR > 0 ||
-        this.countsData.T_REG_CORADM > 0
-      ) {
+      this.totalItems2 = this.errorsData.length;
+      // console.log(this.errorsData);
+      // this.dataTable.load(this.errorsData);
+      // this.dataTable.refresh();
+      // this.countsData.T_REG_LEIDOS = this.countsData.VCONP;
+      // this.countsData.T_REG_PROCESADOS =
+      //   this.countsData.VCONC + this.countsData.VCONE;
+      // this.countsData.T_REG_CORRECTOS = this.countsData.VCONC;
+      // this.countsData.T_REG_ERRONEOS = this.countsData.VCONE;
+      // this.countsData.T_REG_CORJUR = this.countsData.VCONJ;
+      // this.countsData.T_REG_CORADM = this.countsData.VCONA;
+      this.regRead = this.countsData.VCONP;
+      this.regProcessed = this.countsData.VCONC + this.countsData.VCONE;
+      this.regCorrect = this.countsData.VCONC;
+      this.regWrong = this.countsData.VCONE;
+      this.regCorjur = this.countsData.VCONJ;
+      this.regCoradm = this.countsData.VCONA;
+      if (this.regCorrect > 0 || this.regCorjur > 0 || this.regCoradm > 0) {
         this.disableApplyRecords = true; // Enable button
       }
     }
