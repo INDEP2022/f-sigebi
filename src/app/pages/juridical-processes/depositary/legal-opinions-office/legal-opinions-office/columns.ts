@@ -102,7 +102,7 @@ export const RELATED_FOLIO_COLUMNS = {
     sort: false,
   },
   descriptionDocument: {
-    title: 'Descripción del documento',
+    title: 'Descripción del Documento',
     sort: false,
   },
 };

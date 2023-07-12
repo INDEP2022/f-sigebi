@@ -127,4 +127,8 @@ export class SecurityService extends HttpService {
     const route = SecurityEndpoints.FaDelResponsable;
     return this.get(`${route}?noBien=${id}`);
   }
+
+  getIniEmail(data: Object) {
+    return this.post(SecurityEndpoints.IniEmail, data);
+  }
 }

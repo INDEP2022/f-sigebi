@@ -1,1 +1,281 @@
-<p>numerary-massive-conciliation works!</p>
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Conciliación masiva numerario</h5>
+  </div>
+  <div body>
+    <h5 class="row ml-0 mb-5">Bienes</h5>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('dateTesofe')"
+            label="Aplicar Fecha Tesofe:">
+            <input
+              type="text"
+              class="form-control"
+              bsDatepicker
+              formControlName="dateTesofe" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field [control]="form.get('dateOf')" label="Fecha desde:">
+            <input
+              type="text"
+              class="form-control"
+              bsDatepicker
+              formControlName="dateOf" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field [control]="form.get('dateAt')" label="Fecha hasta:">
+            <input
+              type="text"
+              class="form-control"
+              bsDatepicker
+              formControlName="dateAt" />
+          </form-field>
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active ml-1 border-0"
+          style="width: 90px">
+          Aplicar <i class="fa fa-search"></i>
+        </button>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-12 d-flex align-items-center justify-content-center">
+          <p>
+            <span class="text-success mr-5">
+              <i class="fa fa-square"></i> No Conciliado
+            </span>
+            <span class="mr-5" style="color: #bc955c">
+              <i class="fa fa-square"></i> Conciliado
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <div class="col-12 mt-6">
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data">
+            </ng2-smart-table>
+          </div>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+
+      <div
+        class="col-12 mt-4 d-flex justify-content-center"
+        style="margin-top: 50px">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active ml-1 border-0"
+          style="width: 90px">
+          Conciliar
+        </button>
+      </div>
+    </form>
+
+    <div class="row" style="margin-top: 50px">
+      <h5 class="row ml-0 mb-5">Cuentas Bancarias</h5>
+      <form [formGroup]="form2" class="form-material">
+        <div class="row mt-4">
+          <div class="col-6">
+            <form-field [control]="form2.get('bank')">
+              <ngx-select
+                [data]="banks"
+                [form]="form2"
+                bindLabel="name"
+                label="Seleccione un Banco"
+                [control]="'bank'"
+                (change)="onBankSelectChange($event)"
+                (input)="onSearchName($event.target)"></ngx-select>
+            </form-field>
+          </div>
+          <div class="col-6">
+            <form-field [control]="form2.get('bankAccount')">
+              <ngx-select
+                [data]="bankAccountSelect"
+                [form]="form2"
+                bindLabel="accountNumber"
+                label="Seleccione una Cuenta"
+                [control]="'bankAccount'"
+                (change)="onBankAccountSelectChange($event)"
+                (input)="onSearchAccount($event.target)"
+                (clear)="onClearSelection()"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="form2.get('deposit')" label="Depósito">
+            <input type="text" class="form-control" formControlName="deposit" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field [control]="form2.get('current')" label="Moneda">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="current"
+              maxlength="15"
+              readonly />
+          </form-field>
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active ml-1 border-0 mr-4"
+          style="width: 100px">
+          Buscar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active ml-1 border-0"
+          style="width: 100px">
+          Asociación
+        </button>
+
+        <div class="col-12 mt-6">
+          <div class="table-responsive">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings2"
+                [source]="data">
+              </ng2-smart-table>
+            </div>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </div>
+        </div>
+
+        <div class="row mt-5">
+          <div class="col-md-4">
+            <form-field [control]="form2.get('current')" label="Total">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="current"
+                readonly />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="form2.get('current')"
+              label="Total con Fecha Tesofe">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="current"
+                readonly />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="form2.get('current')"
+              label="Total sin Fecha Tesofe">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="current"
+                readonly />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mt-5">
+          <div class="col-md-4">
+            <form-field [control]="form2.get('current')" label="Propuesta">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="current" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field [control]="form2.get('current')" label="Depósito">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="current" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top: 50px">
+          <div class="col-md-4">
+            <form-field [control]="form2.get('current')" label="Clasificador">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="current" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form2.get('current')" label="Banco">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="current" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="form2.get('current')"
+              label="Cuenta Bancaria">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="current" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form2.get('current')" label="Depódito">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="current" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form2.get('current')" label="Moneda">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="current" />
+            </form-field>
+          </div>
+          <div class="col-12 mt-6 d-flex justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active ml-1 border-0 mr-4"
+              style="width: 100px">
+              Actualiza
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active ml-1 border-0"
+              style="width: 100px">
+              Desconcilia
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>

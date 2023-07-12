@@ -8,10 +8,11 @@
         <div class="col-md-12">
           <form-field
             [control]="personForm.get('personName')"
-            label="Cve.Depositaría">
+            label="Clave Depositar&iacute;as">
             <input
               type="text"
               class="form-control"
+              maxLength="30"
               formControlName="personName" />
           </form-field>
         </div>
@@ -21,27 +22,40 @@
           <form-field
             [control]="personForm.get('name')"
             label="Descripci&oacute;n">
-            <input type="text" class="form-control" formControlName="name" />
+            <input
+              type="text"
+              maxLength="200"
+              class="form-control"
+              formControlName="name" />
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-4">
           <form-field [control]="personForm.get('street')" label="Calle">
-            <input type="text" class="form-control" formControlName="street" />
+            <input
+              type="text"
+              maxLength="200"
+              class="form-control"
+              formControlName="street" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="personForm.get('suburb')" label="Colonia">
-            <input type="text" class="form-control" formControlName="suburb" />
+            <input
+              type="text"
+              maxLength="100"
+              class="form-control"
+              formControlName="suburb" />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
             [control]="personForm.get('streetNumber')"
-            label="No.Exterior">
+            label="No.&nbsp;Exterior">
             <input
               type="text"
+              maxLength="10"
               class="form-control"
               formControlName="streetNumber" />
           </form-field>
@@ -49,9 +63,10 @@
         <div class="col-md-2">
           <form-field
             [control]="personForm.get('apartmentNumber')"
-            label="No.Interior">
+            label="No.&nbsp;Interior">
             <input
               type="text"
+              maxLength="10"
               class="form-control"
               formControlName="apartmentNumber" />
           </form-field>
@@ -61,9 +76,10 @@
         <div class="col-md-6">
           <form-field
             [control]="personForm.get('delegation')"
-            label="Delegci&oacute;n Municipal">
+            label="Delegaci&oacute;n/Municipio">
             <input
               type="text"
+              maxLength="60"
               class="form-control"
               formControlName="delegation" />
           </form-field>
@@ -72,89 +88,46 @@
           <form-field
             [control]="personForm.get('zipCode')"
             label="C&oacute;digo Postal">
-            <input type="text" class="form-control" formControlName="zipCode" />
+            <input
+              type="text"
+              maxLength="5"
+              class="form-control"
+              formControlName="zipCode" />
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-4">
           <form-field [control]="personForm.get('rfc')" label="RFC">
-            <input type="text" class="form-control" formControlName="rfc" />
+            <input
+              type="text"
+              maxLength="20"
+              class="form-control"
+              formControlName="rfc" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="personForm.get('curp')" label="CURP">
-            <input type="text" class="form-control" formControlName="curp" />
+            <input
+              type="text"
+              maxLength="20"
+              class="form-control"
+              formControlName="curp" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
             [control]="personForm.get('phone')"
             label="Tel&eacute;fono">
-            <input type="tel" class="form-control" formControlName="phone" />
+            <input
+              type="tel"
+              maxLength="20"
+              class="form-control"
+              formControlName="phone" />
           </form-field>
         </div>
       </div>
-      <!-- <div class="row pt-5">
-        <div class="col-md-3">
-          <form-field
-            [control]="personForm.get('typePerson')"
-            label="Tipo Persona">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="typePerson" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="personForm.get('typeResponsible')"
-            label="Tipo Responsabilidad">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="typeResponsible" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="personForm.get('manager')" label="Gerente">
-            <input type="text" class="form-control" formControlName="manager" />
-          </form-field>
-        </div>
-      </div> -->
-      <!-- <div class="row pt-5">
-        <div class="col-md-3">
-          <form-field
-            [control]="personForm.get('numberDeep')"
-            label="N&uacute;mero Deep">
-            <input
-              type="tel"
-              class="form-control"
-              formControlName="numberDeep" />
-          </form-field>
-        </div>
-        <div class="col-md-9">
-          <form-field
-            [control]="personForm.get('profesion')"
-            label="Profesi&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="profesion" />
-          </form-field>
-        </div>
-      </div> -->
       <div class="row pt-5">
-        <!-- <div class="col-md-6">
-          <form-field
-            [control]="personForm.get('curriculum')"
-            label="Curriculum">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="curriculum" />
-          </form-field>
-        </div> -->
         <div class="col-md-4">
           <form-field [control]="personForm.get('keyEntFed')">
             <ngx-select
@@ -164,6 +137,7 @@
               label="Entidad Federativa"
               value="otkey"
               (fetchItems)="getEntFed($event)"
+              maxLength="100"
               control="keyEntFed"></ngx-select>
           </form-field>
         </div>
@@ -177,21 +151,20 @@
               label="Giro"
               value="otkey"
               (fetchItems)="getTurn($event)"
+              maxLength="100"
               control="keyOperation"></ngx-select>
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
-        <!-- <div class="col-md-8">
-          <form-field [control]="personForm.get('observations')" label="Observaciones">
-            <input type="text" class="form-control" formControlName="observations" />
-          </form-field>
-        </div> -->
         <div class="col-md-6">
           <form-field
             [control]="personForm.get('typePerson')"
             label="Tipo Persona">
-            <select class="form-control" formControlName="typePerson">
+            <select
+              class="form-control"
+              formControlName="typePerson"
+              [class.opacidad_select]="!personForm.get('typePerson').value">
               <option
                 *ngFor="let option of optionsTipoP"
                 [value]="option.value">
@@ -204,7 +177,12 @@
           <form-field
             [control]="personForm.get('typeResponsible')"
             label="Tipo Responsable">
-            <select class="form-control" formControlName="typeResponsible">
+            <select
+              class="form-control"
+              formControlName="typeResponsible"
+              [class.opacidad_select]="
+                !personForm.get('typeResponsible').value
+              ">
               <option
                 *ngFor="let option of optionsTipoR"
                 [value]="option.value">
@@ -219,39 +197,24 @@
           <form-field
             [control]="personForm.get('manager')"
             label="Representante">
-            <input type="text" class="form-control" formControlName="manager" />
+            <input
+              type="text"
+              maxLength="60"
+              class="form-control"
+              formControlName="manager" />
           </form-field>
         </div>
-
-        <!-- <div class="col-md-4">
-          <form-field [control]="personForm.get('precedentPff')" label="Antecedentes PTFF">
-            <input type="text" class="form-control" formControlName="precedentPff" />
-          </form-field>
-        </div> -->
       </div>
-      <!-- <div class="row pt-5">
-        <div class="col-md-4">
-          <form-field [control]="personForm.get('precedentSera')" label="Antecedentes Sera">
-            <input type="text" class="form-control" formControlName="precedentSera" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="personForm.get('precedent0ther')" label="Otros Antecedentes">
-            <input type="text" class="form-control" formControlName="precedent0ther" />
-          </form-field>
-        </div>
-      </div> -->
       <div class="row pt-5">
         <div class="col-md-12">
           <form-field [control]="personForm.get('email')" label="Correo">
-            <input type="email" class="form-control" formControlName="email" />
+            <input
+              type="email"
+              maxLength="60"
+              class="form-control"
+              formControlName="email" />
           </form-field>
         </div>
-        <!-- <div class="col-md-6">
-          <form-field [control]="personForm.get('blackList')" label="Lista Negra">
-            <input type="test" class="form-control" formControlName="blackList" />
-          </form-field>
-        </div> -->
       </div>
     </form>
   </div>
@@ -260,6 +223,7 @@
       <div class="m-3">
         <confirm-button
           [disabled]="!personForm.valid"
+          [btnSmall]="true"
           [type]="'button'"
           (confirm)="confirm()">
         </confirm-button>

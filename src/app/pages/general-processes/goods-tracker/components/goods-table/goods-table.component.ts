@@ -25,6 +25,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { SocketService } from 'src/app/common/socket/socket.service';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
@@ -100,7 +101,8 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     private goodPartService: GoodPartializeService,
     private procedings: ProceedingsService,
     private partializeGoodServ: PartializeGoodService,
-    private photoService: PublicationPhotographsService
+    private photoService: PublicationPhotographsService,
+    private socketService: SocketService
   ) {
     super();
     this.settings.actions = false;
@@ -744,19 +746,45 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     });
   }
 
+  subscribeExcel() {
+    return this.socketService.test().pipe(
+      take(1),
+      switchMap(() => this.getExcel())
+    );
+  }
+
+  getExcel() {
+    return this.goodTrackerService.donwloadExcel().pipe(
+      catchError(error => {
+        this.alert('error', 'Error', 'No se genero correctamente el archivo');
+        return throwError(() => error);
+      }),
+      tap(resp => this.downloadExcel(resp.file))
+    );
+  }
+
+  downloadExcel(base64String: string) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = 'Rastreador_Bienes.xlsx';
+    link.click();
+    link.remove();
+    this.alert('success', 'Archivo descargado correctamente', '');
+  }
+
   getDataExcell() {
     this.excelLoading = true;
     this.goodTrackerService.getExcel(this.filters).subscribe({
       next: resp => {
-        const mediaType =
-          'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
-        const link = document.createElement('a');
-        link.href = mediaType + resp.base64File;
-        link.download = 'Rastreador_Bienes.xlsx';
-        link.click();
-        link.remove();
-        this.excelLoading = false;
-        this.alert('success', 'Archivo descargado correctamente', '');
+        this.loading = false;
+        this.alert(
+          'info',
+          'Aviso',
+          'El archivo excel se esta generando en cuanto este listo se descargará utomaticamente'
+        );
+        this.subscribeExcel().subscribe();
       },
       error: () => {
         this.excelLoading = false;

@@ -234,17 +234,17 @@
             <div class="mx-1">
               <!-- [disabled]="!searchForm.touched" -->
               <button
-                (click)="search()"
-                class="btn btn-sm btn-primary active btn-sm">
-                <i class="bx bx-search-alt-2 me-1 float-icon"></i> Buscar
+                (click)="reset()"
+                class="btn btn-danger active btn-sm"
+                [disabled]="!searchForm.touched">
+                Limpiar <i class="fas fa-eraser"> </i>
               </button>
             </div>
             <div class="mx-1">
               <button
-                (click)="reset()"
-                class="btn btn-danger active btn-sm"
-                [disabled]="!searchForm.touched">
-                <i class="bx bx-reset me-1 float-icon"></i> Limpiar
+                (click)="search()"
+                class="btn btn-sm btn-primary active btn-sm">
+                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
             </div>
           </div>
