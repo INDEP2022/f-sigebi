@@ -14,6 +14,7 @@
               class="form-control"
               formControlName="destiny">
               <ng-option value="DONACION">Donación</ng-option>
+              <ng-option value="VENTA">Venta</ng-option>
             </ng-select>
           </form-field>
         </div>
@@ -440,9 +441,12 @@
           <form-field
             [control]="antecedentThree.get('status')"
             label="Antec. Estado">
-            <select class="form-control" formControlName="status">
-              <option value="NO">Bueno</option>
-            </select>
+            <ng-select class="form-control" formControlName="status">
+              <ng-option value="Excelente">Excelente</ng-option>
+              <ng-option value="Bueno">Bueno</ng-option>
+              <ng-option value="Regular">Regular</ng-option>
+              <ng-option value="Mal">Mal</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>

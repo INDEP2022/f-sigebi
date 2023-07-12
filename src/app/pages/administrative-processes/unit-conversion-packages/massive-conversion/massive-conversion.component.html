@@ -274,6 +274,7 @@
       </button>
       <button
         (click)="pbCorreo()"
+        [disabled]="!cvePackage.value"
         type="button"
         class="btn btn-primary btn-sm active">
         Correo
