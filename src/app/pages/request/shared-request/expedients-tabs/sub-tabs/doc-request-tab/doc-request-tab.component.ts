@@ -247,10 +247,7 @@ export class DocRequestTabComponent
       .subscribe({
         next: async res => {
           if (this.typeDoc == 'doc-request') {
-            if (
-              this.requestInfo.transferenceId != 1 &&
-              !this.requestInfo.recordId
-            ) {
+            if (this.requestInfo.transferenceId == 1) {
               const filterDoc = res.data.filter((item: any) => {
                 if (
                   item.dDocType == 'Document' &&
@@ -274,8 +271,8 @@ export class DocRequestTabComponent
                   items?.xidTransferente
                 );
                 items['transferentName'] = transferent;
-              }*/
-                /*if (items?.xestado) {
+              }
+                if (items?.xestado) {
                 const state = await this.getStateDoc(items?.xestado);
                 items['stateName'] = state;
               } */
@@ -295,10 +292,7 @@ export class DocRequestTabComponent
               });
             }
 
-            if (
-              this.requestInfo.transferenceId != 1 &&
-              this.requestInfo.recordId
-            ) {
+            if (this.requestInfo.transferenceId != 1) {
               const filterDoc = res.data.filter((item: any) => {
                 if (
                   item.dDocType == 'Document' &&
