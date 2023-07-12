@@ -24,6 +24,11 @@ export class SweetalertModel implements SweetAlertOptions {
   cancelButtonText: string;
   confirmButtonClass: string;
   cancelButtonClass: string;
+  customClass: {
+    confirmButton: string;
+    cancelButton: string;
+    loader?: string;
+  };
   timer: number;
   html?: string;
   timerProgressBar: boolean;
@@ -39,8 +44,12 @@ export class SweetalertModel implements SweetAlertOptions {
     this.confirmButtonText = 'Aceptar';
     this.cancelButtonText = 'Cancelar';
     this.showCloseButton = false;
-    this.confirmButtonClass = 'btn btn-primary active btn-sm';
-    this.cancelButtonClass = 'btn btn-danger active btn-sm';
+    // this.confirmButtonClass = 'btn btn-primary active btn-sm';
+    // this.cancelButtonClass = 'btn btn-danger active btn-sm';
+    this.customClass = {
+      confirmButton: 'btn btn-primary active btn-sm',
+      cancelButton: 'btn btn-danger active btn-sm',
+    };
     this.buttonsStyling = false;
   }
 }
