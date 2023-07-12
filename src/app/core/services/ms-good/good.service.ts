@@ -50,7 +50,6 @@ export class GoodService extends HttpService {
   }
 
   getAll(params?: ListParams | string): Observable<IListResponse<IGood>> {
-    console.log('Aquí');
     return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params);
   }
 

@@ -47,6 +47,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   isReadOnly: boolean = true;
   requestId: number = 0;
   taskId: number = 0;
+  regionalDelegationId: number = 0;
 
   loadingTurn = false;
   bsModalRef: BsModalRef;
@@ -217,6 +218,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   getRegionalDeleg(params?: ListParams) {
     const regDelId = Number(this.getRegionalDelegationId());
     this.regionalDelegationService.getById(regDelId).subscribe((data: any) => {
+      this.regionalDelegationId = data.id;
       this.requestForm.controls['regionalDelegationId'].setValue(data.id);
       this.selectRegionalDeleg = new DefaultSelect([data], data.count);
 
@@ -540,7 +542,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       let date = this.requestForm.controls['applicationDate'].value;
       form.applicationDate = date.toISOString();
       form.typeOfTransfer = 'MANUAL';
-
+      form.regionalDelegationId = this.regionalDelegationId;
       this.requestService.create(form).subscribe({
         next: resp => {
           resolve(resp);

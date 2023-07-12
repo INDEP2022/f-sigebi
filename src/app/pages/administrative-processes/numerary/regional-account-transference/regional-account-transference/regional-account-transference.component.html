@@ -6,8 +6,11 @@
     <div class="row mt-3 mb-3">
       <form class="form-material" [formGroup]="form">
         <div class="row mt-4">
-          <div class="col-md-4">
-            <form-field [control]="form.get('noBien')" label="No Bien">
+          <div class="col-md-4 d-flex">
+            <form-field
+              [control]="form.get('noBien')"
+              class="w-100"
+              label="No Bien">
               <input
                 type="number"
                 class="form-control"
@@ -15,6 +18,14 @@
                 min="1"
                 oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
             </form-field>
+            <div class="d-inline">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active ml-2"
+                (click)="getIdSolum()">
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+            </div>
           </div>
           <div class="col-md-4">
             <form-field [control]="form.get('idRequest')" label="Id Solicitud">
@@ -29,6 +40,7 @@
           <div class="col-md-4">
             <div class="d-inline">
               <button
+                type="button"
                 class="btn btn-primary btn-sm active mr-2"
                 (click)="getDataPreview()">
                 Consultar
@@ -74,7 +86,7 @@
             </form-field>
           </div>
           <div class="col-md-6 d-flex mt-4">
-            <form-check label="Marcar como historico" for="histo">
+            <form-check label="Marcar como histórico" for="histo">
               <input
                 id="histo"
                 type="checkbox"
@@ -83,7 +95,7 @@
             </form-check>
             <div class="d-inline">
               <button
-                type="submit"
+                type="button"
                 class="btn btn-primary btn-sm active"
                 tooltip="Enviar"
                 (click)="sendEmail()"
@@ -95,6 +107,7 @@
           <div class="col-md-12 text-center mt-4">
             <div class="d-inline">
               <button
+                type="button"
                 class="btn btn-primary btn-sm active mr-3"
                 (click)="searchRegional()">
                 Buscar
@@ -106,11 +119,15 @@
                 (click)="clear(); isNew = true">
                 Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
-              <button type="button" class="btn btn-primary btn-sm active mr-3">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="save()">
                 Guardar
                 <i aria-hidden="true" class="fa fa-save"></i>
               </button>
               <button
+                type="button"
                 class="btn btn-danger btn-sm active"
                 (click)="clear(); isNew = false">
                 Limpiar <i class="fas fa-eraser"> </i>
@@ -151,15 +168,13 @@
                 label="Tipo Moneda de Cuenta">
                 <ng-select
                   formControlName="currencyType"
+                  (change)="changeSelect()"
                   [items]="moneda"
                   bindValue="value"
                   class="form-control"
                   [searchable]="false"
                   bindLabel="label"></ng-select>
               </form-field>
-              <!-- <form-field [control]="form.get('currencyType')" label="Tipo moneda de cuenta">
-                <input type="number" class="form-control" formControlName="currencyType" min="1" pattern="^[0-9]+" />
-              </form-field> -->
             </div>
             <div style="margin-top: 30px">
               <form-field [control]="form.get('delegation')">
@@ -171,7 +186,7 @@
                   label="Delegación"
                   [control]="'delegation'"
                   [searchable]="false"
-                  (change)="onDelegationsChange($event)"
+                  (change)="changeSelect($event)"
                   [labelTemplate]="delg"
                   [optionTemplate]="delgd">
                 </ngx-select>
@@ -194,16 +209,16 @@
                 [control]="form.get('folioCash')"
                 label="No Folio CashWindows">
                 <input
-                  type="number"
+                  type="text"
                   class="form-control"
                   formControlName="folioCash"
-                  min="1" />
+                  oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
               <form-field
                 [control]="form.get('transactionDate')"
-                label="Fecha transacción CashWindows">
+                label="Fecha Transacción CashWindows">
                 <input
                   formControlName="transactionDate"
                   class="form-control"
@@ -221,33 +236,48 @@
                   type="number"
                   class="form-control"
                   formControlName="cveAccount"
-                  min="1" />
+                  min="1"
+                  oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16)" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
               <form-field
                 [control]="form.get('accountType')"
                 label="Tipo de cuenta">
-                <input formControlName="accountType" class="form-control" />
+                <input
+                  formControlName="accountType"
+                  class="form-control"
+                  oninput="if(this.value.length > 13) this.value = this.value.slice(0, 13)" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
               <form-field
                 [control]="form.get('cveBank')"
                 label="Clave de Banco">
-                <input formControlName="cveBank" class="form-control" />
+                <input
+                  formControlName="cveBank"
+                  class="form-control"
+                  oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10)" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
               <form-field
                 [control]="form.get('cveCurrency')"
                 label="Clave de Moneda">
-                <input formControlName="cveCurrency" class="form-control" />
+                <input
+                  formControlName="cveCurrency"
+                  class="form-control"
+                  oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15)" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
               <form-field [control]="form.get('total')" label="Monto Total">
-                <input formControlName="total" class="form-control" />
+                <input
+                  type="number"
+                  formControlName="total"
+                  class="form-control"
+                  min="0"
+                  oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
               </form-field>
             </div>
           </div>

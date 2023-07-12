@@ -100,7 +100,6 @@ export class RecordAccountStatementsComponent
     this.prepareForm();
     this.searchBanks(new ListParams());
     this.searchCheck();
-
     this.dataAccount
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -114,8 +113,6 @@ export class RecordAccountStatementsComponent
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'dateMotion':
-                console.log(filter.field);
-                console.log(searchFilter);
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'deposit':
@@ -132,7 +129,6 @@ export class RecordAccountStatementsComponent
                 break;
             }
             if (filter.search !== '') {
-              console.log(`${searchFilter}:${filter.search}`);
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -447,6 +443,8 @@ export class RecordAccountStatementsComponent
   }
 
   delete(movimentAccount: IRecordAccountStatements, modal: any) {
+    let showAlert = false;
+
     if (
       movimentAccount.numberMotionTransfer !== null ||
       movimentAccount.numberReturnPayCheck !== null ||
@@ -459,6 +457,7 @@ export class RecordAccountStatementsComponent
           'No se puede eliminar el movimiento porque proviene de una transferencia',
           ``
         );
+        showAlert = true;
       }
       if (movimentAccount.numberReturnPayCheck !== null) {
         this.alert(
@@ -466,6 +465,7 @@ export class RecordAccountStatementsComponent
           'No se puede eliminar el movimiento porque proviene de un cobro de cheque debido a una devolución',
           ``
         );
+        showAlert = true;
       }
       if (movimentAccount.numberGood !== null) {
         this.alert(
@@ -473,29 +473,34 @@ export class RecordAccountStatementsComponent
           'No se puede eliminar el movimiento porque está asociado a un bien',
           ``
         );
+        showAlert = true;
       }
     }
 
-    const chequeEncontrado = this.checks.find(
-      (cheque: { accountOriginDepositNumber: number }) =>
-        cheque.accountOriginDepositNumber === movimentAccount.numberMotion
-    );
-
-    if (chequeEncontrado) {
-      this.alert(
-        'warning',
-        'No se puede eliminar el movimiento mientras tenga devoluciones registradas',
-        ``
+    if (!showAlert) {
+      const chequeEncontrado = this.checks.find(
+        (cheque: { accountOriginDepositNumber: number }) =>
+          cheque.accountOriginDepositNumber === movimentAccount.numberMotion
       );
-    } else {
-      this.recordAccountStatementsAccountsService.remove(modal).subscribe({
-        next: response => {
-          this.alert('success', 'Movimiento eliminado', '');
-        },
-        error: err => {
-          this.alert('error', 'No es posible eliminar el movimiento', '');
-        },
-      });
+
+      if (chequeEncontrado) {
+        this.alert(
+          'warning',
+          'No se puede eliminar el movimiento mientras tenga devoluciones registradas',
+          ``
+        );
+        showAlert = true;
+      } else {
+        this.recordAccountStatementsAccountsService.remove(modal).subscribe({
+          next: response => {
+            this.searchDataAccount(this.dataAccountPaginated);
+            this.alert('success', 'Movimiento eliminado', '');
+          },
+          error: err => {
+            this.alert('error', 'No es posible eliminar el movimiento', '');
+          },
+        });
+      }
     }
   }
 

@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -49,7 +54,15 @@ interface ICurrencyRes {
   styleUrls: ['./numerary-calc.component.scss'],
 })
 export class NumeraryCalcComponent extends BasePage implements OnInit {
-  form: FormGroup;
+  form = new FormGroup({
+    idProcess: new FormControl(null), // [null],
+    date: new FormControl(null), // [null],
+    type: new FormControl(null), // [null],
+    concept: new FormControl(null, [Validators.pattern(STRING_PATTERN)]), // [null, ],
+    totalInterests: new FormControl(null), // [null],
+    totalImport: new FormControl(null, [Validators.required]), // ,
+    user: new FormControl(null, [Validators.required]), // ,
+  });
   formBlkControl: FormGroup;
 
   loading1 = this.loading;
@@ -212,21 +225,28 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       this.form.get('totalImport').patchValue(event.numeraryAll);
       this.tCurrency();
     } else {
-      this.form.reset();
-      this.formBlkControl.reset();
+      this.clean();
     }
   }
 
+  clean() {
+    this.form.reset();
+    this.formBlkControl.reset();
+    this.data.load([]);
+    this.data3.load([]);
+    this.data2.load([]);
+  }
+
   prepareForm() {
-    this.form = this.fb.group({
-      idProcess: [null],
-      date: [null],
-      type: [null],
-      concept: [null, [Validators.pattern(STRING_PATTERN)]],
-      totalInterests: [null],
-      totalImport: [null, Validators.required],
-      user: [null, Validators.required],
-    });
+    // this.form = this.fb.group({
+    //   idProcess: [null],
+    //   date: [null],
+    //   type: [null],
+    //   concept: [null, [Validators.pattern(STRING_PATTERN)]],
+    //   totalInterests: [null],
+    //   totalImport: [null, Validators.required],
+    //   user: [null, Validators.required],
+    // });
     this.formBlkControl = this.fb.group({
       tMoneda: [null, Validators.required],
       commisionBanc: [null, Validators.required],
@@ -234,21 +254,21 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     });
   }
 
-  getRequestNumeEnc() {
+  getRequestNumeEnc(listParams: ListParams = null) {
     this.loading1 = true;
-    this.numeraryService
-      .getNumeraryRequestNumeEnc(this.params.getValue())
-      .subscribe({
-        next: resp => {
-          console.log(resp.data);
-          this.data1 = resp.data;
-          this.totalItems = resp.count;
-          this.loading1 = false;
-        },
-        error: err => {
-          this.loading1 = false;
-        },
-      });
+    const params = listParams || this.params.getValue();
+    this.numeraryService.getNumeraryRequestNumeEnc(params).subscribe({
+      next: resp => {
+        console.log(resp.data);
+        this.data1 = resp.data;
+        this.data.load(resp.data);
+        this.totalItems = resp.count;
+        this.loading1 = false;
+      },
+      error: err => {
+        this.loading1 = false;
+      },
+    });
   }
 
   getRequestNumeDet(idProcess?: number | string) {
@@ -474,6 +494,27 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(ModalRequestComponent, config);
+  }
+
+  searchProcess() {
+    if (!this.form.value.idProcess) {
+      return this.onLoadToast('warning', 'Debe especificar un proceso.');
+    }
+    this.numeraryService
+      .getProcessNumById(this.form.value.idProcess)
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.onProcesosNum(response);
+          const params = new ListParams();
+          params['filter.procnumId'] = this.form.value.idProcess;
+          this.getRequestNumeEnc(params);
+        },
+        error: () => {
+          this.clean();
+          this.onLoadToast('error', 'No se encontró el proceso.');
+        },
+      });
   }
 
   async onChangeProcces(event: IRequestNumeraryEnc) {

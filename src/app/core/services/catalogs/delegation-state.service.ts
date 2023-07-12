@@ -48,7 +48,7 @@ export class DelegationStateService
   //   return this.delegationStateRepository.remove(this.route, id);
   // }
   newRemove(regioanalDelegation: string | number, id: string | number) {
-    const route = `${'delegation-state'}/regional-delegation/${regioanalDelegation}/state-code/${id}`;
+    const route = `${'delegation-state'}/deleteDelegationStateCustom/${regioanalDelegation}/stateCode/${id}`;
     return this.delete(route);
   }
 }
