@@ -3,6 +3,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http-wcontet.service';
 import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
 import { IDepositaryAppointments } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import {
   IScreenStatusCValRevocation,
   IScreenStatusCValUniversalFolio,
@@ -73,6 +74,9 @@ export class AppointmentsService {
 
   getFromGoodsAndExpedients(body: string) {
     return this.msGoodService.getAllFilter(body);
+  }
+  updateGood(body: Partial<IGood>) {
+    return this.msGoodService.update(body);
   }
 
   /**
