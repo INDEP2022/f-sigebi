@@ -481,7 +481,7 @@ export class AppointmentsComponent
         this.depositaryAppointment.InvoiceReturn == null
       ) {
         this.alertInfo(
-          'info',
+          'warning',
           'No Cambiara el Estatus del Bien, Hasta que se Tenga el Folio Acta Depositaría y el Folio de Remoción',
           ''
         );
@@ -490,7 +490,7 @@ export class AppointmentsComponent
         this.depositaryAppointment.InvoiceReturn != null
       ) {
         this.alertInfo(
-          'info',
+          'warning',
           'No Cambiara el Estatus del Bien, Hasta que se Tenga el Folio Acta Depositaría',
           ''
         );
@@ -499,7 +499,7 @@ export class AppointmentsComponent
         this.depositaryAppointment.InvoiceReturn != null
       ) {
         this.alertInfo(
-          'info',
+          'warning',
           'No cambiara el Estatus del Bien, Hasta que se Tenga el Folio de Remoción',
           ''
         );
@@ -2216,7 +2216,7 @@ export class AppointmentsComponent
               console.log('DATA ', data);
               if (data.count == 0) {
                 this.alertInfo(
-                  'info',
+                  'warning',
                   'No se Puede Generar el Folio de Escaneo por Remoción, Porque no Tiene el Estatus Adecuado',
                   ''
                 );
@@ -2230,7 +2230,7 @@ export class AppointmentsComponent
 
                 if (response.isConfirmed) {
                   if (this.form.get('remocion').value == 'N') {
-                    this.alertInfo('info', 'No Tiene Datos de Remoción', '');
+                    this.alertInfo('warning', 'No Tiene Datos de Remoción', '');
                     this.showScanRadio = false;
                   } else {
                     this.valuesChangeRadio.lv_VALESCAN = 1;
@@ -2683,7 +2683,7 @@ export class AppointmentsComponent
     ) {
       validMessage = true;
       this.alertInfo(
-        'info',
+        'warning',
         'No Cambiara el Estatus del Bien, Hasta que se Tenga el Folio Acta Depositaría y el Folio de Remoción',
         ''
       ).then(() => {
@@ -2695,7 +2695,7 @@ export class AppointmentsComponent
     ) {
       validMessage = true;
       this.alertInfo(
-        'info',
+        'warning',
         'No Cambiara el Estatus del Bien, Hasta que se Tenga el Folio Acta Depositaría',
         ''
       ).then(() => {
@@ -2707,7 +2707,7 @@ export class AppointmentsComponent
     ) {
       validMessage = true;
       this.alertInfo(
-        'info',
+        'warning',
         'No cambiara el Estatus del Bien, Hasta que se Tenga el Folio de Remoción',
         ''
       ).then(() => {
