@@ -506,6 +506,10 @@ export class ScanRequestComponent extends BasePage implements OnInit {
                     this.msDepositaryService.update(body).subscribe({
                       next: data => {
                         // Guardar nuevo folio universal en nombramientos depositarias
+                        localStorage.setItem(
+                          '_saveFolioDepositary',
+                          this.paramsDepositaryAppointment.P_FOLIO
+                        );
                       },
                       error: error => {
                         this.loadingDoc = false;
