@@ -48,6 +48,7 @@
               class="btn btn-info btn-sm active"
               (click)="validRecords()">
               Validar registros
+              <i class="fa fa-check" aria-hidden="true"></i>
             </button>
           </div>
         </div>
@@ -126,6 +127,22 @@
         </div>
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+    <div class="row">
+      <!--CAN WORK2 TABLE-->
+      <div class="row pt-4">
+        <div class="col-md-12 table-responsive">
+          <div>
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="dataTable">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination [params]="params2" [totalItems]="errorsData.length">
       </app-pagination>
     </div>
   </div>

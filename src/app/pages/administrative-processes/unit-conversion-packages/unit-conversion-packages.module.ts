@@ -37,7 +37,7 @@ import { ScanFileComponent } from './massive-conversion/scan-file/scan-file.comp
     MassiveConversionModalGoodComponent,
     MassiveConversionSelectGoodComponent,
     PaqDestinoDetComponent,
-    EmailModalComponent
+    EmailModalComponent,
   ],
   imports: [
     CommonModule,
@@ -55,7 +55,7 @@ import { ScanFileComponent } from './massive-conversion/scan-file/scan-file.comp
     PackagesSharedComponent,
     ScanFileSharedComponent,
     ModalModule.forChild(),
-    ScanFileComponent
+    ScanFileComponent,
   ],
 })
 export class UnitConversionPackagesModule {}

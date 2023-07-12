@@ -1,6 +1,5 @@
-// import { CheckboxDisabledElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-disabled-element';
+import { CheckboxDisabledElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-disabled-element';
 // import { CheckboxElementRecordAccountStatementsComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element-record-account-statements';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
   turnSelect: {
@@ -10,14 +9,14 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
     filter: false,
     editable: false,
     type: 'custom',
-    renderComponent: CheckboxElementComponent,
+    renderComponent: CheckboxDisabledElementComponent,
   },
-  goodId: {
+  numberGood: {
     title: 'Bien',
     type: 'number',
     sort: false,
   },
-  withdrawal: {
+  numberProceedings: {
     title: 'Expediente',
     type: 'number',
     sort: false,
@@ -26,6 +25,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
     title: 'Banco',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.accountNumber?.cveBank;
+    },
   },
   numberAccount: {
     title: 'Cuenta Bancaria',
@@ -36,6 +38,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
     title: 'Moneda',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.accountNumber?.cveCurrency.replace(/'/g, '');
+    },
   },
   deposit: {
     title: 'Depósito',
@@ -62,9 +67,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
     filter: false,
     editable: false,
     type: 'custom',
-    renderComponent: CheckboxElementComponent,
+    renderComponent: CheckboxDisabledElementComponent,
   },
-  goodId: {
+  numberGood: {
     title: 'Bien',
     type: 'number',
     sort: false,
@@ -73,6 +78,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
     title: 'Banco',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.accountNumber?.cveBank;
+    },
   },
   numberAccount: {
     title: 'Cuenta Bancaria',
@@ -83,6 +91,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
     title: 'Moneda',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.accountNumber?.cveCurrency.replace(/'/g, '');
+    },
   },
   deposit: {
     title: 'Depósito',

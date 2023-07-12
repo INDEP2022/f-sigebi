@@ -334,3 +334,13 @@ export interface IDepositaryAppointments_custom {
 //   withHousehold: string; // con_menaje
 //   nbOrigin: string; // nb_origen
 // }
+export interface IVChecaPost {
+  appointmentNumber: number;
+  payDate: Date; //"2009-05-14",
+  conceptPayKey: number;
+}
+export interface IVChecaPostReport {
+  appointmentNumber: number;
+  payDate: Date; //"2009-05-14",
+  reportKey: number;
+}

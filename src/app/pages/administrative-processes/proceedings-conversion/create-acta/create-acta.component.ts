@@ -195,7 +195,9 @@ export class CreateActaComponent extends BasePage implements OnInit {
     const mes = this.actaRecepttionForm.value.mes;
     const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${cveReceived}/${consec
       .toString()
-      .padStart(4, '0')}/${anio}/${mes}`;
+      .padStart(4, '0')}/${anio.toString().padStart(2, '0')}/${mes
+      .toString()
+      .padStart(2, '0')}`;
     console.log(cveActa);
 
     if (cveActa) {

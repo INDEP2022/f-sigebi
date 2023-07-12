@@ -130,9 +130,9 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     });
 
     this.formRegistro = this.fb.group({
-      processTwo: [null],
-      fromTwo: [null],
-      toTwo: [null],
+      processTwo: [null, Validators.required],
+      fromTwo: [null, Validators.required],
+      toTwo: [null, Validators.required],
     });
   }
 
@@ -257,6 +257,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       delegationType: this.delegationMae.delegationType,
     };
     this.objGetSupervionDet = obj;
+    this.paramsList.getValue().page = 1;
+    this.paramsList.getValue().limit = 10;
     this.getVigSupervisionDet_();
   }
 
@@ -977,6 +979,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
           delegationType: this.delegationMae.delegationType,
         };
         this.objGetSupervionDet = obj;
+        this.paramsList.getValue().page = 1;
+        this.paramsList.getValue().limit = 10;
         this.getVigSupervisionDet_();
 
         console.log('RESPUESTA', response);
@@ -1044,18 +1048,24 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
   async revisarCarga() {
     if (this.delegationDefault == null) {
+      // const delet = this.form.get('delegation')
+      //   (delet.invalid)
+      // delet.markAsTouched();
       this.alert('warning', 'Debe seleccionar una delegación', '');
       return;
     }
 
     const cveProcessTwo = this.formRegistro.get('processTwo').value;
     if (cveProcessTwo != 1 && cveProcessTwo != 2) {
+      this.formRegistro.get('processTwo').markAsTouched();
+      // cveProcessTwo.markAsTouched();
       this.alert('warning', 'El Proceso es información requerida', '');
       return;
     }
 
     const fromTwo = this.formRegistro.get('fromTwo').value;
     if (fromTwo == null || fromTwo == '') {
+      this.formRegistro.get('fromTwo').markAsTouched();
       this.alert(
         'warning',
         'La fecha inicial del período es información requerida',
@@ -1066,6 +1076,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
     const toTwo = this.formRegistro.get('toTwo').value;
     if (toTwo == null || toTwo == '') {
+      this.formRegistro.get('toTwo').markAsTouched();
       this.alert(
         'warning',
         'La fecha final del período es información requerida',
