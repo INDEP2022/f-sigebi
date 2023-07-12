@@ -54,7 +54,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   public updateInfo: boolean = false;
   typeModule: string = '';
   displayExpedient: boolean = false;
-
+  complementaryDoc: boolean = false;
   /* injections */
   private requestService = inject(RequestService);
   private requestHelperService = inject(RequestHelperService);
@@ -114,6 +114,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   titleView() {
     if (this.requestInfo?.affair == 13) {
       this.title = `DOCUMENTACIÓN COMPLEMENTARIA: Registro de Documentación Complementaria, No. Solicitud ${this.requestInfo.id}`;
+      this.complementaryDoc = true;
     }
   }
 
@@ -305,6 +306,18 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
           this.getRequestInfo(requestId);
         }
       },
+    });
+  }
+
+  endRequest() {
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea finalizar la tarea registro de documentación complementaria?'
+    ).then(question => {
+      if (question) {
+        //Cerrar tarea//
+      }
     });
   }
 }

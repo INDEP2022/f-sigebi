@@ -1442,6 +1442,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     let modalRef = this.modalService.show(FindActaGoodComponent, modalConfig);
     modalRef.content.onSave.subscribe(async (next: any) => {
       console.log(next);
+      this.acordionDetail = false;
       this.actasDefault = next;
       this.fCreate = this.datePipe.transform(
         next.dateElaborationReceipt,
@@ -1969,6 +1970,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     let modalRef = this.modalService.show(CreateActaComponent, modalConfig);
     modalRef.content.onSave.subscribe(async (next: any) => {
       console.log(next);
+      this.acordionDetail = false;
       this.actasDefault = next;
       // this.fCreate = this.datePipe.transform(next.dateElaborationReceipt,'dd/MM/yyyy');
       this.statusConv = next.statusProceedings;
