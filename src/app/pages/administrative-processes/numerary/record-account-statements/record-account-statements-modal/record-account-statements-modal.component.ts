@@ -46,10 +46,7 @@ export class RecordAccountStatementsModalComponent
         this.movimentAccount.factasStatusCta.cve_cuenta,
         Validators.nullValidator,
       ],
-      date: [
-        this.datePipe.transform(this.movimentAccount.dateMotion, 'dd/MM/yyyy'),
-        Validators.nullValidator,
-      ],
+      date: [this.movimentAccount.dateMotion, Validators.nullValidator],
       amount: [
         this.movimentAccount.deposit
           ? this.movimentAccount.deposit
@@ -90,7 +87,6 @@ export class RecordAccountStatementsModalComponent
       dateCalculationInterests: null,
       numberMotionTransfer: this.movimentAccount.numberMotionTransfer,
     };
-    console.log(model);
     this.recordAccountStatementsAccountsService.create(model).subscribe({
       next: () => {
         this.alert('success', 'Movimiento transferido', '');

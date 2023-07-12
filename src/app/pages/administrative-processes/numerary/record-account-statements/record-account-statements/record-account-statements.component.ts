@@ -110,7 +110,6 @@ export class RecordAccountStatementsComponent
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'dateMotion':
                 searchFilter = SearchFilter.EQ;
@@ -151,6 +150,8 @@ export class RecordAccountStatementsComponent
   // Trae la lista de bancos por defecto
   searchBanks(params: ListParams) {
     this.loading = true;
+    this.bankAccountSelect = new DefaultSelect();
+    this.dataAccount = new LocalDataSource();
     this.recordAccountStatementsService.getAll(params).subscribe({
       next: response => {
         this.loading = true;
@@ -385,6 +386,7 @@ export class RecordAccountStatementsComponent
       .subscribe({
         next: response => {
           this.factasStatusCta = response;
+          console.log(this.factasStatusCta);
           this.loading = false;
         },
         error: (err: any) => {
@@ -396,6 +398,7 @@ export class RecordAccountStatementsComponent
 
   // Abre el modal de transferencia de saldos
   openModal(movimentAccount: IRecordAccountStatements) {
+    console.log(movimentAccount);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       ignoreBackdropClick: false,
