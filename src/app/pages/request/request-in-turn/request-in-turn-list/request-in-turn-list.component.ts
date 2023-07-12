@@ -80,65 +80,34 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
   openTurnRequests() {
     if (this.requestSelected.length === 0) {
       this.onLoadToast(
-        'warning',
+        'info',
         'Información',
-        `Seleccione una o mas solicitudes`
+        `Seleccione una o mas solicitudes!`
       );
       return;
     }
 
-    for (let i = 0; i < this.requestSelected.length; i++) {
-      const request = this.requestSelected[i];
-
-      //Verifíca que tenga documentos la solicitud
-      const body = {
-        xidSolicitud: request.id,
-      };
-
-      const params = new ListParams();
-
-      this.wcontentService.getDocumentos(body, params).subscribe({
-        next: res => {
-          console.log('Respuesta, ', res.data.length);
-
-          if (res.data.length >= 1) {
-            //Verifica si tiene Emisora, Autoridad y Delegación la Solicitud
-            if (
-              request?.stationId === null ||
-              request?.authorityId === null ||
-              request?.transferenceId === null ||
-              request?.regionalDelegationId === null
-            ) {
-              this.checkRequest = false;
-              this.countError = this.countError + 1;
-              this.requestError = this.requestError + `${request?.id}, `;
-              this.reportRequest = String(request.id);
-              console.log('SOLICITUD CON ERROR, SIN IDS');
-            } else {
-              console.log('SOLICITUD CORRECTA, CON IDS');
-              this.checkRequest = true;
-            }
-          } else {
-            console.log('SOLICITUD CON ERROR, SIN DOCUMENTOS DEL ENDPOINT');
-            this.checkRequest = false;
-            this.countError = this.countError + 1;
-            this.requestError = this.requestError + `${request?.id}, `;
+    let config: ModalOptions = {
+      initialState: {
+        requestToTurn: this.requestSelected,
+        callback: (next: boolean) => {
+          if (next) {
+            this.paragraphs = new LocalDataSource();
           }
         },
-        error: error => {
-          console.log('SOLICITUD CON ERROR, ERROR ENDPOINT');
-          this.checkRequest = false;
-          this.countError = this.countError + 1;
-          this.requestError = this.requestError + `${request?.id}, `;
-        },
-      });
-    }
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(RequestInTurnSelectedComponent, config);
+  }
 
+  msjCondition(countError: number) {
     if (this.countError != 0) {
       Swal.fire({
         title: 'Importante',
         html: `Existen solicitudes que no se pueden turnar: <strong>${this.requestError}</strong> por falta de información. <br> <strong>Verificar solicitudes seleccionadas</strong>`,
-        icon: 'error',
+        icon: 'warning',
         showCancelButton: false,
         confirmButtonColor: '#9D2449',
         cancelButtonColor: '#B08C5C',
@@ -151,7 +120,11 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
           this.resetForm(this.active);
         }
       });
-    } else if (this.checkRequest === true) {
+    }
+  }
+
+  openModelTurn() {
+    if (this.checkRequest === true) {
       this.modalRequestTurn();
     }
   }
@@ -266,35 +239,53 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
 
     const request = this.requestSelected[0];
 
-    if (
-      request?.stationId === null ||
-      request?.authorityId === null ||
-      request?.regionalDelegationId === null
-    ) {
-      this.checkRequest = false;
-      this.reportRequest = String(request.id);
-      console.log('SOLICITUD CON ERROR');
-    } else {
-      this.checkRequest = true;
-    }
+    //Verifíca que tenga documentos la solicitud
+    const body = {
+      xidSolicitud: request.id,
+    };
 
-    if (this.checkRequest === false) {
-      Swal.fire({
-        title: 'Importante',
-        html: `No se puede turnar la siguiente solicitud: <strong>${this.reportRequest}</strong> por falta de información. <br> <strong>Asegúrese de desmarcar la solicitud.</strong> `,
-        icon: 'warning',
-        showCancelButton: false,
-        confirmButtonColor: '#9D2449',
-        cancelButtonColor: '#ffc107',
-        confirmButtonText: 'Aceptar',
-      }).then(result => {
-        if (result.isConfirmed) {
-          this.active = true;
+    const params = new ListParams();
+
+    this.wcontentService.getDocumentos(body, params).subscribe({
+      next: res => {
+        console.log('Respuesta, ', res.data.length);
+
+        if (res.data.length >= 1) {
+          //Verifica si tiene Emisora, Autoridad y Delegación la Solicitud
+          if (
+            request?.stationId === null ||
+            request?.authorityId === null ||
+            request?.transferenceId === null ||
+            request?.regionalDelegationId === null
+          ) {
+            //this.checkRequest = false;
+            this.countError = this.countError + 1;
+            this.requestError = this.requestError + `${request?.id}`;
+            console.log('SOLICITUD CON ERROR, SIN IDS, count +1');
+            this.msjCondition(this.countError);
+          } else {
+            console.log('SOLICITUD CORRECTA, CON IDS');
+            this.checkRequest = true;
+          }
+        } else {
+          console.log(
+            'SOLICITUD CON ERROR, SIN DOCUMENTOS DEL ENDPOINT, count +1'
+          );
+          //this.checkRequest = false;
+          this.countError = this.countError + 1;
+          this.requestError = this.requestError + `${request?.id}`;
+          this.msjCondition(this.countError);
         }
-      });
-    } else if (this.checkRequest === true) {
-      console.log('Puede continuar');
-    }
+      },
+      error: error => {
+        console.log('SOLICITUD CON ERROR, ERROR ENDPOINT, count +1');
+        this.alert(
+          'error',
+          'Hubo un problema al obtener los documentos de la solicitud',
+          'inténtelo más tarde'
+        );
+      },
+    });
   }
 
   resetForm(event: any) {
