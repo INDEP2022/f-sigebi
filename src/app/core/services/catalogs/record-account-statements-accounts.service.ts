@@ -61,6 +61,13 @@ export class RecordAccountStatementsAccountsService
     return this.get(route, params);
   }
 
+  getDataAccountConciliation(
+    params?: ListParams
+  ): Observable<IListResponse<any>> {
+    const route = `${this.route2}`;
+    return this.get(route, params);
+  }
+
   getFactasStatusCta(accountNumber: number): Observable<IFactasStatusCta> {
     const route = `${this.route3}/get-factas-status-cta/${accountNumber}`;
     return this.get(route);

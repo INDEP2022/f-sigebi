@@ -4,4 +4,5 @@ export enum GoodTrackerEndpoints {
   GenerateIdentifier = 'tmptracker/generate-identifier',
   ViewTracker = 't-v-goods-tracker',
   GoodExcel = 'trackergood/apps/get-excel-tracker',
+  DownloadExcel = 'trackergood/apps/download-excel',
 }
