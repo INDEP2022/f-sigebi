@@ -71,9 +71,9 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadDocumentsSeparator();
+    this.loadDocumentsSeparator(new ListParams());
     this.getDocuments();
-    this.loadDocumentsType();
+    this.loadDocumentsType(new ListParams());
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -137,16 +137,11 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   }
 
   resetFilters(): void {
-    // Eliminar los filtros aplicados aquí
     this.columnFilters = {};
     this.getDocuments();
   }
   onOptionsSelectedTypeDocument(value: any) {
     this.selectTypeDoc = value.id;
-  }
-
-  onOptionsSelectedSeparator(value: any) {
-    this.selectSeparator = value.key;
   }
 
   generateFilterParams(formGroup: FormGroup): any {
@@ -223,22 +218,29 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   }
 
   onTipoDocumentoInputChange(event: any) {
+    console.log(event);
     const inputValue = event.search.toUpperCase();
+    console.log(inputValue);
     const param = `filter.id=${inputValue}`;
+    console.log(param);
     this.documentService.getDocumentsType(param).subscribe(response => {
       this.selectTypeDoc = new DefaultSelect(response.data, response.count);
     });
   }
 
-  loadDocumentsType() {
+  loadDocumentsType(params: ListParams) {
     this.documentService
-      .getDocumentsType()
+      .getDocumentsType(params)
       .pipe(
         map(res => {
           this.selectTypeDoc = new DefaultSelect(res.data, res.count);
         })
       )
       .subscribe();
+  }
+
+  onOptionsSelectedSeparator(value: any) {
+    this.selectSeparator = value.key;
   }
 
   onDocumentsSeparatorInputChange(event: any) {
@@ -250,9 +252,9 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     this.loading = false;
   }
 
-  loadDocumentsSeparator() {
+  loadDocumentsSeparator(params: ListParams) {
     this.documentService
-      .getDocumentsSeparator()
+      .getDocumentsSeparator(params)
       .pipe(
         map(res => {
           this.selectSeparator = new DefaultSelect(res.data, res.count);
@@ -413,8 +415,8 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     this.form.reset();
     this.form.patchValue({ scanStatus: 'all' });
     this.onSubmit();
-    this.loadDocumentsSeparator();
-    this.loadDocumentsType();
+    this.loadDocumentsSeparator(new ListParams());
+    this.loadDocumentsType(new ListParams());
     this.loading = false;
     this.selectTypeDoc = new DefaultSelect([], 0);
     this.selectSeparator = new DefaultSelect([], 0);
