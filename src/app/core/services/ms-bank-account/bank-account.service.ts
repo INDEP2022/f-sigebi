@@ -78,5 +78,12 @@ export class BankAccountService
     return this.repository.remove(`${this.microservice}/${this.api}`, id);
   }
 
+  getDetail(data: Object) {
+    return this.repository.create(
+      `${this.microservice}/bank-account/get-details`,
+      data
+    );
+  }
+
   //***** */
 }

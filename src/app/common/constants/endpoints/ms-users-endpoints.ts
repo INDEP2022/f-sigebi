@@ -9,4 +9,7 @@ export enum UserEndpoints {
 
   //consulta del form
   askForPermissions = 'factadboficiogestrel/delete-when-button-pressed',
+  GetNameEmail = 'seg-access-x-areas/getNameEmail',
+  GetDisName = 'seg-access-x-areas/getDisNameEmail',
+  ProNameEmail = 'seg-access-x-areas/procNameEmail',
 }
