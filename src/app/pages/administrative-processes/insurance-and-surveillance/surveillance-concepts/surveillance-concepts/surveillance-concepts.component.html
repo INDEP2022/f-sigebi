@@ -4,64 +4,97 @@
   </div>
 
   <div body>
-    <div class="ch-content">
-      <h5 class="title">Incorporación a Pólizas de Seguros</h5>
-    </div>
-    <form [formGroup]="form" class="form-material">
-      <div class="row mt-4">
-        <div class="row mt-4">
-          <div class="col-md-6">
-            <form-field [control]="form.get('from')" label="Fecha del:">
-              <input
-                [maxDate]="maxDate"
-                formControlName="from"
-                class="form-control"
-                bsDatepicker />
-            </form-field>
+    <div class="row mt-3 mb-3">
+      <div class="ch-content">
+        <h5 class="title">Incorporación a Pólizas de Seguros</h5>
+      </div>
+      <div>
+        <form [formGroup]="form" class="form-material">
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <form-field [control]="form.get('from')" label="Fecha del:">
+                <input
+                  [maxDate]="maxDate"
+                  formControlName="from"
+                  class="form-control"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field [control]="form.get('to')" label="al:">
+                <input
+                  [maxDate]="maxDate"
+                  formControlName="to"
+                  class="form-control"
+                  [minDate]="form.get('from').value"
+                  bsDatepicker />
+              </form-field>
+            </div>
           </div>
-          <div class="col-md-6">
-            <form-field [control]="form.get('to')" label="al:">
-              <input
-                [maxDate]="maxDate"
-                formControlName="to"
-                class="form-control"
-                [minDate]="form.get('from').value"
-                bsDatepicker />
-            </form-field>
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('noRequest')"
+                label="No. Solicitud:">
+                <input
+                  type="number"
+                  max="9999999999"
+                  class="form-control"
+                  formControlName="noRequest" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field [control]="form.get('toRequest')" label="al:">
+                <input
+                  type="number"
+                  max="9999999999"
+                  class="form-control"
+                  formControlName="toRequest"
+                  [min]="form.get('noRequest').value"
+                  [ngModel]="
+                    form.get('toRequest').value < form.get('noRequest').value
+                      ? form.get('noRequest').value
+                      : form.get('toRequest').value
+                  " />
+              </form-field>
+            </div>
           </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-md-6">
-            <form-field
-              [control]="form.get('noRequest')"
-              label="No. Solicitud:">
-              <input
-                type="number"
-                formControlName="noRequest"
-                class="form-control" />
-            </form-field>
+          <div class="row mt-4">
+            <div class="col-md-12">
+              <form-field
+                [control]="form.get('keyPol')"
+                label="Clave de Póliza:">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="keyPol" />
+              </form-field>
+            </div>
           </div>
-          <div class="col-md-6">
-            <form-field [control]="form.get('toRequest')" label="al:">
-              <input
-                type="number"
-                formControlName="toRequest"
-                class="form-control" />
-            </form-field>
-          </div>
-        </div>
+        </form>
+      </div>
+
+      <div footer>
         <div class="d-flex justify-content-center">
-          <div>
+          <div class="m-3">
             <button
+              type="button"
               [disabled]="form.invalid"
-              type="submit"
               class="btn btn-primary active btn-sm"
               (click)="generar()">
               Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
           </div>
+          <div class="m-3">
+            <button
+              type="button"
+              class="btn btn-danger active btn-sm"
+              (click)="cleanForm()">
+              Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+            </button>
+          </div>
         </div>
       </div>
-    </form>
+    </div>
   </div>
 </app-card>

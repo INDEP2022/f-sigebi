@@ -47,6 +47,7 @@ export class SurveillanceConceptsComponent extends BasePage implements OnInit {
       to: [null, Validators.required],
       noRequest: [null, Validators.required],
       toRequest: [null, Validators.required],
+      keyPol: [null, Validators.required],
     });
   }
 
@@ -67,10 +68,12 @@ export class SurveillanceConceptsComponent extends BasePage implements OnInit {
       PF_FECFIN: this.toT,
       PN_SOLINI: this.form.controls['noRequest'].value,
       PN_SOLFIN: this.form.controls['toRequest'].value,
+      PC_POLIZA: this.form.controls['keyPol'].value,
     };
 
     this.siabService
-      .fetchReport('RCONADBINCORPOLIZA', params)
+      // .fetchReport('RCONADBINCORPOLIZA', params)
+      .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
@@ -104,5 +107,9 @@ export class SurveillanceConceptsComponent extends BasePage implements OnInit {
           this.modalService.show(PreviewDocumentsComponent, config);
         }
       });
+  }
+
+  cleanForm() {
+    this.form.reset();
   }
 }
