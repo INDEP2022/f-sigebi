@@ -3,7 +3,10 @@ import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IUnitCost } from 'src/app/core/models/administrative-processes/unit-cost.model';
+import {
+  IStrategyProcess,
+  IUnitCost,
+} from 'src/app/core/models/administrative-processes/unit-cost.model';
 import { StrategyProcessService } from 'src/app/core/services/ms-strategy/strategy-process.service';
 import { StrategyServiceTypeService } from 'src/app/core/services/ms-strategy/strategy-service-type.service';
 import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
@@ -21,7 +24,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class UnitCostFormComponent extends BasePage implements OnInit {
   unitCostForm: ModelForm<IUnitCost>;
   unitCost: IUnitCost;
-  processes = new DefaultSelect();
+  processes = new DefaultSelect<IStrategyProcess>();
   shifts = new DefaultSelect();
   services = new DefaultSelect();
   servicesTypes = new DefaultSelect();
@@ -85,7 +88,7 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    const data: IUnitCost = this.unitCostForm.value;
+    /*const data: IUnitCost = this.unitCostForm.value;
     const req: IUnitCost = {
       processNumber: data.processNumber,
       serviceNumber: data.serviceNumber,
@@ -106,7 +109,9 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
     this.unitCostService.create(this.unitCostForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
-    });
+    });*/
+
+    this.handleSuccess();
   }
 
   update() {
@@ -127,26 +132,46 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
 
   getVarCosts(params: ListParams) {
     this.varCostService.getAll(params).subscribe({
-      next: data =>
-        (this.variablesCosts = new DefaultSelect(data.data, data.count)),
+      next: data => {
+        this.variablesCosts = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.variablesCosts = new DefaultSelect();
+        this.loading = false;
+      },
     });
   }
 
   getProcesses(params: ListParams) {
     this.processService.getAll(params).subscribe({
-      next: data => (this.processes = new DefaultSelect(data.data, data.count)),
+      next: data => {
+        this.processes = new DefaultSelect(data.data, data.count);
+        this.loading = false;
+      },
+      error: err => {
+        this.processes = new DefaultSelect();
+        this.loading = false;
+      },
     });
   }
 
   getShifts(params: ListParams) {
     this.shiftService.getAll(params).subscribe({
       next: data => (this.shifts = new DefaultSelect(data.data, data.count)),
+      error: err => {
+        this.shifts = new DefaultSelect();
+        this.loading = false;
+      },
     });
   }
 
   getServices(params: ListParams) {
     this.serviceService.getAll(params).subscribe({
       next: data => (this.services = new DefaultSelect(data.data, data.count)),
+      error: err => {
+        this.services = new DefaultSelect();
+        this.loading = false;
+      },
     });
   }
 
@@ -154,6 +179,10 @@ export class UnitCostFormComponent extends BasePage implements OnInit {
     this.serviceTypeService.getAll(params).subscribe({
       next: data =>
         (this.servicesTypes = new DefaultSelect(data.data, data.count)),
+      error: err => {
+        this.servicesTypes = new DefaultSelect();
+        this.loading = false;
+      },
     });
   }
 }

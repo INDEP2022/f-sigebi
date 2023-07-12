@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -53,7 +54,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
     private excelService: ExcelService,
-    private token: AuthService
+    private token: AuthService,
+    private datePipe: DatePipe
   ) {
     super();
     this.settings.columns = SURVEILLANCE_SERVICE_COLUMNS;
@@ -128,9 +130,9 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     });
 
     this.formRegistro = this.fb.group({
-      processTwo: [null],
-      fromTwo: [null],
-      toTwo: [null],
+      processTwo: [null, Validators.required],
+      fromTwo: [null, Validators.required],
+      toTwo: [null, Validators.required],
     });
   }
 
@@ -255,6 +257,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       delegationType: this.delegationMae.delegationType,
     };
     this.objGetSupervionDet = obj;
+    this.paramsList.getValue().page = 1;
+    this.paramsList.getValue().limit = 10;
     this.getVigSupervisionDet_();
   }
 
@@ -365,8 +369,10 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
   addDate(event: any) {
     console.log('event', event);
     if (event != null) {
-      this.form.get('from').setValue(event.initialDate);
-      this.form.get('to').setValue(event.finalDate);
+      const from = this.datePipe.transform(event.initialDate, 'dd/MM/yyyy');
+      const to = this.datePipe.transform(event.finalDate, 'dd/MM/yyyy');
+      this.form.get('from').setValue(from);
+      this.form.get('to').setValue(to);
     } else {
       this.form.get('from').setValue(null);
       this.form.get('to').setValue(null);
@@ -452,7 +458,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       };
 
       this.siabService
-        .fetchReport('REP_SERVICIO_VIGILANCIA', params)
+        // .fetchReport('REP_SERVICIO_VIGILANCIA', params)
+        .fetchReportBlank('blank')
         .subscribe(response => {
           if (response !== null) {
             const blob = new Blob([response], { type: 'application/pdf' });
@@ -468,8 +475,21 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
             };
-            this.alert('success', '', 'Reporte generado');
-            this.cleanForm();
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
             this.modalService.show(PreviewDocumentsComponent, config);
           }
         });
@@ -940,8 +960,16 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
         // this.form.get('process').setValue('Proceso ' + response.data[0].cveProcess);
         this.form.get('period').setValue(response.data[0].cvePeriod);
-        this.form.get('from').setValue(response.data[0].initialDate);
-        this.form.get('to').setValue(response.data[0].finalDate);
+        const from = this.datePipe.transform(
+          response.data[0].initialDate,
+          'dd/MM/yyyy'
+        );
+        const to = this.datePipe.transform(
+          response.data[0].finalDate,
+          'dd/MM/yyyy'
+        );
+        this.form.get('from').setValue(from);
+        this.form.get('to').setValue(to);
         this.form.get('total').setValue(null);
 
         let obj = {
@@ -951,6 +979,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
           delegationType: this.delegationMae.delegationType,
         };
         this.objGetSupervionDet = obj;
+        this.paramsList.getValue().page = 1;
+        this.paramsList.getValue().limit = 10;
         this.getVigSupervisionDet_();
 
         console.log('RESPUESTA', response);
@@ -1018,18 +1048,24 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
   async revisarCarga() {
     if (this.delegationDefault == null) {
+      // const delet = this.form.get('delegation')
+      //   (delet.invalid)
+      // delet.markAsTouched();
       this.alert('warning', 'Debe seleccionar una delegación', '');
       return;
     }
 
     const cveProcessTwo = this.formRegistro.get('processTwo').value;
     if (cveProcessTwo != 1 && cveProcessTwo != 2) {
+      this.formRegistro.get('processTwo').markAsTouched();
+      // cveProcessTwo.markAsTouched();
       this.alert('warning', 'El Proceso es información requerida', '');
       return;
     }
 
     const fromTwo = this.formRegistro.get('fromTwo').value;
     if (fromTwo == null || fromTwo == '') {
+      this.formRegistro.get('fromTwo').markAsTouched();
       this.alert(
         'warning',
         'La fecha inicial del período es información requerida',
@@ -1040,6 +1076,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
     const toTwo = this.formRegistro.get('toTwo').value;
     if (toTwo == null || toTwo == '') {
+      this.formRegistro.get('toTwo').markAsTouched();
       this.alert(
         'warning',
         'La fecha final del período es información requerida',

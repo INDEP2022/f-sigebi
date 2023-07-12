@@ -49,8 +49,15 @@
               </div>
               <div class="col-md-2 text-end d-flex flex-row-reverse mt-3 mb-3">
                 <app-columns-select
-                  [defaultColumns]="10"
+                  *ngIf="!validExcel"
+                  [defaultColumns]="15"
                   [(settings)]="settings"
+                  [leftList]="true"></app-columns-select>
+
+                <app-columns-select
+                  *ngIf="validExcel"
+                  [defaultColumns]="9"
+                  [(settings)]="settings2"
                   [leftList]="true"></app-columns-select>
               </div>
               <!-- <div class="col-2 d-flex justify-content-end align-items-end">
