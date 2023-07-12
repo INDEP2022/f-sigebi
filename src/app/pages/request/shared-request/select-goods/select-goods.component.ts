@@ -1,8 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RequestSiabFormComponent } from '../request-siab-form/request-siab-form.component';
 import { AddGoodsButtonComponent } from './add-goods-button/add-goods-button.component';
@@ -24,6 +26,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   goodColumns: any[] = [];
   selectedGoodColumns: any[] = [];
   @Input() nombrePantalla: string = 'sinNombre';
+  @Input() idRequest: number = 0;
   goodSettings = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -34,52 +37,11 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     selectMode: 'multi',
   };
 
-  goodTestData = [
-    {
-      origin: 'INVENTARIOS',
-      description: 'CANDIL DECORATIVO',
-      key: '801-69-68-65-2',
-      manageNo: 605,
-      transferAmount: 2,
-      transactionAmount: 60,
-      reservedAmount: 20,
-      availableAmount: 40,
-      destination: 'Admon',
-      fileNo: 141,
-      transferRequestNo: 6882,
-      saeNo: '',
-    },
-    {
-      origin: 'INVENTARIOS',
-      description: 'FOTOCOPIADORA',
-      key: '550-A004-07-1',
-      manageNo: 606,
-      transferAmount: 1,
-      transactionAmount: 70,
-      reservedAmount: 20,
-      availableAmount: -10,
-      destination: 'Donados',
-      fileNo: 141,
-      transferRequestNo: 6882,
-      saeNo: '',
-    },
-    {
-      origin: 'INVENTARIOS',
-      description: 'VEHÍCULO MARCA FORD',
-      key: '401-009-04-17-0',
-      manageNo: 401,
-      transferAmount: 1,
-      transactionAmount: 80,
-      reservedAmount: 0,
-      availableAmount: 80,
-      destination: 'Donación',
-      fileNo: 141,
-      transferRequestNo: 4842,
-      saeNo: '',
-    },
-  ];
-
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private activatedRoute: ActivatedRoute,
+    private goodService: GoodService
+  ) {
     super();
     this.goodSettings.columns = SELECT_GOODS_COLUMNS;
     this.selectedGoodSettings.columns = SELECT_GOODS_COLUMNS;
@@ -129,14 +91,25 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   getGoods(filters: any) {
-    console.log(filters);
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.delegationNumber'] = filters.regionalDelegationId;
+    params.getValue()['filter.origin'] = '$not:$null';
+
+    this.goodService.getAll(params.getValue()).subscribe({
+      next: response => {
+        console.log('bienes', response);
+        this.goodColumns = response.data;
+        this.goodTotalItems = response.count;
+      },
+      error: error => {},
+    });
+    //params.getValue()['filter.delegationNumber'] = this.regio;
     //Llamar servicio para obtener bienes
-    let columns = this.goodTestData;
+    /* let columns = this.goodTestData;
     columns.forEach(c => {
       c = Object.assign({ addGood: '' }, { viewFile: '' }, c);
-    });
-    this.goodColumns = columns;
-    this.goodTotalItems = this.goodColumns.length;
+    }); */
+    //
   }
 
   viewFile(file: any) {}
