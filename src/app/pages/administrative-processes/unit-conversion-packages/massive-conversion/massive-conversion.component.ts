@@ -201,30 +201,30 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.fillDataByPackage();
     this.getDataUser();
     this.getEmail();
-    this.packageType.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: response => {
-        if (this.cvePackage.value) {
-          if (this.contador > 0) {
-            if (response === 3) {
-              this.amountKg.setValue(1);
-              this.statusGood.setValue('ROP');
-              this.unit.setValue('UNIDAD');
-              this.amountKg.disable({ onlySelf: true, emitEvent: false });
-              this.unit.disable({ onlySelf: true, emitEvent: false });
-              this.statusGood.disable({ onlySelf: true, emitEvent: false });
-            } else {
-              this.statusGood.setValue('');
-              this.amountKg.enable({ onlySelf: true, emitEvent: false });
-              this.unit.enable({ onlySelf: true, emitEvent: false });
-              this.statusGood.enable({ onlySelf: true, emitEvent: false });
-              this.validateButtons(this.status.value);
-            }
-          } else {
-            this.contador++;
-          }
-        }
-      },
-    });
+    // this.packageType.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
+    //   next: response => {
+    //     if (this.cvePackage.value) {
+    //       if (this.contador > 0) {
+    //         if (response === 3) {
+    //           this.amountKg.setValue(1);
+    //           this.statusGood.setValue('ROP');
+    //           this.unit.setValue('UNIDAD');
+    //           this.amountKg.disable({ onlySelf: true, emitEvent: false });
+    //           this.unit.disable({ onlySelf: true, emitEvent: false });
+    //           this.statusGood.disable({ onlySelf: true, emitEvent: false });
+    //         } else {
+    //           this.statusGood.setValue('');
+    //           this.amountKg.enable({ onlySelf: true, emitEvent: false });
+    //           this.unit.enable({ onlySelf: true, emitEvent: false });
+    //           this.statusGood.enable({ onlySelf: true, emitEvent: false });
+    //           this.validateButtons(this.status.value);
+    //         }
+    //       } else {
+    //         this.contador++;
+    //       }
+    //     }
+    //   },
+    // });
   }
 
   private getEmail() {
@@ -366,12 +366,12 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     return this.form2.get('amount');
   }
 
-  get unit() {
-    return this.form2.get('measurementUnit');
+  get measurementUnit() {
+    return this.form.get('measurementUnit');
   }
 
-  get statusGood() {
-    return this.form2.get('goodStatus');
+  get goodStatus() {
+    return this.form.get('goodStatus');
   }
 
   get dataPrevisualization() {
@@ -407,7 +407,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       goodStatus: [null, [Validators.required]],
       transferent: [null, [Validators.required]],
       warehouse: [null, [Validators.required]],
-
+      measurementUnit: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       //Pestaña de "ESCANEO"
       scanFolio: [
         null,
@@ -438,12 +441,12 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       amount: [null, [Validators.required]],
-      measurementUnit: [
+      statusGood: [null, [Validators.required]],
+      check: [false],
+      unitGood: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      goodStatus: [null, [Validators.required]],
-      check: [false],
     });
   }
   //Datos de usuario logueado
@@ -513,8 +516,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.record.setValue(res.numberRecord);
         // this.goodDescription.setValue(res.numberGoodFather);
         // this.amount.setValue(res.numberGoodFather);
-        this.unit.setValue(res.unit);
-        this.statusGood.setValue(res.status);
+        this.measurementUnit.setValue(res.unit);
+        this.goodStatus.setValue(res.status);
         // this.status2.setValue(res.numberGoodFather);
 
         if (
@@ -797,8 +800,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         record: response.data[0].fileNumber,
         description: response.data[0].description,
         amount: response.data[0].quantity,
-        measurementUnit: response.data[0].unit,
-        goodStatus: response.data[0].status,
+        unitGood: response.data[0].unit,
+        statusGood: response.data[0].status,
       });
     });
   }
@@ -1028,14 +1031,14 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   updatePackageFirstBlock(status: string, pAsuntoInit: string) {
-    if (['C', 'L'].includes(status) && this.amountKg.value <= 0) {
-      this.alert(
-        'error',
-        'Actualización de Paquete',
-        'Debe ingresar previamente la cantidad convertida'
-      );
-      return;
-    }
+    // if (['C', 'L'].includes(status) && this.amountKg.value <= 0) {
+    //   this.alert(
+    //     'error',
+    //     'Actualización de Paquete',
+    //     'Debe ingresar previamente la cantidad convertida'
+    //   );
+    //   return;
+    // }
     let result = true;
     const check = document.getElementById('checkGood') as HTMLInputElement;
     console.log(this.form.value);
@@ -1171,7 +1174,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.alert('warning', 'Debe ingresar el Clasificador', '');
       } else if (this.targetTag.value == null) {
         this.alert('warning', 'Debe ingresar la Etiqueta de destino', '');
-      } else if (this.statusGood.value == null) {
+      } else if (this.goodStatus.value == null) {
         this.alert('warning', 'Debe ingresar el Estatus', '');
       } else if (this.transferent.value == null) {
         this.alert('warning', 'Debe ingresar la Transferente', '');
@@ -1331,7 +1334,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         pGoodClasifNumber: this.goodClassification.value,
         pEtiquetaNumber: this.targetTag.value,
         pPaqueteNumber: this.noPackage.value.numberPackage,
-        pStatus: this.statusGood.value,
+        pStatus: this.goodStatus.value,
         pTypePaquete: this.packageType.value,
         pValidVal24: val24.toString(),
       };
@@ -1363,10 +1366,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       goodFatherNumber: this.numberGoodFather.value,
       delegationNumber: this.delegation.value,
       descGood: this.descriptionPackage.value,
-      statusGood: this.statusGood.value,
+      statusGood: this.goodStatus.value,
       packageNumber: this.noPackage.value.numberPackage,
       proceedingNumber: this.record.value,
-      unitGood: this.unit.value,
+      unitGood: this.measurementUnit.value,
     };
 
     this.massiveGoodService.pubExport(iPackage).subscribe(
@@ -1474,35 +1477,35 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     }
   }
 
-  cancelPackage() {
-    this.alertQuestion(
-      'warning',
-      'Cancelar',
-      '¿Desea cancelar este paquete?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        let data = {
-          goodNumber: this.form2.get('numberGood').value,
-          packageNumber: this.form.get('package').value,
-          user: 'DR_SIGEBI',
-          toolbarUsername: 'DR_SIGEBI',
-          statusPaq: this.form.get('status').value,
-          parentGoodNumber: this.form2.get('numberGood').value,
-          status: this.form2.get('status').value,
-        };
-        this.lotService.pubCancelPackage(data).subscribe(
-          response => {
-            console.log(response);
-            Swal.fire('Exito', 'Se cancelo el paquete', 'success');
-          },
-          error => {
-            console.log(error);
-            Swal.fire('Error', 'Error Al cancelar el paquete', 'error');
-          }
-        );
-      }
-    });
-  }
+  // cancelPackage() {
+  //   this.alertQuestion(
+  //     'warning',
+  //     'Cancelar',
+  //     '¿Desea cancelar este paquete?'
+  //   ).then(question => {
+  //     if (question.isConfirmed) {
+  //       let data = {
+  //         goodNumber: this.form2.get('numberGood').value,
+  //         packageNumber: this.form.get('package').value,
+  //         user: 'DR_SIGEBI',
+  //         toolbarUsername: 'DR_SIGEBI',
+  //         statusPaq: this.form.get('status').value,
+  //         parentGoodNumber: this.form2.get('numberGood').value,
+  //         status: this.form2.get('status').value,
+  //       };
+  //       this.lotService.pubCancelPackage(data).subscribe(
+  //         response => {
+  //           console.log(response);
+  //           Swal.fire('Exito', 'Se cancelo el paquete', 'success');
+  //         },
+  //         error => {
+  //           console.log(error);
+  //           Swal.fire('Error', 'Error Al cancelar el paquete', 'error');
+  //         }
+  //       );
+  //     }
+  //   });
+  // }
 
   getUsername() {
     const user =
@@ -1582,7 +1585,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       this.alert('warning', 'Debe ingresar el Clasificador', '');
     } else if (this.targetTag.value == null) {
       this.alert('warning', 'Debe ingresar la Etiqueta de destino', '');
-    } else if (this.statusGood.value == null) {
+    } else if (this.goodStatus.value == null) {
       this.alert('warning', 'Debe ingresar el Estatus', '');
     } else if (this.transferent.value == null) {
       this.alert('warning', 'Debe ingresar la Transferente', '');
@@ -1726,10 +1729,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       statuspack: 'P',
       numberClassifyGood: this.goodClassification.value,
       numberLabel: this.targetTag.value,
-      unit: this.unit.value,
+      unit: this.measurementUnit.value,
       numberStore: this.warehouse.value,
       numberRecord: null,
-      status: this.statusGood.value,
+      status: this.goodStatus.value,
       numbertrainemiaut: this.transferent.value,
       dateValid: null,
       dateauthorize: null,

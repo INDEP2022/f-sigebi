@@ -233,12 +233,12 @@
         </div>
         <!--Goods Status Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-goods-status-shared [form]="form2"></app-goods-status-shared>
+          <app-goods-status-shared [form]="form"></app-goods-status-shared>
         </div>
         <!--Measurement Units Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
           <app-measurement-units-shared
-            [form]="form2"></app-measurement-units-shared>
+            [form]="form"></app-measurement-units-shared>
         </div>
         <!--Transference Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
@@ -333,18 +333,18 @@
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
-          <form-field label="Unidad" [control]="form2.get('unit')">
+          <form-field label="Unidad" [control]="form2.get('unitGood')">
             <input
-              formControlName="unit"
+              formControlName="unitGood"
               type="text"
               class="form-control"
               maxlength="25" />
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-3 col-12 mb-3 mt-3">
-          <form-field label="Estatus" [control]="form2.get('status')">
+          <form-field label="Estatus" [control]="form2.get('statusGood')">
             <input
-              formControlName="status"
+              formControlName="statusGood"
               type="text"
               class="form-control"
               maxlength="25" />
