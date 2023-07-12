@@ -24,6 +24,19 @@
         <div class="col-md-5 col-sm-12 col-xs-12">
           <form-field [control]="form.get('cve_bank')">
             <ngx-select
+              [searchOnInit]="true"
+              (fetchItems)="getUsers($event)"
+              bindLabel="bankDescription"
+              [data]="users$"
+              [form]="form"
+              control="cve_bank"
+              [showTooltip]="true"
+              value="bankCode"
+              label="Banco"
+              (change)="getDescUser($event)"></ngx-select>
+          </form-field>
+          <!-- <form-field [control]="form.get('cve_bank')">
+            <ngx-select
               [form]="form"
               [data]="users$"
               (change)="getDescUser($event)"
@@ -45,7 +58,7 @@
                 {{ item.bankCode }} - {{ item.name }}
               </div>
             </ng-template>
-          </form-field>
+          </form-field> -->
         </div>
         <div class="col-md-2 col-sm-12 col-xs-12">
           <button
@@ -59,6 +72,7 @@
             (change)="ReadExcel($event)"
             name="fileExcel"
             #fileExcel
+            #uploadFile
             class="d-none"
             accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
         </div>
