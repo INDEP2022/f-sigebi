@@ -197,8 +197,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     //Tabla de PREVISUALIZACIÓN DE DATOS
     this.settings = {
       ...this.settings,
-      rowClassFunction: (row: { data: { available: any } }) =>
-        row.data.available ? 'bg-success text-white' : 'bg-dark text-white',
+      // rowClassFunction: (row: { data: { available: any } }) =>
+      //   row.data.available ? 'bg-success text-white' : 'bg-dark text-white',
       actions: { add: false, delete: false, edit: false },
       columns: COLUMNS,
     };
@@ -924,7 +924,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       '¿Está seguro de ' + messageInit + ' el paquete ' + noPackage
     ).then(question => {
       if (question.isConfirmed) {
-        this.updatePackageFirstBlock('V', titleInit);
+        this.updatePackageFirstBlock(status, titleInit);
       }
     });
   }
@@ -1114,7 +1114,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     // }
   }
 
-  updatePackageFirstBlock(status: string, pAsuntoInit: string) {
+  async updatePackageFirstBlock(status: string, pAsuntoInit: string) {
     // if (['C', 'L'].includes(status) && this.amountKg.value <= 0) {
     //   this.alert(
     //     'error',
@@ -1128,7 +1128,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     console.log(this.form.value);
     const noPack: IPackageGoodEnc = this.noPackage.value;
     if (!check.checked) {
-      result = this.verifyGoods();
+      result = await this.verifyGoods();
     }
     if (!result) return;
     let currentDate = new Date();
@@ -1238,9 +1238,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     }
   }
 
-  verifyGoods() {
+  async verifyGoods() {
     // console.log(this.data['data']);
-    console.log('Sí');
     if (!['L', 'X'].includes(this.status.value)) {
       let _status: string;
 
@@ -1290,9 +1289,14 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
                 descError: message,
               });
             }
+
+            
             availablePrincipal = availablePrincipal && available;
             // this.unitConversionDataService.descError = message;
           });
+       
+
+
           if (availablePrincipal) {
             this.form2.enable({ onlySelf: true, emitEvent: false });
             this.alert('success', 'Verificar Bienes', 'Bienes Sin Errores');
@@ -1318,6 +1322,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     const noPack: IPackageGoodEnc = this.noPackage.value;
     let LV_VALIDA: string;
     let lv_DESC_ERROR = '';
+    console.log(noPack)
     if (noPack.numberDelegation != good.bienes.delegationNumber) {
       console.log({
         valpack: noPack.numberDelegation,
@@ -1851,7 +1856,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       dateApplied: null,
       cvePackage: this.cvePackage.value,
       dateCancelled: null,
-      InvoiceUniversal: 0,
+      InvoiceUniversal: null,
       paragraph1: null,
       paragraph2: null,
       paragraph3: null,

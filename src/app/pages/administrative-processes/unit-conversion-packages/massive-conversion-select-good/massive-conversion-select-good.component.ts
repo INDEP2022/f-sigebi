@@ -53,7 +53,6 @@ export class MassiveConversionSelectGoodComponent
 {
   //Variables que recibe
   noPackage: AbstractControl;
-  goodCheckValues = goodCheck;
   paqDestinationGoodLenght: number;
   clearPaqDestination: boolean;
   //Params para navegación
@@ -461,17 +460,17 @@ export class MassiveConversionSelectGoodComponent
     let V_BANR = true;
     let packageEnc: IPackageGoodEnc = this.noPackage.value;
 
-    debugger;
+    // debugger;
     const results = await goodCheck.map(async good => {
       console.log(good);
-      debugger;
+      // debugger;
       const row = good.row;
       const goodNumber = row.goodNumber;
       const numberTransferee = row.numberTransferee;
-      const id = row.goods.id;
-      const fileNumber = row.goods.fileNumber;
-      let quantity = row.goods.quantity;
-      const delegation = row.goods.numbercoordinatesadmin;
+      // const id = row.goodId;
+      const fileNumber = row.fileNumber;
+      let quantity = row.quantity;
+      // const delegation = row.goods.numbercoordinatesadmin;
       quantity = quantity ? +quantity : null;
       let encontro;
       let V_CUENTA;
