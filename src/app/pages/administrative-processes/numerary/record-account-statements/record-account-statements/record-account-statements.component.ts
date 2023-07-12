@@ -443,6 +443,8 @@ export class RecordAccountStatementsComponent
   }
 
   delete(movimentAccount: IRecordAccountStatements, modal: any) {
+    let showAlert = false;
+
     if (
       movimentAccount.numberMotionTransfer !== null ||
       movimentAccount.numberReturnPayCheck !== null ||
@@ -455,6 +457,7 @@ export class RecordAccountStatementsComponent
           'No se puede eliminar el movimiento porque proviene de una transferencia',
           ``
         );
+        showAlert = true;
       }
       if (movimentAccount.numberReturnPayCheck !== null) {
         this.alert(
@@ -462,6 +465,7 @@ export class RecordAccountStatementsComponent
           'No se puede eliminar el movimiento porque proviene de un cobro de cheque debido a una devolución',
           ``
         );
+        showAlert = true;
       }
       if (movimentAccount.numberGood !== null) {
         this.alert(
@@ -469,29 +473,34 @@ export class RecordAccountStatementsComponent
           'No se puede eliminar el movimiento porque está asociado a un bien',
           ``
         );
+        showAlert = true;
       }
     }
 
-    const chequeEncontrado = this.checks.find(
-      (cheque: { accountOriginDepositNumber: number }) =>
-        cheque.accountOriginDepositNumber === movimentAccount.numberMotion
-    );
-
-    if (chequeEncontrado) {
-      this.alert(
-        'warning',
-        'No se puede eliminar el movimiento mientras tenga devoluciones registradas',
-        ``
+    if (!showAlert) {
+      const chequeEncontrado = this.checks.find(
+        (cheque: { accountOriginDepositNumber: number }) =>
+          cheque.accountOriginDepositNumber === movimentAccount.numberMotion
       );
-    } else {
-      this.recordAccountStatementsAccountsService.remove(modal).subscribe({
-        next: response => {
-          this.alert('success', 'Movimiento eliminado', '');
-        },
-        error: err => {
-          this.alert('error', 'No es posible eliminar el movimiento', '');
-        },
-      });
+
+      if (chequeEncontrado) {
+        this.alert(
+          'warning',
+          'No se puede eliminar el movimiento mientras tenga devoluciones registradas',
+          ``
+        );
+        showAlert = true;
+      } else {
+        this.recordAccountStatementsAccountsService.remove(modal).subscribe({
+          next: response => {
+            this.searchDataAccount(this.dataAccountPaginated);
+            this.alert('success', 'Movimiento eliminado', '');
+          },
+          error: err => {
+            this.alert('error', 'No es posible eliminar el movimiento', '');
+          },
+        });
+      }
     }
   }
 
