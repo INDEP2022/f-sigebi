@@ -742,7 +742,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
           },
         });
       } else {
-        this.router.navigate(['pages/general-processes/scan-documents'], {
+        this.router.navigate(['/pages/general-processes/scan-documents'], {
           queryParams: {
             folio: this.idFolio,
             volante: this.noVolante,
@@ -989,12 +989,26 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       localStorage.setItem('documentLegal', JSON.stringify(this.document));
     }
     console.log(this.cveScreen);
-    this.router.navigate([`/pages/general-processes/scan-documents`], {
-      queryParams: {
-        origin: this.cveScreen,
-        folio: this.form.get('scanningFoli').value,
-      },
-    });
+    if (this.origin == 'FACTJURREGDESTLEG') {
+      this.router.navigate([`/pages/general-processes/scan-documents`], {
+        queryParams: {
+          origin: 'FACTGENSOLICDIGIT',
+          folio: this.idFolio,
+          volante: this.noVolante,
+          requestOrigin: this.origin ?? '',
+          P_NB: this.paramsDepositaryAppointment.P_NB,
+          P_FOLIO: this.paramsDepositaryAppointment.P_FOLIO,
+          P_ND: this.paramsDepositaryAppointment.P_ND,
+        },
+      });
+    } else {
+      this.router.navigate([`/pages/general-processes/scan-documents`], {
+        queryParams: {
+          origin: this.cveScreen,
+          folio: this.form.get('scanningFoli').value,
+        },
+      });
+    }
   }
 
   savedLocal(event: any) {
