@@ -37,4 +37,8 @@ export class DeletePeriodComponent {
   onClickDeletePeriod2() {
     console.log('SIII');
   }
+
+  cleanForm() {
+    this.form.reset();
+  }
 }

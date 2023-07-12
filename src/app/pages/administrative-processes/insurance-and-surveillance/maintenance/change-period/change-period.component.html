@@ -16,7 +16,7 @@
               pattern="^[0-9]+" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12 mt-2">
           <form-field [control]="form.get('period')" label="Periodo">
             <input
               type="number"
@@ -27,7 +27,7 @@
               pattern="^[0-9]+" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12 mt-2">
           <!-- <form-field [control]="form.get('delegation')">
             <ngx-select
               [form]="form"
@@ -54,7 +54,7 @@
             </ng-custom-select>
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12 mt-2">
           <form-field [control]="form.get('process')">
             <ngx-select
               [data]="procesess"
@@ -82,7 +82,7 @@
               pattern="^[0-9]+" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12 mt-2">
           <form-field [control]="form.get('periodDestiny')" label="Periodo">
             <input
               type="number"
@@ -93,7 +93,7 @@
               pattern="^[0-9]+" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12 mt-2">
           <!-- <form-field [control]="form.get('delegation')">
             <ngx-select
               [form]="form"
@@ -120,7 +120,7 @@
             </ng-custom-select>
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12 mt-2">
           <form-field [control]="form.get('processDestiny')">
             <ngx-select
               [data]="procesess1"
@@ -137,6 +137,13 @@
 
     <div class="row mt-4 float-right">
       <div class="">
+        <button
+          (click)="cleanForm()"
+          type="button"
+          class="btn btn-danger btn-sm active mr-2">
+          Limpiar
+          <i class="fa fa-eraser" aria-hidden="true"></i>
+        </button>
         <button
           [disabled]="!form.valid"
           type="submit"

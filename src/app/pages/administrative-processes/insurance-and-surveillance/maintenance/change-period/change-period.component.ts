@@ -69,4 +69,8 @@ export class ChangePeriodComponent {
     //   this.banks = new DefaultSelect(data.data, data.count);
     // });
   }
+
+  cleanForm() {
+    this.form.reset();
+  }
 }

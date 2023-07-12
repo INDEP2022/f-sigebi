@@ -62,9 +62,16 @@
     <div class="row mt-4 float-right">
       <div class="">
         <button
+          (click)="cleanForm()"
+          type="button"
+          class="btn btn-danger btn-sm active mr-2">
+          Limpiar
+          <i class="fa fa-eraser" aria-hidden="true"></i>
+        </button>
+        <button
           [disabled]="!form.valid"
           type="submit"
-          class="btn btn-red btn-sm active m-3">
+          class="btn btn-red btn-sm active mr-3">
           Eliminar <i class="fa fa-trash" aria-hidden="true"></i>
         </button>
       </div>

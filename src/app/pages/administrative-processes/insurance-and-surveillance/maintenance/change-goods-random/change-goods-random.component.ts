@@ -48,4 +48,8 @@ export class ChangeGoodsRandomComponent implements OnInit {
       transference: [null, Validators.required],
     });
   }
+
+  cleanForm() {
+    this.form.reset();
+  }
 }

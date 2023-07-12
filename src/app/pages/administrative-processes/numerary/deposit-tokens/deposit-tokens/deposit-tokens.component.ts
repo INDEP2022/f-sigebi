@@ -746,7 +746,7 @@ export class DepositTokensComponent
             },
             error: err => {
               this.alert('error', `Error al desconciliar`, err.error.message);
-              this.loading = false;
+              // this.loading = false;
             },
           });
         }
@@ -892,8 +892,6 @@ export class DepositTokensComponent
             console.log('AQUI', response);
             this.loading = false;
           });
-
-          this.loading = false;
         },
         error: err => {
           // this.data2.load([]);
@@ -995,12 +993,12 @@ export class DepositTokensComponent
     this.dynamicCatalogsService.getTvalTable5(params).subscribe({
       next: response => {
         this.form.get('description').setValue(response.data[0].otvalor01);
-        this.loading = false;
+        // this.loading = false;
       },
       error: err => {
         console.log(err);
         this.form.get('description').setValue('');
-        this.loading = false;
+        // this.loading = false;
       },
     });
   }

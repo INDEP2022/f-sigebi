@@ -67,7 +67,6 @@ import { ProceedingsConversionModalComponent } from '../proceedings-conversion-m
 import { ActasConvertionCommunicationService } from '../services/proceedings-conversionn';
 import {
   COPY,
-  GOODSEXPEDIENT_COLUMNS_GOODS,
   IGoodStatus,
   registrosMovidos,
 } from './proceedings-conversion-columns';
@@ -320,55 +319,56 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       ...this.settings,
       hideSubHeader: false,
       actions: false,
-      selectMode: 'multi',
-      columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
-      // columns: {
-
-      //   name: {
-      //     title: '',
-      //     sort: false,
-      //     type: 'custom',
-      //     showAlways: true,
-      //     valuePrepareFunction: (isSelected: boolean, row: IGood) =>
-      //       this.isGoodSelected(row),
-      //     renderComponent: CheckboxElementComponent,
-      //     onComponentInitFunction: (instance: CheckboxElementComponent) =>
-      //       this.onGoodSelect(instance),
-      //   },
-      //   goodId: {
-      //     title: 'No. Bien',
-      //     type: 'number',
-      //     sort: false,
-      //   },
-      //   description: {
-      //     title: 'Descripción',
-      //     type: 'string',
-      //     sort: false,
-      //   },
-      //   quantity: {
-      //     title: 'Cantidad',
-      //     type: 'string',
-      //     sort: false,
-      //   },
-      //   acta_: {
-      //     title: 'Acta',
-      //     type: 'string',
-      //     sort: false,
-      //     // valuePrepareFunction: (cell: any, row: any) => {
-      //     //   return row.acta_;
-      //     // },
-      //   },
-      //   status: {
-      //     title: 'Estatus',
-      //     type: 'string',
-      //     sort: false,
-      //   },
-      // },
+      // selectMode: 'multi',
+      selectedRowIndex: -1,
+      mode: 'external',
+      // columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
+      columns: {
+        name: {
+          title: '',
+          sort: false,
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+            this.isGoodSelected(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onGoodSelect(instance),
+        },
+        goodId: {
+          title: 'No. Bien',
+          type: 'number',
+          sort: false,
+        },
+        description: {
+          title: 'Descripción',
+          type: 'string',
+          sort: false,
+        },
+        quantity: {
+          title: 'Cantidad',
+          type: 'string',
+          sort: false,
+        },
+        acta_: {
+          title: 'Acta',
+          type: 'string',
+          sort: false,
+          // valuePrepareFunction: (cell: any, row: any) => {
+          //   return row.acta_;
+          // },
+        },
+        status: {
+          title: 'Estatus',
+          type: 'string',
+          sort: false,
+        },
+      },
       rowClassFunction: (row: any) => {
         if (row.data.di_disponible == 'S') {
-          return 'bg-success text-white';
+          // return 'bg-success text-white';
         } else {
-          return 'bg-dark text-white';
+          // return 'bg-dark text-white';
         }
 
         // if (row.data.status === 'CNE') {

@@ -121,11 +121,23 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.error({ error });
-        this.alert(
-          'error',
-          'Ha ocurrido un error',
-          'Error al querer cambiar periodos.'
-        );
+
+        if (
+          error.error.message ==
+          'duplicate key value violates unique constraint "pk_vig_supervision_mae"'
+        ) {
+          this.alert(
+            'error',
+            'Ha ocurrido un error',
+            'Ya existe el período indicado en la el período destino'
+          );
+        } else {
+          this.alert(
+            'error',
+            'Ha ocurrido un error',
+            'Error al querer cambiar periodos.'
+          );
+        }
       },
     });
   }
