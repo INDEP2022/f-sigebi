@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
@@ -25,12 +32,13 @@ import { COLUMNS, COLUMNS_EXTRAS } from './columns';
 @Component({
   selector: 'app-depositary-payment-charges',
   templateUrl: './depositary-payment-charges.component.html',
-  styles: [],
+  styleUrls: ['./depositary-payment-charges.component.scss'],
 })
 export class DepositaryPaymentChargesComponent
   extends BasePage
   implements OnInit
 {
+  @ViewChild('uploadFile') fileUpload: ElementRef<any>;
   data: any[];
 
   form: FormGroup;
@@ -91,7 +99,7 @@ export class DepositaryPaymentChargesComponent
       columns: {
         ...COLUMNS,
         sent_oi: {
-          title: 'Valido',
+          title: 'Válido',
           sort: false,
           type: 'custom',
           showAlways: true,
@@ -127,7 +135,7 @@ export class DepositaryPaymentChargesComponent
    */
   private buildForm() {
     this.form = this.fb.group({
-      numberGood: [null, null],
+      numberGood: [null, [Validators.required]],
       event: [null, null],
       cve_bank: [null, [Validators.required]],
       loand: [null, null],
@@ -200,16 +208,24 @@ export class DepositaryPaymentChargesComponent
       this.massiveDepositaryService.pupBurdenDataCSV(formData).subscribe({
         next: resp => {
           console.log(resp.data);
-          this.onLoadToast('success', 'Se dio de alta el archivo ', 'Correcto');
+          this.onLoadToast(
+            'success',
+            'El archivo ha sido dado de alta',
+            'Correcto'
+          );
         },
         error: eror => {
-          this.onLoadToast('error', 'Error', eror.error.message);
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio un error : ' + eror.error.message
+          );
         },
       });
 
       let fileReader = new FileReader();
       fileReader.readAsBinaryString(file);
-
+      this.fileUpload.nativeElement.value = '';
       fileReader.onload = e => {
         var workbook = XLSX.read(fileReader.result, { type: 'binary' });
 
@@ -234,7 +250,7 @@ export class DepositaryPaymentChargesComponent
       this.onLoadToast(
         'warning',
         'Información',
-        'Necesita Indicar de que Banco va a cargar datos'
+        'Indicar el banco para cargar datos'
       );
     }
   }
@@ -255,7 +271,7 @@ export class DepositaryPaymentChargesComponent
       );
     }
 
-    /*
+    /*loadItemsJson
 MANDA A LLAMAR LA P�GINA
 FCONDEPOCONCILPAG
 src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliation-depositary-payments
@@ -263,16 +279,25 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
 */
   }
 
-  onSearch() {
+  async onSearch() {
+    if (!this.form.get('numberGood').value) {
+      this.alertInfo('info', 'El No. de bien es requerido', '');
+      return;
+    }
     this.cleanFild();
     this.ItemsJson = this.loadItemsJson.filter(
       X => X.noGood === this.form.get('numberGood').value
     );
-    console.error(JSON.stringify(this.ItemsJson[0]));
+
+    console.log(this.ItemsJson[0]);
     this.form.get('event').setValue(this.ItemsJson[0].description);
     this.form.get('cve_bank').setValue(this.ItemsJson[0].cve_bank);
     this.form.get('loand').setValue(this.ItemsJson[0].amount);
-    console.warn(JSON.stringify(this.ItemsJson[0]));
+    if (this.ItemsJson[0]) {
+      this.formgetCveBank = this.ItemsJson[0].cve_bank;
+      this.formgetCodeBank = this.ItemsJson[0].code;
+    }
+    //console.warn(JSON.stringify(this.ItemsJson[0]));
 
     this.filterParams.getValue().removeAllFilters();
     this.filterParams
@@ -297,12 +322,16 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
   }
 
   getAllUsers(params: ListParams) {
+    params.limit = 40;
     return this.bankService.getAll(params).pipe(
       catchError(error => {
         this.users$ = new DefaultSelect([], 0, true);
         return throwError(() => error);
       }),
       tap(response => {
+        response.data.map((item: any) => {
+          item['bankDescription'] = item.bankCode + '-' + item.name;
+        });
         this.users$ = new DefaultSelect(response.data, response.count);
       })
     );
