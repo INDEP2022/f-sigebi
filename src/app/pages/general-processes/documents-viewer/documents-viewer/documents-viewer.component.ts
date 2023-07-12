@@ -218,11 +218,8 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   }
 
   onTipoDocumentoInputChange(event: any) {
-    console.log(event);
     const inputValue = event.search.toUpperCase();
-    console.log(inputValue);
     const param = `filter.id=${inputValue}`;
-    console.log(param);
     this.documentService.getDocumentsType(param).subscribe(response => {
       this.selectTypeDoc = new DefaultSelect(response.data, response.count);
     });
@@ -253,14 +250,18 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   }
 
   loadDocumentsSeparator(params: ListParams) {
-    this.documentService
-      .getDocumentsSeparator(params)
-      .pipe(
-        map(res => {
-          this.selectSeparator = new DefaultSelect(res.data, res.count);
-        })
-      )
-      .subscribe();
+    this.loading = true;
+    this.documentService.getDocumentsSeparator(params).subscribe({
+      next: res => {
+        this.loading = true;
+        this.selectSeparator = new DefaultSelect(res.data, res.count);
+        this.loading = false;
+      },
+      error: (err: any) => {
+        this.loading = false;
+        this.alert('warning', 'No existen separadores', ``);
+      },
+    });
   }
 
   modalImage(documentViewer: IDocumentsViewerFlyerNumber) {
@@ -289,9 +290,9 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
 
   delete(id: string | number) {
     this.documentService.remove(id).subscribe({
-      next: () => {
-        this.alert('success', 'Expediente eliminado', '');
+      next: responde => {
         this.getDocuments();
+        this.alert('success', 'Expediente eliminado', '');
       },
       error: error => {
         this.alert('warning', 'No es posible eliminar el expediente', '');

@@ -246,9 +246,9 @@ export class PerformProgrammingFormComponent
       },
     };
 
-    this.idProgramming = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as unknown as number;
+    this.idProgramming = Number(
+      this.activatedRoute.snapshot.paramMap.get('id')
+    );
   }
 
   ngOnInit(): void {
