@@ -203,25 +203,28 @@ export class DepositaryPaymentChargesComponent
       let file = event.target.files[0];
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('pBank', this.form.get('cve_bank').value);
+      const cve_bank = this.form.get('cve_bank').value;
+      //formData.append('pBank', this.form.get('cve_bank').value);
 
-      this.massiveDepositaryService.pupBurdenDataCSV(formData).subscribe({
-        next: resp => {
-          console.log(resp.data);
-          this.onLoadToast(
-            'success',
-            'El archivo ha sido dado de alta',
-            'Correcto'
-          );
-        },
-        error: eror => {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Ocurrio un error : ' + eror.error.message
-          );
-        },
-      });
+      this.massiveDepositaryService
+        .pupBurdenDataCSV(formData, cve_bank)
+        .subscribe({
+          next: resp => {
+            console.log(resp.data);
+            this.onLoadToast(
+              'success',
+              'El archivo ha sido dado de alta',
+              'Correcto'
+            );
+          },
+          error: eror => {
+            this.onLoadToast(
+              'error',
+              'Error',
+              'Ocurrio un error : ' + eror.error.message
+            );
+          },
+        });
 
       let fileReader = new FileReader();
       fileReader.readAsBinaryString(file);
