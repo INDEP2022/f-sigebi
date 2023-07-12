@@ -1051,9 +1051,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     let formattedDate = currentDate.toISOString().substring(0, 10);
     let packageUpdate: Partial<IPackage> = {
       numberPackage: +noPack.numberPackage,
-      statuspack: 'V',
+      statuspack: status,
       dateValid: formattedDate,
-      useValid: 'USER',
+      useValid: localStorage.getItem('username').toUpperCase(),
     };
 
     this.packageGoodService
