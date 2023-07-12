@@ -26,6 +26,7 @@ export class UnitCostComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   data1: LocalDataSource = new LocalDataSource();
   data2: LocalDataSource = new LocalDataSource();
+  params = new BehaviorSubject<ListParams>(new ListParams());
   params1 = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   settings2 = { ...this.settings };
@@ -37,6 +38,10 @@ export class UnitCostComponent extends BasePage implements OnInit {
   columnFilters1: any = [];
   columnFilters2: any = [];
 
+  validityAndCost: boolean = false;
+
+  idCost: string;
+
   constructor(
     private unitCostService: UnitCostService,
     private unitCostDetService: UnitCostDetService,
@@ -45,6 +50,7 @@ export class UnitCostComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: false,
@@ -56,11 +62,12 @@ export class UnitCostComponent extends BasePage implements OnInit {
     };
     this.settings2 = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
-        edit: false,
+        edit: true,
         add: false,
-        delete: true,
+        delete: false,
         position: 'right',
       },
       columns: { ...VALIDITYCOST_COLUMNS },
@@ -173,29 +180,9 @@ export class UnitCostComponent extends BasePage implements OnInit {
       .subscribe(() => this.getUnitCostDetAll());
   }
 
-  getUnitCostDetAll() {
-    this.loading = true;
-    let params = {
-      ...this.params2.getValue(),
-      ...this.columnFilters2,
-    };
-
-    this.unitCostDetService.getAll(params).subscribe({
-      next: response => {
-        this.columns2 = response.data;
-        this.data2.load(this.columns2);
-        this.totalItems2 = response.count || 0;
-        this.data2.refresh();
-        this.loading = false;
-      },
-      error: error => {
-        this.loading = false;
-      },
-    });
-  }
-
   getUnitCostAll() {
     this.loading = true;
+
     let params = {
       ...this.params1.getValue(),
       ...this.columnFilters1,
@@ -205,12 +192,47 @@ export class UnitCostComponent extends BasePage implements OnInit {
       next: response => {
         this.columns1 = response.data;
         this.data1.load(this.columns1);
-        this.totalItems1 = response.count || 0;
         this.data1.refresh();
+        this.totalItems1 = response.count || 0;
         this.loading = false;
       },
       error: error => {
         this.loading = false;
+      },
+    });
+  }
+
+  selectValidity(event: any) {
+    this.validityAndCost = true;
+    console.log(event.data.costId);
+    this.idCost = event.data.costId;
+    this.getUnitCostDetAll(event.data.costId);
+  }
+
+  getUnitCostDetAll(id?: string) {
+    this.loading = true;
+    console.log(id);
+    if (id) {
+      this.params2.getValue()['filter.costId'] = id;
+    }
+    let params = {
+      ...this.params2.getValue(),
+      ...this.columnFilters2,
+    };
+
+    this.unitCostDetService.getAll(params).subscribe({
+      next: response => {
+        this.columns2 = response.data;
+        this.data2.load(this.columns2);
+        this.data2.refresh();
+        this.totalItems2 = response.count || 0;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.data2.load([]);
+        this.data2.refresh();
+        this.totalItems2 = 0;
       },
     });
   }
@@ -229,12 +251,20 @@ export class UnitCostComponent extends BasePage implements OnInit {
     this.modalService.show(UnitCostFormComponent, config);
   }
 
-  openForm2(unitCostDet?: IUnitCostDet) {
+  openForm2(unitCostDet?: any) {
+    const unitCostDet1 = unitCostDet != null ? unitCostDet.data : null;
+    const idCost = this.idCost;
+    console.log(unitCostDet1);
     let config: ModalOptions = {
       initialState: {
-        unitCostDet,
-        callBack: (next: boolean) => {
-          if (next) this.getUnitCostDetAll();
+        unitCostDet1,
+        idCost,
+        callback: (next: boolean) => {
+          if (next) {
+            this.params2
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getUnitCostDetAll());
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -242,6 +272,28 @@ export class UnitCostComponent extends BasePage implements OnInit {
     };
     this.modalService.show(UnitCostDetFormComponent, config);
   }
+
+  /*openForm2(unitCostDet?: any) {
+    const unitCostDet1 = unitCostDet != null ? unitCostDet.data : null;
+    console.log(unitCostDet1);
+    const idCost = this.idCost;
+    let config: ModalOptions = {
+      initialState: {
+        unitCostDet1,
+        idCost,
+        callBack: (next: boolean) => {
+          if (next) {
+            this.params2
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getUnitCostDetAll());
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(UnitCostDetFormComponent, config);
+  }*/
 
   showDeleteAlert(unitCost?: IUnitCost) {
     this.alertQuestion(

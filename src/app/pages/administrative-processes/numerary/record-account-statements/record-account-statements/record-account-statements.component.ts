@@ -40,6 +40,7 @@ export class RecordAccountStatementsComponent
   itemsCuentas = new DefaultSelect();
   columnFilters: any = [];
   validation: boolean = false;
+  data: LocalDataSource = new LocalDataSource();
 
   banks = new DefaultSelect();
   bankAccountSelect = new DefaultSelect();
@@ -59,6 +60,10 @@ export class RecordAccountStatementsComponent
   variableAt: Date;
   bankCode: string;
   checks: any;
+
+  paramsSubject: BehaviorSubject<ListParams> = new BehaviorSubject<ListParams>(
+    new ListParams()
+  );
 
   constructor(
     private fb: FormBuilder,
@@ -93,20 +98,18 @@ export class RecordAccountStatementsComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.searchBanks();
+    this.searchBanks(new ListParams());
     this.searchCheck();
     this.dataAccount
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
-          console.log('filter');
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'dateMotion':
                 searchFilter = SearchFilter.EQ;
@@ -145,20 +148,21 @@ export class RecordAccountStatementsComponent
   }
 
   // Trae la lista de bancos por defecto
-  searchBanks() {
-    // this.dataAccount = new LocalDataSource();
-    this.recordAccountStatementsService
-      .getAll(this.params.getValue())
-      .subscribe({
-        next: (response: { data: any[]; count: number }) => {
-          this.banks = new DefaultSelect(response.data, response.count);
-          this.loading = false;
-        },
-        error: (err: any) => {
-          this.loading = false;
-          this.alert('warning', 'No existen bancos', ``);
-        },
-      });
+  searchBanks(params: ListParams) {
+    this.loading = true;
+    this.bankAccountSelect = new DefaultSelect();
+    this.dataAccount = new LocalDataSource();
+    this.recordAccountStatementsService.getAll(params).subscribe({
+      next: response => {
+        this.loading = true;
+        this.banks = new DefaultSelect(response.data, response.count);
+        this.loading = false;
+      },
+      error: (err: any) => {
+        this.loading = false;
+        this.alert('warning', 'No existen bancos', ``);
+      },
+    });
   }
 
   // Permite buscar los bancos por nombre
@@ -192,20 +196,27 @@ export class RecordAccountStatementsComponent
     this.totalItems = 0;
     this.cleandInfoDate();
     this.bankAccountSelect = new DefaultSelect();
+    this.loading = false;
     // this.dataAccount = new LocalDataSource();
     if (value && value.bankCode) {
       const bankCode = value.bankCode;
-      this.searchBankAccount(bankCode);
+      this.searchBankAccount(bankCode, this.paramsSubject);
+      this.loading = false;
     } else {
       this.cleandInfoAll();
+      this.loading = false;
     }
   }
 
   // Toma el banco seleccionado y busca todas las cuentas pertenecientes a ese banco
-  searchBankAccount(bankCode: string) {
+  searchBankAccount(
+    bankCode: string,
+    paramsSubject: BehaviorSubject<ListParams>
+  ) {
     this.bankCode = bankCode;
+    const params = paramsSubject.getValue();
     this.recordAccountStatementsAccountsService
-      .getById(bankCode, this.params.getValue())
+      .getById(bankCode, params)
       .subscribe({
         next: response => {
           this.bankAccountSelect = new DefaultSelect(
@@ -214,6 +225,7 @@ export class RecordAccountStatementsComponent
           );
           this.loading = false;
         },
+        // this.data.load(this.documents);
         error: (err: any) => {
           this.loading = false;
           this.alert('warning', 'No existen cuentas', ``);
@@ -222,7 +234,7 @@ export class RecordAccountStatementsComponent
   }
 
   onClearSelection() {
-    this.searchBankAccount(this.bankCode);
+    this.searchBankAccount(this.bankCode, this.paramsSubject);
   }
 
   onSearchAccount(inputElement: any) {
@@ -284,6 +296,10 @@ export class RecordAccountStatementsComponent
 
   // Permite buscar la descripcion de la moneda
   searchCurrent(currency: string) {
+    if (currency === `'M'`) {
+      currency = 'PESO MEXICANO';
+      this.form.get('description').setValue(currency);
+    }
     this.tvalTable5Service.getCurrent(currency).subscribe({
       next: response => {
         let current = response.data;
@@ -291,10 +307,6 @@ export class RecordAccountStatementsComponent
         this.form.get('description').setValue(currentAccount);
         this.loading = false;
       },
-      // error: (err: any) => {
-      //   this.loading = false;
-      //   this.alert('warning', 'No existen monedas', ``);
-      // },
     });
   }
 
@@ -302,11 +314,24 @@ export class RecordAccountStatementsComponent
   DateAccountBalance() {
     const balanceOf = this.datePipe.transform(this.variableOf, 'dd/MM/yyyy');
     const balanceAt = this.datePipe.transform(this.variableAt, 'dd/MM/yyyy');
+
+    if (!balanceOf && !balanceAt) {
+      this.alert('warning', 'Error', 'Debe ingresar las fechas de saldo');
+      return;
+    } else if (!balanceOf) {
+      this.alert('warning', 'Error', 'Debe ingresar la fecha de "Saldo de"');
+      return;
+    } else if (!balanceAt) {
+      this.alert('warning', 'Error', 'Debe ingresar la fecha de "Saldo a:"');
+      return;
+    }
+
     const model: IDateAccountBalance = {
       noAccount: this.accountDate,
       tiDateCalc: balanceOf,
       tiDateCalcEnd: balanceAt,
     };
+
     this.recordAccountStatementsAccountsService
       .getAccountBalanceDate(model)
       .subscribe({
@@ -332,7 +357,11 @@ export class RecordAccountStatementsComponent
       .subscribe({
         next: response => {
           this.loading = true;
-          const data = response.data;
+          const data = response.data.map(item => {
+            const dateParts = item.dateMotion.split('-');
+            const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+            return { ...item, dateMotion: formattedDate };
+          });
           this.dataAccount.load(data);
           this.dataAccount.refresh();
           this.totalItems = response.count;
@@ -357,6 +386,7 @@ export class RecordAccountStatementsComponent
       .subscribe({
         next: response => {
           this.factasStatusCta = response;
+          console.log(this.factasStatusCta);
           this.loading = false;
         },
         error: (err: any) => {
@@ -368,6 +398,7 @@ export class RecordAccountStatementsComponent
 
   // Abre el modal de transferencia de saldos
   openModal(movimentAccount: IRecordAccountStatements) {
+    console.log(movimentAccount);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       ignoreBackdropClick: false,
@@ -415,6 +446,8 @@ export class RecordAccountStatementsComponent
   }
 
   delete(movimentAccount: IRecordAccountStatements, modal: any) {
+    let showAlert = false;
+
     if (
       movimentAccount.numberMotionTransfer !== null ||
       movimentAccount.numberReturnPayCheck !== null ||
@@ -427,6 +460,7 @@ export class RecordAccountStatementsComponent
           'No se puede eliminar el movimiento porque proviene de una transferencia',
           ``
         );
+        showAlert = true;
       }
       if (movimentAccount.numberReturnPayCheck !== null) {
         this.alert(
@@ -434,6 +468,7 @@ export class RecordAccountStatementsComponent
           'No se puede eliminar el movimiento porque proviene de un cobro de cheque debido a una devolución',
           ``
         );
+        showAlert = true;
       }
       if (movimentAccount.numberGood !== null) {
         this.alert(
@@ -441,43 +476,50 @@ export class RecordAccountStatementsComponent
           'No se puede eliminar el movimiento porque está asociado a un bien',
           ``
         );
+        showAlert = true;
       }
     }
 
-    const chequeEncontrado = this.checks.find(
-      (cheque: { accountOriginDepositNumber: number }) =>
-        cheque.accountOriginDepositNumber === movimentAccount.numberMotion
-    );
-
-    if (chequeEncontrado) {
-      this.alert(
-        'warning',
-        'No se puede eliminar el movimiento mientras tenga devoluciones registradas',
-        ``
+    if (!showAlert) {
+      const chequeEncontrado = this.checks.find(
+        (cheque: { accountOriginDepositNumber: number }) =>
+          cheque.accountOriginDepositNumber === movimentAccount.numberMotion
       );
-    } else {
-      this.recordAccountStatementsAccountsService.remove(modal).subscribe({
-        next: response => {
-          this.alert('success', 'Movimiento eliminado', '');
-        },
-        error: err => {
-          this.alert('error', 'No es posible eliminar el movimiento', '');
-        },
-      });
+
+      if (chequeEncontrado) {
+        this.alert(
+          'warning',
+          'No se puede eliminar el movimiento mientras tenga devoluciones registradas',
+          ``
+        );
+        showAlert = true;
+      } else {
+        this.recordAccountStatementsAccountsService.remove(modal).subscribe({
+          next: response => {
+            this.searchDataAccount(this.dataAccountPaginated);
+            this.alert('success', 'Movimiento eliminado', '');
+          },
+          error: err => {
+            this.alert('error', 'No es posible eliminar el movimiento', '');
+          },
+        });
+      }
     }
   }
 
   cleandInfoAll() {
     this.form.reset();
+    this.dataAccount = new LocalDataSource();
     this.totalItems = 0;
-    this.searchBanks();
+    this.searchBanks(new ListParams());
     this.balance = null;
   }
 
   cleandInfo() {
+    this.dataAccount = new LocalDataSource();
     this.totalItems = 0;
     this.form.reset();
-    this.searchBanks();
+    this.searchBanks(new ListParams());
   }
 
   cleandInfoDate() {
