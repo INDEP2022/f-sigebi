@@ -1077,10 +1077,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
               this.showButtonAlert('C');
             },
             err => {
-              console.log(err)
+              console.log(err);
             }
-          )
-
+          );
         }
       });
     } else {

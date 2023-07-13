@@ -148,8 +148,8 @@ export class ScanFileComponent extends BasePage implements OnInit {
                 },
                 err => {
                   console.log(err);
-                  this.loading = false
-                  this.alert('warning','Se presentó un error inesperado','')
+                  this.loading = false;
+                  this.alert('warning', 'Se presentó un error inesperado', '');
                 }
               );
           }
@@ -171,7 +171,7 @@ export class ScanFileComponent extends BasePage implements OnInit {
           'Continuar'
         ).then(q => {
           if (q.isConfirmed) {
-            this.goToScan()
+            this.goToScan();
           }
         });
       } else {
@@ -186,7 +186,7 @@ export class ScanFileComponent extends BasePage implements OnInit {
     }
   }
 
-  goToScan(){
+  goToScan() {
     localStorage.setItem('noPackage', this.package.numberPackage.toString());
 
     this.router.navigate([`/pages/general-processes/scan-documents`], {
@@ -198,7 +198,7 @@ export class ScanFileComponent extends BasePage implements OnInit {
   }
 
   //Folio
-  printFolio(){
+  printFolio() {
     if (this.form.get(this.formControlName).value != null) {
       const params = {
         pn_folio: this.form.get(this.formControlName).value,
@@ -210,10 +210,10 @@ export class ScanFileComponent extends BasePage implements OnInit {
   }
 
   //Ver solicitud de escaneo
-  viewScan(){
-    if(this.form.get(this.formControlName).value != null){
-      this.goToScan()
-    }else{
+  viewScan() {
+    if (this.form.get(this.formControlName).value != null) {
+      this.goToScan();
+    } else {
       this.alert('warning', 'No tiene folio de escaneo', '');
     }
   }

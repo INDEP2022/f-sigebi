@@ -7,7 +7,10 @@ import { IDocumentsViewerFlyerNumber } from 'src/app/core/models/ms-documents/do
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IClarificationDocumentsImpro } from '../../models/ms-documents/clarification-documents-impro-model';
 import { SeparatorsDocuments } from '../../models/ms-documents/document-separators';
-import { IDocuments, IGenerateFolioMassConv } from '../../models/ms-documents/documents';
+import {
+  IDocuments,
+  IGenerateFolioMassConv,
+} from '../../models/ms-documents/documents';
 import { TypesDocuments } from '../../models/ms-documents/documents-type';
 import { IReceipyGuardDocument } from '../../models/receipt/receipt.model';
 
@@ -249,7 +252,7 @@ export class DocumentsService extends HttpService {
     );
   }
 
-  generateFolioMassiveConversion(body: IGenerateFolioMassConv){
-    return this.post('application/generate-folio', body)
+  generateFolioMassiveConversion(body: IGenerateFolioMassConv) {
+    return this.post('application/generate-folio', body);
   }
 }
