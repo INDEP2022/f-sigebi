@@ -24,7 +24,10 @@
                 </div>
               </div>
             </ng-template>
-            <event-data-form></event-data-form>
+            <reserved-goods
+              [eventForm]="eventForm"
+              [parameters]="parameters"
+              [loggedUser]="loggedUser"></reserved-goods>
           </tab>
           <tab [active]="true" (selectTab)="openEvent()">
             <ng-template tabHeading>
@@ -37,7 +40,9 @@
                 </div>
               </div>
             </ng-template>
-            <commer-events-list></commer-events-list>
+            <commer-events-list
+              [(globalEvent)]="globalEvent"
+              [eventForm]="eventForm"></commer-events-list>
           </tab>
           <tab>
             <ng-template tabHeading>
@@ -100,6 +105,11 @@
         </tabset>
       </div>
     </div>
-    <div class="row"></div>
+    <div class="row">
+      <div class="col-md-12">
+        <event-preparation-stadistics
+          [stadisticsForm]="stadisticsForm"></event-preparation-stadistics>
+      </div>
+    </div>
   </div>
 </app-card>

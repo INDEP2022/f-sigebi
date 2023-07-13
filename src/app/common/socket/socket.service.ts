@@ -19,4 +19,13 @@ export class SocketService extends HttpService {
       })
     );
   }
+
+  exportGoodsTrackerPhotos() {
+    return this.socket.fromEvent('tracker_good_photo').pipe(
+      tap(res => {
+        console.log('Conexion establecida');
+        console.log({ res });
+      })
+    );
+  }
 }

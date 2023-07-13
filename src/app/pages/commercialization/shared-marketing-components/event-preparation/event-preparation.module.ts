@@ -16,6 +16,8 @@ import { CommerEventCustomersComponent } from './components/commer-event-custome
 import { CommerEventsListComponent } from './components/commer-events-list/commer-events-list.component';
 import { CommerPackagesLotsComponent } from './components/commer-packages-lots/commer-packages-lots.component';
 import { EventDataFormComponent } from './components/event-data-form/event-data-form.component';
+import { EventPreparationStadisticsComponent } from './components/event-preparation-stadistics/event-preparation-stadistics.component';
+import { ReservedGoodsComponent } from './components/reserved-goods/reserved-goods.component';
 import { CreateNewEventModalComponent } from './create-new-event-modal/create-new-event-modal.component';
 import { CustomerCatalogsTableComponent } from './customer-catalogs-table/customer-catalogs-table.component';
 import { EventPreparationRoutingModule } from './event-preparation-routing.module';
@@ -40,6 +42,8 @@ import { SelectEventModalComponent } from './select-event-modal/select-event-mod
     CommerEventsListComponent,
     CommerPackagesLotsComponent,
     CommerEventCustomersComponent,
+    ReservedGoodsComponent,
+    EventPreparationStadisticsComponent,
   ],
   imports: [
     CommonModule,

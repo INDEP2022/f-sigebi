@@ -1,12 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { FormBuilder } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 //XLSX
 import { catchError, tap, throwError } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
-import { ExcelService } from 'src/app/common/services/excel.service';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
+import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
+import { ComerEventForm } from '../utils/forms/comer-event-form';
+import { EventStadisticsForm } from '../utils/forms/event-stadistics-form';
+
 @Component({
   selector: 'app-event-preparation',
   templateUrl: './event-preparation.component.html',
@@ -25,7 +29,6 @@ import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/p
   ],
 })
 export class EventPreparationComponent extends BasePage implements OnInit {
-  form: FormGroup = new FormGroup({});
   /**
    * BLK_TAREAS
    * @property {string} tDirection - T_DIRECCION
@@ -70,18 +73,30 @@ export class EventPreparationComponent extends BasePage implements OnInit {
   canvas = {
     main: true,
     events: true,
+    stadistics: true,
   };
+
+  globalEvent: IComerEvent = null;
+  loggedUser: TokenInfoModel = null;
+  eventForm = this.fb.group(new ComerEventForm());
+  stadisticsForm = this.fb.group(new EventStadisticsForm());
   constructor(
-    private modalService: BsModalService,
-    private excelService: ExcelService,
     private fb: FormBuilder,
-    private parameterModService: ParametersModService
+    private parameterModService: ParametersModService,
+    private authService: AuthService
   ) {
     super();
+    // TODO: Recibir los parametros
+    this.parameters.pDirection = 'M';
   }
 
   ngOnInit(): void {
     this.initForm();
+    this.getUserInfo();
+  }
+
+  getUserInfo() {
+    this.loggedUser = this.authService.decodeToken();
   }
 
   /** PUP_INCIALIZA_FORMA */
@@ -115,7 +130,7 @@ export class EventPreparationComponent extends BasePage implements OnInit {
 
   /** PUP_MENU_DEFAULT */
   defaultMenu() {
-    if ((this.parameters.pDirection = 'I')) {
+    if (this.parameters.pDirection == 'I') {
       // ? No hace nada
     }
   }
@@ -139,6 +154,7 @@ export class EventPreparationComponent extends BasePage implements OnInit {
   }
 
   newEvent() {
+    this.eventForm.reset();
     this.canvas.main = false;
   }
 

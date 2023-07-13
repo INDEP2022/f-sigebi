@@ -1,37 +1,42 @@
+import { SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+
 export const PREPARE_EVENT_EVENTS_LIST_COLUMNS = {
-  evento: {
+  id: {
     title: 'Evento',
     sort: false,
   },
-  clave: {
+  processKey: {
     title: 'Clave',
     sort: false,
+    operator: SearchFilter.ILIKE,
   },
-  event: {
-    title: 'Evento',
+  eventTpId: {
+    title: 'ID Tipo',
     sort: false,
   },
   tipo: {
     title: 'Tipo',
     sort: false,
   },
-  lugar: {
+  place: {
     title: 'Lugar',
     sort: false,
+    operator: SearchFilter.ILIKE,
   },
-  observaciones: {
+  observations: {
     title: 'Observaciones',
     sort: false,
+    operator: SearchFilter.ILIKE,
   },
-  usuario: {
+  user: {
     title: 'Usuario',
     sort: false,
   },
-  cordinacion: {
+  delegationNumber: {
     title: 'Coordinación',
     sort: false,
   },
-  estatus: {
+  statusVtaId: {
     title: 'Estatus',
     sort: false,
   },

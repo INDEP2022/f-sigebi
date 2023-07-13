@@ -753,6 +753,19 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     );
   }
 
+  subscribePhotos() {
+    return this.socketService.exportGoodsTrackerPhotos().pipe(
+      tap((res: any) => {
+        if (res.percent == 100 && res.path) {
+          window.open(
+            'http://sigebimsqa.indep.gob.mx/ldocument/api/' + 'v1/' + res.path,
+            '_blank'
+          );
+        }
+      })
+    );
+  }
+
   getExcel() {
     return this.goodTrackerService.donwloadExcel().pipe(
       catchError(error => {
@@ -789,6 +802,18 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       error: () => {
         this.excelLoading = false;
         this.alert('error', 'Error', 'No se genero correctamente el archivo');
+      },
+    });
+  }
+
+  getPhotos() {
+    this.goodTrackerService.getPhotos(this.filters).subscribe({
+      next: res => {
+        console.log(res);
+        this.subscribePhotos().subscribe();
+      },
+      error: error => {
+        console.log(error);
       },
     });
   }
