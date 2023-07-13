@@ -4,7 +4,9 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 //Services
-import { SiabReportEndpoints } from 'src/app/common/constants/endpoints/siab-reports-endpoints';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
   ListParams,
@@ -25,7 +27,9 @@ export class ProceduralHistoryComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private siabService: SiabService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService
   ) {}
 
   users$ = new DefaultSelect<ISegUsers>();
@@ -39,14 +43,8 @@ export class ProceduralHistoryComponent implements OnInit {
   }
   private prepareForm() {
     this.proceduralHistoryForm = this.fb.group({
-      delegation: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      subdelegation: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      delegation: [null, [Validators.required]],
+      subdelegation: [null, [Validators.required]],
       modificationDateOf: [null, Validators.required],
       modificationDateTo: [null, Validators.required],
       ofTheGood: [null, Validators.required],
@@ -56,33 +54,92 @@ export class ProceduralHistoryComponent implements OnInit {
   }
   onSubmit() {
     // Log y url con parámetros quemados
-    console.log(this.proceduralHistoryForm.value);
-    const pdfurl =
-      'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf';
+    console.log('Usuario ', this.filterForm.value);
 
-    const downloadLink = document.createElement('a');
-    downloadLink.href = pdfurl;
-    downloadLink.target = '_blank';
-    downloadLink.click();
+    const DateOf = new Date(
+      this.proceduralHistoryForm.value.modificationDateOf
+    );
+    const formattedDateOf = this.formatDate(DateOf);
 
-    let params = { ...this.proceduralHistoryForm.value };
-    for (const key in params) {
-      if (params[key] === null) delete params[key];
-    }
+    const DateTo = new Date(
+      this.proceduralHistoryForm.value.modificationDateTo
+    );
+    const formattedDateTo = this.formatDate(DateTo);
 
-    this.siabService
-      .getReport(SiabReportEndpoints.FGENADBSITPROCESB, params)
-      .subscribe({
-        next: response => {
-          console.log(response);
-          window.open(pdfurl, 'Reporte de Impresion de Volantes');
-        },
-        error: () => {
-          window.open(pdfurl, 'Reporte de Impresion de Volantes');
-        },
-      });
+    let params = {
+      PN_BIENINI: this.proceduralHistoryForm.value.ofTheGood,
+      PN_BIENFIN: this.proceduralHistoryForm.value.toGood,
+      PN_DELG: this.proceduralHistoryForm.value.delegation,
+      PN_SUBDEL: this.proceduralHistoryForm.value.subdelegation,
+      PF_FECINI: formattedDateOf,
+      PF_FECFIN: formattedDateTo,
+      PC_USUARIO: this.filterForm.value.user,
+    };
+    this.siabService.fetchReport('blank', params).subscribe(response => {
+      if (response !== null) {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      } else {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      }
+    });
+    /*const pdfurl =
+  'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf';
+
+const downloadLink = document.createElement('a');
+downloadLink.href = pdfurl;
+downloadLink.target = '_blank';
+downloadLink.click();
+
+let params = { ...this.proceduralHistoryForm.value };
+for (const key in params) {
+  if (params[key] === null) delete params[key];
+}
+
+this.siabService
+  .getReport(SiabReportEndpoints.FGENADBSITPROCESB, params)
+  .subscribe({
+    next: response => {
+      console.log(response);
+      window.open(pdfurl, 'Reporte de Impresion de Volantes');
+    },
+    error: () => {
+      window.open(pdfurl, 'Reporte de Impresion de Volantes');
+    },
+  });*/
   }
+  formatDate(date: Date): string {
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
 
+    return `${day}-${month}-${year}`;
+  }
   getUsers($params: ListParams) {
     console.log($params);
     let params = new FilterParams();
@@ -93,6 +150,8 @@ export class ProceduralHistoryComponent implements OnInit {
       next: data => {
         data.data.map(user => {
           user.userAndName = `${user.id}- ${user.name}`;
+          user.id = user.id;
+          console.log('user ', user);
           return user;
         });
 
@@ -102,5 +161,10 @@ export class ProceduralHistoryComponent implements OnInit {
         this.users$ = new DefaultSelect();
       },
     });
+  }
+
+  cleanForm() {
+    this.proceduralHistoryForm.reset();
+    this.filterForm.reset();
   }
 }
