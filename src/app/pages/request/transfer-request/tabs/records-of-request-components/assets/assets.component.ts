@@ -84,6 +84,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   typeRecord: string = '';
   transferente: string = '';
   selectedAll: boolean = false;
+  typeRequest: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -113,6 +114,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   ngOnInit(): void {
     console.log('Activando tab: assets');
+    console.log('TIPO TRASFERENCIA', this.requestObject.typeOfTransfer);
+    this.typeRequest = this.requestObject.typeOfTransfer;
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
