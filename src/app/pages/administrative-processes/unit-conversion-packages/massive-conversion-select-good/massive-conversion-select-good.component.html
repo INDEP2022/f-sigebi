@@ -127,10 +127,7 @@
             class="d-none"
             accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
             (change)="onFileChange($event)" /> -->
-          <button
-            class="btn btn-primary btn-sm active"
-            [disabled]="goodCheckValues.length === 0 || loading"
-            (click)="pbIngresar()">
+          <button class="btn btn-primary btn-sm active" (click)="pbIngresar()">
             Ingresar Bienes
           </button>
           <button
