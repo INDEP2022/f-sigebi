@@ -21,4 +21,5 @@ export enum GoodprocessEndpoints {
   consultationScreenGood = 'factadbsolcamnume/consultation-post-query-good',
   AppVWheel = 'application/get-v-steeringwheel-number',
   ApplicationDistinctElaborationDate = 'application/distinctElaborationDate',
+  consultationScreenGood2 = 'update-good-status/getOne',
 }

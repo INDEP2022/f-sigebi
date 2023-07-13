@@ -3,61 +3,65 @@
     <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
-      <div class="row pt-3">
-        <div class="col-md-12">
-          <form-field [control]="form.get('id')" label="Id">
-            <input
-              required
-              type="text"
-              formControlName="id"
-              class="form-control" />
-          </form-field>
+    <div class="row">
+      <form class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <form-field [control]="form.get('id')" label="Id">
+              <input
+                required
+                type="text"
+                formControlName="id"
+                class="form-control" />
+            </form-field>
+          </div>
         </div>
-      </div>
-      <div class="row pt-3">
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('emailSend')"
-            label="Correo Electr&oacute;nico">
-            <input
-              type="text"
-              formControlName="emailSend"
-              class="form-control" />
-          </form-field>
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <form-field
+              [control]="form.get('emailSend')"
+              label="Correo Electr&oacute;nico">
+              <input
+                type="text"
+                formControlName="emailSend"
+                class="form-control" />
+            </form-field>
+          </div>
         </div>
-      </div>
-      <div class="row pt-3">
-        <div class="col-md-12">
-          <form-field [control]="form.get('nameSend')" label="Nombre">
-            <input
-              type="text"
-              formControlName="nameSend"
-              class="form-control" />
-          </form-field>
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <form-field [control]="form.get('nameSend')" label="Nombre">
+              <input
+                type="text"
+                formControlName="nameSend"
+                class="form-control" />
+            </form-field>
+          </div>
         </div>
-      </div>
-      <div class="row pt-3">
-        <div class="col-md-12">
-          <form-field [control]="form.get('postSend')" label="Puesto">
-            <input
-              type="text"
-              formControlName="postSend"
-              class="form-control" />
-          </form-field>
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <form-field [control]="form.get('postSend')" label="Puesto">
+              <input
+                type="text"
+                pattern="[A-Za-z ]+"
+                required
+                formControlName="postSend"
+                class="form-control" />
+            </form-field>
+          </div>
         </div>
-      </div>
-      <div class="row pt-3">
-        <div class="col-md-12">
-          <form-field [control]="form.get('status')" label="Estado">
-            <select class="form-control" formControlName="status">
-              <option [value]="1">Activo</option>
-              <option [value]="0">Inactivo</option>
-            </select>
-          </form-field>
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <form-field [control]="form.get('status')" label="Estado">
+              <select class="form-control" formControlName="status">
+                <option [value]="1">Activo</option>
+                <option [value]="0">Inactivo</option>
+              </select>
+            </form-field>
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
     <div footer>
       <div class="d-flex justify-content-center">
         <div class="m-3">

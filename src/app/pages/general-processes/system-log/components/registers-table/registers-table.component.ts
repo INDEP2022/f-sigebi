@@ -1,3 +1,4 @@
+//PRIMER TABLA
 import {
   Component,
   Input,
@@ -26,6 +27,7 @@ export class RegistersTableComponent
   constructor() {
     super();
     this.settings = { ...this.settings, actions: false };
+    this.settings.hideSubHeader = false;
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['registers']) {
