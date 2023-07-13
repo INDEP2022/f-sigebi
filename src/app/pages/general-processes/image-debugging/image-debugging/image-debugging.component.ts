@@ -1,15 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IPhotos } from 'src/app/core/models/catalogs/photograph-media.model';
+import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IGoodPhoto } from 'src/app/core/models/ms-goodphoto/good-photo.model';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodPhotoService } from 'src/app/core/services/ms-photogood/good-photo.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ImageDebuggingModalComponent } from '../image-debugging-modal/image-debugging-modal.component';
@@ -22,14 +27,17 @@ import { IMAGE_DEBUGGING_COLUMNS } from './image-debugging-columns';
 })
 export class ImageDebuggingComponent extends BasePage implements OnInit {
   form: ModelForm<any>;
-
+  photographs: any[] = [];
   selectGoodNumberSelected = new DefaultSelect();
   statusSelected = new DefaultSelect();
   lotIdSelected = new DefaultSelect();
   eventIdSelected = new DefaultSelect();
   pContador: number;
+  programming: Iprogramming;
   NO_SCREEN = 'FDEPURAFOTOS';
   pScript: string;
+  private data: any[][] = [];
+  disabledBienes: boolean = false;
   globalVFileBatInSrt: string;
   globalVFileExists: boolean = false;
   globalVFileNotExists: boolean = false;
@@ -52,11 +60,13 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private wcontentService: WContentService,
     private goodService: GoodService,
     protected modalService: BsModalService,
     private comerEventService: ComerEventService,
     private goodPhotoService: GoodPhotoService,
-    private readonly goodServices: GoodService
+    private readonly goodServices: GoodService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings.actions = false;
@@ -240,10 +250,90 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
 
   clearSearch() {
     this.resetALL();
-    // this.goods = [];
-    // this.buttonAprove = true;
+    this.goods = [];
+    this.disabledBienes = false;
     // this.isIdent = true;
     this.totalItems = 0;
+  }
+  viewImage(data: IPhotos) {
+    this.wcontentService.getObtainFile(data.dDocName).subscribe(data => {
+      const type = this.detectMimeType(data);
+      let blob = this.dataURItoBlob(data, type);
+      let file = new Blob([blob], { type });
+
+      const fileURL = URL.createObjectURL(file);
+      this.openPrevImg(fileURL);
+    });
+  }
+  dataURItoBlob(dataURI: any, type: string) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type });
+    return blob;
+  }
+
+  openPrevImg(imageUrl: string) {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(imageUrl),
+          type: 'img',
+        },
+        callback: (data: any) => {},
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
+  detectMimeType(base64String: string, fileName = 'unamedfile') {
+    let ext = fileName.substring(fileName.lastIndexOf('.') + 1);
+    if (ext === undefined || ext === null || ext === '') ext = 'bin';
+    ext = ext.toLowerCase();
+    const signatures: any = {
+      JVBERi0: 'application/pdf',
+      R0lGODdh: 'image/gif',
+      R0lGODlh: 'image/gif',
+      iVBORw0KGgo: 'image/png',
+      TU0AK: 'image/tiff',
+      '/9j/': 'image/jpg',
+      UEs: 'application/vnd.openxmlformats-officedocument.',
+      PK: 'application/zip',
+    };
+    for (const s in signatures) {
+      if (base64String.indexOf(s) === 0) {
+        let x = signatures[s];
+        if (ext.length > 3 && ext.substring(0, 3) === 'ppt') {
+          x += 'presentationml.presentation';
+        } else if (ext.length > 3 && ext.substring(0, 3) === 'xls') {
+          x += 'spreadsheetml.sheet';
+        } else if (ext.length > 3 && ext.substring(0, 3) === 'doc') {
+          x += 'wordprocessingml.document';
+        }
+        return x;
+      }
+    }
+    const extensions: any = {
+      xls: 'application/vnd.ms-excel',
+      ppt: 'application/vnd.ms-powerpoint',
+      doc: 'application/msword',
+      xml: 'text/xml',
+      mpeg: 'audio/mpeg',
+      mpg: 'audio/mpeg',
+      txt: 'text/plain',
+    };
+    for (const e in extensions) {
+      if (ext.indexOf(e) === 0) {
+        const xx = extensions[e];
+        return xx;
+      }
+    }
+    return 'unknown';
   }
 
   searchExp() {
@@ -361,32 +451,6 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     return vValor;
   }
 
-  getBienesFotoDescripcion(bienesFoto: any, global: any): void {
-    try {
-      // Lógica para consultar DESCRIPCION en la tabla BIENES y asignar un valor a bienesFoto.descripcion
-      bienesFoto.descripcion = this.desGood;
-    } catch (error) {
-      bienesFoto.descripcion = null;
-    }
-    bienesFoto.publicado = bienesFoto.publ_img_cat_web ?? 0;
-    bienesFoto.existe = this.pufValFoto(
-      bienesFoto.no_bien,
-      bienesFoto.no_consec,
-      null
-    );
-    // LIP_MENSAJE('EXISTE  '||bienesFoto.existe,'A');
-    bienesFoto.script_batch = `IF NOT EXIST ${bienesFoto.ubicacion} ( \n ${bienesFoto.no_bien},${bienesFoto.no_consec},N >> ${global.v_rutareptmp}${global.v_filenotexists}\n) ELSE ( \n  ECHO ${bienesFoto.no_bien},${bienesFoto.no_consec},S >> ${global.v_rutareptmp}${global.v_fileexists}\n)\n`;
-  }
-
-  // Método para insertar en el archivo batch
-  insertarBatch() {
-    // Lógica para insertar en el archivo batch
-  }
-
-  // Métodos para llamar a las funciones HOST y TEXT_IO de Oracle
-  host(pCommand: string, pMode: string) {}
-  textIo: any;
-
   addPhotos(goodPhotos?: IGoodPhoto) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
@@ -400,5 +464,75 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     modalRef.content.onSave.subscribe(async (next: any) => {
       // this.getActasByConversion(next.cve_acta_conv);
     });
+  }
+  getImageGood() {
+    this.loading = true;
+    const formDatra: Object = {
+      xidBien: this.form.value.goodNumber,
+    };
+    this.wcontentService.getDocumentos(formDatra).subscribe({
+      next: response => {
+        const _data = response.data.filter((img: any) => {
+          if (img.dDocType == 'DigitalMedia') {
+            return img;
+          }
+          //if (img.dDocType == 'DigitalMedia') return img;
+        });
+
+        if (_data.length > 0) {
+          this.photographs =
+            _data.length > 10 ? this.setPaginate([..._data]) : _data;
+          this.totalItems = _data.length;
+          this.loading = false;
+        } else {
+          this.alert(
+            'warning',
+            'Información',
+            'No hay imágenes agregadadas a este bien'
+          );
+          this.loading = false;
+        }
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+  loadImages() {
+    let loadingPhotos = 0;
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      goodProg: this.form.value.goodNumber,
+      programming: this.programming,
+      process: 'programming',
+      callBack: (next: boolean) => {
+        if (next) {
+          this.loading = true;
+          loadingPhotos = loadingPhotos + 1;
+          setTimeout(() => {
+            this.getImageGood();
+            this.loading = false;
+          }, 8000);
+          if (loadingPhotos == 1) {
+            this.alertInfo('success', 'Imagen agregada', '').then();
+          }
+        }
+      },
+    };
+  }
+  private setPaginate(value: any[]): any[] {
+    let data: any[] = [];
+    let dataActual: any = [];
+    value.forEach((val, i) => {
+      dataActual.push(val);
+      if ((i + 1) % this.params.value.limit === 0) {
+        this.data.push(dataActual);
+        dataActual = [];
+      } else if (i === value.length - 1) {
+        this.data.push(dataActual);
+      }
+    });
+    data = this.data[this.params.value.page - 1];
+    return data;
   }
 }
