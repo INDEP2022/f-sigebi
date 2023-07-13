@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
@@ -27,6 +27,7 @@ export class UsersSharedComponent extends BasePage implements OnInit {
   @Input() showUsers: boolean = true;
   //If Form PatchValue
   @Input() patchValue: boolean = false;
+  @Output() change = new EventEmitter<IUser>();
 
   users = new DefaultSelect<IUser>();
 
@@ -67,6 +68,7 @@ export class UsersSharedComponent extends BasePage implements OnInit {
     } else {
       this.form.updateValueAndValidity();
     }
+    this.change.emit(type);
   }
 
   resetFields(fields: AbstractControl[]) {

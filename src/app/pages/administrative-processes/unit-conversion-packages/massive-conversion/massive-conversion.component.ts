@@ -1101,7 +1101,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
           this.goodProcessService.packageClose(closeData).subscribe(
             res => {
-              this.showButtonAlert('C');
+              this.researchNoPackage(this.noPackage.value.numberPackage);
             },
             err => {
               console.log(err);
@@ -2104,6 +2104,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           let token = this.authService.decodeToken();
           const noPack = this.noPackage.value;
           console.log(this.noPackage.value)
+
           const model: ISecondIfMC = {
             noPackage: this.noPackage.value.numberPackage,
             noGoodFather: this.noPackage.value.numberGoodFather,
