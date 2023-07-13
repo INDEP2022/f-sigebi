@@ -76,6 +76,14 @@ export class GoodsProcessValidationExtdomComponent
   loadingGoods2: boolean = false;
   totalGoods2: number = 0;
   goodData2: IGood[] | any[] = [];
+  tableSettings3 = {
+    ...this.settings,
+  };
+  dataTable3: LocalDataSource = new LocalDataSource();
+  dataTableParams3 = new BehaviorSubject<ListParams>(new ListParams());
+  loadingGoods3: boolean = false;
+  totalGoods3: number = 0;
+  goodData3: IGood[] | any[] = [];
   // Historico Modal
   params = new BehaviorSubject(new ListParams());
   filterParams = new BehaviorSubject(new FilterParams());
@@ -445,21 +453,27 @@ export class GoodsProcessValidationExtdomComponent
   searchNotification() {
     if (
       this.form.get('wheelNumber').invalid &&
-      this.form.get('fileNumber').invalid
+      this.form.get('expedientNumber').invalid
     ) {
       this.alert('warning', 'Ingrese un Volante o un Expediente correcto', '');
       return;
     }
-    if (this.form.get('wheelNumber').invalid) {
+    if (
+      this.form.get('wheelNumber').value &&
+      this.form.get('wheelNumber').invalid
+    ) {
       this.alert('warning', 'Ingrese un Volante correcto', '');
       return;
     }
-    if (this.form.get('fileNumber').invalid) {
+    if (
+      this.form.get('expedientNumber').value &&
+      this.form.get('expedientNumber').invalid
+    ) {
       this.alert('warning', 'Ingrese un Expediente correcto', '');
       return;
     }
     let flierNumber = this.form.get('wheelNumber').value;
-    let expedientNumber = this.form.get('wheelNumber').value;
+    let expedientNumber = this.form.get('expedientNumber').value;
     this.form.reset();
     this.formScan.reset();
     this.notificationData = null;

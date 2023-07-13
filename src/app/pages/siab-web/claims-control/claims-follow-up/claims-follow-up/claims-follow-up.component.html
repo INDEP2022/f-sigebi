@@ -33,6 +33,12 @@
             <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
+        <div class="col-md-3">
+          <button class="btn btn-danger btn-sm active m-3" (click)="clean()">
+            Limpiar
+            <i class="fas fa-eraser"> </i>
+          </button>
+        </div>
         <div class="col-md-3" *ngIf="lawyers.length > 0">
           <button class="btn btn-success btn-sm active m-3" (click)="export()">
             Exportar a Excel

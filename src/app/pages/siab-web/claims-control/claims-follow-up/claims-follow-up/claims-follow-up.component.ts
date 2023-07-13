@@ -463,4 +463,9 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
 
     FileSaver(blob, nombreArchivo);
   }
+  clean() {
+    this.claimsFollowUpForm.reset();
+    this.dateDelAlForm.reset();
+    this.lawyers = [];
+  }
 }
