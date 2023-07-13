@@ -3,7 +3,8 @@
     <h5 class="title">MOVIMIENTOS CUENTAS GENERALES</h5>
   </div>
 
-  <div body>
+  <div body class="position-relative">
+    <div *ngIf="loading" class="loader loader-container"></div>
     <div [formGroup]="formGood" class="form-material">
       <div class="row">
         <ng-container [formGroup]="formGood">
@@ -109,7 +110,7 @@
       <div>
         <div class="row mt-4">
           <ng-container [formGroup]="formGood1">
-            <div class="col-md-2 form-material d-flex align-items-center">
+            <div class="col-md-3 form-material d-flex align-items-center">
               <form-field
                 [control]="formGood1.get('id')"
                 label="Número Bien Numerario">
@@ -139,7 +140,7 @@
                 (click)="openSelectorGood()"
                 type="button"
                 [disabled]="!this.formGood1.value.contConv"
-                class="btn btn-primary btn-sm active ml-1 m-auto">
+                class="btn btn-primary btn-sm active ml-3 w-auto">
                 <i class="bx bx-list-plus bx-sm float-icon"></i>
               </button>
             </div>
