@@ -181,4 +181,15 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
       `${GoodEndpoints.Good}?filter.requestId=$eq:${Norequest}`
     );
   }
+
+  getByExpedient_(id: number, _params?: ListParams) {
+    _params['filter.fileNumber'] = `$eq:${id}`;
+    const URL = `${environment.API_URL}/good/api/v1/good/`;
+    const headers = new HttpHeaders();
+    let params = new HttpParams().append('filter.fileNumber', `$eq:${id}`);
+
+    return this.http
+      .get<any>(URL, { headers: headers, params: _params })
+      .pipe(map(res => res));
+  }
 }
