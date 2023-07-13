@@ -1,5 +1,5 @@
 export interface IRefPayDepositary {
-  payId: number;
+  payId?: number;
   reference: string;
   movementNumber: number;
   date: Date;

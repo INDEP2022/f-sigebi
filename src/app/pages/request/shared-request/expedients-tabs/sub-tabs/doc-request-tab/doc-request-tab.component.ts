@@ -250,8 +250,9 @@ export class DocRequestTabComponent
             if (this.requestInfo.transferenceId == 1) {
               const filterDoc = res.data.filter((item: any) => {
                 if (
-                  item.dDocType == 'Document' &&
-                  item.xidBien == '         '
+                  item.dDocType == 'Document'
+                  //&&
+                  //item.xidBien == '         '
                 ) {
                   return item;
                 }
@@ -295,8 +296,9 @@ export class DocRequestTabComponent
             if (this.requestInfo.transferenceId != 1) {
               const filterDoc = res.data.filter((item: any) => {
                 if (
-                  item.dDocType == 'Document' &&
-                  item.xidBien == '         '
+                  item.dDocType == 'Document'
+                  //&&
+                  //item.xidBien == '         '
                 ) {
                   return item;
                 }

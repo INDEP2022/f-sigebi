@@ -16,27 +16,31 @@
             type="button"
             data-toggle="tooltip"
             class="btn btn-secondary btn-sm active"
+            (click)="scan()"
             title="Escanear">
             <i class="bx bxs-file"></i>
           </button>
         </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="form.get(formControlName)"
-            label="Folio de Escaneo">
-            <input
-              type="number"
-              [readOnly]="true"
-              class="form-control"
-              min="1"
-              [formControlName]="formControlName"
-              maxlength="15" />
-          </form-field>
+        <div class="col-md-5 text-center">
+          <div class="col">
+            <form-field
+              [control]="form.get(formControlName)"
+              label="Folio de Escaneo">
+              <input
+                type="number"
+                [readOnly]="true"
+                class="form-control"
+                min="1"
+                [formControlName]="formControlName"
+                maxlength="15" />
+            </form-field>
+          </div>
         </div>
         <div class="col">
           <button
             type="button"
             data-toggle="tooltip"
+            (click)="printFolio()"
             class="btn btn-secondary btn-sm active mr-1"
             title="imprimir Solicitud de Escaneo">
             <i class="bx bxs-printer"></i>
@@ -44,6 +48,7 @@
           <button
             type="button"
             data-toggle="tooltip"
+            (click)="viewScan()"
             class="btn btn-secondary btn-sm active"
             title="Consulta de imágenes escaneadas">
             <i class="bx bxs-file-find"></i>

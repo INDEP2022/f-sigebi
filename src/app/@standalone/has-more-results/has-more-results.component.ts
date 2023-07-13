@@ -38,6 +38,35 @@ export const SettingTableDefault = {
   noDataMessage: 'No se encontraron registros',
   rowClassFunction: (row: any) => {},
 };
+
+/**
+ * @params columns: {
+        id: {
+          title: 'Identificador',
+        },
+        expedientNumber: {
+          title: 'Número de expediente',
+        },
+        wheelNumber: {
+          title: 'Número de volante',
+        },
+        typeDict: {
+          title: 'Tipo de dictamen',
+        },
+        status: {
+          title: 'Estatus',
+        },
+      },
+    *@params totalItems: data ? data.count : 0,
+    *@params ms: 'dictation',
+    *@params path: 'dictation',
+    *@instance modalRef = this.modalService.show(HasMoreResultsComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    *@return modalRef.content.onClose.pipe(take(1)).subscribe()
+ */
 @Component({
   selector: 'app-has-more-results',
   standalone: true,
