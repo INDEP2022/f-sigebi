@@ -19,5 +19,4 @@ export enum SurvillanceEndpoints {
   FCalculaNume = 'application/fCalculateNum',
   PostInsertSupervisionTmp = 'surveillance/insertSupervisionTmp',
   GetTransNumerario = 'application/get-trans-numerario-reg',
-  VigAllExcel = 'vig-supervision-det/allExcel',
 }
