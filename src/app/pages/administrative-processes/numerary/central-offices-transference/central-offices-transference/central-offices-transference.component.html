@@ -31,7 +31,7 @@
             style="display: flex; justify-content: start; align-items: center">
             <button type="button" class="btn btn-primary active btn-sm" (click)="getDataNoReport()">
               <i class="bx bx-search-alt bx-sm float-icon"></i>
-            </button>`
+            </button>
             <button type="button" tooltip="Nuevo" containerClass="tooltip-style" class="btn btn-info btn-sm active ml-2 mr-2" (click)="scrollToDiv()">
               NUEVO <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
@@ -99,7 +99,7 @@
               <form-field
                 [control]="form.get('depositDate')"
                 label="Fecha deposito">
-                <input formControlName="depositDate" class="form-control" />
+                <input formControlName="depositDate" class="form-control" bsDatepicker/>
               </form-field>
             </div>
           </div>

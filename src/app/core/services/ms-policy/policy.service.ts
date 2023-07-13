@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { HttpService } from '../../../common/services/http.service';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import { IListResponse, IResponse } from '../../interfaces/list-response.interface';
 import {
   IDeletePolicyXGood,
   IPolicyXBien,
+  IPolicyxRequest,
 } from '../../models/ms-policy/policy.model';
+import { PolicyEndpoint } from 'src/app/common/constants/endpoints/policy-endpoint';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +17,7 @@ export class PolicyService extends HttpService {
   private readonly route = 'policy';
   constructor() {
     super();
-    this.microservice = 'policy';
+    this.microservice = PolicyEndpoint.BasePath;
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IPolicyXBien>> {
@@ -27,4 +29,18 @@ export class PolicyService extends HttpService {
     const route = 'policies-x-right';
     return this.delete(route, model);
   }
+
+  getByNoRequest(NoSolicitud: String | number): Observable<IPolicyxRequest> {
+    return this.get<IPolicyxRequest>(
+      `${PolicyEndpoint.getRequestNumber}/${NoSolicitud}`
+    );
+  }
+
+  getBypolicyKeyId(PolicyKey: string | number) {
+    return this.get<IListResponse>(
+      `${PolicyEndpoint.getPoliciesXSubtype}?filter.policyKeyId=$eq:${PolicyKey}`
+    );
+
+  }
+
 }

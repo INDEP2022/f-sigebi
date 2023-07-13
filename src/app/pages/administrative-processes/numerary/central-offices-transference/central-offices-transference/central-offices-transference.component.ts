@@ -121,12 +121,18 @@ export class CentralOfficesTransferenceComponent
   }
 
   guardar() {
-    console.log("valor ", this.form.get('currencyType').value);
-
     let objeto = {
-      valor: this.form.get('currencyType').value,
-      valor1: this.form.get('delegation').value
+      noReport: this.form.get('noReport').value,
+      currencyType: this.form.get('currencyType').value,
+      delegationDevNumber: this.form.get('delegation').value,
+      checkNumber: this.form.get('check').value,
+      depositDevDate: this.form.get('depositDate').value,
+      accountDevKey: this.form.get('cveAccount').value,
+      accountType: this.form.get('accountType').value,
+      cveBank: this.form.get('cveBank').value,
+      currencyDevKey: this.form.get('cveCurrency').value
     }
+    console.log("valor: ", objeto);
 
     //service con el objeto
   }
@@ -280,5 +286,7 @@ export class CentralOfficesTransferenceComponent
     });
   }
 
+  postDataToTurn() {
 
+  }
 }

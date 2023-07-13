@@ -15,9 +15,18 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   constructor() {
     super();
-    this.settings.columns = PRORRATEGO_GOODS_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings = {
+      ...this.settings,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: true,
+        position: 'right',
+      },
+      columns: PRORRATEGO_GOODS_COLUMNS,
+    }
+
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 }

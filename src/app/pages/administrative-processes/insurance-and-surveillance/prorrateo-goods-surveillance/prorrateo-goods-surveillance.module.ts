@@ -8,12 +8,14 @@ import { ProrrateoConceptsComponent } from './prorrateo-concepts/prorrateo-conce
 import { ProrrateoGoodsSurveillanceRoutingModule } from './prorrateo-goods-surveillance-routing.module';
 import { ProrrateoGoodsSurveillanceComponent } from './prorrateo-goods-surveillance/prorrateo-goods-surveillance.component';
 import { ProrrateoGoodsComponent } from './prorrateo-goods/prorrateo-goods.component';
+import { GoodsRequestModalComponent } from './prorrateo-goods-surveillance/goods-request-modal/goods-request-modal.component';
 
 @NgModule({
   declarations: [
     ProrrateoGoodsSurveillanceComponent,
     ProrrateoConceptsComponent,
     ProrrateoGoodsComponent,
+    GoodsRequestModalComponent,
   ],
   imports: [
     CommonModule,

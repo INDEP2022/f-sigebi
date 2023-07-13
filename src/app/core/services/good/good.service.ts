@@ -175,4 +175,10 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
       .get<any>(URL, { headers: headers, params: params })
       .pipe(map(res => res));
   }
+
+  getByRequestId(Norequest: string | number) {
+    return this.get<IListResponse<IGood>>(
+      `${GoodEndpoints.Good}?filter.requestId=$eq:${Norequest}`
+    );
+  }
 }

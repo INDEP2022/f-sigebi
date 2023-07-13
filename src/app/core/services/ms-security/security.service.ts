@@ -5,6 +5,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import {
   IListResponse,
   IListResponseMessage,
+  IResponse,
 } from '../../interfaces/list-response.interface';
 import {
   IAccesTrackingXArea,
@@ -20,6 +21,7 @@ export class SecurityService extends HttpService {
   private endpoint = SecurityEndpoints.GenerateIdentifier;
   private screen = '?.filter.screenKey=$eq:';
   private userName = '&filter.user=$eq:';
+  private uName = '?filter.user=$eq:';
   constructor() {
     super();
     this.microservice = SecurityEndpoints.Security;
@@ -121,5 +123,10 @@ export class SecurityService extends HttpService {
   getFaDelResponsable(id: any) {
     const route = SecurityEndpoints.FaDelResponsable;
     return this.get(`${route}?noBien=${id}`);
+  }
+  getUser(uName: string) {
+    return this.get<IListResponse<IUsersTracking>>(
+      `${SecurityEndpoints.UsersTracking}${this.uName}${uName}`
+    );
   }
 }
