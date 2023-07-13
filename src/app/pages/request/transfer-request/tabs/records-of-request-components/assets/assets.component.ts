@@ -1041,7 +1041,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   assignAllAddress() {
     Swal.fire({
-      title: 'Asignación Masiva de domicilio',
+      title: 'Asignación Masiva de Domicilio',
       html: 'Se asignará a todos los bienes el domicilio que se seleccione',
       icon: 'warning',
       showCancelButton: false,

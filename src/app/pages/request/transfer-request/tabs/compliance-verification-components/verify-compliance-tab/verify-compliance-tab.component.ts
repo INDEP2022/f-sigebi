@@ -151,14 +151,14 @@ export class VerifyComplianceTabComponent
       },
     };
 
-    this.columns.measureUnitTransferent = {
-      ...this.columns.measureUnitTransferent,
-      onComponentInitFunction: (instance?: any) => {
-        instance.input.subscribe((data: any) => {
-          this.setUnitTransferent(data);
-        });
-      },
-    };
+    /* this.columns.measureUnitTransferent = {
+       ...this.columns.measureUnitTransferent,
+       onComponentInitFunction: (instance?: any) => {
+         instance.input.subscribe((data: any) => {
+           this.setUnitTransferent(data);
+         });
+       },
+     };*/
 
     this.initForm();
 
@@ -505,7 +505,7 @@ export class VerifyComplianceTabComponent
 
   newClarification() {
     if (this.goodsSelected.length === 0) {
-      this.alert('warning', 'Error', 'Debes seleccionar al menos un bien!');
+      this.alert('warning', 'Error', 'Debes seleccionar al menos un bien');
     } else {
       this.openForm();
     }
@@ -517,7 +517,7 @@ export class VerifyComplianceTabComponent
       delete clarify[0].clarificationName;
       this.openForm(clarify[0]);
     } else {
-      this.alert('warning', 'Error', 'Solo se puede editar un bien a la vez!');
+      this.alert('warning', 'Error', 'Solo se puede editar un bien a la vez');
     }
   }
 
@@ -714,7 +714,7 @@ export class VerifyComplianceTabComponent
 
   selectGood(event: any) {
     event.toggle.subscribe((data: any) => {
-      debugger;
+      //debugger;
       const index = this.goodsSelected.indexOf(data.row);
       if (index == -1 && data.toggle == true) {
         data.row['selected'] = true;
@@ -815,7 +815,7 @@ export class VerifyComplianceTabComponent
     }
     const clarifycationLength = this.clarificationData.length;
     Swal.fire({
-      title: 'Eliminar Aclaración?',
+      title: '¿Eliminar Aclaración?',
       text: '¿Desea eliminar la aclaración?',
       icon: 'question',
       showCancelButton: true,
