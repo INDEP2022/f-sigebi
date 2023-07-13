@@ -32,8 +32,7 @@
             class="form-control"
             path="email/api/v1/vig-email-send"
             paramSearch="filter.nameSend"
-            prefixSearch="$ilike"
-            (valueChange)="onChangeFrom($event)">
+            prefixSearch="$ilike">
             <ng-template let-item>
               {{ item.nameSend }} / {{ item.emailSend }}
             </ng-template>
@@ -50,8 +49,7 @@
             class="form-control"
             path="email/api/v1/vig-mail-book"
             paramSearch="filter.bookName"
-            prefixSearch="$ilike"
-            (valueChange)="onChangeTo($event)">
+            prefixSearch="$ilike">
             <ng-template let-item>
               {{ item.bookName }}/{{ item.bookEmail }}
             </ng-template>
@@ -71,8 +69,7 @@
             class="form-control"
             path="email/api/v1/vig-mail-book"
             paramSearch="filter.bookName"
-            prefixSearch="$ilike"
-            (valueChange)="onChangeCc($event)">
+            prefixSearch="$ilike">
             <ng-template let-item>
               {{ item.bookName }}/{{ item.bookEmail }}
             </ng-template>
@@ -108,22 +105,22 @@
         </form-field>
       </div>
       <div class="col-md-6">
-        <form-field [control]="form.get('textBody')" label="Cuerpo">
+        <form-field [control]="form.get('body')" label="Cuerpo">
           <input
             readonly
             type="text"
             class="form-control px-3"
-            formControlName="textBody" />
+            formControlName="body" />
         </form-field>
       </div>
     </div>
 
-    <!-- <div class="row mt-4 float-right">
+    <div class="row mt-4 float-right">
       <div>
         <button type="submit" class="btn btn-primary btn-sm active mx-4">
           ENVIAR
         </button>
       </div>
-    </div> -->
+    </div>
   </form>
 </div>

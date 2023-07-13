@@ -3,7 +3,7 @@ import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filt
 export const registrosMovidos: IDetailProceedingsDeliveryReceptionNew[] = [];
 
 export const COPY = {
-  numberGood: {
+  goodId: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
@@ -13,19 +13,19 @@ export const COPY = {
     type: 'string',
     sort: false,
   },
-  amount: {
+  quantity: {
     title: 'Cantidad',
     type: 'string',
     sort: false,
   },
-  // cell: {
-  //   class: (value: any, row: any) => {
-  //     if (registrosMovidos.includes(row)) {
-  //       return 'registros-movidos';
-  //     }
-  //     return '';
-  //   },
-  // },
+  cell: {
+    class: (value: any, row: any) => {
+      if (registrosMovidos.includes(row)) {
+        return 'registros-movidos';
+      }
+      return '';
+    },
+  },
 };
 
 export const GOODSEXPEDIENT_COLUMNS_GOODS = {
@@ -44,13 +44,13 @@ export const GOODSEXPEDIENT_COLUMNS_GOODS = {
     type: 'string',
     sort: false,
   },
-  acta_: {
+  acta: {
     title: 'Acta',
     type: 'string',
     sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.acta_;
-    // },
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.cveActa;
+    },
   },
   status: {
     title: 'Estatus',

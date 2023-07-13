@@ -1,5 +1,3 @@
-import { DatePipe } from '@angular/common';
-
 export const EXPEDIENTS_REQUEST_COLUMNS = {
   id: {
     title: 'No. Solicitud',
@@ -17,11 +15,6 @@ export const EXPEDIENTS_REQUEST_COLUMNS = {
     title: 'Fecha Solicitud',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (date: Date) => {
-      var raw = new Date(date);
-      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
-      return formatted;
-    },
   },
 
   regionalDelegationId: {

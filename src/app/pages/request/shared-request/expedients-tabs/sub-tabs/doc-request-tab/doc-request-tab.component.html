@@ -243,13 +243,13 @@
             </div>
             <div class="col-md-3" *ngIf="typeDoc === 'doc-expedient'">
               <form-field
-                [control]="docRequestForm.get('recordId')"
+                [control]="docRequestForm.get('noRequest')"
                 label="No&#46; Expediente">
                 <input
                   type="text"
                   class="form-control"
                   [readOnly]="true"
-                  formControlName="recordId" />
+                  formControlName="noRequest" />
               </form-field>
             </div>
             <div class="col-md-3">
@@ -322,9 +322,7 @@
         </div>
       </div>
       <div class="row pt-2">
-        <div
-          class="col-md-12"
-          *ngIf="typeDoc == 'doc-request' || typeDoc == 'request-expedient'">
+        <div class="col-md-12">
           <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
             <form-loader *ngIf="formLoading"></form-loader>
           </div>
@@ -333,27 +331,7 @@
               <ng2-smart-table
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="settings"
-                [source]="docRequest"
-                (edit)="openDetail($event.data)"
-                (delete)="openDoc($event.data)">
-              </ng2-smart-table>
-            </div>
-
-            <app-pagination
-              [params]="params"
-              [totalItems]="totalItems"></app-pagination>
-          </div>
-        </div>
-        <div class="col-md-12" *ngIf="typeDoc == 'doc-expedient'">
-          <div class="row" *ngIf="formLoading" style="margin-bottom: 5rem">
-            <form-loader *ngIf="formLoading"></form-loader>
-          </div>
-          <div *ngIf="!formLoading">
-            <div [class]="loading ? 'table-loading' : ''">
-              <ng2-smart-table
-                [attr.class]="'table-bordered table-responsive'"
-                [settings]="settings"
-                [source]="docExpedient"
+                [source]="paragraphs1"
                 (edit)="openDetail($event.data)"
                 (delete)="openDoc($event.data)">
               </ng2-smart-table>

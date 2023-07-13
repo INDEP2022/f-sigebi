@@ -110,15 +110,3 @@ export interface IMovementDetail {
   Tasa: string;
   importe: string;
 }
-
-export interface INumeraryTransfer {
-  reportDevNumber: string;
-  amountTotalDev: string;
-  accountDevKey: string;
-  delegationDevNumber?: string;
-  reportDevDate: string;
-  currencyDevKey: string;
-  depositDevDate: string;
-  checkNumber: string;
-  nbOrigin: string;
-}

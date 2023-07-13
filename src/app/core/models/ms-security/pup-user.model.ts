@@ -51,14 +51,6 @@ export interface IAccesTrackingXArea {
   lastAsset: number;
 }
 
-export interface Iuser {
-  usuario: string;
-  nombre: string;
-  cve_cargo: number;
-  otvalor: string;
-  no_delegacion: number;
-}
-
 export interface ITrackingAcces {
   screenKey: string;
   user: IUsersTracking;

@@ -138,8 +138,4 @@ export class SurvillanceService extends HttpService {
   PostInsertSupervisionTmp(formData?: any) {
     return this.post(this.route.PostInsertSupervisionTmp, formData);
   }
-  getTransNumerarioReg(id: string) {
-    let query = '?id_solnum=' + id;
-    return this.get<IListResponse<any>>(this.route.GetTransNumerario, query);
-  }
 }

@@ -14,10 +14,7 @@ export class EntFedService implements ICrudMethods<IEntfed> {
   constructor(private entFedRepository: Repository<IEntfed>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IEntfed>> {
-    return this.entFedRepository.getAllPaginated(
-      this.route + '/get-all',
-      params
-    );
+    return this.entFedRepository.getAllPaginated(this.route, params);
   }
 
   /*getAllDetail(params?: ListParams): Observable<IListResponse<IEntfed2>> {

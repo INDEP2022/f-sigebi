@@ -411,8 +411,8 @@ export class GeneralDocumentsFormComponent
         this.requestService.update(this.requestId, request).subscribe({
           next: resp => {
             Swal.fire({
-              title: `Se asoció la solicitud correctamente`,
-              text: `La Solicitud ${request.id} fue asociada al expediente ${request.recordId}. Tiene que subir el reporte de la carátula INAI`,
+              title: `Se asocio la solicitud correctamente`,
+              text: `La Solicitud ${request.id} fue asociada al expediente ${request.recordId}. Tiene que subir el reporte de la caratula INAI`,
               icon: 'success',
               showDenyButton: false,
               showCancelButton: false,
@@ -430,7 +430,7 @@ export class GeneralDocumentsFormComponent
             this.onLoadToast(
               'error',
               'Error',
-              `Ocurrio un error al asociar la solicitud con el expediente ${error.error.message}`
+              `Ocurrio un error al asociar la socitud con el expediente ${error.error.message}`
             );
           },
         });

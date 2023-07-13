@@ -10,7 +10,6 @@ import {
   IDecPackage,
   IFoliovInvoice,
   IPackage,
-  IPrincipalPackageDec,
 } from '../../models/catalogs/package.model';
 import { IPackageGoodDec } from '../../models/ms-package-good/package-good-dec';
 import { IPackageGoodEnc } from '../../models/ms-package-good/package-good-enc';
@@ -32,16 +31,6 @@ export class PackageGoodService extends HttpService {
   insertPaqDestDec(body: IDecPackage) {
     const route = `${PackageGoodEndpoints.paqDestinationDet}`;
     return this.post(route, body);
-  }
-
-  updatePaqDestDec(body: IDecPackage) {
-    const route = `${PackageGoodEndpoints.paqDestinationDet}`;
-    return this.put(route, body);
-  }
-
-  deletePaqDestDec(body: IPrincipalPackageDec) {
-    const route = `${PackageGoodEndpoints.paqDestinationDet}`;
-    return this.delete(route, body);
   }
 
   getPaqDestinationEnc(params?: any) {

@@ -67,22 +67,4 @@ export class MsDepositaryPaymentService extends HttpService {
       params
     );
   }
-
-  postRefPayDepositories(
-    body: IRefPayDepositary
-  ): Observable<IRefPayDepositary> {
-    return this.post<IRefPayDepositary>(
-      `${DepositaryPaymentEndPoints.RefPayDepositories}`,
-      body
-    );
-  }
-
-  updateRefPayDepositories(
-    body: IRefPayDepositary
-  ): Observable<IRefPayDepositary> {
-    return this.put<IRefPayDepositary>(
-      `${DepositaryPaymentEndPoints.RefPayDepositories}`,
-      body
-    );
-  }
 }

@@ -10,22 +10,26 @@
       type="text"
       formControlName="value"
       class="form-control"
+      [placeholder]="controls.columnDescription.value"
       *ngSwitchCase="'NUMBER'" />
     <input
       type="text"
       formControlName="value"
       class="form-control"
+      [placeholder]="controls.columnDescription.value"
       *ngSwitchCase="'DATE'"
       bsDatepicker />
     <input
       type="text"
       formControlName="value"
       class="form-control"
+      [placeholder]="controls.columnDescription.value"
       *ngSwitchCase="'VARCHAR2'" />
     <input
       type="text"
       formControlName="value"
       class="form-control"
+      [placeholder]="controls.columnDescription.value"
       *ngSwitchDefault />
   </form-field>
 </ng-container>

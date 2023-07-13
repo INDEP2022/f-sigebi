@@ -114,9 +114,10 @@ export class InappropriatenessPgrSatFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: async response => {
-        this.openReport(response);
+        const createClarGoodDoc = await this.createClarGoodDoc(response);
+        /*this.openReport(response);
         this.loading = false;
-        this.close();
+        this.close(); */
       },
       error: error => {
         this.loading = false;
@@ -124,6 +125,23 @@ export class InappropriatenessPgrSatFormComponent
         //this.onLoadToast('error', 'No se pudo guardar', '');
       },
     });
+  }
+
+  createClarGoodDoc(docImpro: IClarificationDocumentsImpro) {
+    const formData = {
+      documentId: docImpro.id,
+      version: '1',
+      clarificationRequestId: docImpro.rejectNoticeId,
+    };
+
+    /*this.documentService.createClarDocGood(formData).subscribe({
+      next: response => {
+        console.log('guardado', response);
+      },
+      error: error => {
+        console.log('tiene error', error);
+      },
+    }); */
   }
 
   changeStatusAnswered() {

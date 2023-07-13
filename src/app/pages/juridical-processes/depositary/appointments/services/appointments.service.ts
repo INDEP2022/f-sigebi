@@ -3,7 +3,6 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http-wcontet.service';
 import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
 import { IDepositaryAppointments } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
-import { IGood } from 'src/app/core/models/ms-good/good';
 import {
   IScreenStatusCValRevocation,
   IScreenStatusCValUniversalFolio,
@@ -15,7 +14,6 @@ import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depo
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
-import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { SegAppScreenService } from 'src/app/core/services/ms-screen-status/seg-app-screen.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -34,8 +32,7 @@ export class AppointmentsService {
     private msNotificationService: NotificationService,
     private msPersonService: PersonService,
     private msDynamicTablesService: DynamicTablesService,
-    private msUsersService: UsersService,
-    private msGoodprocessService: GoodprocessService
+    private msUsersService: UsersService
   ) {}
 
   getDataDepositaryAppointment(params: ListParams) {
@@ -74,9 +71,6 @@ export class AppointmentsService {
 
   getFromGoodsAndExpedients(body: string) {
     return this.msGoodService.getAllFilter(body);
-  }
-  updateGood(body: Partial<IGood>) {
-    return this.msGoodService.update(body);
   }
 
   /**
@@ -118,10 +112,7 @@ export class AppointmentsService {
   getSaeUser(params: _Params) {
     return this.msUsersService.getAllSegUsers(params);
   }
-  getByGood_distinctElaborationDate(goodId: number) {
-    return this.msGoodprocessService.getByGood_distinctElaborationDate(goodId);
-  }
-
+  getKeyOperation() {}
   /**
    * HELP FUNCTIONS FOR COMPONENT
    */

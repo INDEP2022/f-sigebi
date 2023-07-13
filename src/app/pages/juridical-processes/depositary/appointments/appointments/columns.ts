@@ -8,7 +8,7 @@ export const RELATED_FOLIO_COLUMNS = {
     sort: false,
   },
   descriptionDocument: {
-    title: 'Descripción del Documento',
+    title: 'Descripción del documento',
     sort: false,
   },
 };

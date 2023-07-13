@@ -26,16 +26,17 @@ export class RequestInformationSimilarGoodsComponent
 
   constructor() {}
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.request);
     this.getRequestInfo();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.request);
+  }
 
   getRequestInfo() {
     if (this.request) {
       setTimeout(() => {
-        this.regionalDelegation = this.request?.regionalDelegation?.description;
+        this.regionalDelegation = this.request.regionalDelegation.description;
         this.state = this.request.state.descCondition;
         this.transferent = this.request.transferent.name;
         this.station = this.request.emisora.stationName;

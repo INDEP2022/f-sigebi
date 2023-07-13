@@ -24,21 +24,12 @@ export class UnitCostDetService extends HttpService {
     );
   }
 
-  update(id: string | number, model: IUnitCostDet): Observable<IUnitCostDet> {
+  update(id: string | number, model: IUnitCostDet) {
     const route = `${UnitCostDetEndpoints.UnitCost}/${id}`;
     return this.put(route, model);
   }
 
-  update1(model: IUnitCostDet): Observable<IUnitCostDet> {
-    const route = `${UnitCostDetEndpoints.UnitCost}`;
-    return this.put(route, model);
-  }
-
-  create(model: IUnitCostDet): Observable<IUnitCostDet> {
-    return this.post(UnitCostDetEndpoints.UnitCost, model);
-  }
-
-  create1(model: IUnitCostDet): Observable<IUnitCostDet> {
+  create(model: IUnitCostDet) {
     return this.post(UnitCostDetEndpoints.UnitCost, model);
   }
 

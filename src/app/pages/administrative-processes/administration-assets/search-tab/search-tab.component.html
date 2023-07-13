@@ -8,14 +8,13 @@
               <div class="col-md-12">
                 <app-goods-types-shared
                   [reloadGood]="reloadGood"
-                  [loadOnChangesNoBien]="false"
+                  [loadOnChangesNoBien]="true"
                   [goodselect]="goodSelect"
                   [form]="searchTabForm"
                   typeField="tipo"
                   subtypeField="subtipo"
                   ssubtypeField="ssubtipo"
                   sssubtypeField="sssubtipo"
-                  (goodTypeChange)="getGoodType($event)"
                   (goodSssubtypeChange)="
                     getGoods($event)
                   "></app-goods-types-shared>
@@ -24,20 +23,13 @@
             <div class="row">
               <div class="col-md-12">
                 <div class="form-group">
-                  <form-field [control]="searchTabForm.get('noBien')">
-                    <ngx-select
-                      (fetchItems)="getGoodsSheard($event)"
-                      [data]="goods"
-                      [form]="searchTabForm"
-                      value="id"
-                      bindLabel="info"
-                      label="Bien"
-                      control="noBien"
-                      (change)="onChangeGood($event)">
-                    </ngx-select>
-                  </form-field>
-                  <!-- <goods-filter-shared [reloadGood]="reloadGood" [clean]="cleanGood" [form]="searchTabForm"
-                    goodField="noBien" [classifGood]="classifGood" (good)="onChangeGood($event)"></goods-filter-shared> -->
+                  <goods-filter-shared
+                    [reloadGood]="reloadGood"
+                    [clean]="cleanGood"
+                    [form]="searchTabForm"
+                    goodField="noBien"
+                    [classifGood]="classifGood"
+                    (good)="onChangeGood($event)"></goods-filter-shared>
                 </div>
               </div>
             </div>

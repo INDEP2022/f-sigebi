@@ -26,35 +26,7 @@ export const COLUMNS = {
     sort: false,
   },
   sucursal: {
-    title: 'Sucursal',
-    sort: false,
-  },
-  amount: {
-    title: 'Monto',
-    sort: false,
-  },
-  result: {
-    title: 'Resultado',
-    sort: false,
-  },
-  validSystem: {
-    title: 'Válido',
-    sort: false,
-  },
-  payId: {
-    title: 'Id Pago',
-    sort: false,
-  },
-  noGood: {
-    title: 'No Bien',
-    sort: false,
-  },
-  reference: {
-    title: 'No contrato',
-    sort: false,
-  },
-  entryorderid: {
-    title: 'Id Orden Ingreso',
+    title: 'sucursal',
     sort: false,
   },
 };
@@ -69,7 +41,7 @@ export const COLUMNS_EXTRAS = {
     sort: false,
   },
   validSystem: {
-    title: 'Válido',
+    title: 'Valido',
     sort: false,
   },
   payId: {

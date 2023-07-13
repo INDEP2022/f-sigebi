@@ -182,8 +182,4 @@ export class GoodProcessService extends HttpService {
     const route = `${GoodProcessPoints.GetNumeProrraCsv}/${idProcnum}`;
     return this.get(`${route}?limit=${limit}`);
   }
-
-  getPubPrevieData(data: Object) {
-    return this.post(GoodProcessPoints.PubPrevieData, data);
-  }
 }

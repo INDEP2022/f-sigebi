@@ -72,8 +72,7 @@ export class AppointmentsRelationsPaysComponent
   }
 
   cleanDate() {
-    // this.formGroup.get('datePay').reset();
-    this.formGroup.reset();
+    this.formGroup.get('datePay').reset();
   }
 
   searchWithFilters() {

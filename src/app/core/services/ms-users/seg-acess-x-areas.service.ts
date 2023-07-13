@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Params } from '@angular/router';
 import { Observable } from 'rxjs';
 import { UserEndpoints } from 'src/app/common/constants/endpoints/ms-users-endpoints';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
@@ -48,17 +47,5 @@ export class SegAcessXAreasService extends HttpService {
 
   getAll__(params?: _Params): Observable<IListResponse<any>> {
     return this.get<IListResponse<any>>(this.route.SegUsers, params);
-  }
-
-  getNameEmail(params: Params) {
-    return this.get(UserEndpoints.GetNameEmail, params);
-  }
-
-  getDisNameEmail(params: Params) {
-    return this.get(UserEndpoints.GetDisName, params);
-  }
-
-  getProNameEmail(data: Object) {
-    return this.post(UserEndpoints.ProNameEmail, data);
   }
 }

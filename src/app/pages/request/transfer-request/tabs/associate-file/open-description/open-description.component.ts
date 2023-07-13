@@ -17,9 +17,12 @@ export class OpenDescriptionComponent implements OnInit {
     private requestHelperService: RequestHelperService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.parameter);
+  }
 
   download() {
+    debugger;
     this.wcontentService.obtainFile(this.parameter.docName).subscribe({
       next: resp => {
         const base64 = resp;

@@ -13,8 +13,8 @@ export class MassiveDepositaryService extends HttpService {
     this.microservice = this.route.BasePath;
   }
 
-  pupBurdenDataCSV(body: FormData, cveBank: any) {
-    return this.post(`${this.route.DataCSV}/${cveBank}`, body);
+  pupBurdenDataCSV(body: FormData) {
+    return this.post(this.route.DataCSV, body);
   }
 
   pupPreviewDataCSV(body: FormData) {

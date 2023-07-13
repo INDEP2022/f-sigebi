@@ -11,7 +11,6 @@
             class="form-control"
             formControlName="year"
             min="1"
-            [max-length]="4"
             pattern="^[0-9]+" />
         </form-field>
       </div>
@@ -22,7 +21,6 @@
             class="form-control"
             formControlName="period"
             min="1"
-            [max-length]="6"
             pattern="^[0-9]+" />
         </form-field>
       </div>
@@ -45,16 +43,15 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-4 mt-3">
-        <form-field [control]="form.get('process')">
-          <ngx-select
-            [data]="procesess"
-            [form]="form"
-            value="value"
-            bindLabel="label"
-            label="Proceso"
-            [control]="'process'">
-          </ngx-select>
+      <div class="col-md-4">
+        <form-field
+          label="Proceso"
+          class="form-group"
+          [control]="form.get('process')">
+          <select class="form-control" formControlName="process">
+            <option value="1">Supervisión</option>
+            <option value="2">Validación</option>
+          </select>
         </form-field>
       </div>
     </div>
@@ -62,10 +59,10 @@
     <div class="row mt-4 float-right">
       <div class="">
         <button
-          [disabled]="!form.valid"
+          [disabled]="isLoading"
           type="submit"
-          class="btn btn-red btn-sm active m-3">
-          Eliminar <i class="fa fa-trash" aria-hidden="true"></i>
+          class="btn btn-primary btn-sm active mx-4">
+          ELIMINAR
         </button>
       </div>
     </div>

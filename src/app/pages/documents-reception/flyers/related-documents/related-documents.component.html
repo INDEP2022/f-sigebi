@@ -421,20 +421,6 @@
             </div>
 
             <div class="row pt-4">
-              <div class="d-flex align-items-end flex-column">
-                <div class="col-md-2 text-center p-2">
-                  <label for="improcedente">Improcedente(s) todo(s)</label>
-                </div>
-                <div class="col-md-2 text-center p-4">
-                  <input
-                    id="improcedente"
-                    type="checkbox"
-                    (change)="changeImprocedente($event.target)"
-                    formControlName="improcedente" />
-                </div>
-              </div>
-            </div>
-            <!-- <div class="row pt-4">
               <div class="d-flex flex-row-reverse">
                 <form-check
                   class="col-md-2 text-end"
@@ -447,7 +433,7 @@
                     formControlName="improcedente" />
                 </form-check>
               </div>
-            </div> -->
+            </div>
 
             <form-loader *ngIf="formLoading"></form-loader>
 

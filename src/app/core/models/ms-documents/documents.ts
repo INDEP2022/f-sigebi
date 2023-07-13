@@ -40,13 +40,3 @@ export interface IDocumentsGood {
   nb_origen?: string | number;
   no_bien?: string | number;
 }
-
-export interface IGenerateFolioMassConv {
-  noPackage: number;
-  cvePackage: number;
-  typePackage: number;
-  noDelegation: number;
-  noSubdelegation: number;
-  toolbarNoDepartament: number;
-  user: string;
-}

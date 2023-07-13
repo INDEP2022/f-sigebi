@@ -37,7 +37,7 @@
             bindLabel="key"
             label="Separador"
             control="keySeparator"
-            (fetchItems)="loadDocumentsSeparator($event)"
+            (fetchItems)="onDocumentsSeparatorInputChange($event)"
             (change)="onOptionsSelectedSeparator($event)">
           </ngx-select>
         </form-field>
@@ -63,7 +63,7 @@
             bindLabel="id"
             label="Tipo de Documento"
             control="keyTypeDocument"
-            (fetchItems)="loadDocumentsType($event)"
+            (fetchItems)="onTipoDocumentoInputChange($event)"
             (change)="onOptionsSelectedTypeDocument($event)">
           </ngx-select>
         </form-field>
@@ -139,7 +139,7 @@
                 type="submit"
                 class="btn btn-sm btn-info active mr-4"
                 style="background-color: #9d2449">
-                Consultar <i class="bx bx-search float-icon"></i>
+                Consultar
               </button>
               <button
                 type="button"

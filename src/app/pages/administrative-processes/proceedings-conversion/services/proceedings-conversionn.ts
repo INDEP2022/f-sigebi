@@ -10,7 +10,6 @@ import {
 })
 export class ActasConvertionCommunicationService {
   private inputValue = new BehaviorSubject<string>('');
-  private inputValueId = new BehaviorSubject<string>('');
   private _actasCoversionParams: IParamsProceedingsParamsActasConvertion = null;
   private _derviationGoodsParams: IParamsProceedingsParamsDerivationGoods =
     null;
@@ -36,13 +35,8 @@ export class ActasConvertionCommunicationService {
     this._derviationGoodsParams = params;
   }
 
-  async enviarDatos(datos: any) {
-    console.log('DATOS', datos);
+  enviarDatos(datos: any) {
     this.datosEnviadosSource.next(datos);
-  }
-
-  getInputValue2() {
-    return this.datosEnviadosSource;
   }
 
   getInputValue() {

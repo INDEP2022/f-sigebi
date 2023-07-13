@@ -4,36 +4,13 @@
       <h5 class="title">
         Lista mantenimiento de personas f&Iacute;sicas y morales
       </h5>
-      <!-- <div class="buttons">
+      <div class="buttons">
         <div>
           <app-columns-select [(settings)]="settings"></app-columns-select>
-          <button class="btn btn-primary active btn-sm ml-3" (click)="openModal()">
-            Nuevo
-          </button>
-          <button *ngIf="origin" class="btn btn-primary active btn-sm m-2" (click)="goBack()">
-            Regresar
-            <i class="fas fa-arrow-circle-left"></i>
-          </button>
-        </div>
-      </div> -->
-    </div>
-  </div>
-
-  <div body>
-    <div class="ch-content">
-      <h5 class="title"></h5>
-      <div class="col-md-5 buttons">
-        <app-columns-select
-          [(settings)]="settings"
-          [defaultColumns]="6"></app-columns-select>
-        <div>
           <button
-            (click)="openModal()"
-            type="button"
-            tooltip="Nuevo"
-            containerClass="tooltip-style"
-            class="btn btn-info btn-sm active ml-2 mr-2">
-            Nuevo<i class="bx bx-plus bx-sm float-icon"></i>
+            class="btn btn-primary active btn-sm ml-3"
+            (click)="openModal()">
+            Nuevo
           </button>
           <button
             *ngIf="origin"
@@ -45,6 +22,9 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <div body>
     <div class="row pt-4">
       <div class="col-md-12">
         <div class="table-responsive">

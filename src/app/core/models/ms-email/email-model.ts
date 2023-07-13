@@ -30,13 +30,3 @@ export interface IVigMailBook {
   delegationNumber: string;
   bookStatus: string;
 }
-
-export interface IVigMailGeneric {
-  recipients: string;
-  cc: string;
-  bcc: string;
-  subject: string;
-  message: string;
-  typeText: number;
-  mailOrigin: string;
-}

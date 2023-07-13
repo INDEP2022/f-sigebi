@@ -5,7 +5,7 @@ export const PERSON_COLUMNS = {
     sort: false,
   },
   personName: {
-    title: 'Clave Depositaría',
+    title: 'Cve. Depositaría',
     type: 'string',
     sort: false,
   },
@@ -20,12 +20,12 @@ export const PERSON_COLUMNS = {
     sort: false,
   },
   streetNumber: {
-    title: 'No. Exterior',
+    title: 'No.Exterior',
     type: 'string',
     sort: false,
   },
   apartmentNumber: {
-    title: 'No. Interior',
+    title: 'No.Interior',
     type: 'string',
     sort: false,
   },

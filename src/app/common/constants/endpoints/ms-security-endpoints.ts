@@ -19,6 +19,4 @@ export enum SecurityEndpoints {
   SegCopyEmail = 'application/getgencopia',
   FaCoordAdmin = 'application/fa-coord-admin',
   FaDelResponsable = 'application/fa-del-responsable',
-  User = 'application/facta-db-solcam-nume',
-  IniEmail = 'application/pup-ini-correo',
 }

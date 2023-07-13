@@ -7,7 +7,6 @@ export interface IPackageGoodDec {
   nbOrigin?: any;
   bienes: Bienes;
   paq_destino_enc: Paqdestinoenc;
-  val24?: string | number;
 }
 
 interface Paqdestinoenc {

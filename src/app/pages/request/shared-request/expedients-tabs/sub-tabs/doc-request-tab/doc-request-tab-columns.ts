@@ -1,5 +1,3 @@
-import { DatePipe } from '@angular/common';
-
 export const DOC_REQUEST_TAB_COLUMNS = {
   //Documentos Solicitud arreglar paginado
   dDocName: {
@@ -34,11 +32,6 @@ export const DOC_REQUEST_TAB_COLUMNS = {
     title: 'Fecha Creación',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (date: Date) => {
-      var raw = new Date(date);
-      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
-      return formatted;
-    },
   },
 
   xtipoTransferencia: {
@@ -135,11 +128,6 @@ export const DOC_GOODS_COLUMNS = {
     title: 'Fecha Creación',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (date: Date) => {
-      var raw = new Date(date);
-      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
-      return formatted;
-    },
   },
 
   xtipoTransferencia: {
@@ -242,15 +230,10 @@ export const DOC_EXPEDIENT_COLUMNS = {
     title: 'Fecha Creación',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (date: Date) => {
-      var raw = new Date(date);
-      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
-      return formatted;
-    },
   },
 
   xtipoTransferencia: {
-    title: 'Tipo de Transferenciaa',
+    title: 'Tipo de Transferencia',
     type: 'string',
     sort: false,
   },

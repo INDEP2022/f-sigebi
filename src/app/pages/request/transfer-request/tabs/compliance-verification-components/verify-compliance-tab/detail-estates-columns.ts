@@ -1,5 +1,6 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { SaeInputComponent } from './sae-input/sae-input.component';
+import { SelectInputComponent } from './select-input/select-input.component';
 
 export const DETAIL_ESTATE_COLUMNS = {
   selected: {
@@ -45,11 +46,11 @@ export const DETAIL_ESTATE_COLUMNS = {
   },
   measureUnitTransferent: {
     title: 'Unidad de Medida Transferente',
-    type: 'string',
+    type: 'custom',
     class: 'custom-field',
     filter: false,
-    //renderComponent: SelectInputComponent,
-    //onComponentInitFunction(instance?: any) {},
+    renderComponent: SelectInputComponent,
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
   uniqueKey: {

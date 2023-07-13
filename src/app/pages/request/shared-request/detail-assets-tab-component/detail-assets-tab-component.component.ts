@@ -1046,8 +1046,6 @@ export class DetailAssetsTabComponentComponent
             resp.count
           );
 
-          console.log('VALOR DESTINO LIGIE, ', resp);
-
           if (this.detailAssets.controls['unitMeasure'].value) {
             this.detailAssets.controls['unitMeasure'].setValue(
               this.detailAssets.controls['unitMeasure'].value

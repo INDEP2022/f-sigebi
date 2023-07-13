@@ -6,7 +6,6 @@ import { JwtInterceptor, JwtModule } from '@auth0/angular-jwt';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { DateFnsModule } from 'ngx-date-fns';
-import { SocketIoModule } from 'ngx-socket-io';
 import { ToastrModule } from 'ngx-toastr';
 import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
@@ -83,7 +82,6 @@ export function servicesOnRun(app: AppInitializer) {
       timeOut: 6000,
       preventDuplicates: true,
     }),
-    SocketIoModule.forRoot({ url: environment.SOCKET_URL }),
   ],
   providers: [
     {

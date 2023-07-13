@@ -189,7 +189,7 @@ export class RDictaminaDocModalComponent extends BasePage implements OnInit {
       for (let i = 0; i < this.dataDocuments.length; i++) {
         if (this.dataDocuments[i].date == '') {
           this.alert(
-            'warning',
+            'info',
             'Asegúrese de ingresar las fechas en los documentos',
             ''
           );

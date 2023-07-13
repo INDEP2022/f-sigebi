@@ -213,17 +213,14 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./maintenance-of-areas/maintenance-of-areas.module'))
         .MaintenanceOfAreasModule,
-    data: {
-      title: 'Catálogo de Mantenimiento de Areas',
-      screen: 'FCATCATMANTEAREAS',
-    }, //FCATCATMANTEAREAS
+    data: { title: 'Catálogo de Mantenimiento de Areas' },
   },
   {
     path: 'profile-maintenance',
     loadChildren: async () =>
       (await import('./profile-maintenance/profile-maintenance.module'))
         .ProfileMaintenanceModule,
-    data: { title: 'Mantenimiento a perfiles', screen: 'FCATCATMTOPERFILES' }, //FCATCATMTOPERFILES
+    data: { title: 'Mantenimiento a perfiles' },
   },
   {
     path: 'maintenance-of-public-ministries',
@@ -243,10 +240,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./wareahouse-catalog/wareahouse-catalog.module'))
         .WareahouseCatalogModule,
-    data: {
-      title: 'Mantenimiento a ministerios publicos',
-      screen: 'FMINISTERIOSPUBLI',
-    }, //FMINISTERIOSPUBLI
+    data: { title: 'Mantenimiento a ministerios publicos' },
   },
   {
     path: 'banks-catalog',
@@ -293,8 +287,7 @@ const routes: Routes = [
       (await import('./cost-catalog/cost-catalog.module')).CostCatalogModule,
     data: {
       title: 'Catálogo de Costos',
-      screen: 'FCATCATMTOSERVICI',
-    }, //FCATCATMTOSERVICI
+    },
   },
   {
     path: 'types-of-claims-catalog',
@@ -303,9 +296,8 @@ const routes: Routes = [
         .TypesOfClaimsCatalogModule,
     data: {
       title: 'Catálogo de tipos de siniestro',
-      screen: 'FCATCATMTOSINIEST',
     },
-  }, //FCATCATMTOSINIEST
+  },
   {
     path: 'indicia-registration',
     loadChildren: async () =>
@@ -313,8 +305,7 @@ const routes: Routes = [
         .IndiciaRegistrationModule,
     data: {
       title: 'Registro de Indiciados',
-      screen: 'FCATCATREGINDICIA',
-    }, //FCATCATREGINDICIA
+    },
   },
   {
     path: 'rate-catalog',
@@ -322,7 +313,6 @@ const routes: Routes = [
       (await import('./rate-catalog/rate-catalog.module')).RateCatalogModule,
     data: {
       title: 'Catálogo de tasas',
-      screen: '',
     },
   },
   {
@@ -335,8 +325,7 @@ const routes: Routes = [
       ).NumeraryParameterizationModule,
     data: {
       title: 'Parametrización de numerario',
-      screen: 'FCATCATPARAMENUME',
-    }, //FCATCATPARAMENUME
+    },
   },
   {
     path: 'parameter-maintenance',
@@ -416,7 +405,6 @@ const routes: Routes = [
     data: { title: 'Días Inhábiles', screen: 'FDIASINHABILES' },
   },
   {
-    //^ NO MUESTRA EL TITULO
     path: 'date-documents',
     loadChildren: async () =>
       (await import('./date-documents/date-documents.module'))

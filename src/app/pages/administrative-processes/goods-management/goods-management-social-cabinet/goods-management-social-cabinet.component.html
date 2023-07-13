@@ -8,7 +8,7 @@
       <div class="row">
         <!--Options-->
         <div class="col-md-9 mb-3 mt-3">
-          <!-- <form-field
+          <form-field
             [control]="form.get('file')"
             label="Cargar Bienes por Archivo TXT">
             <input
@@ -18,24 +18,7 @@
               accept=".txt"
               formControlName="file"
               (change)="onFileChange($event)" />
-          </form-field> -->
-          <button
-            class="btn btn-success btn-sm active"
-            [disabled]="loading"
-            (click)="file.click()">
-            <div class="upload-button">
-              Cargar Bienes por Archivo TXT
-              <!-- <i class="bi bi-filetype-txt-fill"></i> -->
-              <i class="bx bxs-file-txt"></i>
-            </div>
-          </button>
-          <input
-            type="file"
-            name="file"
-            #file
-            class="d-none"
-            accept=".txt"
-            (change)="onFileChange($event)" />
+          </form-field>
         </div>
         <div class="clearButton col-md-3 mb-5">
           <button

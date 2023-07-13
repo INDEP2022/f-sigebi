@@ -4457,7 +4457,6 @@ export class JuridicalRulingGComponent
           let sender_ =
             this.dictaminacionesForm.get('autoriza_remitente').value;
           this.oficioDictamen.sender = sender_;
-          this.oficioDictamen.cveChargeRem = this.positionKeyCargo;
           this.oficioDictamen.typeDict = this.dictamen.typeDict;
           this.oficioDictamen.officialNumber = this.dictamen.id;
           this.oficioDictamen.delegacionRecipientNumber =
@@ -4917,12 +4916,9 @@ export class JuridicalRulingGComponent
   }
   delegationNumberOficioDict: any = null;
   departamentNumberOficioDict: any = null;
-  positionKeyCargo: any = null;
-
   userChange(user: any) {
     // ..captura usuario
     console.log(user);
-    this.positionKeyCargo = user.positionKey;
     if (user.usuario)
       this.delegationNumberOficioDict = user.usuario.delegationNumber;
 
@@ -5038,7 +5034,6 @@ export class JuridicalRulingGComponent
       recipientDepartmentNumber: this.departamentNumberOficioDict,
       typeDict: this.oficioDictamen.typeDict,
       officialNumber: this.oficioDictamen.officialNumber,
-      cveChargeRem: this.positionKeyCargo,
     };
 
     await this.updateOficioDictamen(obj1);

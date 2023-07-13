@@ -4,7 +4,6 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-cat-types-of-goods-sub-type',
@@ -33,16 +32,10 @@ export class CatTypesOfGoodsSubTypeComponent
   prepareForm() {
     this.typeGoodsForm = this.fb.group({
       id: [null],
-      nameSubtypeGood: [
-        '',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      nameSubtypeGood: ['', Validators.compose([Validators.required])],
       idTypeGood: [null],
       noPhotography: [null],
-      descriptionPhotography: [
-        '',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      descriptionPhotography: ['', Validators.compose([Validators.required])],
       noRegister: [null],
       version: null,
       creationUser: [null],
@@ -69,52 +62,25 @@ export class CatTypesOfGoodsSubTypeComponent
   }
   update() {
     this.loading = true;
-    if (
-      this.typeGoodsForm.controls['nameSubtypeGood'].value.trim() == '' ||
-      this.typeGoodsForm.controls['descriptionPhotography'].value.trim() ==
-        '' ||
-      (this.typeGoodsForm.controls['nameSubtypeGood'].value.trim() == '' &&
-        this.typeGoodsForm.controls['descriptionPhotography'].value.trim() ==
-          '')
-    ) {
-      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
-      this.loading = false;
-      return;
-    } else {
-      const ids = {
-        id: this.typeGoodsForm.controls['id'].value,
-        idTypeGood: this.typeGoodsForm.controls['idTypeGood'].value,
-      };
-      this.goodSubTypesService
-        .updateByIds(ids, this.typeGoodsForm.getRawValue())
-        .subscribe({
-          next: data => this.handleSuccess(),
-          error: error => (this.loading = false),
-        });
-    }
+    const ids = {
+      id: this.typeGoodsForm.controls['id'].value,
+      idTypeGood: this.typeGoodsForm.controls['idTypeGood'].value,
+    };
+    this.goodSubTypesService
+      .updateByIds(ids, this.typeGoodsForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
   create() {
     this.loading = true;
-    if (
-      this.typeGoodsForm.controls['nameSubtypeGood'].value.trim() == '' ||
-      this.typeGoodsForm.controls['descriptionPhotography'].value.trim() ==
-        '' ||
-      (this.typeGoodsForm.controls['nameSubtypeGood'].value.trim() == '' &&
-        this.typeGoodsForm.controls['descriptionPhotography'].value.trim() ==
-          '')
-    ) {
-      this.alert('warning', 'No se puede guardar campos vacíos', ``);
-      this.loading = false;
-      return;
-    } else {
-      console.log('Se puede guardar');
-      this.goodSubTypesService
-        .create(this.typeGoodsForm.getRawValue())
-        .subscribe({
-          next: data => this.handleSuccess(),
-          error: error => (this.loading = false),
-        });
-    }
+    this.goodSubTypesService
+      .create(this.typeGoodsForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';

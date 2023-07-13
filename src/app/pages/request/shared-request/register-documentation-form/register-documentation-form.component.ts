@@ -184,33 +184,31 @@ export class RegisterDocumentationFormComponent
   }
 
   register() {
-    this.alertQuestion(
-      'question',
-      'Confirmación',
-      '¿Desea guardar la información de la solicitud?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        const request = this.registerForm.getRawValue();
-        if (this.priorityCheck == true && request.priorityDate == null) {
-          this.onLoadToast(
-            'error',
-            'Registro con Prioridad',
-            'No se puede enviar la fecha de prioridad vacía'
-          );
-          return;
-        }
-        request.receptionDate = this.bsReceptionValue.toISOString();
+    // Llamar servicio para registrar solcitud
+    //this.onRegister.emit(this.registerForm.value);
+    const request = this.registerForm.getRawValue();
+    if (this.priorityCheck == true && request.priorityDate == null) {
+      this.onLoadToast(
+        'error',
+        'Registro con Prioridad',
+        'No se puede enviar la fecha de prioridad vacía'
+      );
+      return;
+    }
+    request.receptionDate = this.bsReceptionValue.toISOString();
 
-        console.log(request);
-        this.requestService.update(request.id, request).subscribe({
-          next: resp => {
-            console.log(resp);
-            if (resp.statusCode == 200) {
-              this.alert('success', 'Correcto', 'Registro Actualizado');
-            }
-          },
-        });
-      }
+    console.log(request);
+    this.requestService.update(request.id, request).subscribe({
+      next: resp => {
+        console.log(resp);
+        if (resp.statusCode == 200) {
+          this.onLoadToast(
+            'success',
+            'Registro Actualizado',
+            `${resp.message}`
+          );
+        }
+      },
     });
   }
 

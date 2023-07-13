@@ -17,25 +17,13 @@ import {
       <input
         [disabled]="disabled"
         #box
-        class="custom-field"
+        class="common-check form-control"
         [checked]="checked"
         (change)="onToggle($event)"
         type="checkbox" />
     </div>
   `,
-  styles: [
-    `
-      .custom-checkbox input[type='checkbox'] {
-        background-color: blue; /* Cambia el color de fondo del checkbox */
-        border-color: red; /* Cambia el color del borde del checkbox */
-      }
-
-      .custom-checkbox input[type='checkbox']:checked {
-        background-color: green; /* Cambia el color de fondo del checkbox cuando está seleccionado */
-        border-color: yellow; /* Cambia el color del borde del checkbox cuando está seleccionado */
-      }
-    `,
-  ],
+  styles: [],
 })
 export class CheckboxElementComponent<T = any> implements OnInit, OnChanges {
   checked: boolean;

@@ -665,8 +665,7 @@ export class ConciliationDepositaryPaymentsComponent
     //   });
     this.alertInfo(
       'warning',
-      // 'La siguiente pantalla no se migra: FCONDEPOCONDISPAG - dispersion de pagos depositarias',
-      'Esta pantalla no esta disponible por el momento',
+      'La siguiente pantalla no se migra: FCONDEPOCONDISPAG - dispersion de pagos depositarias',
       'De igual manera el proceso continuará al cerrar este mensaje'
     ).then(() => {
       this.getPrepOI();

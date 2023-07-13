@@ -47,7 +47,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   isReadOnly: boolean = true;
   requestId: number = 0;
   taskId: number = 0;
-  delegationId: number = 0;
+
   loadingTurn = false;
   bsModalRef: BsModalRef;
   checked: string = 'checked';
@@ -101,13 +101,14 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.getRegionalDeleg(new ListParams());
     this.getTransferent(new ListParams());
+    console.log('taskId', task);
     if (id && this.op == 2) {
+      this.getIssue();
     }
-    this.getIssue(new ListParams());
     //comparo el id de la solicitud que esta en task con el id de la ruta
     if (task) {
       if (Number(task.taskId) != id) {
-        //this.generateFirstTask();
+        this.generateFirstTask();
       } else {
         //si la solicitud tiene id
         this.taskId = task.id;
@@ -115,6 +116,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         this.getRequest(this.requestId);
       }
     } else {
+      this.generateFirstTask();
     }
 
     this.requestForm.controls['transferenceId'].valueChanges.subscribe(
@@ -168,40 +170,37 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   async generateFirstTask() {
-    return new Promise(async (resolve, reject) => {
-      this.loadingTurn = true;
-      const form = this.requestForm.getRawValue();
-      const requestResult: any = await this.createRequest(form);
-      if (requestResult) {
-        this.requestId = requestResult.id;
-        const user: any = this.authService.decodeToken();
-        let task: any = {};
-        task['id'] = 0;
-        task['assignees'] = user.username;
-        task['assigneesDisplayname'] = user.username;
-        task['creator'] = user.username;
-        task['taskNumber'] = Number(this.requestId);
-        task['title'] =
-          this.op != 2
-            ? 'Registro de solicitud con folio: ' + this.requestId
-            : 'Documentacion Complementaria con folio: ' + this.requestId;
-        task['programmingId'] = 0;
-        task['requestId'] = this.requestId;
-        task['expedientId'] = 0;
-        task['idDelegationRegional'] = user.department;
-        task['urlNb'] =
-          this.op != 2
-            ? 'pages/request/list/new-transfer-request'
-            : 'pages/request/request-comp-doc/create';
-        const taskResult: any = await this.createOnlyTask(task);
-        if (taskResult) {
-          this.taskId = Number(taskResult.data[0].id);
-
-          this.loadingTurn = false;
-        }
-        resolve(true);
+    this.loadingTurn = true;
+    const form = this.requestForm.getRawValue();
+    const requestResult: any = await this.createRequest(form);
+    if (requestResult) {
+      this.requestId = requestResult.id;
+      const user: any = this.authService.decodeToken();
+      let task: any = {};
+      task['id'] = 0;
+      task['assignees'] = user.username;
+      task['assigneesDisplayname'] = user.username;
+      task['creator'] = user.username;
+      task['taskNumber'] = Number(this.requestId);
+      task['title'] =
+        this.op != 2
+          ? 'Registro de solicitud con folio: ' + this.requestId
+          : 'Documentacion Complementaria con folio: ' + this.requestId;
+      task['programmingId'] = 0;
+      task['requestId'] = this.requestId;
+      task['expedientId'] = 0;
+      task['idDelegationRegional'] = user.department;
+      task['urlNb'] =
+        this.op != 2
+          ? 'pages/request/list/new-transfer-request'
+          : 'pages/request/request-comp-doc/create';
+      const taskResult: any = await this.createOnlyTask(task);
+      if (taskResult) {
+        this.taskId = Number(taskResult.data[0].id);
+        console.log('task Id', this.taskId);
+        this.loadingTurn = false;
       }
-    });
+    }
   }
 
   complementaryDocumentationField(form: ModelForm<IRequest>) {
@@ -219,8 +218,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   getRegionalDeleg(params?: ListParams) {
     const regDelId = Number(this.getRegionalDelegationId());
     this.regionalDelegationService.getById(regDelId).subscribe((data: any) => {
-      this.delegationId = data.id;
-      this.requestForm.get('regionalDelegationId').setValue(data.id);
+      this.requestForm.controls['regionalDelegationId'].setValue(data.id);
       this.selectRegionalDeleg = new DefaultSelect([data], data.count);
 
       this.getEntity(new ListParams(), regDelId);
@@ -243,7 +241,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
         this.selectEntity = new DefaultSelect(stateCode, stateCode.length);
       },
-      error: error => {},
+      error: error => {
+        console.log(error);
+      },
     });
   }
 
@@ -340,35 +340,19 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   getState(event: any): void {}
 
-  /*getIssue(event?: any, id?: string): void {
+  getIssue(event?: any, id?: string): void {
     let params = new ListParams();
     if (id) {
       params['filter.id'] = `$eq:${id}`;
     }
-
-    params['filter.nbOrigen'] = `SAMI`;
+    params['filter.nbOrigen'] = `$eq:SAMI`;
     this.affairService.getAll(params).subscribe({
       next: data => {
-        console.log('asuntos', data);
+        console.log(data);
         this.issues = new DefaultSelect(data.data, data.count);
-         if (id) {
+        if (id) {
           this.requestForm.controls['affair'].setValue(id);
-        } 
-      },
-      error: error => {
-        console.log('no se encontraron datos en asuntos ', error);
-      },
-    });
-  } */
-
-  getIssue(params?: ListParams): void {
-    params['filter.nbOrigen'] = 'SAMI';
-    this.affairService.getAll(params).subscribe({
-      next: data => {
-        this.issues = new DefaultSelect(data.data, data.count);
-        /* if (id) {
-          this.requestForm.controls['affair'].setValue(id);
-        } */
+        }
       },
       error: error => {
         console.log('no se encontraron datos en asuntos ', error);
@@ -417,116 +401,108 @@ export class RequestFormComponent extends BasePage implements OnInit {
         let date = this.requestForm.controls['applicationDate'].value;
         form.applicationDate = date.toISOString();
 
-        const createRequest = await this.createRequest(this.requestForm.value);
-        if (createRequest) {
-          const updateRequest = await this.updateSavedRequest(form);
-          if (updateRequest) {
-            this.loadingTurn = false;
-            Swal.fire({
-              title: 'Guardado',
-              text: ` Solicitud guardada con el folio: ${this.requestId}`,
-              icon: 'success',
-              showCancelButton: true,
-              confirmButtonColor: '#9D2449',
-              cancelButtonColor: '#B38E5D',
-              confirmButtonText: 'Aceptar',
-            }).then(async result => {});
-          }
+        const updateRequest = await this.updateSavedRequest(form);
+        if (updateRequest) {
+          this.loadingTurn = false;
+          Swal.fire({
+            title: 'Guardado',
+            text: ` Solicitud guardada con el folio: ${this.requestId}`,
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonColor: '#9D2449',
+            cancelButtonColor: '#B38E5D',
+            confirmButtonText: 'Aceptar',
+          }).then(async result => {
+            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+          });
         }
       }
     });
   }
 
-  async turnRequest() {
-    this.alertQuestion(
-      'question',
-      'Turnar Solicitud',
-      '¿Desea Turnar la solicitud?'
-    ).then(async question => {
-      if (question) {
-        if (this.op == 2) {
-          this.getRegionalDeleg(new ListParams());
-          const createTask = await this.generateFirstTask();
-          if (createTask) {
+  turnRequest(): void {
+    if (this.op == 2) {
+      this.onLoadToast(
+        'info',
+        'No guarda',
+        'falta implementarse el registro de tareas'
+      );
+      return;
+    }
+
+    if (this.requestForm.controls['targetUser'].value === null) {
+      this.onLoadToast(
+        'info',
+        'Información',
+        `Seleccione un usuario para poder turnar la solicitud!`
+      );
+      return;
+    }
+
+    Swal.fire({
+      title: 'Turnar Solicitud',
+      text: '¿Desea Turnar la solicitud?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#B38E5D',
+      confirmButtonText: 'Aceptar',
+    }).then(async result => {
+      if (result.isConfirmed) {
+        this.loadingTurn = true;
+        const form = this.requestForm.getRawValue();
+        form.id = this.requestId;
+        const idRequest = form.id;
+        const requestResult: any = await this.updateTurnedRequest(form);
+        if (requestResult) {
+          const actualUser: any = this.authService.decodeToken();
+          let body: any = {};
+          // debugger;
+          body['idTask'] = this.taskId;
+          body['userProcess'] = actualUser.username;
+
+          body['type'] = 'SOLICITUD_TRANSFERENCIA';
+          body['subtype'] = 'Nueva_Solicitud';
+          body['ssubtype'] = 'TURNAR';
+
+          let task: any = {};
+          task['id'] = 0;
+          task['assignees'] = this.nickName;
+          task['assigneesDisplayname'] = this.userName;
+          task['creator'] = actualUser.username;
+          task['taskNumber'] = Number(idRequest);
+          task['title'] =
+            'Registro de solicitud (Captura de Solicitud) con folio: ' +
+            idRequest;
+          task['programmingId'] = 0;
+          task['requestId'] = idRequest;
+          task['expedientId'] = 0;
+          task['urlNb'] = 'pages/request/transfer-request/registration-request';
+          task['processName'] = 'SolicitudTransferencia';
+          task['idDelegationRegional'] = actualUser.department;
+          body['task'] = task;
+
+          let orderservice: any = {};
+          orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
+          orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
+          orderservice['pIdApplication'] = idRequest;
+          orderservice['pCurrentDate'] = new Date().toISOString();
+          orderservice['pOrderServiceIn'] = '';
+
+          body['orderservice'] = orderservice;
+
+          const taskResult = await this.createTaskOrderService(body);
+          console.log('tarea', taskResult);
+          if (taskResult) {
+            this.loadingTurn = false;
             this.msgModal(
-              'Se turna la solicitud con el Folio Nº '
-                .concat(`<strong>${this.requestId}</strong>`)
+              'Se turnar la solicitud con el Folio Nº '
+                .concat(`<strong>${idRequest}</strong>`)
                 .concat(` al usuario ${this.userName}`),
               'Solicitud Creada',
               'success'
             );
             this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
-          }
-        } else {
-          if (this.requestForm.controls['targetUser'].value === null) {
-            this.alert(
-              'warning',
-              'Información',
-              `Seleccione un usuario para poder turnar la solicitud!`
-            );
-            return;
-          } else {
-            this.getRegionalDeleg(new ListParams());
-            const createTask = await this.generateFirstTask();
-
-            if (createTask) {
-              this.loadingTurn = true;
-              const form = this.requestForm.getRawValue();
-              form.id = this.requestId;
-              const idRequest = form.id;
-              const requestResult: any = await this.updateTurnedRequest(form);
-              if (requestResult) {
-                const actualUser: any = this.authService.decodeToken();
-                let body: any = {};
-                // debugger;
-                body['idTask'] = this.taskId;
-                body['userProcess'] = actualUser.username;
-
-                body['type'] = 'SOLICITUD_TRANSFERENCIA';
-                body['subtype'] = 'Nueva_Solicitud';
-                body['ssubtype'] = 'TURNAR';
-
-                let task: any = {};
-                task['id'] = 0;
-                task['assignees'] = this.nickName;
-                task['assigneesDisplayname'] = this.userName;
-                task['creator'] = actualUser.username;
-                task['taskNumber'] = Number(idRequest);
-                task['title'] =
-                  'Registro de solicitud (Captura de Solicitud) con folio: ' +
-                  idRequest;
-                task['programmingId'] = 0;
-                task['requestId'] = idRequest;
-                task['expedientId'] = 0;
-                task['urlNb'] =
-                  'pages/request/transfer-request/registration-request';
-                task['processName'] = 'SolicitudTransferencia';
-                task['idDelegationRegional'] = actualUser.department;
-                body['task'] = task;
-
-                let orderservice: any = {};
-                orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
-                orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
-                orderservice['pIdApplication'] = idRequest;
-                orderservice['pCurrentDate'] = new Date().toISOString();
-                orderservice['pOrderServiceIn'] = '';
-
-                body['orderservice'] = orderservice;
-
-                const taskResult = await this.createTaskOrderService(body);
-                if (taskResult) {
-                  this.loadingTurn = false;
-                  this.msgModal(
-                    'Se turna la solicitud con el Folio Nº '
-                      .concat(`<strong>${idRequest}</strong>`)
-                      .concat(` al usuario ${this.userName}`),
-                    'Solicitud Creada',
-                    'success'
-                  );
-                  this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
-                }
-              }
-            }
           }
         }
       }
@@ -537,16 +513,11 @@ export class RequestFormComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       form.requestStatus = this.op != 2 ? 'POR_TURNAR' : 'Recepcion';
       form.receiptRoute = 'FISICA';
-      form.affair = this.op == 2 ? form.affair : 37;
-      let date = this.requestForm.controls['applicationDate'].value;
-      form.applicationDate = date.toISOString();
-      form.typeOfTransfer = 'MANUAL';
-      form.regionalDelegationId = this.delegationId;
-
+      form.affair = null;
+      form.applicationDate = null;
       this.requestService.create(form).subscribe({
         next: resp => {
           resolve(resp);
-          this.requestId = resp.id;
         },
         error: error => {
           this.loadingTurn = false;
@@ -563,7 +534,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
       form.receiptRoute = 'FISICA';
       form.affair = 37;
       form.typeOfTransfer = 'MANUAL';
-      form.regionalDelegationId = this.delegationId;
       //form.originInfo = 'SOL_TRANSFERENCIA'
       let date = this.requestForm.controls['applicationDate'].value;
       form.applicationDate = date.toISOString();
@@ -583,7 +553,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   updateSavedRequest(form: any) {
     return new Promise((resolve, reject) => {
-      form.id = this.requestId;
       form.requestStatus = 'POR_TURNAR';
       form.receiptRoute = 'FISICA';
       form.affair = this.op == 2 ? form.affair : 37;
@@ -611,6 +580,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           resolve(resp);
         },
         error: error => {
+          console.log(error.error.message);
           this.loadingTurn = false;
           this.onLoadToast('error', 'Error', 'No se pudo crear la tarea');
           reject(false);
@@ -635,6 +605,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           }
         },
         error: error => {
+          console.log(error.error.message);
           this.onLoadToast(
             'error',
             'Error al crear tarea',
@@ -689,7 +660,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         this.requestForm.controls['stationId'].setValue(resp.stationId);
         this.requestForm.controls['authorityId'].setValue(resp.authorityId);
         if (this.op == 2 && resp.affair) {
-          //this.getIssue('', resp.affair);
+          this.getIssue('', resp.affair);
         }
         this.requestForm.controls['targetUserType'].setValue(
           resp.targetUserType
@@ -711,6 +682,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
         this.nickName = resp.data[0].username;
       },
       error: error => {
+        console.log(error);
         this.loading = false;
       },
     });

@@ -121,7 +121,6 @@ export class GoodsManagementSocialCabinetComponent
   clear() {
     this.form.reset();
     this.selectedGoodstxt = [];
-    this.notLoadedGoods = [];
     this.goodsManagementService.clear.next(true);
     this.goodsManagementService.data = [];
     this.activateTabs();
@@ -166,7 +165,6 @@ export class GoodsManagementSocialCabinetComponent
   }
 
   async onFileChange(event: any) {
-    this.notLoadedGoods = [];
     this.pageLoading = true;
     const file = event.target.files[0];
     let fileReader = new FileReader();
@@ -176,7 +174,6 @@ export class GoodsManagementSocialCabinetComponent
       const newArray: number[] = [];
       console.log(array);
       if (array.length === 0) {
-        this.alert('error', 'No se han cargado datos en archivo', '');
         return;
       }
       this.disabledProcess = false;
@@ -195,10 +192,6 @@ export class GoodsManagementSocialCabinetComponent
           }
         });
       });
-      if (newArray.length === 0) {
-        this.alert('error', 'No hay datos válidos en el archivo', '');
-        return;
-      }
       this.selectedGoodstxt = [...newArray];
       console.log(this.selectedGoodstxt);
       this.getData();

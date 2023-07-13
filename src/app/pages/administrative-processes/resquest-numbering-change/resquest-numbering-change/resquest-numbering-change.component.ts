@@ -53,19 +53,7 @@ export interface ExampleData1 {
 @Component({
   selector: 'app-resquest-numbering-change',
   templateUrl: './resquest-numbering-change.component.html',
-  styles: [
-    `
-      .row-verde {
-        background-color: green;
-        font-weight: bold;
-      }
-
-      .row-negro {
-        background-color: black;
-        font-weight: bold;
-      }
-    `,
-  ],
+  styles: [],
 })
 export class ResquestNumberingChangeComponent
   extends BasePage
@@ -77,9 +65,6 @@ export class ResquestNumberingChangeComponent
   columnFilters: any = [];
   people$: Observable<any[]>;
   selectedPeople: any = [];
-
-  esta: string;
-  es: string;
 
   //params = new BehaviorSubject<ListParams>(new ListParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -99,13 +84,11 @@ export class ResquestNumberingChangeComponent
   dataGood: any = [];
   validate: boolean = false;
   selectedCars = [3];
-  rowClass: string = 'verde';
 
   params4 = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
   data1: LocalDataSource = new LocalDataSource();
   data2: LocalDataSource = new LocalDataSource();
-  data3: LocalDataSource = new LocalDataSource();
   tiposData = new DefaultSelect();
   @ViewChild('modal', { static: false }) modal?: ModalDirective;
   loadingText = 'Cargando ...';
@@ -245,29 +228,11 @@ export class ResquestNumberingChangeComponent
     private securityService: SecurityService
   ) {
     super();
-    this.esta = '';
-    this.es = '';
     this.settings = {
       ...this.settings,
-      rowClassFunction: (row: any) => {
-        if (row.data.di_disponible == 'S') {
-          return 'bg-success text-white';
-        } else {
-          return 'bg-dark text-white';
-        }
-
-        // if (row.data.status === 'CNE') {
-        //   return 'bg-success text-white';
-        // } else if (
-        //   row.data.status === 'RRE' ||
-        //   row.data.status === 'VXR' ||
-        //   row.data.status === 'DON'
-        // ) {
-        //   return 'bg-dark text-white';
-        // } else {
-        //   return 'bg-success text-white';
-        // }
-      },
+      rowClassFunction: (row: { data: { id: any } }) =>
+        //this.validationScreen(row.data.id),
+        row.data.id ? 'bg-dark text-white' : 'bg-success text-white',
 
       actions: {
         columnTitle: 'Visualizar',
@@ -299,7 +264,7 @@ export class ResquestNumberingChangeComponent
           sort: false,
         },
         appraisedValue: {
-          title: 'Avalúo Vigente',
+          title: 'Avaluó Vigente',
           width: '10%',
           sort: false,
         },
@@ -380,7 +345,7 @@ export class ResquestNumberingChangeComponent
    * @since: 27/09/2022
    */
 
-  /*validationScreen(id: any) {
+  validationScreen(id: any) {
     //row.data.id ? 'bg-dark text-white' : 'bg-success text-white'
     this.loading = true;
     const payload = {
@@ -396,40 +361,6 @@ export class ResquestNumberingChangeComponent
       },
     });
     this.loading = false;
-  }*/
-
-  async validationScreen(id: any): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      this.goodprocessService.getScreenGood2(id).subscribe({
-        next: async (response: any) => {
-          if (response.data) {
-            console.log('di_dispo', response);
-            resolve('S');
-          } else {
-            console.log('di_dispo', response);
-            resolve('N');
-          }
-        },
-        error: () => {
-          resolve('N');
-        },
-      });
-    });
-  }
-
-  onLegalStatusChange() {
-    const legalStatus = this.form.get('legalStatus').value;
-
-    if (legalStatus === 'AS') {
-      this.esta = 'ADM';
-      this.es = `ESTATUS = ${this.esta}`;
-    } else if (legalStatus === 'DE') {
-      this.esta = 'DEA,AXC';
-      this.es = `ESTATUS IN (${this.esta})`;
-    } else if (legalStatus === 'AB') {
-      this.esta = 'CND,CNA';
-      this.es = `ESTATUS IN (${this.esta})`;
-    }
   }
 
   showReceipt(event: any) {
@@ -470,75 +401,99 @@ export class ResquestNumberingChangeComponent
     console.log(data);
 
     const params = new ListParams();
-    params['filter.usuario'] = data.usuario;
-    console.log(data.usuario);
-    this.securityService.getAllUser(params).subscribe({
+    params['filter.user'] = data.user;
+    console.log(data.user);
+    this.securityService.getAllUsersAccessTracking(params).subscribe({
       next: (types: any) => {
         this.itemsUser = new DefaultSelect(types.data, types.count);
         console.log(types);
         this.formaplicationData.controls['postUserRequestCamnum'].setValue(
-          types.data[0].otvalor
-        );
-        this.formaplicationData.controls['delegationRequestcamnum'].setValue(
-          types.data[0].no_delegacion
+          types.data[0].user.name
         );
       },
     });
   }
 
-  public searchUsuario1(dat: any) {
-    console.log(dat);
+  public searchUsuario1(data: any) {
+    console.log(data);
 
-    const params1 = new ListParams();
-    params1['filter.usuario'] = dat.usuario;
-    console.log(dat.usuario);
-    this.securityService.getAllUser(params1).subscribe({
-      next: (type: any) => {
-        this.itemsUser1 = new DefaultSelect(type.data, type.count);
-        console.log(type);
+    const params = new ListParams();
+    params['filter.user'] = data.user;
+    console.log(data.user);
+    this.securityService.getAllUsersAccessTracking(params).subscribe({
+      next: (types: any) => {
+        this.itemsUser = new DefaultSelect(types.data, types.count);
+        console.log(types);
         this.formaplicationData.controls['authorizePostUser'].setValue(
-          type.data[0].otvalor
+          types.data[0].user.name
         );
         this.formaplicationData.controls['authorizeDelegation'].setValue(
-          type.data[0].no_delegacion
+          types.data[0].user.profession
         );
       },
     });
   }
 
-  getUsuario(params: ListParams, usuario?: string) {
-    if (usuario) {
-      params['filter.usuario'] = `$in:${usuario}`;
+  getUsuario(params: ListParams, user?: string) {
+    if (user) {
+      params['filter.user'] = `$in:${user}`;
     }
 
-    this.securityService.getAllUser(params).subscribe((data: any) => {
-      const res: any = data.data.map((user: any) => {
-        return user.usuario;
-      });
+    this.securityService
+      .getAllUsersAccessTracking(params)
+      .subscribe((data: any) => {
+        const res: any = data.data.map((user: any) => {
+          return user.user;
+        });
 
-      this.itemsUser = new DefaultSelect(res, data.count);
-      console.log(this.itemsUser);
-      console.log(data);
-      //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
-      // Llamar a getNameUser solo si se proporcionó un usuario
-    });
+        this.itemsUser = new DefaultSelect(res, data.count);
+        console.log(this.itemsUser);
+        console.log(data);
+        //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
+        // Llamar a getNameUser solo si se proporcionó un usuario
+        if (user) {
+          this.getNameUser(params, user);
+          console.log(this.getNameUser(params, user));
+        }
+      });
   }
 
-  getUsuario1(params1: ListParams, usuario?: string) {
-    if (usuario) {
-      params1['filter.usuario'] = `$in:${usuario}`;
+  getUsuario1(params: ListParams, user?: string) {
+    if (user) {
+      params['filter.user'] = `$in:${user}`;
     }
 
-    this.securityService.getAllUser(params1).subscribe((dat: any) => {
-      const res: any = dat.data.map((userT: any) => {
-        return userT.usuario;
+    this.securityService
+      .getAllUsersAccessTracking(params)
+      .subscribe((data: any) => {
+        const res: any = data.data.map((user: any) => {
+          return user.user;
+        });
+
+        this.itemsUser1 = new DefaultSelect(res, data.count);
+        console.log(this.itemsUser);
+        console.log(data);
+        //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
+        // Llamar a getNameUser solo si se proporcionó un usuario
+        if (user) {
+          this.getNameUser(params, user);
+          console.log(this.getNameUser(params, user));
+        }
+      });
+  }
+
+  getNameUser(params: ListParams, user?: string) {
+    if (user) {
+      params['filter.user'] = `$in:${user}`;
+    }
+
+    this.securityService.getAllUsersTracker(params).subscribe((data: any) => {
+      const res: any = data.data.map((name: any) => {
+        return name.name;
       });
 
-      this.itemsUser1 = new DefaultSelect(res, dat.count);
-      console.log(this.itemsUser1);
-      console.log(dat);
-      //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
-      // Llamar a getNameUser solo si se proporcionó un usuario
+      this.itemName = new DefaultSelect(data.data, data.count);
+      console.log(this.itemName);
     });
   }
 
@@ -622,55 +577,15 @@ export class ResquestNumberingChangeComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-
-    if (this.form.get('type').value !== null)
-      params['filter.goodClassNumber'] = `$eq:${this.form.get('type').value}`;
-    console.log(params);
-    const legalStatus = this.form.get('legalStatus').value;
-
-    let estados: string[] = [];
-
-    if (legalStatus === 'AS') {
-      estados = ['ADM'];
-    } else if (legalStatus === 'DE') {
-      estados = ['DEA', 'AXC'];
-    } else if (legalStatus === 'AB') {
-      estados = ['CND', 'CNA'];
-    }
-    if (this.form.get('warehouse').value !== null)
-      params['filter.storeNumber'] = `$eq:${this.form.get('warehouse').value}`;
-
-    if (this.form.get('vault').value !== null)
-      params['filter.vaultNumber'] = `$eq:${this.form.get('vault').value}`;
-
-    if (this.form.get('delegation').value !== null)
-      params['filter.delegationNumber'] = `$eq:${
-        this.form.get('delegation').value
-      }`;
-
-    if (estados.length > 0) {
-      params['filter.status'] = `$in:${estados.join(',')}`;
-    } else {
-      params['filter.status'] = '';
-    }
+    params['filter.goodClassNumber'] = `$eq:${this.form.get('type')}`;
+    params['filter.status'] = `$in:${this.form.get('legalStatus')}`;
+    params['filter.storeNumber'] = `$eq:${this.form.get('warehouse')}`;
+    params['filter.vaultNumber'] = `$eq:${this.form.get('vault')} `;
+    params['filter.delegationNumber'] = `$eq:${this.form.get('delegation')}`;
     if (this.form.get('type').value != null)
       this.goodServices.getByExpedientAndParams__(params).subscribe({
         next: async (response: any) => {
-          let result = response.data.map(async (item: any) => {
-            let obj = {
-              vcScreen: 'FACTADBSOLCAMNUME',
-              goodNumber: item.id,
-            };
-            const di_dispo = await this.validationScreen(obj);
-            item['di_disponible'] = di_dispo;
-
-            // const acta = await this.getActaGood(item);
-            //console.log('acta', acta);
-            //item['acta'] = acta;
-            //item.di_disponible = acta != null ? 'N' : di_dispo;
-          });
-
-          console.log('asaddasdasdasd', response.data);
+          console.log(response);
           this.dataGood = response.data;
           this.totalItems = response.count;
           this.data.load(response.data);
@@ -779,23 +694,19 @@ export class ResquestNumberingChangeComponent
       if (
         this.selectGood[0].status == 'CND' ||
         this.selectGood[0].status == 'CNA'
-        //this.selectGood[0].status == 'ADE'
       ) {
         situacionJuridica = 'ABANDONADO';
         motivo = 'BIEN ABANDONADO';
       }
       if (
-        this.selectGood[0].goodClassNumber == '316' ||
-        this.selectGood[0].goodClassNumber == '317' ||
-        this.selectGood[0].goodClassNumber == '1025' ||
-        this.selectGood[0].goodClassNumber == '1038'
+        this.selectGood[0].id == '316' ||
+        this.selectGood[0].id == '317' ||
+        this.selectGood[0].id == '1025' ||
+        this.selectGood[0].id == '1038'
       ) {
         motivo = 'ASEGURADO PERECEDERO';
       }
-      if (
-        this.selectGood[0].goodClassNumber == '319' ||
-        this.selectGood[0].goodClassNumber == '1078'
-      ) {
+      if (this.selectGood[0].id == '319' || this.selectGood[0].id == '1078') {
         motivo = 'ASEGURADO SEMOVIENTE';
       }
       const payload = {
@@ -851,21 +762,21 @@ export class ResquestNumberingChangeComponent
           motivo = 'BIEN ABANDONADO';
         }
         if (
-          this.dataGood[index].goodClassNumber == '316' ||
-          this.dataGood[index].goodClassNumber == '317' ||
-          this.dataGood[index].goodClassNumber == '1025' ||
-          this.dataGood[index].goodClassNumber == '1038'
+          this.dataGood[index].id == '316' ||
+          this.dataGood[index].id == '317' ||
+          this.dataGood[index].id == '1025' ||
+          this.dataGood[index].id == '1038'
         ) {
           motivo = 'ASEGURADO PERECEDERO';
         }
         if (
-          this.dataGood[index].goodClassNumber == '319' ||
-          this.dataGood[index].goodClassNumber == '1078'
+          this.dataGood[index].id == '319' ||
+          this.dataGood[index].id == '1078'
         ) {
           motivo = 'ASEGURADO SEMOVIENTE';
         }
         const payload = {
-          goodNumber: this.dataGood[index].goodClassNumber,
+          goodNumber: this.dataGood[index].id,
           applicationChangeCashNumber: this.idSolicitud,
           ProceedingsNumber: this.dataGood[index].fileNumber,
           situationlegal: situacionJuridica,
@@ -989,33 +900,31 @@ export class ResquestNumberingChangeComponent
       message = 'La Fecha de Autorización no debe estar vacía';
       this.handleSuccess(message);
     }
-
-    for (let index = 0; index < this.dataGood.length; index++) {
-      if (valor == 0) {
-        if (this.dataGood[index].appraisedValue == null) {
-          console.log('ENTRO AQUI');
-          message =
-            'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
-          this.handleSuccess(message);
-        }
-
-        console.log(this.dataGood[index].expediente);
-        if (this.dataGood[index].expediente.id == null) {
-          console.log(this.dataGood[index].expediente.id);
-          message = 'El bien NO tiene Número de Expediente';
-          this.handleSuccess(message);
-        }
-
-        if (
-          this.dataGood[index].expediente.preliminaryInquiry &&
-          this.dataGood[index].expediente.preliminaryInquiry === ''
-        ) {
-          message = 'El bien NO tiene averiguación previa';
-          this.handleSuccess(message);
-        }
+    if (valor == 0) {
+      if (this.dataGood[0].appraisedValue == null) {
+        console.log('ENTRO AQUI');
+        message =
+          'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
+        this.handleSuccess(message);
       }
+    }
 
-      if (valor == 1) {
+    if (valor == 0) {
+      if (this.dataGood[0].expedienteid == null) {
+        message = 'El bien NO tiene Número de Expediente';
+        this.handleSuccess(message);
+      }
+    }
+
+    if (valor == 0) {
+      if (this.dataGood[0].expedientepreliminaryInquiry == null) {
+        message = 'El bien NO tiene averiguación previa';
+        this.handleSuccess(message);
+      }
+    }
+
+    if (valor == 1) {
+      for (let index = 0; index < this.dataGood.length; index++) {
         if (this.dataGood[index].appraisedValue == null) {
           message =
             'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
@@ -1142,22 +1051,6 @@ export class ResquestNumberingChangeComponent
     this.data1.load([]);
     this.data1.refresh();
   }
-  //data3
-  cleanFilter() {
-    this.form.get('legalStatus').setValue(null);
-    this.form.get('type').setValue(null);
-    this.form.get('delegation').setValue(null);
-    this.form.get('warehouse').setValue(null);
-    this.form.get('vault').setValue(null);
-    Object.keys(this.form.controls).forEach(controlName => {
-      this.form.get(controlName).enable();
-    }),
-      (this.totalItems1 = 0);
-    this.data.load([]);
-    this.data.refresh();
-    this.data3.load([]);
-    this.data3.refresh();
-  }
 
   printScanFile() {
     // if (this.form.get(this.formControlName).value != null) {
@@ -1209,11 +1102,11 @@ export class ResquestNumberingChangeComponent
 
   private buildForm() {
     this.form = this.fb.group({
-      legalStatus: [null, Validators.required],
+      legalStatus: [null, [Validators.required]],
       delegation: [null],
       warehouse: [null],
       vault: [null],
-      type: [null],
+      type: [null, [Validators.required]],
     });
   }
 
@@ -1262,12 +1155,8 @@ export class ResquestNumberingChangeComponent
       authorizeDate: [null, [Validators.required]],
     });
     this.formaplicationData.controls['postUserRequestCamnum'].disable();
-    this.formaplicationData.controls['delegationRequestcamnum'].disable();
-    this.formaplicationData.controls['authorizeDelegation'].disable();
-    this.formaplicationData.controls['authorizePostUser'].disable();
     setTimeout(() => {
       this.getUsuario(new ListParams());
-      this.getUsuario1(new ListParams());
     }, 1000);
 
     this.formaplicationData.controls;

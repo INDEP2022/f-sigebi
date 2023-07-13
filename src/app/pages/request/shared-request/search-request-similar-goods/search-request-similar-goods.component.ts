@@ -13,7 +13,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS, COLUMNS2 } from './columns';
 //Provisional Data
 import { ActivatedRoute } from '@angular/router';
-import { IRequest } from 'src/app/core/models/requests/request.model';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import Swal from 'sweetalert2/src/sweetalert2.js';
@@ -33,7 +32,7 @@ export class SearchRequestSimilarGoodsComponent
   totalItems: number = 0;
   data: LocalDataSource = new LocalDataSource();
   selectedRows: any = [];
-  requestInfo: IRequest;
+
   //Goods Table
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems2: number = 0;
@@ -81,16 +80,6 @@ export class SearchRequestSimilarGoodsComponent
   ngOnInit(): void {
     this.requestId = Number(this.route.snapshot.paramMap.get('request'));
     //this.data.load(DATA);
-    this.getInfoRequest();
-  }
-
-  getInfoRequest() {
-    this.requestService.getById(this.requestId).subscribe({
-      next: response => {
-        this.requestInfo = response;
-      },
-      error: error => {},
-    });
   }
 
   getFormSeach(formSearch: any) {
@@ -109,8 +98,10 @@ export class SearchRequestSimilarGoodsComponent
   getFiles() {
     this.loading = true;
     const filter = this.params.getValue().getParams();
+    console.log(filter);
     this.requestService.getAll(filter).subscribe({
       next: resp => {
+        console.log(resp.data);
         resp.data.map((item: any) => {
           item['regionalDelegationName'] = item.regionalDelegation
             ? item.regionalDelegation.description
@@ -131,7 +122,8 @@ export class SearchRequestSimilarGoodsComponent
       },
       error: error => {
         this.loading = false;
-        this.alert('warning', 'No se encontraron registros', '');
+        this.onLoadToast('info', 'No se encontraron registros');
+        console.log('error al obtener las solicitudes: ', error);
       },
     });
     // Llamar servicio para buscar expedientes
@@ -145,6 +137,7 @@ export class SearchRequestSimilarGoodsComponent
   }
 
   onCustom(event: any) {
+    console.log(event);
     if (event.action === 'associate') {
       this.alertQuestion(
         'question',
@@ -162,8 +155,8 @@ export class SearchRequestSimilarGoodsComponent
               next: resp => {
                 this.loading = false;
                 Swal.fire({
-                  title: `Se asoció la solicitud correctamente`,
-                  text: `La Solicitud ${requestAssociated.id} fue asociada al expediente ${requestAssociated.recordId}. Tiene que subir el reporte de la carátula INAI`,
+                  title: `Se asocio la solicitud correctamente`,
+                  text: `La Solicitud ${requestAssociated.id} fue asociada al expediente ${requestAssociated.recordId}. Tiene que subir el reporte de la caratula INAI`,
                   icon: 'success',
                   showDenyButton: false,
                   showCancelButton: false,
@@ -195,7 +188,7 @@ export class SearchRequestSimilarGoodsComponent
     /*this.selectedRows = $event.selected;
     this.data2.load($event.data.goods);
     this.showDetails = $event.isSelected ? true : false;*/
-    //this.alert('warning', 'falta', 'falta implementar esta función');
+    this.onLoadToast('info', 'falta', 'falta implementar esta funcion');
   }
 
   getGoods() {
@@ -241,6 +234,7 @@ export class SearchRequestSimilarGoodsComponent
             'Error',
             'No se puedo obtener la solicitud'
           );
+          console.log('No se pudo obtener la colicitud ', error);
         },
       });
     });

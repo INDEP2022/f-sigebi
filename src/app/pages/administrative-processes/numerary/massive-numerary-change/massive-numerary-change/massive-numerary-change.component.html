@@ -3,10 +3,15 @@
     <h5 class="title">Proceso de Inserción masiva de gastos y numerario</h5>
   </div>
   <div body>
-    <div class="d-flex gap-2 mt-4">
-      <div class="">
+    <div class="row mt-4">
+      <div class="col-md-2">
+        <!-- <input
+          type="file"
+          class="btn btn-secondary btn-sm active"
+          (change)="onClickBtnFileExcel($event)" /> -->
+
         <a
-          class="btn d-flex align-items-center btn-success btn-sm active"
+          class="btn btn-secondary btn-sm active"
           (click)="btnFileExcel.click()"
           >Abrir archivo de MS Excel 4.0<input
             #btnFileExcel
@@ -16,10 +21,8 @@
             (change)="onClickBtnFileExcel($event)" />
         </a>
       </div>
-      <div>
-        <a
-          class="btn d-flex align-items-center btn-success btn-sm active"
-          (click)="btnFileCsv.click()"
+      <div class="col-md-2">
+        <a class="btn btn-secondary btn-sm active" (click)="btnFileCsv.click()"
           >Abrir archivo de Texto CSV<input
             #btnFileCsv
             hidden
@@ -28,25 +31,17 @@
             (change)="onClickBtnFileExcel($event)" />
         </a>
       </div>
-      <div class="">
+      <div class="col-md-2">
         <button
           [disabled]="isLoadingProcessExtraction"
           (click)="onClickBtnProcessExtraction()"
-          class="btn btn-primary btn-sm active">
+          class="btn btn-secondary btn-sm active">
           Proceso de extracción
-          <ng-container *ngIf="isLoadingProcessExtraction">
-            <i class="fas fa-spinner fa-spin"></i>
-          </ng-container>
-        </button>
-      </div>
-      <div>
-        <button (click)="clean()" class="btn btn-danger btn-sm active w-auto">
-          Limpiar <i class="fas fa-eraser"></i>
         </button>
       </div>
     </div>
     <div class="row mt-3 mb-3 pt-4">
-      <form action="" class="form-material text-capitalize" [formGroup]="form">
+      <form action="" class="form-material" [formGroup]="form">
         <div
           style="
             display: flex;
@@ -70,40 +65,35 @@
           </div>
         </div>
         <div class="row mt-4 m-0">
-          <h5 class="title mb-4">Origen de Datos</h5>
-          <div class="overflow-auto pt-5">
-            <div [formGroup]="formTips" class="d-flex gap-4 mb-3 form-material">
-              <div *ngFor="let item of columns; let i = index">
-                <!-- <label>{{ item }}:</label> -->
-                <form-field
-                  [label]="item"
-                  [control]="formTips.get('TIP' + (i + 1))">
-                  <select
-                    class="form-control selects-origin-data"
-                    (change)="changeTip($event, i + 1)"
-                    formControlName="TIP{{ i + 1 }}">
-                    <option selected></option>
-                    <option value="O">Otro</option>
-                    <option value="B">No. Bien</option>
-                    <option value="G">Gasto</option>
-                    <option value="I">Ingreso neto</option>
-                    <option value="V">Iva</option>
-                  </select>
-                </form-field>
-              </div>
-              <!-- <div
-                class="selects-origin-data"
-                *ngFor="let item of columns; let i = index">
-                <ng-select formControlName="TIP{{ i + 1 }}">
-                  <ng-option default>Opción {{ item }}</ng-option>
-                  <ng-option value="O">Otro</ng-option>
-                  <ng-option value="B">No. Bien</ng-option>
-                  <ng-option value="G">Gasto</ng-option>
-                  <ng-option value="I">Ingreso neto</ng-option>
-                  <ng-option value="V">Iva</ng-option>
-                </ng-select>
-              </div> -->
+          <h5 class="title">Origen de Datos</h5>
+          <div [formGroup]="formTips" class="d-flex overflow-auto mb-3">
+            <div
+              class="selects-origin-data mb-4"
+              *ngFor="let item of columns; let i = index">
+              <label>{{ item }}:</label>
+              <select
+                (change)="changeTip($event, i + 1)"
+                formControlName="TIP{{ i + 1 }}">
+                <option selected>Opción {{ item }}</option>
+                <option value="O">Otro</option>
+                <option value="B">No. Bien</option>
+                <option value="G">Gasto</option>
+                <option value="I">Ingreso neto</option>
+                <option value="V">Iva</option>
+              </select>
             </div>
+            <!-- <div
+              class="selects-origin-data"
+              *ngFor="let item of columns; let i = index">
+              <ng-select formControlName="TIP{{ i + 1 }}">
+                <ng-option default>Opción {{ item }}</ng-option>
+                <ng-option value="O">Otro</ng-option>
+                <ng-option value="B">No. Bien</ng-option>
+                <ng-option value="G">Gasto</ng-option>
+                <ng-option value="I">Ingreso neto</ng-option>
+                <ng-option value="V">Iva</ng-option>
+              </ng-select>
+            </div> -->
           </div>
           <!-- <div class="col-md-3 pt-4">
             <form-field [control]="form.get('data')" label="Datos">
@@ -111,44 +101,28 @@
             </form-field>
           </div> -->
         </div>
-        <div [hidden]="!isVisibleSpent" class="row spents mt-4 mx-0">
+        <div [hidden]="!isVisibleSpent" class="row mt-4 mx-0">
           <h5 class="title">Gastos</h5>
-          <div class="overflow-auto pt-5">
-            <div [formGroup]="formGas" class="d-flex gap-4">
+          <div class="overflow-auto">
+            <div [formGroup]="formGas" class="d-flex spent-inputs">
               <div
                 [hidden]="formGas.get('GAS' + (i + 1)).disabled"
                 *ngFor="let item of columns; let i = index">
-                <!-- <label>Concepto {{ item }}:</label> -->
-                <form-field
-                  [label]="'Concepto ' + item"
-                  [control]="formGas.get('GAS' + (i + 1))">
-                  <input
-                    readonly
-                    [formControlName]="'GAS' + (i + 1)"
-                    type="text"
-                    class="form-control" />
-                  <button
-                    (click)="onClickInputGas(i + 1)"
-                    class="btn btn-sm btn-custom-search">
-                    <i class="bx bx-search-alt bx-sm float-icon"></i>
-                  </button>
-                </form-field>
+                <label>Concepto {{ item }}:</label>
+                <input
+                  readonly
+                  (click)="onClickInputGas(i + 1)"
+                  [formControlName]="'GAS' + (i + 1)"
+                  type="text"
+                  class="" />
               </div>
             </div>
-            <div [formGroup]="formGad" class="d-flex gap-4 mt-3">
+            <div [formGroup]="formGad" class="d-flex spent-inputs">
               <div
                 [hidden]="formGad.get('GAD' + (i + 1)).disabled"
                 *ngFor="let item of columns; let i = index">
-                <!-- <label>Descripción {{ item }}:</label> -->
-                <form-field
-                  [label]="'Descripción ' + item"
-                  [control]="formGad.get('GAD' + (i + 1))">
-                  <textarea
-                    type="text"
-                    class="form-control"
-                    formControlName="GAD{{ i + 1 }}">
-                  </textarea>
-                </form-field>
+                <label>Descripción {{ item }}:</label>
+                <input type="text" class="" formControlName="GAD{{ i + 1 }}" />
               </div>
             </div>
           </div>
@@ -165,13 +139,12 @@
       </div>
     </div>
     <div class="row pt-4">
-      <div class="col-md-12 hidden-paginate-default">
+      <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            #tableSpent
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="dataPreviousTable">
+            [source]="dataPrevious">
           </ng2-smart-table>
         </div>
       </div>

@@ -22,7 +22,6 @@ export class EmailInformationComponent {
     type: new FormControl(null, Validators.required),
     issue: new FormControl(null, Validators.required),
     body: new FormControl(null, Validators.required),
-    textBody: new FormControl(null, Validators.required),
   });
 
   public from = new DefaultSelect();
@@ -41,9 +40,7 @@ export class EmailInformationComponent {
   }
 
   changeType($event: any): void {
-    console.log($event);
-    this.form.get('body').setValue($event.id);
-    this.form.get('textBody').setValue($event.bodyEmail);
+    this.form.get('body').setValue($event.bodyEmail);
     this.form.get('issue').setValue($event.subjectEmail);
   }
 
@@ -58,18 +55,5 @@ export class EmailInformationComponent {
       3: 'Cambio de Bienes de Número Aleatorio',
     };
     return data?.[id] || id.toString();
-  }
-
-  onChangeCc(event: any) {
-    console.log(event);
-    this.form.get('cc').setValue(event.id);
-  }
-  onChangeTo(event: any) {
-    console.log(event);
-    this.form.get('to').setValue(event.id);
-  }
-  onChangeFrom(event: any) {
-    console.log(event);
-    this.form.get('from').setValue(event.id);
   }
 }

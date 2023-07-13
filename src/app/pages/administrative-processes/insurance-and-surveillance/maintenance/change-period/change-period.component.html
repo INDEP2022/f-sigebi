@@ -12,7 +12,6 @@
               class="form-control"
               formControlName="year"
               min="1"
-              [max-length]="4"
               pattern="^[0-9]+" />
           </form-field>
         </div>
@@ -23,7 +22,6 @@
               class="form-control"
               formControlName="period"
               min="1"
-              [max-length]="6"
               pattern="^[0-9]+" />
           </form-field>
         </div>
@@ -55,15 +53,14 @@
           </form-field>
         </div>
         <div class="col-md-12">
-          <form-field [control]="form.get('process')">
-            <ngx-select
-              [data]="procesess"
-              [form]="form"
-              value="value"
-              bindLabel="label"
-              label="Proceso"
-              [control]="'process'">
-            </ngx-select>
+          <form-field
+            label="Proceso"
+            class="form-group"
+            [control]="form.get('process')">
+            <select class="form-control" formControlName="process">
+              <option value="1">Supervisión</option>
+              <option value="2">Validación</option>
+            </select>
           </form-field>
         </div>
       </div>
@@ -72,24 +69,22 @@
           <h5 class="title">DESTINO</h5>
         </div>
         <div class="col-md-12 mt-4">
-          <form-field [control]="form.get('yearDestiny')" label="Año">
+          <form-field [control]="form.get('year')" label="Año">
             <input
               type="number"
               class="form-control"
-              formControlName="yearDestiny"
+              formControlName="year"
               min="1"
-              [max-length]="4"
               pattern="^[0-9]+" />
           </form-field>
         </div>
         <div class="col-md-12">
-          <form-field [control]="form.get('periodDestiny')" label="Periodo">
+          <form-field [control]="form.get('period')" label="Periodo">
             <input
               type="number"
               class="form-control"
-              formControlName="periodDestiny"
+              formControlName="period"
               min="1"
-              [max-length]="6"
               pattern="^[0-9]+" />
           </form-field>
         </div>
@@ -121,15 +116,14 @@
           </form-field>
         </div>
         <div class="col-md-12">
-          <form-field [control]="form.get('processDestiny')">
-            <ngx-select
-              [data]="procesess1"
-              [form]="form"
-              value="value"
-              bindLabel="label"
-              label="Proceso"
-              [control]="'processDestiny'">
-            </ngx-select>
+          <form-field
+            label="Proceso"
+            class="form-group"
+            [control]="form.get('processDestiny')">
+            <select class="form-control" formControlName="processDestiny">
+              <option value="1">Supervisión</option>
+              <option value="2">Validación</option>
+            </select>
           </form-field>
         </div>
       </div>
@@ -137,11 +131,8 @@
 
     <div class="row mt-4 float-right">
       <div class="">
-        <button
-          [disabled]="!form.valid"
-          type="submit"
-          class="btn btn-primary btn-sm active mr-3">
-          Cambiar <i class="fas fa-sync-alt"> </i>
+        <button type="submit" class="btn btn-primary btn-sm active mx-4">
+          CAMBIAR
         </button>
       </div>
     </div>

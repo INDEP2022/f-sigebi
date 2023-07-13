@@ -40,7 +40,6 @@ export class RecordAccountStatementsComponent
   itemsCuentas = new DefaultSelect();
   columnFilters: any = [];
   validation: boolean = false;
-  data: LocalDataSource = new LocalDataSource();
 
   banks = new DefaultSelect();
   bankAccountSelect = new DefaultSelect();
@@ -58,12 +57,6 @@ export class RecordAccountStatementsComponent
 
   variableOf: Date;
   variableAt: Date;
-  bankCode: string;
-  checks: any;
-
-  paramsSubject: BehaviorSubject<ListParams> = new BehaviorSubject<ListParams>(
-    new ListParams()
-  );
 
   constructor(
     private fb: FormBuilder,
@@ -77,7 +70,7 @@ export class RecordAccountStatementsComponent
     this.settings.columns = RECORDS_ACCOUNT_STATEMENTS_COLUMNS;
     this.settings.hideSubHeader = false;
     this.settings.actions.add = false;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
     this.settings.actions.edit = false;
   }
 
@@ -92,14 +85,12 @@ export class RecordAccountStatementsComponent
       description: [null, Validators.nullValidator],
       balanceOf: [null, Validators.nullValidator],
       balanceAt: [null, Validators.nullValidator],
-      balance: [null, Validators.nullValidator],
     });
   }
 
   ngOnInit(): void {
     this.prepareForm();
-    this.searchBanks(new ListParams());
-    this.searchCheck();
+    this.searchBanks();
     this.dataAccount
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -110,6 +101,7 @@ export class RecordAccountStatementsComponent
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'dateMotion':
                 searchFilter = SearchFilter.EQ;
@@ -128,13 +120,15 @@ export class RecordAccountStatementsComponent
                 break;
             }
             if (filter.search !== '') {
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
           this.params.value.page = 1;
-          this.params = this.pageFilter(this.params);
           if (this.dataAccountPaginated) {
             this.searchDataAccount(this.dataAccountPaginated);
           }
@@ -147,41 +141,21 @@ export class RecordAccountStatementsComponent
     });
   }
 
-  // Trae la lista de bancos por defecto
-  searchBanks(params: ListParams) {
-    this.loading = true;
-    this.bankAccountSelect = new DefaultSelect();
+  // Trae la lista de bancos
+  searchBanks() {
     this.dataAccount = new LocalDataSource();
-    this.recordAccountStatementsService.getAll(params).subscribe({
-      next: response => {
-        this.loading = true;
-        this.banks = new DefaultSelect(response.data, response.count);
-        this.loading = false;
-      },
-      error: (err: any) => {
-        this.loading = false;
-        this.alert('warning', 'No existen bancos', ``);
-      },
-    });
-  }
-
-  // Permite buscar los bancos por nombre
-  onSearchName(inputElement: any) {
-    const name = inputElement.value;
-    setTimeout(() => {
-      this.recordAccountStatementsService
-        .getAllDinamicName(name, this.params.getValue())
-        .subscribe({
-          next: (response: { data: any[]; count: number }) => {
-            this.banks = new DefaultSelect(response.data, response.count);
-            this.loading = false;
-          },
-          error: (err: any) => {
-            this.loading = false;
-            this.alert('warning', 'No existen bancos', ``);
-          },
-        });
-    }, 3000);
+    this.recordAccountStatementsService
+      .getAll(this.params.getValue())
+      .subscribe({
+        next: (response: { data: any[]; count: number }) => {
+          this.banks = new DefaultSelect(response.data, response.count);
+          this.loading = false;
+        },
+        error: (err: any) => {
+          this.loading = false;
+          this.alert('warning', 'No existen bancos', ``);
+        },
+      });
   }
 
   // Asigna el valor del banco seleccionado a la función "searchBankAccount"
@@ -195,68 +169,32 @@ export class RecordAccountStatementsComponent
     this.totalItems = 0;
     this.cleandInfoDate();
     this.bankAccountSelect = new DefaultSelect();
-    this.loading = false;
+    this.dataAccount = new LocalDataSource();
     if (value && value.bankCode) {
       const bankCode = value.bankCode;
-      this.searchBankAccount(bankCode, this.paramsSubject);
-      this.loading = false;
+      this.searchBankAccount(bankCode);
     } else {
       this.cleandInfoAll();
-      this.loading = false;
     }
   }
 
   // Toma el banco seleccionado y busca todas las cuentas pertenecientes a ese banco
-  searchBankAccount(
-    bankCode: string,
-    paramsSubject: BehaviorSubject<ListParams>
-  ) {
-    this.bankCode = bankCode;
-    const params = paramsSubject.getValue();
+  searchBankAccount(bankCode: string) {
     this.recordAccountStatementsAccountsService
-      .getById(bankCode, params)
+      .getById(bankCode, this.params.getValue())
       .subscribe({
-        next: response => {
+        next: (response: { data: any[]; count: number }) => {
           this.bankAccountSelect = new DefaultSelect(
             response.data,
             response.count
           );
           this.loading = false;
         },
-        // this.data.load(this.documents);
         error: (err: any) => {
           this.loading = false;
           this.alert('warning', 'No existen cuentas', ``);
         },
       });
-  }
-
-  onClearSelection() {
-    this.searchBankAccount(this.bankCode, this.paramsSubject);
-  }
-
-  onSearchAccount(inputElement: any) {
-    const account = inputElement.value;
-    setTimeout(() => {
-      this.recordAccountStatementsAccountsService
-        .getById2(this.bankCode, account, this.params.getValue())
-        .subscribe({
-          next: response => {
-            const filteredAccounts = response.data.filter(item =>
-              item.accountNumber.includes(account)
-            );
-            this.bankAccountSelect = new DefaultSelect(
-              filteredAccounts,
-              response.count
-            );
-            this.loading = false;
-          },
-          error: (err: any) => {
-            this.loading = false;
-            this.alert('warning', 'No existen bancos', ``);
-          },
-        });
-    }, 3000);
   }
 
   // Establece los valores en los inputs de datos de la cuenta seleccionada
@@ -268,6 +206,7 @@ export class RecordAccountStatementsComponent
     this.form.get('description').reset();
     this.totalItems = 0;
     this.cleandInfoDate();
+    this.dataAccount = new LocalDataSource();
     const accountNumber = value.accountNumber;
     this.accountDate = value.accountNumber;
     this.searchDataAccount(accountNumber);
@@ -290,12 +229,7 @@ export class RecordAccountStatementsComponent
     this.form.get('currency').setValue(currency);
   }
 
-  // Permite buscar la descripcion de la moneda
   searchCurrent(currency: string) {
-    if (currency === `'M'`) {
-      currency = 'PESO MEXICANO';
-      this.form.get('description').setValue(currency);
-    }
     this.tvalTable5Service.getCurrent(currency).subscribe({
       next: response => {
         let current = response.data;
@@ -303,6 +237,10 @@ export class RecordAccountStatementsComponent
         this.form.get('description').setValue(currentAccount);
         this.loading = false;
       },
+      // error: (err: any) => {
+      //   this.loading = false;
+      //   this.alert('warning', 'No existen monedas', ``);
+      // },
     });
   }
 
@@ -310,29 +248,16 @@ export class RecordAccountStatementsComponent
   DateAccountBalance() {
     const balanceOf = this.datePipe.transform(this.variableOf, 'dd/MM/yyyy');
     const balanceAt = this.datePipe.transform(this.variableAt, 'dd/MM/yyyy');
-
-    if (!balanceOf && !balanceAt) {
-      this.alert('warning', 'Error', 'Debe ingresar las fechas de saldo');
-      return;
-    } else if (!balanceOf) {
-      this.alert('warning', 'Error', 'Debe ingresar la fecha de "Saldo de"');
-      return;
-    } else if (!balanceAt) {
-      this.alert('warning', 'Error', 'Debe ingresar la fecha de "Saldo a:"');
-      return;
-    }
-
     const model: IDateAccountBalance = {
       noAccount: this.accountDate,
       tiDateCalc: balanceOf,
       tiDateCalcEnd: balanceAt,
     };
-
     this.recordAccountStatementsAccountsService
       .getAccountBalanceDate(model)
       .subscribe({
         next: response => {
-          this.balance = response.result + ' ' + this.current.replace(/'/g, '');
+          this.balance = response.result + ' ' + this.current;
         },
         error: error => {
           this.alert('warning', 'Error', 'No es posible generar el saldo');
@@ -343,23 +268,14 @@ export class RecordAccountStatementsComponent
   // Establece los valores de movimientos de la cuenta seleccionada a la tabla
   searchDataAccount(accountNumber: number) {
     this.loading = true;
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
     this.dataAccountPaginated = accountNumber;
     this.recordAccountStatementsAccountsService
-      .getDataAccount(accountNumber, params)
+      .getDataAccount(accountNumber, this.params.getValue())
       .subscribe({
         next: response => {
           this.loading = true;
-          const data = response.data.map(item => {
-            const dateParts = item.dateMotion.split('-');
-            const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-            return { ...item, dateMotion: formattedDate };
-          });
-          this.dataAccount.load(data);
-          this.dataAccount.refresh();
+          const dataSource = new LocalDataSource(response.data);
+          this.dataAccount = dataSource;
           this.totalItems = response.count;
           this.loading = false;
         },
@@ -367,7 +283,7 @@ export class RecordAccountStatementsComponent
           this.loading = false;
           this.alert(
             'warning',
-            'No existen movimientos de la cuenta seleccionada',
+            'No existen datos de la cuenta seleccionada',
             ``
           );
         },
@@ -382,7 +298,6 @@ export class RecordAccountStatementsComponent
       .subscribe({
         next: response => {
           this.factasStatusCta = response;
-          console.log(this.factasStatusCta);
           this.loading = false;
         },
         error: (err: any) => {
@@ -392,9 +307,8 @@ export class RecordAccountStatementsComponent
       });
   }
 
-  // Abre el modal de transferencia de saldos
+  //Abre el modal de transferencia de saldos
   openModal(movimentAccount: IRecordAccountStatements) {
-    console.log(movimentAccount);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       ignoreBackdropClick: false,
@@ -410,112 +324,17 @@ export class RecordAccountStatementsComponent
     this.modalService.show(RecordAccountStatementsModalComponent, modalConfig);
   }
 
-  searchCheck() {
-    this.recordAccountStatementsAccountsService
-      .getChecks(this.params.getValue())
-      .subscribe({
-        next: response => {
-          (this.checks = response.data), response.count;
-          this.loading = false;
-        },
-        error: (err: any) => {
-          this.loading = false;
-          this.alert('warning', 'No existen cheques devueltos', ``);
-        },
-      });
-  }
-
-  showDeleteAlert(movimentAccount: IRecordAccountStatements) {
-    const modal = {
-      numberAccount: movimentAccount.numberAccount,
-      numberMotion: movimentAccount.numberMotion,
-    };
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      '¿Desea eliminar este movimiento?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.delete(movimentAccount, modal);
-      }
-    });
-  }
-
-  delete(movimentAccount: IRecordAccountStatements, modal: any) {
-    let showAlert = false;
-
-    if (
-      movimentAccount.numberMotionTransfer !== null ||
-      movimentAccount.numberReturnPayCheck !== null ||
-      movimentAccount.numberGood !== null ||
-      movimentAccount.genderTransfer !== null
-    ) {
-      if (movimentAccount.numberMotionTransfer !== null) {
-        this.alert(
-          'warning',
-          'No se puede eliminar el movimiento porque proviene de una transferencia',
-          ``
-        );
-        showAlert = true;
-      }
-      if (movimentAccount.numberReturnPayCheck !== null) {
-        this.alert(
-          'warning',
-          'No se puede eliminar el movimiento porque proviene de un cobro de cheque debido a una devolución',
-          ``
-        );
-        showAlert = true;
-      }
-      if (movimentAccount.numberGood !== null) {
-        this.alert(
-          'warning',
-          'No se puede eliminar el movimiento porque está asociado a un bien',
-          ``
-        );
-        showAlert = true;
-      }
-    }
-
-    if (!showAlert) {
-      const chequeEncontrado = this.checks.find(
-        (cheque: { accountOriginDepositNumber: number }) =>
-          cheque.accountOriginDepositNumber === movimentAccount.numberMotion
-      );
-
-      if (chequeEncontrado) {
-        this.alert(
-          'warning',
-          'No se puede eliminar el movimiento mientras tenga devoluciones registradas',
-          ``
-        );
-        showAlert = true;
-      } else {
-        this.recordAccountStatementsAccountsService.remove(modal).subscribe({
-          next: response => {
-            this.searchDataAccount(this.dataAccountPaginated);
-            this.alert('success', 'Movimiento eliminado', '');
-          },
-          error: err => {
-            this.alert('error', 'No es posible eliminar el movimiento', '');
-          },
-        });
-      }
-    }
-  }
-
   cleandInfoAll() {
     this.form.reset();
-    this.dataAccount = new LocalDataSource();
     this.totalItems = 0;
-    this.searchBanks(new ListParams());
+    this.searchBanks();
     this.balance = null;
   }
 
   cleandInfo() {
-    this.dataAccount = new LocalDataSource();
     this.totalItems = 0;
     this.form.reset();
-    this.searchBanks(new ListParams());
+    this.searchBanks();
   }
 
   cleandInfoDate() {

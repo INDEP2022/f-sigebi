@@ -7,7 +7,6 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { SocketService } from 'src/app/common/socket/socket.service';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
@@ -45,8 +44,7 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private goodTrackerService: GoodTrackerService,
-    private notificationService: NotificationService,
-    private socketService: SocketService
+    private notificationService: NotificationService
   ) {
     super();
   }

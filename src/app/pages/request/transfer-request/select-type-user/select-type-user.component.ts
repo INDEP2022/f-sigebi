@@ -281,16 +281,14 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   async ReturnRequest() {
     const actualUser: any = this.authService.decodeToken();
     this.loader.load = true;
-    const body: any = {};
-    body.id = this.data.id;
-    body.observations =
+    this.data.observations =
       'Solicitud Returnada por la Delegacion Regional ' +
       this.user.delegationreg;
-    body.targetUserType = 'DR';
-    body.requestStatus = 'Captura';
-    body.targetUser = this.user.id;
+    this.data.targetUserType = 'DR';
+    this.data.requestStatus = 'Captura';
+    this.data.targetUser = this.user.id;
 
-    const requestResult = await this.saveRequest(body);
+    const requestResult = await this.saveRequest(this.data);
     if (requestResult === true) {
       this.loader.load = false;
 
@@ -308,8 +306,8 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
         url,
         from,
         to,
-        true,
-        this.task.id,
+        false,
+        0,
         actualUser.username,
         'SOLICITUD_TRANSFERENCIA',
         'Registro_Solicitud',
@@ -436,9 +434,9 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       orderservice['pOrderServiceIn'] = '';
 
       body['orderservice'] = orderservice;
+
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
-          console.log(resp);
           resolve(true);
         },
         error: error => {

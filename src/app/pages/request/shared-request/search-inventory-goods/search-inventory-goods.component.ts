@@ -1,18 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
-import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
-import { IState } from 'src/app/core/models/catalogs/state-model';
-import { IStation } from 'src/app/core/models/catalogs/station.model';
-import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
-import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
-import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
-import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
-import { StationService } from 'src/app/core/services/catalogs/station.service';
-import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
-import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -27,113 +15,124 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
   toggleSearch: boolean = true;
-  idRequest: number = 0;
   searchForm: FormGroup = new FormGroup({});
   delegationItems = new DefaultSelect();
   stateItems = new DefaultSelect();
-  goodsTypes = new DefaultSelect();
-  stationItems = new DefaultSelect();
-  authorityItems = new DefaultSelect();
-  delegationId: number = 0;
-  idStation: string | number;
-  stationId: number = 0;
-  idAuthority: string = '';
-  autorityId: string = '';
-  stateId: string = '';
-  delegation: string = '';
-  regionalDelegationUser: IRegionalDelegation;
+  emitterItems = new DefaultSelect();
   authorities: any[] = [];
   goodTypes: any[] = [];
   origins: any[] = [];
   @Output() onSearch = new EventEmitter<any>();
 
-  constructor(
-    private fb: FormBuilder,
-    private activatedRoute: ActivatedRoute,
-    private regionalDelegationService: RegionalDelegationService,
-    private requestService: RequestService,
-    private programmingService: ProgrammingRequestService,
-    private stateService: DelegationStateService,
-    private stationService: StationService,
-    private authorityService: AuthorityService,
-    private goodTypeService: GoodTypeService
-  ) {
+  delegationTestData: any[] = [
+    {
+      id: 1,
+      description: 'BAJA CALIFORNIA',
+    },
+    {
+      id: 2,
+      description: 'CHIAPAS',
+    },
+    {
+      id: 3,
+      description: 'GUANAJUATO',
+    },
+  ];
+
+  stateTestData: any[] = [
+    {
+      id: 1,
+      description: 'BAJA CALIFORNIA',
+    },
+    {
+      id: 2,
+      description: 'CHIAPAS',
+    },
+    {
+      id: 3,
+      description: 'GUANAJUATO',
+    },
+  ];
+
+  emitterTestData: any[] = [
+    {
+      id: 1,
+      description: 'EJEMPLO EMISORA 1',
+    },
+    {
+      id: 2,
+      description: 'EJEMPLO EMISORA 2',
+    },
+    {
+      id: 3,
+      description: 'EJEMPLO EMISORA 3',
+    },
+  ];
+
+  authorityTestData: any[] = [
+    {
+      id: 1,
+      description: 'A',
+    },
+    {
+      id: 1,
+      description: 'B',
+    },
+    {
+      id: 1,
+      description: 'C',
+    },
+  ];
+
+  goodTypeTestData: any[] = [
+    {
+      id: 1,
+      description: 'TIPO 1',
+    },
+    {
+      id: 1,
+      description: 'TIPO 2',
+    },
+    {
+      id: 1,
+      description: 'TIPO 3',
+    },
+  ];
+
+  originTestData: any[] = [
+    {
+      id: 1,
+      description: 'ORIGEN 1',
+    },
+    {
+      id: 1,
+      description: 'ORIGEN 2',
+    },
+    {
+      id: 1,
+      description: 'ORIGEN 3',
+    },
+  ];
+
+  constructor(private fb: FormBuilder) {
     super();
-    this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
   }
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getRequestInfo();
-    this.getRegionalDelegationSelect(new ListParams());
-    this.getGoodType(new ListParams());
-  }
-
-  getRequestInfo() {
-    //this.requestService.getById()
-  }
-
-  getRegionalDelegationSelect(params?: ListParams) {
-    //Delegation regional user login //
-    this.programmingService.getUserInfo().subscribe((data: any) => {
-      this.regionalDelegationService
-        .getById(data.department)
-        .subscribe((delegation: IRegionalDelegation) => {
-          this.delegationId = delegation.id;
-          this.delegation = delegation.description;
-          this.searchForm
-            .get('regionalDelegation')
-            .setValue(delegation.description);
-          this.searchForm.get('regionalDelegationId').setValue(delegation.id);
-          this.regionalDelegationUser = delegation;
-          this.getStates(new ListParams());
-        });
-    });
-
-    if (params.text) {
-      this.regionalDelegationService.search(params).subscribe(data => {
-        this.delegationItems = new DefaultSelect(data.data, data.count);
-      });
-    } else {
-      this.regionalDelegationService.getAll(params).subscribe(data => {
-        this.delegationItems = new DefaultSelect(data.data, data.count);
-      });
-    }
-  }
-
-  regionalDelegationSelect(item: IRegionalDelegation) {
-    this.regionalDelegationUser = item;
-    this.delegationId = item.id;
-    this.searchForm.get('regionalDelegationId').setValue(this.delegationId);
-    this.getStateSelect(new ListParams());
-  }
-
-  getStateSelect(params?: ListParams) {
-    params['filter.regionalDelegation'] = this.regionalDelegationUser.id;
-    this.stateService.getAll(params).subscribe(data => {
-      const filterStates = data.data.filter(_states => {
-        return _states.stateCode;
-      });
-
-      const states = filterStates.map(items => {
-        return items.stateCode;
-      });
-
-      this.stateItems = new DefaultSelect(states, data.count);
-    });
+    this.getSelectItems();
   }
 
   prepareForm() {
     this.searchForm = this.fb.group({
       manageNo: [null],
       regionalDelegation: [null],
-      regionalDelegationId: [null],
       saeNo: [null],
       key: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       state: [null],
       warehouseCode: [null],
       description: [null, [Validators.pattern(STRING_PATTERN)]],
-      station: [null],
+      emitter: [null],
       origin: [null],
       fileNo: [null],
       authority: [null],
@@ -141,65 +140,54 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
       transferee: [null, [Validators.pattern(STRING_PATTERN)]],
       goodType: [null],
     });
+  }
 
-    const info = JSON.parse(localStorage.getItem('Task'));
+  getSelectItems() {
+    // Inicializar items de selects con buscador
+    this.getDelegations({ page: 1, text: '' });
+    this.getStates({ page: 1, text: '' });
+    this.getEmitters({ page: 1, text: '' });
+    // Llamar servicio para llenar el select de Autoridad
+    this.authorities = this.authorityTestData;
+    this.goodTypes = this.goodTypeTestData;
+    this.origins = this.originTestData;
   }
 
   getDelegations(params: ListParams) {
     // Funcion para demostrar funcionamiento de select. Reemplazar por uso de apis
-    /*if (params.text == '') {
+    if (params.text == '') {
       this.delegationItems = new DefaultSelect(this.delegationTestData, 5);
     } else {
       const id = parseInt(params.text);
       const item = [this.delegationTestData.filter((i: any) => i.id == id)];
       this.delegationItems = new DefaultSelect(item[0], 1);
-    } */
+    }
   }
 
   getStates(params: ListParams) {
-    params['filter.regionalDelegation'] = this.regionalDelegationUser.id;
-    this.stateService.getAll(params).subscribe(data => {
-      const filterStates = data.data.filter(_states => {
-        return _states.stateCode;
-      });
-
-      const states = filterStates.map(items => {
-        return items.stateCode;
-      });
-
-      this.stateItems = new DefaultSelect(states, data.count);
-    });
+    // Funcion para demostrar funcionamiento de select. Reemplazar por uso de apis
+    if (params.text == '') {
+      this.stateItems = new DefaultSelect(this.stateTestData, 5);
+    } else {
+      const id = parseInt(params.text);
+      const item = [this.stateTestData.filter((i: any) => i.id == id)];
+      this.stateItems = new DefaultSelect(item[0], 1);
+    }
   }
 
-  stateSelect(state: IState) {
-    this.stateId = state.id;
-    this.getStation(new ListParams());
-  }
-
-  getStation(params: ListParams) {
-    params['filter.keyState'] = this.stateId;
-    this.stationService.getAll(params).subscribe({
-      next: data => {
-        data.data.map(data => {
-          data.nameAndId = `${data.id} - ${data.stationName}`;
-          return data;
-        });
-        this.stationItems = new DefaultSelect(data.data, data.count);
-      },
-      error: () => {
-        this.stationItems = new DefaultSelect();
-      },
-    });
-  }
-
-  stationSelect(item: IStation) {
-    this.idStation = item.id;
-
-    this.stationId = item.id;
-    this.getAuthoritySelect(new ListParams());
+  getEmitters(params: ListParams) {
+    // Funcion para demostrar funcionamiento de select. Reemplazar por uso de apis
+    if (params.text == '') {
+      this.emitterItems = new DefaultSelect(this.emitterTestData, 5);
+    } else {
+      const id = parseInt(params.text);
+      const item = [this.emitterTestData.filter((i: any) => i.id == id)];
+      this.emitterItems = new DefaultSelect(item[0], 1);
+    }
   }
 
   search() {
+    // console.log(this.searchForm.controls);
     let emptyCount: number = 0;
     let controlCount: number = 0;
     for (const c in this.searchForm.controls) {
@@ -220,42 +208,7 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
       return;
     }
     this.onSearch.emit(this.searchForm.value);
-
-    //this.toggleSearch = false;
-  }
-
-  getAuthoritySelect(params?: ListParams) {
-    params['filter.idStation'] = this.idStation;
-    //params['filter.idTransferer'] = `$eq:${this.transferentId}`;
-    //params['sortBy'] = 'authorityName:ASC';
-    //delete params['search'];
-    //delete params.text;
-    this.authorityService.getAll(params).subscribe({
-      next: data => {
-        data.data.map(data => {
-          data.nameAndId = `${data.idAuthority} - ${data.authorityName}`;
-          return data;
-        });
-        this.authorityItems = new DefaultSelect(data.data, data.count);
-      },
-      error: () => {
-        this.authorityItems = new DefaultSelect();
-      },
-    });
-  }
-
-  authoritySelect(item: IAuthority) {
-    this.idAuthority = item.idAuthority;
-    this.autorityId = item.idAuthority;
-  }
-
-  getGoodType(params?: ListParams) {
-    this.goodTypeService.getAll(params).subscribe({
-      next: response => {
-        this.goodsTypes = new DefaultSelect(response.data, response.count);
-      },
-      error: error => {},
-    });
+    this.toggleSearch = false;
   }
 
   reset() {

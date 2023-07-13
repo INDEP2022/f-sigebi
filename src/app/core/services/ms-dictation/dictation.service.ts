@@ -406,8 +406,4 @@ export class DictationService extends HttpService {
       body
     );
   }
-
-  applicationPufRef(data: Object) {
-    return this.post(DictationEndpoints.ApplicationPufRef, data);
-  }
 }

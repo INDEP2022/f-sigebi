@@ -15,8 +15,4 @@ export enum DepositaryEndPoints {
   DepositaryDetrepo = 'detrepo-depositary',
   InfoDepositary = 'info-depositary',
   FactJurRegDestLeg = 'depositary-queries/getFactJurRegDestLegCustom',
-  ApplicationAppointmentNumber = 'application/appointmentNumber',
-  ApplicationVCheca = 'application/vCheca',
-  ApplicationVChecaPost = 'application/vChecaPost',
-  ApplicationVChecaPostReport = 'application/vChecaPostReport',
 }

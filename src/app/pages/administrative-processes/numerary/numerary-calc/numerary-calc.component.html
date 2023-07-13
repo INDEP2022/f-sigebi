@@ -4,11 +4,11 @@
   </div>
   <div body>
     <div class="row mt-3 mb-3">
-      <form class="form-material" [formGroup]="form">
+      <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
-          <div class="col-md-6 d-flex">
-            <form-field label="Id Proceso" [control]="form.get('idProcess')">
-              <!-- <ngx-select
+          <div class="col-md-6">
+            <form-field [control]="form.get('idProcess')">
+              <ngx-select
                 (fetchItems)="getProcesosNum($event)"
                 [data]="procesosNums"
                 [form]="form"
@@ -17,26 +17,8 @@
                 [label]="'Id Proceso'"
                 [control]="'idProcess'"
                 (change)="onProcesosNum($event)">
-              </ngx-select> -->
-              <input
-                formControlName="idProcess"
-                type="number"
-                class="form-control" />
+              </ngx-select>
             </form-field>
-            <div class="pl-3">
-              <button
-                type="button"
-                (click)="searchProcess()"
-                class="btn btn-primary active btn-sm w-auto">
-                Buscar
-                <i class="bx bx-search-alt bx-sm float-icon"></i>
-              </button>
-              <button
-                (click)="clean()"
-                class="btn btn-danger btn-sm active ml-3 w-auto">
-                Limpiar <i class="fas fa-eraser"> </i>
-              </button>
-            </div>
           </div>
           <div class="col-md-6">
             <form-field [control]="form.get('date')" label="Fecha">
@@ -138,7 +120,7 @@
               <i class="fas fa-edit bx-sm float-icon"></i>
             </button>
             <button
-              [disabled]="disableButton || !requestNumeEnc"
+              [disabled]="disableButton"
               type="button"
               class="btn btn-sm btn-primary active m-3"
               (click)="calculInteres()">
@@ -150,33 +132,21 @@
             </button>
             <button
               type="button"
-              [disabled]="isLoadingStatusAccount"
               class="btn btn-sm btn-primary active m-3"
               (click)="printStatusAccount()">
               Estado de Cuenta <i class="bx bx-printer bx-sm float-icon"></i>
-              <ng-container *ngIf="isLoadingStatusAccount">
-                <i class="bx bx-loader bx-spin"></i>
-              </ng-container>
             </button>
             <button
               type="button"
-              [disabled]="isLoadingDetailMovi"
               class="btn btn-sm btn-primary active m-3"
               (click)="printDetailMovi()">
               Detalle Movimiento <i class="bx bx-printer bx-sm float-icon"></i>
-              <ng-container *ngIf="isLoadingDetailMovi">
-                <i class="bx bx-loader bx-spin"></i>
-              </ng-container>
             </button>
             <button
               type="button"
-              [disabled]="isLoadingProrraComission"
               class="btn btn-sm btn-primary active m-3"
               (click)="printProrraComission()">
               Prorrateo Comisión <i class="bx bx-printer bx-sm float-icon"></i>
-              <ng-container *ngIf="isLoadingProrraComission">
-                <i class="bx bx-loader bx-spin"></i>
-              </ng-container>
             </button>
             <button
               [disabled]="!process"

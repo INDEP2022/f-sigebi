@@ -125,9 +125,7 @@ export class HistoryGoodService extends HttpService {
     params?: _Params
   ): Observable<IListResponse<IHistoricGoodsAsegExtdom>> {
     return this.get<IListResponse<IHistoricGoodsAsegExtdom>>(
-      `${HistoryGoodEndpoints.HistoricGoodsAsegExtdom}`,
-      params
+      `${HistoryGoodEndpoints.HistoricGoodsAsegExtdom}?${params}`
     );
-    //?${params}`
   }
 }

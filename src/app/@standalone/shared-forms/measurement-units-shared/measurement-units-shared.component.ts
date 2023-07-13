@@ -49,45 +49,28 @@ export class MeasurementUnitsSharedComponent
     let count = data.length;
     console.log(data);
     this.measurementUnits = new DefaultSelect(data, count); */
-    // if (
-    //   this.measurementUnits.data.length === this.measurementUnits.count &&
-    //   this.measurementUnits.data.length !== 0
-    // ) {
-    //   this.measurementUnits.reset = true;
-    //   return;
-    // }
     this.service.getMedUnits(params).subscribe(
       data => {
         console.log(data);
         this.measurementUnits = new DefaultSelect(data.data, data.count);
       },
       err => {
-        console.log(err);
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
-          error = err.error.message;
+          error = err.message;
         }
-        this.measurementUnits = new DefaultSelect([], 0);
-        // this.onLoadToast('error', 'Error', error);
+        this.onLoadToast('error', 'Error', error);
       },
       () => {}
     );
   }
 
-  changeValue(event: any) {
-    console.log(event);
-  }
-
-  updateAndValidate() {
-    this.form.updateValueAndValidity();
-  }
-
   onUnitsChange(type: any) {
     //this.resetFields([this.subdelegation]);
     this.getUnits(new ListParams());
-    this.updateAndValidate();
+    this.form.updateValueAndValidity();
   }
 
   resetFields(fields: AbstractControl[]) {
@@ -95,6 +78,6 @@ export class MeasurementUnitsSharedComponent
       //field.setValue(null);
       field = null;
     });
-    this.updateAndValidate();
+    this.form.updateValueAndValidity();
   }
 }

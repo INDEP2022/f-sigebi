@@ -35,7 +35,7 @@ export const NUMERAIRE_COLUMNS = {
     sort: false,
   },
   ivavta: {
-    title: 'IVA Venta',
+    title: 'Iva Venta',
     type: 'number',
     sort: false,
   },
@@ -45,7 +45,7 @@ export const NUMERAIRE_COLUMNS = {
     sort: false,
   },
   ivacom: {
-    title: 'IVA Comisión',
+    title: 'Iva Comisión',
     type: 'number',
     sort: false,
   },

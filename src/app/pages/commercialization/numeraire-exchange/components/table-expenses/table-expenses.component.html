@@ -1,9 +1,9 @@
 <div class="d-flex flex-row-reverse mb-4 mt-0">
   <div class="">
     <button
-      class="btn btn-sm btn-info active font-size-14"
+      class="btn btn-sm btn-success active font-size-14"
       (click)="openCreateOrEditExpense()">
-      Agregar Registro <i class="bx bx-plus bx-sm float-icon"></i>
+      Agregar Registro
     </button>
   </div>
 </div>
@@ -30,12 +30,12 @@
       <td>
         <button
           (click)="openCreateOrEditExpense(expense.id)"
-          class="bg-transparent border-0 btn-sm text-warning">
+          class="btn-outline-info border-0 btn-sm">
           <i class="fas fa-pen"></i>
         </button>
         <button
           (click)="removeExpense(expense.register)"
-          class="bg-transparent border-0 btn-sm ml-2 text-danger">
+          class="btn-outline-danger border-0 btn-sm ml-2">
           <i class="fas fa-times"></i>
         </button>
       </td>
@@ -68,7 +68,6 @@
         class="form-control"
         path="spent/api/v1/expense-concept"
         value="id"
-        paramSearch="filter.id"
         formControlName="id"
         [initOption]="initOptionExpenseConcept"
         (valueChange)="selectedExpenseType($event)">
@@ -84,17 +83,17 @@
   <div class="modal-footer">
     <button
       type="button"
-      class="btn btn-sm btn-info active"
+      class="btn btn-default btn-sm btn-primary active font-weight-bold shadow-none"
       (click)="addExpense()">
       Agregar
-      <i class="bx bx-plus bx-sm float-icon"></i>
+      <i class="fas fa-paper-plane"></i>
     </button>
     <button
       type="button"
-      class="btn btn-sm btn-danger active ml-2"
+      class="bg-danger btn btn-sm font-weight-bold shadow-none text-white"
       (click)="closeDialogExpense()">
       Cerrar
-      <!-- <i class="fas fa-times"></i> -->
+      <i class="fas fa-times"></i>
     </button>
   </div>
 </ng-template>

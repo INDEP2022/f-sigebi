@@ -878,7 +878,7 @@ export class ClassifyAssetsTabComponent
     if (this.fractionCode.length < 8) {
       this.message(
         'error',
-        'Código de fracción',
+        'Codigo de fraccion',
         'Todos los bienes deben tener una fracción de 8 números'
       );
       return;
@@ -943,7 +943,7 @@ export class ClassifyAssetsTabComponent
             this.onLoadToast(
               'error',
               'Bien no creado',
-              `Ocurrió un error al guardar el bien ${error.error.message}`
+              `Ocurrio un error al guardar el bien ${error.error.message}`
             );
             console.log(error);
           },
@@ -966,7 +966,7 @@ export class ClassifyAssetsTabComponent
             this.message(
               'success',
               'Guardado',
-              `El registro se actualizó exitosamente`
+              `El registro se actualizo exitosamente`
             );
             this.classiGoodsForm.controls['id'].setValue(data.id);
 
@@ -977,7 +977,7 @@ export class ClassifyAssetsTabComponent
             this.onLoadToast(
               'error',
               'Bien no creado',
-              `Ocurrió un error al guardar el bien ${error.error.message}`
+              `Ocurrio un error al guardar el bien ${error.error.message}`
             );
             console.log(error);
           },
@@ -997,7 +997,7 @@ export class ClassifyAssetsTabComponent
           this.onLoadToast(
             'error',
             'Error al actualizar',
-            'No se pudo actualizar el registro'
+            'No se pudo actualizar el registro de good finder'
           );
         },
       });
@@ -1264,7 +1264,7 @@ export class ClassifyAssetsTabComponent
           this.message(
             'info',
             'clasificación de bien nula',
-            'El bien seleccionado no tiene número de clasificación de bien'
+            'El bien seleccionado no tiene numero de clasificación de bien'
           );
         }
       }

@@ -149,7 +149,6 @@ export class GeneralDataGoodsComponent
     body['description'] = this.generalDataForm.get('descripcion').value;
     body['id'] = Number(this.good.id);
     body['goodId'] = Number(this.good.id);
-    body['goodClassNumber'] = Number(this.good.goodClassNumber);
     this.goodService.update(body).subscribe({
       next: resp => {
         this.viewAct = !this.viewAct;

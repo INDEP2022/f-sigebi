@@ -4,7 +4,6 @@ import { StoreModule } from '@ngrx/store';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
@@ -20,7 +19,6 @@ import { ClasificationFilterComponent } from './components/clasification-filter/
 import { DataFilterComponent } from './components/data-filter/data-filter.component';
 import { GTrackerDocumentsComponent } from './components/g-tracker-documents/g-tracker-documents.component';
 import { GoodsTableComponent } from './components/goods-table/goods-table.component';
-import { GtDocumentsListComponent } from './components/gt-documents-list/gt-documents-list.component';
 import { LocationFilterComponent } from './components/location-filter/location-filter.component';
 import { PhotoGaleryItemComponent } from './components/photo-galery-item/photo-galery-item.component';
 import { PhotoGaleryComponent } from './components/photo-galery/photo-galery.component';
@@ -46,7 +44,6 @@ import { trackedGoodsReducer } from './store/goods-tracker.reducer';
     AlternClasficationListComponent,
     PhotoGaleryComponent,
     PhotoGaleryItemComponent,
-    GtDocumentsListComponent,
   ],
   imports: [
     CommonModule,
@@ -63,7 +60,6 @@ import { trackedGoodsReducer } from './store/goods-tracker.reducer';
     SelectFractionComponent,
     StoreModule.forFeature('trackedGoods', trackedGoodsReducer),
     FormLoaderComponent,
-    TooltipModule,
   ],
 })
 export class GoodsTrackerModule {}

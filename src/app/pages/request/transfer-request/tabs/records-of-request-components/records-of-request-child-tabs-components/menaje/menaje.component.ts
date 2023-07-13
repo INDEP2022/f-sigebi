@@ -121,7 +121,7 @@ export class MenajeComponent extends BasePage implements OnInit {
 
   selectImmovable() {
     if (!this.immovablesSelected) {
-      this.onLoadToast('info', 'Información', `Seleccione un inmueble`);
+      this.onLoadToast('info', 'Información', `Seleccione un inmueble!`);
       return;
     }
     var menages = this.builtMenage(this.immovablesSelected);

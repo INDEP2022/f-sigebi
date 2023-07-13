@@ -28,7 +28,6 @@ import {
   takeUntil,
 } from 'rxjs';
 import { environment } from 'src/environments/environment';
-
 type Attr = { [key: string]: string };
 @Component({
   selector: 'ng-custom-select-loading',
@@ -163,8 +162,7 @@ export class CustomSelectWidthLoading
   }
 
   clear(event: any) {
-    console.log(event);
-    this.input$.next('');
+    // console.log(event);
   }
 
   getItemsObservable(text: string = '') {
@@ -257,16 +255,13 @@ export class CustomSelectWidthLoading
       )
       .subscribe({
         next: (resp: any[]) => {
-          console.log(resp);
+          // console.log(resp);
           this.isLoading = false;
           if (resp) {
             this.items = resp;
             if (resp.length === 1) {
               this.getObject.emit(resp[0]);
             }
-          } else {
-            this.isLoading = false;
-            this.items = [];
           }
         },
         error: err => {

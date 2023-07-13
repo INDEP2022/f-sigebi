@@ -13,8 +13,6 @@ import {
   IPaymendtDepParamsDep,
   IPersonsModDepositary,
   IRequestDepositary,
-  IVChecaPost,
-  IVChecaPostReport,
 } from '../../models/ms-depositary/ms-depositary.interface';
 
 @Injectable({
@@ -184,34 +182,6 @@ export class MsDepositaryService extends HttpService {
   ): Observable<IListResponse<IDepositaryAppointments_custom>> {
     return this.get<IListResponse<IDepositaryAppointments_custom>>(
       DepositaryEndPoints.FactJurRegDestLeg,
-      params
-    );
-  }
-  getAppointmentNumber_PBAplica(
-    id?: number
-  ): Observable<IListResponse<{ no_nombramiento: string }>> {
-    return this.get<IListResponse<{ no_nombramiento: string }>>(
-      `${DepositaryEndPoints.ApplicationAppointmentNumber}/${id}`
-    );
-  }
-  getVCheca(cvePayConcept?: number): Observable<IListResponse<any>> {
-    return this.get<IListResponse<{ v_checa: number }>>(
-      `${DepositaryEndPoints.ApplicationVCheca}/${cvePayConcept}`
-    );
-  }
-  getVChecaPost(
-    params: IVChecaPost
-  ): Observable<IListResponse<{ v_checa: number }>> {
-    return this.post<IListResponse<{ v_checa: number }>>(
-      DepositaryEndPoints.ApplicationVChecaPost,
-      params
-    );
-  }
-  getVChecaPostReport(
-    params: IVChecaPostReport
-  ): Observable<IListResponse<{ v_checa: number }>> {
-    return this.post<IListResponse<{ v_checa: number }>>(
-      DepositaryEndPoints.ApplicationVChecaPostReport,
       params
     );
   }

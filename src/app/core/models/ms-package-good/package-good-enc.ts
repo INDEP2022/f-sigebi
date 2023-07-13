@@ -1,6 +1,5 @@
 export interface IPackageGoodEnc {
   numberPackage: string;
-  delegation: { description: string; id: string };
   description: string;
   typePackage: string;
   amount: string;

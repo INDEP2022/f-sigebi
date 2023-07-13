@@ -5,7 +5,7 @@
   <div body>
     <div class="row pt-4">
       <div class="col-md-10"></div>
-      <div class="col-md-2 mb-3">
+      <div class="col-md-2">
         <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>
     </div>
@@ -15,7 +15,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="dataTableGoodsLocal">
+            [source]="dataTableGoods">
           </ng2-smart-table>
         </div>
         <app-pagination [params]="params" [totalItems]="totalItems">
@@ -23,15 +23,15 @@
       </div>
     </div>
     <div class="row pt-4">
-      <div class="col-md-12 hidden-paginate-default">
+      <div class="col-md-12">
         <div class="overflow-auto" [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
-            [source]="dataTableSpentsLocal">
+            [source]="dataTableSpents">
           </ng2-smart-table>
         </div>
-        <app-pagination [params]="paramsSpent" [totalItems]="totalItemsSpent">
+        <app-pagination [params]="params" [totalItems]="totalItems">
         </app-pagination>
       </div>
     </div>
@@ -39,19 +39,19 @@
       <div class="col-md-4">
         <button
           (click)="onClickArchoNumeraryConc()"
-          class="btn btn-primary btn-sm active w-100">
+          class="btn btn-secondary btn-sm active">
           Archo numerario conc.
         </button>
       </div>
       <div class="col-md-4">
         <button
           (click)="onClickGenerateNumerareis()"
-          class="btn btn-primary btn-sm active w-100">
+          class="btn btn-secondary btn-sm active">
           Genera Numerarios
         </button>
       </div>
-      <div class="col-md-4">
-        <button class="btn btn-danger btn-sm active w-100" (click)="close()">
+      <div class="col-md-3">
+        <button class="btn btn-danger btn-sm active" (click)="close()">
           Salir
         </button>
       </div>

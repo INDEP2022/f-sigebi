@@ -30,8 +30,7 @@
               [virtualScroll]="true"
               [loading]="loading"
               bindLabel="Nombre"
-              bindValue="usrID"
-              notFoundText="No se encontraron elementos">
+              bindValue="usrID">
               <ng-template ng-option-tmp let-item="item" let-index="index">
                 <div [title]="item.Nombre">
                   {{ item.Nombre }}
@@ -67,8 +66,7 @@
               [loading]="loading"
               bindLabel="DscUnidad"
               bindValue="IdUnidad"
-              (change)="getUnit($event)"
-              notFoundText="No se encontraron elementos">
+              (change)="getUnit($event)">
               <ng-template ng-option-tmp let-item="item" let-index="index">
                 <div [title]="item.DscUnidad">
                   {{ item.DscUnidad }}
@@ -113,8 +111,7 @@
               [virtualScroll]="true"
               [loading]="loading"
               bindLabel="arhDescripcion"
-              bindValue="arhID"
-              notFoundText="No se encontraron elementos">
+              bindValue="arhID">
               <ng-template ng-option-tmp let-item="item" let-index="index">
                 <div [title]="item.arhDescripcion">
                   {{ item.arhDescripcion }}
@@ -159,8 +156,7 @@
               [virtualScroll]="true"
               [loading]="loading"
               bindLabel="ddcCodificacion"
-              bindValue="ddcId"
-              notFoundText="No se encontraron elementos">
+              bindValue="ddcId">
               <ng-template ng-option-tmp let-item="item" let-index="index">
                 <div [title]="item.ddcCodificacion">
                   {{ item.ddcCodificacion }}
@@ -207,8 +203,7 @@
               [virtualScroll]="true"
               [loading]="loading"
               bindLabel="Nombre"
-              bindValue="usrID"
-              notFoundText="No se encontraron elementos">
+              bindValue="usrID">
               <ng-template ng-option-tmp let-item="item" let-index="index">
                 <div [title]="item.Nombre">
                   {{ item.Nombre }}

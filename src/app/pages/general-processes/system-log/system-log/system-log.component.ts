@@ -71,9 +71,11 @@ export class SystemLogComponent extends BasePage implements OnInit {
     private seraLogService: SeraLogService
   ) {
     super();
-    (this.settings.columns = TABLE_LOGS_COLUMNS),
-      (this.settings.actions = false),
-      (this.settings.hideSubHeader = false);
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: TABLE_LOGS_COLUMNS,
+    };
     this.registerSettings = { ...this.settings, columns: {} };
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))

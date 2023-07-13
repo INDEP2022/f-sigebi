@@ -4,8 +4,8 @@ import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
+
 import { HttpService } from '../../../common/services/http.service';
-import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDateAccountBalance,
   IFactasStatusCta,
@@ -21,7 +21,6 @@ export class RecordAccountStatementsAccountsService
   private readonly route: string = ENDPOINT_LINKS.BankAccount;
   private readonly route2: string = ENDPOINT_LINKS.AccountMovements;
   private readonly route3: string = ENDPOINT_LINKS.Aplication;
-  private readonly route4: string = ENDPOINT_LINKS.UserChecks;
 
   constructor(
     private recordAccountStatementsServiceRepository: Repository<IRecordAccountStatements>
@@ -38,33 +37,11 @@ export class RecordAccountStatementsAccountsService
     return this.get(route, params);
   }
 
-  getById2(
-    bankCode: string | number,
-    account: string | number,
-    params?: ListParams
-  ): Observable<IRecordAccountStatements> {
-    const regexPattern = `.*${account}.*`;
-    const route = `${this.route}?filter.cveBank=$eq:${bankCode}&filter.accountNumber=$ilike:${regexPattern}`;
-    return this.get(route, params);
-  }
-
-  getChecks(params?: ListParams): Observable<IRecordAccountStatements> {
-    const route = `${this.route4}`;
-    return this.get(route, params);
-  }
-
   getDataAccount(
     accountNumber: string | number,
     params?: ListParams
-  ): Observable<IListResponse<IRecordAccountStatements>> {
+  ): Observable<IRecordAccountStatements> {
     const route = `${this.route2}?filter.numberAccount=$eq:${accountNumber}`;
-    return this.get(route, params);
-  }
-
-  getDataAccountConciliation(
-    params?: ListParams
-  ): Observable<IListResponse<any>> {
-    const route = `${this.route2}`;
     return this.get(route, params);
   }
 
@@ -83,12 +60,9 @@ export class RecordAccountStatementsAccountsService
   create(
     model: IRecordAccountStatements
   ): Observable<IRecordAccountStatements> {
+    console.log('Creado', model);
     const route = `${this.route2}`;
+    console.log('route', route);
     return this.post(route, model);
-  }
-
-  remove(model: any) {
-    const route = `${this.route2}`;
-    return this.delete(route, model);
   }
 }

@@ -198,7 +198,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         this.types = new DefaultSelect(data.data, data.count);
       },
       error: err => {
-        this.types = new DefaultSelect([], 0, true);
+        this.types = new DefaultSelect();
         if (err.status >= 500) {
           this.onLoadToast(
             'error',
@@ -227,7 +227,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         this.subtypes = new DefaultSelect(data.data, data.count);
       },
       error: err => {
-        this.subtypes = new DefaultSelect([], 0, true);
+        this.subtypes = new DefaultSelect();
       },
     });
   }
@@ -252,7 +252,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         this.ssubtypes = new DefaultSelect(data.data, data.count);
       },
       error: err => {
-        this.ssubtypes = new DefaultSelect([], 0, true);
+        this.ssubtypes = new DefaultSelect();
       },
     });
   }
@@ -280,7 +280,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         this.sssubtypes = new DefaultSelect(data.data, data.count);
       },
       error: error => {
-        this.sssubtypes = new DefaultSelect([], 0, true);
+        this.ssubtypes = new DefaultSelect();
       },
     });
   }

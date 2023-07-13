@@ -510,15 +510,4 @@ export class Repository<T> implements IRepository<T> {
     // console.log(fullRoute);
     return this.httpClient.put(`${fullRoute}/${id}/${id1}/${id2}`, formData);
   }
-
-  getAll3(
-    route: string,
-    id: number | string,
-    id1: number | string,
-    id2: number | string,
-    formData: Object
-  ) {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.get(`${fullRoute}/${id}/${id1}/${id2}`, formData);
-  }
 }

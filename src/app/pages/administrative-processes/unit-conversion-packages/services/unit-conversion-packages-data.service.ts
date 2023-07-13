@@ -10,7 +10,7 @@ export class UnitConversionPackagesDataService {
   clearPrevisualizationData = new Subject<boolean>();
   updatePrevisualizationData = new Subject<boolean>();
   dataPrevisualization: IPackageGoodDec[] = [];
-  dataErrors: IPackageGoodError[] = [];
+  dataErrors: IPackageGoodError[];
   selectedPackage: string;
   constructor() {}
 }

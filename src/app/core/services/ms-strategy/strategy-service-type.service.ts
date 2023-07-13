@@ -5,7 +5,6 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IStrategyServiceType } from '../../models/ms-strategy-service-type/strategy-service-type.model';
-import { ITmpStrategyCost } from '../../models/ms-tmp-strategy-cost/tmp-strategy-cost';
 
 @Injectable({
   providedIn: 'root',
@@ -23,19 +22,6 @@ export class StrategyServiceTypeService extends HttpService {
       StrategyEndpoints.StrategyServiceType,
       params
     );
-  }
-
-  getAllTmp(
-    params?: ListParams | string
-  ): Observable<IListResponse<ITmpStrategyCost>> {
-    return this.get<IListResponse<ITmpStrategyCost>>(
-      StrategyEndpoints.TmpStrategyCost,
-      params
-    );
-  }
-
-  createTmp(model: any) {
-    return this.post(StrategyEndpoints.TmpStrategyCost, model);
   }
 
   create(model: IStrategyServiceType) {

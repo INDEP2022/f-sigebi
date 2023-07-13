@@ -33,7 +33,7 @@ export class FederativeSharedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getFederative(new ListParams());
+    console.log(this.Federative.value);
     if (this.Federative.value) {
       this.service.getById(this.Federative.value).subscribe({
         next: resp => {
@@ -42,22 +42,21 @@ export class FederativeSharedComponent extends BasePage implements OnInit {
         },
       });
     }
+    this.getFederative(new ListParams());
   }
 
   getFederative(params: ListParams) {
-    params.text = '';
     this.service.getAll(params).subscribe({
       next: data =>
         (this.federative = new DefaultSelect(data.data, data.count)),
       error: err => {
-        this.federative = new DefaultSelect([], 0, true);
-        // let error = '';
-        // if (err.status === 0) {
-        //   error = 'Revise su conexión de Internet.';
-        // } else {
-        //   error = err.message;
-        // }
-        // this.onLoadToast('error', 'Error', error);
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+        this.onLoadToast('error', 'Error', error);
       },
     });
   }

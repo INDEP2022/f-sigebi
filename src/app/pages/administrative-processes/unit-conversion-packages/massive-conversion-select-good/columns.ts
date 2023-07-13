@@ -1,10 +1,6 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export let goodCheck: any[] = [];
-
-export function resetGoodCheck() {
-  goodCheck = [];
-}
 export const V_GOOD_COLUMNS = {
   turnSelect: {
     title: 'Selección',
@@ -30,54 +26,24 @@ export const V_GOOD_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  goodDescription: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  clasif: {
-    title: 'No. Clasificación',
-    type: 'string',
-    sort: false,
-  },
-  quantity: {
+  amount: {
     title: 'Cantidad',
     type: 'string',
     sort: false,
   },
-  measurementUnit: {
+  unitExtent: {
     title: 'Unidad Medida',
     type: 'string',
     sort: false,
   },
-  fileNumber: {
+  numberProceedings: {
     title: 'Expediente',
     type: 'number',
-    sort: false,
-  },
-  labelNumber: {
-    title: 'Etiqueta',
-    type: 'string',
-    sort: false,
-  },
-  status: {
-    title: 'Estatus',
-    type: 'string',
-    sort: false,
-  },
-  transfereeD: {
-    title: 'Transferente',
-    type: 'string',
-    sort: false,
-  },
-  warehouseNumber: {
-    title: 'No. Almacen',
-    type: 'string',
-    sort: false,
-  },
-  vaultNumber: {
-    title: 'No. Bodega',
-    type: 'string',
     sort: false,
   },
 };

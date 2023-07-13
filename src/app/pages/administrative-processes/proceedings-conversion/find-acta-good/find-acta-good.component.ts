@@ -24,7 +24,6 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   //Data Table
   actas: string;
-  expedienteNumber: any;
   columnFilters: any = [];
   pageParams: IInitFormProceedingsBody = null;
   conversionGood: IActasConversion;
@@ -112,7 +111,7 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
     // console.log(this.providerForm.value.cveActa.replace(/\//g, ''));
     // console.log(nuevaCadena);
     // console.log(this.providerForm.value.cve);
-    this.params.getValue()['filter.numFile'] = this.expedienteNumber;
+    this.params.getValue()['filter.keysProceedings'] = this.actas;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,

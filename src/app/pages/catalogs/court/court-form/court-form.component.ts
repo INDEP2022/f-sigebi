@@ -60,11 +60,7 @@ export class CourtFormComponent extends BasePage implements OnInit {
       ],
       numRegister: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.maxLength(10),
-        ],
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
       numPhone: [
         null,
@@ -82,10 +78,7 @@ export class CourtFormComponent extends BasePage implements OnInit {
         null,
         [Validators.maxLength(3), Validators.pattern(NUMBERS_PATTERN)],
       ],
-      numExterior: [
-        null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10)],
-      ],
+      numExterior: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       delegationMun: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],

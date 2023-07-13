@@ -20,7 +20,6 @@ export class GTrackerDocumentsComponent extends BasePage implements OnInit {
   $params = new BehaviorSubject(new FilterParams());
   totalItems = 0;
   trackedGood: ITrackedGood = null;
-  byExpedient = false;
   constructor(
     private documentsService: DocumentsService,
     private modalRef: BsModalRef,
@@ -36,11 +35,7 @@ export class GTrackerDocumentsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.$params.subscribe(params => {
-      if (this.byExpedient) {
-        this.getDocumentsByExpedient(params);
-      } else {
-        this.getDocuments(params);
-      }
+      this.getDocuments(params);
     });
   }
 
@@ -81,30 +76,7 @@ export class GTrackerDocumentsComponent extends BasePage implements OnInit {
       });
   }
 
-  getDocumentsByExpedient(params?: FilterParams) {
-    this.loading = true;
-    params.addFilter('numberProceedings', this.trackedGood.fileNumber);
-    this.documentsService.getAll(params.getParams()).subscribe({
-      next: response => {
-        this.loading = false;
-        this.documents = response.data.map(document => {
-          return {
-            folio_universal: document.id,
-            hojas: document.sheets,
-            descripcion_documento: document.descriptionDocument,
-          };
-        });
-        this.totalItems = response.count;
-      },
-      error: error => {
-        this.loading = false;
-        this.documents = [];
-        this.totalItems = 0;
-      },
-    });
-  }
-
-  // confirm() {}
+  confirm() {}
 
   close() {
     this.modalRef.hide();

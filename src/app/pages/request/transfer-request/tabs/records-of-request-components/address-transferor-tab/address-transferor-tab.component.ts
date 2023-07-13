@@ -527,7 +527,7 @@ export class AddressTransferorTabComponent
         }
       },
       error => {
-        //this.onLoadToast('error', 'Alias Almacén', `${error.error.message}`);
+        this.onLoadToast('error', 'Alias Almacén', `${error.error.message}`);
         this.message('error', 'Error', error.getMessage());
       }
     );
@@ -572,7 +572,7 @@ export class AddressTransferorTabComponent
         error: error => {
           resolve(false);
           console.log(error);
-          //this.onLoadToast('error', 'Alias Almacén', `${error.error.message}`);
+          this.onLoadToast('error', 'Alias Almacén', `${error.error.message}`);
         },
       });
     });

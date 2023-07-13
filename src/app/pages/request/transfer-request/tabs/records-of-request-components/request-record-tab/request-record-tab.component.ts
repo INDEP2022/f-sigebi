@@ -6,7 +6,6 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { addDays } from 'date-fns';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
@@ -57,8 +56,6 @@ export class RequestRecordTabComponent
   paperDateLabel: any = '';
   rem: string = 'del Remitente';
   maxDate = new Date();
-  minDate = new Date();
-  today = new Date();
   constructor(
     public fb: FormBuilder,
     private affairService: AffairService,
@@ -68,7 +65,6 @@ export class RequestRecordTabComponent
     private transferenteService: TransferenteService
   ) {
     super();
-    this.minDate = addDays(new Date(), 1);
   }
   ngOnChanges(changes: SimpleChanges): void {
     /*this.requestForm.valueChanges.subscribe({
@@ -77,7 +73,6 @@ export class RequestRecordTabComponent
   }
 
   ngOnInit(): void {
-    //const min = addDays(new Date(), 1);
     console.log('Activando tab: request-record-tab');
     this.getOriginInfo(new ListParams());
     this.getTypeExpedient(new ListParams());
@@ -184,11 +179,7 @@ export class RequestRecordTabComponent
       ],
       indicatedTaxpayer: [
         null,
-        [
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(200),
-          Validators.required,
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
       ],
       affair: [null],
       transferEntNotes: [
@@ -203,10 +194,7 @@ export class RequestRecordTabComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
       ],
-      previousInquiry: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
-      ],
+      previousInquiry: [null, [Validators.pattern(STRING_PATTERN)]],
       trialType: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],

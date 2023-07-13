@@ -9,7 +9,7 @@ export class PaymentServicesService extends HttpService {
   private readonly endpoint: string = PaymentServicesEndPoints.Payment;
   constructor() {
     super();
-    this.microservice = PaymentServicesEndPoints.PaymentServices;
+    this.microservice = PaymentServicesEndPoints.Payment;
   }
 
   getById(id: string | number) {

@@ -3,7 +3,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { showToast } from 'src/app/common/helpers/helpers';
 import { ISpentConcept } from 'src/app/core/models/ms-spent/spent.model';
-import { ClassWidthAlert } from 'src/app/core/shared';
 
 interface IExpense {
   id: string;
@@ -16,11 +15,9 @@ interface IExpense {
   templateUrl: './table-expenses.component.html',
   styles: [],
 })
-export class TableExpensesComponent extends ClassWidthAlert {
+export class TableExpensesComponent {
   @ViewChild('dialogExpense') dialogExpenseTemplateRef: TemplateRef<any>;
-  constructor(private dialogService: BsModalService) {
-    super();
-  }
+  constructor(private dialogService: BsModalService) {}
 
   dialogExpenseRef: BsModalRef;
 
@@ -57,12 +54,10 @@ export class TableExpensesComponent extends ClassWidthAlert {
     }
     const { id, description, import: importValue } = this.form.getRawValue();
 
-    let message = 'Gasto agregado correctamente';
     if (this.idExpense) {
       const expense = this.expenses.find(x => x.id == this.idExpense);
       expense.description = description;
       expense.import = importValue;
-      message = 'Gasto actualizado correctamente';
     } else {
       const expense: IExpense = {
         id,
@@ -71,19 +66,10 @@ export class TableExpensesComponent extends ClassWidthAlert {
       };
       this.expenses.push(expense);
     }
-    this.alert('success', '', message);
     this.closeDialogExpense();
   }
 
-  async removeExpense(register: any) {
-    const confirm = await this.alertQuestion(
-      'warning',
-      'Advertencia',
-      '¿Estas seguro de eliminar el gasto?'
-    );
-    if (!confirm.isConfirmed) {
-      return;
-    }
+  removeExpense(register: any) {
     const index = this.expenses.findIndex(x => x.register == register);
     this.expenses.splice(index, 1);
   }
@@ -132,9 +118,5 @@ export class TableExpensesComponent extends ClassWidthAlert {
 
   isEdit(): boolean {
     return Boolean(this.idExpense);
-  }
-
-  clearTable(): void {
-    this.expenses = [];
   }
 }

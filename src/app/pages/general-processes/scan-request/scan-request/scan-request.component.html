@@ -3,7 +3,7 @@
     <div class="d-flex justify-content-between">
       <h5 class="title">Solicitud de Digitalizaci&oacute;n</h5>
 
-      <!-- <div class="d-inline mr-2" *ngIf="isSearch">
+      <div class="d-inline mr-2" *ngIf="isSearch">
         <div class="btn-group">
           <button
             *ngIf="isParams"
@@ -13,7 +13,7 @@
             <i class="fas fa-arrow-circle-left"></i>
           </button>
         </div>
-      </div> -->
+      </div>
     </div>
   </div>
 
@@ -44,17 +44,6 @@
           (click)="clear(); isSearch = false">
           Limpiar <i class="fas fa-eraser"></i>
         </button>
-        <div class="d-inline mr-2" *ngIf="isSearch">
-          <div class="btn-group">
-            <button
-              *ngIf="isParams"
-              class="btn btn-primary active btn-sm"
-              (click)="back()">
-              Regresar
-              <i class="fas fa-arrow-circle-left"></i>
-            </button>
-          </div>
-        </div>
         <!-- <button
           type="button"
           class="btn btn-primary active btn-sm"

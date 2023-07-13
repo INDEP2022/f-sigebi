@@ -84,7 +84,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   typeRecord: string = '';
   transferente: string = '';
   selectedAll: boolean = false;
-  typeRequest: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -114,8 +113,6 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   ngOnInit(): void {
     console.log('Activando tab: assets');
-    console.log('TIPO TRASFERENCIA', this.requestObject.typeOfTransfer);
-    this.typeRequest = this.requestObject.typeOfTransfer;
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -1041,7 +1038,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   assignAllAddress() {
     Swal.fire({
-      title: 'Asignación Masiva de Domicilio',
+      title: 'Asignación Masiva de domicilio',
       html: 'Se asignará a todos los bienes el domicilio que se seleccione',
       icon: 'warning',
       showCancelButton: false,

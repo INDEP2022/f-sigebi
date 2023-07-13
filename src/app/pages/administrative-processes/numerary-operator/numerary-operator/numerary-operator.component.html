@@ -16,17 +16,11 @@
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('to')" label="al día:">
+            <form-field [control]="form.get('to')" label="Al Día:">
               <input
                 [maxDate]="maxDate"
                 formControlName="to"
-                [ngModel]="
-                  form.get('to').value < form.get('from').value
-                    ? form.get('from').value
-                    : form.get('to').value
-                "
                 class="form-control"
-                [min]="form.get('from').value"
                 [minDate]="form.get('from').value"
                 bsDatepicker />
             </form-field>

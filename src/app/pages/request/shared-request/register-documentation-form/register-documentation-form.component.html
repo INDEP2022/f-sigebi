@@ -7,17 +7,17 @@
       <div class="d-flex flex-row-reverse">
         <div class="mx-1">
           <button
-            class="btn btn-danger btn-sm active"
-            (click)="cancelRequest()">
-            Cancelar
+            class="btn btn-primary btn-sm active"
+            [disabled]="registerForm.invalid"
+            (click)="register()">
+            <i class="bx bx-save mr-1 float-icon"></i>Guardar
           </button>
         </div>
         <div class="mx-1">
           <button
-            class="btn btn-primary btn-sm active"
-            [disabled]="registerForm.invalid"
-            (click)="register()">
-            Guardar <i class="fa fa-save mr-1"></i>
+            class="btn btn-danger btn-sm active"
+            (click)="cancelRequest()">
+            <i class="bx bxs-x-circle mr-1 float-icon"></i>Cancelar
           </button>
         </div>
       </div>
@@ -221,7 +221,9 @@
       </p>
     </div>
     <div class="col-md-4">
-      <form-field [control]="registerForm.get('trialType')" label="Tipo Juicio">
+      <form-field
+        [control]="registerForm.get('trialType')"
+        label="&#42;Tipo Juicio">
         <input
           type="text"
           formControlName="trialType"

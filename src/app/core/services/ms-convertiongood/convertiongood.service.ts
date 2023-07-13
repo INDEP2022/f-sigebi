@@ -113,23 +113,4 @@ export class ConvertiongoodService extends HttpService {
   createMinuteConversion(conversionActa: any) {
     return this.put(ConvertiongoodEndpoints.LisActas, conversionActa);
   }
-
-  getConvertionActa(params: ListParams) {
-    const route = `${ConvertiongoodEndpoints.ConvertionActa}`;
-    return this.get(route, params);
-  }
-  creatConvertionActa(params: any) {
-    const route = `${ConvertiongoodEndpoints.ConvertionActa}`;
-    return this.post(route, params);
-  }
-
-  updateConvertionActa(params: any, id: any) {
-    const route = `${ConvertiongoodEndpoints.ConvertionActa}/${id}`;
-    return this.put(route, params);
-  }
-
-  getConvertionActaById(id: any) {
-    const route = `${ConvertiongoodEndpoints.ConvertionActa}/${id}`;
-    return this.get(route);
-  }
 }
