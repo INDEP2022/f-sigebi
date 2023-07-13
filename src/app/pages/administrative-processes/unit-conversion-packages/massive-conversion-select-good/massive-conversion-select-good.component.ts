@@ -206,7 +206,6 @@ export class MassiveConversionSelectGoodComponent
         .subscribe({
           next: response => {
             if (response) {
-
               this.goodClassification.setValue(
                 response.numClasifGoods + '-' + response.description
               );
@@ -811,7 +810,9 @@ export class MassiveConversionSelectGoodComponent
     if (this.delegation.value != null) {
       // const whereDelegation = await this.delegationWhere();
       modelFilter.global.gstSelecDeleg = 'S';
-      modelFilter.global.delegationNumber = [this.delegation.value.split('-')[0]];
+      modelFilter.global.delegationNumber = [
+        this.delegation.value.split('-')[0],
+      ];
     }
 
     if (this.goodClassification.value != null) {
