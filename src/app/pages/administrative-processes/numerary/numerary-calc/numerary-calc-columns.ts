@@ -76,7 +76,7 @@ export const TOTALS_COLUMNS = {
     sort: false,
   },
   days: {
-    title: 'Dias',
+    title: 'Días',
     type: 'number',
     sort: false,
   },
