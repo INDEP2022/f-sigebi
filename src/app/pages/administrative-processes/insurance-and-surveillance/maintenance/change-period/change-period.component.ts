@@ -35,18 +35,38 @@ export class ChangePeriodComponent extends BasePage {
   public procesess = new DefaultSelect(this.processes, 2);
   public procesess1 = new DefaultSelect(this.processes, 2);
 
+  years: number[] = [];
+  currentYear: number = new Date().getFullYear();
+
   // public delegations = new DefaultSelect();
   isLoading = false;
   @Output() eventChangePeriod = new EventEmitter();
-
+  years2: number[] = [];
+  currentYear2: number = new Date().getFullYear();
+  maxDate: number = 2050;
   constructor(private survillanceService: SurvillanceService) {
     super();
   }
 
-  // ngOnInit(): void {
-  //   this.prepareForm();
-  // }
+  ngOnInit(): void {
+    for (let i = 1900; i <= this.currentYear; i++) {
+      this.years.push(i);
+    }
+    // this.prepareForm();
 
+    this.dateDestino();
+  }
+  dateDestino() {
+    for (let i = 2010; i <= this.maxDate; i++) {
+      this.years2.push(i);
+    }
+  }
+
+  yearChange(event: any) {
+    console.log(event);
+    this.maxDate = event;
+    this.dateDestino();
+  }
   // prepareForm() {
   //   this.form = this.fb.group({
   //     year: [null, Validators.required],

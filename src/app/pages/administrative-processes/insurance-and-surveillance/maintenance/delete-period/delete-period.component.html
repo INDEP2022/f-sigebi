@@ -6,13 +6,18 @@
     <div class="row mt-4">
       <div class="col-md-4">
         <form-field [control]="form.get('year')" label="Año">
-          <input
+          <ng-select
+            class="form-control"
+            formControlName="year"
+            [items]="years"
+            [ngModel]="currentYear"></ng-select>
+          <!-- <input
             type="number"
             class="form-control"
             formControlName="year"
             min="1"
             [max-length]="4"
-            pattern="^[0-9]+" />
+            pattern="^[0-9]+" /> -->
         </form-field>
       </div>
       <div class="col-md-4">
