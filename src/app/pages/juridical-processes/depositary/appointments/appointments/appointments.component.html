@@ -74,6 +74,13 @@
                 class="btn btn-info btn-sm active ml-2 mr-2">
                 <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
+              <!-- <button
+                type="button"
+                class="btn btn-primary active btn-sm m-2"
+                (click)="openModalMail()">
+                TEST MAIL
+                <i class="fa fa-eraser ml-1"></i>
+              </button> -->
             </div>
           </div>
           <!-- </div>
@@ -343,29 +350,7 @@
             </div>
           </div>
         </div> -->
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('depositaria')"
-            label="Depositar&iacute;a">
-            <input
-              class="form-control"
-              maxLength="40"
-              formControlName="depositaria"
-              [readonly]="true" />
-          </form-field>
-        </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="form.get('representante')"
-            label="Representante">
-            <input
-              class="form-control"
-              maxLength="120"
-              formControlName="representante"
-              [readonly]="true" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
           <ngx-select
             [data]="personSelect"
             bindLabel="nameDesc"
@@ -388,6 +373,40 @@
             (click)="btnCatalogoDepositarias()">
             <i class="bx bx-list-plus bx-sm float-icon"></i>
           </button>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2 text-center"></div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('depositaria')"
+            label="Depositar&iacute;a">
+            <input
+              class="form-control"
+              maxLength="40"
+              formControlName="depositaria"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-5 p-2">
+          <form-field
+            [control]="form.get('depositariaDesc')"
+            label="Depositar&iacute;a Descripci&oacute;n">
+            <input
+              class="form-control"
+              maxLength="120"
+              formControlName="depositariaDesc"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-5 p-2">
+          <form-field
+            [control]="form.get('representante')"
+            label="Representante">
+            <input
+              class="form-control"
+              maxLength="120"
+              formControlName="representante"
+              [readonly]="true" />
+          </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field

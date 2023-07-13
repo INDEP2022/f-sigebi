@@ -8,7 +8,6 @@
       <div class="ch-content">
         <h5 class="title">CORREO DE RESPONSABLES DE ENVÍO</h5>
         <div class="col-md-5 buttons">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
           <div>
             <button
               class="btn btn-info btn-sm active ml-2 mr-2"
@@ -16,6 +15,7 @@
               Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
           </div>
+          <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
       </div>
       <div class="row pt-4 table-container">
@@ -61,17 +61,16 @@
         </div>
         <div class="col-md-9">
           <form-field [control]="formCorreo.get('subjectEmail')" label="Asunto">
-            <textarea
-              class="form-control"
-              formControlName="subjectEmail"></textarea>
+            <textarea class="form-control" formControlName="subjectEmail">
+            </textarea>
           </form-field>
         </div>
       </div>
       <div class="row mt-4">
-        <div class="col-md-12">
+        <div class="col-md-12 mt-3">
           <form-field
             [control]="formCorreo.get('bodyEmail')"
-            label="Cuerpo del correo">
+            label="Cuerpo del Correo">
             <textarea
               class="form-control"
               formControlName="bodyEmail"></textarea>
