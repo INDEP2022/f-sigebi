@@ -30,11 +30,11 @@
   <div body>
     <form [formGroup]="form" class="form-material">
       <accordion [isAnimated]="true">
-        <accordion-group [isOpen]="true">
+        <accordion-group [isOpen]="false">
           <div accordion-heading class="d-flex justify-content-between">
             <h5>
               <i class="fa fa-filter" aria-hidden="true"></i>
-              Parámetros de búsqueda
+              Filtro de búsqueda
             </h5>
           </div>
 
@@ -151,6 +151,7 @@
                             label="Listado de Bienes">
                             <input
                               type="checkbox"
+                              (change)="isChecked = true"
                               formControlName="exists"
                               id="goods-list" />
                           </form-check>
@@ -161,51 +162,41 @@
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="row">
-                  <div class="col-md-12">
-                    <div class="card">
-                      <div class="card-body"></div>
-                    </div>
-                  </div>
+            <div footer>
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <!-- <button class="btn btn-secondary active mr-2" (click)="openButon()">
+                        Consultar</button><button class="btn btn-primary active">
+                      </button> -->
+                  <button
+                    type="button"
+                    class="btn btn-primary active btn-sm"
+                    (click)="openButon()">
+                    Consultar<i class="bx bx-search-alt bx-sm float-icon"></i>
+                  </button>
+                </div>
+                <div class="m-3">
+                  <button
+                    type="button"
+                    [disabled]="this.form.value.goodNumber == null"
+                    class="btn btn-primary active btn-sm"
+                    (click)="addPhotos()">
+                    Validar Fotograf&iacute;as
+                    <i class="bx bx-search-alt bx-sm float-icon"></i>
+                  </button>
+                </div>
+                <div class="m-3">
+                  <button
+                    type="button"
+                    class="btn btn-danger active btn-sm"
+                    (click)="resetALL()">
+                    Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
 
-          <div footer>
-            <div class="d-flex justify-content-center">
-              <div class="m-3">
-                <!-- <button class="btn btn-secondary active mr-2" (click)="openButon()">
-                  Consultar</button><button class="btn btn-primary active">
-                </button> -->
-                <button
-                  type="button"
-                  class="btn btn-primary active btn-sm"
-                  (click)="isSearch = true; openButon()">
-                  Consultar<i class="bx bx-search-alt bx-sm float-icon"></i>
-                </button>
-              </div>
-              <div class="m-3">
-                <button
-                  type="button"
-                  class="btn btn-primary active btn-sm"
-                  (click)="isSearch = true; openButon()">
-                  Validar Fotograf&iacute;as
-                  <i class="bx bx-search-alt bx-sm float-icon"></i>
-                </button>
-              </div>
-              <div class="m-3">
-                <button
-                  type="button"
-                  class="btn btn-danger active btn-sm"
-                  (click)="resetALL()">
-                  Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
-                </button>
-              </div>
-            </div>
-          </div>
           <hr />
         </accordion-group>
       </accordion>
@@ -224,15 +215,33 @@
       </div> -->
 
       <div class="row">
+        <div class="d-flex justify-content-end">
+          <div class="d-inline mr-2">
+            <app-columns-select [(settings)]="settings"></app-columns-select>
+          </div>
+          <!-- <div class="d-inline mr-2">
+            <button (click)="addPhotos()" type="button" class="btn btn-primary active btn-sm mr-3">
+              Agregar
+              <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div> -->
+        </div>
         <div class="col-md-12">
           <div [class]="loading ? 'table-loading' : ''">
             <div class="table-responsive">
               <ng2-smart-table [settings]="settings" [source]="goodPhoto">
               </ng2-smart-table>
             </div>
-            <app-pagination
-              [params]="params"
-              [totalItems]="totalItems"></app-pagination>
+            <div class="d-flex justify-content-end">
+              <div>
+                <label for="">Existentes: &nbsp;&nbsp;</label> {{ totalItems }}
+              </div>
+            </div>
+            <div class="col-md-12">
+              <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
+            </div>
           </div>
         </div>
       </div>

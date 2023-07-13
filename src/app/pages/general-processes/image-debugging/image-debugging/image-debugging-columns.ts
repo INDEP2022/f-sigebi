@@ -4,7 +4,7 @@ export const IMAGE_DEBUGGING_COLUMNS = {
     title: 'No. Bien',
     sort: false,
   },
-  description: {
+  desGood: {
     title: 'Descripción',
     sort: false,
   },
