@@ -27,7 +27,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { NgSelectElementComponent } from 'src/app/shared/components/select-element-smarttable/ng-select-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import * as XLSX from 'xlsx';
-import { COLUMNS, COLUMNS_EXTRAS } from './columns';
+import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-depositary-payment-charges',
@@ -98,7 +98,7 @@ export class DepositaryPaymentChargesComponent
       actions: false,
       columns: {
         ...COLUMNS,
-        sent_oi: {
+        validSystem: {
           title: 'Válido',
           sort: false,
           type: 'custom',
@@ -108,7 +108,7 @@ export class DepositaryPaymentChargesComponent
             (instance.data = this.options), this.onSelectValid(instance)
           ),
         },
-        ...COLUMNS_EXTRAS,
+        //...COLUMNS_EXTRAS,
       },
     };
   }
@@ -125,7 +125,10 @@ export class DepositaryPaymentChargesComponent
   }
   onSelectValid(instance: NgSelectElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: data => console.log(data.toggle),
+      next: (data: any) => {
+        const index = this.data.findIndex(x => x.payId == data.row.payId);
+        this.data[index].validSystem = data.toggle.value;
+      },
     });
   }
   /**
@@ -198,24 +201,41 @@ export class DepositaryPaymentChargesComponent
     });
   }
 
-  ReadExcel(event: any) {
+  openFile() {
+    this.alertQuestion(
+      'warning',
+      'Asegurese que el excel sea el correcto',
+      ''
+    ).then(result => {
+      this.fileUpload.nativeElement.value = '';
+      if (result.isDismissed) {
+        return;
+      }
+      document.getElementsByName('fileExcel')[0].click();
+    });
+  }
+
+  async ReadExcel(event: any) {
+    let file = event.target.files[0];
+
+    const result = await this.excelIsCorret(event.target.files[0]);
+    this.fileUpload.nativeElement.value = '';
+    if (result == false) {
+      this.alertInfo('error', 'El archivo cargado no es correcto!', '');
+      return;
+    }
     if (this.form.get('cve_bank').valid) {
-      let file = event.target.files[0];
+      //let file = event.target.files[0];
       const formData = new FormData();
       formData.append('file', file);
       const cve_bank = this.form.get('cve_bank').value;
-      //formData.append('pBank', this.form.get('cve_bank').value);
 
       this.massiveDepositaryService
         .pupBurdenDataCSV(formData, cve_bank)
         .subscribe({
           next: resp => {
-            console.log(resp.data);
-            this.onLoadToast(
-              'success',
-              'El archivo ha sido dado de alta',
-              'Correcto'
-            );
+            console.log(resp.ArrayData);
+            this.insertRefPaymentDepositaria(resp.ArrayData);
           },
           error: eror => {
             this.onLoadToast(
@@ -225,35 +245,11 @@ export class DepositaryPaymentChargesComponent
             );
           },
         });
-
-      let fileReader = new FileReader();
-      fileReader.readAsBinaryString(file);
-      this.fileUpload.nativeElement.value = '';
-      fileReader.onload = e => {
-        var workbook = XLSX.read(fileReader.result, { type: 'binary' });
-
-        var buffer = new Buffer(fileReader.result.toString());
-        var string = buffer.toString('base64');
-
-        var sheetNames = workbook.SheetNames;
-
-        this.ExcelData = XLSX.utils.sheet_to_json(
-          workbook.Sheets[sheetNames[0]]
-        );
-
-        console.log('this.ExcelData =>>>>  ', this.ExcelData);
-
-        this.data = [];
-
-        this.data = this.ExcelData.map((data: any) =>
-          this.setDataTableFromExcel(data)
-        );
-      };
     } else {
       this.onLoadToast(
         'warning',
         'Información',
-        'Indicar el banco para cargar datos'
+        'Se requiere la información del banco'
       );
     }
   }
@@ -374,5 +370,130 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
     return (
       fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate()
     );
+  }
+
+  setDataResult(result: any[]) {
+    this.data = result.map((excelData: any) => {
+      return {
+        movementNumber: excelData.NO_MOVIMIENTO,
+        movement: excelData.CODIGO,
+        sucursal: excelData.SUCURSAL,
+        referenceori: excelData.REFERENCIAORI,
+        date: this.milisegundoToDate(excelData.FECHA),
+        reference: excelData.REFERENCIA,
+        amount: excelData.MONTO,
+        cve_bank: excelData.CVE_BANCO,
+        result: excelData.RESULTADO,
+        validSystem: excelData.VAL,
+        noGood: excelData.NO_BIEN,
+      };
+    });
+  }
+
+  /* Metodo para verificar excel
+  =============================== */
+  excelIsCorret(file: any) {
+    return new Promise((resolve, reject) => {
+      let fileReader = new FileReader();
+      fileReader.readAsBinaryString(file);
+      this.fileUpload.nativeElement.value = '';
+      fileReader.onload = e => {
+        var workbook = XLSX.read(fileReader.result, { type: 'binary' });
+
+        var buffer = new Buffer(fileReader.result.toString());
+        var string = buffer.toString('base64');
+
+        var sheetNames = workbook.SheetNames;
+
+        this.ExcelData = XLSX.utils.sheet_to_json(
+          workbook.Sheets[sheetNames[0]]
+        );
+
+        console.log('this.ExcelData =>>>>  ', this.ExcelData);
+        const value = Object.keys(this.ExcelData[0]);
+
+        if (
+          (value[0] != 'MOV' &&
+            value[1] != 'CODIGO' &&
+            value[3] != 'FECHA' &&
+            value[4] != 'SUCURSAL' &&
+            value[5] != 'ABONO',
+          value[6] != 'GARANTIA')
+        ) {
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+
+        /*this.data = [];
+  
+        this.data = this.ExcelData.map((data: any) =>
+          this.setDataTableFromExcel(data)
+        );*/
+      };
+    });
+  }
+  /* Metodo para limpiar el formulario
+  ====================================== */
+  cleanForm() {
+    this.form.reset();
+    this.data = [];
+    this.fileUpload.nativeElement.value = '';
+  }
+
+  /* Metodo de guardado de la data cargada
+  ========================================== */
+
+  insertRefPaymentDepositaria(data: any[]) {
+    let newData: any = [];
+    data.map(async (item: any, _i: number) => {
+      const index = _i + 1;
+      let body: IRefPayDepositary = {
+        movementNumber: item.NO_MOVIMIENTO,
+        reference: item.REFERENCIA != null ? item.REFERENCIA : '0',
+        referenceori: item.REFERENCIAORI != null ? item.REFERENCIAORI : '0',
+        date: item.FECHA,
+        amount: item.MONTO,
+        description: item.DESCPAGO,
+        cve_bank: item.CVE_BANCO,
+        code: item.CODIGO,
+        sucursal: item.SUCURSAL,
+        result: item.RESULTADO,
+        system_val_date: new Date(),
+        noGood: item.NO_BIEN,
+        validSystem: item.VAL,
+        type: item.TIPO,
+        entryorderid: 0,
+        reconciled: null,
+        registrationDate: null,
+        oiDate: null,
+        appliedto: null,
+        client_id: null,
+        registerNumber: 0,
+        sent_oi: null,
+        invoice_oi: null,
+        indicator: 0,
+      };
+      const result = await this.saveRefPayDepositaryData(body);
+      if (result) {
+        newData.push(result);
+
+        if (data.length == index) {
+          this.data = newData;
+          this.onLoadToast('success', 'El archivo ha sido dado de alta', '');
+        }
+      }
+    });
+  }
+  //this.setDataResult(resp.ArrayData)
+  saveRefPayDepositaryData(data: IRefPayDepositary) {
+    return new Promise((resolve, reject) => {
+      console.log(data);
+      this.Service.postRefPayDepositories(data).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+      });
+    });
   }
 }
