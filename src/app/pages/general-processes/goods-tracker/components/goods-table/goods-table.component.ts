@@ -15,6 +15,7 @@ import {
   switchMap,
   take,
   takeUntil,
+  takeWhile,
   tap,
   throwError,
 } from 'rxjs';
@@ -65,6 +66,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       this.goodsList = [];
     }
   }
+  @Input() formCheckbox: FormGroup;
 
   get goods(): ITrackedGood[] {
     return this.goodsList;
@@ -757,12 +759,14 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     return this.socketService.exportGoodsTrackerPhotos().pipe(
       tap((res: any) => {
         if (res.percent == 100 && res.path) {
+          this.alert('success', 'Archivo descargado correctamente', '');
           window.open(
             'http://sigebimsqa.indep.gob.mx/ldocument/api/' + 'v1/' + res.path,
             '_blank'
           );
         }
-      })
+      }),
+      takeWhile((res: any) => res.percent <= 100 && !res.path)
     );
   }
 
@@ -809,8 +813,12 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   getPhotos() {
     this.goodTrackerService.getPhotos(this.filters).subscribe({
       next: res => {
-        console.log(res);
-        this.subscribePhotos().subscribe();
+        this.alert(
+          'info',
+          'Aviso',
+          'La descargar esta en proceso, favor de esperar'
+        );
+        const $sub = this.subscribePhotos().subscribe();
       },
       error: error => {
         console.log(error);

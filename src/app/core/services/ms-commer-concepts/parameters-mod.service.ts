@@ -14,7 +14,10 @@ export class ParametersModService extends HttpService {
   }
 
   getAllFilter(params?: _Params) {
-    return this.get<IListResponse<IParameterMod>>(this.endpoint, params);
+    return this.get<IListResponse<IParameterMod>>(
+      this.endpoint + '/get-all',
+      params
+    );
   }
 
   getByParameter(parameter: string) {
