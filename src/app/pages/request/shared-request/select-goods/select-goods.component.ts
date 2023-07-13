@@ -4,6 +4,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RequestSiabFormComponent } from '../request-siab-form/request-siab-form.component';
@@ -40,7 +41,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private genericService: GenericService
   ) {
     super();
     this.goodSettings.columns = SELECT_GOODS_COLUMNS;
@@ -97,9 +99,16 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
     this.goodService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('bienes', response);
-        this.goodColumns = response.data;
-        this.goodTotalItems = response.count;
+        const filterData = response.data.map(async item => {
+          const destinyName: any = await this.destinyInfo(item.destiny);
+          item.destinyName = destinyName;
+          return item;
+        });
+
+        Promise.all(filterData).then(data => {
+          this.goodColumns = data;
+          this.goodTotalItems = response.count;
+        });
       },
       error: error => {},
     });
@@ -110,6 +119,20 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       c = Object.assign({ addGood: '' }, { viewFile: '' }, c);
     }); */
     //
+  }
+
+  destinyInfo(idDestiny: number) {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.name'] = '$eq:Destino';
+      params.getValue()['filter.keyId'] = idDestiny;
+      this.genericService.getAll(params.getValue()).subscribe({
+        next: response => {
+          resolve(response.data[0].description);
+        },
+        error: error => {},
+      });
+    });
   }
 
   viewFile(file: any) {}
