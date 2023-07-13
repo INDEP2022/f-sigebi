@@ -3,7 +3,8 @@
     <h5 class="title">MOVIMIENTOS CUENTAS GENERALES</h5>
   </div>
 
-  <div body>
+  <div body class="position-relative">
+    <div *ngIf="loading" class="loader loader-container"></div>
     <div [formGroup]="formGood" class="form-material">
       <div class="row">
         <ng-container [formGroup]="formGood">
@@ -109,7 +110,7 @@
       <div>
         <div class="row mt-4">
           <ng-container [formGroup]="formGood1">
-            <div class="col-md-2">
+            <div class="col-md-3 form-material d-flex align-items-center">
               <form-field
                 [control]="formGood1.get('id')"
                 label="Número Bien Numerario">
@@ -119,7 +120,29 @@
                   formControlName="id"
                   min="1"
                   pattern="^[0-9]+" />
+                <!-- <ng-custom-select
+                  formControlName="id"
+                  microService="good"
+                  class="form-control"
+                  path="good"
+                  paramSearch="filter.id"
+                  [readonly]="!this.formGood1.value.contConv"
+                  (valueChanged)="selectGood1($event)"
+                  [moreParams]="{
+                    'filter.goodReferenceNumber': this.formGood.value.id
+                  }">
+                  <ng-template let-item>
+                    <span>{{ item.id }}</span>
+                  </ng-template>
+                </ng-custom-select> -->
               </form-field>
+              <button
+                (click)="openSelectorGood()"
+                type="button"
+                [disabled]="!this.formGood1.value.contConv"
+                class="btn btn-primary btn-sm active ml-3 w-auto">
+                <i class="bx bx-list-plus bx-sm float-icon"></i>
+              </button>
             </div>
             <div class="form-group col-md-4">
               <form-field

@@ -42,7 +42,7 @@ export const SELECT_GOODS_COLUMNS = {
     sort: false,
   },
 
-  destiny: {
+  destinyName: {
     title: 'Destino',
     type: 'string',
     sort: false,

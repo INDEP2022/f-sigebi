@@ -255,7 +255,11 @@ export class RegistrationOfRequestsComponent
       ],
       indicatedTaxpayer: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+          Validators.required,
+        ],
       ],
       affair: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       transferEntNotes: [
@@ -272,7 +276,11 @@ export class RegistrationOfRequestsComponent
       ],
       previousInquiry: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+          Validators.maxLength(100),
+        ],
       ],
       trialType: [
         null,
