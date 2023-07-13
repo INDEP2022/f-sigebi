@@ -161,4 +161,8 @@ export class SurvillanceService extends HttpService {
   getVigPerGood(params: ListParams) {
     return this.get<IListResponse<any>>(this.route.VigilancePerGood, params);
   }
+
+  getVigSupervisionAllExcel(params: _Params) {
+    return this.get<IListResponse<any>>(this.route.VigAllExcel, params);
+  }
 }
