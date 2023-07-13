@@ -205,7 +205,7 @@ export class MovementsConsultsComponent extends BasePage implements OnInit {
           if (resp.count > 0) {
             res(true);
           } else {
-            res(true);
+            res(false);
           }
         },
         error: err => {
