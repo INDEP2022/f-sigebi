@@ -1,0 +1,32 @@
+export interface IAccountDetailInd {
+  bankkey: string;
+  coinkey: string;
+  deposit: string;
+  interestcalculationdate: string;
+  transferaccountnumber: string;
+  expedientnumber: string;
+  goodnumber: string;
+  depositnumber: string;
+  accountnumber: string;
+  movementnumber: string;
+  accountkey: string;
+  preliminaryinvestigation: string;
+  criminalcause: string;
+  movementdate: string;
+  amountwithoutinterest: string;
+  creditedinterest: string;
+  expensesadmon: string;
+  associatedexpenses: string;
+  returnamount: string;
+  accountnumberpayreturn?: any;
+  devolutionnumber: string;
+  keyratecalculationinterest?: any;
+  description: string;
+  status: string;
+  scheduleddatebyconfiscationreturn: Date;
+  checkfolio: string;
+  checktype: string;
+  checkpayee: string;
+  expeditioncheckdate: string;
+  checkcashingdate: string;
+}

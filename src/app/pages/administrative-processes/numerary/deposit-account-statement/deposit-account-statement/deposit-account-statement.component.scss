@@ -2,4 +2,9 @@
   .form-control[readonly] {
     background-color: white !important;
   }
+  &.fixTextarea {
+    .form-bar {
+      top: -4px;
+    }
+  }
 }
