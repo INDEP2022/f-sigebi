@@ -37,8 +37,14 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
   public procesess = new DefaultSelect(this.processes, 2);
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   delegationDefault: any = null;
+  years: number[] = [];
+  currentYear: number = new Date().getFullYear();
+
   ngOnInit(): void {
     this.prepareForm();
+    for (let i = 1900; i <= this.currentYear; i++) {
+      this.years.push(i);
+    }
   }
 
   getFormChangeGoodsRandom() {

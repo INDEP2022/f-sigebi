@@ -64,7 +64,7 @@ export class RegisterServiceComponent extends BasePage implements OnInit {
         console.log(err);
         this.alert(
           'error',
-          'Regitro de servicio',
+          'Regitro de Servicio',
           'No se pudo guardar el servicio'
         );
         this.loading = false;
@@ -74,7 +74,7 @@ export class RegisterServiceComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = 'Guardado';
-    this.alert('success', 'Registro de servicio', `${message} correctamente`);
+    this.alert('success', 'Registro de Servicio', `${message} correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
