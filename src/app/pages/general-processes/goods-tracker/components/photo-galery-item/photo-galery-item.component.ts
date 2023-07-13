@@ -134,7 +134,7 @@ export class PhotoGaleryItemComponent extends BasePage implements OnInit {
     this.jasperServ
       .fetchReport('FICHATECNICA', {
         P_NO_BIEN: lnu_good,
-        P_IDENTIFICADOR: lnu_identificador,
+        P_IDENTIFICADOR: lnu_identificador ?? '',
       })
       .pipe(
         tap(response => {
