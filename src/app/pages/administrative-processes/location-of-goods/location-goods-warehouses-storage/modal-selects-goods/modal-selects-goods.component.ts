@@ -15,6 +15,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { LocationGoodsWarehousesStorageComponent } from '../location-goods-warehouses-storage/location-goods-warehouses-storage.component';
@@ -29,16 +30,21 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   goods: IGood[] = [];
   goodsNotChange: number[] = [];
   selectedRow: IGood;
+  fileNumber: number | string;
   selectedGooods: IGood[] = [];
   $trackedGoods = this.store.select(getTrackedGoods);
   formVau: FormGroup;
+  activeGood: boolean = false;
   formAlm: FormGroup;
+  di_desc_est: any;
+  dataTableGood_: IGood[];
   @Input() allGoods = new LocalDataSource();
   @Input() totalItems: number;
   @Input() validarGood: Function;
   @Input() formVault: LocationGoodsWarehousesStorageComponent;
   @Input() formWarehouse: LocationGoodsWarehousesStorageComponent;
   @Output() allGoodsUpdated = new EventEmitter();
+
   //Data Table
 
   get radio() {
@@ -58,7 +64,8 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     private router: Router,
     private store: Store,
     private changeDetectorRef: ChangeDetectorRef,
-    private serviceGood: GoodService
+    private serviceGood: GoodService,
+    private GoodprocessService_: GoodprocessService
   ) {
     super();
     this.settings = {
@@ -103,7 +110,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
         },
       },
       rowClassFunction: (row: any) => {
-        if (row.data.di_disponible == 'S') {
+        if (row.data.di_dispo == 'S') {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -116,7 +123,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    // this.allGoods.refresh();
+
     // console.log(this.totalItems);
     this.allGoodsUpdated.next(this.allGoods);
     this.buildForm();
@@ -229,6 +236,8 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   }
   selectData(event: { data: IGood; selected: any }) {
     this.selectedRow = event.data;
+    this.activeGood = true;
+    this.fileNumber = event.data.fileNumber;
     this.selectedGooods = event.selected;
     console.log(this.selectedRow);
     console.log(this.selectedGooods);
@@ -257,6 +266,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
             // this.add();
             console.log(res);
             this.allGoodsUpdated.emit(this.allGoods);
+            this.onLoadGoodList();
           },
           err => {
             this.alert(
@@ -296,6 +306,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
             // this.add();
             console.log(res);
             this.allGoodsUpdated.emit(this.allGoods);
+            this.onLoadGoodList();
           },
           err => {
             this.alert(
@@ -310,6 +321,59 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     } catch (err) {
       console.error(err);
     }
+  }
+  onLoadGoodList() {
+    this.loading = true;
+    this.params.getValue().page = 1;
+    this.params.getValue().limit = 10;
+    this.serviceGood
+      .getByExpedient(this.fileNumber, this.params.getValue())
+      .subscribe({
+        next: data => {
+          this.goods = data.data;
+          this.loading = false;
+          console.log('Bienes', this.goods);
+          let result = data.data.map(async (item: any) => {
+            let obj = {
+              vcScreen: 'FACTADBUBICABIEN',
+              pNumberGood: item.id,
+            };
+            const di_dispo = await this.getStatusScreen(obj);
+            console.log(di_dispo);
+          });
+
+          Promise.all(result).then(item => {
+            this.dataTableGood_ = this.goods;
+            this.allGoods.load(this.dataTableGood_);
+            this.allGoods.refresh();
+            this.totalItems = data.count;
+            console.log(this.goods);
+          });
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
+  }
+  async getStatusScreen(body: any) {
+    return new Promise((resolve, reject) => {
+      this.GoodprocessService_.getScreenGood(body).subscribe({
+        next: async (state: any) => {
+          if (state.data) {
+            console.log('di_dispo', state);
+            resolve('S');
+            this.di_desc_est = 'S';
+          } else {
+            console.log('di_dispo', state);
+            resolve('N');
+            this.di_desc_est = 'N';
+          }
+        },
+        error: () => {
+          resolve('N');
+        },
+      });
+    });
   }
 
   goToGoodTracker() {
