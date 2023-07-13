@@ -76,6 +76,11 @@ export class NumeraryMassiveConciliationComponent
 
   private prepareForm(): void {
     this.form = this.fb.group({
+      goodClasification: [null, Validators.nullValidator],
+      bank: [null, Validators.nullValidator],
+      bankAccount: [null, Validators.nullValidator],
+      current: [null, Validators.nullValidator],
+      deposit: [null, Validators.nullValidator],
       dateTesofe: [null, Validators.nullValidator],
       dateOf: [null, Validators.nullValidator],
       dateAt: [null, Validators.nullValidator],
@@ -124,6 +129,7 @@ export class NumeraryMassiveConciliationComponent
                 break;
             }
             if (filter.search !== '') {
+              console.log(filter.search);
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -155,6 +161,7 @@ export class NumeraryMassiveConciliationComponent
             ...item,
           }));
           this.data = new LocalDataSource(transformedData);
+          console.log(this.data);
           this.totalItems = response.count;
           this.loading = false;
         },
@@ -267,6 +274,7 @@ export class NumeraryMassiveConciliationComponent
 
   // Establece los valores en los inputs de datos de la cuenta seleccionada
   onBankAccountSelectChange(value: any) {
+    this.form.get('current').reset();
     this.form2.get('current').reset();
     const accountNumber = value.accountNumber;
     this.accountDate = value.accountNumber;
@@ -283,6 +291,7 @@ export class NumeraryMassiveConciliationComponent
   // Permite buscar la descripcion de la moneda
   searchCurrent(currency: string) {
     if (currency === `'M'`) {
+      this.form.get('current').setValue(currency);
       this.form2.get('current').setValue(currency);
     } else {
       let currenct = currency.replace(/'/g, '');
@@ -294,6 +303,7 @@ export class NumeraryMassiveConciliationComponent
           if (currentAccount === 'M' || currentAccount === 'MM') {
             currentAccount = 'PESO MEXICANO';
           }
+          this.form.get('current').setValue(currentAccount);
           this.form2.get('current').setValue(currentAccount);
           this.loading = false;
         },
