@@ -214,8 +214,25 @@ $checkbox_image: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' v
   border-color: #9d2449;
 }
 
+<<<<<<< HEAD
 .common-check {
+=======
+input[type='checkbox'] {
+  background-color: #fff;
+}
+
+input[type='checkbox'],
+input[type='checkbox']:checked {
+  appearance: none;
+  -webkit-appearance: none;
+  -o-appearance: none;
+  border: 1px solid #ccc;
+}
+
+input[type='checkbox'] {
+>>>>>>> 53f8457b23297af4c094d5e9ce9d3f84d08a27fb
   border-radius: 0 !important;
+
   &:checked {
     background-image: url($checkbox_image);
     background-color: #9d2449;
@@ -223,6 +240,17 @@ $checkbox_image: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' v
   }
 }
 
+<<<<<<< HEAD
+=======
+input[type='checkbox'] {
+  border-radius: 0 !important;
+
+  &:focus {
+    outline: none !important;
+  }
+}
+
+>>>>>>> 53f8457b23297af4c094d5e9ce9d3f84d08a27fb
 .ng2-smart-actions input[type='checkbox'] {
   @extend %table-check;
 }
@@ -705,6 +733,7 @@ custom-view-component {
 .swal2-html-container {
   white-space: break-spaces;
 }
+
 .float-icon-md2 {
   top: 9px;
 }

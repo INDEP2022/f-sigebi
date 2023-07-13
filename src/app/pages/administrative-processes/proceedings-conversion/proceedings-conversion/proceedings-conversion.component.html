@@ -88,7 +88,7 @@
                                   <div class="col-md-5">
                                     <div>
                                       <label for=""
-                                        >No. Exp. del Trasnferente:
+                                        >No. Exp. del Transferente:
                                       </label>
                                       {{ trasnfer || '' }}
                                     </div>
@@ -419,6 +419,7 @@
                         <div class="row mt-12 d-flex justify-content-center">
                           <div class="col-md-12 justify-content-center">
                             <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
+<<<<<<< HEAD
                             <ng-scrollbar
                               track="horizontal"
                               [autoHeightDisabled]="false">
@@ -434,6 +435,28 @@
                                 </ng2-smart-table>
                                 <app-pagination
                                   [totalItems]="totalItems"></app-pagination>
+=======
+
+                            <div class="row">
+                              <form-loader *ngIf="loading"></form-loader>
+                              <div class="col-md-12">
+                                <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+                                <ng-scrollbar
+                                  [track]="'all'"
+                                  [ngStyle]="{
+                                    height: loading ? '0px' : '400px'
+                                  }">
+                                  <ng2-smart-table
+                                    [attr.class]="
+                                      'table-bordered table-responsive'
+                                    "
+                                    [settings]="settings"
+                                    [source]="dataTableGood_"
+                                    (userRowSelect)="selectData($event)">
+                                  </ng2-smart-table>
+                                </ng-scrollbar>
+                                <!-- </div> -->
+>>>>>>> 53f8457b23297af4c094d5e9ce9d3f84d08a27fb
                               </div>
                             </ng-scrollbar>
                           </div>

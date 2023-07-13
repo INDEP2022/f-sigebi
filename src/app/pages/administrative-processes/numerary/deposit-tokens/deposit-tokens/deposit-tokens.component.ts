@@ -305,6 +305,23 @@ export class DepositTokensComponent
     this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       this.getAccount();
     });
+<<<<<<< HEAD
+=======
+
+    this.paramsList2
+      .pipe(
+        skip(1),
+        tap(() => {
+          // aquí colocas la función que deseas ejecutar
+          // this.getPupPreviewDatosCsv2(this.cargarDataStorage(this.excelFile), 'no');
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {
+        this.readExcel(this.excelFile, false);
+        // this.getPupPreviewDatosCsv2(this.cargarDataStorage());
+      });
+>>>>>>> 53f8457b23297af4c094d5e9ce9d3f84d08a27fb
   }
   ngOnChanges() {}
   getAccount() {
@@ -515,6 +532,7 @@ export class DepositTokensComponent
 
   async desconciliarFunc() {
     // this.loading = true;
+<<<<<<< HEAD
     if (this.dataMovements) {
       if (this.dataMovements.goodnumber == null) {
         this.alert(
@@ -544,6 +562,39 @@ export class DepositTokensComponent
             this.loading = false;
           },
         });
+=======
+    if (!this.validExcel)
+      if (this.dataMovements) {
+        if (this.dataMovements.goodnumber == null) {
+          this.alert(
+            'warning',
+            'No existe un bien asociado a este depósito.',
+            ''
+          );
+        } else {
+          let obj: any = {
+            numberMotion: this.dataMovements.motionnumber,
+            numberAccount: this.dataMovements.accountnumber,
+            numberGood: null,
+            numberProceedings: null,
+          };
+          this.accountMovementService.update(obj).subscribe({
+            next: async (response: any) => {
+              this.getAccount();
+              this.alert(
+                'success',
+                `El bien ${this.dataMovements.goodnumber} ha sido desconciliado`,
+                ''
+              );
+              this.form.get('descriptionGood').setValue('');
+            },
+            error: err => {
+              this.alert('error', `Error al desconciliar`, err.error.message);
+              // this.loading = false;
+            },
+          });
+        }
+>>>>>>> 53f8457b23297af4c094d5e9ce9d3f84d08a27fb
       }
     }
   }
@@ -567,13 +618,22 @@ export class DepositTokensComponent
   onFileChange(event: Event) {
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
+<<<<<<< HEAD
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
     fileReader.onload = () => this.readExcel(fileReader.result);
+=======
+    // const fileReader = new FileReader();
+    // fileReader.readAsBinaryString(files[0]);
+    // fileReader.onload = () => this.readExcel(fileReader.result);
+    // fileReader.onload = () =>
+    this.readExcel(files[0], true);
+>>>>>>> 53f8457b23297af4c094d5e9ce9d3f84d08a27fb
   }
 
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
+<<<<<<< HEAD
       const excelImport = this.excelService.getData<any>(binaryExcel);
       console.log('excelImport', excelImport);
       let arr: any = [];
@@ -613,12 +673,141 @@ export class DepositTokensComponent
           this.clearInput();
         }
       });
+=======
+      this.excelFile = binaryExcel;
+      const formData = new FormData();
+      formData.append('file', binaryExcel);
+      formData.append('user', this.token.decodeToken().preferred_username);
+      formData.append('paginated', filter);
+      const excelImport = await this.getPupPreviewDatosCsv2(formData, filter);
+      if (filter == 'si') {
+        // this.alert(
+        //   'info',
+        //   'Se ha cargado el archivo',
+        //   'Espere mientras cargan los datos'
+        // );
+      }
+      this.clearInput();
+>>>>>>> 53f8457b23297af4c094d5e9ce9d3f84d08a27fb
     } catch (error) {
       this.alert('warning', 'Ocurrio un error al leer el archivo', '');
       this.clearInput();
     }
   }
 
+<<<<<<< HEAD
+=======
+  async cargarDataStorage(data64: any) {
+    if (this.excelFile == null) {
+      // Decodifica el archivo Base64 a un array de bytes
+      const byteCharacters = atob(data64);
+
+      // Crea un array de bytes utilizando el tamaño del archivo decodificado
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+
+      // Crea un Uint8Array a partir del array de bytes
+      const byteArray = new Uint8Array(byteNumbers);
+
+      const blob = new Blob([byteArray], { type: 'text/csv' });
+      // this.readExcel(blob);
+      this.excelFile = blob;
+    }
+    // return '';
+  }
+
+  async getPupPreviewDatosCsv2(formData: any, filter: any) {
+    console.log('formData', formData);
+    this.loading = true;
+    let params: any = {
+      ...this.paramsList2.getValue(),
+      ...this.columnFilters,
+    };
+    console.log('params2', params);
+    this.msMassiveAccountmvmntlineService
+      .getPupPreviewDatosCsv2(formData, params)
+      .subscribe({
+        next: (response: any) => {
+          // console.log("response", response)
+          const data = response;
+          this.validExcel = true;
+
+          let result = data.result.map(async (item: any) => {
+            // let obj1 = {
+            //   TI_BANCO: item.bank,
+            //   DI_CUENTA: item.accountkey,
+            //   NO_CUENTA: item.accountnumber,
+            //   DI_MONEDA: item.currency,
+            //   FEC_MOVIMIENTO: item.motiondate,
+            //   FOLIO_FICHA: item.isfiledeposit,
+            //   FEC_CALCULO_INTERESES: item.calculationinterestsdate,
+            //   DEPOSITO: item.deposit,
+            //   no_bien: item.goodnumber,
+            //   di_expediente2: item.proceedingsnumber
+            // }
+
+            item['accountnumber'] = item.NO_CUENTA ? item.NO_CUENTA : null;
+            const detailsBank: any = await this.returnDataBank(
+              item.accountnumber
+            );
+            if (detailsBank.cveCurrency == "'M'") {
+              item['currency'] = 'M';
+            } else {
+              item['currency'] = detailsBank ? detailsBank.cveCurrency : null;
+            }
+
+            item['bank'] = detailsBank ? detailsBank.cveBank : null;
+            item['cveAccount'] = detailsBank ? detailsBank.cveAccount : null;
+
+            item['bancoDetails'] = detailsBank ? detailsBank : null;
+          });
+
+          Promise.all(result).then((resp: any) => {
+            this.cleanDataBank();
+            this.showPagination = true;
+            this.totalItems2 = response.count;
+            this.cargarDataStorage(response.base64.base64File);
+            // this.excelFile =
+
+            let str = response.msg;
+            console.log('substr1', str);
+            let substr = str[0].slice(0, Number(str.length) - 7);
+            console.log('substr', substr);
+            if (filter == true) {
+              this.alert('success', substr, '');
+            }
+            this.data2.load(response.result);
+            this.data2.refresh();
+            console.log('AQUI', response);
+            this.loading = false;
+          });
+        },
+        error: err => {
+          // this.data2.load([]);
+          // this.data2.refresh();
+          this.totalItems2 = 0;
+          this.validExcel = false;
+          this.loading = false;
+          if (err.error.message == 'No es el excel correcto') {
+            this.alert(
+              'error',
+              'El archivo no cumple con las condiciones de inserción',
+              ''
+            );
+          } else {
+            this.alert(
+              'error',
+              'Ha ocurrido un error al intentar cargar el archivo',
+              err.error.message
+            );
+          }
+        },
+      });
+  }
+
+>>>>>>> 53f8457b23297af4c094d5e9ce9d3f84d08a27fb
   async exportar() {
     const filename: string = 'Deposit Tokens';
     const jsonToCsv: any = await this.returnJsonToCsv();
@@ -667,12 +856,12 @@ export class DepositTokensComponent
     this.dynamicCatalogsService.getTvalTable5(params).subscribe({
       next: response => {
         this.form.get('description').setValue(response.data[0].otvalor01);
-        this.loading = false;
+        // this.loading = false;
       },
       error: err => {
         console.log(err);
         this.form.get('description').setValue('');
-        this.loading = false;
+        // this.loading = false;
       },
     });
   }

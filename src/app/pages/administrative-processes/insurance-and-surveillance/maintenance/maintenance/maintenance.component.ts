@@ -98,6 +98,26 @@ export class MaintenanceComponent implements OnInit {
       },
       error: error => {
         console.error({ error });
+<<<<<<< HEAD
+=======
+
+        if (
+          error.error.message ==
+          'duplicate key value violates unique constraint "pk_vig_supervision_mae"'
+        ) {
+          this.alert(
+            'error',
+            'Ha ocurrido un error',
+            'Ya existe el período indicado en la el período destino'
+          );
+        } else {
+          this.alert(
+            'error',
+            'Ha ocurrido un error',
+            'Error al querer cambiar periodos.'
+          );
+        }
+>>>>>>> 53f8457b23297af4c094d5e9ce9d3f84d08a27fb
       },
     });
   }
@@ -244,6 +264,7 @@ export class MaintenanceComponent implements OnInit {
       pIdFor,
       pIdCopy,
       pIdBody,
+      pUser,
     } = this.getParams();
 
     return {
@@ -262,6 +283,7 @@ export class MaintenanceComponent implements OnInit {
       pIdFor,
       pIdCopy,
       pIdBody,
+      pUser,
     };
   }
 
@@ -354,6 +376,7 @@ export class MaintenanceComponent implements OnInit {
 
       pAddress: changeGoodsRandom.description,
       pTransferee: changeGoodsRandom.transference,
+      pUser: this.token.decodeToken().preferred_username,
     };
   }
 }

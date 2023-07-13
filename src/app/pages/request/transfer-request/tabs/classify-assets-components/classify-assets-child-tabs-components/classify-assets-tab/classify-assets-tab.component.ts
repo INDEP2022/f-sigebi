@@ -1244,7 +1244,9 @@ export class ClassifyAssetsTabComponent
     // el el codigo o el codigo de fracion es = 8 verifica la norma
     if (fraction.fractionCode.length === 8) {
       if (fraction.normId != null) {
-        this.classiGoodsForm.controls['destiny'].setValue(fraction.normId);
+        this.classiGoodsForm.controls['destiny'].setValue(
+          fraction.norms.destination
+        );
       } else {
         this.classiGoodsForm.controls['destiny'].setValue(null);
       }

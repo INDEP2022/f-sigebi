@@ -62,7 +62,6 @@ import { ProceedingsConversionModalComponent } from '../proceedings-conversion-m
 import { ActasConvertionCommunicationService } from '../services/proceedings-conversionn';
 import {
   COPY,
-  GOODSEXPEDIENT_COLUMNS_GOODS,
   IGoodStatus,
   registrosMovidos,
 } from './proceedings-conversion-columns';
@@ -302,11 +301,63 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.procs = new LocalDataSource();
     this.validPermisos = !this.validPermisos;
     this.settings = {
+      pager: {
+        display: false,
+      },
       ...this.settings,
       hideSubHeader: false,
       actions: false,
+<<<<<<< HEAD
       selectMode: 'multi',
       columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
+=======
+      // selectMode: 'multi',
+      selectedRowIndex: -1,
+      mode: 'external',
+      // columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
+      columns: {
+        name: {
+          filter: false,
+          sort: false,
+          title: 'Selección',
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+            this.isGoodSelectedValid(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onGoodSelectValid(instance),
+        },
+        goodId: {
+          title: 'No. Bien',
+          type: 'number',
+          sort: false,
+        },
+        description: {
+          title: 'Descripción',
+          type: 'string',
+          sort: false,
+        },
+        quantity: {
+          title: 'Cantidad',
+          type: 'string',
+          sort: false,
+        },
+        acta_: {
+          title: 'Acta',
+          type: 'string',
+          sort: false,
+          // valuePrepareFunction: (cell: any, row: any) => {
+          //   return row.acta_;
+          // },
+        },
+        status: {
+          title: 'Estatus',
+          type: 'string',
+          sort: false,
+        },
+      },
+>>>>>>> 53f8457b23297af4c094d5e9ce9d3f84d08a27fb
       rowClassFunction: (row: any) => {
         if (row.data.di_disponible == 'S') {
           return 'bg-success text-white';

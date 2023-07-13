@@ -1559,6 +1559,14 @@ export class DetailAssetsTabComponentComponent
       this.getLigieUnit(new ListParams(), ligieUnit);
     }
 
+    this.detailAssets.controls['destiny'].valueChanges.subscribe(
+      (destiny: any) => {
+        if (destiny != null || destiny != undefined) {
+          this.getDestiny(destiny);
+        }
+      }
+    );
+
     this.detailAssets.controls['ligieUnit'].valueChanges.subscribe(
       (data: any) => {
         if (data) {

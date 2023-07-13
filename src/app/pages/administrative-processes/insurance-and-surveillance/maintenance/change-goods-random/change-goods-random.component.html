@@ -1,8 +1,5 @@
 <div body>
-  <form
-    [formGroup]="form"
-    (ngSubmit)="onClickChangeGoodRandom()"
-    class="form-material">
+  <form [formGroup]="form" class="form-material">
     <div class="row mt-4">
       <div class="col-md-4">
         <form-field [control]="form.get('year')" label="Año">
@@ -11,7 +8,11 @@
             class="form-control"
             formControlName="year"
             min="1"
+<<<<<<< HEAD
             pattern="^[0-9]+" />
+=======
+            [max-length]="4" />
+>>>>>>> 53f8457b23297af4c094d5e9ce9d3f84d08a27fb
         </form-field>
       </div>
       <div class="col-md-4">
@@ -21,24 +22,32 @@
             class="form-control"
             formControlName="period"
             min="1"
+<<<<<<< HEAD
             pattern="^[0-9]+" />
+=======
+            [max-length]="6" />
+>>>>>>> 53f8457b23297af4c094d5e9ce9d3f84d08a27fb
         </form-field>
       </div>
       <div class="col-md-4">
-        <form-field
-          [control]="form.get('delegation')"
-          label="Delegación"
-          class="form-group">
-          <ng-custom-select
-            class="form-control"
-            path="catalog/api/v1/delegation"
-            formControlName="delegation"
-            prefixSearch="$ilike"
-            paramSearch="filter.description">
+        <form-field [control]="form.get('delegation')">
+          <ngx-select
+            [form]="form"
+            [searchOnInit]="true"
+            [data]="delegations"
+            (change)="changeDelegations($event)"
+            bindLabel="numberAndDescrip"
+            label="Delegación"
+            value="id"
+            [showTooltip]="true"
+            (fetchItems)="getDelegation($event)"
+            control="delegation"></ngx-select>
+          <!-- <ng-custom-select class="form-control" path="catalog/api/v1/delegation" formControlName="delegation"
+            prefixSearch="$ilike" paramSearch="filter.description">
             <ng-template let-item>
               {{ item.description }}
             </ng-template>
-          </ng-custom-select>
+          </ng-custom-select> -->
         </form-field>
       </div>
       <div class="col-md-4 mt-3">
@@ -55,6 +64,7 @@
       <div class="col-md-4 mt-3">
         <form-field [control]="form.get('random')" label="Aleatorio">
           <input
+            readonly
             type="number"
             class="form-control"
             formControlName="random"
@@ -62,20 +72,30 @@
             pattern="^[0-9]+" />
         </form-field>
       </div>
-      <div class="col-md-4">
-        <app-goods-shared goodField="goodNumber" [form]="form" label="Bien">
-        </app-goods-shared>
-      </div>
-      <div class="col-md-4">
-        <form-field [control]="form.get('description')" label="Descripción">
+      <div class="col-md-4 mt-3">
+        <form-field [control]="form.get('goodNumber')" label="Bien">
           <input
+            readonly
             type="text"
             class="form-control"
-            formControlName="description" />
+            formControlName="goodNumber" />
+        </form-field>
+        <!-- <app-goods-shared goodField="goodNumber" [form]="form" label="Bien">
+        </app-goods-shared> -->
+      </div>
+      <div class="col-md-6 mt-3">
+        <form-field [control]="form.get('description')" label="Descripción">
+          <textarea
+            rows="3"
+            cols="3"
+            readonly
+            type="text"
+            class="form-control"
+            formControlName="description"></textarea>
         </form-field>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-6 mt-3">
         <!-- <form-field
               [control]="form.get('transference')"
               label="Transferente">
@@ -88,24 +108,49 @@
           [control]="form.get('transference')"
           label="Transferente"
           class="form-group">
-          <ng-custom-select
-            prefixSearch="$ilike"
-            paramSearch="filter.nameTransferent"
+          <!-- <input readonly type="text" class="form-control" formControlName="transference" /> -->
+          <textarea
+            rows="3"
+            cols="3"
+            readonly
+            type="text"
             class="form-control"
-            path="catalog/api/v1/transferent"
-            formControlName="transference">
-            <ng-template let-item>
-              {{ item.nameTransferent }}
-            </ng-template>
-          </ng-custom-select>
+            formControlName="transference"></textarea>
         </form-field>
       </div>
     </div>
+<<<<<<< HEAD
 
     <div class="row mt-4 float-right">
       <div class="">
         <button type="submit" class="btn btn-primary btn-sm active mx-4">
           SUSTITUIR
+=======
+    <div class="row justify-content-end text-center">
+      <div>
+        <!-- <div class=""> -->
+        <button
+          (click)="cleanForm()"
+          type="button"
+          class="btn btn-danger btn-sm active mr-3">
+          Limpiar
+          <i class="fa fa-eraser" aria-hidden="true"></i>
+        </button>
+        <button
+          [disabled]="!form.valid || !delegationDefault"
+          (click)="onClickChangeGoodRandom()"
+          type="button"
+          class="btn btn-primary btn-sm active mr-3">
+          Sustituir <i class="fas fa-sync-alt"> </i>
+>>>>>>> 53f8457b23297af4c094d5e9ce9d3f84d08a27fb
+        </button>
+        <!-- </div> -->
+        <button
+          (click)="listBienes()"
+          tooltip="Buscar Aleatorios"
+          containerClass="tooltip-style"
+          class="btn btn-primary btn-sm active">
+          Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
       </div>
     </div>
