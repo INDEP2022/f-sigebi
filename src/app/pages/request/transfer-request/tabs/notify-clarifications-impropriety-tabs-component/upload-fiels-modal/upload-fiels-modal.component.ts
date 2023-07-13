@@ -74,7 +74,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
       ],
       certificate: [null, [Validators.required]],
       keycertificate: [null, [Validators.required]],
-      pass: [null, [Validators.required, Validators.maxLength(10)]],
+      pass: [null, [Validators.required, Validators.maxLength(40)]],
       rfcUser: [
         null,
         [
