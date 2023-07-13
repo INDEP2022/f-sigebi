@@ -221,10 +221,29 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.getGoodClassDescriptions();
     this.getWarehouseDescription();
     this.getTagDescription();
+    //Busquéda de datos del bien Padre
+    this.searchFatherGood()
+  }
 
-    this.packageType.valueChanges.subscribe(res => {
-      console.log(res);
-    });
+  searchFatherGood(){
+    this.numberGoodFather.valueChanges.subscribe(
+      res => {
+        console.log(res)
+        this.goodService.getByIdv3(res).subscribe(
+          res => {
+            console.log(res)
+            this.form2.get('record').setValue(res.fileNumber)
+            this.form2.get('description').setValue(res.description)
+            this.form2.get('amount').setValue(res.quantity)
+            this.form2.get('unitGood').setValue(res.unit)
+            this.form2.get('statusGood').setValue(res.status)
+          },
+          err => {
+            console.log(err)
+          }
+        )
+      }
+    )
   }
 
   initByLocalStorage() {
@@ -498,7 +517,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         paramsF.addFilter('id', resJson.usuario.delegationNumber);
         this.delegationService.getFiltered(paramsF.getParams()).subscribe(
           res => {
-            console.log(res['data'][0]['description']);
+            console.log(res['data'][0]);
             this.dataUser.desDelegation = res['data'][0]['description'];
           },
           err => {
@@ -590,7 +609,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.userCancelado.setValue(res.useCancelled);
         //Setep de la tercera parte
         this.delegation.setValue(res.numberDelegation);
-        this.goodClassification.setValue(res.numberClassifyGood);
+        this.goodClassification.setValue(parseInt(res.numberClassifyGood));
         this.targetTag.setValue(res.numberLabel);
         this.transferent.setValue(res.numbertrainemiaut);
         this.warehouse.setValue(res.numberStore);
@@ -1074,7 +1093,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
           this.goodProcessService.packageClose(closeData).subscribe(
             res => {
-              this.showButtonAlert('C');
+              this.researchNoPackage(this.noPackage.value.numberPackage)
             },
             err => {
               console.log(err)
@@ -1905,6 +1924,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         if (res && res.data && res.data.length > 0) {
           this.noPackage.setValue(res.data[0]);
           this.loading = false;
+          this.validateButtons(this.noPackage.value.statusPaq)
         } else {
           // this.dataPackageEnc = null;
         }
@@ -2062,7 +2082,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
             .firstIfCancelMassiveConversion(model)
             .subscribe(
               res => {
-                console.log(res);
+                this.researchNoPackage(this.noPackage.value.numberPackage)
+                this.alert('success','El Paquete fue cancelado','')
               },
               err => {
                 console.log(err);
@@ -2079,20 +2100,30 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         if (q.isConfirmed) {
           let token = this.authService.decodeToken();
           const noPack = this.noPackage.value;
-
+          console.log(this.noPackage.value)
           const model: ISecondIfMC = {
-            pSessionId: token.sid,
-            pSidId: token.sid,
-            noPackage: noPack.numberPackage,
-            noGoodFather: noPack.goodFatherNumber,
-            encStatus: '',
-            vcScreen: '',
-            user: '',
-            toolbarUser: '',
+            noPackage: this.noPackage.value.numberPackage,
+            noGoodFather: this.noPackage.value.numberGoodFather,
+            encStatus: this.noPackage.value.status,
+            vcScreen: 'FMTOPAQUETE',
+            user: localStorage.getItem('username') == 'sigebiadmon'
+            ? localStorage.getItem('username')
+            : localStorage.getItem('username').toLocaleUpperCase(),
+            toolbarUser: localStorage.getItem('username') == 'sigebiadmon'
+            ? localStorage.getItem('username')
+            : localStorage.getItem('username').toLocaleUpperCase()
           };
-          console.log(token);
+          console.log(model)
+          this.goodProcessService.secondIfCancelMassiveConversion(model).subscribe(
+            res => {
+              this.researchNoPackage(this.noPackage.value.numberPackage)
+                this.alert('success','El Paquete fue cancelado','')
+            },
+            err => {
+              console.log(err)
+            }
+          )
 
-          this.alert('success', 'Funciona con paquete cerrado', '');
         }
       });
     }
