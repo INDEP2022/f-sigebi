@@ -274,7 +274,7 @@ export class MassiveConversionSelectGoodComponent
     const array = txtData.replace(',', '').split('\r\n'); // saltos de linea
     const newArray: string[] = [];
     if (array.length === 0) {
-      this.alert('error', 'No se han cargado datos en archivo', '');
+      this.alert('error', 'No se han Cargado Datos en Archivo', '');
       this.loading = false;
       return;
     }
@@ -288,7 +288,7 @@ export class MassiveConversionSelectGoodComponent
       });
     });
     if (newArray.length === 0) {
-      this.alert('error', 'No hay datos válidos en el archivo', '');
+      this.alert('error', 'No Hay Datos Válidos en el Archivo', '');
       this.loading = false;
       return;
     }
@@ -631,7 +631,7 @@ export class MassiveConversionSelectGoodComponent
         }
       })
       .catch(error => {
-        this.alert('error', 'ERROR', 'No se pudo ingresar los bienes');
+        this.alert('error', 'ERROR', 'No se Pudo Ingresar los Bienes');
       });
   }
 
@@ -640,7 +640,7 @@ export class MassiveConversionSelectGoodComponent
     if (this.dataPrevisualization.length > 0) {
       this.alertQuestion(
         'question',
-        '¿El paquete tiene bienes, se eliminan?',
+        '¿El Paquete Tiene Bienes, se Eliminan?',
         '',
         'Eliminar'
       ).then(q => {
@@ -886,17 +886,17 @@ export class MassiveConversionSelectGoodComponent
           if (res.data && res.data.length > 0) {
             this.data.load(res.data);
             this.totalItems = res.count;
-            this.alert('success', 'Se encontraron registros', '');
+            this.alert('success', 'Se Encontraron Registros', '');
           } else {
             this.data.load([]);
-            this.alert('error', 'No se encontraron registros', '');
+            this.alert('error', 'No se Encontraron Registros', '');
           }
 
           this.loading = false;
         },
         error: err => {
           this.data.load([]);
-          this.alert('error', 'No se encontraron registros', '');
+          this.alert('error', 'No se Encontraron Registros', '');
           this.loading = false;
         },
       });
@@ -1018,7 +1018,7 @@ export class MassiveConversionSelectGoodComponent
     if (goodCheck.length > 0) {
       this.clearPrevisualizationData();
     } else {
-      this.alert('warning', 'No seleccionó ningún bien', '');
+      this.alert('warning', 'No Seleccionó Ningún Bien', '');
     }
   }
 }
