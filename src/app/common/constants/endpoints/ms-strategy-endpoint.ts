@@ -5,4 +5,5 @@ export enum StrategyEndpoints {
   StrategyServiceType = 'strategy-service-type',
   StrategyShift = 'strategy-shift',
   StrategyProcess = 'strategy-process',
+  TmpStrategyCost = 'tmp-strategy-cost',
 }
