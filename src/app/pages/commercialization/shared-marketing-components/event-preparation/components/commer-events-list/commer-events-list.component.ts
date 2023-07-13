@@ -33,6 +33,7 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
   @Input() globalEvent: IComerEvent = null;
   @Output() globalEventChange = new EventEmitter<IComerEvent>();
   @Input() eventForm: FormGroup<ComerEventForm>;
+  @Output() onOpenEvent = new EventEmitter<void>();
   constructor(private comerEventService: ComerEventService) {
     super();
     this.settings = {
@@ -123,8 +124,6 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
   }
 
   openEvent() {
-    if (!this.globalEvent) {
-      this.alert('error', 'Error', 'Primero debe seleccionar un evento');
-    }
+    this.onOpenEvent.emit();
   }
 }

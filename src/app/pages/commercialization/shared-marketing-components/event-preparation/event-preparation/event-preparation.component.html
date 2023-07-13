@@ -41,6 +41,7 @@
               </div>
             </ng-template>
             <commer-events-list
+              (onOpenEvent)="openEvent()"
               [(globalEvent)]="globalEvent"
               [eventForm]="eventForm"></commer-events-list>
           </tab>

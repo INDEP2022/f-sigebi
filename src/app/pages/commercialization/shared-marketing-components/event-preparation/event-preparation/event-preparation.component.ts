@@ -10,6 +10,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerEventForm } from '../utils/forms/comer-event-form';
 import { EventStadisticsForm } from '../utils/forms/event-stadistics-form';
+import { IEventPreparationParameters } from '../utils/interfaces/event-preparation-parameters';
 
 @Component({
   selector: 'app-event-preparation',
@@ -46,12 +47,12 @@ export class EventPreparationComponent extends BasePage implements OnInit {
    * @property {string} pGoods - PASABIENES.
    * @property {string} pDirection - P_DIRECCION.
    */
-  parameters = {
+  parameters: IEventPreparationParameters = {
     pValidTPEVEXUSU: '',
     pBank: '',
     pRejected: '',
     pDays: 0,
-    pValids: '',
+    pValids: 0,
     pGoods: '',
     pDirection: '',
   };
@@ -159,7 +160,9 @@ export class EventPreparationComponent extends BasePage implements OnInit {
   }
 
   openEvent() {
-    this.hideCanvas();
+    let pass = -1;
+    this.parameters.pValids = 1;
+    const user = this.loggedUser.preferred_username;
   }
 
   viewCustomers() {

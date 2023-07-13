@@ -3,7 +3,7 @@ export interface IEventPreparationParameters {
   pBank: string;
   pRejected: string;
   pDays: number;
-  pValids: string;
+  pValids: number;
   pGoods: string;
   pDirection: string;
 }
