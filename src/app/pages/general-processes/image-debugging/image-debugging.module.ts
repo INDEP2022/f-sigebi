@@ -8,7 +8,6 @@ import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/good
 import { SharedModule } from 'src/app/shared/shared.module';
 import { GoodsFilterSharedComponent } from '../../../@standalone/shared-forms/goods-shared/goods-filter-shared';
 import { GoodPhotosModule } from '../good-photos/good-photos.module';
-import { CharacteristicsLegendComponent } from '../goods-characteristics/characteristics-legend/characteristics-legend.component';
 import { GoodPhotoComponent } from '../image-debugging/good-photos/good-photo/good-photo/good-photo.component';
 import { GoodPhotosComponent } from '../image-debugging/good-photos/good-photos.component';
 import { ImageDebuggingModalComponent } from './image-debugging-modal/image-debugging-modal.component';
@@ -31,7 +30,6 @@ import { ImageDebuggingComponent } from './image-debugging/image-debugging.compo
     GoodValueEditWebCar,
     GoodValueEditWebCarCellComponent,
     GoodCharacteristicCellValueComponent,
-    CharacteristicsLegendComponent,
     GoodPhotosComponent,
     GoodPhotoComponent,
   ],

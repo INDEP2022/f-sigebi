@@ -21,9 +21,9 @@ import { formatForIsoDate, secondFormatDate } from 'src/app/shared/utils/date';
 import { GoodTableDetailButtonComponent } from '../../good-table-detail-button/good-table-detail-button.component';
 
 @Component({
-  selector: 'app-good-characteristics-table',
-  templateUrl: './good-characteristics-table.component.html',
-  styleUrls: ['./good-characteristics-table.component.scss'],
+  selector: 'app-good-photo-table',
+  templateUrl: './good-photo-table.component.html',
+  styleUrls: ['./good-photo-table.component.scss'],
 })
 export class GoodPhotoTable extends BasePage implements OnInit {
   @Input() clasification: number;
