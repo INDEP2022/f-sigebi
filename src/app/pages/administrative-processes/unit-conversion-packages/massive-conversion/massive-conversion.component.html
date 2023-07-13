@@ -389,7 +389,7 @@
           <input
             id="checkGood"
             type="checkbox"
-            formControlName="check"    
+            formControlName="check"
             [readOnly]="true" />
         </form-check>
       </div>
@@ -403,14 +403,12 @@
   [noPackage]="noPackage"
   (dataEmit)="handleOutPut($event)"></app-paq-destion-det>
 
-
-
 <app-card>
   <div body>
     <app-scan-file-massive-conversion
-    [form]="form"
-    [package]="form.get('noPackage').value"
-    [formControlName]="scanFolioString">
+      [form]="form"
+      [package]="form.get('noPackage').value"
+      [formControlName]="scanFolioString">
     </app-scan-file-massive-conversion>
   </div>
 </app-card>

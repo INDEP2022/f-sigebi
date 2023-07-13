@@ -42,11 +42,11 @@ export interface IDocumentsGood {
 }
 
 export interface IGenerateFolioMassConv {
-  noPackage: number,
-    cvePackage: number,
-    typePackage: number,
-    noDelegation: number,
-    noSubdelegation: number,
-    toolbarNoDepartament: number,
-    user: string
+  noPackage: number;
+  cvePackage: number;
+  typePackage: number;
+  noDelegation: number;
+  noSubdelegation: number;
+  toolbarNoDepartament: number;
+  user: string;
 }

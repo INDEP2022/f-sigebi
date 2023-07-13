@@ -161,6 +161,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   }
 
   async generateCaratula() {
+    this.loader.load = true;
     let request = this.request;
     const expedient: any = await this.saveExpedientSami();
     if (expedient.id) {
@@ -240,6 +241,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
           );
 
           if (contentResult) {
+            this.loader.load = false;
             Swal.fire({
               title: 'Carátula generada correctamente',
               text: '',
@@ -267,6 +269,8 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                 this.close();
               }
             });
+          } else {
+            this.loader.load = false;
           }
         }
       } else {
