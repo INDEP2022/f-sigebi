@@ -98,7 +98,7 @@
 
     <app-scanning-foil
       [good]=""
-      [numberFoli]=""
+      [numberFoli]="numberFoli"
       [cveScreen]=""
       [reportPrint]=""
       [refresh]="">
@@ -110,7 +110,7 @@
           data-toggle="tooltop"
           title="Agregar Bien"
           class="btn btn-info btn-sm active ml-2 mr-2 float-center"
-          (click)="insertarParrafos()">
+          (click)="insertParaph()">
           <i class=""></i> Insertar Párrafos
         </button>
       </div>
