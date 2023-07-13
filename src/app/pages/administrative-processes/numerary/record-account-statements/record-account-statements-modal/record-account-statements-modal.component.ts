@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
@@ -25,6 +26,7 @@ export class RecordAccountStatementsModalComponent
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
+    private datePipe: DatePipe,
     private recordAccountStatementsAccountsService: RecordAccountStatementsAccountsService
   ) {
     super();
@@ -65,28 +67,36 @@ export class RecordAccountStatementsModalComponent
       '¿Desea transferir este movimiento?'
     ).then(question => {
       if (question.isConfirmed) {
-        console.log('isConfirmed');
         this.create();
       }
     });
   }
 
   create() {
-    this.recordAccountStatementsAccountsService
-      .create(this.form.value)
-      .subscribe({
-        next: () => {
-          console.log('isConfirmed 2');
-          this.alert('success', 'Movimiento transferido', '');
-        },
-        error: error => {
-          this.alert(
-            'warning',
-            'Error',
-            'No se puede transferir el movimiento'
-          );
-        },
-      });
+    const currentDate = this.datePipe.transform(new Date(), 'dd/MM/yyyy');
+    const model: IRecordAccountStatements = {
+      numberAccount: this.movimentAccount.numberAccount,
+      numberMotion: this.movimentAccount.numberMotion,
+      dateMotion: this.datePipe.transform(
+        this.movimentAccount.dateMotion,
+        'dd/MM/yyyy'
+      ),
+      deposit: this.movimentAccount.deposit,
+      userinsert: this.movimentAccount.userinsert,
+      dateInsertion: currentDate,
+      dateCalculationInterests: null,
+      numberMotionTransfer: this.movimentAccount.numberMotionTransfer,
+    };
+    this.recordAccountStatementsAccountsService.create(model).subscribe({
+      next: () => {
+        this.alert('success', 'Movimiento transferido', '');
+        this.modalRef.hide();
+      },
+      error: error => {
+        this.alert('warning', 'Error', 'No se puede transferir el movimiento');
+        this.modalRef.hide();
+      },
+    });
   }
 
   close() {

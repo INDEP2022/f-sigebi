@@ -218,7 +218,6 @@ export class SearchRequestsComponent extends BasePage implements OnInit {
             return x.stateCode;
           })
           .filter((x: any) => x != undefined);
-        console.log(result);
         this.stateItems = new DefaultSelect(result, result.length);
       },
       error => {
@@ -329,7 +328,6 @@ export class SearchRequestsComponent extends BasePage implements OnInit {
           data.nameAndId = `${data.idAuthority} - ${data.authorityName}`;
           return data;
         });*/
-        console.log(data.data);
         this.authorities = new DefaultSelect(data.data, data.count);
       },
       error: () => {

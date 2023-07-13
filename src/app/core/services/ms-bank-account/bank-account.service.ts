@@ -82,5 +82,12 @@ export class BankAccountService
     return this.post(`/aplication/pup-interests-detail`, body);
   }
 
+  getDetail(data: Object) {
+    return this.repository.create(
+      `${this.microservice}/bank-account/get-details`,
+      data
+    );
+  }
+
   //***** */
 }

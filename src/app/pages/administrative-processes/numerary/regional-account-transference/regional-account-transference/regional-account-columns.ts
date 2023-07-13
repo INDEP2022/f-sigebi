@@ -1,10 +1,12 @@
+import { InputCellComponent } from 'src/app/@standalone/smart-table/input-cell/input-cell.component';
+
 export const REGIONAL_ACCOUNT_COLUMNS = {
   file: {
     title: 'No Expediente',
     type: 'string',
     sort: false,
   },
-  good: {
+  goodNumber: {
     title: 'No Bien',
     type: 'string',
     sort: false,
@@ -19,23 +21,33 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  import: {
+  val14: {
     title: 'Importe',
     type: 'string',
     sort: false,
   },
-  interests: {
+  allInterest: {
     title: 'Intereses',
-    type: 'string',
     sort: false,
+    type: 'custom',
+    showAlways: true,
+    renderComponent: InputCellComponent<any>,
+    onComponentInitFunction: (instance: InputCellComponent) => {
+      instance.inputType = 'number';
+      instance.inputChange.subscribe({
+        next: (resp: any) => {
+          resp.row.allInterest = resp.value;
+        },
+      });
+    },
   },
   total: {
     title: 'Total',
     type: 'string',
     sort: false,
   },
-  currency: {
-    title: '',
+  val1: {
+    title: 'Moneda',
     type: 'string',
     sort: false,
   },

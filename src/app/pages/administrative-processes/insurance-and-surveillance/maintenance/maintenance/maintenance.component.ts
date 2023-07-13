@@ -1,10 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {
-  getUser,
-  showQuestion,
-  showToast,
-} from 'src/app/common/helpers/helpers';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
+import { BasePage } from 'src/app/core/shared';
 import { ChangeGoodsRandomComponent } from '../change-goods-random/change-goods-random.component';
 import { ChangePeriodComponent } from '../change-period/change-period.component';
 import { DeletePeriodComponent } from '../delete-period/delete-period.component';
@@ -15,8 +12,13 @@ import { EmailInformationComponent } from '../email-information/email-informatio
   templateUrl: './maintenance.component.html',
   styles: [],
 })
-export class MaintenanceComponent implements OnInit {
-  constructor(private survillanceService: SurvillanceService) {}
+export class MaintenanceComponent extends BasePage implements OnInit {
+  constructor(
+    private survillanceService: SurvillanceService,
+    private token: AuthService
+  ) {
+    super();
+  }
 
   @ViewChild(ChangeGoodsRandomComponent)
   changeGoodsRandomComponent: ChangeGoodsRandomComponent;
@@ -35,11 +37,13 @@ export class MaintenanceComponent implements OnInit {
     const period = form.get('period').value;
     const textNotPass =
       'Debe seleccionar un bien de número aleatorio y periodo en cambio de bienes de número aleatorio';
-    const textQuestion = `¿Está seguro de cambiar el bien de número aleatorio ${numberAleatory} del periodo ${period}`;
+    const textQuestion = `¿Está seguro de cambiar el bien de número aleatorio ${numberAleatory} del periodo ${period}?`;
+    const title = 'Cambio Bienes de Número Aleatorio';
     this.onClickStructure(
       Boolean(numberAleatory) && Boolean(period),
       textNotPass,
-      textQuestion
+      textQuestion,
+      title
     ).then(res => {
       const params = this.getParamsForChangeGoodsRandom();
       this.saveInServerChangeGoodsRandom(params);
@@ -48,11 +52,12 @@ export class MaintenanceComponent implements OnInit {
 
   onClickChangePeriod() {
     const form = this.changePeriodComponent.getFormChangePeriod();
+    console.log(form);
     const changePeriodInitValue = form.get('period').value;
     const changePeriodEndValue = form.get('periodDestiny').value;
     const textNotPass =
       'Debe seleccionar un periodo de origen y destino en el bloque de cambio de periodo';
-    const textQuestion = `¿Está seguro de cambiar la información del periodo ${changePeriodInitValue} al periodo ${changePeriodEndValue}`;
+    const textQuestion = `¿Está seguro de cambiar la información del periodo ${changePeriodInitValue} al periodo ${changePeriodEndValue}?`;
     this.onClickStructure(
       Boolean(changePeriodInitValue) && Boolean(changePeriodEndValue),
       textNotPass,
@@ -63,17 +68,19 @@ export class MaintenanceComponent implements OnInit {
     });
   }
 
-  onClickDeletePeriod() {
+  async onClickDeletePeriod() {
     const periodNumber = this.deletePeriodComponent
       .getFormDeletePeriod()
       .get('period').value;
     const textNotPass =
       'Debe seleccionar un periodo en el bloque de eliminación de periodo';
-    const textPrecaution = `¿Está seguro de eliminar la carga del periodo ${periodNumber}`;
+    const textPrecaution = `¿Está seguro de eliminar la carga del periodo ${periodNumber}?`;
+    const title = 'Eliminar Periodo';
     this.onClickStructure(
       Boolean(periodNumber),
       textNotPass,
-      textPrecaution
+      textPrecaution,
+      title
     ).then(() => {
       const params = this.getParamsForDeletedPeriod();
       this.saveInServerDeletePeriod(params);
@@ -81,12 +88,23 @@ export class MaintenanceComponent implements OnInit {
   }
 
   saveInServerDeletePeriod(params: any) {
+    console.log('Estos son los parametros para eliminar ---->', params);
     this.survillanceService.postDeletePeriod(params).subscribe({
       next: response => {
         console.log({ response });
+        if (response.P_EST_PROCESO === 1) {
+          this.alert('success', 'Eliminar Proceso', response.P_MSG_PROCESO);
+        } else {
+          this.alert('warning', 'Eliminar Proceso', response.P_MSG_PROCESO);
+        }
       },
       error: error => {
         console.error({ error });
+        this.alert(
+          'error',
+          'Ha ocurrido un error',
+          'Error al querer eliminar el periodo.'
+        );
       },
     });
   }
@@ -95,9 +113,19 @@ export class MaintenanceComponent implements OnInit {
     this.survillanceService.postChangePeriod(params).subscribe({
       next: response => {
         console.log({ response });
+        if (response.P_EST_PROCESO === 1) {
+          this.alert('success', 'Cambiar Periodos', response.P_MSG_PROCESO);
+        } else {
+          this.alert('warning', 'Cambiar Periodos', response.P_MSG_PROCESO);
+        }
       },
       error: error => {
         console.error({ error });
+        this.alert(
+          'error',
+          'Ha ocurrido un error',
+          'Error al querer cambiar periodos.'
+        );
       },
     });
   }
@@ -106,9 +134,19 @@ export class MaintenanceComponent implements OnInit {
     this.survillanceService.postChangeGoodAle(params).subscribe({
       next: response => {
         console.log({ response });
+        if (response.P_EST_PROCESO === 1) {
+          this.alert('success', 'Cambiar Periodos', response.P_MSG_PROCESO);
+        } else {
+          this.alert('warning', 'Cambiar Periodos', response.P_MSG_PROCESO);
+        }
       },
       error: error => {
         console.error({ error });
+        this.alert(
+          'error',
+          'Ha ocurrido un error',
+          'Error al querer cambiar bienes de número aleatorio.'
+        );
       },
     });
   }
@@ -122,41 +160,56 @@ export class MaintenanceComponent implements OnInit {
     const controlTo = forms.emailInformation.get('to');
     const controlCc = forms.emailInformation.get('cc');
     const controlBody = forms.emailInformation.get('body');
+
     if (controlReasonForChange.invalid) {
       message.push(
-        'El motivo de cambio del bloque información de correo, es información obligatoria ...'
+        'El motivo de cambio del bloque información de correo, es información obligatoria'
       );
       controlReasonForChange.markAsTouched();
-    }
-    if (controlFrom.invalid) {
-      message.push(
-        'El identificador de envío del bloque información de correo, es información obligatoria ...'
-      );
-      controlFrom.markAsTouched();
-    }
-    if (controlTo.invalid) {
-      message.push(
-        'El correo electrónico del destino (Para) del bloque información de correo, es información obligatoria ...'
-      );
-      controlTo.markAsTouched();
-    }
-    if (controlCc.invalid) {
-      message.push(
-        'El correo electrónico del destino (CC) del bloque información de correo, es información obligatoria ...'
-      );
-      controlCc.markAsTouched();
-    }
-    if (controlBody.invalid) {
-      message.push(
-        'El identificador de tipo (Cuerpo de correo) del bloque información de correo, es información obligatoria ...'
-      );
-      controlBody.markAsTouched();
-    }
-
-    if (message.length > 0) {
-      showToast({ text: message.join(',\n '), icon: 'warning' });
+      this.alert('warning', 'Información de Correo', message.join(',\n '));
       return false;
     }
+
+    if (controlFrom.invalid) {
+      message.push(
+        'El identificador de envío del bloque información de correo, es información obligatoria'
+      );
+      controlFrom.markAsTouched();
+      this.alert('warning', 'Información de Correo', message.join(',\n '));
+      return false;
+    }
+
+    if (controlTo.invalid) {
+      message.push(
+        'El correo electrónico del destino (Para) del bloque información de correo, es información obligatoria'
+      );
+      controlTo.markAsTouched();
+      this.alert('warning', 'Información de Correo', message.join(',\n '));
+      return false;
+    }
+
+    if (controlCc.invalid) {
+      message.push(
+        'El correo electrónico del destino (CC) del bloque información de correo, es información obligatoria'
+      );
+      controlCc.markAsTouched();
+      this.alert('warning', 'Información de Correo', message.join(',\n '));
+      return false;
+    }
+
+    if (controlBody.invalid) {
+      message.push(
+        'El identificador de tipo (Cuerpo de correo) del bloque información de correo, es información obligatoria'
+      );
+      controlBody.markAsTouched();
+      this.alert('warning', 'Información de Correo', message.join(',\n '));
+      return false;
+    }
+
+    // if (message.length > 0) {
+    //   this.alert('warning', 'Información de Correo', message.join(',\n '));
+    //   return false;
+    // }
     return true;
   }
 
@@ -290,32 +343,29 @@ export class MaintenanceComponent implements OnInit {
   onClickStructure(
     pass: boolean,
     textNotPass: string,
-    textQuestion?: string
+    textQuestion?: string,
+    titleQuestion?: string
   ): Promise<boolean> {
     return new Promise((resolve, reject) => {
       if (!pass) {
-        showToast({
-          icon: 'warning',
-          text: textNotPass,
-        });
+        this.alert('warning', titleQuestion, textNotPass);
         reject(false);
         return;
       }
-      showQuestion({
-        icon: 'warning',
-        text: textQuestion,
-      }).then(result => {
-        if (!result.isConfirmed) {
+      this.alertQuestion('question', titleQuestion, textQuestion).then(
+        result => {
+          if (!result.isConfirmed) {
+            reject(false);
+            return;
+          }
+          if (this.validateAllForms()) {
+            resolve(true);
+            return;
+          }
           reject(false);
-          return;
+          //return;
         }
-        if (this.validateAllForms()) {
-          resolve(true);
-          return;
-        }
-        reject(false);
-        return;
-      });
+      );
     });
   }
 
@@ -328,7 +378,7 @@ export class MaintenanceComponent implements OnInit {
       pNumPeriod: deletePeriod.period,
       pDelegationKey: deletePeriod.delegation,
 
-      pUsrAuthorize: getUser(),
+      pUsrAuthorize: this.token.decodeToken().preferred_username,
       pSoliciDate: emailInformation.date,
       pMtvoRequest: emailInformation.reasonForChange,
       pIdSend: emailInformation.from,

@@ -8,14 +8,14 @@
       <div class="ch-content">
         <h5 class="title">CORREO DE RESPONSABLES DE ENVÍO</h5>
         <div class="col-md-5 buttons">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
           <div>
             <button
-              class="btn btn-primary active btn-sm ml-3"
+              class="btn btn-info btn-sm active ml-2 mr-2"
               (click)="openForm(null, false)">
-              Nuevo
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
           </div>
+          <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
       </div>
       <div class="row pt-4 table-container">
@@ -40,8 +40,9 @@
       <h5 class="title">DATOS GENERALES DEL CORREO</h5>
     </div>
     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-      <button class="btn btn-primary btn-sm active" (click)="showData()">
-        <i class="bx bx-list-plus bx-sm float-icon"></i>
+      <button class="btn btn-primary btn-sm active m-3" (click)="showData()">
+        Consultar
+        <i class="bx bx-search-alt bx-sm float-icon"></i>
       </button>
     </div>
 
@@ -60,17 +61,16 @@
         </div>
         <div class="col-md-9">
           <form-field [control]="formCorreo.get('subjectEmail')" label="Asunto">
-            <textarea
-              class="form-control"
-              formControlName="subjectEmail"></textarea>
+            <textarea class="form-control" formControlName="subjectEmail">
+            </textarea>
           </form-field>
         </div>
       </div>
       <div class="row mt-4">
-        <div class="col-md-12">
+        <div class="col-md-12 mt-3">
           <form-field
             [control]="formCorreo.get('bodyEmail')"
-            label="Cuerpo del correo">
+            label="Cuerpo del Correo">
             <textarea
               class="form-control"
               formControlName="bodyEmail"></textarea>
@@ -96,7 +96,8 @@
             class="btn btn-primary btn-sm active mr-3"
             [disabled]="false"
             (click)="update()"
-            (click)="resetForm()">
+            (click)="resetForm()"
+            [disabled]="!formCorreo.valid">
             Actualizar <i class="fas fa-sync-alt"> </i>
           </button>
         </div>

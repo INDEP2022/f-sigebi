@@ -15,9 +15,12 @@
                 bindLabel="name"
                 label="Seleccione un Banco"
                 [control]="'bankSelect'"
-                (change)="onBankSelectChange($event)"></ngx-select>
+                (change)="onBankSelectChange($event)"
+                (fetchItems)="searchBanks($event)"
+                (input)="onSearchName($event.target)"></ngx-select>
             </form-field>
           </div>
+
           <div class="col-6">
             <form-field [control]="form.get('account')">
               <ngx-select
@@ -26,7 +29,10 @@
                 bindLabel="accountNumber"
                 label="Seleccione una Cuenta"
                 [control]="'account'"
-                (change)="onBankAccountSelectChange($event)"></ngx-select>
+                (change)="onBankAccountSelectChange($event)"
+                (fetchItems)="searchBankAccount(bankCode, paramsSubject)"
+                (input)="onSearchAccount($event.target)"
+                (clear)="onClearSelection()"></ngx-select>
             </form-field>
           </div>
         </div>
@@ -99,7 +105,7 @@
         </div>
 
         <h5 class="row ml-0 mt-5">
-          Consulta movimientos de cuenta por rango de fecha
+          Consulta Movimientos de Cuenta por Rango de Fecha
         </h5>
         <div class="row mt-5">
           <div class="col-md-3">
@@ -124,7 +130,18 @@
             </form-field>
           </div>
 
-          <div class="col-md-4">
+          <div class="col-md-3">
+            <form-field [control]="form.get('balance')" label="Saldo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="balance"
+                [value]="balance"
+                readonly />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
             <button
               type="button"
               class="btn btn-sm btn-info active mr-4"
@@ -139,10 +156,6 @@
               (click)="cleandInfoDate()">
               Limpiar <i class="fa fa-eraser"></i>
             </button>
-          </div>
-
-          <div class="col-md-2">
-            <span>Saldo: {{ balance }}</span>
           </div>
         </div>
       </form>
@@ -168,13 +181,16 @@
       <div class="row">
         <div class="col-12 mt-6">
           <p class="row ml-2">(Click para traspasar movimientos)</p>
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="dataAccount"
-              (userRowSelect)="openModal($event.data)">
-            </ng2-smart-table>
+          <div class="table-responsive">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="dataAccount"
+                (userRowSelect)="openModal($event.data)"
+                (delete)="showDeleteAlert($event.data)">
+              </ng2-smart-table>
+            </div>
           </div>
         </div>
         <app-pagination

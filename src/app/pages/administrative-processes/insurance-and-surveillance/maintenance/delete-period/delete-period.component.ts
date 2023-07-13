@@ -14,13 +14,12 @@ export class DeletePeriodComponent {
     delegation: new FormControl(null, Validators.required),
     process: new FormControl(null, Validators.required),
   });
-
-  public delegations = new DefaultSelect();
-  // public procesess = new DefaultSelect();
   processes = [
-    { id: 1, name: 'Supervisión' },
-    { id: 2, name: 'Validación' },
+    { value: 1, label: 'Supervisión' },
+    { value: 2, label: 'Validación' },
   ];
+  public procesess = new DefaultSelect(this.processes, 2);
+  public delegations = new DefaultSelect();
 
   isLoading = false;
   @Output() eventDelete = new EventEmitter();
@@ -33,5 +32,9 @@ export class DeletePeriodComponent {
 
   getFormDeletePeriod() {
     return this.form;
+  }
+
+  onClickDeletePeriod2() {
+    console.log('SIII');
   }
 }

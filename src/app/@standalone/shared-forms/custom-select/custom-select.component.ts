@@ -27,6 +27,7 @@ import {
   switchMap,
   takeUntil,
 } from 'rxjs';
+import { API_VERSION } from 'src/app/common/helpers/helpers';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -49,6 +50,7 @@ export class CustomSelectComponent
   @ContentChild(TemplateRef, { static: false }) template: TemplateRef<any>;
   @Input() path: string;
   @Input() label: string;
+  @Input() readonly: boolean = false;
   @Input() isLoadInOnInit: boolean = false;
   @Input() url: string = environment.API_URL;
   @Input() pathData: string = 'data';
@@ -63,6 +65,7 @@ export class CustomSelectComponent
   @Input() initOption: any = null;
   @Input() delay: number = 300;
   @Input() moreParams: { [key: string]: any } = {};
+  @Input() microService = '';
   @Output() valueChange = new EventEmitter<any>();
   input$ = new Subject<string>();
   items: any[] = [];
@@ -128,10 +131,17 @@ export class CustomSelectComponent
       ...this.moreParams,
     };
     return this.http
-      .get(`${this.url}${this.path}`, {
+      .get(this.generatePath(), {
         params,
       })
       .pipe(catchError(() => of(this.items)));
+  }
+
+  generatePath() {
+    if (this.microService) {
+      return `${this.url}/${this.microService}/${API_VERSION}/${this.path}`;
+    }
+    return `${this.url}${this.path}`;
   }
 
   getDataForPath(data: any): any[] {

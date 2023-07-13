@@ -2,10 +2,12 @@ export const COLUMNS = {
   numberGood: {
     title: 'Bien',
     sort: false,
+    editable: false,
   },
   description: {
     title: 'Descripción',
     sort: false,
+    editable: false,
     valuePrepareFunction: (cell: any, row: any) => {
       if (row.bienes && row.bienes.description) {
         return row.bienes.description;
@@ -17,6 +19,7 @@ export const COLUMNS = {
   record: {
     title: 'Expediente',
     sort: false,
+    editable: false,
     valuePrepareFunction: (cell: any, row: any) => {
       if (row.bienes && row.bienes.fileNumber) {
         return row.bienes.fileNumber;
@@ -28,6 +31,7 @@ export const COLUMNS = {
   originalUnit: {
     title: 'Unidad Original',
     sort: false,
+    editable: false,
     valuePrepareFunction: (cell: any, row: any) => {
       if (row.bienes && row.bienes.unit) {
         return row.bienes.unit;
@@ -39,16 +43,23 @@ export const COLUMNS = {
   amount: {
     title: 'Cantidad Original',
     sort: false,
+    editable: false,
   },
-  val24: {
-    title: 'Prog. Chatarra',
-    sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      if (row.bienes && row.bienes.val24) {
-        return row.bienes.val24;
-      } else {
-        return null;
-      }
-    },
-  },
+  // val24: {
+  //   title: 'Prog. Chatarra',
+  //   sort: false,
+  //   editable: true,
+  //   type: 'custom',
+  //   renderComponent: CheckboxDisabledElementComponent,
+  //   valuePrepareFunction: (cell: any, row: any) => {
+  //     return {
+  //       checked: row.bienes && row.bienes.val24 ? true : false,
+  //       disabled: true,
+  //     };
+  //   },
+  //   editor: {
+  //     type: 'custom',
+  //     component: CheckboxDisabledElementComponent,
+  //   },
+  // },
 };

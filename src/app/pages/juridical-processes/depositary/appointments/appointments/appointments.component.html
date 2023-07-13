@@ -1,39 +1,37 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <div class="col-12 col-sm-12 col-md-6">
-      <h5 class="title">NOMBRAMIENTOS</h5>
-    </div>
-    <div class="col-12 col-sm-12 col-md-6 text-end">
-      <!-- <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
-          Regresar
-          <i class="fas fa-arrow-circle-left"></i>
-        </button> -->
-      <button
-        type="button"
-        class="btn btn-primary btn-sm active"
-        (click)="saveDataForm()">
-        Guardar
-        <i aria-hidden="true" class="fa fa-save"></i></button
-      ><button
-        [disabled]="_saveDataDepositary"
-        type="button"
-        (click)="newDepositary()"
-        tooltip="Agregar"
-        containerClass="tooltip-style"
-        class="btn btn-info btn-sm active ml-2 mr-2">
-        <i class="bx bx-plus bx-sm float-icon"></i>
-      </button>
-    </div>
+    <h5 class="title">NOMBRAMIENTOS</h5>
   </div>
 
   <div body>
     <form [formGroup]="form" class="container-fluid form-material">
       <div class="row">
+        <!-- <div class="col-12 col-sm-12 col-md-12 text-end">
+          <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="saveDataForm()">
+            Guardar
+            <i aria-hidden="true" class="fa fa-save"></i></button
+          ><button
+            [disabled]="_saveDataDepositary"
+            type="button"
+            (click)="newDepositary()"
+            tooltip="Agregar"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2">
+            <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div> -->
         <div class="col-sm-12 col-12 col-md-12 P-2">
           <!-- <div class="row">
             <div class="col-sm-12 col-12 col-md-8 p-2"> -->
           <div class="row">
-            <div class="col-12 col-sm-6 col-md-4 p-2">
+            <div class="col-12 col-sm-12 col-md-4 p-2">
               <form-field [control]="form.get('noBien')" label="No&#46; Bien">
                 <input
                   type="number"
@@ -42,7 +40,7 @@
                   formControlName="noBien" />
               </form-field>
             </div>
-            <div class="col-12 col-sm-4 col-md-8 p-2">
+            <div class="col-12 col-sm-12 col-md-4 p-2">
               <button
                 type="submit"
                 class="btn btn-primary active btn-sm m-2"
@@ -59,6 +57,30 @@
                 Limpiar
                 <i class="fa fa-eraser ml-1"></i>
               </button>
+            </div>
+            <div class="col-12 col-sm-12 col-md-4 p-2 text-end">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="saveDataForm()">
+                Guardar
+                <i aria-hidden="true" class="fa fa-save"></i></button
+              ><button
+                [disabled]="_saveDataDepositary"
+                type="button"
+                (click)="newDepositary()"
+                tooltip="Agregar"
+                containerClass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2">
+                <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+              <!-- <button
+                type="button"
+                class="btn btn-primary active btn-sm m-2"
+                (click)="openModalMail()">
+                TEST MAIL
+                <i class="fa fa-eraser ml-1"></i>
+              </button> -->
             </div>
           </div>
           <!-- </div>
@@ -328,29 +350,7 @@
             </div>
           </div>
         </div> -->
-        <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field
-            [control]="form.get('depositaria')"
-            label="Depositar&iacute;a">
-            <input
-              class="form-control"
-              maxLength="40"
-              formControlName="depositaria"
-              [readonly]="true" />
-          </form-field>
-        </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
-          <form-field
-            [control]="form.get('representante')"
-            label="Representante">
-            <input
-              class="form-control"
-              maxLength="120"
-              formControlName="representante"
-              [readonly]="true" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
           <ngx-select
             [data]="personSelect"
             bindLabel="nameDesc"
@@ -374,12 +374,46 @@
             <i class="bx bx-list-plus bx-sm float-icon"></i>
           </button>
         </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2 text-center"></div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('depositaria')"
+            label="Depositar&iacute;a">
+            <input
+              class="form-control"
+              maxLength="40"
+              formControlName="depositaria"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-5 p-2">
+          <form-field
+            [control]="form.get('depositariaDesc')"
+            label="Depositar&iacute;a Descripci&oacute;n">
+            <input
+              class="form-control"
+              maxLength="120"
+              formControlName="depositariaDesc"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-5 p-2">
+          <form-field
+            [control]="form.get('representante')"
+            label="Representante">
+            <input
+              class="form-control"
+              maxLength="120"
+              formControlName="representante"
+              [readonly]="true" />
+          </form-field>
+        </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('tipoPersona')"
             label="Tipo Persona &#40;F&iacute;SICA&#47;MORAL&#41;">
             <input
-              class="form-control"
+              class="form-control mt-2"
               formControlName="tipoPersona"
               maxLength="20"
               [readonly]="true" />
@@ -390,7 +424,7 @@
             [control]="form.get('tipoPersona2')"
             label="Tipo Persona &#40;DEDICACI&Oacute;N&#41;">
             <input
-              class="form-control"
+              class="form-control mt-2"
               formControlName="tipoPersona2"
               maxLength="30"
               [readonly]="true" />
@@ -399,7 +433,7 @@
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('rfc')" label="RFC">
             <input
-              class="form-control"
+              class="form-control mt-2"
               formControlName="rfc"
               maxLength="20"
               [readonly]="true" />
@@ -408,7 +442,7 @@
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('curp')" label="CURP">
             <input
-              class="form-control"
+              class="form-control mt-2"
               formControlName="curp"
               maxLength="20"
               [readonly]="true" />
@@ -608,7 +642,7 @@
                 <div class="col-sm-12 col-12 col-md-4 p-2">
                   <form-field
                     [control]="form.get('contraprestacion')"
-                    label="Contrapresentaci&oacute;n">
+                    label="Contraprestaci&oacute;n">
                     <input
                       currencyMask
                       class="form-control"
@@ -628,7 +662,7 @@
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-4 p-2">
-                  <form-field [control]="form.get('iva')" label="Iva">
+                  <form-field [control]="form.get('iva')" label="IVA">
                     <input
                       class="form-control"
                       formControlName="iva"
@@ -663,8 +697,8 @@
         <div class="col-sm-12 col-12 col-md-12 p-2">
           <hr class="row" />
         </div>
-        <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
-          <h5 class="text-center">Acuerdo Junta de Gobierno</h5>
+        <div class="col-sm-12 col-12 col-md-12 p-2 mb-4">
+          <h5>Acuerdo Junta de Gobierno</h5>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
@@ -719,7 +753,7 @@
             <div class="row w-100 pl-4 card-body">
               <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
                 <form-radio
-                  label="Folio Acta Depositaria"
+                  label="Folio Acta Depositar&iacute;a"
                   for="depositaryFolio">
                   <input
                     id="depositaryFolio"
@@ -793,11 +827,11 @@
           </div>
         </div> -->
         <!-- BOTONES PANTALLA -->
-        <div class="col-md-4 col-12 col-sm-12 text-center p-1">
+        <div class="col-md-2 col-12 col-sm-12 text-center p-1">
           <button
             (click)="btnPaysDetails()"
             name="payDetail"
-            tooltip="Detallle de Pagos"
+            tooltip="Detalle de Pagos"
             containerClass="tooltip-style"
             type="button"
             class="btn btn-info btn-sm active m-1">
@@ -821,6 +855,22 @@
             class="btn btn-info btn-sm active m-1">
             <i class="bx bxs-detail"></i>
           </button>
+        </div>
+        <!-- PARTE DE ESCANEO -->
+        <div class="col-md-8 col-12 col-sm-12" *ngIf="showScanForm">
+          <app-scanning-foil-appointment
+            [formScan]="formScan"
+            [depositaryAppointment]="depositaryAppointment"
+            [goodId]="noBienReadOnly"
+            [dataUserLogged]="dataUserLogged"
+            (scanRequestEmitter)="scanRequest($event)"
+            (showScanningPageEmitter)="showScanningPage($event)"
+            (messageDigitalizationEmitter)="messageDigitalization($event)"
+            (viewPicturesEmitter)="
+              viewPictures($event)
+            "></app-scanning-foil-appointment>
+        </div>
+        <div class="col-md-2 col-12 col-sm-12 text-center p-1">
           <button
             (click)="btnMasivIncomePays()"
             name="masivIncomePays"
@@ -848,20 +898,6 @@
             class="btn btn-warning btn-sm active m-1">
             <i class="bx bx-window-open"></i>
           </button>
-        </div>
-        <!-- PARTE DE ESCANEO -->
-        <div class="col-md-8 col-12 col-sm-12" *ngIf="showScanForm">
-          <app-scanning-foil-appointment
-            [formScan]="formScan"
-            [depositaryAppointment]="depositaryAppointment"
-            [goodId]="noBienReadOnly"
-            [dataUserLogged]="dataUserLogged"
-            (scanRequestEmitter)="scanRequest($event)"
-            (showScanningPageEmitter)="showScanningPage($event)"
-            (messageDigitalizationEmitter)="messageDigitalization($event)"
-            (viewPicturesEmitter)="
-              viewPictures($event)
-            "></app-scanning-foil-appointment>
         </div>
         <!-- <div class="col-sm-12 col-12 col-md-8 P-2">
           <div class="row">
