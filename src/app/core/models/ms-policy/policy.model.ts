@@ -46,3 +46,50 @@ export interface IDeletePolicyXGood {
   policyKeyId: string;
   beginningDateId: Date;
 }
+
+export interface IPolicyxRequest {
+  id: string;
+  entryDate: string;
+  currencySaKey: string;
+  currencyCousinKey: string;
+  amountCousin: string;
+  paidout: string;
+  policyKey: string;
+  beginningDate: string;
+  requestNumber: string;
+  requestShortNumber?: string;
+  registrationNumber: string;
+  Policies: {
+    policyKeyId: string;
+    beginningDateId: string;
+    description: string;
+    termDate: string;
+    insurancecarrier: string;
+    serviceKey: string;
+    type: string;
+    renewal: string;
+    registrationNumber: string;
+    policyAntKey: string;
+    amountCousin: string;
+    amountCousinPror: string;
+    beginningAntDate: string;
+    termAntDate: string;
+    requestSpentENumber: string;
+    requestEntryENumber: string;
+    iva: string;
+    typeChange: string;
+    amountSpentExp: string;
+    requestSpentNumber: string;
+    idSpent: string;
+  };
+  RequestsXSure: {
+    id: string;
+    type: string;
+    requestDate: string;
+    expirationDate: string;
+    observations: string;
+    usernameDestiny: string;
+    usernameSource: string;
+    recordNumber: string;
+  };
+}

@@ -67,7 +67,11 @@ export class MassiveConversionPermissionsComponent
             this.onSelectRow(instance);
           }, */
           onComponentInitFunction: (instance: any) => {
-            const values = ['S', 'N', ''];
+            const values = [
+              { value: 'S', msg: 'Sí' },
+              { value: 'N', msg: 'No' },
+              { value: null, msg: '' },
+            ];
             instance.values.emit(values);
             instance.toggle.subscribe((data: any) => {
               data.row.abbreviation = data.toggle == '' ? null : data.toggle;
@@ -76,19 +80,19 @@ export class MassiveConversionPermissionsComponent
                 otkey: data.row.otKey.toString(),
                 otvalor: data.row.value,
                 registerNumber: data.row.numRegister,
-                abbreviation: data.row.abbreviation,
+                abbreviation: data.row.abbreviation.value,
               };
               console.log(model);
               this.tvalTable1Service.updateTvalTable1(model).subscribe(
                 res => {
                   this.alert(
                     'success',
-                    'Fue actualizado el dato de usuario',
+                    'Fue Actualizado el Dato de Usuario',
                     ''
                   );
                 },
                 err => {
-                  this.alert('error', 'Se presentó un error inesperado', '');
+                  this.alert('error', 'Se Presentó un Error Inesperado', '');
                 }
               );
             });
@@ -251,15 +255,15 @@ export class MassiveConversionPermissionsComponent
     console.log(model);
     this.tvalTable1Service.updateTvalTable1(model).subscribe(
       res => {
-        this.alert('success', 'Fue actualizado el dato de usuario', '');
+        this.alert('success', 'Fue Actualizado el Dato de Usuario', '');
       },
       err => {
         this.tvalTable1Service.createTvalTable1(model).subscribe(
           res => {
-            this.alert('success', 'Se generaron permisos para el usuario', '');
+            this.alert('success', 'Se Generaron Permisos para el Usuario', '');
           },
           err => {
-            this.alert('error', 'Se presentó un error inesperado', '');
+            this.alert('error', 'Se Presentó un Error Inesperado', '');
             generalData.toggle = false;
           }
         );
@@ -282,10 +286,10 @@ export class MassiveConversionPermissionsComponent
       console.log(model);
       this.tvalTable1Service.updateTvalTable1(model).subscribe(
         res => {
-          this.alert('success', 'Fue actualizado el dato de usuario', '');
+          this.alert('success', 'Fue Actualizado el Dato de Usuario', '');
         },
         err => {
-          this.alert('error', 'Se presentó un error inesperado', '');
+          this.alert('error', 'Se Presentó un Error Inesperado', '');
         }
       );
     });

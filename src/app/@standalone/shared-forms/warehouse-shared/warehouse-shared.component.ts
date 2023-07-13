@@ -71,13 +71,14 @@ export class WarehouseSharedComponent extends BasePage implements OnInit {
         this.warehousesType = new DefaultSelect(data.data, data.count);
       },
       err => {
-        let error = '';
+        this.warehousesType = new DefaultSelect();
+        /*  let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        this.onLoadToast('error', 'Error', error); */
       },
       () => {}
     );
@@ -90,14 +91,15 @@ export class WarehouseSharedComponent extends BasePage implements OnInit {
         this.warehouses = new DefaultSelect(data.data, data.count);
       },
       err => {
-        let error = '';
+        this.warehouses = new DefaultSelect();
+        /* let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
           error = err.message;
         }
         // this.onLoadToast('error', 'Error', error);
-        this.warehouses = new DefaultSelect([], 0, true);
+        this.warehouses = new DefaultSelect([], 0, true); */
       },
       () => {}
     );

@@ -522,24 +522,32 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-end">
-      <div class="m-3" *ngIf="!antecedentThreeEnable">
+      <!-- <div class="m-3" *ngIf="!antecedentThreeEnable">
         <button class="btn btn-primary btn-sm active" (click)="close()">
           Cerrar
         </button>
-      </div>
+      </div> -->
       <div class="m-3" *ngIf="antecedentThreeEnable">
-        <button class="btn btn-primary btn-sm active" (click)="previous()">
-          << Anterior
+        <button
+          class="btn btn-info btn-sm active"
+          (click)="previous()"
+          style="display: flex; align-items: center; justify-content: center">
+          <i class="bx bx-chevrons-left bx-md"></i> <span>Anterior</span>
         </button>
       </div>
       <div class="m-3">
-        <button (click)="salvar()" class="btn btn-success btn-sm active">
+        <button (click)="salvar()" class="btn btn-primary btn-sm active">
           Salvar
+          <i aria-hidden="true" class="fa fa-save"></i>
         </button>
       </div>
       <div class="m-3">
-        <button class="btn btn-primary btn-sm active" (click)="next()">
-          Siguiente>>
+        <button
+          *ngIf="!antecedentThreeEnable"
+          class="btn btn-info btn-sm active"
+          (click)="next()"
+          style="display: flex; align-items: center; justify-content: center">
+          <span>Siguiente</span> <i class="bx bx-chevrons-right bx-md"></i>
         </button>
       </div>
     </div>
