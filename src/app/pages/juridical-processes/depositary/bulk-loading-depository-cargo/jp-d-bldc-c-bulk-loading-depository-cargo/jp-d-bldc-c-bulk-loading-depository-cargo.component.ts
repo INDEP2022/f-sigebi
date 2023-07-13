@@ -138,8 +138,8 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     this.params2.subscribe(params2 => {
       const { page, limit } = params2;
       this.paginatedData2 = offlinePagination(this.errorsData, limit, page);
-      // this.dataTable.load(this.paginatedData2);
-      // this.dataTable.refresh();
+      this.dataTable.load(this.paginatedData2);
+      this.dataTable.refresh();
     });
   }
 
@@ -202,7 +202,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     this.massiveService.pupPreviewDataCSVForDepositary(formData).subscribe({
       next: resp => {
         this.loading = false;
-        console.log(resp);
+        // console.log(resp);
         this.data = resp.data;
         const params = new ListParams();
         this.params.next(params);
@@ -214,6 +214,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         // this.data = this.ExcelData.map((data: any) =>
         //   this.setDataTableFromExcel(data)
         // );
+        this.resetCountsAndVariables();
         this.onLoadToast(
           'success',
           'La información se ha cargado exitosamente.',
@@ -278,6 +279,8 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     }
   }
   applyRecords() {
+    this.loading = true;
+    this.resetCountsAndVariables();
     let VCONP: number = 0;
     let VCONC: number = 0;
     let VCONE: number = 0;
@@ -286,12 +289,12 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     let V_CHECA: number = 0;
     let V_BAN: boolean = false;
     let ERRTXT: string = '';
-    this.regRead = 0;
-    this.regProcessed = 0;
-    this.regCorrect = 0;
-    this.regWrong = 0;
-    this.regCorjur = 0;
-    this.regCoradm = 0;
+    // this.regRead = 0;
+    // this.regProcessed = 0;
+    // this.regCorrect = 0;
+    // this.regWrong = 0;
+    // this.regCorjur = 0;
+    // this.regCoradm = 0;
     if (this.no_bien != null) {
       for (let i = 0; i < this.data.length; i++) {
         if (this.data[i].VALIDADO === 'S' && this.data[i].APLICADO === 'N') {
@@ -385,11 +388,19 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     this.regCorjur = VCONJ;
     this.regCoradm = VCONA;
     this.disableApplyRecords = false;
-    console.log(this.errorsData);
-    this.dataTable.load(this.errorsData);
+    // console.log(this.errorsData);
+    // this.dataTable.load(this.errorsData);
+    // this.dataTable.refresh();
+    this.paginatedData2 = offlinePagination(
+      this.errorsData,
+      this.params2.value.limit,
+      this.params2.value.page
+    );
+    this.dataTable.load(this.paginatedData2);
     this.dataTable.refresh();
+    this.loading = false;
   }
-  validRecords() {
+  resetCountsAndVariables() {
     this.V_BAN = false;
     this.errorsData = [];
     this.countsData = {
@@ -405,7 +416,33 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     this.regWrong = 0;
     this.regCorjur = 0;
     this.regCoradm = 0;
-    console.log('DATA TABLA ', this.data);
+    this.paginatedData2 = offlinePagination(
+      this.errorsData,
+      this.params2.value.limit,
+      this.params2.value.page
+    );
+    this.dataTable.load(this.paginatedData2);
+    this.dataTable.refresh();
+  }
+  validRecords() {
+    this.loading = true;
+    this.resetCountsAndVariables();
+    // this.V_BAN = false;
+    // this.errorsData = [];
+    // this.countsData = {
+    //   VCONP: 0,
+    //   VCONC: 0,
+    //   VCONE: 0,
+    //   VCONJ: 0,
+    //   VCONA: 0,
+    // };
+    // this.regRead = 0;
+    // this.regProcessed = 0;
+    // this.regCorrect = 0;
+    // this.regWrong = 0;
+    // this.regCorjur = 0;
+    // this.regCoradm = 0;
+    // console.log('DATA TABLA ', this.data);
     this.data.forEach(element => {
       if (element.APLICADO == 'N') {
         element.VALIDADO = 'N';
@@ -446,9 +483,14 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
           new Date(this.data[count].FEC_PAGO),
           new Date()
         );
+        // console.log(
+        //   'FECHAS ################# ',
+        //   validDate,
+        //   new Date(this.data[count].FEC_PAGO)
+        // );
         if (validDate < 0) {
           this.V_BAN = false;
-          desc = desc + ', la fecha no puede mayor a la fecha actual';
+          desc = desc + ', la fecha no puede ser mayor a la fecha actual';
         }
       }
       if (this.data[count].CVE_CONCEPTO_PAGO == null) {
@@ -466,7 +508,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       if (this.V_BAN == false) {
         desc = desc + '.';
         this.countsData.VCONE++;
-        console.log('DESC ######### ', desc);
+        // console.log('DESC ######### ', desc);
         this.errorsData.push({ DESCRIPCION: desc }); // Crear error
         this.validJuridical(count);
       } else {
@@ -479,7 +521,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       .getAppointmentNumber_PBAplica(this.data[count].NO_BIEN)
       .subscribe({
         next: async data => {
-          console.log(data, data.data[0].no_nombramiento);
+          // console.log(data, data.data[0].no_nombramiento);
           this.data[count].NO_NOMBRAMIENTO = data.data[0].no_nombramiento;
           if (option == 'pays') {
             this.getVCheca(count, desc);
@@ -491,11 +533,12 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
         },
         error: err => {
           this.V_BAN = false;
+          console.log(option);
           let labelText: string = '';
           if (option == 'pays') {
             labelText = 'PAGOS';
             this.countsData.VCONE++;
-          } else if (option == 'juridical') {
+          } else if (option == 'juridico') {
             labelText = 'JURIDICO';
           } else if (option == 'admin') {
             labelText = 'ADMINISTRATIVO';
@@ -507,7 +550,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
             ') Bien: ' +
             this.data[count].NO_BIEN +
             '. No existe en Depositaría.';
-          console.log('DESC ######### ', desc);
+          // console.log('DESC ######### ', desc);
           this.errorsData.push({ DESCRIPCION: desc }); // Crear error
           if (option == 'pays') {
             this.validJuridical(count);
@@ -524,7 +567,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       .getVCheca(Number(this.data[count].CVE_CONCEPTO_PAGO))
       .subscribe({
         next: async data => {
-          console.log(data);
+          // console.log(data);
           // this.data[count].NO_NOMBRAMIENTO = data.data[0].no_nombramiento;
           this.getVChecaPost(count, desc);
         },
@@ -538,7 +581,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
             this.data[count].CVE_CONCEPTO_PAGO +
             '. Clave de Concepto de Pago inválido.';
           this.countsData.VCONE++;
-          console.log('DESC ######### ', desc);
+          // console.log('DESC ######### ', desc);
           this.errorsData.push({ DESCRIPCION: desc }); // Crear error
           this.validJuridical(count);
         },
@@ -569,7 +612,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
             this.data[count].CVE_CONCEPTO_PAGO +
             '. El pago ya fué aplicado.';
           this.countsData.VCONE++;
-          console.log('DESC ######### ', desc);
+          // console.log('DESC ######### ', desc);
           this.errorsData.push({ DESCRIPCION: desc }); // Crear error
           this.validJuridical(count);
         },
@@ -594,7 +637,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
               this.data[count].CVE_CONCEPTO_PAGO +
               '. Error al verificar el pago.';
             this.countsData.VCONE++;
-            console.log('DESC ######### ', desc);
+            // console.log('DESC ######### ', desc);
             this.errorsData.push({ DESCRIPCION: desc }); // Crear error
             this.validJuridical(count);
           }
@@ -629,7 +672,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
             ) +
             '. El reporte ya fué ingresado.';
           // this.countsData.VCONE++;
-          console.log('DESC ######### ', desc);
+          // console.log('DESC ######### ', desc);
           this.errorsData.push({ DESCRIPCION: desc }); // Crear error
 
           if (option == 'pays') {
@@ -665,7 +708,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
               ) +
               '. Error al verificar el reporte.';
             // this.countsData.VCONE++;
-            console.log('DESC ######### ', desc);
+            // console.log('DESC ######### ', desc);
             this.errorsData.push({ DESCRIPCION: desc }); // Crear error
 
             if (option == 'pays') {
@@ -684,7 +727,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     let desc: string = '';
     if (this.data[count].APLJUR == 'N') {
       this.V_BAN = true;
-      desc = desc + '(ADMINISTRATIVO) En el registro ' + (count + 1);
+      desc = desc + '(JURIDICO) En el registro ' + (count + 1);
       if (this.data[count].NO_BIEN == null) {
         this.V_BAN = false;
         desc = desc + ', el número de bien es nulo';
@@ -696,7 +739,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       if (this.V_BAN == false) {
         desc = desc + '.';
         this.countsData.VCONE++;
-        console.log('DESC ######### ', desc);
+        // console.log('DESC ######### ', desc);
         this.errorsData.push({ DESCRIPCION: desc }); // Crear error
         this.validAdmin(count);
       } else {
@@ -709,7 +752,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     let desc: string = '';
     if (this.data[count].APLADM == 'N') {
       this.V_BAN = true;
-      desc = desc + ' (JURIDICO) En el registro ' + (count + 1);
+      desc = desc + ' (ADMINISTRATIVO) En el registro ' + (count + 1);
       if (this.data[count].NO_BIEN == null) {
         this.V_BAN = false;
         desc = desc + ', el número de bien es nulo';
@@ -721,7 +764,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       if (this.V_BAN == false) {
         desc = desc + '.';
         this.countsData.VCONE++;
-        console.log('DESC ######### ', desc);
+        // console.log('DESC ######### ', desc);
         this.errorsData.push({ DESCRIPCION: desc }); // Crear error
         this.continueLoop(count);
       } else {
@@ -733,7 +776,7 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
   continueLoop(count: number) {
     this.countsData.VCONP++;
     count = count + 1;
-    console.log(count);
+    // console.log(count);
     if (this.data[count]) {
       this.loopValidPays(count);
     } else {
@@ -741,6 +784,14 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       // console.log(this.errorsData);
       // this.dataTable.load(this.errorsData);
       // this.dataTable.refresh();
+      this.loading = false;
+      this.paginatedData2 = offlinePagination(
+        this.errorsData,
+        this.params2.value.limit,
+        this.params2.value.page
+      );
+      this.dataTable.load(this.paginatedData2);
+      this.dataTable.refresh();
       // this.countsData.T_REG_LEIDOS = this.countsData.VCONP;
       // this.countsData.T_REG_PROCESADOS =
       //   this.countsData.VCONC + this.countsData.VCONE;
