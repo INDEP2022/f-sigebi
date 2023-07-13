@@ -330,6 +330,8 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
   getGoodsSheard(params: ListParams) {
     //Provisional data
+    // this.searchTabForm.controls['noBien'].disable();
+    this.loader.load = true;
     this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     let data = this.params.value;
     data.page = params.page;
@@ -351,21 +353,26 @@ export class SearchTabComponent extends BasePage implements OnInit {
           };
         });
         this.goods = new DefaultSelect(this.dataGoods, data.count);
+        this.loader.load = false;
+        // this.searchTabForm.controls['noBien'].enable();
       },
       error: err => {
         this.goods = new DefaultSelect([], 0);
         let error = '';
+        this.loader.load = false;
         // if (err.status === 0) {
         //   error = 'Revise su conexión de Internet.';
         //   this.onLoadToast('error', 'Error', error);
         // }
-        this.alert(
-          'warning',
-          'Información',
-          'No hay bienes que mostrar con los filtros seleccionado'
-        );
+        // this.alert(
+        //   'warning',
+        //   'Información',
+        //   'No hay bienes que mostrar con los filtros seleccionado'
+        // );
       },
-      complete: () => {},
+      complete: () => {
+        this.searchTabForm.updateValueAndValidity();
+      },
     });
   }
 }
