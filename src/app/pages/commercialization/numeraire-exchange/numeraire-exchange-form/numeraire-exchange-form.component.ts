@@ -581,8 +581,8 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       (validateNumerary && !availableGood)
     ) {
       this.onLoadToast(
-        'warning',
-        'Advertencia',
+        'info',
+        'Información',
         'El bien consultado también puede ser convertido a numerario por valores y divisas. \n Verifique su tipo de conversión antes de continuar con el proceso'
       );
     }

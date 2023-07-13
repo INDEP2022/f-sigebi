@@ -137,12 +137,12 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings2"
-              [source]="dataTable">
+              [source]="paginatedData2">
             </ng2-smart-table>
           </div>
         </div>
       </div>
-      <app-pagination [params]="params2" [totalItems]="errorsData.length">
+      <app-pagination [params]="params2" [totalItems]="totalItems2">
       </app-pagination>
     </div>
   </div>
