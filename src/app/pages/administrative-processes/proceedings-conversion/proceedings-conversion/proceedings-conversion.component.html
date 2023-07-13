@@ -85,7 +85,7 @@
                                   <div class="col-md-5">
                                     <div>
                                       <label for=""
-                                        >No. Exp. del Trasnferente:
+                                        >No. Exp. del Transferente:
                                       </label>
                                       {{ trasnfer || '' }}
                                     </div>
@@ -93,7 +93,7 @@
                                   <div class="col-md-3">
                                     <div>
                                       <label for="">Hora de creación: </label>
-                                      {{ time | date: 'hh:mm' }}
+                                      {{ time | date : 'hh:mm' }}
                                     </div>
                                   </div>
                                 </div>
@@ -359,7 +359,6 @@
                                     height: loading ? '0px' : '400px'
                                   }">
                                   <ng2-smart-table
-                                    id="bienes"
                                     [attr.class]="
                                       'table-bordered table-responsive'
                                     "

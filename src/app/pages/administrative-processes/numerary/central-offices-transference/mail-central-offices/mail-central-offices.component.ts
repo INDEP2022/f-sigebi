@@ -238,7 +238,7 @@ export class mailcentralofficesComponent extends BasePage implements OnInit {
 
   getMail(params: ListParams, bookEmail?: string) {
     if (bookEmail) {
-      params['filter.bookEmail'] = `$eq:${bookEmail}`;
+      params['filter.bookEmail'] = `$in:${bookEmail}`;
     }
     this.emailService.getVigMailBook(params).subscribe((data: any) => {
       this.itemsCC = new DefaultSelect(data.data, data.count);
