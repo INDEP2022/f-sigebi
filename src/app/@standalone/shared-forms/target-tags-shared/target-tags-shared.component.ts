@@ -52,13 +52,14 @@ export class TargetTagsSharedComponent extends BasePage implements OnInit {
         this.targetTags = new DefaultSelect(newData, data.count);
       },
       err => {
-        let error = '';
+        /* let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        this.onLoadToast('error', 'Error', error); */
+        this.targetTags = new DefaultSelect()
       },
       () => {}
     );
