@@ -167,7 +167,6 @@ export class RecordAccountStatementsComponent
 
   // Permite buscar los bancos por nombre
   onSearchName(inputElement: any) {
-    // this.dataAccount = new LocalDataSource();
     const name = inputElement.value;
     setTimeout(() => {
       this.recordAccountStatementsService
@@ -197,7 +196,6 @@ export class RecordAccountStatementsComponent
     this.cleandInfoDate();
     this.bankAccountSelect = new DefaultSelect();
     this.loading = false;
-    // this.dataAccount = new LocalDataSource();
     if (value && value.bankCode) {
       const bankCode = value.bankCode;
       this.searchBankAccount(bankCode, this.paramsSubject);
@@ -238,7 +236,6 @@ export class RecordAccountStatementsComponent
   }
 
   onSearchAccount(inputElement: any) {
-    // this.dataAccount = new LocalDataSource();
     const account = inputElement.value;
     setTimeout(() => {
       this.recordAccountStatementsAccountsService
@@ -271,7 +268,6 @@ export class RecordAccountStatementsComponent
     this.form.get('description').reset();
     this.totalItems = 0;
     this.cleandInfoDate();
-    // this.dataAccount = new LocalDataSource();
     const accountNumber = value.accountNumber;
     this.accountDate = value.accountNumber;
     this.searchDataAccount(accountNumber);

@@ -15,15 +15,6 @@ export const RECORDS_ACCOUNT_STATEMENTS_COLUMNS = {
       return row.numberGood !== null;
     },
   },
-  // dateMotion: {
-  //   title: 'Fecha de Movimiento',
-  //   sort: false,
-  //   valuePrepareFunction: (cell: any, row: any) => {
-  //     const parts = cell.split('-');
-  //     const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
-  //     return formattedDate;
-  //   }
-  // },
   dateMotion: {
     title: 'Fecha de Movimiento',
     sort: false,

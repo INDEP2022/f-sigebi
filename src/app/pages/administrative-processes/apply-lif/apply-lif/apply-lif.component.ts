@@ -10,6 +10,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { map } from 'rxjs';
 import { HasMoreResultsComponent } from 'src/app/@standalone/has-more-results/has-more-results.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryNumeraryService } from 'src/app/core/services/ms-historynumerary/historynumerary.service';
 import { MassiveNumeraryService } from 'src/app/core/services/ms-massivenumerary/massivenumerary.service';
@@ -20,7 +21,20 @@ import { ApplyLifRequest } from './apply-lif-requests';
 @Component({
   selector: 'app-apply-lif',
   templateUrl: './apply-lif.component.html',
-  styles: [],
+  styles: [
+    `
+      .loader-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: white;
+        background: #ffffff75;
+        z-index: 100;
+      }
+    `,
+  ],
 })
 export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
   public form: FormGroup;
@@ -126,8 +140,9 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
   getGood1(goodId: number) {
     this.getGoodByReference(goodId).subscribe({
       next: async good => {
-        this.formGood1.patchValue(good as any);
-        await this.postQueryGood1();
+        // this.formGood1.patchValue(good as any);
+        // await this.postQueryGood1();
+        this.changeGood1(good);
         this.loading = false;
       },
       error: () => {
@@ -140,13 +155,11 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
     const option: Partial<HasMoreResultsComponent> = {
       title: 'Seleccionar bien',
       ms: 'good',
-      settingTable: {
-        columns: [
-          { name: 'id', title: 'No. Bien' },
-          { name: 'description', title: 'Descripción' },
-          { name: 'status', title: 'Estatus' },
-          { name: 'fileNumber', title: 'No. Expediente' },
-        ],
+      columns: {
+        id: { title: 'No. Bien' },
+        description: { title: 'Descripción' },
+        status: { title: 'Estatus' },
+        fileNumber: { title: 'No. Expediente' },
       },
       path: 'good',
       queryParams: { 'filter.goodReferenceNumber': this.formGood.value.id },
@@ -156,33 +169,37 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         class: 'modal-xl',
         initialState: option,
       })
-      .onHidden.subscribe({
+      .content.onClose.subscribe({
         next: (good: any) => {
           console.log(good);
+          this.changeGood1(good);
         },
       });
   }
 
-  // async selectGood1(good: IGood) {
-  //   this.formGood1.patchValue(good as any);
-  //   await this.postQueryGood1();
-  // }
+  async changeGood1(good: IGood) {
+    this.loading = true;
+    this.formGood1.patchValue(good as any);
+    await this.postQueryGood1();
+    this.loading = false;
+  }
 
   async postQueryGood1() {
     let TOT: number;
+    const good1 = this.formGood1.getRawValue();
     try {
       TOT = await this.getCountGoodByReference(this.formGood.value.id);
       try {
         const { dateChange } = await this.getChangeNumeraryByGood(
           this.formGood.value.id,
-          this.formGood1.value.id
+          good1.id
         );
         this.formBlkControl.get('dateChange').setValue(new Date(dateChange));
       } catch (error) {
         try {
           const params = new ListParams();
           params['filter.originalGood'] = this.formGood.value.id;
-          params['filter.goodNumeraryNumber'] = this.formGood1.value.id;
+          params['filter.goodNumeraryNumber'] = good1.id;
           const { dateChange } = await this.getHistoricalNumeraryByGood(params);
           this.formBlkControl.get('dateChange').setValue(new Date(dateChange));
         } catch (error) {
@@ -193,7 +210,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
       try {
         const params = new ListParams();
         params['filter.originalGood'] = this.formGood.value.id;
-        params['filter.goodNumeraryNumber'] = this.formGood1.value.id;
+        params['filter.goodNumeraryNumber'] = good1.id;
         const { reason } = await this.getHistoricalNumeraryByGood(params);
         this.formBlkControl.get('motive').setValue(reason);
         this.isVisibleMotive = true;
@@ -202,10 +219,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
       }
 
       this.formGood1.get('contConv').setValue(TOT);
-      const tTotal =
-        this.formGood1.value.val2 -
-        this.formGood1.value.val13 -
-        (this.formGood1.value.val10 || 0);
+      const tTotal = good1.val2 - good1.val13 - (good1.val10 || 0);
       this.formBlkControl.get('tTotal').setValue(tTotal);
       if (TOT == 0) {
         this.isContConvVisible = false;
@@ -213,7 +227,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         this.isContConvVisible = true;
       }
 
-      const val15 = this.formGood1.getRawValue().val15;
+      const val15 = good1.val15 || 0;
       if (val15 == 0) {
         this.isVisibleVal15 = false;
         this.formGood1.get('val15').disable();
