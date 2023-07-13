@@ -165,6 +165,7 @@ export class NotifyAssetsImproprietyFormComponent
     }
 
     if (typeTransference != 'SAT_SAE' || generaXML) {
+      this.aclaracionTransferentesVoluntarias(); //Aclaración Manual tipo 2
       // if (
       //   this.typeClarifications == 2 &&
       //   typeTransference != 'PGR_SAE'
@@ -178,11 +179,13 @@ export class NotifyAssetsImproprietyFormComponent
       if (obtainTypeDocument) {
         switch (this.typeDoc) {
           case 'AclaracionAsegurados': {
+            console.log('AclaracionAsegurados');
             this.aclaracionAsegurados(); //Aclaración PGR tipo 1 y 2
 
             break;
           }
           case 'AclaracionTransferentesVoluntarias': {
+            console.log('AclaracionTransferentesVoluntarias');
             this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
 
             break;
