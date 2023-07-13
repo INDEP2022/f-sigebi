@@ -18,6 +18,12 @@ export interface IAccountMovementCategory {
   registerNumber: string;
 }
 
+export interface IDetailAccountMovement {
+  date: string | null;
+  deposit: string | null;
+  withdrawal: string | null;
+}
+
 export interface IAccountNumber {
   accountNumber: number;
   accountNumberTransfer: string;
@@ -86,4 +92,21 @@ export interface IUserChecks {
   checkType: string;
   registerNumber: number;
   nbOrigin: string;
+}
+
+export interface IPupInterestsDetail {
+  pAmount: number;
+  pDateToday: string;
+  pDateStartMov: string;
+  pMoneyDi: string;
+  pCalculationRate: string;
+  pBonusPoints: number;
+  pDayxAnio: number;
+}
+
+export interface IMovementDetail {
+  periodo: string;
+  dias: string;
+  Tasa: string;
+  importe: string;
 }

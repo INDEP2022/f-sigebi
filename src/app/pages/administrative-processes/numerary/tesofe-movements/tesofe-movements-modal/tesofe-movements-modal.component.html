@@ -12,7 +12,9 @@
             <input
               type="text"
               formControlName="dateMotion"
+              (userRowSelect)="onRowSelect($event)"
               class="form-control"
+              (bsValueChange)="onClickSelect($event)"
               bsDatepicker />
           </form-field>
         </div>
@@ -22,6 +24,15 @@
               type="number"
               class="form-control"
               formControlName="deposit" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="form.get('retiro')" label="Retiro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="retiro" />
           </form-field>
         </div>
       </div>

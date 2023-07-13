@@ -126,6 +126,7 @@ export enum ENDPOINT_LINKS {
   parametergoodBase = 'parametergood/api/v1/rates/get-all',
   parametergoodActa = 'proceeding/proceedings-validators',
   parametergoodCat = 'parametergood/cat-motivosrev',
+  parametergoodMovements = 'parametergood/api/v1/parameters',
   WarehouseTypeWarehouse = 'parametergood/warehouse-types-warehouse',
   WarehouseClassifyCosts = 'parametergood/warehouse-classif-costs',
   parameterComer = 'parametercomer/api/v1/bank-accounts',

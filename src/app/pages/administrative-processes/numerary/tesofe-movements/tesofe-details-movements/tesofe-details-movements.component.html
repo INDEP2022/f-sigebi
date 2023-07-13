@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Bancos</h5>
+    <h5 class="modal-title">Detalle</h5>
   </div>
   <div body>
     <div class="mb-2">
@@ -10,11 +10,11 @@
       <ng2-smart-table
         [attr.class]="'table-bordered table-responsive'"
         [settings]="settings"
-        [source]="data2"
+        [source]="source"
         (userRowSelect)="selectItem($event.data)">
       </ng2-smart-table>
     </div>
-    <app-pagination [filterParams]="filterParams" [totalItems]="totalItem">
+    <app-pagination [filterParams]="filterParams" [totalItems]="total">
     </app-pagination>
   </div>
   <div footer>
@@ -22,17 +22,9 @@
       <div class="m-3">
         <button
           type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="sendData()">
-          Seleccionar
-        </button>
-      </div>
-      <div class="m-3">
-        <button
-          type="button"
           class="btn btn-danger btn-sm active"
           (click)="close()">
-          Cancelar
+          Regresar
         </button>
       </div>
     </div>

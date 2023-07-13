@@ -78,5 +78,9 @@ export class BankAccountService
     return this.repository.remove(`${this.microservice}/${this.api}`, id);
   }
 
+  pupInterestsDetail(body: any) {
+    return this.post(`/aplication/pup-interests-detail`, body);
+  }
+
   //***** */
 }
