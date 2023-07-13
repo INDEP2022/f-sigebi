@@ -74,7 +74,9 @@ interface IFormNumeraire {
 @Component({
   selector: 'app-numeraire-exchange-form',
   templateUrl: './numeraire-exchange-form.component.html',
-  styles: ['::ng-deep .ws-pre{white-space: pre-wrap;}'],
+  styles: [
+    '::ng-deep .ws-pre{white-space: pre-wrap;} ::ng-deep .swal2-html-container{text-transform: capitalize !important;}',
+  ],
   providers: [CurrencyPipe],
   animations: [
     trigger('OnGoodSelected', [
@@ -579,8 +581,8 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       (validateNumerary && !availableGood)
     ) {
       this.onLoadToast(
-        'warning',
-        'Advertencia',
+        'info',
+        'Información',
         'El bien consultado también puede ser convertido a numerario por valores y divisas. \n Verifique su tipo de conversión antes de continuar con el proceso'
       );
     }
@@ -690,13 +692,15 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     return numeraryAvailable;
   }
 
-  selectAccount(account: {
-    cve_banco: string;
-    nombre: string;
-    no_cuenta: string;
-    cve_moneda: string;
-    cve_cuenta: string;
-  }) {
+  selectAccount(
+    account: {
+      cve_banco: string;
+      nombre: string;
+      no_cuenta: string;
+      cve_moneda: string;
+      cve_cuenta: string;
+    } | null
+  ) {
     this.selectedBank = account;
     this.formBlkControl.get('tiNewBank').setValue(account?.cve_banco);
     this.formBlkControl.get('diNewBank').setValue(account?.nombre);
@@ -705,12 +709,19 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       .setValue(account?.no_cuenta);
     this.formBlkControl.get('diNewAccount').setValue(account?.cve_cuenta);
     this.formBlkControl.get('diNewCurrency').setValue(account?.cve_moneda);
-
+    this.clearDateDeposit();
     // account = account || {};
     // this.selectedBank = account;
     // this.form.get('moneyNew').setValue(account?.cveCurrency || null);
     // this.form.get('accountNew').setValue(account?.cveAccount || null);
     // this.form.get('bankNew').setValue(account?.cveBank || null);
+  }
+
+  clearDateDeposit() {
+    this.isCleaning = true;
+    this.formBlkControl.get('tiNewDate').setValue(null);
+    this.formBlkControl.get('diNewFile').setValue(null);
+    this.formBlkControl.get('diDeposit').setValue(null);
   }
 
   async saveInServer(): Promise<void> {

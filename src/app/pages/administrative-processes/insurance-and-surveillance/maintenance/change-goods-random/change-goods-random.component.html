@@ -107,7 +107,10 @@
 
     <div class="row mt-4 float-right">
       <div class="">
-        <button type="submit" class="btn btn-primary btn-sm active mr-3">
+        <button
+          [disabled]="!form.valid"
+          type="submit"
+          class="btn btn-primary btn-sm active mr-3">
           Sustituir <i class="fas fa-sync-alt"> </i>
         </button>
       </div>

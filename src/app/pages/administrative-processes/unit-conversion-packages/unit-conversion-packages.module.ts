@@ -26,6 +26,7 @@ import { MassiveConversionModalGoodComponent } from './massive-conversion-modal-
 import { MassiveConversionPermissionsComponent } from './massive-conversion-permissions/massive-conversion-permissions.component';
 import { MassiveConversionSelectGoodComponent } from './massive-conversion-select-good/massive-conversion-select-good.component';
 import { PaqDestinoDetComponent } from './massive-conversion/paq-destino-det/paq-destino-det.component';
+import { ScanFileComponent } from './massive-conversion/scan-file/scan-file.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { PaqDestinoDetComponent } from './massive-conversion/paq-destino-det/paq
     PackagesSharedComponent,
     ScanFileSharedComponent,
     ModalModule.forChild(),
+    ScanFileComponent,
   ],
 })
 export class UnitConversionPackagesModule {}

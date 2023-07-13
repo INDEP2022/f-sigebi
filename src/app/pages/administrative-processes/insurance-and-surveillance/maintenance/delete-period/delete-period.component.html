@@ -62,7 +62,7 @@
     <div class="row mt-4 float-right">
       <div class="">
         <button
-          [disabled]="isLoading"
+          [disabled]="!form.valid"
           type="submit"
           class="btn btn-red btn-sm active m-3">
           Eliminar <i class="fa fa-trash" aria-hidden="true"></i>

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { getUser } from 'src/app/common/helpers/helpers';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { BasePage } from 'src/app/core/shared';
 import { ChangeGoodsRandomComponent } from '../change-goods-random/change-goods-random.component';
@@ -13,7 +13,10 @@ import { EmailInformationComponent } from '../email-information/email-informatio
   styles: [],
 })
 export class MaintenanceComponent extends BasePage implements OnInit {
-  constructor(private survillanceService: SurvillanceService) {
+  constructor(
+    private survillanceService: SurvillanceService,
+    private token: AuthService
+  ) {
     super();
   }
 
@@ -34,7 +37,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
     const period = form.get('period').value;
     const textNotPass =
       'Debe seleccionar un bien de número aleatorio y periodo en cambio de bienes de número aleatorio';
-    const textQuestion = `¿Está seguro de cambiar el bien de número aleatorio ${numberAleatory} del periodo ${period}`;
+    const textQuestion = `¿Está seguro de cambiar el bien de número aleatorio ${numberAleatory} del periodo ${period}?`;
     const title = 'Cambio Bienes de Número Aleatorio';
     this.onClickStructure(
       Boolean(numberAleatory) && Boolean(period),
@@ -54,7 +57,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
     const changePeriodEndValue = form.get('periodDestiny').value;
     const textNotPass =
       'Debe seleccionar un periodo de origen y destino en el bloque de cambio de periodo';
-    const textQuestion = `¿Está seguro de cambiar la información del periodo ${changePeriodInitValue} al periodo ${changePeriodEndValue}`;
+    const textQuestion = `¿Está seguro de cambiar la información del periodo ${changePeriodInitValue} al periodo ${changePeriodEndValue}?`;
     this.onClickStructure(
       Boolean(changePeriodInitValue) && Boolean(changePeriodEndValue),
       textNotPass,
@@ -157,41 +160,56 @@ export class MaintenanceComponent extends BasePage implements OnInit {
     const controlTo = forms.emailInformation.get('to');
     const controlCc = forms.emailInformation.get('cc');
     const controlBody = forms.emailInformation.get('body');
+
     if (controlReasonForChange.invalid) {
       message.push(
-        'El motivo de cambio del bloque información de correo, es información obligatoria ...'
+        'El motivo de cambio del bloque información de correo, es información obligatoria'
       );
       controlReasonForChange.markAsTouched();
-    }
-    if (controlFrom.invalid) {
-      message.push(
-        'El identificador de envío del bloque información de correo, es información obligatoria ...'
-      );
-      controlFrom.markAsTouched();
-    }
-    if (controlTo.invalid) {
-      message.push(
-        'El correo electrónico del destino (Para) del bloque información de correo, es información obligatoria ...'
-      );
-      controlTo.markAsTouched();
-    }
-    if (controlCc.invalid) {
-      message.push(
-        'El correo electrónico del destino (CC) del bloque información de correo, es información obligatoria ...'
-      );
-      controlCc.markAsTouched();
-    }
-    if (controlBody.invalid) {
-      message.push(
-        'El identificador de tipo (Cuerpo de correo) del bloque información de correo, es información obligatoria ...'
-      );
-      controlBody.markAsTouched();
-    }
-
-    if (message.length > 0) {
       this.alert('warning', 'Información de Correo', message.join(',\n '));
       return false;
     }
+
+    if (controlFrom.invalid) {
+      message.push(
+        'El identificador de envío del bloque información de correo, es información obligatoria'
+      );
+      controlFrom.markAsTouched();
+      this.alert('warning', 'Información de Correo', message.join(',\n '));
+      return false;
+    }
+
+    if (controlTo.invalid) {
+      message.push(
+        'El correo electrónico del destino (Para) del bloque información de correo, es información obligatoria'
+      );
+      controlTo.markAsTouched();
+      this.alert('warning', 'Información de Correo', message.join(',\n '));
+      return false;
+    }
+
+    if (controlCc.invalid) {
+      message.push(
+        'El correo electrónico del destino (CC) del bloque información de correo, es información obligatoria'
+      );
+      controlCc.markAsTouched();
+      this.alert('warning', 'Información de Correo', message.join(',\n '));
+      return false;
+    }
+
+    if (controlBody.invalid) {
+      message.push(
+        'El identificador de tipo (Cuerpo de correo) del bloque información de correo, es información obligatoria'
+      );
+      controlBody.markAsTouched();
+      this.alert('warning', 'Información de Correo', message.join(',\n '));
+      return false;
+    }
+
+    // if (message.length > 0) {
+    //   this.alert('warning', 'Información de Correo', message.join(',\n '));
+    //   return false;
+    // }
     return true;
   }
 
@@ -360,7 +378,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       pNumPeriod: deletePeriod.period,
       pDelegationKey: deletePeriod.delegation,
 
-      pUsrAuthorize: getUser(),
+      pUsrAuthorize: this.token.decodeToken().preferred_username,
       pSoliciDate: emailInformation.date,
       pMtvoRequest: emailInformation.reasonForChange,
       pIdSend: emailInformation.from,

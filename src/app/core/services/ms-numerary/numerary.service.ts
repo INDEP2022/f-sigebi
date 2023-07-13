@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { NumeraryEndpoints } from 'src/app/common/constants/endpoints/ms-numerary';
 import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -122,6 +122,13 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
       NumeraryEndpoints.ProcessesNume,
       params
     );
+  }
+
+  getProcessNumById(id: number): Observable<IProccesNum> {
+    return this.get<IListResponse<IProccesNum>>(
+      NumeraryEndpoints.ProcessesNume,
+      { 'filter.procnumId': id, limit: 1 }
+    ).pipe(map(res => res.data[0]));
   }
 
   createProccesNum(model: IProccesNum) {

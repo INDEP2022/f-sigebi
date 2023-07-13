@@ -20,4 +20,11 @@ export interface IRequestInTurn {
   acta?: string;
   ascertainment?: string;
   cause?: string;
+
+  id?: string | number;
+  stationId?: string | number;
+  authorityId?: string | number;
+  transferenceId?: string | number;
+  regionalDelegationId?: string | number;
+  keyStateOfRepublic?: string | number;
 }

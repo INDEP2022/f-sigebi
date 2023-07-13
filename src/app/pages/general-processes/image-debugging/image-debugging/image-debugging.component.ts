@@ -106,6 +106,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     this.goodPhotoService.getFilterGoodPhoto(params).subscribe({
       next: response => {
         this.idGood = this.form.controls['goodNumber'].value;
+        this.idGood = this.form.controls['goodNumber'].value;
         console.log(response.data);
         this.goodPhoto = response.data;
         this.totalItems = response.count;

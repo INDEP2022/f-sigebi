@@ -72,6 +72,11 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   expedientNumber: number = null; //no_expediente
   wheelNumber: number = null; //no_volante
   processNumber: number = null; //no_tramite
+  paramsDepositaryAppointment: any = {
+    P_NB: null,
+    P_FOLIO: null,
+    P_ND: null,
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -109,6 +114,15 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         }
         if (this.origin == 'FACTJURREGDESTLEG') {
           this.no_bien = params['P_NB'] ?? null;
+        }
+
+        if (
+          this.origin == 'FACTGENSOLICDIGIT' &&
+          this.requestOrigin == 'FACTJURREGDESTLEG'
+        ) {
+          this.paramsDepositaryAppointment.P_NB = params['P_NB'] ?? null;
+          this.paramsDepositaryAppointment.P_FOLIO = params['P_FOLIO'] ?? null;
+          this.paramsDepositaryAppointment.P_ND = params['P_ND'] ?? null;
         }
       });
     this.settings = {
@@ -461,7 +475,24 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         '/pages/executive-processes/destruction-authorization-management',
       ]);
     }
-    if (this.origin == 'FACTGENSOLICDIGIT') {
+    if (
+      this.origin == 'FACTGENSOLICDIGIT' &&
+      this.requestOrigin == 'FACTJURREGDESTLEG'
+    ) {
+      this.router.navigate(
+        [
+          `/pages/general-processes/scan-request/${this.originFlyer}/${this.originFolio}`,
+        ],
+        {
+          queryParams: {
+            origin: this.requestOrigin,
+            P_NB: this.paramsDepositaryAppointment.P_NB,
+            P_FOLIO: this.paramsDepositaryAppointment.P_FOLIO,
+            P_ND: this.paramsDepositaryAppointment.P_ND,
+          },
+        }
+      );
+    } else if (this.origin == 'FACTGENSOLICDIGIT') {
       this.router.navigate(
         [
           `/pages/general-processes/scan-request/${this.originFlyer}/${this.originFolio}`,
@@ -505,6 +536,11 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       this.router.navigateByUrl(
         `pages/juridical/depositary/maintenance-of-coverages?processNumber=${this.processNumber}&wheelNumber=${this.wheelNumber}&proceedingsNumber=${this.expedientNumber}`
       );
+    }
+    if (this.origin == 'FMTOPAQUETE') {
+      this.router.navigate([
+        `pages/administrative-processes/unit-conversion-packages`,
+      ]);
     }
   }
 }

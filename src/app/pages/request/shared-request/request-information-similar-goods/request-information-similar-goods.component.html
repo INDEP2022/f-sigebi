@@ -23,20 +23,21 @@
           <div class="col-md-4">
             <label class="label" for=""
               >Fecha de Solicitud&#58;
-              <span>{{
-                requestInfo?.applicationDate | date: 'ddMMyyyy'
+              <span class="fs-4">{{
+                requestInfo?.applicationDate | date : 'dd-MM-YYYY'
               }}</span></label
             >
           </div>
           <div class="col-md-4">
             <label class="label" for=""
-              >No&#46; Solicitud&#58; <span>{{ requestInfo?.id }}</span></label
+              >No&#46; Solicitud&#58;
+              <span class="fs-4">{{ requestInfo?.id }}</span></label
             >
           </div>
           <div class="col-md-4">
             <label class="label" for=""
               >No&#46; Expediente&#58;
-              <span>{{ requestInfo?.recordId }}</span></label
+              <span class="fs-4">{{ requestInfo?.recordId }}</span></label
             >
           </div>
         </div>
@@ -44,45 +45,48 @@
           <div class="col-md-4">
             <label class="label" for=""
               >No&#46; Oficio&#58;
-              <span>{{ requestInfo?.paperNumber }}</span></label
+              <span class="fs-4">{{ requestInfo?.paperNumber }}</span></label
             >
           </div>
           <div class="col-md-4">
             <label class="label" for=""
               >Delegaci&oacute;n Regional&#58;
-              <span>{{ regionalDelegation }}</span></label
+              <span class="fs-4">{{ regionalDelegation }}</span></label
             >
           </div>
           <div class="col-md-4">
             <label class="label" for=""
-              >Estado&#58; <span>{{ state }}</span></label
+              >Estado&#58; <span class="fs-4">{{ state }}</span></label
             >
           </div>
         </div>
         <div class="row pt-2">
           <div class="col-md-4">
             <label class="label" for=""
-              >Transferente&#58; <span>{{ transferent }}</span></label
+              >Transferente&#58;
+              <span class="fs-4">{{ transferent }}</span></label
             >
           </div>
           <div class="col-md-4">
             <label class="label" for=""
               >Emisora&#58;
-              <span>{{ station }}</span>
+              <span class="fs-4">{{ station }}</span>
             </label>
           </div>
           <div class="col-md-4">
             <label class="label">
               Autoridad&#58;
-              <span>{{ authority }}</span>
+              <span class="fs-4">{{ authority }}</span>
             </label>
           </div>
         </div>
-        <div class="row pt-2" *ngIf="requestInfo?.affair != 13">
+        <div
+          class="row pt-2"
+          *ngIf="requestInfo?.affair != 10 && requestInfo?.affair != 13">
           <div class="col-md-4">
             <label class="label">
               No&#46; Solicitud Bienes Similares&#58;
-              <span>{{ requestInfo?.stateRequestId }}</span>
+              <span class="fs-4">{{ requestInfo?.stateRequestId }}</span>
             </label>
           </div>
         </div>

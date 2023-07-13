@@ -5,6 +5,15 @@
 //   }
 // }
 
+.upload-button {
+  display: flex;
+  column-gap: 5px;
+  align-items: center;
+  i {
+    font-size: 20px;
+  }
+}
+
 .titleTabs {
   align-items: center;
   display: flex;

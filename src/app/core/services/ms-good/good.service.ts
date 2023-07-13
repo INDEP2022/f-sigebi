@@ -50,7 +50,6 @@ export class GoodService extends HttpService {
   }
 
   getAll(params?: ListParams | string): Observable<IListResponse<IGood>> {
-    console.log('Aquí');
     return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params);
   }
 
@@ -411,9 +410,9 @@ export class GoodService extends HttpService {
 
   getByExpedientAndParams__(
     params?: ListParams
-  ): Observable<IListResponse<IGood>> {
-    const route = GoodEndpoints.Sgood;
-    return this.get<IListResponse<IGood>>(route, params);
+  ): Observable<IListResponse<IGoodSami>> {
+    const route = GoodEndpoints.Good;
+    return this.get<IListResponse<IGoodSami>>(route, params);
   }
 
   getFactaDbOficioGestrel(body: {
