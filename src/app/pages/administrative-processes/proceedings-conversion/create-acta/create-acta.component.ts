@@ -32,6 +32,22 @@ export class CreateActaComponent extends BasePage implements OnInit {
   testigoTree: any;
   responsable: any;
   testigoTwo: any;
+  years: number[] = [];
+  currentYear: number = new Date().getFullYear();
+  months = [
+    { value: 1, label: 'Enero' },
+    { value: 2, label: 'Febrero' },
+    { value: 3, label: 'Marzo' },
+    { value: 4, label: 'Abril' },
+    { value: 5, label: 'Mayo' },
+    { value: 6, label: 'Junio' },
+    { value: 7, label: 'Julio' },
+    { value: 8, label: 'Agosto' },
+    { value: 9, label: 'Septiembre' },
+    { value: 10, label: 'Octubre' },
+    { value: 11, label: 'Noviembre' },
+    { value: 12, label: 'Diciembre' },
+  ];
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -48,6 +64,9 @@ export class CreateActaComponent extends BasePage implements OnInit {
     console.log(this.expedient);
     this.actaForm();
     this.consulREG_DEL_ADMIN();
+    for (let i = 1900; i <= this.currentYear; i++) {
+      this.years.push(i);
+    }
   }
 
   async actaForm() {
@@ -59,8 +78,8 @@ export class CreateActaComponent extends BasePage implements OnInit {
       cveReceived: [null, Validators.required],
       consec: [null, Validators.required],
       // ejecuta: [null],
-      anio: [null, Validators.required],
-      mes: [null, Validators.required],
+      anio: [null, [Validators.required]],
+      mes: [null, [Validators.required]],
       cveActa: [null],
       direccion: [null],
       observaciones: [null],
@@ -193,9 +212,13 @@ export class CreateActaComponent extends BasePage implements OnInit {
 
     const anio = this.actaRecepttionForm.value.anio;
     const mes = this.actaRecepttionForm.value.mes;
+
+    const miCadenaAnio = anio + '';
+    const miSubcadena = miCadenaAnio.slice(2, 5);
+
     const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${cveReceived}/${consec
       .toString()
-      .padStart(4, '0')}/${anio.toString().padStart(2, '0')}/${mes
+      .padStart(4, '0')}/${miSubcadena.toString().padStart(2, '0')}/${mes.value
       .toString()
       .padStart(2, '0')}`;
     console.log(cveActa);

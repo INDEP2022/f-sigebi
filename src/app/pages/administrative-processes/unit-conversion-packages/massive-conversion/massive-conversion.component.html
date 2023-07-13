@@ -297,6 +297,7 @@
             label="No. Bien">
             <input
               formControlName="numberGoodFather"
+              [readOnly]="true"
               type="text"
               class="form-control"
               type="number"
@@ -308,6 +309,7 @@
           <form-field label="Expediente" [control]="form2.get('record')">
             <input
               formControlName="record"
+              [readOnly]="true"
               class="form-control"
               type="number"
               min="0"
@@ -318,6 +320,7 @@
           <form-field label="Descripción" [control]="form2.get('description')">
             <input
               formControlName="description"
+              [readOnly]="true"
               class="form-control"
               type="text"
               maxlength="1250" />
@@ -327,6 +330,7 @@
           <form-field label="Cantidad" [control]="form2.get('amount')">
             <input
               formControlName="amount"
+              [readOnly]="true"
               class="form-control"
               type="number"
               min="0"
@@ -337,6 +341,7 @@
           <form-field label="Unidad" [control]="form2.get('unitGood')">
             <input
               formControlName="unitGood"
+              [readOnly]="true"
               type="text"
               class="form-control"
               maxlength="25" />
@@ -346,6 +351,7 @@
           <form-field label="Estatus" [control]="form2.get('statusGood')">
             <input
               formControlName="statusGood"
+              [readOnly]="true"
               type="text"
               class="form-control"
               maxlength="25" />
