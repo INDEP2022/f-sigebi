@@ -1,250 +1,360 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Depuraci&oacute;n de Fotograf&iacute;as</h5>
-  </div>
-  <div class="d-inline mr-2">
-    <button
-      type="button"
-      class="btn btn-primary active btn-sm"
-      (click)="isSearch = true; clearSearch()">
-      <i class="bx bx-search-alt bx-sm float-icon"></i>
-    </button>
-  </div>
-  <div class="d-inline mx-2" *ngIf="isSearch">
-    <div class="btn-group">
-      <button
-        type="button"
-        class="btn btn-primary btn-sm"
-        (click)="searchExp(); isSearch = false">
-        <i class="bx bx-check bx-sm float-icon"></i>
-      </button>
-      <button
-        type="button"
-        class="btn btn-primary btn-sm"
-        (click)="clearSearch(); isSearch = false">
-        <i class="bx bx-x bx-sm float-icon"></i>
-      </button>
+    <div class="row w-100">
+      <div class="col-12 col-sm-12 col-md-8">
+        <h5
+          class="title"
+          [class]="actualGoodNumber ? 'pointer' : ''"
+          (click)="goToHistoric()">
+          DEPURACIÓN DE FOTOGRAFÍAS
+          <ng-container *ngIf="numberGood">{{ actualGoodNumber }}</ng-container>
+        </h5>
+      </div>
+      <div class="col-12 col-sm-12 col-md-4 text-end" *ngIf="origin">
+        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
     </div>
   </div>
 
   <div body>
-    <form [formGroup]="form" class="form-material">
-      <accordion [isAnimated]="true">
-        <accordion-group [isOpen]="false">
-          <div accordion-heading class="d-flex justify-content-between">
-            <h5>
-              <i class="fa fa-filter" aria-hidden="true"></i>
-              Filtro de búsqueda
-            </h5>
+    <div class="row">
+      <div class="col-md-12 md-tabs" *ngIf="form">
+        <form [formGroup]="form" class="form-material">
+          <div class="paginator" *ngIf="totalItems > 1">
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"
+              [limit]="newLimit"
+              [maxSize]="1"></app-pagination>
           </div>
 
-          <div class="row">
-            <div class="col-md-12">
+          <tabset #staticTabs>
+            <tab heading="Parámetros de B&uacute;squeda">
               <div class="row">
-                <div class="col-md-12">
-                  <div class="card">
-                    <div class="card-body">
-                      <div class="row">
-                        <div class="col-md-6">
-                          <div>
-                            <form-field
-                              [control]="form.get('goodNumber')"
-                              label="No. Bien">
-                              <input
-                                type="number"
-                                class="form-control"
-                                (keydown)="openButon()"
-                                formControlName="goodNumber" />
-                            </form-field>
-                          </div>
-                        </div>
-                        <div class="col-md-6">
-                          <div>
-                            <form-field
-                              [control]="form.get('goodStatus')"
-                              label="Estatus">
-                              <input
-                                type="text"
-                                class="form-control"
-                                formControlName="goodStatus" />
-                            </form-field>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <!-- <div class="col-md-6">
-                          <div>
-                            <form-field [control]="form.get('goodStatus')" label="Descripción de Estatus">
-                              <input type="text" class="form-control" formControlName="goodStatus" />
-                            </form-field>
-                          </div>
-                        </div> -->
-                        <div class="col-md-6">
-                          <div>
-                            <form-field
-                              [control]="form.get('fileNumber')"
-                              label="No. Expediente">
-                              <input
-                                type="number"
-                                class="form-control"
-                                formControlName="fileNumber" />
-                            </form-field>
-                          </div>
-                        </div>
-
-                        <div class="col-md-6">
-                          <div>
-                            <form-field
-                              [control]="form.get('idEvent')"
-                              label="Id. Evento">
-                              <input
-                                type="number"
-                                class="form-control"
-                                formControlName="idEvent" />
-                            </form-field>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-md-6">
-                          <div>
-                            <form-field
-                              [control]="form.get('eventDesc')"
-                              label="Descripción de Evento">
-                              <input
-                                type="text"
-                                class="form-control"
-                                formControlName="eventDesc" />
-                            </form-field>
-                          </div>
-                        </div>
-                        <div class="col-md-6">
-                          <div>
-                            <form-field
-                              [control]="form.get('idLot')"
-                              label="Id. Lote">
-                              <input
-                                type="number"
-                                class="form-control"
-                                formControlName="idLot" />
-                            </form-field>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-md-6">
-                          <div>
-                            <form-field
-                              [control]="form.get('lotDesc')"
-                              label="Descripción de Lote">
-                              <input
-                                type="text"
-                                class="form-control"
-                                formControlName="lotDesc" />
-                            </form-field>
-                          </div>
-                        </div>
-                        <div class="col-md-6">
-                          <form-check
-                            for="goods-list"
-                            label="Listado de Bienes">
-                            <input
-                              type="checkbox"
-                              (change)="isChecked = true"
-                              formControlName="exists"
-                              id="goods-list" />
-                          </form-check>
-                        </div>
-                      </div>
-                    </div>
+                <div class="col-md-6">
+                  <app-goods-types-shared
+                    [form]="form"
+                    [(loadTypes)]="loadTypes"
+                    typeField="type"
+                    subtypeField="subtype"
+                    ssubtypeField="ssubtype"
+                    sssubtypeField="sssubtype"
+                    (goodSssubtypeChange)="
+                      getGoods($event)
+                    "></app-goods-types-shared>
+                </div>
+                <div class="col-md-6">
+                  <div class="row pt-3">
+                    <form-field
+                      [control]="form.get('noBien')"
+                      label="No. de Bien">
+                      <input
+                        class="form-control"
+                        formControlName="noBien"
+                        maxlength="10" />
+                    </form-field>
+                  </div>
+                  <div class="row pt-4">
+                    <form-field
+                      [control]="form.get('noClasif')"
+                      label="No. Clasificación Bien">
+                      <input
+                        type="text"
+                        class="form-control"
+                        maxlength="6"
+                        formControlName="noClasif"
+                        readonly
+                        (change)="updateClasif($event)"
+                        (customEvent)="handleEvent($event)" />
+                    </form-field>
+                  </div>
+                  <div class="row pt-3">
+                    <form-field [control]="form.get('status')" label="Estatus">
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="status"
+                        readonly />
+                    </form-field>
+                  </div>
+                  <div class="row pt-3">
+                    <form-field
+                      [control]="form.get('fileNumber')"
+                      label="No. Expediente">
+                      <input
+                        type="number"
+                        class="form-control"
+                        formControlName="fileNumber" />
+                    </form-field>
                   </div>
                 </div>
               </div>
-            </div>
-            <div footer>
-              <div class="d-flex justify-content-center">
-                <div class="m-3">
-                  <!-- <button class="btn btn-secondary active mr-2" (click)="openButon()">
-                        Consultar</button><button class="btn btn-primary active">
-                      </button> -->
-                  <button
-                    type="button"
-                    class="btn btn-primary active btn-sm"
-                    (click)="openButon()">
-                    Consultar<i class="bx bx-search-alt bx-sm float-icon"></i>
-                  </button>
-                </div>
-                <div class="m-3">
-                  <button
-                    type="button"
-                    [disabled]="this.form.value.goodNumber == null"
-                    class="btn btn-primary active btn-sm"
-                    (click)="addPhotos()">
-                    Validar Fotograf&iacute;as
-                    <i class="bx bx-search-alt bx-sm float-icon"></i>
-                  </button>
-                </div>
-                <div class="m-3">
-                  <button
-                    type="button"
-                    class="btn btn-danger active btn-sm"
-                    (click)="resetALL()">
-                    Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
-                  </button>
+              <div footer>
+                <div class="d-flex justify-content-center">
+                  <div class="m-3">
+                    <button
+                      [disabled]="formLoading"
+                      class="btn btn-primary btn-sm active"
+                      type="button"
+                      (click)="searchGood()">
+                      Buscar
+                      <i class="bx bx-search-alt bx-sm float-icon"></i>
+                    </button>
+                  </div>
+                  <div class="m-3">
+                    <button
+                      [disabled]="formLoading"
+                      class="btn btn-danger btn-sm active"
+                      type="button"
+                      (click)="clearFilter()">
+                      Limpiar
+                      <i class="fa fa-eraser"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <hr />
-        </accordion-group>
-      </accordion>
-      <!-- <div class="row pt-3">
-        <form-field [control]="form.get('idLot')" class="col-md-6">
-          <ngx-select [form]="form" control="idLot" bindLabel="lotDescription" [data]="lotIdSelected" label="Lote"
-            value="lotId" (change)="idEvent($event)"></ngx-select>
-
-        </form-field>
-
-        <form-field [control]="form.get('idEvent')" class="col-md-6">
-          <ngx-select [form]="form" control="idEvent" bindLabel="processKey" [data]="eventIdSelected" label="Evento"
-            value="id"></ngx-select>
-
-        </form-field>
-      </div> -->
-
-      <div class="row">
-        <div class="d-flex justify-content-end">
-          <div class="d-inline mr-2">
-            <app-columns-select [(settings)]="settings"></app-columns-select>
-          </div>
-          <!-- <div class="d-inline mr-2">
-            <button (click)="addPhotos()" type="button" class="btn btn-primary active btn-sm mr-3">
-              Agregar
-              <i class="bx bx-plus bx-sm float-icon"></i>
-            </button>
-          </div> -->
-        </div>
-        <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
-            <div class="table-responsive">
-              <ng2-smart-table [settings]="settings" [source]="goodPhoto">
-              </ng2-smart-table>
-            </div>
-            <div class="d-flex justify-content-end">
-              <div>
-                <label for="">Existentes: &nbsp;&nbsp;</label> {{ totalItems }}
+            </tab>
+            <tab heading="Bienes Fotos">
+              <div *ngIf="errorMessage" class="errorMessage">
+                {{ errorMessage }}
               </div>
-            </div>
-            <div class="col-md-12">
-              <app-pagination
-                [params]="params"
-                [totalItems]="totalItems"></app-pagination>
-            </div>
-          </div>
-        </div>
+              <div
+                *ngIf="!disabledBienes || di_numerario_conciliado"
+                class="mb-5"
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                ">
+                <button
+                  *ngIf="!disabledBienes"
+                  type="button"
+                  class="btn btn-sm btn-primary active"
+                  (click)="save()">
+                  Guardar
+                  <i class="bx bx-save text-light float-icon"></i>
+                </button>
+                <h5
+                  class="text-danger"
+                  style="text-align: right"
+                  *ngIf="di_numerario_conciliado">
+                  {{ di_numerario_conciliado }}
+                </h5>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="row">
+                    <form-field
+                      [control]="form.get('descripcion')"
+                      label="Descripci&oacute;n">
+                      <textarea
+                        formControlName="descripcion"
+                        class="form-control"
+                        [readonly]="disabledDescripcion2"
+                        maxlength="1250"></textarea>
+                    </form-field>
+                  </div>
+                  <div class="row pt-3">
+                    <form-field
+                      [control]="form.get('unidad')"
+                      label="Unidad"
+                      class="col-md-4">
+                      <input
+                        type="text"
+                        formControlName="unidad"
+                        class="form-control"
+                        [readonly]="disabledBienes"
+                        maxlength="30" />
+                    </form-field>
+                    <form-field
+                      class="col-md-4"
+                      [control]="form.get('cantidad')"
+                      label="Cantidad">
+                      <input
+                        type="text"
+                        formControlName="cantidad"
+                        class="form-control"
+                        [readonly]="disabledBienes"
+                        maxlength="21" />
+                    </form-field>
+                    <form-field
+                      class="col-md-4"
+                      [control]="form.get('valRef')"
+                      label="Valor de Referencia">
+                      <input
+                        type="text"
+                        formControlName="valRef"
+                        class="form-control"
+                        [readonly]="disabledBienes"
+                        maxlength="18" />
+                    </form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <!-- <app-delegation-shared [form]="form"></app-delegation-shared> -->
+                <ng-template #coordinationLabel let-item="item">
+                  {{ item.id }} - {{ item.description }}
+                </ng-template>
+                <ng-template #coordinationOption let-item="item">
+                  <div [title]="item.id + '-' + item.description">
+                    {{ item.id }} - {{ item.description }}
+                  </div>
+                </ng-template>
+                <div class="col-md-6">
+                  <div class="form-group row">
+                    <ng-custom-select-loading
+                      [form]="form"
+                      [readonly]="disabledBienes"
+                      formControlName="delegation"
+                      label="Delegación"
+                      path="catalog/api/v1/delegation/get-all"
+                      value="id"
+                      bindLabel="description"
+                      paramSearch="filter.id"
+                      [limit]="1000"
+                      [labelTemplate]="coordinationLabel"
+                      [optionTemplate]="coordinationOption"
+                      (valueChange)="updateDelegation($event)">
+                    </ng-custom-select-loading>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group row">
+                    <ng-custom-select-loading
+                      [form]="form"
+                      [readonly]="disabledBienes"
+                      [limit]="1000"
+                      [labelTemplate]="coordinationLabel"
+                      [optionTemplate]="coordinationOption"
+                      formControlName="subdelegation"
+                      label="Sub Delegación"
+                      path="catalog/api/v1/subdelegation/get-all"
+                      value="id"
+                      bindLabel="description"
+                      paramSearch="filter.id"
+                      (valueChange)="updateSubdelegation($event)">
+                    </ng-custom-select-loading>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <form-field
+                  [control]="form.get('fechaAval')"
+                  label="Fecha Aval&uacute;o Vigencia"
+                  class="col-md-3">
+                  <input
+                    *ngIf="!disabledBienes"
+                    type="text"
+                    formControlName="fechaAval"
+                    class="form-control"
+                    style="background-color: white"
+                    [disabled]="disabledBienes"
+                    readonly
+                    bsDatepicker />
+                  <input
+                    *ngIf="disabledBienes"
+                    type="text"
+                    formControlName="fechaAval"
+                    class="form-control"
+                    readonly />
+                </form-field>
+
+                <form-field
+                  [control]="form.get('valorAval')"
+                  label="Valor Aval&uacute;o"
+                  class="col-md-3">
+                  <input
+                    type="text"
+                    formControlName="valorAval"
+                    class="form-control"
+                    [readonly]="disabledBienes"
+                    maxlength="22" />
+                </form-field>
+
+                <form-field
+                  [control]="form.get('latitud')"
+                  label="Latitud"
+                  class="col-md-3">
+                  <input
+                    type="text"
+                    formControlName="latitud"
+                    class="form-control"
+                    maxlength="30"
+                    [readonly]="disabledBienes" />
+                </form-field>
+
+                <form-field
+                  [control]="form.get('longitud')"
+                  label="Longitud"
+                  class="col-md-3">
+                  <input
+                    type="text"
+                    formControlName="longitud"
+                    class="form-control"
+                    maxlength="30"
+                    [readonly]="disabledBienes" />
+                </form-field>
+              </div>
+
+              <div class="row pt-3">
+                <form-field
+                  [control]="form.get('observaciones')"
+                  label="Observaciones"
+                  [class]="showAvaluo ? 'col-md-8' : 'col-md-12'">
+                  <textarea
+                    formControlName="observaciones"
+                    class="form-control"
+                    maxlength="600"
+                    [readonly]="disabledBienes"></textarea>
+                </form-field>
+
+                <div class="col-md-4" *ngIf="showAvaluo">
+                  <small>¿Con Aval&uacute;o?</small>
+                  <div
+                    class="d-flex"
+                    [class]="disabledBienes ? 'not-press' : ''">
+                    <form-radio label="Si">
+                      <input
+                        type="radio"
+                        formControlName="avaluo"
+                        [value]="true" />
+                    </form-radio>
+                    <form-radio label="No">
+                      <input
+                        type="radio"
+                        formControlName="avaluo"
+                        [value]="false" />
+                    </form-radio>
+                  </div>
+                </div>
+              </div>
+              <div class="row" *ngIf="loading === false">
+                <app-good-table-vals
+                  *ngIf="good"
+                  [goodChange]="goodChange"
+                  [disabled]="disabledBienes"
+                  [good]="good"
+                  [clasification]="
+                    numberClassification ? numberClassification.value : null
+                  "
+                  [avaluo]="goodAppraisal2 ? goodAppraisal2.value : null"
+                  [di_numerario_conciliado]="
+                    di_numerario_conciliado
+                  "></app-good-table-vals>
+              </div>
+            </tab>
+            <tab heading="Validación de Fotografías">
+              <app-photos-tabs
+                [goodNumber]="actualGoodNumber + ''"
+                [disabled]="false"></app-photos-tabs>
+            </tab>
+          </tabset>
+        </form>
       </div>
-    </form>
+    </div>
   </div>
 </app-card>
