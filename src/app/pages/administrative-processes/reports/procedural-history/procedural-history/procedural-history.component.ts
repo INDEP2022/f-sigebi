@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 //Services
+import { DatePipe } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -15,6 +15,7 @@ import {
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -22,15 +23,23 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './procedural-history.component.html',
   styles: [],
 })
-export class ProceduralHistoryComponent implements OnInit {
+export class ProceduralHistoryComponent extends BasePage implements OnInit {
   proceduralHistoryForm: ModelForm<any>;
+  fromF: string = '';
+  toT: string = '';
+  isLoading = false;
+
+  @Output() submit = new EventEmitter();
   constructor(
     private fb: FormBuilder,
     private siabService: SiabService,
     private usersService: UsersService,
     private sanitizer: DomSanitizer,
-    private modalService: BsModalService
-  ) {}
+    private modalService: BsModalService,
+    private datePipe: DatePipe
+  ) {
+    super();
+  }
 
   users$ = new DefaultSelect<ISegUsers>();
 
@@ -49,89 +58,53 @@ export class ProceduralHistoryComponent implements OnInit {
       modificationDateTo: [null, Validators.required],
       ofTheGood: [null, Validators.required],
       toGood: [null, Validators.required],
-      users: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
   }
   onSubmit() {
-    // Log y url con parámetros quemados
-    console.log('Usuario ', this.filterForm.value);
-
-    const DateOf = new Date(
-      this.proceduralHistoryForm.value.modificationDateOf
-    );
-    const formattedDateOf = this.formatDate(DateOf);
-
-    const DateTo = new Date(
-      this.proceduralHistoryForm.value.modificationDateTo
-    );
-    const formattedDateTo = this.formatDate(DateTo);
-
-    let params = {
-      PN_BIENINI: this.proceduralHistoryForm.value.ofTheGood,
-      PN_BIENFIN: this.proceduralHistoryForm.value.toGood,
-      PN_DELG: this.proceduralHistoryForm.value.delegation,
-      PN_SUBDEL: this.proceduralHistoryForm.value.subdelegation,
-      PF_FECINI: formattedDateOf,
-      PF_FECFIN: formattedDateTo,
-      PC_USUARIO: this.filterForm.value.user,
-    };
-    this.siabService.fetchReport('blank', params).subscribe(response => {
-      if (response !== null) {
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        let config = {
-          initialState: {
-            documento: {
-              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-              type: 'pdf',
-            },
-            callback: (data: any) => {},
-          }, //pasar datos por aca
-          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-          ignoreBackdropClick: true, //ignora el click fuera del modal
-        };
-        this.modalService.show(PreviewDocumentsComponent, config);
-      } else {
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        let config = {
-          initialState: {
-            documento: {
-              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-              type: 'pdf',
-            },
-            callback: (data: any) => {},
-          }, //pasar datos por aca
-          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-          ignoreBackdropClick: true, //ignora el click fuera del modal
-        };
-        this.modalService.show(PreviewDocumentsComponent, config);
-      }
-    });
-    /*const pdfurl =
-  'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf';
-
-const downloadLink = document.createElement('a');
-downloadLink.href = pdfurl;
-downloadLink.target = '_blank';
-downloadLink.click();
-
-let params = { ...this.proceduralHistoryForm.value };
-for (const key in params) {
-  if (params[key] === null) delete params[key];
-}
-
-this.siabService
-  .getReport(SiabReportEndpoints.FGENADBSITPROCESB, params)
-  .subscribe({
-    next: response => {
-      console.log(response);
-      window.open(pdfurl, 'Reporte de Impresion de Volantes');
-    },
-    error: () => {
-      window.open(pdfurl, 'Reporte de Impresion de Volantes');
-    },
-  });*/
+    if (!this.validarFechas()) {
+      let params = {
+        NO_BIEN_INI: this.proceduralHistoryForm.value.ofTheGood,
+        NO_BIEN_FIN: this.proceduralHistoryForm.value.toGood,
+        NO_DELEGACION: this.proceduralHistoryForm.value.delegation,
+        NO_SUBDELSUBDELEGACION: this.proceduralHistoryForm.value.subdelegation,
+        USUARIO: this.filterForm.value.user,
+      };
+      this.siabService
+        .fetchReport('RGENADBSITPROCESB', params)
+        .subscribe(response => {
+          if (response !== null) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          }
+        });
+    }
   }
   formatDate(date: Date): string {
     const year = date.getFullYear().toString();
@@ -166,5 +139,18 @@ this.siabService
   cleanForm() {
     this.proceduralHistoryForm.reset();
     this.filterForm.reset();
+  }
+
+  validarFechas() {
+    this.fromF = this.proceduralHistoryForm.value.modificationDateOf;
+    this.toT = this.proceduralHistoryForm.value.modificationDateTo;
+    if (this.fromF > this.toT) {
+      this.onLoadToast(
+        'warning',
+        'La fecha inicial no puede ser menor a la final'
+      );
+      return true;
+    }
+    return false;
   }
 }

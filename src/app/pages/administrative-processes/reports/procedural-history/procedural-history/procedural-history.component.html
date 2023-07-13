@@ -85,9 +85,6 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <!-- <form-field [control]="proceduralHistoryForm.get('users')" label="Usuario">
-            <input type="text" class="form-control" formControlName="users" />
-          </form-field> -->
           <form-field class="mb-3 mt-3" [control]="filterForm.get('user')">
             <ngx-select
               [form]="filterForm"
@@ -101,26 +98,15 @@
               termMaxLength="30">
             </ngx-select>
           </form-field>
-          <!-- <form-field
-            [control]="proceduralHistoryForm.get('users')"
-            label="Usuario">
-            <ngx-select
-              [form]="filterForm"
-              [data]="users$"
-              (fetchItems)="getUsers($event)"
-              bindLabel="userAndName"
-              label=""
-              control="user"
-              [searchOnInit]="true"
-              termMaxLength="30">
-            </ngx-select>
-          </form-field> -->
         </div>
       </div>
       <div footer>
         <div class="d-flex justify-content-center">
           <div class="m-3">
-            <button class="btn btn-primary active btn-sm" (click)="onSubmit()">
+            <button
+              class="btn btn-primary active btn-sm"
+              (click)="onSubmit()"
+              [disabled]="!proceduralHistoryForm.valid || !filterForm.valid">
               Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
           </div>
