@@ -165,13 +165,13 @@ export class NotifyAssetsImproprietyFormComponent
     }
 
     if (typeTransference != 'SAT_SAE' || generaXML) {
-      this.aclaracionTransferentesVoluntarias(); //Aclaración Manual tipo 2
-      // if (
-      //   this.typeClarifications == 2 &&
-      //   typeTransference != 'PGR_SAE'
-      // ) {
-      //   this.improcedenciaTransferentesVoluntarias(); //Aclaración Manual tipo 2
-      // }
+      //this.aclaracionTransferentesVoluntarias(); //Aclaración Manual tipo 2
+      if (
+        (this.typeClarifications == 1 || this.typeClarifications == 2) &&
+        typeTransference === 'MANUAL'
+      ) {
+        this.aclaracionTransferentesVoluntarias(); //Aclaración Manual tipo 2
+      }
       const obtainTypeDocument = await this.obtainTypeDocument(
         false,
         this.infoRequest
