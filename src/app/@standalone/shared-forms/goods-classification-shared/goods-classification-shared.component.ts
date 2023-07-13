@@ -28,13 +28,13 @@ export class GoodsClasificationSharedComponent
   extends BasePage
   implements OnInit
 {
-  @Input() label = 'Classificación de Bienes';
+  @Input() label = 'Clasificación de Bienes';
   @Input() form: FormGroup;
   @Input() goodClassificationField: string = 'goodClassification';
 
   @Input() showGoodClassification: boolean = true;
 
-  classifications = new DefaultSelect<IGoodSssubtype>();
+  classifications = new DefaultSelect<any>();
 
   get goodClassification() {
     return this.form.get(this.goodClassificationField);
@@ -52,8 +52,6 @@ export class GoodsClasificationSharedComponent
     /* let data = goodsClassData;
     let count = data.length;
     this.classifications = new DefaultSelect(data, count); */
-    console.log(parseInt(params.text));
-    console.log();
     const paramsF = new FilterParams();
     Number.isNaN(parseInt(params.text))
       ? paramsF.addFilter('description', params.text, SearchFilter.ILIKE)
@@ -69,6 +67,7 @@ export class GoodsClasificationSharedComponent
             };
           })
         );
+        console.log(newData)
         this.classifications = new DefaultSelect(newData, data.count);
       },
       err => {
