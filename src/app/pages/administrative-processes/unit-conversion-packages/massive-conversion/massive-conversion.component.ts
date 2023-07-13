@@ -222,28 +222,26 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.getWarehouseDescription();
     this.getTagDescription();
     //Busquéda de datos del bien Padre
-    this.searchFatherGood()
+    this.searchFatherGood();
   }
 
-  searchFatherGood(){
-    this.numberGoodFather.valueChanges.subscribe(
-      res => {
-        console.log(res)
-        this.goodService.getByIdv3(res).subscribe(
-          res => {
-            console.log(res)
-            this.form2.get('record').setValue(res.fileNumber)
-            this.form2.get('description').setValue(res.description)
-            this.form2.get('amount').setValue(res.quantity)
-            this.form2.get('unitGood').setValue(res.unit)
-            this.form2.get('statusGood').setValue(res.status)
-          },
-          err => {
-            console.log(err)
-          }
-        )
-      }
-    )
+  searchFatherGood() {
+    this.numberGoodFather.valueChanges.subscribe(res => {
+      console.log(res);
+      this.goodService.getByIdv3(res).subscribe(
+        res => {
+          console.log(res);
+          this.form2.get('record').setValue(res.fileNumber);
+          this.form2.get('description').setValue(res.description);
+          this.form2.get('amount').setValue(res.quantity);
+          this.form2.get('unitGood').setValue(res.unit);
+          this.form2.get('statusGood').setValue(res.status);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    });
   }
 
   initByLocalStorage() {
@@ -1093,7 +1091,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
           this.goodProcessService.packageClose(closeData).subscribe(
             res => {
-              this.researchNoPackage(this.noPackage.value.numberPackage)
+              this.researchNoPackage(this.noPackage.value.numberPackage);
             },
             err => {
               console.log(err);
@@ -1923,7 +1921,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         if (res && res.data && res.data.length > 0) {
           this.noPackage.setValue(res.data[0]);
           this.loading = false;
-          this.validateButtons(this.noPackage.value.statusPaq)
+          this.validateButtons(this.noPackage.value.statusPaq);
         } else {
           // this.dataPackageEnc = null;
         }
@@ -2081,8 +2079,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
             .firstIfCancelMassiveConversion(model)
             .subscribe(
               res => {
-                this.researchNoPackage(this.noPackage.value.numberPackage)
-                this.alert('success','El Paquete fue cancelado','')
+                this.researchNoPackage(this.noPackage.value.numberPackage);
+                this.alert('success', 'El Paquete fue cancelado', '');
               },
               err => {
                 console.log(err);
@@ -2099,30 +2097,33 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         if (q.isConfirmed) {
           let token = this.authService.decodeToken();
           const noPack = this.noPackage.value;
-          console.log(this.noPackage.value)
+          console.log(this.noPackage.value);
           const model: ISecondIfMC = {
             noPackage: this.noPackage.value.numberPackage,
             noGoodFather: this.noPackage.value.numberGoodFather,
             encStatus: this.noPackage.value.status,
             vcScreen: 'FMTOPAQUETE',
-            user: localStorage.getItem('username') == 'sigebiadmon'
-            ? localStorage.getItem('username')
-            : localStorage.getItem('username').toLocaleUpperCase(),
-            toolbarUser: localStorage.getItem('username') == 'sigebiadmon'
-            ? localStorage.getItem('username')
-            : localStorage.getItem('username').toLocaleUpperCase()
+            user:
+              localStorage.getItem('username') == 'sigebiadmon'
+                ? localStorage.getItem('username')
+                : localStorage.getItem('username').toLocaleUpperCase(),
+            toolbarUser:
+              localStorage.getItem('username') == 'sigebiadmon'
+                ? localStorage.getItem('username')
+                : localStorage.getItem('username').toLocaleUpperCase(),
           };
-          console.log(model)
-          this.goodProcessService.secondIfCancelMassiveConversion(model).subscribe(
-            res => {
-              this.researchNoPackage(this.noPackage.value.numberPackage)
-                this.alert('success','El Paquete fue cancelado','')
-            },
-            err => {
-              console.log(err)
-            }
-          )
-
+          console.log(model);
+          this.goodProcessService
+            .secondIfCancelMassiveConversion(model)
+            .subscribe(
+              res => {
+                this.researchNoPackage(this.noPackage.value.numberPackage);
+                this.alert('success', 'El Paquete fue cancelado', '');
+              },
+              err => {
+                console.log(err);
+              }
+            );
         }
       });
     }
