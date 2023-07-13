@@ -151,7 +151,7 @@ export class MaintenanceMailConfigurationComponent
     this.emailService.deleteSendMail(id).subscribe({
       next: () => {
         this.getEmailSend(),
-          this.alert('success', 'Registro de estado', 'Borrado');
+          this.alert('success', 'Registro de estado', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(
@@ -166,7 +166,7 @@ export class MaintenanceMailConfigurationComponent
 
   handleSuccess() {
     const message: string = 'Actualizado';
-    this.alert('success', 'Registro actualizado correctamente', '');
+    this.alert('success', 'Registro Actualizado Correctamente', '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

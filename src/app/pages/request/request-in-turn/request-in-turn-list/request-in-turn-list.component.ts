@@ -256,7 +256,8 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
             request?.stationId === null ||
             request?.authorityId === null ||
             request?.transferenceId === null ||
-            request?.regionalDelegationId === null
+            request?.regionalDelegationId === null ||
+            request?.keyStateOfRepublic === null
           ) {
             //this.checkRequest = false;
             this.countError = this.countError + 1;

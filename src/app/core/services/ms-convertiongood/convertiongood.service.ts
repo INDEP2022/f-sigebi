@@ -132,4 +132,15 @@ export class ConvertiongoodService extends HttpService {
     const route = `${ConvertiongoodEndpoints.ConvertionActa}/${id}`;
     return this.get(route);
   }
+  postPupInsertParaph(body: any): Observable<any> {
+    const url = `${environment.API_URL}catalog/api/v1/apps/pupInsertParaph`;
+    return this.http.post(url, body);
+  }
+
+  getAllMinuteConversions(params?: ListParams): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      ConvertiongoodEndpoints.MinuteConversions,
+      params
+    );
+  }
 }

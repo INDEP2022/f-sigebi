@@ -5,7 +5,7 @@ export const LOG_TABLE_COLUMNS = {
     title: 'Fecha de Registro',
     sort: false,
     valuePrepareFunction: (_date: string) =>
-      _date ? format(new Date(_date), 'dd-MM-yyyy') : '',
+      _date ? format(new Date(_date), 'dd/MM/yyyy') : '',
   },
   modificationuser: {
     title: 'Usuario',

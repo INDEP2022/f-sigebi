@@ -1046,6 +1046,8 @@ export class DetailAssetsTabComponentComponent
             resp.count
           );
 
+          console.log('VALOR DESTINO LIGIE, ', resp);
+
           if (this.detailAssets.controls['unitMeasure'].value) {
             this.detailAssets.controls['unitMeasure'].setValue(
               this.detailAssets.controls['unitMeasure'].value
@@ -1558,6 +1560,14 @@ export class DetailAssetsTabComponentComponent
       const ligieUnit = this.detailAssets.controls['ligieUnit'].value;
       this.getLigieUnit(new ListParams(), ligieUnit);
     }
+
+    this.detailAssets.controls['destiny'].valueChanges.subscribe(
+      (destiny: any) => {
+        if (destiny != null || destiny != undefined) {
+          this.getDestiny(destiny);
+        }
+      }
+    );
 
     this.detailAssets.controls['ligieUnit'].valueChanges.subscribe(
       (data: any) => {

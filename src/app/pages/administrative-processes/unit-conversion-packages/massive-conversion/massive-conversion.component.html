@@ -19,7 +19,7 @@
         <div class="col-md-5 col-sm-12">
           <form-field
             [control]="form.get('cvePackage')"
-            label="Clave del paquete">
+            label="Clave del Paquete">
             <input
               [readOnly]="true"
               class="form-control"
@@ -29,7 +29,7 @@
         <div class="col-md-5 col-sm-12">
           <form-field
             [control]="form.get('descriptionPackage')"
-            label="Descripcion">
+            label="Descripción">
             <input
               [readOnly]="true"
               class="form-control"
@@ -39,7 +39,7 @@
       </div>
       <div class="row mb-3 mt-3">
         <!--Package type-->
-        <div class="col-md-6 col-sm-12">
+        <div class="col-md-5 col-sm-12">
           <form-field [control]="form.get('packageType')">
             <label class="text-center">Tipo</label>
             <div class="row justify-content-between">
@@ -70,7 +70,7 @@
         <div class="col-md-3 col-sm-12 mt-3">
           <form-field
             [control]="form.get('amountKg')"
-            label="Cantidad en kilos">
+            label="Cantidad en Kilos">
             <input
               formControlName="amountKg"
               class="form-control"
@@ -80,7 +80,7 @@
               oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16);" />
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 mt-3">
+        <div class="col-md-4 col-sm-12 mt-3">
           <form-field [control]="form.get('status')">
             <ngx-select
               control="status"
@@ -96,14 +96,14 @@
       <div class="row mb-3 mt-3">
         <!--Actions-->
         <div class="col text-center">
-          <button class="btn btn-danger btn-sm active mr-2" (click)="clear()">
+          <button class="btn btn-danger btn-sm active mr-3" (click)="clear()">
             Limpiar <i class="fas fa-eraser"></i>
           </button>
           <button
             [disabled]="!validaButton.PB_VALIDA"
             class="btn btn-primary btn-sm active mr-3"
             (click)="showConfirmAlert()">
-            Validado
+            Validado <i class="fa fa-check" aria-hidden="true"></i>
           </button>
           <button
             [disabled]="!validaButton.PB_AUTORIZA"
@@ -121,7 +121,7 @@
             type="button"
             tooltip="Agregar"
             containerClass="tooltip-style"
-            class="btn btn-info btn-sm active ml-2 mr-2"
+            class="btn btn-info btn-sm active"
             (click)="newPackage()">
             Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
@@ -129,7 +129,7 @@
       </div>
 
       <!--Process Users-->
-      <div class="row mt-5 mb-3">
+      <div class="row mt-5 mb-3 pl-3 pr-3">
         <table>
           <thead>
             <tr>
@@ -148,27 +148,37 @@
               </td>
               <td>
                 <form-field [control]="form.get('fecElab')">
-                  <span>{{ form.get('fecElab').value }}</span>
+                  <span>{{
+                    form.get('fecElab').value | date : 'dd-MM-yyyy'
+                  }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecValida')">
-                  <span>{{ form.get('fecValida').value }}</span>
+                  <span>{{
+                    form.get('fecValida').value | date : 'dd-MM-yyyy'
+                  }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecAutoriza')">
-                  <span>{{ form.get('fecAutoriza').value }}</span>
+                  <span>{{
+                    form.get('fecAutoriza').value | date : 'dd-MM-yyyy'
+                  }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecCerrado')">
-                  <span>{{ form.get('fecCerrado').value }}</span>
+                  <span>{{
+                    form.get('fecCerrado').value | date : 'dd-MM-yyyy'
+                  }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecCancelado')">
-                  <span>{{ form.get('fecCancelado').value }}</span>
+                  <span>{{
+                    form.get('fecCancelado').value | date : 'dd-MM-yyyy'
+                  }}</span>
                 </form-field>
               </td>
             </tr>
@@ -297,6 +307,7 @@
             label="No. Bien">
             <input
               formControlName="numberGoodFather"
+              [readOnly]="true"
               type="text"
               class="form-control"
               type="number"
@@ -308,6 +319,7 @@
           <form-field label="Expediente" [control]="form2.get('record')">
             <input
               formControlName="record"
+              [readOnly]="true"
               class="form-control"
               type="number"
               min="0"
@@ -318,6 +330,7 @@
           <form-field label="Descripción" [control]="form2.get('description')">
             <input
               formControlName="description"
+              [readOnly]="true"
               class="form-control"
               type="text"
               maxlength="1250" />
@@ -327,6 +340,7 @@
           <form-field label="Cantidad" [control]="form2.get('amount')">
             <input
               formControlName="amount"
+              [readOnly]="true"
               class="form-control"
               type="number"
               min="0"
@@ -337,6 +351,7 @@
           <form-field label="Unidad" [control]="form2.get('unitGood')">
             <input
               formControlName="unitGood"
+              [readOnly]="true"
               type="text"
               class="form-control"
               maxlength="25" />
@@ -346,6 +361,7 @@
           <form-field label="Estatus" [control]="form2.get('statusGood')">
             <input
               formControlName="statusGood"
+              [readOnly]="true"
               type="text"
               class="form-control"
               maxlength="25" />
@@ -364,18 +380,18 @@
         <button
           (click)="selectGoods()"
           class="btn btn-primary btn-sm active mr-3">
-          Seleccionar Bienes
+          Seleccionar Bienes <i class="fas fa-edit bx-sm float-icon"></i>
         </button>
         <button
           (click)="verifyGoods()"
           class="btn btn-primary btn-sm active m-3">
-          Verificar Bienes
+          Verificar Bienes <i class="fa fa-check" aria-hidden="true"></i>
         </button>
         <button
           (click)="viewModal('error')"
           [disabled]="widthErrors || dataErrors.length === 0"
           class="btn btn-primary btn-sm active mr-3">
-          Ver Error
+          Ver Error <i class="fas fa-edit bx-sm float-icon"></i>
         </button>
         <button
           (click)="exportToExcel()"
@@ -384,7 +400,7 @@
           <i class="bx bx-download float-icon"></i>
         </button>
       </div>
-      <div class="col-md-3 mt-3">
+      <div class="col-md-3 mt-3 disabled">
         <form-check label="Bienes Correctos" for="checkGood">
           <input
             id="checkGood"
@@ -403,149 +419,44 @@
   [noPackage]="noPackage"
   (dataEmit)="handleOutPut($event)"></app-paq-destion-det>
 
-<!-- <app-card [header]="true" [footer]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Previsualización de Datos</h5>
-    <div class="col-md-5 buttons">
-      <app-columns-select
-        (settingsChange)="settingsChange($event)"
-        [settings]="settings"></app-columns-select>
-    </div>
-  </div>
-  <div body>
-    <div class="row pt-4">
-      <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data"
-            (userSelectRow)="selectRow($event)"
-            (edit)="edit($event.data)"
-            (delete)="delete($event.data)">
-          </ng2-smart-table>
-        </div>
-      </div>
-    </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
-  </div>
-</app-card> -->
-
-<!--Scan Folio-->
-
 <app-card>
   <div body>
     <app-scan-file-massive-conversion
       [form]="form"
-      [formControlName]="scanFolio">
+      [package]="form.get('noPackage').value"
+      [formControlName]="scanFolioString">
     </app-scan-file-massive-conversion>
-    <!-- <div class="row">
-      <div class="col-md-2 col-sm-12 col-xs-12">
-        <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <button
-              (click)="generateFoli()"
-              tooltip="Generar Folio de Escaneo y Solicitud"
-              containerclass="tooltip-style"
-              class="btn btn-secondary btn-sm active m-1">
-              <i class="bx bxs-file-find"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-2 col-sm-12 col-xs-12">
-        <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <button
-              tooltip="Escanear"
-              containerclass="tooltip-style"
-              class="btn btn-secondary btn-sm active m-1">
-              <i class="bx bxs-file"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4 col-sm-12 col-xs-12 mt-1">
-        <form [formGroup]="form" class="form-material">
-          <div class="col-md-full col-sm-12 col-xs-12">
-            <form-field
-              label="Folio de escaneo"
-              [control]="form.get('scanFolio')">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="scanFolio" />
-            </form-field>
-          </div>
-        </form>
-      </div>
-      <div class="col-md-2 col-sm-12 col-xs-12">
-        <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <button
-              (click)="generate()"
-              tooltip="Generar Folio de Escaneo y Solicitud"
-              containerclass="tooltip-style"
-              class="btn btn-secondary btn-sm active m-1">
-              <i class="bx bxs-file-find"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-2 col-sm-12 col-xs-12">
-        <div class="d-flex justify-content-center">
-          <div class="m-3">
-            <button
-              tooltip="Generar Folio de Escaneo y Solicitud"
-              containerclass="tooltip-style"
-              class="btn btn-secondary btn-sm active m-1">
-              <i class="bx bxs-file-find"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div> -->
   </div>
 </app-card>
-
-<!--<div class="ch-content" header>
-      <h5 class="title">Escaneo</h5>
-    </div>
-    <div body>
-      <form class="form-material" [formGroup]="form">
-        <div class="row mb-3 mt-3">
-          <div class="col-lg-3 col-md-6 col-sm-6 col-6 mb-3 mt-3">
-            <form-field [control]="form.get('scanFolio')" label="Folio Escaneo">
-              <input formControlName="scanFolio" type="number" class="form-control" />
-            </form-field>
-          </div>
-          <div class="col-lg-3 col-md-6 col-sm-6 col-6 mb-3 mt-3 align-self-center">
-            <button class="btn btn-primary btn-sm active w-100">Escanear</button>
-          </div>
-        </div>
-      </form>
-    </div>-->
-<!--</app-card>-->
 
 <!--Paragraphs-->
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Párrafos</h5>
-    <div class="col-md-5 buttons">
-      <button
-        (click)="downloadReport()"
-        type="button"
-        class="btn btn-primary active btn-sm">
-        Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
-      </button>
-    </div>
   </div>
   <div body>
+    <div class="row">
+      <div class="col-md-5 buttons">
+        <button
+          type="button"
+          (click)="insertParagraph()"
+          class="btn btn-primary active btn-sm mr-3">
+          Insertar Párrafos
+        </button>
+        <button
+          (click)="downloadReport()"
+          type="button"
+          class="btn btn-primary active btn-sm">
+          Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+        </button>
+      </div>
+    </div>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
         <div class="col-12 mb-3 mt-3">
-          <form-field [control]="form.get('paragraph1')" label="Párafo Inicial">
+          <form-field
+            [control]="form.get('paragraph1')"
+            label="Párrafo Inicial">
             <textarea
               rows="3"
               [max-length]="4000"
@@ -556,7 +467,7 @@
         <div class="col-12 mb-3 mt-3">
           <form-field
             [control]="form.get('paragraph2')"
-            label="Párafo Intermedio">
+            label="Párrafo Intermedio">
             <textarea
               rows="3"
               [max-length]="4000"
@@ -565,7 +476,7 @@
           </form-field>
         </div>
         <div class="col-12 mb-3 mt-3">
-          <form-field [control]="form.get('paragraph3')" label="Párafo Final">
+          <form-field [control]="form.get('paragraph3')" label="Párrafo Final">
             <textarea
               rows="3"
               [max-length]="4000"

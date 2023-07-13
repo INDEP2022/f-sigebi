@@ -9,6 +9,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class EmailInformationComponent {
+  maxDate: Date;
   constructor() {}
   form = new FormGroup({
     reasonForChange: new FormControl(null, [
@@ -71,5 +72,24 @@ export class EmailInformationComponent {
   onChangeFrom(event: any) {
     console.log(event);
     this.form.get('from').setValue(event.id);
+  }
+
+  cleanForm() {
+    this.form.reset();
+  }
+
+  async getDate() {
+    // console.log('date', );
+    // const formattedDate = moment(date).format('DD-MM-YYYY');
+    // if () {
+    const fechaEscritura: any = new Date();
+    fechaEscritura.setUTCDate(fechaEscritura.getUTCDate());
+    const _fechaEscritura: any = new Date(fechaEscritura.toISOString());
+    return _fechaEscritura ? _fechaEscritura : null;
+    // } else {
+    //   return null;
+    // }
+    // { authorizeDate: formattedDate }
+    // { emitEvent: false }
   }
 }
