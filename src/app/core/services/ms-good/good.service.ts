@@ -453,4 +453,9 @@ export class GoodService extends HttpService {
   pupValidMasiv(body: any) {
     return this.post<any>('good/pupValidMasiv2', body);
   }
+
+  removeGoodsRelDocuments(id: string | number) {
+    const URL = `${environment.API_URL}/documents/api/v1/goods-rel-documents/${id}`;
+    return this.delete(URL);
+  }
 }

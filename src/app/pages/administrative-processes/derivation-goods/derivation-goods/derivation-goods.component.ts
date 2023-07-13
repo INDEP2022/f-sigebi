@@ -621,20 +621,33 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         );
       }
 
-      console.log('status2->', this.selectedRow);
+      //console.log('status2->', this.selectedRow);
       this.alertQuestion(
         'question',
         `¿Se va a eliminar el bien ${this.selectedRow.goodId} ¿Desea continuar??`,
         ''
       ).then(q => {
         if (q.isConfirmed) {
-          this.serviceGood.removeGood(this.selectedRow.goodId).subscribe(
+          const body = {
+            id: this.selectedRow.goodId,
+            goodId: this.selectedRow.goodId,
+          };
+          this.serviceGood.removeGood(body).subscribe(
             res => {
-              this.alert(
-                'success',
-                'Se Eliminó el Bien',
-                `El Bien con id: ${this.selectedRow.goodId}, fue Eliminado`
-              );
+              this.serviceGood
+                .removeGoodsRelDocuments(this.selectedRow.goodId)
+                .subscribe(
+                  res2 => {
+                    this.alert(
+                      'success',
+                      'Se Eliminó el Bien',
+                      `El Bien con id: ${this.selectedRow.goodId}, fue Eliminado`
+                    );
+                  },
+                  err2 => {
+                    this.alert('error', 'error ', err2.message);
+                  }
+                );
             },
             err => {
               this.alert('error', 'error ', err.message);
