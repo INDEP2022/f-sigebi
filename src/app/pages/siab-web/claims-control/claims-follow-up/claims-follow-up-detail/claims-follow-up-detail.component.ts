@@ -88,9 +88,9 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
           this.dateConvert(this.siniester.fechareporteaseguradora)
         );
       }
-      if (this.siniester.fecSinisterIn) {
+      if (this.siniester.fechasiniestro) {
         this.claimsFollowUpDetailForm.controls['fecSinisterIn'].setValue(
-          this.dateConvert(this.siniester.fecSinisterIn)
+          this.dateConvert(this.siniester.fechasiniestro)
         );
       }
       if (this.siniester.tiposiniestroid) {

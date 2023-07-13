@@ -116,7 +116,7 @@ export class GeneralDataGoodsComponent
     if (required) {
       this.alert(
         'warning',
-        'Datos inventario',
+        'Datos Inventario',
         'Debe llenar los valores requeridos.'
       );
       return;
