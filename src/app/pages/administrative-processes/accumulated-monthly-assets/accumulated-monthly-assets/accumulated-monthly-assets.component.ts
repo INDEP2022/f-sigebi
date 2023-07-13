@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { MONTHS } from '../utils/constants/months';
 
 @Component({
   selector: 'app-accumulated-monthly-assets',
@@ -11,6 +12,9 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 export class AccumulatedMonthlyAssetsComponent implements OnInit {
   accumulatedMonthlyAssetsForm: ModelForm<any>;
   constructor(private fb: FormBuilder) {}
+  form: FormGroup<any>;
+
+  months = MONTHS;
 
   ngOnInit(): void {
     this.prepareForm();
