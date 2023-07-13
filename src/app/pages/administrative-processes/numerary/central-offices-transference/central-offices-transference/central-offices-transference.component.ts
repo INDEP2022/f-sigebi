@@ -195,9 +195,8 @@ export class CentralOfficesTransferenceComponent
   }
 
   getDataNoReport() {
-    this.form.get('noReport').value;
-    console.log(this.form.get('noReport').value);
     this.reporte = this.form.get('noReport').value;
+    console.log(this.reporte);
     this.getDataByReport(this.reporte);
     this.getDataTranferCounts(this.reporte);
   }
@@ -318,7 +317,6 @@ export class CentralOfficesTransferenceComponent
     this.accountMovementService.getDataFile(data).subscribe({
       next: resp => {
         for (let i = 0; i < resp.procesados.length; i++) {
-          console.log('response: ', resp.procesados);
           let item = {
             file: resp.procesados[i].VNO_EXPEDIENTE,
             good: resp.procesados[i].VNO_BIEN_DEV,
@@ -329,11 +327,14 @@ export class CentralOfficesTransferenceComponent
             total: resp.procesados[i].VTOTAL_DEV,
             currency: resp.procesados[i].VCVE_MONEDA_AVALUO,
           };
-
           this.data1.push(item);
+          console.log(this.data1);
         }
-
+        //this.data1 = resp.data
+        this.totalItems = this.data1.length;
         this.dataTabla.load(this.data1);
+
+        console.log('AQUI', this.dataTabla);
       },
       error: error => {
         console.error(error);
@@ -363,11 +364,10 @@ export class CentralOfficesTransferenceComponent
     this.form.get('cveBank').setValue(null);
     this.form.get('cveCurrency').setValue(null);
     this.form.get('accountType').setValue(null);
-    Object.keys(this.form.controls).forEach(controlName => {
-      this.form.get(controlName).enable();
-    }),
-      (this.totalItems = 0);
+    this.total = null;
+    this.totalItems = 0;
     this.data3.load([]);
+    console.log(this.data3);
     this.data3.refresh();
   }
 }

@@ -12,8 +12,8 @@
                 type="number"
                 class="form-control"
                 formControlName="noReport"
-                min="1"
-                pattern="^[0-9]+" />
+                maxlength="7"
+                [(ngModel)]="this.reporte" />
             </form-field>
           </div>
           <div class="col-md-3">
