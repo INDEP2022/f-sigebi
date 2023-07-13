@@ -147,7 +147,7 @@ export class ProceduralHistoryComponent extends BasePage implements OnInit {
     if (this.fromF > this.toT) {
       this.onLoadToast(
         'warning',
-        'La fecha inicial no puede ser menor a la final'
+        'La fecha final no puede ser menor a la incial'
       );
       return true;
     }
