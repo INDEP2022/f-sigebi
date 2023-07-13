@@ -7,7 +7,10 @@ import {
   IListResponse,
   IListResponseMessage,
 } from '../../interfaces/list-response.interface';
-import { ICharacteristicsGoodDTO, ISecondIfMC } from '../../models/ms-good/good';
+import {
+  ICharacteristicsGoodDTO,
+  ISecondIfMC,
+} from '../../models/ms-good/good';
 import { IGoodDistinctTypes } from '../../models/ms-good/good-distinct-types';
 
 @Injectable({
@@ -183,11 +186,11 @@ export class GoodprocessService extends HttpService {
     );
   }
 
-  firstIfCancelMassiveConversion(body: {noPackage: number}){
-    return this.post('application/update-goods', body)
+  firstIfCancelMassiveConversion(body: { noPackage: number }) {
+    return this.post('application/update-goods', body);
   }
 
-  secondIfCancelMassiveConversion(body: ISecondIfMC){
-    return this.post('application/fmto-package-procedure', body)
+  secondIfCancelMassiveConversion(body: ISecondIfMC) {
+    return this.post('application/fmto-package-procedure', body);
   }
 }

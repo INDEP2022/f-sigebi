@@ -1096,10 +1096,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
               this.researchNoPackage(this.noPackage.value.numberPackage)
             },
             err => {
-              console.log(err)
+              console.log(err);
             }
-          )
-
+          );
         }
       });
     } else {
