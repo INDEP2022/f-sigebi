@@ -2,7 +2,7 @@
   <div class="ch-content" header>
     <h5 class="title">Proceso de Inserción masiva de gastos y numerario</h5>
   </div>
-  <div body>
+  <div class="text-capitalize" body>
     <div class="d-flex gap-2 mt-4">
       <div class="">
         <a
@@ -14,6 +14,7 @@
             type="file"
             accept=".xlsx,.xls"
             (change)="onClickBtnFileExcel($event)" />
+          <i class="bi bi-file-earmark-excel-fill ml-2"></i>
         </a>
       </div>
       <div>
@@ -26,6 +27,7 @@
             type="file"
             accept=".csv"
             (change)="onClickBtnFileExcel($event)" />
+          <i class="bi bi-file-earmark-excel-fill ml-2"></i>
         </a>
       </div>
       <div class="">
@@ -33,7 +35,7 @@
           [disabled]="isLoadingProcessExtraction"
           (click)="onClickBtnProcessExtraction()"
           class="btn btn-primary btn-sm active">
-          Proceso de extracción
+          Proceso De Extracción
           <ng-container *ngIf="isLoadingProcessExtraction">
             <i class="fas fa-spinner fa-spin"></i>
           </ng-container>
@@ -56,13 +58,13 @@
           "
           class="mt-4">
           <div>
-            Registros leídos: <span>{{ registerReads }}</span>
+            Registros Leídos: <span>{{ registerReads }}</span>
           </div>
           <div>
-            Registros procesados: <span>{{ registerProcessed }}</span>
+            Registros Procesados: <span>{{ registerProcessed }}</span>
           </div>
           <div>
-            Registros correctos: <span>{{ registerCorrect }}</span>
+            Registros Correctos: <span>{{ registerCorrect }}</span>
           </div>
           <div>
             Erróneos:
@@ -74,7 +76,6 @@
           <div class="overflow-auto pt-5">
             <div [formGroup]="formTips" class="d-flex gap-4 mb-3 form-material">
               <div *ngFor="let item of columns; let i = index">
-                <!-- <label>{{ item }}:</label> -->
                 <form-field
                   [label]="item"
                   [control]="formTips.get('TIP' + (i + 1))">
@@ -86,7 +87,7 @@
                     <option value="O">Otro</option>
                     <option value="B">No. Bien</option>
                     <option value="G">Gasto</option>
-                    <option value="I">Ingreso neto</option>
+                    <option value="I">Ingreso Neto</option>
                     <option value="V">Iva</option>
                   </select>
                 </form-field>
@@ -157,7 +158,7 @@
     </div>
     <div class="row pt-4">
       <div class="col-md-3">
-        <h5 class="title">Previsualización de Datos</h5>
+        <h5 class="title">Previsualización De Datos</h5>
       </div>
       <div class="col-md-7"></div>
       <div class="col-md-2">
