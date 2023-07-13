@@ -25,6 +25,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
@@ -42,7 +43,7 @@ import { DepositAccountStatementParameterComponent } from '../deposit-account-st
 @Component({
   selector: 'app-deposit-account-statement',
   templateUrl: './deposit-account-statement.component.html',
-  styles: [],
+  styleUrls: ['./deposit-account-statement.component.scss'],
   animations: [
     trigger('OnShow', [
       transition(':enter', [
@@ -188,6 +189,7 @@ export class DepositAccountStatementComponent
       transfDate: [null, Validators.nullValidator],
       proceedings: [null, Validators.nullValidator],
       good: [null, Validators.nullValidator],
+      goodDescription: [null],
       status: [null, Validators.nullValidator],
       indicated: [null, Validators.nullValidator],
       avPrevious: [null, Validators.nullValidator],
@@ -219,6 +221,20 @@ export class DepositAccountStatementComponent
     this.getParameters();
     this.form.controls['depositDate'].disable();
     //this.validation();
+  }
+
+  get goodDescription() {
+    return this.form.get('goodDescription');
+  }
+
+  get status() {
+    return this.form.get('status');
+  }
+
+  changeGood(event: IGood) {
+    console.log(event);
+    this.goodDescription.setValue(event.status + '-' + event.description);
+    this.status.setValue(event.status);
   }
 
   clean() {
@@ -383,7 +399,7 @@ export class DepositAccountStatementComponent
         ''
       );
     }
-    /* VALIDAR ESTA PARTE CON FORM 
+    /* VALIDAR ESTA PARTE CON FORM
     let acount: number;
     //llamar al endpoint de cheque devolucion
     const params = new ListParams();
@@ -475,9 +491,9 @@ export class DepositAccountStatementComponent
     //this.onSearchStart.emit(false);
   }
 
-  changeGood(event: any) {
-    console.log(event.scheduledDateDecoDev, event.status);
-  }
+  // changeGood(event: any) {
+  //   console.log(event.scheduledDateDecoDev, event.status);
+  // }
 
   getParameters() {
     this.goodParametersService.getById('DIASCALINT').subscribe(data => {

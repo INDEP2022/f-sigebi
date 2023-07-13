@@ -315,6 +315,20 @@ export class ProceedingsConversionDetailComponent
   }
 
   salvar() {
+    if (this.header.invalid) return this.header.markAllAsTouched();
+
+    // if (this.antecedentTwo.invalid)
+    //   return this.antecedentTwo.markAllAsTouched()
+
+    // if (this.antecedentThree.invalid)
+    //   return this.antecedentThree.markAllAsTouched()
+
+    // if (this.first.invalid)
+    //   return this.first.markAllAsTouched()
+
+    // if (this.closureOfMinutes.invalid)
+    //   return this.closureOfMinutes.markAllAsTouched()
+
     if (this.valUpdate) {
       // UPDATE
       console.log('form', this.header);

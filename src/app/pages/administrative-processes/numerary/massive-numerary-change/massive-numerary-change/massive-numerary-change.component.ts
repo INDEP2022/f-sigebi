@@ -61,11 +61,14 @@ import {
         display: flex;
         flex-direction: column;
       } */
-      .spents input {
+      .spents input,
+      .spents textarea {
         width: 150px;
       }
       select.selects-origin-data {
         width: 105px;
+        min-height: auto !important;
+        /* height: 43px; */
       }
       .btn-custom-search {
         position: absolute;
@@ -142,6 +145,24 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     this.isVisibleSpent = Object.values(this.formTips.value).some(
       value => value === 'G'
     );
+  }
+
+  clean() {
+    this.form.reset();
+    this.formGad.reset();
+    this.formGad.disable();
+    this.formGas.reset();
+    this.formGas.disable();
+    this.formTips.reset();
+
+    this.BLK_BIENES.reset();
+    this.BLK_GASTOS.reset();
+    this.dataPrevious = [];
+    this.dataPreviousTable = new LocalDataSource([]);
+    this.registerReads = 0;
+    this.registerProcessed = 0;
+    this.registerCorrect = 0;
+    this.registerIncorrect = 0;
   }
 
   prepareForm() {

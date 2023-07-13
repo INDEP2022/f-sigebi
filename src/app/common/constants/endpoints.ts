@@ -124,6 +124,7 @@ export enum ENDPOINT_LINKS {
   TypeSiniester = 'catalog/type-sinister',
   TypeSiniesters = 'catalog/type-sinisters',
   Conclusion = 'catalog/apps/getConclusion',
+  BankCenter = 'catalog/apps/getBank',
   // TypeSiniester = 'catalog/type-sinisters',
   TypeWarehouse = 'catalog/type-warehouses',
   TypeOrderServices = 'catalog/type-order-service',
