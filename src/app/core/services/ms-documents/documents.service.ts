@@ -7,7 +7,7 @@ import { IDocumentsViewerFlyerNumber } from 'src/app/core/models/ms-documents/do
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IClarificationDocumentsImpro } from '../../models/ms-documents/clarification-documents-impro-model';
 import { SeparatorsDocuments } from '../../models/ms-documents/document-separators';
-import { IDocuments } from '../../models/ms-documents/documents';
+import { IDocuments, IGenerateFolioMassConv } from '../../models/ms-documents/documents';
 import { TypesDocuments } from '../../models/ms-documents/documents-type';
 import { IReceipyGuardDocument } from '../../models/receipt/receipt.model';
 
@@ -219,17 +219,19 @@ export class DocumentsService extends HttpService {
   }
 
   //http://sigebimsqa.indep.gob.mx/documents/api/v1/documents-types --> Arroja el listado de Tipos de documento, toma el valor y lo busca como "id"
-  getDocumentsType($params?: any): Observable<IListResponse<TypesDocuments>> {
+  getDocumentsType(
+    params?: ListParams | string
+  ): Observable<IListResponse<TypesDocuments>> {
     const route = `/${DocumentsEndpoints.DocumentsType}`;
-    return this.get(route, $params);
+    return this.get(route, params);
   }
 
   //http://sigebimsqa.indep.gob.mx/documents/api/v1/document-separator  --> description
   getDocumentsSeparator(
-    $params?: any
+    params?: ListParams | string
   ): Observable<IListResponse<SeparatorsDocuments>> {
     const route = `/${DocumentsEndpoints.DocumentsSeparator}`;
-    return this.get(route, $params);
+    return this.get(route, params);
   }
 
   otDocuments(expedient: string | number) {
@@ -245,5 +247,9 @@ export class DocumentsService extends HttpService {
       body,
       params
     );
+  }
+
+  generateFolioMassiveConversion(body: IGenerateFolioMassConv){
+    return this.post('application/generate-folio', body)
   }
 }

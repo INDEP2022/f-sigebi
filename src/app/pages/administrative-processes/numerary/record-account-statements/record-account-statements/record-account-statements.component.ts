@@ -100,7 +100,6 @@ export class RecordAccountStatementsComponent
     this.prepareForm();
     this.searchBanks(new ListParams());
     this.searchCheck();
-
     this.dataAccount
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -111,11 +110,8 @@ export class RecordAccountStatementsComponent
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'dateMotion':
-                console.log(filter.field);
-                console.log(searchFilter);
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'deposit':
@@ -132,7 +128,6 @@ export class RecordAccountStatementsComponent
                 break;
             }
             if (filter.search !== '') {
-              console.log(`${searchFilter}:${filter.search}`);
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -155,6 +150,8 @@ export class RecordAccountStatementsComponent
   // Trae la lista de bancos por defecto
   searchBanks(params: ListParams) {
     this.loading = true;
+    this.bankAccountSelect = new DefaultSelect();
+    this.dataAccount = new LocalDataSource();
     this.recordAccountStatementsService.getAll(params).subscribe({
       next: response => {
         this.loading = true;
@@ -170,7 +167,6 @@ export class RecordAccountStatementsComponent
 
   // Permite buscar los bancos por nombre
   onSearchName(inputElement: any) {
-    // this.dataAccount = new LocalDataSource();
     const name = inputElement.value;
     setTimeout(() => {
       this.recordAccountStatementsService
@@ -200,7 +196,6 @@ export class RecordAccountStatementsComponent
     this.cleandInfoDate();
     this.bankAccountSelect = new DefaultSelect();
     this.loading = false;
-    // this.dataAccount = new LocalDataSource();
     if (value && value.bankCode) {
       const bankCode = value.bankCode;
       this.searchBankAccount(bankCode, this.paramsSubject);
@@ -241,7 +236,6 @@ export class RecordAccountStatementsComponent
   }
 
   onSearchAccount(inputElement: any) {
-    // this.dataAccount = new LocalDataSource();
     const account = inputElement.value;
     setTimeout(() => {
       this.recordAccountStatementsAccountsService
@@ -274,7 +268,6 @@ export class RecordAccountStatementsComponent
     this.form.get('description').reset();
     this.totalItems = 0;
     this.cleandInfoDate();
-    // this.dataAccount = new LocalDataSource();
     const accountNumber = value.accountNumber;
     this.accountDate = value.accountNumber;
     this.searchDataAccount(accountNumber);
@@ -389,6 +382,7 @@ export class RecordAccountStatementsComponent
       .subscribe({
         next: response => {
           this.factasStatusCta = response;
+          console.log(this.factasStatusCta);
           this.loading = false;
         },
         error: (err: any) => {
@@ -400,6 +394,7 @@ export class RecordAccountStatementsComponent
 
   // Abre el modal de transferencia de saldos
   openModal(movimentAccount: IRecordAccountStatements) {
+    console.log(movimentAccount);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       ignoreBackdropClick: false,
@@ -447,6 +442,8 @@ export class RecordAccountStatementsComponent
   }
 
   delete(movimentAccount: IRecordAccountStatements, modal: any) {
+    let showAlert = false;
+
     if (
       movimentAccount.numberMotionTransfer !== null ||
       movimentAccount.numberReturnPayCheck !== null ||
@@ -459,6 +456,7 @@ export class RecordAccountStatementsComponent
           'No se puede eliminar el movimiento porque proviene de una transferencia',
           ``
         );
+        showAlert = true;
       }
       if (movimentAccount.numberReturnPayCheck !== null) {
         this.alert(
@@ -466,6 +464,7 @@ export class RecordAccountStatementsComponent
           'No se puede eliminar el movimiento porque proviene de un cobro de cheque debido a una devolución',
           ``
         );
+        showAlert = true;
       }
       if (movimentAccount.numberGood !== null) {
         this.alert(
@@ -473,29 +472,34 @@ export class RecordAccountStatementsComponent
           'No se puede eliminar el movimiento porque está asociado a un bien',
           ``
         );
+        showAlert = true;
       }
     }
 
-    const chequeEncontrado = this.checks.find(
-      (cheque: { accountOriginDepositNumber: number }) =>
-        cheque.accountOriginDepositNumber === movimentAccount.numberMotion
-    );
-
-    if (chequeEncontrado) {
-      this.alert(
-        'warning',
-        'No se puede eliminar el movimiento mientras tenga devoluciones registradas',
-        ``
+    if (!showAlert) {
+      const chequeEncontrado = this.checks.find(
+        (cheque: { accountOriginDepositNumber: number }) =>
+          cheque.accountOriginDepositNumber === movimentAccount.numberMotion
       );
-    } else {
-      this.recordAccountStatementsAccountsService.remove(modal).subscribe({
-        next: response => {
-          this.alert('success', 'Movimiento eliminado', '');
-        },
-        error: err => {
-          this.alert('error', 'No es posible eliminar el movimiento', '');
-        },
-      });
+
+      if (chequeEncontrado) {
+        this.alert(
+          'warning',
+          'No se puede eliminar el movimiento mientras tenga devoluciones registradas',
+          ``
+        );
+        showAlert = true;
+      } else {
+        this.recordAccountStatementsAccountsService.remove(modal).subscribe({
+          next: response => {
+            this.searchDataAccount(this.dataAccountPaginated);
+            this.alert('success', 'Movimiento eliminado', '');
+          },
+          error: err => {
+            this.alert('error', 'No es posible eliminar el movimiento', '');
+          },
+        });
+      }
     }
   }
 

@@ -58,6 +58,7 @@ import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-va
 import { AppointmentsAdministrativeReportComponent } from '../appointments-administrative-report/appointments-administrative-report.component';
 import { AppointmentsJuridicalReportComponent } from '../appointments-juridical-report/appointments-juridical-report.component';
 import { AppointmentsRelationsPaysComponent } from '../appointments-relations-pays/appointments-relations-pays.component';
+import { EmailAppointmentComponent } from '../email/email.component';
 import { ListDataAppointmentGoodsComponent } from '../list-data-good/list-data-good.component';
 import { ListDataAppointmentComponent } from '../list-data/list-data.component';
 import { ModalScanningFoilAppointmentTableComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
@@ -293,6 +294,10 @@ export class AppointmentsComponent
         { value: '', disabled: true },
         [Validators.maxLength(40), Validators.pattern(STRING_PATTERN)],
       ], //*
+      depositariaDesc: [
+        { value: '', disabled: true },
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+      ], //*
       representante: [
         { value: '', disabled: true },
         [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
@@ -481,7 +486,7 @@ export class AppointmentsComponent
         this.depositaryAppointment.InvoiceReturn == null
       ) {
         this.alertInfo(
-          'info',
+          'warning',
           'No Cambiara el Estatus del Bien, Hasta que se Tenga el Folio Acta Depositaría y el Folio de Remoción',
           ''
         );
@@ -490,7 +495,7 @@ export class AppointmentsComponent
         this.depositaryAppointment.InvoiceReturn != null
       ) {
         this.alertInfo(
-          'info',
+          'warning',
           'No Cambiara el Estatus del Bien, Hasta que se Tenga el Folio Acta Depositaría',
           ''
         );
@@ -499,7 +504,7 @@ export class AppointmentsComponent
         this.depositaryAppointment.InvoiceReturn != null
       ) {
         this.alertInfo(
-          'info',
+          'warning',
           'No cambiara el Estatus del Bien, Hasta que se Tenga el Folio de Remoción',
           ''
         );
@@ -606,7 +611,8 @@ export class AppointmentsComponent
                 : null
             );
           this.form.updateValueAndValidity();
-          this.getStatusGoodByStatus(res.data[0].id);
+          // this.getStatusGoodByStatus(res.data[0].id);
+          this.getStatusGoodByNoGood();
           this.getDataExpedientByNoExpedient(res.data[0].fileNumber);
           setTimeout(() => {
             this.form.get('noBien').setValue(res.data[0].goodId);
@@ -922,7 +928,8 @@ export class AppointmentsComponent
                   : null
               );
             this.form.updateValueAndValidity();
-            this.getStatusGoodByStatus(res.data[0].id);
+            // this.getStatusGoodByStatus(res.data[0].id);
+            this.getStatusGoodByNoGood();
             this.getDataExpedientByNoExpedient(res.data[0].fileNumber);
           } else {
             this.alert(
@@ -956,8 +963,8 @@ export class AppointmentsComponent
       .subscribe({
         next: res => {
           console.log(res);
-          this.form.get('estatusBien').setValue(res.description);
-          this.form.updateValueAndValidity();
+          // this.form.get('estatusBien').setValue(res.description);
+          // this.form.updateValueAndValidity();
         },
         error: err => {
           console.log(err);
@@ -1187,6 +1194,9 @@ export class AppointmentsComponent
 
     // this.form.get('personNumber').enable();
     // this.getPersonCatalog(new ListParams(), true);
+    this.form
+      .get('depositariaDesc')
+      .setValue(allNull ? null : this.depositaryAppointment.personNumber.name);
     this.form.get('depositaria').setValue(
       allNull ? null : this.depositaryAppointment.personNumber.personName
       // ? this.depositaryAppointment.personNumber.personName +
@@ -2216,7 +2226,7 @@ export class AppointmentsComponent
               console.log('DATA ', data);
               if (data.count == 0) {
                 this.alertInfo(
-                  'info',
+                  'warning',
                   'No se Puede Generar el Folio de Escaneo por Remoción, Porque no Tiene el Estatus Adecuado',
                   ''
                 );
@@ -2230,7 +2240,7 @@ export class AppointmentsComponent
 
                 if (response.isConfirmed) {
                   if (this.form.get('remocion').value == 'N') {
-                    this.alertInfo('info', 'No Tiene Datos de Remoción', '');
+                    this.alertInfo('warning', 'No Tiene Datos de Remoción', '');
                     this.showScanRadio = false;
                   } else {
                     this.valuesChangeRadio.lv_VALESCAN = 1;
@@ -2639,7 +2649,7 @@ export class AppointmentsComponent
           }),
           data.count
         );
-        console.log(data, this.saeRepresentativeSelect);
+        console.log('REPRESENTANTE ######', data, this.saeRepresentativeSelect);
         if (getByValue) {
           // this.saeRepresentativeSelect = data.data[0].map((i: any) => {
           //   i['nameDesc'] = i.id + ' -- ' + i.name;
@@ -2683,7 +2693,7 @@ export class AppointmentsComponent
     ) {
       validMessage = true;
       this.alertInfo(
-        'info',
+        'warning',
         'No Cambiara el Estatus del Bien, Hasta que se Tenga el Folio Acta Depositaría y el Folio de Remoción',
         ''
       ).then(() => {
@@ -2695,7 +2705,7 @@ export class AppointmentsComponent
     ) {
       validMessage = true;
       this.alertInfo(
-        'info',
+        'warning',
         'No Cambiara el Estatus del Bien, Hasta que se Tenga el Folio Acta Depositaría',
         ''
       ).then(() => {
@@ -2707,7 +2717,7 @@ export class AppointmentsComponent
     ) {
       validMessage = true;
       this.alertInfo(
-        'info',
+        'warning',
         'No cambiara el Estatus del Bien, Hasta que se Tenga el Folio de Remoción',
         ''
       ).then(() => {
@@ -2886,7 +2896,7 @@ export class AppointmentsComponent
                 this.folios.universalFolio &&
                 _saveFolioDepositary == 'A'
               ) {
-                this.updateGoodStatus('DEP');
+                this.updateGoodStatus('DEP', true);
               }
               if (
                 this.good.status == 'DEP' &&
@@ -2915,7 +2925,7 @@ export class AppointmentsComponent
     }
   }
 
-  updateGoodStatus(status: string) {
+  updateGoodStatus(status: string, sendMail: boolean = false) {
     let body: any = {
       status: status,
       goodId: this.good.goodId,
@@ -2929,7 +2939,12 @@ export class AppointmentsComponent
         console.log('UPDATE STATUS', data);
         // this.form.get('noBien').setValue(this.good.goodId);
         // this.validGoodNumberInDepositaryAppointment();
-        this.getFromGoodsAndExpedients(); // Get data good
+        if (sendMail == true) {
+          this.openModalMail();
+        }
+        setTimeout(() => {
+          this.getFromGoodsAndExpedients(); // Get data good
+        }, 500);
       },
       error: error => {
         console.log('ERROR UPDATE STATUS', error);
@@ -2962,5 +2977,23 @@ export class AppointmentsComponent
       }),
       map(response => response.count)
     );
+  }
+
+  openModalMail() {
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        userSelected: this.form.value.representanteSAE,
+        message:
+          'Por este Conducto se le Informa que el Bien: ' +
+          this.noBienReadOnly +
+          ' con Descripción: ' +
+          this.good.description +
+          '. Está en la Depositaría: ' +
+          this.depositaryAppointment.personNumber.personName,
+        asunto: 'Bien: ' + this.noBienReadOnly + ' en Depositaría',
+      },
+    };
+    return this.modalService.show(EmailAppointmentComponent, config);
   }
 }

@@ -22,15 +22,15 @@ export class TranfergoodService extends HttpService {
     );
   }
 
-  create(data: DetailNum) {
+  create(data: any) {
     return this.post(TransfergoodEndpoint.TransNumDetail, data);
   }
 
-  update(data: DetailNum) {
+  update(data: any) {
     return this.put(TransfergoodEndpoint.TransNumDetail, data);
   }
 
-  remove(data: DetailNum) {
+  remove(data: any) {
     return this.delete(TransfergoodEndpoint.TransNumDetail, data);
   }
 
@@ -39,5 +39,13 @@ export class TranfergoodService extends HttpService {
       `${TransfergoodEndpoint.getFileCSV}`,
       formData
     );
+  }
+
+  getMessageEmail(data: Object) {
+    return this.post(TransfergoodEndpoint.EmailMessage, data);
+  }
+
+  sendEmail(data: Object) {
+    return this.post(TransfergoodEndpoint.SendEmail, data);
   }
 }

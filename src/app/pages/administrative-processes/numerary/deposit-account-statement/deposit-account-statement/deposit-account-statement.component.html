@@ -59,25 +59,7 @@
           </div>
         </div>-->
         <h5 class="title">Datos del Depósito</h5>
-        <div class="row pt-4">
-          <div class="col-md-3">
-            <form-field [control]="form.get('account')">
-              <ngx-select
-                label="Cuenta"
-                [form]="form"
-                control="account"
-                [data]="accountChecksSelect"
-                value="accountOriginDepositNumber"
-                bindLabel="accountOriginDepositNumber"
-                label="Cuenta"
-                (fetchItems)="returnChecks($event)"
-                (change)="changeChecks($event)"></ngx-select>
-              <!--<input
-                type="text"
-                class="form-control"
-                formControlName="account" />-->
-            </form-field>
-          </div>
+        <div class="row pb-4">
           <div class="col text-right">
             <div class="btn-group">
               <button
@@ -99,6 +81,81 @@
                 Parámetros
               </button>
             </div>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <!-- <div class="col-md-3">
+            <form-field [control]="form.get('account')">
+              <ngx-select
+                label="Cuenta"
+                [form]="form"
+                control="account"
+                [data]="accountChecksSelect"
+                value="accountOriginDepositNumber"
+                bindLabel="accountOriginDepositNumber"
+                label="Cuenta"
+                (fetchItems)="returnChecks($event)"
+                (change)="changeChecks($event)"></ngx-select>
+            </form-field>
+          </div> -->
+
+          <div class="col-md-3">
+            <ng-custom-select-loading
+              [isLoadInOnInit]="false"
+              [form]="form"
+              formControlName="good"
+              label="Bien"
+              path="good/api/v1/good"
+              value="goodId"
+              bindLabel="goodId"
+              paramSearch="filter.goodId"
+              prefixSearch="$eq"
+              (valueChange)="changeGood($event)">
+            </ng-custom-select-loading>
+            <!-- <form-field [control]="form.get('good')">
+              <ngx-select
+                label="Bien"
+                [form]="form"
+                control="good"
+                [data]="goodSelect"
+                value="id"
+                bindLabel="description"
+                label="Bien"
+                (fetchItems)="returnChecks($event)"
+                (change)="changeGood($event)"></ngx-select>
+            </form-field> -->
+          </div>
+
+          <!-- <div class="col-md-3">
+            <form-field [control]="form.get('status')" label="Estatus">
+              <input
+                readonly
+                type="text"
+                class="form-control"
+                formControlName="status" />
+            </form-field>
+          </div> -->
+          <div class="col-md-3">
+            <form-field [control]="form.get('proceedings')" label="Expediente">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="proceedings" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-12">
+            <form-field
+              [control]="form.get('goodDescription')"
+              label="Descripción del Bien">
+              <textarea
+                readonly
+                rows="2"
+                class="form-control"
+                formControlName="goodDescription"
+                [max-length]="4000"></textarea>
+            </form-field>
           </div>
         </div>
 
@@ -128,7 +185,7 @@
           </div>
         </div>-->
 
-        <div class="row pt-5 mt-4">
+        <div class="row pt-4">
           <div class="col-md-3">
             <form-field [control]="form.get('account')">
               <ngx-select
@@ -192,38 +249,8 @@
                 bsDatepicker />
             </form-field>
           </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('proceedings')" label="Expediente">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="proceedings" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('good')">
-              <ngx-select
-                label="Bien"
-                [form]="form"
-                control="good"
-                [data]="goodSelect"
-                value="id"
-                bindLabel="description"
-                label="Bien"
-                (change)="changeGood($event)"></ngx-select>
-              <!--<input type="text" class="form-control" formControlName="good" />-->
-            </form-field>
-          </div>
         </div>
         <div class="row mt-4">
-          <div class="col-md-3">
-            <form-field [control]="form.get('status')" label="Estatus">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="status" />
-            </form-field>
-          </div>
           <div class="col-md-3">
             <form-field [control]="form.get('indicated')" label="Indiciado">
               <input

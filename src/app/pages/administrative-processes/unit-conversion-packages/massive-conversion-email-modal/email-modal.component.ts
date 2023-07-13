@@ -20,7 +20,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class EmailModalComponent extends BasePage implements OnInit {
   selectedParaUsers: IUsersTracking[] = [];
   selectedCCUsers: IUsersTracking[] = [];
-  paraSelect: DefaultSelect;
+  paraSelect: DefaultSelect = new DefaultSelect();
   form: FormGroup;
   constructor(
     private modalRef: BsModalRef,
@@ -45,6 +45,7 @@ export class EmailModalComponent extends BasePage implements OnInit {
         ],
       });
     }
+    this.searchUsersPara(new ListParams());
   }
 
   searchUsersPara(params: ListParams) {
