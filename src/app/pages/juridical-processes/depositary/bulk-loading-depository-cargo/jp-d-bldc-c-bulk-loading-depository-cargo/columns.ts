@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const COLUMNS = {
@@ -7,7 +8,13 @@ export const COLUMNS = {
   },
   FEC_PAGO: {
     title: 'Fecha de Pago',
+    type: 'string',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      return formatted;
+    },
   },
   IMPORTE: {
     title: 'Importe',
