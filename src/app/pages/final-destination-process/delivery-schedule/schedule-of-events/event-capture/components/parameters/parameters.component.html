@@ -129,7 +129,7 @@
         [searchable]="false"
         [form]="formSiab"
         bindLabel="description"
-        label="Delegación(es)"
+        label="Delegación"
         control="delegation"
         [labelTemplate]="delLabel">
       </ngx-select>
@@ -158,7 +158,7 @@
         [searchOnInit]="true"
         value="id"
         bindLabel="nameTransferent"
-        label="Transferente(s)"
+        label="Transferente"
         [labelTemplate]="transferLabel"
         control="transfer">
       </ngx-select>
@@ -192,7 +192,7 @@
         [form]="formSiab"
         value="value"
         bindLabel="stationName"
-        label="Emisora(s)"
+        label="Emisora"
         control="transmitter"
         [labelTemplate]="transmitterLabel">
       </ngx-select>
@@ -225,7 +225,7 @@
         [fetchByList]="false"
         value="value"
         bindLabel="authorityName"
-        label="Autoridad(es)"
+        label="Autoridad"
         control="authority"
         [labelTemplate]="authLabel">
       </ngx-select>
@@ -262,7 +262,7 @@
       *ngIf="registerControls.typeEvent.value == 'DN'"
       class="col-md-4 mt-4"
       [control]="formSiab.get('almPaso')"
-      label="Almacen">
+      label="Almacén">
       <input type="text" class="form-control" formControlName="almPaso" />
     </form-field>
     <form-field
@@ -281,7 +281,7 @@
         [form]="formSiab"
         value="value"
         bindLabel="label"
-        label="Almacen"
+        label="Almacén"
         control="warehouse">
       </ngx-select>
     </form-field>

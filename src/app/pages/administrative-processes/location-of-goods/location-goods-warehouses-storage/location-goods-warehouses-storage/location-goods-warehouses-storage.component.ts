@@ -12,9 +12,12 @@ import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModalSelectsGoodsComponent } from '../modal-selects-goods/modal-selects-goods.component';
+
 @Component({
   selector: 'app-location-goods-warehouses-storage',
   templateUrl: './location-goods-warehouses-storage.component.html',
@@ -27,6 +30,7 @@ export class LocationGoodsWarehousesStorageComponent
   //Reactive Forms
   form: FormGroup;
   totalItems: number = 0;
+  noExpediente: number | string;
   formWarehouse: FormGroup;
   mostrarAlmacen = true;
   formVault: FormGroup;
@@ -36,6 +40,7 @@ export class LocationGoodsWarehousesStorageComponent
   newWarehouse: number = 0;
   fileNum: number = 0;
   selectedOption: string = 'B';
+  dataTableGood_: any[] = [];
   disableConsultLocation: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   warehouseDisable: boolean = true;
@@ -96,7 +101,9 @@ export class LocationGoodsWarehousesStorageComponent
     private token: AuthService,
     private warehouseService: WarehouseService,
     private safeService: SafeService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private GoodprocessService_: GoodprocessService,
+    private proceedingsService: ProceedingsService
   ) {
     super();
   }
@@ -278,6 +285,9 @@ export class LocationGoodsWarehousesStorageComponent
     });
   }
   loadDescriptionVault(id: string | number) {
+    if (id == null || undefined) {
+      this.formVault.value.safe = 9999;
+    }
     this.safeService.getById(id).subscribe({
       next: response => {
         this.currentDescriptionVault.setValue(response.description);
@@ -417,46 +427,71 @@ export class LocationGoodsWarehousesStorageComponent
 
   onLoadGoodList() {
     this.loading = true;
-    let noExpediente = this.good.fileNumber || '';
+    this.noExpediente = this.good.fileNumber || '';
     this.params.getValue().page = 1;
     this.params.getValue().limit = 10;
-    if (noExpediente !== '') {
-      this.goodServices
-        .getByExpedient(noExpediente, this.params.getValue())
+    if (this.noExpediente !== '') {
+      this.serviceGood
+        .getByExpedient(this.noExpediente, this.params.getValue())
         .subscribe({
-          next: response => {
-            const data = response.data;
+          next: data => {
+            this.goods = data.data;
             this.loading = false;
-            this.totalItems = response.count;
-            this.goods = data;
-            data.map(async (good: any, index) => {
-              if (index == 0) this.di_desc_est = good.estatus.descriptionStatus;
-              good.di_disponible = 'S';
-              this.di_desc_est = good.di_disponible;
-              await new Promise((resolve, reject) => {
-                const body = {
-                  no_bien: good.id,
-                  estatus: good.status,
-                  identificador: good.identifier,
-                  vc_pantalla: 'FACTADBUBICABIEN',
-                  proceso_ext_dom: good.extDomProcess ?? '',
-                };
-                this.allGoods.load(response.data);
-                this.allGoods.refresh();
-                resolve(body);
-              });
-            }),
-              (this.di_desc_est = 'N');
+            console.log('Bienes', this.goods);
+
+            let result = data.data.map(async (item: any) => {
+              let obj = {
+                vcScreen: 'FACTADBUBICABIEN',
+                pNumberGood: item.id,
+              };
+              const di_dispo = await this.getStatusScreen(obj);
+              console.log(di_dispo);
+            });
+
+            Promise.all(result).then(item => {
+              this.dataTableGood_ = this.goods;
+              this.allGoods.load(this.dataTableGood_);
+              this.allGoods.refresh();
+              this.totalItems = data.count;
+              console.log(this.goods);
+            });
           },
-          error: err => {
-            console.log(err);
-            this.di_desc_est = 'N';
+          error: error => {
+            this.loading = false;
           },
         });
     }
   }
   getEstatusColor(estatus: string): string {
     return estatus === 'S' ? 'green' : 'black';
+  }
+  async getStatusScreen(body: any) {
+    return new Promise((resolve, reject) => {
+      this.GoodprocessService_.getScreenGood(body).subscribe({
+        next: async (state: any) => {
+          if (state.data) {
+            console.log('di_dispo', state);
+            resolve('S');
+            this.di_desc_est = 'S';
+          } else {
+            console.log('di_dispo', state);
+            resolve('N');
+            this.di_desc_est = 'N';
+          }
+        },
+        error: () => {
+          resolve('N');
+        },
+      });
+    });
+  }
+  goBack() {
+    this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
+      queryParams: {
+        origin: this.screenKey,
+        PAR_MASIVO: this.form.value.good,
+      },
+    });
   }
 }
 

@@ -59,16 +59,133 @@
           </div>
         </div>-->
         <h5 class="title">Datos del Depósito</h5>
+        <div class="row pb-4">
+          <div class="col text-right">
+            <div class="btn-group">
+              <button
+                type="button"
+                tooltip="Agregar"
+                containerclass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2">
+                <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+              <button
+                class="btn btn-primary btn-sm active mx-1"
+                [disabled]="!validDetail"
+                (click)="detailCalculation()">
+                Estado de Cuenta
+              </button>
+              <button
+                class="btn btn-primary btn-sm active mx-1"
+                (click)="openFormParameter()">
+                Parámetros
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <!-- <div class="col-md-3">
+            <form-field [control]="form.get('account')">
+              <ngx-select
+                label="Cuenta"
+                [form]="form"
+                control="account"
+                [data]="accountChecksSelect"
+                value="accountOriginDepositNumber"
+                bindLabel="accountOriginDepositNumber"
+                label="Cuenta"
+                (fetchItems)="returnChecks($event)"
+                (change)="changeChecks($event)"></ngx-select>
+            </form-field>
+          </div> -->
 
-        <app-pagination
-          [params]="paramsActNavigate"
-          [totalItems]="totalItemsNavigate"
-          [limit]="newLimitparamsActNavigate"
-          [paginatorPageSize]="false"
-          [pageSizeOptions]="[1]"
-          [paginatorRangeLabel]="false"
-          [maxSize]="1"></app-pagination>
-        <div class="row pt-4 mt-4">
+          <div class="col-md-3">
+            <ng-custom-select-loading
+              [isLoadInOnInit]="false"
+              [form]="form"
+              formControlName="good"
+              label="Bien"
+              path="good/api/v1/good"
+              value="goodId"
+              bindLabel="goodId"
+              paramSearch="filter.goodId"
+              prefixSearch="$eq"
+              (valueChange)="changeGood($event)">
+            </ng-custom-select-loading>
+            <!-- <form-field [control]="form.get('good')">
+              <ngx-select
+                label="Bien"
+                [form]="form"
+                control="good"
+                [data]="goodSelect"
+                value="id"
+                bindLabel="description"
+                label="Bien"
+                (fetchItems)="returnChecks($event)"
+                (change)="changeGood($event)"></ngx-select>
+            </form-field> -->
+          </div>
+
+          <!-- <div class="col-md-3">
+            <form-field [control]="form.get('status')" label="Estatus">
+              <input
+                readonly
+                type="text"
+                class="form-control"
+                formControlName="status" />
+            </form-field>
+          </div> -->
+          <div class="col-md-3">
+            <form-field [control]="form.get('proceedings')" label="Expediente">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="proceedings" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-12">
+            <form-field
+              [control]="form.get('goodDescription')"
+              label="Descripción del Bien">
+              <textarea
+                readonly
+                rows="2"
+                class="form-control"
+                formControlName="goodDescription"
+                [max-length]="4000"></textarea>
+            </form-field>
+          </div>
+        </div>
+
+        <!--<div class="row pt-4">
+          <div class="col-md-6" [formGroup]="form" *ngIf="form">
+            <form-field
+              [control]="form.get('depositDate')"
+              label="Fecha deposito">
+              <input
+                [maxDate]="maxDate"
+                class="form-control"
+                formControlName="depositDate"
+                (bsValueChange)="onChange($event,form.get('depositDate'), form.get('cutoffDate'))"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6" [formGroup]="form" >
+            <form-field [control]="form.get('cutoffDate')" label="Fecha de corte">
+              <input
+                [maxDate]="maxDate"
+                class="form-control"
+                formControlName="formFin"
+                (bsValueChange)="onChangeFin($event, form.get('cutoffDate'))"
+                [minDate]="form.get('cutoffDate').value"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>-->
+
+        <div class="row pt-4">
           <div class="col-md-3">
             <form-field [control]="form.get('account')">
               <ngx-select
@@ -124,7 +241,7 @@
           <div class="col-md-3">
             <form-field
               [control]="form.get('transfDate')"
-              label="Fecha Transf.">
+              label="Fecha Transferencia">
               <input
                 type="text"
                 formControlName="transfDate"
@@ -132,38 +249,8 @@
                 bsDatepicker />
             </form-field>
           </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('proceedings')" label="Expediente">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="proceedings" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('good')">
-              <ngx-select
-                label="Bien"
-                [form]="form"
-                control="good"
-                [data]="goodSelect"
-                value="id"
-                bindLabel="description"
-                label="Bien"
-                (change)="changeGood($event)"></ngx-select>
-              <!--<input type="text" class="form-control" formControlName="good" />-->
-            </form-field>
-          </div>
         </div>
         <div class="row mt-4">
-          <div class="col-md-3">
-            <form-field [control]="form.get('status')" label="Estatus">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="status" />
-            </form-field>
-          </div>
           <div class="col-md-3">
             <form-field [control]="form.get('indicated')" label="Indiciado">
               <input
@@ -173,7 +260,9 @@
             </form-field>
           </div>
           <div class="col-md-3">
-            <form-field [control]="form.get('avPrevious')" label="Av.previa">
+            <form-field
+              [control]="form.get('avPrevious')"
+              label="Averiguaci&oacute;n Previa">
               <input
                 type="text"
                 class="form-control"
@@ -194,38 +283,53 @@
       </form>
     </div>
     <h5 class="title">Datos para cálculo</h5>
-    <div class="row mt-3 mb-3">
+    <div class="row pt-4 mt-4">
+      <div class="col text-right">
+        <button
+          class="btn btn-primary btn-sm active mx-1"
+          [disabled]="!validCheck"
+          (click)="interestCheck()">
+          Cheque Complementario
+        </button>
+      </div>
+    </div>
+    <div class="row pt-5">
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-md-3">
-            <app-date-initial-finish
-              *ngIf="form"
-              [form]="form"
-              [form2]="form"
-              formInitial="depositDate"
-              formFin="transferDate"
-              labelInicioName="Fecha de Depósito"
-              labelFinName="al"
-              (formEmit)="(form)">
-            </app-date-initial-finish>
-            <!--<form-field
-              [control]="form.get('transferDate')" label="Fecha de Transferencia">
+            <!---->
+            <form-field
+              [control]="form.get('transferDate')"
+              label="Fecha de Transferencia">
+              <!--<input
+                [maxDate]="maxDate"
+                class="form-control"
+                formControlName="formFin"
+                (bsValueChange)="onChangeFin($event, form.get('transferDate'))"
+                [minDate]="minDate"
+                bsDatepicker />-->
               <input
                 type="text"
+                [maxDate]="cutoffDate"
                 formControlName="transferDate"
                 class="form-control"
-                bsDatepicker/>
-            </form-field>-->
+                [minDate]="depositDate"
+                bsDatepicker
+                (bsValueChange)="updateTransferDate($event)" />
+            </form-field>
           </div>
           <div class="col-md-3">
             <form-field
               [control]="form.get('cutoffDate')"
-              label="Fecha de corte">
+              label="Fecha de Corte">
               <input
+                [maxDate]="scheduledFecReturn"
                 type="text"
                 formControlName="cutoffDate"
                 class="form-control"
-                bsDatepicker />
+                [minDate]="transferDate"
+                bsDatepicker
+                (bsValueChange)="updateCutoffDate($event)" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -241,7 +345,7 @@
           <div class="col-md-3">
             <form-field
               [control]="form.get('interestCredited')"
-              label="Interes acreditado">
+              label="Inter&eacute;s Acreditado">
               <input
                 type="number"
                 class="form-control"
@@ -253,7 +357,7 @@
         </div>
         <div class="row mt-4">
           <div class="col-md-3">
-            <form-field [control]="form.get('subTotal')" label="Sub total">
+            <form-field [control]="form.get('subTotal')" label="Sub Total">
               <input
                 type="number"
                 class="form-control"
@@ -289,7 +393,7 @@
           <div class="col-md-3">
             <form-field
               [control]="form.get('checkAmount')"
-              label="Importe cheque">
+              label="Importe Cheque">
               <input
                 type="number"
                 class="form-control"
@@ -299,41 +403,26 @@
             </form-field>
           </div>
         </div>
-        <div class="row mt-4">
-          <div class="col-md-2">
-            <button
-              class="btn btn-secondary btn-sm active"
-              [disabled]="!validDetail"
-              (click)="detailCalculation()">
-              Edo. de Cta.
-            </button>
-          </div>
-          <div class="col-md-2">
-            <button
-              class="btn btn-secondary btn-sm active"
-              (click)="openFormParameter()">
-              Parametros
-            </button>
-          </div>
-          <div class="col-md-2">
-            <button
-              class="btn btn-secondary btn-sm active"
-              [disabled]="!validCheck"
-              (click)="interestCheck()">
-              Cheque Compl.
-            </button>
-          </div>
-        </div>
       </form>
     </div>
     <h5 class="title">Datos para el cheque</h5>
-    <div class="row mt-3 mb-3">
+    <div class="row mt-4">
+      <div class="col text-right">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="transferMov()"
+          [disabled]="!validTras">
+          Traspasar
+        </button>
+      </div>
+    </div>
+    <div class="row pt-5">
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-md-3">
             <form-field
               [control]="form.get('checkType')"
-              label="Tipo de cheque">
+              label="Tipo de Cheque">
               <input
                 type="text"
                 class="form-control"
@@ -343,7 +432,7 @@
           <div class="col-md-3">
             <form-field
               [control]="form.get('bankAccount')"
-              label="Cuenta bancaria">
+              label="Cuenta Bancaria">
               <input
                 type="number"
                 class="form-control"
@@ -375,7 +464,7 @@
           <div class="col-md-3">
             <form-field
               [control]="form.get('expeditionDate')"
-              label="Fecha expedición">
+              label="Fecha Expedici&oacute;n">
               <input
                 type="text"
                 formControlName="expeditionDate"
@@ -386,7 +475,7 @@
           <div class="col-md-3">
             <form-field
               [control]="form.get('collectionDate')"
-              label="Fecha cobro">
+              label="Fecha Cobro">
               <input
                 type="text"
                 formControlName="collectionDate"
@@ -404,17 +493,6 @@
                 formControlName="beneficiary" />
             </form-field>
           </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-md-2">
-            <button
-              class="btn btn-secondary btn-sm active"
-              (click)="openForm()"
-              [disabled]="!validTras">
-              Traspasar
-            </button>
-          </div>
-          <span>{{ transferred }}</span>
         </div>
       </form>
     </div>

@@ -2,17 +2,25 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IHistoricGoodsAsegExtdom } from 'src/app/core/models/administrative-processes/history-good.model';
+import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -20,8 +28,14 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { HistoricalGoodsExtDomComponent } from '../historical-goods-extdom/historical-goods-extdom.component';
+import { ModalScanningFoilTableHistoricalGoodsComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
 import { GoodsProcessValidationExtdomService } from '../services/goods-process-validation-extdom.service';
-import { COLUMNS_GOODS_LIST_EXTDOM } from './process-extdoom-columns';
+import {
+  COLUMNS_GOODS_LIST_EXTDOM,
+  COLUMNS_GOODS_LIST_EXTDOM_2,
+  RELATED_FOLIO_COLUMNS,
+} from './process-extdoom-columns';
 
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
@@ -41,7 +55,10 @@ export class GoodsProcessValidationExtdomComponent
   implements OnInit, OnDestroy
 {
   goodDataSelected: IGood | any[];
+  screenKey: string = 'FADMAPROEXTDOM';
   freeLabel: string = 'X';
+  registerType: string = 'N';
+  universalFolio: number = null;
   // TABLA DATA
   tableSettings = {
     ...this.settings,
@@ -50,7 +67,7 @@ export class GoodsProcessValidationExtdomComponent
   dataTableParams = new BehaviorSubject<ListParams>(new ListParams());
   loadingGoods: boolean = false;
   totalGoods: number = 0;
-  goodData: IGood | any[];
+  goodData: IGood[] | any[] = [];
   tableSettings2 = {
     ...this.settings,
   };
@@ -58,46 +75,23 @@ export class GoodsProcessValidationExtdomComponent
   dataTableParams2 = new BehaviorSubject<ListParams>(new ListParams());
   loadingGoods2: boolean = false;
   totalGoods2: number = 0;
-  goodData2: IGood | any[];
-
-  tableSettingsHistorico = {
-    actions: {
-      columnTitle: '',
-      add: false,
-      edit: false,
-      delete: false,
-    },
-    hideSubHeader: true, //oculta subheaader de filtro
-    mode: 'external', // ventana externa
-
-    columns: {
-      noBien: { title: 'No. Bien' }, //*
-      fechaCambio: { title: 'Fecha Cambio' },
-      usuarioCambio: { title: 'Usuario Cambio' },
-      folioUnivCambio: { title: 'Folio Univ Cambio' },
-      fechaLibera: { title: 'Fecha Libera' },
-      usuarioLibera: { title: 'Usuario Libera' },
-      folioUnivLibera: { title: 'Folio Univ Libera' },
-    },
+  goodData2: IGood[] | any[] = [];
+  tableSettings3 = {
+    ...this.settings,
   };
-  // Data table
-  dataTableHistorico = [
-    {
-      noBien: 'No. Bien',
-      fechaCambio: 'Fecha Cambio',
-      usuarioCambio: 'Usuario Cambio',
-      folioUnivCambio: 'Folio Univ Cambio',
-      fechaLibera: 'Fecha Libera',
-      usuarioLibera: 'Usuario Libera',
-      folioUnivLibera: 'Folio Univ Libera',
-    },
-  ];
-  public listadoHistorico: boolean = false;
+  dataTable3: LocalDataSource = new LocalDataSource();
+  dataTableParams3 = new BehaviorSubject<ListParams>(new ListParams());
+  loadingGoods3: boolean = false;
+  totalGoods3: number = 0;
+  goodData3: IGood[] | any[] = [];
+  // Historico Modal
+  params = new BehaviorSubject(new ListParams());
+  filterParams = new BehaviorSubject(new FilterParams());
   // Data
   notificationData: INotification;
   // Forms
   public form: FormGroup;
-  public formEscaneo: FormGroup;
+  public formScan: FormGroup;
   // Params
   origin: string = '';
   P_NO_TRAMITE: number = null;
@@ -115,16 +109,30 @@ export class GoodsProcessValidationExtdomComponent
   selectAuthority = new DefaultSelect();
   // Goods Selects
   selectedGooods: IGood[] = [];
+  selectedDeleteGooods: IGood[] = [];
   goods: IGood[] | any[] = [];
   goodsValid: any[] = [];
+  // Scanning
+  showScanForm: boolean = false;
+  // Usuario actual
+  dataUserLogged: any;
 
   constructor(
     private fb: FormBuilder,
     private datePipe: DatePipe,
     private svGoodsProcessValidationExtdomService: GoodsProcessValidationExtdomService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private modalService: BsModalService,
+    private documentsService: DocumentsService,
+    private authService: AuthService,
+    private msUsersService: UsersService,
+    private router: Router
   ) {
     super();
+    COLUMNS_GOODS_LIST_EXTDOM.seleccion = {
+      ...COLUMNS_GOODS_LIST_EXTDOM.seleccion,
+      onComponentInitFunction: this.onClickSelect.bind(this),
+    };
     this.tableSettings = {
       ...this.settings,
       actions: {
@@ -133,21 +141,47 @@ export class GoodsProcessValidationExtdomComponent
         edit: false,
         delete: false,
       },
-      columns: COLUMNS_GOODS_LIST_EXTDOM,
+      columns: { ...COLUMNS_GOODS_LIST_EXTDOM },
+      rowClassFunction: (row: any) => {
+        if (row.data.disponible == this.freeLabel) {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+      },
+    };
+    COLUMNS_GOODS_LIST_EXTDOM_2.seleccion = {
+      ...COLUMNS_GOODS_LIST_EXTDOM_2.seleccion,
+      onComponentInitFunction: this.onClickSelect_ExtDom.bind(this),
     };
     this.tableSettings2 = {
+      ...this.settings,
       actions: {
         columnTitle: '',
         add: false,
         edit: false,
         delete: false,
       },
-      ...this.settings,
-      columns: COLUMNS_GOODS_LIST_EXTDOM,
+      columns: { ...COLUMNS_GOODS_LIST_EXTDOM_2 },
     };
   }
 
   ngOnInit(): void {
+    const token = this.authService.decodeToken();
+    console.log(token);
+    if (token.preferred_username) {
+      this.getUserDataLogged(
+        token.preferred_username
+          ? token.preferred_username.toLocaleUpperCase()
+          : token.preferred_username
+      );
+    } else {
+      this.alertInfo(
+        'warning',
+        'Error al obtener los datos del Usuario de la sesión actual',
+        ''
+      );
+    }
     this.prepareForm();
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
@@ -157,6 +191,86 @@ export class GoodsProcessValidationExtdomComponent
         this.P_GEST_OK = params['P_GEST_OK'] ?? null;
         this.initForm();
       });
+  }
+
+  onClickSelect(event: any) {
+    // console.log('EVENTO ', event);
+    if (event != undefined) {
+      event.toggle.subscribe((data: any) => {
+        console.log('DATA LOG #### ', data);
+        // data.row.selection = data.toggle;
+        if (data.row.disponible == this.freeLabel) {
+          let row: IGood = data.row;
+          const index = this.selectedGooods.findIndex(
+            _good => _good.goodId == row.goodId
+          ); //.indexOf(row);
+          console.log('INDICE ', index);
+          if (index == -1 && data.toggle == true) {
+            this.selectedGooods.push(row);
+          } else if (index != -1 && data.toggle == false) {
+            this.selectedGooods.splice(index, 1);
+          }
+        } else {
+          const index: number = this.selectedGooods.findIndex(
+            _good => _good.goodId == data.row.goodId
+          );
+          this.goodData[index].seleccion = 0;
+          this.dataTable.load(this.goodData);
+          this.dataTable.refresh();
+        }
+      });
+    }
+  }
+
+  onClickSelect_ExtDom(event: any) {
+    // console.log('EVENTO ', event);
+    if (event != undefined) {
+      event.toggle.subscribe((data: any) => {
+        console.log('DATA LOG #### ', data);
+        // data.row.selection = data.toggle;
+        if (data.row.register_type == this.registerType) {
+          let row: IGood = data.row;
+          const index = this.selectedDeleteGooods.findIndex(
+            _good => _good.goodId == row.goodId
+          ); //.indexOf(row);
+          console.log('INDICE ', index);
+          if (index == -1 && data.toggle == true) {
+            this.selectedDeleteGooods.push(row);
+          } else if (index != -1 && data.toggle == false) {
+            this.selectedDeleteGooods.splice(index, 1);
+          }
+        } else {
+          this.alert(
+            'warning',
+            'Este Registro no se puede Eliminar, sólo es posible Liberar',
+            ''
+          );
+        }
+      });
+    }
+  }
+
+  getUserDataLogged(userId: string) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter(
+      'user',
+      userId == 'SIGEBIADMON' ? userId.toLocaleLowerCase() : userId
+    );
+    this.msUsersService.getInfoUserLogued(params.getParams()).subscribe({
+      next: (res: any) => {
+        console.log('USER INFO', res);
+        this.dataUserLogged = res.data[0];
+      },
+      error: error => {
+        console.log(error);
+        this.alertInfo(
+          'warning',
+          'Error al obtener los datos del Usuario de la sesión actual',
+          error.error.message
+        );
+      },
+    });
   }
 
   private prepareForm() {
@@ -252,17 +366,15 @@ export class GoodsProcessValidationExtdomComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
       ], // extenso AUROTIDAD
     });
-    this.formEscaneo = this.fb.group({
-      folioEscaneo: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
+    this.formScan = this.fb.group({
+      scanningFoli: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
     });
+    this.showScanForm = true; // Mostrar parte de escaneo
   }
 
   initForm() {
-    if (this.P_GEST_OK == 1) {
-      // const params = new FilterParams();
-      // params.removeAllFilters();
-      // params.addFilter('id', this.P_NO_TRAMITE);
-      // params.addFilter('status', 'AMI');
+    if (this.P_GEST_OK == 1 && this.P_NO_TRAMITE) {
+      this.loading = true;
       this.svGoodsProcessValidationExtdomService
         .getProcedureManagementById(this.P_NO_TRAMITE)
         .subscribe({
@@ -279,12 +391,15 @@ export class GoodsProcessValidationExtdomComponent
                 .subscribe({
                   next: data => {
                     console.log('UPDATE GESTION TRAMITE DATA ', data);
+                    this.getProcedureManagement();
                   },
                   error: error => {
                     console.log(error);
                     this.loading = false;
                   },
                 });
+            } else {
+              this.getProcedureManagement();
             }
           },
           error: error => {
@@ -294,6 +409,7 @@ export class GoodsProcessValidationExtdomComponent
             } else {
               this.alert('warning', 'No se encontró el trámite', '');
             }
+            this.loading = false;
           },
         });
     }
@@ -306,6 +422,16 @@ export class GoodsProcessValidationExtdomComponent
         next: data => {
           console.log('GESTION TRAMITE DATA ', data);
           // CONDICION DE VOLANTE O EXPEDIENTE
+          if (data.expedient != null || data.flierNumber != null) {
+            if (data.flierNumber != null) {
+              this.form.get('wheelNumber').setValue(data.flierNumber);
+              this.form.get('wheelNumber').updateValueAndValidity();
+            } else {
+              this.form.get('expedientNumber').setValue(data.expedient);
+              this.form.get('expedientNumber').updateValueAndValidity();
+            }
+            this.getNotificationData();
+          }
         },
         error: error => {
           console.log(error);
@@ -320,18 +446,62 @@ export class GoodsProcessValidationExtdomComponent
 
   cleanDataform() {
     this.form.reset();
-    this.formEscaneo.reset();
+    this.formScan.reset();
     this.notificationData = null;
   }
 
-  searchNotification() {}
+  searchNotification() {
+    if (
+      this.form.get('wheelNumber').invalid &&
+      this.form.get('expedientNumber').invalid
+    ) {
+      this.alert('warning', 'Ingrese un Volante o un Expediente correcto', '');
+      return;
+    }
+    if (
+      this.form.get('wheelNumber').value &&
+      this.form.get('wheelNumber').invalid
+    ) {
+      this.alert('warning', 'Ingrese un Volante correcto', '');
+      return;
+    }
+    if (
+      this.form.get('expedientNumber').value &&
+      this.form.get('expedientNumber').invalid
+    ) {
+      this.alert('warning', 'Ingrese un Expediente correcto', '');
+      return;
+    }
+    let flierNumber = this.form.get('wheelNumber').value;
+    let expedientNumber = this.form.get('expedientNumber').value;
+    this.form.reset();
+    this.formScan.reset();
+    this.notificationData = null;
+    if (flierNumber) {
+      this.form.get('wheelNumber').setValue(flierNumber);
+      this.form.get('wheelNumber').updateValueAndValidity();
+    }
+    if (expedientNumber) {
+      this.form.get('expedientNumber').setValue(expedientNumber);
+      this.form.get('expedientNumber').updateValueAndValidity();
+    }
+    this.getNotificationData();
+  }
 
   getNotificationData() {
     this.loading = true;
     const params = new FilterParams();
     params.removeAllFilters();
-    params.addFilter('fileNumber', this.form.get('expedientNumber').value);
-    params.addFilter('wheelNumber', this.form.get('wheelNumber').value);
+    // if (
+    //   this.form.get('wheelNumber').value ||
+    //   this.form.get('expedientNumber').value
+    // ) {
+    if (this.form.get('wheelNumber').value) {
+      params.addFilter('wheelNumber', this.form.get('wheelNumber').value);
+    } else {
+      params.addFilter('fileNumber', this.form.get('expedientNumber').value);
+    }
+    // }
     this.svGoodsProcessValidationExtdomService
       .getNotificationByFilters(params.getParams())
       .subscribe({
@@ -355,6 +525,7 @@ export class GoodsProcessValidationExtdomComponent
   }
 
   setDataNotification() {
+    this.showScanForm = false; // Mostrar parte de escaneo
     let data: INotification = {
       ...this.notificationData,
       receiptDate: new Date(this.notificationData.receiptDate),
@@ -394,6 +565,11 @@ export class GoodsProcessValidationExtdomComponent
         this.getAuthority(new ListParams(), true);
       }
     }, 200);
+    setTimeout(() => {
+      this.formScan.get('scanningFoli').setValue(null);
+      this.formScan.get('scanningFoli').updateValueAndValidity();
+      this.showScanForm = true; // Mostrar parte de escaneo
+    }, 200);
   }
 
   loadGoods() {
@@ -414,7 +590,8 @@ export class GoodsProcessValidationExtdomComponent
           this.totalGoods = res.count;
           let data = res.data.map((i: any) => {
             i['disponible'] = this.freeLabel;
-            i['ch_selec'] = 0;
+            // i['ch_selec'] = 0;
+            i['seleccion'] = 0;
             return i;
           });
           this.dataTable.load(data);
@@ -465,27 +642,181 @@ export class GoodsProcessValidationExtdomComponent
       });
   }
 
-  btnAgregar() {
+  addSelect() {
     console.log('Agregar');
+    this.selectedGooods.forEach((data: IGood) => {
+      const index2: number = this.goodData.findIndex(
+        (_good: IGood) => _good.goodId == data.goodId
+      );
+      console.log('INDICE 2 ADD SELECT ', index2);
+      if (index2 > -1) {
+        const index3: number = this.goodData2.findIndex(
+          (_good: IGood) => _good.goodId == data.goodId
+        );
+        console.log('INDICE 3 ADD SELECT ', index2);
+        // VALIDAR CON EL ENDPOINT IGUAL
+        if (index3 == -1) {
+          this.loadingGoods2 = true;
+          this.goodData2.push({ ...data, register_type: 'N' }); // Agregar registro a la data
+          this.dataTable2.add({ ...data, register_type: 'N' }); // Agregar registro a la tabla
+          this.totalGoods2++; // Aumentar si se agrego registro
+          this.dataTable2.refresh();
+          this.loadingGoods2 = false;
+          this.loadingGoods = true;
+          this.goodData[index2].disponible = 'N';
+          this.goodData[index2].seleccion = 0;
+          this.dataTable.load(this.goodData);
+          this.dataTable.refresh();
+          this.loadingGoods = false;
+        }
+      }
+    });
   }
 
-  btnEliminar() {
+  removeSelect() {
     console.log('Eliminar');
+    this.selectedGooods.forEach((data: IGood) => {
+      const index2: number = this.goodData2.findIndex(
+        (_good: IGood) => _good.goodId == data.goodId
+      );
+      console.log('INDICE 2 DELETE SELECT ', index2);
+      if (index2 > -1) {
+        const index3: number = this.goodData.findIndex(
+          (_good: IGood) => _good.goodId == data.goodId
+        );
+        console.log('INDICE 3 DELETE SELECT ', index2);
+        // VALIDAR CON EL ENDPOINT IGUAL
+        if (index3 == -1) {
+          this.loadingGoods2 = true;
+          this.goodData2.splice(index2, 1); // Eliminar registro del arreglo
+          this.dataTable2.remove(this.goodData2[index2]); // Eliminar de la tabla
+          this.totalGoods2--; // Restar si se quito el registro
+          this.dataTable2.refresh();
+          this.loadingGoods2 = false;
+          this.loadingGoods = true;
+          this.goodData[index3].disponible = this.freeLabel;
+          this.goodData[index3].seleccion = 0;
+          this.dataTable.load(this.goodData);
+          this.dataTable.refresh();
+          this.loadingGoods = false;
+        }
+      }
+    });
   }
+
+  addAll() {
+    console.log('Agregar Todos');
+  }
+
+  removeAll() {
+    console.log('Eliminar Todos');
+  }
+
   btnEjecutarCambios() {
     console.log('EjecutarCambios');
   }
 
   btnConsultarHistorico() {
+    if (this.notificationData == null) {
+      this.alert('warning', 'Realice una búsqueda para ver está opción', '');
+      return;
+    }
+    if (this.notificationData.expedientNumber == null) {
+      this.alert(
+        'warning',
+        'Se requiere de un Expediente para poder ver está opción',
+        ''
+      );
+      return;
+    }
     console.log('ConsultarHistorico');
-    this.listadoHistorico = true;
-  }
+    // this.listadoHistorico = true;
+    //descomentar si usan FilterParams ejemplo de consulta
+    this.filterParams
+      .getValue()
+      .addFilter(
+        'proceedingsNumber',
+        this.notificationData.expedientNumber,
+        SearchFilter.EQ
+      );
+    //this.filterParams.getValue().addFilter('keyTypeDocument', 'ENTRE', SearchFilter.ILIKE)
 
-  btnSalir() {
-    console.log('Salir');
-    this.listadoHistorico = false;
-  }
+    //ejemplo de uso con ListParams
+    //this.params.getValue()['filter.id'] = '$eq:3429640'
 
+    let config: ModalOptions = {
+      initialState: {
+        //filtros
+        paramsList: this.params,
+        filterParams: this.filterParams, // en caso de no usar FilterParams no enviar
+        callback: (next: boolean, data: IHistoricGoodsAsegExtdom) => {
+          console.log(next);
+
+          if (next) {
+            //mostrar datos de la búsqueda
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(HistoricalGoodsExtDomComponent, config);
+  }
+  btnConocimiento() {
+    if (this.notificationData == null) {
+      this.alert('warning', 'Realice una búsqueda para ver está opción', '');
+      return;
+    }
+    if (this.notificationData.wheelNumber == null) {
+      this.alert('warning', 'Se requiere de un Volante/Expediente', '');
+      return;
+    }
+    if (this.selectedGooods.length > 0) {
+      this.alert(
+        'warning',
+        'Se tiene al menos 1 bien amparado, no puede concluir por este medio',
+        ''
+      );
+      return;
+    }
+    if (!this.universalFolio) {
+      this.alert('warning', 'Se debe ingresar el Folio de Escaneo', '');
+    }
+    const params = new FilterParams();
+    params.addFilter('id', this.universalFolio);
+    params.addFilter('scanStatus', 'ESCANEADO');
+    this.documentsService.getAllFilter(params.getParams()).subscribe({
+      next: resp => {
+        console.log(resp);
+        // NOTIFICACIONES.RESERVADO
+      },
+      error: error => {
+        if (error.status >= 500) {
+          this.alert(
+            'error',
+            'Ocurrió un error al validar los Documentos relacionados al Folio Universal',
+            ''
+          );
+        } else {
+          if (['13', '14'].includes(this.form.get('affairKey').value)) {
+            this.alert('warning', 'Se debe ingresar el Folio de Escaneo', '');
+          }
+        }
+      },
+    });
+  }
+  btnEnvioCorreos() {}
+  btnMantenimientoCorreo() {
+    this.router.navigate(['/pages/parameterization/mail'], {
+      queryParams: {
+        origin: this.screenKey,
+        origin2: this.origin ? this.origin : null,
+        P_CVE_PANTALLA: this.screenKey,
+        P_NO_TRAMITE: this.P_NO_TRAMITE,
+        P_GEST_OK: this.P_GEST_OK,
+      },
+    });
+  }
   addSelectedGoods() {
     console.log(
       'this.selectedGooods',
@@ -541,6 +872,83 @@ export class GoodsProcessValidationExtdomComponent
       });
     }
   }
+  scanRequest(event: any) {
+    console.log(event);
+  }
+
+  showScanningPage(event: any) {
+    console.log(event);
+  }
+  messageDigitalization(event: any) {
+    console.log(event);
+  }
+
+  viewPictures(event: any) {
+    console.log(event);
+    // if (!this.dictationData.wheelNumber) {
+    //   this.onLoadToast(
+    //     'error',
+    //     'Error',
+    //     'Este trámite no tiene volante asignado'
+    //   );
+    //   return;
+    // }
+    this.getDocumentsByFlyer(this.notificationData.wheelNumber);
+  }
+
+  getDocumentsByFlyer(flyerNum: string | number) {
+    const title = 'Folios relacionados al Volante';
+    const modalRef = this.openDocumentsModal(flyerNum, title);
+    modalRef.content.selected
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(document => this.getPicturesFromFolio(document));
+  }
+
+  openDocumentsModal(flyerNum: string | number, title: string) {
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', flyerNum);
+    const $params = new BehaviorSubject(params);
+    const $obs = this.documentsService.getAllFilter;
+    const service = this.documentsService;
+    const columns = RELATED_FOLIO_COLUMNS;
+    // const body = {
+    //   proceedingsNum: this.dictationData.expedientNumber,
+    //   flierNum: this.dictationData.wheelNumber,
+    // };
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        $obs,
+        service,
+        columns,
+        title,
+        $params,
+        proceedingsNumber: this.notificationData.expedientNumber,
+        wheelNumber: this.notificationData.wheelNumber,
+        showConfirmButton: true,
+      },
+    };
+    return this.modalService.show(
+      ModalScanningFoilTableHistoricalGoodsComponent<IDocuments>,
+      config
+    );
+  }
+
+  getPicturesFromFolio(document: IDocuments) {
+    let folio = document.id;
+    if (document.associateUniversalFolio) {
+      folio = document.associateUniversalFolio;
+    }
+    console.log('PICTURES ', folio, document);
+    const config = {
+      ...MODAL_CONFIG,
+      ignoreBackdropClick: false,
+      initialState: {
+        folio,
+      },
+    };
+    this.modalService.show(DocumentsViewerByFolioComponent, config);
+  }
 
   /**
    * SELECTS PANTALLA
@@ -569,7 +977,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectAffairkey);
+          // console.log(data, this.selectAffairkey);
         },
         error: error => {
           this.selectAffairkey = new DefaultSelect();
@@ -599,7 +1007,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectIndiciadoNumber);
+          // console.log(data, this.selectIndiciadoNumber);
         },
         error: error => {
           this.selectIndiciadoNumber = new DefaultSelect();
@@ -629,7 +1037,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectMinpubNumber);
+          // console.log(data, this.selectMinpubNumber);
         },
         error: error => {
           this.selectMinpubNumber = new DefaultSelect();
@@ -659,7 +1067,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectCourtNumber);
+          // console.log(data, this.selectCourtNumber);
         },
         error: error => {
           this.selectCourtNumber = new DefaultSelect();
@@ -698,7 +1106,7 @@ export class GoodsProcessValidationExtdomComponent
       .faStageCreda(dateStage)
       .subscribe({
         next: data => {
-          console.log(data);
+          // console.log(data);
           let stageDate = data.stagecreated;
           const params: any = new FilterParams();
           if (
@@ -726,7 +1134,7 @@ export class GoodsProcessValidationExtdomComponent
                   }),
                   data.count
                 );
-                console.log(data, this.selectDelegationNumber);
+                // console.log(data, this.selectDelegationNumber);
               },
               error: error => {
                 this.selectDelegationNumber = new DefaultSelect();
@@ -734,7 +1142,7 @@ export class GoodsProcessValidationExtdomComponent
             });
         },
         error: error => {
-          console.log(error);
+          // console.log(error);
           this.selectDelegationNumber = new DefaultSelect();
           this.onLoadToast(
             'error',
@@ -767,7 +1175,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectEntFedKey);
+          // console.log(data, this.selectEntFedKey);
         },
         error: error => {
           this.selectEntFedKey = new DefaultSelect();
@@ -797,7 +1205,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectCityNumber);
+          // console.log(data, this.selectCityNumber);
         },
         error: error => {
           this.selectCityNumber = new DefaultSelect();
@@ -827,7 +1235,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectTransference);
+          // console.log(data, this.selectTransference);
         },
         error: error => {
           this.selectTransference = new DefaultSelect();
@@ -869,7 +1277,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectStationNumber);
+          // console.log(data, this.selectStationNumber);
         },
         error: error => {
           this.selectStationNumber = new DefaultSelect();
@@ -923,7 +1331,7 @@ export class GoodsProcessValidationExtdomComponent
             }),
             data.count
           );
-          console.log(data, this.selectAuthority);
+          // console.log(data, this.selectAuthority);
         },
         error: error => {
           this.selectAuthority = new DefaultSelect();

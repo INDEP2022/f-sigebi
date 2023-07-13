@@ -116,7 +116,7 @@ export class GeneralDataGoodsComponent
     if (required) {
       this.alert(
         'warning',
-        'Datos inventario',
+        'Datos Inventario',
         'Debe llenar los valores requeridos.'
       );
       return;
@@ -149,6 +149,7 @@ export class GeneralDataGoodsComponent
     body['description'] = this.generalDataForm.get('descripcion').value;
     body['id'] = Number(this.good.id);
     body['goodId'] = Number(this.good.id);
+    body['goodClassNumber'] = Number(this.good.goodClassNumber);
     this.goodService.update(body).subscribe({
       next: resp => {
         this.viewAct = !this.viewAct;

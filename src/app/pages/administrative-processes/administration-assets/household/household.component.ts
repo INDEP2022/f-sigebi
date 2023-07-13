@@ -147,7 +147,7 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
       error: err => {
         this.alert(
           'error',
-          'Ha ocurrido un error',
+          'Ha Ocurrido un Error',
           `No se pudo eliminar el Menaje N° ${idGood}`
         );
       },

@@ -1,4 +1,62 @@
-<div class="container">
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Envio de Correo</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <form-field [control]="form.get('para')">
+        <!-- <ng-custom-select-loading
+        [form]="form"
+        [formControlName]="'para'"
+        [multiple]="true"
+        [path]="pathPara"
+        value="user"
+        label="Para"
+        ></ng-custom-select-loading> -->
+        <ngx-select
+          (fetchItems)="searchUsersPara($event)"
+          (change)="onParaChange($event)"
+          control="para"
+          label="Para"
+          bindLabel="user"
+          [data]="paraSelect"
+          [multiple]="true"
+          [form]="form"></ngx-select>
+      </form-field>
+      <!-- <form-field [control]="form.get('cc')">
+        <ngx-select
+          control="cc"
+          label="C.C."
+          bindLabel="user"
+          [data]="dataSelect"
+          [multiple]="true"
+          [form]="form"></ngx-select>
+      </form-field> -->
+      <form-field [control]="form.get('asunto')" label="Asunto">
+        <input class="form-control" formControlName="asunto" />
+      </form-field>
+      <form-field [control]="form.get('mensaje')" label="Mensaje">
+        <textarea
+          rows="3"
+          [max-length]="4000"
+          class="form-control"
+          formControlName="mensaje"></textarea>
+      </form-field>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cerrar
+        </button>
+        <button class="btn btn-primary" type="submit">Enviar</button>
+      </div>
+    </div>
+  </div>
+</app-modal>
+
+<!-- <div class="container">
   <div class="row">
     <div class="col">
       <label class="form-label" for="to">Para:</label>
@@ -34,4 +92,4 @@
       <button class="btn btn-primary" type="submit">Enviar</button>
     </div>
   </div>
-</div>
+</div> -->

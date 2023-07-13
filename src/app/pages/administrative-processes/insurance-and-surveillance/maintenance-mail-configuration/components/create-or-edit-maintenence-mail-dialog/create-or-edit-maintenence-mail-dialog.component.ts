@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IVigEmailSend } from 'src/app/core/models/ms-email/email-model';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { EMAIL_PATTERN2, NAME_PATTERN } from 'src/app/core/shared/patterns';
 import { MaintenanceMailConfigurationComponent } from '../../maintenance-mail-configuration/maintenance-mail-configuration.component';
 
 @Component({
@@ -40,17 +41,21 @@ export class CreateOrEditEmailMaintenencekDialogComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      id: [],
-      emailSend: [],
-      nameSend: [],
-      postSend: [null],
-      status: [],
+      id: [null, [Validators.required]],
+      emailSend: [
+        null,
+        [Validators.required, Validators.pattern(EMAIL_PATTERN2)],
+      ],
+      nameSend: [null, [Validators.required, Validators.pattern(NAME_PATTERN)]],
+      postSend: [null, [Validators.required, Validators.pattern(NAME_PATTERN)]],
+      status: [null, [Validators.required]],
     });
     if (this.valEdit === true) {
       this.edit = true;
       console.log('VAINA', this.emailSend);
       //console.log(this.state);
       this.form.patchValue(this.emailSend);
+      this.form.controls['id'].disable();
     }
   }
 

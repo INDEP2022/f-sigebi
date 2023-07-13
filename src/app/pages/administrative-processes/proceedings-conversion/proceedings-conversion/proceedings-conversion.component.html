@@ -5,14 +5,14 @@
     </div>
     <div class="d-flex justify-content-end">
       <div class="d-inline mr-2">
-        Fecha de Elaboración:
+        <!-- Fecha de Elaboración:
         <span class="ml-3 mr-3" style="display: initial !important">
           {{ fCreate || '00/00/0000' }}
         </span>
         / Estatus:
         <span class="ml-3 mr-3" style="display: initial !important">
           {{ statusConv || '-----' }}
-        </span>
+        </span> -->
         <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
           Regresar
           <i class="fas fa-arrow-circle-left"></i>
@@ -33,15 +33,12 @@
               </h5>
             </div>
             <form [formGroup]="proceedingsConversionForm" class="form-material">
-              <div class="float-right pl-3">
-                <button
-                  (click)="searchProcs()"
-                  class="btn btn-primary btn-sm active m-1"
-                  tooltip="Conversiones"
+              <!-- <div class="float-right pl-3">
+                <button (click)="searchProcs()" class="btn btn-primary btn-sm active m-1" tooltip="Conversiones"
                   containerClass="tooltip-style">
                   <i class="bx bx-list-plus bx-sm float-icon"></i>
                 </button>
-              </div>
+              </div> -->
 
               <div class="form-material">
                 <!-- apppcatd **************************************************************-->
@@ -88,7 +85,7 @@
                                   <div class="col-md-5">
                                     <div>
                                       <label for=""
-                                        >No. Exp. del Trasnferente:
+                                        >No. Exp. del Transferente:
                                       </label>
                                       {{ trasnfer || '' }}
                                     </div>
@@ -119,7 +116,7 @@
                           </div>
                         </div>
                       </div>
-                      <div class="row">
+                      <!-- <div class="row">
                         <div class="col-md-12">
                           <div class="row">
                             <div class="col-md-12">
@@ -129,6 +126,33 @@
                             </div>
                           </div>
                         </div>
+                      </div> -->
+                    </div>
+                    <div class="row m-3">
+                      <div class="col-6"></div>
+                      <div class="col-md-6 text-end">
+                        <button
+                          (click)="agregarActa()"
+                          type="button"
+                          class="btn btn-info active btn-sm mr-3">
+                          Agregar
+                          <i class="bx bx-plus bx-sm float-icon"></i>
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-primary active btn-sm mr-3"
+                          (click)="searchActas()">
+                          Estatus Actas
+                          <i class="bx bx-search bx-sm float-icon"></i>
+                        </button>
+                        <!-- <button
+                          [disabled]="!actasDefault"
+                          type="button"
+                          class="btn btn-primary btn-sm active mr-2"
+                          (click)="savActa()">
+                          Guardar
+                          <i aria-hidden="true" class="fa fa-save"></i>
+                        </button> -->
                       </div>
                     </div>
                     <form
@@ -140,156 +164,6 @@
                             <div class="col-md-12">
                               <div class="card">
                                 <div class="card-body">
-                                  <div class="col-md-4">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('respConv')
-                                        "
-                                        label="Responsable">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="respConv"
-                                          class="form-control"
-                                          [readonly]="!validPermisos" />
-                                      </form-field>
-                                    </div>
-                                  </div>
-                                  <div class="col-md-4">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('testigoOIC')
-                                        "
-                                        label="Testigo de la contralor&iacute;a">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="testigoOIC"
-                                          [readonly]="!validPermisos" />
-                                      </form-field>
-                                    </div>
-                                  </div>
-                                  <div class="col-md-4">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('testigoTwo')
-                                        "
-                                        label="Testigo">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="testigoTwo"
-                                          [readonly]="!validPermisos" />
-                                      </form-field>
-                                    </div>
-                                  </div>
-                                  <div class="col-md-4">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('testigoTree')
-                                        "
-                                        label="Testigo">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="testigoTree"
-                                          [disabled]="!validPermisos" />
-                                      </form-field>
-                                    </div>
-                                  </div>
-                                  <div class="col-md-4">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('acta')
-                                        "
-                                        label="Acta">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="acta"
-                                          readonly />
-                                      </form-field>
-                                    </div>
-                                  </div>
-                                  <div class="col-md-4">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('type')
-                                        "
-                                        label="Estado">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="type"
-                                          readonly />
-                                      </form-field>
-                                    </div>
-                                  </div>
-                                  <div class="col-md-4">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('administra')
-                                        "
-                                        label="Admin">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="administra"
-                                          readonly />
-                                      </form-field>
-                                    </div>
-                                  </div>
-
-                                  <div class="col-md-4">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('consec')
-                                        "
-                                        label="Folio">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="consec"
-                                          readonly />
-                                      </form-field>
-                                    </div>
-                                  </div>
-                                  <div class="col-md-4">
-                                    <div>
-                                      <form-field
-                                        [control]="
-                                          actaRecepttionForm.get('anio')
-                                        "
-                                        label="Fecha de Captura">
-                                        <input
-                                          #inputValue
-                                          type="text"
-                                          class="form-control"
-                                          formControlName="anio"
-                                          [readonly]="!validPermisos"
-                                          bsDatepicker
-                                          [bsConfig]="{
-                                            dateInputFormat: 'MM/YYYY'
-                                          }" />
-                                      </form-field>
-                                    </div>
-                                  </div>
                                   <!-- <div class="col-md-4">
                                     <div>
                                       <form-field [control]="actaRecepttionForm.get('mes')">
@@ -299,7 +173,7 @@
                                       </form-field>
                                     </div>
                                   </div> -->
-                                  <div class="col-md-8">
+                                  <div class="col-md-8 mt-2">
                                     <div>
                                       <form-field
                                         [control]="
@@ -315,6 +189,72 @@
                                       </form-field>
                                     </div>
                                   </div>
+                                  <div class="col-md-4 mt-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('respConv')
+                                        "
+                                        label="Responsable">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="respConv"
+                                          class="form-control"
+                                          readonly />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-4 mt-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('testigoOIC')
+                                        "
+                                        label="Testigo de la contralor&iacute;a">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="testigoOIC"
+                                          readonly />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-4 mt-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('testigoTwo')
+                                        "
+                                        label="Testigo">
+                                        <input
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="testigoTwo"
+                                          readonly />
+                                      </form-field>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-4 mt-3">
+                                    <div>
+                                      <form-field
+                                        [control]="
+                                          actaRecepttionForm.get('testigoTree')
+                                        "
+                                        label="Testigo">
+                                        <input
+                                          readonly
+                                          #inputValue
+                                          type="text"
+                                          class="form-control"
+                                          formControlName="testigoTree"
+                                          [disabled]="!validPermisos" />
+                                      </form-field>
+                                    </div>
+                                  </div>
                                   <!-- <div class="col-md-4">
                                     <div>
                                       <form-field [control]="
@@ -325,29 +265,18 @@
                                       </form-field>
                                     </div>
                                   </div> -->
-
-                                  <div class="float-right">
-                                    <div class="col-md-2">
-                                      <button
-                                        type="button"
-                                        class="btn btn-primary active btn-sm"
-                                        (click)="searchActas()">
-                                        Estatus Actas<i
-                                          class="bx bx-search bx-sm float-icon"></i>
-                                      </button>
-                                    </div>
-                                  </div>
                                 </div>
                                 <div class="row mt-5">
-                                  <div class="col-md-12 col-sm-12 col-xs-12">
+                                  <div
+                                    class="col-md-12 col-sm-12 col-xs-12 pl-5 pr-5">
                                     <form-field
                                       [control]="
                                         actaRecepttionForm.get('direccion')
                                       "
                                       label="Direcci&oacute;n">
                                       <textarea
+                                        readonly
                                         maxlength="2000"
-                                        [readonly]="!validPermisos"
                                         type="text"
                                         class="form-control"
                                         formControlName="direccion"
@@ -355,7 +284,7 @@
                                     </form-field>
                                   </div>
                                 </div>
-                                <div class="row mt-5">
+                                <!-- <div class="row mt-5">
                                   <div class="col-md-12 col-sm-12 col-xs-12">
                                     <form-field
                                       [control]="
@@ -405,7 +334,7 @@
                                         rows="5"></textarea>
                                     </form-field>
                                   </div>
-                                </div>
+                                </div> -->
                               </div>
                             </div>
                           </div>
@@ -419,61 +348,133 @@
                         <div class="row mt-12 d-flex justify-content-center">
                           <div class="col-md-12 justify-content-center">
                             <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
-                            <ng-scrollbar
-                              track="horizontal"
-                              [autoHeightDisabled]="false">
-                              <div
-                                [class]="loading ? 'table-loading' : ''"
-                                class="overflow-auto">
-                                <ng2-smart-table
-                                  id="bienes"
-                                  [attr.class]="'table-bordered my-table'"
-                                  [settings]="settings"
-                                  [source]="dataTableGood_"
-                                  (userRowSelect)="selectData($event)">
-                                </ng2-smart-table>
-                                <app-pagination
-                                  [totalItems]="totalItems"></app-pagination>
+
+                            <div class="row">
+                              <form-loader *ngIf="loading"></form-loader>
+                              <div class="col-md-12">
+                                <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+                                <ng-scrollbar
+                                  [track]="'all'"
+                                  [ngStyle]="{
+                                    height: loading ? '0px' : '400px'
+                                  }">
+                                  <ng2-smart-table
+                                    [attr.class]="
+                                      'table-bordered table-responsive'
+                                    "
+                                    [settings]="settings"
+                                    [source]="dataTableGood_"
+                                    (userRowSelect)="selectData($event)">
+                                  </ng2-smart-table>
+                                </ng-scrollbar>
+                                <!-- </div> -->
                               </div>
-                            </ng-scrollbar>
+
+                              <app-pagination
+                                [params]="paramsList"
+                                [totalItems]="totalItems"></app-pagination>
+                              <div class="row">
+                                <div class="col-6 mt-4">
+                                  <form-field
+                                    [control]="actaGoodForm.get('statusGood')"
+                                    label="Estatus Bien">
+                                    <input
+                                      [(ngModel)]="statusGood_"
+                                      type="text"
+                                      class="form-control"
+                                      formControlName="statusGood"
+                                      readonly />
+                                  </form-field>
+                                </div>
+                              </div>
+                            </div>
+
+                            <!-- <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
+                              <div [class]="loading ? 'table-loading' : ''" class="overflow-auto">
+                                
+                                
+                              </div>
+                            </ng-scrollbar> -->
                           </div>
-                          <div class="d-flex justify-content-center">
-                            <div class="text-center">
-                              <!-- WILMER -->
+                          <div class="row pt-2">
+                            <div class="col-md-12 text-center mt-4 mb-4">
                               <button
-                                (click)="addSelect()"
-                                class="btn btn-success btn-sm active"
-                                type="button">
+                                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                                type="button"
+                                (click)="addSelect()">
+                                <!-- Mover uno -->
+                                <i class="bx bx-chevron-down bx-md"></i>
+                              </button>
+                              <button
+                                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                                type="button"
+                                (click)="addAll()">
+                                <!-- Mover todos -->
+                                <i class="bx bx-chevrons-down bx-md"></i>
+                              </button>
+                              <!-- <button class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button"
+                                (click)="removeAll()">
+                                
+                                <i class="bx bx-chevrons-up bx-md"></i>
+                              </button> -->
+                              <button
+                                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                                type="button"
+                                (click)="removeSelect()">
+                                <!-- Quitar uno -->
+                                <i class="bx bx-chevron-up bx-md"></i>
+                              </button>
+                            </div>
+                          </div>
+                          <!-- <div class="d-flex justify-content-center">
+                            <div class="text-center">
+                              <button (click)="addSelect()" class="btn btn-success btn-sm active" type="button">
                                 Agregar <i class="fa fa-plus float-icon"></i>
                               </button>
-                              <!-- <button (click)="create()" class="btn btn-success btn-sm active" type="button">
+                              <button (click)="create()" class="btn btn-success btn-sm active" type="button">
                                 Agregar <i class="fa fa-plus float-icon"></i>
-                              </button> -->
+                              </button>
                               <br />
-                              <!-- <button (click)="deleteGoodActa($event)" [disabled]="isAllDisabled"
+                              <button (click)="deleteGoodActa($event)" [disabled]="isAllDisabled"
                                                         class="btn btn-secondary btn-sm active bg-danger m-3 p-3" type="button">
                                                         Mover uno
                                                         <i class="bx bxs-left-arrow-circle bx-md"></i>
-                                                      </button> -->
+                                                      </button>
                             </div>
-                          </div>
+                          </div> -->
                           <div class="col-md-12">
                             <h6>BIENES RELACIONADOS CON EL ACTA</h6>
-                            <ng-scrollbar
-                              track="horizontal"
-                              [autoHeightDisabled]="false">
-                              <div
-                                [class]="loading ? 'table-loading' : ''"
-                                class="overflow-auto">
-                                <ng2-smart-table
-                                  [attr.class]="'table-bordered my-table'"
-                                  [settings]="settings2"
-                                  [source]="dataRecepcion">
+                            <div class="row">
+                              <form-loader *ngIf="loading2"></form-loader>
+                              <div class="col-md-12">
+                                <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+                                <ng-scrollbar
+                                  [track]="'all'"
+                                  [ngStyle]="{
+                                    height: loading2 ? '0px' : '400px'
+                                  }">
+                                  <ng2-smart-table
+                                    [attr.class]="'table-bordered my-table'"
+                                    [settings]="settings2"
+                                    (userRowSelect)="rowsSelected($event)"
+                                    [source]="dataRecepcion">
+                                  </ng2-smart-table>
+                                </ng-scrollbar>
+                                <!-- </div> -->
+                              </div>
+                              <app-pagination
+                                [params]="paramsList2"
+                                [totalItems]="totalItems2"></app-pagination>
+                            </div>
+                            <!-- <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
+                              <div [class]="loading2 ? 'table-loading' : ''" class="overflow-auto">
+                                <ng2-smart-table [attr.class]="'table-bordered my-table'" [settings]="settings2"
+                                  (userRowSelect)="rowsSelected($event)" [source]="dataRecepcion">
                                 </ng2-smart-table>
-                                <app-pagination
+                                <app-pagination *ngIf="ocultarPaginado" [params]="paramsList2"
                                   [totalItems]="totalItems2"></app-pagination>
                               </div>
-                            </ng-scrollbar>
+                            </ng-scrollbar> -->
                           </div>
                         </div>
                       </form>
@@ -493,19 +494,16 @@
                     <i class="fas fa-edit bx-sm float-icon"></i>
                   </button>
                 </div> -->
-                <div class="m-3">
-                  <button
-                    *ngIf="dataTableGoodsConvertion"
-                    type="button"
-                    class="btn btn-primary btn-sm active"
+                <!-- <div class="m-3">
+                  <button *ngIf="dataTableGoodsConvertion" type="button" class="btn btn-primary btn-sm active"
                     (click)="savActa()">
                     Guardar
                     <i aria-hidden="true" class="fa fa-save"></i>
                   </button>
-                </div>
+                </div> -->
                 <div class="m-3">
                   <button
-                    class="btn btn-secondary btn-sm active"
+                    class="btn btn-primary btn-sm active"
                     type="button"
                     (click)="cargueMasive()">
                     Carga Masiva
@@ -523,6 +521,7 @@
                 </div>
                 <div class="m-3">
                   <button
+                    [disabled]="!disabledBtnCerrar"
                     type="button"
                     class="btn btn-primary active btn-sm"
                     (click)="cerrarActa(goodFatherNumber)">
@@ -534,8 +533,13 @@
             </div>
           </accordion-group>
 
-          <accordion-group [isOpen]="acordionDetail" (click)="closeDetail()">
-            <div accordion-heading class="d-flex justify-content-between">
+          <accordion-group
+            [isOpen]="acordionDetail"
+            [class.disabled]="!disabledBtnCerrar">
+            <div
+              accordion-heading
+              class="d-flex justify-content-between"
+              (click)="closeDetail()">
               <div>
                 <h5>
                   <i class="fa fa-edit" aria-hidden="true"></i>

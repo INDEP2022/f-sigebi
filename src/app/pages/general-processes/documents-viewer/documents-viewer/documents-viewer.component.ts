@@ -71,9 +71,9 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadDocumentsSeparator();
+    this.loadDocumentsSeparator(new ListParams());
     this.getDocuments();
-    this.loadDocumentsType();
+    this.loadDocumentsType(new ListParams());
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -137,16 +137,11 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
   }
 
   resetFilters(): void {
-    // Eliminar los filtros aplicados aquí
     this.columnFilters = {};
     this.getDocuments();
   }
   onOptionsSelectedTypeDocument(value: any) {
     this.selectTypeDoc = value.id;
-  }
-
-  onOptionsSelectedSeparator(value: any) {
-    this.selectSeparator = value.key;
   }
 
   generateFilterParams(formGroup: FormGroup): any {
@@ -230,15 +225,19 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     });
   }
 
-  loadDocumentsType() {
+  loadDocumentsType(params: ListParams) {
     this.documentService
-      .getDocumentsType()
+      .getDocumentsType(params)
       .pipe(
         map(res => {
           this.selectTypeDoc = new DefaultSelect(res.data, res.count);
         })
       )
       .subscribe();
+  }
+
+  onOptionsSelectedSeparator(value: any) {
+    this.selectSeparator = value.key;
   }
 
   onDocumentsSeparatorInputChange(event: any) {
@@ -250,15 +249,19 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     this.loading = false;
   }
 
-  loadDocumentsSeparator() {
-    this.documentService
-      .getDocumentsSeparator()
-      .pipe(
-        map(res => {
-          this.selectSeparator = new DefaultSelect(res.data, res.count);
-        })
-      )
-      .subscribe();
+  loadDocumentsSeparator(params: ListParams) {
+    this.loading = true;
+    this.documentService.getDocumentsSeparator(params).subscribe({
+      next: res => {
+        this.loading = true;
+        this.selectSeparator = new DefaultSelect(res.data, res.count);
+        this.loading = false;
+      },
+      error: (err: any) => {
+        this.loading = false;
+        this.alert('warning', 'No existen separadores', ``);
+      },
+    });
   }
 
   modalImage(documentViewer: IDocumentsViewerFlyerNumber) {
@@ -287,9 +290,9 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
 
   delete(id: string | number) {
     this.documentService.remove(id).subscribe({
-      next: () => {
-        this.alert('success', 'Expediente eliminado', '');
+      next: responde => {
         this.getDocuments();
+        this.alert('success', 'Expediente eliminado', '');
       },
       error: error => {
         this.alert('warning', 'No es posible eliminar el expediente', '');
@@ -413,8 +416,8 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     this.form.reset();
     this.form.patchValue({ scanStatus: 'all' });
     this.onSubmit();
-    this.loadDocumentsSeparator();
-    this.loadDocumentsType();
+    this.loadDocumentsSeparator(new ListParams());
+    this.loadDocumentsType(new ListParams());
     this.loading = false;
     this.selectTypeDoc = new DefaultSelect([], 0);
     this.selectSeparator = new DefaultSelect([], 0);

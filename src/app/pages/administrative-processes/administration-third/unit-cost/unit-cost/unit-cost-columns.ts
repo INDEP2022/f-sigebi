@@ -128,6 +128,7 @@ export const COSTKEY_COLUMNS = {
     sort: false,
   },
 };
+
 export const VALIDITYCOST_COLUMNS = {
   zone: {
     title: 'Zona',

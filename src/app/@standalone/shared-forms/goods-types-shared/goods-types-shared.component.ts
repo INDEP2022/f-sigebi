@@ -110,6 +110,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
             }
           } else {
             this.type.setValue('');
+            console.log('z>>>>>>>>>>>>>>>>>>>>>');
             this.types = new DefaultSelect([], 0);
             this.subtype.setValue('');
             this.subtypes = new DefaultSelect([], 0);
@@ -131,6 +132,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
         .subscribe(x => {
           if (this.loadTypes) {
+            console.log(this.loadTypes);
             const params = new ListParams();
             if (x[this.sssubtypeField]) {
               this.getSssubtypes(params, x[this.sssubtypeField]);
@@ -143,7 +145,10 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
             }
             if (x[this.typeField]) {
               this.getTypes(params, x[this.typeField]);
+            } else {
             }
+          } else {
+            this.getTypes(new ListParams());
           }
           this.loadTypes = false;
           this.loadTypesChange.emit(false);
@@ -198,7 +203,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         this.types = new DefaultSelect(data.data, data.count);
       },
       error: err => {
-        this.types = new DefaultSelect();
+        this.types = new DefaultSelect([], 0, true);
         if (err.status >= 500) {
           this.onLoadToast(
             'error',
@@ -227,7 +232,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         this.subtypes = new DefaultSelect(data.data, data.count);
       },
       error: err => {
-        this.subtypes = new DefaultSelect();
+        this.subtypes = new DefaultSelect([], 0, true);
       },
     });
   }
@@ -252,7 +257,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         this.ssubtypes = new DefaultSelect(data.data, data.count);
       },
       error: err => {
-        this.ssubtypes = new DefaultSelect();
+        this.ssubtypes = new DefaultSelect([], 0, true);
       },
     });
   }
@@ -280,7 +285,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         this.sssubtypes = new DefaultSelect(data.data, data.count);
       },
       error: error => {
-        this.ssubtypes = new DefaultSelect();
+        this.sssubtypes = new DefaultSelect([], 0, true);
       },
     });
   }
@@ -308,7 +313,9 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
 
   onTypesChange(type: any) {
     this.resetFields([this.subtype, this.ssubtype, this.sssubtype]);
-    this.subtypes = new DefaultSelect();
+    // this.subtypes = new DefaultSelect();
+    console.log(type);
+    this.getSubtypes(new ListParams());
     this.ssubtypes = new DefaultSelect();
     this.sssubtypes = new DefaultSelect();
     this.form.updateValueAndValidity();
@@ -321,7 +328,8 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
       this.type.setValue(subtype.idTypeGood.id);
     }
     this.resetFields([this.ssubtype, this.sssubtype]);
-    this.ssubtypes = new DefaultSelect();
+    // this.ssubtypes = new DefaultSelect();
+    this.getSsubtypes(new ListParams());
     this.sssubtypes = new DefaultSelect();
     this.goodSubtypeChange.emit(subtype);
   }
@@ -333,6 +341,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
       this.type.setValue(ssubtype.noType.id);
       this.subtype.setValue(ssubtype.noSubType.id);
     }
+    this.getSssubtypes(new ListParams());
     this.resetFields([this.sssubtype]);
     this.goodSsubtypeChange.emit(ssubtype);
   }

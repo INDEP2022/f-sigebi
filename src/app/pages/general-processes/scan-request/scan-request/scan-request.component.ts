@@ -30,6 +30,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ListDocumentsComponent } from '../list-documents/list-documents.component';
 import { ListNotificationsComponent } from '../list-notifications/list-notifications.component';
+
 @Component({
   selector: 'app-scan-request',
   templateUrl: './scan-request.component.html',
@@ -164,10 +165,21 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   back() {
     if (this.origin == 'FACTJURREGDESTLEG') {
-      this.router.navigate([
-        `/pages/juridical/depositary/depositary-record/` +
-          this.paramsDepositaryAppointment.P_NB,
-      ]);
+      // this.router.navigate([
+      //   `/pages/juridical/depositary/depositary-record/` +
+      //     this.paramsDepositaryAppointment.P_NB,
+      // ]);
+      this.router.navigate(
+        [
+          '/pages/juridical/depositary/depositary-record/' +
+            this.paramsDepositaryAppointment.P_NB,
+        ],
+        {
+          queryParams: {
+            p_nom: this.paramsDepositaryAppointment.P_ND,
+          },
+        }
+      );
     } else {
       const location: any = {
         FGESTBUZONTRAMITE: () =>
@@ -472,9 +484,11 @@ export class ScanRequestComponent extends BasePage implements OnInit {
                 next: data => {
                   let body: any = {
                     appointmentNumber: data.data[0].appointmentNumber,
-                    amountIVA: data.data[0].amountIVA,
+                    amountIVA: data.data[0].amountIVA
+                      ? data.data[0].amountIVA
+                      : 0,
                     personNumber: data.data[0].personNumber.id,
-                    iva: data.data[0].iva,
+                    iva: data.data[0].iva ? data.data[0].iva : 0,
                     folioReturn: data.data[0].folioReturn
                       ? Number(data.data[0].folioReturn)
                       : null,
@@ -492,6 +506,10 @@ export class ScanRequestComponent extends BasePage implements OnInit {
                     this.msDepositaryService.update(body).subscribe({
                       next: data => {
                         // Guardar nuevo folio universal en nombramientos depositarias
+                        localStorage.setItem(
+                          '_saveFolioDepositary',
+                          this.paramsDepositaryAppointment.P_FOLIO
+                        );
                       },
                       error: error => {
                         this.loadingDoc = false;
@@ -549,7 +567,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     if (!isPresent) return false;
 
     if (this.idFolio) {
-      this.alert('error', 'ERROR', 'Ya ha sido solicitado ese documento');
+      this.alert('error', 'ERROR', 'Ya ha sido generada esta solicitud'); //'Ya ha sido solicitado ese documento');
       this.loadingDoc = false;
       return false;
     }
@@ -648,8 +666,8 @@ export class ScanRequestComponent extends BasePage implements OnInit {
                 'success',
                 `${
                   imp
-                    ? 'REPORTE DE DIGITALIZACIÓN'
-                    : 'SOLICITUD Y REPORTE DE DIGITALIZACIÓN'
+                    ? 'Reporte de Digitalización'
+                    : 'Solicitud y Reporte de Digitalización'
                 }`,
                 `${
                   imp
@@ -711,14 +729,28 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
   callScan() {
     if (this.idFolio) {
-      this.router.navigate(['pages/general-processes/scan-documents'], {
-        queryParams: {
-          folio: this.idFolio,
-          volante: this.noVolante,
-          origin: 'FACTGENSOLICDIGIT',
-          requestOrigin: this.origin ?? '',
-        },
-      });
+      if (this.origin == 'FACTJURREGDESTLEG') {
+        this.router.navigate([`/pages/general-processes/scan-documents`], {
+          queryParams: {
+            origin: 'FACTGENSOLICDIGIT',
+            folio: this.idFolio,
+            volante: this.noVolante,
+            requestOrigin: this.origin ?? '',
+            P_NB: this.paramsDepositaryAppointment.P_NB,
+            P_FOLIO: this.paramsDepositaryAppointment.P_FOLIO,
+            P_ND: this.paramsDepositaryAppointment.P_ND,
+          },
+        });
+      } else {
+        this.router.navigate(['/pages/general-processes/scan-documents'], {
+          queryParams: {
+            folio: this.idFolio,
+            volante: this.noVolante,
+            origin: 'FACTGENSOLICDIGIT',
+            requestOrigin: this.origin ?? '',
+          },
+        });
+      }
     } else {
       this.alert('error', 'ERROR', 'No existe un folio para escanear');
     }
@@ -957,12 +989,26 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       localStorage.setItem('documentLegal', JSON.stringify(this.document));
     }
     console.log(this.cveScreen);
-    this.router.navigate([`/pages/general-processes/scan-documents`], {
-      queryParams: {
-        origin: this.cveScreen,
-        folio: this.form.get('scanningFoli').value,
-      },
-    });
+    if (this.origin == 'FACTJURREGDESTLEG') {
+      this.router.navigate([`/pages/general-processes/scan-documents`], {
+        queryParams: {
+          origin: 'FACTGENSOLICDIGIT',
+          folio: this.idFolio,
+          volante: this.noVolante,
+          requestOrigin: this.origin ?? '',
+          P_NB: this.paramsDepositaryAppointment.P_NB,
+          P_FOLIO: this.paramsDepositaryAppointment.P_FOLIO,
+          P_ND: this.paramsDepositaryAppointment.P_ND,
+        },
+      });
+    } else {
+      this.router.navigate([`/pages/general-processes/scan-documents`], {
+        queryParams: {
+          origin: this.cveScreen,
+          folio: this.form.get('scanningFoli').value,
+        },
+      });
+    }
   }
 
   savedLocal(event: any) {

@@ -20,11 +20,13 @@ import { TargetTagsSharedComponent } from 'src/app/@standalone/shared-forms/targ
 import { TransferenteSharedComponent } from 'src/app/@standalone/shared-forms/transferents-shared/transferents-shared.component';
 import { WarehouseSharedComponent } from 'src/app/@standalone/shared-forms/warehouse-shared/warehouse-shared.component';
 import { MasiveConversionPermissionsDeleteComponent } from './masive-conversion-permissions-delete/masive-conversion-permissions-delete.component';
+import { EmailModalComponent } from './massive-conversion-email-modal/email-modal.component';
 import { MassiveConversionErrorsModalComponent } from './massive-conversion-erros-list/massive-conversion-errors-modal/massive-conversion-errors-modal.component';
 import { MassiveConversionModalGoodComponent } from './massive-conversion-modal-good/massive-conversion-modal-good.component';
 import { MassiveConversionPermissionsComponent } from './massive-conversion-permissions/massive-conversion-permissions.component';
 import { MassiveConversionSelectGoodComponent } from './massive-conversion-select-good/massive-conversion-select-good.component';
 import { PaqDestinoDetComponent } from './massive-conversion/paq-destino-det/paq-destino-det.component';
+import { ScanFileComponent } from './massive-conversion/scan-file/scan-file.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,7 @@ import { PaqDestinoDetComponent } from './massive-conversion/paq-destino-det/paq
     MassiveConversionModalGoodComponent,
     MassiveConversionSelectGoodComponent,
     PaqDestinoDetComponent,
+    EmailModalComponent,
   ],
   imports: [
     CommonModule,
@@ -52,6 +55,7 @@ import { PaqDestinoDetComponent } from './massive-conversion/paq-destino-det/paq
     PackagesSharedComponent,
     ScanFileSharedComponent,
     ModalModule.forChild(),
+    ScanFileComponent,
   ],
 })
 export class UnitConversionPackagesModule {}

@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -8,6 +15,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { LocationGoodsWarehousesStorageComponent } from '../location-goods-warehouses-storage/location-goods-warehouses-storage.component';
@@ -22,16 +30,20 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   goods: IGood[] = [];
   goodsNotChange: number[] = [];
   selectedRow: IGood;
+  fileNumber: number | string;
   selectedGooods: IGood[] = [];
   $trackedGoods = this.store.select(getTrackedGoods);
   formVau: FormGroup;
+  activeGood: boolean = false;
   formAlm: FormGroup;
-  data: LocalDataSource = new LocalDataSource();
-  @Input() allGoods: IGood[] = [];
-  @Input() totalItems: number = 0;
+  di_desc_est: any;
+  dataTableGood_: IGood[];
+  @Input() allGoods = new LocalDataSource();
+  @Input() totalItems: number;
   @Input() validarGood: Function;
   @Input() formVault: LocationGoodsWarehousesStorageComponent;
   @Input() formWarehouse: LocationGoodsWarehousesStorageComponent;
+  @Output() allGoodsUpdated = new EventEmitter();
 
   //Data Table
 
@@ -52,10 +64,10 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     private router: Router,
     private store: Store,
     private changeDetectorRef: ChangeDetectorRef,
-    private serviceGood: GoodService
+    private serviceGood: GoodService,
+    private GoodprocessService_: GoodprocessService
   ) {
     super();
-
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
@@ -63,7 +75,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: false,
-        delete: true,
+        delete: false,
         add: false,
         position: 'right',
       },
@@ -98,7 +110,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
         },
       },
       rowClassFunction: (row: any) => {
-        if (row.data.di_disponible == 'S') {
+        if (row.data.di_dispo == 'S') {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -111,6 +123,9 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
+
+    // console.log(this.totalItems);
+    this.allGoodsUpdated.next(this.allGoods);
     this.buildForm();
     this.loading = false;
     // this.$trackedGoods.subscribe({
@@ -201,10 +216,10 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   }
 
   deleteGood(good: IGood) {
-    this.goods = this.goods.filter(item => item.id != good.id);
+    this.goods = this.selectedGooods.filter(item => item.id != good.id);
     this.add();
   }
-  /////////// Temporal
+  /////////// Temporal2222222222222222222222222222222222222
   getGoodByID(idGood: number | string) {
     this.goodServices.getById(idGood).subscribe({
       next: response => {
@@ -217,11 +232,12 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     });
   }
   add() {
-    this.data.load(this.allGoods);
-    this.data.refresh();
+    this.settings;
   }
   selectData(event: { data: IGood; selected: any }) {
     this.selectedRow = event.data;
+    this.activeGood = true;
+    this.fileNumber = event.data.fileNumber;
     this.selectedGooods = event.selected;
     console.log(this.selectedRow);
     console.log(this.selectedGooods);
@@ -229,64 +245,135 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   }
 
   updateGoodsVault() {
-    // this.goods.forEach(good => {
-    const data = {
-      id: this.selectedRow.id,
-      goodId: this.selectedRow.goodId,
-      observations: this.selectedRow.observations,
-      quantity: this.selectedRow.quantity,
-      goodClassNumber: this.selectedRow.goodClassNumber,
-      unit: this.selectedRow.unit,
-      labelNumber: this.selectedRow.labelNumber,
-      vaultNumber: this.form.get('safe').value,
-      // estatus: this.selectedRow.estatus // incluir la propiedad estatus
-    };
-    // if (this.validarGood()) return;
-    console.log('nuevo -->', data);
-    this.serviceGood.update(data).subscribe(
-      res => {
-        this.alert('success', 'Bienes', `Actualizados correctamente`);
-        this.add();
-      },
-      err => {
-        this.alert(
-          'error',
-          'Bien',
-          'No se pudo actualizar el bien, por favor intentelo nuevamente'
+    try {
+      this.selectedGooods.forEach(good => {
+        const data = {
+          id: good.id,
+          goodId: good.goodId,
+          observations: good.observations,
+          quantity: good.quantity,
+          goodClassNumber: good.goodClassNumber,
+          unit: good.unit,
+          labelNumber: good.labelNumber,
+          vaultNumber: this.form.get('safe').value,
+          // estatus: good.estatus // incluir la propiedad estatus
+        };
+        // if (this.validarGood()) return;
+        console.log('nuevo -->', data);
+        this.serviceGood.update(data).subscribe(
+          res => {
+            // this.alert('success', 'Bienes', `Actualizados correctamente`);
+            // this.add();
+            console.log(res);
+            this.allGoodsUpdated.emit(this.allGoods);
+            this.onLoadGoodList();
+          },
+          err => {
+            this.alert(
+              'error',
+              'Bien',
+              'No se pudo actualizar el bien, por favor intentelo nuevamente'
+            );
+          }
         );
-      }
-    );
-    // });
+      });
+
+      this.alert('success', 'Bienes', `Actualizados correctamente`);
+    } catch (err) {
+      console.error(err);
+    }
   }
+
   updateGoodsWareHouse() {
-    // this.goods.forEach(good => {
-    const data = {
-      id: this.selectedRow.id,
-      goodId: this.selectedRow.goodId,
-      observations: this.selectedRow.observations,
-      quantity: this.selectedRow.quantity,
-      goodClassNumber: this.selectedRow.goodClassNumber,
-      unit: this.selectedRow.unit,
-      labelNumber: this.selectedRow.labelNumber,
-      storeNumber: this.form.get('warehouse').value,
-      // estatus: this.selectedRow.estatus // incluir la propiedsad estatus
-    };
-    // if (this.validarGood()) return;
-    console.log('nuevo -->', data);
-    this.serviceGood.update(data).subscribe(
-      res => {
-        this.alert('success', 'Bienes', `Actualizados correctamente`);
-        this.add();
-      },
-      err => {
-        this.alert(
-          'error',
-          'Bien',
-          'No se pudo actualizar el bien, por favor intentelo nuevamente'
+    try {
+      this.selectedGooods.forEach(good => {
+        const data = {
+          id: good.id,
+          goodId: good.goodId,
+          observations: good.observations,
+          quantity: good.quantity,
+          goodClassNumber: good.goodClassNumber,
+          unit: good.unit,
+          labelNumber: good.labelNumber,
+          storeNumber: this.form.get('warehouse').value,
+          // estatus: this.selectedRow.estatus // incluir la propiedsad estatus
+        };
+        // if (this.validarGood()) return;
+        console.log('nuevo -->', data);
+        this.serviceGood.update(data).subscribe(
+          res => {
+            // this.alert('success', 'Bienes', `Actualizados correctamente`);
+            // this.add();
+            console.log(res);
+            this.allGoodsUpdated.emit(this.allGoods);
+            this.onLoadGoodList();
+          },
+          err => {
+            this.alert(
+              'error',
+              'Bien',
+              'No se pudo actualizar el bien, por favor intentelo nuevamente'
+            );
+          }
         );
-      }
-    );
-    // });
+      });
+      this.alert('success', 'Bienes', `Actualizados correctamente`);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  onLoadGoodList() {
+    this.loading = true;
+    this.params.getValue().page = 1;
+    this.params.getValue().limit = 10;
+    this.serviceGood
+      .getByExpedient(this.fileNumber, this.params.getValue())
+      .subscribe({
+        next: data => {
+          this.goods = data.data;
+          this.loading = false;
+          console.log('Bienes', this.goods);
+          let result = data.data.map(async (item: any) => {
+            let obj = {
+              vcScreen: 'FACTADBUBICABIEN',
+              pNumberGood: item.id,
+            };
+            const di_dispo = await this.getStatusScreen(obj);
+            console.log(di_dispo);
+          });
+
+          Promise.all(result).then(item => {
+            this.dataTableGood_ = this.goods;
+            this.allGoods.load(this.dataTableGood_);
+            this.allGoods.refresh();
+            this.totalItems = data.count;
+            console.log(this.goods);
+          });
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
+  }
+  async getStatusScreen(body: any) {
+    return new Promise((resolve, reject) => {
+      this.GoodprocessService_.getScreenGood(body).subscribe({
+        next: async (state: any) => {
+          if (state.data) {
+            console.log('di_dispo', state);
+            resolve('S');
+            this.di_desc_est = 'S';
+          } else {
+            console.log('di_dispo', state);
+            resolve('N');
+            this.di_desc_est = 'N';
+          }
+        },
+        error: () => {
+          resolve('N');
+        },
+      });
+    });
   }
 
   goToGoodTracker() {
@@ -295,5 +382,4 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
       queryParams: { origin: 'FACTADBUBICABIEN' },
     });
   }
-  onUserRowSelect(event: any) {}
 }
