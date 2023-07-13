@@ -425,6 +425,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
     if (cveProcess == null) {
       LV_VALIDAREP = 0;
+      this.form.get('process').markAsTouched();
       this.alert(
         'warning',
         'El tipo de proceso es un valor requerido para generar el reporte',
@@ -439,6 +440,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
     if (period == null) {
       LV_VALIDAREP = 0;
+      this.form.get('period').markAsTouched();
       this.alert(
         'warning',
         'El período es un valor requerido para generar el reporte',
@@ -571,6 +573,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     const cveProcessTwo = this.formRegistro.get('processTwo').value;
     if (cveProcessTwo != 1 && cveProcessTwo != 2) {
       LV_VALPROCESO = 0;
+      this.formRegistro.get('processTwo').markAsTouched();
       this.alert('warning', 'El Proceso es información requerida', '');
       return;
     }
@@ -579,6 +582,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
     if (fromTwo == null || fromTwo == '') {
       LV_VALPROCESO = 0;
+      this.formRegistro.get('fromTwo').markAsTouched();
       this.alert(
         'warning',
         'La fecha inicial del período es información requerida',
@@ -591,6 +595,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
     if (toTwo == null || toTwo == '') {
       LV_VALPROCESO = 0;
+      this.formRegistro.get('toTwo').markAsTouched();
       this.alert(
         'warning',
         'La fecha final del período es información requerida',
@@ -783,6 +788,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     const cveProcessTwo = this.formRegistro.get('processTwo').value;
     if (cveProcessTwo != 1 && cveProcessTwo != 2) {
       LV_VALPROCESO = 0;
+      this.formRegistro.get('processTwo').markAsTouched();
       this.alert('warning', 'El Proceso es información requerida', '');
       return;
     }
@@ -790,6 +796,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     const fromTwo = this.formRegistro.get('fromTwo').value;
     if (fromTwo == null || fromTwo == '') {
       LV_VALPROCESO = 0;
+      this.formRegistro.get('fromTwo').markAsTouched();
       this.alert(
         'warning',
         'La fecha inicial del período es información requerida',
@@ -801,6 +808,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     const toTwo = this.formRegistro.get('toTwo').value;
     if (toTwo == null || toTwo == '') {
       LV_VALPROCESO = 0;
+      this.formRegistro.get('toTwo').markAsTouched();
       this.alert(
         'warning',
         'La fecha final del período es información requerida',
