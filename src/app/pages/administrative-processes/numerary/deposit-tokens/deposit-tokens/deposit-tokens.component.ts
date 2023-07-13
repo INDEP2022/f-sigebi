@@ -478,7 +478,7 @@ export class DepositTokensComponent
         takeUntil(this.$unSubscribe)
       )
       .subscribe(() => {
-        this.readExcel(this.excelFile, 'no');
+        this.readExcel(this.excelFile, false);
         // this.getPupPreviewDatosCsv2(this.cargarDataStorage());
       });
   }
@@ -781,7 +781,7 @@ export class DepositTokensComponent
     // fileReader.readAsBinaryString(files[0]);
     // fileReader.onload = () => this.readExcel(fileReader.result);
     // fileReader.onload = () =>
-    this.readExcel(files[0], 'si');
+    this.readExcel(files[0], true);
   }
 
   excelFile: any = null;
@@ -791,6 +791,7 @@ export class DepositTokensComponent
       const formData = new FormData();
       formData.append('file', binaryExcel);
       formData.append('user', this.token.decodeToken().preferred_username);
+      formData.append('paginated', filter);
       const excelImport = await this.getPupPreviewDatosCsv2(formData, filter);
       if (filter == 'si') {
         // this.alert(
@@ -884,7 +885,7 @@ export class DepositTokensComponent
             console.log('substr1', str);
             let substr = str[0].slice(0, Number(str.length) - 7);
             console.log('substr', substr);
-            if (filter == 'si') {
+            if (filter == true) {
               this.alert('success', substr, '');
             }
             this.data2.load(response.result);

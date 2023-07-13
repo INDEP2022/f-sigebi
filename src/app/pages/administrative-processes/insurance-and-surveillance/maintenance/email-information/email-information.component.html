@@ -14,6 +14,7 @@
       <div class="col-md-4">
         <form-field [control]="form.get('date')" label="Fecha de Solicitud">
           <input
+            [min]="maxDate"
             type="text"
             formControlName="date"
             class="form-control"
@@ -28,7 +29,7 @@
           class="form-group"
           [control]="form.get('from')">
           <ng-custom-select
-            [isLoadInOnInit]="true"
+            [isLoadInOnInit]="false"
             [moreParams]="{ 'filter.status': '$eq:1' }"
             class="form-control"
             path="email/api/v1/vig-email-send"
@@ -44,7 +45,7 @@
       <div class="col-md-6">
         <form-field [control]="form.get('to')" label="Para">
           <ng-custom-select
-            [isLoadInOnInit]="true"
+            [isLoadInOnInit]="false"
             [moreParams]="{
               'filter.bookType': '$eq:P',
               'filter.bookStatus': '$eq:1'

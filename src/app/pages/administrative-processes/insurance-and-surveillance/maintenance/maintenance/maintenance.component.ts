@@ -309,6 +309,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       pIdFor,
       pIdCopy,
       pIdBody,
+      pUser,
     } = this.getParams();
 
     return {
@@ -327,6 +328,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       pIdFor,
       pIdCopy,
       pIdBody,
+      pUser,
     };
   }
 
@@ -416,6 +418,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
 
       pAddress: changeGoodsRandom.description,
       pTransferee: changeGoodsRandom.transference,
+      pUser: this.token.decodeToken().preferred_username,
     };
   }
 }

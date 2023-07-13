@@ -9,6 +9,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class EmailInformationComponent {
+  maxDate: Date;
   constructor() {}
   form = new FormGroup({
     reasonForChange: new FormControl(null, [

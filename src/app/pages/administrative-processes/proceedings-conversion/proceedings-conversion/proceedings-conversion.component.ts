@@ -316,6 +316,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.procs = new LocalDataSource();
     this.validPermisos = !this.validPermisos;
     this.settings = {
+      pager: {
+        display: false,
+      },
       ...this.settings,
       hideSubHeader: false,
       actions: false,
@@ -325,15 +328,16 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       // columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
       columns: {
         name: {
-          title: '',
+          filter: false,
           sort: false,
+          title: 'Selección',
           type: 'custom',
           showAlways: true,
           valuePrepareFunction: (isSelected: boolean, row: IGood) =>
-            this.isGoodSelected(row),
+            this.isGoodSelectedValid(row),
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.onGoodSelect(instance),
+            this.onGoodSelectValid(instance),
         },
         goodId: {
           title: 'No. Bien',
@@ -366,9 +370,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       },
       rowClassFunction: (row: any) => {
         if (row.data.di_disponible == 'S') {
-          // return 'bg-success text-white';
+          return 'bg-success text-white';
         } else {
-          // return 'bg-dark text-white';
+          return 'bg-dark text-white';
         }
 
         // if (row.data.status === 'CNE') {
