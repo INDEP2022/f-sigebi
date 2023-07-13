@@ -914,7 +914,7 @@ export class NotificationAssetsTabComponent
           this.onLoadToast(
             'info',
             'Acción inválida',
-            'El estatus de la aclaración debe estar en: EN ACLARACION'
+            'Debe aceptar o rechazar primero la Aclaración/Improcedencia'
           );
         }
       } else if (notification.clarificationType == 'SOLICITAR_IMPROCEDENCIA') {
@@ -924,7 +924,7 @@ export class NotificationAssetsTabComponent
           this.onLoadToast(
             'info',
             'Acción inválida',
-            'El estatus de la aclaración debe estar en: EN ACLARACION'
+            'Debe aceptar o rechazar primero la Aclaración/Improcedencia'
           );
         }
       }
@@ -1627,7 +1627,7 @@ export class NotificationAssetsTabComponent
         this.onLoadToast(
           'info',
           'Acción no permitida',
-          'Ya se simulo una respuesta del SAT'
+          'Ya se simuló una respuesta del SAT'
         );
       }
       if (this.selectedRow.answered == 'RECHAZADA') {
