@@ -142,4 +142,8 @@ export class SurvillanceService extends HttpService {
     let query = '?id_solnum=' + id;
     return this.get<IListResponse<any>>(this.route.GetTransNumerario, query);
   }
+
+  getVigSupervisionAllExcel(params: _Params) {
+    return this.get<IListResponse<any>>(this.route.VigAllExcel, params);
+  }
 }
