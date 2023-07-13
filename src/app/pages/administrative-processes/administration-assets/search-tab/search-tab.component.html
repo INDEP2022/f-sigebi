@@ -7,7 +7,7 @@
             <div class="row">
               <div class="col-md-12">
                 <app-goods-types-shared
-                  [reloadGood]="reloadGood"
+                  (loadTypes)="(true)"
                   [loadOnChangesNoBien]="false"
                   [goodselect]="goodSelect"
                   [form]="searchTabForm"
