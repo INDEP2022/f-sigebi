@@ -148,6 +148,8 @@ export class ScanFileComponent extends BasePage implements OnInit {
                 },
                 err => {
                   console.log(err);
+                  this.loading = false
+                  this.alert('warning','Se presentó un error inesperado','')
                 }
               );
           }
