@@ -62,6 +62,8 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
       },
       err => {
         this.loading = false;
+        this.status = new DefaultSelect();
+
         /* let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
