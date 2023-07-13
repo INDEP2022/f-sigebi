@@ -3,9 +3,12 @@
 </div>
 <div class="row pt-2">
   <div class="col-md-12">
-    <form class="form-material" [formGroup]="eventForm">
+    <form
+      class="form-material"
+      [formGroup]="eventForm"
+      (ngSubmit)="onSaveEvent()">
       <div class="row">
-        <div class="col-md-1">
+        <div class="col-md-2">
           <form-field [control]="eventForm.get('id')" label="No.">
             <input type="text" class="form-control" formControlName="id" />
           </form-field>
@@ -14,54 +17,47 @@
           <form-field [control]="eventForm.get('processKey')" label="Clave">
             <input
               type="text"
+              [max-length]="60"
               class="form-control"
               formControlName="processKey" />
           </form-field>
         </div>
-        <div class="col-md-2">
-          <form-field [control]="eventForm.get('tpeventoId')">
+        <div class="col-md-3">
+          <form-field [control]="eventForm.get('eventTpId')">
             <ngx-select
+              (change)="eventTypeChange()"
               [searchOnInit]="true"
               [form]="eventForm"
               [data]="eventTypes"
-              control="tpeventoId"
+              control="eventTpId"
               value="id"
-              bindLabel="descCondition"
-              label="Tipo de Evento">
+              bindLabel="description"
+              label="Tipo de Evento"
+              [labelTemplate]="eventTypeLabel"
+              [optionTemplate]="eventTypeDesc">
             </ngx-select>
+
+            <ng-template #eventTypeLabel let-item="item"
+              >{{ item.id }} - {{ item.description }}</ng-template
+            >
+            <ng-template #eventTypeDesc let-item="item"
+              >{{ item.id }} - {{ item.description }}</ng-template
+            >
           </form-field>
         </div>
 
         <div class="col-md-4">
-          <form-field [control]="eventForm.get('address')" label="Lugar">
-            <input type="text" class="form-control" formControlName="address" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="eventForm.get('baseCost')" label="Costo Base">
+          <form-field [control]="eventForm.get('place')" label="Lugar">
             <input
-              type="number"
+              type="text"
+              [max-length]="100"
               class="form-control"
-              formControlName="baseCost" />
+              formControlName="place" />
           </form-field>
         </div>
       </div>
       <div class="row pt-3">
-        <div class="col-md-4">
-          <form-field [control]="eventForm.get('thirdComertializa')">
-            <ngx-select
-              [searchOnInit]="true"
-              [form]="eventForm"
-              [data]="eventTypes"
-              control="thirdComertializa"
-              value="id"
-              bindLabel="descCondition"
-              label="Tercero Comercializa">
-            </ngx-select>
-          </form-field>
-        </div>
-
-        <div class="col-md-2">
+        <div class="col-md-2" *ngIf="!isConsignment">
           <form-field
             [control]="eventForm.get('eventDate')"
             label="Fecha del Evento">
@@ -76,56 +72,115 @@
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="eventForm.get('closeDate')"
+            [control]="eventForm.get('eventClosingDate')"
             label="Fecha de Cierre">
             <input
               type="text"
               placeholder=""
               class="form-control"
               bsDatepicker
-              formControlName="closeDate"
+              formControlName="eventClosingDate"
               [bsConfig]="{ isAnimated: true }" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2" *ngIf="!isConsignment">
           <form-field
-            [control]="eventForm.get('failDate')"
-            label="Fecha de Folio">
+            [control]="eventForm.get('failureDate')"
+            label="Fecha del Fallo">
             <input
               type="text"
               placeholder=""
               class="form-control"
               bsDatepicker
-              formControlName="failDate"
+              formControlName="failureDate"
               [bsConfig]="{ isAnimated: true }" />
           </form-field>
         </div>
         <div class="col-md-2">
-          <ngx-select
-            [searchOnInit]="true"
-            [form]="eventForm"
-            [data]="eventTypes"
-            control="requestType"
-            value="id"
-            bindLabel="descCondition"
-            label="Tipo Solicitud Avalúo">
-          </ngx-select>
+          <form-field [control]="eventForm.get('baseCost')" label="Costo Base">
+            <input
+              type="number"
+              [max-length]="15"
+              class="form-control"
+              formControlName="baseCost" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-primary btn-sm active mr-3">
+            Aplicar
+          </button>
         </div>
       </div>
       <div class="row pt-3">
-        <div class="col-md-5">
+        <div class="col-md-4">
           <form-field
-            [control]="eventForm.get('description')"
-            label="Descripción">
+            [control]="eventForm.get('observations')"
+            label="Observaciones">
             <input
               type="text"
+              [max-length]="300"
               class="form-control"
-              formControlName="description" />
+              formControlName="observations" />
           </form-field>
         </div>
-        <div class="col-md-7">
+        <div class="col-md-4" *ngIf="!isConsignment">
+          <form-field [control]="eventForm.get('thirdId')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="eventForm"
+              [data]="thirds"
+              control="thirdId"
+              value="id"
+              bindLabel="nameReason"
+              label="Tercero Comercializa"
+              [labelTemplate]="thirdLabel"
+              [optionTemplate]="thirdOption">
+            </ngx-select>
+            <ng-template #thirdLabel let-item="item"
+              >{{ item.id }} - {{ item.nameReason }}</ng-template
+            >
+            <ng-template #thirdOption let-item="item"
+              >{{ item.id }} - {{ item.nameReason }}</ng-template
+            >
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="eventForm.get('tpsolavalId')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="eventForm"
+              [data]="modParameters"
+              control="tpsolavalId"
+              value="value"
+              bindLabel="descCondition"
+              label="Tipo Solicitud Avalúo"
+              [labelTemplate]="modLabel"
+              [optionTemplate]="modOption">
+            </ngx-select>
+            <ng-template #modLabel let-item="item"
+              >{{ item.value }} - {{ item.description }}</ng-template
+            >
+            <ng-template #modOption let-item="item"
+              >{{ item.value }} - {{ item.description }}</ng-template
+            >
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 d-flex">
           <div>
-            <button class="btn btn-primary btn-sm active mr-3">Aplicar</button>
+            <confirm-button
+              [loading]="loading"
+              [btnSmall]="true"></confirm-button>
+          </div>
+
+          <div *ngIf="loadFromGoodsTracker">
+            <button
+              (click)="onLoadFromGoodsTracker.emit()"
+              type="button"
+              class="ml-2 btn btn-sm btn-secondary active">
+              Incorporar Bienes desde el Rastreador
+            </button>
           </div>
         </div>
       </div>

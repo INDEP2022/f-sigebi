@@ -285,6 +285,9 @@ export class LocationGoodsWarehousesStorageComponent
     });
   }
   loadDescriptionVault(id: string | number) {
+    if (id == null || undefined) {
+      this.formVault.value.safe = 9999;
+    }
     this.safeService.getById(id).subscribe({
       next: response => {
         this.currentDescriptionVault.setValue(response.description);

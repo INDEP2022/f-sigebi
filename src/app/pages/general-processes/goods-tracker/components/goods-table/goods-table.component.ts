@@ -15,6 +15,7 @@ import {
   switchMap,
   take,
   takeUntil,
+  takeWhile,
   tap,
   throwError,
 } from 'rxjs';
@@ -65,6 +66,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       this.goodsList = [];
     }
   }
+  @Input() formCheckbox: FormGroup;
 
   get goods(): ITrackedGood[] {
     return this.goodsList;
@@ -434,7 +436,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
 
   include() {
     if (this.selectedGooods.length == 0) {
-      this.onLoadToast('info', 'Info', 'Debe seleccionar almenos un bien');
+      this.onLoadToast('info', 'Info', 'Debe seleccionar al menos un bien');
       return;
     }
     const goodIds = this.selectedGooods.map(good => good.goodNumber);
@@ -535,7 +537,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
           this.insertListPhoto(Number(this.selectedGooods[0].goodNumber));
           this.callReport(Number(this.selectedGooods[0].goodNumber), null);
         } else {
-          this.alert('error', 'Error', 'Se requiere de almenos un bien');
+          this.alert('error', 'Error', 'Se requiere de al menos un bien');
         }
       }
     }
@@ -747,9 +749,24 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   }
 
   subscribeExcel() {
-    return this.socketService.test().pipe(
+    return this.socketService.goodsTrackerExcel().pipe(
       take(1),
       switchMap(() => this.getExcel())
+    );
+  }
+
+  subscribePhotos() {
+    return this.socketService.exportGoodsTrackerPhotos().pipe(
+      tap((res: any) => {
+        if (res.percent == 100 && res.path) {
+          this.alert('success', 'Archivo descargado correctamente', '');
+          window.open(
+            'http://sigebimsqa.indep.gob.mx/ldocument/api/' + 'v1/' + res.path,
+            '_blank'
+          );
+        }
+      }),
+      takeWhile((res: any) => res.percent <= 100 && !res.path)
     );
   }
 
@@ -778,17 +795,33 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     this.excelLoading = true;
     this.goodTrackerService.getExcel(this.filters).subscribe({
       next: resp => {
-        this.loading = false;
+        this.excelLoading = false;
         this.alert(
           'info',
           'Aviso',
-          'El archivo excel se esta generando en cuanto este listo se descargará utomaticamente'
+          'El Archivo Excel esta en proceso de generación, favor de esperar la descarga'
         );
         this.subscribeExcel().subscribe();
       },
       error: () => {
         this.excelLoading = false;
         this.alert('error', 'Error', 'No se genero correctamente el archivo');
+      },
+    });
+  }
+
+  getPhotos() {
+    this.goodTrackerService.getPhotos(this.filters).subscribe({
+      next: res => {
+        this.alert(
+          'info',
+          'Aviso',
+          'La descargar esta en proceso, favor de esperar'
+        );
+        const $sub = this.subscribePhotos().subscribe();
+      },
+      error: error => {
+        console.log(error);
       },
     });
   }

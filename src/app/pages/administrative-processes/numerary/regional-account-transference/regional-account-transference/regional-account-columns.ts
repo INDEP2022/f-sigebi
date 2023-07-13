@@ -17,7 +17,7 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
     sort: false,
   },
   status: {
-    title: 'Status',
+    title: 'Estatus',
     type: 'string',
     sort: false,
   },

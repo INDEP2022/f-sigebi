@@ -165,12 +165,13 @@ export class NotifyAssetsImproprietyFormComponent
     }
 
     if (typeTransference != 'SAT_SAE' || generaXML) {
-      // if (
-      //   this.typeClarifications == 2 &&
-      //   typeTransference != 'PGR_SAE'
-      // ) {
-      //   this.improcedenciaTransferentesVoluntarias(); //Aclaración Manual tipo 2
-      // }
+      //this.aclaracionTransferentesVoluntarias(); //Aclaración Manual tipo 2
+      if (
+        (this.typeClarifications == 1 || this.typeClarifications == 2) &&
+        typeTransference === 'MANUAL'
+      ) {
+        this.aclaracionTransferentesVoluntarias(); //Aclaración Manual tipo 2
+      }
       const obtainTypeDocument = await this.obtainTypeDocument(
         false,
         this.infoRequest
@@ -178,11 +179,13 @@ export class NotifyAssetsImproprietyFormComponent
       if (obtainTypeDocument) {
         switch (this.typeDoc) {
           case 'AclaracionAsegurados': {
+            console.log('AclaracionAsegurados');
             this.aclaracionAsegurados(); //Aclaración PGR tipo 1 y 2
 
             break;
           }
           case 'AclaracionTransferentesVoluntarias': {
+            console.log('AclaracionTransferentesVoluntarias');
             this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
 
             break;
