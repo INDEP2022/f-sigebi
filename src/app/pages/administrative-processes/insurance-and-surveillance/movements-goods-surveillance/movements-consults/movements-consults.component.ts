@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPolVigilancePerGood } from 'src/app/core/models/ms-survillance/survillance';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -45,7 +46,7 @@ export class MovementsConsultsComponent extends BasePage implements OnInit {
     console.log('Desde el modal', this.data);
     this.prepareForm();
     this.form.get('goodnumber').disable();
-    this.form.get('descripcion').disable();
+    this.form.get('description').disable();
     this.form.get('contract_code').disable();
     if (this.data) {
       this.form.patchValue(this.data);
@@ -61,17 +62,17 @@ export class MovementsConsultsComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
       ],
-      descripcion: [null, Validators.required],
+      description: [null, Validators.required],
       contract_code: [null, Validators.required],
       contract_start_date: [null, Validators.required],
-      shifts_inforce: [null, Validators.required],
-      medical_turns: [null, Validators.required],
-      industrial_turns: [null, Validators.required],
-      mechanical_turns: [null, Validators.required],
+      shifts_inforce: [null, [Validators.required, Validators.min(1)]],
+      medical_turns: [null, [Validators.required, Validators.min(1)]],
+      industrial_turns: [null, [Validators.required, Validators.min(1)]],
+      turns_can_number: [null, [Validators.required, Validators.min(1)]],
       registration_supervisor: [null, Validators.required],
     });
   }
-
+  //turns_can_number
   handleSuccess() {
     //this.alert('success', 'Movimiento de bienes en vigilancia', `Actualizado Correctamente`);
     //this.onLoadToast('success', this.title, `${message} Correctamente`);
@@ -88,11 +89,11 @@ export class MovementsConsultsComponent extends BasePage implements OnInit {
         cvePolicy: this.data.policy_code,
         cveRegsup: this.form.get('registration_supervisor').value,
         shiftsIncNumber: this.form.get('shifts_inforce').value,
-        shiftsCanNumber: this.form.get('mechanical_turns').value,
+        shiftsCanNumber: this.form.get('turns_can_number').value,
         shiftsIndNumber: this.form.get('industrial_turns').value,
         shiftsMedNumber: this.form.get('medical_turns').value,
         shiftsVigNumber: this.form.get('registration_supervisor').value,
-        shiftsMechNumber: this.form.get('mechanical_turns').value,
+        shiftsMechNumber: this.data.mechanical_turns,
         startVigDate: this.form.get('contract_start_date').value,
       };
       console.log('model de update', model);
@@ -108,16 +109,17 @@ export class MovementsConsultsComponent extends BasePage implements OnInit {
   }
 
   preUpdate() {
-    return new Promise((res, _rej) => {
-      if (!this.validateRegister()) {
+    return new Promise(async (res, _rej) => {
+      const valid: boolean = await this.validateRegister();
+      if (!valid) {
         ///// crear un registrro en esta tabla VIGILANCIA_X_BIEN
         const model: IVigPerGood = {
           goodNumber: this.data.goodnumber,
           cveContract: this.data.contract_code,
-          startDate: this.formatDate2(this.data.contract_start_date),
+          startDate: this.formatDate2(this.data.policy_start_date),
           shiftsVigNumber: this.data.shifts_inforce,
-          shiftsCanNumber: this.data.mechanical_turns,
-          incomeDate: this.formatDate2(this.data.entry_date),
+          shiftsCanNumber: this.data.turns_can_number,
+          incomeDate: this.formatDate2(this.data.contract_start_date),
           inContractCurrent: 'D',
           shiftsMedNumber: this.data.medical_turns,
           shiftsIndNumber: this.data.industrial_turns,
@@ -147,12 +149,71 @@ export class MovementsConsultsComponent extends BasePage implements OnInit {
     });
   }
 
-  validateRegister(): boolean {
-    let valid: boolean = false;
-
-    return valid;
+  async validateRegister() {
+    const vExist: boolean = await this.vExist(
+      this.data.goodnumber,
+      this.data.contract_code,
+      this.formatDate2(this.data.policy_start_date)
+    );
+    if (vExist) {
+      this.alert(
+        'warning',
+        'Movimientos de bienes en vigilancia',
+        `El biene: ${this.data.goodnumber}, existe en contrato de vigilancia`
+      );
+      return true;
+    }
+    /*     if(this.form.get('contract_start_date').value < this.data.policy_effective_date){
+      this.alert('warning','Movimientos de bienes en vigilancia',`Fecha de ingreso menor a fecha de inicio de contrato en el bien: ${this.data.goodnumber}`)
+      return true;
+    } */
+    if (Number(this.form.get('shifts_inforce').value) <= 0) {
+      this.alert(
+        'warning',
+        'Movimientos de bienes en vigilancia',
+        `Vigilancia directa no valida en el bien:${this.data.goodnumber}`
+      );
+      return true;
+    }
+    if (Number(this.form.get('medical_turns').value) <= 0) {
+      this.alert(
+        'warning',
+        'Movimientos de bienes en vigilancia',
+        `Vigilancia media directa no valida en el bien:${this.data.goodnumber}`
+      );
+      return true;
+    }
+    if (Number(this.form.get('industrial_turns').value) <= 0) {
+      this.alert(
+        'warning',
+        'Movimientos de bienes en vigilancia',
+        `Vigilancia indirecta no valida en el bien:${this.data.goodnumber}`
+      );
+      return true;
+    }
+    return false;
   }
 
+  vExist(goodNumber: number | string, cveContract: string, startDate: string) {
+    return new Promise<boolean>((res, _rej) => {
+      const params: ListParams = {};
+      params['filter.goodNumber'] = `$eq:${goodNumber}`;
+      params['filter.cveContract'] = `$eq:${cveContract}`;
+      params['filter.startDate'] = `$eq:${startDate}`;
+      this.survillanceService.getVigPerGood(params).subscribe({
+        next: resp => {
+          if (resp.count > 0) {
+            res(true);
+          } else {
+            res(true);
+          }
+        },
+        error: err => {
+          res(false);
+        },
+      });
+    });
+  }
   formatDate(fecha: string) {
     return fecha.split('T')[0].split('-').reverse().join('/');
   }

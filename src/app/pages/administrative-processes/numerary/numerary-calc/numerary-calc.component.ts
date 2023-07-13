@@ -454,7 +454,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     }
   }
 
-  clean() {
+  /*   clean() {
     this.form.reset();
     this.formBlkControl.reset();
     this.data.load([]);
@@ -463,7 +463,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     this.data2.refresh();
     this.data3.load([]);
     this.data3.refresh();
-  }
+  } */
 
   deleteSoli(proceNum: number) {
     return new Promise<boolean>((res, rej) => {

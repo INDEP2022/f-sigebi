@@ -43,7 +43,7 @@ export const MOVEMENTS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  mechanical_turns: {
+  turns_can_number: {
     title: 'Can.',
     type: 'number',
     sort: false,

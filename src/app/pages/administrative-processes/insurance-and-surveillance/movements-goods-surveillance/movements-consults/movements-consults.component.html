@@ -14,11 +14,11 @@
           </form-field>
         </div>
         <div class="col-md-9">
-          <form-field [control]="form.get('descripcion')" label="Descripción">
+          <form-field [control]="form.get('description')" label="Descripción">
             <input
               type="text"
               class="form-control"
-              formControlName="descripcion" />
+              formControlName="description" />
           </form-field>
         </div>
       </div>
@@ -47,7 +47,7 @@
         <div class="col-md-4">
           <form-field [control]="form.get('shifts_inforce')" label="Dir.">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="shifts_inforce" />
           </form-field>
@@ -57,7 +57,7 @@
         <div class="col-md-3">
           <form-field [control]="form.get('medical_turns')" label="1/2 D.">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="medical_turns" />
           </form-field>
@@ -65,17 +65,17 @@
         <div class="col-md-3">
           <form-field [control]="form.get('industrial_turns')" label="Ind.">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="industrial_turns" />
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('mechanical_turns')" label="Can.">
+          <form-field [control]="form.get('turns_can_number')" label="Can.">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="mechanical_turns" />
+              formControlName="turns_can_number" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -83,7 +83,7 @@
             [control]="form.get('registration_supervisor')"
             label="Región">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="registration_supervisor" />
           </form-field>

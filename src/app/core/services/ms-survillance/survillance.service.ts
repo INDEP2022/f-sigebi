@@ -157,4 +157,8 @@ export class SurvillanceService extends HttpService {
     let query = '?id_solnum=' + id;
     return this.get<IListResponse<any>>(this.route.GetTransNumerario, query);
   }
+
+  getVigPerGood(params: ListParams) {
+    return this.get<IListResponse<any>>(this.route.VigilancePerGood, params);
+  }
 }
