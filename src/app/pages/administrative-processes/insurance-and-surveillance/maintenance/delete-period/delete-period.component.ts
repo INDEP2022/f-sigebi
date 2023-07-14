@@ -44,7 +44,7 @@ export class DeletePeriodComponent extends BasePage {
   }
 
   ngOnInit(): void {
-    for (let i = 1900; i <= this.currentYear; i++) {
+    for (let i = 2010; i <= this.currentYear; i++) {
       this.years.push(i);
     }
     // this.prepareForm();
