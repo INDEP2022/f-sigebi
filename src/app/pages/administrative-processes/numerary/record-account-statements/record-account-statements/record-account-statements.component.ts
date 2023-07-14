@@ -61,6 +61,8 @@ export class RecordAccountStatementsComponent
   bankCode: string;
   checks: any;
 
+  dateMotionFilter: boolean;
+
   paramsSubject: BehaviorSubject<ListParams> = new BehaviorSubject<ListParams>(
     new ListParams()
   );
@@ -105,6 +107,7 @@ export class RecordAccountStatementsComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
+          console.log('filter');
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
@@ -129,6 +132,7 @@ export class RecordAccountStatementsComponent
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log(`${searchFilter}:${filter.search}`);
             } else {
               delete this.columnFilters[field];
             }
@@ -151,7 +155,6 @@ export class RecordAccountStatementsComponent
   searchBanks(params: ListParams) {
     this.loading = true;
     this.bankAccountSelect = new DefaultSelect();
-    this.dataAccount = new LocalDataSource();
     this.recordAccountStatementsService.getAll(params).subscribe({
       next: response => {
         this.loading = true;
@@ -347,31 +350,23 @@ export class RecordAccountStatementsComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    console.log(params);
+    console.log(params['filter.dateMotion']);
     this.dataAccountPaginated = accountNumber;
     this.recordAccountStatementsAccountsService
       .getDataAccount(accountNumber, params)
-      .subscribe({
-        next: response => {
+      .subscribe(
+        response => {
           this.loading = true;
-          const data = response.data.map(item => {
-            const dateParts = item.dateMotion.split('-');
-            const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-            return { ...item, dateMotion: formattedDate };
-          });
+          const data = response.data;
           this.dataAccount.load(data);
+          console.log(this.dataAccount);
           this.dataAccount.refresh();
           this.totalItems = response.count;
           this.loading = false;
         },
-        error: (err: any) => {
-          this.loading = false;
-          this.alert(
-            'warning',
-            'No existen movimientos de la cuenta seleccionada',
-            ``
-          );
-        },
-      });
+        error => (this.loading = false)
+      );
     this.searchFactasStatusCta(accountNumber);
   }
 
@@ -382,7 +377,6 @@ export class RecordAccountStatementsComponent
       .subscribe({
         next: response => {
           this.factasStatusCta = response;
-          console.log(this.factasStatusCta);
           this.loading = false;
         },
         error: (err: any) => {

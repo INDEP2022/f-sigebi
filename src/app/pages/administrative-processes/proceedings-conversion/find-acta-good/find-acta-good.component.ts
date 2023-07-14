@@ -130,6 +130,7 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loading = false;
+          this.totalItems2 = 0;
           // console.log(error);
           // this.dataFactActas.load([]);
           // this.dataFactActas.refresh();

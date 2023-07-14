@@ -59,7 +59,7 @@ export class RegisterModalComponent extends BasePage implements OnInit {
         this.alert(
           'error',
           'Registro de Inventario',
-          'No se pudo guardar el inventario'
+          'No se Pudo Guardar el Inventario'
         );
         this.loading = false;
       },

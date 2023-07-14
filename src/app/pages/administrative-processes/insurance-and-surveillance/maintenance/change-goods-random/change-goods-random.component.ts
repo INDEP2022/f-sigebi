@@ -42,7 +42,7 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    for (let i = 1900; i <= this.currentYear; i++) {
+    for (let i = 2010; i <= this.currentYear; i++) {
       this.years.push(i);
     }
   }
@@ -114,7 +114,7 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
       callback: (next: any) => {
         console.log(next);
 
-        this.form.get('random').setValue(next.randomId);
+        // this.form.get('random').setValue(next.randomId);
         this.form.get('goodNumber').setValue(next.goodNumber);
         this.form.get('description').setValue(next.address);
         this.form.get('transference').setValue(next.transferee);
@@ -148,7 +148,37 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
       delegationType: this.delegationDefault.typeDelegation,
     };
 
-    this.getVigSupervisionDet_(data);
+    this.getDataVIG_SUPERVISION_TMP(data);
+  }
+
+  async getDataVIG_SUPERVISION_TMP(data: any) {
+    this.loading = true;
+    let params = {
+      ...this.paramsList.getValue(),
+    };
+    params['filter.delegationNumber'] = `$eq:${data.delegationNumber}`;
+    params['filter.cveProcess'] = `$eq:${data.cveProcess}`;
+    params['filter.cvePeriod'] = `$eq:${data.cvePeriod}`;
+    params['filter.delegationType'] = `$eq:${data.delegationType}`;
+    this.survillanceService.getVigSupervisionTmp(params).subscribe({
+      next: async (response: any) => {
+        const next = response.data[0];
+        console.log('EDED2', response);
+
+        if (response.count == 1) {
+          // this.form.get('random').setValue(next.randomId);
+          this.form.get('goodNumber').setValue(next.goodNumber);
+          this.form.get('description').setValue(next.address);
+          this.form.get('transference').setValue(next.transferee);
+        } else {
+          this.openForm(data);
+        }
+      },
+      error: error => {
+        this.alert('warning', 'No hay registros en este período', '');
+        this.loading = false;
+      },
+    });
   }
 
   async getVigSupervisionDet_(data: any) {

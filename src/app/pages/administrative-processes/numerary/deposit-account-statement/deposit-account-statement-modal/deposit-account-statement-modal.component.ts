@@ -23,6 +23,7 @@ export class DepositAccountStatementModalComponent
   title: string = 'Detalle del calculo';
   form: FormGroup;
   data: any[] = [];
+  devolutionnumber: string;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   detail: IDetailInterestReturn[] = [];
@@ -65,7 +66,7 @@ export class DepositAccountStatementModalComponent
   getDetail(params: ListParams) {
     //const params = new ListParams();
     this.loading = true;
-    params['filter.returnNumber'] = `$eq:${this.data}`;
+    params['filter.returnNumber'] = `$eq:${this.devolutionnumber}`;
     this.detailInterestReturnService.getAll(params).subscribe({
       next: resp => {
         if (resp) {

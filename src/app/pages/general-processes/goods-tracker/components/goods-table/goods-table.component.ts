@@ -38,6 +38,7 @@ import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+import { environment } from 'src/environments/environment';
 import { SetTrackedGoods } from '../../store/goods-tracker.actions';
 import { getTrackedGoods } from '../../store/goods-tracker.selector';
 import {
@@ -760,10 +761,9 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       tap((res: any) => {
         if (res.percent == 100 && res.path) {
           this.alert('success', 'Archivo descargado correctamente', '');
-          window.open(
-            'http://sigebimsqa.indep.gob.mx/ldocument/api/' + 'v1/' + res.path,
-            '_blank'
-          );
+          const url = `${environment.API_URL}ldocument/${environment.URL_PREFIX}${res.path}`;
+          console.log({ url });
+          window.open(url, '_blank');
         }
       }),
       takeWhile((res: any) => res.percent <= 100 && !res.path)
