@@ -10,9 +10,13 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { IZoneGeographic } from 'src/app/core/models/catalogs/zone-geographic.model';
-import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { IDocuments } from 'src/app/core/models/ms-documents/documents';
+import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ConvertiongoodService } from '../../../../../core/services/ms-convertiongood/convertiongood.service';
@@ -41,30 +45,28 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   selectedIndex: number | null = null;
   selectItem: string = '';
   selectItem2: string = '';
+  user: ISegUsers;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private delegationService: DelegationService,
     private serviceGood: GoodService,
     private route: ActivatedRoute,
     private router: Router,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
+    private proceedingsService: ProceedingsService,
     private modalService: BsModalService,
-    private convertiongoodService: ConvertiongoodService
+    private convertiongoodService: ConvertiongoodService,
+    private readonly userServices: UsersService,
+    private token: AuthService
   ) {
     super();
   }
 
   ngOnInit(): void {
     //nombre de reporte RGERGENSOLICDIGIT
-    this.route.queryParams.subscribe(params => {
-      this.actConvertion = params['actConvertion'] || null;
-      this.tipoConv = params['tipoConv'] || null;
-      this.pGoodFatherNumber = params['pGoodFatherNumber'] || null;
 
-      this.fetchItems();
-    });
+    this.getDataUser();
   }
 
   insertarParrafos(descTransferente: string) {
@@ -214,7 +216,31 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
       },
     });
   }
+  getDataUser() {
+    const params: ListParams = {
+      'filter.id': this.token.decodeToken().preferred_username,
+    };
+    console.log(params);
+
+    this.userServices.getAllSegUsers(params).subscribe({
+      next: response => {
+        console.log(response);
+        this.user = response.data[0];
+        this.route.queryParams.subscribe(params => {
+          this.actConvertion = params['actConvertion'] || null;
+          this.tipoConv = params['tipoConv'] || null;
+          this.pGoodFatherNumber = params['pGoodFatherNumber'] || null;
+          console.log(this.pGoodFatherNumber);
+          this.fetchItems();
+        });
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
+  }
   fetchItems() {
+    this.items = [];
     //console.log("tipoConv -> ",this.tipoConv);
     if (this.tipoConv === '2') {
       //console.log(this.tipoConv);
@@ -223,26 +249,48 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
         this.flagNewActa = true;
         this.flagAsignaActa = true;
         this.disableAllChecks = true;
-        console.log(this.actConvertion);
+        let filter = {
+          pDelivery: this.actConvertion,
+          vFilter: 'false',
+        };
+        this.proceedingsService.postBlkConversions(filter).subscribe({
+          next: response => {},
+          error: err => {
+            console.error(err);
+            this.alert('error', 'ERROR', err.error.message);
+          },
+        });
       } else {
-        console.log(this.actConvertion);
-
+        console.log(this.user.usuario.delegationNumber);
         const payload = {
           pGoodFatherNumber: this.pGoodFatherNumber,
-          pDelegationNumber: 1,
+          pDelegationNumber: this.user.usuario.delegationNumber,
           //buscar numero de delegacion del usuario logeado
         };
         this.serviceGood.generateWeaponKey(payload).subscribe((item: any) => {
           console.log(item);
           this.selectItem2 = item;
           this.items = [{ cve_acta_conv: item }];
-          this.serviceGood
-            .getFolioActaConversion(this.selectItem2)
-            .subscribe(item => {
-              this.numberFoli = item.data[0].folio_universal;
-            });
+          // this.serviceGood
+          //   .getFolioActaConversion(this.selectItem2)
+          //   .subscribe(item => {
+          //     this.numberFoli = item.data[0].folio_universal;
+          //   });
           this.selectedIndex = 0;
           this.flagAsignaActa = true;
+        });
+        let filter = {
+          pDelivery: this.actConvertion,
+          vFilter: 'true',
+        };
+        this.proceedingsService.postBlkConversions(filter).subscribe({
+          next: response => {
+            console.log(response);
+          },
+          error: err => {
+            console.error(err);
+            this.alert('error', 'ERROR', err.error.message);
+          },
         });
       }
       this.flagNewActa = false;
@@ -397,7 +445,10 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
 
     return `${parts[0]}/${parts[1]}/${parts[2]}/${parts[3]}/${parts[4]}/${consecutivo}/${parts[6]}/${parts[7]}`;
   }
-
+  document(doc: IDocuments) {
+    console.log(doc.id);
+    this.numberFoli = doc.id;
+  }
   createMinuteConversion() {
     const payload: any = {
       cveActaConvId: this.selectItem2,
@@ -405,7 +456,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
       broadcaster: null,
       administeredBy: null,
       run: null,
-      universalFolio: this.numberFoli,
+      universalFolio: Number(this.numberFoli),
       paragraph1: this.parrafo1,
       paragraph2: this.parrafo2,
       paragraph3: this.parrafo3,
@@ -413,8 +464,18 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
     console.log('minute-conversions -> ', payload);
     this.convertiongoodService.createMinuteConversion(payload).subscribe({
       next: (res: IListResponse<any>) => {
-        this.alert('success', null, `Registro guardado`);
+        this.alert('success', null, `Registro Guardado`);
         console.log('minute-conversions res -> ', res);
+        this.router.navigate(
+          ['/pages/administrative-processes/derivation-goods'],
+          {
+            queryParams: {
+              newActConvertion: this.selectItem2,
+              // expedientNumber: this.form.value.numberDossier,
+            },
+          }
+        );
+        this.modalRef.hide();
       },
       error: error => {
         this.alert('error', 'error', error.message);
