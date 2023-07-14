@@ -1,0 +1,105 @@
+<!-- <div class="row pt-4 table-container" *ngIf="dataPaginated">
+  <div class="form-material col-md-12 table-responsive">
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        class="col-md-12"
+        [settings]="settings"
+        [source]="dataPaginated"
+        (edit)="showModals($event.data)"></ng2-smart-table>
+    </div>
+  </div>
+</div>
+<app-pagination
+  [params]="params"
+  [pageSizeOptions]="pageSizeOptions"
+  [limit]="limit"
+  [totalItems]="totalItems"></app-pagination> -->
+<!-- <div class="row">
+  <div class="col-md-3">
+    <button
+      type="button"
+      class="btn-sm btn-danger active"
+      (click)="openModal1()">
+      openModal1
+    </button>
+  </div>
+  <div class="col-md-3">
+    <button
+      type="button"
+      class="btn-sm btn-danger active"
+      (click)="openModal2()">
+      openModal2
+    </button>
+  </div>
+</div> -->
+<!-- <table>
+  <thead>
+    <tr>
+      <th>Acciones</th>
+      <th>Atributo</th>
+      <th>Valores</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="let row of dataPaginated; let i = index"
+      [class]="haveError(row) ? 'error' : ''">
+      <td>
+        <a *ngIf="!disabledBienes && !row.editing" (click)="row.editing = true">
+          <span class="fa fa-pencil-alt text-warning mx-2"></span>
+        </a>
+        <a
+          *ngIf="!disabledBienes && row.editing"
+          class="checkEdit"
+          (click)="row.editing = false; updateRow(row, i)">
+          <span class="fa fa-solid fa-check text-success mx-2"></span>
+        </a>
+        <a
+          *ngIf="!disabledBienes && row.editing"
+          (click)="row.editing = false; row.value = row.oldValue">
+          <span class="fa fa-solid fa-ban text-danger mx-2"></span>
+        </a>
+        <app-good-table-detail-button
+          *ngIf="row.tableCd"></app-good-table-detail-button>
+        <div *ngIf="!row.editing" style="width: 26px"></div>
+      </td>
+      <td>{{ row.attribute }}</td>
+      <td [class]="classValue(row)">
+        <div *ngIf="!row.editing">{{ row.value }}</div>
+        <div *ngIf="row.editing">
+          <input
+            *ngIf="row.dataType !== 'D' && !row.attribute.includes('FECHA')"
+            type="text"
+            class="form-control"
+            [maxlength]="row.length"
+            [attr.required]="row.required"
+            [(ngModel)]="row.value" />
+          <input
+            *ngIf="row.dataType === 'D' || row.attribute.includes('FECHA')"
+            bsDatepicker
+            readonly
+            class="form-control"
+            style="background-color: white"
+            [maxDate]="today"
+            [maxlength]="row.dataType === 'F' ? 42 : row.length"
+            [attr.required]="row.required"
+            [(ngModel)]="row.value" />
+          <div class="errorMessage" *ngIf="haveErrorRequired(row)">
+            El campo es obligatorio
+          </div>
+          <ng-container *ngIf="row.value">
+            <div class="errorMessage" *ngIf="haveNumericError(row)">
+              El campo debe ser númerico
+            </div>
+            <div class="errorMessage" *ngIf="haveFloatError(row)">
+              El campo debe ser flotante (38,4)
+            </div>
+            <div class="errorMessage" *ngIf="haveMoneyError(row).length > 1">
+              {{ haveMoneyError(row) }}
+            </div>
+          </ng-container>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table> -->
