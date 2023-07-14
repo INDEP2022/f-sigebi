@@ -10,6 +10,8 @@ import { SharedModule } from '../../shared.module';
       [multiple]="false"
       [closeOnSelect]="true"
       [searchable]="false"
+      bindLabel="msg"
+      bindValue="value"
       [(ngModel)]="value"
       (change)="onToggle($event)">
     </ng-select>

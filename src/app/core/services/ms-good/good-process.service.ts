@@ -208,4 +208,7 @@ export class GoodProcessService extends HttpService {
     });
     return httpParams;
   }
+  procedureGoodStatus(data: { cveShape: string; noGood: number }) {
+    return this.post(GoodProcessPoints.ProcedureStatusGood, data);
+  }
 }

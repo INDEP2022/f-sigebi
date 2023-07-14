@@ -7,5 +7,6 @@ export enum ConvertiongoodEndpoints {
   ActsConvertion = `conversions/get-all`,
   ConvertionActa = `conversions-minutes`,
   AddActa = `aplication/getBlkbieDiActa`,
+  MinuteConversions = `minute-conversions/get-all`,
   LisActas = `minute-conversions`,
 }

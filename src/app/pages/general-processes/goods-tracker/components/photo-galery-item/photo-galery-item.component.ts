@@ -82,11 +82,18 @@ export class PhotoGaleryItemComponent extends BasePage implements OnInit {
         }
         const last = res.at(-1);
         const filename = last.split('.')[0];
-        const consec = filename.substring(filename.length - 4);
+        const consSplit = filename.split('F');
+        const consec = consSplit.at(-1);
+        console.log({ consec });
+
+        // const consec = filename.substring(filename.length - 4);
         this.filePhotoService
           .getById(this.good.goodNumber, Number(consec))
           .subscribe({
             next: res => {
+              if (!res) {
+                this.imgSrc = NO_IMAGE_FOUND;
+              }
               this.imgSrc = `data:image/png;base64, ${res}`;
             },
             error: () => {
@@ -127,7 +134,7 @@ export class PhotoGaleryItemComponent extends BasePage implements OnInit {
     this.jasperServ
       .fetchReport('FICHATECNICA', {
         P_NO_BIEN: lnu_good,
-        P_IDENTIFICADOR: lnu_identificador,
+        P_IDENTIFICADOR: lnu_identificador ?? '',
       })
       .pipe(
         tap(response => {

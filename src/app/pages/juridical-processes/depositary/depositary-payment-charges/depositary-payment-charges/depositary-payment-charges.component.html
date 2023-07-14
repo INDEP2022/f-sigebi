@@ -1,6 +1,10 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Notificaci&oacute;n de abandono por aseguramiento</h5>
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <h5 class="title">Notificaci&oacute;n de abandono por aseguramiento</h5>
+      </div>
+    </div>
   </div>
   <div body>
     <div class="row pl-4">
@@ -60,11 +64,12 @@
             </ng-template>
           </form-field> -->
         </div>
+        <!-- fileExcel.click() -->
         <div class="col-md-2 col-sm-12 col-xs-12">
           <button
             type="text"
             class="btn btn-sm btn-info active"
-            (click)="fileExcel.click()">
+            (click)="openFile()">
             Carga Excel o CSV
           </button>
           <input
@@ -94,6 +99,11 @@
             class="btn btn-success btn-sm active"
             (click)="btnPaymentDispersion()">
             Dispersi&#243;n de pagos
+          </button>
+        </div>
+        <div class="m-3">
+          <button class="btn btn-danger btn-sm active" (click)="cleanForm()">
+            Limpiar <i class="fas fa-eraser"> </i>
           </button>
         </div>
       </div>

@@ -112,4 +112,8 @@ export class GoodTrackerService extends HttpService {
   donwloadExcel() {
     return this.get(GoodTrackerEndpoints.DownloadExcel);
   }
+
+  getPhotos(tmp: GoodTrackerMap) {
+    return this.post(GoodTrackerEndpoints.GoodPhotos, tmp);
+  }
 }

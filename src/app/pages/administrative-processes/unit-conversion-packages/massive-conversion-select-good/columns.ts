@@ -71,7 +71,7 @@ export const V_GOOD_COLUMNS = {
     sort: false,
   },
   warehouseNumber: {
-    title: 'No. Almacen',
+    title: 'No. Almacén',
     type: 'string',
     sort: false,
   },
