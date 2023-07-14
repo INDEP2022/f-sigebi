@@ -117,17 +117,19 @@
           <div class="overflow-auto pt-5">
             <div [formGroup]="formGas" class="d-flex gap-4">
               <div
+                class="spent-container"
                 [hidden]="formGas.get('GAS' + (i + 1)).disabled"
                 *ngFor="let item of columns; let i = index">
                 <!-- <label>Concepto {{ item }}:</label> -->
                 <form-field
+                  class="position-relative"
                   [label]="'Concepto ' + item"
                   [control]="formGas.get('GAS' + (i + 1))">
                   <input
                     readonly
                     [formControlName]="'GAS' + (i + 1)"
                     type="text"
-                    class="form-control" />
+                    class="form-control w-100" />
                   <button
                     (click)="onClickInputGas(i + 1)"
                     class="btn btn-sm btn-custom-search">
@@ -138,6 +140,7 @@
             </div>
             <div [formGroup]="formGad" class="d-flex gap-4 mt-3">
               <div
+                class="spent-container"
                 [hidden]="formGad.get('GAD' + (i + 1)).disabled"
                 *ngFor="let item of columns; let i = index">
                 <!-- <label>Descripción {{ item }}:</label> -->
@@ -146,7 +149,7 @@
                   [control]="formGad.get('GAD' + (i + 1))">
                   <textarea
                     type="text"
-                    class="form-control"
+                    class="form-control w-100"
                     formControlName="GAD{{ i + 1 }}">
                   </textarea>
                 </form-field>
