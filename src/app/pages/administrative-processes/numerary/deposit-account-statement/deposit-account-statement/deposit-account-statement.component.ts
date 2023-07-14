@@ -455,7 +455,7 @@ export class DepositAccountStatementComponent
     this.form.controls['collectionDate'].setValue(
       this.formatDate(this.userChecks.checkcashingdate)
     );
-    // this.form.controls['indicated'].setValue(this.userChecks.indicatedName);
+    this.form.controls['indicated'].setValue(this.userChecks.nameindicated);
     this.form.controls['avPrevious'].setValue(
       this.userChecks.preliminaryinvestigation
     );

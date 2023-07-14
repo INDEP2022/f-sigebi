@@ -29,4 +29,5 @@ export interface IAccountDetailInd {
   checkpayee: string;
   expeditioncheckdate: string;
   checkcashingdate: string;
+  nameindicated: string;
 }
