@@ -212,14 +212,28 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   viewFile(file: any) {}
 
   openReserveModal(good: any) {
-    const modalRef = this.modalService.show(ReserveGoodModalComponent, {
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+    };
+
+    config.initialState = {
+      good,
+      callback: (next: boolean) => {
+        if (next) {
+        }
+      },
+    };
+
+    this.modalService.show(ReserveGoodModalComponent, config);
+    /*const modalRef = this.modalService.show(ReserveGoodModalComponent, {
       initialState: { good },
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.onReserve.subscribe((data: boolean) => {
       if (data) this.addGood(data);
-    });
+    }); */
   }
 
   addGood(good: any) {
