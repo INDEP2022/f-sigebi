@@ -499,7 +499,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.programmingId'] = this.programmingId;
     this.receptionGoodService.getReceptions(params.getValue()).subscribe({
       next: response => {
-        console.log('receipt guard', response);
         this.receiptGuardGood = response.data[0];
 
         const filterWarehouse = response.data.map((item: any) => {
@@ -626,7 +625,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.id'] = this.programming.stateKey;
     this.stateService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('estado', response);
         this.stateName = response.data[0].descCondition;
       },
       error: error => {},
@@ -741,9 +739,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       next: response => {
         this.transfersDestinity = response.data;
       },
-      error: error => {
-        console.log('error', error);
-      },
+      error: error => {},
     });
   }
 
@@ -869,7 +865,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     const goodWarehouse = data.filter(items => {
       return items.status == 'EN_ALMACEN_TMP';
     });
-    console.log('Bienea a almacén', goodWarehouse);
 
     goodWarehouse.forEach(items => {
       this.params.getValue()['filter.id'] = items.goodId;
@@ -1184,7 +1179,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'warning',
         '¿Seguro que quiere asignar los bienes  a una acta?',
-        '',
+        'Acción irreversible',
         'Aceptar'
       ).then(question => {
         if (question.isConfirmed) {
@@ -1309,9 +1304,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   error: error => {},
                 });
             },
-            error: error => {
-              console.log('update good error', error);
-            },
+            error: error => {},
           });
         });
       });
@@ -1405,7 +1398,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       }
     } else if (type == 'almacen') {
       if (this.receipts.count() > 0) {
-        console.log('Soy un recibo almacén con acta creada');
         this.receipts.getElements().then(async receipt => {
           const createReceiptGood: any = await this.createReceiptWarehouse(
             receipt[0]
@@ -1746,7 +1738,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             resolve(true);
           },
           error: error => {
-            console.log('error', error);
             resolve(false);
           },
         });
@@ -2455,9 +2446,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           next: async response => {
             await this.changeStatusGoodWarehouse(item);
           },
-          error: error => {
-            console.log('error actualizar progr', error);
-          },
+          error: error => {},
         });
       });
     } else {
@@ -2481,9 +2470,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           next: async response => {
             await this.changeStatusGoodCancelation(item);
           },
-          error: error => {
-            console.log('error actualizar progr', error);
-          },
+          error: error => {},
         });
       });
     } else {
