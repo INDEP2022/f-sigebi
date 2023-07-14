@@ -6,7 +6,7 @@
           <form [formGroup]="searchTabForm" class="form-material">
             <div class="row">
               <div class="col-md-12">
-                <app-goods-types-shared
+                <app-goods-types-shared-Good
                   [reloadGood]="reloadGood"
                   [loadOnChangesNoBien]="true"
                   [goodselect]="goodSelect"
@@ -15,21 +15,29 @@
                   subtypeField="subtipo"
                   ssubtypeField="ssubtipo"
                   sssubtypeField="sssubtipo"
+                  (goodTypeChange)="getGoodType($event)"
                   (goodSssubtypeChange)="
                     getGoods($event)
-                  "></app-goods-types-shared>
+                  "></app-goods-types-shared-Good>
               </div>
             </div>
             <div class="row">
               <div class="col-md-12">
                 <div class="form-group">
-                  <goods-filter-shared
-                    [reloadGood]="reloadGood"
-                    [clean]="cleanGood"
-                    [form]="searchTabForm"
-                    goodField="noBien"
-                    [classifGood]="classifGood"
-                    (good)="onChangeGood($event)"></goods-filter-shared>
+                  <form-field [control]="searchTabForm.get('noBien')">
+                    <ngx-select
+                      (fetchItems)="getGoodsSheard($event)"
+                      [data]="goods"
+                      [form]="searchTabForm"
+                      value="id"
+                      bindLabel="info"
+                      label="Bien"
+                      control="noBien"
+                      (change)="onChangeGood($event)">
+                    </ngx-select>
+                  </form-field>
+                  <!-- <goods-filter-shared [reloadGood]="reloadGood" [clean]="cleanGood" [form]="searchTabForm"
+                    goodField="noBien" [classifGood]="classifGood" (good)="onChangeGood($event)"></goods-filter-shared> -->
                 </div>
               </div>
             </div>

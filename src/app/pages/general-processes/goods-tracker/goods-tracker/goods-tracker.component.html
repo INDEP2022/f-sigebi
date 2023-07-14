@@ -4,25 +4,25 @@
       <h5 class="title">RASTREADOR POR BIENES Y NOTIFICACIONES</h5>
     </div>
     <div class="buttons d-flex">
-      <form
+      <!-- <form
         [formGroup]="formCheckbox"
-        class="form-material d-flex justify-content-end">
-        <!-- <form-check for="irregular-goods" label="Bienes Irregulares">
+        class="form-material d-flex justify-content-end"> -->
+      <!-- <form-check for="irregular-goods" label="Bienes Irregulares">
           <input
             type="checkbox"
             id="irregular-goods"
             formControlName="goodIrre" />
         </form-check> -->
-        <form-check for="galery" label="Ver Fotos">
+      <!-- <form-check for="galery" label="Ver Fotos">
           <input type="checkbox" id="galery" formControlName="lookPhoto" />
         </form-check>
-        <div>
-          <!-- <button (click)="getAll()" class="btn btn-primary btn-sm active">
+        <div> -->
+      <!-- <button (click)="getAll()" class="btn btn-primary btn-sm active">
             Todos los registros
             <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button> -->
-        </div>
-      </form>
+      <!-- </div>
+      </form> -->
     </div>
   </div>
 
@@ -97,7 +97,7 @@
                     (cleanFilters)="resetFilters()"></transfer-autority-filter>
                   <br />
                   <hr class="row" />
-                  <h6 class="pb-4 pt-3">Ubicación del bien</h6>
+                  <h6 class="pb-4 pt-3">Ubicación del Bien</h6>
                   <location-filter
                     class="pb-3"
                     [form]="form"
@@ -114,6 +114,7 @@
 </app-card>
 <div #scrollTable></div>
 <goods-table
+  [formCheckbox]="formCheckbox"
   [loading]="loading"
   *ngIf="showTable && !formCheckbox.controls.lookPhoto.value"
   [goods]="goods"
@@ -123,6 +124,7 @@
   [fomrCheck]="formCheckbox"
   [filters]="filters"></goods-table>
 <photo-galery
+  [formCheckbox]="formCheckbox"
   *ngIf="showTable && formCheckbox.controls.lookPhoto.value"
   [goods]="goods"
   [loading]="loading"

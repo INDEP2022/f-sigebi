@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { GoodsFilterSharedComponent } from 'src/app/@standalone/shared-forms/goods-shared/goods-filter-shared';
-import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 
+import { GoodsTypesSharedGoodComponent } from 'src/app/@standalone/shared-forms/goods-types-shared-good/goods-types-shared.component';
 import { ServicesSharedComponent } from 'src/app/@standalone/shared-forms/services-shared/services-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { GoodsCharacteristicsModule } from '../../general-processes/goods-characteristics/goods-characteristics.module';
@@ -46,7 +46,7 @@ import { WarehousesAssignedComponent } from './warehouses-assigned/warehouses-as
     CommonModule,
     AdministrationAssetsRoutingModule,
     TabsModule,
-    GoodsTypesSharedComponent,
+    GoodsTypesSharedGoodComponent,
     GoodsFilterSharedComponent,
     SharedModule,
     ServicesSharedComponent,

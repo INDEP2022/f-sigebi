@@ -5,16 +5,19 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SEARCH_COLUMNS } from './search-columns';
 
 @Component({
@@ -35,14 +38,19 @@ export class SearchTabComponent extends BasePage implements OnInit {
   goodSelect: IGood;
   cleanGood: boolean = false;
   data: LocalDataSource = new LocalDataSource();
+  dataGoods: any[] = [];
+  goods = new DefaultSelect<IGood>();
   columnFilters: any = [];
   reloadGood: IGood;
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  isDisabled: boolean = false;
   constructor(
     private fb: FormBuilder,
     private readonly goodService: GoodService,
     private readonly notifyService: NotificationService,
     private modalService: BsModalService,
-    private router: Router
+    private router: Router,
+    private service: GoodFinderService
   ) {
     super();
     this.settings.actions = false;
@@ -62,6 +70,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
       //console.error(this.goodSelect);
       this.search();
     }
+    this.getGoodsSheard({ limit: 10, page: 1 });
     this.searchTabForm.get('noBien').valueChanges.subscribe({
       next: val => {
         this.searchTabForm.get('estatus').setValue('');
@@ -152,15 +161,26 @@ export class SearchTabComponent extends BasePage implements OnInit {
   getGoods(ssssubType: IGoodSssubtype) {
     if (ssssubType !== null) {
       this.classifGood = ssssubType.numClasifGoods;
+      this.getGoodsSheard({ limit: 10, page: 1 });
+      // this.searchTabForm.controls['noBien'].enable();
+      console.log(this.classifGood);
     } else {
       this.classifGood = null;
     }
   }
-
+  getGoodType(data: any) {
+    if (data !== null) {
+      console.log(data);
+      // this.searchTabForm.controls['noBien'].disable();
+    }
+  }
   clean() {
     this.searchTabForm.reset();
     this.data.load([]);
     this.data.refresh();
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    this.classifGood = null;
+    this.getGoodsSheard({ limit: 10, page: 1 });
     this.dataSearch.emit({
       data: this.searchTabForm.get('noBien').value,
       exist: false,
@@ -172,7 +192,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
       this.searchTabForm.get('noBien').value === '' ||
       this.searchTabForm.get('noBien').value === null
     ) {
-      this.alert('warning', 'Datos Búsqueda', 'Debe seleccionar un bien', '');
+      this.alert('warning', 'Datos Búsqueda', 'Debe Seleccionar un Bien', '');
       return;
     }
     this.dataSearch.emit({
@@ -245,7 +265,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
       this.searchTabForm.get('noBien').value === '' ||
       this.searchTabForm.get('noBien').value === null
     ) {
-      this.alert('warning', 'Datos Búsqueda', 'Debe seleccionar un bien');
+      this.alert('warning', 'Datos Búsqueda', 'Debe Seleccionar un Bien');
       return;
     }
     const array: any[] = [this.searchTabForm.get('noBien').value];
@@ -306,6 +326,53 @@ export class SearchTabComponent extends BasePage implements OnInit {
           },
           error: err => res(null),
         });
+    });
+  }
+  getGoodsSheard(params: ListParams) {
+    //Provisional data
+    // this.searchTabForm.controls['noBien'].disable();
+    this.loader.load = true;
+    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+    data.page = params.page;
+    data.limit = params.limit;
+    console.log('CLASIFICADOR DEL BEINE ES: ', this.classifGood);
+    if (this.classifGood) {
+      data.addFilter('goodClassNumber', this.classifGood);
+    }
+    if (params.text != undefined && params.text != '') {
+      data.addFilter('description', params.text, SearchFilter.ILIKE);
+    }
+
+    this.service.getAll2(data.getParams()).subscribe({
+      next: data => {
+        this.dataGoods = data.data.map(clasi => {
+          return {
+            ...clasi,
+            info: `${clasi.id} - ${clasi.description ?? ''}`,
+          };
+        });
+        this.goods = new DefaultSelect(this.dataGoods, data.count);
+        this.loader.load = false;
+        // this.searchTabForm.controls['noBien'].enable();
+      },
+      error: err => {
+        this.goods = new DefaultSelect([], 0);
+        let error = '';
+        this.loader.load = false;
+        // if (err.status === 0) {
+        //   error = 'Revise su conexión de Internet.';
+        //   this.onLoadToast('error', 'Error', error);
+        // }
+        // this.alert(
+        //   'warning',
+        //   'Información',
+        //   'No hay bienes que mostrar con los filtros seleccionado'
+        // );
+      },
+      complete: () => {
+        this.searchTabForm.updateValueAndValidity();
+      },
     });
   }
 }

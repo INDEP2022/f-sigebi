@@ -17,16 +17,17 @@ export class ImageDebuggingModalComponent extends BasePage implements OnInit {
   isChecked: boolean = false;
   @Input() showPhoto: boolean;
   @Input() disabledBienes: boolean;
+  @Input() goodNumber: number;
   @Output() onSave = new EventEmitter();
-  get goodNumber() {
-    return this._goodNumber;
-  }
-  set goodNumber(value) {
-    this._goodNumber = value;
-    if (value) {
-      this.getData();
-    }
-  }
+  // get goodNumber() {
+  //   return this._goodNumber;
+  // }
+  // set goodNumber(value) {
+  //   this._goodNumber = value;
+  //   if (value) {
+  //     this.getData();
+  //   }
+  // }
   lastConsecutive: number = 1;
   filesToDelete: string[] = [];
   private _goodNumber: string | number;

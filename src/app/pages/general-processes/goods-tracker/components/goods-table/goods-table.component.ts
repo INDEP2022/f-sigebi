@@ -15,6 +15,7 @@ import {
   switchMap,
   take,
   takeUntil,
+  takeWhile,
   tap,
   throwError,
 } from 'rxjs';
@@ -25,6 +26,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { SocketService } from 'src/app/common/socket/socket.service';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
@@ -36,6 +38,7 @@ import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+import { environment } from 'src/environments/environment';
 import { SetTrackedGoods } from '../../store/goods-tracker.actions';
 import { getTrackedGoods } from '../../store/goods-tracker.selector';
 import {
@@ -64,6 +67,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       this.goodsList = [];
     }
   }
+  @Input() formCheckbox: FormGroup;
 
   get goods(): ITrackedGood[] {
     return this.goodsList;
@@ -100,7 +104,8 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     private goodPartService: GoodPartializeService,
     private procedings: ProceedingsService,
     private partializeGoodServ: PartializeGoodService,
-    private photoService: PublicationPhotographsService
+    private photoService: PublicationPhotographsService,
+    private socketService: SocketService
   ) {
     super();
     this.settings.actions = false;
@@ -432,7 +437,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
 
   include() {
     if (this.selectedGooods.length == 0) {
-      this.onLoadToast('info', 'Info', 'Debe seleccionar almenos un bien');
+      this.onLoadToast('info', 'Info', 'Debe seleccionar al menos un bien');
       return;
     }
     const goodIds = this.selectedGooods.map(good => good.goodNumber);
@@ -533,7 +538,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
           this.insertListPhoto(Number(this.selectedGooods[0].goodNumber));
           this.callReport(Number(this.selectedGooods[0].goodNumber), null);
         } else {
-          this.alert('error', 'Error', 'Se requiere de almenos un bien');
+          this.alert('error', 'Error', 'Se requiere de al menos un bien');
         }
       }
     }
@@ -744,23 +749,79 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     });
   }
 
+  subscribeExcel() {
+    return this.socketService.goodsTrackerExcel().pipe(
+      take(1),
+      switchMap(() => this.getExcel())
+    );
+  }
+
+  subscribePhotos() {
+    return this.socketService.exportGoodsTrackerPhotos().pipe(
+      tap((res: any) => {
+        if (res.percent == 100 && res.path) {
+          this.alert('success', 'Archivo descargado correctamente', '');
+          const url = `${environment.API_URL}ldocument/${environment.URL_PREFIX}${res.path}`;
+          console.log({ url });
+          window.open(url, '_blank');
+        }
+      }),
+      takeWhile((res: any) => res.percent <= 100 && !res.path)
+    );
+  }
+
+  getExcel() {
+    return this.goodTrackerService.donwloadExcel().pipe(
+      catchError(error => {
+        this.alert('error', 'Error', 'No se genero correctamente el archivo');
+        return throwError(() => error);
+      }),
+      tap(resp => this.downloadExcel(resp.file))
+    );
+  }
+
+  downloadExcel(base64String: string) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = 'Rastreador_Bienes.xlsx';
+    link.click();
+    link.remove();
+    this.alert('success', 'Archivo descargado correctamente', '');
+  }
+
   getDataExcell() {
     this.excelLoading = true;
     this.goodTrackerService.getExcel(this.filters).subscribe({
       next: resp => {
-        const mediaType =
-          'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
-        const link = document.createElement('a');
-        link.href = mediaType + resp.base64File;
-        link.download = 'Rastreador_Bienes.xlsx';
-        link.click();
-        link.remove();
         this.excelLoading = false;
-        this.alert('success', 'Archivo descargado correctamente', '');
+        this.alert(
+          'info',
+          'Aviso',
+          'El Archivo Excel esta en proceso de generación, favor de esperar la descarga'
+        );
+        this.subscribeExcel().subscribe();
       },
       error: () => {
         this.excelLoading = false;
         this.alert('error', 'Error', 'No se genero correctamente el archivo');
+      },
+    });
+  }
+
+  getPhotos() {
+    this.goodTrackerService.getPhotos(this.filters).subscribe({
+      next: res => {
+        this.alert(
+          'info',
+          'Aviso',
+          'La descargar esta en proceso, favor de esperar'
+        );
+        const $sub = this.subscribePhotos().subscribe();
+      },
+      error: error => {
+        console.log(error);
       },
     });
   }

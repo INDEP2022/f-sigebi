@@ -53,28 +53,23 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this._params.pipe(takeUntil(this.$unSubscribe), skip(1)).subscribe(next => {
+      const form = this.form.value;
+      const filledFields = Object.values(form).filter(value => {
+        if (Array.isArray(value)) {
+          return value.length > 0;
+        }
+        return value ? true : false;
+      });
+      if (!filledFields.length) {
+        this.getAllGoods();
+        return;
+      }
       this.getGoods(next);
     });
-    this.socketService.test().subscribe();
   }
 
-  async searchGoods(params: any) {
+  async searchGoods(params?: any) {
     this.params.removeAllFilters();
-    const form = this.form.value;
-    const filledFields = Object.values(form).filter(value => {
-      if (Array.isArray(value)) {
-        return value.length > 0;
-      }
-      return value ? true : false;
-    });
-    if (!filledFields.length) {
-      this.alert(
-        'warning',
-        'Atención',
-        'Debe ingresar almenos un parámetro de búsqueda'
-      );
-      return;
-    }
     const _params = new ListParams();
     this._params.next(_params);
     // this.getGoods();
@@ -110,6 +105,26 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     return _val;
   }
 
+  getAllGoods(params?: ListParams) {
+    this.loading = true;
+    this.filters = new GoodTrackerMap();
+    this.mapFilters();
+    this.scrollTable.nativeElement.scrollIntoView();
+    this.goodTrackerService.getAll(params ?? new ListParams()).subscribe({
+      next: res => {
+        this.loading = false;
+        this.goods = res.data as any;
+        this.totalItems = res.count;
+      },
+      error: error => {
+        this.loading = false;
+        // this.alert('error', 'Error', 'Ocurrio un error al obtener los datos');
+        this.goods = [];
+        this.totalItems = 0;
+      },
+    });
+  }
+
   getGoods(params?: ListParams) {
     this.loading = true;
     this.filters = new GoodTrackerMap();
@@ -127,19 +142,7 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loading = false;
-          if (
-            error.error.message ==
-            'Debe colocar por lo menos un parámetro de búsqueda'
-          ) {
-            this.alert(
-              'warning',
-              'Atención',
-              'Debe ingresar almenos un parámetro de búsqueda'
-            );
-            return;
-          }
-          console.log('xd');
-
+          // this.alert('error', 'Error', 'Ocurrio un error al obtener los datos');
           this.goods = [];
           this.totalItems = 0;
         },
@@ -374,5 +377,8 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
 
   resetFilters() {
     this.form = this.fb.group(new GoodTrackerForm());
+    // this.searchGoods();
+    this.goods = [];
+    this.totalItems = 0;
   }
 }

@@ -1,6 +1,9 @@
+import { DatePipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -20,7 +23,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ListComponent } from './list/list.component';
 import { SURVEILLANCE_SERVICE_COLUMNS } from './surveillance-service-columns';
-
 @Component({
   selector: 'app-surveillance-service',
   templateUrl: './surveillance-service.component.html',
@@ -53,7 +55,9 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
     private excelService: ExcelService,
-    private token: AuthService
+    private token: AuthService,
+    private datePipe: DatePipe,
+    private http: HttpClient
   ) {
     super();
     this.settings.columns = SURVEILLANCE_SERVICE_COLUMNS;
@@ -128,9 +132,9 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     });
 
     this.formRegistro = this.fb.group({
-      processTwo: [null],
-      fromTwo: [null],
-      toTwo: [null],
+      processTwo: [null, Validators.required],
+      fromTwo: [null, Validators.required],
+      toTwo: [null, Validators.required],
     });
   }
 
@@ -244,7 +248,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
   async searchSupervisionDet() {
     console.log(this.form);
     if (!this.form.valid) {
-      this.form.markAllAsTouched();
+      this.form.markAsTouched();
       return;
     }
 
@@ -255,6 +259,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       delegationType: this.delegationMae.delegationType,
     };
     this.objGetSupervionDet = obj;
+    this.paramsList.getValue().page = 1;
+    this.paramsList.getValue().limit = 10;
     this.getVigSupervisionDet_();
   }
 
@@ -303,6 +309,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         this.goods.load([]);
         this.goods.refresh();
         this.totalItems = 0;
+        this.form.get('total').setValue('0');
         this.loading = false;
         // resolve(null);
       },
@@ -365,8 +372,10 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
   addDate(event: any) {
     console.log('event', event);
     if (event != null) {
-      this.form.get('from').setValue(event.initialDate);
-      this.form.get('to').setValue(event.finalDate);
+      const from = this.datePipe.transform(event.initialDate, 'dd/MM/yyyy');
+      const to = this.datePipe.transform(event.finalDate, 'dd/MM/yyyy');
+      this.form.get('from').setValue(from);
+      this.form.get('to').setValue(to);
     } else {
       this.form.get('from').setValue(null);
       this.form.get('to').setValue(null);
@@ -405,7 +414,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       LV_VALIDAREP = 0;
       this.alert(
         'warning',
-        'La Delegación Regional es un valor requerido para generar el reporte',
+        'La Delegación Regional es un Valor Requerido para Generar el Reporte',
         ''
       );
       return;
@@ -417,9 +426,10 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
     if (cveProcess == null) {
       LV_VALIDAREP = 0;
+      this.form.get('process').markAsTouched();
       this.alert(
         'warning',
-        'El tipo de proceso es un valor requerido para generar el reporte',
+        'El Tipo de Proceso es un Valor Requerido para Generar el Reporte',
         ''
       );
       return;
@@ -431,9 +441,10 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
     if (period == null) {
       LV_VALIDAREP = 0;
+      this.form.get('period').markAsTouched();
       this.alert(
         'warning',
-        'El período es un valor requerido para generar el reporte',
+        'El Período es un Valor Requerido para Generar el Reporte',
         ''
       );
       return;
@@ -452,7 +463,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       };
 
       this.siabService
-        .fetchReport('REP_SERVICIO_VIGILANCIA', params)
+        // .fetchReport('REP_SERVICIO_VIGILANCIA', params)
+        .fetchReportBlank('blank')
         .subscribe(response => {
           if (response !== null) {
             const blob = new Blob([response], { type: 'application/pdf' });
@@ -468,8 +480,21 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
             };
-            this.alert('success', '', 'Reporte generado');
-            this.cleanForm();
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
             this.modalService.show(PreviewDocumentsComponent, config);
           }
         });
@@ -511,18 +536,18 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         await this.createVIG_SUPERVISION_TMP(formData);
 
       if (createVIG_SUPERVISION_TMP_) {
-        this.alert('success', 'Archivo cargado correctamente', '');
+        this.alert('success', 'Archivo Cargado Correctamente', '');
         this.clearInput();
       } else {
         this.alert(
           'error',
-          'Ha ocurrido un error al intentar crear los registros',
+          'Ha Ocurrido un Error al Intentar Crear los Registros',
           ''
         );
         this.clearInput();
       }
     } catch (error) {
-      this.alert('error', 'Ocurrió un error al leer el archivo', 'Error');
+      this.alert('error', 'Ocurrió un Error al Leer el Archivo', 'Error');
     }
   }
 
@@ -542,14 +567,15 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     let LV_MENSAJE: any = null;
 
     if (this.delegationDefault == null) {
-      this.alert('warning', 'Debe seleccionar una delegación', '');
+      this.alert('warning', 'Debe Seleccionar una Delegación', '');
       return;
     }
 
     const cveProcessTwo = this.formRegistro.get('processTwo').value;
     if (cveProcessTwo != 1 && cveProcessTwo != 2) {
       LV_VALPROCESO = 0;
-      this.alert('warning', 'El Proceso es información requerida', '');
+      this.formRegistro.get('processTwo').markAsTouched();
+      this.alert('warning', 'El Proceso es Información Requerida', '');
       return;
     }
 
@@ -557,9 +583,10 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
     if (fromTwo == null || fromTwo == '') {
       LV_VALPROCESO = 0;
+      this.formRegistro.get('fromTwo').markAsTouched();
       this.alert(
         'warning',
-        'La fecha inicial del período es información requerida',
+        'La Fecha Inicial del Período es Información Requerida',
         ''
       );
       return;
@@ -569,9 +596,10 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
     if (toTwo == null || toTwo == '') {
       LV_VALPROCESO = 0;
+      this.formRegistro.get('toTwo').markAsTouched();
       this.alert(
         'warning',
-        'La fecha final del período es información requerida',
+        'La Fecha Final del Período es Información Requerida',
         ''
       );
       return;
@@ -585,8 +613,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         pProcess: cveProcessTwo,
         pPeriodKey: period,
         pTypeDelaga: this.delegationDefault.typeDelegation,
-        pInitialDate: fromTwo,
-        pEndDate: toTwo,
+        pInitialDate: this.returnParseDate_(fromTwo),
+        pEndDate: this.returnParseDate_(toTwo),
       };
 
       console.log('objjj', obj);
@@ -595,7 +623,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       if (getPaValidPeriod_ === 'error mes') {
         this.alert(
           'warning',
-          'Ya existe relación con este período',
+          'Ya Existe Relación Con Este Período',
           'relation "lv_mes" already exists'
         );
         return;
@@ -613,7 +641,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       if (LV_EST_PROCESO == 1) {
         this.alertQuestion(
           'question',
-          '¿Está seguro de hacer la carga del archivo ?',
+          '¿Está Seguro de Hacer la Carga del Archivo ?',
           ''
         ).then(async (question: any) => {
           if (question.isConfirmed) {
@@ -656,11 +684,11 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         await this.createVIG_SUPERVISION_TMP(excelImport);
 
       if (createVIG_SUPERVISION_TMP_) {
-        this.alert('warning', 'El archivo no contenía registros', '');
+        this.alert('warning', 'El Archivo no Contenía Registros', '');
       } else {
         this.alert(
           'error',
-          'Ha ocurrido un error al intentar crear los registros',
+          'Ha o}Ocurrido un Error al Intentar Crear los Registros',
           ''
         );
       }
@@ -668,7 +696,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       this.clearInput();
     } else {
       this.objectDelete = null; // LIMPIAMOS OBJECTDELETE //
-      this.alert('warning', 'El archivo no contenía registros', '');
+      this.alert('warning', 'El Archivo no Contenía Registros', '');
       this.clearInput();
     }
   }
@@ -755,22 +783,24 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     let LV_TOTREGISTRO: any = null;
 
     if (this.delegationDefault == null) {
-      this.alert('warning', 'Debe seleccionar una delegación', '');
+      this.alert('warning', 'Debe Seleccionar una Delegación', '');
       return;
     }
     const cveProcessTwo = this.formRegistro.get('processTwo').value;
     if (cveProcessTwo != 1 && cveProcessTwo != 2) {
       LV_VALPROCESO = 0;
-      this.alert('warning', 'El Proceso es información requerida', '');
+      this.formRegistro.get('processTwo').markAsTouched();
+      this.alert('warning', 'El Proceso es Información Requerida', '');
       return;
     }
 
     const fromTwo = this.formRegistro.get('fromTwo').value;
     if (fromTwo == null || fromTwo == '') {
       LV_VALPROCESO = 0;
+      this.formRegistro.get('fromTwo').markAsTouched();
       this.alert(
         'warning',
-        'La fecha inicial del período es información requerida',
+        'La Fecha Inicial del Período es Información Requerida',
         ''
       );
       return;
@@ -779,9 +809,10 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     const toTwo = this.formRegistro.get('toTwo').value;
     if (toTwo == null || toTwo == '') {
       LV_VALPROCESO = 0;
+      this.formRegistro.get('toTwo').markAsTouched();
       this.alert(
         'warning',
-        'La fecha final del período es información requerida',
+        'La Fecha Final del Período es Información Requerida',
         ''
       );
       return;
@@ -794,8 +825,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         pProcess: cveProcessTwo,
         pPeriodKey: period,
         pTypeDelaga: this.delegationDefault.typeDelegation,
-        pInitialDate: fromTwo,
-        pEndDate: toTwo,
+        pInitialDate: this.returnParseDate_(fromTwo),
+        pEndDate: this.returnParseDate_(toTwo),
       };
       console.log('objjj', obj);
       const getPaValidPeriod_: any = await this.getPaValidaPeriodo(obj);
@@ -803,7 +834,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       if (getPaValidPeriod_ === 'error mes') {
         this.alert(
           'warning',
-          'Ya existe relación con este período',
+          'Ya Existe Relación Con Este Período',
           'relation "lv_mes" already exists'
         );
         return;
@@ -821,7 +852,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       if (LV_EST_PROCESO == 1) {
         this.alertQuestion(
           'question',
-          '¿Está seguro de generar los números aleatorios?',
+          '¿Está Seguro de Generar los Números Aleatorios?',
           ''
         ).then(async question => {
           if (question.isConfirmed) {
@@ -843,8 +874,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
                 pProcess: cveProcessTwo,
                 pPeriodKey: LV_CVE_PERIODO,
                 pTypeDelaga: this.delegationDefault.typeDelegation,
-                pInitialDate: fromTwo,
-                pEndDate: toTwo,
+                pInitialDate: this.returnParseDate_(fromTwo),
+                pEndDate: this.returnParseDate_(toTwo),
                 user: this.token.decodeToken().preferred_username,
               };
 
@@ -863,7 +894,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
                 } else {
                   this.alert(
                     'warning',
-                    'No existen carga de bienes en este período para generarar aleatorios',
+                    'No Existen Carga de Bienes en este Período para Generarar Aleatorios',
                     ''
                   );
                   return;
@@ -871,12 +902,12 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
               } else {
                 this.alert(
                   'error',
-                  'Ha ocurrido un error al intentar generar aleatorios',
+                  'Ha Ocurrido un Error al Intentar Generar Aleatorios',
                   ''
                 );
               }
             } else {
-              this.alert('warning', 'No hay bienes cargados', '');
+              this.alert('warning', 'No Hay Bienes Cargados', '');
             }
           }
         });
@@ -933,15 +964,26 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     this.survillanceService.getVigSupervisionMae(params.getParams()).subscribe({
       next: async (response: any) => {
         this.delegationMae = response.data[0];
+        // this.form.controls['cveProcess'].reset();
+
+        // this.form.controls['process'].setValue(response.data[0].cveProcess);
 
         this.form.patchValue({
-          cveProcess: response.data[0].cveProcess.toString(),
+          process: response.data[0].cveProcess,
         });
 
         // this.form.get('process').setValue('Proceso ' + response.data[0].cveProcess);
         this.form.get('period').setValue(response.data[0].cvePeriod);
-        this.form.get('from').setValue(response.data[0].initialDate);
-        this.form.get('to').setValue(response.data[0].finalDate);
+        const from = this.datePipe.transform(
+          response.data[0].initialDate,
+          'dd/MM/yyyy'
+        );
+        const to = this.datePipe.transform(
+          response.data[0].finalDate,
+          'dd/MM/yyyy'
+        );
+        this.form.get('from').setValue(from);
+        this.form.get('to').setValue(to);
         this.form.get('total').setValue(null);
 
         let obj = {
@@ -951,10 +993,12 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
           delegationType: this.delegationMae.delegationType,
         };
         this.objGetSupervionDet = obj;
+        this.paramsList.getValue().page = 1;
+        this.paramsList.getValue().limit = 10;
         this.getVigSupervisionDet_();
 
         console.log('RESPUESTA', response);
-        this.alert('success', 'Se generaron los aleatorios correctamente', '');
+        this.alert('success', 'Se Generaron Los Aleatorios Correctamente', '');
 
         // resolve(response.data[0]);
       },
@@ -975,21 +1019,54 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
   // LV_VALPROCESO:= 0;
   // 	end if;
   async exportar() {
+    if (!this.delegationDefault) {
+      this.alert('warning', 'Debe Seleccionar una Delegación', '');
+      return;
+    }
+
     if (this.goods.count() == 0) {
-      this.alert('warning', 'No hay registros cargados para exportar', '');
+      this.alert('warning', 'No hay Registros Cargados para Exportar', '');
       return;
     }
     const cveProcess = this.form.get('process').value;
     if (cveProcess == null) {
-      this.alert('warning', 'El tipo de proceso es un valor requerido', '');
+      this.alert('warning', 'El Tipo de Proceso es un Valor Requerido', '');
       return;
     }
 
     const period = this.form.get('period').value;
     if (period == null) {
-      this.alert('warning', 'El período es un valor requerido', '');
+      this.alert('warning', 'El Período es un Valor Requerido', '');
       return;
     }
+
+    const params = new ListParams();
+
+    params[
+      'filter.delegationNumber'
+    ] = `$eq:${this.delegationDefault.delegationNumber}`;
+    params['filter.cveProcess'] = `$eq:${cveProcess}`;
+    params['filter.cvePeriod'] = `$eq:${period}`;
+    params[
+      'filter.delegationType'
+    ] = `$eq:${this.delegationMae.delegationType}`;
+    delete params.limit;
+    delete params.page;
+    this.survillanceService.getVigSupervisionAllExcel(params).subscribe({
+      next: async (response: any) => {
+        // Decodifica el archivo Base64 a un array de bytes
+        const base64 = response.base64File;
+        // const base64 = await this.decompressBase64ToString(response.data.base64File)
+        await this.downloadExcel(base64);
+
+        console.log('RESSS', response);
+      },
+      error(err) {
+        console.log('Errorr', err);
+      },
+    });
+
+    return;
     const filename: string = 'Servicio de Vigilancia';
     const jsonToCsv = await this.returnJsonToCsv();
     console.log('jsonToCsv', jsonToCsv);
@@ -1016,23 +1093,47 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     return this.goods.getAll();
   }
 
+  async decompressBase64ToString(compressedBase64: any) {
+    // const compressedBuffer = Buffer.from(compressedBase64, 'base64');
+    // const decompressedBuffer = zlib.gunzipSync(compressedBuffer);
+    // const decompressedString = decompressedBuffer.toString('utf8');
+    // return decompressedString;
+  }
+
+  async downloadExcel(base64String: any) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = 'Servicio_De_Vigilancia.csv';
+    link.click();
+    link.remove();
+    this.alert('success', 'Archivo Descargado Correctamente', '');
+  }
+
   async revisarCarga() {
     if (this.delegationDefault == null) {
-      this.alert('warning', 'Debe seleccionar una delegación', '');
+      // const delet = this.form.get('delegation')
+      //   (delet.invalid)
+      // delet.markAsTouched();
+      this.alert('warning', 'Debe Seleccionar una Delegación', '');
       return;
     }
 
     const cveProcessTwo = this.formRegistro.get('processTwo').value;
     if (cveProcessTwo != 1 && cveProcessTwo != 2) {
-      this.alert('warning', 'El Proceso es información requerida', '');
+      this.formRegistro.get('processTwo').markAsTouched();
+      // cveProcessTwo.markAsTouched();
+      this.alert('warning', 'El Proceso es Información Requerida', '');
       return;
     }
 
     const fromTwo = this.formRegistro.get('fromTwo').value;
     if (fromTwo == null || fromTwo == '') {
+      this.formRegistro.get('fromTwo').markAsTouched();
       this.alert(
         'warning',
-        'La fecha inicial del período es información requerida',
+        'La Fecha Inicial del Período es Información Requerida',
         ''
       );
       return;
@@ -1040,9 +1141,10 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
 
     const toTwo = this.formRegistro.get('toTwo').value;
     if (toTwo == null || toTwo == '') {
+      this.formRegistro.get('toTwo').markAsTouched();
       this.alert(
         'warning',
-        'La fecha final del período es información requerida',
+        'La Fecha Final del Período es Información Requerida',
         ''
       );
       return;
@@ -1067,10 +1169,15 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'No existen bienes cargados para procesar en este periodo',
+        'No Existen Bienes Cargados para Procesar en este Periodo',
         ''
       );
       return;
     }
+  }
+
+  returnParseDate_(data: Date) {
+    const formattedDate = moment(data).format('YYYY-MM-DD');
+    return formattedDate;
   }
 }

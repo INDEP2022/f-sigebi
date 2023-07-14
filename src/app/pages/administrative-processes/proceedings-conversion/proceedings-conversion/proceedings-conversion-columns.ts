@@ -44,13 +44,13 @@ export const GOODSEXPEDIENT_COLUMNS_GOODS = {
     type: 'string',
     sort: false,
   },
-  acta: {
+  acta_: {
     title: 'Acta',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.cveActa;
-    },
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.acta_;
+    // },
   },
   status: {
     title: 'Estatus',
@@ -66,7 +66,7 @@ export const ACTAS = {
     sort: false,
   },
   keysProceedings: {
-    title: 'Cve Acta',
+    title: 'Clave Acta',
     type: 'string',
     sort: false,
   },

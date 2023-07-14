@@ -5,7 +5,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  of,
+  takeUntil,
+  throwError,
+} from 'rxjs';
 import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
@@ -28,12 +35,14 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { offlinePagination } from 'src/app/utils/functions/offline-pagination';
 import { HistoricalGoodsExtDomComponent } from '../historical-goods-extdom/historical-goods-extdom.component';
 import { ModalScanningFoilTableHistoricalGoodsComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
 import { GoodsProcessValidationExtdomService } from '../services/goods-process-validation-extdom.service';
 import {
   COLUMNS_GOODS_LIST_EXTDOM,
   COLUMNS_GOODS_LIST_EXTDOM_2,
+  COLUMNS_GOODS_LIST_EXTDOM_3,
   RELATED_FOLIO_COLUMNS,
 } from './process-extdoom-columns';
 
@@ -57,7 +66,9 @@ export class GoodsProcessValidationExtdomComponent
   goodDataSelected: IGood | any[];
   screenKey: string = 'FADMAPROEXTDOM';
   freeLabel: string = 'X';
+  blockLabel: string = 'N';
   registerType: string = 'N';
+  registerExistType: string = 'E';
   universalFolio: number = null;
   // TABLA DATA
   tableSettings = {
@@ -76,6 +87,14 @@ export class GoodsProcessValidationExtdomComponent
   loadingGoods2: boolean = false;
   totalGoods2: number = 0;
   goodData2: IGood[] | any[] = [];
+  tableSettings3 = {
+    ...this.settings,
+  };
+  dataTable3: LocalDataSource = new LocalDataSource();
+  dataTableParams3 = new BehaviorSubject<ListParams>(new ListParams());
+  loadingGoods3: boolean = false;
+  totalGoods3: number = 0;
+  goodData3: IGood[] | any[] = [];
   // Historico Modal
   params = new BehaviorSubject(new ListParams());
   filterParams = new BehaviorSubject(new FilterParams());
@@ -100,10 +119,14 @@ export class GoodsProcessValidationExtdomComponent
   selectStationNumber = new DefaultSelect();
   selectAuthority = new DefaultSelect();
   // Goods Selects
-  selectedGooods: IGood[] = [];
-  selectedDeleteGooods: IGood[] = [];
-  goods: IGood[] | any[] = [];
-  goodsValid: any[] = [];
+  selectedGoods: IGood[] = [];
+  selectedDeleteGoods: IGood[] | any[] = [];
+  goodsValid: IGood[] | any[] = [];
+  countSelectedGoods: number = 0;
+  countGoodsValid: number = 0;
+  // Variables Ejecutar proceso
+  errorsCount: number = 0;
+  executionType: string = 'X';
   // Scanning
   showScanForm: boolean = false;
   // Usuario actual
@@ -121,6 +144,7 @@ export class GoodsProcessValidationExtdomComponent
     private router: Router
   ) {
     super();
+    // CONFIG PARA REGISTROS DISPONIBLES PARA EXTDOM
     COLUMNS_GOODS_LIST_EXTDOM.seleccion = {
       ...COLUMNS_GOODS_LIST_EXTDOM.seleccion,
       onComponentInitFunction: this.onClickSelect.bind(this),
@@ -142,9 +166,10 @@ export class GoodsProcessValidationExtdomComponent
         }
       },
     };
+    // CONFIG PARA LOS REGISTROS EXISTENTES EN EXTDOM
     COLUMNS_GOODS_LIST_EXTDOM_2.seleccion = {
       ...COLUMNS_GOODS_LIST_EXTDOM_2.seleccion,
-      onComponentInitFunction: this.onClickSelect_ExtDom.bind(this),
+      onComponentInitFunction: this.onClickSelect_ExistExtDom.bind(this),
     };
     this.tableSettings2 = {
       ...this.settings,
@@ -155,6 +180,28 @@ export class GoodsProcessValidationExtdomComponent
         delete: false,
       },
       columns: { ...COLUMNS_GOODS_LIST_EXTDOM_2 },
+    };
+    // CONFIG PARA NUEVOS REGISTROS PARA EXTDOM
+    COLUMNS_GOODS_LIST_EXTDOM_3.seleccion = {
+      ...COLUMNS_GOODS_LIST_EXTDOM_3.seleccion,
+      onComponentInitFunction: this.onClickSelect_ExtDom.bind(this),
+    };
+    this.tableSettings3 = {
+      ...this.settings,
+      actions: {
+        columnTitle: '',
+        add: false,
+        edit: false,
+        delete: false,
+      },
+      columns: { ...COLUMNS_GOODS_LIST_EXTDOM_3 },
+      rowClassFunction: (row: any) => {
+        if (row.data.register_type == this.registerType) {
+          return 'bg-success text-white';
+        } else {
+          return '';
+        }
+      },
     };
   }
 
@@ -183,33 +230,46 @@ export class GoodsProcessValidationExtdomComponent
         this.P_GEST_OK = params['P_GEST_OK'] ?? null;
         this.initForm();
       });
+    this.updatePaginatedTable3();
+  }
+
+  updatePaginatedTable3() {
+    this.dataTableParams3.subscribe(params3 => {
+      this.loadingGoods3 = true;
+      const { page, limit } = params3;
+      let paginated = offlinePagination(this.goodData3, limit, page);
+      this.dataTable3.load(paginated);
+      this.dataTable3.refresh();
+      this.loadingGoods3 = false;
+    });
   }
 
   onClickSelect(event: any) {
     // console.log('EVENTO ', event);
     if (event != undefined) {
       event.toggle.subscribe((data: any) => {
-        console.log('DATA LOG #### ', data);
+        // console.log('DATA LOG #### ', data);
         // data.row.selection = data.toggle;
         if (data.row.disponible == this.freeLabel) {
           let row: IGood = data.row;
-          const index = this.selectedGooods.findIndex(
+          const index = this.selectedGoods.findIndex(
             _good => _good.goodId == row.goodId
           ); //.indexOf(row);
-          console.log('INDICE ', index);
+          // console.log('INDICE ', index);
           if (index == -1 && data.toggle == true) {
-            this.selectedGooods.push(row);
+            this.selectedGoods.push(row);
           } else if (index != -1 && data.toggle == false) {
-            this.selectedGooods.splice(index, 1);
+            this.selectedGoods.splice(index, 1);
           }
         } else {
-          const index: number = this.selectedGooods.findIndex(
+          const index: number = this.selectedGoods.findIndex(
             _good => _good.goodId == data.row.goodId
           );
           this.goodData[index].seleccion = 0;
           this.dataTable.load(this.goodData);
           this.dataTable.refresh();
         }
+        // console.log('SELECIONADOS AL MOMENTO ###### ', this.selectedGoods);
       });
     }
   }
@@ -218,18 +278,18 @@ export class GoodsProcessValidationExtdomComponent
     // console.log('EVENTO ', event);
     if (event != undefined) {
       event.toggle.subscribe((data: any) => {
-        console.log('DATA LOG #### ', data);
+        console.log('DATA LOG DELETE #### ', data);
         // data.row.selection = data.toggle;
-        if (data.row.register_type == this.registerType) {
+        if (data.row.register_type == this.registerExistType) {
           let row: IGood = data.row;
-          const index = this.selectedDeleteGooods.findIndex(
+          const index = this.selectedDeleteGoods.findIndex(
             _good => _good.goodId == row.goodId
           ); //.indexOf(row);
-          console.log('INDICE ', index);
+          console.log('INDICE DELETE', index);
           if (index == -1 && data.toggle == true) {
-            this.selectedDeleteGooods.push(row);
+            this.selectedDeleteGoods.push(row);
           } else if (index != -1 && data.toggle == false) {
-            this.selectedDeleteGooods.splice(index, 1);
+            this.selectedDeleteGoods.splice(index, 1);
           }
         } else {
           this.alert(
@@ -238,6 +298,42 @@ export class GoodsProcessValidationExtdomComponent
             ''
           );
         }
+        console.log(
+          'SELECIONADOS AL MOMENTO ###### ',
+          this.selectedDeleteGoods
+        );
+      });
+    }
+  }
+
+  onClickSelect_ExistExtDom(event: any) {
+    console.log('EVENTO ', event);
+    if (event != undefined) {
+      event.toggle.subscribe((data: any) => {
+        console.log('DATA LOG EXT_DOM #### ', data);
+        // data.row.selection = data.toggle;
+        if (data.row.register_type == this.registerExistType) {
+          let row: IGood = data.row;
+          const index = this.goodsValid.findIndex(
+            _good => _good.goodId == row.goodId
+          ); //.indexOf(row);
+          console.log('INDICE EXT_DOM', index);
+          if (index == -1 && data.toggle == true) {
+            this.goodsValid.push(row);
+          } else if (index != -1 && data.toggle == false) {
+            this.goodsValid.splice(index, 1);
+          }
+        } else {
+          this.alert(
+            'warning',
+            'Este Registro no se puede Eliminar, sólo es posible Liberar',
+            ''
+          );
+        }
+        console.log(
+          'SELECIONADOS AL MOMENTO ###### ',
+          this.selectedDeleteGoods
+        );
       });
     }
   }
@@ -445,21 +541,27 @@ export class GoodsProcessValidationExtdomComponent
   searchNotification() {
     if (
       this.form.get('wheelNumber').invalid &&
-      this.form.get('fileNumber').invalid
+      this.form.get('expedientNumber').invalid
     ) {
       this.alert('warning', 'Ingrese un Volante o un Expediente correcto', '');
       return;
     }
-    if (this.form.get('wheelNumber').invalid) {
+    if (
+      this.form.get('wheelNumber').value &&
+      this.form.get('wheelNumber').invalid
+    ) {
       this.alert('warning', 'Ingrese un Volante correcto', '');
       return;
     }
-    if (this.form.get('fileNumber').invalid) {
+    if (
+      this.form.get('expedientNumber').value &&
+      this.form.get('expedientNumber').invalid
+    ) {
       this.alert('warning', 'Ingrese un Expediente correcto', '');
       return;
     }
     let flierNumber = this.form.get('wheelNumber').value;
-    let expedientNumber = this.form.get('wheelNumber').value;
+    let expedientNumber = this.form.get('expedientNumber').value;
     this.form.reset();
     this.formScan.reset();
     this.notificationData = null;
@@ -575,10 +677,18 @@ export class GoodsProcessValidationExtdomComponent
           console.log('GOODS', res);
           this.totalGoods = res.count;
           let data = res.data.map((i: any) => {
-            i['disponible'] = this.freeLabel;
-            // i['ch_selec'] = 0;
-            i['seleccion'] = 0;
-            return i;
+            const index2: number = this.selectedGoods.findIndex(
+              (_good: IGood) => _good.goodId == i.goodId
+            );
+            if (index2 > -1) {
+              i['disponible'] = this.blockLabel;
+              i['seleccion'] = 0;
+              return i;
+            } else {
+              i['disponible'] = this.freeLabel;
+              i['seleccion'] = 0;
+              return i;
+            }
           });
           this.dataTable.load(data);
           this.dataTable.refresh();
@@ -612,9 +722,13 @@ export class GoodsProcessValidationExtdomComponent
       .subscribe({
         next: res => {
           this.loadingGoods2 = false;
-          console.log('GOODS 2', res);
+          let data = res.data.map((i: any) => {
+            i['register_type'] = this.registerExistType;
+            return i;
+          });
           this.totalGoods2 = res.count;
-          this.dataTable2.load(res.data);
+          // this.dataTable2.load(res.data);
+          this.dataTable2.load(data);
           this.dataTable2.refresh();
           this.goodData2 = res.data;
         },
@@ -623,71 +737,108 @@ export class GoodsProcessValidationExtdomComponent
           console.log(error);
           this.dataTable2.load([]);
           this.dataTable2.refresh();
-          this.goodData = [];
+          this.goodData2 = [];
         },
       });
   }
 
   addSelect() {
     console.log('Agregar');
-    this.selectedGooods.forEach((data: IGood) => {
-      const index2: number = this.goodData.findIndex(
+    this.loadingGoods = true; // Iniciar loading de tabla bienes
+    this.loadingGoods3 = true; // Iniciar loading de tabla a procesar
+    this.selectedGoods.forEach((data: IGood | any, count: number) => {
+      // VALIDAR QUE NO EXISTA YA EN LA TABLA A PROCESAR
+      const index3: number = this.goodData3.findIndex(
         (_good: IGood) => _good.goodId == data.goodId
       );
-      console.log('INDICE 2 ADD SELECT ', index2);
-      if (index2 > -1) {
-        const index3: number = this.goodData2.findIndex(
+      console.log('INDICE 3 ADD SELECT ', index3);
+      if (index3 == -1) {
+        this.goodData3.push({ ...data, register_type: this.registerType }); // Agregar registro a la data
+        this.totalGoods3++; // Aumentar si se agrego registro
+        // VALIDAR CON LA DATA DEL ENDPOINT IGUAL
+        const index2: number = this.goodData.findIndex(
           (_good: IGood) => _good.goodId == data.goodId
         );
-        console.log('INDICE 3 ADD SELECT ', index2);
-        // VALIDAR CON EL ENDPOINT IGUAL
-        if (index3 == -1) {
-          this.loadingGoods2 = true;
-          this.goodData2.push({ ...data, register_type: 'N' }); // Agregar registro a la data
-          this.dataTable2.add({ ...data, register_type: 'N' }); // Agregar registro a la tabla
-          this.totalGoods2++; // Aumentar si se agrego registro
-          this.dataTable2.refresh();
-          this.loadingGoods2 = false;
-          this.loadingGoods = true;
-          this.goodData[index2].disponible = 'N';
-          this.goodData[index2].seleccion = 0;
-          this.dataTable.load(this.goodData);
-          this.dataTable.refresh();
-          this.loadingGoods = false;
+        if (index2 > -1) {
+          this.goodData[index2].disponible = this.blockLabel; // Cambiar a no disponible
+          this.goodData[index2].seleccion = 0; // Quitar el check del registro
         }
       }
     });
+    setTimeout(() => {
+      // Update data table bienes
+      this.dataTable.load(this.goodData);
+      this.dataTable.refresh();
+      this.loadingGoods = false; // Detener loading de tabla bienes
+      this.loadingGoods3 = false; // Detener loading de tabla a procesar
+      this.updatePaginatedTable3();
+    }, 500);
   }
 
   removeSelect() {
     console.log('Eliminar');
-    this.selectedGooods.forEach((data: IGood) => {
-      const index2: number = this.goodData2.findIndex(
+    this.loadingGoods = true; // Iniciar loading de tabla bienes
+    this.loadingGoods3 = true; // Iniciar loading de tabla a procesar
+    let removeSelectedGoods: number[] = []; // Guardar contadores para eliminar del listado de seleccion
+    let removeGoodsSelected: number[] = []; // Guardar contadores para eliminar del listado de elimnar seleccion
+    this.selectedDeleteGoods.forEach((data: IGood | any, count: number) => {
+      // VALIDAR QUE EXISTA YA EN EL LISTADO DE SELECCIONADOS
+      const index1: number = this.goodData3.findIndex(
         (_good: IGood) => _good.goodId == data.goodId
       );
-      console.log('INDICE 2 DELETE SELECT ', index2);
-      if (index2 > -1) {
+      console.log('INDICE 1 DELETE SELECT ', index1);
+      if (index1 > -1) {
+        this.goodData3.splice(index1, 1); // Eliminar registro del arreglo
+        this.totalGoods3--; // Dismunuye si se quito el registro
+        // VALIDAR CON LA DATA DEL ENDPOINT IGUAL
         const index3: number = this.goodData.findIndex(
           (_good: IGood) => _good.goodId == data.goodId
         );
-        console.log('INDICE 3 DELETE SELECT ', index2);
-        // VALIDAR CON EL ENDPOINT IGUAL
-        if (index3 == -1) {
-          this.loadingGoods2 = true;
-          this.goodData2.splice(index2, 1); // Eliminar registro del arreglo
-          this.dataTable2.remove(this.goodData2[index2]); // Eliminar de la tabla
-          this.totalGoods2--; // Restar si se quito el registro
-          this.dataTable2.refresh();
-          this.loadingGoods2 = false;
-          this.loadingGoods = true;
-          this.goodData[index3].disponible = this.freeLabel;
-          this.goodData[index3].seleccion = 0;
-          this.dataTable.load(this.goodData);
-          this.dataTable.refresh();
-          this.loadingGoods = false;
+        if (index3 > -1) {
+          this.goodData[index3].disponible = this.freeLabel; // Cambiar disponible
+          this.goodData[index3].seleccion = 0; // Quitar el check del registro
+        }
+        const index4: number = this.selectedGoods.findIndex(
+          (_good: IGood) => _good.goodId == data.goodId
+        );
+        if (index4 > -1) {
+          removeSelectedGoods.push(index4); // Guardar posicion para eliminar los seleccionados
+        }
+        const index2: number = this.selectedDeleteGoods.findIndex(
+          (_good: IGood) => _good.goodId == data.goodId
+        );
+        if (index2 > -1) {
+          removeGoodsSelected.push(index2); // Guardar posicion para eliminar los seleccionados
         }
       }
     });
+    setTimeout(() => {
+      console.log('REMOVE FROM ARRAY DELETE ', removeGoodsSelected);
+      if (removeGoodsSelected.length > 0) {
+        removeGoodsSelected.forEach(elementCount => {
+          this.selectedDeleteGoods.splice(elementCount, 1); // Eliminar registro del arreglo
+        });
+      }
+      console.log('REMOVE FROM ARRAY SELECTED', removeSelectedGoods);
+      if (removeSelectedGoods.length > 0) {
+        removeSelectedGoods.forEach(elementCount => {
+          this.selectedGoods.splice(elementCount, 1); // Eliminar registro del arreglo
+        });
+      }
+      console.log(
+        'LISTADOS DE SELECCIONADOS ###########',
+        this.selectedGoods,
+        this.selectedDeleteGoods,
+        this.goodData3,
+        this.goodData
+      );
+      // Update data table bienes
+      this.dataTable.load(this.goodData);
+      this.dataTable.refresh();
+      this.loadingGoods = false; // Detener loading de tabla bienes
+      this.loadingGoods3 = false; // Detener loading de tabla a procesar
+      this.updatePaginatedTable3();
+    }, 500);
   }
 
   addAll() {
@@ -700,6 +851,252 @@ export class GoodsProcessValidationExtdomComponent
 
   btnEjecutarCambios() {
     console.log('EjecutarCambios');
+    this.executionType = 'X';
+    this.errorsCount = 0;
+    // -- Verificamos si en el bloque existen registros nuevos
+    if (this.selectedGoods.length > 0) {
+      this.executionType = this.registerType;
+    }
+    // -- Verificamos si en el bloque existen registros para liberar
+    if (this.goodsValid.length > 0) {
+      this.executionType = this.registerExistType;
+    }
+    if (this.executionType == 'X') {
+      this.alert('warning', 'No Existen Cambios para Ejecutar', '');
+      return;
+    } else if (this.executionType == this.registerType) {
+      this.confirmMessageValidFolio(
+        'Se identificó que existen nuevos bienes, sólo se aplicará el cambio de Proceso a ASEG_EXTDOM. ¿Quiere continuar con el proceso?',
+        ''
+      );
+    } else if (this.executionType == this.registerExistType) {
+      this.confirmMessageValidFolio(
+        'Se identificó que existen bienes para Liberar, se aplicara el cambio. ¿Quiere continuar con el proceso?',
+        'para Liberación'
+      );
+    }
+  }
+
+  confirmMessageValidFolio(message: string, folioMessage: string) {
+    this.alertQuestion('question', message, '').then(response => {
+      if (response.isConfirmed) {
+        if (!this.universalFolio) {
+          this.alert(
+            'warning',
+            'No Existe Folio de Escaneo' +
+              folioMessage +
+              ', Favor de Ingresar...',
+            ''
+          );
+          return;
+        } else {
+          this.validDocumentsByFolio(); // Validar documentos relacionados al folio
+        }
+      }
+    });
+  }
+
+  validDocumentsByFolio() {
+    this.getDocumentsCount().subscribe(count => {
+      console.log('COUNT ', count);
+      if (count == 0) {
+        this.alert(
+          'warning',
+          'El Folio Universal no Existe, NO se Han Agregado Imágenes o NO Corresponde a "Admisión de Demanda de Extinción de Dominio"',
+          ''
+        );
+      } else {
+        if (this.executionType == this.registerType) {
+          this.alertInfo(
+            'warning',
+            'Los Bienes se Relacionarán a la Documentación del Folio:  ' +
+              this.universalFolio,
+            ''
+          ).then(response => {
+            this.startLoopSelectedGoods();
+          });
+        } else if (this.executionType == this.registerExistType) {
+          this.alertInfo(
+            'warning',
+            'La Liberación de los Bienes se Relacionará a la Documentación del Folio: ' +
+              this.universalFolio,
+            ''
+          ).then(response => {
+            this.startLoopGoodsValid();
+          });
+        }
+      }
+    });
+  }
+
+  getDocumentsCount() {
+    const params = new FilterParams();
+    params.addFilter('scanStatus', 'ESCANEADO');
+    params.addFilter('keyTypeDocument', 'ASEGEXTDOM');
+    params.addFilter('id', this.universalFolio);
+    this.hideError();
+    return this.documentsService.getAllFilter(params.getParams()).pipe(
+      catchError(error => {
+        if (error.status < 500) {
+          return of({ count: 0 });
+        }
+        return throwError(() => error);
+      }),
+      map(response => response.count)
+    );
+  }
+
+  startLoopSelectedGoods() {
+    this.errorsCount = 0;
+    this.countSelectedGoods = 0;
+    this.updateGoods(false);
+  }
+
+  continueLoopSelectedGoods() {
+    this.countSelectedGoods++;
+    if (this.selectedGoods[this.countSelectedGoods]) {
+      this.updateGoods(false);
+    } else {
+      if (this.errorsCount == 0) {
+        this.alert('success', 'Proceso Completado Correctamente', '');
+      } else {
+        this.alert('error', 'Ocurrieron Errores Durante el Proceso', '');
+      }
+    }
+  }
+
+  startLoopGoodsValid() {
+    this.errorsCount = 0;
+    this.countGoodsValid = 0;
+    this.updateHistoricalGoodAsegExtDom();
+  }
+
+  continueLoopGoodsValid() {
+    this.countGoodsValid++;
+    if (this.goodsValid[this.countGoodsValid]) {
+      this.updateHistoricalGoodAsegExtDom();
+    } else {
+      if (this.errorsCount == 0) {
+        this.alert('success', 'Proceso Completado Correctamente', '');
+      } else {
+        this.alert('error', 'Ocurrieron Errores Durante el Proceso', '');
+      }
+    }
+  }
+
+  updateGoods(onlyUpdate: boolean = false) {
+    // if (insertHistorical == false) {
+    //   this.updateHistoricalGoodAsegExtDom();
+    // } else {
+    let body: any = {
+      status:
+        this.executionType == this.registerType
+          ? 'ASEG_EXTDOM'
+          : this.goodsValid[this.countGoodsValid].extDomProcess,
+      goodId:
+        this.executionType == this.registerType
+          ? this.selectedGoods[this.countSelectedGoods].goodId
+          : this.goodsValid[this.countGoodsValid].goodId,
+      id:
+        this.executionType == this.registerType
+          ? this.selectedGoods[this.countSelectedGoods].id
+          : this.goodsValid[this.countGoodsValid].id,
+    };
+    console.log(body);
+
+    this.svGoodsProcessValidationExtdomService.updateGood(body).subscribe({
+      next: data => {
+        console.log('UPDATE STATUS', data);
+        if (onlyUpdate == false) {
+          this.insertHistoricalGoodAsegExtDom();
+        } else {
+          this.continueLoopGoodsValid();
+        }
+      },
+      error: error => {
+        console.log(error);
+        if (onlyUpdate == false) {
+          this.countSelectedGoods++;
+          this.continueLoopSelectedGoods();
+        } else {
+          this.countGoodsValid++;
+          this.continueLoopGoodsValid();
+        }
+        // this.alert('error', 'Error al Actualizar el Estatus del Bien', '');
+      },
+    });
+    // }
+  }
+
+  insertHistoricalGoodAsegExtDom() {
+    let body: Partial<IHistoricGoodsAsegExtdom> = {
+      proceedingsNumber: this.selectedGoods[this.countSelectedGoods].fileNumber,
+      goodNumber: this.selectedGoods[this.countSelectedGoods].goodId,
+      dateChange: new Date(),
+      userChange: this.dataUserLogged.user,
+      processExtSun: this.selectedGoods[this.countSelectedGoods].extDomProcess,
+      invoiceUnivChange: this.universalFolio,
+    };
+    this.svGoodsProcessValidationExtdomService
+      .createHistoryGood(body)
+      .subscribe({
+        next: data => {
+          console.log('CREATE GOOD HISTORIAL', data);
+          this.continueLoopSelectedGoods();
+        },
+        error: error => {
+          this.countSelectedGoods++;
+          console.log(error);
+          this.continueLoopSelectedGoods();
+          // this.alert('error', 'Error al Actualizar el Estatus del Bien', '');
+        },
+      });
+  }
+
+  updateHistoricalGoodAsegExtDom() {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter(
+      'goodNumber',
+      this.selectedGoods[this.countSelectedGoods].goodId
+    );
+    params.addFilter('userfree', SearchFilter.NULL);
+    params.addFilter('datefree', SearchFilter.NULL);
+    params.limit = this.dataTableParams2.value.limit;
+    params.page = this.dataTableParams2.value.page;
+    this.svGoodsProcessValidationExtdomService
+      .getHistoryGood(params.getParams())
+      .subscribe({
+        next: res => {
+          console.log('GET GOOD HISTORIAL', res);
+          let body: Partial<IHistoricGoodsAsegExtdom> = {
+            // proceedingsNumber: this.selectedGoods[this.countSelectedGoods].fileNumber,
+            goodNumber: this.selectedGoods[this.countSelectedGoods].goodId,
+            datefree: new Date(),
+            userfree: this.dataUserLogged.user,
+            invoiceUnivfree: this.universalFolio,
+          };
+          this.svGoodsProcessValidationExtdomService
+            .updateHistoryGood(body)
+            .subscribe({
+              next: data => {
+                console.log('UPDATE GOOD HISTORIAL', data);
+                this.updateGoods(true);
+              },
+              error: error => {
+                this.countGoodsValid++;
+                console.log(error);
+                this.continueLoopGoodsValid();
+                // this.alert('error', 'Error al Actualizar el Estatus del Bien', '');
+              },
+            });
+        },
+        error: error => {
+          this.countGoodsValid++;
+          console.log(error);
+          this.continueLoopGoodsValid();
+        },
+      });
   }
 
   btnConsultarHistorico() {
@@ -757,7 +1154,7 @@ export class GoodsProcessValidationExtdomComponent
       this.alert('warning', 'Se requiere de un Volante/Expediente', '');
       return;
     }
-    if (this.selectedGooods.length > 0) {
+    if (this.selectedGoods.length > 0) {
       this.alert(
         'warning',
         'Se tiene al menos 1 bien amparado, no puede concluir por este medio',
@@ -766,7 +1163,8 @@ export class GoodsProcessValidationExtdomComponent
       return;
     }
     if (!this.universalFolio) {
-      this.alert('warning', 'Se debe ingresar el Folio de Escaneo', '');
+      this.alert('warning', 'Se Requiere un Folio de Escaneo', '');
+      return;
     }
     const params = new FilterParams();
     params.addFilter('id', this.universalFolio);
@@ -802,61 +1200,6 @@ export class GoodsProcessValidationExtdomComponent
         P_GEST_OK: this.P_GEST_OK,
       },
     });
-  }
-  addSelectedGoods() {
-    console.log(
-      'this.selectedGooods',
-      this.selectedGooods,
-      this.goodDataSelected
-    );
-    if (this.selectedGooods.length > 0) {
-      this.selectedGooods.forEach((good: any) => {
-        if (!this.goodsValid.some(v => v === good)) {
-          let indexGood = this.goods.findIndex(_good => _good.id == good.id);
-          console.log('aaa', this.goods);
-          console.log('indexGood', indexGood);
-          if (indexGood != -1) {
-            // if (this.goods[indexGood].goodDictaminado == true) {
-            //   this.onLoadToast(
-            //     'warning',
-            //     `El bien ${this.goods[indexGood].id} ya se encuentra dictaminado`,
-            //     ''
-            //   );
-            //   return;
-            // } else if (
-            //   this.goods[indexGood].est_disponible == 'N' ||
-            //   this.goods[indexGood].di_disponible == 'N'
-            // ) {
-            //   return;
-            // } else if (
-            //   this.goods[indexGood].di_es_numerario == 'S' &&
-            //   this.goods[indexGood].di_esta_conciliado == 'N' &&
-            //   typeDict
-            // ) {
-            //   this.onLoadToast(
-            //     'warning',
-            //     'El numerario no está conciliado',
-            //     ''
-            //   );
-            //   return;
-            // }
-
-            // IF: bienes.DI_ES_NUMERARIO = 'S' AND: bienes.DI_ESTA_CONCILIADO = 'N' AND: VARIABLES.TIPO_DICTA = 'PROCEDENCIA' THEN
-            // LIP_MENSAJE('El numerario no está conciliado', 'S');
-            this.goods[indexGood].est_disponible = 'N';
-            this.goods[indexGood].di_disponible = 'N';
-          }
-
-          this.goodsValid.push(good);
-          this.goodsValid = [...this.goodsValid];
-          // this.totalItems3 = this.goodsValid.length;
-        } else {
-          if (good.di_disponible == 'N') {
-            this.alert('warning', `El bien ${good.goodId} ya existe`, '');
-          }
-        }
-      });
-    }
   }
   scanRequest(event: any) {
     console.log(event);

@@ -26,6 +26,7 @@
       <div class="col-md-4 col-sm-12 col-xs-12">
         <div class="m-3">
           <button
+            [disabled]="loading"
             type="button"
             class="btn btn-sm btn-success active"
             (click)="file.click()">
@@ -44,10 +45,12 @@
         <div class="d-flex justify-content-center">
           <div class="m-3">
             <button
+              [disabled]="loading"
               type="button"
               class="btn btn-info btn-sm active"
               (click)="validRecords()">
               Validar registros
+              <i class="fa fa-check" aria-hidden="true"></i>
             </button>
           </div>
         </div>
@@ -57,11 +60,21 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            [disabled]="!disableApplyRecords"
+            [disabled]="!disableApplyRecords || loading"
             (click)="applyRecords()">
             Aplicar Registros
             <i aria-hidden="true" class="fa fa-save"></i>
           </button>
+        </div>
+      </div>
+      <div
+        class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+        *ngIf="loading">
+        <div class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center">
+            <div class="loader"></div>
+            <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+          </div>
         </div>
       </div>
     </div>
@@ -126,6 +139,22 @@
         </div>
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+    <div class="row">
+      <!--CAN WORK2 TABLE-->
+      <div class="row pt-4">
+        <div class="col-md-12 table-responsive">
+          <div>
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="paginatedData2">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination [params]="params2" [totalItems]="totalItems2">
       </app-pagination>
     </div>
   </div>

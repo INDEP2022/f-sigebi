@@ -7,6 +7,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  SimpleChanges,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
@@ -28,6 +29,7 @@ import {
   takeUntil,
 } from 'rxjs';
 import { environment } from 'src/environments/environment';
+
 type Attr = { [key: string]: string };
 @Component({
   selector: 'ng-custom-select-loading',
@@ -73,7 +75,9 @@ export class CustomSelectWidthLoading
   @Input() termMaxLength: string = null;
   @Input() readonly: boolean = false;
   @Input() updateValues: boolean = false;
-  @Output() valueChange = new EventEmitter<any>();
+  @Input() externalSearch: string;
+  @Output()
+  valueChange = new EventEmitter<any>();
   @Output() getObject = new EventEmitter<any>();
   input$ = new Subject<string>();
   items: any[] = [];
@@ -126,6 +130,12 @@ export class CustomSelectWidthLoading
     this.destroy$.unsubscribe();
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['externalSearch'] && changes['externalSearch'].currentValue) {
+      this.input$.next(changes['externalSearch'].currentValue);
+    }
+  }
+
   writeValue(obj: any): void {
     this.selectedItem = obj;
   }
@@ -162,7 +172,8 @@ export class CustomSelectWidthLoading
   }
 
   clear(event: any) {
-    // console.log(event);
+    console.log(event);
+    this.input$.next('');
   }
 
   getItemsObservable(text: string = '') {
@@ -255,13 +266,16 @@ export class CustomSelectWidthLoading
       )
       .subscribe({
         next: (resp: any[]) => {
-          // console.log(resp);
+          console.log(resp);
           this.isLoading = false;
           if (resp) {
             this.items = resp;
             if (resp.length === 1) {
               this.getObject.emit(resp[0]);
             }
+          } else {
+            this.isLoading = false;
+            this.items = [];
           }
         },
         error: err => {

@@ -50,7 +50,6 @@ export class GoodService extends HttpService {
   }
 
   getAll(params?: ListParams | string): Observable<IListResponse<IGood>> {
-    console.log('Aquí');
     return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params);
   }
 
@@ -363,6 +362,11 @@ export class GoodService extends HttpService {
 
     return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
   }
+  getGetReferenceGoodgoodI(goodI: any) {
+    const URL = `${environment.API_URL}/good/api/v1/good/get-reference-good/${goodI}`;
+    const headers = new HttpHeaders();
+    return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
+  }
 
   getGoods(goodI: any) {
     const URL = `${environment.API_URL}/good/api/v1/${GoodEndpoints.Good}?filter.goodId=$eq:${goodI}`;
@@ -411,9 +415,9 @@ export class GoodService extends HttpService {
 
   getByExpedientAndParams__(
     params?: ListParams
-  ): Observable<IListResponse<IGood>> {
-    const route = GoodEndpoints.Sgood;
-    return this.get<IListResponse<IGood>>(route, params);
+  ): Observable<IListResponse<IGoodSami>> {
+    const route = GoodEndpoints.Good;
+    return this.get<IListResponse<IGoodSami>>(route, params);
   }
 
   getFactaDbOficioGestrel(body: {

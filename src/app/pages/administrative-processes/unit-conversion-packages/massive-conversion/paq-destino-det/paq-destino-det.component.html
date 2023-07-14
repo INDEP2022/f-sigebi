@@ -3,6 +3,7 @@
     <h5 class="title">Previsualización de Datos</h5>
     <div class="col-md-5 buttons">
       <app-columns-select
+        [leftList]="true"
         (settingsChange)="settingsChange($event)"
         [settings]="settings"></app-columns-select>
     </div>

@@ -164,6 +164,8 @@
             [control]="clarificationForm.get('webMail')"
             label="Correo Notificaci&oacute;n Respuesta SAT">
             <input
+              style="text-transform: lowercase"
+              onkeyup="javascript:this.value=this.value.toLowerCase();"
               type="text"
               class="form-control"
               maxlength="30"
@@ -177,7 +179,6 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="clarificationForm.invalid"
           [text]="'Continuar'"
           [loading]="loading"
           [btnSmall]="true"

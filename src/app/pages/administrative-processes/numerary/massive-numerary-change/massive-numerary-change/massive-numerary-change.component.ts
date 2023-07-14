@@ -61,11 +61,14 @@ import {
         display: flex;
         flex-direction: column;
       } */
-      .spents input {
+      .spents input,
+      .spents textarea {
         width: 150px;
       }
       select.selects-origin-data {
         width: 105px;
+        min-height: auto !important;
+        /* height: 43px; */
       }
       .btn-custom-search {
         position: absolute;
@@ -78,6 +81,7 @@ import {
 export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   form: FormGroup;
   dataPrevious: any[] = [];
+  dataPreviousTable = new LocalDataSource([]);
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
@@ -108,15 +112,23 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: false,
+      hideHeader: false,
+      hideSubHeader: false,
       columns: MASSIVE_NUMERARY_CHANGE_COLUMNS,
-    };
+      pager: {
+        perPage: 10,
+      },
+    } as any;
   }
 
   ngOnInit(): void {
     this.prepareForm();
     this.onInit();
-    this.params.pipe(skip(1)).subscribe((res: any) => {
-      this.loadTablePreviewData(res);
+    this.params.pipe(skip(1)).subscribe((res: ListParams) => {
+      // this.loadTablePreviewData(res);
+      // this.tableSpent.changePage(res.page);
+      console.log(res);
+      this.dataPreviousTable.setPaging(res.page, res.limit, true);
     });
     // this.changeValueFormTips();
   }
@@ -133,6 +145,24 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     this.isVisibleSpent = Object.values(this.formTips.value).some(
       value => value === 'G'
     );
+  }
+
+  clean() {
+    this.form.reset();
+    this.formGad.reset();
+    this.formGad.disable();
+    this.formGas.reset();
+    this.formGas.disable();
+    this.formTips.reset();
+
+    this.BLK_BIENES.reset();
+    this.BLK_GASTOS.reset();
+    this.dataPrevious = [];
+    this.dataPreviousTable = new LocalDataSource([]);
+    this.registerReads = 0;
+    this.registerProcessed = 0;
+    this.registerCorrect = 0;
+    this.registerIncorrect = 0;
   }
 
   prepareForm() {
@@ -152,6 +182,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     this.formGas.get(`GAS${num}`).setValue('');
     const modal = this.modalService.show(SelectConceptSpentDialogComponent, {
       class: 'modal-lg',
+      ignoreBackdropClick: true,
     });
     modal.onHidden.pipe(take(1)).subscribe((res: any) => {
       console.log(res, modal.content);
@@ -194,7 +225,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
 
   isLoadingProcessExtraction = false;
   async onClickBtnProcessExtraction() {
-    this.registerReads = 0;
+    // this.registerReads = 0;
     this.registerProcessed = 0;
     this.registerCorrect = 0;
     this.registerIncorrect = 0;
@@ -276,7 +307,8 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       return;
     }
 
-    const dataPreviousAux = [...this.dataPrevious];
+    const dataPreviousAux = await this.dataPreviousTable.getAll();
+    console.log({ dataPreviousAux });
     dataPreviousAux.shift();
     const body = {
       colB: vColB,
@@ -337,6 +369,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
             user: this.getUser().preferred_username.toUpperCase(),
           },
           class: 'modal-lg',
+          ignoreBackdropClick: true,
         });
       },
       error: err => {
@@ -711,6 +744,10 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
 
   //#region On click Button File Excel
   onClickBtnFileExcel(e: Event) {
+    this.registerReads = 0;
+    this.registerProcessed = 0;
+    this.registerCorrect = 0;
+    this.registerIncorrect = 0;
     const file = (e.target as HTMLInputElement).files[0];
     try {
       readFile(file, 'BinaryString').then(data => {
@@ -744,8 +781,12 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
         });
         dataPreviewTable.unshift(header);
 
-        this.dataPrevious = dataPreviewTable;
+        // this.dataPrevious = dataPreviewTable;
+        console.log({ dataPreviewTable: this.dataPrevious });
+        // this.tableSpent.changePage({ page: 1, perPage: 10 });
+        this.dataPreviousTable.load(dataPreviewTable);
 
+        this.totalItems = dataPreviewTable.length - 1;
         // console.log({ dataPreviewTable, dataExcel });
       });
     } catch (ex) {

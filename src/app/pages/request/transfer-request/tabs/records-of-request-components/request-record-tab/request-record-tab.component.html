@@ -37,6 +37,7 @@
               class="form-control"
               #dp="bsDatepicker"
               bsDatepicker
+              [minDate]="minDate"
               [bsValue]="bsPriorityDate"
               (bsValueChange)="changePriorityDateEvent($event)" />
           </form-field>
@@ -289,7 +290,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="previousInquiry" />
+              formControlName="previousInquiry"
+              maxlength="100" />
           </form-field>
         </div>
         <div class="col-md-4">
