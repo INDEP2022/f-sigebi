@@ -23,7 +23,7 @@ export interface IRecordAccountStatements {
   withdrawal?: number;
   factasStatusCta?: {
     nombre?: string;
-    cve_cuenta?: string;
+    cve_cuenta?: number;
   };
 }
 
