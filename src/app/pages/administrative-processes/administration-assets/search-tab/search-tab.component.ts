@@ -162,7 +162,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
     if (ssssubType !== null) {
       this.classifGood = ssssubType.numClasifGoods;
       this.getGoodsSheard({ limit: 10, page: 1 });
-      this.searchTabForm.controls['noBien'].enable();
+      // this.searchTabForm.controls['noBien'].enable();
       console.log(this.classifGood);
     } else {
       this.classifGood = null;
@@ -171,7 +171,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
   getGoodType(data: any) {
     if (data !== null) {
       console.log(data);
-      this.searchTabForm.controls['noBien'].disable();
+      // this.searchTabForm.controls['noBien'].disable();
     }
   }
   clean() {
