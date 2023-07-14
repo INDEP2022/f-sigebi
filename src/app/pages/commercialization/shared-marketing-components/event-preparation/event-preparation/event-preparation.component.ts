@@ -1,16 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { BasePage } from 'src/app/core/shared/base-page';
 //XLSX
+import { sub } from 'date-fns';
+import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { catchError, tap, throwError } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
-import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
-import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerEventForm } from '../utils/forms/comer-event-form';
 import { EventStadisticsForm } from '../utils/forms/event-stadistics-form';
-import { IEventPreparationParameters } from '../utils/interfaces/event-preparation-parameters';
+import { EventPreparationMain } from './event-preparation-main.component';
+
+const LOTES_TAB = 2;
 
 @Component({
   selector: 'app-event-preparation',
@@ -29,58 +30,16 @@ import { IEventPreparationParameters } from '../utils/interfaces/event-preparati
     `,
   ],
 })
-export class EventPreparationComponent extends BasePage implements OnInit {
-  /**
-   * BLK_TAREAS
-   * @property {string} tDirection - T_DIRECCION
-   */
-  blkTasks = {
-    tDirection: '',
-  };
-  /**
-   * PARAMETERS.
-   * @property {string} pValidTPEVEXUSU - PVALIDATPEVEXUSU.
-   * @property {string} pBank - PBANCO.
-   * @property {string} pRejected - PRECHAZADO.
-   * @property {string} pDays - PDIAS.
-   * @property {string} pValids - P_VALIDOS.
-   * @property {string} pGoods - PASABIENES.
-   * @property {string} pDirection - P_DIRECCION.
-   */
-  parameters: IEventPreparationParameters = {
-    pValidTPEVEXUSU: '',
-    pBank: '',
-    pRejected: '',
-    pDays: 0,
-    pValids: 0,
-    pGoods: '',
-    pDirection: '',
-  };
-
-  /**
-   * BLK_CTRL_PRINCIPAL
-   * @property {boolean} chkProc - CHK_PROCEDENCIA, originalmente es S o N pasa a ser true o false
-   * @property {boolean} chkLocation - CHK_UBICACION, originalmente es S o N pasa a ser true o false
-   */
-  blkCtrlMain = {
-    chkProc: true,
-    chkLocation: true,
-  };
-
-  /**
-   * CANVAS
-   * @property {boolean} main - CAN_PRINCIPAL
-   */
-  canvas = {
-    main: true,
-    events: true,
-    stadistics: true,
-  };
-
-  globalEvent: IComerEvent = null;
-  loggedUser: TokenInfoModel = null;
+export class EventPreparationComponent
+  extends EventPreparationMain
+  implements OnInit
+{
   eventForm = this.fb.group(new ComerEventForm());
   stadisticsForm = this.fb.group(new EventStadisticsForm());
+  @ViewChild('tasksTabs', { static: true }) tasksTabs?: TabsetComponent;
+  get eventControls() {
+    return this.eventForm.controls;
+  }
   constructor(
     private fb: FormBuilder,
     private parameterModService: ParametersModService,
@@ -150,8 +109,13 @@ export class EventPreparationComponent extends BasePage implements OnInit {
     // HIDE_VIEW('CANV_EVELOTE');
   }
 
-  selectTab(event: any) {
-    console.log(event);
+  selectTab(num: number) {
+    const tab = this.tasksTabs.tabs[num];
+    if (tab) {
+      console.log('Deberia cambiar');
+
+      tab.active = true;
+    }
   }
 
   newEvent() {
@@ -159,13 +123,121 @@ export class EventPreparationComponent extends BasePage implements OnInit {
     this.canvas.main = false;
   }
 
-  openEvent() {
-    let pass = -1;
+  taskOpenEvent() {
+    this.hideCanvas();
+    // TODO: Limpiar estadisticas
+    const params = new FilterParams();
+    this.comerEventsListParams.next(params);
+  }
+
+  /**
+   * ABRIR_EVENTO
+   */
+  onOpenEvent() {
     this.parameters.pValids = 1;
     const user = this.loggedUser.preferred_username;
+    const { statusVtaId, eventTpId, id } = this.eventControls;
+    // TODO: IMPLEMENTAR METODO DE VALIDACION DE USUARIO
+    const pass = this.validUser(id.value, user, this.parameters.pDirection);
+    if (['NDIS', 'CONC'].includes(statusVtaId.value)) {
+      if (pass == 0) {
+        this.validPermissions(false);
+      } else {
+        this.validPermissions(true);
+      }
+    } else if ([7, 8].includes(Number(eventTpId.value))) {
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+      const { subYear, subMonth } = this.getSubDates(currentDate);
+      if (year !== subYear || month !== subMonth) {
+        this.validPermissions(false);
+      }
+      if (pass == 0) {
+        this.validPermissions(false);
+      } else if (pass == 1) {
+        this.validPermissions(true);
+      }
+    } else if (pass == 0) {
+      this.validPermissions(false);
+    } else {
+      this.validPermissions(true);
+    }
+    this.openEvent();
+    this.fillStadistics();
+  }
+
+  /**
+   * PUP_ABRIR_EVENTO
+   */
+  openEvent() {
+    const { id } = this.eventControls;
+    if (!id.value) {
+      const params = new FilterParams();
+      this.comerEventsListParams.next(params);
+      return;
+    }
+    this.hideCanvas();
+    this.canvas.main = true;
+    this.openExistingEvent();
+  }
+
+  openExistingEvent() {
+    const { eventTpId } = this.eventControls;
+    if (eventTpId.value == 11) {
+      this.eventFormVisual.eventDate = false;
+      this.eventFormVisual.failureDate = false;
+      this.eventFormVisual.thirdId = false;
+    } else if (eventTpId.value == 6) {
+      this.eventFormVisual.eventDate = false;
+      this.eventFormVisual.failureDate = false;
+    } else {
+      this.eventFormVisual.eventDate = true;
+      this.eventFormVisual.failureDate = true;
+    }
+    this.selectTab(LOTES_TAB);
+  }
+
+  /**
+   * LLENA_DATOS_ESTADISTICOS
+   */
+  fillStadistics() {}
+
+  getSubDates(currentDate: Date) {
+    const subDate = sub(currentDate, {
+      days: this.parameters.pDays,
+    });
+    const subYear = subDate.getFullYear();
+    const subMonth = subDate.getMonth() + 1;
+    return { subYear, subMonth };
   }
 
   viewCustomers() {
     this.canvas.main = true;
+  }
+
+  validUser(eventId: string | number, user: string, direction: 'I' | 'M') {
+    return 1;
+  }
+
+  validPermissions(grant: boolean) {
+    this.blkProperties = {
+      eventBlk: {
+        update: grant,
+      },
+      lotComerBlk: {
+        update: grant,
+        insert: grant,
+      },
+      goodsLotsBlk: {
+        update: grant,
+        insert: grant,
+        delete: grant,
+      },
+      comerAdjBlk: {
+        update: grant,
+      },
+    };
+    this.parameters.pValids = grant ? 1 : 0;
   }
 }

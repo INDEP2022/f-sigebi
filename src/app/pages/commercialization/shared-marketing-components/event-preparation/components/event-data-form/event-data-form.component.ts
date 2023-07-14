@@ -1,7 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { format } from 'date-fns';
-import { catchError, firstValueFrom, map, of, tap, throwError } from 'rxjs';
+import {
+  catchError,
+  firstValueFrom,
+  map,
+  of,
+  takeUntil,
+  tap,
+  throwError,
+} from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
@@ -11,6 +19,7 @@ import { ThirdPartyService } from 'src/app/core/services/ms-thirdparty/thirdpart
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { EventFormVisualProperties } from '../../utils/classes/comer-event-properties';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
 
@@ -29,6 +38,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   @Input() parameters: IEventPreparationParameters;
   @Input() loadFromGoodsTracker = false;
   @Output() onLoadFromGoodsTracker = new EventEmitter<void>();
+  @Input() eventFormVisual = new EventFormVisualProperties();
   get controls() {
     return this.eventForm.controls;
   }
@@ -46,6 +56,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
     this.getEventTypes().subscribe();
     this.getThirds().subscribe();
     this.getParametersMod().subscribe();
+    this.eventTypeChange().subscribe();
   }
 
   getEventTypes() {
@@ -98,11 +109,15 @@ export class EventDataFormComponent extends BasePage implements OnInit {
 
   eventTypeChange() {
     const { eventTpId } = this.controls;
-    if (eventTpId.value == 7 || eventTpId.value == 6) {
-      this.isConsignment = true;
-    } else {
-      this.isConsignment = false;
-    }
+    return eventTpId.valueChanges.pipe(
+      takeUntil(this.$unSubscribe),
+      tap(eventType => {
+        this.eventFormVisual.eventDate = !(eventType == 7 || eventType == 6);
+        this.eventFormVisual.failureDate = !(eventType == 7 || eventType == 6);
+        this.eventFormVisual.thirdId = !(eventType == 7 || eventType == 6);
+        // }
+      })
+    );
   }
 
   getUserDelegation() {
@@ -161,7 +176,18 @@ export class EventDataFormComponent extends BasePage implements OnInit {
       tap(event => {
         this.loading = false;
         this.alert('success', 'El Evento ha sido Guardado', '');
-        this.eventForm.patchValue(event);
+        this.eventForm.patchValue({
+          ...event,
+          thirdId: event.thirdId ? `${event.thirdId}` : null,
+          eventTpId: event.eventTpId ? `${event.eventTpId}` : null,
+          tpsolavalId: event.tpsolavalId ? `${event.tpsolavalId}` : null,
+          eventDate: event?.eventDate ? new Date(event?.eventDate) : null,
+          eventClosingDate: event?.eventClosingDate
+            ? new Date(event?.eventClosingDate)
+            : null,
+          failureDate: event?.failureDate ? new Date(event?.failureDate) : null,
+        });
+        console.log(this.eventForm.value);
       }),
       catchError(error => {
         this.loading = false;
