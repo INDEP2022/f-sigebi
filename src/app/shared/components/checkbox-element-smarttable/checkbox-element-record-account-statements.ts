@@ -14,7 +14,14 @@ interface CheckboxElementData {
         (change)="onToggle($event)" />
     </div>
   `,
-  styles: [],
+  styles: [
+    `
+      :host(.disabled-checkbox) input[type='checkbox'] {
+        opacity: 0.5; /* Reduce la opacidad para simular el estilo desactivado */
+        pointer-events: none; /* Evita la interacción con el checkbox */
+      }
+    `,
+  ],
 })
 export class CheckboxElementRecordAccountStatementsComponent {
   checked: boolean;
