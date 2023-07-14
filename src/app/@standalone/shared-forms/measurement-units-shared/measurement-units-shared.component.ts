@@ -62,14 +62,15 @@ export class MeasurementUnitsSharedComponent
         this.measurementUnits = new DefaultSelect(data.data, data.count);
       },
       err => {
-        console.log(err);
+        this.measurementUnits = new DefaultSelect();
+        /* console.log(err);
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
           error = err.error.message;
         }
-        this.measurementUnits = new DefaultSelect([], 0);
+        this.measurementUnits = new DefaultSelect([], 0); */
         // this.onLoadToast('error', 'Error', error);
       },
       () => {}

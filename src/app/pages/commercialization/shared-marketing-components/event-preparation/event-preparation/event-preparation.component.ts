@@ -1,17 +1,17 @@
-import { trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { CreateNewEventModalComponent } from '../create-new-event-modal/create-new-event-modal.component';
-import { SelectEventModalComponent } from '../select-event-modal/select-event-modal.component';
-import { EVENT_PREPARATION_GOODS_COLUMNS } from './even-preparation-goods-columns';
-import { EVENT_PREPARATION_ALLOTMENT_COLUMNS } from './event-preparation-allotment-columns';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 //XLSX
-import { ExcelService } from 'src/app/common/services/excel.service';
-import * as XLSX from 'xlsx';
-import { AddEditLoteModalComponent } from '../add-edit-lote-modal/add-edit-lote-modal.component';
-import { GroundsStatusModalComponent } from '../grounds-status-modal/grounds-status-modal.component';
+import { sub } from 'date-fns';
+import { TabsetComponent } from 'ngx-bootstrap/tabs';
+import { catchError, tap, throwError } from 'rxjs';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
+import { ComerEventForm } from '../utils/forms/comer-event-form';
+import { EventStadisticsForm } from '../utils/forms/event-stadistics-form';
+import { EventPreparationMain } from './event-preparation-main.component';
+
+const LOTES_TAB = 2;
 
 @Component({
   selector: 'app-event-preparation',
@@ -22,260 +22,222 @@ import { GroundsStatusModalComponent } from '../grounds-status-modal/grounds-sta
         background-color: #e3e3e3;
         border-radius: 8px !important;
       }
+
+      li.nav-item.active > a.nav-link.active {
+        background-color: #9d2449 !important;
+        color: #f0e4d1 !important;
+      }
     `,
   ],
-  animations: [
-    trigger('OnEventSelected', [
-      //  transition(':enter', [
-      //    style({ opacity: 0 }),
-      //    animate('500ms', style({ opacity: 1 })),
-      //  ]),
-      //  transition(':leave', [animate('500ms', style({ opacity: 0 }))]),
-    ]),
-  ],
 })
-export class EventPreparationComponent extends BasePage implements OnInit {
-  form: FormGroup = new FormGroup({});
-
-  event: any = null;
-  authKey: string = '';
-
-  columns: any[] = [];
-
-  settings2 = {
-    ...this.settings,
-    actions: false,
-  };
-
-  totalItems: number = 0;
-  get check() {
-    return this.form.get('check');
+export class EventPreparationComponent
+  extends EventPreparationMain
+  implements OnInit
+{
+  eventForm = this.fb.group(new ComerEventForm());
+  stadisticsForm = this.fb.group(new EventStadisticsForm());
+  @ViewChild('tasksTabs', { static: true }) tasksTabs?: TabsetComponent;
+  get eventControls() {
+    return this.eventForm.controls;
   }
-
   constructor(
-    private modalService: BsModalService,
-    private excelService: ExcelService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private parameterModService: ParametersModService,
+    private authService: AuthService
   ) {
     super();
-    (this.settings = {
-      ...this.settings,
-      actions: {
-        columnTitle: 'Detalles',
-        add: true,
-        delete: true,
-        position: 'right',
-      },
-      columns: { ...EVENT_PREPARATION_ALLOTMENT_COLUMNS },
-    }),
-      (this.settings2.columns = EVENT_PREPARATION_GOODS_COLUMNS);
+    // TODO: Recibir los parametros
+    this.parameters.pDirection = 'M';
   }
 
   ngOnInit(): void {
-    // this.params
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.getData());
-    this.prepareForm();
+    this.initForm();
+    this.getUserInfo();
   }
 
-  private prepareForm() {
-    this.form = this.fb.group({
-      check: [false],
-    });
+  getUserInfo() {
+    this.loggedUser = this.authService.decodeToken();
   }
 
-  openModal(context?: Partial<SelectEventModalComponent>) {
-    const modalRef = this.modalService.show(SelectEventModalComponent, {
-      initialState: { ...context },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+  /** PUP_INCIALIZA_FORMA */
+  initForm() {
+    this.defaultMenu();
+    this.blkTasks.tDirection = 'MUEBLES';
+    // TODO: SET_ITEM_PROPERTY('BLK_BIENES_LOTES.CAMPO1', PROMPT_TEXT, 'Nombre Prod');
+    this.blkCtrlMain.chkLocation = true;
+    this.blkCtrlMain.chkProc = true;
+    this.getCommerParameterMod().subscribe();
+    this.hideCanvas();
   }
 
-  openModal2(): void {
-    const modalRef = this.modalService.show(CreateNewEventModalComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-  }
-  groundsStatus(): void {
-    const modalRef = this.modalService.show(GroundsStatusModalComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-  }
-  // openModal3(): void {
-  //   const modalRef = this.modalService.show(
-  //     AddEditLoteModalComponent,
-  //     {
-  //       class: 'modal-lg modal-dialog-centered',
-  //       ignoreBackdropClick: true,
-  //     }
-  //   );
-  // }
-
-  getData() {
-    this.loading = true;
-    this.columns = this.data;
-    this.totalItems = this.data.length;
-    this.loading = false;
+  getCommerParameterMod() {
+    const params = new FilterParams();
+    params.addFilter('parameter', 'DIAREMAUTO');
+    return this.parameterModService.getByParameter('DIAREMAUTO').pipe(
+      catchError(error => {
+        this.parameters.pDays = 0;
+        return throwError(() => error);
+      }),
+      tap(res => {
+        const parameter = res.data[0];
+        if (!parameter) {
+          return;
+        }
+        this.parameters.pDays = Number(parameter.value);
+      })
+    );
   }
 
-  openModal3(context?: Partial<AddEditLoteModalComponent>) {
-    const modalRef = this.modalService.show(AddEditLoteModalComponent, {
-      initialState: { ...context },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+  /** PUP_MENU_DEFAULT */
+  defaultMenu() {
+    if (this.parameters.pDirection == 'I') {
+      // ? No hace nada
+    }
   }
 
-  openForm(allotment?: any) {}
+  hideCanvas() {
+    this.canvas.main = false;
+    // this.canvas.events = false;
+    // HIDE_VIEW('CAN_PRINCIPAL');
+    // HIDE_VIEW('CAN_EVENTOS');
+    // HIDE_VIEW('CANVAS_RECHAZADO');
+    // HIDE_VIEW('CAN_CLIENTES');
+    // HIDE_VIEW('CAN_ADJUDIREC');
+    // HIDE_VIEW('CAN_CONVOCATORIA');
+    // HIDE_VIEW('CAN_LOTES_PAQUETES');
+    // HIDE_VIEW('CAN_REMESAS');
+    // HIDE_VIEW('CANV_EVELOTE');
+  }
 
-  delete(allotment: any) {
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      'Desea eliminar este registro?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        //Ejecutar el servicio
+  selectTab(num: number) {
+    const tab = this.tasksTabs.tabs[num];
+    if (tab) {
+      console.log('Deberia cambiar');
+
+      tab.active = true;
+    }
+  }
+
+  newEvent() {
+    this.eventForm.reset();
+    this.canvas.main = false;
+  }
+
+  taskOpenEvent() {
+    this.hideCanvas();
+    // TODO: Limpiar estadisticas
+    const params = new FilterParams();
+    this.comerEventsListParams.next(params);
+  }
+
+  /**
+   * ABRIR_EVENTO
+   */
+  onOpenEvent() {
+    this.parameters.pValids = 1;
+    const user = this.loggedUser.preferred_username;
+    const { statusVtaId, eventTpId, id } = this.eventControls;
+    // TODO: IMPLEMENTAR METODO DE VALIDACION DE USUARIO
+    const pass = this.validUser(id.value, user, this.parameters.pDirection);
+    if (['NDIS', 'CONC'].includes(statusVtaId.value)) {
+      if (pass == 0) {
+        this.validPermissions(false);
+      } else {
+        this.validPermissions(true);
       }
+    } else if ([7, 8].includes(Number(eventTpId.value))) {
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+      const { subYear, subMonth } = this.getSubDates(currentDate);
+      if (year !== subYear || month !== subMonth) {
+        this.validPermissions(false);
+      }
+      if (pass == 0) {
+        this.validPermissions(false);
+      } else if (pass == 1) {
+        this.validPermissions(true);
+      }
+    } else if (pass == 0) {
+      this.validPermissions(false);
+    } else {
+      this.validPermissions(true);
+    }
+    this.openEvent();
+    this.fillStadistics();
+  }
+
+  /**
+   * PUP_ABRIR_EVENTO
+   */
+  openEvent() {
+    const { id } = this.eventControls;
+    if (!id.value) {
+      const params = new FilterParams();
+      this.comerEventsListParams.next(params);
+      return;
+    }
+    this.hideCanvas();
+    this.canvas.main = true;
+    this.openExistingEvent();
+  }
+
+  openExistingEvent() {
+    const { eventTpId } = this.eventControls;
+    if (eventTpId.value == 11) {
+      this.eventFormVisual.eventDate = false;
+      this.eventFormVisual.failureDate = false;
+      this.eventFormVisual.thirdId = false;
+    } else if (eventTpId.value == 6) {
+      this.eventFormVisual.eventDate = false;
+      this.eventFormVisual.failureDate = false;
+    } else {
+      this.eventFormVisual.eventDate = true;
+      this.eventFormVisual.failureDate = true;
+    }
+    this.selectTab(LOTES_TAB);
+  }
+
+  /**
+   * LLENA_DATOS_ESTADISTICOS
+   */
+  fillStadistics() {}
+
+  getSubDates(currentDate: Date) {
+    const subDate = sub(currentDate, {
+      days: this.parameters.pDays,
     });
+    const subYear = subDate.getFullYear();
+    const subMonth = subDate.getMonth() + 1;
+    return { subYear, subMonth };
   }
 
-  ReadExcel(event: any) {
-    let file = event.target.files[0];
+  viewCustomers() {
+    this.canvas.main = true;
+  }
 
-    let fileReader = new FileReader();
-    fileReader.readAsBinaryString(file);
+  validUser(eventId: string | number, user: string, direction: 'I' | 'M') {
+    return 1;
+  }
 
-    fileReader.onload = e => {
-      var workbook = XLSX.read(fileReader.result, { type: 'binary' });
-      var sheetNames = workbook.SheetNames;
-      this.data2 = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]]);
-      console.log(this.data2);
+  validPermissions(grant: boolean) {
+    this.blkProperties = {
+      eventBlk: {
+        update: grant,
+      },
+      lotComerBlk: {
+        update: grant,
+        insert: grant,
+      },
+      goodsLotsBlk: {
+        update: grant,
+        insert: grant,
+        delete: grant,
+      },
+      comerAdjBlk: {
+        update: grant,
+      },
     };
+    this.parameters.pValids = grant ? 1 : 0;
   }
-
-  exportAsXLSX(): void {
-    this.excelService.exportAsExcelFile(this.data, 'lotes_preparando_evento');
-  }
-
-  //Datos de prueba para lotes
-  data = [
-    {
-      lote: '1148',
-      descripcion: 'Aduana Dos Bocas (1)',
-      valorbase: '0',
-      idcliente: '240',
-      rfc: 'SIIR480502JA1',
-    },
-    {
-      lote: '1243',
-      descripcion: 'Aduana Cd. Hidalgo',
-      valorbase: '0',
-      idcliente: '1596',
-      rfc: 'PETJ700101',
-    },
-    {
-      lote: '1414',
-      descripcion: 'Aduana Salina Cruz',
-      valorbase: '0',
-      idcliente: '1458',
-      rfc: 'REMJ760712',
-    },
-    {
-      lote: '3213',
-      descripcion: 'ALAF Oaxaca',
-      valorbase: '0',
-      idcliente: '1507',
-      rfc: 'MOAR670630',
-    },
-  ];
-
-  //Datos prueba de bienesdescripcion
-  data2 = [
-    {
-      no_bien: '78946',
-      descripcion: 'PIEZA, LLAVES PARA DADOS, MARCA PITTSBURGH',
-      transferente: '451',
-      estatus: 'CPV',
-      cantidad: '2',
-      valorAvaluo: '',
-      eventoParticipante: '',
-      loteParticipante: '',
-      eventoRemPre: '',
-      loteRemPre: '',
-      valorBase: '',
-      precioFinal: '',
-      precioSIva: '',
-      ivaFinal: '',
-    },
-    {
-      no_bien: '14789',
-      descripcion:
-        '17 PIEZAS, CARTUCHOS DE VIDEO JUEGOS, 6 DE GAME CUBE, 7 GAME BOY ADVANCE Y 4 NINTENDO DS, EN BUEN ESTADO FISICO',
-      transferente: '32',
-      estatus: 'CPV',
-      cantidad: '17',
-      valorAvaluo: '',
-      eventoParticipante: '',
-      loteParticipante: '',
-      eventoRemPre: '',
-      loteRemPre: '',
-      valorBase: '',
-      precioFinal: '',
-      precioSIva: '',
-      ivaFinal: '',
-    },
-    {
-      no_bien: '9874',
-      descripcion:
-        '140 PIEZAS, GORRAS BEISBOLERAS, MARCA BIG, EN BUEN ESTADO FISICO',
-      transferente: '321',
-      estatus: 'CPV',
-      cantidad: '140',
-      valorAvaluo: '',
-      eventoParticipante: '',
-      loteParticipante: '',
-      eventoRemPre: '',
-      loteRemPre: '',
-      valorBase: '',
-      precioFinal: '',
-      precioSIva: '',
-      ivaFinal: '',
-    },
-    {
-      no_bien: '25849',
-      descripcion: '50 PIEZAS DE LENTES, EN REGULAR ESTADO FÍSICO.',
-      transferente: '357',
-      estatus: 'CPV',
-      cantidad: '9',
-      valorAvaluo: '',
-      eventoParticipante: '',
-      loteParticipante: '',
-      eventoRemPre: '',
-      loteRemPre: '',
-      valorBase: '',
-      precioFinal: '',
-      precioSIva: '',
-      ivaFinal: '',
-    },
-    {
-      no_bien: '98541',
-      descripcion: 'PIEZAS DE BALATAS',
-      transferente: '1874',
-      estatus: 'CPV',
-      cantidad: '1',
-      valorAvaluo: '',
-      eventoParticipante: '',
-      loteParticipante: '',
-      eventoRemPre: '',
-      loteRemPre: '',
-      valorBase: '',
-      precioFinal: '',
-      precioSIva: '',
-      ivaFinal: '',
-    },
-  ];
 }

@@ -9,27 +9,21 @@
     <div class="row mt-3 mb-3">
       <form class="form-material" [formGroup]="form">
         <div class="row mt-4">
-          <div class="col-md-12">
+          <div class="col-md-12 mb-3">
             <form-field class="w-100" [control]="form.get('PARA')">
               <ngx-select
-                (fetchItems)="getNameDist($event)"
-                label="Para"
-                [data]="list2"
-                className="scroll-line"
                 [form]="form"
-                value="email"
-                bindLabel="nombre"
-                [searchable]="false"
-                [searchOnInit]="true"
                 [multiple]="true"
-                [control]="'PARA'"
+                [searchOnInit]="true"
+                className="scroll-line"
+                control="PARA"
+                [data]="list2"
+                value="email"
+                bindLabel="email"
+                (fetchItems)="getNameDist($event)"
                 (change)="changeName($event)"
-                [labelTemplate]="label"
-                [optionTemplate]="opt">
-              </ngx-select>
-              <ng-template #label let-item="item">
-                {{ item.email }}
-              </ng-template>
+                label="Para"
+                [optionTemplate]="opt"></ngx-select>
               <ng-template #opt let-item="item">
                 <div [title]="item.nombre + '-' + item.email">
                   {{ item.nombre }} - {{ item.email }}
@@ -37,35 +31,44 @@
               </ng-template>
             </form-field>
           </div>
-          <div class="col-md-12">
+          <div class="col-md-12 mb-3">
             <form-field class="w-100" [control]="form.get('USER')">
               <ngx-select
-                (fetchItems)="getNameRemit($event)"
-                label="C.C"
-                [data]="list"
-                className="scroll-line"
                 [form]="form"
-                value="email"
-                bindLabel="nombre"
-                [searchable]="false"
-                [searchOnInit]="true"
                 [multiple]="true"
-                [control]="'USER'"
+                [searchOnInit]="true"
+                className="scroll-line"
+                control="USER"
+                [data]="list"
+                value="email"
+                bindLabel="email"
+                (fetchItems)="getNameRemit($event)"
                 (change)="changeName($event)"
-                [labelTemplate]="label"
-                [optionTemplate]="opt">
-              </ngx-select>
-              <ng-template #label let-item="item">
-                {{ item.email }}
-              </ng-template>
+                label="C.C"
+                s
+                [optionTemplate]="opt"></ngx-select>
               <ng-template #opt let-item="item">
                 <div [title]="item.nombre + '-' + item.email">
                   {{ item.nombre }} - {{ item.email }}
                 </div>
               </ng-template>
+
+              <!-- <ngx-select (fetchItems)="getNameRemit($event)" label="C.C" [data]="list"
+                                className="scroll-line" [form]="form" value="email" bindLabel="nombre"
+                                [searchable]="false" [searchOnInit]="true" [multiple]="true" [control]="'USER'"
+                                (change)="changeName($event)" [labelTemplate]="label" [optionTemplate]="opt">
+                            </ngx-select>
+                            <ng-template #label let-item="item">
+                                {{ item.email }}
+                            </ng-template>
+                            <ng-template #opt let-item="item">
+                                <div [title]="item.nombre + '-' + item.email">
+                                    {{ item.nombre }} - {{ item.email }}
+                                </div>
+                            </ng-template> -->
             </form-field>
           </div>
-          <div class="col-md-12">
+          <div class="col-md-12 mb-3">
             <form-field [control]="form.get('ASUNTO')" label="Asunto">
               <input
                 type="text"
@@ -75,7 +78,7 @@
                 oninput="if(this.value.length > 50) this.value = this.value.slice(0, 50)" />
             </form-field>
           </div>
-          <div class="col-md-12">
+          <div class="col-md-12 mb-3">
             <form-field [control]="form.get('FECHA_ENV')" label="Fecha Envio">
               <input
                 formControlName="FECHA_ENV"
@@ -84,7 +87,7 @@
                 [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
             </form-field>
           </div>
-          <div class="col-md-12">
+          <div class="col-md-12 mb-3">
             <form-field [control]="form.get('MENSAJE')" label="Mensaje">
               <textarea
                 class="form-control"
@@ -94,13 +97,13 @@
                 oninput="if(this.value.length > 10000) this.value = this.value.slice(0, 10000)"></textarea>
             </form-field>
           </div>
-          <!-- <div class="col-md-12">
+          <!-- <div class="col-md-12 mb-3">
                         <form-field [control]="form.get('LPARA')" label="LPara">
                             <input type="text" class="form-control" formControlName="LPARA" min="1"
                                 oninput="if(this.value.length > 50) this.value = this.value.slice(0, 50)" />
                         </form-field>
                     </div> -->
-          <div class="col-md-12">
+          <div class="col-md-12 mb-3">
             <form-field
               [control]="form.get('DELEGACION')"
               label="No. Delegación">
@@ -112,7 +115,7 @@
                 oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
             </form-field>
           </div>
-          <div class="col-md-12">
+          <div class="col-md-12 mb-3">
             <form-field [control]="form.get('PREVIO')" label="Previo">
               <input
                 type="text"
@@ -122,7 +125,7 @@
                 oninput="if(this.value.length > 4000) this.value = this.value.slice(0, 4000)" />
             </form-field>
           </div>
-          <div class="col-md-12">
+          <div class="col-md-12 mb-3">
             <form-field [control]="form.get('REMITENTE')" label="Remitente">
               <input
                 type="text"
@@ -132,7 +135,7 @@
                 oninput="if(this.value.length > 50) this.value = this.value.slice(0, 50)" />
             </form-field>
           </div>
-          <div class="col-md-12">
+          <div class="col-md-12 mb-3">
             <form-field [control]="form.get('REPORTE')" label="No. Reporte">
               <input
                 type="text"

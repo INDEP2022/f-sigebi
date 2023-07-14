@@ -20,7 +20,7 @@ export const GENERAL_DOCS_DOCUMENTS_VIEWER_COLUMNS = {
       type: 'custom',
       component: CustomDateMounthFilterComponent,
     },
-    valuePrepareFunction: (date: string) => formatDate(date),
+    // valuePrepareFunction: (date: string) => formatDate(date),
   },
   id: {
     title: 'Folio Universal',

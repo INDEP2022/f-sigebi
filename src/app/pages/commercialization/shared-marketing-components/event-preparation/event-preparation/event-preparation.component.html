@@ -5,15 +5,20 @@
     </div>
   </div>
   <div body>
-    <h6>MÓDULO COMERCIAL MUEBLES</h6>
+    <h6>MÓDULO COMERCIAL {{ blkTasks.tDirection }}</h6>
     <hr class="row" />
-    <div class="row">
-      <event-data-form></event-data-form>
+    <div class="row pb-2">
+      <event-data-form
+        [eventFormVisual]="eventFormVisual"
+        *ngIf="canvas.main"
+        [eventForm]="eventForm"
+        [parameters]="parameters"
+        [loggedUser]="loggedUser"></event-data-form>
     </div>
     <div class="row">
       <div class="md-tabs">
-        <tabset class="vertical-tabs" [vertical]="true" type="pills">
-          <tab>
+        <tabset [justified]="true" class="fill-custom-tab" #tasksTabs>
+          <tab (selectTab)="newEvent()">
             <ng-template tabHeading>
               <div class="row">
                 <div class="col-md-12 d-flex justify-content-between">
@@ -24,11 +29,12 @@
                 </div>
               </div>
             </ng-template>
-            <div class="row">
-              <div class="col-md-12"></div>
-            </div>
+            <reserved-goods
+              [eventForm]="eventForm"
+              [parameters]="parameters"
+              [loggedUser]="loggedUser"></reserved-goods>
           </tab>
-          <tab>
+          <tab [active]="true" (selectTab)="taskOpenEvent()">
             <ng-template tabHeading>
               <div class="row">
                 <div class="col-md-12 d-flex justify-content-between">
@@ -39,11 +45,13 @@
                 </div>
               </div>
             </ng-template>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt
-            adipisci, totam earum repudiandae illo aliquam quia deserunt
-            voluptate aperiam amet soluta? Sunt similique, eaque ullam aperiam
-            placeat facilis quidem corrupti.</tab
-          >
+            <commer-events-list
+              [params]="comerEventsListParams"
+              [parameters]="parameters"
+              (onOpenEvent)="onOpenEvent()"
+              [(globalEvent)]="globalEvent"
+              [eventForm]="eventForm"></commer-events-list>
+          </tab>
           <tab>
             <ng-template tabHeading>
               <div class="row">
@@ -55,11 +63,8 @@
                 </div>
               </div>
             </ng-template>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt
-            adipisci, totam earum repudiandae illo aliquam quia deserunt
-            voluptate aperiam amet soluta? Sunt similique, eaque ullam aperiam
-            placeat facilis quidem corrupti.</tab
-          >
+            <commer-packages-lots></commer-packages-lots
+          ></tab>
           <tab>
             <ng-template tabHeading>
               <div class="row">
@@ -71,11 +76,8 @@
                 </div>
               </div>
             </ng-template>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt
-            adipisci, totam earum repudiandae illo aliquam quia deserunt
-            voluptate aperiam amet soluta? Sunt similique, eaque ullam aperiam
-            placeat facilis quidem corrupti.</tab
-          >
+            <commer-event-customers></commer-event-customers
+          ></tab>
           <tab>
             <ng-template tabHeading>
               <div class="row">
@@ -111,6 +113,11 @@
         </tabset>
       </div>
     </div>
-    <div class="row"></div>
+    <div class="row">
+      <div class="col-md-12">
+        <event-preparation-stadistics
+          [stadisticsForm]="stadisticsForm"></event-preparation-stadistics>
+      </div>
+    </div>
   </div>
 </app-card>

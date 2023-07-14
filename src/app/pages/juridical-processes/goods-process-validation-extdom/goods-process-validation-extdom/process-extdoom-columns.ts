@@ -2,7 +2,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
 export const COLUMNS_GOODS_LIST_EXTDOM = {
-  goodId: { title: 'No. Bien' },
+  goodId: { title: 'No. Bien', sort: false },
   description: {
     title: 'Descripción',
     sort: false,
@@ -16,10 +16,10 @@ export const COLUMNS_GOODS_LIST_EXTDOM = {
       return value ? value : '';
     },
   },
-  unit: { title: 'Unidad' },
-  quantity: { title: 'Cantidad' },
-  status: { title: 'Estatus' },
-  extDomProcess: { title: 'Proceso' },
+  unit: { title: 'Unidad', sort: false },
+  quantity: { title: 'Cantidad', sort: false },
+  status: { title: 'Estatus', sort: false },
+  extDomProcess: { title: 'Proceso', sort: false },
   seleccion: {
     title: '',
     sort: false,
@@ -35,7 +35,7 @@ export const COLUMNS_GOODS_LIST_EXTDOM = {
 };
 
 export const COLUMNS_GOODS_LIST_EXTDOM_2 = {
-  goodId: { title: 'No. Bien' },
+  goodId: { title: 'No. Bien', sort: false },
   description: {
     title: 'Descripción',
     sort: false,
@@ -49,10 +49,42 @@ export const COLUMNS_GOODS_LIST_EXTDOM_2 = {
       return value ? value : '';
     },
   },
-  unit: { title: 'Unidad' },
-  quantity: { title: 'Cantidad' },
-  status: { title: 'Estatus' },
-  extDomProcess: { title: 'Proceso' },
+  unit: { title: 'Unidad', sort: false },
+  quantity: { title: 'Cantidad', sort: false },
+  status: { title: 'Estatus', sort: false },
+  extDomProcess: { title: 'Proceso', sort: false },
+  seleccion: {
+    title: '',
+    sort: false,
+    type: 'custom',
+    showAlways: true,
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+  },
+};
+export const COLUMNS_GOODS_LIST_EXTDOM_3 = {
+  goodId: { title: 'No. Bien', sort: false },
+  description: {
+    title: 'Descripción',
+    sort: false,
+    type: 'custom',
+    renderComponent: SeeMoreComponent,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'null' || value == 'undefined') {
+        return '';
+      }
+
+      return value ? value : '';
+    },
+  },
+  unit: { title: 'Unidad', sort: false },
+  quantity: { title: 'Cantidad', sort: false },
+  status: { title: 'Estatus', sort: false },
+  extDomProcess: { title: 'Proceso', sort: false },
   seleccion: {
     title: '',
     sort: false,
