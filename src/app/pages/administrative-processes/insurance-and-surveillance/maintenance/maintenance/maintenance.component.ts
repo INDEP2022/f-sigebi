@@ -100,11 +100,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.error({ error });
-        this.alert(
-          'error',
-          'Ha ocurrido un error',
-          'Error al querer eliminar el periodo.'
-        );
+        this.alert('error', 'Ha ocurrido un error', error.error.message);
       },
     });
   }
@@ -132,11 +128,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
             'Ya existe el período indicado en la el período destino'
           );
         } else {
-          this.alert(
-            'error',
-            'Ha ocurrido un error',
-            'Error al querer cambiar periodos.'
-          );
+          this.alert('error', 'Ha ocurrido un error', error.error.message);
         }
       },
     });
@@ -154,11 +146,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.error({ error });
-        this.alert(
-          'error',
-          'Ha ocurrido un error',
-          'Error al querer cambiar bienes de número aleatorio.'
-        );
+        this.alert('error', 'Ha ocurrido un error', error.error.message);
       },
     });
   }

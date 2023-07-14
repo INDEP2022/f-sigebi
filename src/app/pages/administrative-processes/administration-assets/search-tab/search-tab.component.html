@@ -6,9 +6,9 @@
           <form [formGroup]="searchTabForm" class="form-material">
             <div class="row">
               <div class="col-md-12">
-                <app-goods-types-shared
-                  (loadTypes)="(true)"
-                  [loadOnChangesNoBien]="false"
+                <app-goods-types-shared-Good
+                  [reloadGood]="reloadGood"
+                  [loadOnChangesNoBien]="true"
                   [goodselect]="goodSelect"
                   [form]="searchTabForm"
                   typeField="tipo"
@@ -18,7 +18,7 @@
                   (goodTypeChange)="getGoodType($event)"
                   (goodSssubtypeChange)="
                     getGoods($event)
-                  "></app-goods-types-shared>
+                  "></app-goods-types-shared-Good>
               </div>
             </div>
             <div class="row">
