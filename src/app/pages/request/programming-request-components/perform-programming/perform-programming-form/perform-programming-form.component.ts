@@ -310,7 +310,6 @@ export class PerformProgrammingFormComponent
     this.programmingService
       .getProgrammingId(this.idProgramming)
       .subscribe(data => {
-        console.log('info prog', data);
         this.dataProgramming = data;
         this.setDataProgramming();
       });
@@ -520,7 +519,6 @@ export class PerformProgrammingFormComponent
           regDelData,
           callback: (next: boolean) => {
             if (next) {
-              console.log('next', next);
               this.performForm
                 .get('regionalDelegationNumber')
                 .setValue(this.delegation);
@@ -613,7 +611,9 @@ export class PerformProgrammingFormComponent
     const state = this.searchGoodsForm.get('state').value;
 
     if (!municipality && !colony && !akaWarehouse && !postalCode && !state) {
-      this.getProgGoods();
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getProgGoods());
     }
 
     if (municipality && !colony && !akaWarehouse && !postalCode && !state) {
@@ -1230,9 +1230,12 @@ export class PerformProgrammingFormComponent
             }
           });
 
-          goodsFilter = goodsFilter.filter(item => item);
+          //goodsFilter = goodsFilter.filter(item => item);
+          this.estatesList.load(goodsFilter);
+          this.totalItems = response.count;
+          this.loadingGoods = false;
+          //this.filterGoodsProgramming(goodsFilter);
 
-          this.filterGoodsProgramming(goodsFilter);
           /*this.goodsProgCopy = goodsFilter;
           this.goodsProg = goodsFilter;
 
@@ -1266,7 +1269,6 @@ export class PerformProgrammingFormComponent
 
         if (filter.length > 0) {
           this.estatesList.load(filter);
-          this.totalItems = this.estatesList.count();
           this.loadingGoods = false;
         } else {
           this.alert(
@@ -1275,7 +1277,6 @@ export class PerformProgrammingFormComponent
             'No hay bienes disponibles para programar'
           );
           this.estatesList.load([]);
-          this.totalItems = filter.length;
           this.loadingGoods = false;
         }
       });
@@ -1309,7 +1310,9 @@ export class PerformProgrammingFormComponent
                 const _showGoods = await this.showGoodsTransportable(showGoods);
 
                 if (_showGoods) {
-                  this.getProgGoods();
+                  this.params
+                    .pipe(takeUntil(this.$unSubscribe))
+                    .subscribe(() => this.getProgGoods());
                   this.goodSelect = [];
                 }
               }
@@ -1493,7 +1496,9 @@ export class PerformProgrammingFormComponent
                         const _showGoods = await this.showGoodsGuard(showGoods);
 
                         if (_showGoods) {
-                          this.getProgGoods();
+                          this.params
+                            .pipe(takeUntil(this.$unSubscribe))
+                            .subscribe(() => this.getProgGoods());
                           this.goodSelect = [];
                         }
                       }
@@ -1624,7 +1629,9 @@ export class PerformProgrammingFormComponent
                       );
 
                       if (_showGoods) {
-                        this.getProgGoods();
+                        this.params
+                          .pipe(takeUntil(this.$unSubscribe))
+                          .subscribe(() => this.getProgGoods());
                         this.goodSelect = [];
                       }
                     }
@@ -1773,7 +1780,9 @@ export class PerformProgrammingFormComponent
               );
               const deleteGood = this.goodsTranportables.count();
               this.headingTransportable = `Transportable(${deleteGood})`;
-              this.getProgGoods();
+              this.params
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getProgGoods());
             });
         }
       }
@@ -1824,7 +1833,9 @@ export class PerformProgrammingFormComponent
               const deleteGood = this.goodsGuards.count();
               this.headingGuard = `Resguardo(${deleteGood})`;
 
-              this.getProgGoods();
+              this.params
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getProgGoods());
             });
         }
       }
@@ -1856,7 +1867,9 @@ export class PerformProgrammingFormComponent
               const deleteGood = this.goodsWarehouse.count();
               this.headingWarehouse = `Almacén INDEP(${deleteGood})`;
 
-              this.getProgGoods();
+              this.params
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getProgGoods());
             });
         }
       }
@@ -1910,7 +1923,6 @@ export class PerformProgrammingFormComponent
         const task = JSON.parse(localStorage.getItem('Task'));
         const updateTask = await this.updateTask(folio, task.id);
         if (updateTask) {
-          console.log('this.performForm.value', this.performForm.value);
           this.programmingGoodService
             .updateProgramming(this.idProgramming, this.performForm.value)
             .subscribe({
@@ -1928,9 +1940,7 @@ export class PerformProgrammingFormComponent
                 this.formLoading = false;
                 this.newTransferent = false;
               },
-              error: error => {
-                console.log('error', error);
-              },
+              error: error => {},
             });
         }
       }
@@ -2359,7 +2369,6 @@ export class PerformProgrammingFormComponent
       this.paramsAuthority.getValue()['filter.idAuthority'] = this.autorityId;
       this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
         next: response => {
-          console.log('response', response);
           const nameAndId = `${response.data[0].idAuthority} - ${response.data[0].authorityName}`;
           this.performForm.get('autorityId').setValue(nameAndId);
           this.idStation = this.dataProgramming.stationId;
@@ -2535,9 +2544,7 @@ export class PerformProgrammingFormComponent
           }
         }
       },
-      error: error => {
-        console.log('error', error);
-      },
+      error: error => {},
     });
   }
 }
