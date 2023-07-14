@@ -18,6 +18,7 @@ import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
+import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
 import { PREPARE_EVENT_EVENTS_LIST_COLUMNS } from '../../utils/table-columns/events-list-columns';
 
 @Component({
@@ -26,14 +27,17 @@ import { PREPARE_EVENT_EVENTS_LIST_COLUMNS } from '../../utils/table-columns/eve
   styles: [],
 })
 export class CommerEventsListComponent extends BasePage implements OnInit {
-  params = new BehaviorSubject(new FilterParams());
-  totalItems = 0;
+  @Input() params = new BehaviorSubject(new FilterParams());
   events = new LocalDataSource();
-
   @Input() globalEvent: IComerEvent = null;
   @Output() globalEventChange = new EventEmitter<IComerEvent>();
   @Input() eventForm: FormGroup<ComerEventForm>;
   @Output() onOpenEvent = new EventEmitter<void>();
+  @Input() parameters: IEventPreparationParameters;
+  get controls() {
+    return this.eventForm.controls;
+  }
+  totalItems = 0;
   constructor(private comerEventService: ComerEventService) {
     super();
     this.settings = {
@@ -85,7 +89,12 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
 
   getEvents(params: FilterParams) {
     this.loading = true;
-    return this.comerEventService.getAllFilter(params.getParams()).pipe(
+    const { id } = this.controls;
+    if (id.value) {
+      params.addFilter('id', id.value);
+    }
+    params.addFilter('address', this.parameters.pDirection);
+    return this.comerEventService.getEatEvents(params.getParams()).pipe(
       catchError(error => {
         this.loading = false;
         this.events.load([]);
@@ -95,6 +104,8 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
       }),
       tap(response => {
         this.loading = false;
+        console.log(response.data);
+
         this.events.load(response.data);
         this.events.refresh();
         this.totalItems = response.count;
@@ -110,8 +121,8 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
         eventDate: event.data?.eventDate
           ? new Date(event.data?.eventDate)
           : null,
-        closeDate: event.data?.closeDate
-          ? new Date(event.data?.closeDate)
+        eventClosingDate: event.data?.eventClosingDate
+          ? new Date(event.data?.eventClosingDate)
           : null,
         failureDate: event.data?.failureDate
           ? new Date(event.data?.failureDate)

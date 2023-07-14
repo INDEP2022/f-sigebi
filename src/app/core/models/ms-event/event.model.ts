@@ -27,6 +27,10 @@ export interface IComerEvent {
   closingEventDate?: Date;
   tpsolavalId?: number;
   applyIva?: string;
+  eventClosingDate?: string;
+  failureDate?: string;
+  thirdId?: string;
+  eventTpId?: string;
 }
 
 export interface IComerEventRl {
