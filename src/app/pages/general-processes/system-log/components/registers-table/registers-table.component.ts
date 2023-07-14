@@ -55,11 +55,7 @@ export class RegistersTableComponent
     const { no_registro } = row;
     if (!no_registro) {
       this.registerNum = null;
-      this.onLoadToast(
-        'warning',
-        'Advertencia',
-        'El dato no tiene el número de registro'
-      );
+      this.alert('warning', 'El dato no tiene el número de registro', ``);
       return;
     }
     this.registerNum = Number(no_registro);
