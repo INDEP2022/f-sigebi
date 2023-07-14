@@ -9,6 +9,7 @@ import {
 } from 'src/app/core/models/catalogs/bank-modelo-type-cuentas';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IAccountBank } from '../../models/catalogs/bank-account.model';
+import { IAccountDetailInd } from '../../models/ms-account-movements/account-detail-ind';
 import {
   IAccountMovement,
   INumeraryTransfer,
@@ -29,6 +30,17 @@ export class AccountMovementService extends HttpService {
     //
     return this.get<IListResponse<IAccountMovement>>(
       'account-movements',
+      params
+    );
+  }
+
+  getDetailsInd(
+    params: _Params,
+    body: { goodNumber: string; expedientNumber: number }
+  ) {
+    return this.post<IListResponse<IAccountDetailInd>>(
+      AccountmvmntEndpoint.getDetailsInd,
+      body,
       params
     );
   }

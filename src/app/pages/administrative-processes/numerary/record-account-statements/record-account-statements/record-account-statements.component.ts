@@ -61,6 +61,10 @@ export class RecordAccountStatementsComponent
   bankCode: string;
   checks: any;
 
+  dateMotionFilter: boolean;
+
+  accountNumber: number;
+
   paramsSubject: BehaviorSubject<ListParams> = new BehaviorSubject<ListParams>(
     new ListParams()
   );
@@ -103,7 +107,7 @@ export class RecordAccountStatementsComponent
     this.dataAccount
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
+      .subscribe((change: { action: string; filter: { filters: any } }) => {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
@@ -112,7 +116,12 @@ export class RecordAccountStatementsComponent
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'dateMotion':
-                searchFilter = SearchFilter.EQ;
+                if (filter.search != null) {
+                  filter.search = this.formatDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
                 break;
               case 'deposit':
                 searchFilter = SearchFilter.EQ;
@@ -147,13 +156,24 @@ export class RecordAccountStatementsComponent
     });
   }
 
+  formatDate(dateString: string): string {
+    if (dateString === '') {
+      return '';
+    }
+
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    return `${year}-${month}-${day}`;
+  }
+
   // Trae la lista de bancos por defecto
   searchBanks(params: ListParams) {
     this.loading = true;
     this.bankAccountSelect = new DefaultSelect();
-    this.dataAccount = new LocalDataSource();
     this.recordAccountStatementsService.getAll(params).subscribe({
-      next: response => {
+      next: (response: { data: any[]; count: number }) => {
         this.loading = true;
         this.banks = new DefaultSelect(response.data, response.count);
         this.loading = false;
@@ -242,8 +262,9 @@ export class RecordAccountStatementsComponent
         .getById2(this.bankCode, account, this.params.getValue())
         .subscribe({
           next: response => {
-            const filteredAccounts = response.data.filter(item =>
-              item.accountNumber.includes(account)
+            const filteredAccounts = response.data.filter(
+              (item: { accountNumber: string | any[] }) =>
+                item.accountNumber.includes(account)
             );
             this.bankAccountSelect = new DefaultSelect(
               filteredAccounts,
@@ -297,7 +318,7 @@ export class RecordAccountStatementsComponent
       this.form.get('description').setValue(currency);
     }
     this.tvalTable5Service.getCurrent(currency).subscribe({
-      next: response => {
+      next: (response: { data: any }) => {
         let current = response.data;
         let currentAccount = current[0].otvalor02;
         this.form.get('description').setValue(currentAccount);
@@ -334,7 +355,7 @@ export class RecordAccountStatementsComponent
         next: response => {
           this.balance = response.result + ' ' + this.current.replace(/'/g, '');
         },
-        error: error => {
+        error: (error: any) => {
           this.alert('warning', 'Error', 'No es posible generar el saldo');
         },
       });
@@ -342,6 +363,7 @@ export class RecordAccountStatementsComponent
 
   // Establece los valores de movimientos de la cuenta seleccionada a la tabla
   searchDataAccount(accountNumber: number) {
+    this.accountNumber = accountNumber;
     this.loading = true;
     let params = {
       ...this.params.getValue(),
@@ -350,28 +372,17 @@ export class RecordAccountStatementsComponent
     this.dataAccountPaginated = accountNumber;
     this.recordAccountStatementsAccountsService
       .getDataAccount(accountNumber, params)
-      .subscribe({
-        next: response => {
+      .subscribe(
+        (response: { data: any; count: any }) => {
           this.loading = true;
-          const data = response.data.map(item => {
-            const dateParts = item.dateMotion.split('-');
-            const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-            return { ...item, dateMotion: formattedDate };
-          });
+          const data = response.data;
           this.dataAccount.load(data);
           this.dataAccount.refresh();
           this.totalItems = response.count;
           this.loading = false;
         },
-        error: (err: any) => {
-          this.loading = false;
-          this.alert(
-            'warning',
-            'No existen movimientos de la cuenta seleccionada',
-            ``
-          );
-        },
-      });
+        (error: any) => (this.loading = false)
+      );
     this.searchFactasStatusCta(accountNumber);
   }
 
@@ -380,9 +391,8 @@ export class RecordAccountStatementsComponent
     this.recordAccountStatementsAccountsService
       .getFactasStatusCta(accountNumber)
       .subscribe({
-        next: response => {
+        next: (response: any) => {
           this.factasStatusCta = response;
-          console.log(this.factasStatusCta);
           this.loading = false;
         },
         error: (err: any) => {
@@ -408,6 +418,7 @@ export class RecordAccountStatementsComponent
       },
     };
     this.modalService.show(RecordAccountStatementsModalComponent, modalConfig);
+    this.searchDataAccount(this.accountNumber);
   }
 
   searchCheck() {
@@ -434,7 +445,7 @@ export class RecordAccountStatementsComponent
       'warning',
       'Eliminar',
       '¿Desea eliminar este movimiento?'
-    ).then(question => {
+    ).then((question: { isConfirmed: any }) => {
       if (question.isConfirmed) {
         this.delete(movimentAccount, modal);
       }
@@ -443,7 +454,6 @@ export class RecordAccountStatementsComponent
 
   delete(movimentAccount: IRecordAccountStatements, modal: any) {
     let showAlert = false;
-
     if (
       movimentAccount.numberMotionTransfer !== null ||
       movimentAccount.numberReturnPayCheck !== null ||
@@ -491,11 +501,11 @@ export class RecordAccountStatementsComponent
         showAlert = true;
       } else {
         this.recordAccountStatementsAccountsService.remove(modal).subscribe({
-          next: response => {
+          next: (response: any) => {
             this.searchDataAccount(this.dataAccountPaginated);
             this.alert('success', 'Movimiento eliminado', '');
           },
-          error: err => {
+          error: (err: any) => {
             this.alert('error', 'No es posible eliminar el movimiento', '');
           },
         });

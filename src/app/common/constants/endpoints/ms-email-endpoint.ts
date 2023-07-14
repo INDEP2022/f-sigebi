@@ -5,4 +5,5 @@ export enum EmailEndPoint {
   VigEmailBody = 'vig-email-body',
   VigEmailSend = 'vig-email-send',
   VigMailBook = 'vig-mail-book',
+  DataEmail = 'data-mail',
 }

@@ -17,7 +17,7 @@ import {
       <input
         [disabled]="disabled"
         #box
-        class="custom-field"
+        class="common-check custom-checkbox"
         [checked]="checked"
         (change)="onToggle($event)"
         type="checkbox" />

@@ -116,8 +116,8 @@ export class GeneralDataGoodsComponent
     if (required) {
       this.alert(
         'warning',
-        'Datos inventario',
-        'Debe llenar los valores requeridos.'
+        'Datos Inventario',
+        'Debe llenar los Valores Requeridos.'
       );
       return;
     }
@@ -155,13 +155,13 @@ export class GeneralDataGoodsComponent
         this.viewAct = !this.viewAct;
         this.disableUpdate = !this.disableUpdate;
         this.good = resp;
-        this.alert('success', 'Datos del bien actualizados', '');
+        this.alert('success', 'Datos del Bien Actualizados', '');
         setTimeout(() => {
           this.goodChange++;
         }, 100);
       },
       error: err => {
-        this.alert('error', 'Error al actualizar el bien', '');
+        this.alert('error', 'Error al Actualizar el Bien', '');
       },
     });
   }

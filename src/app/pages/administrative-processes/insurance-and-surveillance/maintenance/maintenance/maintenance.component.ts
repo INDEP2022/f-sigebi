@@ -100,11 +100,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.error({ error });
-        this.alert(
-          'error',
-          'Ha ocurrido un error',
-          'Error al querer eliminar el periodo.'
-        );
+        this.alert('error', 'Ha ocurrido un error', error.error.message);
       },
     });
   }
@@ -121,11 +117,19 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.error({ error });
-        this.alert(
-          'error',
-          'Ha ocurrido un error',
-          'Error al querer cambiar periodos.'
-        );
+
+        if (
+          error.error.message ==
+          'duplicate key value violates unique constraint "pk_vig_supervision_mae"'
+        ) {
+          this.alert(
+            'error',
+            'Ha ocurrido un error',
+            'Ya existe el período indicado en la el período destino'
+          );
+        } else {
+          this.alert('error', 'Ha ocurrido un error', error.error.message);
+        }
       },
     });
   }
@@ -142,11 +146,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.error({ error });
-        this.alert(
-          'error',
-          'Ha ocurrido un error',
-          'Error al querer cambiar bienes de número aleatorio.'
-        );
+        this.alert('error', 'Ha ocurrido un error', error.error.message);
       },
     });
   }
@@ -297,6 +297,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       pIdFor,
       pIdCopy,
       pIdBody,
+      pUser,
     } = this.getParams();
 
     return {
@@ -315,6 +316,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       pIdFor,
       pIdCopy,
       pIdBody,
+      pUser,
     };
   }
 
@@ -404,6 +406,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
 
       pAddress: changeGoodsRandom.description,
       pTransferee: changeGoodsRandom.transference,
+      pUser: this.token.decodeToken().preferred_username,
     };
   }
 }

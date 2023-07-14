@@ -127,7 +127,7 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
     const response = await this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     );
     if (response.isConfirmed) {
       this.delete(good.id);
@@ -141,14 +141,14 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
         this.alert(
           'success',
           'Datos Menaje',
-          `Se elimino el Menaje N° ${idGood}`
+          `Se Elimino el Menaje N° ${idGood}`
         );
       },
       error: err => {
         this.alert(
           'error',
-          'Ha ocurrido un error',
-          `No se pudo eliminar el Menaje N° ${idGood}`
+          'Ha Ocurrido un Error',
+          `No se Pudo Eliminar el Menaje N° ${idGood}`
         );
       },
     });

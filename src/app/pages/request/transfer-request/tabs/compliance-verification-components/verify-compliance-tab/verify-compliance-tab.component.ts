@@ -549,15 +549,19 @@ export class VerifyComplianceTabComponent
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       if (res === 'UPDATE-GOOD') {
-        this.goodData.getElements().then(data => {
-          data.map((item: any) => {
-            if (item.id === this.goodsSelected[0].id) {
-              item.processStatus = 'SOLICITAR_ACLARACION';
-              item.goodStatus = 'SOLICITUD DE ACLARACION';
-            }
-          });
-          this.goodData.load(data);
-        });
+        /*  this.goodData.getElements().then(data => {
+           data.map((item: any) => {
+             if (item.id === this.goodsSelected[0].id) {
+               item.processStatus = 'SOLICITAR_ACLARACION';
+               item.goodStatus = 'SOLICITUD DE ACLARACION';
+               item.selected = false;
+             }
+           });
+           this.goodData.load(data);
+         }); */
+        this.getData();
+        this.goodsSelected = [];
+        this.clarificationData = [];
       }
     });
   }
@@ -884,9 +888,11 @@ export class VerifyComplianceTabComponent
         if (item.id === this.goodsSelected[0].id) {
           item.goodStatus = goodStatus;
           item.processStatus = processStatus;
+          item.selected = false;
         }
       });
       this.goodData.load(data);
+      this.goodsSelected = [];
     });
   }
 

@@ -20,6 +20,7 @@ import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { BankService } from 'src/app/core/services/catalogs/bank.service';
 import { MsDepositaryPaymentService } from 'src/app/core/services/ms-depositarypayment/ms-depositarypayment.service';
 //import { MassiveDepositaryService } from 'src/app/core/services/ms-massivedepositary/massivedepositary.service';
+import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { MassiveDepositaryService } from 'src/app/core/services/ms-massivedepositary/massivedepositary.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -76,7 +77,8 @@ export class DepositaryPaymentChargesComponent
     private massiveGoodService: MassiveGoodService,
     private usersService: UsersService,
     private bankService: BankService,
-    private massiveDepositaryService: MassiveDepositaryService
+    private massiveDepositaryService: MassiveDepositaryService,
+    private nomDepositoryService: MsDepositaryService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -289,6 +291,10 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
     );
 
     console.log(this.ItemsJson[0]);
+    if (this.ItemsJson[0] == null || this.ItemsJson[0] == undefined) {
+      this.alertInfo('info', 'El bien no cuenta con pagos cargados', '');
+      return;
+    }
     this.form.get('event').setValue(this.ItemsJson[0].description);
     this.form.get('cve_bank').setValue(this.ItemsJson[0].cve_bank);
     this.form.get('loand').setValue(this.ItemsJson[0].amount);
@@ -439,6 +445,7 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
     this.form.reset();
     this.data = [];
     this.fileUpload.nativeElement.value = '';
+    this.totalItems = 0;
   }
 
   /* Metodo de guardado de la data cargada
@@ -450,8 +457,14 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
       const index = _i + 1;
       let body: IRefPayDepositary = {
         movementNumber: item.NO_MOVIMIENTO,
-        reference: item.REFERENCIA != null ? item.REFERENCIA : '0',
-        referenceori: item.REFERENCIAORI != null ? item.REFERENCIAORI : '0',
+        reference:
+          item.REFERENCIA != null
+            ? Math.floor(item.REFERENCIA).toString()
+            : '0',
+        referenceori:
+          item.REFERENCIAORI != null
+            ? Math.floor(item.REFERENCIAORI).toString()
+            : '0',
         date: item.FECHA,
         amount: item.MONTO,
         description: item.DESCPAGO,
@@ -474,7 +487,17 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
         invoice_oi: null,
         indicator: 0,
       };
-      const result = await this.saveRefPayDepositaryData(body);
+      const result: any = await this.saveRefPayDepositaryData(body);
+
+      const haveReference = await this.getAppointmentByGoodId(item.NO_BIEN);
+      console.log(haveReference);
+      if (haveReference == true) {
+        const body: any = {
+          appointmentNum: result.appointmentNum,
+          reference: item.RESULTADO,
+        };
+        const updated = await this.updateReferencia(body);
+      }
       if (result) {
         newData.push(result);
 
@@ -492,6 +515,33 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
       this.Service.postRefPayDepositories(data).subscribe({
         next: resp => {
           resolve(resp);
+        },
+      });
+    });
+  }
+
+  updateReferencia(body: any) {
+    return new Promise((resolve, reject) => {
+      this.nomDepositoryService.updateDepositaryAppointments(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+      });
+    });
+  }
+
+  getAppointmentByGoodId(id: any) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.goodNum'] = `$eq:${id}`;
+      params['filter.revocation'] = `$eq:N`;
+      this.nomDepositoryService.getAppointments(params).subscribe({
+        next: resp => {
+          if (resp.data[0].reference != null) {
+            resolve(false);
+          } else {
+            resolve(true);
+          }
         },
       });
     });
