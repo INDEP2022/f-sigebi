@@ -289,6 +289,10 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
     );
 
     console.log(this.ItemsJson[0]);
+    if (this.ItemsJson[0] == null || this.ItemsJson[0] == undefined) {
+      this.alertInfo('info', 'El bien no cuenta con pagos cargados', '');
+      return;
+    }
     this.form.get('event').setValue(this.ItemsJson[0].description);
     this.form.get('cve_bank').setValue(this.ItemsJson[0].cve_bank);
     this.form.get('loand').setValue(this.ItemsJson[0].amount);
@@ -450,8 +454,14 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
       const index = _i + 1;
       let body: IRefPayDepositary = {
         movementNumber: item.NO_MOVIMIENTO,
-        reference: item.REFERENCIA != null ? item.REFERENCIA : '0',
-        referenceori: item.REFERENCIAORI != null ? item.REFERENCIAORI : '0',
+        reference:
+          item.REFERENCIA != null
+            ? Math.floor(item.REFERENCIA).toString()
+            : '0',
+        referenceori:
+          item.REFERENCIAORI != null
+            ? Math.floor(item.REFERENCIAORI).toString()
+            : '0',
         date: item.FECHA,
         amount: item.MONTO,
         description: item.DESCPAGO,

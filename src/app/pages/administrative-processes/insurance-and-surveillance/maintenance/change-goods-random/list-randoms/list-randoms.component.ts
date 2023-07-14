@@ -11,7 +11,7 @@ import {
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { SURVEILLANCE_SERVICE_COLUMNS } from '../../../surveillance-service/surveillance-service/surveillance-service-columns';
+import { COLUMNS } from '../../../surveillance-service/surveillance-service/list/columns';
 
 @Component({
   selector: 'app-list-randoms',
@@ -43,22 +43,7 @@ export class ListRandomsComponent extends BasePage implements OnInit {
       ...this.settings,
       hideSubHeader: false,
       actions: false,
-      columns: SURVEILLANCE_SERVICE_COLUMNS,
-      rowClassFunction: (row: any) => {
-        if (row.data.genderTransfer == 'S') {
-          return 'bg-success text-white';
-        }
-
-        if (row.data.numberMotionTransfer != null) {
-          return 'bg-warning text-white';
-        }
-
-        if (row.data.numberReturnPayCheck != null) {
-          return 'bg-info text-white';
-        } else {
-          return '';
-        }
-      },
+      columns: COLUMNS,
     };
   }
 
@@ -77,7 +62,7 @@ export class ListRandomsComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              randomId: () => (searchFilter = SearchFilter.EQ),
+              recordId: () => (searchFilter = SearchFilter.EQ),
               goodNumber: () => (searchFilter = SearchFilter.EQ),
               address: () => (searchFilter = SearchFilter.ILIKE),
               transferee: () => (searchFilter = SearchFilter.ILIKE),
@@ -102,12 +87,42 @@ export class ListRandomsComponent extends BasePage implements OnInit {
           });
           this.paramsList = this.pageFilter(this.paramsList);
           //Su respectivo metodo de busqueda de datos
-          this.getVigSupervisionDet_();
+          this.getDataVIG_SUPERVISION_TMP();
         }
       });
 
     this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      this.getVigSupervisionDet_();
+      this.getDataVIG_SUPERVISION_TMP();
+    });
+  }
+
+  async getDataVIG_SUPERVISION_TMP() {
+    this.loading = true;
+    let params = {
+      ...this.paramsList.getValue(),
+      ...this.columnFilters,
+    };
+    params[
+      'filter.delegationNumber'
+    ] = `$eq:${this.objGetSupervionDet.delegationNumber}`;
+    params['filter.cvePeriod'] = `$eq:${this.objGetSupervionDet.cvePeriod}`;
+    params[
+      'filter.delegationType'
+    ] = `$eq:${this.objGetSupervionDet.delegationType}`;
+    this.survillanceService.getVigSupervisionTmp(params).subscribe({
+      next: async (response: any) => {
+        console.log('EDED2', response);
+        this.goods.load(response.data);
+        this.goods.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.goods.load([]);
+        this.goods.refresh();
+        this.totalItems = 0;
+        this.loading = false;
+      },
     });
   }
 

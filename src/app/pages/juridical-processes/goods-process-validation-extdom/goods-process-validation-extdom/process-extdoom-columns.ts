@@ -66,6 +66,38 @@ export const COLUMNS_GOODS_LIST_EXTDOM_2 = {
     },
   },
 };
+export const COLUMNS_GOODS_LIST_EXTDOM_3 = {
+  goodId: { title: 'No. Bien', sort: false },
+  description: {
+    title: 'Descripción',
+    sort: false,
+    type: 'custom',
+    renderComponent: SeeMoreComponent,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'null' || value == 'undefined') {
+        return '';
+      }
+
+      return value ? value : '';
+    },
+  },
+  unit: { title: 'Unidad', sort: false },
+  quantity: { title: 'Cantidad', sort: false },
+  status: { title: 'Estatus', sort: false },
+  extDomProcess: { title: 'Proceso', sort: false },
+  seleccion: {
+    title: '',
+    sort: false,
+    type: 'custom',
+    showAlways: true,
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+  },
+};
 export const RELATED_FOLIO_COLUMNS = {
   id: {
     title: 'Folio',
