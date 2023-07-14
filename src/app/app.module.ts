@@ -28,7 +28,6 @@ import { MailModule } from './pages/parameterization/mail/mail.module';
 import { DatePickerModule } from './shared/components/datepicker-element-smarttable/datapicker.module';
 import { LoadingPercentComponent } from './shared/components/loading-percent/loading-percent.component';
 import { LoadingComponent } from './shared/components/loading/loading.component';
-
 export function tokenGetter() {
   return localStorage.getItem('token');
 }
