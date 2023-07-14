@@ -10,13 +10,10 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SharedModule } from '../../../../shared/shared.module';
 import { CentralOfficesTransferenceRoutingModule } from './central-offices-transference-routing.module';
 import { CentralOfficesTransferenceComponent } from './central-offices-transference/central-offices-transference.component';
-import { mailcentralofficesComponent } from './mail-central-offices/mail-central-offices.component';
+import { EmailComponent } from './mail-central-offices/mail-central-offices.component';
 
 @NgModule({
-  declarations: [
-    CentralOfficesTransferenceComponent,
-    mailcentralofficesComponent,
-  ],
+  declarations: [CentralOfficesTransferenceComponent, EmailComponent],
   imports: [
     CommonModule,
     CentralOfficesTransferenceRoutingModule,

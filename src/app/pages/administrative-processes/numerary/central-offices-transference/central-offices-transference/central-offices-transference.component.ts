@@ -1,16 +1,28 @@
+import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
+  BehaviorSubject,
+  catchError,
+  firstValueFrom,
+  map,
+  of,
+  takeUntil,
+} from 'rxjs';
+import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
+import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { TransRegService } from 'src/app/core/services/ms-numerary/transf-reg.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { TranfergoodService } from 'src/app/core/services/ms-transfergood/transfergood.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -19,9 +31,8 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { mailcentralofficesComponent } from '../mail-central-offices/mail-central-offices.component';
+import { EmailComponent } from '../mail-central-offices/mail-central-offices.component';
 import { CENTRAL_ACCOUNT_COLUMNS } from './central-offices-columns';
-
 interface IExcelToJson {
   expediente: number;
   bien: number;
@@ -47,9 +58,21 @@ export class CentralOfficesTransferenceComponent
   itemsDelegation = new DefaultSelect();
   columnFilters: any = [];
   data3: LocalDataSource = new LocalDataSource();
-
+  moneda = [
+    {
+      label: 'MN',
+      value: 'MN',
+    },
+    {
+      label: 'USD',
+      value: 'USD',
+    },
+  ];
+  description: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  delegations: DefaultSelect = new DefaultSelect([], 0);
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
 
   constructor(
     private fb: FormBuilder,
@@ -59,7 +82,12 @@ export class CentralOfficesTransferenceComponent
     private accountMovementService: AccountMovementService,
     private serviceRNomencla: ParametersService,
     private delegationService: DelegationService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private datePipe: DatePipe,
+    private parametersService: ParametersService,
+    private bankService: BankAccountService,
+    private dictationService: DictationService,
+    private transferRegService: TransRegService
   ) {
     super();
     this.settings = {
@@ -71,7 +99,7 @@ export class CentralOfficesTransferenceComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getDelegations(new ListParams());
+    // this.getDelegations(new ListParams());
     this.getDataReport();
   }
 
@@ -102,10 +130,13 @@ export class CentralOfficesTransferenceComponent
         null,
         [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
       ],
+      monto2: [null],
+      total: [null],
     });
+
     console.log('Form: ', this.form);
     setTimeout(() => {
-      this.getDelegations(new ListParams());
+      this.getCatalogDelegation();
     }, 1000);
   }
 
@@ -117,16 +148,54 @@ export class CentralOfficesTransferenceComponent
     this.cleanFilter();
   }
 
-  getDelegations(params: ListParams, id?: string) {
-    if (id) {
-      params['filter.id'] = `$eq:${id}`;
-      console.log('AQUI', params);
+  changeSelect(del?: any) {
+    if (del) {
+      this.description = del.description;
     }
-    this.delegationService.getAllPaginated(params).subscribe((data: any) => {
-      this.itemsDelegation = new DefaultSelect(data.data, data.count);
-      console.log('AQUI', this.itemsDelegation);
-      console.log('AQUI', data);
+
+    const { currencyType, delegation, transactionDate } = this.form.value;
+
+    let date = '';
+    if (transactionDate) {
+      if (typeof transactionDate == 'string') {
+        date = transactionDate.split('/').reverse().join('-');
+      } else {
+        date = this.datePipe.transform(transactionDate, 'yyyy-MM-dd');
+      }
+    }
+  }
+
+  async getCatalogDelegation() {
+    const today = new Date();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const year = today.getFullYear();
+    const SYSDATE = `${year}/${month}/${day}`;
+    const etapa = await this.getFaStageCreda(SYSDATE);
+
+    const filter = new FilterParams();
+    filter.addFilter('etapaEdo', etapa, SearchFilter.EQ);
+    filter.sortBy = 'id:ASC';
+    filter.limit = 50;
+    this.delegationService.getAll(filter.getParams()).subscribe({
+      next: resp => {
+        this.delegations = new DefaultSelect(resp.data, resp.count);
+      },
+      error: () => {
+        this.delegations = new DefaultSelect();
+      },
     });
+  }
+
+  async getFaStageCreda(data: any) {
+    return firstValueFrom(
+      this.parametersService.getFaStageCreda(data).pipe(
+        catchError(error => {
+          return of(null);
+        }),
+        map(resp => resp.stagecreated)
+      )
+    );
   }
 
   asignarDatos(item: any) {
@@ -146,17 +215,6 @@ export class CentralOfficesTransferenceComponent
   scrollToDiv() {
     const divElement = this.elementRef.nativeElement.querySelector('#miDiv');
     divElement.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  guardar() {
-    console.log('valor ', this.form.get('currencyType').value);
-
-    let objeto = {
-      valor: this.form.get('currencyType').value,
-      valor1: this.form.get('delegation').value,
-    };
-
-    //service con el objeto
   }
 
   getDataReport() {
@@ -206,13 +264,15 @@ export class CentralOfficesTransferenceComponent
     this.accountMovementService.getByReportDataToTurn(reporte).subscribe({
       next: async (response: any) => {
         const data = response.data;
-        this.total = response.data[0].amountTotalDev;
+        this.total = response.data[0].total_sum;
         let dataForm = {
           check: response.data[0].checkNumber,
           cveAccount: response.data[0].accountDevKey,
           cveCurrency: response.data[0].currencyDevKey,
           depositDate: response.data[0].depositDevDate,
+          total: this.total,
         };
+
         this.form.patchValue(dataForm);
         this.delegacion = response.data[0].delegationDevNumber;
         this.currency = response.data[0].currencyDevKey;
@@ -282,13 +342,15 @@ export class CentralOfficesTransferenceComponent
         }
       },
       error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
+        if (err.status == 400) {
+          this.alert(
+            'error',
+            'Error',
+            'Este bien no se encuentra en una solicitud de numerario'
+          );
         } else {
-          error = err.error.message;
+          this.alert('error', 'Error', err.error.message);
         }
-        this.onLoadToast('error', error, '');
       },
     });
   }
@@ -323,14 +385,19 @@ export class CentralOfficesTransferenceComponent
             description: resp.procesados[i].VDESCRIPCION,
             import: resp.procesados[i].VVAL14,
             status: resp.procesados[i].VESTATUS,
-            interests: resp.procesados[i].VNO_BIEN_DEV,
+            interests: resp.procesados[i].VTOT_INTERES_DEV,
             total: resp.procesados[i].VTOTAL_DEV,
             currency: resp.procesados[i].VCVE_MONEDA_AVALUO,
+            total2: resp.procesados[i].total_sum,
           };
           this.data1.push(item);
           console.log(this.data1);
         }
         //this.data1 = resp.data
+        this.form.patchValue(resp);
+        this.form.get('total').patchValue(resp.total_sum);
+        this.total = resp.total_sum;
+        console.log(this.total);
         this.totalItems = this.data1.length;
         this.dataTabla.load(this.data1);
 
@@ -353,7 +420,7 @@ export class CentralOfficesTransferenceComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(mailcentralofficesComponent, config);
+    this.modalService.show(EmailComponent, config);
   }
 
   cleanFilter() {
@@ -364,10 +431,283 @@ export class CentralOfficesTransferenceComponent
     this.form.get('cveBank').setValue(null);
     this.form.get('cveCurrency').setValue(null);
     this.form.get('accountType').setValue(null);
+    this.form.get('total').setValue(null);
     this.total = null;
     this.totalItems = 0;
     this.data3.load([]);
     console.log(this.data3);
     this.data3.refresh();
+  }
+
+  /*createTransferCentral() {
+    const {
+      currencyType,
+      dateDevolution,
+      total,
+      depositDate,
+      cveAccount,
+      delegation,
+      check,
+    } = this.form.value;
+
+    const body: any = {
+      dateDepositDev: depositDate,
+      amountAllDev: total,
+      dateReportDev: dateDevolution,
+      cveAccountDev: cveAccount,
+      numberDelegationDev: delegation,
+      numberCheck: check,
+      cveCurrencyDev: currencyType,
+
+    };
+    console.log(body);
+    this.accountMovementService.createB(body).subscribe({
+      next: async resp => {
+        this.form.get('noReport').patchValue(resp.reportNumber);
+        this.alert('success', 'Reporte', 'Creado correctamente');
+
+        this.data1.map(async good => {
+          await this.createTransNumDet(good);
+        });
+
+        this.filterParams.getValue().removeAllFilters();
+        this.filterParams.getValue().page = 1;
+        this.filterParams
+          .getValue()
+          .addFilter(
+            'noReport',
+            this.form.get(resp.reportNumber).value,
+            SearchFilter.EQ
+          );
+
+        this.getDataFile(body);
+      },
+      error: err => {
+        this.alert('error', 'Error', err.error.message);
+        console.log(err);
+      },
+    });
+  }*/
+
+  async createTransNumDet(data: any) {
+    console.log('VAINA', data);
+    const { noReport, total } = this.form.value;
+    const body: any = {
+      numberReportDev: noReport,
+      numberGoodDev: data.good,
+      val14Dev: data.import,
+      allInterestDev: data.interests,
+      totalDev: total,
+    };
+    console.log(body);
+
+    return new Promise((resolve, reject) => {
+      this.accountMovementService.createB(body).subscribe({
+        next: resp => {
+          this.form.get('noReport').patchValue(resp.noReport);
+          console.log(resp.noReport);
+          this.alert('success', 'Reporte', 'Creado correctamente');
+
+          this.filterParams.getValue().removeAllFilters();
+          this.filterParams.getValue().page = 1;
+          this.filterParams
+            .getValue()
+            .addFilter(
+              'noReport',
+              this.form.get(resp.noReport).value,
+              SearchFilter.EQ
+            );
+
+          this.getDataFile(body);
+        },
+        error: err => {
+          this.alert('error', 'Error', err.error.message);
+          console.log(err);
+        },
+      });
+    });
+  }
+
+  async save() {
+    const { delegation, check, depositDate, dateDevolution, noReport } =
+      this.form.value;
+
+    if (!noReport) {
+      let total: number = 0;
+
+      for (let i = 0; i < this.data1.length; i++) {
+        const element: any = this.data1[i];
+        total = total + Number(element.total);
+        console.log(total);
+      }
+
+      //Monto
+      this.form.get('monto2').patchValue(total);
+      if (!delegation) {
+        this.alert('error', 'Error', 'No a ingresado el numero de delegació');
+        return;
+      } else if (!check) {
+        this.alert('error', 'Error', 'No a ingresado el numero de cheque');
+        return;
+      } else if (!depositDate) {
+        this.alert('error', 'Error', 'No a ingresado la fecha de deposito');
+        return;
+      } else if (
+        this.convertDate(depositDate) > this.convertDate(dateDevolution)
+      ) {
+        this.alert(
+          'error',
+          'Error',
+          'La fecha de deposito no puede ser mayor a la fecha de devolucion'
+        );
+        return;
+      }
+
+      let next: boolean = true;
+
+      for (let i = 0; i < this.data1.length; i++) {
+        const element: any = this.data1[i];
+
+        if (!element.currency) {
+          console.log(element);
+          this.alertInfo(
+            'error',
+            'Error',
+            'No puede guardar el reporte si el numero de bien no tiene el tipo de mmoneda. Ingrese a la pantalla Características del Bien y agregue esta información (Siab/General/Características del Bien)'
+          );
+          next = false;
+          break;
+        }
+      }
+
+      if (!next) return;
+
+      this.pupInteres();
+    } else {
+    }
+  }
+
+  pupInteres() {
+    const { currencyType, total, monto2, delegation } = this.form.value;
+
+    const good: any = this.data1.length > 0 ? this.data1[0] : null;
+
+    if (good.currency != currencyType) {
+      this.form.get('delegation');
+      this.form.get('currencyType');
+      this.form.get('cveAccount');
+      this.form.get('accountType');
+      this.form.get('cveBank');
+      this.form.get('cveCurrency');
+
+      this.alert(
+        'error',
+        'Error',
+        'El tipo de moneda de los bienes ingresados es diferente al tipo de moneda de la cuenta, favor de verificar'
+      );
+
+      return;
+    }
+
+    let next: boolean = true;
+
+    for (let i = 0; i < this.data1.length; i++) {
+      const element: any = this.data1[i];
+
+      if (!element.interests) {
+        this.alertInfo(
+          'error',
+          'Error',
+          `Debe ingresar el intéres del bien: ${element.good}`
+        );
+        next = false;
+        break;
+      }
+    }
+
+    if (!next) return;
+
+    for (let i = 0; i < this.data1.length; i++) {
+      const element: any = this.data1[i];
+
+      if (!element.total) {
+        element.total = total + Number(element.total);
+        console.log(total);
+        console.log(element.total);
+      }
+
+      if (element.total != monto2) {
+        this.alert(
+          'error',
+          'Error',
+          'El monto ingresado no corresponde al monto calculado verfique'
+        );
+        return;
+      } else if (!element.total && total != 0) {
+        console.log(!element.total);
+        this.alert(
+          'error',
+          'Error',
+          'Debe ingresar el monto total de devolución'
+        );
+        return;
+      }
+    }
+
+    this.data1.map(async good => {
+      const ban = await this.pupRegAdm(Number(good.good), Number(delegation));
+    });
+    this.createTransNumDet(good);
+  }
+
+  async pupRegAdm(good: number, delegation: number) {
+    const body = {
+      F_NOBIEN: good,
+      F_NODEL: delegation,
+    };
+
+    return firstValueFrom(
+      this.dictationService.applicationPufRef(body).pipe(
+        catchError(error => {
+          this.alert('error', 'Error', error.error.message);
+          console.log(error);
+
+          return of(null);
+        }),
+        map(resp => resp)
+      )
+    );
+  }
+
+  convertDate(date: Date | string) {
+    let newDate;
+    const type = typeof date;
+    if (type == 'string') {
+      newDate = date.toString().split('/').reverse().join('/');
+    } else {
+      newDate = this.datePipe.transform(date, 'yyyy/MM/dd');
+    }
+    return new Date(newDate).valueOf();
+  }
+
+  getAccount() {
+    const { currencyType, delegation } = this.form.value;
+    const filter = new FilterParams();
+
+    filter.addFilter('cveCurrency', currencyType, SearchFilter.ILIKE);
+    filter.addFilter('delegationNumber', delegation, SearchFilter.EQ);
+
+    this.bankService.getAllWithFilters(filter.getParams()).subscribe({
+      next: resp => {
+        const data = resp.data[0];
+        this.form.get('cveBank').patchValue(data.cveBank);
+        this.form.get('accountType').patchValue(data.accountType);
+        this.form.get('cveCurrency').patchValue(data.cveCurrency);
+        this.form.get('cveAccount').patchValue(data.cveAccount);
+      },
+      error: err => {
+        this.alert('error', 'Error', err.error.message);
+      },
+    });
   }
 }
