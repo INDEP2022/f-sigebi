@@ -193,114 +193,45 @@ export class ProceedingsConversionDetailComponent
       dateOfOffice: [null, Validators.required],
     });
     this.antecedent = this.fb.group({
-      tradeEntity: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      officialDate: [null, Validators.required],
-      signedBy: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      position: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      dependence: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      customs: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      container: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      noContainer: [null, Validators.required],
+      tradeEntity: [null, [Validators.pattern(STRING_PATTERN)]],
+      officialDate: [null],
+      signedBy: [null, [Validators.pattern(STRING_PATTERN)]],
+      position: [null, [Validators.pattern(STRING_PATTERN)]],
+      dependence: [null, [Validators.pattern(STRING_PATTERN)]],
+      customs: [null, [Validators.pattern(STRING_PATTERN)]],
+      container: [null, [Validators.pattern(STRING_PATTERN)]],
+      noContainer: [null],
     });
     this.antecedentTwo = this.fb.group({
-      job: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      officialDate: [null, Validators.required],
-      signedBy: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      position: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      propertyOf: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      job: [null, [Validators.pattern(STRING_PATTERN)]],
+      officialDate: [null],
+      signedBy: [null, [Validators.pattern(STRING_PATTERN)]],
+      position: [null, [Validators.pattern(STRING_PATTERN)]],
+      propertyOf: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.antecedentThree = this.fb.group({
-      date: [null, Validators.required],
-      subscribe1: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      position1: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      attachedA: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      subscribe2: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      position2: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      attachedB: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      wineriesSAE: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      verificationOf: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      consistsIn: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      correspondentA: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      description: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      date: [null],
+      subscribe1: [null, [Validators.pattern(STRING_PATTERN)]],
+      position1: [null, [Validators.pattern(STRING_PATTERN)]],
+      attachedA: [null, [Validators.pattern(STRING_PATTERN)]],
+      subscribe2: [null, [Validators.pattern(STRING_PATTERN)]],
+      position2: [null, [Validators.pattern(STRING_PATTERN)]],
+      attachedB: [null, [Validators.pattern(STRING_PATTERN)]],
+      wineriesSAE: [null, [Validators.pattern(STRING_PATTERN)]],
+      verificationOf: [null, [Validators.pattern(STRING_PATTERN)]],
+      consistsIn: [null, [Validators.pattern(STRING_PATTERN)]],
+      correspondentA: [null, [Validators.pattern(STRING_PATTERN)]],
+      description: [null, [Validators.pattern(STRING_PATTERN)]],
+      status: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.first = this.fb.group({
-      authorizedBy: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      addressee: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      authorizedBy: [null, [Validators.pattern(STRING_PATTERN)]],
+      addressee: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.closureOfMinutes = this.fb.group({
-      date: [null, Validators.required],
-      hour: [null, Validators.required],
-      closePages: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      date: [null],
+      hour: [null],
+      closePages: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -386,12 +317,12 @@ export class ProceedingsConversionDetailComponent
         .subscribe({
           next: (res: any) => {
             this.valUpdate = true;
-            this.alert('success', 'El acta se actualizó correctamente', '');
+            this.alert('success', 'El Acta se Actualizó Correctamente', '');
             console.log(res);
           },
           error: error => {
             this.valUpdate = false;
-            this.alert('error', 'Error al intentar guardar los cambios', '');
+            this.alert('error', 'Error al Intentar Guardar los Cambios', '');
             console.log(error);
           },
         });
@@ -451,11 +382,11 @@ export class ProceedingsConversionDetailComponent
       this.convertiongoodService.creatConvertionActa(obj).subscribe({
         next: (res: any) => {
           this.valUpdate = true;
-          this.alert('success', 'El acta se creó correctamente', '');
+          this.alert('success', 'El Acta se Creó Correctamente', '');
           console.log(res);
         },
         error: error => {
-          this.alert('error', 'Error al intentar guardar los cambios', '');
+          this.alert('error', 'Error al Intentar Guardar los Cambios', '');
           console.log(error);
         },
       });

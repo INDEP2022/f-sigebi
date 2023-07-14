@@ -5,5 +5,5 @@ export interface IEventPreparationParameters {
   pDays: number;
   pValids: number;
   pGoods: string;
-  pDirection: string;
+  pDirection: 'M' | 'I';
 }
