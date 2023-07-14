@@ -129,7 +129,7 @@
       </div>
 
       <!--Process Users-->
-      <div class="row mt-5 mb-3 pl-3 pr-3 ">
+      <div class="row mt-5 mb-3 pl-3 pr-3">
         <table>
           <thead>
             <tr>
@@ -148,27 +148,37 @@
               </td>
               <td>
                 <form-field [control]="form.get('fecElab')">
-                  <span>{{ form.get('fecElab').value | date: 'dd-MM-yyyy' }}</span>
+                  <span>{{
+                    form.get('fecElab').value | date: 'dd-MM-yyyy'
+                  }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecValida')">
-                  <span>{{ form.get('fecValida').value | date: 'dd-MM-yyyy' }}</span>
+                  <span>{{
+                    form.get('fecValida').value | date: 'dd-MM-yyyy'
+                  }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecAutoriza')">
-                  <span>{{ form.get('fecAutoriza').value | date: 'dd-MM-yyyy' }}</span>
+                  <span>{{
+                    form.get('fecAutoriza').value | date: 'dd-MM-yyyy'
+                  }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecCerrado')">
-                  <span>{{ form.get('fecCerrado').value | date: 'dd-MM-yyyy' }}</span>
+                  <span>{{
+                    form.get('fecCerrado').value | date: 'dd-MM-yyyy'
+                  }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecCancelado')">
-                  <span>{{ form.get('fecCancelado').value | date: 'dd-MM-yyyy' }}</span>
+                  <span>{{
+                    form.get('fecCancelado').value | date: 'dd-MM-yyyy'
+                  }}</span>
                 </form-field>
               </td>
             </tr>
@@ -444,7 +454,9 @@
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
         <div class="col-12 mb-3 mt-3">
-          <form-field [control]="form.get('paragraph1')" label="Párrafo Inicial">
+          <form-field
+            [control]="form.get('paragraph1')"
+            label="Párrafo Inicial">
             <textarea
               rows="3"
               [max-length]="4000"

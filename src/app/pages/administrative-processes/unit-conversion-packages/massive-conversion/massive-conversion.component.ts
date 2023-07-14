@@ -222,28 +222,26 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.getWarehouseDescription();
     this.getTagDescription();
     //Busquéda de datos del bien Padre
-    this.searchFatherGood()
+    this.searchFatherGood();
   }
 
-  searchFatherGood(){
-    this.numberGoodFather.valueChanges.subscribe(
-      res => {
-        console.log(res)
-        this.goodService.getByIdv3(res).subscribe(
-          res => {
-            console.log(res)
-            this.form2.get('record').setValue(res.fileNumber)
-            this.form2.get('description').setValue(res.description)
-            this.form2.get('amount').setValue(res.quantity)
-            this.form2.get('unitGood').setValue(res.unit)
-            this.form2.get('statusGood').setValue(res.status)
-          },
-          err => {
-            console.log(err)
-          }
-        )
-      }
-    )
+  searchFatherGood() {
+    this.numberGoodFather.valueChanges.subscribe(res => {
+      console.log(res);
+      this.goodService.getByIdv3(res).subscribe(
+        res => {
+          console.log(res);
+          this.form2.get('record').setValue(res.fileNumber);
+          this.form2.get('description').setValue(res.description);
+          this.form2.get('amount').setValue(res.quantity);
+          this.form2.get('unitGood').setValue(res.unit);
+          this.form2.get('statusGood').setValue(res.status);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    });
   }
 
   initByLocalStorage() {
@@ -565,7 +563,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   getGoodClassDescriptions() {
     this.goodClassification.valueChanges.subscribe(res => {
-      console.log(res)
+      console.log(res);
       if (this.goodClassification.value != null) {
         const paramsF = new FilterParams();
         paramsF.addFilter('numClasifGoods', this.goodClassification.value);
@@ -944,7 +942,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       return;
     }
 
-    if(['V','A'].includes(status)){
+    if (['V', 'A'].includes(status)) {
       this.alertQuestion(
         'question',
         'Confirmación',
@@ -954,10 +952,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           this.updatePackageFirstBlock(status, titleInit);
         }
       });
-    }else{
+    } else {
       this.updatePackageFirstBlock(status, titleInit);
     }
-    
   }
 
   showConfirmAlert() {
@@ -1927,7 +1924,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         if (res && res.data && res.data.length > 0) {
           this.noPackage.setValue(res.data[0]);
           this.loading = false;
-          this.validateButtons(this.noPackage.value.statusPaq)
+          this.validateButtons(this.noPackage.value.statusPaq);
         } else {
           // this.dataPackageEnc = null;
         }
@@ -2085,8 +2082,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
             .firstIfCancelMassiveConversion(model)
             .subscribe(
               res => {
-                this.researchNoPackage(this.noPackage.value.numberPackage)
-                this.alert('success','El Paquete fue cancelado','')
+                this.researchNoPackage(this.noPackage.value.numberPackage);
+                this.alert('success', 'El Paquete fue cancelado', '');
               },
               err => {
                 console.log(err);
@@ -2103,31 +2100,34 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         if (q.isConfirmed) {
           let token = this.authService.decodeToken();
           const noPack = this.noPackage.value;
-          console.log(this.noPackage.value)
+          console.log(this.noPackage.value);
 
           const model: ISecondIfMC = {
             noPackage: this.noPackage.value.numberPackage,
             noGoodFather: this.noPackage.value.numberGoodFather,
             encStatus: this.noPackage.value.status,
             vcScreen: 'FMTOPAQUETE',
-            user: localStorage.getItem('username') == 'sigebiadmon'
-            ? localStorage.getItem('username')
-            : localStorage.getItem('username').toLocaleUpperCase(),
-            toolbarUser: localStorage.getItem('username') == 'sigebiadmon'
-            ? localStorage.getItem('username')
-            : localStorage.getItem('username').toLocaleUpperCase()
+            user:
+              localStorage.getItem('username') == 'sigebiadmon'
+                ? localStorage.getItem('username')
+                : localStorage.getItem('username').toLocaleUpperCase(),
+            toolbarUser:
+              localStorage.getItem('username') == 'sigebiadmon'
+                ? localStorage.getItem('username')
+                : localStorage.getItem('username').toLocaleUpperCase(),
           };
-          console.log(model)
-          this.goodProcessService.secondIfCancelMassiveConversion(model).subscribe(
-            res => {
-              this.researchNoPackage(this.noPackage.value.numberPackage)
-                this.alert('success','El Paquete fue cancelado','')
-            },
-            err => {
-              console.log(err)
-            }
-          )
-
+          console.log(model);
+          this.goodProcessService
+            .secondIfCancelMassiveConversion(model)
+            .subscribe(
+              res => {
+                this.researchNoPackage(this.noPackage.value.numberPackage);
+                this.alert('success', 'El Paquete fue cancelado', '');
+              },
+              err => {
+                console.log(err);
+              }
+            );
         }
       });
     }
@@ -2183,7 +2183,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     const p1 = `- - - En la Ciudad de ______________, siendo las _____ horas, del día ____de ________ de 200__, se encuentran presentes en la Bodega ubicada en la calle de ________________________ de esta Ciudad, el C. _____________________ con cargo de ___________________, de la empresa ______________ y el C. ________________ adscrito a _______________ del Servicio de Administración y Enajenación de Bienes (SAE), Organismo Descentralizado de la Administración Pública Federal; ambos con el fin de llevar a cabo la validación y conversión de los bienes transferidos al SAE.- - - - - - - - - - - - - - - - - - - - - - - - - - - - \n
     - - -Intervienen como testigos de asistencia los CC. _______________________, y ___________________________, - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n
     -------------------------------------------------- A N T E C E D E N T E S ------------------------------------------\n
-    
+
     - - - l. Los bienes fueron transferidos al SAE por [_____________________________], con fundamento en los artículos 3 de la LFAEBSP, 12 y 13 del Reglamento de la ley en comento. - - \n
     - - - II.- Los bienes sujetos ha validación y conversión de unidad, se encuentran en administración del SAE y bajo la custodia de _____________________ los cuales se incorporan a este procedimiento a efecto de facilitar la ejecución de su destino.- - - - - - - - - - - - '\n
     ----------------------------------------------------- DECLARACIONES ---------------------------------------------'\n
