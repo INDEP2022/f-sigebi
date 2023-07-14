@@ -48,6 +48,13 @@ export const PRORRATEGO_GOODS_COLUMNS = {
     title: 'Dias Transcurridos',
     type: 'text',
     sort: false,
+    valuePrepareFunction: (value: number) => {
+      if (value > 0) {
+        return value;
+      } else {
+        return '0';
+      }
+    },
   },
   daysPassed: {
     title: 'Dias Fatantes',

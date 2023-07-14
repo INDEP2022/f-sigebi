@@ -43,15 +43,25 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
     this.policyService.getByKeyId(Key).subscribe({
       next: response => {
         let lista = [];
+        this.totalItems = response.data.length;
         for (let i = 0; i < response.data.length; i++) {
           lista.push(response.data[i].Goods);
-          //debugger
           const dueDate = new Date();
           const formattedDueDate = this.formatDate(dueDate);
           this.datebd = response.data[i].Policies.termDate;
           let fec = convertFormatDate(formattedDueDate);
           let fecInic = convertFormatDate(this.datebd);
           this.daysF = differenceInDays(parseISO(fecInic), parseISO(fec));
+          let dateIni = convertFormatDate(
+            response.data[i].Policies.beginningDateId
+          );
+          let dateLim = convertFormatDate(response.data[i].Policies.termDate);
+          const date = new Date();
+
+          let daysTrans = 0;
+          if (date < dateLim) {
+            daysTrans = differenceInDays(parseISO(dateIni), parseISO(dateLim));
+          }
           let dataForm = {
             goodId: response.data[i].Goods.id,
             description: response.data[i].Goods.description,
@@ -62,6 +72,7 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
             statusGood: response.data[i].Goods.status,
             factorCostDaily: response.data[i].factorCostDaily,
             amountNoteCredit: response.data[i].amountNoteCredit,
+            di_dias_trans: daysTrans,
             daysPassed: this.daysF,
             responsibleShort: response.data[i].responsibleShort,
           };
