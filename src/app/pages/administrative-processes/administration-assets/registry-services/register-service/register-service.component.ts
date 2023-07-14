@@ -65,7 +65,7 @@ export class RegisterServiceComponent extends BasePage implements OnInit {
         this.alert(
           'error',
           'Regitro de Servicio',
-          'No se pudo guardar el servicio'
+          'No se Pudo Guardar el Servicio'
         );
         this.loading = false;
       },

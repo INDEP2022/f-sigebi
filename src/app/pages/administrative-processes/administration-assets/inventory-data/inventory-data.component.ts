@@ -296,7 +296,7 @@ export class InventoryDataComponent
       this.alert(
         'warning',
         'Datos Inventario',
-        'Debe seleccionar un inventario para obtener sus atributos.'
+        'Debe Seleccionar un Inventario para Obtener sus Atributos.'
       );
       return;
     }
@@ -373,7 +373,7 @@ export class InventoryDataComponent
           this.alert(
             'warning',
             'Datos Inventario',
-            'Debe llenar los valores requeridos.'
+            'Debe llenar los Valores Requeridos.'
           );
           return;
         }

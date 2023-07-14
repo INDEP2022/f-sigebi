@@ -25,6 +25,7 @@
         <div class="col-md-3">
           <form-field [control]="eventForm.get('eventTpId')">
             <ngx-select
+              (change)="eventTypeChange()"
               [searchOnInit]="true"
               [form]="eventForm"
               [data]="eventTypes"

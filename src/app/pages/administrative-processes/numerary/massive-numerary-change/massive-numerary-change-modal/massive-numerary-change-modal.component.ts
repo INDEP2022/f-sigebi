@@ -320,7 +320,7 @@ export class MassiveNumeraryChangeModalComponent
         ti_ficha_new: this.TI_FICHA_NEW,
         ti_banco_new: this.TI_BANCO_NEW,
         ti_fecha_new:
-          this.TI_FECHA_NEW || formatDate(new Date(), 'dd/MM/yyyy', 'en'),
+          this.TI_FECHA_NEW || formatDate(new Date(), 'yyyy/MM/dd', 'en'),
         di_cuenta_new: this.DI_CUENTA_NEW,
         di_no_cuenta_deposito: this.DI_NO_CUENTA_DEPOSITO,
         di_categoria: this.DI_CATEGORIA,

@@ -763,7 +763,6 @@ export class GoodsTableComponent extends BasePage implements OnInit {
           this.alert('success', 'Archivo descargado correctamente', '');
           const url = `${environment.API_URL}ldocument/${environment.URL_PREFIX}${res.path}`;
           console.log({ url });
-
           window.open(url, '_blank');
         }
       }),

@@ -22,7 +22,6 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EventFormVisualProperties } from '../../utils/classes/comer-event-properties';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
-
 @Component({
   selector: 'event-data-form',
   templateUrl: './event-data-form.component.html',

@@ -161,8 +161,8 @@ export class EmailComponent extends BasePage implements OnInit {
 
         // const body: any = {
         //   header: "DEV",
-        //   destination: ["joselalo1997@outlook.com"],
-        //   copy: ['joseeduardo.jeg37@gmail.com'],
+        //   destination: [""],
+        //   copy: [''],
         //   subject: "DEV EMAIL",
         //   message: `${resp.message}`
         // }
@@ -189,9 +189,9 @@ export class EmailComponent extends BasePage implements OnInit {
 
             // const body: any = {
             //   id: REPORTE,
-            //   addressee: "joselalo1997@outlook.com",
+            //   addressee: "",
             //   sender: user.toUpperCase(),
-            //   cc: 'joseeduardo.jeg37@gmail.com',
+            //   cc: '',
             //   message: `${resp.message}`,
             //   affair: ASUNTO,
             //   sendDate: date,
