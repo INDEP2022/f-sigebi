@@ -21,6 +21,7 @@ export class SecurityService extends HttpService {
   private endpoint = SecurityEndpoints.GenerateIdentifier;
   private screen = '?.filter.screenKey=$eq:';
   private userName = '&filter.user=$eq:';
+  private uName = '?filter.user=$eq:';
   constructor() {
     super();
     this.microservice = SecurityEndpoints.Security;
@@ -130,5 +131,11 @@ export class SecurityService extends HttpService {
 
   getIniEmail(data: Object) {
     return this.post(SecurityEndpoints.IniEmail, data);
+  }
+
+  getUser(uName: string) {
+    return this.get<IListResponse<IUsersTracking>>(
+      `${SecurityEndpoints.UsersTracking}${this.uName}${uName}`
+    );
   }
 }
