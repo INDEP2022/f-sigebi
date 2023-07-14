@@ -19,7 +19,7 @@ export class ProrrateoGoodsSurveillanceComponent implements OnInit {
   userSour: any;
   dataSelect: any;
   PolicyKey: any;
-
+  elemento = '';
   constructor(
     private fb: FormBuilder,
     private policyService: PolicyService,
@@ -57,7 +57,6 @@ export class ProrrateoGoodsSurveillanceComponent implements OnInit {
   }
   getDataNoRequest() {
     this.form.get('noRequest').value;
-    console.log(this.form.get('noRequest').value);
     this.NoRequest = this.form.get('noRequest').value;
     this.getNoRequest(this.NoRequest);
   }
@@ -65,7 +64,6 @@ export class ProrrateoGoodsSurveillanceComponent implements OnInit {
   getNoRequest(NoRequest: string | number) {
     this.policyService.getByNoRequest(NoRequest).subscribe({
       next: response => {
-        //console.log("Response: ", response);
         const requestDate = new Date(response.RequestsXSure.requestDate);
         const formattedRequestDate = this.formatDate(requestDate);
 
@@ -87,6 +85,7 @@ export class ProrrateoGoodsSurveillanceComponent implements OnInit {
         this.getByUserName(userDes, true);
         this.getByUserName(userSour, false);
         this.getByPolicyKey(PolicyKey);
+        this.elemento = response.Policies.policyKeyId;
       },
       error: error => {
         console.error(error);
@@ -98,7 +97,6 @@ export class ProrrateoGoodsSurveillanceComponent implements OnInit {
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear().toString();
-
     return `${day}/${month}/${year}`;
   }
 
@@ -128,13 +126,13 @@ export class ProrrateoGoodsSurveillanceComponent implements OnInit {
     modalConfig.initialState = {
       newOrEdit,
       noRequest,
+      Elemento: { Elemento: this.elemento },
       callback: (next: boolean) => {},
     };
     this.modalService.show(GoodsRequestModalComponent, modalConfig);
   }
 
   getByPolicyKey(PolicyKey: string | number) {
-    console.log('POLIcy: ', PolicyKey);
     this.policyService.getBypolicyKeyId(PolicyKey).subscribe({
       next: response => {
         let dataForm = {

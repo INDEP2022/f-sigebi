@@ -41,4 +41,10 @@ export class PolicyService extends HttpService {
       `${PolicyEndpoint.getPoliciesXSubtype}?filter.policyKeyId=$eq:${PolicyKey}`
     );
   }
+
+  getByKeyId(Key: string) {
+    return this.get<IListResponse>(
+      `${PolicyEndpoint.getPolicesXRight}?filter.policyKeyId=$eq:${Key}`
+    );
+  }
 }

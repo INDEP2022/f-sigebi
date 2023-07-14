@@ -25,7 +25,6 @@ export class GoodsRequestModalComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('Numero ngOnInit: ', this.noRequest);
     this.getGoodByNoRequest(this.noRequest);
   }
 

@@ -219,12 +219,12 @@
     <div class="row mt-4" style="padding-top: 40px">
       <div class="md-tabs">
         <tabset>
-          <tab heading="Conceptos" id="tab1">
-            <app-prorrateo-concepts></app-prorrateo-concepts>
-          </tab>
           <tab heading="Bienes en Vigilancia" id="tab2">
-            <div class="table-responsive" style="overflow-x: auto">
-              <app-prorrateo-goods></app-prorrateo-goods>
+            <div
+              class="table-responsive"
+              style="overflow-x: auto"
+              *ngIf="elemento != ''">
+              <app-prorrateo-goods [elemento]="elemento"></app-prorrateo-goods>
             </div>
           </tab>
         </tabset>
