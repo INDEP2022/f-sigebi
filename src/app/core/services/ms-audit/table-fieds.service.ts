@@ -4,7 +4,7 @@ const example: Partial<IListResponse<ITableField>> = {
       registerNumber: 1,
       table: 'COMER_CLIENTES',
       column: 'ID_CLIENTE',
-      columnDescription: 'No Cliente',
+      columnDescription: 'No. Cliente',
       dataType: 'NUMBER',
     },
     {
