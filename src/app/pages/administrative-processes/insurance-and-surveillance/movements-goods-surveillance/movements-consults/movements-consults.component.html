@@ -1,128 +1,109 @@
-<form [formGroup]="form" class="form-material mt-4">
-  <div class="row mt-4">
-    <div class="col-md-3">
-      <div class="ch-content">
-        <h5 class="title">Contrato</h5>
-      </div>
-      <form-field [control]="form.get('cveContract')" label="Cve Contrato">
-        <input type="text" class="form-control" formControlName="cveContract" />
-      </form-field>
-    </div>
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Actualizar Bienes en Vigilancia</h5>
   </div>
-  <div class="row mt-4">
-    <div class="col-md-5">
-      <div class="ch-content">
-        <h5 class="title">Vigilancia compartida</h5>
-      </div>
-      <div class="d-flex">
-        <form-radio label="Si">
-          <input type="radio" formControlName="radio" value="cat" />
-        </form-radio>
-        <form-radio label="No">
-          <input type="radio" formControlName="radio" value="dog" />
-        </form-radio>
-      </div>
-    </div>
-  </div>
-  <div class="row mt-4">
-    <div class="col-md-3">
-      <form-field [control]="form.get('h24')" label="Turno 24h">
-        <input type="text" class="form-control" formControlName="h24" />
-      </form-field>
-    </div>
-    <div class="col-md-3">
-      <form-field [control]="form.get('h12')" label="Turno 12h">
-        <input type="text" class="form-control" formControlName="h12" />
-      </form-field>
-    </div>
-    <div class="col-md-3">
-      <form-field [control]="form.get('indirectTurn')" label="Turno indirecto">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="indirectTurn" />
-      </form-field>
-    </div>
-    <div class="col-md-3">
-      <form-field [control]="form.get('canineTurn')" label="Turno canino">
-        <input type="text" class="form-control" formControlName="canineTurn" />
-      </form-field>
-    </div>
-  </div>
-  <div class="row mt-4">
-    <div class="col">
-      <button class="btn btn-success btn-sm active">
-        CARGA VIGILANCIA COMPARTIDA
-      </button>
-    </div>
-  </div>
-
-  <div class="row mt-4">
-    <div class="col-md-12">
-      <div class="ch-content">
-        <h5 class="title">Importar bienes desde rastreador</h5>
-      </div>
-      <button class="btn btn-success btn-sm active">IMPORTAR</button>
-    </div>
-  </div>
-  <hr />
-
-  <div class="">
-    <div class="pt-4">
-      <div class="">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="consults">
-          </ng2-smart-table>
+  <div body>
+    <form [formGroup]="form" class="form-material mt-4">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('goodnumber')" label="No. Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="goodnumber" />
+          </form-field>
+        </div>
+        <div class="col-md-9">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
         </div>
       </div>
-    </div>
-    <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('contract_code')"
+            label="Cve. Contrato">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="contract_code" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('contract_start_date')"
+            label="F. Ingreso">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="contract_start_date"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('shifts_inforce')" label="Dir.">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="shifts_inforce" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('medical_turns')" label="1/2 D.">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="medical_turns" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('industrial_turns')" label="Ind.">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="industrial_turns" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('turns_can_number')" label="Can.">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="turns_can_number" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('registration_supervisor')"
+            label="Región">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="registration_supervisor" />
+          </form-field>
+        </div>
+      </div>
+    </form>
   </div>
-  <div class="row mt-4">
-    <div class="col-md-12">
-      <button class="btn btn-secondary btn-sm active mx-4">
-        CARGA DE BIENES
-      </button>
-      <button class="btn btn-secondary btn-sm active mx-4">
-        SELECCIONAR TODO
-      </button>
-      <div class="float-right">
-        <span class="text-success mr-5"
-          ><i class="fa fa-square"></i> Bienes autorizados</span
-        >
-        <button class="btn btn-primary btn-sm active mx-4">
-          PROCESAR ALTAS
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
         </button>
       </div>
     </div>
   </div>
-  <hr />
-  <div class="row mt-4">
-    <div class="col-md-3">
-      <form-field [control]="form.get('criteria')" label="Criterio">
-        <select class="form-control" formControlName="criteria">
-          <option [value]="null">Seleccione un valor</option>
-          <option [value]="1">Criterio 1</option>
-          <option [value]="2">Criterio 2</option>
-        </select>
-      </form-field>
-    </div>
-    <div class="col-md-6">
-      <form-field
-        [control]="form.get('descCriteria')"
-        label="Descripción criterio">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="descCriteria" />
-      </form-field>
-    </div>
-  </div>
-
-  <hr />
-</form>
+</app-modal>

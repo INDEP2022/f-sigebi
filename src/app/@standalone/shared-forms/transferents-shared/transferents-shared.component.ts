@@ -65,13 +65,15 @@ export class TransferenteSharedComponent extends BasePage implements OnInit {
         this.transferents = new DefaultSelect(newData);
       },
       err => {
-        let error = '';
+        this.transferents = new DefaultSelect();
+
+        /*  let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        this.onLoadToast('error', 'Error', error); */
       },
       () => {}
     );

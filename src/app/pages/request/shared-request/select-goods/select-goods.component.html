@@ -1,6 +1,6 @@
 <ng-container *ngIf="nombrePantalla != 'goods-classification'">
   <app-search-inventory-goods
-    (onSearch)="getGoods($event)"></app-search-inventory-goods>
+    (onSearch)="getInfoGoods($event)"></app-search-inventory-goods>
   <div class="row mt-3">
     <div class="col-sm-12 col-md-12 col-lg-6">
       <div class="form-material">
@@ -25,7 +25,7 @@
       <div class="table-padding"></div>
     </div>
   </ng-scrollbar>
-  <app-pagination [params]="goodParams" [totalItems]="goodTotalItems">
+  <app-pagination [params]="params" [totalItems]="goodTotalItems">
   </app-pagination>
   <br />
 </ng-container>

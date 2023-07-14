@@ -22,7 +22,7 @@ export class DeletePeriodComponent extends BasePage {
   form = new FormGroup({
     year: new FormControl(null, Validators.required),
     period: new FormControl(null, Validators.required),
-    delegation: new FormControl(null, Validators.required),
+    delegation: new FormControl(null),
     process: new FormControl(null, Validators.required),
   });
   processes = [
@@ -36,10 +36,19 @@ export class DeletePeriodComponent extends BasePage {
   delegationDefault: any = null;
   @Output() eventDelete = new EventEmitter();
 
+  years: number[] = [];
+  currentYear: number = new Date().getFullYear();
+
   constructor(private survillanceService: SurvillanceService) {
     super();
   }
 
+  ngOnInit(): void {
+    for (let i = 1900; i <= this.currentYear; i++) {
+      this.years.push(i);
+    }
+    // this.prepareForm();
+  }
   onClickDeletePeriod() {
     if (!this.delegationDefault) {
       this.form.markAsTouched();
