@@ -276,28 +276,17 @@ export class LocationGoodsWarehousesStorageComponent
         this.currentDescriptionWare.setValue(response.description);
       },
       error: err => {
-        this.onLoadToast(
-          'info',
-          'Opps...',
-          'Este bien no tiene asignado almacen'
-        );
+        this.alert('info', 'Opps...', 'Este bien no tiene asignado almacen');
       },
     });
   }
   loadDescriptionVault(id: string | number) {
-    if (id == null || undefined) {
-      this.formVault.value.safe = 9999;
-    }
     this.safeService.getById(id).subscribe({
       next: response => {
         this.currentDescriptionVault.setValue(response.description);
       },
       error: err => {
-        this.onLoadToast(
-          'info',
-          'Opps...',
-          'Este bien no tiene asignado Bóvedas'
-        );
+        this.alert('info', 'Opps...', 'Este bien no tiene asignado Bóvedas');
       },
     });
   }
@@ -372,10 +361,10 @@ export class LocationGoodsWarehousesStorageComponent
           this.warehouseDisable = true;
           this.vaultDisable = true;
           this.good.dateIn = new Date();
-          // this.good.ubicationType = 'A';
+          this.good.ubicationType = 'A';
           return true;
         } else if (Number(this.good.type) === 7) {
-          // this.good.ubicationType = 'A';
+          this.good.ubicationType = 'A';
           this.vaultDisable = false;
           this.formVault.disable();
           this.good.dateIn = new Date();
@@ -393,9 +382,9 @@ export class LocationGoodsWarehousesStorageComponent
         ) {
           this.warehouseDisable = true;
           this.vaultDisable = true;
-          // this.good.ubicationType = 'B';
-          // this.good.vaultNumber = 9999;
-          // this.good.storeNumber = null;
+          this.good.ubicationType = 'B';
+          this.good.vaultNumber = 9999;
+          this.good.storeNumber = null;
           this.good.dateIn = new Date();
         } else if (Number(this.good.type) === 7) {
           this.warehouseDisable = false;
