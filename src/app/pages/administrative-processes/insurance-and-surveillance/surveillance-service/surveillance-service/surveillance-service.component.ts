@@ -26,7 +26,16 @@ import { SURVEILLANCE_SERVICE_COLUMNS } from './surveillance-service-columns';
 @Component({
   selector: 'app-surveillance-service',
   templateUrl: './surveillance-service.component.html',
-  styles: [],
+  styles: [
+    `
+      .hr {
+        border: none;
+        border-right: 1px solid hsl(200deg 20.1% 80.92%);
+        height: 90%;
+        width: 51%;
+      }
+    `,
+  ],
 })
 export class SurveillanceServiceComponent extends BasePage implements OnInit {
   form: FormGroup;
@@ -903,7 +912,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
                 this.alert(
                   'error',
                   'Ha Ocurrido un Error al Intentar Generar Aleatorios',
-                  ''
+                  'Verifique que no exista el periodo que intentó ingresar'
                 );
               }
             } else {
@@ -995,6 +1004,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
         this.objGetSupervionDet = obj;
         this.paramsList.getValue().page = 1;
         this.paramsList.getValue().limit = 10;
+        this.disabledPeriod = true;
         this.getVigSupervisionDet_();
 
         console.log('RESPUESTA', response);
