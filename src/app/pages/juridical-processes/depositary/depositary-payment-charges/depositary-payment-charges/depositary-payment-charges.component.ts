@@ -150,7 +150,6 @@ export class DepositaryPaymentChargesComponent
   loadCargaBienes() {
     this.Service.getRefPayDepositories().subscribe({
       next: resp => {
-        debugger;
         this.loadItemsJson = resp.data;
         /*console.log(' ' + resp.count);
         console.log(JSON.stringify(this.loadItemsJson));*/

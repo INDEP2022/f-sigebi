@@ -7,6 +7,7 @@ import { ITypeSiniester } from 'src/app/core/models/catalogs/type-siniester.mode
 import { TypeSiniesterService } from 'src/app/core/services/catalogs/type-siniester.service';
 import { SeraLogService } from 'src/app/core/services/ms-audit/sera-log.service';
 import { BasePage } from 'src/app/core/shared';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -62,7 +63,10 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       letterClaimIn: [null],
       orderOfEntryIn: [null],
       docOfficeMinConcluIn: [null],
-      statusIn: [null, [Validators.required]],
+      statusIn: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
       firstSecondLaterIn: [null],
       shapeConclusionIn: [null, [Validators.required]],
       dateIndemnizationIn: [null, [Validators.required]],
@@ -255,7 +259,7 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     if (this.fileDocOfficeMailIn) {
       formData.append('docOfficeMailIn', this.fileDocOfficeMailIn);
     }
-    if (this.fileDocOfficeMailIn) {
+    if (this.fileDocAmountIndemnizedIn) {
       formData.append('docAmountIndemnizedIn', this.fileDocAmountIndemnizedIn);
     }
     formData.append(
@@ -383,13 +387,17 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     );
     formData.append(
       'firstSecondLaterIn',
-      this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].value != null
+      this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].value !=
+        null &&
+        this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].value !=
+          'null'
         ? this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].value
         : ''
     );
     formData.append(
       'statusIn',
-      this.claimsFollowUpDetailForm.controls['statusIn'].value != null
+      this.claimsFollowUpDetailForm.controls['statusIn'].value != null &&
+        this.claimsFollowUpDetailForm.controls['statusIn'].value != 'null'
         ? this.claimsFollowUpDetailForm.controls['statusIn'].value
         : ''
     );
@@ -543,21 +551,23 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     );
     formData.append(
       'firstSecondLaterIn',
-      this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].value != null
+      this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].value !=
+        null &&
+        this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].value !=
+          'null'
         ? this.claimsFollowUpDetailForm.controls['firstSecondLaterIn'].value
         : ''
     );
     formData.append(
       'statusIn',
-      this.claimsFollowUpDetailForm.controls['statusIn'].value != null
+      this.claimsFollowUpDetailForm.controls['statusIn'].value != null &&
+        this.claimsFollowUpDetailForm.controls['statusIn'].value != 'null'
         ? this.claimsFollowUpDetailForm.controls['statusIn'].value
         : ''
     );
     this.seraLogService.postSaveSinisterRecord(formData).subscribe({
       next: resp => {
-        if (resp.data) {
-          this.handleSuccess();
-        }
+        this.handleSuccess();
       },
       error: eror => {
         this.alert(
