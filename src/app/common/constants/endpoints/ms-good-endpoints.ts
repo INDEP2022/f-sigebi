@@ -45,6 +45,7 @@ export enum GoodProcessPoints {
   acceptGoodActa = `application/acceptGoodActa`,
   acceptGoodStatus = `application/acceptGoodStatus`,
   acceptGoodStatusScreen = `application/acceptGoodStatusScreen`,
+  getGoodPostQuery = `application/get-good-post-query`,
   dateRange = `util-pkg/getDate`,
   getFact = 'application/get-fact-juridict-amasg',
   getIdent = 'application/get-fact-juridict-amasg-2',

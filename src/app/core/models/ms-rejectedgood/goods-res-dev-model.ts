@@ -1,3 +1,5 @@
+import { IGood } from '../good/good.model';
+
 export interface IGoodsResDev {
   applicationId: number;
 
@@ -61,6 +63,7 @@ export interface IGoodsResDev {
   processInitial?: string;
   processFinal?: string;
   amountNet?: string;
+  good?: IGood;
   subinventory?: string;
   origin?: string;
   inventoryItemId?: number;
