@@ -12,7 +12,12 @@ import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-s
 
 import { AddEditLoteModalComponent } from './add-edit-lote-modal/add-edit-lote-modal.component';
 import { AvailableGoodsTableComponent } from './available-goods-table/available-goods-table.component';
+import { CommerEventCustomersComponent } from './components/commer-event-customers/commer-event-customers.component';
+import { CommerEventsListComponent } from './components/commer-events-list/commer-events-list.component';
+import { CommerPackagesLotsComponent } from './components/commer-packages-lots/commer-packages-lots.component';
 import { EventDataFormComponent } from './components/event-data-form/event-data-form.component';
+import { EventPreparationStadisticsComponent } from './components/event-preparation-stadistics/event-preparation-stadistics.component';
+import { ReservedGoodsComponent } from './components/reserved-goods/reserved-goods.component';
 import { CreateNewEventModalComponent } from './create-new-event-modal/create-new-event-modal.component';
 import { CustomerCatalogsTableComponent } from './customer-catalogs-table/customer-catalogs-table.component';
 import { EventPreparationRoutingModule } from './event-preparation-routing.module';
@@ -34,6 +39,11 @@ import { SelectEventModalComponent } from './select-event-modal/select-event-mod
     GroundsStatusModalComponent,
     ReasonsModelComponent,
     EventDataFormComponent,
+    CommerEventsListComponent,
+    CommerPackagesLotsComponent,
+    CommerEventCustomersComponent,
+    ReservedGoodsComponent,
+    EventPreparationStadisticsComponent,
   ],
   imports: [
     CommonModule,

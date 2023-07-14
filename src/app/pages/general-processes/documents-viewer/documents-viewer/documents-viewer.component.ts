@@ -206,6 +206,7 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    console.log(params);
     this.documentService.getAll(params).subscribe(
       response => {
         this.documents = response.data;

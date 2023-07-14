@@ -14,7 +14,6 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //import { GoodClassificationService } from 'src/app/core/services/catalogs/good-classification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
-import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 
 @Component({
@@ -67,7 +66,7 @@ export class GoodsClasificationSharedComponent
             };
           })
         );
-        console.log(newData)
+        console.log(newData);
         this.classifications = new DefaultSelect(newData, data.count);
       },
       err => {
