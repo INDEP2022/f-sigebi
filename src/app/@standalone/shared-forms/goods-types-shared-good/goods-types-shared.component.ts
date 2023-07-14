@@ -21,13 +21,13 @@ import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtyp
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 
 @Component({
-  selector: 'app-goods-types-shared',
+  selector: 'app-goods-types-shared-Good',
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './goods-types-shared.component.html',
   styles: [],
 })
-export class GoodsTypesSharedComponent extends BasePage implements OnInit {
+export class GoodsTypesSharedGoodComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
   @Input() loadTypes = false;
   @Output() loadTypesChange = new EventEmitter<boolean>();
@@ -92,6 +92,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
       this.loadOnChangesNoBien
     ) {
       console.info('Desde el componenete de change*******');
+      this.getTypes(new ListParams());
       this.form
         .get('noBien')
         .valueChanges.pipe(debounceTime(500), takeUntil(this.$unSubscribe))
@@ -99,6 +100,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
           console.info('Desde el componenete de change', res);
           if (this.goodselect && res !== null) {
             if (this.goodselect.goodClassNumber) {
+              console.info('Desde el componenete de change', res);
               const params = new ListParams();
               const response: any = await this.getClassif(
                 params,
@@ -109,51 +111,53 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
               this.onSssubtypesChange(response);
             }
           } else {
+            console.info('Desde el componenete de change', res);
             this.type.setValue('');
-            this.types = new DefaultSelect([], 0);
+            this.types = new DefaultSelect([], 0, true);
             this.subtype.setValue('');
-            this.subtypes = new DefaultSelect([], 0);
+            this.subtypes = new DefaultSelect([], 0, true);
             this.ssubtype.setValue('');
-            this.ssubtypes = new DefaultSelect([], 0);
+            this.ssubtypes = new DefaultSelect([], 0, true);
             this.sssubtype.setValue('');
-            this.sssubtypes = new DefaultSelect([], 0);
+            this.sssubtypes = new DefaultSelect([], 0, true);
             this.form.get('situacion').setValue('');
             this.form.get('destino').setValue('');
             this.form.get('estatus').setValue('');
             this.goodSssubtypeChange.emit(null);
+            this.getTypes(new ListParams());
           }
         });
       return;
     }
 
-    if (this.form) {
-      this.form.valueChanges
-        .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
-        .subscribe(x => {
-          if (this.loadTypes) {
-            const params = new ListParams();
-            if (x[this.sssubtypeField]) {
-              this.getSssubtypes(params, x[this.sssubtypeField]);
-            }
-            if (x[this.ssubtypeField]) {
-              this.getSsubtypes(params, x[this.ssubtypeField]);
-            }
-            if (x[this.subtypeField]) {
-              this.getSubtypes(params, x[this.subtypeField]);
-            }
-            if (x[this.typeField]) {
-              this.getTypes(params, x[this.typeField]);
-            }
-          }
-          this.loadTypes = false;
-          this.loadTypesChange.emit(false);
-        });
-      // this.sssubtype.valueChanges
-      //   .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
-      //   .subscribe(x => {
-      //     console.log(x);
-      //   });
-    }
+    // if (this.form) {
+    //   this.form.valueChanges
+    //     .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
+    //     .subscribe(x => {
+    //       if (this.loadTypes) {
+    //         const params = new ListParams();
+    //         if (x[this.sssubtypeField]) {
+    //           this.getSssubtypes(params, x[this.sssubtypeField]);
+    //         }
+    //         if (x[this.ssubtypeField]) {
+    //           this.getSsubtypes(params, x[this.ssubtypeField]);
+    //         }
+    //         if (x[this.subtypeField]) {
+    //           this.getSubtypes(params, x[this.subtypeField]);
+    //         }
+    //         if (x[this.typeField]) {
+    //           this.getTypes(params, x[this.typeField]);
+    //         }
+    //       }
+    //       this.loadTypes = false;
+    //       this.loadTypesChange.emit(false);
+    //     });
+    //   // this.sssubtype.valueChanges
+    //   //   .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
+    //   //   .subscribe(x => {
+    //   //     console.log(x);
+    //   //   });
+    // }
   }
 
   async getData(good: IGood) {
@@ -311,6 +315,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     this.subtypes = new DefaultSelect();
     this.ssubtypes = new DefaultSelect();
     this.sssubtypes = new DefaultSelect();
+    this.getSubtypes(new ListParams());
     this.form.updateValueAndValidity();
     this.goodTypeChange.emit(type);
   }
@@ -323,6 +328,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     this.resetFields([this.ssubtype, this.sssubtype]);
     this.ssubtypes = new DefaultSelect();
     this.sssubtypes = new DefaultSelect();
+    this.getSsubtypes(new ListParams());
     this.goodSubtypeChange.emit(subtype);
   }
 
@@ -334,6 +340,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
       this.subtype.setValue(ssubtype.noSubType.id);
     }
     this.resetFields([this.sssubtype]);
+    this.getSssubtypes(new ListParams());
     this.goodSsubtypeChange.emit(ssubtype);
   }
 
