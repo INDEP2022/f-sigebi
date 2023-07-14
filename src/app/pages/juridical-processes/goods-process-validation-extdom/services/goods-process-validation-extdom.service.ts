@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
+import { IHistoricGoodsAsegExtdom } from 'src/app/core/models/administrative-processes/history-good.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
@@ -91,5 +93,14 @@ export class GoodsProcessValidationExtdomService {
   }
   getProcedureManagementById(id: number) {
     return this.msProcedureManagementService.getById(id);
+  }
+  updateGood(body: Partial<IGood>) {
+    return this.msGoodService.update(body);
+  }
+  createHistoryGood(body: Partial<IHistoricGoodsAsegExtdom>) {
+    return this.msHistoryGoodService.createHistoricGoodsAsegExtdom(body);
+  }
+  updateHistoryGood(body: Partial<IHistoricGoodsAsegExtdom>) {
+    return this.msHistoryGoodService.updateHistoricGoodsAsegExtdom(body);
   }
 }
