@@ -1,5 +1,6 @@
 // import { CheckboxDisabledElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-disabled-element';
 // import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { CustomDateDayFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
 import { CheckboxElementRecordAccountStatementsComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element-record-account-statements';
 
 export const RECORDS_ACCOUNT_STATEMENTS_COLUMNS = {
@@ -27,13 +28,17 @@ export const RECORDS_ACCOUNT_STATEMENTS_COLUMNS = {
       const formattedDate = `${day}/${month}/${year}`;
       return formattedDate;
     },
+    filter: {
+      type: 'custom',
+      component: CustomDateDayFilterComponent,
+    },
   },
   deposit: {
     title: 'Abono',
     type: 'number',
     sort: false,
   },
-  withdrawal: {
+  passDiverse: {
     title: 'Cargo',
     type: 'number',
     sort: false,
