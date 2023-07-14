@@ -563,6 +563,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   getGoodClassDescriptions() {
     this.goodClassification.valueChanges.subscribe(res => {
+      console.log(res);
       if (this.goodClassification.value != null) {
         const paramsF = new FilterParams();
         paramsF.addFilter('numClasifGoods', this.goodClassification.value);
@@ -584,6 +585,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   //Llenar valores por el no. paquete
   fillDataByPackage() {
     this.noPackage.valueChanges.subscribe((res: IPackageGoodEnc) => {
+      console.log(res.numberClassifyGood);
       console.log(res);
       if (res != null) {
         this.contador = 0;
@@ -607,7 +609,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.userCancelado.setValue(res.useCancelled);
         //Setep de la tercera parte
         this.delegation.setValue(res.numberDelegation);
-        this.goodClassification.setValue(parseInt(res.numberClassifyGood));
+        this.form.get('goodClassification').setValue(res.numberClassifyGood);
         this.targetTag.setValue(res.numberLabel);
         this.transferent.setValue(res.numbertrainemiaut);
         this.warehouse.setValue(res.numberStore);
@@ -939,15 +941,20 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       );
       return;
     }
-    this.alertQuestion(
-      'question',
-      'Confirmación',
-      '¿Está seguro de ' + messageInit + ' el paquete ' + noPackage + '?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.updatePackageFirstBlock(status, titleInit);
-      }
-    });
+
+    if (['V', 'A'].includes(status)) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Está seguro de ' + messageInit + ' el paquete ' + noPackage + '?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.updatePackageFirstBlock(status, titleInit);
+        }
+      });
+    } else {
+      this.updatePackageFirstBlock(status, titleInit);
+    }
   }
 
   showConfirmAlert() {
@@ -1228,10 +1235,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     };
 
     let packageUpdateC: Partial<IPackage> = {
-      numberPackage: +noPack.numberPackage,
-      statuspack: status,
-      dateClosed: formattedDate,
-      useClosed: localStorage.getItem('username').toUpperCase(),
       amount: this.amountKg.value,
     };
 
@@ -2098,6 +2101,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           let token = this.authService.decodeToken();
           const noPack = this.noPackage.value;
           console.log(this.noPackage.value);
+
           const model: ISecondIfMC = {
             noPackage: this.noPackage.value.numberPackage,
             noGoodFather: this.noPackage.value.numberGoodFather,
