@@ -44,12 +44,14 @@ export class ChangePeriodComponent extends BasePage {
   years2: number[] = [];
   currentYear2: number = new Date().getFullYear();
   maxDate: number = 2050;
+  periods = new DefaultSelect();
+  disabledPeriod: boolean = false;
   constructor(private survillanceService: SurvillanceService) {
     super();
   }
 
   ngOnInit(): void {
-    for (let i = 1900; i <= this.currentYear; i++) {
+    for (let i = 2010; i <= this.currentYear; i++) {
       this.years.push(i);
     }
     // this.prepareForm();
@@ -57,15 +59,23 @@ export class ChangePeriodComponent extends BasePage {
     this.dateDestino();
   }
   dateDestino() {
-    for (let i = 2010; i <= this.maxDate; i++) {
+    for (let i = 2010; i <= this.currentYear; i++) {
       this.years2.push(i);
     }
   }
 
   yearChange(event: any) {
     console.log(event);
-    this.maxDate = event;
-    this.dateDestino();
+    if (event) {
+      this.form.get('period').setValue(null);
+      this.maxDate = event;
+      this.dateDestino();
+      this.disabledPeriod = true;
+      this.getPeriods(new ListParams());
+    } else {
+      this.form.get('period').setValue(null);
+      this.disabledPeriod = false;
+    }
   }
   // prepareForm() {
   //   this.form = this.fb.group({
@@ -160,6 +170,35 @@ export class ChangePeriodComponent extends BasePage {
     // });
   }
 
+  // OBTENER PERIODOS //
+  async getPeriods(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    params.addFilter('perYear', this.form.value.year, SearchFilter.EQ);
+
+    return new Promise((resolve, reject) => {
+      this.survillanceService
+        .getVigSupervisionMae(params.getParams())
+        .subscribe({
+          next: async (response: any) => {
+            console.log('EDED2', response);
+
+            this.periods = new DefaultSelect(response.data, response.count);
+            resolve(response.data);
+          },
+          error: error => {
+            this.periods = new DefaultSelect([], 0);
+            this.loading = false;
+            resolve(null);
+          },
+        });
+    });
+  }
+
+  changePeriods(event: any) {}
   cleanForm() {
     this.delegationDefault = null;
     this.processDefault = null;

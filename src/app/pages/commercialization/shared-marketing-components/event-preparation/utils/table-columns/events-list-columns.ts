@@ -14,9 +14,12 @@ export const PREPARE_EVENT_EVENTS_LIST_COLUMNS = {
     title: 'ID Tipo',
     sort: false,
   },
-  tipo: {
+  comerTpevents: {
     title: 'Tipo',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value?.description ?? '';
+    },
   },
   place: {
     title: 'Lugar',
@@ -32,12 +35,18 @@ export const PREPARE_EVENT_EVENTS_LIST_COLUMNS = {
     title: 'Usuario',
     sort: false,
   },
-  delegationNumber: {
+  catDelegation: {
     title: 'Coordinación',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value?.description ?? '';
+    },
   },
-  statusVtaId: {
+  comerStatusvta: {
     title: 'Estatus',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value?.description ?? '';
+    },
   },
 };
