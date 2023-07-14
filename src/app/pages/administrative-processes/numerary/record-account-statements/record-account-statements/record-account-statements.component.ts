@@ -83,6 +83,20 @@ export class RecordAccountStatementsComponent
     this.settings.actions.add = false;
     this.settings.actions.delete = true;
     this.settings.actions.edit = false;
+
+    this.settings.rowClassFunction = (row: any) => {
+      const genderTransfer = row.data.genderTransfer;
+      const numberReturnPayCheck = row.data.numberReturnPayCheck;
+      if (genderTransfer === 'S' && numberReturnPayCheck === null) {
+        return 'bg-yellow-record';
+      } else if (numberReturnPayCheck !== null) {
+        return 'bg-blue-record';
+      } else {
+        return 'bg-green-record';
+      }
+
+      return '';
+    };
   }
 
   private prepareForm() {
@@ -171,6 +185,7 @@ export class RecordAccountStatementsComponent
   // Trae la lista de bancos por defecto
   searchBanks(params: ListParams) {
     this.loading = true;
+    this.dataAccount = new LocalDataSource();
     this.bankAccountSelect = new DefaultSelect();
     this.recordAccountStatementsService.getAll(params).subscribe({
       next: (response: { data: any[]; count: number }) => {
@@ -213,6 +228,7 @@ export class RecordAccountStatementsComponent
     this.form.get('currency').reset();
     this.form.get('description').reset();
     this.totalItems = 0;
+    this.dataAccount = new LocalDataSource();
     this.cleandInfoDate();
     this.bankAccountSelect = new DefaultSelect();
     this.loading = false;
@@ -231,6 +247,7 @@ export class RecordAccountStatementsComponent
     bankCode: string,
     paramsSubject: BehaviorSubject<ListParams>
   ) {
+    this.dataAccount = new LocalDataSource();
     this.bankCode = bankCode;
     const params = paramsSubject.getValue();
     this.recordAccountStatementsAccountsService
@@ -404,7 +421,6 @@ export class RecordAccountStatementsComponent
 
   // Abre el modal de transferencia de saldos
   openModal(movimentAccount: IRecordAccountStatements) {
-    console.log(movimentAccount);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       ignoreBackdropClick: false,

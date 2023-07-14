@@ -81,3 +81,39 @@ export const IMAGE_DEBUGGING_COLUMNS = {
     sort: false,
   },
 };
+
+export const PHOTOGRAPHY_COLUMNS = {
+  dDocName: {
+    title: 'No. Fotografía',
+    type: 'string',
+    sort: false,
+  },
+
+  xidBien: {
+    title: 'No. Bien',
+    type: 'string',
+    sort: false,
+  },
+
+  xtipoDocumento: {
+    title: 'Tipo de documento',
+    type: 'string',
+    sort: false,
+  },
+
+  ddocTitle: {
+    title: 'Título del Documento',
+    type: 'string',
+    sort: false,
+  },
+  dDocAuthor: {
+    title: 'Autor',
+    type: 'string',
+    sort: false,
+  },
+  dInDate: {
+    title: 'Fecha Creación',
+    type: 'string',
+    sort: false,
+  },
+};
