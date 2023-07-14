@@ -7,13 +7,19 @@
         </div>
         <div class="col-md-12 mt-4">
           <form-field [control]="form.get('year')" label="Año">
-            <input
+            <ng-select
+              (change)="yearChange($event)"
+              class="form-control"
+              formControlName="year"
+              [items]="years"
+              [ngModel]="currentYear"></ng-select>
+            <!-- <input
               type="number"
               class="form-control"
               formControlName="year"
               min="1"
               [max-length]="4"
-              pattern="^[0-9]+" />
+              pattern="^[0-9]+" /> -->
           </form-field>
         </div>
         <div class="col-md-12 mt-2">
@@ -78,13 +84,13 @@
         </div>
         <div class="col-md-12 mt-4">
           <form-field [control]="form.get('yearDestiny')" label="Año">
-            <input
-              type="number"
+            <ng-select
               class="form-control"
               formControlName="yearDestiny"
-              min="1"
-              [max-length]="4"
-              pattern="^[0-9]+" />
+              [items]="years2"
+              [ngModel]="currentYear"></ng-select>
+            <!-- <input type="number" class="form-control" formControlName="yearDestiny" min="1" [max-length]="4"
+              pattern="^[0-9]+" /> -->
           </form-field>
         </div>
         <div class="col-md-12 mt-2">

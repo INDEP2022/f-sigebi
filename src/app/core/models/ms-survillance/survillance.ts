@@ -46,3 +46,27 @@ export interface IDelegation {
   phaseEdo: string;
   zoneVigilanceKey: null;
 }
+
+export interface IPolVigilancePerGood {
+  goodNumber: string | number;
+  cvePolicy: string;
+  startPolDate?: Date | string;
+  cveContract?: string;
+  startVigDate: Date | string;
+  additionInsured?: string;
+  amountCousin?: string | number;
+  cveCurrencySa?: string;
+  incomeDate?: Date | string;
+  inContractCurrent?: string;
+  shiftsVigNumber: string | number;
+  shiftsMedNumber: string | number;
+  shiftsIndNumber: string | number;
+  shiftsCanNumber: string | number;
+  shiftsMechNumber?: string | number;
+  shiftsIncNumber: string | number;
+  indseg?: string;
+  indVig?: string;
+  recordNumber?: string;
+  ingVigDate?: string | Date;
+  cveRegsup: string;
+}

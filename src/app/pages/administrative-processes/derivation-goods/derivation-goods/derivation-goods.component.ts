@@ -11,6 +11,7 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents-type/documents.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
@@ -46,6 +47,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   selectedRow: any;
   goodData: any;
   good: any;
+  relDocuments: any;
   bkConversionsCveActaCon: any;
 
   get id() {
@@ -133,7 +135,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     private serviceGoodProcess: GoodProcessService,
     private convertiongoodService: ConvertiongoodService,
     private route: ActivatedRoute,
-    private historyGoodProcess: HistoryGoodService
+    private historyGoodProcess: HistoryGoodService,
+    private documentsService: DocumentsService
   ) {
     super();
     this.route.queryParams.subscribe(params => {
@@ -144,8 +147,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
   ngOnInit(): void {
     this.buildForm();
-
+    this.pw();
     //Inicializando el modal
+  }
+  pw() {
     let config = MODAL_CONFIG;
     config = {
       initialState: {
@@ -164,6 +169,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.searchGoods(data.goodFatherNumber);
             this.searchGoodSon(data.goodFatherNumber);
             this.searchSituation(data.goodFatherNumber);
+            this.searchGoodRelDocuments(data.goodFatherNumber);
+            this.getAllGoodChild(data.goodFatherNumber);
           }
         },
       }, //pasar datos por aca
@@ -173,9 +180,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
 
     const modalRef = this.modalService.show(PwComponent, config);
   }
-
   getAll() {
     this.loading = false;
+    //bien validacion de referencia. refertencia sea igual al noBien padre ? referencia debe ser diferente al bien del padre
+    // select no_bien, no_bien_referencia
+    // from sera.bien
+    // where no_bien != no_bien_referencia
+    // and no_bien_referencia = 641346 --Este es el no_bien del padre
+
     this.form.valueChanges.subscribe(value => {
       this.convertiongoodService
         .getAllGoodsConversions(this.params.getValue(), value.idConversion)
@@ -187,12 +199,18 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
               item.fileNumber =
                 item.fileNumber != null ? item.fileNumber : item.idConversion;
             });
-            this.dataGoods2 = response.data;
+            // this.dataGoods2 = response.data;
           },
         });
     });
   }
-
+  getAllGoodChild(good: string) {
+    this.serviceGood.getGetReferenceGoodgoodI(good).subscribe({
+      next: response => {
+        this.dataGoods2 = response.data;
+      },
+    });
+  }
   /**
    * @method: metodo para iniciar el formulario
    * @author:  Alexander Alvarez
@@ -243,6 +261,15 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     });
     this.getAll();
   }
+  searchGoodRelDocuments(good: string) {
+    let params = new ListParams();
+    params['filter.goodNumber'] = good;
+    this.documentsService.getGoodsRelDocuments(params).subscribe({
+      next: response => {
+        this.relDocuments = response.data[0];
+      },
+    });
+  }
   searchGoods(e: any) {
     const paramsF = new FilterParams();
     paramsF.addFilter('goodId', e);
@@ -274,6 +301,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             .toPromise();
           // if (conversionData.typeConv === '1') {
           this.good = res.data[0];
+          // console.log(this.good);
           if (conversionData.typeConv === '2') {
             this.id.setValue(res.data[0]['id']);
             this.observation.setValue(res.data[0]['observations']);
@@ -351,14 +379,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             res => {
               this.alert(
                 'success',
-                'Se cambio el estatus del Bien',
-                `El Bien estatus del bien con id: ${this.numberGoodFather.value}, fue cambiado a CAN`
+                'Se Cambio el Estatus del Bien',
+                `El Bien Estatus del Bien con id: ${this.numberGoodFather.value}, fue Cambiado a CAN`
               );
             },
             err => {
               this.alert(
                 'error',
-                'No se pudo cambiar el estatus del bien',
+                'No se Pudo Cambiar el Estatus del Bien',
                 'Se presentó un error inesperado que no permitió el cambio de estatus del bien, por favor intentelo nuevamente'
               );
             }
@@ -493,6 +521,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       async res => {
         if (res.statusCode === 200 && res.message[0] === 'ok') {
           this.alert('success', 'Conversión Finalizada', '');
+          this.pw();
         }
       },
       err => {
@@ -551,68 +580,61 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         `ya ha sido convertido`
       );
     }*/
-    if (event != null) {
-      this.serviceGood.getGoods(this.goodFatherNumber$.getValue()).subscribe(
-        res => {
-          const data = res;
-          console.log('respuesta de consulta -> ', data);
-          console.trace('getGoods -> ', data);
-          this.filterGood$.next(data);
-        },
-        err => {
-          console.log(err);
-        }
-      );
-      let payload = this.filterGood$.getValue().data;
-      payload = payload.map((item: any) => {
-        delete item.almacen;
-        delete item.delegationNumber;
-        delete item.expediente;
-        delete item.menaje;
-        delete item.statusDetails;
-        delete item.subDelegationNumber;
-        return item;
-      });
-      delete payload.almacen;
-      console.log('crateGood -> ', payload[0]);
-      this.serviceGood.crateGood(payload[0]).subscribe(
-        res => {
-          this.alert(
-            'success',
-            'se ha agregado el Bien',
-            `con el id: ${res.id}`
-          );
-        },
-        err => {
-          this.alert(
-            'error',
-            'No se pudo cambiar el estatus del bien',
-            'Se presentó un error inesperado que no permitió el cambio de estatus del bien, por favor intentelo nuevamente'
-          );
-        }
-      );
-
-      this.serviceGood.getGoods(this.goodFatherNumber$.getValue()).subscribe(
-        res => {
-          const data = res;
-          this.filterGood$.next(data);
-          console.log('filterGood -> ', this.filterGood$.getValue);
-        },
-        err => {
-          console.log(err);
-        }
-      );
-    } else {
-      this.alert('warning', 'No bien hijo', 'Debe seleccionar un bien hijo');
-    }
+    //crear segun el nuemero pardre en referencia y copiar los demas valores al bien
+    this.alertQuestion(
+      'question',
+      `Se agregará un bien hijo`,
+      '¿Desea continuar?'
+    ).then(q => {
+      if (q.isConfirmed) {
+        let good = this.good;
+        delete good.id;
+        delete good.goodId;
+        good.goodReferenceNumber = this.goodFatherNumber$.getValue();
+        good.almacen = this.good.almacen.idWarehouse;
+        good.delegationNumber = this.good.delegationNumber.id;
+        good.expediente = this.good.expediente.id;
+        good.subDelegationNumber = this.good.subDelegationNumber.id;
+        console.log(good);
+        this.serviceGood.crateGood(good).subscribe(
+          res => {
+            this.createRelDocument(res);
+          },
+          err => {
+            this.alert(
+              'error',
+              'No bien hijo',
+              'Error inesperado, por favor intentelo nuevamente'
+            );
+          }
+        );
+      }
+    });
   }
-
+  createRelDocument(good: any) {
+    let documentGood = this.relDocuments;
+    delete documentGood.goodNumber;
+    documentGood.goodNumber = good.goodId;
+    this.documentsService.createRelDocument(documentGood).subscribe(
+      res => {
+        this.alert(
+          'success',
+          'Se ha agregado el Bien',
+          `con el id: ${good.goodId}`
+        );
+        this.getAllGoodChild(this.goodFatherNumber$.getValue());
+      },
+      err => {
+        this.alert('error', 'No se pudo agregar el Bien', '');
+      }
+    );
+  }
   //Eliminar bien hijo
   deletGood(event: any) {
     //console.log("el evento es -> ",this.selectedRow.data);
     if (event != null && this.selectedRow != undefined) {
       //console.log("el evento es -> ",JSON.stringify(this.selectedRow));
-      console.log('status->', this.selectedRow.status);
+      console.log('status->', this.selectedRow);
       if (this.selectedRow.status === 'CVD') {
         this.alert(
           'error',
@@ -624,17 +646,22 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       console.log('status2->', this.selectedRow);
       this.alertQuestion(
         'question',
-        `¿Se va a eliminar el bien ${this.selectedRow.goodId} ¿Desea continuar??`,
-        ''
+        `Se va a eliminar el bien ${this.selectedRow.goodId}`,
+        '¿Desea continuar?'
       ).then(q => {
         if (q.isConfirmed) {
-          this.serviceGood.removeGood(this.selectedRow.goodId).subscribe(
+          let data = {
+            id: this.selectedRow.id,
+            goodId: this.selectedRow.goodId,
+          };
+          this.serviceGood.removeGood(data).subscribe(
             res => {
               this.alert(
                 'success',
                 'Se Eliminó el Bien',
                 `El Bien con id: ${this.selectedRow.goodId}, fue Eliminado`
               );
+              this.getAllGoodChild(this.goodFatherNumber$.getValue());
             },
             err => {
               this.alert('error', 'error ', err.message);
@@ -664,8 +691,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       res => {
         this.attributes = [];
         console.log('getAllFilterClassification -> ', res);
-        // delete res.goodNumber;
-        // this.attributes = Object.entries(res.data).filter(([key, value]) => value.attribute);
         for (let i = 0; i < res.data.length; i++) {
           let value = '';
           for (const index in this.good) {

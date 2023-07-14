@@ -870,8 +870,6 @@ export interface IServiceGood {
 }
 
 export interface ISecondIfMC {
-  pSessionId: number | string;
-  pSidId: number | string;
   noPackage: number;
   noGoodFather: number;
   encStatus: string;
