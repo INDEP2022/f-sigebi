@@ -77,7 +77,7 @@ export class DepositaryReportComponent extends BasePage implements OnInit {
     if (this.depositaryDataForm.get('reportDate').value >= new Date()) {
       this.alert(
         'warning',
-        'Informe depositaria',
+        'Informe Depositaria',
         'La fecha del informe debe ser menor a la fecha actual'
       );
       return;
@@ -86,7 +86,7 @@ export class DepositaryReportComponent extends BasePage implements OnInit {
       this.depositaryDataForm.get('report').value === null ||
       this.depositaryDataForm.get('report').value === ''
     ) {
-      this.alert('warning', 'Informe depositaria', 'El informe es requerido');
+      this.alert('warning', 'Informe Depositaria', 'El informe es requerido');
       return;
     }
     const model: IInfoDepositary = {
@@ -100,7 +100,7 @@ export class DepositaryReportComponent extends BasePage implements OnInit {
       next: response => {
         this.alert(
           'success',
-          'Informe depositaria',
+          'Informe Depositaria',
           'Se ha actualizado la información del informe de depositaria del bien'
         );
       },
@@ -108,7 +108,7 @@ export class DepositaryReportComponent extends BasePage implements OnInit {
         console.log(err);
         this.alert(
           'error',
-          'Ha ocurrido un error',
+          'Ha Ocurrido un Error',
           'No se ha actualizado la información del informe de depositaria del bien'
         );
       },

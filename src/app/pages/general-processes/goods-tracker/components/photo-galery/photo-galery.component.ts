@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
@@ -21,6 +22,7 @@ export class PhotoGaleryComponent extends BasePage implements OnInit {
   @Input() totalItems: number = 0;
   @Input() params: BehaviorSubject<ListParams>;
   @Input() override loading: boolean = false;
+  @Input() formCheckbox: FormGroup;
   constructor() {
     super();
   }
