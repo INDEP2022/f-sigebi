@@ -22,8 +22,7 @@
                 bindLabel="email"
                 (fetchItems)="getNameDist($event)"
                 (change)="changeName($event)"
-                label="Estatus"
-                s
+                label="Para"
                 [optionTemplate]="opt"></ngx-select>
               <ng-template #opt let-item="item">
                 <div [title]="item.nombre + '-' + item.email">

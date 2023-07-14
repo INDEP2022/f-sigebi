@@ -639,7 +639,7 @@ export class RegionalAccountTransferenceComponent
     } = this.form.value;
 
     const body: any = {
-      transDate: transactionDate,
+      transDate: this.parseDateNoOffset(transactionDate),
       amountAll: total,
       repDate: this.getDate(dateReport),
       accountKey: cveAccount,
@@ -674,6 +674,13 @@ export class RegionalAccountTransferenceComponent
         this.alert('error', 'Error', err.error.message);
       },
     });
+  }
+
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() - dateLocal.getTimezoneOffset() * 60 * 1000
+    );
   }
 
   getAccount() {
