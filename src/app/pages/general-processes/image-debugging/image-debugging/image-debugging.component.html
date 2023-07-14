@@ -122,13 +122,23 @@
                 {{ errorMessage }}
               </div>
               <div
-                *ngIf="!disabledBienes || di_numerario_conciliado"
                 class="mb-5"
                 style="
                   display: flex;
                   justify-content: space-between;
                   align-items: center;
                 ">
+                <div [class]="loading ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settings"
+                    [source]="photographs"
+                    (edit)="viewImage($event.data)">
+                  </ng2-smart-table>
+                  <app-pagination
+                    [params]="params"
+                    [totalItems]="totalItems"></app-pagination>
+                </div>
                 <button
                   *ngIf="!disabledBienes"
                   type="button"
