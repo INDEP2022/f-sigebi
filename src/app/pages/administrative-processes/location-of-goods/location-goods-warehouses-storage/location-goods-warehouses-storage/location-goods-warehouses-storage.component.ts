@@ -41,6 +41,7 @@ export class LocationGoodsWarehousesStorageComponent
   fileNum: number = 0;
   selectedOption: string = 'B';
   dataTableGood_: any[] = [];
+  columnFilters: any;
   disableConsultLocation: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   warehouseDisable: boolean = true;
@@ -352,56 +353,39 @@ export class LocationGoodsWarehousesStorageComponent
   }
 
   validarGood(): boolean {
-    if (this.di_desc_est === 'S') {
-      if (this.radio.value === 'A') {
-        if (
-          Number(this.good.type) === 5 &&
-          Number(this.good.subTypeId) === 16
-        ) {
-          this.warehouseDisable = true;
-          this.vaultDisable = true;
-          this.good.dateIn = new Date();
-          this.good.ubicationType = 'A';
-          return true;
-        } else if (Number(this.good.type) === 7) {
-          this.good.ubicationType = 'A';
-          this.vaultDisable = false;
-          this.formVault.disable();
-          this.good.dateIn = new Date();
-        } else {
-          this.warehouseDisable = false;
-          this.vaultDisable = false;
-          this.good.storeNumber = this.warehouse.value;
-          this.radio.setValue('A');
-          this.good.dateIn = new Date();
-        }
+    if (this.radio.value === 'A') {
+      if (Number(this.good.type) === 5 && Number(this.good.subTypeId) === 16) {
+        this.good.dateIn = new Date();
+        this.good.ubicationType = 'A';
+        return true;
+      } else if (Number(this.good.type) === 7) {
+        this.good.ubicationType = 'A';
+        this.formVault.disable();
+        this.good.dateIn = new Date();
       } else {
-        if (
-          Number(this.good.type) === 5 &&
-          Number(this.good.subTypeId) === 16
-        ) {
-          this.warehouseDisable = true;
-          this.vaultDisable = true;
-          this.good.ubicationType = 'B';
-          this.good.vaultNumber = 9999;
-          this.good.storeNumber = null;
-          this.good.dateIn = new Date();
-        } else if (Number(this.good.type) === 7) {
-          this.warehouseDisable = false;
-          this.formWarehouse.disable();
-          this.good.dateIn = new Date();
-          // this.good.ubicationType = 'B';
-        } else {
-          this.warehouseDisable = true;
-          this.vaultDisable = true;
-          this.good.vaultNumber = this.safe.value;
-          this.good.ubicationType = '';
-          this.good.dateIn = new Date();
-          this.radio.setValue('B');
-        }
+        this.good.storeNumber = this.warehouse.value;
+        this.radio.setValue('A');
+        this.good.dateIn = new Date();
+      }
+    } else {
+      if (Number(this.good.type) === 5 && Number(this.good.subTypeId) === 16) {
+        this.good.ubicationType = 'B';
+        this.good.vaultNumber = 9999;
+        this.good.storeNumber = null;
+        this.good.dateIn = new Date();
+      } else if (Number(this.good.type) === 7) {
+        this.warehouseDisable = false;
+        this.formWarehouse.disable();
+        this.good.dateIn = new Date();
+        // this.good.ubicationType = 'B';
+      } else {
+        this.good.vaultNumber = this.safe.value;
+        this.good.ubicationType = '';
+        this.good.dateIn = new Date();
+        this.radio.setValue('B');
       }
     }
-    this.di_desc_est = 'N';
+
     return false;
   }
   validLocationsConsult(warehouse: IWarehouse) {
@@ -417,38 +401,39 @@ export class LocationGoodsWarehousesStorageComponent
   onLoadGoodList() {
     this.loading = true;
     this.noExpediente = this.good.fileNumber || '';
-    this.params.getValue().page = 1;
-    this.params.getValue().limit = 10;
+    let params: any = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
     if (this.noExpediente !== '') {
-      this.serviceGood
-        .getByExpedient(this.noExpediente, this.params.getValue())
-        .subscribe({
-          next: data => {
-            this.goods = data.data;
-            this.loading = false;
-            console.log('Bienes', this.goods);
+      this.serviceGood.getByExpedient(this.noExpediente, params).subscribe({
+        next: data => {
+          this.goods = data.data;
+          this.loading = false;
+          console.log('Bienes', this.goods);
 
-            let result = data.data.map(async (item: any) => {
-              let obj = {
-                vcScreen: 'FACTADBUBICABIEN',
-                pNumberGood: item.id,
-              };
-              const di_dispo = await this.getStatusScreen(obj);
-              console.log(di_dispo);
-            });
+          let result = data.data.map(async (item: any) => {
+            let obj = {
+              vcScreen: 'FACTADBUBICABIEN',
+              pNumberGood: item.id,
+            };
+            const di_dispo = await this.getStatusScreen(obj);
+            item['di_disponible'] = di_dispo;
+            item.di_disponible != null ? 'N' : di_dispo;
+          });
 
-            Promise.all(result).then(item => {
-              this.dataTableGood_ = this.goods;
-              this.allGoods.load(this.dataTableGood_);
-              this.allGoods.refresh();
-              this.totalItems = data.count;
-              console.log(this.goods);
-            });
-          },
-          error: error => {
-            this.loading = false;
-          },
-        });
+          Promise.all(result).then(item => {
+            this.dataTableGood_ = this.goods;
+            this.allGoods.load(this.dataTableGood_);
+            this.allGoods.refresh();
+            this.totalItems = data.count;
+            console.log(this.goods);
+          });
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
     }
   }
   getEstatusColor(estatus: string): string {
