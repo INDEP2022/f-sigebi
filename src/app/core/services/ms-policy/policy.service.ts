@@ -47,4 +47,14 @@ export class PolicyService extends HttpService {
       `${PolicyEndpoint.getPolicesXRight}?filter.policyKeyId=$eq:${Key}`
     );
   }
+  putPolicyGood(params: any) {
+    return this.put(PolicyEndpoint.getPolicesXRight, params);
+  }
+
+  putGood(data: IPolicyXBien) {
+    return this.put;
+  }
+  postPolicyGood(params: any) {
+    return this.post(PolicyEndpoint.getPolicesXRight, params);
+  }
 }

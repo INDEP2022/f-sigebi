@@ -1,11 +1,20 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { differenceInDays, parseISO } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IPolicyXBien } from 'src/app/core/models/ms-policy/policy.model';
 import { PolicyService } from 'src/app/core/services/ms-policy/policy.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { convertFormatDate } from '../../../../../common/helpers/helpers';
+import { ProrrateoGoodSurveillanceModalComponent } from '../prorrateo-goods-surveillance/prorrateo-good-surveillance-modal/prorrateo-good-surveillance-modal.component';
 import { PRORRATEGO_GOODS_COLUMNS } from './prorrateo-goods-columns';
 
 @Component({
@@ -15,20 +24,33 @@ import { PRORRATEGO_GOODS_COLUMNS } from './prorrateo-goods-columns';
 })
 export class ProrrateoGoodsComponent extends BasePage implements OnInit {
   goods: any[] = [];
+  form: FormGroup;
+  NoRequest: any;
   totalItems: number = 0;
   datebd: number;
   daysF: number;
   data = new LocalDataSource();
+  columnFilters: any = [];
+  keyA: string;
+  dateIni: any;
+  id: number;
+  selectedRow: IPolicyXBien;
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   @Input() elemento: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
-  constructor(private policyService: PolicyService) {
+  constructor(
+    private policyService: PolicyService,
+    private modalService: BsModalService
+  ) {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: true,
+        add: false,
         position: 'right',
       },
       columns: PRORRATEGO_GOODS_COLUMNS,
@@ -36,7 +58,73 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getByPolicyKey(this.elemento);
+    // this.getByPolicyKey(this.elemento);
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filters.field) {
+              case 'goodId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'additionInsured':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'amountCousin':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'location':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'shortDate':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'statusGood':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'factorCostDaily':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'amountNoteCredit':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'di_dias_trans':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'daysPassed':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'responsibleShort':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getByPolicyKey(this.elemento);
+        }
+      });
+    this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: () => {
+        if (this.data) this.getByPolicyKey(this.elemento);
+      },
+    });
   }
 
   getByPolicyKey(Key: string) {
@@ -68,7 +156,7 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
             amountCousin: response.data[i].Policies.amountCousin,
             additionInsured: response.data[i].additionInsured,
             location: response.data[i].Goods.ubicationType,
-            expireDate: response.data[i].Goods.expireDate,
+            shortDate: response.data[i].shortDate,
             statusGood: response.data[i].Goods.status,
             factorCostDaily: response.data[i].factorCostDaily,
             amountNoteCredit: response.data[i].amountNoteCredit,
@@ -78,6 +166,9 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
           };
           this.goods.push(dataForm);
           this.data.load(this.goods);
+          this.keyA = response.data[i].policyKeyId;
+          this.dateIni = response.data[i].beginningDateId;
+          this.id = response.data[i].id;
         }
       },
 
@@ -93,5 +184,54 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
     const year = date.getFullYear().toString();
 
     return `${year}-${month}-${day}`;
+  }
+
+  loadModalgood() {
+    this.openPushModalGood(false, this.id, this.keyA);
+  }
+
+  formData(doc: any) {
+    this.selectedRow = doc;
+    this.openModalGood2(true, doc, this.keyA, this.dateIni, this.id);
+  }
+
+  openPushModalGood(newOrEdit: boolean, id: number, keyA: string) {
+    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    modalConfig.initialState = {
+      newOrEdit,
+      id,
+      keyA,
+      Elemento: { Elemento: this.elemento },
+      callback: (next: boolean) => {},
+    };
+    this.modalService.show(
+      ProrrateoGoodSurveillanceModalComponent,
+      modalConfig
+    );
+  }
+
+  openModalGood2(
+    newOrEdit: boolean,
+    data: IPolicyXBien,
+    keyA: any,
+    dateIni: any,
+    id: number
+  ) {
+    console.log('FECHA: ', dateIni);
+    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    modalConfig.initialState = {
+      newOrEdit,
+      data,
+      keyA,
+      dateIni,
+      id,
+      callback: (next: boolean) => {
+        if (next) this.getByPolicyKey(this.elemento);
+      },
+    };
+    this.modalService.show(
+      ProrrateoGoodSurveillanceModalComponent,
+      modalConfig
+    );
   }
 }

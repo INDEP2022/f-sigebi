@@ -24,7 +24,7 @@ export const PRORRATEGO_GOODS_COLUMNS = {
     type: 'text',
     sort: false,
   },
-  expireDate: {
+  shortDate: {
     title: 'Fecha Baja',
     type: 'date',
     sort: false,
@@ -67,9 +67,9 @@ export const PRORRATEGO_GOODS_COLUMNS = {
       }
     },
   },
-  Di_responsable_baja: {
+  responsibleShort: {
     title: 'Responsable',
-    type: 'date',
+    type: 'string',
     sort: false,
   },
 };
