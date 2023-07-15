@@ -480,6 +480,7 @@
           [formScan]="formScan"
           [notificationData]="notificationData"
           [dataUserLogged]="dataUserLogged"
+          (changeFolio)="changeFolio($event)"
           (scanRequestEmitter)="scanRequest($event)"
           (showScanningPageEmitter)="showScanningPage($event)"
           (messageDigitalizationEmitter)="messageDigitalization($event)"
