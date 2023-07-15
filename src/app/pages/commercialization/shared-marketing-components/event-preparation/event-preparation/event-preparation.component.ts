@@ -12,6 +12,7 @@ import { EventStadisticsForm } from '../utils/forms/event-stadistics-form';
 import { EventPreparationMain } from './event-preparation-main.component';
 
 const LOTES_TAB = 2;
+const OPEN_TAB = 1;
 
 @Component({
   selector: 'app-event-preparation',
@@ -36,6 +37,7 @@ export class EventPreparationComponent
 {
   eventForm = this.fb.group(new ComerEventForm());
   stadisticsForm = this.fb.group(new EventStadisticsForm());
+  onlyBase = false;
   @ViewChild('tasksTabs', { static: true }) tasksTabs?: TabsetComponent;
   get eventControls() {
     return this.eventForm.controls;
@@ -112,8 +114,6 @@ export class EventPreparationComponent
   selectTab(num: number) {
     const tab = this.tasksTabs.tabs[num];
     if (tab) {
-      console.log('Deberia cambiar');
-
       tab.active = true;
     }
   }
@@ -167,6 +167,25 @@ export class EventPreparationComponent
     this.fillStadistics();
   }
 
+  lotesTab() {
+    const { id } = this.eventControls;
+    if (!id.value) {
+      setTimeout(() => {
+        this.selectTab(OPEN_TAB);
+        this.alert(
+          'error',
+          'Error',
+          'Para trabajar los lotes requiere tener un evento abierto'
+        );
+      }, 500);
+      return;
+    }
+    this.defaultMenu();
+    this.canvas.main = true;
+    const params = new FilterParams();
+    this.comerLotsListParams.next(params);
+  }
+
   /**
    * PUP_ABRIR_EVENTO
    */
@@ -183,11 +202,13 @@ export class EventPreparationComponent
   }
 
   openExistingEvent() {
-    const { eventTpId } = this.eventControls;
+    this.onlyBase = false;
+    const { eventTpId, id } = this.eventControls;
     if (eventTpId.value == 11) {
       this.eventFormVisual.eventDate = false;
       this.eventFormVisual.failureDate = false;
       this.eventFormVisual.thirdId = false;
+      this.onlyBase = true;
     } else if (eventTpId.value == 6) {
       this.eventFormVisual.eventDate = false;
       this.eventFormVisual.failureDate = false;
@@ -195,7 +216,18 @@ export class EventPreparationComponent
       this.eventFormVisual.eventDate = true;
       this.eventFormVisual.failureDate = true;
     }
+    this.resetTableFilters();
     this.selectTab(LOTES_TAB);
+    const params = new FilterParams();
+    this.comerLotsListParams.next(params);
+  }
+
+  resetTableFilters() {
+    const filtersData = this.events.getFilter();
+    const filters = filtersData.filters.map((filter: any) => {
+      return { ...filter, search: '' };
+    });
+    this.events.setFilter(filters, true, false);
   }
 
   /**

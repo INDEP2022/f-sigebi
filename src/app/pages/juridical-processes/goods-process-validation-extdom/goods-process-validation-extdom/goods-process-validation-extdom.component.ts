@@ -2,7 +2,9 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
@@ -10,10 +12,13 @@ import {
   catchError,
   map,
   of,
+  switchMap,
   takeUntil,
+  tap,
   throwError,
 } from 'rxjs';
 import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
@@ -26,6 +31,7 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -107,6 +113,8 @@ export class GoodsProcessValidationExtdomComponent
   origin: string = '';
   P_NO_TRAMITE: number = null;
   P_GEST_OK: number = null;
+  P_VOLANTE: number = null;
+  P_EXPEDIENTE: number = null;
   // SELECTS
   selectAffairkey = new DefaultSelect();
   selectIndiciadoNumber = new DefaultSelect();
@@ -124,9 +132,13 @@ export class GoodsProcessValidationExtdomComponent
   goodsValid: IGood[] | any[] = [];
   countSelectedGoods: number = 0;
   countGoodsValid: number = 0;
+  localStorage_selectedGoods: string = 'selectedGoods_aseg';
+  localStorage_goodData3: string = 'goodData3_aseg';
+  localStorage_totalGoods3: string = 'totalGoods3_aseg';
   // Variables Ejecutar proceso
   errorsCount: number = 0;
   executionType: string = 'X';
+  loadingProcess: boolean = false;
   // Scanning
   showScanForm: boolean = false;
   // Usuario actual
@@ -141,7 +153,9 @@ export class GoodsProcessValidationExtdomComponent
     private documentsService: DocumentsService,
     private authService: AuthService,
     private msUsersService: UsersService,
-    private router: Router
+    private router: Router,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     // CONFIG PARA REGISTROS DISPONIBLES PARA EXTDOM
@@ -228,6 +242,16 @@ export class GoodsProcessValidationExtdomComponent
         this.origin = params['origin'] ?? null;
         this.P_NO_TRAMITE = params['P_NO_TRAMITE'] ?? null;
         this.P_GEST_OK = params['P_GEST_OK'] ?? null;
+        this.P_VOLANTE = params['P_VOLANTE'] ?? null;
+        this.P_EXPEDIENTE = params['P_EXPEDIENTE'] ?? null;
+        if (this.P_VOLANTE) {
+          this.form.get('wheelNumber').setValue(this.P_VOLANTE);
+          this.form.get('wheelNumber').updateValueAndValidity();
+        }
+        if (this.P_EXPEDIENTE) {
+          this.form.get('expedientNumber').setValue(this.P_EXPEDIENTE);
+          this.form.get('expedientNumber').updateValueAndValidity();
+        }
         this.initForm();
       });
     this.updatePaginatedTable3();
@@ -280,7 +304,7 @@ export class GoodsProcessValidationExtdomComponent
       event.toggle.subscribe((data: any) => {
         console.log('DATA LOG DELETE #### ', data);
         // data.row.selection = data.toggle;
-        if (data.row.register_type == this.registerExistType) {
+        if (data.row.register_type == this.registerType) {
           let row: IGood = data.row;
           const index = this.selectedDeleteGoods.findIndex(
             _good => _good.goodId == row.goodId
@@ -292,11 +316,11 @@ export class GoodsProcessValidationExtdomComponent
             this.selectedDeleteGoods.splice(index, 1);
           }
         } else {
-          this.alert(
-            'warning',
-            'Este Registro no se puede Eliminar, sólo es posible Liberar',
-            ''
-          );
+          // this.alert(
+          //   'warning',
+          //   'Este Registro no se puede Eliminar, sólo es posible Liberar',
+          //   ''
+          // );
         }
         console.log(
           'SELECIONADOS AL MOMENTO ###### ',
@@ -493,9 +517,9 @@ export class GoodsProcessValidationExtdomComponent
           error: error => {
             console.log(error);
             if (error.status >= 500) {
-              this.alert('error', 'Error', 'Error al búscar el trámite');
+              this.alert('error', 'Error', 'Error al Búscar el Trámite');
             } else {
-              this.alert('warning', 'No se encontró el trámite', '');
+              this.alert('warning', 'No se Encontró el Trámite', '');
             }
             this.loading = false;
           },
@@ -524,9 +548,9 @@ export class GoodsProcessValidationExtdomComponent
         error: error => {
           console.log(error);
           if (error.status >= 500) {
-            this.alert('error', 'Error', 'Error al búscar el trámite');
+            this.alert('error', 'Error', 'Error al Búscar el Trámite');
           } else {
-            this.alert('warning', 'No se encontró el trámite', '');
+            this.alert('warning', 'No se Encontró el Trámite', '');
           }
         },
       });
@@ -604,12 +628,41 @@ export class GoodsProcessValidationExtdomComponent
           this.dataTableParams2
             .pipe(takeUntil(this.$unSubscribe))
             .subscribe(() => this.loadGoods2());
+          // this.getDocumentsByExpedient();
         },
         error: error => {
           console.log(error);
           this.loading = false;
         },
       });
+  }
+
+  getDocumentsByExpedient() {
+    const params = new FilterParams();
+    // params.addFilter('scanStatus', 'ESCANEADO');
+    // params.addFilter('keyTypeDocument', 'ASEGEXTDOM'); // 'AMPA');
+    params.addFilter(
+      'numberProceedings',
+      this.notificationData.expedientNumber
+    );
+    params.addFilter('flyerNumber', this.notificationData.wheelNumber);
+    this.hideError();
+    return this.documentsService.getAllFilter(params.getParams()).subscribe({
+      next: data => {
+        console.log('FOLIO DATA ', data);
+        this.showScanForm = false;
+        this.universalFolio = Number(data.data[0].id);
+        this.formScan.get('scanningFoli').setValue(data.data[0].id);
+        this.formScan.get('scanningFoli').updateValueAndValidity();
+        setTimeout(() => {
+          this.showScanForm = true;
+        }, 200);
+      },
+      error: error => {
+        console.log(error);
+        this.loading = false;
+      },
+    });
   }
 
   setDataNotification() {
@@ -653,11 +706,60 @@ export class GoodsProcessValidationExtdomComponent
         this.getAuthority(new ListParams(), true);
       }
     }, 200);
+    let f_aseg = localStorage.getItem('f_aseg');
+    let e_aseg = localStorage.getItem('e_aseg');
+    let v_aseg = localStorage.getItem('v_aseg');
+    console.log('LOCALSTORAGE ', f_aseg, e_aseg, v_aseg);
+    let valid = true;
+    if (e_aseg != this.notificationData.expedientNumber.toString()) {
+      valid = false;
+    }
+    if (v_aseg != this.notificationData.wheelNumber.toString()) {
+      valid = false;
+    }
+    if (valid == false) {
+      localStorage.removeItem('f_aseg');
+      localStorage.removeItem('e_aseg');
+      localStorage.removeItem('v_aseg');
+      localStorage.removeItem(this.localStorage_selectedGoods);
+      localStorage.removeItem(this.localStorage_goodData3);
+      localStorage.removeItem(this.localStorage_totalGoods3);
+      return;
+    } else {
+      let _selectedGoods = localStorage.getItem(
+        this.localStorage_selectedGoods
+      );
+      let _goodData3 = localStorage.getItem(this.localStorage_goodData3);
+      let _totalGoods3 = localStorage.getItem(this.localStorage_totalGoods3);
+      if (_selectedGoods) {
+        this.selectedGoods = JSON.parse(_selectedGoods);
+      }
+      if (_goodData3) {
+        this.goodData3 = JSON.parse(_goodData3);
+      }
+      if (_totalGoods3) {
+        this.totalGoods3 = JSON.parse(_totalGoods3);
+      }
+      this.updatePaginatedTable3();
+    }
+    console.log('LOCALSTORAGE PASS VALID ', f_aseg, e_aseg, v_aseg);
+    this.showScanForm = false;
+    this.universalFolio = f_aseg ? Number(f_aseg) : null;
+    this.formScan.get('scanningFoli').setValue(f_aseg);
     setTimeout(() => {
-      this.formScan.get('scanningFoli').setValue(null);
       this.formScan.get('scanningFoli').updateValueAndValidity();
-      this.showScanForm = true; // Mostrar parte de escaneo
+      console.log(
+        'FOLIO DATA ',
+        this.universalFolio,
+        this.formScan.get('scanningFoli').value
+      );
+      this.showScanForm = true;
     }, 200);
+    // setTimeout(() => {
+    //   this.formScan.get('scanningFoli').setValue(null);
+    //   this.formScan.get('scanningFoli').updateValueAndValidity();
+    //   this.showScanForm = true; // Mostrar parte de escaneo
+    // }, 200);
   }
 
   loadGoods() {
@@ -766,6 +868,18 @@ export class GoodsProcessValidationExtdomComponent
       }
     });
     setTimeout(() => {
+      localStorage.setItem(
+        this.localStorage_selectedGoods,
+        JSON.stringify(this.selectedGoods)
+      );
+      localStorage.setItem(
+        this.localStorage_goodData3,
+        JSON.stringify(this.goodData3)
+      );
+      localStorage.setItem(
+        this.localStorage_totalGoods3,
+        JSON.stringify(this.totalGoods3)
+      );
       // Update data table bienes
       this.dataTable.load(this.goodData);
       this.dataTable.refresh();
@@ -832,6 +946,18 @@ export class GoodsProcessValidationExtdomComponent
         this.goodData3,
         this.goodData
       );
+      localStorage.setItem(
+        this.localStorage_selectedGoods,
+        JSON.stringify(this.selectedGoods)
+      );
+      localStorage.setItem(
+        this.localStorage_goodData3,
+        JSON.stringify(this.goodData3)
+      );
+      localStorage.setItem(
+        this.localStorage_totalGoods3,
+        JSON.stringify(this.totalGoods3)
+      );
       // Update data table bienes
       this.dataTable.load(this.goodData);
       this.dataTable.refresh();
@@ -890,6 +1016,7 @@ export class GoodsProcessValidationExtdomComponent
           );
           return;
         } else {
+          this.loadingProcess = true;
           this.validDocumentsByFolio(); // Validar documentos relacionados al folio
         }
       }
@@ -900,6 +1027,7 @@ export class GoodsProcessValidationExtdomComponent
     this.getDocumentsCount().subscribe(count => {
       console.log('COUNT ', count);
       if (count == 0) {
+        this.loadingProcess = false;
         this.alert(
           'warning',
           'El Folio Universal no Existe, NO se Han Agregado Imágenes o NO Corresponde a "Admisión de Demanda de Extinción de Dominio"',
@@ -949,6 +1077,12 @@ export class GoodsProcessValidationExtdomComponent
   startLoopSelectedGoods() {
     this.errorsCount = 0;
     this.countSelectedGoods = 0;
+    console.log(
+      'startLoopSelectedGoods ',
+      this.errorsCount,
+      this.countSelectedGoods,
+      this.selectedGoods
+    );
     this.updateGoods(false);
   }
 
@@ -957,6 +1091,8 @@ export class GoodsProcessValidationExtdomComponent
     if (this.selectedGoods[this.countSelectedGoods]) {
       this.updateGoods(false);
     } else {
+      this.removeSelect(); // Quitar los registros procesados
+      this.loadingProcess = false;
       if (this.errorsCount == 0) {
         this.alert('success', 'Proceso Completado Correctamente', '');
       } else {
@@ -976,6 +1112,7 @@ export class GoodsProcessValidationExtdomComponent
     if (this.goodsValid[this.countGoodsValid]) {
       this.updateHistoricalGoodAsegExtDom();
     } else {
+      this.loadingProcess = false;
       if (this.errorsCount == 0) {
         this.alert('success', 'Proceso Completado Correctamente', '');
       } else {
@@ -989,7 +1126,7 @@ export class GoodsProcessValidationExtdomComponent
     //   this.updateHistoricalGoodAsegExtDom();
     // } else {
     let body: any = {
-      status:
+      extDomProcess:
         this.executionType == this.registerType
           ? 'ASEG_EXTDOM'
           : this.goodsValid[this.countGoodsValid].extDomProcess,
@@ -1042,6 +1179,9 @@ export class GoodsProcessValidationExtdomComponent
       .subscribe({
         next: data => {
           console.log('CREATE GOOD HISTORIAL', data);
+          this.selectedDeleteGoods.push(
+            this.selectedGoods[this.countSelectedGoods]
+          ); // Guardar registros a eliminar terminando el proceso
           this.continueLoopSelectedGoods();
         },
         error: error => {
@@ -1198,44 +1338,201 @@ export class GoodsProcessValidationExtdomComponent
         P_CVE_PANTALLA: this.screenKey,
         P_NO_TRAMITE: this.P_NO_TRAMITE,
         P_GEST_OK: this.P_GEST_OK,
+        P_VOLANTE: this.P_VOLANTE,
+        P_EXPEDIENTE: this.P_EXPEDIENTE,
       },
     });
   }
+  changeFolio(event: any) {
+    console.log(event);
+    if (event) {
+      this.formScan.get('scanningFoli').setValue(event);
+      this.universalFolio = event;
+    } else {
+      this.formScan.get('scanningFoli').setValue(null);
+      this.universalFolio = null;
+    }
+  }
   scanRequest(event: any) {
     console.log(event);
+    if (event == true) {
+      this.confirmScanRequest();
+    }
+  }
+  async confirmScanRequest() {
+    const response = await this.alertQuestion(
+      'question',
+      'Aviso',
+      'Se Generará un Nuevo folio de Escaneo para el Amparo, ¿Deseas Continuar?'
+    );
+
+    if (!response.isConfirmed) {
+      return;
+    }
+
+    const expedient = this.notificationData.expedientNumber;
+    if (!expedient) {
+      this.alert(
+        'error',
+        'Error',
+        'Al Localizar la Información de Volante: ' +
+          this.notificationData.wheelNumber +
+          ' y Expediente: ' +
+          expedient
+      );
+      return;
+    }
+    const document = {
+      numberProceedings: this.notificationData.expedientNumber,
+      keySeparator: '60',
+      keyTypeDocument: 'AMPA',
+      natureDocument: 'ORIGINAL',
+      descriptionDocument: `AMPARO EXPEDIENTE ${this.notificationData.expedientNumber}`, // Clave de Oficio Armada
+      significantDate: format(new Date(), 'MM-yyyy'),
+      scanStatus: 'SOLICITADO',
+      userRequestsScan:
+        this.dataUserLogged.user == 'SIGEBIADMON'
+          ? this.dataUserLogged.user.toLocaleLowerCase()
+          : this.dataUserLogged.user,
+      scanRequestDate: new Date(),
+      numberDelegationRequested: this.dataUserLogged.delegationNumber,
+      numberSubdelegationRequests: this.dataUserLogged.subdelegationNumber,
+      numberDepartmentRequest: this.dataUserLogged.departamentNumber,
+      flyerNumber: this.notificationData.wheelNumber,
+    };
+
+    this.createDocument(document)
+      .pipe(
+        tap(_document => {
+          this.formScan.get('scanningFoli').setValue(_document.id);
+          this.universalFolio = Number(_document.id);
+          localStorage.setItem('f_aseg', '' + _document.id);
+          localStorage.setItem('e_aseg', '' + document.numberProceedings);
+          localStorage.setItem('v_aseg', '' + document.flyerNumber);
+        }),
+        switchMap(_document => this.generateScanRequestReport())
+      )
+      .subscribe();
+  }
+
+  createDocument(document: IDocuments) {
+    return this.documentsService.create(document).pipe(
+      tap(_document => {
+        // END PROCESS
+      }),
+      catchError(error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrió un Error al Generar la Solicitud'
+        );
+        return throwError(() => error);
+      })
+    );
+  }
+
+  generateScanRequestReport() {
+    const pn_folio = this.formScan.get('scanningFoli').value;
+    return this.siabService.fetchReport('RGERGENSOLICDIGIT', { pn_folio }).pipe(
+      catchError(error => {
+        return throwError(() => error);
+      }),
+      tap(response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      })
+    );
   }
 
   showScanningPage(event: any) {
     console.log(event);
+    if (event == true) {
+      if (this.formScan.get('scanningFoli').value && this.universalFolio) {
+        this.alertQuestion(
+          'info',
+          'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Amparo. ¿Deseas continuar?',
+          '',
+          'Aceptar',
+          'Cancelar'
+        ).then(res => {
+          console.log(res);
+          if (res.isConfirmed) {
+            this.router.navigate(['/pages/general-processes/scan-documents'], {
+              queryParams: {
+                origin: this.screenKey,
+                folio: this.formScan.get('scanningFoli').value,
+                origin2: this.origin ? this.origin : null,
+                P_NO_TRAMITE: this.P_NO_TRAMITE,
+                P_GEST_OK: this.P_GEST_OK,
+                P_VOLANTE: this.P_VOLANTE,
+                P_EXPEDIENTE: this.P_EXPEDIENTE,
+              },
+            });
+          }
+        });
+      } else {
+        this.alertInfo(
+          'warning',
+          'No tiene Folio de Escaneo para Continuar a la Pantalla de Escaneo',
+          ''
+        );
+      }
+    }
   }
   messageDigitalization(event: any) {
     console.log(event);
+    if (event == true) {
+      if (this.formScan.get('scanningFoli').value && this.universalFolio) {
+        this.generateScanRequestReport();
+      } else {
+        this.alertInfo(
+          'warning',
+          'No tiene Folio de Escaneo para Imprimir',
+          ''
+        );
+      }
+    }
   }
 
   viewPictures(event: any) {
     console.log(event);
-    // if (!this.dictationData.wheelNumber) {
-    //   this.onLoadToast(
-    //     'error',
-    //     'Error',
-    //     'Este trámite no tiene volante asignado'
-    //   );
-    //   return;
-    // }
-    this.getDocumentsByFlyer(this.notificationData.wheelNumber);
+    if (event == true) {
+      if (this.formScan.get('scanningFoli').value && this.universalFolio) {
+        this.getDocumentsByFlyer();
+      } else {
+        this.alertInfo(
+          'warning',
+          'No Tiene Folio de Escaneo para Visualizar',
+          ''
+        );
+      }
+    }
   }
 
-  getDocumentsByFlyer(flyerNum: string | number) {
-    const title = 'Folios relacionados al Volante';
-    const modalRef = this.openDocumentsModal(flyerNum, title);
+  getDocumentsByFlyer() {
+    const title = 'Folios Relacionados al Expediente';
+    const modalRef = this.openDocumentsModal(title);
     modalRef.content.selected
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(document => this.getPicturesFromFolio(document));
   }
 
-  openDocumentsModal(flyerNum: string | number, title: string) {
+  openDocumentsModal(title: string) {
     const params = new FilterParams();
-    params.addFilter('flyerNumber', flyerNum);
+    // params.addFilter('flyerNumber', flyerNum);
+    params.addFilter('fileNumber', this.notificationData.expedientNumber);
     const $params = new BehaviorSubject(params);
     const $obs = this.documentsService.getAllFilter;
     const service = this.documentsService;
@@ -1253,7 +1550,7 @@ export class GoodsProcessValidationExtdomComponent
         title,
         $params,
         proceedingsNumber: this.notificationData.expedientNumber,
-        wheelNumber: this.notificationData.wheelNumber,
+        // wheelNumber: this.notificationData.wheelNumber,
         showConfirmButton: true,
       },
     };
