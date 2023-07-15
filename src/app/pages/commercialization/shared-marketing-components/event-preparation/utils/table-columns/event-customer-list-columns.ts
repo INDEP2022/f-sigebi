@@ -3,7 +3,7 @@ export const PREPARE_EVENT_CUSTOMER_LIST_COLUMNS = {
     title: 'ID Cliente',
     sort: false,
   },
-  razon: {
+  reasonName: {
     title: 'Nombre Razón',
     sort: false,
   },
@@ -11,15 +11,15 @@ export const PREPARE_EVENT_CUSTOMER_LIST_COLUMNS = {
     title: 'RFC',
     sort: false,
   },
-  calle: {
+  street: {
     title: 'Calle',
     sort: false,
   },
-  ciudad: {
+  city: {
     title: 'Ciudad',
     sort: false,
   },
-  colonia: {
+  colony: {
     title: 'Colonia',
     sort: false,
   },

@@ -47,8 +47,8 @@ export class ModalScanningFoilTableHistoricalGoodsComponent<T = any>
 
   getData() {
     const params = new FilterParams();
-    // params.addFilter('fileNumber', this.proceedingsNumber);
-    params.addFilter('flyerNumber', this.wheelNumber);
+    params.addFilter('fileNumber', this.proceedingsNumber);
+    // params.addFilter('flyerNumber', this.wheelNumber);
     this.loading = true;
     this.documentsService.getAllFilter(params.getParams()).subscribe({
       next: resp => {
@@ -59,7 +59,7 @@ export class ModalScanningFoilTableHistoricalGoodsComponent<T = any>
       },
       error: error => {
         this.loading = false;
-        this.onLoadToast('warning', 'Atención', 'No se encontraron registros');
+        this.onLoadToast('warning', 'Atención', 'No se Encontraron Registros');
       },
     });
   }

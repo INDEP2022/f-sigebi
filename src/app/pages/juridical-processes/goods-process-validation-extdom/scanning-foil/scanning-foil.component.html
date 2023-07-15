@@ -23,47 +23,23 @@
         <div class="col-sm-12 col-12 col-md-6 w-100 p-0">
           <form [formGroup]="formScan" class="form-material">
             <div class="col-md-12 col-sm-12 col-12 p-0">
-              <!-- <div class="col-md-6 col-sm-12 col-xs-12 p-1">
-                <form-field
-                  label="Folio de Remoci&oacute;n"
-                  [control]="formScan.get('returnFoli')">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="returnFoli" />
-                </form-field>
-              </div> -->
-              <!-- <div class="col-md-6 col-sm-12 col-xs-12 p-1"> -->
               <form-field
                 label="Folio de Escaneo"
-                [control]="formScan.get('scanningFoli')">
+                [control]="formScan.get('scanningFoli')"
+                (change)="onChangeFolio()">
                 <input
                   type="text"
                   class="form-control"
                   formControlName="scanningFoli" />
               </form-field>
-              <!-- </div> -->
             </div>
-            <!-- <div class="col-md-12 col-sm-12 col-12">
-              <div class="d-flex justify-content-center">
-                <div class="m-3">
-                  <button
-                    [disabled]="disabled"
-                    (click)="replicate()"
-                    type="button"
-                    class="btn btn-warning btn-sm active">
-                    Replicar Folio
-                  </button>
-                </div>
-              </div>
-            </div> -->
           </form>
         </div>
         <div class="col-sm-12 col-12 col-md-3 text-center">
           <button
             [disabled]="disabled"
             (click)="showMessageDigitalization()"
-            tooltip="imprimir Solicitud de Escaneo"
+            tooltip="Imprimir Solicitud de Escaneo"
             containerClass="tooltip-style"
             class="btn btn-secondary btn-sm active m-1">
             <i class="bx bxs-file-find"></i>
@@ -71,7 +47,7 @@
           <button
             [disabled]="disabled"
             (click)="showScannerFoil()"
-            tooltip="Consulta de imágenes escaneadas"
+            tooltip="Consulta de Imágenes Escaneadas"
             containerClass="tooltip-style"
             class="btn btn-secondary btn-sm active m-1">
             <i class="bx bxs-file"></i>
