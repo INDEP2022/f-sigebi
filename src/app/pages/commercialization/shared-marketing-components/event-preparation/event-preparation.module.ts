@@ -16,6 +16,9 @@ import { CommerEventCustomersComponent } from './components/commer-event-custome
 import { CommerEventsListComponent } from './components/commer-events-list/commer-events-list.component';
 import { CommerPackagesLotsComponent } from './components/commer-packages-lots/commer-packages-lots.component';
 import { EventDataFormComponent } from './components/event-data-form/event-data-form.component';
+import { EventGoodsLotsListComponent } from './components/event-goods-lots-list/event-goods-lots-list.component';
+import { EventLotFormComponent } from './components/event-lot-form/event-lot-form.component';
+import { EventLotsListComponent } from './components/event-lots-list/event-lots-list.component';
 import { EventPreparationStadisticsComponent } from './components/event-preparation-stadistics/event-preparation-stadistics.component';
 import { ReservedGoodsComponent } from './components/reserved-goods/reserved-goods.component';
 import { CreateNewEventModalComponent } from './create-new-event-modal/create-new-event-modal.component';
@@ -44,6 +47,9 @@ import { SelectEventModalComponent } from './select-event-modal/select-event-mod
     CommerEventCustomersComponent,
     ReservedGoodsComponent,
     EventPreparationStadisticsComponent,
+    EventLotsListComponent,
+    EventGoodsLotsListComponent,
+    EventLotFormComponent,
   ],
   imports: [
     CommonModule,
@@ -53,6 +59,7 @@ import { SelectEventModalComponent } from './select-event-modal/select-event-mod
     EventsSharedComponent,
     EventTypeSharedComponent,
     TabsModule,
+    ModalModule,
   ],
   exports: [
     CustomerCatalogsTableComponent,

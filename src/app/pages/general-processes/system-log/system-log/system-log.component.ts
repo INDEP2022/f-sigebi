@@ -100,6 +100,12 @@ export class SystemLogComponent extends BasePage implements OnInit {
         this.getDynamicRegisters(params).subscribe();
       }
     });
+    console.log(this.origin);
+    console.log(this.rowSelected);
+  }
+
+  isSelectedRow(rowData: any): boolean {
+    return rowData === this.rowSelected;
   }
 
   getTableLogs(params: FilterParams, tables?: string[]) {
@@ -116,9 +122,12 @@ export class SystemLogComponent extends BasePage implements OnInit {
       }),
       tap(response => {
         this.loading = false;
-        this.tableLogs = response.data;
+        this.tableLogs = response.data; //Son todos los nombres de las tablas
         this.totalLogs = response.count;
-        this.onSelectTable(this.tableLogs[0]);
+        this.onSelectTable(this.tableLogs[0]); //Es la primer tabla que se setea
+        console.log(this.tableLogs);
+        console.log(this.totalLogs);
+        console.log(this.tableLogs[0]);
         this.getDynamicRegistersInit().subscribe();
       })
     );
@@ -136,6 +145,8 @@ export class SystemLogComponent extends BasePage implements OnInit {
   }
 
   onSelectTable(row: ITableLog) {
+    //Es la Tabla escogida
+    console.log(row);
     this.dynamicRegisters = [];
     this.totalDynamic = 0;
     this.rowSelected = null;
@@ -179,16 +190,17 @@ export class SystemLogComponent extends BasePage implements OnInit {
   getDynamicRegisters(params: FilterParams) {
     const filter = this.getFilter();
     this.dynamicLoading = true;
+    console.log(this.dynamicLoading);
     return this.seraLogService
       .getDynamicTables(params.getParams(), filter)
       .pipe(
         catchError(error => {
           this.dynamicLoading = false;
-          if (error.status >= 500 || error.status >= 400) {
-            this.onLoadToast(
+          if (error.status >= 500) {
+            this.alert(
               'error',
-              'Error',
-              'Ocurrio un error al obtener la informacion'
+              'Ocurrió un error al obtener la información',
+              ''
             );
           }
           return throwError(() => error);
@@ -209,10 +221,10 @@ export class SystemLogComponent extends BasePage implements OnInit {
         catchError(error => {
           this.dynamicLoading = false;
           if (error.status >= 500) {
-            this.onLoadToast(
+            this.alert(
               'error',
-              'Error',
-              'Ocurrio un error al obtener la informacion'
+              'Ocurrio un error al obtener la información',
+              ``
             );
           }
           return throwError(() => error);

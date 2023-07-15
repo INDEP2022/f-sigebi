@@ -9,9 +9,10 @@
         <ng2-smart-table
           [settings]="settings"
           [source]="tableLogs"
-          (userRowSelect)="onSelectTable($event.data)">
+          (userRowSelect)="onSelectTable($event.data)"
+          [ngClass]="{ 'selected-row': isSelectedRow(tableLogs[0]) }">
+          <!-- (ngAfterViewInit)="selectFirstRow()" -->
         </ng2-smart-table>
-
         <app-pagination
           [filterParams]="params"
           [totalItems]="totalLogs"></app-pagination>
@@ -23,7 +24,9 @@
             (confirm)="getTableData()"
             text="Generar"
             class="pb-5"
-            loadingText="Cargando"></confirm-button>
+            icon="bi bi-search float-icon"
+            loadingText="Cargando">
+          </confirm-button>
         </system-log-form>
       </div>
     </div>

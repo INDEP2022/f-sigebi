@@ -8,42 +8,16 @@
         <div class="col-md-12 mt-4">
           <form-field [control]="form.get('year')" label="Año">
             <ng-select
-              (change)="yearChange($event)"
+              (change)="obtenerPeriodo($event)"
               class="form-control"
               formControlName="year"
               [items]="years"
               [ngModel]="currentYear"></ng-select>
-            <!-- <input
-              type="number"
-              class="form-control"
-              formControlName="year"
-              min="1"
-              [max-length]="4"
+            <!-- <input type="number" class="form-control" formControlName="year" min="1" [max-length]="4"
               pattern="^[0-9]+" /> -->
           </form-field>
         </div>
         <div class="col-md-12 mt-2">
-          <form-field [control]="form.get('period')" label="Periodo">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="period"
-              min="1"
-              [max-length]="6"
-              pattern="^[0-9]+" />
-          </form-field>
-        </div>
-        <div class="col-md-12 mt-2">
-          <!-- <form-field [control]="form.get('delegation')">
-            <ngx-select
-              [form]="form"
-              [data]="delegations"
-              bindLabel="name"
-              label="Delegación"
-              value="id"
-              (fetchItems)="getDelegations($event)"
-              control="delegation"></ngx-select>
-          </form-field> -->
           <form-field [control]="form.get('delegation')">
             <ngx-select
               [form]="form"
@@ -55,19 +29,13 @@
               value="id"
               [showTooltip]="true"
               (fetchItems)="getDelegation($event)"
-              control="delegation"></ngx-select>
-            <!-- <ng-custom-select class="form-control" path="catalog/api/v1/delegation" formControlName="delegation"
-              prefixSearch="$ilike" paramSearch="filter.description">
-              <ng-template let-item>
-                {{ item.description }}
-              </ng-template>
-            </ng-custom-select> -->
+              [control]="'delegation'"></ngx-select>
           </form-field>
         </div>
         <div class="col-md-12 mt-2">
           <form-field [control]="form.get('process')">
             <ngx-select
-              (change)="changeProcess($event)"
+              (change)="obtenerPeriodoProcess($event)"
               [data]="procesess"
               [form]="form"
               value="value"
@@ -75,6 +43,21 @@
               label="Proceso"
               [control]="'process'">
             </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-12 mt-2">
+          <form-field [control]="form.get('period')">
+            <ngx-select
+              (change)="addDate($event)"
+              [readonly]="!disabledPeriod"
+              [form]="form"
+              [data]="periods"
+              bindLabel="cvePeriod"
+              label="Periodo"
+              value="cvePeriod"
+              (fetchItems)="getPeriods($event)"
+              control="period"></ngx-select>
+            <!-- <input type="text" class="form-control" formControlName="period" maxlength="6" minlength="1" /> -->
           </form-field>
         </div>
       </div>
@@ -88,33 +71,12 @@
               class="form-control"
               formControlName="yearDestiny"
               [items]="years2"
-              [ngModel]="currentYear"></ng-select>
+              [ngModel]="currentYear2"></ng-select>
             <!-- <input type="number" class="form-control" formControlName="yearDestiny" min="1" [max-length]="4"
               pattern="^[0-9]+" /> -->
           </form-field>
         </div>
         <div class="col-md-12 mt-2">
-          <form-field [control]="form.get('periodDestiny')" label="Periodo">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="periodDestiny"
-              min="1"
-              [max-length]="6"
-              pattern="^[0-9]+" />
-          </form-field>
-        </div>
-        <div class="col-md-12 mt-2">
-          <!-- <form-field [control]="form.get('delegation')">
-            <ngx-select
-              [form]="form"
-              [data]="delegations"
-              bindLabel="name"
-              label="Delegación"
-              value="id"
-              (fetchItems)="getDelegations($event)"
-              control="delegation"></ngx-select>
-          </form-field> -->
           <form-field
             [control]="form.get('delegationDestiny')"
             label="Delegación"
@@ -125,11 +87,11 @@
               class="form-control"
               formControlName="delegationDestiny" />
             <!-- <ng-custom-select class="form-control" path="catalog/api/v1/delegation" formControlName="delegationDestiny"
-              prefixSearch="$ilike" paramSearch="filter.description">
-              <ng-template let-item>
-                {{ item.description }}
-              </ng-template>
-            </ng-custom-select> -->
+                        prefixSearch="$ilike" paramSearch="filter.description">
+                        <ng-template let-item>
+                          {{ item.description }}
+                        </ng-template>
+                      </ng-custom-select> -->
           </form-field>
         </div>
         <div class="col-md-12 mt-2">
@@ -140,8 +102,28 @@
               class="form-control"
               formControlName="processDestiny" />
             <!-- <ngx-select [data]="procesess1" [form]="form" value="value" bindLabel="label" label="Proceso"
-              [control]="'processDestiny'">
-            </ngx-select> -->
+                        [control]="'processDestiny'">
+                      </ngx-select> -->
+          </form-field>
+          <!-- <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [form]="form"
+              [data]="delegations"
+              bindLabel="name"
+              label="Delegación"
+              value="id"
+              (fetchItems)="getDelegations($event)"
+              control="delegation"></ngx-select>
+          </form-field> -->
+        </div>
+        <div class="col-md-12 mt-2">
+          <form-field [control]="form.get('periodDestiny')" label="Periodo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="periodDestiny"
+              maxlength="6"
+              minlength="1" />
           </form-field>
         </div>
       </div>

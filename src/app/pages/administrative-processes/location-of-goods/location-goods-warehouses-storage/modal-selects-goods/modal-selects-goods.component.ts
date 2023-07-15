@@ -81,11 +81,11 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
       },
       columns: {
         id: {
-          title: 'No Bien',
+          title: 'No. Bien',
           sort: false,
         },
         description: {
-          title: 'Descripcion',
+          title: 'Descripción',
           sort: false,
         },
         quantity: {
@@ -97,20 +97,20 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           sort: false,
         },
         goodClassNumber: {
-          title: 'Clasif Bien',
+          title: 'Clasif. Bien',
           sort: false,
         },
         storeNumber: {
-          title: 'Almacen',
+          title: 'Almacén',
           sort: false,
         },
         vaultNumber: {
-          title: 'Boveda',
+          title: 'Bóveda',
           sort: false,
         },
       },
       rowClassFunction: (row: any) => {
-        if (row.data.di_dispo == 'S') {
+        if (row.data.di_disponible == 'S') {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -125,21 +125,20 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     this.loading = true;
 
     // console.log(this.totalItems);
-    this.allGoodsUpdated.next(this.allGoods);
     this.buildForm();
     this.loading = false;
-    // this.$trackedGoods.subscribe({
-    //   next: response => {
-    //     response.forEach(good => {
-    //       this.getGoodByID(good.goodNumber);
-    //     });
-    //     this.loading = false;
-    //   },
-    //   error: err => {
-    //     console.log(err);
-    //     this.loading = false;
-    //   },
-    // });
+    this.$trackedGoods.subscribe({
+      next: response => {
+        response.forEach(good => {
+          this.getGoodByID(good.goodNumber);
+        });
+        this.loading = false;
+      },
+      error: err => {
+        console.log(err);
+        this.loading = false;
+      },
+    });
   }
 
   returnModal() {
@@ -277,7 +276,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           }
         );
       });
-
+      this.onLoadGoodList();
       this.alert('success', 'Bienes', `Actualizados correctamente`);
     } catch (err) {
       console.error(err);
@@ -317,6 +316,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           }
         );
       });
+      this.onLoadGoodList();
       this.alert('success', 'Bienes', `Actualizados correctamente`);
     } catch (err) {
       console.error(err);

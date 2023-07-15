@@ -3,26 +3,26 @@
     <div class="col-md-5">
       <h5 class="title">ACTAS DE CONVERSI&Oacute;N</h5>
     </div>
-    <div class="d-flex justify-content-end">
-      <div class="d-inline mr-2">
-        <!-- Fecha de Elaboración:
-        <span class="ml-3 mr-3" style="display: initial !important">
-          {{ fCreate || '00/00/0000' }}
-        </span>
-        / Estatus:
-        <span class="ml-3 mr-3" style="display: initial !important">
-          {{ statusConv || '-----' }}
-        </span> -->
-        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
-          Regresar
-          <i class="fas fa-arrow-circle-left"></i>
-        </button>
-      </div>
-    </div>
   </div>
 
   <div body>
     <div class="row">
+      <div class="d-flex justify-content-end">
+        <div class="d-inline mr-2">
+          <!-- Fecha de Elaboración:
+              <span class="ml-3 mr-3" style="display: initial !important">
+                {{ fCreate || '00/00/0000' }}
+              </span>
+              / Estatus:
+              <span class="ml-3 mr-3" style="display: initial !important">
+                {{ statusConv || '-----' }}
+              </span> -->
+          <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+            Regresar
+            <i class="fas fa-arrow-circle-left"></i>
+          </button>
+        </div>
+      </div>
       <div class="col-md-12">
         <accordion [isAnimated]="true">
           <accordion-group [isOpen]="true">
@@ -92,15 +92,15 @@
                                   </div>
                                   <div class="col-md-3">
                                     <div>
-                                      <label for="">Hora de creación: </label>
-                                      {{ time | date: 'hh:mm' }}
+                                      <label for="">Hora de Creación: </label>
+                                      {{ time | date : 'hh:mm' }}
                                     </div>
                                   </div>
                                 </div>
                                 <div class="row p-3">
                                   <div class="col-md-3">
                                     <div>
-                                      <label for="">Causal Penal: </label>
+                                      <label for="">Causa Penal: </label>
                                       {{ criCase || '' }}
                                     </div>
                                   </div>
@@ -212,7 +212,7 @@
                                         [control]="
                                           actaRecepttionForm.get('testigoOIC')
                                         "
-                                        label="Testigo de la contralor&iacute;a">
+                                        label="Testigo de la Contralor&iacute;a">
                                         <input
                                           #inputValue
                                           type="text"
@@ -363,7 +363,7 @@
                                       'table-bordered table-responsive'
                                     "
                                     [settings]="settings"
-                                    [source]="dataTableGood_"
+                                    [source]="dataTableGood"
                                     (userRowSelect)="selectData($event)">
                                   </ng2-smart-table>
                                 </ng-scrollbar>
@@ -399,6 +399,8 @@
                           <div class="row pt-2">
                             <div class="col-md-12 text-center mt-4 mb-4">
                               <button
+                                tooltip="Agregar Bien al Acta"
+                                containerClass="tooltip-style"
                                 class="btn btn-secondary btn-sm active m-3 p-1 pointer"
                                 type="button"
                                 (click)="addSelect()">
@@ -406,6 +408,8 @@
                                 <i class="bx bx-chevron-down bx-md"></i>
                               </button>
                               <button
+                                tooltip="Agregar Bienes al Acta"
+                                containerClass="tooltip-style"
                                 class="btn btn-secondary btn-sm active m-3 p-1 pointer"
                                 type="button"
                                 (click)="addAll()">
@@ -418,6 +422,8 @@
                                 <i class="bx bx-chevrons-up bx-md"></i>
                               </button> -->
                               <button
+                                tooltip="Quitar Bien del Acta"
+                                containerClass="tooltip-style"
                                 class="btn btn-secondary btn-sm active m-3 p-1 pointer"
                                 type="button"
                                 (click)="removeSelect()">
@@ -454,10 +460,13 @@
                                     height: loading2 ? '0px' : '400px'
                                   }">
                                   <ng2-smart-table
-                                    [attr.class]="'table-bordered my-table'"
+                                    class="table-responsive"
+                                    [attr.class]="
+                                      'table-bordered table-responsive'
+                                    "
                                     [settings]="settings2"
                                     (userRowSelect)="rowsSelected($event)"
-                                    [source]="dataRecepcion">
+                                    [source]="dataRecepcionGood">
                                   </ng2-smart-table>
                                 </ng-scrollbar>
                                 <!-- </div> -->
