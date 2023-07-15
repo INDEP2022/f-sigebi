@@ -22,8 +22,10 @@ import { DelegationService } from 'src/app/core/services/catalogs/delegation.ser
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { TransRegService } from 'src/app/core/services/ms-numerary/transf-reg.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { TranfergoodService } from 'src/app/core/services/ms-transfergood/transfergood.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -33,6 +35,7 @@ import {
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EmailComponent } from '../mail-central-offices/mail-central-offices.component';
 import { CENTRAL_ACCOUNT_COLUMNS } from './central-offices-columns';
+
 interface IExcelToJson {
   expediente: number;
   bien: number;
@@ -87,7 +90,9 @@ export class CentralOfficesTransferenceComponent
     private parametersService: ParametersService,
     private bankService: BankAccountService,
     private dictationService: DictationService,
-    private transferRegService: TransRegService
+    private securityService: SecurityService,
+    private transferRegService: TransRegService,
+    private goodProcessService: GoodProcessService
   ) {
     super();
     this.settings = {
@@ -165,6 +170,15 @@ export class CentralOfficesTransferenceComponent
     }
   }
 
+  getDate(date: any) {
+    let newDate;
+    if (typeof date == 'string') {
+      newDate = String(date).split('/').reverse().join('-');
+    } else {
+      newDate = this.datePipe.transform(date, 'yyyy-MM-dd');
+    }
+    return newDate;
+  }
   async getCatalogDelegation() {
     const today = new Date();
     const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -439,7 +453,7 @@ export class CentralOfficesTransferenceComponent
     this.data3.refresh();
   }
 
-  /*createTransferCentral() {
+  createTransferCentral() {
     const {
       currencyType,
       dateDevolution,
@@ -451,22 +465,21 @@ export class CentralOfficesTransferenceComponent
     } = this.form.value;
 
     const body: any = {
-      dateDepositDev: depositDate,
-      amountAllDev: total,
-      dateReportDev: dateDevolution,
-      cveAccountDev: cveAccount,
-      numberDelegationDev: delegation,
-      numberCheck: check,
-      cveCurrencyDev: currencyType,
-
+      depositDevDate: this.parseDateNoOffset(depositDate),
+      amountTotalDev: total,
+      reportDevDate: this.getDate(dateDevolution),
+      accountDevKey: cveAccount,
+      delegationDevNumber: Number(delegation),
+      checkNumber: check,
+      currencyDevKey: currencyType,
     };
-    console.log(body);
-    this.accountMovementService.createB(body).subscribe({
+    this.accountMovementService.createA(body).subscribe({
       next: async resp => {
-        this.form.get('noReport').patchValue(resp.reportNumber);
+        this.form.get('noReport').patchValue(resp.reportDevNumber);
         this.alert('success', 'Reporte', 'Creado correctamente');
-
+        console.log(resp);
         this.data1.map(async good => {
+          await this.procedure(Number(good.good));
           await this.createTransNumDet(good);
         });
 
@@ -476,7 +489,7 @@ export class CentralOfficesTransferenceComponent
           .getValue()
           .addFilter(
             'noReport',
-            this.form.get(resp.reportNumber).value,
+            this.form.get(resp.noReport).value,
             SearchFilter.EQ
           );
 
@@ -487,7 +500,14 @@ export class CentralOfficesTransferenceComponent
         console.log(err);
       },
     });
-  }*/
+  }
+
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() - dateLocal.getTimezoneOffset() * 60 * 1000
+    );
+  }
 
   async createTransNumDet(data: any) {
     console.log('VAINA', data);
@@ -504,25 +524,10 @@ export class CentralOfficesTransferenceComponent
     return new Promise((resolve, reject) => {
       this.accountMovementService.createB(body).subscribe({
         next: resp => {
-          this.form.get('noReport').patchValue(resp.noReport);
-          console.log(resp.noReport);
-          this.alert('success', 'Reporte', 'Creado correctamente');
-
-          this.filterParams.getValue().removeAllFilters();
-          this.filterParams.getValue().page = 1;
-          this.filterParams
-            .getValue()
-            .addFilter(
-              'noReport',
-              this.form.get(resp.noReport).value,
-              SearchFilter.EQ
-            );
-
-          this.getDataFile(body);
+          resolve(true);
         },
-        error: err => {
-          this.alert('error', 'Error', err.error.message);
-          console.log(err);
+        error: () => {
+          resolve(true);
         },
       });
     });
@@ -585,6 +590,24 @@ export class CentralOfficesTransferenceComponent
       this.pupInteres();
     } else {
     }
+  }
+
+  async procedure(good: number) {
+    const body: any = {
+      cveShape: 'FTRANSFCUENXREG',
+      noGood: good,
+    };
+
+    return new Promise((resolve, reject) => {
+      this.goodProcessService.procedureGoodStatus(body).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: () => {
+          resolve(true);
+        },
+      });
+    });
   }
 
   pupInteres() {
@@ -709,5 +732,60 @@ export class CentralOfficesTransferenceComponent
         this.alert('error', 'Error', err.error.message);
       },
     });
+  }
+
+  async sendEmail() {
+    const { noReport } = this.form.value;
+
+    if (noReport) {
+      const email = await this.getDataMail();
+
+      if (email) {
+        const emailv2 = {
+          ...email,
+          REPORTE: noReport,
+        };
+        let config: ModalOptions = {
+          initialState: {
+            email: emailv2,
+            report: this.form.value,
+            description: this.description,
+            delegations: this.delegations,
+            callback: async (next: boolean) => {
+              if (next) {
+              }
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(EmailComponent, config);
+      }
+    } else {
+      this.alert('error', 'Error', 'Primero debe guardar el reporte');
+    }
+  }
+
+  async getDataMail() {
+    const { noReport, delegation } = this.form.value;
+    const data = {
+      pAffair: 'TRANSFERENCIA DE CUENTAS A OFICINAS CENTRALES',
+      pMessage: '',
+      pFor: '',
+      pCc: '',
+      transNumeraryRegNoReport: Number(noReport),
+      transNumeraryRegNoDelegation: Number(delegation),
+    };
+    console.log(data);
+    return firstValueFrom(
+      this.securityService.getIniEmail(data).pipe(
+        catchError(error => {
+          this.alert('error', 'Error', error.error.message);
+          return of(null);
+          console.log(error);
+        }),
+        map(resp => resp)
+      )
+    );
   }
 }

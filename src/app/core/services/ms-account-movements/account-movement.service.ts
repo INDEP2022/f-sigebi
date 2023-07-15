@@ -68,6 +68,9 @@ export class AccountMovementService extends HttpService {
     return this.post('dev-detail-transfer', movement);
   }
 
+  createA(movement: any) {
+    return this.post('dev-numerary-transfer', movement);
+  }
   createAccount(movement: any) {
     return this.post('account-movements/lovDeposits', movement);
   }

@@ -8,6 +8,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
+import { DataEmailServiceCentral } from 'src/app/core/services/ms-email/data-email-central.service';
 import { TranfergoodService } from 'src/app/core/services/ms-transfergood/transfergood.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared';
@@ -37,7 +38,8 @@ export class EmailComponent extends BasePage implements OnInit {
     private user: AuthService,
     private segUserService: SegAcessXAreasService,
     private receptionService: DocReceptionRegisterService,
-    private transferGoodService: TranfergoodService
+    private transferGoodService: TranfergoodService,
+    private emailService: DataEmailServiceCentral
   ) {
     super();
   }
@@ -118,39 +120,97 @@ export class EmailComponent extends BasePage implements OnInit {
 
   sendEmail() {
     const {
-      folioCash,
-      transactionDate,
+      check,
+      dateDevolution,
       cveCurrency,
       total,
       cveAccount,
       delegation,
     } = this.report;
-    const { ASUNTO, PARA, REPORTE } = this.form.value;
+    const { ASUNTO, PARA, REPORTE, CC, FECHA_ENV } = this.form.value;
     const user: string = this.user.decodeToken().name;
 
     const del = this.delegations.data.filter(
       (del: any) => del.id == delegation
     )[0].description;
 
-    console.log(PARA);
-
     const body = {
       to: PARA.join(','),
       subject: ASUNTO,
-      fecTrans: transactionDate,
-      cveDescription: del ?? this.description,
+      fecDepositDev: dateDevolution,
+      description: del ?? this.description,
       cveCurrency: cveCurrency,
-      nameUser: user.toUpperCase(),
-      noReport: REPORTE,
-      noFolioCv: folioCash,
-      cveAccount: cveAccount,
-      cveAmount: total,
+      toolbarUser: user.toUpperCase(),
+      noReportDev: REPORTE,
+      noCheque: check,
+      cveAccountDev: cveAccount,
+      amountTotalDev: total,
     };
 
     this.transferGoodService.getMessageEmail(body).subscribe({
       next: resp => {
-        console.log(resp.message);
         this.form.get('MENSAJE').patchValue(resp.message);
+
+        const body: any = {
+          header: 'aetiru@gmail.com',
+          destination: PARA,
+          copy: CC,
+          subject: ASUNTO,
+          message: `${resp.message}`,
+        };
+
+        // const body: any = {
+        //   header: "DEV",
+        //   destination: [""],
+        //   copy: [''],
+        //   subject: "DEV EMAIL",
+        //   message: `${resp.message}`
+        // }
+
+        this.transferGoodService.sendEmailCentral(body).subscribe({
+          next: () => {
+            this.alert('success', 'Correo', 'Mensaje enviado correctamente');
+
+            const date =
+              typeof FECHA_ENV == 'string'
+                ? FECHA_ENV.split('/').reverse().join('-')
+                : FECHA_ENV;
+
+            const body = {
+              id: REPORTE,
+              addressee: PARA.join(','),
+              sender: user.toUpperCase(),
+              cc: CC ? CC.join(',') : [],
+              message: `${resp.message}`,
+              affair: ASUNTO,
+              sendDate: date,
+              devReportNumber: '',
+            };
+
+            // const body: any = {
+            //   id: REPORTE,
+            //   addressee: "",
+            //   sender: user.toUpperCase(),
+            //   cc: '',
+            //   message: `${resp.message}`,
+            //   affair: ASUNTO,
+            //   sendDate: date,
+            //   devReportNumber: null
+            // }
+
+            this.emailService.create(body).subscribe({
+              next: () => {
+                this.modalRef.hide();
+              },
+              error: err => {
+                this.alert('error', 'Error', err.error.message);
+              },
+            });
+          },
+          error: () => {
+            this.alert('error', 'Error', 'No es posible enviar el correo');
+          },
+        });
       },
       error: () => {},
     });

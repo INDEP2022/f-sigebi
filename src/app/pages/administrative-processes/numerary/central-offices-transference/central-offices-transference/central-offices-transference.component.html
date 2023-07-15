@@ -64,9 +64,11 @@
               (change)="onFileChange($event)" />
             <button
               type="button"
-              class="btn btn-sm btn-secondary active m-2"
-              (click)="openForm()">
-              ENVIAR
+              class="btn btn-primary btn-sm active"
+              tooltip="Enviar"
+              (click)="sendEmail()"
+              containerClass="tooltip-style">
+              Enviar <i class="bx bx-send"></i>
             </button>
           </div>
         </div>
@@ -214,7 +216,7 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            (click)="save()">
+            (click)="createTransferCentral()">
             Guardar
             <i aria-hidden="true" class="fa fa-save"></i>
           </button>

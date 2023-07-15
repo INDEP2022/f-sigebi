@@ -48,4 +48,8 @@ export class TranfergoodService extends HttpService {
   sendEmail(data: Object) {
     return this.post(TransfergoodEndpoint.SendEmail, data);
   }
+
+  sendEmailCentral(data: Object) {
+    return this.post(TransfergoodEndpoint.SendEmailCheque, data);
+  }
 }
