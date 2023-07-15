@@ -332,10 +332,11 @@ export class NotificationAssetsTabComponent
         this.data.refresh();
         this.loadingGoods = false;
       },
-      error: error => (
-        console.log('NO HAY VIENES, SE FINALIZARÁ LA TAREA'),
-        (this.loadingGoods = false)
-      ),
+      error: error => {
+        console.log('NO HAY VIENES, SE FINALIZARÁ LA TAREA');
+        this.changeStatusTask();
+        this.loadingGoods = false;
+      },
     });
   }
 
