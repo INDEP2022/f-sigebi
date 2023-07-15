@@ -10,6 +10,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ListRandomsComponent } from './list-randoms/list-randoms.component';
 
@@ -54,13 +55,23 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
   onClickChangeGoodRandom() {
     console.log(this.form.value);
     this.form.value.delegation = this.delegationDefault.delegationNumber;
+
+    const period = this.form.value.period;
+    if (period.length > 6) {
+      let per = period.toString().slice(0, 5);
+      this.form.value.period = Number(per);
+    }
+
     this.eventChangeGoodsRandom.emit(this.form.value);
   }
 
   prepareForm() {
     this.form = this.fb.group({
       year: [null, Validators.required],
-      period: [null, Validators.required],
+      period: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       delegation: [null],
       process: [null, Validators.required],
       random: [null, Validators.required],
@@ -132,7 +143,6 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
       this.alert('warning', 'Debe seleccionar un periodo', '');
       return;
     }
-    console.log('this.form.value.delegation', this.delegationDefault);
     if (!this.delegationDefault) {
       this.alert('warning', 'Debe seleccionar una delegación', '');
       return;

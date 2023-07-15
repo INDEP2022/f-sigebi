@@ -7,6 +7,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -19,9 +20,15 @@ export class ChangePeriodComponent extends BasePage {
     year: new FormControl(null, Validators.required),
     period: new FormControl(null, Validators.required),
     delegation: new FormControl(null),
-    process: new FormControl(null, Validators.required),
+    process: new FormControl(null, [
+      Validators.required,
+      Validators.pattern(POSITVE_NUMBERS_PATTERN),
+    ]),
     yearDestiny: new FormControl(null, Validators.required),
-    periodDestiny: new FormControl(null, Validators.required),
+    periodDestiny: new FormControl(null, [
+      Validators.required,
+      Validators.pattern(POSITVE_NUMBERS_PATTERN),
+    ]),
     delegationDestiny: new FormControl(null, Validators.required),
     processDestiny: new FormControl(null, Validators.required),
   });
@@ -100,6 +107,19 @@ export class ChangePeriodComponent extends BasePage {
     this.form.value.delegationDestiny = this.delegationDefault.delegationNumber;
     this.form.value.processDestiny = this.processDefault.value;
     console.log(this.form.value);
+
+    const period = this.form.value.period;
+    if (period.length > 6) {
+      let per = period.toString().slice(0, 5);
+      this.form.value.period = Number(per);
+    }
+
+    const periodDestiny = this.form.value.periodDestiny;
+    if (periodDestiny.length > 6) {
+      let per = periodDestiny.toString().slice(0, 5);
+      this.form.value.periodDestiny = Number(per);
+    }
+
     this.eventChangePeriod.emit(this.form.value);
   }
 
