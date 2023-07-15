@@ -27,6 +27,8 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
   fileDocOfficeMinConcluIn: any;
   fileDocOfficeMailIn: any;
   fileDocAmountIndemnizedIn: any;
+  tipeFirstSecondLater = new DefaultSelect<any>();
+  status = new DefaultSelect<any>();
   constructor(
     private fb: FormBuilder,
     private datePipe: DatePipe,
@@ -38,6 +40,15 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.tipeFirstSecondLater = new DefaultSelect([
+      { value: '1', description: '1ER CAPA' },
+      { value: '2', description: '2DA CAPA' },
+      { value: '3', description: '1ER CAPA / 2DA CAPA' },
+    ]);
+    this.status = new DefaultSelect([
+      { value: 1, description: 'ABIERTO' },
+      { value: 2, description: 'CERRADO' },
+    ]);
     this.prepareForm();
   }
   private prepareForm() {

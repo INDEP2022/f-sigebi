@@ -57,6 +57,7 @@ export class CustomSelectWidthLoading
   @Input() multiple: boolean = false;
   @Input() addTag: boolean = false;
   @Input() isLoadInOnInit: boolean = true;
+  @Input() load = false;
   @Input() url: string = environment.API_URL;
   @Input() pathData: string = 'data';
   @Input() value: string = 'id';
@@ -133,6 +134,9 @@ export class CustomSelectWidthLoading
   ngOnChanges(changes: SimpleChanges) {
     if (changes['externalSearch'] && changes['externalSearch'].currentValue) {
       this.input$.next(changes['externalSearch'].currentValue);
+    }
+    if (changes['load']) {
+      this.input$.next('');
     }
   }
 

@@ -163,7 +163,9 @@ export class DeletePeriodComponent extends BasePage {
             resolve(response.data);
           },
           error: error => {
-            this.periods = new DefaultSelect();
+            this.periods = new DefaultSelect([], 0, true);
+            // this.alert('warning', 'No se Encontraron Períodos', '');
+
             this.loading = false;
             resolve(null);
           },
@@ -235,6 +237,8 @@ export class DeletePeriodComponent extends BasePage {
   }
 
   cleanForm() {
+    this.anio = null;
+    this.process = null;
     this.disabledPeriod = false;
     this.periods = new DefaultSelect([], 0);
     this.delegationDefault = null;
