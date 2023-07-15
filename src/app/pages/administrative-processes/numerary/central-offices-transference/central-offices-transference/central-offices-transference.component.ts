@@ -290,8 +290,22 @@ export class CentralOfficesTransferenceComponent
         this.form.patchValue(dataForm);
         this.delegacion = response.data[0].delegationDevNumber;
         this.currency = response.data[0].currencyDevKey;
-        this.getEdo(response.data[0].delegationDevNumber);
+        //this.getEdo(response.data[0].delegation);
+        this.form
+          .get('delegation')
+          .patchValue(response.data[0].delegationDevNumber);
+        this.form.get('noReport').patchValue(response.data[0].reportDevNumber);
+        this.form.get('accountType').patchValue(response.data[0].accountType);
+        this.form.get('cveBank').patchValue(response.data[0].cveBank);
+        this.getAccount();
+
+        this.form.get('noReport').patchValue(response.data[0].reportDevNumber);
         this.getAcountBank(this.delegacion, this.currency);
+        this.form
+          .get('depositDate')
+          .patchValue(
+            response.data[0].depositDevDate.split('-').reverse().join('/')
+          );
       },
       error: error => {
         console.error(error);
@@ -594,7 +608,7 @@ export class CentralOfficesTransferenceComponent
 
   async procedure(good: number) {
     const body: any = {
-      cveShape: 'FTRANSFCUENXREG',
+      cveShape: 'FTRANSFCUENXREG_DEV',
       noGood: good,
     };
 

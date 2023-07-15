@@ -397,6 +397,7 @@ export class RegionalAccountTransferenceComponent
       this.securityService.getIniEmail(data).pipe(
         catchError(error => {
           this.alert('error', 'Error', error.error.message);
+          console.log(error);
           return of(null);
         }),
         map(resp => resp)
