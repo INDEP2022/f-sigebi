@@ -202,7 +202,7 @@ export class MassiveNumeraryChangeModalComponent
         this.alert(
           'warning',
           'Advertencia',
-          'Con estos datos no se puede generar el archivo de excel.'
+          'Con Estos Datos No Se Puede Generar El Archivo De Excel.'
         );
       }
     } catch (error) {
@@ -210,7 +210,7 @@ export class MassiveNumeraryChangeModalComponent
       this.onLoadToast(
         'warning',
         '',
-        'No se puede copiar el archivo de excel.'
+        'No Se Puede Copiar El Archivo De Excel.'
       );
       //    END;
     }
@@ -241,14 +241,14 @@ export class MassiveNumeraryChangeModalComponent
     if (dataTableGoods.length > 0) {
       if (this.chkMovBan) {
         if (!this.TI_BANCO_NEW) {
-          this.onLoadToast('error', '', 'Se debe ingresar los datos del banco');
+          this.onLoadToast('error', '', 'Se Debe Ingresar Los Datos Del Banco');
           return;
         }
         if (!this.TI_FECHA_NEW) {
           this.onLoadToast(
             'error',
             '',
-            'Se debe ingresar la fecha de depósito'
+            'Se Debe Ingresar La Fecha De Depósito'
           );
           return;
         } else {
@@ -259,7 +259,7 @@ export class MassiveNumeraryChangeModalComponent
             this.onLoadToast(
               'error',
               '',
-              'Se debe ingresar una fecha de depósito válida'
+              'Se Debe Ingresar Una Fecha De Depósito Válida'
             );
             return;
           }
@@ -281,14 +281,13 @@ export class MassiveNumeraryChangeModalComponent
       } else {
         this.v_clasif_bien = 1426;
       }
-      // this.vBAN = false;
       this.vBAN = dataTableGoods.some(element => element.indNume == 2);
 
       if (this.vBAN) {
         this.vCHECA = (
           await showQuestion({
             title: 'Confirmación',
-            text: 'Se Actualizan los importes de los numerarios en ADM sin conciliar?',
+            text: 'Se Actualizan Los Importes De Los Numerarios En ADM Sin Conciliar?',
             confirmButtonText: 'SI',
             cancelButtonText: 'NO',
           })
@@ -320,7 +319,7 @@ export class MassiveNumeraryChangeModalComponent
         ti_ficha_new: this.TI_FICHA_NEW,
         ti_banco_new: this.TI_BANCO_NEW,
         ti_fecha_new:
-          this.TI_FECHA_NEW || formatDate(new Date(), 'dd/MM/yyyy', 'en'),
+          this.TI_FECHA_NEW || formatDate(new Date(), 'yyyy/MM/dd', 'en'),
         di_cuenta_new: this.DI_CUENTA_NEW,
         di_no_cuenta_deposito: this.DI_NO_CUENTA_DEPOSITO,
         di_categoria: this.DI_CATEGORIA,
@@ -330,12 +329,12 @@ export class MassiveNumeraryChangeModalComponent
         next: (res: any) => {
           this.alert(
             'success',
-            'Operación terminada correctamente',
-            'Proceso terminado'
+            'Operación Terminada Correctamente',
+            'Proceso Terminado'
           );
         },
         error: (err: any) => {
-          this.alert('error', 'Error', 'Ocurrió un error al procesar');
+          this.alert('error', 'Error', 'Ocurrió Un Error Al Procesar');
         },
       });
     }

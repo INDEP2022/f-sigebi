@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -16,9 +16,7 @@ import { INotification } from 'src/app/core/models/ms-notification/notification.
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
-import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-scanning-foil-historical-goods-extdom',
@@ -40,6 +38,7 @@ export class ScanningFoilHistoricalGoodsExtDomComponent
   @Input() paramsScreen: any;
   @Input() disabled: boolean = false;
 
+  @Output() changeFolio = new EventEmitter<boolean>();
   @Output() scanRequestEmitter = new EventEmitter<boolean>();
   @Output() showScanningPageEmitter = new EventEmitter<boolean>();
   @Output() viewPicturesEmitter = new EventEmitter<boolean>();
@@ -47,9 +46,6 @@ export class ScanningFoilHistoricalGoodsExtDomComponent
 
   get scanningFoli() {
     return this.formScan.get('scanningFoli');
-  }
-  get returnFoli() {
-    return this.formScan.get('returnFoli');
   }
 
   constructor(
@@ -59,8 +55,7 @@ export class ScanningFoilHistoricalGoodsExtDomComponent
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
-    private msDepositaryService: MsDepositaryService,
-    private msNotificationService: NotificationService
+    private msDepositaryService: MsDepositaryService
   ) {
     super();
   }
@@ -70,29 +65,12 @@ export class ScanningFoilHistoricalGoodsExtDomComponent
     console.log(this.formScan.value);
   }
 
-  private buildForm() {
-    this.formScan = this.fb.group({
-      scanningFoli: [
-        { value: '', disabled: false },
-        [
-          [
-            Validators.required,
-            Validators.pattern(NUM_POSITIVE),
-            Validators.maxLength(11),
-          ],
-        ],
-      ],
-      returnFoli: [
-        { value: '', disabled: false },
-        [
-          [
-            Validators.required,
-            Validators.pattern(NUM_POSITIVE),
-            Validators.maxLength(11),
-          ],
-        ],
-      ],
-    });
+  onChangeFolio() {
+    if (this.scanningFoli.valid) {
+      this.changeFolio.emit(this.scanningFoli.value);
+    } else {
+      this.changeFolio.emit(null);
+    }
   }
 
   async createScannerFoil() {

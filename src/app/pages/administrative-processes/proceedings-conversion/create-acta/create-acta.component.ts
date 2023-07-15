@@ -17,7 +17,13 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-create-acta',
   templateUrl: './create-acta.component.html',
-  styles: [],
+  styles: [
+    `
+      .bg-gray {
+        background-color: #eee !important;
+      }
+    `,
+  ],
 })
 export class CreateActaComponent extends BasePage implements OnInit {
   actaRecepttionForm: FormGroup;
@@ -48,6 +54,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     { value: 11, label: 'Noviembre' },
     { value: 12, label: 'Diciembre' },
   ];
+  disabledSend: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -229,11 +236,11 @@ export class CreateActaComponent extends BasePage implements OnInit {
       this.proceedingsDeliveryReceptionService.getByFilter_(params).subscribe({
         next: (data: any) => {
           if (data.data.length == 1) {
-            this.alert('warning', 'Esa acta ya se tiene registrada', '');
+            this.alert('warning', 'Esa Acta ya se tiene Registrada', '');
           } else {
             this.alert(
               'warning',
-              'Actas duplicadas en ACTAS_ENTREGA_RECEPCION',
+              'Actas Duplicadas en ACTAS_ENTREGA_RECEPCION',
               ''
             );
           }
@@ -297,11 +304,11 @@ export class CreateActaComponent extends BasePage implements OnInit {
         next: (data: any) => {
           console.log('DATA', data);
           this.newRegister = data;
-          this.alert('success', 'El acta se ha creado correctamente', '');
+          this.alert('success', 'El Acta se ha Creado Correctamente', '');
           this.handleSuccess();
         },
         error: error => {
-          this.alert('error', 'Ha ocurrido al intentar crear un acta', '');
+          this.alert('error', 'Ha Ocurrido al Intentar Crear un Acta', '');
         },
       });
   }

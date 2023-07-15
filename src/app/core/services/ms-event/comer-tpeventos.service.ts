@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EventEndpoints } from 'src/app/common/constants/endpoints/ms-event-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import {
   IComerTpEvent,
@@ -25,7 +25,7 @@ export class ComerTpEventosService extends HttpService {
   }
 
   getAllComerTpEvent(
-    params?: ListParams
+    params?: _Params
   ): Observable<IListResponse<IComerTpEvent>> {
     return this.get<IListResponse<IComerTpEvent>>(this.endpointTevents, params);
   }

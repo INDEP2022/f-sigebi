@@ -67,7 +67,11 @@ export class MassiveConversionPermissionsComponent
             this.onSelectRow(instance);
           }, */
           onComponentInitFunction: (instance: any) => {
-            const values = [{value: 'S', msg: 'Sí'},{value:'N', msg:'No'}, {value: null, msg: ''}];
+            const values = [
+              { value: 'S', msg: 'Sí' },
+              { value: 'N', msg: 'No' },
+              { value: null, msg: '' },
+            ];
             instance.values.emit(values);
             instance.toggle.subscribe((data: any) => {
               data.row.abbreviation = data.toggle == '' ? null : data.toggle;

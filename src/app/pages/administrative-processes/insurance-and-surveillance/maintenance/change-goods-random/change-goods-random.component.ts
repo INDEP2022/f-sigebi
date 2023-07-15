@@ -10,6 +10,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ListRandomsComponent } from './list-randoms/list-randoms.component';
 
@@ -42,7 +43,7 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    for (let i = 1900; i <= this.currentYear; i++) {
+    for (let i = 2010; i <= this.currentYear; i++) {
       this.years.push(i);
     }
   }
@@ -54,13 +55,23 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
   onClickChangeGoodRandom() {
     console.log(this.form.value);
     this.form.value.delegation = this.delegationDefault.delegationNumber;
+
+    const period = this.form.value.period;
+    if (period.length > 6) {
+      let per = period.toString().slice(0, 5);
+      this.form.value.period = Number(per);
+    }
+
     this.eventChangeGoodsRandom.emit(this.form.value);
   }
 
   prepareForm() {
     this.form = this.fb.group({
       year: [null, Validators.required],
-      period: [null, Validators.required],
+      period: [
+        null,
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+      ],
       delegation: [null],
       process: [null, Validators.required],
       random: [null, Validators.required],
@@ -114,7 +125,7 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
       callback: (next: any) => {
         console.log(next);
 
-        this.form.get('random').setValue(next.randomId);
+        // this.form.get('random').setValue(next.randomId);
         this.form.get('goodNumber').setValue(next.goodNumber);
         this.form.get('description').setValue(next.address);
         this.form.get('transference').setValue(next.transferee);
@@ -132,7 +143,6 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
       this.alert('warning', 'Debe seleccionar un periodo', '');
       return;
     }
-    console.log('this.form.value.delegation', this.delegationDefault);
     if (!this.delegationDefault) {
       this.alert('warning', 'Debe seleccionar una delegación', '');
       return;
@@ -148,7 +158,37 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
       delegationType: this.delegationDefault.typeDelegation,
     };
 
-    this.getVigSupervisionDet_(data);
+    this.getDataVIG_SUPERVISION_TMP(data);
+  }
+
+  async getDataVIG_SUPERVISION_TMP(data: any) {
+    this.loading = true;
+    let params = {
+      ...this.paramsList.getValue(),
+    };
+    params['filter.delegationNumber'] = `$eq:${data.delegationNumber}`;
+    params['filter.cveProcess'] = `$eq:${data.cveProcess}`;
+    params['filter.cvePeriod'] = `$eq:${data.cvePeriod}`;
+    params['filter.delegationType'] = `$eq:${data.delegationType}`;
+    this.survillanceService.getVigSupervisionTmp(params).subscribe({
+      next: async (response: any) => {
+        const next = response.data[0];
+        console.log('EDED2', response);
+
+        if (response.count == 1) {
+          // this.form.get('random').setValue(next.randomId);
+          this.form.get('goodNumber').setValue(next.goodNumber);
+          this.form.get('description').setValue(next.address);
+          this.form.get('transference').setValue(next.transferee);
+        } else {
+          this.openForm(data);
+        }
+      },
+      error: error => {
+        this.alert('warning', 'No hay registros en este período', '');
+        this.loading = false;
+      },
+    });
   }
 
   async getVigSupervisionDet_(data: any) {
