@@ -43,7 +43,7 @@
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2"
-              >Delegaci&oacute;n regional&#58;</label
+              >Delegaci&oacute;n Regional&#58;</label
             >
             <span class="fs-4">
               {{ programming?.regionalDelegationName }}
@@ -52,7 +52,7 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Correo transferente&#58;</label>
+            <label class="text-right mr-2">Correo Transferente&#58;</label>
             <span class="fs-4">{{ programming?.emailTransfer }}</span>
           </div>
         </div>
@@ -73,13 +73,13 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Fecha inicio operativo&#58;</label>
+            <label class="text-right mr-2">Fecha Inicio Operativo&#58;</label>
             <span class="fs-4"> {{ programming?.startDate }} </span>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Fecha fin operativo&#58;</label>
+            <label class="text-right mr-2">Fecha Fin Operativo&#58;</label>
             <span class="fs-4"> {{ programming?.endDate }}</span>
           </div>
         </div>
@@ -126,7 +126,7 @@
       <div class="row pt-3">
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Tipo relevante&#58;</label>
+            <label class="text-right mr-2">Tipo Relevante&#58;</label>
             <span class="fs-3"> {{ typeRelevantName }} </span>
           </div>
         </div>
@@ -143,7 +143,7 @@
       </div>
       <div class="col-lg-6">
         <div class="form-group">
-          <label class="text-right">Direcci&oacute;n almac&eacute;n&#58;</label>
+          <label class="text-right">Direcci&oacute;n Almac&eacute;n&#58;</label>
           <span>
             {{ ubicationWarehouse }}
           </span>
@@ -184,13 +184,13 @@
           *ngIf="!task?.State"
           (click)="getProccedings()"
           class="btn btn-primary btn-sm active">
-          Actualizar <i class="fa fa-retweet"></i>
+          Actualizar <i class="fas fa-sync-alt"> </i>
         </button>
 
         <button
           *ngIf="task?.State == 'FINALIZADA'"
           class="btn btn-primary disabled btn-sm active">
-          Actualizar <i class="fa fa-retweet"></i>
+          Actualizar <i class="fas fa-sync-alt"> </i>
         </button>
       </div>
       <div class="row pt-3">
@@ -303,7 +303,7 @@
             </div>
 
             <div class="row pt-4">
-              <div class="justify-content-start">
+              <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="settingsRecepGoods"></app-columns-select>
               </div>
@@ -326,7 +326,7 @@
           <!-- RESGUARDO -->
           <tab [heading]="headingGuard">
             <div class="row pt-4">
-              <div class="d-flex">
+              <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="settingsGuardGoods"></app-columns-select>
               </div>
@@ -361,7 +361,7 @@
           <!-- ALMACEN -->
           <tab [heading]="headingWarehouse">
             <div class="row pt-4">
-              <div class="d-flex">
+              <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="settingsWarehouseGoods"></app-columns-select>
               </div>
@@ -384,7 +384,7 @@
           <!-- REPROGRAMACION -->
           <tab [heading]="headingReprogramation">
             <div class="row pt-4">
-              <div class="d-flex">
+              <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="settingsReprog"></app-columns-select>
               </div>
@@ -404,7 +404,7 @@
           </tab>
           <!-- CANCELACION -->
           <tab [heading]="headingCancelation">
-            <div class="justify-content-start">
+            <div class="d-flex justify-content-end">
               <app-columns-select
                 [(settings)]="settingsCancelation"></app-columns-select>
             </div>
