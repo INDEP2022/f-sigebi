@@ -145,6 +145,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
    */
   async preInsertEvent() {
     if (!this.eventForm.valid) {
+      this.eventForm.markAllAsTouched();
       this.alert('error', 'Error', 'Formulario inválido');
       return;
     }
