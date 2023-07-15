@@ -94,7 +94,9 @@ export class MaintenanceComponent extends BasePage implements OnInit {
         console.log({ response });
         if (response.P_EST_PROCESO === 1) {
           this.alert('success', 'Eliminar Proceso', response.P_MSG_PROCESO);
+          this.limpiarPeriodoDelete();
         } else {
+          this.limpiarPeriodoDelete();
           this.alert('warning', 'Eliminar Proceso', response.P_MSG_PROCESO);
         }
       },
@@ -111,8 +113,10 @@ export class MaintenanceComponent extends BasePage implements OnInit {
         console.log({ response });
         if (response.P_EST_PROCESO === 1) {
           this.alert('success', 'Cambiar Periodos', response.P_MSG_PROCESO);
+          this.limpiarPeriodoCambiar();
         } else {
           this.alert('warning', 'Cambiar Periodos', response.P_MSG_PROCESO);
+          this.limpiarPeriodoCambiar();
         }
       },
       error: error => {
@@ -408,5 +412,13 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       pTransferee: changeGoodsRandom.transference,
       pUser: this.token.decodeToken().preferred_username,
     };
+  }
+
+  limpiarPeriodoDelete() {
+    this.deletePeriodComponent.limpiarPeriodo();
+  }
+
+  limpiarPeriodoCambiar() {
+    this.changePeriodComponent.limpiarPeriodo();
   }
 }

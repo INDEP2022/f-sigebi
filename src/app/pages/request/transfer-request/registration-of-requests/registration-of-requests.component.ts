@@ -1022,7 +1022,7 @@ export class RegistrationOfRequestsComponent
       this.onLoadToast(
         'error',
         'Bienes no aclarados',
-        'Algunos bienes aun no se aclararon'
+        'Algunos bienes aún no se aclararon'
       );
       return;
     }
@@ -1062,8 +1062,8 @@ export class RegistrationOfRequestsComponent
     if (this.requestApproved == true) {
       this.onLoadToast(
         'error',
-        'Solicitud aprovado',
-        'La solicitud ya fue aprovada'
+        'Solicitud aprobada',
+        'No es posible rechazar la solicitud, ya fue firmada'
       );
       return;
     }
@@ -1073,7 +1073,7 @@ export class RegistrationOfRequestsComponent
       this.onLoadToast(
         'error',
         'Bienes no aclarados',
-        'Algunos bienes aun no se aclararon'
+        'Algunos bienes aún no se aclararon'
       );
       return;
     }
