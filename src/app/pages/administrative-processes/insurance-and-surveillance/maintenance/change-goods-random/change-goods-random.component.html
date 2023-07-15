@@ -14,11 +14,11 @@
       <div class="col-md-4">
         <form-field [control]="form.get('period')" label="Periodo">
           <input
-            type="number"
+            type="text"
             class="form-control"
             formControlName="period"
-            min="1"
-            [max-length]="6" />
+            maxlength="6"
+            minlength="1" />
         </form-field>
       </div>
       <div class="col-md-4">

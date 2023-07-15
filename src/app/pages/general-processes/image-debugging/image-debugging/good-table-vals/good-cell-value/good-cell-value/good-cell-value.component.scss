@@ -1,0 +1,54 @@
+.error {
+  input {
+    border-bottom-color: #f46a6a;
+  }
+
+  .errorMessage {
+    width: 100%;
+    font-size: 80%;
+    color: #dc3545;
+    text-align: left;
+  }
+
+  .checkEdit {
+    pointer-events: none;
+
+    .text-success {
+      color: #6c757d !important;
+    }
+  }
+}
+
+.form-material .form-control {
+  height: 35px;
+}
+
+div.goodCellContainer {
+  position: relative;
+  height: 55px;
+  margin: auto;
+  text-align: right;
+  align-items: center;
+  display: flex;
+  padding: 0 10px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.requiredAva {
+  background-color: #dc3545;
+}
+
+.required {
+  background-color: #ffc107;
+}
+
+.update {
+  background-color: #17a2b8;
+
+  input.form-control {
+    &:focus {
+      background-color: #17a2b8;
+    }
+  }
+}
