@@ -338,6 +338,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
     }
   }
   seeClaimLetter(data: any) {
+    console.log(data);
     if (data.doccartareclamacion) {
       const columnas = Object.keys(data);
       let colum = '';

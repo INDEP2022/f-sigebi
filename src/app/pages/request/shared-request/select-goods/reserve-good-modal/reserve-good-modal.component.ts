@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { IGoodsResDev } from 'src/app/core/models/ms-rejectedgood/goods-res-dev-model';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -10,7 +11,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class ReserveGoodModalComponent extends BasePage implements OnInit {
   title: string = 'Seleccione la Cantidad a Reservar';
-  good: any;
+  good: IGoodsResDev;
   reserveForm: FormGroup = new FormGroup({});
   @Output() onReserve = new EventEmitter<any>();
 
@@ -19,6 +20,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('good', this.good);
     this.prepareForm();
   }
 
@@ -29,7 +31,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.min(1),
-          Validators.max(parseInt(this.good.availableAmount)),
+          Validators.max(parseInt(String(this.good.amount))),
         ],
       ],
     });
@@ -48,14 +50,22 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
     // Llamar servicio para agregar caratula
     this.loading = false;
     let availableAmount: number =
-      parseInt(this.good.availableAmount) -
+      parseInt(String(this.good.amount)) -
       parseInt(this.reserveForm.controls['reserve'].value);
-    this.onReserve.emit({
+
+    console.log('availableAmount', availableAmount);
+    console.log('good', this.good);
+    const object = {
+      id: this.good.goodId,
+      goodId: this.good.goodId,
+      amount: this.good.amount,
+    };
+    /*this.onReserve.emit({
       ...this.good,
       ...this.reserveForm.value,
       reservedAmount: this.reserveForm.controls['reserve'].value,
       availableAmount,
-    });
+    }); */
     this.modalRef.hide();
   }
 }

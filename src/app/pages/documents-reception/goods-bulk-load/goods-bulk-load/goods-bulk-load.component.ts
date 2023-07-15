@@ -885,6 +885,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       data['col' + index] = null;
     }
     data['FGR_NO_BIEN'] = dataPgr.pgrGoodNumber; // SET CLAVE UNICA
+    console.log('REVISAR TIPO ######### ', dataPgr);
     if (dataPgr.pgrTypeGoodVeh) {
       // CONDICION VEH
       data.clasif = dataPgr.pgrTypeGoodVeh;
@@ -1045,6 +1046,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       dataInfo['moneda'] = 'MONEDA';
       dataInfo['ficha'] = 'FICHA';
       dataInfo['banco'] = 'BANCO';
+      dataInfo['fecha'] = 'FECHA';
       dataInfo['edofisico'] = 'ESTADO FISICO';
       dataInfo['clasif'] = dataPgr.pgrTypeGoodNum;
       let dataInfoRow: any = {};
@@ -1053,6 +1055,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       dataInfoRow['moneda'] = dataPgr.pgrNueTypemon;
       dataInfoRow['ficha'] = dataPgr.pgrNuefolficdep;
       dataInfoRow['banco'] = dataPgr.pgrNumofictransf;
+      dataInfoRow['fecha'] = dataPgr.pgrNuefedepos;
       dataInfoRow['edofisico'] = dataPgr.pgrEdoPhysicalNum;
       this.getValData(this.pgrData[count], count, data, dataInfo, dataInfoRow); // Siguiente registro
     } else if (dataPgr.pgrTypeGoodJoy) {
@@ -1142,6 +1145,11 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             const element = dataResponse[key];
             if (element) {
               response['col' + element] = dataInfo[key];
+              console.log(
+                'DATA COLUMNA ### "col' + element + '"### ',
+                response['col' + element],
+                dataInfo[key]
+              );
             }
           }
         }

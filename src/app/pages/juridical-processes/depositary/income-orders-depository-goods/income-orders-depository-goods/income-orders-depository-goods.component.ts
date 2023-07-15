@@ -247,7 +247,7 @@ export class IncomeOrdersDepositoryGoodsComponent
     this.getItemsNumberBienes();
 
     this.form = this.fb.group({
-      numberGood: [null, null],
+      numberGood: [null, [Validators.required]],
       contractKey: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       depositary: [
         null,
@@ -258,7 +258,7 @@ export class IncomeOrdersDepositoryGoodsComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(300)],
       ],
       date: [null, [Validators.required]],
-      userId: [null, null],
+      userId: [null, [Validators.required]],
       username: [null, [Validators.required, Validators.maxLength(255)]],
       charge: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
