@@ -118,7 +118,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
         this.loading = false;
         this.tableLogs = response.data;
         this.totalLogs = response.count;
-        this.onSelectTable(this.tableLogs[0]);
+        // this.onSelectTable(this.tableLogs[0]);
         this.getDynamicRegistersInit().subscribe();
       })
     );
@@ -185,10 +185,10 @@ export class SystemLogComponent extends BasePage implements OnInit {
         catchError(error => {
           this.dynamicLoading = false;
           if (error.status >= 500 || error.status >= 400) {
-            this.onLoadToast(
+            this.alert(
               'error',
-              'Error',
-              'Ocurrio un error al obtener la informacion'
+              'Ocurrio un error al obtener la información',
+              ``
             );
           }
           return throwError(() => error);
@@ -209,10 +209,10 @@ export class SystemLogComponent extends BasePage implements OnInit {
         catchError(error => {
           this.dynamicLoading = false;
           if (error.status >= 500) {
-            this.onLoadToast(
+            this.alert(
               'error',
-              'Error',
-              'Ocurrio un error al obtener la informacion'
+              'Ocurrio un error al obtener la información',
+              ``
             );
           }
           return throwError(() => error);

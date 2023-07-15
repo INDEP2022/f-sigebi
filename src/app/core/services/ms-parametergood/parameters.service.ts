@@ -8,6 +8,8 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IIndicatorParameters,
   IParameters,
+  IPupCalculateDevolutionDTO,
+  IPupCalculateDevolutionResult,
 } from './../../models/ms-parametergood/parameters.model';
 @Injectable({
   providedIn: 'root',
@@ -57,5 +59,10 @@ export class ParametersService extends HttpService {
   getCategorzacionAutomNumerario(params: _Params) {
     const route = `${ParameterGoodEndpoints.CategorzacionAutomNumerario_}`;
     return this.get<IListResponse<any>>(route, params);
+  }
+
+  pupCalculateDevolution(body: IPupCalculateDevolutionDTO) {
+    const route = `${ParameterGoodEndpoints.PupCalculaDevolucion}`;
+    return this.post<IPupCalculateDevolutionResult>(route, body);
   }
 }

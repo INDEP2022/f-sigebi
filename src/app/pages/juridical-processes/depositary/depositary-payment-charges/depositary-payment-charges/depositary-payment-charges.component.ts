@@ -151,8 +151,8 @@ export class DepositaryPaymentChargesComponent
     this.Service.getRefPayDepositories().subscribe({
       next: resp => {
         this.loadItemsJson = resp.data;
-        console.log(' ' + resp.count);
-        console.log(JSON.stringify(this.loadItemsJson));
+        /*console.log(' ' + resp.count);
+        console.log(JSON.stringify(this.loadItemsJson));*/
       },
       error: err => {
         let error = '';
@@ -172,10 +172,16 @@ export class DepositaryPaymentChargesComponent
       this.filterParams.getValue().getParams()
     ).subscribe({
       next: resp => {
+        console.log('refpayDepositaries', this.data);
+        resp.data.map((item: any) => {
+          item.oiDate = this.milisegundoToDate(item.oiDate);
+          item.date = this.milisegundoToDate(item.date);
+          item.system_val_date = this.milisegundoToDate(item.system_val_date);
+          item.registrationDate = this.milisegundoToDate(item.registrationDate);
+          console.log(item);
+        });
+
         this.data = resp.data;
-        console.log('<<<<<<  this.data  >>>>>>');
-        console.log(this.data);
-        console.log('<<<<<<  this.data  >>>>>>');
         this.totalItems = resp.count;
         this.loading = false;
       },
@@ -185,8 +191,10 @@ export class DepositaryPaymentChargesComponent
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
           this.onLoadToast('error', 'Error', error);
+          this.data = [];
         } else {
           this.onLoadToast('error', 'Error', err.error.message);
+          this.data = [];
         }
       },
     });
@@ -290,17 +298,19 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
       X => X.noGood === this.form.get('numberGood').value
     );
 
-    console.log(this.ItemsJson[0]);
-    if (this.ItemsJson[0] == null || this.ItemsJson[0] == undefined) {
+    /*if (this.ItemsJson[0] == null || this.ItemsJson[0] == undefined) {
+      console.log(this.ItemsJson[0]);
       this.alertInfo('info', 'El bien no cuenta con pagos cargados', '');
       return;
-    }
-    this.form.get('event').setValue(this.ItemsJson[0].description);
-    this.form.get('cve_bank').setValue(this.ItemsJson[0].cve_bank);
-    this.form.get('loand').setValue(this.ItemsJson[0].amount);
+    }*/
+    console.log(this.ItemsJson[0]);
+
+    this.form.get('event').setValue(this.ItemsJson[0]?.description);
+    this.form.get('cve_bank').setValue(this.ItemsJson[0]?.cve_bank);
+    this.form.get('loand').setValue(this.ItemsJson[0]?.amount);
     if (this.ItemsJson[0]) {
-      this.formgetCveBank = this.ItemsJson[0].cve_bank;
-      this.formgetCodeBank = this.ItemsJson[0].code;
+      this.formgetCveBank = this.ItemsJson[0]?.cve_bank;
+      this.formgetCodeBank = this.ItemsJson[0]?.code;
     }
     //console.warn(JSON.stringify(this.ItemsJson[0]));
 
@@ -362,19 +372,19 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
   }
 
   milisegundoToDate(milis: any) {
-    console.log('ENTRA FECHA =>> ' + milis);
+    /*console.log('ENTRA FECHA =>> ' + milis);*/
     let fecha = new Date(milis);
-    console.log('SALE FECHA =>> ' + fecha);
+    /*console.log('SALE FECHA =>> ' + fecha);
     console.log(
       'FECHA =>> ' +
-        fecha.getFullYear() +
-        '-' +
-        (fecha.getMonth() + 1) +
-        '-' +
-        fecha.getDate()
-    );
+      fecha.getFullYear() +
+      '-' +
+      (fecha.getMonth() + 1) +
+      '-' +
+      fecha.getDate()
+    );*/
     return (
-      fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate()
+      fecha.getDate() + '/' + (fecha.getMonth() + 1) + '/' + fecha.getFullYear()
     );
   }
 
