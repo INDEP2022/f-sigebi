@@ -280,7 +280,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
           this.flagAsignaActa = true;
         });
         let filter = {
-          pDelivery: this.actConvertion,
+          pDelivery: this.selectItem2,
           vFilter: 'true',
         };
         this.proceedingsService.postBlkConversions(filter).subscribe({

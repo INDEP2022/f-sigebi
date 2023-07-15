@@ -115,7 +115,7 @@ export class ScanningFoilComponent
       this.alert(
         'info',
         'Información',
-        'El número de bien para este proceso ya tiene folio de escaneo.'
+        'El Número de Bien para este Proceso ya Tiene folio de Escaneo.'
       );
       return;
     }
