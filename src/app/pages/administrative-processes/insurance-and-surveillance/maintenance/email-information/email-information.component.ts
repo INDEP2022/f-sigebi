@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -31,6 +37,7 @@ export class EmailInformationComponent {
   public tos = new DefaultSelect();
   public ccs = new DefaultSelect();
   public types = new DefaultSelect();
+  @ViewChild('Send') Send: ElementRef;
 
   @Output() eventEmailInformation = new EventEmitter();
 
@@ -68,7 +75,9 @@ export class EmailInformationComponent {
 
   onChangeCc(event: any) {
     console.log(event);
+
     this.form.get('cc').setValue(event.id);
+    console.log('Send', this.Send);
   }
   onChangeTo(event: any) {
     console.log(event);
