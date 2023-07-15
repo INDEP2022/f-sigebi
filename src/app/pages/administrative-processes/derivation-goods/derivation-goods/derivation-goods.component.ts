@@ -611,8 +611,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     //crear segun el nuemero pardre en referencia y copiar los demas valores al bien
     this.alertQuestion(
       'question',
-      `Se agregará un bien hijo`,
-      '¿Desea continuar?'
+      `Se Agregará un Bien Hijo`,
+      '¿Desea Continuar?'
     ).then(q => {
       if (q.isConfirmed) {
         let good = this.good;
