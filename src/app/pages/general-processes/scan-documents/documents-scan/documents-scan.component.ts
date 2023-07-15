@@ -77,6 +77,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     P_FOLIO: null,
     P_ND: null,
   };
+  P_NO_TRAMITE: number = null;
+  P_GEST_OK: number = null;
 
   constructor(
     private fb: FormBuilder,
@@ -115,7 +117,11 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         if (this.origin == 'FACTJURREGDESTLEG') {
           this.no_bien = params['P_NB'] ?? null;
         }
-
+        if (this.origin == 'FADMAPROEXTDOM') {
+          this.origin2 = params['origin2'] ?? null;
+          this.P_NO_TRAMITE = params['P_NO_TRAMITE'] ?? null;
+          this.P_GEST_OK = params['P_GEST_OK'] ?? null;
+        }
         if (
           this.origin == 'FACTGENSOLICDIGIT' &&
           this.requestOrigin == 'FACTJURREGDESTLEG'
@@ -541,6 +547,18 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       this.router.navigate([
         `pages/administrative-processes/unit-conversion-packages`,
       ]);
+    }
+    if (this.origin == 'FADMAPROEXTDOM') {
+      this.router.navigate(
+        ['/pages/juridical/goods-process-validation-extdom'],
+        {
+          queryParams: {
+            origin: this.origin2 ? this.origin2 : null,
+            P_NO_TRAMITE: this.P_NO_TRAMITE,
+            P_GEST_OK: this.P_GEST_OK,
+          },
+        }
+      );
     }
   }
 }

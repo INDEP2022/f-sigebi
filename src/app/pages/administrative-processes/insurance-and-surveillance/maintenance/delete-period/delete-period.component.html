@@ -7,28 +7,12 @@
       <div class="col-md-4">
         <form-field [control]="form.get('year')" label="Año">
           <ng-select
+            (change)="obtenerPeriodo($event)"
             class="form-control"
             formControlName="year"
             [items]="years"
             [ngModel]="currentYear"></ng-select>
-          <!-- <input
-            type="number"
-            class="form-control"
-            formControlName="year"
-            min="1"
-            [max-length]="4"
-            pattern="^[0-9]+" /> -->
-        </form-field>
-      </div>
-      <div class="col-md-4">
-        <form-field [control]="form.get('period')" label="Periodo">
-          <input
-            type="number"
-            class="form-control"
-            formControlName="period"
-            min="1"
-            [max-length]="6"
-            pattern="^[0-9]+" />
+          <!-- <input type="number" class="form-control" formControlName="year" min="1" [max-length]="4" pattern="^[0-9]+" /> -->
         </form-field>
       </div>
       <div class="col-md-4">
@@ -45,18 +29,17 @@
             (fetchItems)="getDelegation($event)"
             [control]="'delegation'"></ngx-select>
           <!-- <ng-custom-select class="form-control" path="catalog/api/v1/delegation" formControlName="delegation"
-            prefixSearch="$ilike" paramSearch="filter.description">
-            <ng-template let-item>
-              {{ item.description }}
-            </ng-template>
-          </ng-custom-select> -->
+                  prefixSearch="$ilike" paramSearch="filter.description">
+                  <ng-template let-item>
+                    {{ item.description }}
+                  </ng-template>
+                </ng-custom-select> -->
         </form-field>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-4 mt-3">
+      <div class="col-md-4">
         <form-field [control]="form.get('process')">
           <ngx-select
+            (change)="obtenerPeriodoProcess($event)"
             [data]="procesess"
             [form]="form"
             value="value"
@@ -64,6 +47,23 @@
             label="Proceso"
             [control]="'process'">
           </ngx-select>
+        </form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 mt-3">
+        <form-field [control]="form.get('period')">
+          <ngx-select
+            (change)="addDate($event)"
+            [readonly]="!disabledPeriod"
+            [form]="form"
+            [data]="periods"
+            bindLabel="cvePeriod"
+            label="Periodo"
+            value="cvePeriod"
+            (fetchItems)="getPeriods($event)"
+            control="period"></ngx-select>
+          <!-- <input type="text" class="form-control" formControlName="period" maxlength="6" minlength="1" /> -->
         </form-field>
       </div>
     </div>

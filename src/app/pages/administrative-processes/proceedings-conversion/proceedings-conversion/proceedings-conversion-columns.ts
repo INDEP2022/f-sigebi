@@ -66,7 +66,7 @@ export const ACTAS = {
     sort: false,
   },
   keysProceedings: {
-    title: 'Cve Acta',
+    title: 'Clave Acta',
     type: 'string',
     sort: false,
   },

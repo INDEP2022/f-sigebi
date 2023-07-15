@@ -7,6 +7,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  SimpleChanges,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
@@ -56,6 +57,7 @@ export class CustomSelectWidthLoading
   @Input() multiple: boolean = false;
   @Input() addTag: boolean = false;
   @Input() isLoadInOnInit: boolean = true;
+  @Input() load = false;
   @Input() url: string = environment.API_URL;
   @Input() pathData: string = 'data';
   @Input() value: string = 'id';
@@ -74,7 +76,9 @@ export class CustomSelectWidthLoading
   @Input() termMaxLength: string = null;
   @Input() readonly: boolean = false;
   @Input() updateValues: boolean = false;
-  @Output() valueChange = new EventEmitter<any>();
+  @Input() externalSearch: string;
+  @Output()
+  valueChange = new EventEmitter<any>();
   @Output() getObject = new EventEmitter<any>();
   input$ = new Subject<string>();
   items: any[] = [];
@@ -125,6 +129,15 @@ export class CustomSelectWidthLoading
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['externalSearch'] && changes['externalSearch'].currentValue) {
+      this.input$.next(changes['externalSearch'].currentValue);
+    }
+    if (changes['load']) {
+      this.input$.next('');
+    }
   }
 
   writeValue(obj: any): void {

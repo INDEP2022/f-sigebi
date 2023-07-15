@@ -65,4 +65,11 @@ export class ReportService extends HttpService {
       `${environment.API_URL}catalog/api/v1/good-type`
     );
   }
+
+  getReporteHistorico(nombre: string) {
+    return this.siabService.fetchReport(nombre, {});
+    // return this.httpClient.get(
+    //   `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?PN_DELEG=${PN_DELEG}&PN_SUBDEL=${PN_SUBDEL}&PF_MES=${PF_MES}&PF_ANIO=${PF_ANIO}`
+    // );
+  }
 }
