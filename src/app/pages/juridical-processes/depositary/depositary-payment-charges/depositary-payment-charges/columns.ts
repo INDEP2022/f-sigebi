@@ -6,7 +6,7 @@ export const COLUMNS = {
     sort: false,
   },
   registrationDate: {
-    title: 'Fecha Registro SIAB',
+    title: 'Fecha Registro INDEP',
     sort: false,
   },
   movement: {
