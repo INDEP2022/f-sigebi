@@ -16,6 +16,7 @@ import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-good
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { ModalSelectsGoodsComponent } from '../modal-selects-goods/modal-selects-goods.component';
 
 @Component({
@@ -39,6 +40,9 @@ export class LocationGoodsWarehousesStorageComponent
   goods: IGood[] = [];
   newWarehouse: number = 0;
   fileNum: number = 0;
+  selectedGooodsValid: any[] = [];
+  selectedGooods: any[] = [];
+  goodsValid: any;
   selectedOption: string = 'B';
   dataTableGood_: any[] = [];
   columnFilters: any;
@@ -435,6 +439,49 @@ export class LocationGoodsWarehousesStorageComponent
         },
       });
     }
+  }
+  onGoodSelect(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChange(data.row, data.toggle),
+    });
+  }
+
+  isGoodSelected(_good: IGood) {
+    const exists = this.selectedGooods.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+
+  goodSelectedChange(good: IGood, selected: boolean) {
+    if (selected) {
+      this.selectedGooods.push(good);
+    } else {
+      this.selectedGooods = this.selectedGooods.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
+  onGoodSelectValid(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChangeValid(data.row, data.toggle),
+    });
+  }
+
+  isGoodSelectedValid(_good: IGood) {
+    const exists = this.selectedGooodsValid.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+
+  goodSelectedChangeValid(good: IGood, selected?: boolean) {
+    if (selected) {
+      this.selectedGooodsValid.push(good);
+    } else {
+      this.selectedGooodsValid = this.selectedGooodsValid.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
+  rowsSelected(event: any) {
+    this.selectedGooodsValid = event.selected;
   }
   getEstatusColor(estatus: string): string {
     return estatus === 'S' ? 'green' : 'black';

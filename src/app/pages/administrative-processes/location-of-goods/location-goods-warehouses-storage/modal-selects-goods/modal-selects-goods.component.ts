@@ -276,7 +276,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           }
         );
       });
-
+      this.onLoadGoodList();
       this.alert('success', 'Bienes', `Actualizados correctamente`);
     } catch (err) {
       console.error(err);
@@ -316,6 +316,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           }
         );
       });
+      this.onLoadGoodList();
       this.alert('success', 'Bienes', `Actualizados correctamente`);
     } catch (err) {
       console.error(err);
