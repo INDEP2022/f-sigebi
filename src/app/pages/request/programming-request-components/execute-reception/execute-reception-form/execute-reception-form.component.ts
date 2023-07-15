@@ -1529,13 +1529,15 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         actId: receipt.actId,
         typeReceipt: 'RESGUARDO',
         statusReceiptGuard: 'ABIERTO',
-        receiptDate: new Date(),
+        receiptDate: moment(new Date()).format('YYYY-MM-DD HH:mm:ssZ'),
       };
       this.receptionGoodService.createReception(formData).subscribe({
         next: response => {
           resolve(response);
         },
-        error: error => {},
+        error: error => {
+          console.log('error', error);
+        },
       });
     });
   }
@@ -1547,7 +1549,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         actId: receipt.actId,
         typeReceipt: 'ALMACEN',
         statusReceiptGuard: 'ABIERTO',
-        receiptDate: new Date(),
+        receiptDate: moment(new Date()).format('YYYY-MM-DD HH:mm:ssZ'),
       };
       this.receptionGoodService.createReception(formData).subscribe({
         next: response => {
@@ -1578,17 +1580,21 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   createReceiptGoodGuard(receiptGuard: any) {
     return new Promise((resolve, reject) => {
+      console.log('receiptGuard', receiptGuard);
       this.selectGood.map(item => {
         const formData = {
           receiptGuardId: receiptGuard.id,
           idGood: item.goodId,
           typeReceipt: 'RESGUARDO',
         };
+
+        console.log('formData', formData);
         this.receptionGoodService.createReceiptGoodGuard(formData).subscribe({
           next: response => {
             resolve(true);
           },
           error: error => {
+            console.log('createReceiptGoodGuard', error);
             resolve(false);
           },
         });
@@ -1631,6 +1637,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             resolve(true);
           },
           error: error => {
+            console.log('error update receipt guard', error);
             resolve(false);
           },
         });
@@ -1717,6 +1724,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             resolve(true);
           },
           error: error => {
+            console.log('error actualizar bien', error);
             resolve(false);
           },
         });
