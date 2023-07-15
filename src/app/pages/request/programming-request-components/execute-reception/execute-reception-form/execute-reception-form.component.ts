@@ -165,7 +165,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   settingsReceipt = {
     ...this.settings,
     actions: {
-      columnTitle: 'Generar recibo',
+      columnTitle: 'Generar Recibo',
       position: 'right',
       delete: true,
     },
