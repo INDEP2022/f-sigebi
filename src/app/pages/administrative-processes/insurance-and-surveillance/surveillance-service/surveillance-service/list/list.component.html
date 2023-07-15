@@ -2,12 +2,6 @@
   <div class="w-100" header>
     <div class="d-flex flex-wrap justify-content-between aling-items-center">
       <h5 class="modal-title">{{ title }}</h5>
-      <div class="buttons">
-        <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
-        <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
-          Cerrar
-        </button>
-      </div>
     </div>
   </div>
   <div body>
@@ -17,7 +11,7 @@
         <!-- <div [class]="loading ? 'table-loading' : ''"> -->
         <ng-scrollbar
           [track]="'all'"
-          [ngStyle]="{ height: loading ? '0px' : '500px' }">
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
             class="table-responsive"
@@ -31,5 +25,12 @@
       </app-pagination>
     </div>
   </div>
-  <div footer></div>
+  <div footer>
+    <div class="text-center">
+      <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
+      <button class="btn btn-primary active mb-4" (click)="close()">
+        Cerrar
+      </button>
+    </div>
+  </div>
 </app-modal>

@@ -103,7 +103,7 @@
                 [data]="regionalsDelegations"
                 value="description"
                 bindLabel="description"
-                label="Selecciona una delegaci&oacute;n regional"
+                label="Selecciona una Delegaci&oacute;n Regional"
                 (change)="regionalDelegationSelect($event)"
                 (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
             </form-field>
@@ -117,7 +117,7 @@
                 value="description"
                 bindLabel="description"
                 [readonly]="true"
-                label="Selecciona una delegaci&oacute;n regional"
+                label="Selecciona una Delegaci&oacute;n Regional"
                 (change)="regionalDelegationSelect($event)"
                 (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
             </form-field>
@@ -146,7 +146,7 @@
                 [loading]="loading"
                 value="id"
                 bindLabel="descCondition"
-                label="Selecciona un estado"
+                label="Selecciona un Estado"
                 (change)="stateSelect($event)"
                 (fetchItems)="getStateSelect($event)"></ngx-select>
             </form-field>
@@ -182,7 +182,7 @@
           <div class="col-md-4">
             <form-field
               [control]="performForm.get('startDate')"
-              label="Fecha inicio operativo">
+              label="Fecha Inicio Operativo">
               <input
                 class="form-control"
                 formControlName="startDate"
@@ -199,7 +199,7 @@
           <div class="col-md-4">
             <form-field
               [control]="performForm.get('endDate')"
-              label="Fecha fin operativo">
+              label="Fecha Fin Operativo">
               <input
                 type="datetime"
                 class="form-control"
@@ -226,7 +226,7 @@
                 [data]="transferences"
                 value="id"
                 bindLabel="nameAndId"
-                label="Selecciona transferente"
+                label="Selecciona Transferente"
                 (change)="transferentSelect($event)"
                 (fetchItems)="getTransferentSelect($event)"></ngx-select>
             </form-field>
@@ -241,7 +241,7 @@
                 [data]="transferences"
                 value="nameAndId"
                 bindLabel="nameAndId"
-                label="Selecciona transferente"
+                label="Selecciona Transferente"
                 (change)="transferentSelect($event)"
                 (fetchItems)="getTransferentSelect($event)"></ngx-select>
             </form-field>
@@ -257,7 +257,7 @@
                 [showTooltip]="true"
                 value="id"
                 bindLabel="nameAndId"
-                label="Selecciona emisora"
+                label="Selecciona Emisora"
                 (change)="stationSelect($event)"
                 (fetchItems)="getStations($event)"></ngx-select>
             </form-field>
@@ -271,7 +271,7 @@
                 [showTooltip]="true"
                 value="nameAndId"
                 bindLabel="nameAndId"
-                label="Selecciona emisora"
+                label="Selecciona Emisora"
                 (change)="stationSelect($event)"
                 (fetchItems)="getStations($event)"></ngx-select>
             </form-field>
@@ -287,7 +287,7 @@
                 [showTooltip]="true"
                 value="idAuthority"
                 bindLabel="nameAndId"
-                label="Selecciona una autoridad"
+                label="Selecciona una Autoridad"
                 (change)="authoritySelect($event)"
                 (fetchItems)="getAuthoritySelect($event)"></ngx-select>
             </form-field>
@@ -301,7 +301,7 @@
                 [showTooltip]="true"
                 value="nameAndId"
                 bindLabel="nameAndId"
-                label="Selecciona una autoridad"
+                label="Selecciona una Autoridad"
                 (change)="authoritySelect($event)"
                 (fetchItems)="getAuthoritySelect($event)"></ngx-select>
             </form-field>
@@ -319,7 +319,7 @@
                 [data]="typeRelevant"
                 value="id"
                 bindLabel="description"
-                label="Selecciona un tipo relevante"
+                label="Selecciona un Tipo Relevante"
                 (change)="typeSchedule($event)"
                 (fetchItems)="getTypeRelevantSelect($event)"></ngx-select>
             </form-field>
@@ -333,7 +333,7 @@
                 value="id"
                 [readonly]="true"
                 bindLabel="description"
-                label="Selecciona un tipo relevante"
+                label="Selecciona un Tipo Relevante"
                 (change)="typeSchedule($event)"
                 (fetchItems)="getTypeRelevantSelect($event)"></ngx-select>
             </form-field>
@@ -341,7 +341,7 @@
           <div class="col-md-4">
             <form-field
               [control]="performForm.get('emailTransfer')"
-              label="Correo electr&oacute;nico transferente">
+              label="Correo Electr&oacute;nico Transferente">
               <input
                 type="text"
                 class="form-control"
@@ -391,7 +391,7 @@
                 value="idWarehouse"
                 bindLabel="description"
                 (change)="showWarehouse($event)"
-                label="Selecciona un almac&eacute;n"
+                label="Selecciona un Almac&eacute;n"
                 (fetchItems)="getWarehouseSelect($event)"></ngx-select>
             </form-field>
             <form-field
@@ -420,7 +420,7 @@
     </form>
 
     <div class="row pt-5" *ngIf="showForm">
-      <h5 class="title">Usuarios al operativo</h5>
+      <h5 class="title">Usuarios al Operativo</h5>
 
       <div class="justify-content-end btn-toolbar">
         <button
