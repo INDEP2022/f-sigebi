@@ -11,4 +11,5 @@ export enum ParameterGoodEndpoints {
   FaStageCreda = 'parameters/fa-stage-creda',
   IndicatorsParameter = '/indicators-parameter',
   CategorzacionAutomNumerario_ = 'categorization-autom-numerary',
+  PupCalculaDevolucion = 'application/pup-calcula-devolucion',
 }
