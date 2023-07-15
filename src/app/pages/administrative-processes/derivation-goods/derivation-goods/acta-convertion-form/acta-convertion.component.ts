@@ -464,7 +464,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
     console.log('minute-conversions -> ', payload);
     this.convertiongoodService.createMinuteConversion(payload).subscribe({
       next: (res: IListResponse<any>) => {
-        this.alert('success', null, `Registro Guardado`);
+        this.alert('success', `Acta Creada Correctamente`, '');
         console.log('minute-conversions res -> ', res);
         this.router.navigate(
           ['/pages/administrative-processes/derivation-goods'],
