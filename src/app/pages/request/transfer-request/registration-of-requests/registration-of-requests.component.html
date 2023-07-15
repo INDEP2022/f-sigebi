@@ -66,22 +66,26 @@
         </button>
       </div>
       <div class="p-2" *ngIf="approvalProcess">
-        <button
-          [disabled]="statusTask == 'FINALIZADA'"
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="approveRequest()">
-          <i class="bx bxs-right-arrow-square"></i> Aprobar
-        </button>
+        <div *ngIf="approvalProcess && haveDictamen == false">
+          <button
+            [disabled]="statusTask == 'FINALIZADA'"
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="approveRequest()">
+            <i class="bx bxs-right-arrow-square"></i> Aprobar
+          </button>
+        </div>
       </div>
       <div class="p-2" *ngIf="approvalProcess">
-        <button
-          [disabled]="statusTask == 'FINALIZADA'"
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="refuseRequest()">
-          <i class="bx bx-minus"></i> Rechazar
-        </button>
+        <div *ngIf="approvalProcess && haveDictamen == false">
+          <button
+            [disabled]="statusTask == 'FINALIZADA'"
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="refuseRequest()">
+            <i class="bx bx-minus"></i> Rechazar
+          </button>
+        </div>
       </div>
       <div class="p-2">
         <button class="btn btn-primary active btn-sm" (click)="close()">
