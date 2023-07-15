@@ -46,13 +46,14 @@
               </div>
             </ng-template>
             <commer-events-list
+              [events]="events"
               [params]="comerEventsListParams"
               [parameters]="parameters"
               (onOpenEvent)="onOpenEvent()"
               [(globalEvent)]="globalEvent"
               [eventForm]="eventForm"></commer-events-list>
           </tab>
-          <tab>
+          <tab (selectTab)="lotesTab()">
             <ng-template tabHeading>
               <div class="row">
                 <div class="col-md-12 d-flex justify-content-between">
@@ -63,7 +64,12 @@
                 </div>
               </div>
             </ng-template>
-            <commer-packages-lots></commer-packages-lots
+            <commer-packages-lots
+              [eventForm]="eventForm"
+              [lots]="lots"
+              [onlyBase]="onlyBase"
+              [comerLotsListParams]="comerLotsListParams"
+              [parameters]="parameters"></commer-packages-lots
           ></tab>
           <tab>
             <ng-template tabHeading>
