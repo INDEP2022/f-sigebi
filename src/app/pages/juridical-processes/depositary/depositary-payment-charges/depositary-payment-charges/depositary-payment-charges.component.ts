@@ -172,7 +172,6 @@ export class DepositaryPaymentChargesComponent
       this.filterParams.getValue().getParams()
     ).subscribe({
       next: resp => {
-        this.data = resp.data;
         console.log('refpayDepositaries', this.data);
         resp.data.map((item: any) => {
           item.oiDate = this.milisegundoToDate(item.oiDate);
@@ -181,6 +180,8 @@ export class DepositaryPaymentChargesComponent
           item.registrationDate = this.milisegundoToDate(item.registrationDate);
           console.log(item);
         });
+
+        this.data = resp.data;
         this.totalItems = resp.count;
         this.loading = false;
       },
@@ -190,8 +191,10 @@ export class DepositaryPaymentChargesComponent
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
           this.onLoadToast('error', 'Error', error);
+          this.data = [];
         } else {
           this.onLoadToast('error', 'Error', err.error.message);
+          this.data = [];
         }
       },
     });
