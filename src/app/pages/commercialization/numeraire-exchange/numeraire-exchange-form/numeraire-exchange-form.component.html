@@ -313,17 +313,23 @@
             </div>
           </div>
           <div class="mt-3">
-            <div class="d-flex justify-content-between">
-              <div class="form-material col-md-5">
-                <search-bar [params]="params"></search-bar>
-              </div>
-              <div>
+            <div class="ch-content">
+              <h5 class="title"></h5>
+              <div class="col-md-5 buttons">
                 <app-columns-select
                   [(settings)]="numeraireSettings"></app-columns-select>
               </div>
             </div>
+            <!-- <div class="d-flex justify-content-between">
+              <div class="form-material col-md-5"> -->
+            <!-- <search-bar [params]="params"></search-bar> -->
+            <!-- </div>
+              <div>
+                <app-columns-select [(settings)]="numeraireSettings"></app-columns-select>
+              </div>
+            </div> -->
           </div>
-          <div class="row">
+          <div class="row pt-4">
             <div class="table-responsive">
               <div [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
@@ -578,18 +584,20 @@
               <div class="form-group">
                 <form-field
                   class="form-group"
-                  label="Tipo de Conversión"
                   [control]="formBlkControl.get('typeConversion')">
-                  <select
-                    (change)="changeTypeConversion($event)"
-                    class="form-control"
-                    formControlName="typeConversion">
-                    <option
-                      [value]="type.value"
-                      *ngFor="let type of conversionTypes">
+                  <ngx-select
+                    [data]="conversionTypes"
+                    [form]="formBlkControl"
+                    value="value"
+                    bindLabel="text"
+                    label="Tipo de Conversión"
+                    control="typeConversion"
+                    (change)="changeTypeConversion($event)"></ngx-select>
+                  <!-- <select  class="form-control" formControlName="typeConversion">
+                    <option [value]="type.value" *ngFor="let type of conversionTypes">
                       {{ type.text }}
                     </option>
-                  </select>
+                  </select> -->
                 </form-field>
               </div>
             </div>

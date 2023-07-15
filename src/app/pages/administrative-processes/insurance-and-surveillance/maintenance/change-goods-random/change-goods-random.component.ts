@@ -40,8 +40,13 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
   delegationDefault: any = null;
   years: number[] = [];
   currentYear: number = new Date().getFullYear();
-
+  periods = new DefaultSelect();
+  randoms = new DefaultSelect();
+  disabledPeriod: boolean = false;
+  disabledRandom: boolean = false;
+  data_: any;
   ngOnInit(): void {
+    this.anio = this.currentYear;
     this.prepareForm();
     for (let i = 2010; i <= this.currentYear; i++) {
       this.years.push(i);
@@ -185,53 +190,226 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
         }
       },
       error: error => {
-        this.alert('warning', 'No hay registros en este período', '');
+        this.alert('warning', 'No hay bienes disponibles', '');
         this.loading = false;
       },
     });
   }
 
-  async getVigSupervisionDet_(data: any) {
-    this.loading = true;
-    let params = {
-      ...this.paramsList.getValue(),
-    };
-    // const params = new FilterParams();
-    params['filter.delegationNumber'] = `$eq:${data.delegationNumber}`;
-    params['filter.cveProcess'] = `$eq:${data.cveProcess}`;
-    params['filter.cvePeriod'] = `$eq:${data.cvePeriod}`;
-    params['filter.delegationType'] = `$eq:${data.delegationType}`;
-
-    // return new Promise((resolve, reject) => {
-    this.survillanceService.getVigSupervisionDet(params).subscribe({
-      next: async (response: any) => {
-        const next = response.data[0];
-        console.log('EDED2', response);
-
-        if (response.count == 1) {
-          this.form.get('random').setValue(next.randomId);
-          this.form.get('goodNumber').setValue(next.goodNumber);
-          this.form.get('description').setValue(next.address);
-          this.form.get('transference').setValue(next.transferee);
-        } else {
-          this.openForm(data);
-        }
-
-        // resolve(response.data);
-      },
-      error: error => {
-        this.alert('warning', 'No hay registros en este período', '');
-        // resolve(null);
-      },
-    });
-    // });
-  }
-
-  changeDelegations(event: any) {
-    this.delegationDefault = event;
-  }
   cleanForm() {
+    this.anio = null;
+    this.process = null;
+    this.periodoSelecionado = null;
+    this.disabledRandom = false;
     this.delegationDefault = null;
+    this.disabledPeriod = false;
+    this.periods = new DefaultSelect([], 0);
     this.form.reset();
   }
+
+  // -------------------------------------------------------------------------------------------------------------- //
+
+  // OBTENER PERIODOS //
+  async getPeriods(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    if (this.delegationDefault != null) {
+      params.addFilter(
+        'delegationNumber',
+        this.delegationDefault.delegationNumber,
+        SearchFilter.EQ
+      );
+      params.addFilter(
+        'delegationType',
+        this.delegationDefault.typeDelegation,
+        SearchFilter.EQ
+      );
+
+      params.addFilter('perYear', this.form.value.year, SearchFilter.EQ);
+
+      if (this.form.value.process != null) {
+        params.addFilter(
+          'cveProcess',
+          this.form.value.process,
+          SearchFilter.EQ
+        );
+      }
+    }
+
+    if (lparams.text != '') {
+      params.addFilter('cvePeriod', lparams.text, SearchFilter.EQ);
+    }
+
+    return new Promise((resolve, reject) => {
+      this.survillanceService
+        .getVigSupervisionMae(params.getParams())
+        .subscribe({
+          next: async (response: any) => {
+            console.log('EDED2', response);
+
+            this.periods = new DefaultSelect(response.data, response.count);
+            resolve(response.data);
+          },
+          error: error => {
+            this.periods = new DefaultSelect([], 0, true);
+            this.loading = false;
+            // this.alert('warning', 'No se Encontraron Períodos', '');
+            resolve(null);
+          },
+        });
+    });
+  }
+
+  // FUNCION DE PERIODO //
+  periodoSelecionado: any = null;
+  obtenerNumero(event: any) {
+    console.log('event', event);
+    this.periodoSelecionado = event;
+    if (event) {
+      if (
+        this.delegationDefault &&
+        this.anio &&
+        this.process &&
+        this.periodoSelecionado
+      ) {
+        this.disabledRandom = true;
+        this.form.get('random').setValue(null);
+        let data = {
+          delegationNumber: this.delegationDefault.delegationNumber,
+          cveProcess: this.form.value.process,
+          cvePeriod: this.form.value.period,
+          delegationType: this.delegationDefault.typeDelegation,
+        };
+
+        this.data_ = data;
+        this.getVigSupervisionDet_(new ListParams());
+      } else {
+        this.form.get('random').setValue(null);
+        this.disabledRandom = false;
+      }
+    } else {
+      this.disabledRandom = false;
+      this.form.get('random').setValue(null);
+    }
+  }
+
+  // FUNCION DE AÑO //
+  anio: any;
+  obtenerPeriodo(event: any) {
+    this.anio = event;
+
+    if (event) {
+      if (this.delegationDefault && this.anio && this.process) {
+        this.disabledPeriod = true;
+        this.form.get('period').setValue(null);
+        this.form.get('random').setValue(null);
+        this.getPeriods(new ListParams());
+      } else {
+        this.form.get('period').setValue(null);
+        this.form.get('random').setValue(null);
+        this.disabledPeriod = false;
+      }
+    } else {
+      this.form.get('period').setValue(null);
+      this.form.get('random').setValue(null);
+      this.disabledPeriod = false;
+    }
+  }
+
+  // FUNCION DE PROCESO //
+  process: any;
+  obtenerPeriodoProcess(event: any) {
+    console.log('process', event);
+    this.process = event.value;
+    if (event) {
+      if (this.delegationDefault && this.anio && this.process) {
+        this.disabledPeriod = true;
+        this.form.get('period').setValue(null);
+        this.form.get('random').setValue(null);
+        this.getPeriods(new ListParams());
+      } else {
+        this.form.get('period').setValue(null);
+        this.form.get('random').setValue(null);
+        this.disabledPeriod = false;
+      }
+    } else {
+      this.form.get('period').setValue(null);
+      this.form.get('random').setValue(null);
+      this.disabledPeriod = false;
+    }
+  }
+
+  // FUNCION DE DELEGACION //
+  changeDelegations(event: any) {
+    this.delegationDefault = event;
+    if (event) {
+      if (this.delegationDefault && this.anio && this.process) {
+        this.disabledPeriod = true;
+        this.form.get('period').setValue(null);
+        this.form.get('random').setValue(null);
+        this.getPeriods(new ListParams());
+      } else {
+        this.form.get('period').setValue(null);
+        this.form.get('random').setValue(null);
+        this.disabledPeriod = false;
+      }
+    } else {
+      this.form.get('period').setValue(null);
+      this.form.get('random').setValue(null);
+      this.disabledPeriod = false;
+    }
+  }
+
+  async getVigSupervisionDet_(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    if (this.delegationDefault != null) {
+      params.addFilter(
+        'delegationNumber',
+        this.delegationDefault.delegationNumber,
+        SearchFilter.EQ
+      );
+
+      params.addFilter(
+        'delegationType',
+        this.delegationDefault.typeDelegation,
+        SearchFilter.EQ
+      );
+    }
+
+    params.addFilter('perYear', this.form.value.year, SearchFilter.EQ);
+
+    if (this.form.value.process != null) {
+      params.addFilter('cveProcess', this.form.value.process, SearchFilter.EQ);
+    }
+
+    if (this.form.value.period != null) {
+      params.addFilter('cvePeriod', this.form.value.period, SearchFilter.EQ);
+    }
+
+    if (lparams.text != '') {
+      params.addFilter('randomId', lparams.text, SearchFilter.EQ);
+    }
+
+    this.survillanceService
+      .getVigSupervisionDet_(params.getParams())
+      .subscribe({
+        next: async (response: any) => {
+          console.log('EDED2', response);
+          this.randoms = new DefaultSelect(response.data, response.count);
+        },
+        error: error => {
+          this.randoms = new DefaultSelect([], 0, true);
+          // this.alert('warning', 'No hay Registros en este Período', '');
+        },
+      });
+  }
+
+  seleccionarNumero(event: any) {}
 }
