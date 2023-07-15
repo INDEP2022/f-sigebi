@@ -34,6 +34,7 @@ import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive
 import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GoodsGenerateDialogComponent } from '../components/goods-generate-dialog/goods-generate-dialog.component';
 import { TableExpensesComponent } from '../components/table-expenses/table-expenses.component';
 import { NUMERAIRE_COLUMNS } from './numeraire-exchange-columns';
@@ -251,28 +252,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   pathGoods = generateUrlOrPath(GoodEndpoints.Good, GoodEndpoints.Good, true);
 
-  conversionTypes = [
-    {
-      value: 'CBD',
-      text: 'Bien decomisado cambiado a numerario por enajenación',
-    },
-    {
-      text: 'Bien decomisado cambiado a numerario por siniestro',
-      value: 'CDS',
-    },
-    {
-      text: 'Bien asegurado cambiado a numerario por enajenación.',
-      value: 'CNE1',
-    },
-    {
-      text: 'Bien asegurado cambiado a numerario por siniestro.',
-      value: 'CNS',
-    },
-    {
-      text: 'Bien generado por pago parcial por siniestro',
-      value: 'BBB',
-    },
-  ];
+  conversionTypes = new DefaultSelect<any>();
 
   readonly NAME_CURRENT_FORM = 'FACTADBCAMBIONUME';
   validNumerary: 'loading' | 'error' | 'valid' | 'notValid' = 'loading';
@@ -294,6 +274,28 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.infoToken = this.authService.decodeToken();
+    this.conversionTypes = new DefaultSelect([
+      {
+        value: 'CBD',
+        text: 'Bien decomisado cambiado a numerario por enajenación',
+      },
+      {
+        text: 'Bien decomisado cambiado a numerario por siniestro',
+        value: 'CDS',
+      },
+      {
+        text: 'Bien asegurado cambiado a numerario por enajenación.',
+        value: 'CNE1',
+      },
+      {
+        text: 'Bien asegurado cambiado a numerario por siniestro.',
+        value: 'CNS',
+      },
+      {
+        text: 'Bien generado por pago parcial por siniestro',
+        value: 'BBB',
+      },
+    ]);
     this.formGood.get('importSell').valueChanges.subscribe({
       next: value => {
         // const valueSell = value || 0;
@@ -888,7 +890,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
             // resp.message.length > 0
             //   ? resp.message.join('.\n')
             //   :
-            'Proceso terminado con éxito';
+            'Proceso Terminado con Éxito';
 
           this.alert('success', 'Éxito', message);
         }),
@@ -1092,7 +1094,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   changeTypeConversion(event: any) {
     console.log(event);
-    const value = event.target.value;
+    const value = event.value;
     if (value !== 'BBB') {
       this.formBlkControl.get('comment').setValue(null);
     }
