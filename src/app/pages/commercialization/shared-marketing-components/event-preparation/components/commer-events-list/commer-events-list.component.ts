@@ -28,7 +28,11 @@ import { PREPARE_EVENT_EVENTS_LIST_COLUMNS } from '../../utils/table-columns/eve
 })
 export class CommerEventsListComponent extends BasePage implements OnInit {
   @Input() params = new BehaviorSubject(new FilterParams());
+<<<<<<< HEAD
   @Input() events = new LocalDataSource();
+=======
+  events = new LocalDataSource();
+>>>>>>> 624f6883e32eb2e09075bcce9834fb77571184bc
   @Input() globalEvent: IComerEvent = null;
   @Output() globalEventChange = new EventEmitter<IComerEvent>();
   @Input() eventForm: FormGroup<ComerEventForm>;

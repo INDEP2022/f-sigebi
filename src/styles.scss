@@ -378,6 +378,10 @@ table:not(.normal-hover) tbody tr:hover {
   background-color: rgba(173, 181, 189, 0.25);
 }
 
+.bg-blue-card {
+  background-color: #564ab1;
+}
+
 .center-checkbox thead tr th[ng2-st-checkbox-select-all] {
   text-align: center !important;
 }
@@ -654,6 +658,21 @@ ng-scrollbar.table-scrollbar {
   color: black;
   font-weight: 900;
   padding: 0.3rem;
+}
+
+.bg-yellow-record {
+  background-color: #e2c103 !important;
+  color: #fff;
+}
+
+.bg-green-record {
+  background-color: #1e7e34 !important;
+  color: #fff;
+}
+
+.bg-blue-record {
+  background-color: #564ab1 !important;
+  color: #fff;
 }
 
 #fichas table:not(.normal-hover) tbody tr.selected {
