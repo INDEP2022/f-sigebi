@@ -9,7 +9,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, map, skip, take } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { readFile, showAlert } from 'src/app/common/helpers/helpers';
+import { readFile } from 'src/app/common/helpers/helpers';
 import {
   ListParams,
   SearchFilter,
@@ -61,14 +61,15 @@ import {
         display: flex;
         flex-direction: column;
       } */
-      .spents input,
-      .spents textarea {
+      .spent-container {
+        width: 250px;
+      }
+      .spent-container input {
         width: 150px;
       }
       select.selects-origin-data {
         width: 105px;
         min-height: auto !important;
-        /* height: 43px; */
       }
       .btn-custom-search {
         position: absolute;
@@ -270,8 +271,8 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     if (vBanB === 0 || vBanB > 1) {
       messages.push(
         vBanB === 0
-          ? 'Se debe especificar la columna del No. de Bien'
-          : 'Se especificó más de una columna del No. de Bien'
+          ? 'Se Debe Especificar La Columna Del No. De Bien'
+          : 'Se Especificó Más De Una Columna Del No. De Bien'
       );
       vBan = true;
     }
@@ -279,15 +280,15 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     if (vBanI === 0 || vBanI > 1) {
       messages.push(
         vBanI === 0
-          ? 'Se debe especificar la columna del Ingreso neto'
-          : 'Se especificó más de una columna del Ingreso neto'
+          ? 'Se Debe Especificar La Columna Del Ingreso Neto'
+          : 'Se Especificó Más De Una Columna Del Ingreso Neto'
       );
       vBan = true;
     }
 
     if (vBanG) {
       messages.push(
-        'No se especificó el Concepto de Gasto en al menos una columna'
+        'No Se Especificó El Concepto De Gasto En Al Menos Una Columna'
       );
       vBan = true;
     }
@@ -295,8 +296,8 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     if (vBanV === 0 || vBanV > 1) {
       messages.push(
         vBanV === 0
-          ? 'Se debe especificar la columna del IVA'
-          : 'Se especificó más de una columna del IVA'
+          ? 'Se Debe Especificar La Columna Del IVA'
+          : 'Se Especificó Más De Una Columna Del IVA'
       );
       vBan = true;
     }
@@ -753,13 +754,13 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       readFile(file, 'BinaryString').then(data => {
         const dataExcel = this.excelService.getData(data.result);
         if (dataExcel.length < 1 || !this.validatorFileExcel()) {
-          showAlert({
-            text:
-              dataExcel.length < 1
-                ? 'El archivo no contiene datos.'
-                : 'El archivo no es valido verifique su cabecera.',
-            icon: 'error',
-          });
+          this.alert(
+            'error',
+            '',
+            dataExcel.length < 1
+              ? 'El archivo no contiene datos.'
+              : 'El archivo no es valido verifique su cabecera.'
+          );
           return;
         }
         //ERROR: por implentar la validacion del archivo;

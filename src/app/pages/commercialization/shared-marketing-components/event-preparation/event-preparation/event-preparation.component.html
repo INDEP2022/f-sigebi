@@ -7,12 +7,17 @@
   <div body>
     <h6>MÓDULO COMERCIAL {{ blkTasks.tDirection }}</h6>
     <hr class="row" />
-    <div class="row">
-      <event-data-form *ngIf="canvas.main"></event-data-form>
+    <div class="row pb-2">
+      <event-data-form
+        [eventFormVisual]="eventFormVisual"
+        *ngIf="canvas.main"
+        [eventForm]="eventForm"
+        [parameters]="parameters"
+        [loggedUser]="loggedUser"></event-data-form>
     </div>
     <div class="row">
       <div class="md-tabs">
-        <tabset [justified]="true" class="fill-custom-tab">
+        <tabset [justified]="true" class="fill-custom-tab" #tasksTabs>
           <tab (selectTab)="newEvent()">
             <ng-template tabHeading>
               <div class="row">
@@ -29,7 +34,7 @@
               [parameters]="parameters"
               [loggedUser]="loggedUser"></reserved-goods>
           </tab>
-          <tab [active]="true" (selectTab)="openEvent()">
+          <tab [active]="true" (selectTab)="taskOpenEvent()">
             <ng-template tabHeading>
               <div class="row">
                 <div class="col-md-12 d-flex justify-content-between">
@@ -41,11 +46,14 @@
               </div>
             </ng-template>
             <commer-events-list
-              (onOpenEvent)="openEvent()"
+              [events]="events"
+              [params]="comerEventsListParams"
+              [parameters]="parameters"
+              (onOpenEvent)="onOpenEvent()"
               [(globalEvent)]="globalEvent"
               [eventForm]="eventForm"></commer-events-list>
           </tab>
-          <tab>
+          <tab (selectTab)="lotesTab()">
             <ng-template tabHeading>
               <div class="row">
                 <div class="col-md-12 d-flex justify-content-between">
@@ -56,7 +64,12 @@
                 </div>
               </div>
             </ng-template>
-            <commer-packages-lots></commer-packages-lots
+            <commer-packages-lots
+              [eventForm]="eventForm"
+              [lots]="lots"
+              [onlyBase]="onlyBase"
+              [comerLotsListParams]="comerLotsListParams"
+              [parameters]="parameters"></commer-packages-lots
           ></tab>
           <tab>
             <ng-template tabHeading>

@@ -147,8 +147,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
   ngOnInit(): void {
     this.buildForm();
-
+    this.pw();
     //Inicializando el modal
+  }
+  pw() {
     let config = MODAL_CONFIG;
     config = {
       initialState: {
@@ -178,7 +180,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
 
     const modalRef = this.modalService.show(PwComponent, config);
   }
-
   getAll() {
     this.loading = false;
     //bien validacion de referencia. refertencia sea igual al noBien padre ? referencia debe ser diferente al bien del padre
@@ -378,14 +379,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             res => {
               this.alert(
                 'success',
-                'Se cambio el estatus del Bien',
-                `El Bien estatus del bien con id: ${this.numberGoodFather.value}, fue cambiado a CAN`
+                'Se Cambio el Estatus del Bien',
+                `El Bien Estatus del Bien con id: ${this.numberGoodFather.value}, fue Cambiado a CAN`
               );
             },
             err => {
               this.alert(
                 'error',
-                'No se pudo cambiar el estatus del bien',
+                'No se Pudo Cambiar el Estatus del Bien',
                 'Se presentó un error inesperado que no permitió el cambio de estatus del bien, por favor intentelo nuevamente'
               );
             }
@@ -520,6 +521,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       async res => {
         if (res.statusCode === 200 && res.message[0] === 'ok') {
           this.alert('success', 'Conversión Finalizada', '');
+          this.pw();
         }
       },
       err => {

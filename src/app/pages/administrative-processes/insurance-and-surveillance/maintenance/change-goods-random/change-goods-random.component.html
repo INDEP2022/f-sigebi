@@ -8,22 +8,17 @@
             formControlName="year"
             [items]="years"
             [ngModel]="currentYear"></ng-select>
-          <!-- <input
-            type="number"
-            class="form-control"
-            formControlName="year"
-            min="1"
-            [max-length]="4" /> -->
+          <!-- <input type="number" class="form-control" formControlName="year" min="1" [max-length]="4" /> -->
         </form-field>
       </div>
       <div class="col-md-4">
         <form-field [control]="form.get('period')" label="Periodo">
           <input
-            type="number"
+            type="text"
             class="form-control"
             formControlName="period"
-            min="1"
-            [max-length]="6" />
+            maxlength="6"
+            minlength="1" />
         </form-field>
       </div>
       <div class="col-md-4">
@@ -62,7 +57,6 @@
       <div class="col-md-4 mt-3">
         <form-field [control]="form.get('random')" label="Aleatorio">
           <input
-            readonly
             type="number"
             class="form-control"
             formControlName="random"
@@ -137,7 +131,7 @@
         <!-- </div> -->
         <button
           (click)="listBienes()"
-          tooltip="Buscar Aleatorios"
+          tooltip="Buscar Bienes"
           containerClass="tooltip-style"
           class="btn btn-primary btn-sm active">
           Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>

@@ -14,7 +14,6 @@
       <div class="col-md-4">
         <form-field [control]="form.get('date')" label="Fecha de Solicitud">
           <input
-            [min]="maxDate"
             type="text"
             formControlName="date"
             class="form-control"
@@ -36,7 +35,7 @@
             paramSearch="filter.nameSend"
             prefixSearch="$ilike"
             (valueChange)="onChangeFrom($event)">
-            <ng-template let-item>
+            <ng-template #Send let-item>
               {{ item.nameSend }} / {{ item.emailSend }}
             </ng-template>
           </ng-custom-select>

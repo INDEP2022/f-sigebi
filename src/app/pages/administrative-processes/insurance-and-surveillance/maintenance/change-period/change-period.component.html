@@ -13,24 +13,21 @@
               formControlName="year"
               [items]="years"
               [ngModel]="currentYear"></ng-select>
-            <!-- <input
-              type="number"
-              class="form-control"
-              formControlName="year"
-              min="1"
-              [max-length]="4"
+            <!-- <input type="number" class="form-control" formControlName="year" min="1" [max-length]="4"
               pattern="^[0-9]+" /> -->
           </form-field>
         </div>
         <div class="col-md-12 mt-2">
           <form-field [control]="form.get('period')" label="Periodo">
+            <!-- <ngx-select (change)="changePeriods($event)" [searchOnInit]="true" [readonly]="!disabledPeriod"
+              [form]="form" [data]="periods" bindLabel="cvePeriod" label="Período" value="cvePeriod"
+              (fetchItems)="getPeriods($event)" control="period"></ngx-select> -->
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="period"
-              min="1"
-              [max-length]="6"
-              pattern="^[0-9]+" />
+              maxlength="6"
+              minlength="1" />
           </form-field>
         </div>
         <div class="col-md-12 mt-2">
@@ -96,12 +93,11 @@
         <div class="col-md-12 mt-2">
           <form-field [control]="form.get('periodDestiny')" label="Periodo">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="periodDestiny"
-              min="1"
-              [max-length]="6"
-              pattern="^[0-9]+" />
+              maxlength="6"
+              minlength="1" />
           </form-field>
         </div>
         <div class="col-md-12 mt-2">
