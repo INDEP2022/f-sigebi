@@ -14,6 +14,8 @@ export class CaptureFilterComponent implements OnInit {
   @Input() isReceptionAndDelivery: boolean = false;
   @Input() isReceptionStrategies: boolean = false;
   @Input() isConsolidated: boolean = false;
+  maxDate = new Date();
+
   form = this.fb.group({
     de: [null, [Validators.required]],
     a: [null, [Validators.required]],
@@ -36,8 +38,13 @@ export class CaptureFilterComponent implements OnInit {
     'Recepción Física',
     'Entrega',
   ];
+
   select = new DefaultSelect();
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {}
+
+  cleanForm() {
+    this.form.reset();
+  }
 }
