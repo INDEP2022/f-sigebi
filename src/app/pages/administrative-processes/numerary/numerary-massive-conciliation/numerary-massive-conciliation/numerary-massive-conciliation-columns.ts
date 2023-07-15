@@ -1,53 +1,57 @@
-import { CheckboxDisabledElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-disabled-element';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 // import { CheckboxElementRecordAccountStatementsComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element-record-account-statements';
 
+export let goodCheck: any[] = []
+
 export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
-  turnSelect: {
-    title: 'Selección',
+  select: {
+    title: '',
     sort: false,
-    showAlways: true,
     filter: false,
-    editable: false,
     type: 'custom',
-    renderComponent: CheckboxDisabledElementComponent,
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        if (data.toggle) {
+          console.log(goodCheck);
+          goodCheck.push(data);
+        } else {
+          goodCheck = goodCheck.filter(valor => valor.row.id != data.row.id);
+        }
+      });
+    },
   },
-  numberGood: {
+  goodId: {
     title: 'Bien',
     type: 'number',
     sort: false,
   },
-  numberProceedings: {
+  fileNumber: {
     title: 'Expediente',
     type: 'number',
     sort: false,
   },
-  cveBank: {
+  val4: {
     title: 'Banco',
     type: 'string',
-    sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.accountNumber?.cveBank;
-    },
+    sort: false
   },
-  numberAccount: {
+  val6: {
     title: 'Cuenta Bancaria',
     type: 'string',
     sort: false,
   },
-  cveCurrency: {
+  val1: {
     title: 'Moneda',
     type: 'string',
-    sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.accountNumber?.cveCurrency.replace(/'/g, '');
-    },
+    sort: false
   },
-  deposit: {
+  val2: {
     title: 'Depósito',
     type: 'string',
     sort: false,
   },
-  cveConcept4: {
+  val5: {
     title: 'Fec. Depósito',
     type: 'string',
     sort: false,
@@ -59,6 +63,10 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
   },
 };
 
+export function clearGoodCheck() {
+  goodCheck = [];
+}
+
 export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
   turnSelect: {
     title: 'Selección',
@@ -67,45 +75,39 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
     filter: false,
     editable: false,
     type: 'custom',
-    renderComponent: CheckboxDisabledElementComponent,
+    renderComponent: CheckboxElementComponent,
   },
-  numberGood: {
+  goodNumber: {
     title: 'Bien',
     type: 'number',
     sort: false,
   },
-  cveBank: {
+  bankKey: {
     title: 'Banco',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.accountNumber?.cveBank;
-    },
   },
-  numberAccount: {
+  accountKey: {
     title: 'Cuenta Bancaria',
     type: 'string',
     sort: false,
   },
-  cveCurrency: {
+  currencyKey: {
     title: 'Moneda',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.accountNumber?.cveCurrency.replace(/'/g, '');
-    },
   },
   deposit: {
     title: 'Depósito',
     type: 'string',
     sort: false,
   },
-  cveConcept4: {
+  motionDate: {
     title: 'Fec. Depósito',
     type: 'string',
     sort: false,
   },
-  cveConcept5: {
+  interestCalculationDate: {
     title: 'Fec. Tesofe',
     type: 'string',
     sort: false,
