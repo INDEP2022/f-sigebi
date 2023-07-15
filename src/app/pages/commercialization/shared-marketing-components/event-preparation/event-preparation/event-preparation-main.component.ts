@@ -1,3 +1,4 @@
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
@@ -81,4 +82,8 @@ export class EventPreparationMain extends BasePage {
   loggedUser: TokenInfoModel = null;
 
   comerEventsListParams = new BehaviorSubject(new FilterParams());
+  comerLotsListParams = new BehaviorSubject(new FilterParams());
+
+  lots = new LocalDataSource();
+  events = new LocalDataSource();
 }

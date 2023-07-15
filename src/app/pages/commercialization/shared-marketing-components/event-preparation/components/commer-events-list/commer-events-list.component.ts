@@ -28,7 +28,7 @@ import { PREPARE_EVENT_EVENTS_LIST_COLUMNS } from '../../utils/table-columns/eve
 })
 export class CommerEventsListComponent extends BasePage implements OnInit {
   @Input() params = new BehaviorSubject(new FilterParams());
-  events = new LocalDataSource();
+  @Input() events = new LocalDataSource();
   @Input() globalEvent: IComerEvent = null;
   @Output() globalEventChange = new EventEmitter<IComerEvent>();
   @Input() eventForm: FormGroup<ComerEventForm>;
@@ -87,13 +87,16 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
     }
   }
 
+  resetEventSelected() {
+    this.eventForm.reset();
+    this.settings.selectedRowIndex = -1;
+  }
+
   getEvents(params: FilterParams) {
+    this.resetEventSelected();
     this.loading = true;
-    const { id } = this.controls;
-    if (id.value) {
-      params.addFilter('id', id.value);
-    }
     params.addFilter('address', this.parameters.pDirection);
+    // params.sortBy = 'id:DESC';
     return this.comerEventService.getEatEvents(params.getParams()).pipe(
       catchError(error => {
         this.loading = false;

@@ -1,0 +1,109 @@
+:host ::ng-deep .paginator app-pagination {
+  .paginator-page-size {
+    display: none !important;
+  }
+
+  // .paginator-range-label {
+  //   display: none !important;
+  // }
+}
+
+.errorMessage {
+  margin-bottom: 2em;
+  text-align: center;
+  color: #ba657f;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+:host ::ng-deep form-field {
+  .form-control[readonly] {
+    &:focus ~ .form-bar:after,
+    &:focus ~ .form-bar:before {
+      width: 0% !important;
+    }
+  }
+}
+
+:host ::ng-deep app-goods-types-shared {
+  .row {
+    flex-direction: column;
+
+    > div {
+      width: 100%;
+      max-width: 100%;
+
+      &:last-child {
+        margin-top: 17px;
+      }
+    }
+  }
+}
+
+.buttons {
+  button {
+    width: 100px;
+
+    &:last-child {
+      margin-left: 10px;
+    }
+
+    @media screen and (max-width: 576px) {
+      width: 100%;
+
+      &:last-child {
+        margin-left: 0px;
+      }
+    }
+  }
+}
+
+// .buttons {
+//   @media screen and (max-width: 576px) {
+//     button {
+//       width: 100%;
+//       margin-bottom: 10px;
+//     }
+//   }
+// }
+
+:host::ng-deep .paginator app-pagination {
+  .pagination {
+    display: flex;
+    column-gap: 5px;
+
+    .page-item {
+      .page-link {
+        width: 36px !important;
+        height: 36px !important;
+        display: flex !important;
+        margin-top: 0px !important;
+      }
+    }
+  }
+}
+
+.btn-return {
+  color: #9d2449;
+  padding-left: 0px;
+  left: -10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  top: -20px;
+  margin-top: 5px;
+
+  > i {
+    font-size: 35px;
+  }
+
+  &:hover {
+    color: #9d2449;
+  }
+}
+
+.title {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  position: relative !important;
+}
