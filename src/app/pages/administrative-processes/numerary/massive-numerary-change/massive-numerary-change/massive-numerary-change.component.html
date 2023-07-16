@@ -67,7 +67,7 @@
             Registros Correctos: <span>{{ registerCorrect }}</span>
           </div>
           <div>
-            Erróneos:
+            Registros Erróneos:
             <span>{{ registerIncorrect }}</span>
           </div>
         </div>
@@ -92,58 +92,32 @@
                   </select>
                 </form-field>
               </div>
-              <!-- <div
-                class="selects-origin-data"
-                *ngFor="let item of columns; let i = index">
-                <ng-select formControlName="TIP{{ i + 1 }}">
-                  <ng-option default>Opción {{ item }}</ng-option>
-                  <ng-option value="O">Otro</ng-option>
-                  <ng-option value="B">No. Bien</ng-option>
-                  <ng-option value="G">Gasto</ng-option>
-                  <ng-option value="I">Ingreso neto</ng-option>
-                  <ng-option value="V">Iva</ng-option>
-                </ng-select>
-              </div> -->
             </div>
           </div>
-          <!-- <div class="col-md-3 pt-4">
-            <form-field [control]="form.get('data')" label="Datos">
-              <input type="text" class="form-control" formControlName="data" />
-            </form-field>
-          </div> -->
         </div>
-        <div [hidden]="!isVisibleSpent" class="row spents mt-4 mx-0">
+        <div [hidden]="!isVisibleSpent" class="row mt-4 mx-0">
           <h5 class="title">Gastos</h5>
-          <div class="overflow-auto pt-5">
+          <div
+            class="col-md-3"
+            [hidden]="formGas.get('GAS' + (i + 1)).disabled"
+            [hidden]="formGad.get('GAD' + (i + 1)).disabled"
+            *ngFor="let item of columns; let i = index">
             <div [formGroup]="formGas" class="d-flex gap-4">
-              <div
-                class="spent-container"
-                [hidden]="formGas.get('GAS' + (i + 1)).disabled"
-                *ngFor="let item of columns; let i = index">
-                <!-- <label>Concepto {{ item }}:</label> -->
+              <div>
                 <form-field
-                  class="position-relative"
                   [label]="'Concepto ' + item"
                   [control]="formGas.get('GAS' + (i + 1))">
                   <input
                     readonly
                     [formControlName]="'GAS' + (i + 1)"
                     type="text"
-                    class="form-control w-100" />
-                  <button
-                    (click)="onClickInputGas(i + 1)"
-                    class="btn btn-sm btn-custom-search">
-                    <i class="bx bx-search-alt bx-sm float-icon"></i>
-                  </button>
+                    class="form-control w-100"
+                    (click)="onClickInputGas(i + 1)" />
                 </form-field>
               </div>
             </div>
             <div [formGroup]="formGad" class="d-flex gap-4 mt-3">
-              <div
-                class="spent-container"
-                [hidden]="formGad.get('GAD' + (i + 1)).disabled"
-                *ngFor="let item of columns; let i = index">
-                <!-- <label>Descripción {{ item }}:</label> -->
+              <div>
                 <form-field
                   [label]="'Descripción ' + item"
                   [control]="formGad.get('GAD' + (i + 1))">

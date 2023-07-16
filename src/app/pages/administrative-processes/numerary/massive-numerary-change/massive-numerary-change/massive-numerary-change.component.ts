@@ -97,7 +97,6 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   BLK_GASTOS = new LocalDataSource();
 
   isVisibleSpent: boolean = false;
-
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -189,6 +188,9 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       console.log(res, modal.content);
       if (modal.content) {
         this.formGas.get(`GAS${num}`).setValue(modal.content.selectedItem.id);
+        this.formGad
+          .get(`GAD${num}`)
+          .setValue(modal.content.selectedItem.description);
       }
     });
   }
@@ -209,7 +211,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
 
   formTips = new FormGroup({});
   formGas = new FormGroup<any>({});
-  formGad = new FormGroup({});
+  formGad = new FormGroup<any>({});
   async onInit() {
     this.columns.forEach((column, index) => {
       this.formTips.addControl(`TIP${index + 1}`, new FormControl(''));
@@ -302,7 +304,11 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       vBan = true;
     }
     if (messages.length > 0) {
-      this.alert('warning', 'Advertencia', messages.join('\n'));
+      this.alert(
+        'warning',
+        'Advertencia',
+        'No puede Haber Más de Una Columna con el No. Bien, Ingreso Neto o IVA'
+      );
     }
     if (vBan) {
       return;
@@ -322,14 +328,16 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     };
     console.log({ body });
     this.isLoadingProcessExtraction = true;
-
+    this.loader.load = true;
     this.goodProcess.postFMasInsNumerario(body).subscribe({
       next: (res: IResponseFMasInsNumerarioSpent) => {
         this.isLoadingProcessExtraction = false;
+        this.loader.load = false;
         this.registerReads = res.T_REG_PROCESADOS;
         this.registerProcessed = res.T_REG_PROCESADOS;
         this.registerCorrect = res.T_REG_CORRECTOS;
         this.registerIncorrect = res.T_REG_ERRONEOS;
+        console.log(res);
         this.dataTableSpent = res.bienes.map(res => {
           return {
             costs: res.spent,
@@ -374,6 +382,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
         });
       },
       error: err => {
+        this.loader.load = false;
         this.isLoadingProcessExtraction = false;
       },
       complete: () => {},
@@ -745,6 +754,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
 
   //#region On click Button File Excel
   onClickBtnFileExcel(e: Event) {
+    this.loader.load = true;
     this.registerReads = 0;
     this.registerProcessed = 0;
     this.registerCorrect = 0;
@@ -758,8 +768,8 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
             'error',
             '',
             dataExcel.length < 1
-              ? 'El archivo no contiene datos.'
-              : 'El archivo no es valido verifique su cabecera.'
+              ? 'El Archivo no Contiene Datos.'
+              : 'El Archivo no es Valido Verifique su Cabecera.'
           );
           return;
         }
@@ -783,6 +793,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
         dataPreviewTable.unshift(header);
 
         // this.dataPrevious = dataPreviewTable;
+        this.loader.load = false;
         console.log({ dataPreviewTable: this.dataPrevious });
         // this.tableSpent.changePage({ page: 1, perPage: 10 });
         this.dataPreviousTable.load(dataPreviewTable);
