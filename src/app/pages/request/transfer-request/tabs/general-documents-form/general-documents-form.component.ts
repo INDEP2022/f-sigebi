@@ -405,6 +405,7 @@ export class GeneralDocumentsFormComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#B38E5D',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         console.log(this.requestId, request);
@@ -419,6 +420,7 @@ export class GeneralDocumentsFormComponent
               confirmButtonText: 'Aceptar',
               denyButtonText: `Cancelar`,
               confirmButtonColor: '#9D2449',
+              allowOutsideClick: false,
             }).then(result => {
               if (result.isConfirmed) {
                 this.updateStateRequestTab();
