@@ -4,7 +4,7 @@
   </div>
   <div body>
     <div class="row mt-3 mb-3">
-      <form action="" class="form-material" [formGroup]="form">
+      <form action="" class="form-material table-responsive" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-md-4">
             <form-field [control]="form.get('noReport')" label="No Reporte">
@@ -51,9 +51,9 @@
               (change)="onFileChange($event)" />
             <button
               type="button"
-              class="btn btn-sm btn-success active m-2"
+              class="btn btn-sm btn-success active m-3"
               (click)="file.click()">
-              Importar
+              Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
             </button>
             <input
               type="file"
@@ -220,12 +220,21 @@
             Guardar
             <i aria-hidden="true" class="fa fa-save"></i>
           </button>
-          <button
-            type="button"
-            class="btn btn-primary active btn-sm"
-            (click)="getAccount()">
-            <i class="bx bx-search-alt bx-sm float-icon"></i></button
-          >`
+          <div style="margin-left: 2vh">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="getAccount()">
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div style="margin-left: 2vh">
+            <button
+              class="btn btn-danger btn-sm active mr-3"
+              (click)="cleanFilter()">
+              Limpiar <i class="fas fa-eraser"> </i>
+            </button>
+          </div>
         </div>
       </form>
     </div>

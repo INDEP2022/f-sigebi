@@ -8,4 +8,5 @@ export enum EmailEndPoint {
   VigMailBook = 'vig-mail-book',
   DataEmail = 'data-mail',
   DataEmailCentral = 'transf-num-detail/generate-body-email-cheque',
+  IniEmailCentral = 'application/pup-ini-co',
 }

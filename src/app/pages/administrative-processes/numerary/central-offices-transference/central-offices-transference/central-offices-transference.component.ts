@@ -18,10 +18,13 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
+import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { TransRegService } from 'src/app/core/services/ms-numerary/transf-reg.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
@@ -33,7 +36,7 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { EmailComponent } from '../mail-central-offices/mail-central-offices.component';
+import { EmailComponentC } from '../email/email.component';
 import { CENTRAL_ACCOUNT_COLUMNS } from './central-offices-columns';
 
 interface IExcelToJson {
@@ -56,6 +59,7 @@ export class CentralOfficesTransferenceComponent
   delegacion: any;
   currency: any;
   data1: any[] = [];
+  delegation: number = 0;
   data: IExcelToJson[] = [];
   dataTabla: LocalDataSource = new LocalDataSource();
   itemsDelegation = new DefaultSelect();
@@ -92,7 +96,10 @@ export class CentralOfficesTransferenceComponent
     private dictationService: DictationService,
     private securityService: SecurityService,
     private transferRegService: TransRegService,
-    private goodProcessService: GoodProcessService
+    private goodProcessService: GoodProcessService,
+    private user: AuthService,
+    private receptionService: DocReceptionRegisterService,
+    private emailService: EmailService
   ) {
     super();
     this.settings = {
@@ -106,6 +113,18 @@ export class CentralOfficesTransferenceComponent
     this.prepareForm();
     // this.getDelegations(new ListParams());
     this.getDataReport();
+    const params = new FilterParams();
+    const token = this.user.decodeToken();
+    params.addFilter('user', token.username.toUpperCase());
+    this.receptionService.getUsersSegAreas(params.getParams()).subscribe({
+      next: response => {
+        if (response.data.length > 0) {
+          this.delegation = response.data[0].delegationNumber;
+          console.log(this.delegation);
+        }
+      },
+      error: () => {},
+    });
   }
 
   prepareForm() {
@@ -306,6 +325,7 @@ export class CentralOfficesTransferenceComponent
           .patchValue(
             response.data[0].depositDevDate.split('-').reverse().join('/')
           );
+        this.form.get('total').patchValue(response.data[0].amountTotalDev);
       },
       error: error => {
         console.error(error);
@@ -345,7 +365,6 @@ export class CentralOfficesTransferenceComponent
       next: resp => {
         console.log('resp ', resp);
         for (let i = 0; resp.data.length; i++) {
-          console.log('data JCH: ', resp.data[i]);
           if (resp.data[i] != undefined) {
             let item = {
               file: resp.data[i].good.fileNumber,
@@ -377,7 +396,7 @@ export class CentralOfficesTransferenceComponent
             'Este bien no se encuentra en una solicitud de numerario'
           );
         } else {
-          this.alert('error', 'Error', err.error.message);
+          //this.alert('error', 'Error', err.error.message);
         }
       },
     });
@@ -437,20 +456,6 @@ export class CentralOfficesTransferenceComponent
     });
   }
 
-  openForm(contract?: any) {
-    let config: ModalOptions = {
-      /*initialState: {
-        contract,
-        callback: (next: boolean) => {
-          if (next) this.getContractsAll();
-        },
-      },*/
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(EmailComponent, config);
-  }
-
   cleanFilter() {
     this.form.get('currencyType').setValue(null);
     this.form.get('delegation').setValue(null);
@@ -460,9 +465,14 @@ export class CentralOfficesTransferenceComponent
     this.form.get('cveCurrency').setValue(null);
     this.form.get('accountType').setValue(null);
     this.form.get('total').setValue(null);
+    this.form.get('noReport').setValue(null);
     this.total = null;
     this.totalItems = 0;
     this.data3.load([]);
+    this.form.reset();
+    this.totalItems = 0;
+    this.data1 = [];
+    this.dataTabla.load([]);
     console.log(this.data3);
     this.data3.refresh();
   }
@@ -496,22 +506,10 @@ export class CentralOfficesTransferenceComponent
           await this.procedure(Number(good.good));
           await this.createTransNumDet(good);
         });
-
-        this.filterParams.getValue().removeAllFilters();
-        this.filterParams.getValue().page = 1;
-        this.filterParams
-          .getValue()
-          .addFilter(
-            'noReport',
-            this.form.get(resp.noReport).value,
-            SearchFilter.EQ
-          );
-
-        this.getDataFile(body);
       },
       error: err => {
-        this.alert('error', 'Error', err.error.message);
-        console.log(err);
+        //this.alert('error', 'Error', err.error.message);
+        console.log('ASDASD', err);
       },
     });
   }
@@ -545,6 +543,63 @@ export class CentralOfficesTransferenceComponent
         },
       });
     });
+  }
+
+  async sendEmail() {
+    const { noReport, total } = this.form.value;
+    console.log(noReport);
+    if (noReport) {
+      const email = await this.getDataMail();
+      console.log(email);
+      console.log({ email });
+      if (email) {
+        const emailv2 = {
+          ...email,
+          REPORTE: noReport,
+        };
+        let config: ModalOptions = {
+          initialState: {
+            email: emailv2,
+            report: this.form.value,
+            description: this.description,
+            delegations: this.delegations,
+            callback: async (next: boolean) => {
+              if (next) {
+              }
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(EmailComponentC, config);
+      }
+    } else {
+      this.alert('error', 'Error', 'Primero debe guardar el reporte');
+    }
+  }
+
+  async getDataMail() {
+    const { noReport } = this.form.value;
+    const user = this.user.decodeToken();
+    const data = {
+      pSubject: 'Depósito de Devoluciones',
+      pMessage: '',
+      pFor: '',
+      pCc: '',
+      devReportNumber: noReport,
+      toolbarUser: user.username.toUpperCase(),
+    };
+    console.log(data);
+    return firstValueFrom(
+      this.emailService.getIniEmailCentral(data).pipe(
+        catchError(error => {
+          this.alert('error', 'Error', error.error.message);
+          console.log(error);
+          return of(null);
+        }),
+        map(resp => resp)
+      )
+    );
   }
 
   async save() {
@@ -699,12 +754,11 @@ export class CentralOfficesTransferenceComponent
 
   async pupRegAdm(good: number, delegation: number) {
     const body = {
-      F_NOBIEN: good,
       F_NODEL: delegation,
     };
 
     return firstValueFrom(
-      this.dictationService.applicationPufRef(body).pipe(
+      this.dictationService.applicationPufRefCentral(body).pipe(
         catchError(error => {
           this.alert('error', 'Error', error.error.message);
           console.log(error);
@@ -743,63 +797,8 @@ export class CentralOfficesTransferenceComponent
         this.form.get('cveAccount').patchValue(data.cveAccount);
       },
       error: err => {
-        this.alert('error', 'Error', err.error.message);
+        //this.alert('error', 'Error', err.error.message);
       },
     });
-  }
-
-  async sendEmail() {
-    const { noReport } = this.form.value;
-
-    if (noReport) {
-      const email = await this.getDataMail();
-
-      if (email) {
-        const emailv2 = {
-          ...email,
-          REPORTE: noReport,
-        };
-        let config: ModalOptions = {
-          initialState: {
-            email: emailv2,
-            report: this.form.value,
-            description: this.description,
-            delegations: this.delegations,
-            callback: async (next: boolean) => {
-              if (next) {
-              }
-            },
-          },
-          class: 'modal-lg modal-dialog-centered',
-          ignoreBackdropClick: true,
-        };
-        this.modalService.show(EmailComponent, config);
-      }
-    } else {
-      this.alert('error', 'Error', 'Primero debe guardar el reporte');
-    }
-  }
-
-  async getDataMail() {
-    const { noReport, delegation } = this.form.value;
-    const data = {
-      pAffair: 'TRANSFERENCIA DE CUENTAS A OFICINAS CENTRALES',
-      pMessage: '',
-      pFor: '',
-      pCc: '',
-      transNumeraryRegNoReport: Number(noReport),
-      transNumeraryRegNoDelegation: Number(delegation),
-    };
-    console.log(data);
-    return firstValueFrom(
-      this.securityService.getIniEmail(data).pipe(
-        catchError(error => {
-          this.alert('error', 'Error', error.error.message);
-          return of(null);
-          console.log(error);
-        }),
-        map(resp => resp)
-      )
-    );
   }
 }

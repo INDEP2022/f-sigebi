@@ -356,6 +356,7 @@ export class RegionalAccountTransferenceComponent
 
     if (transferenceReport) {
       const email = await this.getDataMail();
+      console.log(email);
 
       if (email) {
         const emailv2 = {
@@ -393,6 +394,7 @@ export class RegionalAccountTransferenceComponent
       transNumeraryRegNoReport: Number(transferenceReport),
       transNumeraryRegNoDelegation: Number(delegation),
     };
+    console.log(data);
     return firstValueFrom(
       this.securityService.getIniEmail(data).pipe(
         catchError(error => {

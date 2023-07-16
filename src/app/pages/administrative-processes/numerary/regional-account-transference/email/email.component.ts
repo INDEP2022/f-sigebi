@@ -78,6 +78,7 @@ export class EmailComponent extends BasePage implements OnInit {
     this.form.patchValue(this.email);
 
     this.form.get('PARA').patchValue([this.email.PARA]);
+    console.log(this.email.PARA);
 
     this.form
       .get('FECHA_ENV')

@@ -69,19 +69,19 @@
             </form-field>
           </div>
           <div class="col-md-12 mb-3">
-            <form-field [control]="form.get('ASUNTO')" label="Asunto">
+            <form-field [control]="form.get('asunto')" label="Asunto">
               <input
                 type="text"
                 class="form-control"
-                formControlName="ASUNTO"
+                formControlName="asunto"
                 min="1"
                 oninput="if(this.value.length > 50) this.value = this.value.slice(0, 50)" />
             </form-field>
           </div>
           <div class="col-md-12 mb-3">
-            <form-field [control]="form.get('FECHA_ENV')" label="Fecha Envio">
+            <form-field [control]="form.get('fechaEnv')" label="Fecha Envio">
               <input
-                formControlName="FECHA_ENV"
+                formControlName="fechaEnv"
                 class="form-control"
                 bsDatepicker
                 [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
@@ -103,28 +103,18 @@
                                 oninput="if(this.value.length > 50) this.value = this.value.slice(0, 50)" />
                         </form-field>
                     </div> -->
-          <div class="col-md-12 mb-3">
-            <form-field
-              [control]="form.get('DELEGACION')"
-              label="No. Delegación">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="DELEGACION"
-                min="1"
+          <!--<div class="col-md-12 mb-3">
+            <form-field [control]="form.get('DELEGACION')" label="No. Delegación">
+              <input type="text" class="form-control" formControlName="DELEGACION" min="1"
                 oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
             </form-field>
-          </div>
-          <div class="col-md-12 mb-3">
+          </div>-->
+          <!--<div class="col-md-12 mb-3">
             <form-field [control]="form.get('PREVIO')" label="Previo">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="PREVIO"
-                min="1"
+              <input type="text" class="form-control" formControlName="PREVIO" min="1"
                 oninput="if(this.value.length > 4000) this.value = this.value.slice(0, 4000)" />
             </form-field>
-          </div>
+          </div>-->
           <div class="col-md-12 mb-3">
             <form-field [control]="form.get('REMITENTE')" label="Remitente">
               <input
@@ -132,7 +122,8 @@
                 class="form-control"
                 formControlName="REMITENTE"
                 min="1"
-                oninput="if(this.value.length > 50) this.value = this.value.slice(0, 50)" />
+                oninput="if(this.value.length > 50) this.value = this.value.slice(0, 50)"
+                readonly />
             </form-field>
           </div>
           <div class="col-md-12 mb-3">
@@ -142,7 +133,8 @@
                 class="form-control"
                 formControlName="REPORTE"
                 min="1"
-                oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
+                oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)"
+                readonly />
             </form-field>
           </div>
         </div>
