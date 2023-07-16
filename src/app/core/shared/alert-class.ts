@@ -69,6 +69,7 @@ export class ClassWidthAlert {
     sweetalert.icon = icon;
     sweetalert.html = html;
     sweetalert.showConfirmButton = true;
+    sweetalert.allowOutsideClick = false;
     this._alertsService.alerts.push(sweetalert);
     this._alertsService.alertQueue.next(true);
   }
@@ -79,6 +80,7 @@ export class ClassWidthAlert {
     sweetalert.text = text;
     sweetalert.icon = icon;
     sweetalert.showConfirmButton = true;
+    sweetalert.allowOutsideClick = false;
     return Swal.fire(sweetalert);
   }
 

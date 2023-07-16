@@ -85,11 +85,12 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
 
   confirmTurnModal() {
     Swal.fire({
-      title: 'Confirmacion Turnado!',
+      title: 'Confirmación del Turnado',
       text: 'Observaciones:',
       input: 'text',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
+      allowOutsideClick: false,
     }).then(result => {
       console.log(result.value);
     });
