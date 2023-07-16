@@ -590,7 +590,7 @@ export class RegionalAccountTransferenceComponent
       this.alert(
         'error',
         'Error',
-        'El monto ingresado no corresponde al monto calculado verfique'
+        'El monto ingresado no corresponde al monto calculado, favor de verificar'
       );
       return;
     } else if (!total && total != 0) {
@@ -671,7 +671,7 @@ export class RegionalAccountTransferenceComponent
         const time = setTimeout(() => {
           this.getTransDetail();
           clearTimeout(time);
-        }, 1000);
+        }, 2500);
       },
       error: err => {
         this.alert('error', 'Error', err.error.message);
@@ -719,7 +719,7 @@ export class RegionalAccountTransferenceComponent
       next: resp => {
         this.form.get('idRequest').patchValue(resp.data[0].solnumId);
         this.alert(
-          'info',
+          'warning',
           'Bien Encontrado',
           `Con número de solicitud: ${resp.data[0].solnumId}`
         );
