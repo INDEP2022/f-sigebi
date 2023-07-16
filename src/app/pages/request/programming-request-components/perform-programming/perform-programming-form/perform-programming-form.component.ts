@@ -2481,6 +2481,7 @@ export class PerformProgrammingFormComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         this.router.navigate(['/pages/siab-web/sami/consult-tasks']);

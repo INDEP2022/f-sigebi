@@ -413,6 +413,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
