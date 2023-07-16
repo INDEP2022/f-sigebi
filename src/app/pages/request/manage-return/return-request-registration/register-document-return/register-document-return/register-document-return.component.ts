@@ -70,6 +70,7 @@ export class RegisterDocumentReturnComponent
       cancelButtonColor: '#b38e5d',
       confirmButtonText: 'Turnar',
       cancelButtonText: 'Cancelar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         Swal.fire(

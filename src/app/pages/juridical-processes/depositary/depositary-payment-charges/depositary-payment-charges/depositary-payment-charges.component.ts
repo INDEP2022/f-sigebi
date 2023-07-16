@@ -20,6 +20,7 @@ import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { BankService } from 'src/app/core/services/catalogs/bank.service';
 import { MsDepositaryPaymentService } from 'src/app/core/services/ms-depositarypayment/ms-depositarypayment.service';
 //import { MassiveDepositaryService } from 'src/app/core/services/ms-massivedepositary/massivedepositary.service';
+import * as moment from 'moment';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { MassiveDepositaryService } from 'src/app/core/services/ms-massivedepositary/massivedepositary.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
@@ -488,7 +489,7 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
         type: item.TIPO,
         entryorderid: 0,
         reconciled: null,
-        registrationDate: null,
+        registrationDate: new Date(),
         oiDate: null,
         appliedto: null,
         client_id: null,
@@ -499,21 +500,31 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
       };
       const result: any = await this.saveRefPayDepositaryData(body);
 
-      const haveReference = await this.getAppointmentByGoodId(item.NO_BIEN);
+      const haveReference: any = await this.getAppointmentByGoodId(
+        item.NO_BIEN
+      );
       console.log(haveReference);
-      if (haveReference == true) {
-        const body: any = {
-          appointmentNum: result.appointmentNum,
+      if (haveReference != null) {
+        /*const body: any = {
+          appointmentNum: haveReference,
           reference: item.RESULTADO,
-        };
-        const updated = await this.updateReferencia(body);
+        };*/
+        haveReference.reference = item.REFERENCIA || '0';
+        const updated = await this.updateReferencia(haveReference);
       }
       if (result) {
+        this.loading = true;
+        result.system_val_date = moment(result.system_val_date).format('L');
+        result.registrationDate = moment(result.registrationDate).format('L');
+        result.date = this.milisegundoToDate(result.date);
         newData.push(result);
 
         if (data.length == index) {
-          this.data = newData;
-          this.onLoadToast('success', 'El archivo ha sido dado de alta', '');
+          setTimeout(() => {
+            this.data = newData;
+            this.onLoadToast('success', 'El archivo ha sido dado de alta', '');
+            this.loading = false;
+          }, 1000);
         }
       }
     });
@@ -545,12 +556,13 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
       const params = new ListParams();
       params['filter.goodNum'] = `$eq:${id}`;
       params['filter.revocation'] = `$eq:N`;
+      params['sortBy'] = 'appointmentNum:DESC';
       this.nomDepositoryService.getAppointments(params).subscribe({
         next: resp => {
           if (resp.data[0].reference != null) {
-            resolve(false);
+            resolve(null);
           } else {
-            resolve(true);
+            resolve(resp.data[0]);
           }
         },
       });

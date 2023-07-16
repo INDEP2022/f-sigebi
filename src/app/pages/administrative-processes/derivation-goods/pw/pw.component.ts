@@ -58,7 +58,7 @@ export class PwComponent extends BasePage implements OnInit {
       err => {
         this.alert(
           'warning',
-          'No existen registros con el valor ingresado',
+          'No Existen Registros con el Valor Ingresado',
           ''
         );
         this.conversiones = new DefaultSelect();
@@ -73,8 +73,8 @@ export class PwComponent extends BasePage implements OnInit {
         if (this.password.value != this._password) {
           this.alert(
             'warning',
-            'Contraseña incorrecta',
-            'Por favor verificar y volver a intentar'
+            'Contraseña Incorrecta',
+            'Por Favor Verificar y Volver a Intentar'
           );
         } else {
           if (this.conversionData.goodFatherNumber != null) {
@@ -84,15 +84,15 @@ export class PwComponent extends BasePage implements OnInit {
             this.alert(
               'warning',
               'Conversiones',
-              'La conversion debe tener un bien padre'
+              'La Conversion debe tener un Bien Padre'
             );
           }
         }
       } else {
-        this.alert('warning', 'Debe introducir la contraseña', '');
+        this.alert('warning', 'Debe Introducir la Contraseña', '');
       }
     } else {
-      this.alert('warning', 'Debe introducir un Id Conversión', '');
+      this.alert('warning', 'Debe Introducir un Id Conversión', '');
     }
   }
 

@@ -196,21 +196,16 @@
         </div>
         <div class="col-md-6">
           <form-field
-            [control]="claimsFollowUpDetailForm.get('firstSecondLaterIn')"
-            label="1er Capa/2da Capa">
-            <select class="form-control" formControlName="firstSecondLaterIn">
-              <option [value]="null">Seleccione</option>
-              <option [value]="1">1ER CAPA</option>
-              <option [value]="2">2DA CAPA</option>
-              <option [value]="3">1ER CAPA / 2DA CAPA</option>
-            </select>
+            [control]="claimsFollowUpDetailForm.get('firstSecondLaterIn')">
+            <ngx-select
+              [data]="tipeFirstSecondLater"
+              [form]="claimsFollowUpDetailForm"
+              value="value"
+              bindLabel="description"
+              label="1er Capa/2da Capa"
+              control="firstSecondLaterIn"></ngx-select>
           </form-field>
         </div>
-        <!-- <div class="col-md-6">
-          <form-field label="Estatus" [control]="claimsFollowUpDetailForm.get('statusIn')">
-            <input class="form-control" formControlName="statusIn" type="text" />
-          </form-field>
-        </div> -->
       </div>
 
       <div class="row margin-input">
@@ -253,14 +248,19 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field
-            [control]="claimsFollowUpDetailForm.get('statusIn')"
-            label="Estado">
-            <select class="form-control" formControlName="statusIn">
+          <form-field [control]="claimsFollowUpDetailForm.get('statusIn')">
+            <ngx-select
+              [data]="status"
+              [form]="claimsFollowUpDetailForm"
+              value="value"
+              bindLabel="description"
+              label="Estado"
+              control="statusIn"></ngx-select>
+            <!-- <select class="form-control" formControlName="statusIn">
               <option [value]="null">Seleccione</option>
               <option [value]="1">ABIERTO</option>
               <option [value]="2">CERRADO</option>
-            </select>
+            </select> -->
           </form-field>
         </div>
       </div>

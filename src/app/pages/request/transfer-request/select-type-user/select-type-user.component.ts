@@ -261,6 +261,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
                 confirmButtonColor: '#9D2449',
                 cancelButtonColor: '#B38E5D',
                 confirmButtonText: 'Aceptar',
+                allowOutsideClick: false,
               }).then(result => {
                 this.closeAll();
               });
@@ -318,12 +319,13 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       if (taskResponse) {
         Swal.fire({
           title: 'Solicitud Returnada',
-          text: 'La solicitud se returno correctamente',
+          text: 'La solicitud se returnó correctamente',
           icon: 'success',
           showCancelButton: false,
           confirmButtonColor: '#9D2449',
           cancelButtonColor: '#B38E5D',
           confirmButtonText: 'Aceptar',
+          allowOutsideClick: false,
         }).then(result => {
           this.closeAll();
         });

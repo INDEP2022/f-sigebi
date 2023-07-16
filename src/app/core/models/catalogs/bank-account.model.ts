@@ -44,3 +44,12 @@ export interface IBankCentral {
   cveBank: string;
   cveCurrency: string;
 }
+
+export interface IProReconcilesGood {
+  bankKey?: string;
+  accountKey?: string;
+  deposit?: number;
+  currencyKey?: string;
+  startDate?: Date | string;
+  endDate?: Date | string;
+}

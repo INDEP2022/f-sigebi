@@ -470,6 +470,7 @@ export class ReadInfoGoodComponent
       confirmButtonColor: '#9d2449',
       cancelButtonColor: '#a78457',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         const user: any = this.authService.decodeToken();

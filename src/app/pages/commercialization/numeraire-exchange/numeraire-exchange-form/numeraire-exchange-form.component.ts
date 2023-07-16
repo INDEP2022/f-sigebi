@@ -34,6 +34,7 @@ import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive
 import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GoodsGenerateDialogComponent } from '../components/goods-generate-dialog/goods-generate-dialog.component';
 import { TableExpensesComponent } from '../components/table-expenses/table-expenses.component';
 import { NUMERAIRE_COLUMNS } from './numeraire-exchange-columns';
@@ -74,9 +75,7 @@ interface IFormNumeraire {
 @Component({
   selector: 'app-numeraire-exchange-form',
   templateUrl: './numeraire-exchange-form.component.html',
-  styles: [
-    '::ng-deep .ws-pre{white-space: pre-wrap;} ::ng-deep .swal2-html-container{text-transform: capitalize !important;}',
-  ],
+  styles: [],
   providers: [CurrencyPipe],
   animations: [
     trigger('OnGoodSelected', [
@@ -251,28 +250,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   pathGoods = generateUrlOrPath(GoodEndpoints.Good, GoodEndpoints.Good, true);
 
-  conversionTypes = [
-    {
-      value: 'CBD',
-      text: 'Bien decomisado cambiado a numerario por enajenación',
-    },
-    {
-      text: 'Bien decomisado cambiado a numerario por siniestro',
-      value: 'CDS',
-    },
-    {
-      text: 'Bien asegurado cambiado a numerario por enajenación.',
-      value: 'CNE1',
-    },
-    {
-      text: 'Bien asegurado cambiado a numerario por siniestro.',
-      value: 'CNS',
-    },
-    {
-      text: 'Bien generado por pago parcial por siniestro',
-      value: 'BBB',
-    },
-  ];
+  conversionTypes = new DefaultSelect<any>();
 
   readonly NAME_CURRENT_FORM = 'FACTADBCAMBIONUME';
   validNumerary: 'loading' | 'error' | 'valid' | 'notValid' = 'loading';
@@ -294,6 +272,28 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.infoToken = this.authService.decodeToken();
+    this.conversionTypes = new DefaultSelect([
+      {
+        value: 'CBD',
+        text: 'Bien decomisado cambiado a numerario por enajenación',
+      },
+      {
+        text: 'Bien decomisado cambiado a numerario por siniestro',
+        value: 'CDS',
+      },
+      {
+        text: 'Bien asegurado cambiado a numerario por enajenación.',
+        value: 'CNE1',
+      },
+      {
+        text: 'Bien asegurado cambiado a numerario por siniestro.',
+        value: 'CNS',
+      },
+      {
+        text: 'Bien generado por pago parcial por siniestro',
+        value: 'BBB',
+      },
+    ]);
     this.formGood.get('importSell').valueChanges.subscribe({
       next: value => {
         // const valueSell = value || 0;
@@ -358,7 +358,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     if (!goodId) {
       showToast({
         icon: 'warning',
-        text: 'Debe ingresar un identificador de bien',
+        text: 'Debe Ingresar un Identificador de Bien',
       });
       return;
     }
@@ -377,7 +377,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       },
       error: () => {
         this.isLoadingGood = false;
-        this.onLoadToast('warning', '', 'No se encontró el bien');
+        this.onLoadToast('warning', '', 'No se Encontró el Bien');
       },
     });
   }
@@ -435,15 +435,15 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
           this.openMoreOneResults(res);
         } else {
           this.changeDeposit(res.data[0]);
-          this.onLoadToast('success', 'Éxito', 'Depósito encontrado');
+          this.onLoadToast('success', 'Éxito', 'Depósito Encontrado');
         }
       },
       error: () => {
         // this.formBlkControl.get('tiNewDate').setValue(null);
         this.onLoadToast(
           'warning',
-          '',
-          'No se encontró el depósito en la fecha seleccionada'
+          'No se Encontró el Depósito en la Fecha Seleccionada',
+          ''
         );
       },
     });
@@ -454,13 +454,13 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       queryParams: this.generateParamsSearchDate(),
       columns: {
         numberMotion: {
-          title: 'Número de movimiento',
+          title: 'Número de Movimiento',
         },
         deposit: {
           title: 'Depósito',
         },
         dateMotion: {
-          title: 'Fecha de movimiento',
+          title: 'Fecha de Movimiento',
         },
         InvoiceFile: {
           title: 'Folio ficha',
@@ -583,14 +583,14 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'info',
         'Información',
-        'El bien consultado también puede ser convertido a numerario por valores y divisas. \n Verifique su tipo de conversión antes de continuar con el proceso'
+        'El Bien Consultado También Puede ser Convertido a Numerario por Valores y Divisas. \n Verifique su Tipo de Conversión antes de Continuar con el Proceso'
       );
     }
     if (!validateNumerary && !availableGood) {
       this.onLoadToast(
         'warning',
         'Advertencia',
-        'Estatus, identificador o clasificador inválido para cambio a numerario/valores y divisas'
+        'Estatus, Identificador o Clasificador Inválido para Cambio a Numerario/Valores y Divisas'
       );
     }
   }
@@ -888,7 +888,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
             // resp.message.length > 0
             //   ? resp.message.join('.\n')
             //   :
-            'Proceso terminado con éxito';
+            'Proceso Terminado con Éxito';
 
           this.alert('success', 'Éxito', message);
         }),
@@ -1092,7 +1092,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   changeTypeConversion(event: any) {
     console.log(event);
-    const value = event.target.value;
+    const value = event.value;
     if (value !== 'BBB') {
       this.formBlkControl.get('comment').setValue(null);
     }

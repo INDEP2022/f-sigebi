@@ -332,7 +332,11 @@ export class NotificationAssetsTabComponent
         this.data.refresh();
         this.loadingGoods = false;
       },
-      error: error => (this.loadingGoods = false),
+      error: error => {
+        console.log('NO HAY VIENES, SE FINALIZARÁ LA TAREA');
+        this.changeStatusTask();
+        this.loadingGoods = false;
+      },
     });
   }
 
@@ -1021,6 +1025,7 @@ export class NotificationAssetsTabComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#b38e5d',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         return;
@@ -1848,6 +1853,7 @@ export class NotificationAssetsTabComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         this.endClarification();
@@ -1864,6 +1870,7 @@ export class NotificationAssetsTabComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         this.router.navigate(['/pages/siab-web/sami/consult-tasks']);

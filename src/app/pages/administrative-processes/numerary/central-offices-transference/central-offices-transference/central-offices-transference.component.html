@@ -4,7 +4,7 @@
   </div>
   <div body>
     <div class="row mt-3 mb-3">
-      <form action="" class="form-material" [formGroup]="form">
+      <form action="" class="form-material table-responsive" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-md-4">
             <form-field [control]="form.get('noReport')" label="No Reporte">
@@ -12,8 +12,7 @@
                 type="number"
                 class="form-control"
                 formControlName="noReport"
-                min="1"
-                pattern="^[0-9]+" />
+                maxlength="7" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -52,9 +51,9 @@
               (change)="onFileChange($event)" />
             <button
               type="button"
-              class="btn btn-sm btn-success active m-2"
+              class="btn btn-sm btn-success active m-3"
               (click)="file.click()">
-              Importar
+              Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
             </button>
             <input
               type="file"
@@ -65,9 +64,11 @@
               (change)="onFileChange($event)" />
             <button
               type="button"
-              class="btn btn-sm btn-secondary active m-2"
-              (click)="openForm()">
-              ENVIAR
+              class="btn btn-primary btn-sm active"
+              tooltip="Enviar"
+              (click)="sendEmail()"
+              containerClass="tooltip-style">
+              Enviar <i class="bx bx-send"></i>
             </button>
           </div>
         </div>
@@ -94,24 +95,40 @@
             <div>
               <form-field
                 [control]="form.get('currencyType')"
-                label="Tipo moneda de cuenta">
-                <select class="form-control" formControlName="currencyType">
-                  <option [value]="1">MN</option>
-                  <option [value]="0">USD</option>
-                </select>
+                label="Tipo Moneda de Cuenta">
+                <ng-select
+                  formControlName="currencyType"
+                  (change)="changeSelect()"
+                  [items]="moneda"
+                  bindValue="value"
+                  class="form-control"
+                  [searchable]="false"
+                  bindLabel="label">
+                </ng-select>
               </form-field>
             </div>
             <div style="margin-top: 30px">
               <form-field [control]="form.get('delegation')">
                 <ngx-select
+                  [data]="delegations"
                   [form]="form"
-                  [data]="itemsDelegation"
-                  label="Delegación"
                   value="id"
                   bindLabel="description"
-                  (fetchItems)="getDelegations($event)"
-                  control="delegation">
+                  label="Delegación"
+                  [control]="'delegation'"
+                  [searchable]="false"
+                  (change)="changeSelect($event)"
+                  [labelTemplate]="delg"
+                  [optionTemplate]="delgd">
                 </ngx-select>
+                <ng-template #delg let-item="item">
+                  {{ item.id }} - {{ item.description }}
+                </ng-template>
+                <ng-template #delgd let-item="item">
+                  <div [title]="item.id + '-' + item.description">
+                    {{ item.id }} - {{ item.description }}
+                  </div>
+                </ng-template>
               </form-field>
             </div>
             <div style="margin-top: 30px">
@@ -145,37 +162,48 @@
                   type="number"
                   class="form-control"
                   formControlName="cveAccount"
-                  min="1" />
+                  min="1"
+                  oninput="if(this.value.length > 16) this.value = this.value.slice(0, 16)" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
               <form-field
                 [control]="form.get('accountType')"
                 label="Tipo de cuenta">
-                <input formControlName="accountType" class="form-control" />
+                <input
+                  formControlName="accountType"
+                  class="form-control"
+                  oninput="if(this.value.length > 13) this.value = this.value.slice(0, 13)" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
               <form-field
                 [control]="form.get('cveBank')"
                 label="Clave de Banco">
-                <input formControlName="cveBank" class="form-control" />
+                <input
+                  formControlName="cveBank"
+                  class="form-control"
+                  oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10)" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
               <form-field
                 [control]="form.get('cveCurrency')"
                 label="Clave de Moneda">
-                <input formControlName="cveCurrency" class="form-control" />
+                <input
+                  formControlName="cveCurrency"
+                  class="form-control"
+                  oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15)" />
               </form-field>
             </div>
             <div style="margin-top: 30px">
-              <p>
-                <span style="font-weight: bold; margin-right: 5px"
-                  >Monto total:</span
-                >
-                $ {{ total }}
-              </p>
+              <form-field [control]="form.get('total')" label="Total">
+                <input
+                  formControlName="total"
+                  class="form-control"
+                  readonly
+                  oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15)" />
+              </form-field>
             </div>
             <!---   <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
             <app-delegation-shared [form]="form" [showDelegation]="false"></app-delegation-shared>
@@ -188,10 +216,25 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            (click)="guardar()">
+            (click)="createTransferCentral()">
             Guardar
             <i aria-hidden="true" class="fa fa-save"></i>
           </button>
+          <div style="margin-left: 2vh">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="getAccount()">
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div style="margin-left: 2vh">
+            <button
+              class="btn btn-danger btn-sm active mr-3"
+              (click)="cleanFilter()">
+              Limpiar <i class="fas fa-eraser"> </i>
+            </button>
+          </div>
         </div>
       </form>
     </div>

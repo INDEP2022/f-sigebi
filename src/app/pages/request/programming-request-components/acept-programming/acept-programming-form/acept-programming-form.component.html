@@ -58,7 +58,7 @@
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2"
-              >Delegaci&oacute;n regional&#58;</label
+              >Delegaci&oacute;n Regional&#58;</label
             >
             <span class="fs-4">
               {{ programming?.regionalDelegationNumber }}
@@ -67,7 +67,7 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Correo transferente&#58;</label>
+            <label class="text-right mr-2">Correo Transferente&#58;</label>
             <span class="fs-4">{{ programming?.emailTransfer }}</span>
           </div>
         </div>
@@ -88,13 +88,13 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Fecha inicio operativo&#58;</label>
+            <label class="text-right mr-2">Fecha Inicio Operativo&#58;</label>
             <span class="fs-4"> {{ programming?.startDate }} </span>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Fecha fin operativo&#58;</label>
+            <label class="text-right mr-2">Fecha Fin Operativo&#58;</label>
             <span class="fs-4"> {{ programming?.endDate }}</span>
           </div>
         </div>
@@ -139,7 +139,7 @@
       <div class="row pt-4">
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Tipo relevante&#58;</label>
+            <label class="text-right mr-2">Tipo Relevante&#58;</label>
             <span class="fs-3"> {{ typeRelevantName }} </span>
           </div>
         </div>
@@ -154,7 +154,7 @@
       </div>
 
       <div class="row pt-4">
-        <h5 class="title">Usuarios al operativo</h5>
+        <h5 class="title">Usuarios al Operativo</h5>
         <ng2-smart-table
           [attr.class]="'table-bordered'"
           [settings]="settings"
@@ -170,7 +170,7 @@
         <div class="md-tabs">
           <tabset>
             <tab [heading]="headingTransportable" id="tab1">
-              <div class="d-flex justify-content-start">
+              <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="
                     settingsTransportableGoods
@@ -189,7 +189,7 @@
                 [totalItems]="totalItemsTransportable"></app-pagination>
             </tab>
             <tab [heading]="headingGuard">
-              <div class="d-flex justify-content-start">
+              <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="settingGuardGoods"></app-columns-select>
               </div>
@@ -203,7 +203,7 @@
               </div>
             </tab>
             <tab [heading]="headingWarehouse">
-              <div class="d-flex justify-content-start">
+              <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="settingWarehouseGoods"></app-columns-select>
               </div>
