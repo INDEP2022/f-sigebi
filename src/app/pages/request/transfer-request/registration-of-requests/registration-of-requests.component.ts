@@ -387,6 +387,7 @@ export class RegistrationOfRequestsComponent
         cancelButtonColor: '#b38e5d',
         confirmButtonText: 'Aceptar',
         cancelButtonText: 'Cancelar',
+        allowOutsideClick: false,
       }).then(async result => {
         if (result.isConfirmed) {
         }
@@ -669,8 +670,8 @@ export class RegistrationOfRequestsComponent
           console.log('Hay bienes por aclarar');
           this.alertQuestion(
             'warning',
-            'Aún hay bienes sin aclarar',
-            'Recuerde tener todos los bienes aclarados'
+            'Existe bienes sin aclarar',
+            'Se creará una nueva tarea de Notificación'
           ).then(async question => {
             if (question.isConfirmed) {
               //this.notifyClarificationsMethod2();
@@ -1321,7 +1322,13 @@ export class RegistrationOfRequestsComponent
       cancelButtonColor: '#b38e5d',
       confirmButtonText: btnTitle,
       cancelButtonText: 'Cancelar',
+      allowOutsideClick: false,
     }).then(async result => {
+      if (!result.isConfirmed) {
+        console.log('Cancelar');
+        return;
+      }
+
       if (result.isConfirmed) {
         if (typeCommit === 'finish') {
           console.log('finish');
@@ -1417,6 +1424,7 @@ export class RegistrationOfRequestsComponent
           }
         }
       }
+
       if (typeCommit === 'proceso-aprovacion') {
         await this.updateGoodStatus('APROBADO');
         this.approveRequestMethod();
@@ -1679,6 +1687,7 @@ export class RegistrationOfRequestsComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         this.close();
@@ -1695,6 +1704,7 @@ export class RegistrationOfRequestsComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     });
   }
 
@@ -1708,6 +1718,7 @@ export class RegistrationOfRequestsComponent
       confirmButtonColor: '#AD4766',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
       }
