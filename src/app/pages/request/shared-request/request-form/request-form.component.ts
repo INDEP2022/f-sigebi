@@ -408,6 +408,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#B38E5D',
       confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cancelar',
       allowOutsideClick: false,
     }).then(async result => {
       if (result.isConfirmed) {
@@ -427,7 +428,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
               title: 'Guardado',
               text: ` Solicitud guardada con el folio: ${this.requestId}`,
               icon: 'success',
-              showCancelButton: true,
+              //showCancelButton: true,
               confirmButtonColor: '#9D2449',
               cancelButtonColor: '#B38E5D',
               confirmButtonText: 'Aceptar',
@@ -451,7 +452,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           const createTask = await this.generateFirstTask();
           if (createTask) {
             this.msgModal(
-              'Se turna la solicitud con el Folio Nº '
+              'Se turnó la solicitud con el Folio Nº '
                 .concat(`<strong>${this.requestId}</strong>`)
                 .concat(` al usuario ${this.userName}`),
               'Solicitud Creada',
