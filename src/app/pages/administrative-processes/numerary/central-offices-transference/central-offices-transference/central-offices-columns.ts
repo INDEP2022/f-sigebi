@@ -38,8 +38,5 @@ export const CENTRAL_ACCOUNT_COLUMNS = {
     title: 'Moneda',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (_cell: any, row: any) => {
-      return row.currency == '1' ? 'MN' : 'USD';
-    },
   },
 };
