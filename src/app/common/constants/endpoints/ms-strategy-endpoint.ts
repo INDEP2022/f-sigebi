@@ -6,4 +6,6 @@ export enum StrategyEndpoints {
   StrategyShift = 'strategy-shift',
   StrategyProcess = 'strategy-process',
   TmpStrategyCost = 'tmp-strategy-cost',
+  StrategyAdmin = 'strategies-admin',
+  FolioDeliveredWeather = 'folio-delivered-weather',
 }
