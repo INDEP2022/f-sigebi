@@ -1,7 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { format } from 'date-fns';
-import { BehaviorSubject, skip, takeUntil } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, skip, take, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -12,6 +13,8 @@ import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.m
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ResetTrackerFilter } from '../store/goods-tracker.actions';
+import { getTrackerFilter } from '../store/goods-tracker.selector';
 import {
   FilterMatchTracker,
   OperatorValues,
@@ -41,34 +44,51 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
   goods: ITrackedGood[] = [];
   subloading: boolean = false;
   filters = new GoodTrackerMap();
+  selectedGooods: ITrackedGood[] = [];
+  $trackerFilter = this.store.select(getTrackerFilter);
 
   constructor(
     private fb: FormBuilder,
     private goodTrackerService: GoodTrackerService,
     private notificationService: NotificationService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private store: Store
   ) {
     super();
   }
 
-  ngOnInit(): void {
-    this._params.pipe(takeUntil(this.$unSubscribe), skip(1)).subscribe(next => {
-      const form = this.form.value;
-      const filledFields = Object.values(form).filter(value => {
-        if (Array.isArray(value)) {
-          return value.length > 0;
+  async ngOnInit() {
+    this._params
+      .pipe(takeUntil(this.$unSubscribe), skip(1))
+      .subscribe(async next => {
+        const form = this.form.value;
+        const filledFields = Object.values(form).filter(value => {
+          if (Array.isArray(value)) {
+            return value.length > 0;
+          }
+          return value ? true : false;
+        });
+        if (!filledFields.length) {
+          this.getAllGoods();
+          return;
         }
-        return value ? true : false;
+        this.getGoods(next);
       });
-      if (!filledFields.length) {
-        this.getAllGoods();
-        return;
-      }
-      this.getGoods(next);
-    });
+
+    const state = await this.getFilterState();
+    if (state) {
+      this.store.dispatch(ResetTrackerFilter());
+      this.form.patchValue({ ...state.getRawValue() });
+      this.searchGoods();
+    }
+  }
+
+  getFilterState() {
+    return firstValueFrom(this.$trackerFilter.pipe(take(1)));
   }
 
   async searchGoods(params?: any) {
+    this.selectedGooods = [];
     this.params.removeAllFilters();
     const _params = new ListParams();
     this._params.next(_params);

@@ -46,6 +46,7 @@ export class LocationGoodsWarehousesStorageComponent
   selectedOption: string = 'B';
   dataTableGood_: any[] = [];
   columnFilters: any;
+  origin2: string;
   disableConsultLocation: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   warehouseDisable: boolean = true;
@@ -56,6 +57,7 @@ export class LocationGoodsWarehousesStorageComponent
   paramsScreen: IParamsUbicationGood = {
     PAR_MASIVO: '',
     origin: '',
+    origin2: '',
   };
   paramsCurrentScreen = {
     TIPO_PROC: '',
@@ -136,7 +138,7 @@ export class LocationGoodsWarehousesStorageComponent
                 paramsQuery[key] ?? null;
             }
           }
-          // this.origin2 = paramsQuery['origin2'] ?? null;
+          this.origin2 = paramsQuery['origin2'] ?? null;
           // this.origin3 = paramsQuery['origin3'] ?? null;
         }
       });
@@ -198,12 +200,30 @@ export class LocationGoodsWarehousesStorageComponent
   checkLocations() {
     if (this.radio.value === null) return;
     this.radio.value === 'A'
-      ? this.router.navigate([
-          '/pages/administrative-processes/warehouse-inquiries',
-        ])
-      : this.router.navigate([
-          '/pages/administrative-processes/vault-consultation',
-        ]);
+      ? this.router.navigate(
+          ['/pages/administrative-processes/warehouse-inquiries'],
+          {
+            queryParams: {
+              origin: this.screenKey,
+              PAR_MASIVO: this.form.value.good,
+              origin2: 'FCONADBBOVEDAS',
+              origin3: 'FACTGENACTDATEX',
+              origin4: 'FCONADBALMACENES',
+            },
+          }
+        )
+      : this.router.navigate(
+          ['/pages/administrative-processes/vault-consultation'],
+          {
+            queryParams: {
+              origin: this.screenKey,
+              PAR_MASIVO: this.form.value.good,
+              origin2: 'FCONADBBOVEDAS',
+              origin3: 'FACTGENACTDATEX',
+              origin4: 'FCONADBALMACENES',
+            },
+          }
+        );
   }
 
   openModal(goods?: IGood[]): void {
@@ -281,7 +301,7 @@ export class LocationGoodsWarehousesStorageComponent
         this.currentDescriptionWare.setValue(response.description);
       },
       error: err => {
-        this.alert('info', 'Opps...', 'Este bien no tiene asignado almacen');
+        this.alert('info', 'Este bien no tiene asignado almacen', '');
       },
     });
   }
@@ -291,7 +311,7 @@ export class LocationGoodsWarehousesStorageComponent
         this.currentDescriptionVault.setValue(response.description);
       },
       error: err => {
-        this.alert('info', 'Opps...', 'Este bien no tiene asignado Bóvedas');
+        this.alert('info', 'Este bien no tiene asignado Bóvedas', '');
       },
     });
   }
@@ -423,7 +443,7 @@ export class LocationGoodsWarehousesStorageComponent
             };
             const di_dispo = await this.getStatusScreen(obj);
             item['di_disponible'] = di_dispo;
-            item.di_disponible != null ? 'N' : di_dispo;
+            // item.di_disponible != null ? 'N' : di_dispo;
           });
 
           Promise.all(result).then(item => {
@@ -511,6 +531,9 @@ export class LocationGoodsWarehousesStorageComponent
       queryParams: {
         origin: this.screenKey,
         PAR_MASIVO: this.form.value.good,
+        origin2: 'FCONADBBOVEDAS',
+        origin3: 'FACTGENACTDATEX',
+        origin4: 'FACTGENACTDATEX',
       },
     });
   }
@@ -519,6 +542,7 @@ export class LocationGoodsWarehousesStorageComponent
 export interface IParamsUbicationGood {
   PAR_MASIVO: string;
   origin: string;
+  origin2: string;
 }
 
 export interface IParamsUbicationGoodBody {

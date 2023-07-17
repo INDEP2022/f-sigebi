@@ -221,7 +221,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
     formData.append('certificate', this.certiFile);
     formData.append('keycertificate', this.keyCertiFile);
     formData.append('learnedId', this.signatories.learnedId);
-    formData.append('name', this.signatories.name);
+    formData.append('name', this.fileForm.controls['name'].value);
     formData.append(
       'pass',
       this.password.encriptarResult || this.fileForm.controls['pass'].value
@@ -237,7 +237,12 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
       .update(this.signatories.signatoryId, formData)
       .subscribe(
         data => this.handleSuccess(),
-        error => this.alert('info', 'No se pudo actualizar', error.error)
+        error =>
+          this.alert(
+            'info',
+            'No se pudo actualizar',
+            'Corregir datos del firmante'
+          )
       );
   }
 

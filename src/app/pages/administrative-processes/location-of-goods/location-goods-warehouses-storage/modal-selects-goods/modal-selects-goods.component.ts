@@ -123,28 +123,28 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-
     // console.log(this.totalItems);
     this.buildForm();
-    this.loading = false;
-    this.$trackedGoods.subscribe({
-      next: response => {
-        response.forEach(good => {
-          this.getGoodByID(good.goodNumber);
-        });
-        this.loading = false;
-      },
-      error: err => {
-        console.log(err);
-        this.loading = false;
-      },
-    });
+
+    // this.$trackedGoods.subscribe({
+    //   next: response => {
+    //     response.forEach(good => {
+    //       this.getGoodByID(good.goodNumber);
+    //     });
+    //     this.loading = false;
+    //   },
+    //   error: err => {
+    //     console.log(err);
+    //     this.loading = false;
+    //   },
+    // });
   }
 
   returnModal() {
     this.bsModalRef.hide();
   }
   private buildForm() {
+    this.loading = false;
     this.form = this.fb.group({
       radio: [null, [Validators.required]],
       warehouse: [null, [Validators.required]],
@@ -185,7 +185,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           });
         }
       });
-      this.onLoadToast(
+      this.alert(
         'success',
         'Exito',
         'Se ha cambiado la ubicación de los bienes seleccionados'
@@ -194,7 +194,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     } catch (error) {
       console.log(error);
       this.loading = false;
-      this.onLoadToast(
+      this.alert(
         'error',
         'ERROR',
         'Ha ocurrido un error al cambiar la ubicacion del bien'
@@ -204,11 +204,11 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
 
   validar(): boolean {
     if (this.radio.value === null) {
-      this.onLoadToast('error', 'ERROR', 'Selecione un tipo de ubicacion');
+      this.alert('error', 'ERROR', 'Selecione un tipo de ubicacion');
       return true;
     }
     if (this.warehouse.value === null && this.safe.value === null) {
-      this.onLoadToast('error', 'ERROR', 'Selecione un elemento de la lista');
+      this.alert('error', 'ERROR', 'Selecione un elemento de la lista');
       return true;
     }
     return false;
@@ -362,15 +362,13 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           if (state.data) {
             console.log('di_dispo', state);
             resolve('S');
-            this.di_desc_est = 'S';
           } else {
             console.log('di_dispo', state);
             resolve('N');
-            this.di_desc_est = 'N';
           }
         },
         error: () => {
-          resolve('N');
+          console.error('error');
         },
       });
     });
