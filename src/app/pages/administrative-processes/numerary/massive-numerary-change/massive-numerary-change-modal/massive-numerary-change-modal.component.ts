@@ -25,6 +25,41 @@ import {
   templateUrl: './massive-numerary-change-modal.component.html',
   styles: [
     `
+      .legend {
+        justify-content: center;
+        display: flex;
+        column-gap: 10px;
+        > div {
+          display: flex;
+          column-gap: 10px;
+          align-items: center;
+          .rectangle {
+            width: 15px;
+            height: 15px;
+          }
+        }
+        @media screen and (max-width: 576px) {
+          flex-direction: column;
+        }
+      }
+
+      .requiredAva {
+        background-color: #dc3545;
+      }
+      .numerary {
+        background-color: #357935;
+      }
+      .required {
+        background-color: #ffc107;
+      }
+
+      .update {
+        background-color: #17a2b8;
+      }
+      .numeraryGood {
+        background-color: #ff8000;
+      }
+
       ::ng-deep .bg-custom-red {
         background: #dc3545;
         color: white;
@@ -202,7 +237,7 @@ export class MassiveNumeraryChangeModalComponent
         this.alert(
           'warning',
           'Advertencia',
-          'Con Estos Datos No Se Puede Generar El Archivo De Excel.'
+          'Con estos Datos no se Puede Generar el Archivo de Excel.'
         );
       }
     } catch (error) {
@@ -210,7 +245,7 @@ export class MassiveNumeraryChangeModalComponent
       this.onLoadToast(
         'warning',
         '',
-        'No Se Puede Copiar El Archivo De Excel.'
+        'No se Puede Copiar el Archivo de Excel.'
       );
       //    END;
     }
@@ -334,7 +369,7 @@ export class MassiveNumeraryChangeModalComponent
           );
         },
         error: (err: any) => {
-          this.alert('error', 'Error', 'Ocurrió Un Error Al Procesar');
+          this.alert('error', 'Error', 'Ocurrió un Error al Procesar');
         },
       });
     }
