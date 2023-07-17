@@ -75,9 +75,7 @@ interface IFormNumeraire {
 @Component({
   selector: 'app-numeraire-exchange-form',
   templateUrl: './numeraire-exchange-form.component.html',
-  styles: [
-    '::ng-deep .ws-pre{white-space: pre-wrap;} ::ng-deep .swal2-html-container{text-transform: capitalize !important;}',
-  ],
+  styles: [],
   providers: [CurrencyPipe],
   animations: [
     trigger('OnGoodSelected', [
@@ -360,7 +358,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     if (!goodId) {
       showToast({
         icon: 'warning',
-        text: 'Debe ingresar un identificador de bien',
+        text: 'Debe Ingresar un Identificador de Bien',
       });
       return;
     }
@@ -379,7 +377,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       },
       error: () => {
         this.isLoadingGood = false;
-        this.onLoadToast('warning', '', 'No se encontró el bien');
+        this.onLoadToast('warning', '', 'No se Encontró el Bien');
       },
     });
   }
@@ -437,15 +435,15 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
           this.openMoreOneResults(res);
         } else {
           this.changeDeposit(res.data[0]);
-          this.onLoadToast('success', 'Éxito', 'Depósito encontrado');
+          this.onLoadToast('success', 'Éxito', 'Depósito Encontrado');
         }
       },
       error: () => {
         // this.formBlkControl.get('tiNewDate').setValue(null);
         this.onLoadToast(
           'warning',
-          '',
-          'No se encontró el depósito en la fecha seleccionada'
+          'No se Encontró el Depósito en la Fecha Seleccionada',
+          ''
         );
       },
     });
@@ -456,13 +454,13 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       queryParams: this.generateParamsSearchDate(),
       columns: {
         numberMotion: {
-          title: 'Número de movimiento',
+          title: 'Número de Movimiento',
         },
         deposit: {
           title: 'Depósito',
         },
         dateMotion: {
-          title: 'Fecha de movimiento',
+          title: 'Fecha de Movimiento',
         },
         InvoiceFile: {
           title: 'Folio ficha',
@@ -585,14 +583,14 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'info',
         'Información',
-        'El bien consultado también puede ser convertido a numerario por valores y divisas. \n Verifique su tipo de conversión antes de continuar con el proceso'
+        'El Bien Consultado También Puede ser Convertido a Numerario por Valores y Divisas. \n Verifique su Tipo de Conversión antes de Continuar con el Proceso'
       );
     }
     if (!validateNumerary && !availableGood) {
       this.onLoadToast(
         'warning',
         'Advertencia',
-        'Estatus, identificador o clasificador inválido para cambio a numerario/valores y divisas'
+        'Estatus, Identificador o Clasificador Inválido para Cambio a Numerario/Valores y Divisas'
       );
     }
   }

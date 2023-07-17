@@ -9,22 +9,19 @@
       <div class="row">
         <ng-container [formGroup]="formGood">
           <div class="col-md-5 d-flex form-group gap-4 align-items-center">
-            <form-field [control]="formGood.get('id')" label="Número bien">
+            <form-field [control]="formGood.get('id')" label="Número Bien">
               <input
                 type="number"
                 class="form-control"
                 formControlName="id"
                 min="1"
-                pattern="^[0-9]+" />
+                oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
             </form-field>
             <button
               [disabled]="loading"
               class="active align-items-center btn btn-primary btn-sm w-auto"
               (click)="getGood()">
               Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
-              <ng-container *ngIf="loading">
-                <i class="fas fa-spinner fa-spin ml-2"></i>
-              </ng-container>
             </button>
             <button
               (click)="clean()"
@@ -32,7 +29,7 @@
               Limpiar <i class="fas fa-eraser"> </i>
             </button>
           </div>
-          <div class="form-group col-md-4">
+          <div class="form-group col-md-7">
             <form-field
               [control]="formGood.get('description')"
               label="Descripción">
@@ -43,7 +40,8 @@
                 class="form-control" />
             </form-field>
           </div>
-          <div class="form-group col-md-2">
+
+          <div class="form-group col-md-3">
             <form-field [control]="formGood.get('status')" label="Estatus">
               <input
                 type="text"
@@ -52,7 +50,7 @@
                 class="form-control" />
             </form-field>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-3">
             <form-field
               [control]="formGood.get('fileNumber')"
               label="Número de Expediente">
@@ -65,7 +63,7 @@
                 pattern="^[0-9]+" />
             </form-field>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-3">
             <form-field
               [control]="formGood.get('identifier')"
               label="Identificador">
@@ -76,10 +74,10 @@
                 class="form-control" />
             </form-field>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-3">
             <form-field
               [control]="formGood.get('extDomProcess')"
-              label="Proceso ext dom">
+              label="Proceso Ext. Dom.">
               <input
                 type="text"
                 [readonly]="true"
@@ -88,10 +86,11 @@
             </form-field>
           </div>
         </ng-container>
-        <div *ngIf="isContConvVisible" [formGroup]="formGood1" class="col-md-2">
+
+        <div *ngIf="isContConvVisible" [formGroup]="formGood1" class="col-md-3">
           <form-field
             [control]="formGood1.get('contConv')"
-            label="Número de conversiónes">
+            label="Número de Conversiones">
             <input
               [readonly]="true"
               type="number"
@@ -119,7 +118,7 @@
                   class="form-control"
                   formControlName="id"
                   min="1"
-                  pattern="^[0-9]+" />
+                  oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
                 <!-- <ng-custom-select
                   formControlName="id"
                   microService="good"
@@ -140,14 +139,14 @@
                 (click)="openSelectorGood()"
                 type="button"
                 [disabled]="!this.formGood1.value.contConv"
-                class="btn btn-primary btn-sm active ml-3 w-auto">
+                class="btn btn-primary btn-sm active ml-3 w-auto mr-2">
                 <i class="bx bx-list-plus bx-sm float-icon"></i>
               </button>
             </div>
             <div class="form-group col-md-4">
               <form-field
                 [control]="formGood1.get('status')"
-                label="Estatus bien">
+                label="Estatus Bien">
                 <input
                   [readonly]="true"
                   type="text"
@@ -160,7 +159,7 @@
             <div class="form-group col-md-2">
               <form-field
                 [control]="formBlkControl.get('dateChange')"
-                label="Fecha de cambio">
+                label="Fecha de Cambio">
                 <input
                   formControlName="dateChange"
                   class="form-control"
@@ -171,9 +170,10 @@
               <form-field
                 [control]="formBlkControl.get('motive')"
                 label="Motivo">
+                <!-- [readonly]="true" -->
                 <input
                   formControlName="motive"
-                  maxLength="50"
+                  maxLength="500"
                   class="form-control" />
               </form-field>
             </div>
@@ -189,7 +189,7 @@
                   type="number"
                   class="form-control"
                   formControlName="val2"
-                  min="1"
+                  min="0"
                   pattern="^[0-9]+" />
               </form-field>
             </div>
@@ -202,7 +202,7 @@
                   type="number"
                   class="form-control"
                   formControlName="val13"
-                  min="1"
+                  min="0"
                   pattern="^[0-9]+" />
               </form-field>
             </div>
@@ -215,22 +215,21 @@
                   type="number"
                   class="form-control"
                   formControlName="val10"
-                  min="1"
+                  min="0"
                   pattern="^[0-9]+" />
               </form-field>
             </div>
           </div>
           <div class="row">
             <div class="col-md-5"></div>
-            <div
-              *ngIf="isVisibleVal15"
-              class="form-group col-md-3 d-flex justify-content-end">
+            <!-- *ngIf="isVisibleVal15" -->
+            <div class="form-group col-md-3 d-flex justify-content-end">
               <form-field [control]="formGood1.get('val15')" label="LIF">
                 <input
                   type="number"
                   class="form-control"
                   formControlName="val15"
-                  min="1"
+                  min="0"
                   pattern="^[0-9]+" />
               </form-field>
             </div>
@@ -244,7 +243,7 @@
                 type="number"
                 class="form-control"
                 formControlName="tTotal"
-                min="1"
+                min="0"
                 pattern="^[0-9]+" />
             </form-field>
           </div>
@@ -268,6 +267,9 @@
             [disabled]="
               !isEnableBtnRvlif || !formGood.value.id || !formGood1.value.id
             ">
+            <!-- [disabled]="
+              !isEnableBtnLif || !formGood.value.id || !formGood1.value.id
+            " -->
             Revertir Lif
           </button>
           <!-- <confirm-button

@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
@@ -8,7 +9,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
-import { DataEmailService } from 'src/app/core/services/ms-email/data-email.service';
+import { DataEmailServiceCentral } from 'src/app/core/services/ms-email/data-email-central.service';
 import { TranfergoodService } from 'src/app/core/services/ms-transfergood/transfergood.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared';
@@ -19,7 +20,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './email.component.html',
   styles: [],
 })
-export class EmailComponent extends BasePage implements OnInit {
+export class EmailComponentC extends BasePage implements OnInit {
   email: any;
   report: any;
   form: FormGroup;
@@ -39,7 +40,8 @@ export class EmailComponent extends BasePage implements OnInit {
     private segUserService: SegAcessXAreasService,
     private receptionService: DocReceptionRegisterService,
     private transferGoodService: TranfergoodService,
-    private emailService: DataEmailService
+    private emailService: DataEmailServiceCentral,
+    private datePipe: DatePipe
   ) {
     super();
   }
@@ -54,6 +56,7 @@ export class EmailComponent extends BasePage implements OnInit {
       next: response => {
         if (response.data.length > 0) {
           this.delegation = response.data[0].delegationNumber;
+          console.log(this.delegation);
         }
       },
       error: () => {},
@@ -62,9 +65,9 @@ export class EmailComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      ASUNTO: [null],
+      asunto: [null],
       CC: [null],
-      FECHA_ENV: [null],
+      fechaEnv: [null],
       MENSAJE: [null],
       PARA: [null],
       PREVIO: [null],
@@ -77,20 +80,35 @@ export class EmailComponent extends BasePage implements OnInit {
 
     this.form.patchValue(this.email);
 
-    this.form.get('PARA').patchValue([this.email.PARA]);
-    console.log(this.email.PARA);
+    this.form.get('asunto').patchValue(this.email.data[0].asunto);
+
+    console.log(this.email.data[0]);
 
     this.form
-      .get('FECHA_ENV')
+      .get('fechaEnv')
       .patchValue(
-        this.email.FECHA_ENV
-          ? this.email.FECHA_ENV.split('T')[0].split('-').reverse().join('/')
+        this.email.data[0].fechaEnv
+          ? this.email.data[0].fechaEnv
+              .split('T')[0]
+              .split('-')
+              .reverse()
+              .join('/')
           : ''
       );
 
     const user = this.user.decodeToken();
 
     this.form.get('REMITENTE').patchValue(user.username.toUpperCase());
+  }
+
+  getDate(date: any) {
+    let newDate;
+    if (typeof date == 'string') {
+      newDate = String(date).split('/').reverse().join('-');
+    } else {
+      newDate = this.datePipe.transform(date, 'yyyy-MM-dd');
+    }
+    return newDate;
   }
 
   close() {
@@ -121,83 +139,83 @@ export class EmailComponent extends BasePage implements OnInit {
 
   sendEmail() {
     const {
-      folioCash,
-      transactionDate,
+      check,
+      dateDevolution,
       cveCurrency,
       total,
       cveAccount,
       delegation,
     } = this.report;
-    const { ASUNTO, PARA, REPORTE, CC, FECHA_ENV } = this.form.value;
+    const { asunto, PARA, REPORTE, CC, fechaEnv } = this.form.value;
     const user: string = this.user.decodeToken().name;
-
+    console.log(this.report);
     const del = this.delegations.data.filter(
       (del: any) => del.id == delegation
     )[0].description;
 
     const body = {
-      to: PARA.join(','),
-      subject: ASUNTO,
-      fecTrans: transactionDate,
-      cveDescription: del ?? this.description,
+      to: 'aetiru@gmail.com',
+      subject: asunto,
+      fecDepositDev: dateDevolution,
+      description: del ?? this.description,
       cveCurrency: cveCurrency,
-      nameUser: user.toUpperCase(),
-      noReport: REPORTE,
-      noFolioCv: folioCash,
-      cveAccount: cveAccount,
-      cveAmount: total,
+      toolbarUser: user.toUpperCase(),
+      noReportDev: REPORTE,
+      noCheque: check,
+      amountTotalDev: total,
+      cveAccountDev: cveAccount,
     };
-
-    this.transferGoodService.getMessageEmail(body).subscribe({
+    console.log(body);
+    this.transferGoodService.getEmailCentral(body).subscribe({
       next: resp => {
         this.form.get('MENSAJE').patchValue(resp.message);
 
-        const body: any = {
-          header: 'infosaedwh@sae.gob.mx',
-          destination: PARA,
-          copy: CC,
-          subject: ASUNTO,
-          message: `${resp.message}`,
-        };
-
         // const body: any = {
-        //   header: 'Test Email',
-        //   destination: ['amydla194@gmail.com'],
-        //   copy: ['amydla194@hotmail.com'],
+        //   header: 'aetiru@gmail.com',
+        //   destination: PARA,
+        //   copy: CC,
         //   subject: ASUNTO,
         //   message: `${resp.message}`,
         // };
+
+        const body: any = {
+          header: 'DEV',
+          destination: ['aetiru@gmail.com'],
+          copy: [''],
+          subject: 'DEV EMAIL',
+          message: `${resp.message}`,
+        };
 
         this.transferGoodService.sendEmail(body).subscribe({
           next: () => {
             this.alert('success', 'Correo', 'Mensaje enviado correctamente');
 
             const date =
-              typeof FECHA_ENV == 'string'
-                ? FECHA_ENV.split('/').reverse().join('-')
-                : FECHA_ENV;
+              typeof fechaEnv == 'string'
+                ? fechaEnv.split('/').reverse().join('-')
+                : fechaEnv;
 
-            const body = {
-              id: REPORTE,
-              addressee: PARA ? PARA.join(',') : [],
-              sender: user.toUpperCase(),
-              cc: CC ? CC.join(',') : [],
-              message: `${resp.message}`,
-              affair: ASUNTO,
-              sendDate: date,
-              devReportNumber: '',
-            };
-
-            // const body: any = {
+            // const body = {
             //   id: REPORTE,
-            //   addressee: 'amydla194@gmail.com',
+            //   addressee: PARA.join(','),
             //   sender: user.toUpperCase(),
-            //   cc: 'amydla194@hotmail.com',
+            //   cc: CC ? CC.join(',') : [],
             //   message: `${resp.message}`,
             //   affair: ASUNTO,
             //   sendDate: date,
-            //   devReportNumber: null,
+            //   devReportNumber: '',
             // };
+
+            const body: any = {
+              id: REPORTE,
+              addressee: 'aetiru@gmail.com',
+              sender: user.toUpperCase(),
+              cc: '',
+              message: `${resp.message}`,
+              affair: asunto,
+              sendDate: date,
+              devReportNumber: null,
+            };
 
             this.emailService.create(body).subscribe({
               next: () => {

@@ -26,7 +26,7 @@ export class DeletePeriodComponent extends BasePage {
       Validators.required,
       Validators.pattern(POSITVE_NUMBERS_PATTERN),
     ]),
-    delegation: new FormControl(null),
+    delegation: new FormControl(null, Validators.required),
     process: new FormControl(null, Validators.required),
   });
   processes = [
@@ -60,7 +60,7 @@ export class DeletePeriodComponent extends BasePage {
   onClickDeletePeriod() {
     if (!this.delegationDefault) {
       this.form.markAsTouched();
-      this.alert('warning', 'Debe seleccionar una delegación', '');
+      this.alert('warning', 'Debe Seleccionar una Delegación', '');
     }
 
     const period = this.form.value.period;

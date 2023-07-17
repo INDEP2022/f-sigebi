@@ -380,6 +380,7 @@ export class RecordAccountStatementsComponent
 
   // Establece los valores de movimientos de la cuenta seleccionada a la tabla
   searchDataAccount(accountNumber: number) {
+    console.log(accountNumber);
     this.accountNumber = accountNumber;
     this.loading = true;
     let params = {
@@ -394,6 +395,7 @@ export class RecordAccountStatementsComponent
           this.loading = true;
           const data = response.data;
           this.dataAccount.load(data);
+          console.log(this.dataAccount);
           this.dataAccount.refresh();
           this.totalItems = response.count;
           this.loading = false;
@@ -471,12 +473,13 @@ export class RecordAccountStatementsComponent
   delete(movimentAccount: IRecordAccountStatements, modal: any) {
     let showAlert = false;
     if (
+      movimentAccount.genderTransfer !== null ||
       movimentAccount.numberMotionTransfer !== null ||
       movimentAccount.numberReturnPayCheck !== null ||
       movimentAccount.numberGood !== null ||
       movimentAccount.genderTransfer !== null
     ) {
-      if (movimentAccount.numberMotionTransfer !== null) {
+      if (movimentAccount.genderTransfer === 'S') {
         this.alert(
           'warning',
           'No se puede eliminar el movimiento porque proviene de una transferencia',
@@ -519,7 +522,7 @@ export class RecordAccountStatementsComponent
         this.recordAccountStatementsAccountsService.remove(modal).subscribe({
           next: (response: any) => {
             this.searchDataAccount(this.dataAccountPaginated);
-            this.alert('success', 'Movimiento eliminado', '');
+            this.alert('success', 'Movimiento Eliminado', '');
           },
           error: (err: any) => {
             this.alert('error', 'No es posible eliminar el movimiento', '');

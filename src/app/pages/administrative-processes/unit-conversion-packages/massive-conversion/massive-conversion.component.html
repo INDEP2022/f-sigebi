@@ -21,6 +21,7 @@
             [control]="form.get('cvePackage')"
             label="Clave del Paquete">
             <input
+              type="text"
               [readOnly]="true"
               class="form-control"
               formControlName="cvePackage" />
@@ -37,36 +38,48 @@
           </form-field>
         </div>
       </div>
-      <div class="row mb-3 mt-3">
-        <!--Package type-->
-        <div class="col-md-5 col-sm-12">
+      <div class="row">
+        <div class="col-md-6 col-sm-12">
           <form-field [control]="form.get('packageType')">
             <label class="text-center">Tipo</label>
-            <div class="row justify-content-between">
-              <div class="col-md-3">
-                <form-radio label="Destrucción">
-                  <input type="radio" formControlName="packageType" value="1" />
-                </form-radio>
-              </div>
-              <div class="col-md-3">
-                <form-radio label="Donación">
-                  <input type="radio" formControlName="packageType" value="2" />
-                </form-radio>
-              </div>
-              <div class="col-md-3">
-                <form-radio label="Chatarra">
-                  <input type="radio" formControlName="packageType" value="3" />
-                </form-radio>
-              </div>
+            <div class="row">
               <div class="col">
-                <form-radio>
-                  <input type="radio" formControlName="packageType" value="4" />
-                </form-radio>
+                <div class="col">
+                  <form-radio label="Destrucción">
+                    <input
+                      type="radio"
+                      formControlName="packageType"
+                      value="1" />
+                  </form-radio>
+                </div>
+                <div class="col">
+                  <form-radio label="Donación">
+                    <input
+                      type="radio"
+                      formControlName="packageType"
+                      value="2" />
+                  </form-radio>
+                </div>
+                <div class="col">
+                  <form-radio label="Chatarra">
+                    <input
+                      type="radio"
+                      formControlName="packageType"
+                      value="3" />
+                  </form-radio>
+                </div>
+                <div class="col">
+                  <form-radio label="Otro">
+                    <input
+                      type="radio"
+                      formControlName="packageType"
+                      value="4" />
+                  </form-radio>
+                </div>
               </div>
             </div>
           </form-field>
         </div>
-
         <div class="col-md-3 col-sm-12 mt-3">
           <form-field
             [control]="form.get('amountKg')"
@@ -149,35 +162,35 @@
               <td>
                 <form-field [control]="form.get('fecElab')">
                   <span>{{
-                    form.get('fecElab').value | date: 'dd-MM-yyyy'
+                    form.get('fecElab').value | date : 'dd-MM-yyyy'
                   }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecValida')">
                   <span>{{
-                    form.get('fecValida').value | date: 'dd-MM-yyyy'
+                    form.get('fecValida').value | date : 'dd-MM-yyyy'
                   }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecAutoriza')">
                   <span>{{
-                    form.get('fecAutoriza').value | date: 'dd-MM-yyyy'
+                    form.get('fecAutoriza').value | date : 'dd-MM-yyyy'
                   }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecCerrado')">
                   <span>{{
-                    form.get('fecCerrado').value | date: 'dd-MM-yyyy'
+                    form.get('fecCerrado').value | date : 'dd-MM-yyyy'
                   }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecCancelado')">
                   <span>{{
-                    form.get('fecCancelado').value | date: 'dd-MM-yyyy'
+                    form.get('fecCancelado').value | date : 'dd-MM-yyyy'
                   }}</span>
                 </form-field>
               </td>
@@ -391,7 +404,7 @@
           (click)="viewModal('error')"
           [disabled]="widthErrors || dataErrors.length === 0"
           class="btn btn-primary btn-sm active mr-3">
-          Ver Error <i class="fas fa-edit bx-sm float-icon"></i>
+          Ver Error <i class="fa fa-eye" aria-hidden="true"></i>
         </button>
         <button
           (click)="exportToExcel()"

@@ -19,7 +19,7 @@ export class ChangePeriodComponent extends BasePage {
   form = new FormGroup({
     year: new FormControl(null, Validators.required),
     period: new FormControl(null, Validators.required),
-    delegation: new FormControl(null),
+    delegation: new FormControl(null, Validators.required),
     process: new FormControl(null, [
       Validators.required,
       Validators.pattern(POSITVE_NUMBERS_PATTERN),
