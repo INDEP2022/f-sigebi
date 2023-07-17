@@ -80,7 +80,7 @@ export class TableExpensesComponent extends ClassWidthAlert {
       };
       this.expenses.push(expense);
     }
-    this.alert('success', '', message);
+    this.alert('success', message, '');
     this.closeDialogExpense();
   }
 
