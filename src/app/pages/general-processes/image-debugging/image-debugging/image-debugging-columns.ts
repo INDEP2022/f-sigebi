@@ -1,86 +1,4 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-export const IMAGE_DEBUGGING_COLUMNS = {
-  // goodNumber: {
-  //   title: 'No. Bien',
-  //   sort: false,
-  // },
-  // desGood: {
-  //   title: 'Descripción',
-  //   sort: false,
-  // },
-  // consecNumber: {
-  //   title: 'Consecutivo',
-  //   sort: false,
-  // },
-  program: {
-    title: 'Programa',
-    type: 'string',
-    sort: false,
-  },
-  goodNumb: {
-    title: 'No. Bien',
-    type: 'number',
-    sort: false,
-  },
-  description: {
-    title: 'Descripción',
-    type: 'string',
-    sort: false,
-  },
-  status: {
-    title: 'Estatus',
-    type: 'string',
-    sort: false,
-  },
-  destination: {
-    title: 'Destino',
-    type: 'string',
-    sort: false,
-  },
-  receptDate: {
-    title: 'Fecha Recepción',
-    type: 'string',
-    sort: false,
-  },
-  photoDate: {
-    title: 'Fecha Fotografía',
-    type: 'string',
-    sort: false,
-  },
-  photo: {
-    title: 'Fotografía',
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
-    },
-    sort: false,
-  },
-  publicImgcatWeb: {
-    title: 'Publicado',
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
-    },
-    sort: false,
-  },
-  existsfs: {
-    title: 'Existe',
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
-    },
-    sort: false,
-  },
-};
 
 export const PHOTOGRAPHY_COLUMNS = {
   dDocName: {
@@ -117,3 +35,123 @@ export const PHOTOGRAPHY_COLUMNS = {
     sort: false,
   },
 };
+
+export const IMAGE_DEBUGGING_COLUMNS = {
+  goodNumber: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+  consecNumber: {
+    title: 'Consecutivo',
+    sort: false,
+  },
+  publicImgcatWeb: {
+    title: 'Publicado',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+    sort: false,
+  },
+  existsfs: {
+    title: 'Existe',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+    sort: false,
+  },
+};
+
+// export const IMAGE_DEBUGGING_COLUMNS = {
+//   // goodNumber: {
+//   //   title: 'No. Bien',
+//   //   sort: false,
+//   // },
+//   // desGood: {
+//   //   title: 'Descripción',
+//   //   sort: false,
+//   // },
+//   // consecNumber: {
+//   //   title: 'Consecutivo',
+//   //   sort: false,
+//   // },
+//   // program: {
+//   //   title: 'Programa',
+//   //   type: 'string',
+//   //   sort: false,
+//   // },
+//   goodNumb: {
+//     title: 'No. Bien',
+//     type: 'number',
+//     sort: false,
+//   },
+//   description: {
+//     title: 'Descripción',
+//     type: 'string',
+//     sort: false,
+//   },
+//   status: {
+//     title: 'Estatus',
+//     type: 'string',
+//     sort: false,
+//   },
+//   destination: {
+//     title: 'Destino',
+//     type: 'string',
+//     sort: false,
+//   },
+//   receptDate: {
+//     title: 'Fecha Recepción',
+//     type: 'string',
+//     sort: false,
+//   },
+//   photoDate: {
+//     title: 'Fecha Fotografía',
+//     type: 'string',
+//     sort: false,
+//   },
+//   photo: {
+//     title: 'Fotografía',
+//     type: 'custom',
+//     renderComponent: CheckboxElementComponent,
+//     onComponentInitFunction(instance: any) {
+//       instance.toggle.subscribe((data: any) => {
+//         data.row.to = data.toggle;
+//       });
+//     },
+//     sort: false,
+//   },
+//   publicImgcatWeb: {
+//     title: 'Publicado',
+//     type: 'custom',
+//     renderComponent: CheckboxElementComponent,
+//     onComponentInitFunction(instance: any) {
+//       instance.toggle.subscribe((data: any) => {
+//         data.row.to = data.toggle;
+//       });
+//     },
+//     sort: false,
+//   },
+//   existsfs: {
+//     title: 'Existe',
+//     type: 'custom',
+//     renderComponent: CheckboxElementComponent,
+//     onComponentInitFunction(instance: any) {
+//       instance.toggle.subscribe((data: any) => {
+//         data.row.to = data.toggle;
+//       });
+//     },
+//     sort: false,
+//   },
+// };

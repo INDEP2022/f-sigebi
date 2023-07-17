@@ -73,6 +73,10 @@ export class UnitCostDetFormComponent extends BasePage implements OnInit {
       this.unitCostDetForm.controls['contract'].setValue(
         this.unitCostDet1.cveZoneContract
       );
+      this.unitCostDetForm.controls['validity'].setValue(
+        this.unitCostDet1.validity
+      );
+      console.log(this.unitCostDet1.validity);
       //this.getContractFilter();
       //console.log(this.idCost);
     }
@@ -153,6 +157,7 @@ export class UnitCostDetFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    console.log(this.unitCostDetForm.controls['validity'].value);
     let body = {
       costId: Number(this.unitCostDetForm.controls['costId'].value),
       cveZoneContract: this.unitCostDetForm.controls['cveZoneContract'].value,

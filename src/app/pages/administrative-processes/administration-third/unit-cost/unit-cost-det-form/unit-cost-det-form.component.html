@@ -85,10 +85,17 @@
           <form-field
             label="Vigente"
             [control]="unitCostDetForm.get('validity')">
-            <input
+            <select
+              formcontrolName="validity"
+              class="form-control ng-pristine ng-invalid ng-touched">
+              <option value="null">Seleccione un valor</option>
+              <option value="1">SI</option>
+              <option value="0">NO</option>
+            </select>
+            <!--<input
               type="number"
               class="form-control"
-              formControlName="validity" />
+              formControlName="validity" />-->
           </form-field>
         </div>
       </div>
