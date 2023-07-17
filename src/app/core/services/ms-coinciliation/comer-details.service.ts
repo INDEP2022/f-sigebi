@@ -15,7 +15,7 @@ export class ComerDetailsService extends HttpService {
     return this.post(`${this.route}/fa-conciliation-good`, body);
   }
 
-  deleteAllTable(){
-    return this.delete('tmp-good-val5/')
+  deleteAllTable() {
+    return this.delete('tmp-good-val5/');
   }
 }

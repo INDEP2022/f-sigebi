@@ -168,27 +168,27 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
     );
   }
 
-  pupSearchNumerary(body: ISearchNumerary){
-    return this.post(`application/pup-search-numerary`,body)
+  pupSearchNumerary(body: ISearchNumerary) {
+    return this.post(`application/pup-search-numerary`, body);
   }
 
-  getAllRequestNume(params?: string){
-    return this.get(`request-nume`,params)
+  getAllRequestNume(params?: string) {
+    return this.get(`request-nume`, params);
   }
 
-  createRequestNume(body: IRequesNum){
-    return this.post('request-nume',body)
+  createRequestNume(body: IRequesNum) {
+    return this.post('request-nume', body);
   }
 
-  getAllRequestNumMov(params?:string){
-    return this.get(`nume-request-movi`,params)
+  getAllRequestNumMov(params?: string) {
+    return this.get(`nume-request-movi`, params);
   }
 
-  createRequestNumMov(body:IRequesNumMov){
-    return this.post(`nume-request-movi`,body)
+  createRequestNumMov(body: IRequesNumMov) {
+    return this.post(`nume-request-movi`, body);
   }
 
-  pupAssociateGood(body:IPupAssociateGood){
-    return this.post('application/pup-associate-good-func',body)
+  pupAssociateGood(body: IPupAssociateGood) {
+    return this.post('application/pup-associate-good-func', body);
   }
 }
