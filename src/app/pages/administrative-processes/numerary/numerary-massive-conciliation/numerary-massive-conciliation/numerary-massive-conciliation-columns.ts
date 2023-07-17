@@ -1,7 +1,7 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 // import { CheckboxElementRecordAccountStatementsComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element-record-account-statements';
 
-export let goodCheck: any[] = []
+export let goodCheck: any[] = [];
 
 export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
   select: {
@@ -34,7 +34,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
   val4: {
     title: 'Banco',
     type: 'string',
-    sort: false
+    sort: false,
   },
   val6: {
     title: 'Cuenta Bancaria',
@@ -44,7 +44,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
   val1: {
     title: 'Moneda',
     type: 'string',
-    sort: false
+    sort: false,
   },
   val2: {
     title: 'Depósito',
