@@ -3,7 +3,7 @@
     <h5 class="modal-title">Seleccionar {{ title }}</h5>
   </div>
   <div body>
-    <div class="row mt-n3">
+    <div class="row mt-n3" *ngIf="!haveColumnFilters">
       <div class="form-material col-md-7">
         <search-bar
           *ngIf="dataObservableFn"
@@ -38,6 +38,15 @@
         </button>
       </div>
     </div>
+    <div class="row" *ngIf="haveSelectColumns">
+      <div class="d-flex justify-content-end">
+        <div class="m-3">
+          <app-columns-select
+            [(settings)]="settings"
+            [leftList]="true"></app-columns-select>
+        </div>
+      </div>
+    </div>
     <div class="row pt-4">
       <div class="col-md-12 heigth-limit">
         <!-- <ng-scrollbar track="all" [autoHeightDisabled]="true"> -->
@@ -45,9 +54,9 @@
           <ng2-smart-table
             #table
             id="events-table"
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
-            [source]="columns"
+            [source]="data"
             (userRowSelect)="selectEvent($event)">
           </ng2-smart-table>
         </div>

@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -20,13 +25,15 @@ export class DepositAccountStatementModalComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Detalle del calculo';
+  title: string = 'Detalle del cálculo';
   form: FormGroup;
   data: any[] = [];
   devolutionnumber: string;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   detail: IDetailInterestReturn[] = [];
+  limit: FormControl = new FormControl(5);
+  pageSizeOptions: number[] = [5, 10, 15, 20];
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -36,6 +43,7 @@ export class DepositAccountStatementModalComponent
     private sanitizer: DomSanitizer
   ) {
     super();
+    this.params.value.limit = 5;
     this.settings = {
       ...this.settings,
       actions: false,
