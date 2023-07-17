@@ -4,7 +4,36 @@
   </div>
   <div body>
     <div class="row pt-4">
-      <div class="col-md-8"></div>
+      <div class="legend mb-4">
+        <div>
+          <div class="rectangle requiredAva"></div>
+          <span style="font-size: 0.875em">Numerario ADM</span>
+        </div>
+        <div>
+          <div class="rectangle numerary"></div>
+          <span style="font-size: 0.875em"
+            >Numerario 'CNE','CBD','CDS','CNS','CNR'</span
+          >
+        </div>
+        <div>
+          <div class="rectangle requiredAva"></div>
+          <span style="font-size: 0.875em">Numerario TRANSFERENTE.</span>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-8">
+        <div class="legend mb-4">
+          <div>
+            <div class="rectangle numeraryGood"></div>
+            <span style="font-size: 0.875em">Bien sin Acta.</span>
+          </div>
+          <div>
+            <div class="rectangle required"></div>
+            <span style="font-size: 0.875em">Numerario conciliado.</span>
+          </div>
+        </div>
+      </div>
       <div class="col-md-4 mb-3">
         <div class="d-flex gap-3 justify-content-end">
           <app-columns-select [(settings)]="settings"></app-columns-select>
@@ -19,28 +48,6 @@
       </div> -->
     </div>
     <div class="row">
-      <div class="legend mb-4">
-        <div>
-          <div class="rectangle requiredAva"></div>
-          Numerario ADM
-        </div>
-        <div>
-          <div class="rectangle numerary"></div>
-          Numerario 'CNE','CBD','CDS','CNS','CNR'
-        </div>
-        <div>
-          <div class="rectangle requiredAva"></div>
-          Numerario TRANSFERENTE.
-        </div>
-        <div>
-          <div class="rectangle numeraryGood"></div>
-          Bien sin Acta.
-        </div>
-        <div>
-          <div class="rectangle required"></div>
-          Numerario conciliado.
-        </div>
-      </div>
       <div class="col-md-12">
         <div class="overflow-auto" [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
