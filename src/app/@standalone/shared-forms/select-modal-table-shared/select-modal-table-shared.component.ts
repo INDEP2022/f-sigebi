@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { Observable } from 'rxjs';
@@ -44,6 +44,9 @@ export class SelectModalTableSharedComponent
 {
   @Input() form: FormGroup;
   @Input() disabled: boolean;
+  @Input() override haveSelectColumns: boolean = false;
+  @Input() override haveColumnFilters: boolean = false;
+  @Input() widthDescription = true;
   @Input() label: string;
   @Input() labelName: string;
   @Input() formField: string;
@@ -57,6 +60,7 @@ export class SelectModalTableSharedComponent
   @Input() columnsType: {
     [others: string]: { title: string; type: string; sort: boolean };
   };
+  @Output() selectRow = new EventEmitter();
   constructor(protected override modalService: BsModalService) {
     super(modalService);
   }
@@ -74,7 +78,7 @@ export class SelectModalTableSharedComponent
       columnsType: this.columnsType,
       service: this.service,
       settings: { ...TABLE_SETTINGS },
-      dataObservableFn: this.service.getAllFilterSelf,
+      dataObservableListParamsFn: this.service.getAllFilterSelf,
     };
     if (this.searchField) {
       context = {
@@ -87,6 +91,7 @@ export class SelectModalTableSharedComponent
 
   selectData(row: any, self: SelectModalTableSharedComponent) {
     self.form.get(self.formField).setValue(row[self.id]);
+    self.selectRow.emit(row);
     if (self.form.get(self.formFieldName))
       self.form.get(self.formFieldName).setValue(row[self.description]);
   }

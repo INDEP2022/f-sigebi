@@ -62,13 +62,13 @@
         <div class="row pb-4">
           <div class="col text-right">
             <div class="btn-group">
-              <button
+              <!-- <button
                 type="button"
                 tooltip="Agregar"
                 containerclass="tooltip-style"
                 class="btn btn-info btn-sm active ml-2 mr-2">
                 <i class="bx bx-plus bx-sm float-icon"></i>
-              </button>
+              </button> -->
               <button
                 class="btn btn-primary btn-sm active mx-1"
                 [disabled]="!validDetail"
@@ -165,7 +165,23 @@
 
         <div class="row pt-4">
           <div class="col-md-3">
-            <form-field [control]="form.get('account')">
+            <app-select-modal-table-shared
+              [form]="form"
+              [disabled]="false"
+              [widthDescription]="false"
+              [haveSelectColumns]="true"
+              [haveColumnFilters]="true"
+              label="Cuenta"
+              formField="account"
+              [service]="detailsIndMovementService"
+              [columnsType]="columnsType"
+              searchField="description"
+              id="accountkey"
+              title="Cuenta"
+              (selectRow)="
+                changeChecks($event)
+              "></app-select-modal-table-shared>
+            <!-- <form-field [control]="form.get('account')">
               <ngx-select
                 label="Cuenta"
                 [form]="form"
@@ -195,11 +211,7 @@
                   {{ item.devolutionnumber }}
                 </div>
               </ng-template>
-              <!--<input
-                type="text"
-                class="form-control"
-                formControlName="account" />-->
-            </form-field>
+            </form-field> -->
           </div>
           <div class="col-md-3">
             <form-field [control]="form.get('bank')" label="Banco">
@@ -562,7 +574,7 @@
             </form-field>
           </div>
           <div class="col-md-6">
-            <ng-custom-select-loading
+            <!-- <ng-custom-select-loading
               [isLoadInOnInit]="false"
               [load]="userChecks != null"
               [form]="form"
@@ -572,8 +584,8 @@
               [path]="pathBeneficiary"
               value="beneficiario_cheque"
               bindLabel="beneficiario_cheque">
-            </ng-custom-select-loading>
-            <!-- <form-field
+            </ng-custom-select-loading> -->
+            <form-field
               [control]="form.get('beneficiary')"
               label="Beneficiario">
               <input
@@ -581,7 +593,7 @@
                 class="form-control"
                 formControlName="beneficiary"
                 [readonly]="readonly && !userChecks" />
-            </form-field> -->
+            </form-field>
           </div>
         </div>
       </form>

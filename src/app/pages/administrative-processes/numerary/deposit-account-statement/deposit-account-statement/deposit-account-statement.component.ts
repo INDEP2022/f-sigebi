@@ -39,6 +39,7 @@ import { IPupCalculateDevolutionResult } from 'src/app/core/models/ms-parameterg
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { DetailsIndMovementService } from 'src/app/core/services/ms-account-movements/details-ind-movement.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
 import { DetailInterestReturnService } from 'src/app/core/services/ms-deposit/detail-interest-return.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
@@ -48,6 +49,7 @@ import { PaymentServicesService } from 'src/app/core/services/ms-paymentservices
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { formatForIsoDate } from 'src/app/shared/utils/date';
 import { DepositAccountStatementModalComponent } from '../deposit-account-statement-modal/deposit-account-statement-modal.component';
 import { DepositAccountStatementParameterComponent } from '../deposit-account-statement-parameter/deposit-account-statement-parameter.component';
 
@@ -115,6 +117,71 @@ export class DepositAccountStatementComponent
   dateTransfer: Date;
   transferDate: Date;
   checksDevolution: IUserChecks[] = [];
+  columnsType = {
+    accountkey: {
+      title: 'Cuenta',
+      type: 'string',
+      sort: false,
+    },
+    devolutionnumber: {
+      title: 'Devolución',
+      type: 'string',
+      sort: false,
+    },
+
+    goodnumber: {
+      title: 'Bien',
+      type: 'string',
+      sort: false,
+    },
+    expedientnumber: {
+      title: 'Expediente',
+      type: 'string',
+      sort: false,
+    },
+    depositnumber: {
+      title: 'Importe',
+      type: 'string',
+      sort: false,
+    },
+    returnamount: {
+      title: 'Importe Cheque',
+      type: 'string',
+      sort: false,
+    },
+    bankkey: {
+      title: 'Banco',
+      type: 'string',
+      sort: false,
+    },
+    coinkey: {
+      title: 'Moneda',
+      type: 'string',
+      sort: false,
+    },
+
+    interestcalculationdate: {
+      title: 'Fecha de transferencia',
+      type: 'string',
+      sort: false,
+      valuePrepareFunction: (value: string) => {
+        return formatForIsoDate(value, 'string');
+      },
+    },
+    scheduleddatebyconfiscationreturn: {
+      title: 'Fecha de corte',
+      type: 'string',
+      sort: false,
+      valuePrepareFunction: (value: string) => {
+        return formatForIsoDate(value, 'string');
+      },
+    },
+    nameindicated: {
+      title: 'Nombre indiciado',
+      type: 'string',
+      sort: false,
+    },
+  };
   constructor(
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
@@ -129,7 +196,8 @@ export class DepositAccountStatementComponent
     private expedientService: ExpedientService,
     private detailInterestReturnService: DetailInterestReturnService,
     private paymentServicesService: PaymentServicesService,
-    private authService: AuthService
+    private authService: AuthService,
+    public detailsIndMovementService: DetailsIndMovementService
   ) {
     super();
   }
@@ -375,18 +443,22 @@ export class DepositAccountStatementComponent
     if (this.expedientFilter.value) {
       body = { ...body, expedientNumber: this.expedientFilter.value };
     }
-    this.accountMovementService
-      .getDetailsInd(params, body)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: data => {
-          console.log(data.data);
-          this.accountChecksSelect = new DefaultSelect(data.data, data.count);
-        },
-        error: error => {
-          this.accountChecksSelect = new DefaultSelect();
-        },
-      });
+    // this.detailsIndMovementService
+    //   .getAll(params, body)
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe({
+    //     next: data => {
+    //       console.log(data.data);
+    //       this.accountChecksSelect = new DefaultSelect(data.data, data.count);
+    //     },
+    //     error: error => {
+    //       this.accountChecksSelect = new DefaultSelect();
+    //     },
+    //   });
+  }
+
+  changeChecks2(event: any) {
+    console.log(event);
   }
 
   async changeChecks(event: any) {
@@ -572,6 +644,7 @@ export class DepositAccountStatementComponent
       this.userChecks.scheduleddatebyconfiscationreturn
     );
     this.form.controls['cutoffDate'].setValue(formatDateReturn);
+    this.form.controls['expeditionDate'].setValue(formatDateReturn);
     this.form.controls['bank'].setValue(this.userChecks.bankkey);
     if (this.userChecks.accountnumberpayreturn) {
       this.form.controls['bankAccount'].setValue(this.userChecks.bankkey);
@@ -975,7 +1048,8 @@ export class DepositAccountStatementComponent
     if (!this.updatePupReturnsByDates) return;
     if (date) {
       console.log(date);
-
+      this.form.controls['expeditionDate'].setValue(date);
+      // this.form
       if (
         this.form.controls['toReturn'].value &&
         this.form.controls['depositDate'].value &&
