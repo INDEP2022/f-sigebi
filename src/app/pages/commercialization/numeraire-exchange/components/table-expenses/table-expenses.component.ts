@@ -1,6 +1,6 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { showToast } from 'src/app/common/helpers/helpers';
 import { ISpentConcept } from 'src/app/core/models/ms-spent/spent.model';
 import { ClassWidthAlert } from 'src/app/core/shared';
@@ -14,7 +14,16 @@ interface IExpense {
 @Component({
   selector: 'app-table-expenses',
   templateUrl: './table-expenses.component.html',
-  styles: [],
+  styles: [
+    `
+      .dialog-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+    `,
+  ],
 })
 export class TableExpensesComponent extends ClassWidthAlert {
   @ViewChild('dialogExpense') dialogExpenseTemplateRef: TemplateRef<any>;
@@ -45,11 +54,11 @@ export class TableExpensesComponent extends ClassWidthAlert {
 
   addExpense(): void {
     if (this.form.invalid) {
-      showToast({
-        icon: 'error',
-        title: 'Gasto invalido',
-        text: 'Revise el gasto que va a ingresar unos de sus campos es invalido o es requerido',
-      });
+      this.alert(
+        'warning',
+        'Gasto inválido',
+        'Revise el Gasto que va a Ingresar unos de sus Campos es Inválido o es Requerido'
+      );
       return;
     }
     if (!this.validateNotRepeatExpense()) {
@@ -57,12 +66,12 @@ export class TableExpensesComponent extends ClassWidthAlert {
     }
     const { id, description, import: importValue } = this.form.getRawValue();
 
-    let message = 'Gasto agregado correctamente';
+    let message = 'Gasto Agregado Correctamente';
     if (this.idExpense) {
       const expense = this.expenses.find(x => x.id == this.idExpense);
       expense.description = description;
       expense.import = importValue;
-      message = 'Gasto actualizado correctamente';
+      message = 'Gasto Actualizado Correctamente';
     } else {
       const expense: IExpense = {
         id,
@@ -79,7 +88,7 @@ export class TableExpensesComponent extends ClassWidthAlert {
     const confirm = await this.alertQuestion(
       'warning',
       'Advertencia',
-      '¿Estas seguro de eliminar el gasto?'
+      '¿Estas Seguro de Eliminar el Gasto?'
     );
     if (!confirm.isConfirmed) {
       return;
@@ -105,8 +114,12 @@ export class TableExpensesComponent extends ClassWidthAlert {
   }
 
   openDialogExpense(): void {
+    const config: ModalOptions = {
+      class: 'modal-dialog-centered',
+    };
     this.dialogExpenseRef = this.dialogService.show(
-      this.dialogExpenseTemplateRef
+      this.dialogExpenseTemplateRef,
+      config
     );
   }
 
@@ -122,8 +135,8 @@ export class TableExpensesComponent extends ClassWidthAlert {
     if (expense && !this.isEdit()) {
       showToast({
         icon: 'error',
-        title: 'Gasto invalido',
-        text: 'El Gasto ya esta ingresado',
+        title: 'Gasto Inválido',
+        text: 'El Gasto ya esta Ingresado',
       });
       return false;
     }

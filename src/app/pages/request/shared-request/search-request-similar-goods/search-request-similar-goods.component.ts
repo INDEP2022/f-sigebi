@@ -170,6 +170,7 @@ export class SearchRequestSimilarGoodsComponent
                   confirmButtonText: 'Aceptar',
                   denyButtonText: `Cancelar`,
                   confirmButtonColor: '#9D2449',
+                  allowOutsideClick: false,
                 }).then(result => {
                   if (result.isConfirmed) {
                     this.updateStateRequestTab();

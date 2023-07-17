@@ -6,7 +6,10 @@ import { Repository } from 'src/app/common/repository/repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { BankAccount } from 'src/app/pages/administrative-processes/numerary/tesofe-movements/list-banks/bank';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IBankAccount, IProReconcilesGood } from '../../models/catalogs/bank-account.model';
+import {
+  IBankAccount,
+  IProReconcilesGood,
+} from '../../models/catalogs/bank-account.model';
 import { IAccountMovement } from '../../models/ms-account-movements/account-movement.model';
 
 @Injectable({
