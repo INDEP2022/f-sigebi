@@ -4,21 +4,12 @@
       <div class="col-md-4">
         <form-field [control]="form.get('year')" label="Año">
           <ng-select
+            (change)="obtenerPeriodo($event)"
             class="form-control"
             formControlName="year"
             [items]="years"
             [ngModel]="currentYear"></ng-select>
           <!-- <input type="number" class="form-control" formControlName="year" min="1" [max-length]="4" /> -->
-        </form-field>
-      </div>
-      <div class="col-md-4">
-        <form-field [control]="form.get('period')" label="Periodo">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="period"
-            maxlength="6"
-            minlength="1" />
         </form-field>
       </div>
       <div class="col-md-4">
@@ -30,7 +21,7 @@
             (change)="changeDelegations($event)"
             bindLabel="numberAndDescrip"
             label="Delegación"
-            value="id"
+            value="delegationNumber"
             [showTooltip]="true"
             (fetchItems)="getDelegation($event)"
             control="delegation"></ngx-select>
@@ -42,9 +33,10 @@
           </ng-custom-select> -->
         </form-field>
       </div>
-      <div class="col-md-4 mt-3">
+      <div class="col-md-4">
         <form-field [control]="form.get('process')">
           <ngx-select
+            (change)="obtenerPeriodoProcess($event)"
             [data]="procesess"
             [form]="form"
             value="value"
@@ -55,13 +47,33 @@
         </form-field>
       </div>
       <div class="col-md-4 mt-3">
-        <form-field [control]="form.get('random')" label="Aleatorio">
-          <input
-            type="number"
-            class="form-control"
-            formControlName="random"
-            min="1"
-            pattern="^[0-9]+" />
+        <form-field [control]="form.get('period')">
+          <ngx-select
+            (change)="obtenerNumero($event)"
+            [readonly]="!disabledPeriod"
+            [form]="form"
+            [data]="periods"
+            bindLabel="cvePeriod"
+            label="Periodo"
+            value="cvePeriod"
+            (fetchItems)="getPeriods($event)"
+            control="period"></ngx-select>
+          <!-- <input type="text" class="form-control" formControlName="period" maxlength="6" minlength="1" /> -->
+        </form-field>
+      </div>
+      <div class="col-md-4 mt-3">
+        <form-field [control]="form.get('random')">
+          <ngx-select
+            (change)="seleccionarNumero($event)"
+            [readonly]="!disabledRandom"
+            [form]="form"
+            [data]="randoms"
+            bindLabel="randomId"
+            label="Aleatorio"
+            value="randomId"
+            (fetchItems)="getVigSupervisionDet_($event)"
+            control="random"></ngx-select>
+          <!-- <input type="number" class="form-control" formControlName="random" min="1" pattern="^[0-9]+" /> -->
         </form-field>
       </div>
       <div class="col-md-4 mt-3">

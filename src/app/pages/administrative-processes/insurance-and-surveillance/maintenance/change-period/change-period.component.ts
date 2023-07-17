@@ -19,7 +19,7 @@ export class ChangePeriodComponent extends BasePage {
   form = new FormGroup({
     year: new FormControl(null, Validators.required),
     period: new FormControl(null, Validators.required),
-    delegation: new FormControl(null),
+    delegation: new FormControl(null, Validators.required),
     process: new FormControl(null, [
       Validators.required,
       Validators.pattern(POSITVE_NUMBERS_PATTERN),
@@ -58,6 +58,7 @@ export class ChangePeriodComponent extends BasePage {
   }
 
   ngOnInit(): void {
+    this.anio = this.currentYear;
     for (let i = 2010; i <= this.currentYear; i++) {
       this.years.push(i);
     }
@@ -66,24 +67,28 @@ export class ChangePeriodComponent extends BasePage {
     this.dateDestino();
   }
   dateDestino() {
-    for (let i = 2010; i <= this.currentYear; i++) {
+    this.currentYear2 = this.anio;
+    this.years2 = [];
+    const aaa = this.anio - 1;
+    for (let i = aaa; i <= this.anio; i++) {
+      if (i == 2009) return;
       this.years2.push(i);
     }
   }
 
-  yearChange(event: any) {
-    console.log(event);
-    if (event) {
-      this.form.get('period').setValue(null);
-      this.maxDate = event;
-      this.dateDestino();
-      this.disabledPeriod = true;
-      this.getPeriods(new ListParams());
-    } else {
-      this.form.get('period').setValue(null);
-      this.disabledPeriod = false;
-    }
-  }
+  // yearChange(event: any) {
+  //   console.log(event);
+  //   if (event) {
+  //     this.form.get('period').setValue(null);
+  //     this.maxDate = event;
+  //     this.dateDestino();
+  //     this.disabledPeriod = true;
+  //     this.getPeriods(new ListParams());
+  //   } else {
+  //     this.form.get('period').setValue(null);
+  //     this.disabledPeriod = false;
+  //   }
+  // }
   // prepareForm() {
   //   this.form = this.fb.group({
   //     year: [null, Validators.required],
@@ -105,7 +110,7 @@ export class ChangePeriodComponent extends BasePage {
     console.log(this.form.value);
     this.form.value.delegation = this.delegationDefault.delegationNumber;
     this.form.value.delegationDestiny = this.delegationDefault.delegationNumber;
-    this.form.value.processDestiny = this.processDefault.value;
+    this.form.value.processDestiny = this.process;
     console.log(this.form.value);
 
     const period = this.form.value.period;
@@ -160,14 +165,14 @@ export class ChangePeriodComponent extends BasePage {
     });
   }
 
-  changeDelegations(event: any) {
-    if (event) {
-      this.form.get('delegationDestiny').setValue(event.numberAndDescrip);
-    } else {
-      this.form.get('delegationDestiny').setValue('');
-    }
-    this.delegationDefault = event;
-  }
+  // changeDelegations(event: any) {
+  //   if (event) {
+  //     this.form.get('delegationDestiny').setValue(event.numberAndDescrip);
+  //   } else {
+  //     this.form.get('delegationDestiny').setValue('');
+  //   }
+  //   this.delegationDefault = event;
+  // }
 
   changeProcess(event: any) {
     if (event) {
@@ -190,6 +195,15 @@ export class ChangePeriodComponent extends BasePage {
     // });
   }
 
+  changePeriods(event: any) {}
+  cleanForm() {
+    this.disabledPeriod = false;
+    this.periods = new DefaultSelect([], 0, true);
+    this.delegationDefault = null;
+    this.processDefault = null;
+    this.form.reset();
+  }
+
   // OBTENER PERIODOS //
   async getPeriods(lparams: ListParams) {
     const params = new FilterParams();
@@ -197,7 +211,32 @@ export class ChangePeriodComponent extends BasePage {
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    params.addFilter('perYear', this.form.value.year, SearchFilter.EQ);
+    if (this.delegationDefault != null) {
+      params.addFilter(
+        'delegationNumber',
+        this.delegationDefault.delegationNumber,
+        SearchFilter.EQ
+      );
+      params.addFilter(
+        'delegationType',
+        this.delegationDefault.typeDelegation,
+        SearchFilter.EQ
+      );
+
+      params.addFilter('perYear', this.form.value.year, SearchFilter.EQ);
+
+      if (this.form.value.process != null) {
+        params.addFilter(
+          'cveProcess',
+          this.form.value.process,
+          SearchFilter.EQ
+        );
+      }
+    }
+
+    if (lparams.text != '') {
+      params.addFilter('cvePeriod', lparams.text, SearchFilter.EQ);
+    }
 
     return new Promise((resolve, reject) => {
       this.survillanceService
@@ -210,18 +249,102 @@ export class ChangePeriodComponent extends BasePage {
             resolve(response.data);
           },
           error: error => {
-            this.periods = new DefaultSelect([], 0);
+            this.periods = new DefaultSelect([], 0, true);
             this.loading = false;
+            // this.alert('warning', 'No se Encontraron Períodos', '');
             resolve(null);
           },
         });
     });
   }
 
-  changePeriods(event: any) {}
-  cleanForm() {
-    this.delegationDefault = null;
-    this.processDefault = null;
-    this.form.reset();
+  // AGREGAR FECHAS //
+  addDate(event: any) {
+    console.log('event', event);
+    if (event != null) {
+    } else {
+    }
+  }
+
+  anio: any;
+  obtenerPeriodo(event: any) {
+    this.anio = event;
+
+    if (event) {
+      this.currentYear2 = event;
+      this.years2 = [];
+      const aaa = this.anio - 1;
+      for (let i = aaa; i <= this.anio; i++) {
+        if (i >= 2010) {
+          this.years2.push(i);
+        }
+      }
+
+      if (this.delegationDefault && this.anio && this.process) {
+        this.disabledPeriod = true;
+        this.form.get('period').setValue(null);
+        this.getPeriods(new ListParams());
+      } else {
+        this.form.get('period').setValue(null);
+        this.disabledPeriod = false;
+      }
+    } else {
+      this.form.get('period').setValue(null);
+      this.disabledPeriod = false;
+    }
+  }
+
+  process: any;
+  obtenerPeriodoProcess(event: any) {
+    console.log('process', event);
+    this.process = event.value;
+    if (event) {
+      this.form.get('processDestiny').setValue(event.label);
+      if (this.delegationDefault && this.anio && this.process) {
+        this.disabledPeriod = true;
+        this.form.get('period').setValue(null);
+        this.getPeriods(new ListParams());
+      } else {
+        this.form.get('period').setValue(null);
+        this.disabledPeriod = false;
+      }
+    } else {
+      this.form.get('processDestiny').setValue('');
+      this.form.get('period').setValue(null);
+      this.disabledPeriod = false;
+    }
+  }
+
+  changeDelegations(event: any) {
+    this.delegationDefault = event;
+    if (event) {
+      this.form.get('delegationDestiny').setValue(event.numberAndDescrip);
+      if (this.delegationDefault && this.anio && this.process) {
+        this.disabledPeriod = true;
+        this.form.get('period').setValue(null);
+        this.getPeriods(new ListParams());
+      } else {
+        this.form.get('period').setValue(null);
+        this.disabledPeriod = false;
+      }
+    } else {
+      this.form.get('delegationDestiny').setValue('');
+      this.form.get('period').setValue(null);
+      this.disabledPeriod = false;
+    }
+  }
+
+  limpiarPeriodo() {
+    this.form.get('period').setValue(null);
+
+    const periodDestiny = this.form.value.periodDestiny;
+    if (periodDestiny.length > 6) {
+      let per = periodDestiny.toString().slice(0, 5);
+      this.form.get('period').setValue(Number(per));
+    } else {
+      this.form.get('period').setValue(Number(periodDestiny));
+    }
+
+    this.getPeriods(new ListParams());
   }
 }

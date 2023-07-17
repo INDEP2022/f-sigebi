@@ -8,13 +8,15 @@
         Nuevo recibo <i class="bx bx-plus bx-sm float-icon"></i>
       </button>
     </div>
-    <div [class]="loadingTable ? 'table-loading' : ''">
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settingsReceipt"
-        [source]="receipts"
-        (userRowSelect)="receiptSelect($event.data)">
-      </ng2-smart-table>
+    <div class="row pt-2">
+      <div [class]="loadingTable ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settingsReceipt"
+          [source]="receipts"
+          (userRowSelect)="receiptSelect($event.data)">
+        </ng2-smart-table>
+      </div>
     </div>
   </div>
   <div footer>

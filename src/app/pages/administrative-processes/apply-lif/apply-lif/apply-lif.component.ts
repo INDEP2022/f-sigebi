@@ -86,6 +86,8 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
 
   ngOnInit(): void {
     this.handleForm();
+    console.log(this.formGood.value.id);
+    console.log(this.formGood1.value.id);
   }
 
   public handleForm(): void {
@@ -117,7 +119,6 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
 
   getGood() {
     if (!this.formGood.value.id) return;
-
     this.loading = true;
     const listParams = new ListParams();
     listParams['filter.id'] = this.formGood.value.id;
@@ -131,8 +132,9 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
           this.formGood1.get('goodReferenceNumber').setValue(good.id as any);
           this.getGood1(good.id);
         },
-        error: () => {
+        error: error => {
           this.loading = false;
+          console.log(error);
         },
       });
   }
@@ -145,8 +147,9 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         this.changeGood1(good);
         this.loading = false;
       },
-      error: () => {
+      error: error => {
         this.loading = false;
+        console.log(error);
       },
     });
   }
@@ -196,6 +199,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         );
         this.formBlkControl.get('dateChange').setValue(new Date(dateChange));
       } catch (error) {
+        console.log(error);
         try {
           const params = new ListParams();
           params['filter.originalGood'] = this.formGood.value.id;
@@ -204,6 +208,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
           this.formBlkControl.get('dateChange').setValue(new Date(dateChange));
         } catch (error) {
           this.formBlkControl.get('dateChange').setValue(null);
+          console.log(error);
         }
       }
 
@@ -216,6 +221,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         this.isVisibleMotive = true;
       } catch (error) {
         this.isVisibleMotive = false;
+        console.log(error);
       }
 
       this.formGood1.get('contConv').setValue(TOT);
@@ -240,7 +246,8 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         this.isEnableBtnRvlif = true;
       }
     } catch (error) {
-      this.onLoadToast('error', 'Error', 'Err. PQ');
+      this.alert('error', 'Error', '');
+      console.log(error);
     }
   }
 
@@ -274,7 +281,7 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
     for (const key in params) {
       if (params[key] === null) delete params[key];
     }
-    this.onLoadToast('success', '', 'Reporte generado');
+    this.alert('success', 'Reporte Generado', '');
     this.loading = false;
   }
 
@@ -299,9 +306,9 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
 
       if (VEST != 'ADM') {
         this.alert(
-          'error',
-          '',
-          'El Bien Numerario no se encuentra en un estatus valido para esta operación'
+          'warning',
+          'El bien numerario no se encuentra en un estatus valido para esta operación',
+          ''
         );
       } else {
         params = new ListParams();
@@ -323,7 +330,8 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
         this.commit();
       }
     } catch (error) {
-      this.alert('error', '', 'Err:');
+      this.alert('error', 'El bien numerario no se encuentra', '');
+      console.log(error);
     }
   }
 
@@ -339,9 +347,9 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
       VEST = status;
       if (VEST != 'ADM') {
         this.alert(
-          'error',
-          'Error',
-          'El Bien Numerario no se encuentra en un estatus valido para esta operación'
+          'warning',
+          'El bien numerario no se encuentra en un estatus valido para esta operación',
+          ''
         );
         return;
       } else {
@@ -359,7 +367,9 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
       }
       // GO_BLOCK('BIENES1');
       // EXECUTE_QUERY;
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   commit() {
@@ -369,11 +379,12 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
 
     this.goodService.update(auxBody).subscribe({
       next: () => {
-        this.onLoadToast('success', '', 'Bien actualizado');
+        this.alert('success', 'Bien Actualizado', '');
         this.postQueryGood1();
       },
-      error: () => {
-        this.onLoadToast('error', '', 'Error al actualizar Bien');
+      error: error => {
+        this.alert('error', 'Error al Actualizar Bien', '');
+        console.log(error);
       },
     });
   }

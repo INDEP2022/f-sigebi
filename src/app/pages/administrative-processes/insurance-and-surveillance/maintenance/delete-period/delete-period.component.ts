@@ -26,7 +26,7 @@ export class DeletePeriodComponent extends BasePage {
       Validators.required,
       Validators.pattern(POSITVE_NUMBERS_PATTERN),
     ]),
-    delegation: new FormControl(null),
+    delegation: new FormControl(null, Validators.required),
     process: new FormControl(null, Validators.required),
   });
   processes = [
@@ -60,7 +60,7 @@ export class DeletePeriodComponent extends BasePage {
   onClickDeletePeriod() {
     if (!this.delegationDefault) {
       this.form.markAsTouched();
-      this.alert('warning', 'Debe seleccionar una delegación', '');
+      this.alert('warning', 'Debe Seleccionar una Delegación', '');
     }
 
     const period = this.form.value.period;
@@ -163,7 +163,9 @@ export class DeletePeriodComponent extends BasePage {
             resolve(response.data);
           },
           error: error => {
-            this.periods = new DefaultSelect();
+            this.periods = new DefaultSelect([], 0, true);
+            // this.alert('warning', 'No se Encontraron Períodos', '');
+
             this.loading = false;
             resolve(null);
           },
@@ -235,6 +237,8 @@ export class DeletePeriodComponent extends BasePage {
   }
 
   cleanForm() {
+    this.anio = null;
+    this.process = null;
     this.disabledPeriod = false;
     this.periods = new DefaultSelect([], 0);
     this.delegationDefault = null;

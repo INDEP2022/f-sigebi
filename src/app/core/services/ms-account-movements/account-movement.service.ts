@@ -12,6 +12,7 @@ import { IAccountBank } from '../../models/catalogs/bank-account.model';
 import { IAccountDetailInd } from '../../models/ms-account-movements/account-detail-ind';
 import {
   IAccountMovement,
+  IAccountMovementShort,
   INumeraryTransfer,
   IUserChecks,
 } from '../../models/ms-account-movements/account-movement.model';
@@ -31,6 +32,18 @@ export class AccountMovementService extends HttpService {
     return this.get<IListResponse<IAccountMovement>>(
       'account-movements',
       params
+    );
+  }
+
+  getBeneficiarios() {
+    return this.get<IListResponse<{ beneficiario_cheque: string }>>(
+      AccountmvmntEndpoint.getBeneficiarios
+    );
+  }
+
+  getDevolutionsBanks() {
+    return this.get<IListResponse<IAccountMovementShort>>(
+      AccountmvmntEndpoint.getDevolutionsBanks
     );
   }
 
@@ -64,6 +77,13 @@ export class AccountMovementService extends HttpService {
     return this.post('account-movements', movement);
   }
 
+  createB(movement: any) {
+    return this.post('dev-detail-transfer', movement);
+  }
+
+  createA(movement: any) {
+    return this.post('dev-numerary-transfer', movement);
+  }
   createAccount(movement: any) {
     return this.post('account-movements/lovDeposits', movement);
   }
@@ -143,6 +163,10 @@ export class AccountMovementService extends HttpService {
       `${AccountmvmntEndpoint.getNumberReport}?filter.numberReportDev=$eq:${reporte}`
     );
   }
+
+  // create(data: IDetailTransfer ) {
+  //   return this.post<any>(AccountmvmntEndpoint)
+  // }
 
   getbyDelegationCurrency(delegacion: string | number, currency: string) {
     return this.get<IListResponse<IAccountBank>>(

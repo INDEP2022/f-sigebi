@@ -189,6 +189,7 @@ export class ClarificationListTabComponent
         confirmButtonColor: '#9D2449',
         cancelButtonColor: '#B38E5D',
         confirmButtonText: 'Eliminar',
+        allowOutsideClick: false,
       }).then(async (result: any) => {
         const idChatClarification =
           clarification['chatClarification'].idClarification;

@@ -6,13 +6,13 @@ export const USER_COLUMNS = {
   },
 
   email: {
-    title: 'Correo electrónico',
+    title: 'Correo Electrónico',
     type: 'string',
     sort: false,
   },
 
   userCharge: {
-    title: 'Tipo usuario',
+    title: 'Tipo Usuario',
     type: 'string',
     sort: false,
   },
@@ -26,13 +26,13 @@ export const USER_COLUMNS_SHOW = {
   },
 
   email: {
-    title: 'Correo electrónico',
+    title: 'Correo Electrónico',
     type: 'string',
     sort: false,
   },
 
   userCharge: {
-    title: 'Cargo del usuario',
+    title: 'Cargo del Usuario',
     type: 'string',
     sort: false,
   },

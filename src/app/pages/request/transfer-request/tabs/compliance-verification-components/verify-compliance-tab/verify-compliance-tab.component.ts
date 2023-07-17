@@ -826,6 +826,7 @@ export class VerifyComplianceTabComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#B38E5D',
       confirmButtonText: 'Eliminar',
+      allowOutsideClick: false,
     }).then(async result => {
       if (result.isConfirmed) {
         //debugger;
