@@ -71,6 +71,8 @@ export class LogTableComponent extends BasePage implements OnInit, OnChanges {
           this.loading = false;
           this.binnacles = response.data;
           this.totalItems = response.count;
+          console.log(this.binnacles);
+          console.log(this.totalItems);
         })
       );
   }
