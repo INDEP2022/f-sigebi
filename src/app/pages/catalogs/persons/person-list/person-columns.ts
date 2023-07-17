@@ -1,6 +1,6 @@
 export const PERSON_COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'ID',
     type: 'number',
     sort: false,
   },

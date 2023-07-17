@@ -569,9 +569,9 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       proccesExtDom: this.formGood.value.extDomProcess,
     };
 
-    const availableGood = await firstValueFrom(
+    const availableGood: any = await firstValueFrom(
       this.goodProcessService.postExistsGoodxStatus(body).pipe(
-        map(res => (res.count > 0 ? true : false)),
+        map(res => (res.data.length > 0 ? true : false)),
         catchError(() => of(false))
       )
     );
@@ -685,7 +685,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     };
     const numeraryAvailable = await firstValueFrom(
       this.statusScreenService.getStatus(body).pipe(
-        map(res => (res.count > 0 ? true : false)),
+        map(res => (res.data.length > 0 ? true : false)),
         catchError(() => of(false))
       )
     );
