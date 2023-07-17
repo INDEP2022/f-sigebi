@@ -43,8 +43,8 @@ export class SystemLogComponent extends BasePage implements OnInit {
   rowSelected: ITableLog = null;
   tableLogs: LocalDataSource = new LocalDataSource();
   dynamicRegisters: any[] = [];
-  totalLogs = 0;
-  totalDynamic = 0;
+  totalLogs: number = 0;
+  totalDynamic: number = 0;
   filterFields: ITableField[] = [];
   registerNum: number = null;
   columnFilters: any = [];
@@ -74,9 +74,9 @@ export class SystemLogComponent extends BasePage implements OnInit {
     private seraLogService: SeraLogService
   ) {
     super();
-    (this.settings.columns = TABLE_LOGS_COLUMNS),
-      (this.settings.actions = false),
-      (this.settings.hideSubHeader = false);
+    this.settings.columns = TABLE_LOGS_COLUMNS;
+    this.settings.actions = false;
+    this.settings.hideSubHeader = false;
     this.registerSettings = { ...this.settings, columns: {} };
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
@@ -310,6 +310,20 @@ export class SystemLogComponent extends BasePage implements OnInit {
       .filter(filter => !isEmpty(filter.value));
     return { table, filters };
   }
+
+  // cleandInfo() {
+  //   this.loading = false;
+  //   this.totalDynamic = 0;
+  //   this.rowSelected = null;
+  //   this.filterFields = null;
+  //   this.dynamicColumns = null;
+  //   this.dynamicParams = null;
+  //   this.dynamicRegisters = null;
+  //   this.router = null;
+  //   this.dynamicLoading = false;
+  //   this.totalLogs = 0;
+  //   this.filterForm.reset();
+  // }
 }
 
 const MATCH_OPERATORS: any = {

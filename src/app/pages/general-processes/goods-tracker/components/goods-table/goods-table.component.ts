@@ -250,7 +250,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     }
     const selectedGood = this.selectedGooods.at(-1);
     if (!selectedGood.fileNumber) {
-      this.alert('error', 'Error', 'Este Trámite no Tiene Volante Asignado');
+      this.alert('error', 'Error', 'Este Trámite no tiene Volante Asignado');
       return;
     }
 
@@ -291,7 +291,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     params.addFilter('numberProceedings', trackedGood.fileNumber);
     const documents = await this.getDocumentsFilter(params);
     if (documents.count == 0) {
-      this.alert('error', 'Error', 'No Existen Documentos para el Expediente');
+      this.alert('error', 'Error', 'No existen Documentos para el Expediente');
     } else if (documents.count == 1) {
       const d = await this.getOtDocs(trackedGood.fileNumber);
       if (!d.data.length) {
@@ -315,7 +315,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     params.addFilter('numberProceedings', trackedGood.fileNumber);
     const response = await this.getDocumentsFilter(params);
     if (response.count == 0) {
-      this.alert('error', 'Error', 'No Tiene Documentos Digitalizados');
+      this.alert('error', 'Error', 'No tiene Documentos Digitalizados');
       return;
     }
     const byExpedient = true;
@@ -354,7 +354,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     await this.alertInfo(
       'info',
       'Más de un trámite seleccionado',
-      'Se Tomará el Último Registro Seleccionado'
+      'Se tomará el último Registro Seleccionado'
     );
   }
 
@@ -379,7 +379,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     if (this.ngGlobal.bienes_foto >= 2) {
       this.alertQuestion(
         'question',
-        '¿Desea Visualizar las Fotos de Todos los Bienes?',
+        '¿Desea visualizar las Fotos de todos los Bienes?',
         ''
       ).then(answ => {
         if (answ.isConfirmed) {
@@ -537,7 +537,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     const { lookPhoto } = this.fomrCheck.value;
 
     if (lookPhoto) {
-      this.alert('warning', 'De Doble Click Sobre la Foto', '');
+      this.alert('warning', 'De Doble Clic sobre la Foto', '');
     } else {
       await this.getTem();
 
@@ -562,7 +562,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
           this.insertListPhoto(Number(this.selectedGooods[0].goodNumber));
           this.callReport(Number(this.selectedGooods[0].goodNumber), null);
         } else {
-          this.alert('error', 'Error', 'Se Requiere de al Menos un Bien');
+          this.alert('error', 'Error', 'Se Requiere de al menos un Bien');
         }
       }
     }
@@ -688,7 +688,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         `Bien: ${good.goodNumber}`,
-        'No Tiene Actas, Programaciones, Suspensiones ni Cancelaciones'
+        'No tiene Actas, Programaciones, Suspensiones ni Cancelaciones'
       );
     }
   }
@@ -714,7 +714,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
         this.alertQuestion(
           'warning',
           '',
-          'Se Tiene Varios Bienes Seleccionados se Tomara el Último',
+          'Se tiene varios Bienes Seleccionados se tomará el último',
           ''
         ).then(async answ => {
           if (answ.isConfirmed) {
@@ -823,7 +823,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
         this.alert(
           'info',
           'Aviso',
-          'El Archivo Excel Está en Proceso de Generación, Favor de Esperar la Descarga'
+          'El Archivo Excel está en Proceso de Generación, favor de esperar la Descarga'
         );
         this.subscribeExcel().subscribe();
       },
@@ -840,7 +840,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
         this.alert(
           'info',
           'Aviso',
-          'La Descarga está en Proceso, Favor de Esperar'
+          'La Descarga está en Proceso, favor de Esperar'
         );
         const $sub = this.subscribePhotos().subscribe();
       },

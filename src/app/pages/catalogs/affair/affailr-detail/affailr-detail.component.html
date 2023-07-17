@@ -43,6 +43,7 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
+          [disabled]="affairForm.invalid"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
