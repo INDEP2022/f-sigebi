@@ -97,5 +97,13 @@ export class BankAccountService
     return this.post(`account-movements/get-cve-currency`,body)
   }
 
+  updateAccountMovExp(body: {noGoods: any[]}){
+    return this.post(`account-movements/update-account-movements-exp`, body)
+  }
+
+  updateAccountMovFec(body: {noGoods: any[], fecTesofe: Date | string}){
+    return this.post(`account-movements/update-account-movements-fec`, body)
+  }
+
   //***** */
 }

@@ -11,6 +11,7 @@ import {
   IRequesNumeraryCal,
   IRequesNumeraryDet,
   IRequestNumeraryEnc,
+  ISearchNumerary,
 } from '../../models/ms-numerary/numerary.model';
 
 @Injectable({
@@ -162,5 +163,17 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
       model,
       params
     );
+  }
+
+  pupSearchNumerary(body: ISearchNumerary){
+    return this.post(`application/pup-search-numerary`,body)
+  }
+
+  getAllRequestNume(params?: string){
+    return this.get(`request-nume`,params)
+  }
+
+  getAllRequestNumMov(params?:string){
+    return this.get(`nume-request-movi`,params)
   }
 }

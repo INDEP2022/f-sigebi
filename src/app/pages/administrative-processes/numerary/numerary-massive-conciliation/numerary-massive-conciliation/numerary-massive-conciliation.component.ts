@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import {
   FilterParams,
@@ -9,22 +10,28 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IProReconcilesGood } from 'src/app/core/models/catalogs/bank-account.model';
+import { ISearchNumerary } from 'src/app/core/models/ms-numerary/numerary.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { RecordAccountStatementsAccountsService } from 'src/app/core/services/catalogs/record-account-statements-accounts.service';
 import { RecordAccountStatementsService } from 'src/app/core/services/catalogs/record-account-statements.service';
 import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
-import { ConfiscatedProcessService } from 'src/app/core/services/ms-confiscation/confiscation-process.service';
+import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
+  clearGoodCheck,
+  goodCheck,
+  newGoodCheck,
   NUMERARY_MASSIVE_CONCILIATION_COLUMNS,
   NUMERARY_MASSIVE_CONCILIATION_COLUMNS2,
 } from './numerary-massive-conciliation-columns';
-import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { NumerarySolicitudeComponent } from '../numerary-solicitude/numerary-solicitude.component';
 
 @Component({
   selector: 'app-numerary-massive-conciliation',
@@ -58,7 +65,13 @@ export class NumeraryMassiveConciliationComponent
 
   currentData = new DefaultSelect();
 
+  loading2: boolean = false;
+
   public override settings: any = {
+    rowClassFunction: (row: { data: { VISUAL_ATTRIBUTE: any } }) =>
+      row.data.VISUAL_ATTRIBUTE == 'VA_VERDE'
+        ? 'bg-success text-white'
+        : 'bg-dark text-white',
     columns: NUMERARY_MASSIVE_CONCILIATION_COLUMNS,
     hideSubHeader: false,
     noDataMessage: 'No se encontrarón registros',
@@ -91,7 +104,8 @@ export class NumeraryMassiveConciliationComponent
     private accountBankService: BankAccountService,
     private goodService: GoodService,
     private goodProcessService: GoodProcessService,
-    private tmpVal5Service: ComerDetailsService
+    private tmpVal5Service: ComerDetailsService,
+    private numeraryService: NumeraryService
   ) {
     super();
   }
@@ -115,59 +129,19 @@ export class NumeraryMassiveConciliationComponent
     this.form2 = this.fb.group({
       bank: [null, Validators.nullValidator],
       bankAccount: [null, Validators.nullValidator],
+      total: [null],
+      totalDateTesofe: [null],
+      totalWithoutTesofe: [null],
       deposit: [null, Validators.nullValidator],
       current: [null, Validators.nullValidator],
+      proposal: [null],
+      currencyDeposit: [null]
     });
   }
 
   ngOnInit(): void {
     this.prepareForm();
     this.prepareForm2();
-    // this.searchBanks(new ListParams());
-    /* this.searchDataAccount(); */
-
-    /* this.dataGoods
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        if (change.action === 'filter') {
-          let filters = change.filter.filters;
-          filters.map((filter: any) => {
-            let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
-            switch (filter.field) {
-              case 'dateMotion':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'deposit':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'withdrawal':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'cveConcept':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
-            if (filter.search !== '') {
-              console.log(filter.search);
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-            } else {
-              delete this.columnFilters[field];
-            }
-          });
-          this.params.value.page = 1;
-          this.params = this.pageFilter(this.params);
-          this.searchDataAccount();
-        }
-      }); */
-    /* this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.searchDataAccount()); */
 
     //Añadido por GF
     this.changeClassGood(); //Setea la moneda suscribiendose al valor de classgood
@@ -406,6 +380,7 @@ export class NumeraryMassiveConciliationComponent
 
   //Selecciona los bienes filtrador
   searchFilterGood() {
+    clearGoodCheck();
     this.loading = true;
     this.tmpVal5Service.deleteAllTable().subscribe(
       res => {
@@ -428,7 +403,7 @@ export class NumeraryMassiveConciliationComponent
         this.goodService.getAllFilter(paramsF.getParams()).subscribe(
           res => {
             console.log(res);
-            this.dataGoods.load(res.data);
+            // this.dataGoods.load(res.data);
             this.totalItems = res.count;
 
             const arrayNumbers = res.data.map((e: any) => {
@@ -439,22 +414,22 @@ export class NumeraryMassiveConciliationComponent
               return e.status;
             });
 
-            console.log(arrayNumbers);
-            console.log(arrayStatus);
+            const fec = this.form.get('dateTesofe').value;
 
             const model = {
               goodNumber: arrayNumbers,
               arrayStatus: arrayStatus,
-              dateMasiv: '',
+              dateMasiv: fec == null ? '' : format(fec, 'dd-MM-yyyy'),
             };
 
             this.goodProcessService.pupReconcilied(model).subscribe(
               res => {
-                console.log(res)
+                console.log(res);
+                this.dataGoods.load(res.data);
                 this.loading = false;
               },
               err => {
-                console.log(err)
+                console.log(err);
                 this.loading = false;
               }
             );
@@ -474,191 +449,255 @@ export class NumeraryMassiveConciliationComponent
   //Muestra descripcion y estatus del bien
   selectRowGood(e: any) {
     console.log(e);
-    console.log(e.data.description);
-    console.log(e.data.status);
-    this.description.setValue(e.data.description);
-    this.statusGood.setValue(e.data.status);
+    console.log(e.data.RSPTAQUERY.descripcion);
+    console.log(e.data.RSPTAQUERY.estatus);
+    this.description.setValue(e.data.RSPTAQUERY.descripcion);
+    this.statusGood.setValue(e.data.RSPTAQUERY.estatus);
   }
 
-  /*   deselectRowGood(){
-    this.description.reset()
-    this.statusGood.reset()
-  } */
-
-  // Trae toda la información que se pasa a las tablas
-  /*   searchDataAccount() {
+  //Boton Actualiza
+  updateButton() {
     this.loading = true;
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-    this.recordAccountStatementsAccountsService
-      .getDataAccountConciliation(params)
-      .subscribe({
-        next: response => {
-          this.loading = true;
-          const transformedData = response.data.map(item => ({
-            ...item,
-          }));
-          this.dataGoods = new LocalDataSource(transformedData);
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error: (err: any) => {
-          this.loading = false;
-          this.alert(
-            'warning',
-            'No existen movimientos de la cuenta seleccionada',
-            ``
-          );
-        },
-      });
-  } */
-
-  // Trae la lista de bancos por defecto
-  /* searchBanks(params: ListParams) {
-    this.recordAccountStatementsService
-      .getAll(this.params.getValue())
-      .subscribe({
-        next: (response: { data: any[]; count: number }) => {
-          this.banks = new DefaultSelect(response.data, response.count);
-          this.loading = false;
-        },
-        error: (err: any) => {
-          this.loading = false;
-          this.alert('warning', 'No existen bancos', ``);
-        },
-      });
-  } */
-
-  // Permite buscar los bancos por nombre
-  onSearchName(inputElement: any) {
-    const name = inputElement.value;
-    setTimeout(() => {
-      this.recordAccountStatementsService
-        .getAllDinamicName(name, this.params.getValue())
-        .subscribe({
-          next: (response: { data: any[]; count: number }) => {
-            this.banks = new DefaultSelect(response.data, response.count);
-            this.loading = false;
-          },
-          error: (err: any) => {
-            this.loading = false;
-            this.alert('warning', 'No existen bancos', ``);
-          },
-        });
-    }, 3000);
-  }
-
-  // Asigna el valor del banco seleccionado a la función "searchBankAccount"
-  onBankSelectChange(value: any) {
-    // this.cleandInfoDate();
-    this.bankAccountData = new DefaultSelect();
-    if (value && value.bankCode) {
-      const bankCode = value.bankCode;
-      this.searchBankAccount(bankCode);
+    const fec = this.form.get('dateTesofe').value;
+    if (goodCheck.length < 1) {
+      this.alert('warning', 'No hay bienes seleccionados', '');
+      this.loading = false;
+    } else if (fec == null) {
+      this.alert('warning', 'No seleccionó un fecha Tesofe', '');
+      this.loading = false;
     } else {
-      this.cleandInfoAll();
-    }
-  }
-
-  // Toma el banco seleccionado y busca todas las cuentas pertenecientes a ese banco
-  searchBankAccount(bankCode: string) {
-    this.bankCode = bankCode;
-    this.recordAccountStatementsAccountsService
-      .getById(bankCode, this.params.getValue())
-      .subscribe({
-        next: response => {
-          this.bankAccountData = new DefaultSelect(
-            response.data,
-            response.count
-          );
-          this.loading = false;
-        },
-        error: (err: any) => {
-          this.loading = false;
-          this.alert('warning', 'No existen cuentas', ``);
-        },
+      console.log(goodCheck);
+      const arrayNumbers = goodCheck.map((e: any) => {
+        return e.RSPTAQUERY.no_bien;
       });
-  }
 
-  onClearSelection() {
-    this.searchBankAccount(this.bankCode);
-  }
+      const arrayStatus = goodCheck.map((e: any) => {
+        return e.RSPTAQUERY.estatus;
+      });
 
-  //
-  onSearchAccount(inputElement: any) {
-    const account = inputElement.value;
-    setTimeout(() => {
-      this.recordAccountStatementsAccountsService
-        .getById2(this.bankCode, account, this.params.getValue())
-        .subscribe({
-          next: response => {
-            const filteredAccounts = response.data.filter(item =>
-              item.accountNumber.includes(account)
+      const model = {
+        goodNumber: arrayNumbers,
+        arrayStatus: arrayStatus,
+        dateMasiv: format(this.form.get('dateTesofe').value,'dd-MM-yyyy'),
+      };
+
+      this.accountBankService
+        .updateAccountMovFec({
+          noGoods: arrayNumbers,
+          fecTesofe: fec,
+        })
+        .subscribe(
+          res => {
+            this.goodProcessService.pupReconcilied(model).subscribe(
+              res => {
+                console.log(res);
+
+                this.dataGoods.load(this.dataGoods['data'].map((e:any) => {
+                  if(arrayNumbers.includes(e.RSPTAQUERY.no_bien)){
+                    return res['data'].find((item:any) => item.RSPTAQUERY.no_bien == e.RSPTAQUERY.no_bien)
+                  }else{
+                    return e
+                  }
+                }));
+                
+                this.alert('success', 'Actualización realizada', '');
+                this.loading = false;
+              },
+              err => {
+                console.log(err);
+                this.loading = false;
+              }
             );
-            this.bankAccountData = new DefaultSelect(
-              filteredAccounts,
-              response.count
-            );
-            this.loading = false;
           },
-          error: (err: any) => {
-            this.loading = false;
-            this.alert('warning', 'No existen bancos', ``);
-          },
-        });
-    }, 3000);
-  }
-
-  // Establece los valores en los inputs de datos de la cuenta seleccionada
-  onBankAccountSelectChange(value: any) {
-    this.form.get('current').reset();
-    this.form2.get('current').reset();
-    const accountNumber = value.accountNumber;
-    this.accountDate = value.accountNumber;
-
-    // Obtener los valores correspondientes de la cuenta seleccionada
-    let currency = value.cveCurrency;
-    // this.current = currency;
-    this.searchCurrent(currency);
-
-    // Quitar las comillas simples del valor de currency, si existen
-    currency = currency.replace(/'/g, '');
-  }
-
-  // Permite buscar la descripcion de la moneda
-  searchCurrent(currency: string) {
-    if (currency === `'M'`) {
-      this.form.get('current').setValue(currency);
-      this.form2.get('current').setValue(currency);
-    } else {
-      let currenct = currency.replace(/'/g, '');
-      this.tvalTable5Service.getCurrent(currenct).subscribe({
-        next: response => {
-          let current = response.data;
-          let currentAccount = current[0].otvalor02;
-          let currentAccount2 = current[0].otvalor01;
-          if (currentAccount === 'M' || currentAccount === 'MM') {
-            currentAccount = 'PESO MEXICANO';
+          err => {
+            console.log(err);
           }
-          this.form.get('current').setValue(currentAccount);
-          this.form2.get('current').setValue(currentAccount);
-          this.loading = false;
-        },
-      });
+        );
     }
   }
 
-  cleandInfoAll() {
-    this.form.reset();
-    this.totalItems = 0;
-    // this.searchBanks(new ListParams());
+  validateDateddmmyyyy(date: string) {
+    const splitData = date.indexOf('-');
+    const splitSlash = date.indexOf('/');
+    console.log(splitData);
+    if (splitData == 2) {
+      const arrayData = date.split('-');
+      const newDate = `${arrayData[2]}-${arrayData[1]}-${arrayData[0]}`;
+      return { rpta: format(new Date(newDate), 'yyyy-MM-dd') };
+    } else if (splitSlash == 2) {
+      const arrayData = date.split('/');
+      const newDate = `${arrayData[2]}-${arrayData[1]}-${arrayData[0]}`;
+      return { rpta: format(new Date(newDate), 'yyyy-MM-dd') };
+    } else {
+      return { rpta: 'No tiene formato dd-mm-yyyy' };
+    }
   }
 
-  cleandInfoDate() {
-    this.form.get('bankAccount').reset();
-    this.form.get('deposit').reset();
-    this.form.get('current').reset();
+  //Funcion de boton conciliar
+
+  //Boton conciliar
+  reconcileButton() {
+    console.log('Entró');
+
+    this.loading = true;
+    if (goodCheck.length < 1) {
+      this.alert('warning', 'No hay bienes seleccionados', '');
+      this.loading = false;
+    } else {
+      this.loading = false;
+      for (let item of goodCheck) {
+        const date = this.validateDateddmmyyyy(item.RSPTAQUERY.val5);
+        console.log(item);
+
+        if (!isNaN(Date.parse(item.RSPTAQUERY.val5))) {
+          if (!isNaN(parseInt(item.RSPTAQUERY.val2))) {
+            const model: ISearchNumerary = {
+              conciled: 'S',
+              goodNumber: item.RSPTAQUERY.no_bien,
+              fileNum: item.RSPTAQUERY.no_expediente,
+              val1: item.RSPTAQUERY.val1,
+              val2: parseInt(item.RSPTAQUERY.val2),
+              val4: item.RSPTAQUERY.val4,
+              val5: format(new Date(item.RSPTAQUERY.val5), 'yyyy-MM-dd'),
+              val6: item.RSPTAQUERY.val6,
+              fecTesofe: item.BFEC_TESOFE,
+            };
+            console.log(model);
+            this.numeraryService.pupSearchNumerary(model).subscribe(
+              res => {
+                console.log(res);
+              },
+              err => {
+                console.log(err);
+              }
+            );
+          } else {
+            this.alert(
+              'error',
+              'Fallo al tranformar la cantidad numerica del importe',
+              ''
+            );
+            return;
+          }
+        } else {
+          const date = this.validateDateddmmyyyy(item.RSPTAQUERY.val5);
+          if (date.rpta != 'No tiene formato dd-mm-yyyy') {
+            if (!isNaN(parseInt(item.RSPTAQUERY.val2))) {
+              const model: ISearchNumerary = {
+                conciled: 'S',
+                goodNumber: item.RSPTAQUERY.no_bien,
+                fileNum: item.RSPTAQUERY.no_expediente,
+                val1: item.RSPTAQUERY.val1,
+                val2: parseInt(item.RSPTAQUERY.val2),
+                val4: item.RSPTAQUERY.val4,
+                val5: format(new Date(date.rpta), 'yyyy-MM-dd'),
+                val6: item.RSPTAQUERY.val6,
+                fecTesofe: item.BFEC_TESOFE,
+              };
+              console.log(model);
+              this.numeraryService.pupSearchNumerary(model).subscribe(
+                res => {
+                  console.log(res);
+                },
+                err => {
+                  console.log(err);
+                }
+              );
+            } else {
+              this.alert(
+                'error',
+                'Fallo al tranformar la cantidad numerica del importe',
+                ''
+              );
+              return;
+            }
+          } else {
+            this.alert(
+              'error',
+              'Fallo al generar formato estandar para fecha',
+              ''
+            );
+            return;
+          }
+        }
+      }
+    }
+  }
+
+  //Botón para desconciliar
+  disconnectButton() {
+    if (goodCheck.length > 0) {
+      try {
+        for (let item of goodCheck) {
+          if (item.BCONCILIADO == 'CONCILIADO') {
+            const arrayNumbers = goodCheck.map((e: any) => {
+              return e.RSPTAQUERY.no_bien;
+            });
+            const arrayStatus = this.dataGoods['data'].map((e: any) => {
+              return e.RSPTAQUERY.estatus;
+            });
+            const newArrayNumbers = this.dataGoods['data'].map((e: any) => {
+              return e.RSPTAQUERY.no_bien
+            })
+
+            this.accountBankService
+              .updateAccountMovExp({ noGoods: arrayNumbers })
+              .subscribe(
+                res => {
+                  const newgoodCheck = goodCheck.filter(
+                    valor => valor.RSPTAQUERY.no_bien != item.RSPTAQUERY.no_bien
+                  );
+
+                  newGoodCheck(newgoodCheck);
+
+                  const fec = this.form.get('dateTesofe').value;
+                  const model = {
+                    goodNumber: newArrayNumbers,
+                    arrayStatus: arrayStatus,
+                    dateMasiv: fec == null ? '' : fec,
+                  };
+                  this.goodProcessService.pupReconcilied(model).subscribe(
+                    res => {
+                      console.log(res);
+                      this.dataGoods.load(res.data);
+                    },
+                    err => {
+                      console.log(err);
+                      this.loading = false;
+                    }
+                  );
+                },
+                err => {
+                  console.log(err);
+                }
+              );
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.alert('success', 'Desconciliación realizada', '');
+        this.loading = false;
+      }
+    } else {
+      this.alert('warning', 'No se seleccionó ningún Bien', '');
+    }
+  }
+
+  //Boton asociar
+  openAsociate(){
+    let modalConfig:ModalOptions = {
+      initialState: {
+        callback: (data:any) => {
+            if(data != null || data != undefined){
+              this.form2.get('proposal').setValue(data.motionNumber)
+              this.form2.get('currencyDeposit').setValue(data.amountAssign)
+            }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    }
+    this.modalService.show(NumerarySolicitudeComponent, modalConfig)
   }
 }

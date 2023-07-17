@@ -98,3 +98,15 @@ export interface TransferReg {
   currencyKey?: string;
   historical: string;
 }
+
+export interface ISearchNumerary {
+    conciled: string,
+    goodNumber: number,
+    fileNum: number,
+    val1: string,
+    val2: number,
+    val4: string,
+    val5: string,
+    val6: string,
+    fecTesofe: Date | string
+}
