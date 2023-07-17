@@ -33,6 +33,9 @@ export class CertificatesFilterComponent implements OnInit {
     params.limit = 100;
     this.statusGoodService.getAll(params).subscribe({
       next: res => (this.goodStatuses = new DefaultSelect(res.data, res.count)),
+      error: error => {
+        this.goodStatuses = new DefaultSelect([], 0);
+      },
     });
   }
 

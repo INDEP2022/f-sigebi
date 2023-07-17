@@ -60,7 +60,7 @@ export class PaymentConceptListComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'id':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'description':
                 searchFilter = SearchFilter.ILIKE;

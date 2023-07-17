@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   ListParams,
   SearchFilter,
@@ -10,6 +12,7 @@ import {
 import { IUnitCostDet } from 'src/app/core/models/administrative-processes/unit-cost-det.model';
 import { IUnitCost } from 'src/app/core/models/administrative-processes/unit-cost.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { StrategyServiceTypeService } from 'src/app/core/services/ms-strategy/strategy-service-type.service';
 import { UnitCostDetService } from 'src/app/core/services/unit-cost/unit-cost-det.service';
 import { UnitCostService } from 'src/app/core/services/unit-cost/unit-cost.service';
@@ -62,7 +65,9 @@ export class UnitCostComponent extends BasePage implements OnInit {
     private unitCostDetService: UnitCostDetService,
     private modalService: BsModalService,
     private strategyServiceTypeService: StrategyServiceTypeService,
-    private authService: AuthService
+    private authService: AuthService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings = {
@@ -321,7 +326,7 @@ export class UnitCostComponent extends BasePage implements OnInit {
   calculate() {
     this.alertQuestion(
       'warning',
-      '¿Esta seguro que desea generar el calculo?',
+      '¿Está seguro que desea generar el cálculo?',
       ''
     ).then(question => {
       if (question.isConfirmed) {
@@ -334,7 +339,7 @@ export class UnitCostComponent extends BasePage implements OnInit {
             this.idCost == null ||
             this.idCost == undefined
           ) {
-            this.onLoadToast('warning', 'No se puede generar el calculo', ``);
+            this.onLoadToast('warning', 'No se puede generar el cálculo', ``);
           }
           //this.idCost;
           console.log(date, this.idCost, this.cveZone);
@@ -397,7 +402,7 @@ export class UnitCostComponent extends BasePage implements OnInit {
       error: err => {
         this.onLoadToast(
           'warning',
-          `El calculo del costo ${idCos}, para el año ${dateYear}`,
+          `El cálculo del costo ${idCos}, para el año ${dateYear}`,
           `de la zona ${cveZone} ya ha sido realizado.`
         );
       },
@@ -444,7 +449,48 @@ export class UnitCostComponent extends BasePage implements OnInit {
     });
   }
 
-  confirm(): void {
+  report() {
+    let params = {
+      //PN_DEVOLUCION: this.data,
+    };
+    this.siabService
+      .fetchReport('FESTCOTPRE_0001', params)
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
+  }
+
+  /*confirm(): void {
     this.loading = true;
     const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
 
@@ -462,5 +508,5 @@ export class UnitCostComponent extends BasePage implements OnInit {
     //let newWin = window.open(pdfurl, 'test.pdf');
     this.onLoadToast('success', '', 'Reporte generado');
     this.loading = false;
-  }
+  }*/
 }
