@@ -25,6 +25,7 @@ export class UsersSharedComponent extends BasePage implements OnInit {
   @Input() userField: string = 'user';
   @Input() label: string = 'Usuarios';
   @Input() showUsers: boolean = true;
+  @Input() id: boolean = false;
   //If Form PatchValue
   @Input() patchValue: boolean = false;
   @Output() change = new EventEmitter<IUser>();

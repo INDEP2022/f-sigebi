@@ -43,6 +43,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
 
   @Input() showSubdelegation: boolean = true;
   @Input() showDelegation: boolean = true;
+  @Input() delegationChange: boolean = true;
   @Output() emitSubdelegation = new EventEmitter<ISubdelegation>();
   @Output() emitDelegation = new EventEmitter<IDelegation>();
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -149,8 +150,10 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   onDelegationsChange(type: any) {
     console.log(type);
     this.resetFields([this.subdelegation]);
-    this.subdelegations = new DefaultSelect();
-    this.getSubDelegations(new ListParams());
+    if (this.delegationChange) {
+      this.subdelegations = new DefaultSelect();
+      this.getSubDelegations(new ListParams());
+    }
     this.emitDelegation.emit(type);
   }
 

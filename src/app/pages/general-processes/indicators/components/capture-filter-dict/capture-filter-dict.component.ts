@@ -11,8 +11,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 @Component({
-  selector: 'capture-filter',
-  templateUrl: './capture-filter.component.html',
+  selector: 'capture-filter-dict',
+  templateUrl: './capture-filter-dict.component.html',
   standalone: true,
   imports: [
     SharedModule,
@@ -22,10 +22,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   ],
   styles: [],
 })
-export class CaptureFilterComponent extends BasePage implements OnInit {
-  @Input() isReceptionAndDelivery: boolean = false;
+export class CaptureFilterDictComponent extends BasePage implements OnInit {
   @Input() isReceptionStrategies: boolean = false;
-  @Input() isConsolidated: boolean = false;
   @Output() consultEmmit = new EventEmitter<FormGroup>();
   @Output() reportEmmit = new EventEmitter<FormGroup>();
   @Output() exportEmmit = new EventEmitter<FormGroup>();
@@ -98,6 +96,7 @@ export class CaptureFilterComponent extends BasePage implements OnInit {
       emisora: [null, [Validators.required]],
       autoridad: [null, [Validators.required]],
       tipoVolante: [null, [Validators.required]],
+      tipoEvento: [null, [Validators.required]],
       numeroVolante: [null],
       fechaVolante: [null, [Validators.required]],
     });
