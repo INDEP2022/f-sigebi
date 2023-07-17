@@ -237,8 +237,8 @@ export class QueryRelatedPaymentsDepositoriesComponent
       if (!this.noBienReadOnly) {
         this.alert(
           'warning',
-          'Carga la Información del Bien primero para Continuar',
-          ''
+          'Número de Bien',
+          'Carga la Información del Bien primero para Continuar'
         );
         return;
       }
@@ -310,8 +310,8 @@ export class QueryRelatedPaymentsDepositoriesComponent
       if (!this.noBienReadOnly) {
         this.alert(
           'warning',
-          'Carga la Información del Bien primero para Continuar',
-          ''
+          'Número de Bien',
+          'Carga la Información del Bien primero para Continuar'
         );
         return;
       }
@@ -327,6 +327,8 @@ export class QueryRelatedPaymentsDepositoriesComponent
         {
           queryParams: {
             origin: this.screenKey,
+            origin2: this.origin,
+            p_bien: this.noBienReadOnly,
           },
         }
       );
@@ -343,6 +345,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
     this.router.navigate(['/pages/juridical/depositary/depository-fees'], {
       queryParams: {
         origin: this.screenKey,
+        origin2: this.origin,
         p_bien: this.noBienReadOnly,
       },
     });
@@ -680,7 +683,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
             'Se mostrará un excel con detalles de los errores por cada registro procesado'
           );
         } else {
-          this.alert('success', 'PROCESO TERMINADO ', '');
+          this.alert('success', 'Proceso Terminado ', '');
         }
       }
     }

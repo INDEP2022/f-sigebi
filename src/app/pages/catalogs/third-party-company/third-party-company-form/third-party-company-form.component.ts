@@ -20,7 +20,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class ThirdPartyCompanyFormComponent extends BasePage implements OnInit {
   thirdPartyCompanyForm: ModelForm<IThirdPartyCompany>;
-  title = 'EMPRESAS DE TERCEROS';
+  title = 'Empresa de Terceros';
   edit = false;
   thirdParty: any;
   itemsZoneContract = new DefaultSelect();

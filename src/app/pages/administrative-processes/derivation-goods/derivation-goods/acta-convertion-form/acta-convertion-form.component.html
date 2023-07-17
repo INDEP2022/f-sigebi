@@ -1,4 +1,4 @@
-<app-modal>
+<app-modal class="col-md-15">
   <div header>
     <h5 class="modal-title">{{ 'Actas Conversion' }}</h5>
   </div>
@@ -18,7 +18,7 @@
               <tbody>
                 <tr *ngFor="let item of items; let i = index">
                   <th scope="row">{{ i + 1 }}</th>
-                  <td class="custom-cell">{{ item.cveActaConvId }}</td>
+                  <td class="custom-cell">{{ item.cve_acta_conv }}</td>
                   <td>
                     <div class="form-check">
                       <input
@@ -46,62 +46,52 @@
         <!-- Columna para los botones -->
         <div class="d-flex flex-column">
           <button
-            type="button"
             style="
-              font-size: 60%;
               width: 100%;
               height: 40px;
-              white-space: nowrap;
-              overflow: hidden;
               text-overflow: ellipsis;
               text-align: center;
             "
-            class="btn btn-primary btn-block"
+            class="btn btn-primary btn-sm active m-3"
             (click)="handleSubmitNewItem()"
             [disabled]="flagNewActa">
-            Genera Acta
+            Genera Acta <i class="fa fa-check" aria-hidden="true"></i>
           </button>
           <button
-            type="button"
             style="
-              font-size: 60%;
               width: 100%;
               height: 40px;
-              white-space: nowrap;
-              overflow: hidden;
               text-overflow: ellipsis;
               text-align: center;
             "
-            class="btn btn-primary btn-block"
+            class="btn btn-primary active btn-sm m-3"
             (click)="generateAsignarActa()"
             [disabled]="flagAsignaActa">
-            Asigna Acta
+            Asigna Acta <i class="fas fa-edit bx-sm float-icon"></i>
           </button>
           <button
-            type="button"
             style="
-              font-size: 60%;
               width: 100%;
               height: 40px;
-              white-space: nowrap;
-              overflow: hidden;
               text-overflow: ellipsis;
               text-align: center;
             "
-            class="btn btn-primary btn-block"
+            class="btn btn-primary active btn-sm m-3"
             (click)="close()">
             Regresar
+            <i class="fas fa-arrow-circle-left"></i>
           </button>
         </div>
       </div>
     </div>
 
     <app-scanning-foil
-      [good]=""
-      [numberFoli]=""
-      [cveScreen]=""
-      [reportPrint]=""
-      [refresh]="">
+      [good]="pGoodFatherNumber"
+      [numberFoli]="numberFoli"
+      [cveScreen]="selectItem2"
+      reportPrint="RGERGENSOLICDIGIT"
+      [refresh]=""
+      (documentEmmit)="document($event)">
     </app-scanning-foil>
     <div class="row text-center mb-3">
       <div class="col-md-6 col-sm-12">
@@ -110,7 +100,7 @@
           data-toggle="tooltop"
           title="Agregar Bien"
           class="btn btn-info btn-sm active ml-2 mr-2 float-center"
-          (click)="insertarParrafos()">
+          (click)="insertParaph()">
           <i class=""></i> Insertar Párrafos
         </button>
       </div>
@@ -119,7 +109,8 @@
           type="button"
           data-toggle="tooltop"
           title="Eliminar Bien"
-          class="btn btn-danger btn-sm active ml-2 mr-2 float-center">
+          class="btn btn-danger btn-sm active ml-2 mr-2 float-center"
+          (click)="printAct()">
           <i class=""></i> Imprimir Acta
         </button>
       </div>
@@ -156,6 +147,20 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          (click)="createMinuteConversion()">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+        <!-- <button type="button" class="btn btn-primary" >
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button> -->
+      </div>
+
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
           Cancelar

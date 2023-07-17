@@ -1,19 +1,22 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Subject } from 'rxjs';
-import { showToast } from 'src/app/common/helpers/helpers';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IVigMailBook } from 'src/app/core/models/ms-email/email-model';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
-
+import { BasePage } from 'src/app/core/shared';
+//import { ModelForm } from 'src/app/core/interfaces/model-form';
 @Component({
   selector: 'app-create-or-edit-email-book-dialog',
   templateUrl: './create-or-edit-email-book-dialog.component.html',
   styleUrls: ['./create-or-edit-email-book-dialog.component.css'],
 })
-export class CreateOrEditEmailBookDialogComponent {
+export class CreateOrEditEmailBookDialogComponent extends BasePage {
   form = new FormGroup({
-    id: new FormControl(null),
+    id: new FormControl(),
     bookName: new FormControl('', [Validators.required]),
     bookEmail: new FormControl('', [Validators.required, Validators.email]),
     bookType: new FormControl('', [Validators.required]),
@@ -33,20 +36,44 @@ export class CreateOrEditEmailBookDialogComponent {
   dialogRef: BsModalRef;
   isLoading = false;
   initOption: any = null;
+  formControlRegionalDelegation = new FormControl(null, [Validators.required]);
+  // public regionalDelegations = new DefaultSelect();
+  emailsBook = new LocalDataSource();
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  columnFilters: any = [];
+  columnsD: IDelegation[] = [];
+  parameterData: any[] = [];
 
   constructor(
     private dialogService: BsModalService,
     private emailService: EmailService
-  ) {}
+  ) {
+    super();
+  }
 
   openDialog() {
     this.dialogRef = this.dialogService.show(this.templateRefDialog);
+    this.getVigMailBook();
   }
+
+  /*openForm(city?: ICity) {
+    console.log(city);
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      city,
+      callback: (next: boolean) => {
+        if (next) this.getCities();
+      },
+    };
+    this.modalService.show(CityDetailComponent, modalConfig);
+  }*/
 
   closeDialog() {
     this.oldData = null;
     this.form.reset();
     this.dialogRef.hide();
+    this.getVigMailBook();
   }
 
   openDialogEdit(formData: IVigMailBook, item: any): void {
@@ -59,10 +86,11 @@ export class CreateOrEditEmailBookDialogComponent {
   saveInServer(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      showToast({
-        icon: 'error',
-        text: 'Formulario invalido, complete los campos requeridos',
-      });
+      this.alert(
+        'error',
+        'Formulario invalido, complete los campos requeridos',
+        ''
+      );
       return;
     }
 
@@ -80,15 +108,39 @@ export class CreateOrEditEmailBookDialogComponent {
           newData: { id: this.oldData?.id, ...data },
           oldData: this.oldData,
         });
+
+        callback: (next: boolean) => {
+          if (next) this.getVigMailBook();
+        };
         this.closeDialog();
+
         this.isLoading = false;
       },
-      error: () => {
-        showToast({
-          icon: 'error',
-          text: 'Error al guardar el libro de correo',
-        });
+      error: error => {
+        this.alert('error', 'Error al guardar registros', '');
         this.isLoading = false;
+      },
+    });
+  }
+
+  getVigMailBook(listParams = new ListParams()): void {
+    this.loading = true;
+    listParams['filter.delegationNumber'] =
+      this.formControlRegionalDelegation.value;
+    this.emailService.getVigMailBook(listParams).subscribe({
+      next: res => {
+        this.parameterData = res.data;
+        this.totalItems = res.count || 0;
+        this.emailsBook.load(res.data);
+        this.emailsBook.refresh();
+        this.loading = false;
+        console.log(res);
+      },
+      error: () => {
+        this.loading = false;
+        this.emailsBook.load([]);
+        this.emailsBook.refresh();
+        this.totalItems = 0;
       },
     });
   }

@@ -25,6 +25,7 @@ export class GoodsReceiptsFormComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsGuardGood = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  type: string = '';
   constructor(
     private modalRef: BsModalRef,
     private receptionService: ReceptionGoodService,
@@ -45,58 +46,93 @@ export class GoodsReceiptsFormComponent extends BasePage implements OnInit {
   }
 
   getGoodsReceipt() {
-    this.loading = true;
-    this.params.getValue()['filter.receiptGuardId'] = this.receipt.id;
-    this.receptionService.getReceptionGoods(this.params.getValue()).subscribe({
-      next: response => {
-        const goodsGuard: IGood[] = [];
-        response.data.map((item: IRecepitGuard) => {
-          this.paramsGuardGood.getValue()['filter.id'] = item.idGood;
-          this.goodService.getAll(this.paramsGuardGood.getValue()).subscribe({
-            next: response => {
-              if (response.data[0].physicalStatus == 1) {
-                response.data[0].physicalStatusName = 'BUENO';
-              }
-              if (response.data[0].physicalStatus == 2) {
-                response.data[0].stateConservationName = 'MALO';
-              }
-              if (response.data[0].stateConservation == 1) {
-                response.data[0].physicalStatusName = 'BUENO';
-              }
-              if (response.data[0].stateConservation == 2) {
-                response.data[0].stateConservationName = 'MALO';
-              }
-              goodsGuard.push(response.data[0]);
-              console.log('goodsGuard', goodsGuard);
-              this.goodsReceiptGuards.load(goodsGuard);
-              this.loading = false;
-            },
-            error: error => {
-              console.log(error);
-            },
-          });
+    if (this.type == 'guard') {
+      this.loading = true;
+      this.params.getValue()['filter.receiptGuardId'] = this.receipt.id;
+      this.receptionService
+        .getReceptionGoods(this.params.getValue())
+        .subscribe({
+          next: response => {
+            console.log('response guard', response);
+            const goodsGuard: IGood[] = [];
+            response.data.map((item: IRecepitGuard) => {
+              this.paramsGuardGood.getValue()['filter.id'] = item.idGood;
+              this.goodService
+                .getAll(this.paramsGuardGood.getValue())
+                .subscribe({
+                  next: response => {
+                    if (response.data[0].physicalStatus == 1) {
+                      response.data[0].physicalStatusName = 'BUENO';
+                    }
+                    if (response.data[0].physicalStatus == 2) {
+                      response.data[0].stateConservationName = 'MALO';
+                    }
+                    if (response.data[0].stateConservation == 1) {
+                      response.data[0].physicalStatusName = 'BUENO';
+                    }
+                    if (response.data[0].stateConservation == 2) {
+                      response.data[0].stateConservationName = 'MALO';
+                    }
+                    goodsGuard.push(response.data[0]);
+                    console.log('goodsGuard', goodsGuard);
+                    this.goodsReceiptGuards.load(goodsGuard);
+                    this.loading = false;
+                  },
+                  error: error => {
+                    console.log(error);
+                  },
+                });
+            });
+          },
+          error: error => {
+            console.log('error', error);
+          },
         });
-      },
-      error: error => {
-        console.log('error', error);
-      },
-    });
-    /* this.params.getValue()['filter.receiptGuardId'] = 456400;
-    this.receptionService.getReceptionGoods(this.params.getValue()).subscribe({
-      next: response => {
-        response.data.map((items: IRecepitGuard) => {
-          console.log('id bien', items.idGood);
-          this.goodService.getById(items.idGood).subscribe({
-            next: data => {
-              this.receipGuards.push(data);
-              console.log(this.receipGuards);
-              this.goodsReceiptGuards.load(this.receipGuards);
-              this.totalItems = this.goodsReceiptGuards.count();
-            },
-          });
+    }
+
+    if (this.type == 'warehouse') {
+      this.loading = true;
+      this.params.getValue()['filter.receiptGuardId'] = this.receipt.id;
+      this.receptionService
+        .getReceptionGoods(this.params.getValue())
+        .subscribe({
+          next: response => {
+            console.log('response warehouse', response);
+            const goodsGuard: IGood[] = [];
+            response.data.map((item: IRecepitGuard) => {
+              this.paramsGuardGood.getValue()['filter.id'] = item.idGood;
+              this.goodService
+                .getAll(this.paramsGuardGood.getValue())
+                .subscribe({
+                  next: response => {
+                    if (response.data[0].physicalStatus == 1) {
+                      response.data[0].physicalStatusName = 'BUENO';
+                    }
+                    if (response.data[0].physicalStatus == 2) {
+                      response.data[0].stateConservationName = 'MALO';
+                    }
+                    if (response.data[0].stateConservation == 1) {
+                      response.data[0].physicalStatusName = 'BUENO';
+                    }
+                    if (response.data[0].stateConservation == 2) {
+                      response.data[0].stateConservationName = 'MALO';
+                    }
+                    goodsGuard.push(response.data[0]);
+                    console.log('goodsGuard', goodsGuard);
+                    this.goodsReceiptGuards.load(goodsGuard);
+                    this.loading = false;
+                  },
+                  error: error => {
+                    console.log(error);
+                  },
+                });
+            });
+          },
+          error: error => {
+            console.log('error', error);
+          },
         });
-      },
-    }); */
+    }
   }
 
   close() {

@@ -64,7 +64,7 @@ export class IssuingInstitutionListComponent
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         add: false,
         position: 'right',
       },
@@ -179,10 +179,11 @@ export class IssuingInstitutionListComponent
   delete2(id: number) {
     this.institutionClasificationService.remove2(id).subscribe({
       next: () => {
+        this.totalItems2 = 0;
         this.getInstitutionClassification();
         this.alert(
           'success',
-          'Clasificación institución',
+          'Clasificación Institución',
           'Borrado Correctamente'
         );
       },
@@ -254,7 +255,13 @@ export class IssuingInstitutionListComponent
           this.totalItems2 = response.count;
           this.loading2 = false;
         },
-        error: error => (this.showNullRegister1(), (this.loading2 = false)),
+        error: error => {
+          //(this.showNullRegister1(), (this.loading2 = false)),
+          /*this.loading2 = false;
+          this.data1.load([]);
+          this.data1.refresh();*/
+          this.showNullRegister1();
+        },
       });
   }
 
@@ -262,7 +269,7 @@ export class IssuingInstitutionListComponent
   showNullRegister1() {
     this.alertQuestion(
       'warning',
-      'Institución sin autoridades emisoras',
+      'Institución sin Autoridades Emisoras',
       '¿Desea agregarlas ahora?'
     ).then(question => {
       if (question.isConfirmed) {

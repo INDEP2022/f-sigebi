@@ -6,7 +6,12 @@ import { MassiveGoodEndpoints } from '../../../common/constants/endpoints/ms-mas
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { HttpService } from '../../../common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IMassiveGoodTracker } from '../../models/ms-massivegood/massive-good-goods-tracker.model';
+import { IPackageInfo } from '../../models/catalogs/package.model';
+import {
+  IIdentifierCount,
+  IMassiveGoodTracker,
+  IPupValidMassive,
+} from '../../models/ms-massivegood/massive-good-goods-tracker.model';
 import { IMassiveGood } from '../../models/ms-massivegood/massivegood.model';
 
 @Injectable({
@@ -70,8 +75,10 @@ export class MassiveGoodService extends HttpService {
   deleteMassiveGoodComer(good: number) {
     return this.delete(`${this.route.DeleteMassiveGood}/${good}`);
   }
-  cargueMassiveGoodConversion() {
-    return this.delete(`${this.route.Massive}`);
+  cargueMassiveGoodConversion(
+    params?: ListParams
+  ): Observable<IListResponse<IMassiveGood>> {
+    return this.get<IListResponse<IMassiveGood>>(this.route.Massive, params);
   }
 
   getWheelNotificationsByExpedientNumber(goodNumber: string) {
@@ -102,6 +109,18 @@ export class MassiveGoodService extends HttpService {
     return this.post<IMassiveGoodTracker>(route, body);
   }
 
+  pubExport(body: IPackageInfo) {
+    const route = `application/pup-export`;
+    return this.post(route, body);
+  }
+
+  getIdentifierCount(
+    params: ListParams
+  ): Observable<IListResponse<IIdentifierCount>> {
+    const route = `application/getIdentifierCount`;
+    return this.get(route, params);
+  }
+
   getDataCSVFile(currency: string, file: any) {
     const formData = new FormData();
     formData.append('tCurrency', currency);
@@ -125,5 +144,18 @@ export class MassiveGoodService extends HttpService {
       responseType: 'arraybuffer',
     };
     return this.post(this.route.GetFProRecPag2CSV, formData, params);
+  }
+
+  postPupCargaCsv(
+    file: File,
+    vc_pantalla: string
+  ): Observable<{
+    bienes: IPupValidMassive[];
+    errores: string[];
+  }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('vc_pantalla', vc_pantalla);
+    return this.post(this.route.PupCargaCsv, formData);
   }
 }

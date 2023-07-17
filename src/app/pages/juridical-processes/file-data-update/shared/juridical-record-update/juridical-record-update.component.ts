@@ -2333,28 +2333,23 @@ export class JuridicalRecordUpdateComponent
     });
   }
 
+  isLoadingDictums = false;
   getDictums(params: ListParams) {
-    /* SELECT DESCRIPCION,DICTAMEN
-      FROM CAT_DICTAMEN 
-      WHERE  DICTAMEN IN (SELECT DICTAMEN 
-                          FROM CAT_R_ASUNT_DIC
-                          WHERE CODIGO = :blk_not.cve_asunto
-                          AND TIPO_VOLANTE = :blk_not.tipo_volante)
-      UNION                       
-        SELECT DESCRIPCION,DICTAMEN
-        FROM CAT_DICTAMEN 
-        WHERE DICTAMEN IN (24,26)  
-        AND  EXISTS   (SELECT 1
-                      FROM SAT_TRANSFERENCIA
-                      WHERE  SAT_DETERMINANTE||'-'||SAT_NUMOFICTRANSF = :BLK_NOT.CVE_OFICIO_EXTERNO) */
+    this.isLoadingDictums = true;
     params['CVE_ASUNTO'] = this.formControls.affairKey.value?.id;
     params['TIPO_VOLANTE'] = this.formControls.wheelType.value;
     params['CVE_OFICIO_EXTERNO'] = this.formControls.officeExternalKey.value;
     this.fileUpdateService.postFindDescriptionOpinion(params).subscribe({
       next: (data: { data: any[]; count: number }) => {
+        //order for id
+        data.data.sort((a, b) => {
+          return a.id - b.id;
+        });
         this.dictums = new DefaultSelect(data.data, data.count);
+        this.isLoadingDictums = false;
       },
       error: () => {
+        this.isLoadingDictums = false;
         this.dictums = new DefaultSelect();
       },
     });

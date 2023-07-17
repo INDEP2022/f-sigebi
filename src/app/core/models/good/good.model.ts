@@ -26,6 +26,7 @@ export interface IGood {
   classificationGood?: any;
   remarksOrien?: any;
   physicalStatus?: number | string;
+  scheduledDateDecoDev?: string;
   destinyName?: string;
   goodId?: number;
   solIncripRegister?: any;
@@ -652,4 +653,15 @@ export interface IGoodSearchGoodByClasification {
 export interface IGoodAttribGoodBad {
   id: string | number;
   motive: string;
+}
+
+export interface IbulkLoadGoods {
+  noClasifGood: number;
+  noGoodFather: number;
+  quantity: number;
+  description: string;
+  unit?: string;
+  type?: string;
+  material?: string;
+  edoPhisical?: string;
 }

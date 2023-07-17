@@ -1,33 +1,33 @@
 export const REQUESTS_COLUMNS = {
-  idRequest: {
+  solnumId: {
     title: 'Id de solicitud',
     type: 'string',
     sort: false,
   },
-  date: {
+  solnumDate: {
     title: 'Fecha',
     type: 'string',
     sort: false,
   },
-  concept: {
+  description: {
     title: 'Concepto',
     type: 'string',
     sort: false,
   },
-  delegation: {
+  delegationNumber: {
     title: 'Delegación',
     type: 'string',
     sort: false,
   },
-  userRequest: {
-    title: 'Usuario que solicita',
+  user: {
+    title: 'Usuario que Solicita',
     type: 'string',
     sort: false,
   },
 };
 
 export const GOODS_COLUMNS = {
-  good: {
+  goodNumber: {
     title: 'Bien',
     type: 'string',
     sort: false,
@@ -37,28 +37,28 @@ export const GOODS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  interests: {
+  allInterest: {
     title: 'Intereses',
     type: 'string',
     sort: false,
   },
-  total: {
+  allNumerary: {
     title: 'Total',
     type: 'number',
     sort: false,
   },
-  bankComision: {
+  commission: {
     title: 'Comisión Bancaria',
     type: 'string',
     sort: false,
   },
-  interests2: {
-    title: 'Intereses a pagar',
+  allintPay: {
+    title: 'Intereses a Pagar',
     type: 'number',
     sort: false,
   },
-  totalToPay: {
-    title: 'Total a pagar',
+  allPayNumber: {
+    title: 'Total a Pagar',
     type: 'string',
     sort: false,
   },
@@ -76,21 +76,21 @@ export const TOTALS_COLUMNS = {
     sort: false,
   },
   days: {
-    title: 'Dias',
+    title: 'Días',
     type: 'number',
     sort: false,
   },
-  import: {
+  amount: {
     title: 'Importe',
     type: 'number',
     sort: false,
   },
-  interests: {
-    title: 'Interes',
+  interest: {
+    title: 'Interés',
     type: 'number',
     sort: false,
   },
-  Total: {
+  total: {
     title: 'Total',
     type: 'number',
     sort: false,

@@ -1,8 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs';
 import { ITmpValSocialLoadSocialCabinet } from 'src/app/core/models/ms-social-cabinet/tmp-val-load-social-cabinet';
 import { SocialCabinetService } from 'src/app/core/services/ms-social-cabinet/social-cabinet.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
+import { GoodsManagementService } from '../services/goods-management.service';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -20,18 +22,53 @@ export class GoodsManagementSocialTableErrorsComponent
       this.getData();
     }
   }
-  @Input() set clear(value: number) {
-    if (value > 0) {
-      this.dataNotFound();
-    }
-  }
-
-  constructor(private socialCabinetService: SocialCabinetService) {
+  pageSizeOptions = [5, 10, 15, 20];
+  limit: FormControl = new FormControl(5);
+  lastClickTime: number = 0;
+  selected: ITmpValSocialLoadSocialCabinet[];
+  constructor(
+    private socialCabinetService: SocialCabinetService,
+    private goodManagementService: GoodsManagementService
+  ) {
     super();
+    this.params.value.limit = 5;
     this.haveInitialCharge = false;
     this.service = this.socialCabinetService;
     this.ilikeFilters = ['valMessage'];
     this.settings = { ...this.settings, actions: null, columns: COLUMNS };
+    this.goodManagementService.clear
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.dataNotFound();
+          }
+        },
+      });
+  }
+
+  rowSelect(event: { selected: ITmpValSocialLoadSocialCabinet[] }) {
+    console.log(event);
+    if (this.lastClickTime === 0) {
+      this.lastClickTime = new Date().getTime();
+      this.selected = event.selected;
+    } else {
+      const change = new Date().getTime() - this.lastClickTime;
+      if (change < 400) {
+        this.saveSelected(this.selected);
+      }
+      this.lastClickTime = 0;
+    }
+  }
+
+  saveSelected(selected: ITmpValSocialLoadSocialCabinet[]) {
+    // this.goodManagementeService.selectedGood = selected.goodNumber;
+    console.log(selected);
+    if (selected && selected.length > 0) {
+      this.goodManagementService.selectedGoodSubject.next(
+        selected[0].goodNumber
+      );
+    }
   }
 
   override getData() {

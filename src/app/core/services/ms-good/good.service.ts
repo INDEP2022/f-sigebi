@@ -132,6 +132,13 @@ export class GoodService extends HttpService {
   getAllFilter(params?: string): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(`${GoodEndpoints.Good}?${params}`);
   }
+  getAllFilterClassification(
+    classifGoodNumber?: string
+  ): Observable<IListResponse<any>> {
+    const URL = `${environment.API_URL}/goodsquery/api/v1/${GoodEndpoints.AttribGood}?filter.classifGoodNumber=${classifGoodNumber}`;
+    const headers = new HttpHeaders();
+    return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
+  }
 
   getAllFilterDetail(params?: string): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(
@@ -355,6 +362,11 @@ export class GoodService extends HttpService {
 
     return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
   }
+  getGetReferenceGoodgoodI(goodI: any) {
+    const URL = `${environment.API_URL}/good/api/v1/good/get-reference-good/${goodI}`;
+    const headers = new HttpHeaders();
+    return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
+  }
 
   getGoods(goodI: any) {
     const URL = `${environment.API_URL}/good/api/v1/${GoodEndpoints.Good}?filter.goodId=$eq:${goodI}`;
@@ -403,9 +415,9 @@ export class GoodService extends HttpService {
 
   getByExpedientAndParams__(
     params?: ListParams
-  ): Observable<IListResponse<IGood>> {
+  ): Observable<IListResponse<IGoodSami>> {
     const route = GoodEndpoints.Good;
-    return this.get<IListResponse<IGood>>(route, params);
+    return this.get<IListResponse<IGoodSami>>(route, params);
   }
 
   getFactaDbOficioGestrel(body: {
@@ -416,8 +428,13 @@ export class GoodService extends HttpService {
   }
 
   getActasConversion(actaConvertion: any) {
-    const URL = `${environment.API_URL}/convertiongood/api/v1/${GoodActaConvertion.GoodActaConvertion}?filter.cveActaConvId=$like:${actaConvertion}`;
+    const URL = `${environment.API_URL}/convertiongood/api/v1/${GoodActaConvertion.GoodActaConvertion}/get-all?filter.cveActaConvId=$eq:${actaConvertion}`;
+    const headers = new HttpHeaders();
 
+    return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
+  }
+  getFolioActaConversion(actaConvertion: any) {
+    const URL = `${environment.API_URL}/convertiongood/api/v1/conversions/procedure/fConvBienHijos?cve_acta_conv=${actaConvertion}`;
     const headers = new HttpHeaders();
 
     return this.http.get<any>(URL, { headers: headers }).pipe(map(res => res));
@@ -436,5 +453,9 @@ export class GoodService extends HttpService {
     const URL = `${environment.API_URL}/parametergood/api/v1/application/pup-weapon-key`;
 
     return this.http.post<any>(URL, payload).pipe(map(res => res));
+  }
+
+  pupValidMasiv(body: any) {
+    return this.post<any>('good/pupValidMasiv2', body);
   }
 }

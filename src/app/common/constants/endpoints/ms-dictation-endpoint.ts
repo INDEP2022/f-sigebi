@@ -56,4 +56,6 @@ export enum DictationEndpoints {
   ApplicationGetFirmados = 'application/getFirmados',
   ApplicationBlkControlPrintWhenButtonPressed = 'application/blkControlPrintWhenButtonPressed',
   ApplicationPupPreviousData = 'application/pup-previous-datos',
+  ApplicationPufRef = 'application/pufRegManaged',
+  ApplicationPufRefCentral = 'application/pupRegionalCorrect',
 }

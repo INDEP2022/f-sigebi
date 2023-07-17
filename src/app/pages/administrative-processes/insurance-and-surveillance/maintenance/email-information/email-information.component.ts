@@ -1,5 +1,12 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -9,6 +16,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class EmailInformationComponent {
+  maxDate = new Date();
   constructor() {}
   form = new FormGroup({
     reasonForChange: new FormControl(null, [
@@ -22,15 +30,21 @@ export class EmailInformationComponent {
     type: new FormControl(null, Validators.required),
     issue: new FormControl(null, Validators.required),
     body: new FormControl(null, Validators.required),
+    textBody: new FormControl(null, Validators.required),
   });
 
   public from = new DefaultSelect();
   public tos = new DefaultSelect();
   public ccs = new DefaultSelect();
   public types = new DefaultSelect();
+  @ViewChild('Send') Send: ElementRef;
 
   @Output() eventEmailInformation = new EventEmitter();
 
+  ngOnInit(): void {
+    this.getDate();
+    // this.prepareForm();
+  }
   save() {
     console.log(this.form.value);
   }
@@ -40,7 +54,9 @@ export class EmailInformationComponent {
   }
 
   changeType($event: any): void {
-    this.form.get('body').setValue($event.bodyEmail);
+    console.log($event);
+    this.form.get('body').setValue($event.id);
+    this.form.get('textBody').setValue($event.bodyEmail);
     this.form.get('issue').setValue($event.subjectEmail);
   }
 
@@ -55,5 +71,48 @@ export class EmailInformationComponent {
       3: 'Cambio de Bienes de Número Aleatorio',
     };
     return data?.[id] || id.toString();
+  }
+
+  onChangeCc(event: any) {
+    console.log(event);
+
+    this.form.get('cc').setValue(event.id);
+    console.log('Send', this.Send);
+  }
+  onChangeTo(event: any) {
+    console.log(event);
+    this.form.get('to').setValue(event.id);
+  }
+  onChangeFrom(event: any) {
+    console.log(event);
+    this.form.get('from').setValue(event.id);
+  }
+
+  cleanForm() {
+    this.form.get('type').setValue('');
+    this.form.reset();
+  }
+
+  async getDate() {
+    // console.log('date', );
+    // const formattedDate = moment(date).format('DD-MM-YYYY');
+    // if () {
+
+    this.form.get('date').valueChanges.subscribe((date: Date) => {
+      if (date) {
+        const formattedDate = moment(date).format('YYYY-MM-DD');
+        this.form.value.date = formattedDate;
+        // this.form.patchValue({ date: formattedDate }, { emitEvent: false });
+      }
+    });
+    // const fechaEscritura: any = new Date();
+    // fechaEscritura.setUTCDate(fechaEscritura.getUTCDate());
+    // const _fechaEscritura: any = new Date(fechaEscritura.toISOString());
+    // return _fechaEscritura ? _fechaEscritura : null;
+    // } else {
+    //   return null;
+    // }
+    // { authorizeDate: formattedDate }
+    // { emitEvent: false }
   }
 }

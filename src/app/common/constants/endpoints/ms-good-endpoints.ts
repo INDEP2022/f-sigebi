@@ -27,12 +27,12 @@ export enum GoodEndpoints {
   Vban = 'good/getBan',
   AttribGoodBad = 'attrib-good-bad/get-all',
   AttribGoodBadId = 'attrib-good-bad',
-  AttribGood = 'goods-attributes',
-
+  AttribGood = 'attributes-classification-good',
   GetAllGoodQuery = 'good/getAllGoodQuery',
   PAValidaCambioEstatus = 'good/testValid',
   GetMassiveSearch = 'good/getMassiveSearch',
   GoodsMotivesrev2 = 'goods-motivesrev',
+  Sgood = `good/searchGoods`,
 }
 
 export enum GoodProcessPoints {
@@ -45,6 +45,7 @@ export enum GoodProcessPoints {
   acceptGoodActa = `application/acceptGoodActa`,
   acceptGoodStatus = `application/acceptGoodStatus`,
   acceptGoodStatusScreen = `application/acceptGoodStatusScreen`,
+  getGoodPostQuery = `application/get-good-post-query`,
   dateRange = `util-pkg/getDate`,
   getFact = 'application/get-fact-juridict-amasg',
   getIdent = 'application/get-fact-juridict-amasg-2',
@@ -60,6 +61,12 @@ export enum GoodProcessPoints {
   getVstatusIniVnoRegister = 'application/getVstatusIniVnoRegister',
   pup_change_impro = 'application/pup-change-impro',
   GetDescDep = 'application/getDestDepBan',
+  GetGoodSituation = 'update-good-status/pupMakeQuery2',
+  GetGoodAppraise = 'update-good-status/getGoodAppraise',
+  GetNumeProrraCsv = 'application/get-f-proc-sol-numerario',
+  GetFproSolNumerarioProdnumCsv = 'application/get-fpro-sol-numerario-prodnum',
+  PubPrevieData = 'application/pupPreviewData',
+  ProcedureStatusGood = 'application/procedure-status-good',
 }
 
 export enum GoodFinderEndpoint {

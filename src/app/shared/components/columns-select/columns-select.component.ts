@@ -22,6 +22,11 @@ interface ISettings {
         transform: translate3d(0px, 34px, 0px) !important;
         margin-right: 0px !important;
       }
+      #dropdown-basic.left {
+        inset: 100% auto auto -100% !important;
+        width: 200px !important;
+        max-width: 200px !important;
+      }
     `,
   ],
 })
@@ -32,11 +37,19 @@ export class ColumnsSelectComponent implements OnInit {
     }
   }
   @Input()
-  defaultColumns: number = 10;
+  defaultColumns: number = 6;
+  /* 
+  ! Si se desea cambiar el numero de columnas para una pantalla en especifoco,
+  ! se debe mandar el numero de columnas como input, 
+  ! POR DEFECTO SIEMPRE SERA 6
+  */
   @Input() settings: ISettings = { columns: {} };
   @Output() settingsChange = new EventEmitter<any>();
   private allColumns: any = {};
   columns: IColumns[] = [];
+  @Input()
+  leftList: boolean = false;
+
   constructor() {}
 
   ngOnInit(): void {

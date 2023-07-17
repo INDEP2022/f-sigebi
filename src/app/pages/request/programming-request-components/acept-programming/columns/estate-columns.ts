@@ -1,6 +1,6 @@
 export const ESTATE_COLUMNS = {
   googId: {
-    title: 'Nº Gestión',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -52,7 +52,7 @@ export const ESTATE_COLUMNS = {
   },
 
   esReprogramming: {
-    title: 'Nº Reprogramación',
+    title: 'No. Reprogramación',
     type: 'string',
     sort: false,
   },
@@ -84,7 +84,7 @@ export const ESTATE_COLUMNS = {
 
 export const ESTATE_COLUMNS_VIEW = {
   goodId: {
-    title: 'Nª Gestión',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -119,7 +119,7 @@ export const ESTATE_COLUMNS_VIEW = {
   },
 
   saeMeasureUnit: {
-    title: 'Unidad de medida INDEP',
+    title: 'Unidad de Medida INDEP',
     type: 'string',
     sort: false,
   },
@@ -136,7 +136,7 @@ export const ESTATE_COLUMNS_VIEW = {
   },
 
   saePhysicalState: {
-    title: 'Estado físico INDEP',
+    title: 'Estado Físico INDEP',
     type: 'html',
     sort: false,
     valuePrepareFunction: (value: string) => {
@@ -147,7 +147,7 @@ export const ESTATE_COLUMNS_VIEW = {
   },
 
   stateConservation: {
-    title: 'Estado de conservación',
+    title: 'Estado de Conservación',
     type: 'html',
     sort: false,
     valuePrepareFunction: (value: string) => {
@@ -158,7 +158,7 @@ export const ESTATE_COLUMNS_VIEW = {
   },
 
   stateConservationSae: {
-    title: 'Estado de conservación INDEP',
+    title: 'Estado de Conservación INDEP',
     type: 'html',
     sort: false,
     valuePrepareFunction: (value: string) => {
@@ -188,13 +188,13 @@ export const ESTATE_COLUMNS_VIEW = {
 
 export const ESTATE_COLUMNS_NOTIFY = {
   gestionNumber: {
-    title: 'Nº Gestión',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
 
   uniqueKey: {
-    title: 'Clave única',
+    title: 'Clave Única',
     type: 'string',
     sort: false,
   },
@@ -225,7 +225,7 @@ export const ESTATE_COLUMNS_NOTIFY = {
 
 export const ESTATE_COLUMNS_1 = {
   goodId: {
-    title: 'Nª Gestión',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -277,7 +277,7 @@ export const ESTATE_COLUMNS_1 = {
   },
 
   saePhysicalState: {
-    title: 'Estado físico INDEP',
+    title: 'Estado Físico INDEP',
     type: 'html',
     sort: false,
     valuePrepareFunction: (value: string) => {
@@ -288,7 +288,7 @@ export const ESTATE_COLUMNS_1 = {
   },
 
   stateConservation: {
-    title: 'Estado de conservación',
+    title: 'Estado de Conservación',
     type: 'html',
     sort: false,
     valuePrepareFunction: (value: string) => {
@@ -299,7 +299,7 @@ export const ESTATE_COLUMNS_1 = {
   },
 
   stateConservationSae: {
-    title: 'Estado de conservación INDEP',
+    title: 'Estado de Conservación INDEP',
     type: 'html',
     sort: false,
     valuePrepareFunction: (value: string) => {
@@ -321,7 +321,7 @@ export const ESTATE_COLUMNS_1 = {
   },
 
   saeMeasureUnit: {
-    title: 'Unidad de medida INDEP',
+    title: 'Unidad de Medida INDEP',
     type: 'string',
     sort: false,
   },

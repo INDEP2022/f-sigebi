@@ -6,7 +6,8 @@
           <form [formGroup]="searchTabForm" class="form-material">
             <div class="row">
               <div class="col-md-12">
-                <app-goods-types-shared
+                <app-goods-types-shared-Good
+                  [reloadGood]="reloadGood"
                   [loadOnChangesNoBien]="true"
                   [goodselect]="goodSelect"
                   [form]="searchTabForm"
@@ -14,20 +15,29 @@
                   subtypeField="subtipo"
                   ssubtypeField="ssubtipo"
                   sssubtypeField="sssubtipo"
+                  (goodTypeChange)="getGoodType($event)"
                   (goodSssubtypeChange)="
                     getGoods($event)
-                  "></app-goods-types-shared>
+                  "></app-goods-types-shared-Good>
               </div>
             </div>
             <div class="row">
               <div class="col-md-12">
                 <div class="form-group">
-                  <goods-filter-shared
-                    [clean]="cleanGood"
-                    [form]="searchTabForm"
-                    goodField="noBien"
-                    [classifGood]="classifGood"
-                    (good)="onChangeGood($event)"></goods-filter-shared>
+                  <form-field [control]="searchTabForm.get('noBien')">
+                    <ngx-select
+                      (fetchItems)="getGoodsSheard($event)"
+                      [data]="goods"
+                      [form]="searchTabForm"
+                      value="id"
+                      bindLabel="info"
+                      label="Bien"
+                      control="noBien"
+                      (change)="onChangeGood($event)">
+                    </ngx-select>
+                  </form-field>
+                  <!-- <goods-filter-shared [reloadGood]="reloadGood" [clean]="cleanGood" [form]="searchTabForm"
+                    goodField="noBien" [classifGood]="classifGood" (good)="onChangeGood($event)"></goods-filter-shared> -->
                 </div>
               </div>
             </div>
@@ -60,7 +70,7 @@
                   </form-field>
                 </div>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-3">
                 <div class="form-group">
                   <form-field
                     [control]="searchTabForm.get('situacion')"
@@ -73,22 +83,22 @@
                   </form-field>
                 </div>
               </div>
-              <div class="col-md-5 d-flex justify-content-end">
+              <div class="col-md-6 d-flex justify-content-end">
                 <div class="m-3">
                   <button
-                    class="btn btn-sm btn-primary active mr-3"
+                    class="btn btn-sm btn-primary active mr-2"
                     (click)="search()">
                     Buscar <i class="fas fa-search"></i>
                   </button>
                   <button
-                    class="btn btn-danger btn-sm active mr-3"
+                    class="btn btn-danger btn-sm active mr-2"
                     (click)="clean()">
                     Limpiar <i class="fas fa-eraser"></i>
                   </button>
                   <button
                     class="btn btn-sm btn-primary active"
                     (click)="openPhotos()">
-                    Ver fotos <i class="fas fa-eye"></i>
+                    Ver Fotos <i class="fas fa-eye"></i>
                   </button>
                 </div>
               </div>

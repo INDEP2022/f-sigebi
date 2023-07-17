@@ -692,7 +692,7 @@ export class DetailAssetsTabComponentComponent
   }
 
   getDestinyTransfer(params: ListParams, idSolicitud?: string | number) {
-    let params2 = new ListParams();
+    /*let params2 = new ListParams();
     params['filter.requestId'] = `$eq:${idSolicitud}`;
 
     this.goodService.getAll(params2).subscribe({
@@ -702,13 +702,19 @@ export class DetailAssetsTabComponentComponent
         this.onLoadToast('success', 'Actualizado', 'Formulario actualizado');
       },
       error: error => {
+        debugger;
         this.onLoadToast(
           'error',
           'Error',
           `El formulario no se puede actualizar ${error.error.message}`
         );
+        // this.onLoadToast(
+        //   'error',
+        //   'Error',
+        //   `El formulario no se puede actualizar ${error.error.message}`
+        // );
       },
-    });
+    });*/
 
     params['filter.name'] = '$eq:Destino';
     this.genericService
@@ -719,88 +725,73 @@ export class DetailAssetsTabComponentComponent
           this.selectDestinyTransfer = new DefaultSelect(data.data, data.count);
 
           //OBTENER TIPO DE SOLICITUD
-          this.requestService.getById(idSolicitud).subscribe({
-            next: res => {
-              const transferente = res.typeOfTransfer;
-              console.log(
-                'info de la solicitud',
-                res,
-                'Transferente, ',
-                res.typeOfTransfer
-              );
+          /*this.requestService.getById(idSolicitud).subscribe({
+            next: res => {*/
+          const transferente = this.typeOfRequest;
 
-              switch (transferente) {
-                case 'SAT_SAE':
-                  console.log('SAT_SAE');
+          switch (transferente) {
+            case 'SAT_SAE':
+              console.log('SAT_SAE');
 
-                  if (
-                    this.detailAssets.controls['transferentDestiny'].value ===
-                    null
-                  ) {
-                    this.detailAssets.controls['transferentDestiny'].setValue(
-                      '1'
-                    );
-                  } else {
-                    const destinyTransf =
-                      this.detailAssets.controls['transferentDestiny'].value;
-                    this.detailAssets.controls['transferentDestiny'].setValue(
-                      destinyTransf
-                    );
-                  }
-
-                  break;
-                case 'PGR_SAE':
-                  console.log('PGR_SAE');
-
-                  if (
-                    this.detailAssets.controls['transferentDestiny'].value ===
-                    null
-                  ) {
-                    this.detailAssets.controls['transferentDestiny'].setValue(
-                      '4'
-                    );
-                  } else {
-                    const destinyTransf =
-                      this.detailAssets.controls['transferentDestiny'].value;
-                    this.detailAssets.controls['transferentDestiny'].setValue(
-                      destinyTransf
-                    );
-                  }
-
-                  break;
-                case 'MANUAL':
-                  console.log('MANUAL');
-
-                  if (
-                    this.detailAssets.controls['transferentDestiny'].value ===
-                    null
-                  ) {
-                    this.detailAssets.controls['transferentDestiny'].setValue(
-                      '1'
-                    );
-                  } else {
-                    const destinyTransf =
-                      this.detailAssets.controls['transferentDestiny'].value;
-                    this.detailAssets.controls['transferentDestiny'].setValue(
-                      destinyTransf
-                    );
-                  }
-
-                  break;
+              if (
+                this.detailAssets.controls['transferentDestiny'].value === null
+              ) {
+                this.detailAssets.controls['transferentDestiny'].setValue('1');
+              } else {
+                const destinyTransf =
+                  this.detailAssets.controls['transferentDestiny'].value;
+                this.detailAssets.controls['transferentDestiny'].setValue(
+                  destinyTransf
+                );
               }
-            },
-            // error: error => {
-            //   this.typeTransferent = '';
-            //   console.log(
-            //     'Error al consultar solicitud',
-            //     error,
-            //     'Transferente, ',
-            //     this.typeTransferent
-            //   );
-            // },
-          });
+
+              break;
+            case 'PGR_SAE':
+              console.log('PGR_SAE');
+
+              if (
+                this.detailAssets.controls['transferentDestiny'].value === null
+              ) {
+                this.detailAssets.controls['transferentDestiny'].setValue('4');
+              } else {
+                const destinyTransf =
+                  this.detailAssets.controls['transferentDestiny'].value;
+                this.detailAssets.controls['transferentDestiny'].setValue(
+                  destinyTransf
+                );
+              }
+
+              break;
+            case 'MANUAL':
+              console.log('MANUAL');
+
+              if (
+                this.detailAssets.controls['transferentDestiny'].value === null
+              ) {
+                this.detailAssets.controls['transferentDestiny'].setValue('1');
+              } else {
+                const destinyTransf =
+                  this.detailAssets.controls['transferentDestiny'].value;
+                this.detailAssets.controls['transferentDestiny'].setValue(
+                  destinyTransf
+                );
+              }
+
+              break;
+          }
         },
+        // error: error => {
+        //   this.typeTransferent = '';
+        //   console.log(
+        //     'Error al consultar solicitud',
+        //     error,
+        //     'Transferente, ',
+        //     this.typeTransferent
+        //   );
+        // },
       });
+    /*},
+      });*/
   }
 
   destinySae(event: any) {
@@ -1055,6 +1046,8 @@ export class DetailAssetsTabComponentComponent
             resp.count
           );
 
+          console.log('VALOR DESTINO LIGIE, ', resp);
+
           if (this.detailAssets.controls['unitMeasure'].value) {
             this.detailAssets.controls['unitMeasure'].setValue(
               this.detailAssets.controls['unitMeasure'].value
@@ -1305,12 +1298,14 @@ export class DetailAssetsTabComponentComponent
   }
 
   getTypeGood(id: number) {
+    let params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
     this.typeRelevantSevice
-      .getById(id)
+      .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: (data: any) => {
-          this.goodTypeName = data.description;
+          this.goodTypeName = data.data[0].description;
         },
       });
   }
@@ -1565,6 +1560,14 @@ export class DetailAssetsTabComponentComponent
       const ligieUnit = this.detailAssets.controls['ligieUnit'].value;
       this.getLigieUnit(new ListParams(), ligieUnit);
     }
+
+    this.detailAssets.controls['destiny'].valueChanges.subscribe(
+      (destiny: any) => {
+        if (destiny != null || destiny != undefined) {
+          this.getDestiny(destiny);
+        }
+      }
+    );
 
     this.detailAssets.controls['ligieUnit'].valueChanges.subscribe(
       (data: any) => {

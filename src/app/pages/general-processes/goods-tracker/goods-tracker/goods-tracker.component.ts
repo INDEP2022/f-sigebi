@@ -1,16 +1,20 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { format } from 'date-fns';
-import { BehaviorSubject, skip, takeUntil } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, skip, take, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { SocketService } from 'src/app/common/socket/socket.service';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ResetTrackerFilter } from '../store/goods-tracker.actions';
+import { getTrackerFilter } from '../store/goods-tracker.selector';
 import {
   FilterMatchTracker,
   OperatorValues,
@@ -40,41 +44,55 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
   goods: ITrackedGood[] = [];
   subloading: boolean = false;
   filters = new GoodTrackerMap();
+  selectedGooods: ITrackedGood[] = [];
+  $trackerFilter = this.store.select(getTrackerFilter);
 
   constructor(
     private fb: FormBuilder,
     private goodTrackerService: GoodTrackerService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private socketService: SocketService,
+    private store: Store
   ) {
     super();
   }
 
-  ngOnInit(): void {
-    this._params.pipe(takeUntil(this.$unSubscribe), skip(1)).subscribe(next => {
-      this.params.limit = next.limit;
-      this.params.page = next.page;
-      this.getGoods();
-    });
+  async ngOnInit() {
+    this._params
+      .pipe(takeUntil(this.$unSubscribe), skip(1))
+      .subscribe(async next => {
+        const form = this.form.value;
+        const filledFields = Object.values(form).filter(value => {
+          if (Array.isArray(value)) {
+            return value.length > 0;
+          }
+          return value ? true : false;
+        });
+        if (!filledFields.length) {
+          this.getAllGoods();
+          return;
+        }
+        this.getGoods(next);
+      });
+
+    const state = await this.getFilterState();
+    if (state) {
+      this.store.dispatch(ResetTrackerFilter());
+      this.form.patchValue({ ...state.getRawValue() });
+      this.searchGoods();
+    }
   }
 
-  async searchGoods(params: any) {
+  getFilterState() {
+    return firstValueFrom(this.$trackerFilter.pipe(take(1)));
+  }
+
+  async searchGoods(params?: any) {
+    this.selectedGooods = [];
     this.params.removeAllFilters();
-    const form = this.form.value;
-    const filledFields = Object.values(form).filter(value => {
-      if (Array.isArray(value)) {
-        return value.length > 0;
-      }
-      return value ? true : false;
-    });
-    if (!filledFields.length) {
-      this.alert(
-        'warning',
-        'Atención',
-        'Debe ingresar almenos un parámetro de búsqueda'
-      );
-      return;
-    }
-    this.getGoods();
+    const _params = new ListParams();
+    this._params.next(_params);
+    // this.getGoods();
     this.showTable = true;
   }
 
@@ -107,32 +125,44 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     return _val;
   }
 
-  getGoods() {
+  getAllGoods(params?: ListParams) {
+    this.loading = true;
+    this.filters = new GoodTrackerMap();
+    this.mapFilters();
+    this.scrollTable.nativeElement.scrollIntoView();
+    this.goodTrackerService.getAll(params ?? new ListParams()).subscribe({
+      next: res => {
+        this.loading = false;
+        this.goods = res.data as any;
+        this.totalItems = res.count;
+      },
+      error: error => {
+        this.loading = false;
+        // this.alert('error', 'Error', 'Ocurrio un error al obtener los datos');
+        this.goods = [];
+        this.totalItems = 0;
+      },
+    });
+  }
+
+  getGoods(params?: ListParams) {
     this.loading = true;
     this.filters = new GoodTrackerMap();
     this.mapFilters();
     this.scrollTable.nativeElement.scrollIntoView();
     this.goodTrackerService
-      .trackGoods(this.filters, this._params.getValue())
+      .trackGoods(this.filters, params ?? new ListParams())
       .subscribe({
         next: res => {
+          console.log(res);
+
           this.loading = false;
           this.goods = res.data;
           this.totalItems = res.count;
         },
         error: error => {
           this.loading = false;
-          if (
-            error.error.message ==
-            'Debe colocar por lo menos un parámetro de búsqueda'
-          ) {
-            this.alert(
-              'warning',
-              'Atención',
-              'Debe ingresar almenos un parámetro de búsqueda'
-            );
-            return;
-          }
+          // this.alert('error', 'Error', 'Ocurrio un error al obtener los datos');
           this.goods = [];
           this.totalItems = 0;
         },
@@ -150,24 +180,70 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     this.expNotDicFilter();
     // Filtros de actas
     this.certificatesFilter();
+    // Filtro transferente emisora autoridad
+    this.transferFilter();
 
-    const {
-      transfers,
-      transmitters,
-      autorities,
-      warehouse,
-      cordination,
-      autorityState,
-      goodState,
-    } = form;
+    const { warehouse, cordination, autorityState, goodState } = form;
+
+    if (warehouse.length) {
+      this.filters.global.gstSelecStore = 'S';
+      this.filters.global.cstStoreNumber = warehouse;
+    } else {
+      this.filters.global.cstStoreNumber = null;
+    }
+
+    if (autorityState.length) {
+      this.filters.global.gstSelecEntfed = 'S';
+      this.filters.global.otKey = autorityState;
+    } else {
+      this.filters.global.otKey = null;
+    }
+
+    if (goodState.length) {
+      this.filters.global.gstSelecEntfedOne = 'S';
+      this.filters.global.otKeyOne = goodState;
+    } else {
+      this.filters.global.otKeyOne = null;
+    }
+
+    if (cordination.length) {
+      this.filters.global.gstSelecDeleg = 'S';
+      this.filters.global.delegationNumber = cordination;
+    } else {
+      this.filters.global.delegationNumber = null;
+    }
+
+    if (this.formCheckbox.controls.goodIrre.value) {
+      this.filters.parval.chkIrregular = 'S';
+    }
+  }
+
+  transferFilter() {
+    const form = this.form.getRawValue();
+    const { transfers, transmitters, autorities } = form;
 
     const all = [...transfers, ...transmitters, ...autorities];
     if (all.length) {
       this.filters.global.gstSelecProced = 'S';
     }
-    //     selecAuthority;
-    //     selecStation;
-    // selecTransferee
+    if (transfers.length) {
+      this.filters.global.selecTransferee = 'S';
+      this.filters.global.ctTransfereeNumber = transfers.map(t => Number(t));
+    } else {
+      this.filters.global.ctTransfereeNumber = null;
+    }
+    if (transmitters.length) {
+      this.filters.global.selecStation = 'S';
+      this.filters.global.csStationNumber = transmitters;
+    } else {
+      this.filters.global.csStationNumber = null;
+    }
+    if (autorities.length) {
+      this.filters.global.selecAuthority = 'S';
+      this.filters.global.caAuthorityNumber = autorities;
+    } else {
+      this.filters.global.caAuthorityNumber = null;
+    }
   }
 
   certificatesFilter() {
@@ -203,9 +279,8 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
       ? format(new Date(statusChaangeTo), 'yyyy-MM-dd')
       : null;
     this.filters.parval.actKey = certificate;
-    this.filters.parval.statusChange = receptionStatus
-      ? [receptionStatus]
-      : null;
+    this.filters.parval.statusChange =
+      receptionStatus.length > 0 ? receptionStatus : null;
     this.filters.parval.alienationProcessNumber = eventNum;
     this.filters.parval.processChange = historicalProcess
       ? [historicalProcess]
@@ -318,5 +393,12 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     this.showTable = true;
     this.params.removeAllFilters();
     this.getGoods();
+  }
+
+  resetFilters() {
+    this.form = this.fb.group(new GoodTrackerForm());
+    // this.searchGoods();
+    this.goods = [];
+    this.totalItems = 0;
   }
 }

@@ -16,6 +16,14 @@ export class PartializeGoodService extends HttpService {
     this.microservice = 'partializegood';
   }
 
+  getAll(params?: string) {
+    return this.get('partialized-good', params);
+  }
+
+  partializePaGood(pGoodNum: number) {
+    return this.get(`aplication/pa-partialization/${pGoodNum}`);
+  }
+
   partializeGood(body: {}) {
     return this.post('aplication/partWell', body);
   }

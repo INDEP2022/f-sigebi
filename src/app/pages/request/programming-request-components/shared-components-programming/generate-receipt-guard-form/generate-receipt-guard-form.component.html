@@ -1,6 +1,7 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Recibo resguardo</h5>
+    <h5 *ngIf="proceess == 'warehouse'" class="modal-title">Recibo Almacén</h5>
+    <h5 *ngIf="proceess == 'guard'" class="modal-title">Recibo Resguardo</h5>
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
@@ -58,7 +59,7 @@
           <div class="row pt-3">
             <form-field
               [control]="form.get('nameWitnessTwo')"
-              label="Testigo 1">
+              label="Testigo 2">
               <input
                 type="text"
                 class="form-control"

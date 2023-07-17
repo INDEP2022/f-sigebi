@@ -9,7 +9,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data1">
+            [source]="detail">
           </ng2-smart-table>
         </div>
       </div>
@@ -59,7 +59,12 @@
         </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-secondary active">Imprimir</button>
+        <button
+          type="button"
+          class="btn btn-primary active btn-md"
+          (click)="report()">
+          Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+        </button>
       </div>
     </div>
   </div>

@@ -13,6 +13,7 @@ import {
   of,
   takeUntil,
 } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import {
   FilterParams,
   ListParams,
@@ -434,14 +435,14 @@ export class ScheduledMaintenanceDetailComponent
                 //     selected.no_bien + (index < newData.length - 1 ? ',' : '');
                 // });
                 this.data = [...newData];
-                this.onLoadToast(
+                this.alert(
                   'success',
                   'Fechas',
                   'Se actualizaron las fechas correctamente'
                 );
               },
               error: err => {
-                this.onLoadToast(
+                this.alert(
                   'error',
                   'Fechas',
                   'No se pudieron actualizar las fechas'
@@ -591,7 +592,7 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   alertTableRangeError() {
-    this.onLoadToast(
+    this.alert(
       'error',
       'Campos no concuerdan',
       'Fecha final no puede ser menor a inicial'
@@ -599,7 +600,7 @@ export class ScheduledMaintenanceDetailComponent
   }
 
   alertTableIncompleteFields() {
-    this.onLoadToast(
+    this.alert(
       'error',
       'Campos incompletos',
       'Complete todos los campos para agregar un registro'
@@ -616,18 +617,14 @@ export class ScheduledMaintenanceDetailComponent
       removeds.forEach((selected, index) => {
         message += selected + (index < this.selecteds.length - 1 ? ',' : '');
       });
-      this.onLoadToast(
+      this.alert(
         'success',
         'Bienes',
         `Se ${text} los bienes No. ${message} ` +
           this.showMessageNotRemoved(notRemoveds, 'pero no')
       );
     } else {
-      this.onLoadToast(
-        'error',
-        'Bienes',
-        this.showMessageNotRemoved(notRemoveds)
-      );
+      this.alert('error', 'Bienes', this.showMessageNotRemoved(notRemoveds));
     }
   }
 
@@ -719,40 +716,50 @@ export class ScheduledMaintenanceDetailComponent
     params.limit = 100;
     this.indicatorService
       .getAll(params)
-      .pipe(takeUntil(this.$unSubscribe))
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        catchError(x => of({ data: [] as IParametersIndicators[] })),
+        map(x => x.data)
+      )
       .subscribe({
         next: response => {
           // debugger;
           let newColumns;
-          this.proceedingIndicators = response.data.filter(
-            indicator =>
-              indicator.description === 'ENTREGA FISICA' || 'RECEPCION FISICA'
-          );
+          this.proceedingIndicators = response.filter(indicator => {
+            return (
+              indicator.description === 'ENTREGA FISICA' ||
+              indicator.description === 'RECEPCION FISICA'
+            );
+          });
           const indicator = this.proceedingIndicators.find(
             indicator => indicator.typeActa === this.typeProceeding
           );
-          if (!indicator) return;
+          if (!indicator) {
+            this.areaProcess = 'RF';
+          } else {
+            this.areaProcess = indicator.areaProcess;
+          }
           // console.log(indicator);
-          this.areaProcess = indicator.areaProcess;
-          if (indicator.areaProcess === 'RF') {
+
+          if (this.areaProcess === 'RF') {
             newColumns = { ciudad_transferente: columnGoodId, ...columnsGoods };
           }
-          if (indicator.areaProcess === 'DN') {
+          if (this.areaProcess === 'DN') {
             newColumns = {
               clave_contrato_donacion: columnGoodId,
               ...columnsGoods,
             };
           }
-          if (indicator.areaProcess === 'DV') {
+          if (this.areaProcess === 'DV') {
             newColumns = {
               clave_acta_devolucion: columnGoodId,
               ...columnsGoods,
             };
           }
-          if (indicator.areaProcess === 'CM') {
+          if (this.areaProcess === 'CM') {
             newColumns = { clave_dictamen: columnGoodId, ...columnsGoods };
           }
-          if (indicator.areaProcess === 'DS') {
+          if (this.areaProcess === 'DS') {
             newColumns = {
               clave_acta_destruccion: columnGoodId,
               ...columnsGoods,
@@ -803,7 +810,7 @@ export class ScheduledMaintenanceDetailComponent
           this.loading = false;
         },
         error: err => {
-          this.onLoadToast('error', 'Bienes', 'Bienes no válidos para agregar');
+          this.alert('error', 'Bienes', 'Bienes no válidos para agregar');
           this.loading = false;
         },
       });
@@ -838,7 +845,7 @@ export class ScheduledMaintenanceDetailComponent
                 this.fillColumnsGoods();
               },
               error: err => {
-                this.onLoadToast('error', 'Bienes', 'No Agregados');
+                this.alert('error', 'Bienes', 'No Agregados');
                 this.fillColumnsGoods();
               },
             });

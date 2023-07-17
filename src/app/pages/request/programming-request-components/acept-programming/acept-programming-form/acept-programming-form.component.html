@@ -9,29 +9,28 @@
       <div class="mt-3 btn-toolbar">
         <button
           (click)="signOffice()"
-          class="btn btn-info btn-sm active"
-          *ngIf="programming?.contentId == null">
-          Firmar oficio
+          class="btn btn-primary btn-sm active"
+          *ngIf="!programming?.contentId">
+          Firmar oficio <i class="bx bx-edit-alt"></i>
         </button>
 
         <button
           (click)="viewOffice()"
-          class="btn btn-info btn-sm active"
+          class="btn btn-primary btn-sm active"
           *ngIf="programming?.contentId">
-          Ver oficio
+          Ver oficio <i class="fa fa-eye" aria-hidden="true"></i>
         </button>
 
         <button
           (click)="aprobateProgramming()"
           class="btn btn-primary btn-sm active"
-          *ngIf="programming?.concurrentMsg == null">
-          Aprobar
+          *ngIf="!task?.State">
+          Aprobar <i class="fa fa-check" aria-hidden="true"></i>
         </button>
         <button
-          (click)="aprobateProgramming()"
-          class="btn btn-primary btn-sm active"
-          *ngIf="programming?.concurrentMsg">
-          Aprobar
+          class="btn btn-primary btn-sm active disabled"
+          *ngIf="task?.State == 'FINALIZADA'">
+          Aprobar <i class="fa fa-check" aria-hidden="true"></i>
         </button>
         <button
           (click)="rejectProgramming()"
@@ -59,7 +58,7 @@
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2"
-              >Delegaci&oacute;n regional&#58;</label
+              >Delegaci&oacute;n Regional&#58;</label
             >
             <span class="fs-4">
               {{ programming?.regionalDelegationNumber }}
@@ -68,7 +67,7 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Correo transferente&#58;</label>
+            <label class="text-right mr-2">Correo Transferente&#58;</label>
             <span class="fs-4">{{ programming?.emailTransfer }}</span>
           </div>
         </div>
@@ -89,13 +88,13 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Fecha inicio operativo&#58;</label>
+            <label class="text-right mr-2">Fecha Inicio Operativo&#58;</label>
             <span class="fs-4"> {{ programming?.startDate }} </span>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Fecha fin operativo&#58;</label>
+            <label class="text-right mr-2">Fecha Fin Operativo&#58;</label>
             <span class="fs-4"> {{ programming?.endDate }}</span>
           </div>
         </div>
@@ -119,11 +118,17 @@
       <div class="row pt-4">
         <div class="col-md-4">
           <div class="form-group">
+            <label class="text-right mr-2">Estado&#58;</label>
+            <span class="fs-4"> {{ nameState }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
             <label class="text-right mr-2">Autoridad&#58;</label>
             <span class="fs-4"> {{ authorityName }} </span>
           </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Observación&#58;</label>
             <span class="fs-4"> {{ programming?.observation }} </span>
@@ -134,7 +139,7 @@
       <div class="row pt-4">
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Tipo relevante&#58;</label>
+            <label class="text-right mr-2">Tipo Relevante&#58;</label>
             <span class="fs-3"> {{ typeRelevantName }} </span>
           </div>
         </div>
@@ -149,7 +154,7 @@
       </div>
 
       <div class="row pt-4">
-        <h5 class="title">Usuarios al operativo</h5>
+        <h5 class="title">Usuarios al Operativo</h5>
         <ng2-smart-table
           [attr.class]="'table-bordered'"
           [settings]="settings"
@@ -171,7 +176,7 @@
                     settingsTransportableGoods
                   "></app-columns-select>
               </div>
-              <div class="table-responsive">
+              <div class="table-responsive pt-3">
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="settingsTransportableGoods"
@@ -188,7 +193,7 @@
                 <app-columns-select
                   [(settings)]="settingGuardGoods"></app-columns-select>
               </div>
-              <div class="table-responsive">
+              <div class="table-responsive pt-3">
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="settingGuardGoods"
@@ -202,7 +207,7 @@
                 <app-columns-select
                   [(settings)]="settingWarehouseGoods"></app-columns-select>
               </div>
-              <div class="table-responsive">
+              <div class="table-responsive pt-3">
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="settingWarehouseGoods"

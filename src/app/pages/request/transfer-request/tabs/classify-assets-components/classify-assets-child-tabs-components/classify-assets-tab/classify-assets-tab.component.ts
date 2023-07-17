@@ -878,7 +878,7 @@ export class ClassifyAssetsTabComponent
     if (this.fractionCode.length < 8) {
       this.message(
         'error',
-        'Codigo de fraccion',
+        'Código de fracción',
         'Todos los bienes deben tener una fracción de 8 números'
       );
       return;
@@ -943,7 +943,7 @@ export class ClassifyAssetsTabComponent
             this.onLoadToast(
               'error',
               'Bien no creado',
-              `Ocurrio un error al guardar el bien ${error.error.message}`
+              `Ocurrió un error al guardar el bien ${error.error.message}`
             );
             console.log(error);
           },
@@ -966,7 +966,7 @@ export class ClassifyAssetsTabComponent
             this.message(
               'success',
               'Guardado',
-              `El registro se actualizo exitosamente`
+              `El registro se actualizó exitosamente`
             );
             this.classiGoodsForm.controls['id'].setValue(data.id);
 
@@ -977,7 +977,7 @@ export class ClassifyAssetsTabComponent
             this.onLoadToast(
               'error',
               'Bien no creado',
-              `Ocurrio un error al guardar el bien ${error.error.message}`
+              `Ocurrió un error al guardar el bien ${error.error.message}`
             );
             console.log(error);
           },
@@ -997,7 +997,7 @@ export class ClassifyAssetsTabComponent
           this.onLoadToast(
             'error',
             'Error al actualizar',
-            'No se pudo actualizar el registro de good finder'
+            'No se pudo actualizar el registro'
           );
         },
       });
@@ -1244,7 +1244,9 @@ export class ClassifyAssetsTabComponent
     // el el codigo o el codigo de fracion es = 8 verifica la norma
     if (fraction.fractionCode.length === 8) {
       if (fraction.normId != null) {
-        this.classiGoodsForm.controls['destiny'].setValue(fraction.normId);
+        this.classiGoodsForm.controls['destiny'].setValue(
+          fraction.norms.destination
+        );
       } else {
         this.classiGoodsForm.controls['destiny'].setValue(null);
       }
@@ -1264,7 +1266,7 @@ export class ClassifyAssetsTabComponent
           this.message(
             'info',
             'clasificación de bien nula',
-            'El bien seleccionado no tiene numero de clasificación de bien'
+            'El bien seleccionado no tiene número de clasificación de bien'
           );
         }
       }

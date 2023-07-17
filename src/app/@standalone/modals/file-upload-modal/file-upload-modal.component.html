@@ -7,8 +7,10 @@
       <div class="col-md-12">
         <file-upload
           (onUploadFiles)="testFiles($event)"
+          [uploadLoading]="uploadFiles"
           [accept]="accept"
-          [uploadLoading]="loading"></file-upload>
+          [info]="info"
+          [multiple]="multiple"></file-upload>
       </div>
     </div>
   </div>

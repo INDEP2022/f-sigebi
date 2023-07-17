@@ -24,6 +24,7 @@ export class TransferAutorityFilterComponent implements OnInit {
   autorities = new DefaultSelect();
   transmitterParams = new FilterParams();
   autoritiesParams = new FilterParams();
+  @Output() cleanFilters = new EventEmitter<void>();
 
   constructor(
     private trasnferService: TransferenteService,
@@ -40,6 +41,9 @@ export class TransferAutorityFilterComponent implements OnInit {
   getTransfers(params: ListParams) {
     this.trasnferService.getAll(params).subscribe({
       next: res => (this.transfers = new DefaultSelect(res.data, res.count)),
+      error: () => {
+        this.transfers = new DefaultSelect([], 0);
+      },
     });
   }
 
@@ -74,6 +78,9 @@ export class TransferAutorityFilterComponent implements OnInit {
       .subscribe({
         next: res =>
           (this.transmitters = new DefaultSelect(res.data, res.count)),
+        error: () => {
+          this.transmitters = new DefaultSelect([], 0);
+        },
       });
   }
 
@@ -101,6 +108,9 @@ export class TransferAutorityFilterComponent implements OnInit {
       .getAllFilter(this.autoritiesParams.getParams())
       .subscribe({
         next: res => (this.autorities = new DefaultSelect(res.data, res.count)),
+        error: () => {
+          this.autorities = new DefaultSelect([], 0);
+        },
       });
   }
 }

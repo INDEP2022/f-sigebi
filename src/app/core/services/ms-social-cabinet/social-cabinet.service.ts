@@ -22,6 +22,9 @@ export class SocialCabinetService extends HttpService {
   }
 
   paValidSocialCabinet(body: IValidSocialCabinet) {
-    return this.post(SocialCabinetGoodEndpoints.PAValidSocialGabinet, body);
+    return this.post<IListResponseMessage<any>>(
+      SocialCabinetGoodEndpoints.PAValidSocialGabinet,
+      body
+    );
   }
 }

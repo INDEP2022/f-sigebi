@@ -24,6 +24,7 @@ export class LocationFilterComponent implements OnInit {
   delegations = new DefaultSelect();
   autorityStates = new DefaultSelect();
   goodStates = new DefaultSelect();
+  @Output() cleanFilters = new EventEmitter<void>();
   constructor(
     private fb: FormBuilder,
     private warehouseService: WarehouseService,
@@ -49,12 +50,18 @@ export class LocationFilterComponent implements OnInit {
       // this.warehouseService.getAll(params)
       .subscribe({
         next: res => (this.warehouses = new DefaultSelect(res.data, res.count)),
+        error: () => {
+          this.warehouses = new DefaultSelect([], 0);
+        },
       });
   }
 
   getDelegations(params: ListParams) {
     this.delegationService.getAll(params).subscribe({
       next: res => (this.delegations = new DefaultSelect(res.data, res.count)),
+      error: () => {
+        this.delegations = new DefaultSelect([], 0);
+      },
     });
   }
 
@@ -62,12 +69,18 @@ export class LocationFilterComponent implements OnInit {
     this.statesService.getAll(params).subscribe({
       next: res =>
         (this.autorityStates = new DefaultSelect(res.data, res.count)),
+      error: () => {
+        this.autorityStates = new DefaultSelect([], 0);
+      },
     });
   }
 
   getGoodStates(params: ListParams) {
     this.statesService.getAll(params).subscribe({
       next: res => (this.goodStates = new DefaultSelect(res.data, res.count)),
+      error: () => {
+        this.goodStates = new DefaultSelect([], 0);
+      },
     });
   }
 }

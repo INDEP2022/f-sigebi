@@ -140,7 +140,7 @@ export class CityDetailComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.cityForm = this.fb.group({
-      idCity: [null, []],
+      //idCity: [],
       nameCity: [
         null,
         [

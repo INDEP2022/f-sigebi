@@ -364,21 +364,23 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
       //   }
       // );
     } else if (screen == 'FACTDIRDATOSBIEN') {
+      localStorage.setItem('goodCharacteristicNumber', no_bien);
+
       this.router.navigate([`/pages/general-processes/goods-characteristics`], {
         queryParams: {
           origin: 'FMATENCBIENESREV',
-          P_PARAM_PANT: parameter,
-          P_BIEN: no_bien,
         },
       });
     } else if (screen == 'FIMGFOTBIEADD') {
       // No hay url
-      return;
-      this.router.navigate([`/pages/general-processes/scan-documents`], {
+      let arr = [];
+      arr.push(no_bien);
+      const dataString = JSON.stringify(arr);
+      localStorage.setItem('selectedGoodsForPhotos', dataString);
+      this.router.navigate([`/pages/general-processes/good-photos`], {
         queryParams: {
           origin: 'FMATENCBIENESREV',
-          P_PARAM_PANT: parameter,
-          P_BIEN: no_bien,
+          numberGood: no_bien,
         },
       });
     } else if (screen == 'FCAMNOCLASIFBIEN') {
@@ -387,13 +389,13 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
         {
           queryParams: {
             origin: 'FMATENCBIENESREV',
-            P_PARAM_PANT: parameter,
-            P_BIEN: no_bien,
+            numberGood: no_bien,
           },
         }
       );
     } else {
       this.alert('warning', 'No se localizó la URL de la forma', '');
+      return;
     }
   }
 

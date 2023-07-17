@@ -10,7 +10,8 @@
           <div class="col-md-6 pt-3">
             <form-field [control]="form.get('currency')">
               <ngx-select
-                (fetchItems)="getRegCurrency()"
+                [searchOnInit]="true"
+                (fetchItems)="getCurrencies($event)"
                 [data]="currencies"
                 [form]="form"
                 value="cve_moneda"
@@ -32,17 +33,36 @@
               [control]="form.get('fileFrom')"
               label="Del Expediente:">
               <input
+                max="9999999999"
                 type="number"
                 formControlName="fileFrom"
                 class="form-control" />
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('fileTo')" label="Al:">
-              <input
+            <form-field [control]="form.get('fileTo')" label="al:">
+              <!-- <input
+                max="9999999999"
                 type="number"
                 formControlName="fileTo"
-                class="form-control" />
+                class="form-control"
+                [min]="form.get('fileFrom').value"
+                [ngModel]="
+                  form.get('fileTo').value < form.get('fileFrom').value
+                    ? form.get('fileFrom').value
+                    : form.get('fileTo').value
+                " /> -->
+              <input
+                max="9999999999"
+                type="number"
+                formControlName="fileTo"
+                class="form-control"
+                [min]="form.get('fileFrom').value"
+                [ngModel]="
+                  form.get('fileTo').value < form.get('fileFrom').value
+                    ? form.get('fileFrom').value
+                    : form.get('fileTo').value
+                " />
             </form-field>
           </div>
         </div>
@@ -57,12 +77,18 @@
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('to')" label="Al:">
+            <form-field [control]="form.get('to')" label="al:">
               <input
                 [maxDate]="maxDate"
                 formControlName="to"
                 class="form-control"
+                [min]="form.get('from').value"
                 [minDate]="form.get('from').value"
+                [ngModel]="
+                  form.get('to').value < form.get('from').value
+                    ? form.get('from').value
+                    : form.get('to').value
+                "
                 bsDatepicker />
             </form-field>
           </div>

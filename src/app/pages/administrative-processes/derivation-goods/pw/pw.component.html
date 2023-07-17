@@ -13,7 +13,8 @@
               label="Id Conversión"
               bindLabel="id"
               [data]="conversiones"
-              [form]="form"></ngx-select>
+              [form]="form"
+              [attr.autocomplete]="'off'"></ngx-select>
           </form-field>
         </div>
         <div class="row mt-3">
@@ -21,19 +22,20 @@
             <input
               type="password"
               class="form-control"
-              formControlName="password" />
+              formControlName="password"
+              autocomplete="new-password" />
           </form-field>
         </div>
       </div>
       <div class="row text-center mt-5">
         <div class="col">
           <button
-            class="btn btn-primary btn-sm active mr-5"
+            class="btn btn-primary btn-sm active mr-3"
             [disabled]="!form.valid"
             (click)="sigin()">
             Ingresar
           </button>
-          <button class="btn btn-secondary btn-sm active" (click)="close()">
+          <button class="btn btn-danger btn-sm active mr-3" (click)="close()">
             Cancelar
           </button>
         </div>

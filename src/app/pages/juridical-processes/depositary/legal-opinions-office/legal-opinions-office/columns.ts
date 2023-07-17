@@ -102,14 +102,14 @@ export const RELATED_FOLIO_COLUMNS = {
     sort: false,
   },
   descriptionDocument: {
-    title: 'Descripción del documento',
+    title: 'Descripción del Documento',
     sort: false,
   },
 };
 
 export const CCP_COLUMS_OFICIO = {
   personExtInt_: {
-    title: 'Tipo persona',
+    title: 'Tipo Persona',
     type: 'string',
     sort: false,
     // valuePrepareFunction: (value: any) => {
@@ -130,7 +130,7 @@ export const CCP_COLUMS_OFICIO = {
     // },
   },
   userOrPerson: {
-    title: 'Nombre persona',
+    title: 'Nombre Persona',
     type: 'string',
     sort: false,
   },

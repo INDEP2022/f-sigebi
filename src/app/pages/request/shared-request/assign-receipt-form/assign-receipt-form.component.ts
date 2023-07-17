@@ -35,6 +35,8 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   loadingTable: boolean = false;
   delegationDes: string = '';
   keyTransferent: string = '';
+  typeReceipt: string = '';
+  proceedign: IProceedings;
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -52,6 +54,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getReceipts();
+    this.getProceedings();
   }
 
   getReceipts() {
@@ -64,13 +67,20 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
         this.loadingTable = false;
       },
       error: error => {
-        this.alertInfo(
-          'info',
-          'Información',
-          'No se encontraron recibos'
-        ).then();
+        this.alert('warning', 'Información', 'No se encontraron recibos');
         this.loadingTable = false;
       },
+    });
+  }
+
+  getProceedings() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.idPrograming'] = this.programming.id;
+    this.proceedingService.getProceedings(params.getValue()).subscribe({
+      next: response => {
+        this.proceedign = response.data[0];
+      },
+      error: error => {},
     });
   }
 
@@ -187,39 +197,54 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
         'Aún se encuentran recibos abiertos'
       ).then();
     } else {
-      const form: Object = {
-        minutesId: '1',
-        idPrograming: this.programming.id,
-        statusProceeedings: 'ABIERTO',
-      };
-      this.proceedingService.createProceedings(form).subscribe({
-        next: async response => {
-          const createKeyAct = await this.createKeyAct(response);
-          if (createKeyAct == true) {
-            const receiptForm: Object = {
-              id: 1,
-              actId: response.id,
-              programmingId: this.programming.id,
-              statusReceipt: 'ABIERTO',
-            };
+      if (this.proceedign) {
+        const receiptForm: Object = {
+          id: 1,
+          actId: this.proceedign.id,
+          programmingId: this.programming.id,
+          statusReceipt: 'ABIERTO',
+        };
 
-            this.receptionGoodService.createReceipt(receiptForm).subscribe({
-              next: async response => {
-                const folioReceipt = await this.createKeyReceipt(response);
-                if (folioReceipt) {
-                  this.getReceipts();
-                }
-              },
-              error: error => {
-                console.log(error);
-              },
-            });
-          }
-        },
-        error: error => {
-          console.log(error);
-        },
-      });
+        this.receptionGoodService.createReceipt(receiptForm).subscribe({
+          next: async response => {
+            const folioReceipt = await this.createKeyReceipt(response);
+            if (folioReceipt) {
+              this.getReceipts();
+            }
+          },
+          error: error => {},
+        });
+      } else {
+        const form: Object = {
+          minutesId: '1',
+          idPrograming: this.programming.id,
+          statusProceeedings: 'ABIERTO',
+        };
+        this.proceedingService.createProceedings(form).subscribe({
+          next: async response => {
+            const createKeyAct = await this.createKeyAct(response);
+            if (createKeyAct == true) {
+              const receiptForm: Object = {
+                id: 1,
+                actId: response.id,
+                programmingId: this.programming.id,
+                statusReceipt: 'ABIERTO',
+              };
+
+              this.receptionGoodService.createReceipt(receiptForm).subscribe({
+                next: async response => {
+                  const folioReceipt = await this.createKeyReceipt(response);
+                  if (folioReceipt) {
+                    this.getReceipts();
+                  }
+                },
+                error: error => {},
+              });
+            }
+          },
+          error: error => {},
+        });
+      }
     }
   }
 

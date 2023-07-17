@@ -10,12 +10,12 @@ export const OPINION_COLUMNS = {
     sort: false,
   },
   dict_ofi: {
-    title: 'Dictamen_oficio',
+    title: 'Dictamen del Oficio',
     type: 'string',
     sort: false,
   },
   areaProcess: {
-    title: 'Área de proceso',
+    title: 'Área de Proceso',
     type: 'string',
     sort: false,
   },

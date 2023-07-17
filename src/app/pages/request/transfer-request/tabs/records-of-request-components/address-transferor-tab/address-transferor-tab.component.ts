@@ -24,8 +24,8 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { StoreAliasStockService } from 'src/app/core/services/ms-store/store-alias-stock.service';
 import {
+  LATITUDE_LONGITUDE_PATTERN,
   NUMBERS_PATTERN,
-  NUMBERS_POINT_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -150,11 +150,17 @@ export class AddressTransferorTabComponent
       ],
       latitude: [
         null,
-        [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.maxLength(30)],
+        [
+          Validators.pattern(LATITUDE_LONGITUDE_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
       length: [
         null,
-        [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.maxLength(30)],
+        [
+          Validators.pattern(LATITUDE_LONGITUDE_PATTERN),
+          Validators.maxLength(30),
+        ],
       ], //por cambiar
       wayName: [
         null,
@@ -521,7 +527,7 @@ export class AddressTransferorTabComponent
         }
       },
       error => {
-        this.onLoadToast('error', 'Alias Almacén', `${error.error.message}`);
+        //this.onLoadToast('error', 'Alias Almacén', `${error.error.message}`);
         this.message('error', 'Error', error.getMessage());
       }
     );
@@ -566,7 +572,7 @@ export class AddressTransferorTabComponent
         error: error => {
           resolve(false);
           console.log(error);
-          this.onLoadToast('error', 'Alias Almacén', `${error.error.message}`);
+          //this.onLoadToast('error', 'Alias Almacén', `${error.error.message}`);
         },
       });
     });

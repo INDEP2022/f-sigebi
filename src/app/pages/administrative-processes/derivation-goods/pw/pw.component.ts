@@ -16,6 +16,7 @@ export class PwComponent extends BasePage implements OnInit {
   form: FormGroup;
   //Search conversion
   conversiones = new DefaultSelect();
+  conversionData: any;
   // Variable para la contraseña
   private _password: string;
   conversionId: any;
@@ -47,16 +48,17 @@ export class PwComponent extends BasePage implements OnInit {
     });
   }
 
-  serachIdConversion(e: any) {
+  serachIdConversion(e?: any) {
     this.serviceConversion.getById(e.text).subscribe(
       res => {
         console.log(res);
+        this.conversionData = res;
         this.conversiones = new DefaultSelect([res]);
       },
       err => {
         this.alert(
           'warning',
-          'No existen registros con el valor ingresado',
+          'No Existen Registros con el Valor Ingresado',
           ''
         );
         this.conversiones = new DefaultSelect();
@@ -71,18 +73,26 @@ export class PwComponent extends BasePage implements OnInit {
         if (this.password.value != this._password) {
           this.alert(
             'warning',
-            'Contraseña incorrecta',
-            'Por favor verificar y volver a intentar'
+            'Contraseña Incorrecta',
+            'Por Favor Verificar y Volver a Intentar'
           );
         } else {
-          this.modalService.content.callback(this.idConversion.value);
-          this.modalService.hide();
+          if (this.conversionData.goodFatherNumber != null) {
+            this.modalService.content.callback(this.conversionData);
+            this.modalService.hide();
+          } else {
+            this.alert(
+              'warning',
+              'Conversiones',
+              'La Conversion debe tener un Bien Padre'
+            );
+          }
         }
       } else {
-        this.alert('warning', 'Debe introducir la contraseña', '');
+        this.alert('warning', 'Debe Introducir la Contraseña', '');
       }
     } else {
-      this.alert('warning', 'Debe introducir un Id Conversión', '');
+      this.alert('warning', 'Debe Introducir un Id Conversión', '');
     }
   }
 

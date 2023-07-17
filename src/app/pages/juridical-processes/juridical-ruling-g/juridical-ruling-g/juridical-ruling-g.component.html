@@ -28,7 +28,7 @@
         <div class="col-6">
           <div class="d-inline mx-2">
             <button
-              [disabled]="!dictNumber"
+              [disabled]="!dictNumber || !disabledSend"
               style="float: right"
               type="button"
               class="btn btn-primary btn-sm active"
@@ -221,6 +221,8 @@
                 [control]="dictaminacionesForm.get('fechaPPFF')"
                 [label]="label">
                 <input
+                  [ngClass]="{ 'not-press bg-gray': !disabledSend }"
+                  #datepickerElement
                   class="form-control"
                   formControlName="fechaPPFF"
                   bsDatepicker
@@ -296,6 +298,7 @@
                   [form]="dictaminacionesForm"
                   [data]="users$"
                   (change)="userChange($event)"
+                  [readonly]="!disabledSend"
                   (fetchItems)="getUsers($event)"
                   bindLabel="userAndName"
                   control="autoriza_remitente"
@@ -619,6 +622,7 @@
               class="btn btn-info btn-sm active m-3 text-wrap w-100"
               (click)="btnDocumentos()">
               Documentos
+              <i class="bx bx-file bx-sm float-icon"></i>
             </button>
           </div>
           <div class="col-6 text-align-center">
@@ -644,7 +648,7 @@
               (click)="btnImprimeOficio()">
               <!-- [routerLink]="returnRoute" -->
               <!-- Imprime Oficio -->
-              Imprime Oficio <i class="bx bx-printer bx-sm float-icon"></i>
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
             </button>
           </div>
           <div class="col-6 text-align-center">

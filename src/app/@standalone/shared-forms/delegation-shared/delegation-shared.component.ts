@@ -39,7 +39,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   @Input() subdelegationField: string = 'subdelegation';
 
   @Input() labelDelegation: string = 'Delegación';
-  @Input() labelSubdelegation: string = 'Sub Delegación';
+  @Input() labelSubdelegation: string = 'Subdelegación';
 
   @Input() showSubdelegation: boolean = true;
   @Input() showDelegation: boolean = true;
@@ -85,18 +85,21 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   }
 
   getDelegations(params: ListParams) {
+    params.limit = 100;
+    params.take = 100;
     this.service.getAll(params).subscribe(
       data => {
         this.delegations = new DefaultSelect(data.data, data.count);
       },
       err => {
-        let error = '';
+        /* let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        this.alert('warning', 'No se encontraron registros', ''); */
+        this.delegations = new DefaultSelect();
       },
       () => {}
     );
@@ -115,14 +118,15 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
           this.subdelegations = new DefaultSelect(data.data, data.count);
         },
         error: err => {
-          let error = '';
+          /* let error = '';
           if (err.status === 0) {
             error = 'Revise su conexión de Internet.';
           } else {
             error = err.message;
           }
-
-          this.onLoadToast('error', 'Error', error);
+          this.subdelegations = new DefaultSelect([], 0);
+          this.alert('warning', 'No se encontraron registros', ''); */
+          this.subdelegations = new DefaultSelect();
         },
       });
     } else {
@@ -137,14 +141,15 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
           } else {
             error = err.message;
           }
-
-          this.onLoadToast('error', 'Error', error);
+          this.subdelegations = new DefaultSelect([], 0);
+          this.alert('warning', 'No se encontraron registros', '');
         }
       );
     }
   }
 
   onDelegationsChange(type: any) {
+    console.log(type);
     this.resetFields([this.subdelegation]);
     this.subdelegations = new DefaultSelect();
     this.getSubDelegations(new ListParams());

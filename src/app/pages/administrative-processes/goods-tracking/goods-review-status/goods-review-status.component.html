@@ -11,7 +11,7 @@
             margin-left: 10px;
             margin-right: 10px;
           ">
-          {{ responsable }}</strong
+          {{ responsable2 }}</strong
         >
       </h6>
     </div>
@@ -32,6 +32,7 @@
             <div class="col-lg-4 col-md-4 col-sm-4 col-6">
               <form-radio label="Muebles">
                 <input
+                  [readonly]="!responsable"
                   type="radio"
                   [(ngModel)]="selectedGender"
                   (change)="handleGenderChange()"
@@ -42,6 +43,7 @@
             <div class="col-lg-4 col-md-4 col-sm-4 col-6">
               <form-radio label="Inmuebles">
                 <input
+                  [readonly]="!responsable"
                   [(ngModel)]="selectedGender"
                   (change)="handleGenderChange()"
                   type="radio"
@@ -52,6 +54,7 @@
             <div class="col-lg-4 col-md-4 col-sm-4 col-6">
               <form-radio label="Todos">
                 <input
+                  [readonly]="!responsable"
                   [(ngModel)]="selectedGender"
                   (change)="handleGenderChange()"
                   type="radio"
@@ -66,6 +69,7 @@
           class="col-lg-7 col-md-12 col-sm-12 col-12 align-self-center mb-3 mt-3">
           <div class="col-lg-3 col-md-2 col-sm-4 col-12">
             <button
+              [disabled]="!responsable"
               (click)="attention()"
               class="btn btn-primary btn-sm active w-100">
               Atender
@@ -73,6 +77,7 @@
           </div>
           <div class="col-lg-5 col-md-5 col-sm-4 col-12">
             <button
+              [disabled]="!responsable"
               class="btn btn-success btn-sm w-100"
               type="button"
               (click)="file.click()">
@@ -87,7 +92,10 @@
               (change)="onFileChange($event)" />
           </div>
           <div class="col-lg-4 col-md-5 col-sm-4 col-12">
-            <button (click)="exportar()" class="btn btn-success btn-sm w-100">
+            <button
+              [disabled]="!responsable"
+              (click)="exportar()"
+              class="btn btn-success btn-sm w-100">
               Exportar CSV <i class="bx bx-download float-icon"></i>
             </button>
           </div>
@@ -114,7 +122,6 @@
           [track]="'all'"
           [ngStyle]="{ height: loading ? '0px' : '500px' }">
           <ng2-smart-table
-            (click)="onDblClick($event)"
             [attr.class]="'table-bordered table-responsive'"
             class="table-responsive"
             [settings]="settings"

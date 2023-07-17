@@ -19,6 +19,13 @@ export const REQUEST_NUMERARY_COLUMNS = {
     title: 'Fecha Banco',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      return value
+        ? value.includes('T')
+          ? value.split('T')[0].split('-').reverse().join('/')
+          : value.split('-').join('/')
+        : '';
+    },
   },
   dateCalculationInterests: {
     title: 'Fecha Tesofe',

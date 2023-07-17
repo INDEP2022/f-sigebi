@@ -376,7 +376,7 @@ export interface IGood {
   opinion?: string;
   appraisedValue?: number;
   drawerNumber?: number;
-  vaultNumber?: number;
+  vaultNumber?: string | number;
   goodReferenceNumber?: number;
   appraisalCurrencyKey?: string;
   appraisalVigDate?: Date;
@@ -867,4 +867,13 @@ export interface IServiceGood {
   recordNumber?: string;
   good?: IGood;
   serviceCat?: IServiceCat;
+}
+
+export interface ISecondIfMC {
+  noPackage: number;
+  noGoodFather: number;
+  encStatus: string;
+  vcScreen: string;
+  user: string;
+  toolbarUser: string;
 }

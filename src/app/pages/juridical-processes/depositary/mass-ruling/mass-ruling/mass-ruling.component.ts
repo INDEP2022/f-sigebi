@@ -54,15 +54,16 @@ export class MassRulingComponent
     },
     hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
-
     columns: {
       goodNumber: {
+        sort: false,
         title: 'No. Bien',
         // valuePrepareFunction: (data: any) => {
         //   return data ? data.id : '';
         // },
       },
       fileNumber: {
+        sort: false,
         title: 'No. Expediente',
         // valuePrepareFunction: (data: any) => {
         //   return data ? data.id : '';
@@ -88,6 +89,7 @@ export class MassRulingComponent
 
     columns: {
       description: {
+        sort: false,
         title: 'Errores del proceso',
       },
     },
@@ -273,7 +275,9 @@ export class MassRulingComponent
 
     let body: any = {};
     if (this.isFileLoad) {
-      body['goodIds'] = this.dataTable.map(x => {
+      body['goodIds'] = /* this.dataTable.map(x => {
+        return { no_bien: x.goodNumber }; 
+      });*/ this.dataFile.map(x => {
         return { no_bien: x.goodNumber };
       });
     } else {
@@ -304,10 +308,8 @@ export class MassRulingComponent
       },
       error: err => {
         console.log(err);
-        this.onLoadToast(
-          'warning',
-          'Error al eliminar los bienes del dictamen'
-        );
+        const message = err.error.message || 'Error al eliminar los bienes';
+        this.onLoadToast('warning', message);
         this.btnsEnabled.btnGoodDictation = false;
       },
     });
@@ -357,6 +359,9 @@ export class MassRulingComponent
 
   onClickBtnClear() {
     this.dataTable = [];
+    this.totalItems = 0;
+    this.dataTableErrors = [];
+    this.totalItemsErrors = 0;
     this.formCargaMasiva.reset();
     this.form.reset();
     this.form.get('delete').setValue(false);
@@ -428,6 +433,9 @@ export class MassRulingComponent
   onClickLoadByIdentifier(): void {
     this.isFileLoad = false;
     this.dataTable = [];
+    this.totalItems = 0;
+    this.dataTableErrors = [];
+    this.totalItemsErrors = 0;
     this.params.next(new ListParams());
   }
 
@@ -463,15 +471,20 @@ export class MassRulingComponent
       error: () => {
         this.dataTable = [];
         this.totalItems = 0;
+        this.dataTableErrors = [];
+        this.totalItemsErrors = 0;
         // this.file = null;
         this.loading = false;
       },
     });
   }
+
   dataFile: { goodNumber: number; fileNumber: number }[];
+
   async onClickLoadFile(event: any) {
     this.dataTableErrors = [];
     this.dataTable = [];
+    this.totalItemsErrors = 0;
     this.isFileLoad = true;
     this.totalItems = 0;
     const { id, typeDict } = this.form.value;
@@ -516,10 +529,6 @@ export class MassRulingComponent
     // this.dataTableErrors = dataTableError;
     // this.dataTable = dataTable;
 
-    this.form.get('id').setValue(null);
-    this.form.get('delete').enable();
-    this.form.get('delete').setValue(false);
-    this.isDisableCreateDictation = false;
     this.fileInput.nativeElement.value = null;
   }
 
@@ -527,6 +536,14 @@ export class MassRulingComponent
     try {
       const { CLAVE_ARMADA, PARAMFORM, P_OFICIO, TIPO_DIC, TIPO_VOL, vIDENTI } =
         await this.prePrints();
+      console.log({
+        CLAVE_ARMADA,
+        PARAMFORM,
+        P_OFICIO,
+        TIPO_DIC,
+        TIPO_VOL,
+        vIDENTI,
+      });
       let report = 'RGENREPDICTAMASDES';
       if (vIDENTI.includes('4')) {
         report = 'RGENREPDICTAMASDES_EXT';
@@ -585,7 +602,7 @@ export class MassRulingComponent
   //   console.log({ data });
   // }
 
-  isDisableCreateDictation = false;
+  isDisableCreateDictation = true;
   async onClickCreatedDictation() {
     let vNO_OF_DICTA;
     // if (this.form.invalid) {

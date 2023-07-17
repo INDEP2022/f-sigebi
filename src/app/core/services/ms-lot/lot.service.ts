@@ -15,4 +15,22 @@ export class LotService extends HttpService {
     const route = `${LotEndpoints.ComerLot}?filter.eventId=${id}`;
     return this.get(route, params);
   }
+
+  pubFmtoPackage(value: any) {
+    const route = `${LotEndpoints.pubFmtoPackage}`;
+    return this.post(route, value);
+  }
+
+  pubCancelPackage(value: any) {
+    const route = `${LotEndpoints.pubCancelPackage}`;
+    return this.post(route, value);
+  }
+
+  getEventId(data: Object) {
+    return this.post(LotEndpoints.Event, data);
+  }
+
+  getGlobalGood(id: number) {
+    return this.get(`${LotEndpoints.EventGlobalGood}/${id}`);
+  }
 }

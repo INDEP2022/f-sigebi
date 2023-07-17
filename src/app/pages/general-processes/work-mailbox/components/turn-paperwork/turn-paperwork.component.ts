@@ -129,16 +129,20 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
         return;
       }
       this.loadingText = 'Generando reporte ...';
-      this.downloadReport(userTurn).subscribe({
-        next: res => (this.loading = false),
-        error: error => (this.loading = false),
-      });
+      if (response == 'S') {
+        this.downloadReport(userTurn).subscribe({
+          next: res => (this.loading = false),
+          error: error => (this.loading = false),
+        });
+      }
     });
   }
 
   downloadReport(user: string) {
     return this.getPaperwork().pipe(
       switchMap(paperwork => {
+        console.log(paperwork);
+
         const params = {
           PFOLIO: paperwork.folio,
           PTURNADOA: user,

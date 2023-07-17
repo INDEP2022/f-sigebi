@@ -62,7 +62,7 @@
                     oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);" />
                 </form-field>
               </div>
-              <div class="col-6">
+              <div class="col-6 mt-4">
                 <form-field [control]="form.get('ssa')" label="SSA">
                   <input
                     type="number"
@@ -71,7 +71,7 @@
                     oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);" />
                 </form-field>
               </div>
-              <div class="col-6">
+              <div class="col-6 mt-4">
                 <form-field [control]="form.get('pjf')" label="PJF">
                   <input
                     type="number"
@@ -86,7 +86,7 @@
       </form>
       <form action="" class="form-material" [formGroup]="file">
         <div class="row mt-4">
-          <div class="col-md-2">
+          <!--<div class="col-md-2">
             <button class="btn btn-secondary btn-sm active">
               Abrir archivo de texto
             </button>
@@ -97,6 +97,9 @@
               #FileInput
               class="form-control"
               formControlName="recordRead" />
+          </div>-->
+          <div class="col-md-4">
+            <input type="file" />
           </div>
           <div class="col-md-2">
             <form-field
@@ -140,135 +143,140 @@
           </div>
         </div>
       </form>
-      <form action="" class="form-material" [formGroup]="data">
-        <div class="row mt-4 pt-4">
-          <div class="col-md-3">
-            <form-field [control]="data.get('noGood')">
-              <ngx-select
-                (fetchItems)="getGood($event)"
-                label="No. Bien"
-                [data]="goods"
-                [form]="data"
-                value="goodId"
-                bindLabel="goodDescription"
-                [control]="'noGood'"
-                (change)="(null)"
-                [searchOnInit]="true"
-                [showTooltip]="true">
-              </ngx-select>
-            </form-field>
+
+      <div class="row pt-5">
+        <form action="" class="form-material" [formGroup]="data">
+          <div class="row mt-4 pt-4">
+            <div class="col-md-3">
+              <form-field [control]="data.get('noGood')">
+                <ngx-select
+                  (fetchItems)="getGood($event)"
+                  label="No. Bien"
+                  [data]="goods"
+                  [form]="data"
+                  value="goodId"
+                  bindLabel="goodDescription"
+                  [control]="'noGood'"
+                  (change)="(null)"
+                  [searchOnInit]="true"
+                  [showTooltip]="true">
+                </ngx-select>
+              </form-field>
+            </div>
+            <div class="col-md-2">
+              <form-field
+                [control]="data.get('criminalCase')"
+                label="Causa Penal">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="criminalCase" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="data.get('preliminaryInvestigation')"
+                label="Averiguación Previa">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="preliminaryInvestigation"
+                  min="1"
+                  pattern="^[0-9]+" />
+              </form-field>
+            </div>
+            <div class="col-md-2">
+              <form-field
+                [control]="data.get('dateTesofe')"
+                label="Fecha Tesofe">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="dateTesofe" />
+              </form-field>
+            </div>
+            <div class="col-md-2">
+              <form-field
+                [control]="data.get('jobTesofe')"
+                label="Oficio a Tesofe">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="jobTesofe" />
+              </form-field>
+            </div>
           </div>
-          <div class="col-md-2">
-            <form-field
-              [control]="data.get('criminalCase')"
-              label="Causa Penal">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="criminalCase" />
-            </form-field>
+          <div class="row mt-4">
+            <div class="col-md-2">
+              <form-field [control]="data.get('authority')" label="Autoridad">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="authority" />
+              </form-field>
+            </div>
+            <div class="col-md-2">
+              <form-field
+                [control]="data.get('dateTreasury')"
+                label="Fecha Tesoreria">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="dateTreasury" />
+              </form-field>
+            </div>
+            <div class="col-md-2">
+              <form-field
+                [control]="data.get('dateJudgment')"
+                label="Fecha Sentencia">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="dateJudgment" />
+              </form-field>
+            </div>
+            <div class="col-md-2">
+              <form-field
+                [control]="data.get('appraisalValue')"
+                label="Valor Avaluo">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="appraisalValue" />
+              </form-field>
+            </div>
+            <div class="col-md-2">
+              <form-field [control]="data.get('interests')" label="Intereses">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="interests" />
+              </form-field>
+            </div>
+            <div class="col-md-2">
+              <form-field [control]="data.get('results')" label="Resultado">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="results" />
+              </form-field>
+            </div>
           </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="data.get('preliminaryInvestigation')"
-              label="Averiguación Previa">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="preliminaryInvestigation"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
+          <div class="row pt-5">
+            <div class="col-md-8"></div>
+            <div class="col-md-4">
+              <form-field
+                [control]="data.get('totalSeizures')"
+                label="Total en Decomisos:">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="totalSeizures" />
+              </form-field>
+            </div>
           </div>
-          <div class="col-md-2">
-            <form-field [control]="data.get('dateTesofe')" label="Fecha Tesofe">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="dateTesofe" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <form-field
-              [control]="data.get('jobTesofe')"
-              label="Oficio a Tesofe">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="jobTesofe" />
-            </form-field>
-          </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-md-2">
-            <form-field [control]="data.get('authority')" label="Autoridad">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="authority" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <form-field
-              [control]="data.get('dateTreasury')"
-              label="Fecha Tesoreria">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="dateTreasury" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <form-field
-              [control]="data.get('dateJudgment')"
-              label="Fecha Sentencia">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="dateJudgment" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <form-field
-              [control]="data.get('appraisalValue')"
-              label="Valor Avaluo">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="appraisalValue" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <form-field [control]="data.get('interests')" label="Intereses">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="interests" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <form-field [control]="data.get('results')" label="Resultado">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="results" />
-            </form-field>
-          </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-md-8"></div>
-          <div class="col-md-4">
-            <form-field
-              [control]="data.get('totalSeizures')"
-              label="Total en Decomisos:">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="totalSeizures" />
-            </form-field>
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
 </app-card>

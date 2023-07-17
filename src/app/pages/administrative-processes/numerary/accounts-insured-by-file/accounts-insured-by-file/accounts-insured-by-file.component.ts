@@ -78,8 +78,8 @@ export class AccountsInsuredByFileComponent implements OnInit {
     };
 
     this.siabService
-      // .fetchReport('FGENADBCTASASEGEX', params)
-      .fetchReportBlank('blank')
+      .fetchReport('RGENADBCTASASEGEX', params)
+      // .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });

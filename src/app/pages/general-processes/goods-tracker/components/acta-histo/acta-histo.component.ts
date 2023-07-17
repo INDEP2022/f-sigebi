@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   SearchFilter,
@@ -18,9 +20,10 @@ export class ActaHistoComponent extends BasePage implements OnInit {
   histo: any[];
 
   constructor(
-    private modalService: BsModalRef,
+    public modalRef: BsModalRef,
     private proceedingService: ProceedingsDeliveryReceptionService,
-    private documentService: DocumentsService
+    private documentService: DocumentsService,
+    private modalService: BsModalService
   ) {
     super();
     this.settings.columns = ACTAS_COLUMNS;
@@ -30,27 +33,41 @@ export class ActaHistoComponent extends BasePage implements OnInit {
   ngOnInit(): void {}
 
   async showDocs(data: any) {
+    this.loading = true;
     const folio: any = await this.getFolio(data.cve_acta);
 
-    console.log(folio);
-
-    if (folio) {
-      if (folio.universalFolio) {
-        const folioFinal: any = await this.getFolioFinally(
-          folio.universalFolio
-        );
-
-        if (folioFinal) {
-          console.log(folioFinal);
-        } else {
-          this.alert('error', 'Error', 'No tiene documentos digitalizados');
-        }
-      } else {
-        this.alert('error', 'Error', 'No tiene documentos digitalizados');
-      }
-    } else {
+    if (!folio) {
       this.alert('error', 'Error', 'No tiene documentos digitalizados');
+      this.loading = false;
+      return;
     }
+
+    if (!folio.universalFolio) {
+      this.alert('error', 'Error', 'No tiene documentos digitalizados');
+      this.loading = false;
+      return;
+    }
+
+    const folioFinal = await this.getFolioFinally(folio.universalFolio);
+    if (!folioFinal) {
+      this.alert('error', 'Error', 'No tiene documentos digitalizados');
+      this.loading = false;
+      return;
+    }
+    this.loading = false;
+
+    if (!folioFinal?.file?.universalFolio) {
+      this.alert('error', 'Error', 'No tiene documentos digitalizados');
+      return;
+    }
+    const config = {
+      ...MODAL_CONFIG,
+      ignoreBackdropClick: false,
+      initialState: {
+        folio: folioFinal?.file?.universalFolio,
+      },
+    };
+    this.modalService.show(DocumentsViewerByFolioComponent, config);
   }
 
   async getFolio(cve: string) {
@@ -67,7 +84,7 @@ export class ActaHistoComponent extends BasePage implements OnInit {
   async getFolioFinally(folio: string) {
     return new Promise<any>((resolve, reject) => {
       const filter = new FilterParams();
-      filter.addFilter('universalFolio', folio, SearchFilter.EQ);
+      filter.addFilter('id', folio, SearchFilter.EQ);
       this.documentService.getAll(filter.getParams()).subscribe({
         next: resp => resolve(resp.data[0]),
         error: () => resolve(null),

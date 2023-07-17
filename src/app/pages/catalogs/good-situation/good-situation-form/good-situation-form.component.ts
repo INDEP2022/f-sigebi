@@ -54,7 +54,7 @@ export class GoodSituationFormComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      status: [null, [Validators.required, Validators.maxLength(3)]],
+      status: [null, [Validators.required]],
     });
     if (this.situation != null) {
       this.edit = true;
@@ -107,26 +107,49 @@ export class GoodSituationFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.goodSituationService
-      .create(this.goodSituationForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.goodSituationForm.controls['situation'].value.trim() == '' ||
+      this.goodSituationForm.controls['descSituation'].value.trim() == '' ||
+      (this.goodSituationForm.controls['situation'].value.trim() == '' &&
+        this.goodSituationForm.controls['descSituation'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.goodSituationService
+        .create(this.goodSituationForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.id = this.goodSituationForm.get('situation').value;
-    let numero: number = parseInt(this.id);
-    this.goodSituationForm.controls['situation'].setValue(numero);
-    this.goodSituationService
-      .updateCatalogGoodSituation(numero, this.goodSituationForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.goodSituationForm.controls['situation'].value.trim() == '' ||
+      this.goodSituationForm.controls['descSituation'].value.trim() == '' ||
+      (this.goodSituationForm.controls['situation'].value.trim() == '' &&
+        this.goodSituationForm.controls['descSituation'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.id = this.goodSituationForm.get('situation').value;
+      let numero: number = parseInt(this.id);
+      this.goodSituationForm.controls['situation'].setValue(numero);
+      this.goodSituationService
+        .updateCatalogGoodSituation(
+          numero,
+          this.goodSituationForm.getRawValue()
+        )
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

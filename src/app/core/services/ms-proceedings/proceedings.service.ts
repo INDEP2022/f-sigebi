@@ -70,6 +70,12 @@ export class ProceedingsService extends HttpService {
   getBiePosquery(model: IBlkPost) {
     return this.post<IResponse>(`${ProceedingsEndpoints.blkBienPost}`, model);
   }
+  postBlkConversions(model: any) {
+    return this.post<IResponse>(
+      `${ProceedingsEndpoints.blkConversions}`,
+      model
+    );
+  }
 
   getActByFileNumber(
     fileNumber?: number,
@@ -103,12 +109,12 @@ export class ProceedingsService extends HttpService {
   }
 
   getExistProceedings(numberGood: string) {
-    return this.get<IListResponseMessage<{ existe: number }>>(
+    return this.get<IListResponseMessage<{ no_acta: string }>>(
       ProceedingsEndpoints.ExistProceedings + '/' + numberGood
     );
   }
 
-  createProceedings(formData: any) {
+  createProceedings(formData: IProceedings) {
     return this.post(this.route, formData);
   }
 
@@ -156,5 +162,64 @@ export class ProceedingsService extends HttpService {
 
   getUnioTable(goodNumber: number, params?: string) {
     return this.get(`${ProceedingsEndpoints.GetUnion}/${goodNumber}`, params);
+  }
+
+  getCountActas(goodNumber: number | string) {
+    return this.get('aplication/get-count-actas/' + goodNumber);
+  }
+
+  getGlobalExpedientF(body: {
+    pCveActa: string;
+    pGoodNumber: string | number;
+    pDelivery: string;
+  }) {
+    return this.post('aplication/get-global-expedient-f', body);
+  }
+
+  getGlobalExpedientF3(body: { pGoodNumber: string; pConstEntKey: string }) {
+    return this.post('aplication/get-global-expedient-f-3', body);
+  }
+
+  getGlobalExpedientF2(body: {
+    pGoodNumber: number | string;
+    pRecepCan: string;
+    pSuspension: string;
+    pCveActa: string;
+  }) {
+    return this.post('aplication/get-global-expedient-f-2', body);
+  }
+
+  getSteeringWheelNumber(body: {
+    pExpedientNumber: string | number;
+    pGoodNumber: string | number;
+  }) {
+    return this.post('application/get-v-steeringwheel-number', body);
+  }
+
+  getGetFactDbConvBien(good: any, exp: any) {
+    return this.get<IResponse>(
+      `${ProceedingsEndpoints.GetFactDbConvBien}?no_bien=${good}&no_expediente=${exp}`
+    );
+  }
+
+  creaDetailProceedingsDevollution(good: any) {
+    return this.post<IResponse>(
+      `${ProceedingsEndpoints.DetailProceedingsDevollution}`,
+      good
+    );
+  }
+
+  getDetailProceedingsDevollution(params: any) {
+    return this.get<IResponse>(
+      `${ProceedingsEndpoints.DetailProceedingsDevollution}`,
+      params
+    );
+  }
+
+  deleteDetailProceedingsDevollution(params: any) {
+    return this.delete<IResponse>(
+      `${ProceedingsEndpoints.DetailProceedingsDevollution}`,
+      params
+    );
   }
 }

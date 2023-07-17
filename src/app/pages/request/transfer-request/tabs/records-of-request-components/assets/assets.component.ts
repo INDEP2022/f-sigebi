@@ -84,6 +84,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   typeRecord: string = '';
   transferente: string = '';
   selectedAll: boolean = false;
+  typeRequest: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -113,6 +114,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   ngOnInit(): void {
     console.log('Activando tab: assets');
+    console.log('TIPO TRASFERENCIA', this.requestObject.typeOfTransfer);
+    this.typeRequest = this.requestObject.typeOfTransfer;
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -290,8 +293,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           this.loaderProgress.load = false;
           this.message(
             'error',
-            'Error al subir el file',
-            `No se pudo cargar el archivo excel ${error.error.message}`
+            'Error al cargar el archivo',
+            `No se pudo cargar el archivo excel: ${error.error.message}`
           );
         },
       });
@@ -547,6 +550,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         confirmButtonColor: '#9D2449',
         cancelButtonColor: '#B38E5D',
         confirmButtonText: 'Aceptar',
+        allowOutsideClick: false,
       }).then(result => {
         if (result.isConfirmed) {
           this.deleteMethod();
@@ -1038,13 +1042,14 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   assignAllAddress() {
     Swal.fire({
-      title: 'Asignacion Masiva de domicilio',
-      html: 'Se asignara a todos los bienes el domicio que se seleccionara',
-      icon: 'info',
+      title: 'Asignación Masiva de Domicilio',
+      html: 'Se asignará a todos los bienes el domicilio que se seleccione',
+      icon: 'warning',
       showCancelButton: false,
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         let config: ModalOptions = {
@@ -1103,12 +1108,13 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   classifyAllGoods() {
     Swal.fire({
       title: 'Clasificación Masiva',
-      html: 'Se asignara a todos los bienes la fraccion que se seleccionara',
-      icon: 'info',
+      html: 'Se asignará a todos los bienes la fracción que se seleccione',
+      icon: 'warning',
       showCancelButton: false,
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         let config: ModalOptions = {

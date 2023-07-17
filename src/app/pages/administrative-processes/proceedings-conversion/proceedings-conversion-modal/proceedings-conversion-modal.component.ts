@@ -103,17 +103,17 @@ export class ProceedingsConversionModalComponent
     };
     this.convertiongoodService.getAllGoods(para).subscribe({
       next: response => {
-        this.conversiones = response.data;
-        this.totalItems2 = response.count | 0;
+        console.log(response);
         this.dataFactGood.load(response.data);
         this.dataFactGood.refresh();
+        this.conversiones = response.data;
+        this.totalItems2 = response.count | 0;
         this.loading = false;
       },
       error: error => (this.loading = false),
     });
   }
   onUserRowSelect(row: any): void {
-    this.loading = true;
     if (row.isSelected) {
       this.selectedRow = row.data;
     } else {

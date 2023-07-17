@@ -1,7 +1,19 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { SaeInputComponent } from './sae-input/sae-input.component';
-import { SelectInputComponent } from './select-input/select-input.component';
 
 export const DETAIL_ESTATE_COLUMNS = {
+  selected: {
+    title: '',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+    sort: false,
+    hide: false,
+  },
   id: {
     title: 'No. Gestión',
     type: 'string',
@@ -33,11 +45,11 @@ export const DETAIL_ESTATE_COLUMNS = {
   },
   measureUnitTransferent: {
     title: 'Unidad de Medida Transferente',
-    type: 'custom',
+    type: 'string',
     class: 'custom-field',
     filter: false,
-    renderComponent: SelectInputComponent,
-    onComponentInitFunction(instance?: any) {},
+    //renderComponent: SelectInputComponent,
+    //onComponentInitFunction(instance?: any) {},
     sort: false,
   },
   uniqueKey: {

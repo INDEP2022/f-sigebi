@@ -161,26 +161,33 @@ export class JuridicalRulingComponent
       id: {
         title: 'No. Bien',
         type: 'number',
+
+        sort: false,
       },
       description: {
         title: 'Descripción',
         type: 'string',
+        sort: false,
       },
       quantity: {
         title: 'Cantidad',
         type: 'string',
+        sort: false,
       },
       identifier: {
         title: 'Ident.',
         type: 'string',
+        sort: false,
       },
       status: {
         title: 'Estatus',
         type: 'string',
+        sort: false,
       },
       extDomProcess: {
         title: 'Proceso',
         type: 'string',
+        sort: false,
       },
     },
     rowClassFunction: (row: any) => {
@@ -270,7 +277,7 @@ export class JuridicalRulingComponent
       k: {
         title: 'Cve. Documento',
         sort: false,
-        filter: false,
+        type: 'string',
       },
       d: {
         title: 'Descripción',
@@ -280,7 +287,7 @@ export class JuridicalRulingComponent
         // },
       },
       date: {
-        title: 'Fecha. Recibido',
+        title: 'Fecha Recibido',
         sort: false,
         type: 'string',
         valuePrepareFunction: (row: any) => {

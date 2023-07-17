@@ -1,13 +1,12 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <!-- <h5 class="title">Caracter&Iacute;sticas del bien</h5> -->
     <div class="row w-100">
       <div class="col-12 col-sm-12 col-md-8">
         <h5
           class="title"
           [class]="actualGoodNumber ? 'pointer' : ''"
           (click)="goToHistoric()">
-          Caracter&Iacute;sticas del bien
+          Caracter&Iacute;sticas del Bien
           <ng-container *ngIf="numberGood">{{ actualGoodNumber }}</ng-container>
         </h5>
       </div>
@@ -127,7 +126,7 @@
                   <div class="row pt-3">
                     <form-field
                       [control]="form.get('noBien')"
-                      label="No. de bien">
+                      label="No. de Bien">
                       <input
                         class="form-control"
                         formControlName="noBien"
@@ -198,7 +197,11 @@
               </div>
             </tab>
             <tab heading="Datos Generales del Bien">
+              <div *ngIf="errorMessage" class="errorMessage">
+                {{ errorMessage }}
+              </div>
               <div
+                *ngIf="!disabledBienes || di_numerario_conciliado"
                 class="mb-5"
                 style="
                   display: flex;
@@ -444,11 +447,14 @@
               </div>
             </tab>
             <tab heading="Fotos">
-              <app-good-photos
+              <app-photos-tabs
+                [goodNumber]="actualGoodNumber + ''"
+                [disabled]="false"></app-photos-tabs>
+              <!-- <app-good-photos
                 *ngIf="actualGoodNumber"
                 [showPhoto]="showPhoto"
                 [disabledBienes]="disabledBienes"
-                [goodNumber]="actualGoodNumber"></app-good-photos>
+                [goodNumber]="actualGoodNumber"></app-good-photos> -->
             </tab>
           </tabset>
         </form>

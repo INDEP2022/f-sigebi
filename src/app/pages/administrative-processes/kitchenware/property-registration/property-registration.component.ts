@@ -4,6 +4,7 @@ import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IMenageWrite } from 'src/app/core/models/ms-menage/menage.model';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -30,6 +31,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   goods = new DefaultSelect<IGood>();
+  goodsList = new DefaultSelect<IGood>();
   expedient: IExpedient;
   numberGoodSelect: number;
   addGood: boolean = false;
@@ -49,6 +51,11 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   goodClassNumberIn: number;
   showSearchButton: boolean = true;
 
+  paramsSubject: BehaviorSubject<ListParams> = new BehaviorSubject<ListParams>(
+    new ListParams()
+  );
+  idExpedient: number | string;
+
   get numberFile() {
     return this.form.get('numberFile');
   }
@@ -67,6 +74,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     private readonly expedientServices: ExpedientService,
     private readonly goodServices: GoodService,
     private readonly menageServices: MenageService,
+    private readonly goodFinderService: GoodFinderService,
     private repositoryService: Repository<IGood>
   ) {
     super();
@@ -77,6 +85,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.settings.actions.edit = false;
   }
   ngOnInit(): void {
+    this.searchGood(new ListParams());
     this.buildForm();
     this.form.disable();
     this.formGood.disable();
@@ -87,7 +96,6 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
-          console.log('filter');
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
@@ -128,9 +136,14 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
+      goodsList: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.formGood = this.fb.group({
       goodId: [null, [Validators.required]],
+      goodsList: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 
@@ -148,12 +161,13 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.expedientServices.getById(numberFile).subscribe({
       next: response => {
         this.expedient = response;
+        this.idExpedient = this.expedient.id;
         this.causePenal.setValue(this.expedient.criminalCase);
         this.preliminaryInquiry.setValue(this.expedient.preliminaryInquiry);
-        this.searchGoods(this.expedient.id);
+        this.searchGoods(this.idExpedient, this.paramsSubject);
       },
       error: err => {
-        this.alert('error', 'ERROR', 'No existe el registro');
+        this.alert('warning', 'No existe el registro', '');
       },
     });
   }
@@ -182,22 +196,24 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   }
 
   //Busca el expediente
-  searchGoods(idExpedient: number | string) {
+  searchGoods(
+    idExpedient: number | string,
+    paramsSubject: BehaviorSubject<ListParams>
+  ) {
     this.idExpedientSearch = idExpedient;
-    this.goodServices
-      .getByExpedient(idExpedient, this.params.getValue())
-      .subscribe({
-        next: response => {
-          //Son todos los bienes listados en el input "Seleccione un bien para ver sus menajes"
-          this.goodSelect.enable();
-          this.goods = new DefaultSelect(response.data, response.count);
-          this.loading = false;
-        },
-        error: err => {
-          this.loading = false;
-          this.alert('error', 'Expediente sin bienes asociados', ``);
-        },
-      });
+    const params = paramsSubject.getValue();
+    this.goodServices.getByExpedient(idExpedient, params).subscribe({
+      next: response => {
+        //Son todos los bienes listados en el input "Seleccione un bien para ver sus menajes"
+        this.goodSelect.enable();
+        this.goods = new DefaultSelect(response.data, response.count);
+        this.loading = false;
+      },
+      error: err => {
+        this.loading = false;
+        this.alert('warning', 'Expediente sin bienes asociados', ``);
+      },
+    });
   }
 
   searchGoodMenageOnInit = true;
@@ -260,23 +276,57 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
           this.totalItems = response.count;
           this.loading = false;
         } else {
-          this.alert('error', 'Bien sin menajes asociados', ``);
+          this.alert('warning', 'Bien sin menajes asociados', ``);
           this.loading = false;
           this.totalItems = 0;
-          this.searchGoods(this.idExpedientSearch);
+          this.searchGoods(this.idExpedientSearch, this.paramsSubject);
         }
       },
       error: err => {
-        this.alert('error', 'Bien sin menajes asociados', ``);
+        this.alert('warning', 'Bien sin menajes asociados', ``);
         this.loading = false;
         this.totalItems = 0;
-        this.searchGoods(this.idExpedientSearch);
+        this.searchGoods(this.idExpedientSearch, this.paramsSubject);
       },
     });
   }
 
-  addMenage(good: IGood) {
-    this.createMenage(this.numberGoodSelect, good.id);
+  //Lista los menajes en el select
+  searchGood(params: ListParams) {
+    this.goodServices.getAll(params).subscribe({
+      next: response => {
+        this.goodsList = new DefaultSelect(response.data, response.count);
+        this.loading = false;
+      },
+      error: (err: any) => {
+        this.loading = false;
+        this.alert('warning', 'No existen bienes', ``);
+      },
+    });
+  }
+
+  //Busca en los menajes, lo que el usuario escribe para filtrar
+  goodsListChange(inputElement: any) {
+    const name = inputElement.value;
+    setTimeout(() => {
+      this.goodFinderService
+        .goodFinder2(name, this.params.getValue())
+        .subscribe({
+          next: response => {
+            this.goodsList = new DefaultSelect(response.data, response.count);
+            this.loading = false;
+          },
+          error: (err: any) => {
+            this.loading = false;
+            this.alert('warning', 'No existen bienes', ``);
+          },
+        });
+    }, 4000);
+  }
+
+  onSelect(event: any) {
+    const selectedValue = event;
+    this.createMenage(this.numberGoodSelect, selectedValue.id);
     this.isSelected = true;
   }
 
@@ -328,7 +378,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.numberGoodSelect = null;
     this.goods = new DefaultSelect([], 0);
     this.params = new BehaviorSubject<ListParams>(new ListParams());
-    this.searchGoods(this.idExpedientSearch);
+    this.searchGoods(this.idExpedientSearch, this.paramsSubject);
     this.menajes.load([]);
     this.showSearchButton = false;
     this.textButton = 'Agregar menaje';

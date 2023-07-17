@@ -30,7 +30,7 @@ export const VALID_STATUSES_COLUMNS = {
       row.statusFinal.description,
   },
   processExtSun: {
-    title: 'Proceso Ext Dominio',
+    title: 'Proceso Ext. Dominio',
     sort: false,
   },
 };

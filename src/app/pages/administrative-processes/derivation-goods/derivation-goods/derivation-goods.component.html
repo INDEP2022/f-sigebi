@@ -87,7 +87,7 @@
           <div class="col-md-12 col-sm-12 col-xs-12">
             <form-field
               [control]="form.get('actConvertion')"
-              label="Acta de conversión">
+              label="Acta de Conversión">
               <input
                 type="text"
                 class="form-control"
@@ -111,6 +111,7 @@
               <input
                 type="text"
                 class="form-control"
+                [readOnly]="true"
                 formControlName="numberGoodSon" />
             </form-field>
           </div>
@@ -135,6 +136,7 @@
               <textarea
                 type="text"
                 class="form-control"
+                [readOnly]="true"
                 formControlName="descriptionSon">
               </textarea>
             </form-field>
@@ -163,7 +165,7 @@
           <div class="col-md-3 col-sm-12 col-xs-12">
             <form-field
               [control]="form.get('unitOfMeasure')"
-              label="Unidad de medida">
+              label="Unidad de Medida">
               <input
                 type="text"
                 class="form-control"
@@ -174,7 +176,7 @@
           <div class="col-md-3 col-sm-12 col-xs-12">
             <form-field
               [control]="form.get('destinationLabel')"
-              label="Etiqueta de destino">
+              label="Etiqueta de Destino">
               <input
                 type="text"
                 class="form-control"
@@ -184,11 +186,18 @@
         </div>
 
         <div class="row mt-5 text-center">
-          <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="col-md-6 col-sm-6 col-xs-12">
             <button
-              class="btn btn-primary btn-sm active"
+              class="btn btn-primary btn-sm active mr-3"
               (click)="updateStatus()">
-              Cambiar Status
+              Cambiar Estatus
+            </button>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <button
+              class="btn btn-primary btn-sm active mr-3"
+              (click)="updateGood()">
+              Actualizar <i class="fas fa-sync-alt"> </i>
             </button>
           </div>
         </div>
@@ -200,7 +209,7 @@
     <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
       <app-card [header]="true">
         <div class="ch-content" header>
-          <h5 class="title">No Bien Hijo</h5>
+          <h5 class="title">No. Bien Hijo</h5>
         </div>
         <div body>
           <div class="row text-center mb-3">
@@ -218,17 +227,18 @@
                 type="button"
                 data-toggle="tooltop"
                 title="Eliminar Bien"
-                class="btn btn-danger btn-sm active ml-2 mr-2">
+                class="btn btn-danger btn-sm active ml-2 mr-2"
+                (click)="deletGood($event)">
                 <i class="bx bx-minus bx-sm float-icon"></i>
               </button>
             </div>
           </div>
           <div class="table-responsive">
             <ng2-smart-table
-              class="col"
               [settings]="settingsGood"
               [source]="dataGoods2"
-              (rowSelect)="onRowSelect($event)">
+              [attr.class]="'table-bordered table-responsive'"
+              (userRowSelect)="onRowSelect($event)">
             </ng2-smart-table>
           </div>
         </div>
@@ -237,23 +247,26 @@
     <div class="col-md-8 col-sm-12 col-xs-12 mt-2">
       <div class="card">
         <div class="card-header mb-3">
-          <h5>Atributos del Bien</h5>
+          <h5>ATRIBUTOS DEL BIEN</h5>
         </div>
         <div class="card-block" style="max-height: 500px; overflow-y: auto">
           <div class="row">
             <div class="col-6">
-              <h6>Atributos</h6>
+              <h6>ATRIBUTOS</h6>
             </div>
             <div class="col-6">
-              <h6>Valores</h6>
+              <h6>VALORES</h6>
             </div>
           </div>
           <div class="row" *ngFor="let attr of attributes">
             <div class="col-6">
-              <label class="label-first">{{ attr[1] }}:</label>
+              <label class="label-first">{{ attr.attributes }}:</label>
             </div>
             <div class="col-6">
-              <input type="text" placeholder="Introduce un valor" />
+              <input
+                type="text"
+                placeholder="Introduce un valor"
+                [value]="attr.value" />
             </div>
           </div>
         </div>
@@ -266,7 +279,7 @@
       <div class="row">
         <div class="col-md-3 col-sm-6 col-xs-12">
           <button
-            class="btn btn-success btn-sm active"
+            class="btn btn-primary btn-sm active mr-3"
             (click)="showActasConvertion()"
             [disabled]="flagActa">
             Actas conversión
@@ -275,7 +288,7 @@
 
         <div class="col-md-3 col-sm-6 col-xs-12">
           <button
-            class="btn btn-info btn-sm active"
+            class="btn btn-secondary btn-sm active"
             (click)="bulkUpload()"
             [disabled]="flagCargMasiva">
             Carga masiva
@@ -293,7 +306,7 @@
 
         <div class="col-md-3 col-sm-6 col-xs-12">
           <button
-            class="btn btn-info btn-sm active"
+            class="btn btn-primary btn-sm active"
             (click)="imgUpload()"
             [disabled]="flagCargaImagenes">
             Carga Imagenes

@@ -167,7 +167,7 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
           if (taskResult) {
             this.msgGuardado(
               'success',
-              'Creación de tarea exitosa',
+              'Creación de tarea correcta',
               `Se creó la tarea Realizar Programación con el folio: ${this.programmingId}`
             );
           }
@@ -224,6 +224,7 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         this.router.navigate(['/pages/siab-web/sami/consult-tasks']);

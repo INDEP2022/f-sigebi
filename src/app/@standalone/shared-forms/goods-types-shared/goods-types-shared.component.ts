@@ -50,11 +50,15 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   @Input() subtypes = new DefaultSelect();
   @Input() ssubtypes = new DefaultSelect();
   @Input() sssubtypes = new DefaultSelect();
+  @Input() set reloadGood(value: IGood) {
+    if (value) this.getData(value);
+  }
 
   @Output() goodTypeChange = new EventEmitter<IGoodType>();
   @Output() goodSubtypeChange = new EventEmitter<IGoodSubType>();
   @Output() goodSsubtypeChange = new EventEmitter<IGoodsSubtype>();
   @Output() goodSssubtypeChange = new EventEmitter<IGoodSssubtype>();
+
   get type() {
     return this.form.get(this.typeField);
   }
@@ -87,12 +91,12 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         this.form.get('noBien').value !== '') &&
       this.loadOnChangesNoBien
     ) {
+      console.info('Desde el componenete de change*******');
       this.form
         .get('noBien')
         .valueChanges.pipe(debounceTime(500), takeUntil(this.$unSubscribe))
         .subscribe(async res => {
-          console.log('Desde el componenete de change', res);
-
+          console.info('Desde el componenete de change', res);
           if (this.goodselect && res !== null) {
             if (this.goodselect.goodClassNumber) {
               const params = new ListParams();
@@ -121,6 +125,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         });
       return;
     }
+
     if (this.form) {
       this.form.valueChanges
         .pipe(debounceTime(500), takeUntil(this.$unSubscribe))
@@ -151,6 +156,34 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     }
   }
 
+  async getData(good: IGood) {
+    console.info('---------- nuevo flujo -----------------', this.goodselect);
+    if (good) {
+      if (good.goodClassNumber) {
+        const params = new ListParams();
+        const response: any = await this.getClassif(
+          params,
+          good.goodClassNumber
+        );
+        console.log(response);
+        this.sssubtype.setValue(response.id);
+        this.onSssubtypesChange(response);
+      }
+    } else {
+      this.type.setValue('');
+      this.types = new DefaultSelect([], 0);
+      this.subtype.setValue('');
+      this.subtypes = new DefaultSelect([], 0);
+      this.ssubtype.setValue('');
+      this.ssubtypes = new DefaultSelect([], 0);
+      this.sssubtype.setValue('');
+      this.sssubtypes = new DefaultSelect([], 0);
+      this.form.get('situacion').setValue('');
+      this.form.get('destino').setValue('');
+      this.form.get('estatus').setValue('');
+      this.goodSssubtypeChange.emit(null);
+    }
+  }
   getTypes(params: ListParams, id: any = null) {
     const _params: any = params;
     if (id) {
@@ -165,7 +198,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         this.types = new DefaultSelect(data.data, data.count);
       },
       error: err => {
-        this.types = new DefaultSelect();
+        this.types = new DefaultSelect([], 0, true);
         if (err.status >= 500) {
           this.onLoadToast(
             'error',
@@ -194,7 +227,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         this.subtypes = new DefaultSelect(data.data, data.count);
       },
       error: err => {
-        this.subtypes = new DefaultSelect();
+        this.subtypes = new DefaultSelect([], 0, true);
       },
     });
   }
@@ -219,7 +252,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         this.ssubtypes = new DefaultSelect(data.data, data.count);
       },
       error: err => {
-        this.ssubtypes = new DefaultSelect();
+        this.ssubtypes = new DefaultSelect([], 0, true);
       },
     });
   }
@@ -247,7 +280,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
         this.sssubtypes = new DefaultSelect(data.data, data.count);
       },
       error: error => {
-        this.ssubtypes = new DefaultSelect();
+        this.sssubtypes = new DefaultSelect([], 0, true);
       },
     });
   }
