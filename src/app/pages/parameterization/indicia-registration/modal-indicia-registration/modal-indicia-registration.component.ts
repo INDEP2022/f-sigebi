@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IIndiciados } from 'src/app/core/models/catalogs/indiciados.model';
 import { IndiciadosService } from 'src/app/core/services/catalogs/indiciados.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CURP_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-modal-indicia-registration',
@@ -15,7 +16,7 @@ export class ModalIndiciaRegistrationComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'INDICIADOS';
+  title: string = 'Indiciado';
   edit: boolean = false;
   form: ModelForm<IIndiciados>;
   indicated: IIndiciados;
@@ -36,10 +37,16 @@ export class ModalIndiciaRegistrationComponent
   private prepareForm() {
     this.form = this.fb.group({
       id: [null],
-      name: [null, [Validators.required]],
-      curp: [null, [Validators.maxLength(40)]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      curp: [
+        null,
+        [Validators.maxLength(40), Validators.pattern(CURP_PATTERN)],
+      ],
       noRegistration: [null],
-      consecutive: [null],
+      consecutive: [
+        null,
+        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.indicated != null) {
       this.edit = true;
