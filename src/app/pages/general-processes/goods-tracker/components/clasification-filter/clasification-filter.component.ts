@@ -113,7 +113,10 @@ export class ClasificationFilterComponent extends BasePage implements OnInit {
         this.changeSubloading(false);
         this.types = new DefaultSelect(response.data, response.count);
       },
-      error: () => this.changeSubloading(false),
+      error: () => {
+        this.changeSubloading(false);
+        this.types = new DefaultSelect([], 0);
+      },
     });
   }
 
@@ -132,7 +135,10 @@ export class ClasificationFilterComponent extends BasePage implements OnInit {
         this.changeSubloading(false);
         this.subtypes = new DefaultSelect(response.data, response.count);
       },
-      error: () => this.changeSubloading(false),
+      error: () => {
+        this.subtypes = new DefaultSelect([], 0);
+        this.changeSubloading(false);
+      },
     });
   }
 
@@ -153,7 +159,10 @@ export class ClasificationFilterComponent extends BasePage implements OnInit {
         this.changeSubloading(false);
         this.ssubtypes = new DefaultSelect(response.data, response.count);
       },
-      error: () => this.changeSubloading(false),
+      error: () => {
+        this.ssubtypes = new DefaultSelect([], 0);
+        this.changeSubloading(false);
+      },
     });
   }
 
@@ -179,7 +188,10 @@ export class ClasificationFilterComponent extends BasePage implements OnInit {
         this.changeSubloading(false);
         this.sssubtypes = new DefaultSelect(response.data, response.count);
       },
-      error: () => this.changeSubloading(false),
+      error: () => {
+        this.sssubtypes = new DefaultSelect([], 0);
+        this.changeSubloading(false);
+      },
     });
   }
 

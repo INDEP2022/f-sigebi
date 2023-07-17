@@ -102,7 +102,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.error({ error });
-        this.alert('error', 'Ha ocurrido un error', error.error.message);
+        this.alert('error', 'Ha Ocurrido un Error', error.error.message);
       },
     });
   }
@@ -128,11 +128,11 @@ export class MaintenanceComponent extends BasePage implements OnInit {
         ) {
           this.alert(
             'error',
-            'Ha ocurrido un error',
-            'Ya existe el período indicado en la el período destino'
+            'Ha Ocurrido un Error',
+            'Ya existe el período destino indicado'
           );
         } else {
-          this.alert('error', 'Ha ocurrido un error', error.error.message);
+          this.alert('error', 'Ha Ocurrido un Error', error.error.message);
         }
       },
     });
@@ -150,7 +150,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.error({ error });
-        this.alert('error', 'Ha ocurrido un error', error.error.message);
+        this.alert('error', 'Ha Ocurrido un Error', error.error.message);
       },
     });
   }

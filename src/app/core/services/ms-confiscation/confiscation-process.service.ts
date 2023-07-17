@@ -11,6 +11,5 @@ export class ConfiscatedProcessService extends HttpService {
     super();
     this.microservice = Confiscatedpoints.basepath
   }
-
   
 }

@@ -77,8 +77,8 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     };
   }
 
-  async ngOnInit() {
-    await this.prepareForm();
+  ngOnInit(): void {
+    this.prepareForm();
 
     this.goods
       .onChanged()
@@ -127,12 +127,12 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       this.getVigSupervisionDet_();
     });
 
-    await this.getDelegation(new ListParams());
+    this.getDelegation(new ListParams());
   }
 
   async prepareForm() {
     this.form = this.fb.group({
-      delegation: [null],
+      delegation: [null, Validators.required],
       process: [null, Validators.required],
       period: [null, Validators.required],
       from: [null],
@@ -256,8 +256,24 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
   objGetSupervionDet: any = null;
   async searchSupervisionDet() {
     console.log(this.form);
-    if (!this.form.valid) {
-      this.form.markAsTouched();
+
+    if (!this.delegationDefault) {
+      this.form.get('delegation').markAsTouched();
+      this.alert('warning', 'Debe Seleccionar una Delegación', '');
+      return;
+    }
+
+    const cveProcess = this.form.get('process').value;
+    if (cveProcess == null) {
+      this.form.get('process').markAsTouched();
+      this.alert('warning', 'El Tipo de Proceso es un Valor Requerido', '');
+      return;
+    }
+
+    const period = this.form.get('period').value;
+    if (period == null) {
+      this.form.get('period').markAsTouched();
+      this.alert('warning', 'El Período es un Valor Requerido', '');
       return;
     }
 
@@ -575,7 +591,9 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     let LV_CVE_PERIODO: any = null;
     let LV_MENSAJE: any = null;
 
-    if (this.delegationDefault == null) {
+    const delegation = this.form.get('delegation').value;
+    if (delegation == null) {
+      this.form.get('delegation').markAsTouched();
       this.alert('warning', 'Debe Seleccionar una Delegación', '');
       return;
     }
@@ -791,7 +809,9 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     let LV_MENSAJE: any = null;
     let LV_TOTREGISTRO: any = null;
 
-    if (this.delegationDefault == null) {
+    const delegation = this.form.get('delegation').value;
+    if (delegation == null) {
+      this.form.get('delegation').markAsTouched();
       this.alert('warning', 'Debe Seleccionar una Delegación', '');
       return;
     }
@@ -1029,15 +1049,13 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
   // LV_VALPROCESO:= 0;
   // 	end if;
   async exportar() {
-    if (!this.delegationDefault) {
+    const delegation = this.form.get('delegation').value;
+    if (delegation == null) {
+      this.form.get('delegation').markAsTouched();
       this.alert('warning', 'Debe Seleccionar una Delegación', '');
       return;
     }
 
-    if (this.goods.count() == 0) {
-      this.alert('warning', 'No hay Registros Cargados para Exportar', '');
-      return;
-    }
     const cveProcess = this.form.get('process').value;
     if (cveProcess == null) {
       this.alert('warning', 'El Tipo de Proceso es un Valor Requerido', '');
@@ -1047,6 +1065,11 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     const period = this.form.get('period').value;
     if (period == null) {
       this.alert('warning', 'El Período es un Valor Requerido', '');
+      return;
+    }
+
+    if (this.goods.count() == 0) {
+      this.alert('warning', 'No hay Registros Cargados para Exportar', '');
       return;
     }
 
@@ -1122,10 +1145,11 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
   }
 
   async revisarCarga() {
-    if (this.delegationDefault == null) {
+    if (!this.delegationDefault) {
       // const delet = this.form.get('delegation')
       //   (delet.invalid)
       // delet.markAsTouched();
+      this.form.get('delegation').markAsTouched();
       this.alert('warning', 'Debe Seleccionar una Delegación', '');
       return;
     }

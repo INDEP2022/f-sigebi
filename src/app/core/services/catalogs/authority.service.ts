@@ -8,7 +8,10 @@ import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IResponse,
+} from '../../interfaces/list-response.interface';
 import {
   IAuthority,
   IAuthority2,
@@ -118,6 +121,14 @@ export class AuthorityService
     const route = `${AuthorityEndpoints.Authority}?filter.idStation=${id}&filter.idTransferer=${id2}`;
     return this.get(route, params);
   }
+
+  getAppsDescAuthory(params?: ListParams) {
+    return this.get<IResponse>(AuthorityEndpoints.Apps, params);
+  }
+
+  /*getGoodAppraise(params?: ListParams) {
+    return this.get<IResponse>(AuthorityEndpoints.Apps, params);
+  }*/
 
   create2(model: IAuthority) {
     return this.post(AuthorityEndpoints.Authority, model);

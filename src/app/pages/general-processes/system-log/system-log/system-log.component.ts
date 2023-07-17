@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import {
   BehaviorSubject,
   catchError,
@@ -12,6 +13,7 @@ import {
 } from 'rxjs';
 import {
   FilterParams,
+  ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { Registers } from 'src/app/core/models/ms-audit/registers.model';
@@ -36,15 +38,16 @@ export class SystemLogComponent extends BasePage implements OnInit {
   paramsTemporal: FilterParams = new FilterParams();
   globalVars: any;
   registers: Registers;
-  params = new BehaviorSubject(new FilterParams());
+  params = new BehaviorSubject(new ListParams());
   dynamicParams = new BehaviorSubject(new FilterParams());
   rowSelected: ITableLog = null;
-  tableLogs: any[] = [];
+  tableLogs: LocalDataSource = new LocalDataSource();
   dynamicRegisters: any[] = [];
-  totalLogs = 0;
-  totalDynamic = 0;
+  totalLogs: number = 0;
+  totalDynamic: number = 0;
   filterFields: ITableField[] = [];
   registerNum: number = null;
+  columnFilters: any = [];
   filterForm = this.fb.group({
     filter: this.fb.array<
       FormGroup<{
@@ -71,14 +74,15 @@ export class SystemLogComponent extends BasePage implements OnInit {
     private seraLogService: SeraLogService
   ) {
     super();
-    (this.settings.columns = TABLE_LOGS_COLUMNS),
-      (this.settings.actions = false),
-      (this.settings.hideSubHeader = false);
+    this.settings.columns = TABLE_LOGS_COLUMNS;
+    this.settings.actions = false;
+    this.settings.hideSubHeader = false;
     this.registerSettings = { ...this.settings, columns: {} };
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
         this.origin = params['screen'];
+        console.log(this.origin);
       });
 
     this.registers = new Registers();
@@ -86,64 +90,113 @@ export class SystemLogComponent extends BasePage implements OnInit {
   }
 
   ngOnInit() {
-    this.params
-      .pipe(
-        takeUntil(this.$unSubscribe),
-        switchMap(params =>
-          this.origin ? this.getTableLogsFiltered() : this.getTableLogs(params)
-        )
-      )
-      .subscribe();
-
+    // this.params
+    //   .pipe(
+    //     takeUntil(this.$unSubscribe),
+    //     switchMap(params =>
+    //       this.origin ? this.getTableLogsFiltered() : this.getTableLogs(params)
+    //     )
+    //   )
+    //   .subscribe();
+    this.tableLogs
+      .onChanged()
+      .pipe(takeUntil(this['$unSubscribe']))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            switch (filter.field) {
+              case 'destable':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+            console.log(this.columnFilters);
+          });
+          this.params = this.pageFilter(this.params);
+          this.getTableLogs();
+        }
+      });
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.origin ? this.getTableLogsFiltered() : this.getTableLogs();
+    });
     this.dynamicParams.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       if (this.rowSelected) {
         this.getDynamicRegisters(params).subscribe();
       }
     });
-    console.log(this.origin);
-    console.log(this.rowSelected);
   }
 
-  isSelectedRow(rowData: any): boolean {
-    return rowData === this.rowSelected;
-  }
-
-  getTableLogs(params: FilterParams, tables?: string[]) {
+  //Es la función que trae los nombres de las tablas para visualizarse en el Módulo
+  getTableLogs(tables?: string[]): any {
+    console.log('hola' + tables);
     this.loading = true;
-    params.removeAllFilters();
-    params.addFilter('valid', 1);
+    // params.removeAllFilters();
+    // params.addFilter('valid', 1);
+    this.params.getValue()['filter.valid'] = 1;
     if (tables) {
-      params.addFilter('table', tables.join(','), SearchFilter.IN);
+      this.params.getValue()['filter.table'] = `$in:${tables.join(',')}`;
     }
-    return this.tablesLogService.getAllFiltered(params.getParams()).pipe(
-      catchError(error => {
+
+    let param = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    console.log(param);
+    return this.tablesLogService.getAllFiltered(param).subscribe({
+      next: response => {
         this.loading = false;
-        return throwError(() => error);
-      }),
-      tap(response => {
-        this.loading = false;
-        this.tableLogs = response.data; //Son todos los nombres de las tablas
+        this.tableLogs.load(response.data);
+        this.tableLogs.refresh(); //Son todos los nombres de las tablas
+
         this.totalLogs = response.count;
-        this.onSelectTable(this.tableLogs[0]); //Es la primer tabla que se setea
+        this.registers.table = response.data[0].table;
+        // this.onSelectTable(this.tableLogs[0]); //Es la primer tabla que se setea
         console.log(this.tableLogs);
         console.log(this.totalLogs);
-        console.log(this.tableLogs[0]);
-        this.getDynamicRegistersInit().subscribe();
-      })
-    );
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+
+    // .pipe(
+    //   catchError(error => {
+
+    //   }),
+    //   tap(response => {
+
+    //     // console.log(this.tableLogs[0]);
+    //     // this.getDynamicRegistersInit().subscribe();
+    //   })
+    // );
   }
 
   getTableLogsFiltered() {
-    const params = new FilterParams();
+    const params = new ListParams();
     params.limit = 100;
-    params.addFilter('screen', this.origin);
-    const logsParams = this.params.getValue();
-    return this.screenTableService.getAllFiltered(params.getParams()).pipe(
+    // params.addFilter('screen', this.origin);
+    params['filter.screen'] = this.origin;
+    // const logsParams = this.params.getValue();
+    return this.screenTableService.getAllFiltered(params).pipe(
       map(response => response.data.map(screenTable => screenTable.board)),
-      switchMap(tables => this.getTableLogs(logsParams, tables))
+      switchMap(tables => this.getTableLogs(tables))
     );
   }
 
+  //Es la tabla que se escoge
   onSelectTable(row: ITableLog) {
     //Es la Tabla escogida
     console.log(row);
@@ -153,8 +206,10 @@ export class SystemLogComponent extends BasePage implements OnInit {
     this.getFilterFields(row.table).subscribe(() => {
       this.rowSelected = row;
     });
+    this.getTableData();
   }
 
+  //Son las columnas que salen en la tabla
   getFilterFields(table: string) {
     const params = new FilterParams();
     params.limit = 100;
@@ -172,6 +227,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
         this.dynamicColumns = generateColumnsFromFields(
           response.data.filter(field => field.table == table)
         );
+        console.log(this.dynamicColumns);
       })
     );
   }
@@ -182,9 +238,11 @@ export class SystemLogComponent extends BasePage implements OnInit {
     });
   }
 
+  //Se ejecuta con el botón de Generar Filtrado
   getTableData() {
     const params = new FilterParams();
     this.dynamicParams.next(params);
+    console.log(this.dynamicParams);
   }
 
   getDynamicRegisters(params: FilterParams) {
@@ -209,12 +267,15 @@ export class SystemLogComponent extends BasePage implements OnInit {
           this.dynamicLoading = false;
           this.dynamicRegisters = response.data;
           this.totalDynamic = response.count;
+          console.log(this.dynamicRegisters);
+          console.log(this.totalDynamic);
         })
       );
   }
 
+  //Es la información que se muestra en la tabla al escoger alguna en el Módulo de tablas
   getDynamicRegistersInit() {
-    this.registers.table = this.tableLogs[0].table;
+    // this.registers.table = this.tableLogs[0].table;
     return this.seraLogService
       .getDynamicTables(this.paramsTemporal.getParams(), this.registers)
       .pipe(
@@ -232,6 +293,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
         tap(response => {
           this.dynamicLoading = false;
           this.dynamicRegisters = response.data;
+          console.log(this.dynamicRegisters);
           this.totalDynamic = response.count;
         })
       );
@@ -248,6 +310,20 @@ export class SystemLogComponent extends BasePage implements OnInit {
       .filter(filter => !isEmpty(filter.value));
     return { table, filters };
   }
+
+  // cleandInfo() {
+  //   this.loading = false;
+  //   this.totalDynamic = 0;
+  //   this.rowSelected = null;
+  //   this.filterFields = null;
+  //   this.dynamicColumns = null;
+  //   this.dynamicParams = null;
+  //   this.dynamicRegisters = null;
+  //   this.router = null;
+  //   this.dynamicLoading = false;
+  //   this.totalLogs = 0;
+  //   this.filterForm.reset();
+  // }
 }
 
 const MATCH_OPERATORS: any = {

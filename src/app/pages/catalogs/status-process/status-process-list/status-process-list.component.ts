@@ -51,7 +51,13 @@ export class StatusProcessListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'id':
+              case 'status':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'process':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:

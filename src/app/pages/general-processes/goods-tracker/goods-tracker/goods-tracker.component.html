@@ -114,6 +114,7 @@
 </app-card>
 <div #scrollTable></div>
 <goods-table
+  [selectedGooods]="selectedGooods"
   [formCheckbox]="formCheckbox"
   [loading]="loading"
   *ngIf="showTable && !formCheckbox.controls.lookPhoto.value"
