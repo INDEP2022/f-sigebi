@@ -34,8 +34,11 @@ export class AffailrDetailComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.affairForm = this.fb.group({
       id: [null],
-      description: [null, [Validators.pattern(STRING_PATTERN)]],
-      processDetonate: [null],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      processDetonate: [null, [Validators.required]],
       referralNoteType: [null],
       userCreation: [null],
       creationDate: [null],
@@ -63,22 +66,32 @@ export class AffailrDetailComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.affairForm.controls['nbOrigen'].setValue('SIAB');
-    this.affairService.create2(this.affairForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    this.affairService
-      .update2(this.affair.id, this.affairForm.value)
-      .subscribe({
+    if (this.affairForm.controls['description'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.affairForm.controls['nbOrigen'].setValue('SIAB');
+      this.affairService.create2(this.affairForm.value).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (this.affairForm.controls['description'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.affairService
+        .update2(this.affair.id, this.affairForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

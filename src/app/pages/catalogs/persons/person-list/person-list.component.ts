@@ -12,7 +12,6 @@ import { IPerson } from 'src/app/core/models/catalogs/person.model';
 import { PersonService } from 'src/app/core/services/catalogs/person.service';
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { PersonFormComponent } from '../person-form/person-form.component';
 import { PERSON_COLUMNS } from './person-columns';
 
@@ -79,7 +78,7 @@ export class PersonListComponent extends BasePage implements OnInit {
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'id':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -220,30 +219,18 @@ export class PersonListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.personService.remove(id).subscribe({
       next: () => {
-        Swal.fire('Borrado', '', 'success');
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getPersons());
-      },
-    });
 
-    this.personService.remove(id).subscribe({
-      next: () => {
         this.alert(
           'success',
-          'Mantto. a administrador, depositario e interventor',
+          'Mantenimiento a Administrador, Depositario e Interventor',
           'Borrado Correctamente'
         );
-        this.params
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getPersons());
       },
       error: error => {
-        this.alert(
-          'warning',
-          'Alerta',
-          'No se puede eliminar el objeto debido a una relación con otra tabla.'
-        );
+        console.log(error);
       },
     });
   }
