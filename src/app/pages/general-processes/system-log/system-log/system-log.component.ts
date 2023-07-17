@@ -100,15 +100,11 @@ export class SystemLogComponent extends BasePage implements OnInit {
         this.getDynamicRegisters(params).subscribe();
       }
     });
-    console.log(this.origin);
-    console.log(this.rowSelected);
   }
 
-  isSelectedRow(rowData: any): boolean {
-    return rowData === this.rowSelected;
-  }
-
+  //Es la función que trae los nombres de las tablas para visualizarse en el Módulo
   getTableLogs(params: FilterParams, tables?: string[]) {
+    console.log('hola');
     this.loading = true;
     params.removeAllFilters();
     params.addFilter('valid', 1);
@@ -124,11 +120,11 @@ export class SystemLogComponent extends BasePage implements OnInit {
         this.loading = false;
         this.tableLogs = response.data; //Son todos los nombres de las tablas
         this.totalLogs = response.count;
-        this.onSelectTable(this.tableLogs[0]); //Es la primer tabla que se setea
+        // this.onSelectTable(this.tableLogs[0]); //Es la primer tabla que se setea
         console.log(this.tableLogs);
         console.log(this.totalLogs);
         console.log(this.tableLogs[0]);
-        this.getDynamicRegistersInit().subscribe();
+        // this.getDynamicRegistersInit().subscribe();
       })
     );
   }
@@ -144,6 +140,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
     );
   }
 
+  //Es la tabla que se escoge
   onSelectTable(row: ITableLog) {
     //Es la Tabla escogida
     console.log(row);
@@ -153,8 +150,10 @@ export class SystemLogComponent extends BasePage implements OnInit {
     this.getFilterFields(row.table).subscribe(() => {
       this.rowSelected = row;
     });
+    this.getTableData();
   }
 
+  //Son las columnas que salen en la tabla
   getFilterFields(table: string) {
     const params = new FilterParams();
     params.limit = 100;
@@ -172,6 +171,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
         this.dynamicColumns = generateColumnsFromFields(
           response.data.filter(field => field.table == table)
         );
+        console.log(this.dynamicColumns);
       })
     );
   }
@@ -182,9 +182,11 @@ export class SystemLogComponent extends BasePage implements OnInit {
     });
   }
 
+  //Se ejecuta con el botón de Generar Filtrado
   getTableData() {
     const params = new FilterParams();
     this.dynamicParams.next(params);
+    console.log(this.dynamicParams);
   }
 
   getDynamicRegisters(params: FilterParams) {
@@ -209,10 +211,13 @@ export class SystemLogComponent extends BasePage implements OnInit {
           this.dynamicLoading = false;
           this.dynamicRegisters = response.data;
           this.totalDynamic = response.count;
+          console.log(this.dynamicRegisters);
+          console.log(this.totalDynamic);
         })
       );
   }
 
+  //Es la información que se muestra en la tabla al escoger alguna en el Módulo de tablas
   getDynamicRegistersInit() {
     this.registers.table = this.tableLogs[0].table;
     return this.seraLogService
@@ -232,6 +237,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
         tap(response => {
           this.dynamicLoading = false;
           this.dynamicRegisters = response.data;
+          console.log(this.dynamicRegisters);
           this.totalDynamic = response.count;
         })
       );
