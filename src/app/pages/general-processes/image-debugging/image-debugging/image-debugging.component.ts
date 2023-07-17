@@ -25,6 +25,7 @@ import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import {
   IAttribGoodBad,
   ICharacteristicsGoodDTO,
+  IGood,
 } from 'src/app/core/models/ms-good/good';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
@@ -35,6 +36,7 @@ import { AttribGoodBadService } from 'src/app/core/services/ms-good/attrib-good-
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
+import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
@@ -57,7 +59,7 @@ import {
 } from 'src/app/shared/utils/date';
 import { SubdelegationService } from '../../../../core/services/catalogs/subdelegation.service';
 import { GoodsPhotoService } from '../services/image-debugging-service';
-import { PHOTOGRAPHY_COLUMNS } from './image-debugging-columns';
+import { IMAGE_DEBUGGING_COLUMNS } from './image-debugging-columns';
 @Component({
   selector: 'app-image-debugging',
   templateUrl: './image-debugging.component.html',
@@ -68,6 +70,9 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
   formLoading = false;
   showConciliado = false;
+  expedientSelected = new DefaultSelect();
+  lotIdSelected = new DefaultSelect();
+  eventIdSelected = new DefaultSelect();
   LVALIDA = true;
   showAvaluo = true;
   photographs: any[] = [];
@@ -76,13 +81,17 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   newLimit = new FormControl(1);
   totalItems = 0;
   count = 0;
+  goods: any[];
   delegacion: number;
   subdelegacion: number;
   selectedBad: IAttribGoodBad;
   form: FormGroup;
+  di_desc_est: string;
   disabledBienes: boolean = true;
   goodChange: number = 0;
   bodyGoodCharacteristics: ICharacteristicsGoodDTO = {};
+  goodsAll: IGood[] = [];
+  goodO: IGood;
   showPhoto = false;
   loadTypes = false;
   actualGoodNumber: number = null;
@@ -138,7 +147,21 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   get numberGood() {
     return this.form.get('noBien');
   }
-
+  get fileNumber() {
+    return this.form.get('fileNumber');
+  }
+  get idEvemt() {
+    return this.form.get('idEvent');
+  }
+  get idLot() {
+    return this.form.get('idLot');
+  }
+  get lotDesc() {
+    return this.form.get('lotDesc');
+  }
+  get eventDesc() {
+    return this.form.get('eventDesc');
+  }
   get numberClassification() {
     return this.form.get('noClasif');
   }
@@ -274,6 +297,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     private service: GoodsPhotoService,
     private goodPartialize: GoodPartializeService,
     private comerDetailService: ComerDetailsService,
+    private comerEventService: ComerEventService,
     private attribGoodBadService: AttribGoodBadService,
     private fb: FormBuilder,
     public router: Router
@@ -283,7 +307,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     this.params.value.limit = 1;
     this.settings = {
       ...this.settings,
-      columns: PHOTOGRAPHY_COLUMNS,
+      columns: IMAGE_DEBUGGING_COLUMNS,
       edit: {
         editButtonContent: '<i  class="fa fa-eye text-info mx-2" > Ver</i>',
       },
@@ -379,40 +403,6 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     return data;
   }
 
-  getImageGood() {
-    this.loading = true;
-    const formDatra: Object = {
-      xidBien: this.good,
-    };
-    this.wcontentService.getDocumentos(formDatra).subscribe({
-      next: response => {
-        const _data = response.data.filter((img: any) => {
-          if (img.dDocType == 'DigitalMedia') {
-            return img;
-          }
-          //if (img.dDocType == 'DigitalMedia') return img;
-        });
-
-        if (_data.length > 0) {
-          this.photographs =
-            _data.length > 10 ? this.setPaginate([..._data]) : _data;
-          this.totalItems = _data.length;
-          this.loading = false;
-        } else {
-          this.alert(
-            'warning',
-            'Información',
-            'No hay imágenes agregadadas a este bien'
-          );
-          this.loading = false;
-        }
-      },
-      error: error => {
-        this.loading = false;
-      },
-    });
-  }
-
   private disabledFotos() {
     if (this.staticTabs) {
       this.staticTabs.tabs[2].disabled = true;
@@ -449,9 +439,11 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       subtype: [null],
       ssubtype: [null],
       sssubtype: [null],
-      lote: [null],
-      evento: [null],
-      fileNumber: [null],
+      idLot: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      lotDesc: [null, [Validators.pattern(STRING_PATTERN)]],
+      idEvent: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      eventDesc: [null, [Validators.pattern(STRING_PATTERN)]],
+      fileNumber: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       noBien: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       noClasif: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       status: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -925,6 +917,11 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       this.bodyGoodCharacteristics.noGood = this.numberGood.value;
       return true;
     }
+    // if (this.fileNumber && this.fileNumber.value) {
+    //   this.filterParams.addFilter('fileNumber', this.fileNumber.value);
+    //   this.bodyGoodCharacteristics.fileNumber = this.fileNumber.value;
+    //   return true;
+    // }
     if (this.type && this.type.value) {
       this.filterParams.addFilter('goodTypeId', this.type.value);
       this.bodyGoodCharacteristics.noType = this.type.value;
@@ -1024,10 +1021,10 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
             this.showPhoto = false;
           }
           this.numberGood.setValue(item.id);
-          this.type.setValue(item.no_tipo);
-          this.subtype.setValue(item.no_subtipo);
-          this.form.get('ssubtype').setValue(item.no_ssubtipo);
-          this.form.get('sssubtype').setValue(item.no_sssubtipo);
+          this.fileNumber.setValue(item.fileNumber);
+          // this.subtype.setValue(item.no_subtipo);
+          // this.form.get('ssubtype').setValue(item.no_ssubtipo);
+          // this.form.get('sssubtype').setValue(item.no_sssubtipo);
           this.loadTypes = true;
           const delegacion = item.delegationnumber;
           if (delegacion) {
@@ -1042,7 +1039,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
           this.getLatitudLongitud(item.goodid);
           this.numberClassification.setValue(item.goodclassnumber);
           this.goodStatus.setValue(item.status);
-          this.form.get('fileNumber').setValue(item.fileNumber);
+          this.fileNumber.setValue(item.fileNumber);
           this.descripcion.setValue(item.description);
           this.goodUnit.setValue(item.unit);
           this.goodQuantity.setValue(item.quantity);
@@ -1131,39 +1128,34 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   }
 
   private fillAvaluo() {
-    if (this.type.value === '6' && this.subtype.value) {
-      if (this.goodAppraisal.value === null) {
-        if (this.good.val14 === 'S') {
-          this.goodAppraisal2.setValue(true);
-        } else if (this.good.val14 === 'N') {
+    if (this.goodAppraisal.value === null) {
+      if (this.good.val14 === 'S') {
+        this.goodAppraisal2.setValue(true);
+      } else if (this.good.val14 === 'N') {
+        this.goodAppraisal2.setValue(false);
+      } else {
+        if (this.good.val14 === null) {
           this.goodAppraisal2.setValue(false);
         } else {
-          if (this.good.val14 === null) {
-            this.goodAppraisal2.setValue(false);
-          } else {
-            this.goodAppraisal2.setValue(true);
-          }
-        }
-      } else {
-        if (this.good.val14 === 'S') {
           this.goodAppraisal2.setValue(true);
-        }
-        if (this.good.val14 === 'N') {
-          this.goodAppraisal2.setValue(true);
-        }
-        if (this.good.val14 !== 'S' && this.good.val14 !== 'N') {
-          this.goodAppraisal2.setValue(true);
-        }
-        if (this.goodAppraisal.value != null && this.good.val14 === 'N') {
-          this.good.val14 = 'S';
-        }
-        if (this.goodAppraisal.value != null && this.good.val14 === null) {
-          this.good.val14 = 'S';
         }
       }
     } else {
-      this.goodAppraisal2.setValue(true);
-      this.showAvaluo = false;
+      if (this.good.val14 === 'S') {
+        this.goodAppraisal2.setValue(true);
+      }
+      if (this.good.val14 === 'N') {
+        this.goodAppraisal2.setValue(true);
+      }
+      if (this.good.val14 !== 'S' && this.good.val14 !== 'N') {
+        this.goodAppraisal2.setValue(true);
+      }
+      if (this.goodAppraisal.value != null && this.good.val14 === 'N') {
+        this.good.val14 = 'S';
+      }
+      if (this.goodAppraisal.value != null && this.good.val14 === null) {
+        this.good.val14 = 'S';
+      }
     }
   }
 
@@ -1405,5 +1397,168 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     } else {
       this.location.back();
     }
+  }
+  // getComerGoodAll(data: any) {
+  //   //console.log(params);
+  //   console.log(data);
+  //   const params = new ListParams();
+  //   params['filter.goodNumber'] = `$eq:${data.id}`;
+  //   console.log(this.form.controls['goodNumber'].value);
+  //   this.comerEventService.getAllFilterComerGood(params).subscribe({
+  //     next: resp => {
+  //       this.lot = resp;
+  //       console.log(resp);
+  //       this.lotIdSelected = new DefaultSelect(resp.data, resp.count);
+  //     },
+  //     error: error => {
+  //       console.log(error);
+  //       this.lotIdSelected = new DefaultSelect();
+  //     },
+  //   });
+  // }
+
+  idEvent(datos: any) {
+    this.getIdLot(datos);
+  }
+
+  getIdLot(data: any) {
+    const datos: any = {};
+    this.comerEventService.getLotId(data.lotId).subscribe({
+      next: resp => {
+        this.comerEventService.geEventId(resp.eventId).subscribe({
+          next: resp => {
+            console.log(resp);
+            //this.form.controls['idEvent'].setValue(resp.id);
+            this.eventIdSelected = new DefaultSelect([resp], 1);
+            this.form.controls['idEvent'].setValue(resp.id);
+          },
+          error: error => {
+            console.log(error);
+            this.eventIdSelected = new DefaultSelect();
+          },
+        });
+      },
+      error: error => {
+        console.log(error);
+        //this.lotIdSelected = new DefaultSelect();
+      },
+    });
+  }
+  searchExp(id: number | string) {
+    if (!id) return;
+    // this.isSearch = true;
+    // this.isDisabledExp = true;
+    // this.onLoadExpedientData();
+    this.params.getValue().page = 1;
+    this.loading = true;
+    this.goodService.getByExpedient(id).subscribe({
+      next: resp => {
+        const data = resp.data;
+        this.loading = false;
+        data.map(async (good: any, index: any) => {
+          if (index == 0) this.di_desc_est = good.estatus.descriptionStatus;
+          good.di_disponible = 'S';
+          await new Promise((resolve, reject) => {
+            const body = {
+              no_bien: good.id,
+              estatus: good.status,
+              identificador: good.identifier,
+              vc_pantalla: 'FDEPURAFOTOS',
+              proceso_ext_dom: good.extDomProcess ?? '',
+            };
+            console.log(body);
+            // this.dictationServ.checkGoodAvaliable(body).subscribe({
+            //   next: state => {
+            //     good.est_disponible = state.est_disponible;
+            //     good.v_amp = state.v_amp ? state.v_amp : null;
+            //     good.pDiDescStatus = state.pDiDescStatus;
+            //     // this.desc_estatus_good = state.pDiDescStatus ?? '';
+            //   },
+            //   error: () => {
+            //     this.loading = false;
+            //     resolve(null);
+            //   },
+            // });
+          });
+        });
+
+        this.goods = data;
+        this.totalItems = resp.count || 0;
+
+        // this.onLoadDictationInfo();
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
+
+    // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+
+    // });
+  }
+  getEvent(params?: ListParams) {
+    params['filter.event.statusvtaId'] = `$ilike:${params.text}`;
+    params['filter.event.id'] = `$eq:${this.idEvent}`;
+    this.comerEventService.getAllFilterComerGood(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.description = `${data.event}- ${data.event.statusvtaId}`;
+          return data;
+        });
+        this.eventIdSelected = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.eventIdSelected = new DefaultSelect();
+      },
+    });
+  }
+  getLot(params?: ListParams) {
+    params['filter.description'] = `$ilike:${params.text}`;
+    params['filter.lotId'] = `$eq:${this.idLot}`;
+    this.comerEventService.getAllFilterComerGood(params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.description = `${data.lotId}- ${data.description}`;
+          return data;
+        });
+        this.lotIdSelected = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.lotIdSelected = new DefaultSelect();
+      },
+    });
+  }
+  getImageGood() {
+    this.loading = true;
+    const formDatra: Object = {
+      xidBien: this.form.controls['goodNumber'].value,
+    };
+    this.wcontentService.getDocumentos(formDatra).subscribe({
+      next: response => {
+        const _data = response.data.filter((img: any) => {
+          if (img.dDocType == 'DigitalMedia') {
+            return img;
+          }
+          //if (img.dDocType == 'DigitalMedia') return img;
+        });
+
+        if (_data.length > 0) {
+          this.photographs =
+            _data.length > 10 ? this.setPaginate([..._data]) : _data;
+          this.totalItems = _data.length;
+          this.loading = false;
+        } else {
+          this.alert(
+            'warning',
+            'Información',
+            'No hay imágenes agregadadas a este bien'
+          );
+          this.loading = false;
+        }
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
   }
 }
