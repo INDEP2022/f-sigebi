@@ -40,7 +40,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.data) this.idGood = this.data?.id;
+    this.idGood = this.data.id;
     if (this.idRequest) this.infoRequest();
     this.obtainDate();
     this.getInfoUserLog();
@@ -61,6 +61,10 @@ export class UploadFileComponent extends BasePage implements OnInit {
     this.requestService.getById(this.idRequest).subscribe(data => {
       this.idTrans = data.transferenceId;
     });
+  }
+
+  close(): void {
+    this.bsModalRef.hide();
   }
 
   loadImage(uploadEvent: IUploadEvent) {
@@ -90,6 +94,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
             )
             .subscribe({
               next: data => {
+                this.bsModalRef.content.callback(true);
                 this.close();
               },
               error: error => {},
@@ -127,10 +132,5 @@ export class UploadFileComponent extends BasePage implements OnInit {
         });
       }
     }
-  }
-
-  close(): void {
-    this.bsModalRef.content.callback(true);
-    this.bsModalRef.hide();
   }
 }

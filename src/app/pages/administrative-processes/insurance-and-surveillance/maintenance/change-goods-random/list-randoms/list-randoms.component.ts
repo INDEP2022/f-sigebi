@@ -19,7 +19,7 @@ import { COLUMNS } from '../../../surveillance-service/surveillance-service/list
   styles: [],
 })
 export class ListRandomsComponent extends BasePage implements OnInit {
-  title: string = 'Lista de Aleatorios';
+  title: string = 'Lista de Bienes Disponibles';
   form: FormGroup;
 
   data1: LocalDataSource = new LocalDataSource();
