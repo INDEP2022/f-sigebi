@@ -59,4 +59,5 @@ export enum DictationEndpoints {
   ApplicationPufRef = 'application/pufRegManaged',
   VIndDictaminacion = 'v-ind-dictaminacion',
   VIndDictaminacion1 = 'v-ind-dictaminacion1',
+  ApplicationPufRefCentral = 'application/pupRegionalCorrect',
 }

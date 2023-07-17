@@ -143,13 +143,24 @@
             <form-loader *ngIf="loading"></form-loader>
             <div *ngIf="!loading">
               <ng2-smart-table
-                [attr.class]="'table-bordered table-responsive'"
+                [attr.class]="'table-bordered table-responsive mb-4'"
                 [settings]="settings"
                 [source]="dataTable">
               </ng2-smart-table>
             </div>
           </div>
+          <div class="col-md-12 d-flex justify-content-end pt-3">
+            <form-field [control]="form.get('monto2')" label="Monto total">
+              <input
+                [readOnly]="true"
+                type="number"
+                class="form-control pl-2"
+                formControlName="monto2"
+                min="1" />
+            </form-field>
+          </div>
           <app-pagination
+            *ngIf="totalItems > 0"
             [filterParams]="filterParams"
             [totalItems]="totalItems">
           </app-pagination>
@@ -231,7 +242,7 @@
             <div>
               <form-field
                 [control]="form.get('cveAccount')"
-                label="Clave cuenta">
+                label="Clave Cuenta">
                 <input
                   type="number"
                   class="form-control"

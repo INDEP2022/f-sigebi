@@ -247,6 +247,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
           this.createReport = false;
           this.rejectReq = false;
         } else if (affair == 10) {
+          this.searchRequestSimGoods = true;
           this.regDocForm = true;
           this.selectGoods = true;
           this.expRequest = true;

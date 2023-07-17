@@ -424,4 +424,8 @@ export class DictationService extends HttpService {
       listParams
     );
   }
+
+  applicationPufRefCentral(data: Object) {
+    return this.post(DictationEndpoints.ApplicationPufRefCentral, data);
+  }
 }

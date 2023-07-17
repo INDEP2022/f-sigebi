@@ -93,13 +93,14 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
         this.delegations = new DefaultSelect(data.data, data.count);
       },
       err => {
-        let error = '';
+        /* let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
           error = err.message;
         }
-        this.alert('warning', 'No se encontraron registros', '');
+        this.alert('warning', 'No se encontraron registros', ''); */
+        this.delegations = new DefaultSelect();
       },
       () => {}
     );
@@ -118,14 +119,15 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
           this.subdelegations = new DefaultSelect(data.data, data.count);
         },
         error: err => {
-          let error = '';
+          /* let error = '';
           if (err.status === 0) {
             error = 'Revise su conexión de Internet.';
           } else {
             error = err.message;
           }
           this.subdelegations = new DefaultSelect([], 0);
-          this.alert('warning', 'No se encontraron registros', '');
+          this.alert('warning', 'No se encontraron registros', ''); */
+          this.subdelegations = new DefaultSelect();
         },
       });
     } else {

@@ -61,7 +61,10 @@ export class RecordNotificationFilterComponent implements OnInit {
         this.changeSubloading(false);
         this.publicMins = new DefaultSelect(res.data, res.count);
       },
-      error: () => this.changeSubloading(false),
+      error: () => {
+        this.changeSubloading(false);
+        this.publicMins = new DefaultSelect([], 0);
+      },
     });
   }
 
@@ -72,7 +75,10 @@ export class RecordNotificationFilterComponent implements OnInit {
         this.changeSubloading(false);
         this.courts = new DefaultSelect(res.data, res.count);
       },
-      error: () => this.changeSubloading(false),
+      error: () => {
+        this.changeSubloading(false);
+        this.courts = new DefaultSelect([], 0);
+      },
     });
   }
 

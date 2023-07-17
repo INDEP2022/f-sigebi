@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
@@ -24,10 +24,6 @@ import { ParametersService } from 'src/app/core/services/ms-parametergood/parame
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { TranfergoodService } from 'src/app/core/services/ms-transfergood/transfergood.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  KEYGENERATION_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EmailComponent } from '../email/email.component';
 import { DetailNum } from './detail.model';
@@ -120,6 +116,7 @@ export class RegionalAccountTransferenceComponent
         },
         error: err => {
           this.loading = false;
+          this.dataTable = [];
           this.alert('error', 'Error', err.error.message);
         },
       });
@@ -177,11 +174,12 @@ export class RegionalAccountTransferenceComponent
             this.form.get('dateReport').patchValue(date);
 
             this.dataTable = [...resp.data];
-            this.totalItems = resp.data.length;
+            //this.totalItems = resp.data.length;
           },
           error: err => {
             this.alert('error', 'Error', err.error.message);
             this.loading = false;
+            this.dataTable = [];
           },
         });
     } else {
@@ -245,6 +243,8 @@ export class RegionalAccountTransferenceComponent
         this.form.get('cveAccount').patchValue(data.accountKey);
         this.form.get('total').patchValue(data.amountAll);
 
+        this.form.get('monto2').patchValue(data.amountAll);
+
         this.filterParams.getValue().removeAllFilters();
         this.filterParams.getValue().page = 1;
         this.filterParams
@@ -281,20 +281,31 @@ export class RegionalAccountTransferenceComponent
       historicCheck: [null],
 
       currencyType: [null],
-      delegation: [null, [Validators.pattern(STRING_PATTERN)]],
+      delegation: [null],
       folioCash: [null],
       transactionDate: [null],
 
       cveAccount: [null],
-      accountType: [null, [Validators.pattern(STRING_PATTERN)]],
-      cveBank: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      cveCurrency: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      total: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      accountType: [null],
+      cveBank: [null],
+      cveCurrency: [null],
+      total: [null],
       monto2: [null],
     });
   }
 
   onFileChange(event: Event) {
+    const { transferenceReport } = this.form.value;
+
+    if (transferenceReport) {
+      this.alert(
+        'error',
+        'Error',
+        `No puede agregar más bienes a este reporte: ${transferenceReport}`
+      );
+      return;
+    }
+
     this.loading = true;
     const file = (event.target as HTMLInputElement).files[0];
     let formData = new FormData();
@@ -345,6 +356,7 @@ export class RegionalAccountTransferenceComponent
 
     if (transferenceReport) {
       const email = await this.getDataMail();
+      console.log(email);
 
       if (email) {
         const emailv2 = {
@@ -382,10 +394,12 @@ export class RegionalAccountTransferenceComponent
       transNumeraryRegNoReport: Number(transferenceReport),
       transNumeraryRegNoDelegation: Number(delegation),
     };
+    console.log(data);
     return firstValueFrom(
       this.securityService.getIniEmail(data).pipe(
         catchError(error => {
           this.alert('error', 'Error', error.error.message);
+          console.log(error);
           return of(null);
         }),
         map(resp => resp)
@@ -403,14 +417,14 @@ export class RegionalAccountTransferenceComponent
     } = this.form.value;
 
     if (!transferenceReport) {
-      let total: number = 0;
+      // let total: number = 0;
 
-      for (let index = 0; index < this.dataTable.length; index++) {
-        const element: any = this.dataTable[index];
-        total = total + Number(element.total);
-      }
+      // for (let index = 0; index < this.dataTable.length; index++) {
+      //   const element: any = this.dataTable[index];
+      //   total = total + Number(element.total);
+      // }
 
-      this.form.get('monto2').patchValue(total);
+      // this.form.get('monto2').patchValue(total);
 
       if (!delegation) {
         this.alert('error', 'Error', 'No a ingresado el número de delegación');
@@ -459,6 +473,24 @@ export class RegionalAccountTransferenceComponent
     }
   }
 
+  async procedure(good: number) {
+    const body: any = {
+      cveShape: 'FTRANSFCUENXREG',
+      noGood: good,
+    };
+
+    return new Promise((resolve, reject) => {
+      this.goodProcessService.procedureGoodStatus(body).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: () => {
+          resolve(true);
+        },
+      });
+    });
+  }
+
   async createTransNumDet(data: any) {
     const { transferenceReport } = this.form.value;
     const body: any = {
@@ -498,12 +530,12 @@ export class RegionalAccountTransferenceComponent
     const good: any = this.dataTable.length > 0 ? this.dataTable[0] : null;
 
     if (good.val1 != currencyType) {
-      this.form.get('delegation');
-      this.form.get('currencyType');
-      this.form.get('cveAccount');
-      this.form.get('accountType');
-      this.form.get('cveBank');
-      this.form.get('cveCurrency');
+      this.form.get('delegation').patchValue(null);
+      this.form.get('currencyType').patchValue(null);
+      this.form.get('cveAccount').patchValue(null);
+      this.form.get('accountType').patchValue(null);
+      this.form.get('cveBank').patchValue(null);
+      this.form.get('cveCurrency').patchValue(null);
 
       this.alert(
         'error',
@@ -535,16 +567,30 @@ export class RegionalAccountTransferenceComponent
     for (let index = 0; index < this.dataTable.length; index++) {
       const element: any = this.dataTable[index];
 
-      if (!element.total) {
-        element.total = Number(element.val14) + Number(element.allInterest);
+      console.log(element);
+
+      if (element.total == 0 || !element.total) {
+        this.dataTable[index].total = String(
+          Number(element.val14) + Number(element.allInterest)
+        );
+        this.dataTable = [...this.dataTable];
       }
     }
 
-    if (total != monto2) {
+    let totalSuma: number = 0;
+
+    for (let index = 0; index < this.dataTable.length; index++) {
+      const element: any = this.dataTable[index];
+      totalSuma = totalSuma + Number(element.total);
+    }
+
+    this.form.get('monto2').patchValue(totalSuma);
+
+    if (total != totalSuma) {
       this.alert(
         'error',
         'Error',
-        'El monto ingresado no corresponde al monto calculado verfique'
+        'El monto ingresado no corresponde al monto calculado, favor de verificar'
       );
       return;
     } else if (!total && total != 0) {
@@ -596,9 +642,9 @@ export class RegionalAccountTransferenceComponent
     } = this.form.value;
 
     const body: any = {
-      transDate: transactionDate,
+      transDate: this.parseDateNoOffset(transactionDate),
       amountAll: total,
-      repDate: dateReport,
+      repDate: this.getDate(dateReport),
       accountKey: cveAccount,
       delegationNumber: Number(delegation),
       invoiceCwNumber: folioCash,
@@ -612,6 +658,7 @@ export class RegionalAccountTransferenceComponent
         this.alert('success', 'Reporte', 'Creado correctamente');
 
         this.dataTable.map(async good => {
+          await this.procedure(Number(good.goodNumber));
           await this.createTransNumDet(good);
         });
 
@@ -619,18 +666,24 @@ export class RegionalAccountTransferenceComponent
         this.filterParams.getValue().page = 1;
         this.filterParams
           .getValue()
-          .addFilter(
-            'numberReport',
-            this.form.get(resp.reportNumber).value,
-            SearchFilter.EQ
-          );
+          .addFilter('numberReport', resp.reportNumber, SearchFilter.EQ);
 
-        this.getTransDetail();
+        const time = setTimeout(() => {
+          this.getTransDetail();
+          clearTimeout(time);
+        }, 2500);
       },
       error: err => {
         this.alert('error', 'Error', err.error.message);
       },
     });
+  }
+
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() - dateLocal.getTimezoneOffset() * 60 * 1000
+    );
   }
 
   getAccount() {
@@ -666,7 +719,7 @@ export class RegionalAccountTransferenceComponent
       next: resp => {
         this.form.get('idRequest').patchValue(resp.data[0].solnumId);
         this.alert(
-          'info',
+          'warning',
           'Bien Encontrado',
           `Con número de solicitud: ${resp.data[0].solnumId}`
         );

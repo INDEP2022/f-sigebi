@@ -1,4 +1,5 @@
 export interface IComerLot {
+  id?: string | number;
   statusVtaId: number;
   eventId: number;
   publicLot: number;

@@ -108,14 +108,14 @@ export class ScanningFoilComponent
       this.scanningFoli.value
     );
     if (this.good === null || this.good === undefined) {
-      this.alert('info', 'Información', 'Debe cargar un bien', '');
+      this.alert('info', 'Información', 'Debe Cargar un Bien', '');
       return;
     }
     if (this.document !== undefined) {
       this.alert(
         'info',
         'Información',
-        'El número de bien para este proceso ya tiene folio de escaneo.'
+        'El Número de Bien para este Proceso ya Tiene folio de Escaneo.'
       );
       return;
     }
@@ -205,7 +205,7 @@ export class ScanningFoilComponent
   }
   scan() {
     if (this.good === undefined) {
-      this.alert('info', 'Información', 'No existe folio de escaneo', '');
+      this.alert('info', 'Información', 'No Existe Folio de Escaneo', '');
       return;
     }
     console.log(this.form.get('scanningFoli').value);
@@ -221,7 +221,7 @@ export class ScanningFoilComponent
         }
       });
     } else {
-      this.alert('info', 'Información', 'No existe folio de escaneo', '');
+      this.alert('info', 'Información', 'No Existe Folio de Escaneo', '');
     }
   }
   goToScan() {
@@ -240,7 +240,7 @@ export class ScanningFoilComponent
   }
   seeImages() {
     if (this.good === undefined) {
-      this.alert('info', 'Información', 'No existe folio de escaneo', '');
+      this.alert('info', 'Información', 'No Existe Folio de Escaneo', '');
       return;
     }
     if (this.document !== undefined) {
@@ -260,19 +260,19 @@ export class ScanningFoilComponent
           } else {
             this.alert(
               'warning',
-              'No existe documentación para este folio',
+              'No Existe Documentación Para este Folio',
               ''
             );
           }
         });
     } else {
-      this.alert('warning', 'No tiene folio de escaneo para visualizar.', '');
+      this.alert('warning', 'No Tiene Folio de Escaneo para Visualizar.', '');
     }
   }
 
   printScanFile() {
     if (this.good === undefined) {
-      this.alert('info', 'Información', 'No existe folio de escaneo', '');
+      this.alert('info', 'Información', 'No Existe Folio de Escaneo', '');
       return;
     }
     if (this.form.get('scanningFoli').value !== '') {
@@ -281,7 +281,7 @@ export class ScanningFoilComponent
       };
       this.downloadReport(this.reportPrint, params);
     } else {
-      this.alert('info', 'Información', 'No existe folio de escaneo', '');
+      this.alert('info', 'Información', 'No Existe Folio de Escaneo', '');
     }
   }
 

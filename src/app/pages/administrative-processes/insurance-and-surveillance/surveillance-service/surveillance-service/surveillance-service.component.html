@@ -6,7 +6,7 @@
   <div body>
     <div class="col-12">
       <div class="row">
-        <div class="col-6">
+        <div class="col-5">
           <div class="ch-content">
             <h5 class="title">PERÍODOS DE SUPERVISIÓN Y VALIDACIÓN</h5>
           </div>
@@ -20,7 +20,7 @@
                     (change)="changeDelegations($event)"
                     bindLabel="numberAndDescrip"
                     label="Delegación"
-                    value="id"
+                    value="delegationNumber"
                     (fetchItems)="getDelegation($event)"
                     control="delegation"></ngx-select>
                 </form-field>
@@ -58,7 +58,7 @@
             </div>
             <div class="row mt-4">
               <div class="col-md-4 mt-3">
-                <form-field [control]="form.get('from')" label="Período Del">
+                <form-field [control]="form.get('from')" label="Período del">
                   <input
                     readonly
                     type="text"
@@ -105,6 +105,9 @@
             </div>
           </form>
         </div>
+        <div class="col-1">
+          <div class="hr"></div>
+        </div>
         <div class="col-6">
           <div class="ch-content">
             <h5 class="title">PROCESA</h5>
@@ -133,7 +136,7 @@
                     style="margin-top: 23px !important">
                     <form-field
                       [control]="formRegistro.get('fromTwo')"
-                      label="Período Del">
+                      label="Período del">
                       <input
                         type="text"
                         formControlName="fromTwo"
@@ -161,21 +164,6 @@
                   <div class="col-1"></div>
                   <div class="col-5 text-center">
                     <button
-                      (click)="generaAleatorios()"
-                      type="button"
-                      class="btn btn-info btn-sm active mt-4 w-100">
-                      Generar Aleatorios
-                    </button>
-                    <button
-                      (click)="revisarCarga()"
-                      type="button"
-                      class="btn btn-primary btn-sm active mt-4 w-100">
-                      Revisar Carga
-                      <i class="bx bx-search-alt bx-sm float-icon"></i>
-                    </button>
-                  </div>
-                  <div class="col-5 text-center">
-                    <button
                       style="font-size: 14px"
                       class="btn btn-success active btn-sm mt-4 w-100"
                       type="button"
@@ -190,11 +178,22 @@
                       class="d-none"
                       accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                       (change)="onFileChange($event)" />
+                    <button
+                      (click)="revisarCarga()"
+                      type="button"
+                      class="btn btn-primary btn-sm active mt-4 w-100">
+                      Revisar Carga
+                      <i class="bx bx-search-alt bx-sm float-icon"></i>
+                    </button>
+                  </div>
+                  <div class="col-5 text-center">
+                    <button
+                      (click)="generaAleatorios()"
+                      type="button"
+                      class="btn btn-info btn-sm active mt-4 w-100">
+                      Generar Aleatorios
+                    </button>
 
-                    <!-- <button (click)="cargarArchivo()" type="button" style="width: 80%;"
-                      class="btn btn-success btn-sm mt-4">
-                      Cargar Archivo <i class="bx bx-download float-icon"></i>
-                    </button> -->
                     <button
                       style="font-size: 14px"
                       (click)="exportar()"
@@ -223,7 +222,6 @@
         </div>
       </div>
     </div>
-    <hr />
     <div>
       <div class="row pt-4">
         <div class="ch-content">

@@ -14,8 +14,8 @@
       <div class="col-md-4">
         <form-field [control]="form.get('date')" label="Fecha de Solicitud">
           <input
-            [min]="maxDate"
             type="text"
+            [minDate]="maxDate"
             formControlName="date"
             class="form-control"
             bsDatepicker />
@@ -36,7 +36,7 @@
             paramSearch="filter.nameSend"
             prefixSearch="$ilike"
             (valueChange)="onChangeFrom($event)">
-            <ng-template let-item>
+            <ng-template #Send let-item>
               {{ item.nameSend }} / {{ item.emailSend }}
             </ng-template>
           </ng-custom-select>
@@ -67,7 +67,7 @@
       <div class="col-md-6">
         <form-field label="CC" [control]="form.get('cc')">
           <ng-custom-select
-            [isLoadInOnInit]="true"
+            [isLoadInOnInit]="false"
             [moreParams]="{
               'filter.bookType': '$eq:C',
               'filter.bookStatus': '$eq:1'

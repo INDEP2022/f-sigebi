@@ -38,13 +38,14 @@
                 <div class="col-sm-12 col-12 col-md-4 p-2">
                   <button
                     type="button"
-                    [disabled]="loading"
+                    [disabled]="loading || loadingProcess"
                     class="btn btn-primary btn-sm active"
                     (click)="searchNotification()">
                     Buscar
                     <i class="bx bx-search-alt bx-sm float-icon"></i>
                   </button>
                   <button
+                    [disabled]="loading || loadingProcess"
                     type="button"
                     class="btn btn-danger active btn-sm m-2"
                     (click)="cleanDataform()">
@@ -346,8 +347,11 @@
         <div class="card">
           <div class="card-body">
             <div class="row">
+              <div class="col-12 col-sm-12 col-md-8">
+                <h6>Bienes Disponibles</h6>
+              </div>
               <div
-                class="col-12 col-sm-12 col-md-12 text-end d-flex flex-row-reverse">
+                class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
                 <app-columns-select
                   [leftList]="true"
                   [(settings)]="tableSettings"></app-columns-select>
@@ -370,14 +374,11 @@
             </div>
           </div>
         </div>
-        <!-- <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettings"
-          [source]="dataTable"></ng2-smart-table> -->
       </div>
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 text-center">
         <div class="form-group">
           <button
+            [disabled]="loadingProcess"
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
             (click)="addSelect()">
@@ -385,6 +386,7 @@
             <i class="bx bx-chevron-down bx-md"></i>
           </button>
           <button
+            [disabled]="loadingProcess"
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
             (click)="addAll()">
@@ -392,6 +394,7 @@
             <i class="bx bx-chevrons-down bx-md"></i>
           </button>
           <button
+            [disabled]="loadingProcess"
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
             (click)="removeAll()">
@@ -399,33 +402,58 @@
             <i class="bx bx-chevrons-up bx-md"></i>
           </button>
           <button
+            [disabled]="loadingProcess"
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
             (click)="removeSelect()">
             <!-- Quitar uno -->
             <i class="bx bx-chevron-up bx-md"></i>
           </button>
-          <!-- <button
-            type="button"
-            class="btn btn-primary btn-sm active m-3"
-            (click)="btnAgregar()">
-            <i class="bx bxs-down-arrow-circle bx-md"></i>
-          </button>
-          <button
-            type="button"
-            class="btn btn-danger btn-sm active m-3"
-            (click)="btnEliminar()">
-            <i class="bx bxs-up-arrow-circle bx-md"></i>
-          </button> -->
         </div>
       </div>
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
         <div class="card">
           <div class="card-body">
             <div class="row">
+              <div class="col-12 col-sm-12 col-md-8">
+                <h6>Bienes a Procesar para Validaci&oacute;n ASEG_EXTDOM</h6>
+              </div>
               <div
-                class="col-12 col-sm-12 col-md-12 text-end d-flex flex-row-reverse">
+                class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
                 <app-columns-select
+                  [leftList]="true"
+                  [(settings)]="tableSettings3"></app-columns-select>
+              </div>
+              <div
+                class="col-sm-12 col-12 col-md-12 table-responsive p-5"
+                style="max-height: 500px; overflow-y: scroll">
+                <div [class]="loadingGoods3 ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="tableSettings3"
+                    [source]="dataTable3"></ng2-smart-table>
+                </div>
+              </div>
+              <div class="col-sm-12 col-12 col-md-12">
+                <app-pagination
+                  [params]="dataTableParams3"
+                  [totalItems]="totalGoods3"></app-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-8">
+                <h6>Bienes en Validaci&oacute;n ASEG_EXTDOM</h6>
+              </div>
+              <div
+                class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
+                <app-columns-select
+                  [leftList]="true"
                   [(settings)]="tableSettings2"></app-columns-select>
               </div>
               <div
@@ -446,40 +474,87 @@
             </div>
           </div>
         </div>
-        <!-- <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="tableSettings2"
-          [source]="dataTable2"></ng2-smart-table> -->
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 text-center">
+        <div class="form-group">
+          <button
+            [disabled]="loadingProcess"
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button"
+            (click)="addSelectFree()">
+            <!-- Mover uno -->
+            <i class="bx bx-chevron-down bx-md"></i>
+          </button>
+          <button
+            [disabled]="loadingProcess"
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button"
+            (click)="addAllFree()">
+            <!-- Mover todos -->
+            <i class="bx bx-chevrons-down bx-md"></i>
+          </button>
+          <button
+            [disabled]="loadingProcess"
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button"
+            (click)="removeAllFree()">
+            <!-- Quitar todos -->
+            <i class="bx bx-chevrons-up bx-md"></i>
+          </button>
+          <button
+            [disabled]="loadingProcess"
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button"
+            (click)="removeSelectFree()">
+            <!-- Quitar uno -->
+            <i class="bx bx-chevron-up bx-md"></i>
+          </button>
+        </div>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-8">
+                <h6>Bienes en Validaci&oacute;n ASEG_EXTDOM para Liberar</h6>
+              </div>
+              <div
+                class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
+                <app-columns-select
+                  [leftList]="true"
+                  [(settings)]="tableSettings4"></app-columns-select>
+              </div>
+              <div
+                class="col-sm-12 col-12 col-md-12 table-responsive p-5"
+                style="max-height: 500px; overflow-y: scroll">
+                <div [class]="loadingGoods4 ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="tableSettings4"
+                    [source]="dataTable4"></ng2-smart-table>
+                </div>
+              </div>
+              <div class="col-sm-12 col-12 col-md-12">
+                <app-pagination
+                  [params]="dataTableParams4"
+                  [totalItems]="totalGoods4"></app-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <!-- tabla Bienes -->
 
     <div class="row pt-2">
-      <!-- <div class="col-sm-12 col-12 col-md-4">
-        <form [formGroup]="formEscaneo" class="form-material">
-          <div class="row w-100">
-            <div class="col-sm-12 col-12 col-md-12 p-2">
-              <form-field
-                [control]="formEscaneo.get('folioEscaneo')"
-                label="Folio Escaneo">
-                <input class="form-control" formControlName="folioEscaneo" />
-              </form-field>
-            </div>
+      <div
+        class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+        *ngIf="loadingProcess">
+        <div class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center">
+            <div class="loader"></div>
+            <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
           </div>
-        </form>
-      </div> -->
-      <div class="col-sm-12 col-12 col-md-8 text-center">
-        <div class="form-group">
-          <!-- <button
-            class="btn btn-primary btn-sm active m-3"
-            (click)="btnEjecutarCambios()">
-            Ejecutar Cambios
-          </button> -->
-          <!-- <button
-            class="btn btn-info btn-sm active m-3"
-            (click)="btnConsultarHistorico()">
-            Consultar Hist&oacute;rico
-          </button> -->
         </div>
       </div>
       <!-- PARTE DE ESCANEO -->
@@ -488,6 +563,7 @@
           [formScan]="formScan"
           [notificationData]="notificationData"
           [dataUserLogged]="dataUserLogged"
+          (changeFolio)="changeFolio($event)"
           (scanRequestEmitter)="scanRequest($event)"
           (showScanningPageEmitter)="showScanningPage($event)"
           (messageDigitalizationEmitter)="messageDigitalization($event)"
@@ -497,6 +573,7 @@
       </div>
       <div class="col-md-5 col-12 col-sm-12 text-center">
         <button
+          [disabled]="loadingProcess"
           tooltip="Ejecutar Cambios"
           containerClass="tooltip-style"
           class="btn btn-primary btn-sm active m-3"
@@ -504,6 +581,7 @@
           <i class="fa fa-check" aria-hidden="true"></i>
         </button>
         <button
+          [disabled]="loadingProcess"
           tooltip="Consultar Histórico"
           containerClass="tooltip-style"
           class="btn btn-primary btn-sm active m-3"
@@ -511,19 +589,21 @@
           <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
         <button
+          [disabled]="loadingProcess"
           class="btn btn-primary btn-sm active m-3"
           (click)="btnConocimiento()">
           Conocimiento&nbsp;
         </button>
         <button
+          [disabled]="loadingProcess"
           class="btn btn-primary btn-sm active m-3"
           (click)="btnEnvioCorreos()"
           tooltip="Envio de Correos"
           containerClass="tooltip-style">
           <i class="bx bx-send"></i>
-          <!-- Envio Correos&nbsp;<i class="fa fa-check" aria-hidden="true"></i> -->
         </button>
         <button
+          [disabled]="loadingProcess"
           class="btn btn-primary btn-sm active m-3"
           (click)="btnMantenimientoCorreo()"
           tooltip="Mantenimiento de Correos"
