@@ -118,55 +118,39 @@
               </div>
             </tab>
             <tab heading="Bienes Fotos">
-              <div *ngIf="errorMessage" class="errorMessage">
-                {{ errorMessage }}
-              </div>
-              <div
-                class="mb-5"
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                ">
-                <div [class]="loading ? 'table-loading' : ''">
-                  <ng2-smart-table
-                    [attr.class]="'table-bordered'"
-                    [settings]="settings"
-                    [source]="photographs"
-                    (edit)="viewImage($event.data)">
-                  </ng2-smart-table>
-                  <app-pagination
-                    [params]="params"
-                    [totalItems]="totalItems"></app-pagination>
+              <div class="row">
+                <div *ngIf="errorMessage" class="errorMessage">
+                  {{ errorMessage }}
                 </div>
-                <button
-                  *ngIf="!disabledBienes"
-                  type="button"
-                  class="btn btn-sm btn-primary active"
-                  (click)="save()">
-                  Guardar
-                  <i class="bx bx-save text-light float-icon"></i>
-                </button>
+                <div
+                  class="mb-5"
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                  ">
+                  <!-- <div [class]="loading ? 'table-loading' : ''">
+                    <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="photographs"
+                      (edit)="viewImage($event.data)">
+                    </ng2-smart-table>
+                    <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+                  </div> -->
+                  <div class="justify-content-end btn-toolbar pt-5">
+                    <app-columns-select
+                      [(settings)]="settings"></app-columns-select>
+                  </div>
+                  <!-- <div class="row pt-3">
+                    <div [class]="loading ? 'table-loading' : ''">
+                      <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="photographs"
+                        (edit)="viewImage($event.data)">
+                      </ng2-smart-table>
+                      <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+                    </div>
+                  </div> -->
+                </div>
               </div>
-
-              <!-- <app-delegation-shared [form]="form"></app-delegation-shared> -->
-
-              <!-- <div class="row" *ngIf="loading === false">
-                <app-good-table-vals
-                  *ngIf="good"
-                  [goodChange]="goodChange"
-                  [disabled]="disabledBienes"
-                  [good]="good"
-                  [clasification]="
-                    numberClassification ? numberClassification.value : null
-                  "
-                  [avaluo]="goodAppraisal2 ? goodAppraisal2.value : null"
-                  [di_numerario_conciliado]="
-                    di_numerario_conciliado
-                  "></app-good-table-vals>
-              </div> -->
             </tab>
-            <tab heading="Validación de Fotografías">
+            <tab heading="Fotos">
               <app-photos-tabs
                 [goodNumber]="actualGoodNumber + ''"
                 [disabled]="false"></app-photos-tabs>

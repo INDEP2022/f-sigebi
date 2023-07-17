@@ -317,9 +317,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
           this.NO_INDICADOR = param['NO_INDICADOR'] ?? null;
         }
         const selectedBadString = localStorage.getItem('selectedBad');
-        const actualGoodNumberString = localStorage.getItem(
-          'goodCharacteristicNumber'
-        );
+        const actualGoodNumberString = localStorage.getItem('goodNumberDepura');
         if (selectedBadString) {
           this.selectedBad = JSON.parse(selectedBadString);
           if (!this.origin) this.origin = '1';
@@ -340,9 +338,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   override ngAfterViewInit(): void {
     super.ngAfterViewInit();
     const selectedBadString = localStorage.getItem('selectedBad');
-    const actualGoodNumberString = localStorage.getItem(
-      'goodCharacteristicNumber'
-    );
+    const actualGoodNumberString = localStorage.getItem('goodNumberDepura');
     if (selectedBadString || actualGoodNumberString) {
       if (selectedBadString) {
         setTimeout(() => {
@@ -443,10 +439,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
           },
         }
       );
-      localStorage.setItem(
-        'goodCharacteristicNumber',
-        this.actualGoodNumber + ''
-      );
+      localStorage.setItem('goodNumberDepura', this.actualGoodNumber + '');
     }
   }
 
@@ -456,6 +449,9 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       subtype: [null],
       ssubtype: [null],
       sssubtype: [null],
+      lote: [null],
+      evento: [null],
+      fileNumber: [null],
       noBien: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       noClasif: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       status: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -474,7 +470,6 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       latitud: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       longitud: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       avaluo: ['0'],
-      fileNumber: [null],
     });
   }
 
@@ -511,7 +506,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       if (row.required && !row.value) {
         this.alert(
           'error',
-          'Características del bien ' + this.numberGood.value,
+          'Depuración de imágenes del bien ' + this.numberGood.value,
           'Complete el atributo ' + row.attribute
         );
         tableValid = false;
@@ -575,32 +570,12 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
         next: response => {
           this.alert(
             'success',
-            'Características del bien ' + this.numberGood.value,
+            'Depuración de fotografías del bien ' + this.numberGood.value,
             'Actualizadas correctamente'
           );
         },
       });
     await this.pupInsertGeoreferencia();
-  }
-
-  private async fillConciliate() {
-    let clasificators = '62,1424,1426,1590';
-    if (
-      this.numberClassification.value &&
-      clasificators.includes(this.numberClassification.value + '')
-    ) {
-      const filterParams = new FilterParams();
-      filterParams.addFilter('numberGood', this.good.goodid);
-      const accounts = await firstValueFrom(
-        this.accountMovementsService
-          .getAll(filterParams.getParams())
-          .pipe(catchError(x => of(null)))
-      );
-      if (accounts && accounts.data && accounts.data.length > 0) {
-        this.di_numerario_conciliado = 'Conciliado';
-      }
-      this.showConciliado = true;
-    }
   }
 
   clearFilter() {
@@ -713,7 +688,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       );
       return;
     }
-    await this.fillConciliate();
+
     await this.checkPartialize();
   }
 

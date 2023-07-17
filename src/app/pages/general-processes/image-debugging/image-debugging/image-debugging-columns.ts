@@ -12,11 +12,11 @@ export const IMAGE_DEBUGGING_COLUMNS = {
   //   title: 'Consecutivo',
   //   sort: false,
   // },
-  program: {
-    title: 'Programa',
-    type: 'string',
-    sort: false,
-  },
+  // program: {
+  //   title: 'Programa',
+  //   type: 'string',
+  //   sort: false,
+  // },
   goodNumb: {
     title: 'No. Bien',
     type: 'number',
