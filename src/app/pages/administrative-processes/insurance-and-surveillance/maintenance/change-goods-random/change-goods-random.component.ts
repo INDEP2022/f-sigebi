@@ -77,7 +77,7 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      delegation: [null],
+      delegation: [null, Validators.required],
       process: [null, Validators.required],
       random: [null, Validators.required],
       goodNumber: [null, Validators.required],
@@ -141,19 +141,19 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
 
   listBienes() {
     if (!this.form.value.year) {
-      this.alert('warning', 'Debe seleccionar un año', '');
+      this.alert('warning', 'Debe Seleccionar un Año', '');
       return;
     }
     if (!this.form.value.period) {
-      this.alert('warning', 'Debe seleccionar un periodo', '');
+      this.alert('warning', 'Debe Seleccionar un Periodo', '');
       return;
     }
     if (!this.delegationDefault) {
-      this.alert('warning', 'Debe seleccionar una delegación', '');
+      this.alert('warning', 'Debe Seleccionar una Delegación', '');
       return;
     }
     if (!this.form.value.process) {
-      this.alert('warning', 'Debe seleccionar un proceso', '');
+      this.alert('warning', 'Debe Seleccionar un Proceso', '');
       return;
     }
     let data = {
@@ -190,7 +190,7 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
         }
       },
       error: error => {
-        this.alert('warning', 'No hay bienes disponibles', '');
+        this.alert('warning', 'No Hay Bienes Disponibles', '');
         this.loading = false;
       },
     });

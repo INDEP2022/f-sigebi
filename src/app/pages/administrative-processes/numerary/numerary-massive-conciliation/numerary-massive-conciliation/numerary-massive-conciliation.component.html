@@ -218,11 +218,11 @@
               <div class="col-md-4">
                 <form-field [control]="form2.get('current')">
                   <ngx-select
-                  [data]="currentDataF2"
-                  [form]="form2"
-                  label="Moneda"
-                  bindLabel="cve_moneda"
-                  control="current"></ngx-select>
+                    [data]="currentDataF2"
+                    [form]="form2"
+                    label="Moneda"
+                    bindLabel="cve_moneda"
+                    control="current"></ngx-select>
                 </form-field>
               </div>
               <div class="col-md-4">
@@ -235,8 +235,7 @@
                       form2.get('current').value == null ? 'disabled' : ''
                     "
                     label="Seleccione un Banco"
-                    [control]="'bank'"
-                    ></ngx-select>
+                    [control]="'bank'"></ngx-select>
                 </form-field>
               </div>
               <div class="col-md-4">
@@ -245,9 +244,7 @@
                     [data]="bankAccountDataF2"
                     [form]="form2"
                     bindLabel="cveAccount"
-                    [class]="
-                      form2.get('bank').value == null ? 'disabled' : ''
-                    "
+                    [class]="form2.get('bank').value == null ? 'disabled' : ''"
                     label="Cuenta Bancaria"
                     [control]="'bankAccount'"></ngx-select>
                 </form-field>
@@ -266,24 +263,19 @@
                     formControlName="deposit" />
                 </form-field>
               </div>
-                            
             </div>
           </div>
           <div class="row text-center">
             <div class="col">
               <button
-              type="button"
-              class="btn btn-primary btn-sm active mr-3"
-              (click)="searchGoodBankAccount()"
-              >
-              Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              >
-              Asociación
-            </button>
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="searchGoodBankAccount()">
+                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button type="button" class="btn btn-primary btn-sm active">
+                Asociación
+              </button>
             </div>
           </div>
         </form>
@@ -293,8 +285,6 @@
     <div class="row" style="margin-top: 50px">
       <h5 class="row ml-0 ml-4 mb-5">Cuentas Bancarias</h5>
       <form [formGroup]="form2" class="form-material">
-        
-
         <div class="col-12 mt-5">
           <div class="table-responsive">
             <div [class]="loading ? 'table-loading' : ''">
