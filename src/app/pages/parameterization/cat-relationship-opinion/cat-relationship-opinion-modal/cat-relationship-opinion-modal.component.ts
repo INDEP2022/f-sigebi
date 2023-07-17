@@ -14,7 +14,6 @@ import {
 import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
 import { RAsuntDicService } from 'src/app/core/services/catalogs/r-asunt-dic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
 
@@ -57,10 +56,7 @@ export class CatRelationshipOpinionModalComponent
   private prepareForm() {
     this.rAsuntDicForm = this.fb.group({
       code: [null, []],
-      dictum: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      dictum: [null, [Validators.required]],
       flyerType: [null, [Validators.required]],
       doc: [null, [Validators.required]],
       property: [null, [Validators.required]],

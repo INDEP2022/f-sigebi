@@ -60,6 +60,10 @@ export class GoodProcessService extends HttpService {
     return this.post<IResponse>(GoodProcessPoints.acceptGoodStatus, model);
   }
 
+  getGoodAppraise(model: any) {
+    return this.post<IResponse>(GoodProcessPoints.GetGoodAppraise, model);
+  }
+
   getAccepGoodActa(model: IAcceptGoodActa) {
     return this.post<IResponse>(GoodProcessPoints.acceptGoodActa, model);
   }

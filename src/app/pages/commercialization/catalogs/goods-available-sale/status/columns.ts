@@ -18,7 +18,7 @@ export const COLUMNS = {
     filter: true,
   },
   processStatus: {
-    title: 'Estatus del proceso',
+    title: 'Estatus del Proceso',
     sort: false,
     filter: true,
   },

@@ -33,6 +33,13 @@ export class AccountMovementService extends HttpService {
     );
   }
 
+  getAllRatio(params: _Params) {
+    return this.get<IListResponse<IAccountMovement>>(
+      AccountmvmntEndpoint.AccountMovements,
+      params
+    );
+  }
+
   getAllUsersChecks(params: _Params) {
     return this.get<IListResponse<IUserChecks>>('user-checks', params);
   }
