@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -18,7 +17,8 @@ import { MunicipalityService } from './../../../../core/services/catalogs/munici
   styles: [],
 })
 export class MunicipalityFormComponent extends BasePage implements OnInit {
-  municipalityForm: ModelForm<IMunicipality>;
+  municipalityForm: FormGroup;
+  //municipalityForm: ModelForm<IMunicipality>;
   title: string = 'Municipio';
   edit: boolean = false;
   municipality: IMunicipality;
@@ -40,17 +40,22 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
     this.municipalityForm = this.fb.group({
       idMunicipality: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
-      stateKey: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      stateKey: [null, [Validators.required]],
       nameMunicipality: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
-      description: [null, [Validators.required]],
+      description: [null, [Validators.required, Validators.maxLength(100)]],
       codMarginality: [
         null,
         [
@@ -71,7 +76,11 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
       ],
       version: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
     });
     if (this.municipality != null) {

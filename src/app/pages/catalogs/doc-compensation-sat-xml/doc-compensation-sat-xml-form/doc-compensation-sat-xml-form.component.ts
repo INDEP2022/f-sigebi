@@ -67,23 +67,33 @@ export class DocCompensationSatXmlFormComponent
   }
 
   create() {
-    this.loading = true;
-    this.compensationService
-      .create(this.compensationForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (this.compensationForm.controls['typeDocSatXml'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.compensationService
+        .create(this.compensationForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.compensationService
-      .update(this.compensationSatXml.id, this.compensationForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (this.compensationForm.controls['typeDocSatXml'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.compensationService
+        .update(this.compensationSatXml.id, this.compensationForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {
