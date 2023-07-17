@@ -96,25 +96,25 @@ export class NotifyAssetsImproprietyFormComponent
     this.clarificationForm = this.fb.group({
       addresseeName: [
         //Nombre Destinatario - Titular de la solicitud
-        this.infoRequest?.nameOfOwner || null,
+        null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
       positionAddressee: [
         //Cargo Destinatario - Titular de la solicitud
-        this.infoRequest?.holderCharge || null,
+        null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
       senderName: [
         //Nombre Remitente - DELEGADO
-        null,
+        this.infoRequest?.nameOfOwner || null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
       senderCharge: [
         //Cargo Remitente - DELEGADO
-        null,
+        this.infoRequest?.holderCharge || null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
@@ -212,7 +212,7 @@ export class NotifyAssetsImproprietyFormComponent
           'IMPROCEDENCIA' &&
         typeTransference == 'MANUAL'
       ) {
-        this.oficioImprocedencia(); //IMPROCEDENCIA  MANUAL
+        this.improcedenciaTransferentesVoluntarias(); //IMPROCEDENCIA  MANUAL
       }
     }
 
@@ -347,10 +347,11 @@ export class NotifyAssetsImproprietyFormComponent
       positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['observations'].value,
-      managedTo: this.infoRequest?.nameOfOwner, //Nombre destinatario - Titular de la solicitud
+      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
-      positionAddressee: this.infoRequest?.holderCharge, //Cargo destinatario - Titular de la solicitud
+      positionAddressee:
+        this.clarificationForm.controls['positionAddressee'].value, //Cargo destinatario - Titular de la solicitud
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '212',
@@ -796,8 +797,10 @@ export class NotifyAssetsImproprietyFormComponent
 
     if (token.siglasnivel4 != null) {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/${noDictamen}/${year}`;
+      console.log('CLAVE ARMADA: ', this.folioReporte);
     } else {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${noDictamen}/${year}`;
+      console.log('CLAVE ARMADA: ', this.folioReporte);
     }
   }
 

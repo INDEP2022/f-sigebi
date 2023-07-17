@@ -14,7 +14,7 @@ import { RecordAccountStatementsAccountsService } from 'src/app/core/services/ca
 import { RecordAccountStatementsService } from 'src/app/core/services/catalogs/record-account-statements.service';
 import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
-import { ConfiscatedProcessService } from 'src/app/core/services/ms-confiscation/confiscation-process.service';
+import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -24,7 +24,6 @@ import {
   NUMERARY_MASSIVE_CONCILIATION_COLUMNS,
   NUMERARY_MASSIVE_CONCILIATION_COLUMNS2,
 } from './numerary-massive-conciliation-columns';
-import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 
 @Component({
   selector: 'app-numerary-massive-conciliation',
@@ -450,11 +449,11 @@ export class NumeraryMassiveConciliationComponent
 
             this.goodProcessService.pupReconcilied(model).subscribe(
               res => {
-                console.log(res)
+                console.log(res);
                 this.loading = false;
               },
               err => {
-                console.log(err)
+                console.log(err);
                 this.loading = false;
               }
             );

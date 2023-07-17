@@ -670,8 +670,8 @@ export class RegistrationOfRequestsComponent
           console.log('Hay bienes por aclarar');
           this.alertQuestion(
             'warning',
-            'Aún hay bienes sin aclarar',
-            'Recuerde tener todos los bienes aclarados'
+            'Existe bienes sin aclarar',
+            'Se creará una nueva tarea de Notificación'
           ).then(async question => {
             if (question.isConfirmed) {
               //this.notifyClarificationsMethod2();
@@ -1324,6 +1324,11 @@ export class RegistrationOfRequestsComponent
       cancelButtonText: 'Cancelar',
       allowOutsideClick: false,
     }).then(async result => {
+      if (!result.isConfirmed) {
+        console.log('Cancelar');
+        return;
+      }
+
       if (result.isConfirmed) {
         if (typeCommit === 'finish') {
           console.log('finish');
@@ -1419,6 +1424,7 @@ export class RegistrationOfRequestsComponent
           }
         }
       }
+
       if (typeCommit === 'proceso-aprovacion') {
         await this.updateGoodStatus('APROBADO');
         this.approveRequestMethod();
