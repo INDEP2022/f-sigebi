@@ -6,14 +6,21 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { Ng2SmartTableComponent } from 'ng2-smart-table';
+import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  distinctUntilChanged,
+  Observable,
+  takeUntil,
+  throttleTime,
+} from 'rxjs';
 import {
   DynamicFilterLike,
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -44,6 +51,9 @@ export class SelectListFilteredModalComponent
   extends BasePage
   implements OnInit
 {
+  data: LocalDataSource = new LocalDataSource();
+  haveColumnFilters = false;
+  haveSelectColumns = false;
   rowSelected: boolean = false;
   selectedRow: any = null;
   columns: any[] = [];
@@ -64,7 +74,7 @@ export class SelectListFilteredModalComponent
   type: 'number' | 'text' = 'number';
   initialCharge = true;
   haveSearch = true;
-  showError: boolean = true;
+  showError: boolean = false;
   widthButton = false;
   multi = '';
   permitSelect = true;
@@ -73,11 +83,60 @@ export class SelectListFilteredModalComponent
   searchFilterCompatible: boolean = true; // Input opcional para deshabilitar el filtro "search" en la busqueda cuando el endpoint no lo soporta
   selectOnClick: boolean = false; //Input opcional para seleccionar registro al dar click en la tabla
   placeholder: string = 'Buscar...'; //Input opcional para establecer el mensaje del input de busqueda
+
+  columnFilters: any = [];
+  // equalFilters: string[] = ['id'];
+  ilikeFilters: string[] = ['description'];
+
   @Output() onSelect = new EventEmitter<any>();
   @ViewChild('table') table: Ng2SmartTableComponent;
 
   constructor(private modalRef: BsModalRef) {
     super();
+  }
+
+  protected dinamicFilterUpdate() {
+    this.data
+      .onChanged()
+      .pipe(
+        distinctUntilChanged(),
+        throttleTime(500),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let haveFilter = false;
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            if (this.ilikeFilters.includes(filter.field)) {
+              searchFilter = SearchFilter.ILIKE;
+            } else {
+              searchFilter = SearchFilter.EQ;
+            }
+            // if (this.ilikeFilters.includes(filter.field)) {
+            //   searchFilter = SearchFilter.ILIKE;
+            // }
+            field = `filter.${filter.field}`;
+            // let search = filter.search;
+            // if (isNaN(+search)) {
+            //   search = search + ''.toUpperCase();
+            // }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              haveFilter = true;
+            } else {
+              delete this.columnFilters[field];
+            }
+            console.log(this.columnFilters);
+          });
+          if (haveFilter) {
+            this.params.value.page = 1;
+          }
+          this.getData();
+        }
+      });
   }
 
   ngOnInit(): void {
@@ -88,9 +147,23 @@ export class SelectListFilteredModalComponent
       actions: false,
       columns: { ...this.columnsType },
     };
+    if (this.haveColumnFilters) {
+      this.settings = {
+        ...this.settings,
+        hideSubHeader: false,
+        actions: {
+          ...this.settings.actions,
+          add: false,
+          edit: false,
+          delete: false,
+        },
+      };
+      this.dinamicFilterUpdate();
+    } else {
+      this.addFilters();
+    }
     // console.log(this.settings);
 
-    this.addFilters();
     if (!this.widthButton) {
       if (this.dataObservableFn) {
         this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
@@ -147,6 +220,13 @@ export class SelectListFilteredModalComponent
     }, 500);
   }
 
+  private getParams() {
+    return {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+  }
+
   getData(): void {
     // console.log(this.filterParams.getValue().getParams());
     this.loading = true;
@@ -156,7 +236,7 @@ export class SelectListFilteredModalComponent
           this.filterParams.getValue().getParams()
         )
       : this.dataObservableListParamsFn
-      ? this.dataObservableListParamsFn(this.service, this.params.getValue())
+      ? this.dataObservableListParamsFn(this.service, this.getParams())
       : this.dataObservableId
       ? this.dataObservableId(this.service, this.id.getValue())
       : null;
@@ -165,6 +245,7 @@ export class SelectListFilteredModalComponent
         next: data => {
           // console.log(data);
           this.columns = data.data;
+          this.data.load(data.data);
           this.totalItems = data.count || 0;
           this.loading = false;
           this.fillSelectedRows();
@@ -173,7 +254,7 @@ export class SelectListFilteredModalComponent
           console.log(err);
           if (err.status == 400) {
             if (this.showError) {
-              this.onLoadToast('error', 'Error', 'No se encontrarón registros');
+              this.alert('error', 'Error', 'No se encontrarón registros');
             }
           }
           this.loading = false;
