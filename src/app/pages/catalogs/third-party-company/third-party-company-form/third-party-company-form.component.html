@@ -5,7 +5,7 @@
   <div body>
     <form [formGroup]="thirdPartyCompanyForm" class="form-material">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field
             [control]="thirdPartyCompanyForm.get('keyCompany')"
             label="Clave empresa">
@@ -16,20 +16,7 @@
               maxlength="10" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field
-            [control]="thirdPartyCompanyForm.get('description')"
-            label="Descripci&oacute;n">
-            <textarea
-              class="form-control"
-              type="text"
-              rows="2"
-              formControlName="description"
-              maxlength="100">
-            </textarea>
-          </form-field>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field [control]="thirdPartyCompanyForm.get('keyZoneContract')">
             <ngx-select
               [form]="thirdPartyCompanyForm"
@@ -49,6 +36,21 @@
               <option value="4">4</option>
             </select>
           </form-field> -->
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <form-field
+            [control]="thirdPartyCompanyForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="description"
+              maxlength="100">
+            </textarea>
+          </form-field>
         </div>
       </div>
     </form>

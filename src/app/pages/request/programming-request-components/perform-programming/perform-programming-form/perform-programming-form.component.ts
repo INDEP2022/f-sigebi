@@ -1231,10 +1231,8 @@ export class PerformProgrammingFormComponent
           });
 
           //goodsFilter = goodsFilter.filter(item => item);
-          this.estatesList.load(goodsFilter);
           this.totalItems = response.count;
-          this.loadingGoods = false;
-          //this.filterGoodsProgramming(goodsFilter);
+          this.filterGoodsProgramming(goodsFilter);
 
           /*this.goodsProgCopy = goodsFilter;
           this.goodsProg = goodsFilter;
@@ -1269,6 +1267,8 @@ export class PerformProgrammingFormComponent
 
         if (filter.length > 0) {
           this.estatesList.load(filter);
+          this.loadingGoods = false;
+          //this.estatesList.load(filter);
           this.loadingGoods = false;
         } else {
           this.alert(
@@ -2481,6 +2481,7 @@ export class PerformProgrammingFormComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         this.router.navigate(['/pages/siab-web/sami/consult-tasks']);

@@ -151,7 +151,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'Atención',
-        'El bien cuenta con una aclaración'
+        'El bien cuenta con una notificación sin aclarar, no es posible agregar una nueva'
       );
       return;
     }

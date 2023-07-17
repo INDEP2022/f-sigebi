@@ -112,6 +112,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
         confirmButtonColor: '#9D2449',
         cancelButtonColor: '#B08C5C',
         confirmButtonText: 'Aceptar',
+        allowOutsideClick: false,
         //cancelButtonText: 'Cancelar',
       }).then(result => {
         if (result.isConfirmed) {

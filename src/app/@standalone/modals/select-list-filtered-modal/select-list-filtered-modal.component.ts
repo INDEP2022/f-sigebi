@@ -33,9 +33,9 @@ import { IUserRowSelectEvent } from '../../../core/interfaces/ng2-smart-table.in
   templateUrl: './select-list-filtered-modal.component.html',
   styles: [
     `
-      .heigth-limit {
+      /* .heigth-limit {
         height: 52rem;
-      }
+      } */
 
       ng-scrollbar {
         ::ng-deep {

@@ -17,7 +17,7 @@ import {
 })
 export class TypeOrderServiceFormComponent extends BasePage implements OnInit {
   typeOrderServiceForm: ModelForm<ITypeOrderService>;
-  title: string = 'Tipo de Servicios';
+  title: string = 'Tipo Orden de Servicio';
   edit: boolean = false;
   typeOrderService: ITypeOrderService;
   constructor(
@@ -66,13 +66,23 @@ export class TypeOrderServiceFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.typeOrderServicesService
-      .create(this.typeOrderServiceForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.typeOrderServiceForm.controls['key'].value.trim() == '' ||
+      this.typeOrderServiceForm.controls['description'].value.trim() == '' ||
+      (this.typeOrderServiceForm.controls['key'].value.trim() == '' &&
+        this.typeOrderServiceForm.controls['description'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.typeOrderServicesService
+        .create(this.typeOrderServiceForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {

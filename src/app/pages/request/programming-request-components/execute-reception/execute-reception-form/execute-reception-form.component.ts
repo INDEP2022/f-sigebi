@@ -165,7 +165,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   settingsReceipt = {
     ...this.settings,
     actions: {
-      columnTitle: 'Generar recibo',
+      columnTitle: 'Generar Recibo',
       position: 'right',
       delete: true,
     },
@@ -1352,6 +1352,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               if (updateProgrammingGood) {
                 const updateGood = await this.updateGoodGuard();
                 this.goodsGuards.clear();
+                this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
                 this.getReceiptsGuard();
                 this.getInfoGoodsProgramming();
                 this.formLoadingGuard = false;
@@ -1529,8 +1530,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         actId: receipt.actId,
         typeReceipt: 'RESGUARDO',
         statusReceiptGuard: 'ABIERTO',
-        receiptDate: new Date(),
+        receiptDate: moment(new Date()).format('YYYY-MM-DD HH:mm:ssZ'),
       };
+
       this.receptionGoodService.createReception(formData).subscribe({
         next: response => {
           resolve(response);
@@ -1547,7 +1549,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         actId: receipt.actId,
         typeReceipt: 'ALMACEN',
         statusReceiptGuard: 'ABIERTO',
-        receiptDate: new Date(),
+        receiptDate: moment(new Date()).format('YYYY-MM-DD HH:mm:ssZ'),
       };
       this.receptionGoodService.createReception(formData).subscribe({
         next: response => {
@@ -1584,6 +1586,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           idGood: item.goodId,
           typeReceipt: 'RESGUARDO',
         };
+
         this.receptionGoodService.createReceiptGoodGuard(formData).subscribe({
           next: response => {
             resolve(true);

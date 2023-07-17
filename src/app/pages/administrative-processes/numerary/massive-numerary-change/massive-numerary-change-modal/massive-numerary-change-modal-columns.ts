@@ -1,12 +1,12 @@
 export const MASSIVE_NUMERARY_CHANGE_MODAL_COLUMNS = {
   noGood: {
     //NO_BIEN
-    title: 'No.Bien',
+    title: 'No. Bien',
     type: 'number',
     sort: false,
   },
   noNum: {
-    title: 'No.Num',
+    title: 'No. Num',
     type: 'number',
     sort: false,
   },
@@ -17,7 +17,7 @@ export const MASSIVE_NUMERARY_CHANGE_MODAL_COLUMNS = {
     sort: false,
   },
   cveEvent: {
-    title: 'Cve.Evento',
+    title: 'Clave Evento',
     type: 'string',
     sort: false,
   },
@@ -47,19 +47,19 @@ export const MASSIVE_NUMERARY_CHANGE_MODAL_COLUMNS = {
   },
   impNumerary: {
     //VALOR_AVALUO
-    title: 'Imp.Numerario',
+    title: 'Imp. Numerario',
     type: 'number',
     sort: false,
   },
 };
 export const WIN_BIENES_MODAL_COLUMNS = {
   noGood: {
-    title: 'No.Bien',
+    title: 'No. Bien',
     type: 'number',
     sort: false,
   },
   cveie: {
-    title: 'Cve.I/E',
+    title: 'Clave I/E',
     type: 'number',
     sort: false,
   },
