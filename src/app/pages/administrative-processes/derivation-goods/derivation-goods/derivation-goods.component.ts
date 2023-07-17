@@ -147,8 +147,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
   ngOnInit(): void {
     this.buildForm();
-
+    this.pw();
     //Inicializando el modal
+  }
+  pw() {
     let config = MODAL_CONFIG;
     config = {
       initialState: {
@@ -164,6 +166,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.wrongModal = false;
             this.tipo.setValue(data.typeConv);
             this.actConvertion.setValue(data.cveActaConv);
+            this.statusGood(data.goodFatherNumber);
             this.searchGoods(data.goodFatherNumber);
             this.searchGoodSon(data.goodFatherNumber);
             this.searchSituation(data.goodFatherNumber);
@@ -178,7 +181,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
 
     const modalRef = this.modalService.show(PwComponent, config);
   }
-
   getAll() {
     this.loading = false;
     //bien validacion de referencia. refertencia sea igual al noBien padre ? referencia debe ser diferente al bien del padre
@@ -300,7 +302,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             .toPromise();
           // if (conversionData.typeConv === '1') {
           this.good = res.data[0];
-          // console.log(this.good);
+          console.log(conversionData);
+
           if (conversionData.typeConv === '2') {
             this.id.setValue(res.data[0]['id']);
             this.observation.setValue(res.data[0]['observations']);
@@ -313,11 +316,12 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.numberGoodSon.setValue(e);
             this.searchStatus(res.data[0]['status']);
             this.getAttributesGood(res.data[0]['goodClassNumber']);
+
             // this.flagActa = true;
-            this.flagCargMasiva = false;
-            this.flagCargaImagenes = false;
-            this.flagFinConversion = false;
-          } else if (conversionData.typeConv === '2') {
+            // this.flagCargMasiva = false;
+            // this.flagCargaImagenes = false;
+            // this.flagFinConversion = false;
+          } else if (conversionData.typeConv === '1') {
             this.observation.setValue('');
             this.descriptionSon.setValue('');
             this.quantity.setValue('');
@@ -332,6 +336,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.flagCargaImagenes = true;
             this.flagFinConversion = true;
           }
+
           this.lastIdConversion = value.idConversion;
         } catch (err) {
           console.error(err);
@@ -378,15 +383,15 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             res => {
               this.alert(
                 'success',
-                'Se cambio el estatus del Bien',
-                `El Bien estatus del bien con id: ${this.numberGoodFather.value}, fue cambiado a CAN`
+                'Se Cambio el Estatus del Bien',
+                `El Bien Estatus del Bien con id: ${this.numberGoodFather.value}, fue Cambiado a CAN`
               );
             },
             err => {
               this.alert(
                 'error',
-                'No se pudo cambiar el estatus del bien',
-                'Se presentó un error inesperado que no permitió el cambio de estatus del bien, por favor intentelo nuevamente'
+                'No se Pudo Cambiar el Estatus del Bien',
+                'Se Presentó un Error Inesperado que no Permitió el Cambio de Estatus del Bien, por favor Intentelo Nuevamente'
               );
             }
           );
@@ -405,13 +410,13 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     };
     this.serviceGood.update(data).subscribe(
       res => {
-        this.alert('success', 'Bien', `Actualizado correctamente`);
+        this.alert('success', 'Bien', `Actualizado Correctamente`);
       },
       err => {
         this.alert(
           'error',
           'Bien',
-          'No se pudo actualizar el bien, por favor intentelo nuevamente'
+          'No se Pudo Actualizar el Bien, por favor Intentelo Nuevamente'
         );
       }
     );
@@ -421,7 +426,31 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     this.flagActa = flag;
   }
 
-  actConversionBtn() {}
+  statusGood(numberGoodFather: string) {
+    this.serviceGood.getById(numberGoodFather).subscribe(
+      async res => {
+        this.goodData = res;
+        console.log('res:', res);
+        this.goodData = this.goodData.data[0];
+
+        // this.finishConversionBeforeValidation(
+        //   this.goodData.goodId,
+        //   this.goodData.id
+        // );
+        // return;
+
+        if (this.goodData.status == 'CVD') {
+          this.flagActa = true;
+          this.flagCargMasiva = true;
+          this.flagCargaImagenes = true;
+          this.flagFinConversion = true;
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
 
   finishConversion() {
     let numberGoodFather = this.form.get('numberGoodFather').value;
@@ -442,17 +471,16 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           this.alert(
             'warning',
             'Advertencia',
-            'El bien ya ha sido convertido, anteriormente'
+            'El Bien ya ha Sido Convertido, Anteriormente'
           );
         } else {
           const result = await this.alertQuestion(
             'question',
-            'Finalizar conversión',
-            '¿ Estas seguro de FINALIZAR la captura de la conversión ?'
+            'Finalizar Conversión',
+            '¿ Estas Seguro de FINALIZAR la Captura de la Conversión ?'
           );
 
           if (result.isConfirmed) {
-            console.log('ddd');
             this.finishConversionBeforeValidation(
               this.goodData.goodId,
               this.goodData.id
@@ -512,6 +540,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     let idConversion = this.form.get('idConversion').value;
     let conversions = {
       id: parseInt(idConversion),
+      cveActaConv: this.form.get('actConvertion').value,
       statusConv: 2,
     };
     console.log('ress conversions :', conversions);
@@ -520,6 +549,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       async res => {
         if (res.statusCode === 200 && res.message[0] === 'ok') {
           this.alert('success', 'Conversión Finalizada', '');
+          this.pw();
         }
       },
       err => {
@@ -581,8 +611,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     //crear segun el nuemero pardre en referencia y copiar los demas valores al bien
     this.alertQuestion(
       'question',
-      `Se agregará un bien hijo`,
-      '¿Desea continuar?'
+      `Se Agregará un Bien Hijo`,
+      '¿Desea Continuar?'
     ).then(q => {
       if (q.isConfirmed) {
         let good = this.good;
@@ -601,8 +631,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           err => {
             this.alert(
               'error',
-              'No bien hijo',
-              'Error inesperado, por favor intentelo nuevamente'
+              'No Bien Hijo',
+              'Error Inesperado, Por Favor Intentelo Nuevamente'
             );
           }
         );
@@ -617,13 +647,13 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       res => {
         this.alert(
           'success',
-          'Se ha agregado el Bien',
-          `con el id: ${good.goodId}`
+          'Se ha Agregado el Bien',
+          `con el Id: ${good.goodId}`
         );
         this.getAllGoodChild(this.goodFatherNumber$.getValue());
       },
       err => {
-        this.alert('error', 'No se pudo agregar el Bien', '');
+        this.alert('error', 'No se Pudo Agregar el Bien', '');
       }
     );
   }
@@ -636,16 +666,16 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       if (this.selectedRow.status === 'CVD') {
         this.alert(
           'error',
-          `El bien con id: ${this.numberGoodFather.value}`,
-          `ya ha sido convertido`
+          `El Bien con Id: ${this.numberGoodFather.value}`,
+          `ya ha Sido Convertido`
         );
       }
 
       console.log('status2->', this.selectedRow);
       this.alertQuestion(
         'question',
-        `Se va a eliminar el bien ${this.selectedRow.goodId}`,
-        '¿Desea continuar?'
+        `Se va a Eliminar el Bien ${this.selectedRow.goodId}`,
+        '¿Desea Continuar?'
       ).then(q => {
         if (q.isConfirmed) {
           let data = {
@@ -668,7 +698,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      this.alert('warning', 'No hay registro Seleccionado', '');
+      this.alert('warning', 'No hay Registro Seleccionado', '');
     }
   }
 

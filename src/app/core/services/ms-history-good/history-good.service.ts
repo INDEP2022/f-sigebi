@@ -128,6 +128,17 @@ export class HistoryGoodService extends HttpService {
       `${HistoryGoodEndpoints.HistoricGoodsAsegExtdom}`,
       params
     );
-    //?${params}`
+  }
+  createHistoricGoodsAsegExtdom(body: Partial<IHistoricGoodsAsegExtdom>) {
+    return this.post<IHistoricGoodsAsegExtdom>(
+      HistoryGoodEndpoints.HistoricGoodsAsegExtdom,
+      body
+    );
+  }
+  updateHistoricGoodsAsegExtdom(body: Partial<IHistoricGoodsAsegExtdom>) {
+    return this.put<IHistoricGoodsAsegExtdom>(
+      HistoryGoodEndpoints.HistoricGoodsAsegExtdom,
+      body
+    );
   }
 }

@@ -16,6 +16,7 @@ export enum ProceedingsEndpoints {
   UpdateWarehouseByKeyProceeding = 'updateWarehouseByAct',
   DeleteProceedinGood = 'aplication/pbDelete',
   blkBienPost = 'aplication/blkBiePosquery',
+  blkConversions = 'aplication/blkConversions',
   UpdateActasEntregaRecepcion = 'aplication/update-actasEntregaRecepcion',
   UpdateActasRDelegation = 'aplication/minutesNumberXdelegation2',
   GoStatus = 'aplication/get-count-good',

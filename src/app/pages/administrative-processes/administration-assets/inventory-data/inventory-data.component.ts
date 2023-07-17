@@ -296,7 +296,7 @@ export class InventoryDataComponent
       this.alert(
         'warning',
         'Datos Inventario',
-        'Debe seleccionar un inventario para obtener sus atributos.'
+        'Debe Seleccionar un Inventario para Obtener sus Atributos.'
       );
       return;
     }
@@ -373,7 +373,7 @@ export class InventoryDataComponent
           this.alert(
             'warning',
             'Datos Inventario',
-            'Debe llenar los valores requeridos.'
+            'Debe llenar los Valores Requeridos.'
           );
           return;
         }
@@ -387,7 +387,7 @@ export class InventoryDataComponent
         this.alert(
           'success',
           'Datos Inventario',
-          'Se ha realizado la actualización correctamente'
+          'Se ha Realizado la Actualización Correctamente'
         );
       } else {
         let required: boolean = false;
@@ -400,7 +400,7 @@ export class InventoryDataComponent
           this.alert(
             'warning',
             'Datos Inventario',
-            'Debe llenar los valores requeridos.'
+            'Debe llenar los Valores Requeridos.'
           );
           return;
         }
@@ -416,14 +416,14 @@ export class InventoryDataComponent
           this.alert(
             'success',
             'Datos Inventario',
-            'Se ha guardado correctamente el inventario.'
+            'Se ha Guardado Correctamente el Inventario.'
           );
           this.inventoryDataForm.get('responsable').reset();
         } else {
           this.alert(
             'error',
             'Ha Ocurrido un Error',
-            'No se ha podido guardar el inventario.'
+            'No se ha Podido Guardar el Inventario.'
           );
         }
       }
@@ -431,7 +431,7 @@ export class InventoryDataComponent
       this.alert(
         'warning',
         'Datos Inventario',
-        'Debe seleccionar un inventario o genear nuevos atributos'
+        'Debe Seleccionar un Inventario o Genear Nuevos Atributos'
       );
     }
   }
@@ -500,7 +500,7 @@ export class InventoryDataComponent
       this.alert(
         'warning',
         'Datos Inventario',
-        'Debe registrar la fecha en la que se toma el inventario'
+        'Debe Registrar la Fecha en la que se Toma el Inventario'
       );
       return;
     }
@@ -509,7 +509,7 @@ export class InventoryDataComponent
       this.alert(
         'warning',
         'Datos Inventario',
-        'Es necesario que sea ingresado el nombre del responsable'
+        'Es Necesario que sea Ingresado el Nombre del Responsable'
       );
       return;
     }
@@ -527,7 +527,7 @@ export class InventoryDataComponent
       const response = await this.alertQuestion(
         'question',
         'Datos Inventario',
-        '¿Desea traer los valores del inventario anterior?'
+        '¿Desea Traer los Valores del Inventario Anterior?'
       );
       if (response.isConfirmed) {
         const atributes: any[] = await this.getAtributeBack(

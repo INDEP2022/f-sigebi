@@ -42,19 +42,11 @@
     </tr>
   </tbody>
 </table>
-
 <ng-template #dialogExpense>
   <div class="modal-header">
     <h4 class="modal-title pull-left font-size-16">
       {{ idExpense ? 'Editando Gasto' : 'Agregando Gasto' }}
     </h4>
-    <button
-      type="button"
-      class="close pull-right"
-      aria-label="Close"
-      (click)="closeDialogExpense()">
-      <span aria-hidden="true">×</span>
-    </button>
   </div>
   <div class="modal-body form-material" [formGroup]="form">
     <!-- <form-field class="form-group" [control]="form.get('id')" label="Id Gasto">

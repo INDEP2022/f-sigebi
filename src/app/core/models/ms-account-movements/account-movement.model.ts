@@ -99,3 +99,10 @@ export interface INumeraryTransfer {
   checkNumber: string;
   nbOrigin: string;
 }
+
+export interface IAccountMovementShort {
+  cve_banco: string;
+  cve_cuenta: string;
+  no_cuenta: string;
+  no_cuenta_traspaso: string;
+}

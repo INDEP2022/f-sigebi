@@ -16,6 +16,7 @@ import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-good
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { ModalSelectsGoodsComponent } from '../modal-selects-goods/modal-selects-goods.component';
 
 @Component({
@@ -39,8 +40,13 @@ export class LocationGoodsWarehousesStorageComponent
   goods: IGood[] = [];
   newWarehouse: number = 0;
   fileNum: number = 0;
+  selectedGooodsValid: any[] = [];
+  selectedGooods: any[] = [];
+  goodsValid: any;
   selectedOption: string = 'B';
   dataTableGood_: any[] = [];
+  columnFilters: any;
+  origin2: string;
   disableConsultLocation: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   warehouseDisable: boolean = true;
@@ -51,6 +57,7 @@ export class LocationGoodsWarehousesStorageComponent
   paramsScreen: IParamsUbicationGood = {
     PAR_MASIVO: '',
     origin: '',
+    origin2: '',
   };
   paramsCurrentScreen = {
     TIPO_PROC: '',
@@ -131,7 +138,7 @@ export class LocationGoodsWarehousesStorageComponent
                 paramsQuery[key] ?? null;
             }
           }
-          // this.origin2 = paramsQuery['origin2'] ?? null;
+          this.origin2 = paramsQuery['origin2'] ?? null;
           // this.origin3 = paramsQuery['origin3'] ?? null;
         }
       });
@@ -193,12 +200,30 @@ export class LocationGoodsWarehousesStorageComponent
   checkLocations() {
     if (this.radio.value === null) return;
     this.radio.value === 'A'
-      ? this.router.navigate([
-          '/pages/administrative-processes/warehouse-inquiries',
-        ])
-      : this.router.navigate([
-          '/pages/administrative-processes/vault-consultation',
-        ]);
+      ? this.router.navigate(
+          ['/pages/administrative-processes/warehouse-inquiries'],
+          {
+            queryParams: {
+              origin: this.screenKey,
+              PAR_MASIVO: this.form.value.good,
+              origin2: 'FCONADBBOVEDAS',
+              origin3: 'FACTGENACTDATEX',
+              origin4: 'FCONADBALMACENES',
+            },
+          }
+        )
+      : this.router.navigate(
+          ['/pages/administrative-processes/vault-consultation'],
+          {
+            queryParams: {
+              origin: this.screenKey,
+              PAR_MASIVO: this.form.value.good,
+              origin2: 'FCONADBBOVEDAS',
+              origin3: 'FACTGENACTDATEX',
+              origin4: 'FCONADBALMACENES',
+            },
+          }
+        );
   }
 
   openModal(goods?: IGood[]): void {
@@ -276,28 +301,17 @@ export class LocationGoodsWarehousesStorageComponent
         this.currentDescriptionWare.setValue(response.description);
       },
       error: err => {
-        this.onLoadToast(
-          'info',
-          'Opps...',
-          'Este bien no tiene asignado almacen'
-        );
+        this.alert('info', 'Este bien no tiene asignado almacen', '');
       },
     });
   }
   loadDescriptionVault(id: string | number) {
-    if (id == null || undefined) {
-      this.formVault.value.safe = 9999;
-    }
     this.safeService.getById(id).subscribe({
       next: response => {
         this.currentDescriptionVault.setValue(response.description);
       },
       error: err => {
-        this.onLoadToast(
-          'info',
-          'Opps...',
-          'Este bien no tiene asignado Bóvedas'
-        );
+        this.alert('info', 'Este bien no tiene asignado Bóvedas', '');
       },
     });
   }
@@ -363,56 +377,39 @@ export class LocationGoodsWarehousesStorageComponent
   }
 
   validarGood(): boolean {
-    if (this.di_desc_est === 'S') {
-      if (this.radio.value === 'A') {
-        if (
-          Number(this.good.type) === 5 &&
-          Number(this.good.subTypeId) === 16
-        ) {
-          this.warehouseDisable = true;
-          this.vaultDisable = true;
-          this.good.dateIn = new Date();
-          // this.good.ubicationType = 'A';
-          return true;
-        } else if (Number(this.good.type) === 7) {
-          // this.good.ubicationType = 'A';
-          this.vaultDisable = false;
-          this.formVault.disable();
-          this.good.dateIn = new Date();
-        } else {
-          this.warehouseDisable = false;
-          this.vaultDisable = false;
-          this.good.storeNumber = this.warehouse.value;
-          this.radio.setValue('A');
-          this.good.dateIn = new Date();
-        }
+    if (this.radio.value === 'A') {
+      if (Number(this.good.type) === 5 && Number(this.good.subTypeId) === 16) {
+        this.good.dateIn = new Date();
+        this.good.ubicationType = 'A';
+        return true;
+      } else if (Number(this.good.type) === 7) {
+        this.good.ubicationType = 'A';
+        this.formVault.disable();
+        this.good.dateIn = new Date();
       } else {
-        if (
-          Number(this.good.type) === 5 &&
-          Number(this.good.subTypeId) === 16
-        ) {
-          this.warehouseDisable = true;
-          this.vaultDisable = true;
-          // this.good.ubicationType = 'B';
-          // this.good.vaultNumber = 9999;
-          // this.good.storeNumber = null;
-          this.good.dateIn = new Date();
-        } else if (Number(this.good.type) === 7) {
-          this.warehouseDisable = false;
-          this.formWarehouse.disable();
-          this.good.dateIn = new Date();
-          // this.good.ubicationType = 'B';
-        } else {
-          this.warehouseDisable = true;
-          this.vaultDisable = true;
-          this.good.vaultNumber = this.safe.value;
-          this.good.ubicationType = '';
-          this.good.dateIn = new Date();
-          this.radio.setValue('B');
-        }
+        this.good.storeNumber = this.warehouse.value;
+        this.radio.setValue('A');
+        this.good.dateIn = new Date();
+      }
+    } else {
+      if (Number(this.good.type) === 5 && Number(this.good.subTypeId) === 16) {
+        this.good.ubicationType = 'B';
+        this.good.vaultNumber = 9999;
+        this.good.storeNumber = null;
+        this.good.dateIn = new Date();
+      } else if (Number(this.good.type) === 7) {
+        this.warehouseDisable = false;
+        this.formWarehouse.disable();
+        this.good.dateIn = new Date();
+        // this.good.ubicationType = 'B';
+      } else {
+        this.good.vaultNumber = this.safe.value;
+        this.good.ubicationType = '';
+        this.good.dateIn = new Date();
+        this.radio.setValue('B');
       }
     }
-    this.di_desc_est = 'N';
+
     return false;
   }
   validLocationsConsult(warehouse: IWarehouse) {
@@ -428,39 +425,83 @@ export class LocationGoodsWarehousesStorageComponent
   onLoadGoodList() {
     this.loading = true;
     this.noExpediente = this.good.fileNumber || '';
-    this.params.getValue().page = 1;
-    this.params.getValue().limit = 10;
+    let params: any = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
     if (this.noExpediente !== '') {
-      this.serviceGood
-        .getByExpedient(this.noExpediente, this.params.getValue())
-        .subscribe({
-          next: data => {
-            this.goods = data.data;
-            this.loading = false;
-            console.log('Bienes', this.goods);
+      this.serviceGood.getByExpedient(this.noExpediente, params).subscribe({
+        next: data => {
+          this.goods = data.data;
+          this.loading = false;
+          console.log('Bienes', this.goods);
 
-            let result = data.data.map(async (item: any) => {
-              let obj = {
-                vcScreen: 'FACTADBUBICABIEN',
-                pNumberGood: item.id,
-              };
-              const di_dispo = await this.getStatusScreen(obj);
-              console.log(di_dispo);
-            });
+          let result = data.data.map(async (item: any) => {
+            let obj = {
+              vcScreen: 'FACTADBUBICABIEN',
+              pNumberGood: item.id,
+            };
+            const di_dispo = await this.getStatusScreen(obj);
+            item['di_disponible'] = di_dispo;
+            // item.di_disponible != null ? 'N' : di_dispo;
+          });
 
-            Promise.all(result).then(item => {
-              this.dataTableGood_ = this.goods;
-              this.allGoods.load(this.dataTableGood_);
-              this.allGoods.refresh();
-              this.totalItems = data.count;
-              console.log(this.goods);
-            });
-          },
-          error: error => {
-            this.loading = false;
-          },
-        });
+          Promise.all(result).then(item => {
+            this.dataTableGood_ = this.goods;
+            this.allGoods.load(this.dataTableGood_);
+            this.allGoods.refresh();
+            this.totalItems = data.count;
+            console.log(this.goods);
+          });
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
     }
+  }
+  onGoodSelect(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChange(data.row, data.toggle),
+    });
+  }
+
+  isGoodSelected(_good: IGood) {
+    const exists = this.selectedGooods.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+
+  goodSelectedChange(good: IGood, selected: boolean) {
+    if (selected) {
+      this.selectedGooods.push(good);
+    } else {
+      this.selectedGooods = this.selectedGooods.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
+  onGoodSelectValid(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChangeValid(data.row, data.toggle),
+    });
+  }
+
+  isGoodSelectedValid(_good: IGood) {
+    const exists = this.selectedGooodsValid.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+
+  goodSelectedChangeValid(good: IGood, selected?: boolean) {
+    if (selected) {
+      this.selectedGooodsValid.push(good);
+    } else {
+      this.selectedGooodsValid = this.selectedGooodsValid.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
+  rowsSelected(event: any) {
+    this.selectedGooodsValid = event.selected;
   }
   getEstatusColor(estatus: string): string {
     return estatus === 'S' ? 'green' : 'black';
@@ -490,6 +531,9 @@ export class LocationGoodsWarehousesStorageComponent
       queryParams: {
         origin: this.screenKey,
         PAR_MASIVO: this.form.value.good,
+        origin2: 'FCONADBBOVEDAS',
+        origin3: 'FACTGENACTDATEX',
+        origin4: 'FACTGENACTDATEX',
       },
     });
   }
@@ -498,6 +542,7 @@ export class LocationGoodsWarehousesStorageComponent
 export interface IParamsUbicationGood {
   PAR_MASIVO: string;
   origin: string;
+  origin2: string;
 }
 
 export interface IParamsUbicationGoodBody {

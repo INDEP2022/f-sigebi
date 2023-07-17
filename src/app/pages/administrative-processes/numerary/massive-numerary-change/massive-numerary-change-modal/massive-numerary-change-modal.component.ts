@@ -25,6 +25,41 @@ import {
   templateUrl: './massive-numerary-change-modal.component.html',
   styles: [
     `
+      .legend {
+        justify-content: center;
+        display: flex;
+        column-gap: 10px;
+        > div {
+          display: flex;
+          column-gap: 10px;
+          align-items: center;
+          .rectangle {
+            width: 15px;
+            height: 15px;
+          }
+        }
+        @media screen and (max-width: 576px) {
+          flex-direction: column;
+        }
+      }
+
+      .requiredAva {
+        background-color: #dc3545;
+      }
+      .numerary {
+        background-color: #357935;
+      }
+      .required {
+        background-color: #ffc107;
+      }
+
+      .update {
+        background-color: #17a2b8;
+      }
+      .numeraryGood {
+        background-color: #ff8000;
+      }
+
       ::ng-deep .bg-custom-red {
         background: #dc3545;
         color: white;
@@ -202,7 +237,7 @@ export class MassiveNumeraryChangeModalComponent
         this.alert(
           'warning',
           'Advertencia',
-          'Con estos datos no se puede generar el archivo de excel.'
+          'Con estos Datos no se Puede Generar el Archivo de Excel.'
         );
       }
     } catch (error) {
@@ -210,7 +245,7 @@ export class MassiveNumeraryChangeModalComponent
       this.onLoadToast(
         'warning',
         '',
-        'No se puede copiar el archivo de excel.'
+        'No se Puede Copiar el Archivo de Excel.'
       );
       //    END;
     }
@@ -241,14 +276,14 @@ export class MassiveNumeraryChangeModalComponent
     if (dataTableGoods.length > 0) {
       if (this.chkMovBan) {
         if (!this.TI_BANCO_NEW) {
-          this.onLoadToast('error', '', 'Se debe ingresar los datos del banco');
+          this.onLoadToast('error', '', 'Se Debe Ingresar Los Datos Del Banco');
           return;
         }
         if (!this.TI_FECHA_NEW) {
           this.onLoadToast(
             'error',
             '',
-            'Se debe ingresar la fecha de depósito'
+            'Se Debe Ingresar La Fecha De Depósito'
           );
           return;
         } else {
@@ -259,7 +294,7 @@ export class MassiveNumeraryChangeModalComponent
             this.onLoadToast(
               'error',
               '',
-              'Se debe ingresar una fecha de depósito válida'
+              'Se Debe Ingresar Una Fecha De Depósito Válida'
             );
             return;
           }
@@ -281,14 +316,13 @@ export class MassiveNumeraryChangeModalComponent
       } else {
         this.v_clasif_bien = 1426;
       }
-      // this.vBAN = false;
       this.vBAN = dataTableGoods.some(element => element.indNume == 2);
 
       if (this.vBAN) {
         this.vCHECA = (
           await showQuestion({
             title: 'Confirmación',
-            text: 'Se Actualizan los importes de los numerarios en ADM sin conciliar?',
+            text: 'Se Actualizan Los Importes De Los Numerarios En ADM Sin Conciliar?',
             confirmButtonText: 'SI',
             cancelButtonText: 'NO',
           })
@@ -330,14 +364,20 @@ export class MassiveNumeraryChangeModalComponent
         next: (res: any) => {
           this.alert(
             'success',
-            'Operación terminada correctamente',
-            'Proceso terminado'
+            'Operación Terminada Correctamente',
+            'Proceso Terminado'
           );
         },
         error: (err: any) => {
-          this.alert('error', 'Error', 'Ocurrió un error al procesar');
+          this.alert('error', 'Error', 'Ocurrió un Error al Procesar');
         },
       });
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Con estos Datos no se Puede Generar Numerarios.'
+      );
     }
   }
 

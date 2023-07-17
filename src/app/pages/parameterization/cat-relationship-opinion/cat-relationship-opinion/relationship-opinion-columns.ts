@@ -2,14 +2,15 @@ export const AFFAIR_COLUMNS = {
   id: {
     title: 'Código',
     sort: false,
-    width: '35px',
+    width: '10%',
   },
   description: {
     title: 'Descripción',
     sort: false,
+    width: '70%',
   },
   processDetonate: {
-    title: 'Proceso detona',
+    title: 'Proceso Detona',
     sort: false,
   },
 };
@@ -21,7 +22,7 @@ export const AFFAIR_TYPE_COLUMNS = {
     filter: false,
   },
   referralNoteType: {
-    title: 'Tipo de volante',
+    title: 'Tipo de Volante',
     sort: false,
     filter: false,
     valuePrepareFunction: (value: string) => {
@@ -33,7 +34,7 @@ export const AFFAIR_TYPE_COLUMNS = {
     },
   },
   relationPropertyKey: {
-    title: 'Relación con bien',
+    title: 'Relación con Bien',
     sort: false,
     filter: false,
     valuePrepareFunction: (value: string) => {
@@ -67,7 +68,7 @@ export const DICTA_COLUMNS = {
     },
   },
   flyerType: {
-    title: 'Tipo volante',
+    title: 'Tipo Volante',
     sort: false,
     valuePrepareFunction: (value: string) => {
       if (value == 'P') return 'Procesal';

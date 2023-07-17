@@ -78,6 +78,7 @@ export class EmailComponent extends BasePage implements OnInit {
     this.form.patchValue(this.email);
 
     this.form.get('PARA').patchValue([this.email.PARA]);
+    console.log(this.email.PARA);
 
     this.form
       .get('FECHA_ENV')
@@ -160,12 +161,12 @@ export class EmailComponent extends BasePage implements OnInit {
         };
 
         // const body: any = {
-        //   header: "DEV",
-        //   destination: ["joselalo1997@outlook.com"],
-        //   copy: ['joseeduardo.jeg37@gmail.com'],
-        //   subject: "DEV EMAIL",
-        //   message: `${resp.message}`
-        // }
+        //   header: 'Test Email',
+        //   destination: ['amydla194@gmail.com'],
+        //   copy: ['amydla194@hotmail.com'],
+        //   subject: ASUNTO,
+        //   message: `${resp.message}`,
+        // };
 
         this.transferGoodService.sendEmail(body).subscribe({
           next: () => {
@@ -178,7 +179,7 @@ export class EmailComponent extends BasePage implements OnInit {
 
             const body = {
               id: REPORTE,
-              addressee: PARA.join(','),
+              addressee: PARA ? PARA.join(',') : [],
               sender: user.toUpperCase(),
               cc: CC ? CC.join(',') : [],
               message: `${resp.message}`,
@@ -189,14 +190,14 @@ export class EmailComponent extends BasePage implements OnInit {
 
             // const body: any = {
             //   id: REPORTE,
-            //   addressee: "joselalo1997@outlook.com",
+            //   addressee: 'amydla194@gmail.com',
             //   sender: user.toUpperCase(),
-            //   cc: 'joseeduardo.jeg37@gmail.com',
+            //   cc: 'amydla194@hotmail.com',
             //   message: `${resp.message}`,
             //   affair: ASUNTO,
             //   sendDate: date,
-            //   devReportNumber: null
-            // }
+            //   devReportNumber: null,
+            // };
 
             this.emailService.create(body).subscribe({
               next: () => {

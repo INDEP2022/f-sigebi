@@ -9,7 +9,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, map, skip, take } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { readFile, showAlert } from 'src/app/common/helpers/helpers';
+import { readFile } from 'src/app/common/helpers/helpers';
 import {
   ListParams,
   SearchFilter,
@@ -61,14 +61,15 @@ import {
         display: flex;
         flex-direction: column;
       } */
-      .spents input,
-      .spents textarea {
+      .spent-container {
+        width: 250px;
+      }
+      .spent-container input {
         width: 150px;
       }
       select.selects-origin-data {
         width: 105px;
         min-height: auto !important;
-        /* height: 43px; */
       }
       .btn-custom-search {
         position: absolute;
@@ -96,7 +97,6 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   BLK_GASTOS = new LocalDataSource();
 
   isVisibleSpent: boolean = false;
-
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -188,6 +188,9 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       console.log(res, modal.content);
       if (modal.content) {
         this.formGas.get(`GAS${num}`).setValue(modal.content.selectedItem.id);
+        this.formGad
+          .get(`GAD${num}`)
+          .setValue(modal.content.selectedItem.description);
       }
     });
   }
@@ -208,7 +211,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
 
   formTips = new FormGroup({});
   formGas = new FormGroup<any>({});
-  formGad = new FormGroup({});
+  formGad = new FormGroup<any>({});
   async onInit() {
     this.columns.forEach((column, index) => {
       this.formTips.addControl(`TIP${index + 1}`, new FormControl(''));
@@ -270,8 +273,8 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     if (vBanB === 0 || vBanB > 1) {
       messages.push(
         vBanB === 0
-          ? 'Se debe especificar la columna del No. de Bien'
-          : 'Se especificó más de una columna del No. de Bien'
+          ? 'Se Debe Especificar La Columna Del No. De Bien'
+          : 'Se Especificó Más De Una Columna Del No. De Bien'
       );
       vBan = true;
     }
@@ -279,15 +282,15 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     if (vBanI === 0 || vBanI > 1) {
       messages.push(
         vBanI === 0
-          ? 'Se debe especificar la columna del Ingreso neto'
-          : 'Se especificó más de una columna del Ingreso neto'
+          ? 'Se Debe Especificar La Columna Del Ingreso Neto'
+          : 'Se Especificó Más De Una Columna Del Ingreso Neto'
       );
       vBan = true;
     }
 
     if (vBanG) {
       messages.push(
-        'No se especificó el Concepto de Gasto en al menos una columna'
+        'No Se Especificó El Concepto De Gasto En Al Menos Una Columna'
       );
       vBan = true;
     }
@@ -295,13 +298,17 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     if (vBanV === 0 || vBanV > 1) {
       messages.push(
         vBanV === 0
-          ? 'Se debe especificar la columna del IVA'
-          : 'Se especificó más de una columna del IVA'
+          ? 'Se Debe Especificar La Columna Del IVA'
+          : 'Se Especificó Más De Una Columna Del IVA'
       );
       vBan = true;
     }
     if (messages.length > 0) {
-      this.alert('warning', 'Advertencia', messages.join('\n'));
+      this.alert(
+        'warning',
+        'Advertencia',
+        'No puede Haber Más de Una Columna con el No. Bien, Ingreso Neto o IVA'
+      );
     }
     if (vBan) {
       return;
@@ -321,14 +328,16 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     };
     console.log({ body });
     this.isLoadingProcessExtraction = true;
-
+    this.loader.load = true;
     this.goodProcess.postFMasInsNumerario(body).subscribe({
       next: (res: IResponseFMasInsNumerarioSpent) => {
         this.isLoadingProcessExtraction = false;
+        this.loader.load = false;
         this.registerReads = res.T_REG_PROCESADOS;
         this.registerProcessed = res.T_REG_PROCESADOS;
         this.registerCorrect = res.T_REG_CORRECTOS;
         this.registerIncorrect = res.T_REG_ERRONEOS;
+        console.log(res);
         this.dataTableSpent = res.bienes.map(res => {
           return {
             costs: res.spent,
@@ -373,6 +382,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
         });
       },
       error: err => {
+        this.loader.load = false;
         this.isLoadingProcessExtraction = false;
       },
       complete: () => {},
@@ -744,6 +754,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
 
   //#region On click Button File Excel
   onClickBtnFileExcel(e: Event) {
+    this.loader.load = true;
     this.registerReads = 0;
     this.registerProcessed = 0;
     this.registerCorrect = 0;
@@ -753,13 +764,13 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       readFile(file, 'BinaryString').then(data => {
         const dataExcel = this.excelService.getData(data.result);
         if (dataExcel.length < 1 || !this.validatorFileExcel()) {
-          showAlert({
-            text:
-              dataExcel.length < 1
-                ? 'El archivo no contiene datos.'
-                : 'El archivo no es valido verifique su cabecera.',
-            icon: 'error',
-          });
+          this.alert(
+            'error',
+            '',
+            dataExcel.length < 1
+              ? 'El Archivo no Contiene Datos.'
+              : 'El Archivo no es Valido Verifique su Cabecera.'
+          );
           return;
         }
         //ERROR: por implentar la validacion del archivo;
@@ -782,6 +793,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
         dataPreviewTable.unshift(header);
 
         // this.dataPrevious = dataPreviewTable;
+        this.loader.load = false;
         console.log({ dataPreviewTable: this.dataPrevious });
         // this.tableSpent.changePage({ page: 1, perPage: 10 });
         this.dataPreviousTable.load(dataPreviewTable);

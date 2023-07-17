@@ -81,11 +81,11 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
       },
       columns: {
         id: {
-          title: 'No Bien',
+          title: 'No. Bien',
           sort: false,
         },
         description: {
-          title: 'Descripcion',
+          title: 'Descripción',
           sort: false,
         },
         quantity: {
@@ -97,20 +97,20 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           sort: false,
         },
         goodClassNumber: {
-          title: 'Clasif Bien',
+          title: 'Clasif. Bien',
           sort: false,
         },
         storeNumber: {
-          title: 'Almacen',
+          title: 'Almacén',
           sort: false,
         },
         vaultNumber: {
-          title: 'Boveda',
+          title: 'Bóveda',
           sort: false,
         },
       },
       rowClassFunction: (row: any) => {
-        if (row.data.di_dispo == 'S') {
+        if (row.data.di_disponible == 'S') {
           return 'bg-success text-white';
         } else {
           return 'bg-dark text-white';
@@ -123,11 +123,9 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-
     // console.log(this.totalItems);
-    this.allGoodsUpdated.next(this.allGoods);
     this.buildForm();
-    this.loading = false;
+
     // this.$trackedGoods.subscribe({
     //   next: response => {
     //     response.forEach(good => {
@@ -146,6 +144,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     this.bsModalRef.hide();
   }
   private buildForm() {
+    this.loading = false;
     this.form = this.fb.group({
       radio: [null, [Validators.required]],
       warehouse: [null, [Validators.required]],
@@ -186,7 +185,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           });
         }
       });
-      this.onLoadToast(
+      this.alert(
         'success',
         'Exito',
         'Se ha cambiado la ubicación de los bienes seleccionados'
@@ -195,7 +194,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     } catch (error) {
       console.log(error);
       this.loading = false;
-      this.onLoadToast(
+      this.alert(
         'error',
         'ERROR',
         'Ha ocurrido un error al cambiar la ubicacion del bien'
@@ -205,11 +204,11 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
 
   validar(): boolean {
     if (this.radio.value === null) {
-      this.onLoadToast('error', 'ERROR', 'Selecione un tipo de ubicacion');
+      this.alert('error', 'ERROR', 'Selecione un tipo de ubicacion');
       return true;
     }
     if (this.warehouse.value === null && this.safe.value === null) {
-      this.onLoadToast('error', 'ERROR', 'Selecione un elemento de la lista');
+      this.alert('error', 'ERROR', 'Selecione un elemento de la lista');
       return true;
     }
     return false;
@@ -277,7 +276,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           }
         );
       });
-
+      this.onLoadGoodList();
       this.alert('success', 'Bienes', `Actualizados correctamente`);
     } catch (err) {
       console.error(err);
@@ -317,6 +316,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           }
         );
       });
+      this.onLoadGoodList();
       this.alert('success', 'Bienes', `Actualizados correctamente`);
     } catch (err) {
       console.error(err);
@@ -362,15 +362,13 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           if (state.data) {
             console.log('di_dispo', state);
             resolve('S');
-            this.di_desc_est = 'S';
           } else {
             console.log('di_dispo', state);
             resolve('N');
-            this.di_desc_est = 'N';
           }
         },
         error: () => {
-          resolve('N');
+          console.error('error');
         },
       });
     });

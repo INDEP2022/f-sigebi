@@ -58,7 +58,11 @@ export class LogTableComponent extends BasePage implements OnInit, OnChanges {
         catchError(error => {
           this.loading = false;
           if (error.status >= 500 || error.status >= 400) {
-            this.onLoadToast('error', 'Warn', error.error.message);
+            this.alert(
+              'error',
+              'Ocurrio un error al obtener la información',
+              ``
+            );
             this.binnacles = [];
           }
           return throwError(() => error);
@@ -67,6 +71,8 @@ export class LogTableComponent extends BasePage implements OnInit, OnChanges {
           this.loading = false;
           this.binnacles = response.data;
           this.totalItems = response.count;
+          console.log(this.binnacles);
+          console.log(this.totalItems);
         })
       );
   }

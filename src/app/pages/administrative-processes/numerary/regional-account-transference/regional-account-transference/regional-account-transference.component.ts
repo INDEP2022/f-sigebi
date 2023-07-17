@@ -356,6 +356,7 @@ export class RegionalAccountTransferenceComponent
 
     if (transferenceReport) {
       const email = await this.getDataMail();
+      console.log(email);
 
       if (email) {
         const emailv2 = {
@@ -393,10 +394,12 @@ export class RegionalAccountTransferenceComponent
       transNumeraryRegNoReport: Number(transferenceReport),
       transNumeraryRegNoDelegation: Number(delegation),
     };
+    console.log(data);
     return firstValueFrom(
       this.securityService.getIniEmail(data).pipe(
         catchError(error => {
           this.alert('error', 'Error', error.error.message);
+          console.log(error);
           return of(null);
         }),
         map(resp => resp)
@@ -587,7 +590,7 @@ export class RegionalAccountTransferenceComponent
       this.alert(
         'error',
         'Error',
-        'El monto ingresado no corresponde al monto calculado verfique'
+        'El monto ingresado no corresponde al monto calculado, favor de verificar'
       );
       return;
     } else if (!total && total != 0) {
@@ -639,7 +642,7 @@ export class RegionalAccountTransferenceComponent
     } = this.form.value;
 
     const body: any = {
-      transDate: transactionDate,
+      transDate: this.parseDateNoOffset(transactionDate),
       amountAll: total,
       repDate: this.getDate(dateReport),
       accountKey: cveAccount,
@@ -668,12 +671,19 @@ export class RegionalAccountTransferenceComponent
         const time = setTimeout(() => {
           this.getTransDetail();
           clearTimeout(time);
-        }, 1000);
+        }, 2500);
       },
       error: err => {
         this.alert('error', 'Error', err.error.message);
       },
     });
+  }
+
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() - dateLocal.getTimezoneOffset() * 60 * 1000
+    );
   }
 
   getAccount() {
@@ -709,7 +719,7 @@ export class RegionalAccountTransferenceComponent
       next: resp => {
         this.form.get('idRequest').patchValue(resp.data[0].solnumId);
         this.alert(
-          'info',
+          'warning',
           'Bien Encontrado',
           `Con número de solicitud: ${resp.data[0].solnumId}`
         );
