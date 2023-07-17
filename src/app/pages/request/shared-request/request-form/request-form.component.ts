@@ -222,7 +222,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       this.delegationId = data.id;
       this.requestForm.get('regionalDelegationId').setValue(data.id);
       this.selectRegionalDeleg = new DefaultSelect([data], data.count);
-
+      debugger;
       this.getEntity(new ListParams(), regDelId);
     });
   }
