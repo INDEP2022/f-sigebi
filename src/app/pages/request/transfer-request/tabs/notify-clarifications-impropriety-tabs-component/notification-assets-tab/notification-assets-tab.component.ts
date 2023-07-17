@@ -797,10 +797,15 @@ export class NotificationAssetsTabComponent
           }
         } else if (impro) {
           this.initializeFormclarification(notification);
+
           if (
-            this.requestData.transferent.type == 'A' ||
-            this.requestData.transferent.type == 'CE'
+            this.requestData.transferent.type === 'A' ||
+            this.requestData.transferent.type === 'CE'
           ) {
+            console.log(
+              'Impro para sat y pgr ',
+              this.requestData.transferent.type
+            );
             const token = this.authService.decodeToken();
             this.delegationUser = token.department;
             const delegationUser = this.delegationUser;
@@ -830,7 +835,8 @@ export class NotificationAssetsTabComponent
               InappropriatenessPgrSatFormComponent,
               config
             );
-          } else {
+          } else if (this.requestData.transferent.type === 'NO') {
+            console.log('Abrir formulario para impro manual');
             const token = this.authService.decodeToken();
             this.delegationUser = token.department;
             const delegationUser = this.delegationUser;

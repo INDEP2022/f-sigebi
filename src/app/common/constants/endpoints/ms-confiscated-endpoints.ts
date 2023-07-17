@@ -1,3 +1,3 @@
 export enum Confiscatedpoints {
-    basepath = `confiscation`
+  basepath = `confiscation`,
 }

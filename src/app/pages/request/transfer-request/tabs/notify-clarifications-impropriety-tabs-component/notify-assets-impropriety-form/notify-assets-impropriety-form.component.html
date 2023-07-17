@@ -10,7 +10,10 @@
           *ngIf="
             infoRequest.typeOfTransfer != 'SAT_SAE' ||
             (infoRequest.typeOfTransfer == 'SAT_SAE' &&
-              dataClarifications2.chatClarification.idClarificationType == '2')
+              (dataClarifications2.chatClarification.idClarificationType ==
+                '2' ||
+                dataClarifications2.chatClarification.idClarificationType ==
+                  '1'))
           ">
           <form-field
             [control]="clarificationForm.get('addresseeName')"
@@ -27,7 +30,10 @@
           *ngIf="
             infoRequest.typeOfTransfer != 'SAT_SAE' ||
             (infoRequest.typeOfTransfer == 'SAT_SAE' &&
-              dataClarifications2.chatClarification.idClarificationType == '2')
+              (dataClarifications2.chatClarification.idClarificationType ==
+                '2' ||
+                dataClarifications2.chatClarification.idClarificationType ==
+                  '1'))
           ">
           <form-field
             [control]="clarificationForm.get('positionAddressee')"
