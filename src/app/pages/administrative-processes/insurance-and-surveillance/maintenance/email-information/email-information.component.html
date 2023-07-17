@@ -15,6 +15,7 @@
         <form-field [control]="form.get('date')" label="Fecha de Solicitud">
           <input
             type="text"
+            [minDate]="maxDate"
             formControlName="date"
             class="form-control"
             bsDatepicker />
@@ -28,13 +29,14 @@
           class="form-group"
           [control]="form.get('from')">
           <ng-custom-select
+            [isLoadInOnInit]="false"
             [moreParams]="{ 'filter.status': '$eq:1' }"
             class="form-control"
             path="email/api/v1/vig-email-send"
             paramSearch="filter.nameSend"
             prefixSearch="$ilike"
             (valueChange)="onChangeFrom($event)">
-            <ng-template let-item>
+            <ng-template #Send let-item>
               {{ item.nameSend }} / {{ item.emailSend }}
             </ng-template>
           </ng-custom-select>
@@ -43,6 +45,7 @@
       <div class="col-md-6">
         <form-field [control]="form.get('to')" label="Para">
           <ng-custom-select
+            [isLoadInOnInit]="false"
             [moreParams]="{
               'filter.bookType': '$eq:P',
               'filter.bookStatus': '$eq:1'
@@ -64,6 +67,7 @@
       <div class="col-md-6">
         <form-field label="CC" [control]="form.get('cc')">
           <ng-custom-select
+            [isLoadInOnInit]="false"
             [moreParams]="{
               'filter.bookType': '$eq:C',
               'filter.bookStatus': '$eq:1'
@@ -81,6 +85,10 @@
       </div>
       <div class="col-md-6">
         <form-field [control]="form.get('type')" label="Tipo">
+          <!-- <ng-select formControlName="administra" class="form-control">
+            <ng-option *ngFor="let item of arrayDele" [value]="item.delegacion">{{ item.no_delegacion_2 }} -
+              {{ item.delegacion }}</ng-option>
+          </ng-select> -->
           <ng-custom-select
             (valueChange)="changeType($event)"
             [isLoadInOnInit]="true"
@@ -118,6 +126,17 @@
       </div>
     </div>
 
+    <!-- <div class="row mt-4 float-right">
+      <div>
+        <button
+          (click)="cleanForm()"
+          type="button"
+          class="btn btn-danger btn-sm active mr-2">
+          Limpiar
+          <i class="fa fa-eraser" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div> -->
     <!-- <div class="row mt-4 float-right">
       <div>
         <button type="submit" class="btn btn-primary btn-sm active mx-4">

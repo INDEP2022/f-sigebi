@@ -140,6 +140,7 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
       folio: [null],
       transferee: [null, [Validators.pattern(STRING_PATTERN)]],
       goodType: [null],
+      storeNumber: ['27398'],
     });
 
     const info = JSON.parse(localStorage.getItem('Task'));

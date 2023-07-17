@@ -4,22 +4,25 @@ export const SELECT_GOODS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  description: {
+  descriptionGood: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
+
   uniqueKey: {
     title: 'Clave Única',
     type: 'string',
     sort: false,
   },
+
   goodId: {
     title: 'No. Gestión',
     type: 'number',
     sort: false,
   },
-  quantity: {
+
+  amount: {
     title: 'Cantidad de Transferencia',
     type: 'number',
     sort: false,
@@ -31,18 +34,19 @@ export const SELECT_GOODS_COLUMNS = {
     sort: false,
   }, */
 
-  reservedAmount: {
+  amountToReserve: {
     title: 'Cantidad Reservada',
     type: 'number',
     sort: false,
   },
+
   availableAmount: {
     title: 'Cantidad Disponible',
     type: 'number',
     sort: false,
   },
 
-  destiny: {
+  destination: {
     title: 'Destino',
     type: 'string',
     sort: false,

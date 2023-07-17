@@ -111,40 +111,43 @@
               <form-field
                 [control]="actaRecepttionForm.get('anio')"
                 label="Año">
-                <input
-                  #inputValue
-                  [max-length]="2"
-                  pattern="^[0-9]+"
-                  type="number"
+                <ng-select
                   class="form-control"
-                  formControlName="anio" />
+                  formControlName="anio"
+                  [items]="years"
+                  [ngModel]="currentYear"></ng-select>
+                <!-- <input #inputValue [max-length]="2" pattern="^[0-9]+" type="number" class="form-control"
+                  formControlName="anio" /> -->
               </form-field>
             </div>
           </div>
           <div class="col-md-3 mt-2">
             <div>
               <form-field [control]="actaRecepttionForm.get('mes')" label="Mes">
-                <input
-                  [max]="12"
-                  [min]="1"
-                  [max-length]="2"
-                  pattern="^[0-9]+"
-                  #inputValue
-                  type="number"
+                <ng-select
                   class="form-control"
-                  formControlName="mes" />
+                  formControlName="mes"
+                  [items]="months"></ng-select>
+                <!-- <select>
+                  <option formControlName="mes" class="form-control" *ngFor="let month of currentmonths"
+                    value="month.value">
+                    {{ month.label }}</option>
+                </select> -->
+                <!-- <input [max-length]="2" pattern="^[0-9]+" #inputValue type="number" class="form-control"
+                  formControlName="mes" /> -->
               </form-field>
             </div>
           </div>
           <!-- <div class="col-md-6 mt-3">
                     </div> -->
-          <div class="col-md-6 mt-2">
+          <div class="col-md-3 mt-2">
             <div>
               <form-field
                 [control]="actaRecepttionForm.get('elaboradate')"
                 label="Fecha de Elaboración">
                 <input
-                  #inputValue
+                  [ngClass]="{ 'not-press bg-gray': !disabledSend }"
+                  #datepickerElement
                   type="text"
                   class="form-control"
                   formControlName="elaboradate"
@@ -154,7 +157,7 @@
             </div>
           </div>
         </div>
-        <div class="row mt-2">
+        <div class="row mt-4">
           <div class="col-md-12 col-sm-12 col-xs-12">
             <form-field
               [control]="actaRecepttionForm.get('direccion')"

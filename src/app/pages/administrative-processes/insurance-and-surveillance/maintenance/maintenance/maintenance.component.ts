@@ -94,17 +94,15 @@ export class MaintenanceComponent extends BasePage implements OnInit {
         console.log({ response });
         if (response.P_EST_PROCESO === 1) {
           this.alert('success', 'Eliminar Proceso', response.P_MSG_PROCESO);
+          this.limpiarPeriodoDelete();
         } else {
+          this.limpiarPeriodoDelete();
           this.alert('warning', 'Eliminar Proceso', response.P_MSG_PROCESO);
         }
       },
       error: error => {
         console.error({ error });
-        this.alert(
-          'error',
-          'Ha ocurrido un error',
-          'Error al querer eliminar el periodo.'
-        );
+        this.alert('error', 'Ha Ocurrido un Error', error.error.message);
       },
     });
   }
@@ -115,17 +113,27 @@ export class MaintenanceComponent extends BasePage implements OnInit {
         console.log({ response });
         if (response.P_EST_PROCESO === 1) {
           this.alert('success', 'Cambiar Periodos', response.P_MSG_PROCESO);
+          this.limpiarPeriodoCambiar();
         } else {
           this.alert('warning', 'Cambiar Periodos', response.P_MSG_PROCESO);
+          this.limpiarPeriodoCambiar();
         }
       },
       error: error => {
         console.error({ error });
-        this.alert(
-          'error',
-          'Ha ocurrido un error',
-          'Error al querer cambiar periodos.'
-        );
+
+        if (
+          error.error.message ==
+          'duplicate key value violates unique constraint "pk_vig_supervision_mae"'
+        ) {
+          this.alert(
+            'error',
+            'Ha Ocurrido un Error',
+            'Ya existe el período destino indicado'
+          );
+        } else {
+          this.alert('error', 'Ha Ocurrido un Error', error.error.message);
+        }
       },
     });
   }
@@ -142,11 +150,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.error({ error });
-        this.alert(
-          'error',
-          'Ha ocurrido un error',
-          'Error al querer cambiar bienes de número aleatorio.'
-        );
+        this.alert('error', 'Ha Ocurrido un Error', error.error.message);
       },
     });
   }
@@ -297,6 +301,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       pIdFor,
       pIdCopy,
       pIdBody,
+      pUser,
     } = this.getParams();
 
     return {
@@ -315,6 +320,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       pIdFor,
       pIdCopy,
       pIdBody,
+      pUser,
     };
   }
 
@@ -404,6 +410,15 @@ export class MaintenanceComponent extends BasePage implements OnInit {
 
       pAddress: changeGoodsRandom.description,
       pTransferee: changeGoodsRandom.transference,
+      pUser: this.token.decodeToken().preferred_username,
     };
+  }
+
+  limpiarPeriodoDelete() {
+    this.deletePeriodComponent.limpiarPeriodo();
+  }
+
+  limpiarPeriodoCambiar() {
+    this.changePeriodComponent.limpiarPeriodo();
   }
 }

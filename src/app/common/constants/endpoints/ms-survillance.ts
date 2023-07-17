@@ -18,5 +18,9 @@ export enum SurvillanceEndpoints {
   VCuentaPaqDestion = 'application/get-v-cuenta',
   FCalculaNume = 'application/fCalculateNum',
   PostInsertSupervisionTmp = 'surveillance/insertSupervisionTmp',
+  GetContract = 'application/getContract',
+  VigilancePerGood = 'vigilance-per-good',
+  PolVigilancePerGood = 'pol-vig-per-good',
   GetTransNumerario = 'application/get-trans-numerario-reg',
+  VigAllExcel = 'vig-supervision-det/allExcel',
 }

@@ -37,6 +37,10 @@ export class RecordAccountStatementsModalComponent
   }
 
   private prepareForm() {
+    const formattedDate = this.datePipe.transform(
+      this.movimentAccount.dateMotion,
+      'dd/MM/yyyy'
+    );
     this.form = this.fb.group({
       bank: [
         this.movimentAccount.factasStatusCta.nombre,
@@ -46,7 +50,7 @@ export class RecordAccountStatementsModalComponent
         this.movimentAccount.factasStatusCta.cve_cuenta,
         Validators.nullValidator,
       ],
-      date: [this.movimentAccount.dateMotion, Validators.nullValidator],
+      date: [formattedDate, Validators.nullValidator],
       amount: [
         this.movimentAccount.deposit
           ? this.movimentAccount.deposit
@@ -73,33 +77,73 @@ export class RecordAccountStatementsModalComponent
   }
 
   create() {
-    const currentDate = this.datePipe.transform(new Date(), 'dd/MM/yyyy');
-    const model: IRecordAccountStatements = {
-      numberAccount: this.movimentAccount.numberAccount,
-      numberMotion: this.movimentAccount.numberMotion,
-      dateMotion: this.datePipe.transform(
-        this.movimentAccount.dateMotion,
-        'dd/MM/yyyy'
-      ),
-      deposit: this.movimentAccount.deposit,
-      userinsert: this.movimentAccount.userinsert,
-      dateInsertion: currentDate,
-      dateCalculationInterests: null,
-      numberMotionTransfer: this.movimentAccount.numberMotionTransfer,
-    };
-    this.recordAccountStatementsAccountsService.create(model).subscribe({
-      next: () => {
-        this.alert('success', 'Movimiento transferido', '');
-        this.modalRef.hide();
-      },
-      error: error => {
-        this.alert('warning', 'Error', 'No se puede transferir el movimiento');
-        this.modalRef.hide();
-      },
-    });
+    const currentDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
+    if (this.movimentAccount.genderTransfer !== 'S') {
+      const model: IRecordAccountStatements = {
+        // numberAccount: this.movimentAccount.factasStatusCta.cve_cuenta,
+        numberAccount: this.movimentAccount.numberAccount,
+        numberMotion: this.movimentAccount.numberMotion,
+        dateMotion: this.movimentAccount.dateMotion,
+        deposit: this.movimentAccount.deposit,
+        userinsert: this.movimentAccount.userinsert,
+        dateInsertion: currentDate,
+        genderTransfer: 'S',
+        numberMotionTransfer: this.movimentAccount.numberMotionTransfer,
+      };
+      console.log(model);
+      this.recordAccountStatementsAccountsService.create(model).subscribe({
+        next: () => {
+          this.loading = true;
+          this.alert('success', 'Movimiento Transferido', '');
+          // this.dataAccountService.searchDataAccount(this.movimentAccount.numberAccount);
+          this.modalRef.hide();
+        },
+        error: error => {
+          this.alert('warning', 'No se puede transferir el movimiento', '');
+          this.modalRef.hide();
+        },
+      });
+    } else {
+      this.alert('warning', 'Este movimiento ya ha sido trasnferido', '');
+      this.modalRef.hide();
+    }
   }
 
   close() {
     this.modalRef.hide();
   }
 }
+
+/*
+
+PUT 
+{
+    "withdrawal": null,
+    "deposit": "153400.00",
+    "numberMotion": 69261,
+    "placeMotion": null,
+    "pierced": null,
+    "dateMotion": "2001-06-11",
+    "numberProceedings": "25118",
+    "numberRecord": "12189901",
+    "numberAccount": "3",
+    "InvoiceFile": null,
+    "genderTransfer": "S",
+    "postTransfer": null,
+    "cveConcept": null,
+    "userinsert": "JARELLANO",
+    "dateTransfer": null,
+    "ispartialization": null,
+    "dateInsertion": "2008-01-21",
+    "userTransfer": null,
+    "passDiverse": null,
+    "numberGood": "20997",
+    "numberMotionTransfer": null,
+    "postDiverse": null,
+    "dateCalculationInterests": null,
+    "isFileDeposit": "S",
+    "numberReturnPayCheck": null
+}
+
+
+*/

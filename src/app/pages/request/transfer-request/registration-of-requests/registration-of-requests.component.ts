@@ -255,7 +255,11 @@ export class RegistrationOfRequestsComponent
       ],
       indicatedTaxpayer: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+          Validators.required,
+        ],
       ],
       affair: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       transferEntNotes: [
@@ -272,7 +276,11 @@ export class RegistrationOfRequestsComponent
       ],
       previousInquiry: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+          Validators.maxLength(100),
+        ],
       ],
       trialType: [
         null,
@@ -379,6 +387,7 @@ export class RegistrationOfRequestsComponent
         cancelButtonColor: '#b38e5d',
         confirmButtonText: 'Aceptar',
         cancelButtonText: 'Cancelar',
+        allowOutsideClick: false,
       }).then(async result => {
         if (result.isConfirmed) {
         }
@@ -661,8 +670,8 @@ export class RegistrationOfRequestsComponent
           console.log('Hay bienes por aclarar');
           this.alertQuestion(
             'warning',
-            'Aún hay bienes sin aclarar',
-            'Recuerde tener todos los bienes aclarados'
+            'Existe bienes sin aclarar',
+            'Se creará una nueva tarea de Notificación'
           ).then(async question => {
             if (question.isConfirmed) {
               //this.notifyClarificationsMethod2();
@@ -1014,14 +1023,14 @@ export class RegistrationOfRequestsComponent
       this.onLoadToast(
         'error',
         'Bienes no aclarados',
-        'Algunos bienes aun no se aclararon'
+        'Algunos bienes aún no se aclararon'
       );
       return;
     }
 
     const existDictamen = await this.getDictamen(this.requestData.id);
     if (existDictamen === true) {
-      this.onLoadToast('info', '', 'Ya se genero un dictamen');
+      this.onLoadToast('info', '', 'Ya se generó un dictamen');
       return;
     }
 
@@ -1054,8 +1063,8 @@ export class RegistrationOfRequestsComponent
     if (this.requestApproved == true) {
       this.onLoadToast(
         'error',
-        'Solicitud aprovado',
-        'La solicitud ya fue aprovada'
+        'Solicitud aprobada',
+        'No es posible rechazar la solicitud, ya fue firmada'
       );
       return;
     }
@@ -1065,7 +1074,7 @@ export class RegistrationOfRequestsComponent
       this.onLoadToast(
         'error',
         'Bienes no aclarados',
-        'Algunos bienes aun no se aclararon'
+        'Algunos bienes aún no se aclararon'
       );
       return;
     }
@@ -1313,7 +1322,13 @@ export class RegistrationOfRequestsComponent
       cancelButtonColor: '#b38e5d',
       confirmButtonText: btnTitle,
       cancelButtonText: 'Cancelar',
+      allowOutsideClick: false,
     }).then(async result => {
+      if (!result.isConfirmed) {
+        console.log('Cancelar');
+        return;
+      }
+
       if (result.isConfirmed) {
         if (typeCommit === 'finish') {
           console.log('finish');
@@ -1409,6 +1424,7 @@ export class RegistrationOfRequestsComponent
           }
         }
       }
+
       if (typeCommit === 'proceso-aprovacion') {
         await this.updateGoodStatus('APROBADO');
         this.approveRequestMethod();
@@ -1671,6 +1687,7 @@ export class RegistrationOfRequestsComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         this.close();
@@ -1687,6 +1704,7 @@ export class RegistrationOfRequestsComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     });
   }
 
@@ -1700,6 +1718,7 @@ export class RegistrationOfRequestsComponent
       confirmButtonColor: '#AD4766',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
       }

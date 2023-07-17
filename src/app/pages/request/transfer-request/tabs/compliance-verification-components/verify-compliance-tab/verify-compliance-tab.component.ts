@@ -151,14 +151,14 @@ export class VerifyComplianceTabComponent
       },
     };
 
-    this.columns.measureUnitTransferent = {
-      ...this.columns.measureUnitTransferent,
-      onComponentInitFunction: (instance?: any) => {
-        instance.input.subscribe((data: any) => {
-          this.setUnitTransferent(data);
-        });
-      },
-    };
+    /* this.columns.measureUnitTransferent = {
+       ...this.columns.measureUnitTransferent,
+       onComponentInitFunction: (instance?: any) => {
+         instance.input.subscribe((data: any) => {
+           this.setUnitTransferent(data);
+         });
+       },
+     };*/
 
     this.initForm();
 
@@ -505,7 +505,7 @@ export class VerifyComplianceTabComponent
 
   newClarification() {
     if (this.goodsSelected.length === 0) {
-      this.alert('warning', 'Error', 'Debes seleccionar al menos un bien!');
+      this.alert('warning', 'Error', 'Debes seleccionar al menos un bien');
     } else {
       this.openForm();
     }
@@ -517,7 +517,7 @@ export class VerifyComplianceTabComponent
       delete clarify[0].clarificationName;
       this.openForm(clarify[0]);
     } else {
-      this.alert('warning', 'Error', 'Solo se puede editar un bien a la vez!');
+      this.alert('warning', 'Error', 'Solo se puede editar un bien a la vez');
     }
   }
 
@@ -549,15 +549,19 @@ export class VerifyComplianceTabComponent
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       if (res === 'UPDATE-GOOD') {
-        this.goodData.getElements().then(data => {
-          data.map((item: any) => {
-            if (item.id === this.goodsSelected[0].id) {
-              item.processStatus = 'SOLICITAR_ACLARACION';
-              item.goodStatus = 'SOLICITUD DE ACLARACION';
-            }
-          });
-          this.goodData.load(data);
-        });
+        /*  this.goodData.getElements().then(data => {
+           data.map((item: any) => {
+             if (item.id === this.goodsSelected[0].id) {
+               item.processStatus = 'SOLICITAR_ACLARACION';
+               item.goodStatus = 'SOLICITUD DE ACLARACION';
+               item.selected = false;
+             }
+           });
+           this.goodData.load(data);
+         }); */
+        this.getData();
+        this.goodsSelected = [];
+        this.clarificationData = [];
       }
     });
   }
@@ -714,6 +718,7 @@ export class VerifyComplianceTabComponent
 
   selectGood(event: any) {
     event.toggle.subscribe((data: any) => {
+      //debugger;
       const index = this.goodsSelected.indexOf(data.row);
       if (index == -1 && data.toggle == true) {
         data.row['selected'] = true;
@@ -814,13 +819,14 @@ export class VerifyComplianceTabComponent
     }
     const clarifycationLength = this.clarificationData.length;
     Swal.fire({
-      title: 'Eliminar Aclaración?',
+      title: '¿Eliminar Aclaración?',
       text: '¿Desea eliminar la aclaración?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#B38E5D',
       confirmButtonText: 'Eliminar',
+      allowOutsideClick: false,
     }).then(async result => {
       if (result.isConfirmed) {
         //debugger;
@@ -883,9 +889,11 @@ export class VerifyComplianceTabComponent
         if (item.id === this.goodsSelected[0].id) {
           item.goodStatus = goodStatus;
           item.processStatus = processStatus;
+          item.selected = false;
         }
       });
       this.goodData.load(data);
+      this.goodsSelected = [];
     });
   }
 

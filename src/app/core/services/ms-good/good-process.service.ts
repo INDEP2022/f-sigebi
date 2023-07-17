@@ -1,10 +1,13 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GoodProcessPoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { GoodSubtype } from 'src/app/pages/juridical-processes/juridical-ruling-g/juridical-ruling-g/model/good.model';
 import { IResponse } from '../../interfaces/list-response.interface';
+import { IGood } from '../../models/good/good.model';
 import {
   IAcceptGoodActa,
   IAcceptGoodStatus,
@@ -189,5 +192,35 @@ export class GoodProcessService extends HttpService {
 
   getPubPrevieData(data: Object) {
     return this.post(GoodProcessPoints.PubPrevieData, data);
+  }
+
+  getGoodPostQuery(
+    _params: ListParams,
+    data: Object
+  ): Observable<IListResponse<IGood>> {
+    const params = this.makeParams(_params);
+    return this.post<IListResponse<IGood>>(
+      `${GoodProcessPoints.getGoodPostQuery}?${params}`,
+      data
+    );
+  }
+
+  private makeParams(params: ListParams): HttpParams {
+    let httpParams: HttpParams = new HttpParams();
+    Object.keys(params).forEach(key => {
+      httpParams = httpParams.append(key, (params as any)[key]);
+    });
+    return httpParams;
+  }
+  procedureGoodStatus(data: { cveShape: string; noGood: number }) {
+    return this.post(GoodProcessPoints.ProcedureStatusGood, data);
+  }
+
+  pupReconcilied(body: {
+    goodNumber: number[];
+    arrayStatus: string[];
+    dateMasiv: Date | string;
+  }) {
+    return this.post('application/pup-reconcilied', body);
   }
 }

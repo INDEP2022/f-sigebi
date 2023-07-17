@@ -4,5 +4,7 @@ export enum AccountmvmntEndpoint {
   getNumberReport = 'dev-detail-transfer',
   getAccount = 'bank-account',
   getDataFile = 'aplication/pupPreviewDatosCsv',
-  AccountMovements = 'account-movements',
+  getDetailsInd = 'bank-account/get-details-ind',
+  getBeneficiarios = 'aplication/select-cheques-devolucion',
+  getDevolutionsBanks = 'aplication/select-devoluciones',
 }

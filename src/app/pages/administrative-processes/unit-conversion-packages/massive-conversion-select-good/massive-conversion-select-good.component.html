@@ -36,7 +36,7 @@
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
           <form-field
             [control]="form.get('targetTag')"
-            label="Etiquetas de destino">
+            label="Etiquetas de Destino">
             <input
               [readOnly]="true"
               class="form-control"
@@ -82,6 +82,8 @@
           <form-field [control]="form.get('warehouse')" label="Almacén">
             <textarea
               rows="2"
+              [readOnly]="true"
+              [disabled]="true"
               class="form-control"
               formControlName="warehouse"></textarea>
             <!-- <input
@@ -127,15 +129,12 @@
             class="d-none"
             accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
             (change)="onFileChange($event)" /> -->
-          <button
-            class="btn btn-primary btn-sm active"
-            [disabled]="goodCheckValues.length === 0 || loading"
-            (click)="pbIngresar()">
+          <button class="btn btn-primary btn-sm active" (click)="pbIngresar()">
             Ingresar Bienes
           </button>
           <button
             class="btn btn-sm btn-success active"
-            [disabled]="loading"
+            [disabled]="loading || data['data'].length < 1"
             (click)="exportarExcel()">
             Exportar a Excel
             <i class="bx bx-download float-icon"></i>

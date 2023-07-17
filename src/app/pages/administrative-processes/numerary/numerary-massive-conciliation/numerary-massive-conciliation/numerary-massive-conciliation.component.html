@@ -3,158 +3,295 @@
     <h5 class="title">Conciliación masiva numerario</h5>
   </div>
   <div body>
-    <h5 class="row ml-0 mb-5">Bienes</h5>
-    <form [formGroup]="form" class="form-material">
-      <div class="row">
-        <div class="col-md-3">
-          <form-field
-            [control]="form.get('dateTesofe')"
-            label="Aplicar Fecha Tesofe:">
-            <input
-              type="text"
-              class="form-control"
-              bsDatepicker
-              formControlName="dateTesofe" />
-          </form-field>
-        </div>
-
-        <div class="col-md-3">
-          <form-field [control]="form.get('dateOf')" label="Fecha desde:">
-            <input
-              type="text"
-              class="form-control"
-              bsDatepicker
-              formControlName="dateOf" />
-          </form-field>
-        </div>
-
-        <div class="col-md-3">
-          <form-field [control]="form.get('dateAt')" label="Fecha hasta:">
-            <input
-              type="text"
-              class="form-control"
-              bsDatepicker
-              formControlName="dateAt" />
-          </form-field>
-        </div>
-
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active ml-1 border-0"
-          style="width: 90px">
-          Aplicar <i class="fa fa-search"></i>
-        </button>
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Bienes</h5>
       </div>
-
-      <div class="row mt-5">
-        <div class="col-md-12 d-flex align-items-center justify-content-center">
-          <p>
-            <span class="text-success mr-5">
-              <i class="fa fa-square"></i> No Conciliado
-            </span>
-            <span class="mr-5" style="color: #bc955c">
-              <i class="fa fa-square"></i> Conciliado
-            </span>
-          </p>
-        </div>
-      </div>
-
-      <div class="col-12 mt-6">
-        <div class="table-responsive">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="data">
-            </ng2-smart-table>
+      <div body>
+        <form [formGroup]="form" class="form-material">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="col-md-4">
+                <form-field [control]="form.get('goodClasification')">
+                  <ngx-select
+                    control="goodClasification"
+                    label="Clasificador"
+                    bindLabel="numClasifGoods"
+                    [data]="dataClassGood"
+                    [form]="form"></ngx-select>
+                </form-field>
+              </div>
+              <div class="col-md-4">
+                <form-field [control]="form.get('bank')">
+                  <ngx-select
+                    control="bank"
+                    label="Banco"
+                    bindLabel="cveBank"
+                    [class]="
+                      form.get('current').value == null ? 'disabled' : ''
+                    "
+                    [data]="banks"
+                    [form]="form"></ngx-select>
+                </form-field>
+              </div>
+              <div class="col-md-4">
+                <form-field [control]="form.get('bankAccount')">
+                  <ngx-select
+                    [data]="bankAccountData"
+                    [form]="form"
+                    [class]="form.get('bank').value == null ? 'disabled' : ''"
+                    bindLabel="cveAccount"
+                    label="Cuenta Bancaria"
+                    control="bankAccount"></ngx-select>
+                </form-field>
+              </div>
+            </div>
           </div>
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"></app-pagination>
+
+          <div class="row">
+            <div class="col-md-12 mt-4">
+              <div class="col-md-4">
+                <form-field [control]="form.get('deposit')" label="Depósito">
+                  <input
+                    type="number"
+                    [min]="0"
+                    class="form-control"
+                    formControlName="deposit" />
+                </form-field>
+              </div>
+
+              <div class="col-md-3">
+                <form-field [control]="form.get('current')" label="Moneda">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="current"
+                    maxlength="15"
+                    readonly />
+                </form-field>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 mt-4">
+              <div class="col-md-3">
+                <form-field
+                  [control]="form.get('dateTesofe')"
+                  label="Aplicar Fecha Tesofe:">
+                  <input
+                    type="text"
+                    class="form-control"
+                    bsDatepicker
+                    formControlName="dateTesofe" />
+                </form-field>
+              </div>
+              <div class="col-md-3">
+                <form-field [control]="form.get('dateOf')" label="Fecha desde:">
+                  <input
+                    type="text"
+                    class="form-control"
+                    bsDatepicker
+                    formControlName="dateOf" />
+                </form-field>
+              </div>
+              <div class="col-md-3">
+                <form-field [control]="form.get('dateAt')" label="Fecha hasta:">
+                  <input
+                    type="text"
+                    class="form-control"
+                    bsDatepicker
+                    formControlName="dateAt" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+
+          <div class="row text-center mt-3 mb-3">
+            <div class="col">
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm"
+                (click)="searchFilterGood()">
+                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </app-card>
+
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Bienes Filtrados</h5>
+      </div>
+      <div body>
+        <form [formGroup]="form" class="form-material">
+          <div class="row">
+            <div
+              class="col-md-12 d-flex align-items-center justify-content-center">
+              <p>
+                <span class="text-success mr-5">
+                  <i class="fa fa-square"></i> No Conciliado
+                </span>
+                <span class="mr-5" style="color: #bc955c">
+                  <i class="fa fa-square"></i> Conciliado
+                </span>
+              </p>
+            </div>
+          </div>
+          <div class="col-12 mt-6">
+            <div class="table-responsive">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings"
+                  (userRowSelect)="selectRowGood($event)"
+                  [source]="dataGoods">
+                </ng2-smart-table>
+              </div>
+              <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="col-md-8">
+                <form-field
+                  [control]="form.get('description')"
+                  label="Descripción">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="description"
+                    readonly />
+                </form-field>
+              </div>
+              <div class="col-md-4">
+                <form-field [control]="form.get('statusGood')" label="Estatus">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="statusGood"
+                    readonly />
+                </form-field>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </app-card>
+
+    <app-card>
+      <div body>
+        <div class="row text-center">
+          <div class="col">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active ml-1 mr-3">
+              Actualiza
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active ml-1 mr-3">
+              Conciliar
+            </button>
+
+            <button type="button" class="btn btn-primary btn-sm active ml-1">
+              Desconcilia
+            </button>
+          </div>
         </div>
       </div>
+    </app-card>
 
-      <div
-        class="col-12 mt-4 d-flex justify-content-center"
-        style="margin-top: 50px">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active ml-1 border-0"
-          style="width: 90px">
-          Conciliar
-        </button>
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Cuentas bancarias</h5>
       </div>
-    </form>
+      <div body>
+        <form [formGroup]="form2" class="form-material">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="col-md-4">
+                <form-field [control]="form2.get('current')">
+                  <ngx-select
+                    [data]="currentDataF2"
+                    [form]="form2"
+                    label="Moneda"
+                    bindLabel="cve_moneda"
+                    control="current"></ngx-select>
+                </form-field>
+              </div>
+              <div class="col-md-4">
+                <form-field [control]="form2.get('bank')">
+                  <ngx-select
+                    [data]="banksDataF2"
+                    [form]="form2"
+                    bindLabel="cveBank"
+                    [class]="
+                      form2.get('current').value == null ? 'disabled' : ''
+                    "
+                    label="Seleccione un Banco"
+                    [control]="'bank'"></ngx-select>
+                </form-field>
+              </div>
+              <div class="col-md-4">
+                <form-field [control]="form2.get('bankAccount')">
+                  <ngx-select
+                    [data]="bankAccountDataF2"
+                    [form]="form2"
+                    bindLabel="cveAccount"
+                    [class]="form2.get('bank').value == null ? 'disabled' : ''"
+                    label="Cuenta Bancaria"
+                    [control]="'bankAccount'"></ngx-select>
+                </form-field>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 mt-4 mb-2">
+              <div class="col-md-4">
+                <form-field [control]="form2.get('deposit')" label="Depósito">
+                  <input
+                    type="number"
+                    [min]="0"
+                    [readOnly]="form2.get('bankAccount').value == null"
+                    class="form-control"
+                    formControlName="deposit" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+          <div class="row text-center">
+            <div class="col">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="searchGoodBankAccount()">
+                Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button type="button" class="btn btn-primary btn-sm active">
+                Asociación
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </app-card>
 
     <div class="row" style="margin-top: 50px">
-      <h5 class="row ml-0 mb-5">Cuentas Bancarias</h5>
+      <h5 class="row ml-0 ml-4 mb-5">Cuentas Bancarias</h5>
       <form [formGroup]="form2" class="form-material">
-        <div class="row mt-4">
-          <div class="col-6">
-            <form-field [control]="form2.get('bank')">
-              <ngx-select
-                [data]="banks"
-                [form]="form2"
-                bindLabel="name"
-                label="Seleccione un Banco"
-                [control]="'bank'"
-                (change)="onBankSelectChange($event)"
-                (fetchItems)="searchBanks($event)"
-                (input)="onSearchName($event.target)"></ngx-select>
-            </form-field>
-          </div>
-          <div class="col-6">
-            <form-field [control]="form2.get('bankAccount')">
-              <ngx-select
-                [data]="bankAccountSelect"
-                [form]="form2"
-                bindLabel="accountNumber"
-                label="Seleccione una Cuenta"
-                [control]="'bankAccount'"
-                (change)="onBankAccountSelectChange($event)"
-                (input)="onSearchAccount($event.target)"
-                (clear)="onClearSelection()"></ngx-select>
-            </form-field>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <form-field [control]="form2.get('deposit')" label="Depósito">
-            <input type="text" class="form-control" formControlName="deposit" />
-          </form-field>
-        </div>
-
-        <div class="col-md-3">
-          <form-field [control]="form2.get('current')" label="Moneda">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="current"
-              maxlength="15"
-              readonly />
-          </form-field>
-        </div>
-
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active ml-1 border-0 mr-4"
-          style="width: 100px">
-          Buscar
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active ml-1 border-0"
-          style="width: 100px">
-          Asociación
-        </button>
-
-        <div class="col-12 mt-6">
+        <div class="col-12 mt-5">
           <div class="table-responsive">
             <div [class]="loading ? 'table-loading' : ''">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settings2"
-                [source]="data">
+                [source]="dataGoods2">
               </ng2-smart-table>
             </div>
             <app-pagination
@@ -198,81 +335,28 @@
         </div>
 
         <div class="row mt-5">
-          <div class="col-md-4">
-            <form-field [control]="form2.get('current')" label="Propuesta">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="current" />
-            </form-field>
-          </div>
-
-          <div class="col-md-4">
-            <form-field [control]="form2.get('current')" label="Depósito">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="current" />
-            </form-field>
-          </div>
-        </div>
-
-        <div class="row" style="margin-top: 50px">
-          <div class="col-md-4">
-            <form-field [control]="form2.get('current')" label="Clasificador">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="current" />
-            </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field [control]="form2.get('current')" label="Banco">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="current" />
-            </form-field>
-          </div>
-
-          <div class="col-md-4">
-            <form-field
-              [control]="form2.get('current')"
-              label="Cuenta Bancaria">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="current" />
-            </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field [control]="form2.get('current')" label="Depódito">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="current" />
-            </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field [control]="form2.get('current')" label="Moneda">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="current" />
-            </form-field>
-          </div>
-          <div class="col-12 mt-6 d-flex justify-content-center">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active ml-1 border-0 mr-4"
-              style="width: 100px">
-              Actualiza
-            </button>
+          <div class="col-md-12">
+            <div class="col-md-4">
+              <form-field [control]="form2.get('current')" label="Propuesta">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="current" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field [control]="form2.get('current')" label="Depósito">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="current" />
+              </form-field>
+            </div>
             <button
               type="button"
               class="btn btn-primary btn-sm active ml-1 border-0"
               style="width: 100px">
-              Desconcilia
+              Asociar
             </button>
           </div>
         </div>

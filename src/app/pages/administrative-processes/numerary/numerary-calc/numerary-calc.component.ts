@@ -213,6 +213,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
 
   onProcesosNum(event: IProccesNum) {
     if (event) {
+      this.clean();
       this.processService.process(event);
       this.process = event;
       this.form
@@ -437,14 +438,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
         Number(this.process.procnumId)
       );
       if (deleteExi) {
-        this.form.reset();
-        this.formBlkControl.reset();
-        this.data.load([]);
-        this.data.refresh();
-        this.data2.load([]);
-        this.data2.refresh();
-        this.data3.load([]);
-        this.data3.refresh();
+        this.clean();
         this.alert(
           'success',
           'Cálculo de numerario',
@@ -459,6 +453,17 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       }
     }
   }
+
+  /*   clean() {
+    this.form.reset();
+    this.formBlkControl.reset();
+    this.data.load([]);
+    this.data.refresh();
+    this.data2.load([]);
+    this.data2.refresh();
+    this.data3.load([]);
+    this.data3.refresh();
+  } */
 
   deleteSoli(proceNum: number) {
     return new Promise<boolean>((res, rej) => {

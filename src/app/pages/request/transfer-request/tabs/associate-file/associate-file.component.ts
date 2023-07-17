@@ -161,6 +161,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
   }
 
   async generateCaratula() {
+    this.loader.load = true;
     let request = this.request;
     const expedient: any = await this.saveExpedientSami();
     if (expedient.id) {
@@ -240,6 +241,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
           );
 
           if (contentResult) {
+            this.loader.load = false;
             Swal.fire({
               title: 'Carátula generada correctamente',
               text: '',
@@ -248,6 +250,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
               confirmButtonColor: '#AD4766',
               cancelButtonColor: '#d33',
               confirmButtonText: 'Aceptar',
+              allowOutsideClick: false,
             }).then(result => {
               if (result.isConfirmed) {
                 const reporteName = contentResult.dDocName;
@@ -267,6 +270,8 @@ export class AssociateFileComponent extends BasePage implements OnInit {
                 this.close();
               }
             });
+          } else {
+            this.loader.load = false;
           }
         }
       } else {
@@ -587,9 +592,10 @@ export class AssociateFileComponent extends BasePage implements OnInit {
       confirmButtonColor: '#AD4766',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
-        Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
+        Swal.fire('Eliminado', 'El archivo fue elminado', 'success');
       }
     });
   }
