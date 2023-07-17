@@ -94,7 +94,7 @@ export class RecordAccountStatementsModalComponent
       this.recordAccountStatementsAccountsService.create(model).subscribe({
         next: () => {
           this.loading = true;
-          this.alert('success', 'Movimiento transferido', '');
+          this.alert('success', 'Movimiento Transferido', '');
           // this.dataAccountService.searchDataAccount(this.movimentAccount.numberAccount);
           this.modalRef.hide();
         },

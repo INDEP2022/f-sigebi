@@ -20,7 +20,7 @@
                     (change)="changeDelegations($event)"
                     bindLabel="numberAndDescrip"
                     label="Delegación"
-                    value="id"
+                    value="delegationNumber"
                     (fetchItems)="getDelegation($event)"
                     control="delegation"></ngx-select>
                 </form-field>
@@ -58,7 +58,7 @@
             </div>
             <div class="row mt-4">
               <div class="col-md-4 mt-3">
-                <form-field [control]="form.get('from')" label="Período Del">
+                <form-field [control]="form.get('from')" label="Período del">
                   <input
                     readonly
                     type="text"
@@ -136,7 +136,7 @@
                     style="margin-top: 23px !important">
                     <form-field
                       [control]="formRegistro.get('fromTwo')"
-                      label="Período Del">
+                      label="Período del">
                       <input
                         type="text"
                         formControlName="fromTwo"
