@@ -64,23 +64,43 @@ export class TypeServicesFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.typeServicesService
-      .create(this.typeServiceForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.typeServiceForm.controls['type'].value.trim() == '' ||
+      this.typeServiceForm.controls['concept'].value.trim() == '' ||
+      (this.typeServiceForm.controls['type'].value.trim() == '' &&
+        this.typeServiceForm.controls['concept'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.typeServicesService
+        .create(this.typeServiceForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.typeServicesService
-      .update(this.typeService.id, this.typeServiceForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.typeServiceForm.controls['type'].value.trim() == '' ||
+      this.typeServiceForm.controls['concept'].value.trim() == '' ||
+      (this.typeServiceForm.controls['type'].value.trim() == '' &&
+        this.typeServiceForm.controls['concept'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.typeServicesService
+        .update(this.typeService.id, this.typeServiceForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

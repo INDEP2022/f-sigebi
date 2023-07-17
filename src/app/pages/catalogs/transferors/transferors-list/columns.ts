@@ -2,7 +2,7 @@ export const TRANSFERENT_STATE_COLUMNS = {
   id: {
     title: 'No.',
     sort: false,
-    width: '25px',
+    width: '10%',
   },
   keyTransferent: {
     title: 'Clave',

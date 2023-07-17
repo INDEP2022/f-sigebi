@@ -10,7 +10,7 @@ export const MUNICIPALITIES_COLUMNS = {
     sort: false,
   },
   nameMunicipality: {
-    title: 'Nombre De Municipio',
+    title: 'Nombre de Municipio',
     type: 'string',
     sort: false,
   },

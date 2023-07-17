@@ -20,9 +20,12 @@ import { IAffairType } from 'src/app/core/models/catalogs/affair-type-model';
 import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 import { IRAsuntDic } from 'src/app/core/models/catalogs/r-asunt-dic.model';
 //Services
+import { DomSanitizer } from '@angular/platform-browser';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { AffairTypeService } from 'src/app/core/services/affair/affair-type.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { RAsuntDicService } from 'src/app/core/services/catalogs/r-asunt-dic.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 
 @Component({
   selector: 'app-cat-relationship-opinion',
@@ -69,7 +72,9 @@ export class CatRelationshipOpinionComponent
     private affairService: AffairService,
     private affairTypeService: AffairTypeService,
     private modalService: BsModalService,
-    private RAsuntDicService: RAsuntDicService
+    private RAsuntDicService: RAsuntDicService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings = {
@@ -250,12 +255,12 @@ export class CatRelationshipOpinionComponent
     this.RAsuntDicService.remove2(rAsuntDic).subscribe({
       next: () => {
         this.getRAsuntDic();
-        this.alert('success', 'Dictamen', 'Borrado');
+        this.alert('success', 'Dictamen', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(
           'warning',
-          'Relación y de asunto dictamen',
+          'Relación de asunto dictamen',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },
@@ -265,8 +270,10 @@ export class CatRelationshipOpinionComponent
   //Abre cat de Dictamen
 
   openDictum() {
+    const goBack = false;
     let config: ModalOptions = {
       initialState: {
+        goBack,
         callback: (next: boolean) => {
           //if (next) this.getRAsuntDic();
           //this.rowsSelected(this.affairs);
@@ -289,5 +296,46 @@ export class CatRelationshipOpinionComponent
       },
     };
     this.modalService.show(OpinionsListComponent, modalConfig);*/
+  }
+
+  report() {
+    let params = {
+      //PN_DEVOLUCION: this.data,
+    };
+    this.siabService
+      .fetchReport('FCATADBRELASDIC', params)
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
   }
 }

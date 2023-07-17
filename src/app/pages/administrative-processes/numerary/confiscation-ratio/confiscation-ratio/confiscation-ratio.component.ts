@@ -9,8 +9,14 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
+import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { DetRelationConfiscationService } from 'src/app/core/services/ms-confiscation/det-relation-confiscation.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -26,6 +32,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   lock: boolean = false;
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
   filterParams = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<ListParams>(new ListParams());
   goods: DefaultSelect<IGood>;
   columnFilters: any = [];
   constructor(
@@ -33,7 +40,13 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
     private report: SiabService,
-    private goodServ: GoodService
+    private goodServ: GoodService,
+    private goodSssubtypeService: GoodSssubtypeService,
+    private screenStatusService: ScreenStatusService,
+    private detRelationConfiscationService: DetRelationConfiscationService,
+    private goodProcessService: GoodProcessService,
+    private authorityService: AuthorityService,
+    private accountMovementService: AccountMovementService
   ) {
     super();
   }
@@ -140,5 +153,82 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
         },
       });
     }
+  }
+
+  initialize() {
+    //p_Trae('Consecutivo');
+  }
+
+  brings() {}
+
+  getClasificGood() {}
+
+  getGoodFilter(money: number | string, goodNumber: number | string) {
+    let body = {
+      vcScreen: 'FRELDECOMISO',
+      coinArray: money,
+      goodNumber: goodNumber,
+    };
+    this.goodProcessService.getGoodAppraise(body).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
+  }
+
+  getValidGood(goodNumber: number | string) {
+    if (goodNumber) {
+      this.params.getValue()['filter.goodNumber'] = goodNumber;
+    }
+    let params = {
+      ...this.params.getValue(),
+    };
+    this.detRelationConfiscationService.getAllDetRel(params).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
+  }
+
+  getCpAp() {
+    //Endpoint pendiente
+  }
+
+  getAuthority() {
+    //Preguntar
+  }
+
+  // getDTransfer(goodNumber?: number | string) {
+  //   if (goodNumber) {
+  //     this.params.getValue()['filter.numberAccount'] = goodNumber;
+  //   }
+  //   let params = {
+  //     ...this.params.getValue(),
+  //   };
+  //   this.accountMovementService.getAllRatio(params).subscribe({
+  //     next: resp => {
+  //       console.log(resp);
+  //     },
+  //     error: err => {
+  //       console.log(err);
+  //     },
+  //   });
+  // }
+
+  getConsecutive(year?: number | string) {
+    this.detRelationConfiscationService.getAllMaxNoRelDec(year).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
   }
 }
