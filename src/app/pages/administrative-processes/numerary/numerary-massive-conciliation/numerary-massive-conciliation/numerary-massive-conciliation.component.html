@@ -152,6 +152,7 @@
               </div>
               <app-pagination
                 [params]="params"
+                [limit]="limit"
                 [totalItems]="totalItems"></app-pagination>
             </div>
           </div>
@@ -278,8 +279,10 @@
                 (click)="searchGoodBankAccount()">
                 Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
-              <button type="button" class="btn btn-primary btn-sm active" (click)="openAsociate()">
-
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="openAsociate()">
                 Asociación
               </button>
             </div>
@@ -305,8 +308,9 @@
                   </ng2-smart-table>
                 </div>
                 <app-pagination
-                  [params]="params"
-                  [totalItems]="totalItems"></app-pagination>
+                  [params]="params2"
+                  [limit]="limit2"
+                  [totalItems]="totalItems2"></app-pagination>
               </div>
             </div>
 
@@ -365,7 +369,9 @@
                 </form-field>
               </div>
               <div class="col-md-4">
-                <form-field [control]="form2.get('currencyDeposit')" label="Depósito">
+                <form-field
+                  [control]="form2.get('currencyDeposit')"
+                  label="Depósito">
                   <input
                     type="text"
                     class="form-control"
@@ -375,12 +381,14 @@
               </div>
               <div class="col text-center">
                 <div class="col">
-                  <button type="button" class="btn btn-primary btn-sm active">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="finalAsociate()">
                     Asociar
                   </button>
                 </div>
               </div>
-
             </div>
           </div>
         </form>

@@ -1,16 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IProReconcilesGood } from 'src/app/core/models/catalogs/bank-account.model';
-import { ISearchNumerary } from 'src/app/core/models/ms-numerary/numerary.model';
+import {
+  IPupAssociateGood,
+  ISearchNumerary,
+} from 'src/app/core/models/ms-numerary/numerary.model';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { RecordAccountStatementsAccountsService } from 'src/app/core/services/catalogs/record-account-statements-accounts.service';
 import { RecordAccountStatementsService } from 'src/app/core/services/catalogs/record-account-statements.service';
@@ -23,15 +31,15 @@ import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.serv
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { NumerarySolicitudeComponent } from '../numerary-solicitude/numerary-solicitude.component';
 import {
   clearGoodCheck,
   goodCheck,
+  goodCheck2,
   newGoodCheck,
   NUMERARY_MASSIVE_CONCILIATION_COLUMNS,
   NUMERARY_MASSIVE_CONCILIATION_COLUMNS2,
 } from './numerary-massive-conciliation-columns';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { NumerarySolicitudeComponent } from '../numerary-solicitude/numerary-solicitude.component';
 
 @Component({
   selector: 'app-numerary-massive-conciliation',
@@ -58,8 +66,13 @@ export class NumeraryMassiveConciliationComponent
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  limit = new FormControl(10);
   columnFilters: any = [];
   accountDate: number;
+
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems2: number = 0;
+  limit2 = new FormControl(10);
 
   dataClassGood = new DefaultSelect();
 
@@ -135,7 +148,7 @@ export class NumeraryMassiveConciliationComponent
       deposit: [null, Validators.nullValidator],
       current: [null, Validators.nullValidator],
       proposal: [null],
-      currencyDeposit: [null]
+      currencyDeposit: [null],
     });
   }
 
@@ -150,6 +163,18 @@ export class NumeraryMassiveConciliationComponent
     this.getCveCurrency(); //Trae la lista de monedas para la forma2
     this.getBanks2(); //Se suscribe al valor de moneda en la forma2 y trae los bancos
     this.getAccountsBank2(); //
+
+    //Navegación
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      console.log(params);
+      this.limit = new FormControl(params.limit);
+      this.searchFilterGoodPag();
+    });
+
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      console.log(params);
+      this.limit2 = new FormControl(params.limit);
+    });
   }
 
   //Gets form 1
@@ -204,8 +229,8 @@ export class NumeraryMassiveConciliationComponent
     const paramsF = new FilterParams();
     paramsF.addFilter('numType', 7);
     paramsF.addFilter('numSubType', 1);
-    paramsF.addFilter('numSsubType', 3, SearchFilter.NOT);
-    paramsF.addFilter('numClasifGoods', '1424,1426,1590', SearchFilter.NOTIN);
+    paramsF.addFilter('numSssubType', 3, SearchFilter.NOT);
+    paramsF.addFilter('numClasifGoods', '1424,1426,1590', SearchFilter.IN);
     this.godClassService.getAllSssubtype(paramsF.getFilterParams()).subscribe(
       res => {
         this.dataClassGood = new DefaultSelect(res.data, res.count);
@@ -350,6 +375,7 @@ export class NumeraryMassiveConciliationComponent
   //Buscador de datos de cuentas bancarias
   searchGoodBankAccount() {
     // let body: IProReconcilesGood;
+    this.loading2 = true;
     const bank = this.bank2.value;
     const bankAccount = this.bankAccount2.value;
     const currency = this.current2.value;
@@ -371,11 +397,77 @@ export class NumeraryMassiveConciliationComponent
         console.log(res);
         this.dataGoods2.load(res.result);
         console.log(this.dataGoods2['data']);
+        this.loading2 = false;
       },
       err => {
         console.log(err);
+        this.loading2 = true;
       }
     );
+  }
+
+  //Paginado
+  searchFilterGoodPag() {
+    if (this.dataGoods['data'].length > 0) {
+      this.loading = true;
+      const noClass = this.goodClasification.value;
+      const val1 = this.current.value;
+      const val4 = this.bank.value;
+      const val6 = this.bankAccount.value;
+      const val2 = this.deposit.value;
+
+      const paramsF = new FilterParams();
+      paramsF.page = this.params.value.page;
+      paramsF.limit = this.params.value.limit;
+
+      noClass != null
+        ? paramsF.addFilter('goodClassNumber', noClass.numClasifGoods)
+        : '';
+      val1 != null ? paramsF.addFilter('val1', val1) : '';
+      val4 != null ? paramsF.addFilter('val4', val4.cveBank) : '';
+      val6 != null ? paramsF.addFilter('val6', val6.cveAccount) : '';
+      val2 != null ? paramsF.addFilter('val2', val2) : '';
+
+      this.goodService.getAllFilter(paramsF.getParams()).subscribe(
+        res => {
+          console.log(res);
+          // this.dataGoods.load(res.data);
+          this.totalItems = res.count;
+
+          const arrayNumbers = res.data.map((e: any) => {
+            return e.goodId;
+          });
+
+          const arrayStatus = res.data.map((e: any) => {
+            return e.status;
+          });
+
+          const fec = this.form.get('dateTesofe').value;
+
+          const model = {
+            goodNumber: arrayNumbers,
+            arrayStatus: arrayStatus,
+            dateMasiv: fec == null ? '' : format(fec, 'dd-MM-yyyy'),
+          };
+
+          this.goodProcessService.pupReconcilied(model).subscribe(
+            res => {
+              console.log(res);
+              this.dataGoods.load(res.data);
+              this.loading = false;
+            },
+            err => {
+              console.log(err);
+              this.loading = false;
+            }
+          );
+        },
+        err => {
+          console.log(err);
+          this.loading = false;
+        }
+      );
+    }
   }
 
   //Selecciona los bienes filtrador
@@ -391,6 +483,8 @@ export class NumeraryMassiveConciliationComponent
         const val2 = this.deposit.value;
 
         const paramsF = new FilterParams();
+        paramsF.page = this.params.value.page;
+        paramsF.limit = this.params.value.limit;
 
         noClass != null
           ? paramsF.addFilter('goodClassNumber', noClass.numClasifGoods)
@@ -478,7 +572,7 @@ export class NumeraryMassiveConciliationComponent
       const model = {
         goodNumber: arrayNumbers,
         arrayStatus: arrayStatus,
-        dateMasiv: format(this.form.get('dateTesofe').value,'dd-MM-yyyy'),
+        dateMasiv: format(this.form.get('dateTesofe').value, 'dd-MM-yyyy'),
       };
 
       this.accountBankService
@@ -492,15 +586,21 @@ export class NumeraryMassiveConciliationComponent
               res => {
                 console.log(res);
 
-                this.dataGoods.load(this.dataGoods['data'].map((e:any) => {
-                  if(arrayNumbers.includes(e.RSPTAQUERY.no_bien)){
-                    return res['data'].find((item:any) => item.RSPTAQUERY.no_bien == e.RSPTAQUERY.no_bien)
-                  }else{
-                    return e
-                  }
-                }));
-                
+                this.dataGoods.load(
+                  this.dataGoods['data'].map((e: any) => {
+                    if (arrayNumbers.includes(e.RSPTAQUERY.no_bien)) {
+                      return res['data'].find(
+                        (item: any) =>
+                          item.RSPTAQUERY.no_bien == e.RSPTAQUERY.no_bien
+                      );
+                    } else {
+                      return e;
+                    }
+                  })
+                );
+
                 this.alert('success', 'Actualización realizada', '');
+                clearGoodCheck();
                 this.loading = false;
               },
               err => {
@@ -560,7 +660,6 @@ export class NumeraryMassiveConciliationComponent
               val4: item.RSPTAQUERY.val4,
               val5: format(new Date(item.RSPTAQUERY.val5), 'yyyy-MM-dd'),
               val6: item.RSPTAQUERY.val6,
-              fecTesofe: item.BFEC_TESOFE,
             };
             console.log(model);
             this.numeraryService.pupSearchNumerary(model).subscribe(
@@ -568,7 +667,13 @@ export class NumeraryMassiveConciliationComponent
                 console.log(res);
               },
               err => {
-                console.log(err);
+                console.log(err.error.message);
+                if (
+                  err.error.message ==
+                  'La propiedad fecTesofe debe ser una fecha'
+                ) {
+                  this.alert('warning', 'No tiene fecha Tesofe', '');
+                }
               }
             );
           } else {
@@ -592,7 +697,6 @@ export class NumeraryMassiveConciliationComponent
                 val4: item.RSPTAQUERY.val4,
                 val5: format(new Date(date.rpta), 'yyyy-MM-dd'),
                 val6: item.RSPTAQUERY.val6,
-                fecTesofe: item.BFEC_TESOFE,
               };
               console.log(model);
               this.numeraryService.pupSearchNumerary(model).subscribe(
@@ -601,6 +705,12 @@ export class NumeraryMassiveConciliationComponent
                 },
                 err => {
                   console.log(err);
+                  if (
+                    err.error.message ==
+                    'La propiedad fecTesofe debe ser una fecha'
+                  ) {
+                    this.alert('warning', 'No tiene fecha Tesofe', '');
+                  }
                 }
               );
             } else {
@@ -637,8 +747,8 @@ export class NumeraryMassiveConciliationComponent
               return e.RSPTAQUERY.estatus;
             });
             const newArrayNumbers = this.dataGoods['data'].map((e: any) => {
-              return e.RSPTAQUERY.no_bien
-            })
+              return e.RSPTAQUERY.no_bien;
+            });
 
             this.accountBankService
               .updateAccountMovExp({ noGoods: arrayNumbers })
@@ -654,7 +764,7 @@ export class NumeraryMassiveConciliationComponent
                   const model = {
                     goodNumber: newArrayNumbers,
                     arrayStatus: arrayStatus,
-                    dateMasiv: fec == null ? '' : fec,
+                    dateMasiv: fec == null ? '' : format(fec, 'dd-MM-yyyy'),
                   };
                   this.goodProcessService.pupReconcilied(model).subscribe(
                     res => {
@@ -685,19 +795,46 @@ export class NumeraryMassiveConciliationComponent
   }
 
   //Boton asociar
-  openAsociate(){
-    let modalConfig:ModalOptions = {
+  openAsociate() {
+    let modalConfig: ModalOptions = {
       initialState: {
-        callback: (data:any) => {
-            if(data != null || data != undefined){
-              this.form2.get('proposal').setValue(data.motionNumber)
-              this.form2.get('currencyDeposit').setValue(data.amountAssign)
-            }
+        callback: (data: any) => {
+          if (data != null || data != undefined) {
+            this.form2.get('proposal').setValue(data.motionNumber);
+            this.form2.get('currencyDeposit').setValue(data.amountAssign);
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
+    };
+    this.modalService.show(NumerarySolicitudeComponent, modalConfig);
+  }
+
+  //Ultimo boton de asociar
+  finalAsociate() {
+    if (goodCheck2.length > 0) {
+      for (let item of goodCheck2) {
+        console.log(item);
+        /* this.numeraryService.pupAssociateGood() */
+        const model: IPupAssociateGood = {
+          movementNo: 0,
+          requestId: 0,
+          blkDeposit: 0,
+          cbdDeposit: 0,
+          cbcveCurrency: '',
+        };
+        this.numeraryService.pupAssociateGood(model).subscribe(
+          res => {
+            console.log(res);
+          },
+          err => {
+            console.log(err);
+          }
+        );
+      }
+    } else {
+      this.alert('warning', 'No se seleccionó datos de cuentas bancarias', '');
     }
-    this.modalService.show(NumerarySolicitudeComponent, modalConfig)
   }
 }

@@ -2,6 +2,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 // import { CheckboxElementRecordAccountStatementsComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element-record-account-statements';
 
 export let goodCheck: any[] = [];
+export let goodCheck2: any[] = [];
 
 export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
   select: {
@@ -14,9 +15,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
       instance.toggle.subscribe((data: any) => {
         if (data.toggle) {
           console.log(goodCheck);
-          if(!goodCheck.includes(data.row)){
             goodCheck.push(data.row);
-          }
         } else {
           console.log(data.row.RSPTAQUERY)
           goodCheck = goodCheck.filter(
@@ -121,6 +120,10 @@ export function clearGoodCheck() {
   goodCheck = [];
 }
 
+export function clearGoodCheck2() {
+  goodCheck2 = []
+}
+
 export function newGoodCheck(data: any[]){
   goodCheck = data
 }
@@ -134,6 +137,19 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
     editable: false,
     type: 'custom',
     renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        if (data.toggle) {
+          console.log(goodCheck);
+            goodCheck2.push(data.row);
+        } else {
+          console.log(data.row.RSPTAQUERY)
+          goodCheck = goodCheck2.filter(
+            valor => valor.RSPTAQUERY.no_bien != data.row.RSPTAQUERY.no_bien
+          );
+        }
+      });
+    },
   },
   goodNumber: {
     title: 'Bien',

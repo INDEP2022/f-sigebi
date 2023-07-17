@@ -100,13 +100,34 @@ export interface TransferReg {
 }
 
 export interface ISearchNumerary {
-    conciled: string,
-    goodNumber: number,
-    fileNum: number,
-    val1: string,
-    val2: number,
-    val4: string,
-    val5: string,
-    val6: string,
-    fecTesofe: Date | string
+  conciled: string;
+  goodNumber: number;
+  fileNum: number;
+  val1: string;
+  val2: number;
+  val4: string;
+  val5: string;
+  val6: string;
+  fecTesofe?: Date | string;
+}
+
+export interface IPupAssociateGood {
+  movementNo: number;
+  requestId: number;
+  blkDeposit: number;
+  cbdDeposit: number;
+  cbcveCurrency: string;
+}
+
+export interface IRequesNum {
+  applicationId?: number;
+  deposit: number;
+  relayTesofDate: Date | string;
+  currencyKey: string;
+}
+
+export interface IRequesNumMov {
+  applicationId: number;
+  motionNumber: number;
+  amountAssign: number;
 }
