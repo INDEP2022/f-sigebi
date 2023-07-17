@@ -372,6 +372,12 @@ export class MassiveNumeraryChangeModalComponent
           this.alert('error', 'Error', 'Ocurrió un Error al Procesar');
         },
       });
+    } else {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Con estos Datos no se Puede Generar Numerarios.'
+      );
     }
   }
 
