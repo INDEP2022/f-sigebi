@@ -1033,15 +1033,20 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         return;
       }
 
-      // if (this.actasDefault.comptrollerWitness == null) {
-      //   this.alert('warning', 'Indique el Testigo de la Contraloría', '');
-      //   return;
-      // }
+      if (this.dataRecepcionGood.count() == 0) {
+        this.alertInfo(
+          'warning',
+          'El acta no tiene ningún bien asignado, no se puede cerrar.',
+          ''
+        );
+        return;
+      }
 
-      // if (this.actasDefault == null) {
-      //   this.alert('warning', 'No existe acta para cerrar', '');
-      //   return;
-      // }
+      if (this.actasDefault.comptrollerWitness == null) {
+        this.alert('warning', 'Indique el Testigo de la Contraloría', '');
+        return;
+      }
+
       const toolbar_user = this.authService.decodeToken().preferred_username;
       const cadena = this.cveActa ? this.cveActa.indexOf('?') : 0;
       console.log('cadena', cadena);
@@ -1050,17 +1055,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         null;
       } else {
         if (this.delete == true) {
-          this.alertQuestion('warning', '¿Desea Cerrar el Acta?', '').then(
+          this.alertQuestion('question', '¿Desea Cerrar el Acta?', '').then(
             async question => {
               if (question.isConfirmed) {
-                if (this.dataRecepcion.length == 0) {
-                  this.alertInfo(
-                    'warning',
-                    'El acta no tiene ningún bien asignado, no se puede cerrar.',
-                    ''
-                  );
-                  return;
-                }
                 // await this.createDET();
                 this.actasDefault.statusProceedings = 'CERRADA';
                 delete this.actasDefault.numDelegation1Description;
@@ -1096,7 +1093,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
                       this.alertInfo(
                         'success',
-                        'Se cerró el acta correctamente',
+                        'Se Cerró el Acta Correctamente',
                         ''
                       );
                       // this.alert('success', 'Acta cerrada', '');
@@ -1711,6 +1708,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             });
           },
           error: error => {
+            this.dataRecepcion = [];
             this.dataRecepcionGood.load([]);
             this.loading2 = false;
             this.ocultarPaginado = false;
@@ -2043,6 +2041,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     let modalRef = this.modalService.show(CreateActaComponent, modalConfig);
     modalRef.content.onSave.subscribe(async (next: any) => {
       console.log(next);
+      this.totalItems2 = 0;
       this.acordionDetail = false;
       this.actasDefault = next;
       // this.fCreate = this.datePipe.transform(next.dateElaborationReceipt,'dd/MM/yyyy');
@@ -2102,6 +2101,15 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         console.log('NO');
       },
     });
+  }
+
+  cleanActa() {
+    this.actasDefault = null;
+    this.actaRecepttionForm.get('cveActa').setValue('');
+    this.actaRecepttionForm.get('direccion').setValue('');
+    this.dataRecepcionGood.load([]);
+    this.dataRecepcionGood.refresh();
+    this.totalItems2 = 0;
   }
 }
 
