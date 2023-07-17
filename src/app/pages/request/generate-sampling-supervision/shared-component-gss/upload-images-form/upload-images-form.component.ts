@@ -100,6 +100,7 @@ export class UploadImagesFormComponent extends BasePage implements OnInit {
       confirmButtonColor: '#9D2449',
       confirmButtonText: 'Aceptar',
       footer: '',
+      allowOutsideClick: false,
     });
   }
 }

@@ -9,9 +9,7 @@
         <ng2-smart-table
           [settings]="settings"
           [source]="tableLogs"
-          (userRowSelect)="onSelectTable($event.data)"
-          [ngClass]="{ 'selected-row': isSelectedRow(tableLogs[0]) }">
-          <!-- (ngAfterViewInit)="selectFirstRow()" -->
+          (userRowSelect)="onSelectTable($event.data)">
         </ng2-smart-table>
         <app-pagination
           [filterParams]="params"
@@ -20,21 +18,37 @@
       <div class="col-md-4">
         <system-log-form [fields]="filterFields" [form]="filterForm">
           <confirm-button
-            [loading]="dynamicLoading"
+            *ngIf="rowSelected"
             (confirm)="getTableData()"
-            text="Generar"
+            text="Generar Filtrado"
             class="pb-5"
-            icon="bi bi-search float-icon"
-            loadingText="Cargando">
+            icon="bx bx-search float-icon">
           </confirm-button>
         </system-log-form>
+
+        <div *ngIf="!rowSelected" class="alert alert-warning mt-3">
+          Por favor, seleccione un elemento para generar el filtrado.
+        </div>
       </div>
     </div>
-    <system-log-registers-table
-      [class.table-loading]="dynamicLoading"
-      [columns]="dynamicColumns"
-      [params]="dynamicParams"
-      [totalItems]="totalDynamic"
-      [registers]="dynamicRegisters"></system-log-registers-table>
+    <ng-container *ngIf="rowSelected">
+      <system-log-registers-table
+        [class.table-loading]="dynamicLoading"
+        [columns]="dynamicColumns"
+        [params]="dynamicParams"
+        [totalItems]="totalDynamic"
+        [registers]="dynamicRegisters"></system-log-registers-table>
+    </ng-container>
   </div>
 </app-card>
+
+<!-- [loading]="dynamicLoading"
+  loadingText="Cargando" -->
+
+<!-- <system-log-registers-table
+        [class.table-loading]="dynamicLoading"
+        [columns]="dynamicColumns"
+        [params]="dynamicParams"
+        [totalItems]="totalDynamic"
+        [registers]="dynamicRegisters"
+        ></system-log-registers-table> -->

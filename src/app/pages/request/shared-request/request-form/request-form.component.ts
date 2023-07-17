@@ -408,6 +408,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#B38E5D',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(async result => {
       if (result.isConfirmed) {
         this.loadingTurn = true;
@@ -430,6 +431,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
               confirmButtonColor: '#9D2449',
               cancelButtonColor: '#B38E5D',
               confirmButtonText: 'Aceptar',
+              allowOutsideClick: false,
             }).then(async result => {});
           }
         }
@@ -725,6 +727,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         this.requestForm.reset();

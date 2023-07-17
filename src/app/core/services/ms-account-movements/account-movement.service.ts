@@ -77,6 +77,13 @@ export class AccountMovementService extends HttpService {
     return this.post('account-movements', movement);
   }
 
+  createB(movement: any) {
+    return this.post('dev-detail-transfer', movement);
+  }
+
+  createA(movement: any) {
+    return this.post('dev-numerary-transfer', movement);
+  }
   createAccount(movement: any) {
     return this.post('account-movements/lovDeposits', movement);
   }
@@ -156,6 +163,10 @@ export class AccountMovementService extends HttpService {
       `${AccountmvmntEndpoint.getNumberReport}?filter.numberReportDev=$eq:${reporte}`
     );
   }
+
+  // create(data: IDetailTransfer ) {
+  //   return this.post<any>(AccountmvmntEndpoint)
+  // }
 
   getbyDelegationCurrency(delegacion: string | number, currency: string) {
     return this.get<IListResponse<IAccountBank>>(
