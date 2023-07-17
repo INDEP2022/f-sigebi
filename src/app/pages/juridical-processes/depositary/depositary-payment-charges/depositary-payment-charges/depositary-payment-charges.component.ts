@@ -500,9 +500,8 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
       };
       const result: any = await this.saveRefPayDepositaryData(body);
 
-      const haveReference: any = await this.getAppointmentByGoodId(
-        item.NO_BIEN
-      );
+      let haveReference: any = await this.getAppointmentByGoodId(item.NO_BIEN);
+
       console.log(haveReference);
       if (haveReference != null) {
         /*const body: any = {
@@ -559,7 +558,7 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
       params['sortBy'] = 'appointmentNum:DESC';
       this.nomDepositoryService.getAppointments(params).subscribe({
         next: resp => {
-          if (resp.data[0].reference != null) {
+          if (resp.data[0].reference != null && resp.data[0].reference != '') {
             resolve(null);
           } else {
             resolve(resp.data[0]);
