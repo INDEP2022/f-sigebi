@@ -167,6 +167,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   descLabel: string;
   descWarehouse: string;
 
+  newDataFilled: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -588,6 +590,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       console.log(res.numberClassifyGood);
       console.log(res);
       if (res != null) {
+        this.newDataFilled = false;
         this.contador = 0;
         //Seteo de la primera parte
         this.cvePackage.setValue(res.cvePackage);
@@ -1769,26 +1772,31 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   //Nuevo
   newPackage() {
     console.log(this.form.get('packageType').value);
+
     if (!this.generalPermissions.Proyecto) {
       this.alert(
         'warning',
         'No cuenta con privilegios',
         'No cuenta con privilegios para guardar un nuevo paquete'
       );
+      return;
+    } else if (
+      this.delegation.value == null ||
+      this.goodClassification.value == null ||
+      this.targetTag.value == null ||
+      this.goodStatus.value == null ||
+      this.transferent.value == null
+    ) {
+      this.delegation.markAsTouched();
+      this.goodClassification.markAsTouched();
+      this.targetTag.markAsTouched();
+      this.goodStatus.markAsTouched();
+      this.transferent.markAsTouched();
     } else if (this.form.get('packageType').value == null) {
       this.alert('warning', 'Debe especificar el tipo de paquete', '');
-    } else if (this.delegation.value == null) {
-      this.alert('warning', 'Debe ingresar la coordinación que administra', '');
-    } else if (this.goodClassification.value == null) {
-      this.alert('warning', 'Debe ingresar el Clasificador', '');
-    } else if (this.targetTag.value == null) {
-      this.alert('warning', 'Debe ingresar la Etiqueta de destino', '');
-    } else if (this.goodStatus.value == null) {
-      this.alert('warning', 'Debe ingresar el Estatus', '');
-    } else if (this.transferent.value == null) {
-      this.alert('warning', 'Debe ingresar la Transferente', '');
     } else if (this.form.get('packageType').value != 3) {
       if (this.warehouse.value == null) {
+        this.warehouse.markAsTouched()
         this.alert('warning', 'Debe ingresar el Almacén', '');
       } else {
         this.newCvePackage();
@@ -2205,6 +2213,30 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.paragraph3.setValue(p3);
 
     //Actualizar paq_dest_enc
+    const modelUpdate: Partial<IPackage> = {
+      paragraph1: this.paragraph1.value,
+      paragraph2: this.paragraph2.value,
+      paragraph3: this.paragraph3.value,
+    };
+
+    this.packageGoodService
+      .updatePaqDestinationEnc(this.noPackage.value.numberPackage, modelUpdate)
+      .subscribe(
+        res => {
+          console.log(res);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+  }
+
+  addNewPack() {
+    this.clear();
+    this.newDataFilled = true;
+  }
+
+  updatePackage(){
     const modelUpdate: Partial<IPackage> = {
       paragraph1: this.paragraph1.value,
       paragraph2: this.paragraph2.value,

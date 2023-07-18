@@ -62,4 +62,8 @@ export class ComerEventosService extends HttpService {
   getComerEventById(id: string | number, params?: ListParams) {
     return this.get(`${EventEndpoints.ComerE}/${id}`, params);
   }
+
+  validUser(body: { event: number | string; user: string; address: string }) {
+    return this.post(EventEndpoints.ComerE + '/valid-user', body);
+  }
 }
