@@ -41,4 +41,31 @@ export class PolicyService extends HttpService {
       `${PolicyEndpoint.getPoliciesXSubtype}?filter.policyKeyId=$eq:${PolicyKey}`
     );
   }
+
+  getByKeyId(Key: string) {
+    return this.get<IListResponse>(
+      `${PolicyEndpoint.getPolicesXRight}?filter.policyKeyId=$eq:${Key}`
+    );
+  }
+  putPolicyGood(params: any) {
+    return this.put(PolicyEndpoint.getPolicesXRight, params);
+  }
+
+  postPolicyGood(params: any) {
+    return this.post(PolicyEndpoint.getPolicesXRight, params);
+  }
+
+  deletePolicyGood(params: any) {
+    return this.delete(PolicyEndpoint.getPolicesXRight, params);
+  }
+
+  postPolicy(params: any) {
+    return this.delete(PolicyEndpoint.getPoliciesXSubtype, params);
+  }
+
+  getSinister(PolicyKey: string) {
+    return this.get<IListResponse>(
+      `${PolicyEndpoint.getPolicesXsinister}?filter.policyKeyId=$eq:${PolicyKey}`
+    );
+  }
 }

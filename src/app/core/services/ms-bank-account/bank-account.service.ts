@@ -108,5 +108,9 @@ export class BankAccountService
     return this.post(`account-movements/update-account-movements-fec`, body)
   }
 
+  pupInterestsDetail(body: any) {
+    return this.post(`/aplication/pup-interests-detail`, body);
+  }
+
   //***** */
 }

@@ -372,7 +372,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       next: response => {
         this.isLoadingGood = false;
         this.formGood.patchValue(response.data[0]);
-
+        console.log(response.data[0]);
         this.validateGood(this.formGood.value.id);
       },
       error: () => {
@@ -909,9 +909,9 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
             // resp.message.length > 0
             //   ? resp.message.join('.\n')
             //   :
-            'Proceso Terminado con Éxito';
+            'Proceso Terminado correctamente';
 
-          this.alert('success', 'Éxito', message);
+          this.alert('success', 'message', '');
           this.clear();
           this.loader.load = false;
         }),

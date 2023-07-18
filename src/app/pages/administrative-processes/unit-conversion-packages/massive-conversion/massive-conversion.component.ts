@@ -167,6 +167,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   descLabel: string;
   descWarehouse: string;
 
+  newDataFilled: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -222,28 +224,26 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.getWarehouseDescription();
     this.getTagDescription();
     //Busquéda de datos del bien Padre
-    this.searchFatherGood()
+    this.searchFatherGood();
   }
 
-  searchFatherGood(){
-    this.numberGoodFather.valueChanges.subscribe(
-      res => {
-        console.log(res)
-        this.goodService.getByIdv3(res).subscribe(
-          res => {
-            console.log(res)
-            this.form2.get('record').setValue(res.fileNumber)
-            this.form2.get('description').setValue(res.description)
-            this.form2.get('amount').setValue(res.quantity)
-            this.form2.get('unitGood').setValue(res.unit)
-            this.form2.get('statusGood').setValue(res.status)
-          },
-          err => {
-            console.log(err)
-          }
-        )
-      }
-    )
+  searchFatherGood() {
+    this.numberGoodFather.valueChanges.subscribe(res => {
+      console.log(res);
+      this.goodService.getByIdv3(res).subscribe(
+        res => {
+          console.log(res);
+          this.form2.get('record').setValue(res.fileNumber);
+          this.form2.get('description').setValue(res.description);
+          this.form2.get('amount').setValue(res.quantity);
+          this.form2.get('unitGood').setValue(res.unit);
+          this.form2.get('statusGood').setValue(res.status);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    });
   }
 
   initByLocalStorage() {
@@ -565,7 +565,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   getGoodClassDescriptions() {
     this.goodClassification.valueChanges.subscribe(res => {
-      console.log(res)
+      console.log(res);
       if (this.goodClassification.value != null) {
         const paramsF = new FilterParams();
         paramsF.addFilter('numClasifGoods', this.goodClassification.value);
@@ -590,6 +590,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       console.log(res.numberClassifyGood);
       console.log(res);
       if (res != null) {
+        this.newDataFilled = false;
         this.contador = 0;
         //Seteo de la primera parte
         this.cvePackage.setValue(res.cvePackage);
@@ -944,7 +945,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       return;
     }
 
-    if(['V','A'].includes(status)){
+    if (['V', 'A'].includes(status)) {
       this.alertQuestion(
         'question',
         'Confirmación',
@@ -954,10 +955,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           this.updatePackageFirstBlock(status, titleInit);
         }
       });
-    }else{
+    } else {
       this.updatePackageFirstBlock(status, titleInit);
     }
-    
   }
 
   showConfirmAlert() {
@@ -1772,26 +1772,31 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   //Nuevo
   newPackage() {
     console.log(this.form.get('packageType').value);
+
     if (!this.generalPermissions.Proyecto) {
       this.alert(
         'warning',
         'No cuenta con privilegios',
         'No cuenta con privilegios para guardar un nuevo paquete'
       );
+      return;
+    } else if (
+      this.delegation.value == null ||
+      this.goodClassification.value == null ||
+      this.targetTag.value == null ||
+      this.goodStatus.value == null ||
+      this.transferent.value == null
+    ) {
+      this.delegation.markAsTouched();
+      this.goodClassification.markAsTouched();
+      this.targetTag.markAsTouched();
+      this.goodStatus.markAsTouched();
+      this.transferent.markAsTouched();
     } else if (this.form.get('packageType').value == null) {
       this.alert('warning', 'Debe especificar el tipo de paquete', '');
-    } else if (this.delegation.value == null) {
-      this.alert('warning', 'Debe ingresar la coordinación que administra', '');
-    } else if (this.goodClassification.value == null) {
-      this.alert('warning', 'Debe ingresar el Clasificador', '');
-    } else if (this.targetTag.value == null) {
-      this.alert('warning', 'Debe ingresar la Etiqueta de destino', '');
-    } else if (this.goodStatus.value == null) {
-      this.alert('warning', 'Debe ingresar el Estatus', '');
-    } else if (this.transferent.value == null) {
-      this.alert('warning', 'Debe ingresar la Transferente', '');
     } else if (this.form.get('packageType').value != 3) {
       if (this.warehouse.value == null) {
+        this.warehouse.markAsTouched()
         this.alert('warning', 'Debe ingresar el Almacén', '');
       } else {
         this.newCvePackage();
@@ -1927,7 +1932,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         if (res && res.data && res.data.length > 0) {
           this.noPackage.setValue(res.data[0]);
           this.loading = false;
-          this.validateButtons(this.noPackage.value.statusPaq)
+          this.validateButtons(this.noPackage.value.statusPaq);
         } else {
           // this.dataPackageEnc = null;
         }
@@ -2085,8 +2090,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
             .firstIfCancelMassiveConversion(model)
             .subscribe(
               res => {
-                this.researchNoPackage(this.noPackage.value.numberPackage)
-                this.alert('success','El Paquete fue cancelado','')
+                this.researchNoPackage(this.noPackage.value.numberPackage);
+                this.alert('success', 'El Paquete fue cancelado', '');
               },
               err => {
                 console.log(err);
@@ -2103,31 +2108,34 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         if (q.isConfirmed) {
           let token = this.authService.decodeToken();
           const noPack = this.noPackage.value;
-          console.log(this.noPackage.value)
+          console.log(this.noPackage.value);
 
           const model: ISecondIfMC = {
             noPackage: this.noPackage.value.numberPackage,
             noGoodFather: this.noPackage.value.numberGoodFather,
             encStatus: this.noPackage.value.status,
             vcScreen: 'FMTOPAQUETE',
-            user: localStorage.getItem('username') == 'sigebiadmon'
-            ? localStorage.getItem('username')
-            : localStorage.getItem('username').toLocaleUpperCase(),
-            toolbarUser: localStorage.getItem('username') == 'sigebiadmon'
-            ? localStorage.getItem('username')
-            : localStorage.getItem('username').toLocaleUpperCase()
+            user:
+              localStorage.getItem('username') == 'sigebiadmon'
+                ? localStorage.getItem('username')
+                : localStorage.getItem('username').toLocaleUpperCase(),
+            toolbarUser:
+              localStorage.getItem('username') == 'sigebiadmon'
+                ? localStorage.getItem('username')
+                : localStorage.getItem('username').toLocaleUpperCase(),
           };
-          console.log(model)
-          this.goodProcessService.secondIfCancelMassiveConversion(model).subscribe(
-            res => {
-              this.researchNoPackage(this.noPackage.value.numberPackage)
-                this.alert('success','El Paquete fue cancelado','')
-            },
-            err => {
-              console.log(err)
-            }
-          )
-
+          console.log(model);
+          this.goodProcessService
+            .secondIfCancelMassiveConversion(model)
+            .subscribe(
+              res => {
+                this.researchNoPackage(this.noPackage.value.numberPackage);
+                this.alert('success', 'El Paquete fue cancelado', '');
+              },
+              err => {
+                console.log(err);
+              }
+            );
         }
       });
     }
@@ -2205,6 +2213,30 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.paragraph3.setValue(p3);
 
     //Actualizar paq_dest_enc
+    const modelUpdate: Partial<IPackage> = {
+      paragraph1: this.paragraph1.value,
+      paragraph2: this.paragraph2.value,
+      paragraph3: this.paragraph3.value,
+    };
+
+    this.packageGoodService
+      .updatePaqDestinationEnc(this.noPackage.value.numberPackage, modelUpdate)
+      .subscribe(
+        res => {
+          console.log(res);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+  }
+
+  addNewPack() {
+    this.clear();
+    this.newDataFilled = true;
+  }
+
+  updatePackage(){
     const modelUpdate: Partial<IPackage> = {
       paragraph1: this.paragraph1.value,
       paragraph2: this.paragraph2.value,

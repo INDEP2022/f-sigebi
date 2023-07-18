@@ -20,7 +20,7 @@ export const EXPENSE_COLUMNS = {
 
 export const NUMERAIRE_COLUMNS = {
   no_bien: {
-    title: 'N° Bien',
+    title: 'N. Bien',
     type: 'number',
     sort: false,
   },
