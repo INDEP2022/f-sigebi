@@ -1509,13 +1509,16 @@ export class DepositAccountStatementComponent
     };
     console.log(body);
     // return null
-    return await firstValueFrom(
+    const results = await firstValueFrom(
       this.detailInterestReturnService.pupDetailDevolution(body).pipe(
         takeUntil(this.$unSubscribe),
         catchError(x => of(null as IPupDetalleDevolutionResult))
       )
     );
-
+    if (results) {
+      this.userChecks.devolutionnumber = results.no_devolucion;
+    }
+    return results;
     // let today: Date = this.form.controls['cutoffDate'].value;
     // let monthsReview: number;
     // let annualRate: number;

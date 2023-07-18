@@ -19,7 +19,7 @@ export interface IAccountDetailInd {
   associatedexpenses: string;
   returnamount: string;
   accountnumberpayreturn?: any;
-  devolutionnumber: string;
+  devolutionnumber: string | number;
   keyratecalculationinterest?: any;
   description: string;
   status: string;
