@@ -87,6 +87,7 @@ export class EventGoodsLotsListActionsComponent
     const selfState = await this.eventPreparationService.getState();
     this.eventPreparationService.updateState({
       ...selfState,
+      eventForm: this.eventForm,
       lastLot: Number(this.lotSelected.id) ?? -1,
       lastPublicLot: this.lotSelected.publicLot ?? 1,
     });
