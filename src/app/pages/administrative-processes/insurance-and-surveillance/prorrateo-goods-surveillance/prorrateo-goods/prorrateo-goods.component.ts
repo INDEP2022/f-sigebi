@@ -4,7 +4,6 @@ import { differenceInDays, parseISO } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
@@ -13,7 +12,7 @@ import { IPolicyXBien } from 'src/app/core/models/ms-policy/policy.model';
 import { PolicyService } from 'src/app/core/services/ms-policy/policy.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { convertFormatDate } from '../../../../../common/helpers/helpers';
-import { ProrrateoGoodSurveillanceModalComponent } from '../prorrateo-goods-surveillance/prorrateo-good-surveillance-modal/prorrateo-good-surveillance-modal.component';
+//import { ProrrateoGoodSurveillanceModalComponent } from '../prorrateo-goods-surveillance/prorrateo-good-surveillance-modal/prorrateo-good-surveillance-modal.component';
 import { PRORRATEGO_GOODS_COLUMNS } from './prorrateo-goods-columns';
 
 @Component({
@@ -207,19 +206,19 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
     keyA: string,
     dateIni: Date
   ) {
-    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
-    modalConfig.initialState = {
-      newOrEdit,
-      id,
-      keyA,
-      dateIni,
-      Elemento: { Elemento: this.elemento },
-      callback: (next: boolean) => {},
-    };
-    this.modalService.show(
-      ProrrateoGoodSurveillanceModalComponent,
-      modalConfig
-    );
+    // const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    // modalConfig.initialState = {
+    //   newOrEdit,
+    //   id,
+    //   keyA,
+    //   dateIni,
+    //   Elemento: { Elemento: this.elemento },
+    //   callback: (next: boolean) => {},
+    // };
+    // this.modalService.show(
+    //   ProrrateoGoodSurveillanceModalComponent,
+    //   modalConfig
+    // );
   }
 
   openModalGood2(
@@ -230,21 +229,21 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
     id: number
   ) {
     console.log('FECHA: ', dateIni);
-    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
-    modalConfig.initialState = {
-      newOrEdit,
-      data,
-      keyA,
-      dateIni,
-      id,
-      callback: (next: boolean) => {
-        if (next) this.getByPolicyKey(this.elemento);
-      },
-    };
-    this.modalService.show(
-      ProrrateoGoodSurveillanceModalComponent,
-      modalConfig
-    );
+    // const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    // modalConfig.initialState = {
+    //   newOrEdit,
+    //   data,
+    //   keyA,
+    //   dateIni,
+    //   id,
+    //   callback: (next: boolean) => {
+    //     if (next) this.getByPolicyKey(this.elemento);
+    //   },
+    // };
+    // this.modalService.show(
+    //   ProrrateoGoodSurveillanceModalComponent,
+    //   modalConfig
+    // );
   }
 
   deletePolicyGood(params: any) {
