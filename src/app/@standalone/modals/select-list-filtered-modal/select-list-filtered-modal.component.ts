@@ -25,6 +25,7 @@ import {
 import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { firstFormatDateToSecondFormatDate } from 'src/app/shared/utils/date';
 import { IUserRowSelectEvent } from '../../../core/interfaces/ng2-smart-table.interface';
 @Component({
   selector: 'app-select-list-filtered-modal',
@@ -87,6 +88,7 @@ export class SelectListFilteredModalComponent
   columnFilters: any = [];
   // equalFilters: string[] = ['id'];
   ilikeFilters: string[] = ['description'];
+  dateFilters: string[] = [];
 
   @Output() onSelect = new EventEmitter<any>();
   @ViewChild('table') table: Ng2SmartTableComponent;
@@ -124,7 +126,13 @@ export class SelectListFilteredModalComponent
             //   search = search + ''.toUpperCase();
             // }
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              let newSearch = filter.search;
+              if (this.dateFilters.includes(filter.field)) {
+                if ((newSearch + '').includes('/')) {
+                  newSearch = firstFormatDateToSecondFormatDate(newSearch);
+                }
+              }
+              this.columnFilters[field] = `${searchFilter}:${newSearch}`;
               haveFilter = true;
             } else {
               delete this.columnFilters[field];
