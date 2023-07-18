@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
 import { TransferenteSharedComponent } from 'src/app/@standalone/shared-forms/transferents-shared/transferents-shared.component';
 import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shared/user-shared.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { BasePage } from 'src/app/core/shared';
@@ -27,6 +28,7 @@ export class CaptureFilterDictComponent extends BasePage implements OnInit {
   @Output() consultEmmit = new EventEmitter<FormGroup>();
   @Output() reportEmmit = new EventEmitter<FormGroup>();
   @Output() exportEmmit = new EventEmitter<FormGroup>();
+  @Output() cleanEmmit = new EventEmitter<FormGroup>();
   form: FormGroup;
   flyerTypes = [
     { label: 'A', value: 'A' },
@@ -86,19 +88,20 @@ export class CaptureFilterDictComponent extends BasePage implements OnInit {
   //Desahogo
   private prepareForm() {
     this.form = this.fb.group({
-      fechaInicio: [null, [Validators.required]],
-      fechaFin: [null, [Validators.required]],
-      fechaTurno: [null, [Validators.required]],
-      fechaDesahogo: [null, [Validators.required]],
-      cordinador: [null, [Validators.required]],
-      usuario: [null, [Validators.required]],
-      transferente: [null, [Validators.required]],
-      emisora: [null, [Validators.required]],
-      autoridad: [null, [Validators.required]],
-      tipoVolante: [null, [Validators.required]],
-      tipoEvento: [null, [Validators.required]],
+      fechaInicio: [null],
+      fechaFin: [null],
+      fechaTurno: [null],
+      fechaDesahogo: [null],
+      cordinador: [null],
+      cordinadorName: [null],
+      usuario: [null],
+      transferente: [null],
+      emisora: [null],
+      autoridad: [null],
+      tipoVolante: [null],
+      tipoEvento: [null],
       numeroVolante: [null],
-      fechaVolante: [null, [Validators.required]],
+      fechaVolante: [null],
     });
   }
 
@@ -155,5 +158,15 @@ export class CaptureFilterDictComponent extends BasePage implements OnInit {
 
   export() {
     this.exportEmmit.emit(this.form);
+  }
+
+  changeDelegation(event: IDelegation) {
+    console.log(event);
+    this.form.get('cordinadorName').setValue(event.description);
+  }
+
+  clean() {
+    this.form.reset();
+    this.cleanEmmit.emit(this.form);
   }
 }
