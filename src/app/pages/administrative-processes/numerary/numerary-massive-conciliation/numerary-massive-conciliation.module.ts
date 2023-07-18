@@ -7,9 +7,10 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { NumeraryMassiveConciliationRoutingModule } from './numerary-massive-conciliation-routing.module';
 import { NumeraryMassiveConciliationComponent } from './numerary-massive-conciliation/numerary-massive-conciliation.component';
+import { NumerarySolicitudeComponent } from './numerary-solicitude/numerary-solicitude.component'
 
 @NgModule({
-  declarations: [NumeraryMassiveConciliationComponent],
+  declarations: [NumeraryMassiveConciliationComponent, NumerarySolicitudeComponent],
   imports: [
     CommonModule,
     NumeraryMassiveConciliationRoutingModule,

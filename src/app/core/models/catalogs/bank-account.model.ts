@@ -46,10 +46,10 @@ export interface IBankCentral {
 }
 
 export interface IProReconcilesGood {
-  bankKey?: string;
-  accountKey?: string;
-  deposit?: number;
-  currencyKey?: string;
-  startDate?: Date | string;
-  endDate?: Date | string;
+  bankKey?:string,
+  accountKey?:string,
+  deposit?: number,
+  currencyKey?:string,
+  startDate?: Date | string,
+  endDate?: Date | string
 }

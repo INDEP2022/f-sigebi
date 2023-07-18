@@ -59,7 +59,7 @@ export class TargetTagsSharedComponent extends BasePage implements OnInit {
           error = err.message;
         }
         this.onLoadToast('error', 'Error', error); */
-        this.targetTags = new DefaultSelect();
+        this.targetTags = new DefaultSelect()
       },
       () => {}
     );
