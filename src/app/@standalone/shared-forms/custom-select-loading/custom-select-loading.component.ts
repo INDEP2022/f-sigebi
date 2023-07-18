@@ -69,7 +69,7 @@ export class CustomSelectWidthLoading
   @Input() paramLimitName: string = 'limit';
   @Input() limit: number = 10;
   @Input() initOption: any = null;
-  @Input() delay: number = 300;
+  @Input() delay: number = 500;
   @Input() moreParams: string[] = [];
   @Input() labelTemplate: TemplateRef<any>;
   @Input() optionTemplate: TemplateRef<any>;
@@ -218,20 +218,20 @@ export class CustomSelectWidthLoading
 
   fetchMore(text: any) {
     // console.log(text);
-    // if (!this.isLoading && this.items.length < this.totalItems) {
-    this.page++;
-    this.isLoading = true;
-    this.getItemsObservable(text).subscribe({
-      next: resp => {
-        this.isLoading = false;
-        const items = this.getDataForPath(resp);
-        this.items = [...this.items, ...items];
-      },
-      error: () => {
-        this.isLoading = false;
-      },
-    });
-    // }
+    if (!this.isLoading && this.items.length < this.totalItems) {
+      this.page++;
+      this.isLoading = true;
+      this.getItemsObservable(text).subscribe({
+        next: resp => {
+          this.isLoading = false;
+          const items = this.getDataForPath(resp);
+          this.items = [...this.items, ...items];
+        },
+        error: () => {
+          this.isLoading = false;
+        },
+      });
+    }
   }
 
   isRequired() {

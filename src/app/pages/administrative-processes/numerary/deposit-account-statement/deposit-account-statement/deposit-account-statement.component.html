@@ -405,7 +405,8 @@
                 class="form-control"
                 formControlName="toReturn"
                 min="1"
-                [readonly]="readonly" />
+                [readonly]="!userChecks"
+                (input)="updateCalculateData()" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -417,7 +418,8 @@
                 class="form-control"
                 formControlName="interestCredited"
                 min="1"
-                [readonly]="readonly" />
+                readonly
+                (input)="updateCalculateData()" />
             </form-field>
           </div>
         </div>
@@ -429,7 +431,8 @@
                 class="form-control"
                 formControlName="subTotal"
                 min="1"
-                [readonly]="readonly" />
+                readonly
+                (input)="updateCalculateData()" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -441,7 +444,8 @@
                 class="form-control"
                 formControlName="costsAdmon"
                 min="1"
-                [readonly]="readonly" />
+                [readonly]="!userChecks"
+                (input)="updateCalculateData()" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -452,8 +456,8 @@
                 type="number"
                 class="form-control"
                 formControlName="associatedCosts"
-                min="1"
-                [readonly]="readonly" />
+                [readonly]="!userChecks"
+                min="1" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -465,7 +469,7 @@
                 class="form-control"
                 formControlName="checkAmount"
                 min="1"
-                [readonly]="readonly" />
+                readonly />
             </form-field>
           </div>
         </div>
