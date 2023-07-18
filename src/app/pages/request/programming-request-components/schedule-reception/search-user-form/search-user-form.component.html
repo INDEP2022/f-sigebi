@@ -5,7 +5,7 @@
   <div body>
     <div class="row" style="margin-top: -40px">
       <div class="form-material col-md-5">
-        <search-bar [filterParams]="params"></search-bar>
+        <search-bar [params]="params"></search-bar>
       </div>
     </div>
     <div [class]="loading ? 'table-loading' : ''">
@@ -18,7 +18,7 @@
     </div>
 
     <app-pagination
-      [filterParams]="params"
+      [params]="params"
       [totalItems]="totalItems"></app-pagination>
   </div>
   <div footer>

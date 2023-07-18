@@ -13,7 +13,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
-import { IAppointmentDepositary } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
+import { IDepositaryAppointments } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import {
   IPaymentsGensDepositary,
   IRefPayDepositary,
@@ -22,6 +22,7 @@ import {
   ITotalIvaPaymentsGens,
 } from 'src/app/core/models/ms-depositarypayment/ms-depositarypayment.interface';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { PersonService } from 'src/app/core/services/catalogs/person.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   POSITVE_NUMBERS_PATTERN,
@@ -85,7 +86,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
   loadingTableReceivedPays: boolean = false;
   // Data
   sendSirsae: ISendSirSaeBody;
-  depositaryAppointment: IAppointmentDepositary;
+  depositaryAppointment: IDepositaryAppointments;
   good: IGood;
   payIdSelected: IRefPayDepositary;
   // Loading
@@ -110,7 +111,8 @@ export class QueryRelatedPaymentsDepositoriesComponent
     private datePipe: DatePipe,
     private excelService: ExcelService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private personService: PersonService
   ) {
     super();
   }
@@ -355,21 +357,37 @@ export class QueryRelatedPaymentsDepositoriesComponent
     if (this.form.get('noBien').valid) {
       this.loadingAppointment = true;
       this.noBienReadOnly = this.form.get('noBien').value;
-      const params = new FilterParams();
-      params.removeAllFilters();
-      params.addFilter('goodNumber', this.noBienReadOnly);
-      params.addFilter('revocation', 'N');
+      // const params = new FilterParams();
+      // params.removeAllFilters();
+      // params.addFilter('goodNumber', this.noBienReadOnly);
+      // params.addFilter('revocation', 'N');
+      let params = new ListParams();
+      params['filter.goodNum'] = this.noBienReadOnly;
+      params['filter.revocation'] = 'N';
+      console.log(params);
       await this.svQueryRelatedPaymentsService
-        .getGoodAppointmentDepositaryByNoGood(params.getParams())
+        .getGoodAppointmentDepositaryByNoGood(params)
         .subscribe({
           next: res => {
             this.loadingAppointment = false;
             this.depositaryAppointment = res.data[0];
             this.setDataDepositaryAppointment(); // Set data depositary
-            if (this.depositaryAppointment.personNumber) {
-              if (this.depositaryAppointment.personNumber.id) {
-                this.setDataDepositary(); // Set data Person
-              }
+            if (this.depositaryAppointment.personNum) {
+              const params = new FilterParams();
+              params.removeAllFilters();
+              params.addFilter('id', this.depositaryAppointment.personNum);
+              this.personService.getAllFilters().subscribe({
+                next: res => {
+                  console.log(res);
+                  this.depositaryAppointment.personNumber = res.data[0];
+                  if (this.depositaryAppointment.personNumber.id) {
+                    this.setDataDepositary(); // Set data Person
+                  }
+                },
+                error: err => {
+                  console.log(err);
+                },
+              });
             }
             this.startTablePaymentBank();
             this.startTablePaymentReceive();
@@ -446,19 +464,19 @@ export class QueryRelatedPaymentsDepositoriesComponent
   setDataDepositaryAppointment() {
     this.form
       .get('nombramiento')
-      .setValue(this.depositaryAppointment.appointmentNumber);
+      .setValue(this.depositaryAppointment.appointmentNum);
     this.form
       .get('contraprestaciones')
       .setValue(
         this.formatTotalAmount(
-          Number(this.depositaryAppointment.importConsideration)
+          Number(this.depositaryAppointment.amountConsideration)
         )
       );
     this.form
       .get('cveContrato')
       .setValue(this.depositaryAppointment.contractKey);
     let fecha = this.datePipe.transform(
-      this.depositaryAppointment.contractStartDate,
+      this.depositaryAppointment.startContractDate,
       'dd/MM/yyyy'
     );
     this.form.get('fecha').setValue(fecha);
@@ -696,7 +714,7 @@ export class QueryRelatedPaymentsDepositoriesComponent
   ) {
     this.sendSirsae = {
       process: 1,
-      appointment: Number(this.depositaryAppointment.appointmentNumber),
+      appointment: Number(this.depositaryAppointment.appointmentDate),
       idorderincome: String(dataComplete[count].entryorderid),
       validSystem: dataComplete[count].validSystem,
       shipmentOi: dataComplete[count].sent_oi,

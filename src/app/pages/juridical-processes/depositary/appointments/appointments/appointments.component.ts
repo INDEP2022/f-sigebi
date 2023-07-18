@@ -130,6 +130,8 @@ export class AppointmentsComponent
     returnFolio: number;
     universalFolio: number;
   };
+  mailSAE: string = '';
+  nombreToMail: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -2617,6 +2619,8 @@ export class AppointmentsComponent
     console.log(event);
     if (event) {
       this.form.get('nombre').setValue(event.name);
+      this.mailSAE = event.email;
+      this.nombreToMail = event.name;
     } else {
       this.form.get('nombre').setValue(null);
     }
@@ -2757,8 +2761,10 @@ export class AppointmentsComponent
         typeDepositary: this.form.value.tipoDepositaria,
         observations: this.form.value.observaciones,
         jobRevocationNum: this.form.value.noOficio,
-        amountConsideration: this.form.value.contraprestacion,
-        amountFee: this.form.value.honorarios,
+        amountConsideration: this.form.value.contraprestacion
+          ? this.form.value.contraprestacion
+          : 0,
+        amountFee: this.form.value.honorarios ? this.form.value.honorarios : 0,
         jobProvisionalNum: null,
         exhibit: this.form.value.anexo,
         jobBoardgovtDate: this.form.value.fechaAcuerdo,
@@ -2784,8 +2790,8 @@ export class AppointmentsComponent
         amountVat: null,
         folioReturn: null,
         personNum: this.depositaryAppointment.personNumber.id,
-        reference: this.form.value.referencia,
-        vat: this.form.value.iva ? Number(this.form.value.iva) : null,
+        reference: null, //this.form.value.referencia,
+        vat: this.form.value.iva ? Number(this.form.value.iva) : 0,
         withHousehold: this.form.value.bienesMenaje,
         goodNum: this.form.value.noBien,
       };
@@ -2843,8 +2849,10 @@ export class AppointmentsComponent
         typeDepositary: this.form.value.tipoDepositaria,
         observations: this.form.value.observaciones,
         jobRevocationNum: this.form.value.noOficio,
-        amountConsideration: this.form.value.contraprestacion,
-        amountFee: this.form.value.honorarios,
+        amountConsideration: this.form.value.contraprestacion
+          ? this.form.value.contraprestacion
+          : 0,
+        amountFee: this.form.value.honorarios ? this.form.value.honorarios : 0,
         exhibit: this.form.value.anexo,
         jobBoardgovtDate: this.form.value.fechaAcuerdo,
         jobBoardgovtNum: this.form.value.noAcuerdo,
@@ -2853,8 +2861,8 @@ export class AppointmentsComponent
           : this.depositaryAppointment.personNumber.personName,
         representativeSera: this.form.value.representanteSAE,
         personNum: this.depositaryAppointment.personNumber.id,
-        reference: this.form.value.referencia,
-        vat: this.form.value.iva ? Number(this.form.value.iva) : null,
+        // reference: this.form.value.referencia,
+        vat: this.form.value.iva ? Number(this.form.value.iva) : 0,
         withHousehold: this.form.value.bienesMenaje,
         goodNum: this.form.value.noBien,
       };
@@ -2983,7 +2991,10 @@ export class AppointmentsComponent
     const config = {
       ...MODAL_CONFIG,
       initialState: {
-        userSelected: this.form.value.representanteSAE,
+        userSelected: {
+          nombre: this.nombreToMail ? this.nombreToMail : null,
+          email: this.mailSAE ? this.mailSAE : null,
+        }, // this.form.value.representanteSAE,
         message:
           'Por este Conducto se le Informa que el Bien: ' +
           this.noBienReadOnly +
