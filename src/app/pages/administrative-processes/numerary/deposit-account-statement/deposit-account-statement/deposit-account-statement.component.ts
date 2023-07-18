@@ -47,6 +47,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   firstFormatDate,
+  firstFormatDateToDate,
   firstFormatDateToSecondFormatDate,
   formatForIsoDate,
   secondFormatDate,
@@ -87,12 +88,12 @@ export class DepositAccountStatementComponent
   bodyDep: any;
   bodyPost: any;
   instrument: string;
-  transferred: string = '';
   ok: boolean = false;
   instrumentAccount: string;
   scheduledFecReturn: Date;
   userChecks: IAccountDetailInd;
   rea: any;
+  disabled = true;
   // accountPayReturn: number;
   updatePupReturnsByDates = false;
   transferAccount: number;
@@ -110,7 +111,6 @@ export class DepositAccountStatementComponent
   anio: number;
   mes: number;
   dataGoodAct = new LocalDataSource();
-  noReturn: number;
   dateEnd: Date;
   balance: number;
   interestaccredited: number;
@@ -265,6 +265,14 @@ export class DepositAccountStatementComponent
       .subscribe({
         next: response => {
           this.updateCutoffDate(response);
+        },
+      });
+    this.form
+      .get('transferDate')
+      .valueChanges.pipe(takeUntil(this.$unSubscribe), debounceTime(500))
+      .subscribe({
+        next: response => {
+          this.updateTransferDate(response);
         },
       });
     //this.getGood(new ListParams());
@@ -529,7 +537,7 @@ export class DepositAccountStatementComponent
       this.validCheck = true;
       this.validDetail = true;
       this.validTras = true;
-      this.transferred = '';
+      // this.userChecks.accounttras = '';
       //this.setAccount = true;
       this.userChecks = event;
       const filterParams = new FilterParams();
@@ -789,7 +797,10 @@ export class DepositAccountStatementComponent
     //   Number(this.form.controls['toReturn'].value) +
     //   (Number(this.form.controls['interestCredited'].value) ?? 0);
     // this.form.controls['subTotal'].setValue(subTotal);
-    this.updatePupReturnsByDates = true;
+    this.preRecord();
+    setTimeout(() => {
+      this.updatePupReturnsByDates = true;
+    }, 500);
   }
 
   formatDate(date: string) {
@@ -902,19 +913,29 @@ export class DepositAccountStatementComponent
   }
 
   preRecord() {
-    const traspasadoCuenta = 'TRASPASADO';
-    const tiCuentaDevolucion = 0;
-    const folioCheque = 0;
-    const fecExpedicionCheque = 0;
-    const beneficiarioCheque = 0;
     if (
-      traspasadoCuenta == 'TRASPASADO' ||
-      (tiCuentaDevolucion != null &&
-        folioCheque != null &&
-        fecExpedicionCheque != null &&
-        beneficiarioCheque != null)
+      (this.userChecks.accounttras &&
+        this.userChecks.accounttras === 'TRASPASADO') ||
+      (this.form.get('bankAccount').value &&
+        this.form.get('check').value &&
+        this.form.get('expeditionDate').value &&
+        this.form.get('collectionDate').value)
     ) {
-      // BLOQUEAR LOS SIGUIENTES INPUTS
+      this.disabled = true;
+    } else {
+      this.disabled = false;
+      this.form.controls['transferDate'].enable({
+        onlySelf: true,
+        emitEvent: false,
+      });
+      this.form.controls['cutoffDate'].enable({
+        onlySelf: true,
+        emitEvent: false,
+      });
+      this.form.controls['beneficiary'].enable({
+        onlySelf: true,
+        emitEvent: false,
+      });
     }
   }
 
@@ -972,18 +993,28 @@ export class DepositAccountStatementComponent
   //     });
   // }
 
-  async updateTransferDate(date: Date) {
+  async updateTransferDate(date: any) {
     if (!this.updatePupReturnsByDates) return;
     if (date) {
-      this.transferDate = date;
+      if (date instanceof Date) {
+        this.transferDate = date;
+      } else {
+        this.transferDate = firstFormatDateToDate(date);
+      }
       console.log(date);
-      // debugger;
+      debugger;
       if (
         this.form.controls['toReturn'].value &&
         this.form.controls['depositDate'].value &&
         this.form.controls['cutoffDate'].value
       ) {
-        if (date < new Date(this.form.controls['depositDate'].value)) {
+        let depositDate = this.form.controls['depositDate'].value;
+        if (depositDate instanceof Date) {
+          // depositDate = depositDate;
+        } else {
+          depositDate = firstFormatDateToDate(depositDate);
+        }
+        if (this.transferDate < depositDate) {
           this.alert(
             'error',
             'La fecha de Inicio no puede ser menor a la fecha del depósito',
@@ -991,7 +1022,14 @@ export class DepositAccountStatementComponent
           );
           return;
         }
-        if (date > new Date(this.form.controls['cutoffDate'].value)) {
+
+        let cutoffDate = this.form.controls['cutoffDate'].value;
+        if (cutoffDate instanceof Date) {
+          // cutoffDate = cutoffDate;
+        } else {
+          cutoffDate = firstFormatDateToDate(cutoffDate);
+        }
+        if (this.transferDate > cutoffDate) {
           this.alert(
             'error',
             'La fecha de inicio NO puede ser mayor a la fecha de corte',
@@ -1014,6 +1052,7 @@ export class DepositAccountStatementComponent
     if (!this.updatePupReturnsByDates) return;
     if (date) {
       console.log(date);
+      debugger;
       this.form.controls['expeditionDate'].setValue(date);
       // this.form
       if (
@@ -1021,7 +1060,20 @@ export class DepositAccountStatementComponent
         this.form.controls['depositDate'].value &&
         this.form.controls['transferDate'].value
       ) {
-        if (date < new Date(this.form.controls['transferDate'].value)) {
+        let transferDate = this.form.controls['transferDate'].value;
+        if (transferDate instanceof Date) {
+          // transferDate = transferDate;
+        } else {
+          transferDate = firstFormatDateToDate(transferDate);
+        }
+        let newDate = date;
+        if (newDate instanceof Date) {
+          // this.transferDate = date;
+        } else {
+          newDate = firstFormatDateToDate(newDate);
+        }
+
+        if (newDate < transferDate) {
           this.alert(
             'error',
             'La fecha de corte no puede ser menor a la fecha de inicio',
@@ -1442,7 +1494,7 @@ export class DepositAccountStatementComponent
   }
 
   private async detailReturn() {
-    // debugger;
+    debugger;
     if (!this.updatePupReturnsByDates) {
       return null;
     }
@@ -1486,9 +1538,10 @@ export class DepositAccountStatementComponent
     //   return null;
     // }
     let tipo_cheque = this.form.controls['checkType'].value;
-    if (!tipo_cheque) {
-      return null;
-    }
+    // if (!tipo_cheque) {
+    //   this.alert('error','Detalle de devolución')
+    //   return null;
+    // }
     let no_movimiento_origen_deposito = this.userChecks.accountnumber;
     if (!no_movimiento_origen_deposito) {
       return null;
@@ -1746,7 +1799,7 @@ export class DepositAccountStatementComponent
     this.form.controls['check'].setValue(null);
     this.form.controls['expeditionDate'].setValue(null);
     this.form.controls['collectionDate'].setValue(null);
-    this.transferred = '';
+    this.userChecks.accounttras = null;
     await this.calculateReturn();
     if ((priorInterest = this.form.controls['interestCredited'].value)) {
       this.alert(
@@ -1758,14 +1811,24 @@ export class DepositAccountStatementComponent
       /*SELECT seq_num_devolucion.nextval
       INTO: blk_dev.no_devolucion
       FROM dual;*/
+      const seqNextVal = await firstValueFrom(
+        this.detailInterestReturnService
+          .getSeqNextVal()
+          .pipe(takeUntil(this.$unSubscribe))
+      );
+      if (seqNextVal) {
+        this.userChecks.devolutionnumber = seqNextVal.nextval;
+      }
       this.form.controls['checkType'].setValue('INTERES');
       await this.detailReturn();
       const resp = await firstValueFrom(
-        this.detailInterestReturnService.getById(this.noReturn).pipe(
-          takeUntil(this.$unSubscribe),
-          catchError(x => of({ data: [] })),
-          map(x => (x ? (x.data ? x.data : []) : []))
-        )
+        this.detailInterestReturnService
+          .getById(this.userChecks.devolutionnumber)
+          .pipe(
+            takeUntil(this.$unSubscribe),
+            catchError(x => of({ data: [] })),
+            map(x => (x ? (x.data ? x.data : []) : []))
+          )
       );
       for (let i = 0; i < resp.length; i++) {
         this.interestaccredited = resp[i].interest;
@@ -1784,9 +1847,18 @@ export class DepositAccountStatementComponent
       this.form.controls['checkAmount'].setValue(
         this.form.controls['interestCredited'].value
       );
-      this.form.controls['transferDate'].disable();
-      this.form.controls['cutoffDate'].disable();
-      this.form.controls['beneficiary'].disable();
+      this.form.controls['transferDate'].disable({
+        onlySelf: true,
+        emitEvent: false,
+      });
+      this.form.controls['cutoffDate'].disable({
+        onlySelf: true,
+        emitEvent: false,
+      });
+      this.form.controls['beneficiary'].disable({
+        onlySelf: true,
+        emitEvent: false,
+      });
     }
     // llamar al servicio de deposit
   }
@@ -1815,8 +1887,8 @@ export class DepositAccountStatementComponent
 
   async transferMov() {
     let concept: string = null;
-    // crear en HTML etiqueta traspasado_a_cuenta;
-    if (this.transferred == 'TRASPASADO') {
+    // crear en HTML etiqueta accounttras;
+    if (this.userChecks.accounttras == 'TRASPASADO') {
       this.alert('warning', 'Ya ha sido traspasado', '');
       return;
     }
@@ -1898,7 +1970,7 @@ export class DepositAccountStatementComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: data => {
-          this.transferred = 'TRASPASADO';
+          this.userChecks.accounttras = 'TRASPASADO';
           this.validTras = false;
         },
         error: error => {},

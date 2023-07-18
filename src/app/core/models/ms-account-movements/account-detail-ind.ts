@@ -30,4 +30,5 @@ export interface IAccountDetailInd {
   expeditioncheckdate: string;
   checkcashingdate: string;
   nameindicated: string;
+  accounttras?: string;
 }

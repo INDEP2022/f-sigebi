@@ -361,7 +361,7 @@
         <div class="row mt-4">
           <div
             class="col-md-3"
-            [class]="!userChecks && readonly ? 'disabledInput' : ''">
+            [class]="disabled && readonly ? 'disabledInput' : ''">
             <!---->
             <form-field
               [control]="form.get('transferDate')"
@@ -379,13 +379,12 @@
                 class="form-control"
                 bsDatepicker
                 [maxDate]="maxTransferDate"
-                [minDate]="minTransferDate"
-                (bsValueChange)="updateTransferDate($event)" />
+                [minDate]="minTransferDate" />
             </form-field>
           </div>
           <div
             class="col-md-3"
-            [class]="!userChecks && readonly ? 'disabledInput' : ''">
+            [class]="disabled && readonly ? 'disabledInput' : ''">
             <form-field
               [control]="form.get('cutoffDate')"
               label="Fecha de Corte">
@@ -404,7 +403,7 @@
                 class="form-control"
                 formControlName="toReturn"
                 min="1"
-                [readonly]="!userChecks"
+                [readonly]="disabled"
                 (input)="updateCalculateData()" />
             </form-field>
           </div>
@@ -476,7 +475,9 @@
     </div>
     <h5 class="title">Datos para el cheque</h5>
     <div class="row mt-4">
-      <div *ngIf="transferred === ''">{{ transferred }}</div>
+      <div *ngIf="userChecks && userChecks.accounttras">
+        {{ userChecks.accounttras }}
+      </div>
       <div class="col text-right">
         <button
           class="btn btn-primary btn-sm active"
@@ -497,7 +498,7 @@
                 type="text"
                 class="form-control"
                 formControlName="checkType"
-                [readonly]="!userChecks" />
+                [readonly]="disabled" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -505,7 +506,7 @@
               [isLoadInOnInit]="false"
               [load]="userChecks != null"
               [form]="form"
-              [readonly]="!userChecks"
+              [readonly]="disabled"
               formControlName="bankAccount"
               label="Cuenta Bancaria"
               [path]="pathBankAccount"
@@ -523,7 +524,7 @@
                 formControlName="bankAccount"
                 min="1"
                 pattern="^[0-9]+"
-                [readonly]="!userChecks" />
+                [readonly]="disabled" />
             </form-field> -->
           </div>
           <div class="col-md-3">
@@ -534,7 +535,7 @@
                 formControlName="check"
                 min="1"
                 pattern="^[0-9]+"
-                [readonly]="readonly && !userChecks" />
+                [readonly]="readonly && disabled" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -550,7 +551,7 @@
         <div class="row mt-4">
           <div
             class="col-md-3"
-            [class]="!userChecks && readonly ? 'disabledInput' : ''">
+            [class]="disabled && readonly ? 'disabledInput' : ''">
             <form-field
               [control]="form.get('expeditionDate')"
               label="Fecha Expedici&oacute;n">
@@ -565,7 +566,7 @@
           </div>
           <div
             class="col-md-3"
-            [class]="!userChecks && readonly ? 'disabledInput' : ''">
+            [class]="disabled && readonly ? 'disabledInput' : ''">
             <form-field
               [control]="form.get('collectionDate')"
               label="Fecha Cobro">
@@ -596,7 +597,7 @@
                 type="text"
                 class="form-control"
                 formControlName="beneficiary"
-                [readonly]="readonly && !userChecks" />
+                [readonly]="readonly && disabled" />
             </form-field>
           </div>
         </div>
