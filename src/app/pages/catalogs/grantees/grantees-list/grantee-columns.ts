@@ -20,7 +20,7 @@ export const GRANTEES_COLUMNS = {
     sort: false,
   },
   razonSocial: {
-    title: 'Razón social',
+    title: 'Razón Social',
     type: 'string',
     sort: false,
   },
@@ -55,12 +55,12 @@ export const GRANTEES_COLUMNS = {
     sort: false,
   },
   cp: {
-    title: 'CP',
+    title: 'C.P.',
     type: 'string',
     sort: false,
   },
   usrStatus: {
-    title: 'Estatus usuario',
+    title: 'Estatus Usuarios',
     type: 'string',
     sort: false,
   },
