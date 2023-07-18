@@ -1347,7 +1347,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Carga Masiva Completada',
-          `Expediente : ${this.fileNumber}`
+          // `Expediente : ${this.fileNumber}`
+          ``
         );
         this.getGoodsByStatus(this.fileNumber);
         console.log(data);
