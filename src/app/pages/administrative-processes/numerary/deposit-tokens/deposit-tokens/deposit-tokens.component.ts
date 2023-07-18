@@ -7,6 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
@@ -129,28 +130,9 @@ export class DepositTokensComponent
           type: 'html',
           valuePrepareFunction: (text: string) => {
             console.log('text', text);
-            if (typeof text === 'number') {
-              let date = new Date((Number(text) - 25569) * 86400 * 1000);
-              let fechaString = date.toString();
-
-              let fecha = new Date(fechaString);
-
-              let dia = fecha.getDate();
-              let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
-              let año = fecha.getFullYear();
-
-              // Asegurarse de que el día y el mes tengan dos dígitos
-              let diaString = dia < 10 ? '0' + dia : dia;
-              let mesString = mes < 10 ? '0' + mes : mes;
-
-              let fechaFormateada = `${diaString}/${mesString}/${año}`;
-
-              return `${fechaFormateada}`;
-            } else {
-              return `${
-                text ? text.split('T')[0].split('-').reverse().join('/') : ''
-              }`;
-            }
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('/') : ''
+            }`;
           },
           filter: {
             type: 'custom',
@@ -170,28 +152,26 @@ export class DepositTokensComponent
           type: 'html',
           valuePrepareFunction: (text: string) => {
             console.log('text', text);
-            if (typeof text === 'number') {
-              let date = new Date((Number(text) - 25569) * 86400 * 1000);
-              let fechaString = date.toString();
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('/') : ''
+            }`;
 
-              let fecha = new Date(fechaString);
+            // let date = new Date((Number(text) - 25569) * 86400 * 1000);
+            // let fechaString = date.toString();
 
-              let dia = fecha.getDate();
-              let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
-              let año = fecha.getFullYear();
+            // let fecha = new Date(fechaString);
 
-              // Asegurarse de que el día y el mes tengan dos dígitos
-              let diaString = dia < 10 ? '0' + dia : dia;
-              let mesString = mes < 10 ? '0' + mes : mes;
+            // let dia = fecha.getDate();
+            // let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
+            // let año = fecha.getFullYear();
 
-              let fechaFormateada = `${diaString}/${mesString}/${año}`;
+            // // Asegurarse de que el día y el mes tengan dos dígitos
+            // let diaString = dia < 10 ? '0' + dia : dia;
+            // let mesString = mes < 10 ? '0' + mes : mes;
 
-              return `${fechaFormateada}`;
-            } else {
-              return `${
-                text ? text.split('T')[0].split('-').reverse().join('/') : ''
-              }`;
-            }
+            // let fechaFormateada = `${diaString}/${mesString}/${año}`;
+
+            // return `${fechaFormateada}`;
           },
           filter: {
             type: 'custom',
@@ -574,15 +554,12 @@ export class DepositTokensComponent
             }
             item['bank'] = detailsBank ? detailsBank.cveBank : null;
             item['cveAccount'] = detailsBank ? detailsBank.cveAccount : null;
-            item['motionDate_'] = item.motiondate
-              ? this.datePipe.transform(item.motiondate, 'dd/MM/yyyy')
-              : null;
-            item['calculationInterestsDate_'] = item.calculationinterestsdate
-              ? this.datePipe.transform(
-                  item.calculationinterestsdate,
-                  'dd/MM/yyyy'
-                )
-              : null;
+
+            item['motionDate_'] = item.motiondate;
+            // ? this.returnParseDate_(item.motiondate) : null;
+            item['calculationInterestsDate_'] = item.calculationinterestsdate;
+            // ? this.returnParseDate_(item.calculationinterestsdate)
+            //   : null;
             item['bancoDetails'] = detailsBank ? detailsBank : null;
           });
 
@@ -1204,5 +1181,12 @@ export class DepositTokensComponent
 
   clearInput() {
     this.myInput.nativeElement.value = '';
+  }
+
+  returnParseDate_(data: Date) {
+    console.log('DATEEEE', data);
+
+    const formattedDate = moment(data).format('YYYY-MM-DD');
+    return formattedDate;
   }
 }
