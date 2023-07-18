@@ -204,22 +204,22 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     //Preguntar
   }
 
-  getDTransfer(goodNumber?: number | string) {
-    if (goodNumber) {
-      this.params.getValue()['filter.numberAccount'] = goodNumber;
-    }
-    let params = {
-      ...this.params.getValue(),
-    };
-    this.accountMovementService.getAllRatio(params).subscribe({
-      next: resp => {
-        console.log(resp);
-      },
-      error: err => {
-        console.log(err);
-      },
-    });
-  }
+  // getDTransfer(goodNumber?: number | string) {
+  //   if (goodNumber) {
+  //     this.params.getValue()['filter.numberAccount'] = goodNumber;
+  //   }
+  //   let params = {
+  //     ...this.params.getValue(),
+  //   };
+  //   this.accountMovementService.getAllRatio(params).subscribe({
+  //     next: resp => {
+  //       console.log(resp);
+  //     },
+  //     error: err => {
+  //       console.log(err);
+  //     },
+  //   });
+  // }
 
   getConsecutive(year?: number | string) {
     this.detRelationConfiscationService.getAllMaxNoRelDec(year).subscribe({
