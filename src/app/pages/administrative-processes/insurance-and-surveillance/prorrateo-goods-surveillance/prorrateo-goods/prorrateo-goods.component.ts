@@ -229,7 +229,6 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
     dateIni: any,
     id: number
   ) {
-    console.log('FECHA: ', dateIni);
     const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
     modalConfig.initialState = {
       newOrEdit,
