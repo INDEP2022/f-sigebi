@@ -23,7 +23,6 @@ export class ComerEventForm {
   eventClosingDate = new FormControl(null);
   failureDate = new FormControl(null);
   requestType = new FormControl(null);
-  statusvtaId = new FormControl(null, []);
   tpsolavalId = new FormControl(null);
   statusVtaId = new FormControl(null);
   address = new FormControl(null);
