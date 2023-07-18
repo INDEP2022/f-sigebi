@@ -14,6 +14,7 @@ import { GoodsProcessValidationExtdomRoutingModule } from './goods-process-valid
 /** COMPONENTS IMPORTS */
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
+import { EmailGoodProcessValidationComponent } from './email/email.component';
 import { GoodsProcessValidationExtdomComponent } from './goods-process-validation-extdom/goods-process-validation-extdom.component';
 import { HistoricalGoodsExtDomComponent } from './historical-goods-extdom/historical-goods-extdom.component';
 import { ModalScanningFoilTableHistoricalGoodsComponent } from './modal-scanning-foil/modal-scanning-foil.component';
@@ -25,6 +26,7 @@ import { ScanningFoilHistoricalGoodsExtDomComponent } from './scanning-foil/scan
     HistoricalGoodsExtDomComponent,
     ModalScanningFoilTableHistoricalGoodsComponent,
     ScanningFoilHistoricalGoodsExtDomComponent,
+    EmailGoodProcessValidationComponent,
   ],
   imports: [
     CommonModule,
