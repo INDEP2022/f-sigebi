@@ -437,7 +437,7 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     if (this.fileDocOfficeMailIn) {
       formData.append('docOfficeMailIn', this.fileDocOfficeMailIn);
     }
-    if (this.fileDocOfficeMailIn) {
+    if (this.fileDocAmountIndemnizedIn) {
       formData.append('docAmountIndemnizedIn', this.fileDocAmountIndemnizedIn);
     }
     formData.append('operation', '1');
