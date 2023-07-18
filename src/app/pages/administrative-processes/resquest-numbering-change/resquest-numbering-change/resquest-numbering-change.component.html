@@ -332,7 +332,46 @@
       <hr />
       <div class="row mb-6 mt-6">
         <div class="col-md-12">
-          <button
+          <div class="row pt-2">
+            <div class="col-md-12 text-center mt-4 mb-4">
+              <button
+                tooltip="Agregar Bien"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="pasar()">
+                <!-- Mover uno -->
+                <i class="bx bx-chevron-down bx-md"></i>
+              </button>
+              <button
+                tooltip="Agregar Bienes"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="pasarTodo()">
+                <!-- Mover todos -->
+                <i class="bx bx-chevrons-down bx-md"></i>
+              </button>
+              <button
+                tooltip="Quitar Bien"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="quitarTodo()">
+                <i class="bx bx-chevrons-up bx-md"></i>
+              </button>
+              <button
+                tooltip="Quitar Bien"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="quitar()">
+                <!-- Quitar uno -->
+                <i class="bx bx-chevron-up bx-md"></i>
+              </button>
+            </div>
+          </div>
+          <!-- <button
             type="button"
             class="btn btn-primary btn-sm active"
             style="margin-left: 1vh"
@@ -356,7 +395,7 @@
             style="margin-left: 1vh"
             (click)="quitar()">
             Borrar
-          </button>
+          </button> -->
         </div>
         <hr />
         <div class="col-md-11 col-sm-12 col-xs-12">

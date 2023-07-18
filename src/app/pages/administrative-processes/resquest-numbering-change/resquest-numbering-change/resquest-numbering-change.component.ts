@@ -630,7 +630,7 @@ export class ResquestNumberingChangeComponent
     };
 
     if (this.form.get('type').value !== null)
-      params['filter.goodClassNumber'] = `$eq:${this.form.get('type').value}`;
+      params['filter.goodClassNumber'] = `$in:${this.form.get('type').value}`;
     console.log(params);
     const legalStatus = this.form.get('legalStatus').value;
 
@@ -663,11 +663,11 @@ export class ResquestNumberingChangeComponent
     if (this.form.get('type').value != null)
       this.goodServices.getByExpedientAndParams__(params).subscribe({
         next: async (response: any) => {
-          this.alert(
-            'info',
-            'Se mostraran los datos en la tabla BIENES X TIPO',
-            ''
-          );
+          // this.alert(
+          //   'info',
+          //   'Se mostraran los datos en la tabla BIENES X TIPO',
+          //   ''
+          // );
           let result = response.data.map(async (item: any) => {
             let obj = {
               vcScreen: 'FACTADBSOLCAMNUME',
@@ -835,9 +835,11 @@ export class ResquestNumberingChangeComponent
       this.warningAlert('Debe seleccionar un Registro en la tabla Bien x Tipo');
     }
   }
-  pasarTodo() {
+
+  async pasarTodo() {
     var situacionJuridica = '';
-    var motivo = null;
+    var motivo: any = null;
+    console.log('this.dataGood', this.dataGood);
     if (this.dataGood.length != 0) {
       this.validation(1);
       if (this.validate) {
@@ -876,31 +878,56 @@ export class ResquestNumberingChangeComponent
         ) {
           motivo = 'ASEGURADO SEMOVIENTE';
         }
-        const payload = {
-          goodNumber: this.dataGood[index].goodClassNumber,
-          applicationChangeCashNumber: this.idSolicitud,
-          ProceedingsNumber: this.dataGood[index].fileNumber,
-          situationlegal: situacionJuridica,
-          reasonApplication: motivo,
-        };
-        console.log('PAYLOAD', payload);
-        this.loading = true;
-        this.numeraryService.createSolCamNum(payload).subscribe({
-          next: async (response: any) => {
-            this.handleSuccess('Se creo correctamente');
-            this.getDataTableNum();
-            this.loading = false;
-          },
-          error: err => {
-            this.loading = false;
-            this.handleSuccess('No se Creo el Registro');
-          },
+
+        const data = this.data.getAll();
+        let result = this.dataGood.map(async (_g: any) => {
+          console.log('aaa', _g);
+
+          if (_g.di_disponible == 'N') {
+            return;
+          }
+
+          if (_g.di_disponible == 'S') {
+            // _g.di_disponible = 'N
+            // let valid = this.dataCamNum.some((goodV: any) => goodV.numberGood == _g.id);
+
+            const payload = {
+              goodNumber: _g.id,
+              applicationChangeCashNumber: this.idSolicitud,
+              ProceedingsNumber: _g.fileNumber,
+              situationlegal: situacionJuridica,
+              reasonApplication: motivo,
+            };
+            await this.crearRegistro(payload);
+            console.log('PAYLOAD', payload);
+            this.loading = true;
+          }
+        });
+
+        Promise.all(result).then(async item => {
+          this.getDataTableDos();
+          await this.getDataTableNumDos();
         });
       }
     } else {
       this.warningAlert('No hay Registro en la tabla Bien x Tipo');
     }
   }
+
+  async crearRegistro(payload: any) {
+    this.numeraryService.createSolCamNum(payload).subscribe({
+      next: async (response: any) => {
+        // this.handleSuccess('Se creo correctamente');
+        this.getDataTableNum();
+        this.loading = false;
+      },
+      error: err => {
+        this.loading = false;
+        // this.handleSuccess('No se Creo el Registro');
+      },
+    });
+  }
+
   quitarTodo() {
     this.alertQuestion(
       'warning',
