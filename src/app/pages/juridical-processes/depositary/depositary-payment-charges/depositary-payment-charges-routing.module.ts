@@ -7,6 +7,10 @@ const routes: Routes = [
     path: '',
     component: DepositaryPaymentChargesComponent,
   },
+  {
+    path: ':id',
+    component: DepositaryPaymentChargesComponent,
+  },
 ];
 
 @NgModule({
