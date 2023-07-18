@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject, firstValueFrom, map, of, takeUntil } from 'rxjs';
@@ -27,6 +28,7 @@ import {
   ICharacteristicsGoodDTO,
   IGood,
 } from 'src/app/core/models/ms-good/good';
+import { IPhoto } from 'src/app/core/models/ms-parametercomer/parameter';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { AccountMovements } from 'src/app/core/services/ms-account-movements/account-movements.service';
@@ -36,6 +38,7 @@ import { AttribGoodBadService } from 'src/app/core/services/ms-good/attrib-good-
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
+import { GoodPhotoService } from 'src/app/core/services/ms-photogood/good-photo.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
@@ -69,19 +72,24 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
   formLoading = false;
+  goodPhoto: IPhoto[] = [];
   showConciliado = false;
   expedientSelected = new DefaultSelect();
   lotIdSelected = new DefaultSelect();
   eventIdSelected = new DefaultSelect();
   LVALIDA = true;
   showAvaluo = true;
+  lot: any;
   photographs: any[] = [];
   programming: Iprogramming;
   filterParams = new FilterParams();
   newLimit = new FormControl(1);
   totalItems = 0;
+  goodDateTable: LocalDataSource = new LocalDataSource();
   totalItemsPhotos = 0;
+
   count = 0;
+  noExpedient = 0;
   goods: any[];
   delegacion: number;
   subdelegacion: number;
@@ -299,6 +307,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     private goodPartialize: GoodPartializeService,
     private comerDetailService: ComerDetailsService,
     private comerEventService: ComerEventService,
+    private goodPhotoService: GoodPhotoService,
     private attribGoodBadService: AttribGoodBadService,
     private fb: FormBuilder,
     public router: Router
@@ -971,7 +980,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   async searchGood(byPage = false) {
     // debugger;
     this.loading = true;
-
+    this.getByIdGood(this.form.value.noBien);
     if (this.fillParams(byPage)) {
       const newListParams = new ListParams();
       newListParams.limit = this.filterParams.limit;
@@ -1022,7 +1031,6 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
             this.showPhoto = false;
           }
           this.numberGood.setValue(item.id);
-          this.fileNumber.setValue(item.fileNumber);
           // this.subtype.setValue(item.no_subtipo);
           // this.form.get('ssubtype').setValue(item.no_ssubtipo);
           // this.form.get('sssubtype').setValue(item.no_sssubtipo);
@@ -1399,24 +1407,21 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       this.location.back();
     }
   }
-  // getComerGoodAll(data: any) {
-  //   //console.log(params);
-  //   console.log(data);
-  //   const params = new ListParams();
-  //   params['filter.goodNumber'] = `$eq:${data.id}`;
-  //   console.log(this.form.controls['goodNumber'].value);
-  //   this.comerEventService.getAllFilterComerGood(params).subscribe({
-  //     next: resp => {
-  //       this.lot = resp;
-  //       console.log(resp);
-  //       this.lotIdSelected = new DefaultSelect(resp.data, resp.count);
-  //     },
-  //     error: error => {
-  //       console.log(error);
-  //       this.lotIdSelected = new DefaultSelect();
-  //     },
-  //   });
-  // }
+  getComerGoodAll(data: any) {
+    //console.log(params);
+    console.log(data);
+    const params = new ListParams();
+    params['filter.goodNumber'] = `$eq:${data.id}`;
+    this.comerEventService.getAllFilterComerGood(params).subscribe({
+      next: resp => {
+        this.lot = resp;
+        console.log(resp);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
 
   // idEvent(datos: any) {
   //   this.getIdLot(datos);
@@ -1578,6 +1583,35 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       error: () => {
         this.expedientSelected = new DefaultSelect();
       },
+    });
+  }
+  getByIdGood(id: number | string) {
+    this.goodService.getById(id).subscribe({
+      next: (data: IGood) => {
+        this.goodO = data;
+        console.log(this.goodO);
+        this.fileNumber.setValue(this.good.fileNumber);
+        // this.noExpedient = this.good.fileNumber
+        // this.fio
+      },
+      error: error => {
+        console.error('no existe el bien');
+      },
+    });
+  }
+  getGoodPhoto(params: ListParams) {
+    this.loading = true;
+    params['filter.goodNumber'] = `$eq:${this.form.value.noBien}`;
+    this.goodPhotoService.getFilterGoodPhoto(params).subscribe({
+      next: response => {
+        this.goodPhoto = response.data;
+        this.totalItems = response.count;
+        this.goodDateTable.load(response.data);
+        this.goodDateTable.refresh();
+        this.loading = false;
+        console.log(this.goodPhoto);
+      },
+      error: error => (this.loading = false),
     });
   }
 }

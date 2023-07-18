@@ -174,16 +174,18 @@
                     </div>
                   </div>
                 </div>
-                <div [class]="loading ? 'table-loading' : ''">
-                  <ng2-smart-table
-                    [attr.class]="'table-bordered'"
-                    [settings]="settings"
-                    [source]="photographs"
-                    (edit)="viewImage($event.data)">
-                  </ng2-smart-table>
-                  <app-pagination
-                    [params]="params"
-                    [totalItems]="totalItemsPhotos"></app-pagination>
+                <div class="card">
+                  <div [class]="loading ? 'table-loading' : ''">
+                    <ng2-smart-table
+                      [attr.class]="'table-bordered table-responsive'"
+                      [settings]="settings"
+                      [source]="goodPhoto"
+                      (edit)="viewImage($event.data)">
+                    </ng2-smart-table>
+                    <app-pagination
+                      [params]="params"
+                      [totalItems]="totalItemsPhotos"></app-pagination>
+                  </div>
                 </div>
                 <!-- <div [class]="loading ? 'table-loading' : ''">
                     <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="photographs"
