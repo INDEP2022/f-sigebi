@@ -34,6 +34,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { NumerarySolicitudeComponent } from '../numerary-solicitude/numerary-solicitude.component';
 import {
   clearGoodCheck,
+  clearGoodCheck2,
   goodCheck,
   goodCheck2,
   newGoodCheck,
@@ -376,6 +377,7 @@ export class NumeraryMassiveConciliationComponent
   searchGoodBankAccount() {
     // let body: IProReconcilesGood;
     this.loading2 = true;
+    clearGoodCheck2();
     const bank = this.bank2.value;
     const bankAccount = this.bankAccount2.value;
     const currency = this.current2.value;
@@ -395,6 +397,9 @@ export class NumeraryMassiveConciliationComponent
     this.accountBankService.searchByFilterNumeraryMassive(body).subscribe(
       res => {
         console.log(res);
+        this.form2.get('total').setValue(res.total)
+        this.form2.get('totalDateTesofe').setValue(res.tDateTesof)
+        this.form2.get('totalWithoutTesofe').setValue(res.tSinTesof)
         this.dataGoods2.load(res.result);
         console.log(this.dataGoods2['data']);
         this.loading2 = false;
@@ -660,6 +665,7 @@ export class NumeraryMassiveConciliationComponent
               val4: item.RSPTAQUERY.val4,
               val5: format(new Date(item.RSPTAQUERY.val5), 'yyyy-MM-dd'),
               val6: item.RSPTAQUERY.val6,
+              fecTesofe: item.BFEC_TESOFE
             };
             console.log(model);
             this.numeraryService.pupSearchNumerary(model).subscribe(
@@ -799,8 +805,9 @@ export class NumeraryMassiveConciliationComponent
     let modalConfig: ModalOptions = {
       initialState: {
         callback: (data: any) => {
+          console.log(data)
           if (data != null || data != undefined) {
-            this.form2.get('proposal').setValue(data.motionNumber);
+            this.form2.get('proposal').setValue(data.applicationId);
             this.form2.get('currencyDeposit').setValue(data.amountAssign);
           }
         },
@@ -814,25 +821,38 @@ export class NumeraryMassiveConciliationComponent
   //Ultimo boton de asociar
   finalAsociate() {
     if (goodCheck2.length > 0) {
-      for (let item of goodCheck2) {
-        console.log(item);
+      const noMovementArray = goodCheck2.map((e:any) => {
+        return e.motionNumber
+      })
+
+      const depositArray = goodCheck2.map((e:any) => {
+        return e.deposit
+      })
+
+      const currencyArray = goodCheck2.map((e:any) => {
+        return e.currencyKey
+      })
+
         /* this.numeraryService.pupAssociateGood() */
         const model: IPupAssociateGood = {
-          movementNo: 0,
-          requestId: 0,
-          blkDeposit: 0,
-          cbdDeposit: 0,
-          cbcveCurrency: '',
+          movementNo: noMovementArray,
+          requestId: this.form2.get('proposal').value,
+          blkDeposit: this.form2.get('currencyDeposit').value,
+          cbdDeposit: depositArray,
+          cbcveCurrency: currencyArray
         };
         this.numeraryService.pupAssociateGood(model).subscribe(
           res => {
+            this.alert('success','Se realizó la asociación','')
+            clearGoodCheck2()
             console.log(res);
           },
           err => {
+            this.alert('error','Se presentó un error inesperado','')
             console.log(err);
           }
         );
-      }
+
     } else {
       this.alert('warning', 'No se seleccionó datos de cuentas bancarias', '');
     }
