@@ -69,21 +69,17 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
     this.prepareForm2();
 
     //Paginador
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(params => {
-        console.log(params);
-        this.limit = new FormControl(params.limit);
-        this.getProposalData();
-      });
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      console.log(params);
+      this.limit = new FormControl(params.limit);
+      this.getProposalData();
+    });
 
-      this.params2
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(params => {
-        console.log(params);
-        this.limit2 = new FormControl(params.limit);
-        this.getDetailDataPag(this.id);
-      });
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      console.log(params);
+      this.limit2 = new FormControl(params.limit);
+      this.getDetailDataPag(this.id);
+    });
   }
 
   private prepareForm() {
@@ -101,9 +97,9 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
   }
 
   getProposalData() {
-    const paramsF = new FilterParams()
-    paramsF.page = this.params.value.page
-    paramsF.limit = this.params.value.limit
+    const paramsF = new FilterParams();
+    paramsF.page = this.params.value.page;
+    paramsF.limit = this.params.value.limit;
     this.numeraryService.getAllRequestNume(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -116,13 +112,13 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
     );
   }
 
-  getDetailDataPag(e:any){
-    if(e != null){
+  getDetailDataPag(e: any) {
+    if (e != null) {
       console.log(e);
       const paramsF = new FilterParams();
       paramsF.addFilter('applicationId', e);
-      paramsF.page = this.params2.value.page
-      paramsF.limit = this.params2.value.limit
+      paramsF.page = this.params2.value.page;
+      paramsF.limit = this.params2.value.limit;
       this.numeraryService.getAllRequestNumMov(paramsF.getParams()).subscribe(
         res => {
           console.log(res);
@@ -134,7 +130,7 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
         }
       );
     }
-  }  
+  }
 
   getDetailData(e: any) {
     if (e != null) {
@@ -142,8 +138,8 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
       this.id = e.data.applicationId;
       const paramsF = new FilterParams();
       paramsF.addFilter('applicationId', e.data.applicationId);
-      paramsF.page = this.params2.value.page
-      paramsF.limit = this.params2.value.limit
+      paramsF.page = this.params2.value.page;
+      paramsF.limit = this.params2.value.limit;
       this.numeraryService.getAllRequestNumMov(paramsF.getParams()).subscribe(
         res => {
           console.log(res);
@@ -234,8 +230,8 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
             this.loading = false;
             this.detailData.load(res.data);
             this.totalItems2 = res.count;
-            this.newDetail = false
-            this.alert('success','Detalle creado','')
+            this.newDetail = false;
+            this.alert('success', 'Detalle creado', '');
           },
           err => {
             console.log(err);
