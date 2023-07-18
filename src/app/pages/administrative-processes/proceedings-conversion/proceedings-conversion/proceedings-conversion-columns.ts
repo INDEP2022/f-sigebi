@@ -93,8 +93,8 @@ export const ACTAS = {
     type: 'string',
     sort: false,
   },
-  numTransfer: {
-    title: 'Trasnfer',
+  numTransfer_: {
+    title: 'Transferente',
     type: 'number',
     sort: false,
   },
