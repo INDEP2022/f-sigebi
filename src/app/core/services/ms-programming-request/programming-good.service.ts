@@ -24,7 +24,7 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
 
   constructor(private httpClient: HttpClient) {}
 
-  getAll(params?: ListParams): Observable<IListResponse<IGoodProgramming>> {
+  getAll(params?: ListParams) {
     return this.httpClient.get<IListResponse<IGoodProgramming>>(
       `${environment.API_URL}${this.route}/programming-goods`
     );
@@ -34,8 +34,7 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
     const params = this.makeParams(_params);
     const route = `${this.route}/programming-users`;
     return this.httpClient.get<IListResponse<IUser>>(
-      `${environment.API_URL}/${route}`,
-      { params }
+      `${environment.API_URL}/${route}?${params}`
     );
   }
 
