@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import {
   FilterParams,
@@ -79,7 +79,8 @@ export class DepositaryPaymentChargesComponent
     private usersService: UsersService,
     private bankService: BankService,
     private massiveDepositaryService: MassiveDepositaryService,
-    private nomDepositoryService: MsDepositaryService
+    private nomDepositoryService: MsDepositaryService,
+    private route: ActivatedRoute
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -117,8 +118,10 @@ export class DepositaryPaymentChargesComponent
   }
 
   ngOnInit(): void {
+    const id = this.route.snapshot.params['id'] || null;
     this.loadCargaBienes();
     this.buildForm();
+    this.form.controls['numberGood'].setValue(id);
     this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (this.form.get('numberGood').value) this.loadTablaDispersiones();
     });
@@ -274,10 +277,10 @@ export class DepositaryPaymentChargesComponent
       this.router.navigate(
         [
           '/pages/juridical/depositary/payment-dispersion-process/conciliation-depositary-payments',
+          idBien,
         ],
         {
           queryParams: {
-            p_nom_bien: idBien,
             origin: 'FCONDEPOCARGAPAG',
           },
         }
