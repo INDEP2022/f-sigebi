@@ -21,17 +21,21 @@ export class GoodsGenerateDialogComponent implements OnInit {
     this.settingsFather.columns = {
       goodNumberF: {
         title: 'No. Bien',
+        sort: false,
       },
       goodStatusF: {
         title: 'Estatus',
+        sort: false,
       },
     };
     this.settingsGenerate.columns = {
       goodNumberS: {
         title: 'No. Bien',
+        sort: false,
       },
       goodStatusS: {
         title: 'Estatus',
+        sort: false,
       },
     };
     // this.params.pipe(skip(1)).subscribe((params: ListParams) => {
