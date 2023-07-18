@@ -93,3 +93,17 @@ export interface IPolicyxRequest {
     recordNumber: string;
   };
 }
+
+export interface IPolicyxSubtype {
+  policyKeyId: string;
+  beginningDate: Date;
+  typeNumberId: number | string;
+  subtypeNumberId: number | string;
+  ssubtypeNumberId: number | string;
+  sssubtypeNumberId: number | string;
+  concept: string;
+  currencyCousinKey?: string;
+  currencySaKkey?: number | string;
+  registrationNumber: number | string;
+  consecPol: number | string;
+}
