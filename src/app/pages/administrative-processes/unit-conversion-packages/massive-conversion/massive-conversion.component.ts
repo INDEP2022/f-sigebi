@@ -2235,4 +2235,23 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.clear();
     this.newDataFilled = true;
   }
+
+  updatePackage(){
+    const modelUpdate: Partial<IPackage> = {
+      paragraph1: this.paragraph1.value,
+      paragraph2: this.paragraph2.value,
+      paragraph3: this.paragraph3.value,
+    };
+
+    this.packageGoodService
+      .updatePaqDestinationEnc(this.noPackage.value.numberPackage, modelUpdate)
+      .subscribe(
+        res => {
+          console.log(res);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+  }
 }
