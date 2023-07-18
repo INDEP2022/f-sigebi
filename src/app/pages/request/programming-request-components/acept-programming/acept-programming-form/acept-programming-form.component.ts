@@ -188,8 +188,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.programmingService
       .getProgrammingId(this.programmingId)
       .subscribe(data => {
-        data.startDate = moment(data.startDate).format('DD/MM/YYYY, h:mm:ss ');
-        data.endDate = moment(data.endDate).format('DD/MM/YYYY, h:mm:ss a');
+        data.startDate = moment(data.startDate).format('YYYY-MM-DD HH:mm:ss');
+        data.endDate = moment(data.endDate).format('YYYY-MM-DD HH:mm:ss');
         this.programming = data;
 
         this.idTransferent = data.tranferId;
@@ -553,52 +553,65 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
     await Promise.all(
       this.goodsInfoTrans.map(async good => {
-        const infotrans = await this.warehouseNameT(good.storeId);
-        const transObject = {
-          goodId: good.goodId,
-          uniqueKey: good.uniqueKey,
-          goodDescription: good.goodDescription,
-          quantity: good.quantity,
-          unitMeasure: good.unitMeasure,
-          storeId: infotrans,
-        };
-        this.transGoods.push(transObject);
+        if (good.storeId) {
+          const infotrans = await this.warehouseNameT(good.storeId);
+          const transObject = {
+            goodId: good.goodId,
+            uniqueKey: good.uniqueKey,
+            goodDescription: good.goodDescription,
+            quantity: good.quantity,
+            unitMeasure: good.unitMeasure,
+            storeId: infotrans,
+          };
+          this.transGoods.push(transObject);
+        } else {
+          const transObject = {
+            goodId: good.goodId,
+            uniqueKey: good.uniqueKey,
+            goodDescription: good.goodDescription,
+            quantity: good.quantity,
+            unitMeasure: good.unitMeasure,
+          };
+          this.transGoods.push(transObject);
+        }
       })
     );
 
     await Promise.all(
       this.goodsInfoGuard.map(async goodRes => {
-        const guardsgood = await this.warehouseNameT(goodRes.storeId);
+        const guardsGood = await this.warehouseNameT(goodRes.storeId);
         const guardObject = {
           goodId: goodRes.goodId,
           uniqueKey: goodRes.uniqueKey,
           goodDescription: goodRes.goodDescription,
           quantity: goodRes.quantity,
           unitMeasure: goodRes.unitMeasure,
-          storeId: guardsgood,
+          storeId: guardsGood,
         };
         this.guardGoods.push(guardObject);
       })
     );
 
-    this.goodsInfoWarehouse.map(async warehouse => {
-      const warehouseObject = {
-        goodId: warehouse.goodId,
-        uniqueKey: warehouse.uniqueKey,
-        goodDescription: warehouse.goodDescription,
-        quantity: warehouse.quantity,
-        unitMeasure: warehouse.unitMeasure,
-        storeId: warehouse.storeId,
-      };
-      this.warehouseGoods.push(warehouseObject);
-    });
+    await Promise.all(
+      this.goodsInfoWarehouse.map(async goodRes => {
+        const warehouseGood = await this.warehouseNameT(goodRes.storeId);
+        const guardObject = {
+          goodId: goodRes.goodId,
+          uniqueKey: goodRes.uniqueKey,
+          goodDescription: goodRes.goodDescription,
+          quantity: goodRes.quantity,
+          unitMeasure: goodRes.unitMeasure,
+          storeId: warehouseGood,
+        };
+
+        this.warehouseGoods.push(guardObject);
+      })
+    );
 
     const dataEmail = {
       folio: this.programming.folio,
-      startDate: moment(this.programming.startDate).format(
-        'YYYY-MM-DD HH:mm:ss'
-      ),
-      endDate: moment(this.programming.endDate).format('YYYY-MM-DD HH:mm:ss'),
+      startDate: this.programming.startDate,
+      endDate: this.programming.endDate,
       city: this.programming.city,
       address: this.programming.address,
       usersProg: this.infoUsers,
@@ -607,8 +620,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       goodsWarehouse: this.warehouseGoods,
       emailSend: this.emails,
     };
-
-    console.log('dataEmail', dataEmail);
     this.emailService
       .createEmailProgramming(JSON.stringify(dataEmail))
       .subscribe({
@@ -618,9 +629,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             'Notificación',
             'Se envio el correo electrónico a los usuarios correctamente'
           );
-          /*this.createTaskNotification();
-          this.createTaskExecuteProgramming();
-          this.createTaskFormalize(); */
         },
         error: error => {},
       });
