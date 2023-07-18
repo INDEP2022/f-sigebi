@@ -135,11 +135,11 @@ export class MovementsConsultsComponent extends BasePage implements OnInit {
           },
           error: err => {
             res(false);
-            this.alert(
+            /* this.alert(
               'warning',
               'Movimientos de bienes en vigilancia',
               `Error, al ingreso de contrato de vigilancia, bien: ${this.data.goodnumber}`
-            );
+            ); */
             console.log(err);
           },
         });
@@ -156,11 +156,11 @@ export class MovementsConsultsComponent extends BasePage implements OnInit {
       this.formatDate2(this.data.policy_start_date)
     );
     if (vExist) {
-      this.alert(
+      /* this.alert(
         'warning',
         'Movimientos de bienes en vigilancia',
         `El biene: ${this.data.goodnumber}, existe en contrato de vigilancia`
-      );
+      ); */
       return true;
     }
     /*     if(this.form.get('contract_start_date').value < this.data.policy_effective_date){
@@ -168,27 +168,27 @@ export class MovementsConsultsComponent extends BasePage implements OnInit {
       return true;
     } */
     if (Number(this.form.get('shifts_inforce').value) <= 0) {
-      this.alert(
+      /* this.alert(
         'warning',
         'Movimientos de bienes en vigilancia',
         `Vigilancia directa no valida en el bien:${this.data.goodnumber}`
-      );
+      ); */
       return true;
     }
     if (Number(this.form.get('medical_turns').value) <= 0) {
-      this.alert(
+      /* this.alert(
         'warning',
         'Movimientos de bienes en vigilancia',
         `Vigilancia media directa no valida en el bien:${this.data.goodnumber}`
-      );
+      ); */
       return true;
     }
     if (Number(this.form.get('industrial_turns').value) <= 0) {
-      this.alert(
+      /* this.alert(
         'warning',
         'Movimientos de bienes en vigilancia',
         `Vigilancia indirecta no valida en el bien:${this.data.goodnumber}`
-      );
+      ); */
       return true;
     }
     return false;
