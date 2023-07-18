@@ -10,67 +10,68 @@
       <div body>
         <form [formGroup]="form" class="form-material">
           <div class="row">
-            <div class="col-md-12">
-              <div class="col-md-4">
-                <form-field [control]="form.get('goodClasification')">
-                  <ngx-select
-                    control="goodClasification"
-                    label="Clasificador"
-                    bindLabel="numClasifGoods"
-                    [data]="dataClassGood"
-                    [form]="form"></ngx-select>
-                </form-field>
-              </div>
-              <div class="col-md-4">
-                <form-field [control]="form.get('bank')">
-                  <ngx-select
-                    control="bank"
-                    label="Banco"
-                    bindLabel="cveBank"
-                    [class]="
-                      form.get('current').value == null ? 'disabled' : ''
-                    "
-                    [data]="banks"
-                    [form]="form"></ngx-select>
-                </form-field>
-              </div>
-              <div class="col-md-4">
-                <form-field [control]="form.get('bankAccount')">
-                  <ngx-select
-                    [data]="bankAccountData"
-                    [form]="form"
-                    [class]="form.get('bank').value == null ? 'disabled' : ''"
-                    bindLabel="cveAccount"
-                    label="Cuenta Bancaria"
-                    control="bankAccount"></ngx-select>
-                </form-field>
-              </div>
+            <div class="col-md-4">
+              <ngx-select
+                class="form-group"
+                id="goodClasification"
+                control="goodClasification"
+                label="Clasificador"
+                bindLabel="numClasifGoods"
+                [data]="dataClassGood"
+                [form]="form"></ngx-select>
+            </div>
+
+            <div class="col-md-4">
+              <ngx-select
+                class="form-group"
+                id="bank"
+                control="bank"
+                label="Banco"
+                bindLabel="cveBank"
+                [class]="form.get('current').value == null ? 'disabled' : ''"
+                [data]="banks"
+                (fetchItems)="getBanks()"
+                [form]="form"></ngx-select>
+            </div>
+
+            <div class="col-md-4">
+              <ngx-select
+                class="form-group"
+                id="bankAccount"
+                [data]="bankAccountData"
+                [form]="form"
+                [class]="form.get('bank').value == null ? 'disabled' : ''"
+                bindLabel="cveAccount"
+                label="Cuenta Bancaria"
+                control="bankAccount"></ngx-select>
             </div>
           </div>
 
           <div class="row">
-            <div class="col-md-12 mt-4">
-              <div class="col-md-4">
-                <form-field [control]="form.get('deposit')" label="Depósito">
-                  <input
-                    type="number"
-                    [min]="0"
-                    class="form-control"
-                    formControlName="deposit" />
-                </form-field>
-              </div>
+            <form-field
+              [control]="form.get('deposit')"
+              label="Depósito"
+              class="col-md-4">
+              <input
+                class="form-group"
+                type="number"
+                [min]="0"
+                class="form-control"
+                formControlName="deposit" />
+            </form-field>
 
-              <div class="col-md-3">
-                <form-field [control]="form.get('current')" label="Moneda">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="current"
-                    maxlength="15"
-                    readonly />
-                </form-field>
-              </div>
-            </div>
+            <form-field
+              [control]="form.get('current')"
+              label="Moneda"
+              class="col-md-4">
+              <input
+                class="form-group"
+                type="text"
+                class="form-control"
+                formControlName="current"
+                maxlength="15"
+                readonly />
+            </form-field>
           </div>
 
           <div class="row">
@@ -100,6 +101,8 @@
                   <input
                     type="text"
                     class="form-control"
+                    [readOnly]="form.get('dateOf').value == null"
+                    [minDate]="form.get('dateOf').value"
                     bsDatepicker
                     formControlName="dateAt" />
                 </form-field>
@@ -107,14 +110,22 @@
             </div>
           </div>
 
-          <div class="row text-center mt-3 mb-3">
+          <div class="row text-center">
             <div class="col">
               <button
                 type="button"
-                class="btn btn-primary active btn-sm"
+                class="btn btn-primary active btn-sm mr-2"
                 (click)="searchFilterGood()">
                 Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
+              <!-- <button
+                type="button"
+                class="btn btn-sm btn-info active ml-2"
+                style="width: 90px; background-color: #b38e5d"
+                (click)="cleandInfo()"
+              >
+                Limpiar <i class="fa fa-eraser"></i>
+              </button> -->
             </div>
           </div>
         </form>
@@ -192,7 +203,7 @@
               type="button"
               (click)="updateButton()"
               class="btn btn-primary btn-sm active ml-1 mr-3">
-              Actualiza
+              Actualiza <i class="fas fa-sync-alt"></i>
             </button>
 
             <button
@@ -241,6 +252,7 @@
                       form2.get('current').value == null ? 'disabled' : ''
                     "
                     label="Seleccione un Banco"
+                    (fetchItems)="getBanks2()"
                     [control]="'bank'"></ngx-select>
                 </form-field>
               </div>
@@ -283,7 +295,7 @@
                 type="button"
                 class="btn btn-primary btn-sm active"
                 (click)="openAsociate()">
-                Asociación
+                Asociación <i class="fa fa-link" aria-hidden="true"></i>
               </button>
             </div>
           </div>
@@ -309,8 +321,8 @@
                 </div>
                 <app-pagination
                   [params]="params2"
-                  [limit]="limit2"
                   [totalItems]="totalItems2"></app-pagination>
+                <!-- [limit]="limit2" -->
               </div>
             </div>
 
@@ -385,7 +397,7 @@
                     type="button"
                     class="btn btn-primary btn-sm active"
                     (click)="finalAsociate()">
-                    Asociar
+                    Asociar <i class="fa fa-link" aria-hidden="true"></i>
                   </button>
                 </div>
               </div>
