@@ -67,7 +67,7 @@ export class TransferenteSharedComponent extends BasePage implements OnInit {
       err => {
         this.transferents = new DefaultSelect();
 
-       /*  let error = '';
+        /*  let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
