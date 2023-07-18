@@ -33,4 +33,8 @@ export class LotService extends HttpService {
   getGlobalGood(id: number) {
     return this.get(`${LotEndpoints.EventGlobalGood}/${id}`);
   }
+
+  fillEventStadistics(event: string | number) {
+    return this.get('apps/fill-data-statistics/event/' + event);
+  }
 }

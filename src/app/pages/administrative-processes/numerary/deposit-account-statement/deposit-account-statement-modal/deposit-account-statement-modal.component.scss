@@ -1,0 +1,13 @@
+:host ::ng-deep app-modal {
+  .modal-body {
+    padding: 10px 20px 0px;
+  }
+}
+
+:host ::ng-deep ng2-smart-table {
+  table thead tr {
+    th:first-child {
+      min-width: 90px;
+    }
+  }
+}

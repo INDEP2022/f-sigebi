@@ -11,6 +11,19 @@ export class UtilComerV1Service extends HttpService {
     this.microservice = PrepareEventEndpoints.PreparaEvent;
   }
 
+  processTracker(body: {
+    id: string | number;
+    dir: string | number;
+    event: string | number;
+    lot: string | number;
+    tpeve2: string | number;
+    program: string | number;
+    lotepub: string | number;
+    user: string | number;
+  }) {
+    return this.post(PrepareEventEndpoints.ProcessesTracker, body);
+  }
+
   encrypt(model: IEncrypt) {
     return this.post(PrepareEventEndpoints.Encrypt, model);
   }

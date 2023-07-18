@@ -1211,6 +1211,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
   }
 
   returnParseDate_(data: Date) {
+    console.log('DATEEEE', data);
     const formattedDate = moment(data).format('YYYY-MM-DD');
     return formattedDate;
   }

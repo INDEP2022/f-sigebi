@@ -9,7 +9,6 @@ import {
 } from 'src/app/core/models/catalogs/bank-modelo-type-cuentas';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IAccountBank } from '../../models/catalogs/bank-account.model';
-import { IAccountDetailInd } from '../../models/ms-account-movements/account-detail-ind';
 import {
   IAccountMovement,
   IAccountMovementShort,
@@ -44,17 +43,6 @@ export class AccountMovementService extends HttpService {
   getDevolutionsBanks() {
     return this.get<IListResponse<IAccountMovementShort>>(
       AccountmvmntEndpoint.getDevolutionsBanks
-    );
-  }
-
-  getDetailsInd(
-    params: _Params,
-    body: { goodNumber: string; expedientNumber: number }
-  ) {
-    return this.post<IListResponse<IAccountDetailInd>>(
-      AccountmvmntEndpoint.getDetailsInd,
-      body,
-      params
     );
   }
 
@@ -186,6 +174,10 @@ export class AccountMovementService extends HttpService {
 
   postMassNumeraryGenerate(body: any) {
     return this.post('aplication/massNumeraryGenerate', body);
+  }
+
+  postValidateClosingAccounts(body: any) {
+    return this.post('aplication/get-vc-dummy', body);
   }
 }
 
