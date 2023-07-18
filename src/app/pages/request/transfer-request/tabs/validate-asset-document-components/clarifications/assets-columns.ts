@@ -1,4 +1,16 @@
 export const ASSETS_COLUMNS = {
+  /*selected: {
+    title: '',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+    sort: false,
+    hide: false,
+  },*/
   goodId: {
     title: 'No. Gestión',
     type: 'string',

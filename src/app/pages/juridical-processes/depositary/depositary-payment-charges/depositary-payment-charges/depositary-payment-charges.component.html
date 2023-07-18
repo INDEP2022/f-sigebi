@@ -1,6 +1,10 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Notificaci&oacute;n de abandono por aseguramiento</h5>
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <h5 class="title">Notificaci&oacute;n de abandono por aseguramiento</h5>
+      </div>
+    </div>
   </div>
   <div body>
     <div class="row pl-4">
@@ -24,6 +28,19 @@
         <div class="col-md-5 col-sm-12 col-xs-12">
           <form-field [control]="form.get('cve_bank')">
             <ngx-select
+              [searchOnInit]="true"
+              (fetchItems)="getUsers($event)"
+              bindLabel="bankDescription"
+              [data]="users$"
+              [form]="form"
+              control="cve_bank"
+              [showTooltip]="true"
+              value="bankCode"
+              label="Banco"
+              (change)="getDescUser($event)"></ngx-select>
+          </form-field>
+          <!-- <form-field [control]="form.get('cve_bank')">
+            <ngx-select
               [form]="form"
               [data]="users$"
               (change)="getDescUser($event)"
@@ -45,13 +62,14 @@
                 {{ item.bankCode }} - {{ item.name }}
               </div>
             </ng-template>
-          </form-field>
+          </form-field> -->
         </div>
+        <!-- fileExcel.click() -->
         <div class="col-md-2 col-sm-12 col-xs-12">
           <button
             type="text"
             class="btn btn-sm btn-info active"
-            (click)="fileExcel.click()">
+            (click)="openFile()">
             Carga Excel o CSV
           </button>
           <input
@@ -59,6 +77,7 @@
             (change)="ReadExcel($event)"
             name="fileExcel"
             #fileExcel
+            #uploadFile
             class="d-none"
             accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
         </div>
@@ -82,15 +101,20 @@
             Dispersi&#243;n de pagos
           </button>
         </div>
+        <div class="m-3">
+          <button class="btn btn-danger btn-sm active" (click)="cleanForm()">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+        </div>
       </div>
     </div>
     <div class="row">
-      <div class="form-material col-md-10">
-        <!--search-bar [params]="params"></search-bar>
-      </div><div class="col-md-2"-->
-      </div>
-      <div class="col-md-2 buttons mb-5">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
+      <div class="d-flex justify-content-end">
+        <div class="p-2">
+          <app-columns-select
+            [leftList]="true"
+            [(settings)]="settings"></app-columns-select>
+        </div>
       </div>
     </div>
     <div class="row mb-5">

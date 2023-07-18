@@ -6,7 +6,10 @@ import { Repository } from 'src/app/common/repository/repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { BankAccount } from 'src/app/pages/administrative-processes/numerary/tesofe-movements/list-banks/bank';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IBankAccount } from '../../models/catalogs/bank-account.model';
+import {
+  IBankAccount,
+  IProReconcilesGood,
+} from '../../models/catalogs/bank-account.model';
 import { IAccountMovement } from '../../models/ms-account-movements/account-movement.model';
 
 @Injectable({
@@ -21,6 +24,8 @@ export class BankAccountService
   private readonly apiBank = 'account-movements/getBankAndAccount';
 
   private readonly apiAccount = 'account-movements';
+
+  private readonly apiStatusCta = 'aplication/get-facta-db-status-cta';
 
   constructor(private repository: Repository<IBankAccount>) {
     super();
@@ -38,8 +43,16 @@ export class BankAccountService
     return this.get<IListResponse<IBankAccount>>(`${this.api}`, _params);
   }
 
+  getCveBankFilter(params?: string) {
+    return this.get(`${this.api}`, params);
+  }
+
   getById(accountNumber: Object): Observable<IBankAccount> {
     return this.post<IBankAccount>(`${this.api}/find-by-ids`, accountNumber);
+  }
+
+  getStatusCta(statusCta: Object): Observable<IBankAccount> {
+    return this.post<any>(this.apiStatusCta, statusCta);
   }
 
   getAllWithFilters(params?: _Params): Observable<IListResponse<IBankAccount>> {
@@ -50,6 +63,10 @@ export class BankAccountService
     params?: string
   ): Observable<IListResponse<IAccountMovement>> {
     return this.get<IListResponse<IAccountMovement>>(this.apiAccount, params);
+  }
+
+  getTransferAccount(Cta: Object): Observable<any> {
+    return this.post<any>(this.apiAccount, Cta);
   }
 
   getBankAndAccount() {
@@ -66,6 +83,33 @@ export class BankAccountService
 
   remove(id: string | number): Observable<Object> {
     return this.repository.remove(`${this.microservice}/${this.api}`, id);
+  }
+
+  getDetail(data: Object) {
+    return this.repository.create(
+      `${this.microservice}/bank-account/get-details`,
+      data
+    );
+  }
+
+  searchByFilterNumeraryMassive(body: IProReconcilesGood) {
+    return this.post(`aplication/proReconcilesGood`, body);
+  }
+
+  getListCurrencyCve(body?: { currency: string | null }) {
+    return this.post(`account-movements/get-cve-currency`, body);
+  }
+
+  updateAccountMovExp(body: { noGoods: any[] }) {
+    return this.post(`account-movements/update-account-movements-exp`, body);
+  }
+
+  updateAccountMovFec(body: { noGoods: any[]; fecTesofe: Date | string }) {
+    return this.post(`account-movements/update-account-movements-fec`, body);
+  }
+
+  pupInterestsDetail(body: any) {
+    return this.post(`/aplication/pup-interests-detail`, body);
   }
 
   //***** */

@@ -75,7 +75,8 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
-    console.log('Delegación de la solicitud', this.delegationUser);
+    this.modalService.onHide.subscribe(key => {});
+
     this.dictamenSeq();
     this.withDocumentation = this.idAclara === '1' ? true : false;
     this.initForm1();
@@ -95,25 +96,25 @@ export class NotifyAssetsImproprietyFormComponent
     this.clarificationForm = this.fb.group({
       addresseeName: [
         //Nombre Destinatario - Titular de la solicitud
-        this.infoRequest?.nameOfOwner || null,
+        null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
       positionAddressee: [
         //Cargo Destinatario - Titular de la solicitud
-        this.infoRequest?.holderCharge || null,
+        null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
       senderName: [
         //Nombre Remitente - DELEGADO
-        null,
+        this.infoRequest?.nameOfOwner || null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
       senderCharge: [
         //Cargo Remitente - DELEGADO
-        null,
+        this.infoRequest?.holderCharge || null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
 
@@ -154,7 +155,6 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   async confirm() {
-    console.log('Botón de continuar');
     const typeTransference = this.infoRequest.typeOfTransfer;
     let generaXML: boolean = false;
     if (
@@ -165,13 +165,13 @@ export class NotifyAssetsImproprietyFormComponent
     }
 
     if (typeTransference != 'SAT_SAE' || generaXML) {
-      // if (
-      //   this.typeClarifications == 2 &&
-      //   typeTransference != 'SAT_SAE' &&
-      //   typeTransference != 'PGR_SAE'
-      // ) {
-      //   this.improcedenciaTransferentesVoluntarias(); //Aclaración Manual tipo 2
-      // }
+      //this.aclaracionTransferentesVoluntarias(); //Aclaración Manual tipo 2
+      if (
+        (this.typeClarifications == 1 || this.typeClarifications == 2) &&
+        typeTransference === 'MANUAL'
+      ) {
+        this.aclaracionTransferentesVoluntarias(); //Aclaración Manual tipo 2
+      }
       const obtainTypeDocument = await this.obtainTypeDocument(
         false,
         this.infoRequest
@@ -179,11 +179,13 @@ export class NotifyAssetsImproprietyFormComponent
       if (obtainTypeDocument) {
         switch (this.typeDoc) {
           case 'AclaracionAsegurados': {
+            console.log('AclaracionAsegurados');
             this.aclaracionAsegurados(); //Aclaración PGR tipo 1 y 2
 
             break;
           }
           case 'AclaracionTransferentesVoluntarias': {
+            console.log('AclaracionTransferentesVoluntarias');
             this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
 
             break;
@@ -191,11 +193,26 @@ export class NotifyAssetsImproprietyFormComponent
         }
       }
 
+      /*if (
+        this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
+        (this.dataClarifications2.chatClarification.idClarificationType ==
+          '2' ||
+          this.dataClarifications2.chatClarification.idClarificationType ==
+            '1') &&
+        typeTransference == 'MANUAL'
+      ) {
+        console.log('Se ejecutará aclaracionTransferentesVoluntarias segundo')
+        this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1 y 2
+
+      }*/
+
       if (
         this.dataClarifications2.clarificationType === 'SOLICITAR_ACLARACION' &&
-        this.dataClarifications2.chatClarification.idClarificationType == '2'
+        this.dataClarifications2.chatClarification.clarificationStatus ==
+          'IMPROCEDENCIA' &&
+        typeTransference == 'MANUAL'
       ) {
-        this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
+        this.improcedenciaTransferentesVoluntarias(); //IMPROCEDENCIA  MANUAL
       }
     }
 
@@ -209,7 +226,6 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   improcedenciaTransferentesVoluntarias() {
-    console.log('improcedenciaTransferentesVoluntarias DESDE EL');
     //Recupera información del usuario logeando para luego registrarlo como firmante
     let token = this.authService.decodeToken();
 
@@ -331,10 +347,11 @@ export class NotifyAssetsImproprietyFormComponent
       positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
       paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
       consistentIn: this.clarificationForm.controls['observations'].value,
-      managedTo: this.infoRequest?.nameOfOwner, //Nombre destinatario - Titular de la solicitud
+      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
-      positionAddressee: this.infoRequest?.holderCharge, //Cargo destinatario - Titular de la solicitud
+      positionAddressee:
+        this.clarificationForm.controls['positionAddressee'].value, //Cargo destinatario - Titular de la solicitud
       modificationDate: new Date(),
       creationUser: token.name,
       documentTypeId: '212',
@@ -352,9 +369,13 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.openReport(data);
-        this.loading = false;
-        this.close();
+        const createClarGoodDoc = this.createClarGoodDoc(data);
+
+        if (createClarGoodDoc) {
+          this.openReport(data);
+          this.loading = false;
+          this.close();
+        }
       },
       error: error => {
         this.loading = false;
@@ -404,9 +425,13 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.openReport(data);
-        this.loading = false;
-        this.close();
+        const createClarGoodDoc = this.createClarGoodDoc(data);
+
+        if (createClarGoodDoc) {
+          this.openReport(data);
+          this.loading = false;
+          this.close();
+        }
       },
       error: error => {
         this.loading = false;
@@ -455,16 +480,35 @@ export class NotifyAssetsImproprietyFormComponent
 
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
-      next: data => {
-        this.openReport(data);
-        this.loading = false;
-        this.close();
+      next: async data => {
+        const createClarGoodDoc = this.createClarGoodDoc(data);
+        if (createClarGoodDoc) {
+          this.openReport(data);
+          this.loading = false;
+          this.close();
+        }
       },
       error: error => {
         this.loading = false;
 
         //this.onLoadToast('error', 'No se pudo guardar', '');
       },
+    });
+  }
+
+  createClarGoodDoc(docImpro: IClarificationDocumentsImpro) {
+    return new Promise((resolve, reject) => {
+      const formData = {
+        documentId: docImpro.id,
+        version: '1',
+        clarificationRequestId: docImpro.rejectNoticeId,
+      };
+      this.documentService.createClarDocGood(formData).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: error => {},
+      });
     });
   }
 
@@ -508,9 +552,12 @@ export class NotifyAssetsImproprietyFormComponent
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
       next: data => {
-        this.openReport(data);
-        this.loading = false;
-        this.close();
+        const createClarGoodDoc = this.createClarGoodDoc(data);
+        if (createClarGoodDoc) {
+          this.openReport(data);
+          this.loading = false;
+          this.close();
+        }
       },
       error: error => {
         this.loading = false;
@@ -520,7 +567,6 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   changeStatusAnswered() {
-    console.log('changeStatusAnswered()');
     this.loading = true;
     this.paramsReload.getValue()['filter.clarifiNewsRejectId'] =
       this.dataClarifications2.rejectNotificationId;
@@ -530,14 +576,11 @@ export class NotifyAssetsImproprietyFormComponent
         this.dataChatClarifications = data.data;
         this.updateChatClarification(this.dataChatClarifications[0]);
       },
-      error: error => {
-        console.log('changeStatusAnswered() ERROR');
-      },
+      error: error => {},
     });
   }
 
   updateChatClarification(chatClarifications: IChatClarifications) {
-    console.log('updateChatClarification()');
     const modelChatClarifications: IChatClarifications = {
       id: chatClarifications.id, //ID primaria
       clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
@@ -551,14 +594,12 @@ export class NotifyAssetsImproprietyFormComponent
       .subscribe({
         next: async data => {
           if (data.clarificationTypeId == 1) {
-            console.log('updateAnsweredAcla() TIPO 1');
             this.updateAnsweredAcla(
               data.clarifiNewsRejectId,
               chatClarifications.id,
               modelChatClarifications.goodId
             );
           } else if (data.clarificationTypeId == 2) {
-            console.log('updateAnsweredAcla() TIPO 2');
             this.updateAnsweredImpro(
               data.clarifiNewsRejectId,
               chatClarifications.id,
@@ -567,7 +608,6 @@ export class NotifyAssetsImproprietyFormComponent
           }
         },
         error: error => {
-          console.log('NO SE PUDO ACTUALIZAR');
           this.onLoadToast('error', 'No se pudo actualizar', 'error.error');
         },
       });
@@ -579,7 +619,6 @@ export class NotifyAssetsImproprietyFormComponent
     goodId?: number,
     observations?: string
   ) {
-    console.log('actualizando... 2');
     const data: ClarificationGoodRejectNotification = {
       rejectionDate: new Date(),
       rejectNotificationId: id,
@@ -603,7 +642,6 @@ export class NotifyAssetsImproprietyFormComponent
           },
           error: error => {
             this.loading = false;
-            console.log(error);
           },
         });
       },
@@ -635,9 +673,7 @@ export class NotifyAssetsImproprietyFormComponent
             this.modalRef.content.callback(true, data.goodId);
             this.modalRef.hide();
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
       },
     });
@@ -724,10 +760,8 @@ export class NotifyAssetsImproprietyFormComponent
         notificationValidate,
         callback: (next: boolean) => {
           if (next) {
-            console.log('Modal cerrado 1');
             this.changeStatusAnswered();
           } else {
-            console.log('Modal no cerrado 1');
           }
         },
       },
@@ -749,9 +783,7 @@ export class NotifyAssetsImproprietyFormComponent
         this.folio = response;
         this.generateClave(this.folio.dictamenDelregSeq);
       },
-      error: error => {
-        console.log('Error al generar secuencia de dictamen', error.error);
-      },
+      error: error => {},
     });
   }
 
@@ -759,15 +791,16 @@ export class NotifyAssetsImproprietyFormComponent
   generateClave(noDictamen?: string) {
     //Trae información del usuario logeado
     let token = this.authService.decodeToken();
-    console.log('Informació del token', token);
     //Trae el año actuar
     const year = this.today.getFullYear();
     //Cadena final (Al final las siglas ya venian en el token xd)
 
     if (token.siglasnivel4 != null) {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${token.siglasnivel4}/${noDictamen}/${year}`;
+      console.log('CLAVE ARMADA: ', this.folioReporte);
     } else {
       this.folioReporte = `${token.siglasnivel1}/${token.siglasnivel2}/${token.siglasnivel3}/${noDictamen}/${year}`;
+      console.log('CLAVE ARMADA: ', this.folioReporte);
     }
   }
 

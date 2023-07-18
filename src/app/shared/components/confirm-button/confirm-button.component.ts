@@ -9,7 +9,15 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
       (click)="onConfirm()"
       [disabled]="disabled || loading">
       {{ loading ? loadingText : text }}
-      <i *ngIf="icon && !loading" aria-hidden="true" [class]="icon"></i>
+      <i *ngIf="icon && !loading" aria-hidden="true" [class]="icon"></i
+      ><i
+        *ngIf="!loading && text.toLowerCase() == 'guardar' && !icon"
+        aria-hidden="true"
+        class="fa fa-save"></i
+      ><i
+        *ngIf="!loading && text.toLowerCase() == 'siguiente' && !icon"
+        aria-hidden="true"
+        class="fas fa-arrow-circle-right"></i>
       <img
         *ngIf="loading"
         src="assets/images/loader-button.gif"

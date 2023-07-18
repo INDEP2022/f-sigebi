@@ -1,6 +1,6 @@
 <ng-container *ngIf="nombrePantalla != 'goods-classification'">
   <app-search-inventory-goods
-    (onSearch)="getGoods($event)"></app-search-inventory-goods>
+    (onSearch)="getInfoGoods($event)"></app-search-inventory-goods>
   <div class="row mt-3">
     <div class="col-sm-12 col-md-12 col-lg-6">
       <div class="form-material">
@@ -25,7 +25,7 @@
       <div class="table-padding"></div>
     </div>
   </ng-scrollbar>
-  <app-pagination [params]="goodParams" [totalItems]="goodTotalItems">
+  <app-pagination [params]="params" [totalItems]="goodTotalItems">
   </app-pagination>
   <br />
 </ng-container>
@@ -47,15 +47,14 @@
         <button
           class="btn btn-sm btn-primary active me-2 font-size-13"
           (click)="openSiabSearch()">
-          <i class="bx bx-search me-1 float-icon"></i>
           Solicitar B&uacute;squeda en SIAB
+          <i class="bx bx-search me-1 float-icon"></i>
         </button>
       </div>
       <div>
         <button
           class="btn btn-sm btn-danger active me-2 font-size-13"
           (click)="removeGoods()">
-          <i class="bx bx-x-circle me-1 float-icon"></i>
           Eliminar
         </button>
       </div>

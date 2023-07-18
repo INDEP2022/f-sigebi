@@ -64,9 +64,13 @@ import { UserFormComponent } from '../user-form/user-form.component';
 import { WarehouseSelectFormComponent } from '../warehouse-select-form/warehouse-select-form.component';
 import {
   settingGuard,
+  settingGuardClose,
   settingTransGoods,
+  settingTransGoodsClose,
   SettingUserTable,
+  SettingUserTableClose,
   settingWarehouse,
+  settingWarehouseClose,
 } from './settings-tables';
 
 @Component({
@@ -108,9 +112,9 @@ export class PerformProgrammingFormComponent
   localities = new DefaultSelect<ILocality>();
   warehouseUbication: string = '';
   tranportableItems: number = 0;
-  headingTransportable: string = `Transportables(0)`;
-  headingGuard: string = `Resguardo(0)`;
-  headingWarehouse: string = `Almacén INDEP(0)`;
+  headingTransportable: string = `Transportables (0)`;
+  headingGuard: string = `Resguardo (0)`;
+  headingWarehouse: string = `Almacén INDEP (0)`;
   idProgramming: number = 0;
   idAuthority: string = '';
   idState: number = 0;
@@ -161,16 +165,33 @@ export class PerformProgrammingFormComponent
   infoTask: ITask;
   goodsProgCopy: IGoodProgramming[] = [];
   goodsProg: IGoodProgramming[] = [];
+  stateKey: string = '';
+  idMunicipality: string = '';
   settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
+  settingsTransportableGoodsClose = {
+    ...this.settings,
+    ...settingTransGoodsClose,
+  };
   settingUser = { ...this.settings, ...SettingUserTable };
+  settingUserClose = { ...this.settings, ...SettingUserTableClose };
   settingGuardGoods = {
     ...this.settings,
     ...settingGuard,
   };
 
+  settingGuardGoodsClose = {
+    ...this.settings,
+    ...settingGuardClose,
+  };
+
   settingWarehouseGoods = {
     ...this.settings,
     ...settingWarehouse,
+  };
+
+  settingWarehouseGoodsClose = {
+    ...this.settings,
+    ...settingWarehouseClose,
   };
 
   transferentId: string | number;
@@ -225,9 +246,9 @@ export class PerformProgrammingFormComponent
       },
     };
 
-    this.idProgramming = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as unknown as number;
+    this.idProgramming = Number(
+      this.activatedRoute.snapshot.paramMap.get('id')
+    );
   }
 
   ngOnInit(): void {
@@ -236,8 +257,7 @@ export class PerformProgrammingFormComponent
     this.getTypeRelevantSelect(new ListParams());
     this.getAkaWarehouse(new ListParams());
     this.getStates(new ListParams());
-    this.getMunicipalities(new ListParams());
-    this.getLocalities(new ListParams());
+
     this.getWarehouseSelect(new ListParams());
     this.getTransferentSelect(new ListParams());
     this.showUsersProgramming();
@@ -354,14 +374,14 @@ export class PerformProgrammingFormComponent
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      startDate: [null, [Validators.required]],
-      endDate: [null, [Validators.required]],
+      startDate: [null, Validators.required],
+      endDate: [null, Validators.required],
       observation: [
         null,
         [Validators.maxLength(400), Validators.pattern(STRING_PATTERN)],
       ],
       regionalDelegationNumber: [null, [Validators.required]],
-      delregAttentionId: [null, [Validators.required]],
+      delregAttentionId: [null],
       stateKey: [null, [Validators.required]],
       tranferId: [null, [Validators.required]],
       stationId: [null, [Validators.required]],
@@ -369,11 +389,11 @@ export class PerformProgrammingFormComponent
       typeRelevantId: [null, [Validators.required]],
       storeId: [null],
       folio: [null],
+      concurrentMsg: [null],
     });
   }
   checkInfoDate2() {
     const startDateValue = this.performForm.get('startDate').value;
-    console.log('Valor de startDate:', startDateValue);
     // Realiza cualquier operación adicional con el valor de startDateValue
   }
   searchEstate() {
@@ -449,32 +469,65 @@ export class PerformProgrammingFormComponent
         .setValue(this.delegationId);
 
       this.performForm.get('delregAttentionId').setValue(this.delegationId);
+      if (
+        this.transferentId &&
+        this.typeRelevant &&
+        this.regionalDelegationUser
+      ) {
+        const folio: any = await this.generateFolio(this.performForm.value);
+        this.performForm.get('folio').setValue(folio);
+        const task = JSON.parse(localStorage.getItem('Task'));
+        const updateTask = await this.updateTask(folio, task.id);
+        if (updateTask) {
+          this.programmingGoodService
+            .updateProgramming(this.idProgramming, this.performForm.value)
+            .subscribe({
+              next: async () => {
+                this.loading = false;
+                const regDelData = this.regionalDelegationUser;
+                let config = {
+                  ...MODAL_CONFIG,
+                  class: 'modal-lg modal-dialog-centered',
+                };
+                config.initialState = {
+                  programmingId: this.idProgramming,
+                  regDelData,
+                  callback: (next: boolean) => {
+                    if (next) {
+                      this.performForm
+                        .get('regionalDelegationNumber')
+                        .setValue(this.delegation);
+                      //this.setDataProgramming();
+                    }
+                  },
+                };
 
-      const folio: any = await this.generateFolio(this.performForm.value);
-      this.performForm.get('folio').setValue(folio);
-      const task = JSON.parse(localStorage.getItem('Task'));
-      const updateTask = await this.updateTask(folio, task.id);
-      if (updateTask) {
-        this.programmingGoodService
-          .updateProgramming(this.idProgramming, this.performForm.value)
-          .subscribe({
-            next: async () => {
-              this.loading = false;
-              const regDelData = this.regionalDelegationUser;
-              let config = {
-                ...MODAL_CONFIG,
-                class: 'modal-lg modal-dialog-centered',
-              };
-              config.initialState = {
-                programmingId: this.idProgramming,
-                regDelData,
-                callback: (next: boolean) => {},
-              };
+                this.modalService.show(WarehouseFormComponent, config);
+              },
+              error: error => {},
+            });
+        }
+      } else {
+        this.loading = false;
+        const regDelData = this.regionalDelegationUser;
+        let config = {
+          ...MODAL_CONFIG,
+          class: 'modal-lg modal-dialog-centered',
+        };
+        config.initialState = {
+          programmingId: this.idProgramming,
+          regDelData,
+          callback: (next: boolean) => {
+            if (next) {
+              this.performForm
+                .get('regionalDelegationNumber')
+                .setValue(this.delegation);
+              //this.setDataProgramming();
+            }
+          },
+        };
 
-              this.modalService.show(WarehouseFormComponent, config);
-            },
-            error: error => {},
-          });
+        this.modalService.show(WarehouseFormComponent, config);
       }
     } else {
       this.onLoadToast(
@@ -496,17 +549,20 @@ export class PerformProgrammingFormComponent
       delegationUserLog,
       callback: (data: boolean) => {
         if (data) {
-          this.onLoadToast(
+          this.alertInfo(
             'success',
-            'Correcto',
-            'Usuarios agregados a la programación correctamente'
-          );
-          this.showUsersProgramming();
+            'Registro guardado',
+            'Usuario agregado correctmante'
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.showUsersProgramming();
+            }
+          });
         }
       },
     };
 
-    const searchUser = this.modalService.show(SearchUserFormComponent, config);
+    this.modalService.show(SearchUserFormComponent, config);
   }
 
   //Mostrar lista de uusarios afiliados a la programación
@@ -555,7 +611,9 @@ export class PerformProgrammingFormComponent
     const state = this.searchGoodsForm.get('state').value;
 
     if (!municipality && !colony && !akaWarehouse && !postalCode && !state) {
-      this.getProgGoods();
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getProgGoods());
     }
 
     if (municipality && !colony && !akaWarehouse && !postalCode && !state) {
@@ -654,8 +712,6 @@ export class PerformProgrammingFormComponent
 
     if (akaWarehouse) {
       const filterData = this.goodsProgCopy.filter(item => {
-        console.log('item', item);
-        console.log('akaWarehouse', akaWarehouse);
         return item.aliasWarehouse == akaWarehouse;
       });
 
@@ -1079,19 +1135,25 @@ export class PerformProgrammingFormComponent
   }
 
   getStates(params?: ListParams) {
-    this.stateService.getAll(params).subscribe({
-      next: response => {
-        const statesData = response.data.map(data => {
-          return data.stateCode;
-        });
-        this.statesSearch = new DefaultSelect(statesData, response.count);
-      },
+    this.stateService.getAll(params).subscribe(data => {
+      const filterStates = data.data.filter(_states => {
+        return _states.stateCode;
+      });
 
-      error: error => {},
+      const states = filterStates.map(items => {
+        return items.stateCode;
+      });
+      this.statesSearch = new DefaultSelect(states, data.count);
     });
   }
 
+  stateSearchSelect(state: IStateOfRepublic) {
+    this.stateKey = state.id;
+    this.getMunicipalities(new ListParams());
+  }
+
   getMunicipalities(params?: ListParams) {
+    params['filter.stateKey'] = this.stateKey;
     this.municipalityService.getAll(params).subscribe({
       next: response => {
         this.municipailitites = new DefaultSelect(
@@ -1103,7 +1165,13 @@ export class PerformProgrammingFormComponent
     });
   }
 
+  municipalitySearchSelect(municipality: IMunicipality) {
+    this.idMunicipality = municipality.idMunicipality;
+    this.getLocalities(new ListParams());
+  }
+
   getLocalities(params?: ListParams) {
+    params['filter.municipalityId'] = this.idMunicipality;
     this.localityService.getAll(params).subscribe({
       next: response => {
         this.localities = new DefaultSelect(response.data, response.count);
@@ -1148,7 +1216,6 @@ export class PerformProgrammingFormComponent
       .postGoodsProgramming(this.params.getValue(), filterColumns)
       .subscribe({
         next: response => {
-          console.log('response', response);
           let goodsFilter = response.data.map(items => {
             if (items.physicalState) {
               if (items.physicalState == 1) {
@@ -1162,16 +1229,17 @@ export class PerformProgrammingFormComponent
               return items;
             }
           });
-          // const goodsFilter = goodsFilter.filter(item => item);
-          goodsFilter = goodsFilter.filter(item => item);
-          // console.log('goodsFilter1222', JSON.stringify(goodsFilter2));
-          this.goodsProgCopy = goodsFilter;
+
+          //goodsFilter = goodsFilter.filter(item => item);
+          this.totalItems = response.count;
+          this.filterGoodsProgramming(goodsFilter);
+
+          /*this.goodsProgCopy = goodsFilter;
           this.goodsProg = goodsFilter;
 
           this.estatesList.load(goodsFilter);
           this.totalItems = response.count;
-          this.loadingGoods = false;
-          //this.filterGoodsProgramming(goodsFilter);
+           */
           //
         },
         error: error => (this.loadingGoods = false),
@@ -1199,16 +1267,17 @@ export class PerformProgrammingFormComponent
 
         if (filter.length > 0) {
           this.estatesList.load(filter);
-          this.totalItems = this.estatesList.count();
+          this.loadingGoods = false;
+          //this.estatesList.load(filter);
           this.loadingGoods = false;
         } else {
           this.alert(
-            'info',
+            'warning',
             'Advertencía',
             'No hay bienes disponibles para programar'
           );
           this.estatesList.load([]);
-          this.totalItems = filter.length;
+          this.loadingGoods = false;
         }
       });
   }
@@ -1222,7 +1291,7 @@ export class PerformProgrammingFormComponent
   sendTransportable() {
     if (this.goodSelect.length) {
       this.alertQuestion(
-        'info',
+        'warning',
         'Acción',
         'Los bienes seleccionados serán enviados a transportable'
       ).then(async question => {
@@ -1241,7 +1310,9 @@ export class PerformProgrammingFormComponent
                 const _showGoods = await this.showGoodsTransportable(showGoods);
 
                 if (_showGoods) {
-                  this.getProgGoods();
+                  this.params
+                    .pipe(takeUntil(this.$unSubscribe))
+                    .subscribe(() => this.getProgGoods());
                   this.goodSelect = [];
                 }
               }
@@ -1324,7 +1395,7 @@ export class PerformProgrammingFormComponent
                 this.goodsTranportables.load(showTransportable);
                 this.totalItemsTransportableGoods =
                   this.goodsTranportables.count();
-                this.headingTransportable = `Transportable(${this.goodsTranportables.count()})`;
+                this.headingTransportable = `Transportable (${this.goodsTranportables.count()})`;
                 resolve(true);
               });
             },
@@ -1378,7 +1449,7 @@ export class PerformProgrammingFormComponent
   sendGuard() {
     if (this.goodSelect.length) {
       this.alertQuestion(
-        'info',
+        'warning',
         'Acción',
         'Los bienes seleccionados serán enviados a resguardo'
       ).then(async question => {
@@ -1414,7 +1485,9 @@ export class PerformProgrammingFormComponent
                   const createProgGood = await this.addGoodsGuards();
 
                   if (createProgGood) {
-                    const updateGood: any = await this.changeStatusGoodGuard();
+                    const updateGood: any = await this.changeStatusGoodGuard(
+                      data
+                    );
 
                     if (updateGood) {
                       const showGoods: any = await this.getFilterGood(
@@ -1425,7 +1498,9 @@ export class PerformProgrammingFormComponent
                         const _showGoods = await this.showGoodsGuard(showGoods);
 
                         if (_showGoods) {
-                          this.getProgGoods();
+                          this.params
+                            .pipe(takeUntil(this.$unSubscribe))
+                            .subscribe(() => this.getProgGoods());
                           this.goodSelect = [];
                         }
                       }
@@ -1455,7 +1530,6 @@ export class PerformProgrammingFormComponent
           version: '1',
           status: 'EN_RESGUARDO_TMP',
         };
-
         this.programmingGoodService.createGoodProgramming(formData).subscribe({
           next: () => {
             resolve(true);
@@ -1469,7 +1543,7 @@ export class PerformProgrammingFormComponent
   }
 
   /*------------Cambio de status a resguardo ------------------*/
-  changeStatusGoodGuard() {
+  changeStatusGoodGuard(warehouse: number) {
     return new Promise(async (resolve, reject) => {
       this.goodSelect.map(item => {
         const formData: Object = {
@@ -1477,6 +1551,7 @@ export class PerformProgrammingFormComponent
           goodId: item.googId,
           goodStatus: 'EN_RESGUARDO_TMP',
           programmationStatus: 'EN_RESGUARDO_TMP',
+          storeId: warehouse,
         };
         this.goodService.updateByBody(formData).subscribe({
           next: () => {
@@ -1510,7 +1585,7 @@ export class PerformProgrammingFormComponent
 
               this.goodsGuards.load(showGuards);
               this.totalItemsTransportableGuard = this.goodsGuards.count();
-              this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+              this.headingGuard = `Resguardo (${this.goodsGuards.count()})`;
               resolve(true);
             });
           },
@@ -1523,7 +1598,7 @@ export class PerformProgrammingFormComponent
   sendWarehouse() {
     if (this.goodSelect.length) {
       this.alertQuestion(
-        'info',
+        'warning',
         'Acción',
         'Los bienes seleccionados serán enviado a almacén'
       ).then(question => {
@@ -1536,13 +1611,13 @@ export class PerformProgrammingFormComponent
           config.initialState = {
             idTransferent,
             typeTransportable: 'warehouse',
-            callback: async (data: any) => {
-              if (data) {
+            callback: async (warehouse: number) => {
+              if (warehouse) {
                 const createProgGood = await this.addGoodsWarehouse();
 
                 if (createProgGood) {
                   const updateGood: any = await this.changeStatusGoodWarehouse(
-                    data
+                    warehouse
                   );
 
                   if (updateGood) {
@@ -1556,7 +1631,9 @@ export class PerformProgrammingFormComponent
                       );
 
                       if (_showGoods) {
-                        this.getProgGoods();
+                        this.params
+                          .pipe(takeUntil(this.$unSubscribe))
+                          .subscribe(() => this.getProgGoods());
                         this.goodSelect = [];
                       }
                     }
@@ -1644,7 +1721,7 @@ export class PerformProgrammingFormComponent
               this.goodsWarehouse.load(showWarehouse);
               this.totalItemsTransportableWarehouse =
                 this.goodsWarehouse.count();
-              this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
+              this.headingWarehouse = `Almacén INDEP (${this.goodsWarehouse.count()})`;
               resolve(true);
             });
           },
@@ -1663,7 +1740,16 @@ export class PerformProgrammingFormComponent
     this.modalService.show(DetailGoodProgrammingFormComponent, config);
   }
   // Visualizar información de alias almacen //
-  showDomicile(item: any) {
+  // showDomicile(item: any) {
+  //   let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+  //   config.initialState = {
+  //     item,
+  //     callback: () => {},
+  //   };
+  //   this.modalService.show(DomicileFormComponent, config);
+  // }
+
+  showGoodWarehouse(item: IGoodProgrammingSelect) {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       item,
@@ -1674,7 +1760,7 @@ export class PerformProgrammingFormComponent
 
   removeGoodTrans(item: IGood) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Desea eliminar el bien de transportable?'
     ).then(async question => {
@@ -1696,7 +1782,9 @@ export class PerformProgrammingFormComponent
               );
               const deleteGood = this.goodsTranportables.count();
               this.headingTransportable = `Transportable(${deleteGood})`;
-              this.getProgGoods();
+              this.params
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getProgGoods());
             });
         }
       }
@@ -1724,7 +1812,7 @@ export class PerformProgrammingFormComponent
 
   removeGoodGuard(item: IGood) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Desea eliminar el bien de resguardo?'
     ).then(async question => {
@@ -1747,7 +1835,9 @@ export class PerformProgrammingFormComponent
               const deleteGood = this.goodsGuards.count();
               this.headingGuard = `Resguardo(${deleteGood})`;
 
-              this.getProgGoods();
+              this.params
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getProgGoods());
             });
         }
       }
@@ -1756,7 +1846,7 @@ export class PerformProgrammingFormComponent
 
   removeGoodWarehouse(item: IGood) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Desea eliminar el bien de almacén?'
     ).then(async question => {
@@ -1779,7 +1869,9 @@ export class PerformProgrammingFormComponent
               const deleteGood = this.goodsWarehouse.count();
               this.headingWarehouse = `Almacén INDEP(${deleteGood})`;
 
-              this.getProgGoods();
+              this.params
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getProgGoods());
             });
         }
       }
@@ -1791,12 +1883,20 @@ export class PerformProgrammingFormComponent
     if (this.performForm.get('startDate').value) {
       this.performForm
         .get('startDate')
-        .setValue(new Date(this.performForm.get('startDate').value));
+        .setValue(
+          moment(this.performForm.get('startDate').value).format(
+            'YYYY-MM-DD HH:mm:ssZ'
+          )
+        );
     }
     if (this.performForm.get('endDate').value) {
       this.performForm
         .get('endDate')
-        .setValue(new Date(this.performForm.get('endDate').value));
+        .setValue(
+          moment(this.performForm.get('endDate').value).format(
+            'YYYY-MM-DD HH:mm:ssZ'
+          )
+        );
     }
 
     if (this.transferentId)
@@ -1813,7 +1913,7 @@ export class PerformProgrammingFormComponent
 
     this.performForm.get('delregAttentionId').setValue(this.delegationId);
     this.alertQuestion(
-      'info',
+      'question',
       'Confirmación',
       '¿Desea guardar la información de la programación?'
     ).then(async question => {
@@ -1970,7 +2070,7 @@ export class PerformProgrammingFormComponent
         .setValue(this.delegationId);
       this.performForm.get('delregAttentionId').setValue(this.delegationId);
       this.alertQuestion(
-        'info',
+        'question',
         'Confirmación',
         `¿Esta seguro de enviar la programación ${this.dataProgramming.id}?`
       ).then(async question => {
@@ -2082,7 +2182,7 @@ export class PerformProgrammingFormComponent
     if (taskResult) {
       this.msgGuardado(
         'success',
-        'Creación de tarea exitosa',
+        'Creación de tarea correcta',
         `Se creó la tarea Aceptar Programación con el folio: ${folio}`
       );
     }
@@ -2104,7 +2204,7 @@ export class PerformProgrammingFormComponent
 
   deleteUser(user: any) {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Desea eliminar el usuario de la programación?'
     ).then(question => {
@@ -2164,11 +2264,7 @@ export class PerformProgrammingFormComponent
         },
         error: error => {
           this.loadingReport = false;
-          this.onLoadToast(
-            'info',
-            'Error',
-            'Error al visualizar los bienes disponibles a programar'
-          );
+          this.alert('error', 'Error', 'Error al generar reporte');
         },
       });
   }
@@ -2179,7 +2275,7 @@ export class PerformProgrammingFormComponent
     downloadLink.href = linkSource;
     downloadLink.target = '_blank';
     downloadLink.click();
-    this.onLoadToast('success', '', 'Archivo generado');
+    this.alert('success', 'Acción Correcta', 'Archivo generado');
   }
 
   close() {
@@ -2208,11 +2304,13 @@ export class PerformProgrammingFormComponent
       this.performForm
         .get('startDate')
         .setValue(
-          moment(this.dataProgramming.startDate).format('DD/MMMM/YYYY')
+          moment(this.dataProgramming.startDate).format('YYYY-MM-DD HH:mm:ssZ')
         );
       this.performForm
         .get('endDate')
-        .setValue(moment(this.dataProgramming.endDate).format('DD/MMMM/YYYY'));
+        .setValue(
+          moment(this.dataProgramming.endDate).format('YYYY-MM-DD HH:mm:ssZ')
+        );
 
       this.transferentId = this.dataProgramming.tranferId;
 
@@ -2270,6 +2368,7 @@ export class PerformProgrammingFormComponent
 
       this.paramsAuthority.getValue()['filter.idTransferer'] =
         this.transferentId;
+      this.paramsAuthority.getValue()['filter.idAuthority'] = this.autorityId;
       this.authorityService.getAll(this.paramsAuthority.getValue()).subscribe({
         next: response => {
           const nameAndId = `${response.data[0].idAuthority} - ${response.data[0].authorityName}`;
@@ -2384,6 +2483,7 @@ export class PerformProgrammingFormComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
@@ -2393,15 +2493,23 @@ export class PerformProgrammingFormComponent
 
   checkInfoDate(event: any) {
     const startDate = event;
-    const _startDateFormat = moment(startDate).format('DD/MMMM/YYYY');
+    const _startDateFormat = moment(startDate).format('YYYY/MM/DD HH:mm:ss');
 
     const _endDateFormat = moment(this.performForm.get('endDate').value).format(
-      'DD/MMMM/YYYY'
+      'YYYY/MM/DD HH:mm:ss'
     );
-    const date = moment(new Date()).format('YYYY-MM-DD');
-    this.programmingService.getDateProgramming(date, 5).subscribe({
+    const date = moment(new Date()).format('YYYY/MM/DD');
+
+    const formData = {
+      days: 5,
+      hours: 0,
+      minutes: 0,
+      date: date,
+    };
+
+    this.programmingService.getDateProgramming(formData).subscribe({
       next: (response: any) => {
-        const correctDate = moment(response).format('DD/MMMM/YYYY');
+        const correctDate = moment(response).format('YYYY/MM/DD HH:mm:ss');
         if (correctDate > _startDateFormat || correctDate > _endDateFormat) {
           this.performForm
             .get('startDate')
@@ -2409,6 +2517,8 @@ export class PerformProgrammingFormComponent
           this.performForm
             .get('startDate')
             .setErrors({ minDate: { min: new Date(response) } });
+          this.performForm.markAllAsTouched();
+          //this.performForm.reset();
           this.performForm
             .get('endDate')
             .addValidators([minDate(new Date(response))]);
@@ -2416,8 +2526,8 @@ export class PerformProgrammingFormComponent
             .get('endDate')
             .setErrors({ minDate: { min: new Date(response) } });
           this.performForm.markAllAsTouched();
-          this.performForm.reset();
-          /*const endDate = this.performForm.get('endDate').value;
+          //this.performForm.reset();
+          const endDate = this.performForm.get('endDate').value;
           const _endDateFormat = moment(endDate).format(
             'DD/MMMM/YYYY, h:mm:ss a'
           );
@@ -2434,9 +2544,10 @@ export class PerformProgrammingFormComponent
               .get('endDate')
               .setErrors({ minDate: { min: response } });
             this.performForm.markAllAsTouched();
-          } */
+          }
         }
       },
+      error: error => {},
     });
   }
 }

@@ -12,19 +12,27 @@
       <div class="d-flex justify-content-end">
         <div class="p-2">
           <button
+            *ngIf="infoTask?.State == null"
             type="button"
             (click)="confirm()"
             class="btn btn-primary btn-sm active">
+            Aceptar
+          </button>
+
+          <button
+            *ngIf="infoTask?.State == 'FINALIZADA'"
+            type="button"
+            class="btn btn-primary disabled btn-sm active">
             Aceptar
           </button>
         </div>
 
         <div class="p-2">
           <button
-            type="button"
-            class="btn btn-danger btn-sm active"
-            (click)="close()">
-            Cancelar
+            class="btn btn-primary btn-sm active"
+            (click)="close()"
+            type="button">
+            Regresar <i class="fas fa-arrow-circle-left"></i>
           </button>
         </div>
       </div>
@@ -36,7 +44,7 @@
         <form class="form-horizontal" style="margin: 0 auto">
           <div class="form-group">
             <label class="col-lg-4 text-right"
-              >N&#46; Almac&eacute;n&#58;</label
+              >No&#46; Almac&eacute;n&#58;</label
             >
             <span> {{ store?.nbstoresiab }} </span>
           </div>

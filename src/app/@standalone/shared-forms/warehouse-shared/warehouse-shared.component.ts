@@ -11,6 +11,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { TypeWarehouseService } from 'src/app/core/services/catalogs/type-warehouse.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 //Models
+import { debounceTime } from 'rxjs';
 import { ITypeWarehouse } from 'src/app/core/models/catalogs/type-warehouse.model';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 
@@ -52,9 +53,16 @@ export class WarehouseSharedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.warehouseField == 'warehouse') {
-      this.getWarehouses(new ListParams());
-    }
+    this.form
+      .get(this.warehouseField)
+      .valueChanges.pipe(
+        debounceTime(300) // Retraso de 300 ms antes de realizar la búsqueda
+      )
+      .subscribe(value => {
+        const newParams = new ListParams();
+        newParams['filter.idWarehouse'] = value;
+        this.getWarehouses(newParams);
+      });
   }
 
   getWarehousesType(params: ListParams) {
@@ -63,13 +71,14 @@ export class WarehouseSharedComponent extends BasePage implements OnInit {
         this.warehousesType = new DefaultSelect(data.data, data.count);
       },
       err => {
-        let error = '';
+        this.warehousesType = new DefaultSelect();
+        /*  let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        this.onLoadToast('error', 'Error', error); */
       },
       () => {}
     );
@@ -82,14 +91,15 @@ export class WarehouseSharedComponent extends BasePage implements OnInit {
         this.warehouses = new DefaultSelect(data.data, data.count);
       },
       err => {
-        let error = '';
+        this.warehouses = new DefaultSelect();
+        /* let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
           error = err.message;
         }
         // this.onLoadToast('error', 'Error', error);
-        this.warehouses = new DefaultSelect([], 0, true);
+        this.warehouses = new DefaultSelect([], 0, true); */
       },
       () => {}
     );

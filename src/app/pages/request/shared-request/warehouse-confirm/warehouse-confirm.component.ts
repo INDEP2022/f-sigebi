@@ -33,7 +33,6 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    console.log('store', this.store);
   }
 
   prepareForm() {
@@ -48,7 +47,7 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
 
   confirm() {
     this.alertQuestion(
-      'warning',
+      'question',
       'Confirmación',
       '¿Estás seguro que desea confirmar el alta de almacén?'
     ).then(async question => {
@@ -69,22 +68,23 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
             responsibleDelegation: this.store.wildebeestDelegationregion,
           };
           this.close();
-          console.log('cerro1');
-          console.log('warehouseForm', warehouseForm);
+
           this.warehouseService.create(warehouseForm).subscribe({
-            next: async response => {
-              console.log('cerro2');
+            next: async () => {
               const openTaskPerform = await this.openTaskPerform();
               if (openTaskPerform == true) {
-                this.onLoadToast(
-                  'success',
-                  'Acción correcta',
-                  'Alta de almacén confirmada correctamente'
-                );
-                console.log('cerro3');
-                this.close();
-                this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
-                console.log('cerro4');
+                const closeTaskCreateWarehouse =
+                  await this.closeTaskWarehouse();
+                if (closeTaskCreateWarehouse) {
+                  this.alert(
+                    'success',
+                    'Acción correcta',
+                    'Alta de almacén confirmada correctamente'
+                  );
+
+                  this.close();
+                  this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+                }
               }
             },
             error: error => {},
@@ -114,6 +114,22 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
               },
               error: error => {},
             });
+        },
+        error: error => {},
+      });
+    });
+  }
+
+  closeTaskWarehouse() {
+    return new Promise((resolve, reject) => {
+      const task = JSON.parse(localStorage.getItem('Task'));
+      const taskForm: ITask = {
+        State: 'FINALIZADA',
+        taskDefinitionId: null,
+      };
+      this.taskService.update(task.id, taskForm).subscribe({
+        next: response => {
+          resolve(true);
         },
         error: error => {},
       });

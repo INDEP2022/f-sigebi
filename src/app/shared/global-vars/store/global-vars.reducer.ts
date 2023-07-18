@@ -35,6 +35,17 @@ export const initialState: GlobalVarsState = {
     noTransferente: null,
     gNoVolante: null,
     varDic: null,
+    bienes_foto: 0,
+    EXPEDIENTE: null,
+    TIPO_DIC: null,
+    VOLANTE: null,
+    CONSULTA: null,
+    TIPO_VO: null,
+    P_GEST_OK: null,
+    P_NO_TRAMITE: null,
+    IMP_OF: null,
+    NO_EXPEDIENTE_F: null,
+    G_REGISTRO_BITACORA: null,
   },
 };
 

@@ -18,6 +18,7 @@
         [control]="generalDataForm.get('descripcion')"
         label="Descripción">
         <textarea
+          rows="4"
           class="form-control"
           type="text"
           formControlName="descripcion"></textarea>
@@ -57,66 +58,8 @@
       </form-field>
     </div>
   </form>
-  <!-- ng-scrollbar style="height: calc(100vh - 700px)"> -->
-  <!-- <div class="container">
-    <div class="container">
-      <div class="css-table">
-        <div class="css-table-header">
-          <div>Atributo</div>
-          <div>Valores</div>
-        </div>
-  
-        <div class="css-table-body">
-          <div class="css-table-row" *ngFor="let item of list">
-            <div class="mr-2" style="text-align: end">
-              {{ item.atributo }}
-            </div>
-            <div class="ml-2">
-              <input
-                type="text"
-                class="form-control"
-                [value]="
-                  item.valor === null ||
-                  item.valor === 'NULL' ||
-                  item.valor === 'null'
-                    ? ''
-                    : item.valor
-                "
-                style="background-color: #dff8f8" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
-  <!-- </ng-scrollbar> -->
-
   <div class="container">
     <div class="row">
-      <div class="d-flex justify-content-end">
-        <div class="m-3">
-          <button
-            [disabled]="disableUpdate"
-            type="button"
-            class="btn btn-info btn-sm active"
-            (click)="update()">
-            Actualizar
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="row" *ngIf="!viewAct">
-      <app-good-characteristics-table
-        [goodChange]="goodChange"
-        [clasification]="classificationOfGoods"
-        [settings]="atributActSettings"
-        [avaluo]="false"
-        [good]="good"
-        [disabled]="true"
-        [service]="service"></app-good-characteristics-table>
-    </div>
-    <div class="row" *ngIf="viewAct">
       <app-characteristics-legend></app-characteristics-legend>
       <app-good-characteristics-table
         [goodChange]="goodChange"
@@ -130,3 +73,29 @@
     </div>
   </div>
 </div>
+
+<!--     <div class="row">
+      <div class="d-flex justify-content-end">
+        <div class="m-3">
+           [disabled]="disableUpdate"
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="update()">
+            Refrescar <i class="fas fa-sync-alt"> </i>
+          </button>
+        </div>
+      </div>
+    </div> -->
+
+<!--     <div class="row" *ngIf="!viewAct">
+      <app-good-characteristics-table
+        [goodChange]="goodChange"
+        [clasification]="classificationOfGoods"
+        [settings]="atributActSettings"
+        [avaluo]="false"
+        [good]="good"
+        [disabled]="true"
+        [service]="service"
+        [initValue]="true"></app-good-characteristics-table>
+    </div> -->

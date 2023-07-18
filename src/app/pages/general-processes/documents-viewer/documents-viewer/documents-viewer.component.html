@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Visualizaci&oacute;n de Documentos</h5>
+    <h5 class="title">Visualización de Documentos</h5>
   </div>
 
   <div body>
@@ -17,6 +17,7 @@
             min="0"
             oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
         </form-field>
+
         <form-field
           [control]="form.get('flyerNumber')"
           label="No. Volante"
@@ -36,14 +37,14 @@
             bindLabel="key"
             label="Separador"
             control="keySeparator"
-            (fetchItems)="onDocumentsSeparatorInputChange($event)"
+            (fetchItems)="loadDocumentsSeparator($event)"
             (change)="onOptionsSelectedSeparator($event)">
           </ngx-select>
         </form-field>
 
         <form-field
           [control]="form.get('significantDate')"
-          label="Fecha significativa (mm/aaaa)"
+          label="Fecha Significativa (mm/aaaa)"
           class="col-md-2">
           <input
             type="text"
@@ -60,16 +61,16 @@
             [data]="selectTypeDoc"
             [form]="form"
             bindLabel="id"
-            label="Tipo de documento"
+            label="Tipo de Documento"
             control="keyTypeDocument"
-            (fetchItems)="onTipoDocumentoInputChange($event)"
+            (fetchItems)="loadDocumentsType($event)"
             (change)="onOptionsSelectedTypeDocument($event)">
           </ngx-select>
         </form-field>
 
         <form-field
           [control]="form.get('descriptionDocument')"
-          label="Descripci&oacute;n del documento"
+          label="Descripci&oacute;n del Documento"
           class="col-md-9">
           <input
             type="text"
@@ -82,7 +83,7 @@
       <div class="row pt-3">
         <form-field
           [control]="form.get('preliminaryInquiry')"
-          label="Averiguaci&oacute;n previa"
+          label="Averiguaci&oacute;n Previa"
           class="col-md-3">
           <input
             type="text"
@@ -93,7 +94,7 @@
 
         <form-field
           [control]="form.get('criminalCase')"
-          label="Causa penal"
+          label="Causa Penal"
           class="col-md-3">
           <input
             type="text"
@@ -138,7 +139,7 @@
                 type="submit"
                 class="btn btn-sm btn-info active mr-4"
                 style="background-color: #9d2449">
-                Consultar
+                Consultar <i class="bx bx-search float-icon"></i>
               </button>
               <button
                 type="button"
@@ -156,11 +157,11 @@
       <div class="row" style="margin-bottom: 30px">
         <div class="col-md-10 d-flex justify-content-between">
           <div class="d-flex align-items-center">
-            <span class="mr-5" style="color: #b38e5d"
+            <span class="mr-5" style="color: #1e7e34"
               ><i class="fa fa-square"></i> Documento digitalizado</span
             >
-            <span style="color: #05668d"
-              ><i class="fa fa-square"></i> Documento pendiente de
+            <span class="text-dark"
+              ><i class="fa fa-square"></i> Documento pendiente a
               digitalizar</span
             >
           </div>
@@ -183,17 +184,18 @@
             <div [class]="loading ? 'table-loading' : ''">
               <div class="table-responsive">
                 <ng2-smart-table
+                  id="hooverTableDocumentViewer"
                   [attr.class]="'table-bordered'"
                   [settings]="settings"
                   [source]="data"
                   (delete)="showDeleteAlert($event.data)"
-                  (userRowSelect)="modalImage($event.data)">
+                  (userRowSelect)="modalImage($event.data)"
+                  (resetFilter)="resetFilters()">
                 </ng2-smart-table>
               </div>
             </div>
           </div>
         </div>
-        <!-- (edit)="openForm($event.data)" -->
         <app-pagination
           [params]="params"
           [totalItems]="totalItems"></app-pagination>

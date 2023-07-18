@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { DefaultFilter } from 'ng2-smart-table';
 
 @Component({
@@ -9,19 +9,29 @@ import { DefaultFilter } from 'ng2-smart-table';
         class="form-control"
         bsDatepicker
         [ngModel]="query"
-        [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }"
-        (ngModelChange)="onChange($event)" />
+        [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+        (ngModelChange)="onChange($event)"
+        placeholder="Fecha"
+        style="border-radius: 5px;padding: 8px;border: 1px solid #ccc;" />
       <span class="input-group-addon" *ngIf="this.query">
-        <i class="fa fa-broom" (click)="clearDate($event)"></i>
+        <i
+          class="fa fa-trash red-icon"
+          (click)="clearDate($event)"
+          style="color: #9D2449"></i>
       </span>
     </div>
   `,
 })
-export class CustomDateFilterComponent extends DefaultFilter {
+export class CustomDateFilterComponent
+  extends DefaultFilter
+  implements OnChanges
+{
+  @Input() someInput: any;
   onChange(event: any): void {
     this.query = event;
     this.setFilter();
   }
+  ngOnChanges() {}
   clearDate(event: any) {
     event.stopPropagation();
     this.query = '';

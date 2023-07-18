@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { GoodTrackerEndpoints } from 'src/app/common/constants/endpoints/ms-good-tracker-endpoints';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { GoodTrackerMap } from 'src/app/pages/general-processes/goods-tracker/utils/good-tracker-map';
@@ -9,7 +9,11 @@ import {
 } from '../../interfaces/list-response.interface';
 import { Iidentifier } from '../../models/ms-good-tracker/identifier.model';
 import { ITmpTracker } from '../../models/ms-good-tracker/tmpTracker.model';
-import { ITrackedGood } from '../../models/ms-good-tracker/tracked-good.model';
+import {
+  ITrackedGood,
+  ITrackerGoodSocialCabinet,
+  ITrackerGoodSocialCabinetObject,
+} from '../../models/ms-good-tracker/tracked-good.model';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +31,40 @@ export class GoodTrackerService extends HttpService {
     );
   }
 
+  getAllSocialCabinet(params?: _Params) {
+    return this.get<IListResponseMessage<ITrackerGoodSocialCabinetObject>>(
+      'trackergood/apps/goodtrackertmpv2',
+      params
+    ).pipe(
+      catchError(x =>
+        of({ count: 0, data: [] as ITrackerGoodSocialCabinetObject[] })
+      ),
+      map(response => {
+        return {
+          ...response,
+          data: response.data.map(x => {
+            return {
+              ...x,
+              socialCabinet: x.socialCabinet
+                ? x.socialCabinet.cabinetType
+                : null,
+            } as ITrackerGoodSocialCabinet;
+          }),
+        };
+      })
+    );
+  }
+
   trackGoods(filters: GoodTrackerMap, params: _Params) {
+    return this.post<IListResponseMessage<ITrackedGood>>(
+      'trackergood/apps/pup-consult',
+      filters,
+      params
+    );
+  }
+
+  trackGoodsWidthNotGoods(filters: GoodTrackerMap, params: string) {
+    params = 'flag=true' + (params.length > 0 ? '&' + params : '');
     return this.post<IListResponseMessage<ITrackedGood>>(
       'trackergood/apps/pup-consult',
       filters,
@@ -40,6 +77,10 @@ export class GoodTrackerService extends HttpService {
       GoodTrackerEndpoints.TmpTracker,
       params
     );
+  }
+
+  getTvGoodTrackerFilter(params: any) {
+    return this.get('t-v-goods-tracker', params);
   }
 
   getAllModal(
@@ -58,5 +99,21 @@ export class GoodTrackerService extends HttpService {
 
   createTmpTracker(tmpTracker: ITmpTracker) {
     return this.post(GoodTrackerEndpoints.TmpTracker, tmpTracker);
+  }
+
+  includeAll(filters: any) {
+    return this.post('trackergood/apps/pup-consult-with-insert', filters);
+  }
+
+  getExcel(tmp: GoodTrackerMap) {
+    return this.post(GoodTrackerEndpoints.GoodExcel, tmp);
+  }
+
+  donwloadExcel() {
+    return this.get(GoodTrackerEndpoints.DownloadExcel);
+  }
+
+  getPhotos(tmp: GoodTrackerMap) {
+    return this.post(GoodTrackerEndpoints.GoodPhotos, tmp);
   }
 }

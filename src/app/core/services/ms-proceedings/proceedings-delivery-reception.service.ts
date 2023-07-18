@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
 import { catchError, forkJoin, map, mergeMap, Observable, of } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
 import {
@@ -35,6 +38,8 @@ export interface INotSucess {
 })
 export class ProceedingsDeliveryReceptionService extends HttpService {
   private readonly endpoint = ProceedingsEndpoints.ProceedingsDeliveryReception;
+  private readonly endpoint2 = ProceedingsEndpoints.GoStatus;
+  private readonly filter = `?.filter.keysProceedings=`;
   constructor(
     private detailService: ProceedingsDetailDeliveryReceptionService
   ) {
@@ -296,5 +301,26 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.get(
       `${ProceedingsEndpoints.ProceedingsDeliveryReception}/find/user/${user}/area/${area}`
     );
+  }
+  getStatusDeliveryCveExpendiente(cve: string) {
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}?text.keysProceedings=${cve}`;
+    return this.get(route, cve);
+  }
+  getStatusDeliveryCveExpendienteAll(params?: ListParams) {
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}`;
+    return this.get(route, params);
+  }
+  getAllByActa(
+    cve: string,
+    fileNumber: number,
+    tipe: number
+  ): Observable<IListResponse<IProceedingDeliveryReception>> {
+    return this.get<IListResponse<IProceedingDeliveryReception>>(
+      `${this.endpoint}/proceedings-delivery-reception?text.${cve}&file.filesId=${fileNumber}file.filesId=${fileNumber}`
+    );
+  }
+
+  getStatusConversion(id: string | number) {
+    return this.get(`${this.endpoint2}/${id}`);
   }
 }

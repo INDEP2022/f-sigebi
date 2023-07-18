@@ -59,7 +59,6 @@ export class InappropriatenessPgrSatFormComponent
   }
 
   ngOnInit(): void {
-    console.log('Delegación de la solicitud', this.delegationUser);
     this.dictamenSeq();
 
     this.prepareForm();
@@ -114,7 +113,7 @@ export class InappropriatenessPgrSatFormComponent
 
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
-      next: response => {
+      next: async response => {
         this.openReport(response);
         this.loading = false;
         this.close();
@@ -194,7 +193,6 @@ export class InappropriatenessPgrSatFormComponent
           },
           error: error => {
             this.loading = false;
-            console.log(error);
           },
         });
       },
@@ -226,9 +224,7 @@ export class InappropriatenessPgrSatFormComponent
             this.modalRef.content.callback(true, data.goodId);
             this.modalRef.hide();
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
       },
     });
@@ -253,10 +249,8 @@ export class InappropriatenessPgrSatFormComponent
         notificationValidate,
         callback: (next: boolean) => {
           if (next) {
-            console.log('Modal cerrado 1');
             this.changeStatusAnswered();
           } else {
-            console.log('Modal no cerrado 1');
           }
         },
       },
@@ -278,9 +272,7 @@ export class InappropriatenessPgrSatFormComponent
         this.folio = response;
         this.generateClave(this.folio.dictamenDelregSeq);
       },
-      error: error => {
-        console.log('Error al generar secuencia de dictamen', error.error);
-      },
+      error: error => {},
     });
   }
 

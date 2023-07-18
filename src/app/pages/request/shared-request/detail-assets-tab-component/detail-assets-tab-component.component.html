@@ -121,7 +121,7 @@
             <div class="col-md-5">
               <form-field
                 [control]="detailAssets.get('volume')"
-                label="Volumen (m3)">
+                label="Volumen &#40;m&#179;&#41;">
                 <input
                   type="text"
                   class="form-control"
@@ -314,7 +314,7 @@
               class="btn btn-primary btn-sm active"
               style="margin-right: 2px"
               (click)="openSelectAddressModal()">
-              <i class="bx bx-home"></i> Seleccionar Domicilio
+              Seleccionar Domicilio <i class="bx bx-home"></i>
             </button>
             <button
               class="btn btn-secondary btn-sm active"
@@ -1013,7 +1013,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('volume')"
-              label="Volumen&#40;m3&#41;"
+              label="Volumen &#40;m&#179;&#41;"
               *ngIf="process != 'classify-assets'">
               <input
                 type="number"
@@ -1024,7 +1024,7 @@
             </form-field>
             <form-field
               [control]="detailAssets.get('volume')"
-              label="Volumen&#40;m3&#41;"
+              label="Volumen &#40;m&#179;&#41;"
               *ngIf="process == 'classify-assets'">
               <input
                 type="number"
@@ -1327,7 +1327,7 @@
           <div class="col-md-3">
             <form-field
               [control]="detailAssets.get('weight')"
-              label="Peso&#40;Kgs&#41;"
+              label="Peso &#40;Kgs&#41;"
               *ngIf="process != 'classify-assets'">
               <input
                 type="number"
@@ -1338,7 +1338,7 @@
             </form-field>
             <form-field
               [control]="detailAssets.get('weight')"
-              label="Peso&#40;Kgs&#41;"
+              label="Peso &#40;Kgs&#41;"
               *ngIf="process == 'classify-assets'">
               <input
                 type="number"
@@ -1944,7 +1944,7 @@
           <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('publicDeed')"
-              label="Escritura p&uacute;blica"
+              label="Escritura P&uacute;blica"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
@@ -1954,7 +1954,7 @@
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('publicDeed')"
-              label="Escritura p&uacute;blica"
+              label="Escritura P&uacute;blica"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
@@ -1991,7 +1991,7 @@
           <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('pubRegProperty')"
-              label="Registro Público de Propiedad"
+              label="Registro P&uacute;blico de Propiedad"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
@@ -2001,7 +2001,7 @@
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('pubRegProperty')"
-              label="Registro Público de Propiedad"
+              label="Registro P&uacute;blico de Propiedad"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
@@ -2099,7 +2099,7 @@
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('appraisalDate')"
-              label="Fecha de Avaluo"
+              label="Fecha de Aval&uacute;o"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
@@ -2432,7 +2432,7 @@
           <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('ownershipPercentage')"
-              label="% de Copropietario"
+              label="&#37; de Copropietario"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
@@ -2440,9 +2440,10 @@
                 formControlName="ownershipPercentage"
                 [readOnly]="isGoodTypeReadOnly" />
             </form-field>
+            <!-- % = &#37; -->
             <form-field
               [control]="goodDomicilieForm.get('ownershipPercentage')"
-              label="% de Copropietario"
+              label="&#37; de Copropietario"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
@@ -2594,7 +2595,7 @@
           <div class="col-md-5">
             <form-field
               [control]="goodDomicilieForm.get('echoForecastPercentage')"
-              label="% Previsi&oacute;n Ecol&oacute;gica"
+              label="&#37; Previsi&oacute;n Ecol&oacute;gica"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
@@ -2604,7 +2605,7 @@
             </form-field>
             <form-field
               [control]="goodDomicilieForm.get('echoForecastPercentage')"
-              label="% Previsi&oacute;n Ecol&oacute;gica"
+              label="&#37; Previsi&oacute;n Ecol&oacute;gica"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"

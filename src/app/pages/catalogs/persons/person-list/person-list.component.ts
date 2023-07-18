@@ -12,7 +12,6 @@ import { IPerson } from 'src/app/core/models/catalogs/person.model';
 import { PersonService } from 'src/app/core/services/catalogs/person.service';
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { PersonFormComponent } from '../person-form/person-form.component';
 import { PERSON_COLUMNS } from './person-columns';
 
@@ -29,6 +28,7 @@ export class PersonListComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   origin: string = '';
   no_bien: number = null;
+  no_nom: number = null;
 
   constructor(
     private personService: PersonService,
@@ -60,6 +60,7 @@ export class PersonListComponent extends BasePage implements OnInit {
         this.origin = params['origin'] ?? null;
         if (this.origin == 'FACTJURREGDESTLEG') {
           this.no_bien = params['no_bien'] ?? null;
+          this.no_nom = params['p_nom'] ?? null;
         }
         console.log(params);
       });
@@ -218,38 +219,31 @@ export class PersonListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.personService.remove(id).subscribe({
       next: () => {
-        Swal.fire('Borrado', '', 'success');
         this.params
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getPersons());
-      },
-    });
 
-    this.personService.remove(id).subscribe({
-      next: () => {
         this.alert(
           'success',
-          'Mantto. a administrador, depositario e interventor',
+          'Mantenimiento a Administrador, Depositario e Interventor',
           'Borrado Correctamente'
         );
-        this.params
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getPersons());
       },
       error: error => {
-        this.alert(
-          'warning',
-          'Alerta',
-          'No se puede eliminar el objeto debido a una relación con otra tabla.'
-        );
+        console.log(error);
       },
     });
   }
   goBack() {
     if (this.origin == 'FACTJURREGDESTLEG') {
-      this.router.navigate([
-        '/pages/juridical/depositary/depositary-record/' + this.no_bien,
-      ]);
+      this.router.navigate(
+        ['/pages/juridical/depositary/depositary-record/' + this.no_bien],
+        {
+          queryParams: {
+            p_nom: this.no_nom,
+          },
+        }
+      );
     } else {
       this.alert(
         'warning',

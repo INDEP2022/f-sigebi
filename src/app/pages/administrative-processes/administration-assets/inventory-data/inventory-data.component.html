@@ -1,12 +1,11 @@
-<!-- <form class="form-material" [formGroup]="inventoryDataForm"> -->
 <div class="row">
   <div class="row">
     <div class="col-md-8">
-      <p><strong>Seleccione un inventario</strong></p>
+      <p><strong>Seleccione un Inventario</strong></p>
     </div>
     <div class="col-md-4" *ngIf="inventorySelect">
       <p>
-        Inventario seleccionado:
+        Inventario Seleccionado:
         <strong>{{
           inventorySelect ? inventorySelect.inventoryNumber : ''
         }}</strong>
@@ -34,11 +33,6 @@
   <form class="form-material" [formGroup]="inventoryDataForm">
     <div class="container">
       <div class="row">
-        <!-- <div class="col-md-4">
-          <form-field [control]="inventoryDataForm.get('noInventario')" label="No. Inventario">
-            <input type="number" class="form-control" formControlName="noInventario" />
-          </form-field>
-        </div> -->
         <div class="col-md-6">
           <form-field
             [control]="inventoryDataForm.get('fechaInventario')"
@@ -65,29 +59,28 @@
   </form>
 </div>
 <div class="row">
-  <div class="d-flex justify-content-end">
-    <div class="m-3">
-      <button (click)="add()" class="btn btn-primary active btn-sm">
-        {{ textButon }}
-      </button>
-    </div>
-  </div>
-</div>
-<div class="row">
   <div class="col-md-3">
-    <!--  <button
-      class="btn btn-primary btn-sm active"
-      (click)="getAtribute()"
-      >
-      Obtener Atributos
-    </button> -->
-    <button
-      [disabled]="generateAtri"
-      class="btn btn-secondary btn-sm active mt-2"
-      (click)="generateAtribute()">
-      Genarar Atributos
-    </button>
-    <!-- [disabled]="disableGetAtribute" -->
+    <div class="row">
+      <div class="col-md-10">
+        <button
+          [disabled]="generateAtri"
+          class="btn btn-primary btn-sm active"
+          (click)="generateAtribute()">
+          {{ atribute }}&nbsp;
+        </button>
+      </div>
+    </div>
+    <br />
+    <div class="row">
+      <div class="col-md-10">
+        <button (click)="add()" class="btn btn-primary active btn-sm">
+          {{ textButon }}
+          <i *ngIf="textButon.includes('Actualizar')" class="fas fa-sync-alt">
+          </i>
+        </button>
+      </div>
+    </div>
+    <br />
   </div>
   <div class="col">
     <div class="row" *ngIf="viewAct">
@@ -109,24 +102,14 @@
       <app-good-characteristics-table
         [goodChange]="goodChange"
         [clasification]="classificationOfGoods"
-        [settings]="atributNewSettings"
+        [settings]="atributActSettings"
         [avaluo]="false"
         [good]="good"
         [disabled]="false"
         [loadInventary]="loadInventary"
         [inventary]="inventary"
-        [service]="service"
-        [initValue]="false"></app-good-characteristics-table>
+        [initValue]="false"
+        [service]="service"></app-good-characteristics-table>
     </div>
   </div>
 </div>
-<!-- <div class="d-flex justify-content-center">
-  <div>
-    <button
-      class="btn btn-secondary btn-sm active"
-      (click)="inventoryAutorization()">
-      Inventario Autoridad Emisora
-    </button>
-  </div>
-</div> -->
-<!-- </form> -->

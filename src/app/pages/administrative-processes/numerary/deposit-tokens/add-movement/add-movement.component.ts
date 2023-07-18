@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -118,7 +119,7 @@ export class AddMovementComponent extends BasePage implements OnInit {
       deposit: this.form.value.deposit,
       placeMotion: null,
       pierced: null,
-      dateMotion: this.form.value.dateMovement,
+      dateMotion: this.returnParseDate_(this.form.value.dateMovement),
       numberProceedings: null,
       numberAccount: BANK.no_cuenta,
       InvoiceFile: null,
@@ -134,7 +135,9 @@ export class AddMovementComponent extends BasePage implements OnInit {
       numberGood: null,
       numberMotionTransfer: null,
       postDiverse: null,
-      dateCalculationInterests: this.form.value.dateCalculationInterests,
+      dateCalculationInterests: this.returnParseDate_(
+        this.form.value.dateCalculationInterests
+      ),
       isFileDeposit: 'S',
       numberReturnPayCheck: null,
     };
@@ -167,7 +170,7 @@ export class AddMovementComponent extends BasePage implements OnInit {
     if (lparams?.text.length > 0)
       if (!isNaN(parseInt(lparams?.text))) {
         console.log('SI');
-        params__ = `?filter.no_cuenta=${lparams.text}`;
+        params__ = `?filter.cve_cuenta=${lparams.text}`;
         // params.addFilter('no_cuenta', lparams.text);
       } else {
         console.log('NO');
@@ -180,9 +183,10 @@ export class AddMovementComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.accountMovementService.getDataBank(params__).subscribe({
         next: response => {
+          console.log('ress1', response);
           let result = response.data.map(item => {
             item['bankAndNumber'] =
-              item.no_cuenta + ' - ' + item.cve_banco + ' - ' + item.nombre;
+              item.cve_cuenta + ' - ' + item.cve_banco + ' - ' + item.nombre;
           });
 
           Promise.all(result).then((resp: any) => {
@@ -232,5 +236,11 @@ export class AddMovementComponent extends BasePage implements OnInit {
           },
         });
     });
+  }
+
+  returnParseDate_(data: Date) {
+    console.log('DATEEEE', data);
+    const formattedDate = moment(data).format('YYYY-MM-DD');
+    return formattedDate;
   }
 }

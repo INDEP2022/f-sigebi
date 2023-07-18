@@ -76,6 +76,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   showPhoto = false;
   loadTypes = false;
   actualGoodNumber: number = null;
+  errorMessage: string;
   get data() {
     return this.service.data;
   }
@@ -314,10 +315,9 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     });
   }
 
-  ngAfterViewInit() {
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit();
     const selectedBadString = localStorage.getItem('selectedBad');
-    const derivationGoodId = localStorage.getItem('derivationGoodId');
-
     const actualGoodNumberString = localStorage.getItem(
       'goodCharacteristicNumber'
     );
@@ -328,12 +328,6 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           this.enabledFotos();
         }, 1000);
       }
-    }
-    if (derivationGoodId) {
-      setTimeout(() => {
-        this.selectTab(0, 1);
-        this.enabledFotos();
-      }, 1000);
     } else {
       setTimeout(() => {
         this.selectTab(1, 0);
@@ -588,6 +582,12 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     }
     if ('ATP,ADM'.includes(this.goodStatus.value) && this.LVALIDA) {
       this.disabledDescripcion = true;
+      if (!this.disabledBienes) {
+        this.errorMessage =
+          'No se puede editar la descripción de un bien ' +
+          this.good.status +
+          ' con delegaciones';
+      }
     } else {
       const partializedGoods = await this.goodIsPartialize();
       if (partializedGoods) {
@@ -595,6 +595,10 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       }
       if (vb_parcial) {
         this.disabledDescripcion = true;
+        if (!this.disabledBienes) {
+          this.errorMessage =
+            'No se puede editar la descripción de un bien parcializado ';
+        }
       } else {
         this.disabledDescripcion = false;
       }
@@ -611,6 +615,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   async postQuery() {
     // debugger;
+    this.errorMessage = null;
     await this.postRecord(true);
     this.loading = false;
     setTimeout(() => {
@@ -933,12 +938,18 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
             map(x => {
               return {
                 ...x,
-                data: x.data.map(item => {
-                  return {
-                    ...item,
-                    quantity: item.quantity ? +(item.quantity + '') : null,
-                  };
-                }),
+                data: x
+                  ? x.data
+                    ? x.data.map(item => {
+                        return {
+                          ...item,
+                          quantity: item.quantity
+                            ? +(item.quantity + '')
+                            : null,
+                        };
+                      })
+                    : []
+                  : [],
               };
             })
           )
@@ -1005,6 +1016,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         } else {
           this.loading = false;
           this.goodChange++;
+          this.alert('error', 'Error', 'No existe biene');
           // this.service.goodChange.next(false);
         }
       } else {
@@ -1106,6 +1118,31 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     }
   }
 
+  private activateForEdit() {
+    this.disabledBienes = false;
+    this.disabledTable = false;
+    this.disabledNoClasifBien = false;
+    this.disabledDescripcion = false;
+    this.errorMessage = null;
+  }
+
+  private disactivateForStatus() {
+    this.disabledBienes = true;
+    this.disabledDescripcion = true;
+    this.disabledTable = true;
+    this.disabledNoClasifBien = true;
+    this.errorMessage =
+      'El estatus ' + this.good.status + ' no es válido para editar';
+  }
+
+  private disactivateForUser() {
+    this.disabledBienes = true;
+    this.disabledDescripcion = true;
+    this.disabledTable = true;
+    this.disabledNoClasifBien = true;
+    this.errorMessage = 'El usuario no tiene permisos de escritura';
+  }
+
   private async getValidations() {
     // debugger;
     const response = await firstValueFrom(
@@ -1118,33 +1155,20 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       ).length;
       const di_disponible_d = response.filter(x => x.action === 'D').length;
       if (di_disponible > 0) {
-        this.disabledBienes = false;
-        this.disabledTable = false;
-        this.disabledNoClasifBien = false;
-        this.disabledDescripcion = false;
+        this.activateForEdit();
       } else {
-        if (di_disponible_e > 0 && this.haveTdictaUser) {
-          this.disabledBienes = false;
-          this.disabledDescripcion = false;
-          this.disabledTable = false;
-          this.disabledNoClasifBien = false;
-        } else if (di_disponible_d > 0 && this.haveTdictaUser) {
-          this.disabledBienes = false;
-          this.disabledDescripcion = false;
-          this.disabledTable = false;
-          this.disabledNoClasifBien = false;
+        if (this.haveTdictaUser) {
+          if (di_disponible_e > 0 || di_disponible_d > 0) {
+            this.activateForEdit();
+          } else {
+            this.disactivateForStatus();
+          }
         } else {
-          this.disabledBienes = true;
-          this.disabledDescripcion = true;
-          this.disabledTable = true;
-          this.disabledNoClasifBien = true;
+          this.disactivateForUser();
         }
       }
     } else {
-      this.disabledBienes = true;
-      this.disabledDescripcion = true;
-      this.disabledTable = true;
-      this.disabledNoClasifBien = true;
+      this.disactivateForStatus();
     }
     // this.disabledBienes = false;
   }

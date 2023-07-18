@@ -7,41 +7,45 @@
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
-            [source]="data1">
+            [source]="detail">
           </ng2-smart-table>
         </div>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems">
+      <app-pagination
+        [limit]="limit"
+        [params]="params"
+        [totalItems]="totalItems"
+        [pageSizeOptions]="pageSizeOptions">
       </app-pagination>
     </div>
     <form action="" class="form-material" [formGroup]="form">
       <div class="row mt-4">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field
             [control]="form.get('realInterests')"
-            label="Intereses Reales">
+            label="Intéreses Reales">
             <input
               type="text"
               class="form-control"
               formControlName="realInterests" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field
             [control]="form.get('estimatedInterest')"
-            label="Intereses Estimados">
+            label="Intéreses Estimados">
             <input
               type="text"
               class="form-control"
               formControlName="estimatedInterest" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field
             [control]="form.get('creditedInterest')"
-            label="Interes Acreditados">
+            label="Intéreses Acreditados">
             <input
               type="text"
               class="form-control"
@@ -56,10 +60,16 @@
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
           Regresar
+          <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-secondary active">Imprimir</button>
+        <button
+          type="button"
+          class="btn btn-primary active btn-md"
+          (click)="report()">
+          Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+        </button>
       </div>
     </div>
   </div>

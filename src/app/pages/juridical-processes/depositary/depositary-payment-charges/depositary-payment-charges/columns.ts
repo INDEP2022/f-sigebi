@@ -6,7 +6,7 @@ export const COLUMNS = {
     sort: false,
   },
   registrationDate: {
-    title: 'Fecha Registro SIAB',
+    title: 'Fecha Registro INDEP',
     sort: false,
   },
   movement: {
@@ -26,7 +26,35 @@ export const COLUMNS = {
     sort: false,
   },
   sucursal: {
-    title: 'sucursal',
+    title: 'Sucursal',
+    sort: false,
+  },
+  amount: {
+    title: 'Monto',
+    sort: false,
+  },
+  result: {
+    title: 'Resultado',
+    sort: false,
+  },
+  validSystem: {
+    title: 'Válido',
+    sort: false,
+  },
+  payId: {
+    title: 'Id Pago',
+    sort: false,
+  },
+  noGood: {
+    title: 'No Bien',
+    sort: false,
+  },
+  appointmentNum: {
+    title: 'No contrato',
+    sort: false,
+  },
+  entryorderid: {
+    title: 'Id Orden Ingreso',
     sort: false,
   },
 };
@@ -41,7 +69,7 @@ export const COLUMNS_EXTRAS = {
     sort: false,
   },
   validSystem: {
-    title: 'Valido',
+    title: 'Válido',
     sort: false,
   },
   payId: {

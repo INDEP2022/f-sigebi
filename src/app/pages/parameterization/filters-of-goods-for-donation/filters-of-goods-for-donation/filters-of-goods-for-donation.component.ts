@@ -10,7 +10,7 @@ import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModalGoodForDonationComponent } from '../modal-good-for-donation/modal-good-for-donation.component';
-import { COLUMNS } from './columns';
+import { COLUMNS_1 } from './columns';
 
 @Component({
   selector: 'app-filters-of-goods-for-donation',
@@ -44,7 +44,7 @@ export class FiltersOfGoodsForDonationComponent
         add: false,
         position: 'right',
       },
-      columns: { ...COLUMNS },
+      columns: { ...COLUMNS_1 },
     };
   }
 
@@ -60,8 +60,19 @@ export class FiltersOfGoodsForDonationComponent
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'id':
+              case 'statusId':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'status':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
+                break;
+              case 'noLabel':
                 searchFilter = SearchFilter.EQ;
+                break;
+              case 'tag':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -107,21 +118,24 @@ export class FiltersOfGoodsForDonationComponent
 
     this.donationServ.getAll(newParams).subscribe({
       next: response => {
-        if (response.data.length > 0) {
+        /*if (response.data.length > 0) {
           response.data.map(donation => {
             donation.statusDesc = donation.status.description;
             donation.tagId = donation.tag.id;
             donation.tagDesc = donation.tag.description;
           });
           this.loading = false;
-        }
+        }*/
         this.data.load(response.data);
         this.totalItems = response.count;
         this.data.refresh();
+        this.loading = false;
       },
       error: err => {
-        //this.onLoadToast('error', err.error.message, '');
         this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
       },
     });
   }

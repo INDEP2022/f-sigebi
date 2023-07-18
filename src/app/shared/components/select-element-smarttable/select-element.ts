@@ -10,6 +10,8 @@ import { SharedModule } from '../../shared.module';
       [multiple]="false"
       [closeOnSelect]="true"
       [searchable]="false"
+      bindLabel="msg"
+      bindValue="value"
       [(ngModel)]="value"
       (change)="onToggle($event)">
     </ng-select>
@@ -27,11 +29,16 @@ export class SelectElementComponent<T = any> implements OnInit {
 
   constructor() {
     this.values.subscribe(data => {
+      console.log(data);
       this.data = data;
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.values.subscribe(data => {
+      this.data = data;
+    });
+  }
 
   onToggle($event: Event) {
     let row = this.rowData;

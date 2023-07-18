@@ -8,17 +8,39 @@
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('legalStatus')"
-            label="Situación Juridica">
+            label="Situación Jurídica">
             <ng-select
               formControlName="legalStatus"
               [searchable]="false"
               class="form-control"
               [clearable]="false">
-              <ng-option value="ADM">ASEGURADO</ng-option>
-              <ng-option value="DEA">DECOMISADO</ng-option>
-              <ng-option value="CND">ABANDONADO</ng-option>
+              <ng-option value="AS">ASEGURADO</ng-option>
+              <ng-option value="DE">DECOMISADO</ng-option>
+              <ng-option value="AB">ABANDONADO</ng-option>
             </ng-select>
           </form-field>
+          <ng-container *ngIf="form.get('legalStatus').value">
+            <ng-container *ngIf="form.get('legalStatus').value === 'AS'">
+              <ng-container *ngIf="true">
+                {{ esta }}
+                {{ es }}
+              </ng-container>
+            </ng-container>
+
+            <ng-container *ngIf="form.get('legalStatus').value === 'DE'">
+              <ng-container *ngIf="true">
+                {{ esta }}
+                {{ es }}
+              </ng-container>
+            </ng-container>
+
+            <ng-container *ngIf="form.get('legalStatus').value === 'AB'">
+              <ng-container *ngIf="true">
+                {{ esta }}
+                {{ es }}
+              </ng-container>
+            </ng-container>
+          </ng-container>
         </div>
         <div class="col-md-9 col-sm-12 col-xs-12">
           <form-field [control]="form.get('type')">
@@ -29,7 +51,8 @@
               value="clasifGoodNumber"
               bindLabel="tipoSupbtipoDescription"
               (fetchItems)="getTodos($event)"
-              control="type">
+              control="type"
+              [multiple]="true">
             </ngx-select>
           </form-field>
         </div>
@@ -84,6 +107,13 @@
             [disabled]="!form.valid">
             Ejecutar
           </button>
+          <button
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="cleanFilter()"
+            [disabled]="!form.valid"
+            style="margin: 1vh">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
         </div>
       </div>
     </div>
@@ -96,6 +126,9 @@
   </div>
   <div body>
     <div class="row">
+      <div class="d-flex justify-content-end mb-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
       <div [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table
           class="table-responsive"
@@ -122,18 +155,20 @@
 <form [formGroup]="formaplicationData" class="form-material">
   <app-card [header]="true" [footer]="true">
     <div class="ch-content" header>
-      <h5 class="title">Datos de la Solicitud y sus Bienes</h5>
+      <h5 class="title">Datos de la solicitud y sus bienes</h5>
     </div>
     <div body>
       <div class="row">
         <div class="col-md-3 col-sm-12 col-xs-12" style="display: flex">
           <form-field
             [control]="formaplicationData.get('applicationChangeCashNumber')"
-            label="No. Solicitud">
+            label="No. Solicitud"
+            style="top: -20px">
             <input
               type="text"
               class="form-control"
-              formControlName="applicationChangeCashNumber" />
+              formControlName="applicationChangeCashNumber"
+              maxlength="7" />
           </form-field>
           <button
             type="button"
@@ -157,31 +192,37 @@
             label="Fecha Solicitud">
             <input
               type="text"
-              class="form-control"
+              class="form-control mt-2"
               formControlName="dateRequestChangeNumerary"
-              bsDatepicker />
+              bsDatepicker
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
-            [control]="formaplicationData.get('userRequestChangeNumber')"
-            label="Usr. Solicita">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="userRequestChangeNumber"
-              placeholder="Rol" />
+            [control]="formaplicationData.get('userRequestChangeNumber')">
+            <ngx-select
+              [form]="formaplicationData"
+              [data]="itemsUser"
+              label="Usuario Solicita"
+              value="usuario"
+              bindLabel="usuario"
+              (fetchItems)="getUsuario($event)"
+              (change)="searchUsuario($event)"
+              control="userRequestChangeNumber"
+              class="form-control mt-2">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('postUserRequestCamnum')"
-            label="Nombre">
+            label="Cargo">
             <input
               type="text"
-              class="form-control"
+              class="form-control mt-2"
               formControlName="postUserRequestCamnum"
-              placeholder="Nombre" />
+              maxlength="200" />
           </form-field>
         </div>
       </div>
@@ -190,31 +231,43 @@
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('delegationRequestcamnum')"
-            label="Cargo">
+            label="No. Delegacion Solicitante">
             <input
               type="text"
-              class="form-control"
-              formControlName="delegationRequestcamnum" />
+              class="form-control mt-2"
+              formControlName="delegationRequestcamnum"
+              maxlength="200" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('procedureProposal')"
             label="Procedimiento Propuesto">
-            <select class="form-control" formControlName="procedureProposal">
+            <select
+              class="form-control mt-2"
+              formControlName="procedureProposal">
               <option [value]="null">Seleccione un valor</option>
               <option value="LICITACION PUBLICA">LICITACION PUBLICA</option>
+              <option value="INVITACION">INVITACION</option>
+              <option value="LICITACION DIRECTA">ADJUDICACION DIRECTA</option>
+              <option value="SUBASTA">SUBASTA</option>
+              <option value="REMATE">REMATE</option>
             </select>
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field
-            [control]="formaplicationData.get('authorizeUser')"
-            label="Usr. Autoriza">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="authorizeUser" />
+          <form-field [control]="formaplicationData.get('authorizeUser')">
+            <ngx-select
+              [form]="formaplicationData"
+              [data]="itemsUser1"
+              label="Usuario Autoriza"
+              value="usuario"
+              bindLabel="usuario"
+              (fetchItems)="getUsuario1($event)"
+              (change)="searchUsuario1($event)"
+              control="authorizeUser"
+              class="form-control mt-2">
+            </ngx-select>
           </form-field>
         </div>
       </div>
@@ -223,20 +276,20 @@
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('authorizePostUser')"
-            label="Nombre">
+            label="Cargo">
             <input
               type="text"
-              class="form-control"
+              class="form-control mt-2"
               formControlName="authorizePostUser" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('authorizeDelegation')"
-            label="Cargo">
+            label="No. Delegacion Autoriza">
             <input
               type="text"
-              class="form-control"
+              class="form-control mt-2"
               formControlName="authorizeDelegation" />
           </form-field>
         </div>
@@ -246,9 +299,10 @@
             label="Fecha Autoriza">
             <input
               type="text"
-              class="form-control"
+              class="form-control mt-2"
               formControlName="authorizeDate"
-              bsDatepicker />
+              bsDatepicker
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
           </form-field>
         </div>
       </div>
@@ -276,41 +330,35 @@
         </div>
       </div>
       <hr />
-      <div class="row">
-        <div class="col-md-1 col-sm-12 col-xs-12" style="display: grid">
+      <div class="row mb-6 mt-6">
+        <div class="col-md-12">
           <button
-            type="submit"
+            type="button"
             class="btn btn-primary btn-sm active"
-            tooltip="Enviar"
-            containerClass="tooltip-style"
+            style="margin-left: 1vh"
             (click)="pasar()">
-            <i class="bx bx-chevron-right"></i>
+            Pasar
           </button>
           <button
-            type="submit"
             class="btn btn-primary btn-sm active"
-            tooltip="Enviar"
-            containerClass="tooltip-style"
+            style="margin-left: 1vh"
             (click)="pasarTodo()">
-            <i class="bx bx-chevrons-right"></i>
+            Pasar Todo
           </button>
           <button
-            type="submit"
             class="btn btn-primary btn-sm active"
-            tooltip="Enviar"
-            containerClass="tooltip-style"
+            style="margin-left: 1vh"
             (click)="quitarTodo()">
-            <i class="bx bx-chevrons-left"></i>
+            Borrar Todo
           </button>
           <button
-            type="submit"
             class="btn btn-primary btn-sm active"
-            tooltip="Enviar"
-            containerClass="tooltip-style"
+            style="margin-left: 1vh"
             (click)="quitar()">
-            <i class="bx bx-chevron-left"></i>
+            Borrar
           </button>
         </div>
+        <hr />
         <div class="col-md-11 col-sm-12 col-xs-12">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table

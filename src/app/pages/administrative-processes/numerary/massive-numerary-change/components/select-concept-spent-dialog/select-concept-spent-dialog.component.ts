@@ -14,7 +14,7 @@ import { SpentService } from 'src/app/core/services/ms-spent/spent.service';
 })
 export class SelectConceptSpentDialogComponent implements OnInit {
   constructor(
-    private modalRef: BsModalRef,
+    public modalRef: BsModalRef,
     private spentService: SpentService
   ) {}
   // SELECT NO_CONCEPTO_GASTO,DESCRIPCION FROM CONCEPTO_GASTO
@@ -31,21 +31,26 @@ export class SelectConceptSpentDialogComponent implements OnInit {
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,
+    hideSubHeader: false,
     columns: {
       id: {
         title: 'Id',
+        sort: false,
       },
       description: {
+        sort: false,
         title: 'Descripción',
       },
       expenseAppCritNumber: {
+        sort: false,
         title: 'N° Crit',
       },
       registryNumber: {
+        sort: false,
         title: 'N° Registro',
       },
       prorationType: {
+        sort: false,
         title: 'Tipo Prorrateo',
       },
     },
@@ -87,7 +92,8 @@ export class SelectConceptSpentDialogComponent implements OnInit {
   }
 
   onUserRowSelect(event: any) {
-    // console.log(event.data);
+    console.log(event.data);
+
     this.selectedItem = event.data;
     this.modalRef.hide();
   }

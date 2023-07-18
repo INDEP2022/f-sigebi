@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { firstValueFrom, map } from 'rxjs';
 import {
   FilterParams,
@@ -33,6 +34,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     // private service2: PartializeGeneralGoodV2Service,
     // private service2Tab2: PartializeGeneralGoodV2Tab2Service,
     private goodService: GoodService,
+    private activatedRoute: ActivatedRoute,
     private goodSssubtypeService: GoodSssubtypeService,
     private statusService: StatusGoodService,
     private statusScreenService: StatusXScreenService
@@ -54,7 +56,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       },
       error: err => {
         this.resetForm();
-        this.onLoadToast('error', 'No. Bien ' + this.noBien, 'No encontrado');
+        this.alert('error', 'No. Bien ' + this.noBien, 'No encontrado');
         this.formLoading = false;
       },
     });
@@ -64,11 +66,22 @@ export class GoodFormComponent extends AlertButton implements OnInit {
     if (this.version === null) {
       return;
     }
+
     // if (this.firstCase === null || this.version === null) {
     //   return;
     // }
     // this.moreParams = [];
     this.service.initFormGood();
+    this.activatedRoute.queryParams.subscribe({
+      next: param => {
+        console.log(param);
+        if (param['numberGood']) {
+          this.form.get('noBien').setValue(param['numberGood'] || null);
+          this.searchGood();
+          return;
+        }
+      },
+    });
     // this.selectGood(this.service.getSavedGood());
     // if (this.firstCase === true) {
     // this.service.initFormGood();
@@ -333,7 +346,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         console.log(vb_estatus_valido);
       } catch (x) {
         console.log(x);
-        this.onLoadToast(
+        this.alert(
           'error',
           'Error',
           'El Bien no cuenta con un estatus y/o proceso correcto'
@@ -367,14 +380,14 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         const validacion = await this.validateGood(good);
         bandera = validacion.bandera;
         if (bandera === 0) {
-          this.onLoadToast('error', 'Parcialización', validacion.mensaje);
+          this.alert('error', 'Parcialización', validacion.mensaje);
           return;
         }
       } else {
         clasif = 1;
       }
       if (!good.goodClassNumber) {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Parcialización',
           'Bien ' + good.goodId + ' no cuenta con clasificador'
@@ -392,7 +405,7 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         this.firstCase = true;
         const val14 = good.val14 ? +good.val14.trim() : 0;
         if (isNaN(+good.val2) || val14 <= 0 || good.appraisedValue <= 0) {
-          this.onLoadToast(
+          this.alert(
             'error',
             'Parcialización',
             'Bien ' + good.goodId + ' no cuenta con importe'

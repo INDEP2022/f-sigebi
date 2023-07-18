@@ -34,8 +34,17 @@
         </div>
         <div class="row mt-4">
           <div class="col-md-6">
-            <form-field [control]="form.get('type')" label="Tipo:">
-              <input type="text" formControlName="type" class="form-control" />
+            <form-field [control]="form.get('type')">
+              <ngx-select
+                (fetchItems)="getTvalTable1Service($event)"
+                [searchOnInit]="true"
+                [data]="types"
+                [form]="form"
+                value="otvalor"
+                bindLabel="otvalor"
+                label="Tipo:"
+                control="type">
+              </ngx-select>
             </form-field>
           </div>
         </div>

@@ -58,8 +58,8 @@ export class RegisterModalComponent extends BasePage implements OnInit {
         console.log(err);
         this.alert(
           'error',
-          'Registro de inventario',
-          'No se pudo guardar el inventario'
+          'Registro de Inventario',
+          'No se Pudo Guardar el Inventario'
         );
         this.loading = false;
       },
@@ -68,7 +68,7 @@ export class RegisterModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = 'Guardado';
-    this.alert('success', 'Registro de inventario', `${message} correctamente`);
+    this.alert('success', 'Registro de Inventario', `${message} correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

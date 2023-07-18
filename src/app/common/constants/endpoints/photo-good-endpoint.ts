@@ -12,4 +12,5 @@ export enum PhotoGoodEndpoints {
   TmpGoodsPhoto = 'tmp-goods-photo',
   ContainerPhotosSiab = 'container-photossiab',
   BienFoto = 'good-photo',
+  AppPhoto = 'application/pup-list-photos-tracker',
 }

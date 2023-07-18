@@ -1,47 +1,50 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <div class="row w-100">
-      <div class="col-12 col-sm-12 col-md-8">
-        <h5 class="title">
-          Fotos del bien
-          <ng-container *ngIf="actualGoodNumber">{{
-            actualGoodNumber
-          }}</ng-container>
-        </h5>
-      </div>
-      <div
-        class="col-12 col-sm-12 col-md-4 text-end"
-        *ngIf="origin && origin > 0">
-        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
-          Regresar
-          <i class="fas fa-arrow-circle-left"></i>
-        </button>
-      </div>
-    </div>
+    <h5 class="title">
+      Fotos del Bien
+      <ng-container *ngIf="actualGoodNumber">{{
+        actualGoodNumber
+      }}</ng-container>
+    </h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
+      <div class="row" *ngIf="totalItems > 1">
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"
+          [limit]="newLimit"
+          [maxSize]="1"></app-pagination>
+      </div>
       <div class="row">
-        <div class="col-md-6" style="display: flex; column-gap: 15px">
-          <form-field [control]="form.get('noBien')" label="No. de bien">
+        <div class="col-12" style="display: flex; column-gap: 15px">
+          <form-field [control]="form.get('noBien')" label="No. de Bien">
             <input
               class="form-control"
               formControlName="noBien"
+              [readonly]="origin !== null"
               maxlength="10" />
           </form-field>
           <button
-            [disabled]="loading || form.invalid"
+            [disabled]="loading || form.invalid || origin !== null"
             class="btn btn-primary btn-sm active"
             type="button"
             (click)="searchGood()">
             Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
           <button
-            [disabled]="loading"
+            [disabled]="loading || origin !== null"
             class="btn btn-danger btn-sm active"
             type="button"
             (click)="clear()">
-            Limpiar
+            Limpiar <i class="fas fa-eraser"></i>
+          </button>
+          <button
+            class="btn btn-primary active btn-sm"
+            *ngIf="origin !== null"
+            (click)="goBack()">
+            Regresar
+            <i class="fas fa-arrow-circle-left"></i>
           </button>
         </div>
       </div>
@@ -59,8 +62,8 @@
         </div>
       </div>
     </form>
-    <app-photos-list
-      [disabled]="!actualGoodNumber"
-      [goodNumber]="actualGoodNumber"></app-photos-list>
+    <app-photos-tabs
+      [goodNumber]="actualGoodNumber"
+      [disabled]="!actualGoodNumber"></app-photos-tabs>
   </div>
 </app-card>

@@ -277,8 +277,11 @@ export const JURIDICAL_FILE_UPDATE_SHIFT_CHANGE_COLUMNS = {
 };
 
 export const COUNT_ACTAS_COLUMNS = {
-  idConversion: {
+  bienesConversiones: {
     title: 'No. Conversión',
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.conversionId : '';
+    },
     type: 'number',
     sort: false,
   },
@@ -293,12 +296,12 @@ export const COUNT_ACTAS_COLUMNS = {
     sort: false,
   },
   cveActaConv: {
-    title: 'CVE Acta',
+    title: 'Clave Acta',
     type: 'number',
     sort: false,
   },
   witnessOic: {
-    title: 'Testigo de la Contraloria',
+    title: 'Testigo de la Contraloría',
     type: 'number',
     sort: false,
   },

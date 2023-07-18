@@ -10,6 +10,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //import { GoodTypeService } from 'src/app/core/services/catalogs/good-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
+import { debounceTime } from 'rxjs';
 import { IGoodStatus } from 'src/app/core/models/catalogs/good-status.model';
 import { GoodService } from 'src/app/core/services/good/good.service';
 
@@ -38,8 +39,16 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getGoodStatus(new ListParams());
-    // this.getSelectedGoodStatus(this.goodStatus.value);
+    this.form
+      .get(this.goodStatusField)
+      .valueChanges.pipe(
+        debounceTime(300) // Retraso de 300 ms antes de realizar la búsqueda
+      )
+      .subscribe(value => {
+        console.log(value, ' Linea 53 goods-status-shared.component.ts');
+
+        this.getSelectedGoodStatus(value);
+      });
   }
 
   getSelectedGoodStatus(id: string): void {
@@ -47,15 +56,24 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
 
     newParams['filter.status'] = id;
 
-    this.service.getStatusAll(newParams).subscribe({
-      next: result => {
-        const newResult = result.data[0];
-
-        this.goodStatus.setValue(newResult.description);
-        if (this.goodStatus.value) this.getGoodStatus(new ListParams());
+    this.service.getStatusAll(newParams).subscribe(
+      data => {
+        this.status = new DefaultSelect(data.data, data.count);
       },
-      error: error => console.error(error),
-    });
+      err => {
+        this.loading = false;
+        this.status = new DefaultSelect();
+
+        /* let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+        this.onLoadToast('error', 'Error', error); */
+      },
+      () => {}
+    );
   }
 
   getGoodStatus(params: ListParams) {
@@ -72,12 +90,13 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
         this.status = new DefaultSelect(newData, data.count);
       },
       error: err => {
+        this.loading = false;
         // this.alert(
         //   'warning',
         //   'No se encontraron datos',
         //   'Por favor revise haber registrado el nombre de estatus correcto e inténtelo nuevamente'
         // );
-        this.status = new DefaultSelect([], 0, true);
+        /* this.status = new DefaultSelect([], 0, true); */
         /* let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
@@ -92,6 +111,7 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   onGoodStatusChange(type: any) {
     console.log(type);
     this.form.updateValueAndValidity();
+    console.log('CAmbios algo');
   }
 
   resetFields(fields: AbstractControl[]) {

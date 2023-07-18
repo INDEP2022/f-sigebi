@@ -54,7 +54,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     .subscribe( change => {
       if (change.action === 'filter') {
         let filters = change.filter.filters;
-        console.log(filters)
+        
         filters.map((filter: any) => {})
       }
     })*/
@@ -140,7 +140,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   private getTasks() {
     let isfilterUsed = false;
     const params = this.params.getValue();
-    console.log(params);
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
     const user = this.authService.decodeToken() as any;
@@ -148,13 +147,13 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue(
       Number.parseInt(user.department)
     );
-    console.log(this.consultTasksForm.value);
+
     this.filterParams
       .getValue()
       .addFilter('assignees', user.username, SearchFilter.ILIKE);
     //this.filterParams.getValue().addFilter('title','',SearchFilter.NOT);
     const filterStatus = this.consultTasksForm.get('State').value;
-    console.log(filterStatus);
+
     if (filterStatus) {
       isfilterUsed = true;
       if (filterStatus === 'null') {
@@ -165,7 +164,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         this.getDelegationRegional(user.department);
       }
       if (filterStatus === 'TODOS') {
-        console.log('todos');
         this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue('');
         this.delegation = '';
       }
@@ -371,11 +369,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
 
-    console.log(
-      'this.filterParams: ',
-      this.filterParams.getValue().getParams()
-    );
-
     this.loading = true;
     this.loadingText = 'Cargando';
 
@@ -392,12 +385,11 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       .getValue()
       .getParams()
       .concat('&sortBy=id:DESC');
-    console.log(filter);
+
     this.taskService.getTasksByUser(filter).subscribe({
       next: response => {
-        console.log('Response: ', response);
         this.loading = false;
-        console.log('Hay un filtro activo? ', isfilterUsed);
+
         /*  if (isfilterUsed) {
             this.tasks = response.data.filter(
               (record: { State: string }) => record.State != 'FINALIZADA'
@@ -431,7 +423,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   }
 
   onKeydown(event: any) {
-    console.log('Apreto enter event', event);
     this.searchTasks();
   }
 
@@ -442,9 +433,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       next: resp => {
         this.delegation = resp.data[0].id + ' - ' + resp.data[0].description;
       },
-      error: error => {
-        console.log(error);
-      },
+      error: error => {},
     });
   }
 
@@ -460,7 +449,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
     if (selected.requestId !== null && selected.urlNb !== null) {
       let url = `${selected.urlNb}/${selected.requestId}`;
-      console.log(url);
       this.router.navigateByUrl(url);
     } else {
       this.alert('warning', 'No disponible', 'Tarea no disponible');

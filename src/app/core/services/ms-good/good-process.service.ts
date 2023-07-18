@@ -1,10 +1,13 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GoodProcessPoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { GoodSubtype } from 'src/app/pages/juridical-processes/juridical-ruling-g/juridical-ruling-g/model/good.model';
 import { IResponse } from '../../interfaces/list-response.interface';
+import { IGood } from '../../models/good/good.model';
 import {
   IAcceptGoodActa,
   IAcceptGoodStatus,
@@ -13,6 +16,7 @@ import {
   ILvlPrograma,
   IValNumeOtro,
 } from '../../models/ms-good/good';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -29,7 +33,10 @@ export class GoodProcessService extends HttpService {
   getValOtro(model: IValNumeOtro) {
     return this.post<IResponse>(GoodProcessPoints.cuValOtro, model);
   }
-
+  getByIdSituation(id: string | number) {
+    const route = `${GoodProcessPoints.GetGoodSituation}`;
+    return this.get<any>(`${route}/${id}`);
+  }
   getVnNumerario(id: string | number) {
     return this.get(`${GoodProcessPoints.vnNumerario}?no_bien=${id}`);
   }
@@ -54,6 +61,10 @@ export class GoodProcessService extends HttpService {
 
   getacceptGoodStatus(model: IAcceptGoodStatus) {
     return this.post<IResponse>(GoodProcessPoints.acceptGoodStatus, model);
+  }
+
+  getGoodAppraise(model: any) {
+    return this.post<IResponse>(GoodProcessPoints.GetGoodAppraise, model);
   }
 
   getAccepGoodActa(model: IAcceptGoodActa) {
@@ -156,5 +167,60 @@ export class GoodProcessService extends HttpService {
     clasifGooNumber: string | number;
   }) {
     return this.post('update-good-status/getLabelDescrip', body);
+  }
+
+  postExistsGoodxStatus(body: {
+    pVcScreem: string;
+    goodNumber: string;
+    proccesExtDom: string;
+  }): Observable<IListResponse<any>> {
+    return this.post('application/getExistsGoodxStatus', body);
+  }
+
+  postGoodMasiveForm(body: any): Observable<IListResponse<any>> {
+    return this.post('application/get-conv-good-children', body);
+  }
+  getNumeProrraCsv(idProcnum: number) {
+    const route = GoodProcessPoints.GetNumeProrraCsv;
+    return this.get(`${route}/${idProcnum}`);
+  }
+
+  getFproSolNumerarioProdnumCsv(idProcnum: number, limit: number) {
+    const route = `${GoodProcessPoints.GetNumeProrraCsv}/${idProcnum}`;
+    return this.get(`${route}?limit=${limit}`);
+  }
+
+  getPubPrevieData(data: Object) {
+    return this.post(GoodProcessPoints.PubPrevieData, data);
+  }
+
+  getGoodPostQuery(
+    _params: ListParams,
+    data: Object
+  ): Observable<IListResponse<IGood>> {
+    const params = this.makeParams(_params);
+    return this.post<IListResponse<IGood>>(
+      `${GoodProcessPoints.getGoodPostQuery}?${params}`,
+      data
+    );
+  }
+
+  private makeParams(params: ListParams): HttpParams {
+    let httpParams: HttpParams = new HttpParams();
+    Object.keys(params).forEach(key => {
+      httpParams = httpParams.append(key, (params as any)[key]);
+    });
+    return httpParams;
+  }
+  procedureGoodStatus(data: { cveShape: string; noGood: number }) {
+    return this.post(GoodProcessPoints.ProcedureStatusGood, data);
+  }
+
+  pupReconcilied(body: {
+    goodNumber: number[];
+    arrayStatus: string[];
+    dateMasiv: Date | string;
+  }) {
+    return this.post('application/pup-reconcilied', body);
   }
 }

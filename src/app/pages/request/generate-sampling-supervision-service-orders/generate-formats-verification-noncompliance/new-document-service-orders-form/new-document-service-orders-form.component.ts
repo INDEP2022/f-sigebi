@@ -115,6 +115,7 @@ export class NewDocumentServiceOrdersFormComponent
       confirmButtonColor: '#9D2449',
       confirmButtonText: 'Aceptar',
       footer: '',
+      allowOutsideClick: false,
     });
   }
 }

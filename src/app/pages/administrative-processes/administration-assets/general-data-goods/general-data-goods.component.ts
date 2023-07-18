@@ -102,42 +102,71 @@ export class GeneralDataGoodsComponent
     this.prepareForm();
   }
 
+  esTipoFecha(variable: any): boolean {
+    return variable instanceof Date;
+  }
+
   updateGood() {
+    let required: boolean = false;
+    this.dataAtribute.forEach((item: any) => {
+      if (item.required && (item.value === null || item.value === '')) {
+        required = true;
+      }
+    });
+    if (required) {
+      this.alert(
+        'warning',
+        'Datos Inventario',
+        'Debe llenar los Valores Requeridos.'
+      );
+      return;
+    }
     const patron: RegExp =
       /^(0[1-9]|1[0-9]|2[0-9]|3[01])\/(0[1-9]|1[0-2])\/((19|20)\d\d)$/;
     let body: any = {};
+    console.log('ATRIBUTOS DESDE GENERAL', this.dataAtribute);
     this.dataAtribute.forEach((row: any) => {
       if (patron.test(row.value)) {
         row.value = this.convertirFecha(row.value);
       }
-      console.log(row.value);
       body[row.column] = row.value;
     });
     body['quantitySae'] = this.generalDataForm.get('cantidad').value;
-    body['judicialDate'] = this.generalDataForm.get('fechaFe').value;
+    if (this.generalDataForm.get('fechaFe').value === null) {
+      body['judicialDate'] = this.generalDataForm.get('fechaFe').value;
+    } else {
+      if (this.esTipoFecha(this.generalDataForm.get('fechaFe').value)) {
+        body['judicialDate'] = this.obtenerFecha(
+          this.generalDataForm.get('fechaFe').value
+        );
+      } else {
+        body['judicialDate'] = this.formatDate2(
+          this.generalDataForm.get('fechaFe').value
+        );
+      }
+    }
     body['observations'] = this.generalDataForm.get('observacion').value;
     body['description'] = this.generalDataForm.get('descripcion').value;
     body['id'] = Number(this.good.id);
     body['goodId'] = Number(this.good.id);
-    console.log(body);
+    body['goodClassNumber'] = Number(this.good.goodClassNumber);
     this.goodService.update(body).subscribe({
       next: resp => {
         this.viewAct = !this.viewAct;
         this.disableUpdate = !this.disableUpdate;
-        console.log(resp);
         this.good = resp;
-        this.alert('success', 'Datos del bien actualizados', '');
+        this.alert('success', 'Datos del Bien Actualizados', '');
         setTimeout(() => {
           this.goodChange++;
         }, 100);
       },
       error: err => {
-        this.alert('error', 'Error al actualizar el bien', '');
+        this.alert('error', 'Error al Actualizar el Bien', '');
       },
     });
   }
 
-  convertirFecha(fechaOriginal: string): string {
+  convertirFecha(fechaOriginal: any): string {
     const [dia, mes, anio] = fechaOriginal.split('/');
     const fechaObjeto: Date = new Date(`${mes}/${dia}/${anio}`);
     const anioFormateado: string = fechaObjeto.getFullYear().toString();
@@ -150,6 +179,20 @@ export class GeneralDataGoodsComponent
       .padStart(2, '0');
     const fechaFormateada: string = `${anioFormateado}-${mesFormateado}-${diaFormateado}`;
     return fechaFormateada;
+  }
+
+  convertirFecha2(fecha: string | Date): string {
+    let fechaObj: Date;
+    if (typeof fecha === 'string') {
+      fechaObj = new Date(fecha);
+    } else {
+      fechaObj = fecha;
+    }
+    const anio = fechaObj.getFullYear();
+    const mes = (fechaObj.getMonth() + 1).toString().padStart(2, '0');
+    const dia = fechaObj.getDate().toString().padStart(2, '0');
+
+    return `${anio}-${mes}-${dia}`;
   }
 
   formatearFecha(fecha: string): string {
@@ -171,18 +214,16 @@ export class GeneralDataGoodsComponent
     this.goodService.getById(this.goodId).subscribe({
       next: (response: any) => {
         this.classificationOfGoods = Number(response.data[0].goodClassNumber);
-
         this.good = response.data[0];
         this.generalDataForm.get('cantidad').patchValue(this.good.quantitySae);
-        console.log(this.good.judicialDate);
         this.generalDataForm
           .get('fechaFe')
           .patchValue(
-            this.good.judicialDate != null
-              ? this.formatearFecha(this.good.judicialDate.toString())
-              : null
+            this.good.judicialDate === undefined ||
+              this.good.judicialDate === null
+              ? null
+              : this.formatDate(this.good.judicialDate.toString())
           );
-
         this.generalDataForm
           .get('observacion')
           .patchValue(this.good.observations);
@@ -209,6 +250,21 @@ export class GeneralDataGoodsComponent
     setTimeout(() => {
       this.goodChange++;
     }, 100);
+  }
+
+  formatDate(fecha: string) {
+    return fecha.split('T')[0].split('-').reverse().join('/');
+  }
+  formatDate2(fecha: string) {
+    return fecha.split('T')[0].split('/').reverse().join('-');
+  }
+  obtenerFecha(fecha: string): string {
+    const fechaActual = new Date(fecha);
+    const year = fechaActual.getFullYear();
+    const month = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
+    const day = fechaActual.getDate().toString().padStart(2, '0');
+    const fechaFormateada = `${year}-${month}-${day}`;
+    return fechaFormateada;
   }
 }
 

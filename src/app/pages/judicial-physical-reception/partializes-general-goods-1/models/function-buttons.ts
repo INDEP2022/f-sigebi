@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { firstValueFrom } from 'rxjs';
 import { LoadingService } from 'src/app/common/services/loading.service';
+import { AlertsQueueService } from 'src/app/core/services/alerts/alerts-queue.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { SweetalertModel } from 'src/app/core/shared';
 import Swal, { SweetAlertIcon, SweetAlertResult } from 'sweetalert2';
@@ -25,6 +26,32 @@ export class FunctionButtons {
   protected loader = inject(LoadingService);
   v_numerario: number;
   vfactor: number;
+  private _alertsService = inject(AlertsQueueService);
+
+  protected alert(
+    icon: SweetAlertIcon,
+    title: string,
+    text: string,
+    html?: string
+  ) {
+    let sweetalert = new SweetalertModel();
+    sweetalert.title = title;
+    sweetalert.text = text;
+    sweetalert.icon = icon;
+    sweetalert.html = html;
+    sweetalert.showConfirmButton = true;
+    this._alertsService.alerts.push(sweetalert);
+    this._alertsService.alertQueue.next(true);
+  }
+
+  protected alertInfo(icon: SweetAlertIcon, title: string, text: string) {
+    let sweetalert = new SweetalertModel();
+    sweetalert.title = title;
+    sweetalert.text = text;
+    sweetalert.icon = icon;
+    sweetalert.showConfirmButton = true;
+    return Swal.fire(sweetalert);
+  }
 
   ngOnInit() {
     if (this.version === null) {

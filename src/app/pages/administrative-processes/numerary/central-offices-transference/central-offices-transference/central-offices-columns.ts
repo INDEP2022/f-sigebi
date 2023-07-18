@@ -35,7 +35,7 @@ export const CENTRAL_ACCOUNT_COLUMNS = {
     sort: false,
   },
   currency: {
-    title: '',
+    title: 'Moneda',
     type: 'string',
     sort: false,
   },

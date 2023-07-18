@@ -1,11 +1,11 @@
 export const PERSON_COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'ID',
     type: 'number',
     sort: false,
   },
   personName: {
-    title: 'Cve. Depositaría',
+    title: 'Clave Depositaría',
     type: 'string',
     sort: false,
   },
@@ -20,12 +20,12 @@ export const PERSON_COLUMNS = {
     sort: false,
   },
   streetNumber: {
-    title: 'No.Exterior',
+    title: 'No. Exterior',
     type: 'string',
     sort: false,
   },
   apartmentNumber: {
-    title: 'No.Interior',
+    title: 'No. Interior',
     type: 'string',
     sort: false,
   },

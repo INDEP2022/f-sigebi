@@ -5,7 +5,9 @@ export enum NumeraryEndpoints {
   NumEnc = 'numerary-enc',
   NumDet = 'numerary-det',
   NumCal = 'numerary-cal',
+  ProcessesNume = 'processes-nume',
   RequestEnc = 'requests-nume-enc',
+  RequestCal = 'requests-nume-cal',
   RequestDet = 'requests-nume-det',
   RequestEncFilter = 'requests-nume-enc/getAllRequest',
   RequestChangeNumerary = 'm-request-change-numerary',
@@ -13,4 +15,7 @@ export enum NumeraryEndpoints {
   RequestDSolCamNum = 'application/del-d-sol-cam-num',
   NumeraryCategories = 'numerary-categories',
   Application = 'application/del-solicitudes-nume-det-por-id-solnum',
+  CloseNumerary = 'close-numerary',
+  GetSolNumerario = 'application/get-sol-numerario',
+  TransReg = 'transfer-numerary-region',
 }

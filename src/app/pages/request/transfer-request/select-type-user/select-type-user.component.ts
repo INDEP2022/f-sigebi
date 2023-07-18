@@ -261,6 +261,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
                 confirmButtonColor: '#9D2449',
                 cancelButtonColor: '#B38E5D',
                 confirmButtonText: 'Aceptar',
+                allowOutsideClick: false,
               }).then(result => {
                 this.closeAll();
               });
@@ -281,14 +282,16 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   async ReturnRequest() {
     const actualUser: any = this.authService.decodeToken();
     this.loader.load = true;
-    this.data.observations =
+    const body: any = {};
+    body.id = this.data.id;
+    body.observations =
       'Solicitud Returnada por la Delegacion Regional ' +
       this.user.delegationreg;
-    this.data.targetUserType = 'DR';
-    this.data.requestStatus = 'Captura';
-    this.data.targetUser = this.user.id;
+    body.targetUserType = 'DR';
+    body.requestStatus = 'Captura';
+    body.targetUser = this.user.id;
 
-    const requestResult = await this.saveRequest(this.data);
+    const requestResult = await this.saveRequest(body);
     if (requestResult === true) {
       this.loader.load = false;
 
@@ -306,8 +309,8 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
         url,
         from,
         to,
-        false,
-        0,
+        true,
+        this.task.id,
         actualUser.username,
         'SOLICITUD_TRANSFERENCIA',
         'Registro_Solicitud',
@@ -316,12 +319,13 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       if (taskResponse) {
         Swal.fire({
           title: 'Solicitud Returnada',
-          text: 'La solicitud se returno correctamente',
+          text: 'La solicitud se returnó correctamente',
           icon: 'success',
           showCancelButton: false,
           confirmButtonColor: '#9D2449',
           cancelButtonColor: '#B38E5D',
           confirmButtonText: 'Aceptar',
+          allowOutsideClick: false,
         }).then(result => {
           this.closeAll();
         });
@@ -434,9 +438,9 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       orderservice['pOrderServiceIn'] = '';
 
       body['orderservice'] = orderservice;
-
       this.taskService.createTaskWitOrderService(body).subscribe({
         next: resp => {
+          console.log(resp);
           resolve(true);
         },
         error: error => {

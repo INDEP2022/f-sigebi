@@ -1,20 +1,31 @@
-export interface IMassiveNumeraryChangeSpent {
+export interface IMassiveNumeraryGood {
   noGood: number; // NO_BIEN // good.id
-  npNUm: number; // NO_BIEN_NUME // good.id
-  description: string; // DESCRIPCION
+  /**@description NO_BIEN_NUME || numeGoodNumber */
+  npNUm: number; //  // good.id
+  /**@description DESCRIPCION || description */
+  description: string;
   cveEvent: string; // CVE_PROCESO
-  status: string; // ESTATUS
+  /**@description ESTATUS || status */
+  status: string; //
   entry: number; // INGRESO
+  /**@description GASTO || spent */
   costs: number; // GASTO
   tax: number; // IVA
-  impNumerary: number; // VALOR_AVALUO
-  noExpAssociated: any; // NO_EXP_ASOCIADO
-  noExpedient: string; // NO_EXPEDIENTE
+  /**@description VALOR_AVALUO || appraisalValue*/
+  impNumerary: number; //
+  /**@description NO_EXP_ASOCIADO || expAssocNumber */
+  noExpAssociated: any;
+  /**@description NO_EXPEDIENTE || fileNumber */
+  noExpedient: string;
   quantity: number; // CANTIDAD
-  noDelegation: string; // NO_DELEGACION
-  noSubDelegation: string; // NO_SUBDELEGACION
-  identifier: string; // IDENTIFICADOR
-  noFlier: any; // NO_VOLANTE
+  /**@description NO_DELEGACION || delegationNumber */
+  noDelegation: string;
+  /**@description NO_SUBDELEGACION || subdelegationNumber */
+  noSubDelegation: string;
+  /**@description IDENTIFICADOR | identifier */
+  identifier: string;
+  /**@description NO_VOLANTE | flyerNumber */
+  noFlier: any;
   indNume: number; // IND_NUME
   color?:
     | 'bg-custom-red'
@@ -31,4 +42,40 @@ export interface IMassiveNumeraryTableSmall {
   description?: string; // DESCRIPCION
   status?: string; // ESTATUS
   type?: string; // TIPO
+}
+
+export interface IFMasInsNumerarioGood {
+  associatedExpNum: string;
+  delegationNumber: string;
+  description: string;
+  fileNumber: string;
+  flyerNumber: string;
+  goodNumber: number;
+  goodNumberNum: string;
+  identifier: string;
+  income: number;
+  indNume: number;
+  iva: string;
+  processKey: string;
+  quantity: string;
+  spent: number;
+  status: string;
+  subdelegationNumber: string;
+  vColor: string;
+  valueAppraisalm: number;
+}
+
+export interface IFMasInsNumerarioSpent {
+  amount: string;
+  description: string;
+  goodNumber: number;
+  spentConceptNumber: number;
+  status: string;
+  type: string;
+}
+
+export interface IResponseFMasInsNumerarioSpent {
+  T_REG: any;
+  BLK_BIENES: IFMasInsNumerarioGood[];
+  BLK_GASTOS: IFMasInsNumerarioSpent[];
 }

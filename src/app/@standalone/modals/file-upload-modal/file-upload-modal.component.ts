@@ -39,12 +39,17 @@ export interface IServiceUpload {
 })
 export class FileUploadModalComponent extends BasePage implements OnInit {
   accept: string = '*';
-  identificator: any = '3429238';
-  uploadFiles = true;
+  identificator: any = null;
+  uploadFiles = false;
   refresh: boolean = false;
   successCount: number = 0;
   totalDocs: number = 0;
+  multiple = true;
   fileEvents: FileUploadEvent[];
+  info = `Haz clic para seleccionar las imágenes o arrástralas
+      aquí`;
+  titleFinishUpload = 'Archivos cargados correctamente';
+  questionFinishUpload = '¿Desea subir más archivos?';
   service: IServiceUpload = inject(FileBrowserService);
   constructor(
     private modalRef: BsModalRef,
@@ -53,9 +58,72 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.accept);
+  }
+
+  private async completeLoadFiles() {
+    this.loading = false;
+    const result = await this.alertQuestion(
+      'question',
+      'Archivos cargados correctamente',
+      '¿Desea subir más archivos?'
+    );
+    this.uploadFiles = false;
+    if (!result.isConfirmed) {
+      this.close();
+      return false;
+    }
+    if (result.isConfirmed) {
+      this.totalDocs = 0;
+      this.successCount = 0;
+      return true;
+    }
+    return false;
+  }
+
+  private async completeWidthErrors() {
+    const result = await this.alertQuestion(
+      'question',
+      'No se puedieron cargar todos los archivos revise su formato',
+      '¿Desea subir más archivos?'
+    );
+    this.uploadFiles = false;
+    if (!result.isConfirmed) {
+      this.close();
+      return false;
+    }
+    if (result.isConfirmed) {
+      this.totalDocs = 0;
+      this.successCount = 0;
+      return true;
+    }
+    return false;
+  }
+
+  private async loadZipFiles(response: any) {
+    console.log(response);
+    const body = response.body;
+    if (body.rejectedPhotos && body.rejectedPhotos.length > 0) {
+      if (body.approvedPhotos && body.approvedPhotos.length > 0) {
+        return this.completeWidthErrors();
+      } else {
+        this.loading = false;
+        this.uploadFiles = false;
+        this.alert(
+          'error',
+          'Error',
+          'No se pudieron cargar los archivos formato incorrecto'
+        );
+        return false;
+      }
+    } else {
+      return this.completeLoadFiles();
+    }
+  }
 
   testFiles(uploadEvent: IUploadEvent) {
+    this.uploadFiles = true;
     const { index, fileEvents } = uploadEvent;
     console.log(uploadEvent);
     this.fileEvents = fileEvents;
@@ -70,22 +138,22 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
       concat(...obs).subscribe({
         error: error => {
           this.loading = false;
+          this.uploadFiles = false;
+        },
+        next: async (response: any) => {
+          if (this.identificator && this.accept === '.zip') {
+            const result = await this.loadZipFiles(response);
+            if (result) {
+              uploadEvent.fileEvents.length = 0;
+            }
+          }
         },
         complete: async () => {
-          this.loading = false;
-          const result = await this.alertQuestion(
-            'question',
-            'Archivos cargados correctamente',
-            '¿Desea subir más archivos?'
-          );
-
-          if (!result.isConfirmed) {
-            this.close();
-          }
-          if (result.isConfirmed) {
-            this.totalDocs = 0;
-            this.successCount = 0;
-            uploadEvent.fileEvents.length = 0;
+          if (this.identificator === null || this.accept !== '.zip') {
+            const result = await this.completeLoadFiles();
+            if (result) {
+              uploadEvent.fileEvents.length = 0;
+            }
           }
         },
       });
@@ -105,9 +173,6 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
     // }
     // console.log(index);
     this._blockErrors.blockAllErrors = true;
-    if (this.service['consecNumber']) {
-      this.service['consecNumber'] += consecNumber;
-    }
     return this.service
       .uploadFile(this.identificator, fileEvent.file, 'file')
       .pipe(
@@ -136,10 +201,27 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
       );
   }
 
-  private async finishUpload(
-    fileEvent: FileUploadEvent,
-    uploadEvent: IUploadEvent
-  ) {}
+  // private async finishUpload(
+  //   fileEvent: FileUploadEvent,
+  //   uploadEvent: IUploadEvent
+  // ) {
+  //   fileEvent.status = FILE_UPLOAD_STATUSES.SUCCESS;
+  //   this.refresh = true;
+  //   const result = await this.alertQuestion(
+  //     'question',
+  //     this.titleFinishUpload,
+  //     this.questionFinishUpload
+  //   );
+
+  //   if (!result.isConfirmed) {
+  //     this.close();
+  //   }
+  //   if (result.isConfirmed) {
+  //     this.totalDocs = 0;
+  //     this.successCount = 0;
+  //     uploadEvent.fileEvents.length = 0;
+  //   }
+  // }
 
   close() {
     this.modalRef.content.callback(this.refresh);

@@ -29,6 +29,7 @@ export class DataFilterComponent implements OnInit {
   @Input() subloading: boolean;
   @Output() subloadingChange = new EventEmitter<boolean>();
   labels = new DefaultSelect();
+  @Output() cleanFilters = new EventEmitter<void>();
   goodStatuses = new DefaultSelect();
   processes = PROCESSES;
   constructor(
@@ -48,6 +49,9 @@ export class DataFilterComponent implements OnInit {
     this.goodLabelService.getAll(params).subscribe({
       next: response =>
         (this.labels = new DefaultSelect(response.data, response.count)),
+      error: () => {
+        this.labels = new DefaultSelect([], 0);
+      },
     });
   }
 
@@ -55,6 +59,9 @@ export class DataFilterComponent implements OnInit {
     params.limit = 100;
     this.statusGoodService.getAll(params).subscribe({
       next: res => (this.goodStatuses = new DefaultSelect(res.data, res.count)),
+      error: () => {
+        this.goodStatuses = new DefaultSelect([], 0);
+      },
     });
   }
 }

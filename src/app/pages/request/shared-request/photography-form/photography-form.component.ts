@@ -48,6 +48,7 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('good', this.good);
     this.prepareForm();
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -56,7 +57,7 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.photographyForm = this.fb.group({
-      managementNumber: [5296016],
+      managementNumber: [this.good],
       noProgrammation: [null],
       noImage: [null],
       author: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -87,11 +88,11 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
           this.totalItems = _data.length;
           this.loadingTable = false;
         } else {
-          this.alertInfo(
-            'info',
+          this.alert(
+            'warning',
             'Información',
             'No hay imágenes agregadadas a este bien'
-          ).then();
+          );
           this.loadingTable = false;
         }
       },
@@ -121,10 +122,10 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
     let loadingPhotos = 0;
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
-      data: this.good,
+      goodProg: this.good,
       programming: this.programming,
       process: 'programming',
-      callBack: (next: boolean) => {
+      callback: (next: boolean) => {
         if (next) {
           this.formLoading = true;
           loadingPhotos = loadingPhotos + 1;

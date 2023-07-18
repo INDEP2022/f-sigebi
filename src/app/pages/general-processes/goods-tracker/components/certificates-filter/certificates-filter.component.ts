@@ -1,14 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import {
-  FilterParams,
-  ListParams,
-  SearchFilter,
-} from 'src/app/common/repository/interfaces/list-params';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { RECEPTION_STATUS } from '../../utils/constants/filter-match';
 import { GoodTrackerForm } from '../../utils/goods-tracker-form';
 
 @Component({
@@ -19,6 +14,7 @@ import { GoodTrackerForm } from '../../utils/goods-tracker-form';
 export class CertificatesFilterComponent implements OnInit {
   @Output() onSubmit = new EventEmitter<any>();
   @Input() form: FormGroup<GoodTrackerForm>;
+  @Output() cleanFilters = new EventEmitter<void>();
   goodStatuses = new DefaultSelect();
 
   constructor(
@@ -37,20 +33,23 @@ export class CertificatesFilterComponent implements OnInit {
     params.limit = 100;
     this.statusGoodService.getAll(params).subscribe({
       next: res => (this.goodStatuses = new DefaultSelect(res.data, res.count)),
+      error: error => {
+        this.goodStatuses = new DefaultSelect([], 0);
+      },
     });
   }
 
   statusChange() {
-    const status = this.form.controls.receptionStatus.value;
-    if (status.length == 0) {
-      return;
-    }
-    RECEPTION_STATUS.length = 0;
-    const params = new FilterParams();
-    params.addFilter('status', status, SearchFilter.IN);
-    this.historyGoodService.getAllFilter(params.getParams()).subscribe({
-      next: res =>
-        RECEPTION_STATUS.push(res.data.map(history => history.propertyNum)),
-    });
+    // const status = this.form.controls.receptionStatus.value;
+    // if (status.length == 0) {
+    //   return;
+    // }
+    // RECEPTION_STATUS.length = 0;
+    // const params = new FilterParams();
+    // params.addFilter('status', status, SearchFilter.IN);
+    // this.historyGoodService.getAllFilter(params.getParams()).subscribe({
+    //   next: res =>
+    //     RECEPTION_STATUS.push(res.data.map(history => history.propertyNum)),
+    // });
   }
 }

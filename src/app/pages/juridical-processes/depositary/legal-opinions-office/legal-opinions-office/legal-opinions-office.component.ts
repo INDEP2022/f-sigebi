@@ -191,6 +191,9 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
   settings3 = { ...this.settings };
   public formCcpOficio: FormGroup;
   loadingCopiesDictation: boolean = false;
+  // Folio
+  folio: string = '';
+  files: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -222,6 +225,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     this.settings3 = {
       ...this.settings,
       actions: {
+        columnTitle: 'Acciones',
+        position: 'right',
         edit: false,
         add: false,
         delete: true,
@@ -2547,8 +2552,56 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
         },
         complete: async () => {
           console.log('COMPLETADO SUBIR PDF');
+          // this.updateSheets();
+          this.files = [];
+          this.loadImages(this.folio).subscribe(() => {
+            this.updateSheets();
+          });
         },
       });
+  }
+
+  updateSheets() {
+    const token = this.authService.decodeToken();
+    let scanStatus = null;
+    const sheets = `${this.files.length}`;
+    if (this.files.length > 0) {
+      scanStatus = 'ESCANEADO';
+    }
+    const userRegistersScan = token?.preferred_username?.toUpperCase();
+    const dateRegistrationScan = new Date();
+    this.documentsService
+      .update(this.folio, {
+        sheets,
+        scanStatus,
+        userRegistersScan,
+        dateRegistrationScan,
+      })
+      .subscribe(() => {
+        // const params = this.documentsParams.getValue();
+        // this.documentsParams.next(params);
+      });
+  }
+  loadImages(folio: string | number) {
+    return this.getFileNamesByFolio(folio).pipe(
+      catchError(error => {
+        if (error.status >= 500) {
+        }
+        return throwError(() => error);
+      }),
+      map(response => response.data.map(element => element.name)),
+      tap(files => {
+        this.files = files;
+      })
+    );
+  }
+  getFileNamesByFolio(folio: number | string) {
+    return this.fileBrowserService.getFilenamesFromFolio(folio).pipe(
+      catchError(error => {
+        this.files = [];
+        return throwError(() => error);
+      })
+    );
   }
 
   openDocumentsModal(flyerNum: string | number, title: string) {
@@ -2591,12 +2644,17 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
 
   getPicturesFromFolio(document: IDocuments) {
     let folio = document.id;
-    if (document.id != this.dictationData.folioUniversal) {
-      folio = this.dictationData.folioUniversal;
-    }
+    // if (document.id != this.dictationData.folioUniversal) {
+    // if (document.id) {
+    //   folio = this.dictationData.folioUniversal;
+    // }
     if (document.associateUniversalFolio) {
       folio = document.associateUniversalFolio;
     }
+    if (!folio && this.folio) {
+      folio = this.folio;
+    }
+    console.log('PICTURES ', folio, document);
     const config = {
       ...MODAL_CONFIG,
       ignoreBackdropClick: false,
@@ -3092,6 +3150,7 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
                 tap(_document => {
                   this.showScanForm = false;
                   this.formScan.get('scanningFoli').setValue(_document.id);
+                  this.folio = _document.id.toString();
                   setTimeout(() => {
                     this.showScanForm = true;
                   }, 300);

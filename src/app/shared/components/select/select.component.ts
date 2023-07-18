@@ -70,6 +70,8 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   @Input() showTooltip: boolean = false;
   @Input() labelTemplate: TemplateRef<any>;
   @Input() optionTemplate: TemplateRef<any>;
+  @Input() loadingInit = false;
+  @Input() className = '';
   @ViewChild(NgSelectComponent) ngSelect: NgSelectComponent;
 
   buffer: any[] = [];
@@ -88,6 +90,7 @@ export class SelectComponent<T> implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     if (this.searchOnInit) {
       if (this.fetchByList) {
+        this.loadingInit && (this.loading = true);
         const params = new ListParams();
         this.fetchItems.emit(params);
       } else {

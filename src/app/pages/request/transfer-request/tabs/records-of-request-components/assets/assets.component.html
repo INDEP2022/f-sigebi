@@ -46,7 +46,8 @@
             type="button"
             class="btn btn-info btn-sm active dropdown-toggle"
             aria-controls="dropdown-alignment">
-            Acciones <span class="caret"></span>
+            <i class="bx bx-list-plus bx-sm float-icon"></i>
+            <span class="caret"></span>
           </button>
           <ul
             id="dropdown-alignment"
@@ -85,7 +86,7 @@
             </li>
             <li role="menuitem">
               <a class="dropdown-item" (click)="assignAllAddress()">
-                <i class="bx bx-layer"></i> Assignar a Todos el Domicilio
+                <i class="bx bx-layer"></i> Asignar a Todos el Domicilio
               </a>
             </li>
             <li class="divider dropdown-divider"></li>
@@ -98,14 +99,19 @@
           </ul>
         </div>
       </div>
-      <div class="p-2" style="margin-left: 1%">
-        <button class="btn btn-secondary btn-sm active" (click)="newAsset()">
-          {{ btnCreate }}
+
+      <div class="p-2" style="margin-left: 1%" *ngIf="typeRequest == 'MANUAL'">
+        <button
+          class="btn btn-info btn-sm active"
+          type="button"
+          containerClass="tooltip-style"
+          (click)="newAsset()">
+          {{ btnCreate }} <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
       </div>
       <div class="p-2" style="margin-left: 1%">
-        <button class="btn btn-primary btn-sm active" (click)="getData()">
-          Actualizar
+        <button class="btn btn-primary btn-sm active mr-3" (click)="getData()">
+          Recargar <i class="fas fa-sync-alt"> </i>
         </button>
       </div>
     </div>

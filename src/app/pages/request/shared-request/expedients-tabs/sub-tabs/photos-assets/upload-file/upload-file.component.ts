@@ -28,6 +28,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
   idGood: number = 0;
   date: string = '';
   userLogName: string = '';
+  goodProg: any;
   constructor(
     private bsModalRef: BsModalRef,
     private requestService: RequestService,
@@ -39,7 +40,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.idGood = this.data;
+    this.idGood = this.data.id;
     if (this.idRequest) this.infoRequest();
     this.obtainDate();
     this.getInfoUserLog();
@@ -77,7 +78,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
             xfolioProgramacion: this.programming.folio,
             xnoProgramacion: this.programming.id,
             xidTransferente: this.programming.tranferId,
-            xidBien: this.idGood,
+            xidBien: this.goodProg,
             xnombreProceso: 'Ejecutar Recepcion',
           };
 
@@ -93,7 +94,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
             )
             .subscribe({
               next: data => {
-                this.bsModalRef.content.callBack(true);
+                this.bsModalRef.content.callback(true);
                 this.close();
               },
               error: error => {},
@@ -101,7 +102,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
         });
       } else {
         const { index, fileEvents } = uploadEvent;
-
+        this.idGood = this.data.id;
         fileEvents.forEach(fileEvent => {
           const formData = {
             xidcProfile: 'NSBDB_Gral',
@@ -111,7 +112,6 @@ export class UploadFileComponent extends BasePage implements OnInit {
             xidBien: this.idGood,
             xnombreProceso: 'Clasificar Bien',
           };
-
           const contentType = 'img';
           const docName = `IMG_${this.date}${contentType}`;
 

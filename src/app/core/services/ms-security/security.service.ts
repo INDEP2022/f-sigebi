@@ -10,6 +10,7 @@ import {
   IAccesTrackingXArea,
   IPupUser,
   ITrackingAcces,
+  Iuser,
   IUsersTracking,
 } from '../../models/ms-security/pup-user.model';
 
@@ -20,6 +21,7 @@ export class SecurityService extends HttpService {
   private endpoint = SecurityEndpoints.GenerateIdentifier;
   private screen = '?.filter.screenKey=$eq:';
   private userName = '&filter.user=$eq:';
+  private uName = '?filter.user=$eq:';
   constructor() {
     super();
     this.microservice = SecurityEndpoints.Security;
@@ -48,6 +50,10 @@ export class SecurityService extends HttpService {
     );
   }
 
+  getAllUser(params?: _Params): Observable<IListResponse<Iuser>> {
+    return this.get<IListResponse<Iuser>>(SecurityEndpoints.User, params);
+  }
+
   getAllFilterAssigned(params: any) {
     return this.get<IListResponse<IAccesTrackingXArea>>(
       `access-tracking-x-area`,
@@ -61,6 +67,10 @@ export class SecurityService extends HttpService {
       body,
       params
     );
+  }
+
+  getAccessXScreenFilter(params?: any) {
+    return this.get(`tracking-access-screens`, params);
   }
 
   getFilterAllUsersTracker(params: any) {
@@ -117,5 +127,15 @@ export class SecurityService extends HttpService {
   getFaDelResponsable(id: any) {
     const route = SecurityEndpoints.FaDelResponsable;
     return this.get(`${route}?noBien=${id}`);
+  }
+
+  getIniEmail(data: Object) {
+    return this.post(SecurityEndpoints.IniEmail, data);
+  }
+
+  getUser(uName: string) {
+    return this.get<IListResponse<IUsersTracking>>(
+      `${SecurityEndpoints.UsersTracking}${this.uName}${uName}`
+    );
   }
 }

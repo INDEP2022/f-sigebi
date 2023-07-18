@@ -7,7 +7,7 @@ import {
   BsModalService,
   ModalDirective,
 } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   ListParams,
@@ -21,6 +21,7 @@ import { GoodSpentService } from 'src/app/core/services/ms-expense/good-expense.
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -52,7 +53,26 @@ export interface ExampleData1 {
 @Component({
   selector: 'app-resquest-numbering-change',
   templateUrl: './resquest-numbering-change.component.html',
-  styles: [],
+  // styles: [
+  //   `
+  //     .row-verde {
+  //       background-color: green;
+  //       font-weight: bold;
+  //     }
+
+  //     .row-negro {
+  //       background-color: black;
+  //       font-weight: bold;
+  //     }
+
+  //     .form-group.form-static-label.form-danger label.float-label {
+  //       color: blue;
+  //     }
+
+  //   `,
+  // ],
+
+  styleUrls: ['./resquest-numbering-change.component.scss'],
 })
 export class ResquestNumberingChangeComponent
   extends BasePage
@@ -62,12 +82,21 @@ export class ResquestNumberingChangeComponent
   totalItems1: number = 0;
   totalItems2: number = 0;
   columnFilters: any = [];
+  people$: Observable<any[]>;
+  selectedPeople: any = [];
+
+  esta: string;
+  es: string;
+
   //params = new BehaviorSubject<ListParams>(new ListParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
   params1 = new BehaviorSubject<ListParams>(new ListParams());
 
   itemsBoveda = new DefaultSelect();
   itemsDelegation = new DefaultSelect();
+  itemsUser = new DefaultSelect();
+  itemsUser1 = new DefaultSelect();
+  itemName = new DefaultSelect();
   itemsAlmacen = new DefaultSelect();
   columnFilters4: any = [];
   idSolicitud: string = '';
@@ -76,10 +105,14 @@ export class ResquestNumberingChangeComponent
   dataCamNum: any = [];
   dataGood: any = [];
   validate: boolean = false;
+  selectedCars = [3];
+  rowClass: string = 'verde';
+
   params4 = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
   data1: LocalDataSource = new LocalDataSource();
   data2: LocalDataSource = new LocalDataSource();
+  data3: LocalDataSource = new LocalDataSource();
   tiposData = new DefaultSelect();
   @ViewChild('modal', { static: false }) modal?: ModalDirective;
   loadingText = 'Cargando ...';
@@ -125,12 +158,12 @@ export class ResquestNumberingChangeComponent
     hideSubHeader: false,
     columns: {
       goodNumber: {
-        title: 'No Bien',
+        title: 'No. Bien',
         width: '10%',
         sort: false,
       },
       situationlegal: {
-        title: 'Sit. Juridica',
+        title: 'Situación Jurídica',
         width: '30%',
         sort: false,
       },
@@ -152,6 +185,7 @@ export class ResquestNumberingChangeComponent
 
   //Reactive Forms
   form: FormGroup;
+  authorizeDate: any;
 
   get legalStatus() {
     return this.form.get('legalStatus');
@@ -214,13 +248,33 @@ export class ResquestNumberingChangeComponent
     private numeraryService: NumeraryService,
     private siabService: SiabService,
     private modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private securityService: SecurityService
   ) {
     super();
+    this.esta = '';
+    this.es = '';
     this.settings = {
       ...this.settings,
-      rowClassFunction: (row: { data: { id: any } }) =>
-        row.data.id ? 'bg-dark text-white' : 'bg-success text-white',
+      rowClassFunction: (row: any) => {
+        if (row.data.di_disponible == 'S') {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+
+        // if (row.data.status === 'CNE') {
+        //   return 'bg-success text-white';
+        // } else if (
+        //   row.data.status === 'RRE' ||
+        //   row.data.status === 'VXR' ||
+        //   row.data.status === 'DON'
+        // ) {
+        //   return 'bg-dark text-white';
+        // } else {
+        //   return 'bg-success text-white';
+        // }
+      },
 
       actions: {
         columnTitle: 'Visualizar',
@@ -232,12 +286,12 @@ export class ResquestNumberingChangeComponent
       },
       columns: {
         id: {
-          title: 'No Bien',
+          title: 'No. Bien',
           width: '10%',
           sort: false,
         },
         description: {
-          title: 'description',
+          title: 'Descripción',
           width: '30%',
           sort: false,
         },
@@ -252,12 +306,12 @@ export class ResquestNumberingChangeComponent
           sort: false,
         },
         appraisedValue: {
-          title: 'Avaluó Vig',
+          title: 'Avalúo Vigente',
           width: '10%',
           sort: false,
         },
         armor: {
-          title: 'Mon.',
+          title: 'Monto',
           width: '10%',
           sort: false,
         },
@@ -266,38 +320,41 @@ export class ResquestNumberingChangeComponent
           width: '20%',
           sort: false,
         },
-        'expediente.id': {
-          title: 'No Exp.',
+        expedienteid: {
+          title: 'Número de Expediente',
           width: '10%',
           sort: false,
-          valuePrepareFunction: (
-            cell: any,
-            row: { expediente: { id: any } }
-          ) => {
-            return row.expediente.id;
+          valuePrepareFunction: (cell: any, row: any) => {
+            if (row.expediente == null) {
+              return '';
+            } else {
+              return row.expediente.id;
+            }
           },
         },
 
-        'expediente.preliminaryInquiry': {
-          title: 'Averiguacion prev.',
+        expedientepreliminaryInquiry: {
+          title: 'Averiguación Previa',
           width: '10%',
           sort: false,
-          valuePrepareFunction: (
-            cell: any,
-            row: { expediente: { preliminaryInquiry: any } }
-          ) => {
-            return row.expediente.preliminaryInquiry;
+          valuePrepareFunction: (cell: any, row: any) => {
+            if (row.expediente == null) {
+              return '';
+            } else {
+              return row.expediente.preliminaryInquiry;
+            }
           },
         },
-        'expediente.criminalCase': {
+        expedientecriminalCase: {
           title: 'Causa Penal',
           width: '40%',
           sort: false,
-          valuePrepareFunction: (
-            cell: any,
-            row: { expediente: { criminalCase: any } }
-          ) => {
-            return row.expediente.criminalCase;
+          valuePrepareFunction: (cell: any, row: any) => {
+            if (row.expediente == null) {
+              return '';
+            } else {
+              return row.expediente.criminalCase;
+            }
           },
         },
       },
@@ -314,9 +371,14 @@ export class ResquestNumberingChangeComponent
     this.getDelegations(new ListParams());
     this.getAlmacen(new ListParams());
     this.getTodos(new ListParams());
+    this.getUsuario(new ListParams());
     this.getDataTable();
     if (this.modal?.isShown) {
     }
+    //this.people$ = this.goodprocessService.getTodos();
+  }
+  clearModel() {
+    this.selectedPeople = [];
   }
 
   /**
@@ -325,9 +387,60 @@ export class ResquestNumberingChangeComponent
    * @since: 27/09/2022
    */
 
+  /*validationScreen(id: any) {
+    //row.data.id ? 'bg-dark text-white' : 'bg-success text-white'
+    this.loading = true;
+    const payload = {
+      pNumberGood: id,
+      vcScreen: 'FACTADBSOLCAMNUME',
+    };
+    this.goodprocessService.getScreenGood(payload).subscribe({
+      next: async (response: any) => {
+        this.loading = false;
+      },
+      error: err => {
+        this.loading = false;
+      },
+    });
+    this.loading = false;
+  }*/
+
+  async validationScreen(id: any): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.goodprocessService.getScreenGood2(id).subscribe({
+        next: async (response: any) => {
+          if (response.data) {
+            console.log('di_dispo', response);
+            resolve('S');
+          } else {
+            console.log('di_dispo', response);
+            resolve('N');
+          }
+        },
+        error: () => {
+          resolve('N');
+        },
+      });
+    });
+  }
+
+  onLegalStatusChange() {
+    const legalStatus = this.form.get('legalStatus').value;
+
+    if (legalStatus === 'AS') {
+      this.esta = 'ADM';
+      this.es = `ESTATUS = ${this.esta}`;
+    } else if (legalStatus === 'DE') {
+      this.esta = 'DEA,AXC';
+      this.es = `ESTATUS IN (${this.esta})`;
+    } else if (legalStatus === 'AB') {
+      this.esta = 'CND,CNA';
+      this.es = `ESTATUS IN (${this.esta})`;
+    }
+  }
+
   showReceipt(event: any) {
     this.modal.show();
-    console.log('YAaaaaaaaaaaaaaaaaaaaaaaaa', event);
     this.loading = true;
 
     this.expenseService.getGoodCosto(event.id).subscribe(
@@ -351,11 +464,91 @@ export class ResquestNumberingChangeComponent
   getDelegations(params: ListParams, id?: string) {
     if (id) {
       params['filter.id'] = `$eq:${id}`;
+      console.log('AQUI', params);
     }
     this.delegationService.getAllPaginated(params).subscribe((data: any) => {
       this.itemsDelegation = new DefaultSelect(data.data, data.count);
+      console.log('AQUI', this.itemsDelegation);
+      console.log('AQUI', data);
     });
   }
+
+  public searchUsuario(data: any) {
+    console.log(data);
+
+    const params = new ListParams();
+    params['filter.usuario'] = data.usuario;
+    console.log(data.usuario);
+    this.securityService.getAllUser(params).subscribe({
+      next: (types: any) => {
+        this.itemsUser = new DefaultSelect(types.data, types.count);
+        console.log(types);
+        this.formaplicationData.controls['postUserRequestCamnum'].setValue(
+          types.data[0].otvalor
+        );
+        this.formaplicationData.controls['delegationRequestcamnum'].setValue(
+          types.data[0].no_delegacion
+        );
+      },
+    });
+  }
+
+  public searchUsuario1(dat: any) {
+    console.log(dat);
+
+    const params1 = new ListParams();
+    params1['filter.usuario'] = dat.usuario;
+    console.log(dat.usuario);
+    this.securityService.getAllUser(params1).subscribe({
+      next: (type: any) => {
+        this.itemsUser1 = new DefaultSelect(type.data, type.count);
+        console.log(type);
+        this.formaplicationData.controls['authorizePostUser'].setValue(
+          type.data[0].otvalor
+        );
+        this.formaplicationData.controls['authorizeDelegation'].setValue(
+          type.data[0].no_delegacion
+        );
+      },
+    });
+  }
+
+  getUsuario(params: ListParams, usuario?: string) {
+    if (usuario) {
+      params['filter.usuario'] = `$in:${usuario}`;
+    }
+
+    this.securityService.getAllUser(params).subscribe((data: any) => {
+      const res: any = data.data.map((user: any) => {
+        return user.usuario;
+      });
+
+      this.itemsUser = new DefaultSelect(res, data.count);
+      console.log(this.itemsUser);
+      console.log(data);
+      //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
+      // Llamar a getNameUser solo si se proporcionó un usuario
+    });
+  }
+
+  getUsuario1(params1: ListParams, usuario?: string) {
+    if (usuario) {
+      params1['filter.usuario'] = `$in:${usuario}`;
+    }
+
+    this.securityService.getAllUser(params1).subscribe((dat: any) => {
+      const res: any = dat.data.map((userT: any) => {
+        return userT.usuario;
+      });
+
+      this.itemsUser1 = new DefaultSelect(res, dat.count);
+      console.log(this.itemsUser1);
+      console.log(dat);
+      //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
+      // Llamar a getNameUser solo si se proporcionó un usuario
+    });
+  }
+
   getAlmacen(params: ListParams, id?: string) {
     if (id) {
       params['filter.id'] = `$eq:${id}`;
@@ -388,6 +581,10 @@ export class ResquestNumberingChangeComponent
     );
   }
 
+  onOptionsSelected(options: any[]) {
+    console.log('Opciones seleccionadas:', options);
+  }
+
   getDataTable() {
     this.totalItems = 0;
     this.data
@@ -416,7 +613,6 @@ export class ResquestNumberingChangeComponent
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getDataTableDos();
         }
       });
     this.params
@@ -425,33 +621,84 @@ export class ResquestNumberingChangeComponent
   }
 
   getDataTableDos() {
-    this.loading = true;
+    //this.loading = true;
     this.dataGood = [];
+
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    //params['filter.goodClassNumber'] = `$eq:1115`;
-    params['filter.goodClassNumber'] = `$eq:${this.form.get('type').value}`;
-    params['filter.status'] = `$in:${this.form.get('legalStatus').value}`;
-    params['filter.storeNumber'] = `$eq:${this.form.get('warehouse').value}`;
-    params['filter.vaultNumber'] = `$eq:${this.form.get('vault').value}`;
-    params['filter.delegationNumber'] = `$eq:${
-      this.form.get('delegation').value
-    }`;
-    this.goodServices.getByExpedientAndParams__(params).subscribe({
-      next: async (response: any) => {
-        this.dataGood = response.data;
-        this.totalItems = response.count;
-        this.data.load(response.data);
-        this.data.refresh();
-        this.loading = false;
-      },
-      error: err => {},
-    });
-    this.loading = false;
-  }
 
+    if (this.form.get('type').value !== null)
+      params['filter.goodClassNumber'] = `$eq:${this.form.get('type').value}`;
+    console.log(params);
+    const legalStatus = this.form.get('legalStatus').value;
+
+    let estados: string[] = [];
+
+    if (legalStatus === 'AS') {
+      estados = ['ADM'];
+    } else if (legalStatus === 'DE') {
+      estados = ['DEA', 'AXC'];
+    } else if (legalStatus === 'AB') {
+      estados = ['CND', 'CNA'];
+    }
+    if (this.form.get('warehouse').value !== null)
+      params['filter.storeNumber'] = `$eq:${this.form.get('warehouse').value}`;
+
+    if (this.form.get('vault').value !== null)
+      params['filter.vaultNumber'] = `$eq:${this.form.get('vault').value}`;
+
+    if (this.form.get('delegation').value !== null)
+      params['filter.delegationNumber'] = `$eq:${
+        this.form.get('delegation').value
+      }`;
+
+    if (estados.length > 0) {
+      params['filter.status'] = `$in:${estados.join(',')}`;
+    } else {
+      params['filter.status'] = '';
+    }
+    let alertShown = false;
+    if (this.form.get('type').value != null)
+      this.goodServices.getByExpedientAndParams__(params).subscribe({
+        next: async (response: any) => {
+          this.alert(
+            'info',
+            'Se mostraran los datos en la tabla BIENES X TIPO',
+            ''
+          );
+          let result = response.data.map(async (item: any) => {
+            let obj = {
+              vcScreen: 'FACTADBSOLCAMNUME',
+              goodNumber: item.id,
+            };
+            const di_dispo = await this.validationScreen(obj);
+            item['di_disponible'] = di_dispo;
+
+            // const acta = await this.getActaGood(item);
+            //console.log('acta', acta);
+            //item['acta'] = acta;
+            //item.di_disponible = acta != null ? 'N' : di_dispo;
+          });
+
+          console.log('asaddasdasdasd', response.data);
+          this.dataGood = response.data;
+          this.totalItems = response.count;
+          this.data.load(response.data);
+          this.data.refresh();
+          this.loading = false;
+        },
+        error: err => {
+          console.log('error', err);
+          if (!alertShown) {
+            this.alert('error', 'No se Encontraron Registros', '');
+            alertShown = true; // Marcar el flag como true después de mostrar el mensaje
+          }
+        },
+      });
+    //this.loading = false;
+  }
   getDataTableNum() {
     this.totalItems1 = 0;
     this.data1
@@ -506,9 +753,8 @@ export class ResquestNumberingChangeComponent
       },
       error: err => {
         console.log('ERROR', err);
-        this.totalItems1 = 0;
-        this.data1.load([]);
-        this.data1.refresh();
+        this.alert('error', 'No se Encontraron Registros', '');
+        this.loading = false;
       },
     });
     this.loading = false;
@@ -547,19 +793,23 @@ export class ResquestNumberingChangeComponent
       if (
         this.selectGood[0].status == 'CND' ||
         this.selectGood[0].status == 'CNA'
+        //this.selectGood[0].status == 'ADE'
       ) {
         situacionJuridica = 'ABANDONADO';
         motivo = 'BIEN ABANDONADO';
       }
       if (
-        this.selectGood[0].id == '316' ||
-        this.selectGood[0].id == '317' ||
-        this.selectGood[0].id == '1025' ||
-        this.selectGood[0].id == '1038'
+        this.selectGood[0].goodClassNumber == '316' ||
+        this.selectGood[0].goodClassNumber == '317' ||
+        this.selectGood[0].goodClassNumber == '1025' ||
+        this.selectGood[0].goodClassNumber == '1038'
       ) {
         motivo = 'ASEGURADO PERECEDERO';
       }
-      if (this.selectGood[0].id == '319' || this.selectGood[0].id == '1078') {
+      if (
+        this.selectGood[0].goodClassNumber == '319' ||
+        this.selectGood[0].goodClassNumber == '1078'
+      ) {
         motivo = 'ASEGURADO SEMOVIENTE';
       }
       const payload = {
@@ -578,13 +828,11 @@ export class ResquestNumberingChangeComponent
         },
         error: err => {
           this.loading = false;
-          this.warningAlert('No se creo el registro');
+          this.warningAlert('No se Creo el Registro');
         },
       });
     } else {
-      this.warningAlert(
-        'Debe seleccionar un registro en la tabla Bien por tipo'
-      );
+      this.warningAlert('Debe seleccionar un Registro en la tabla Bien x Tipo');
     }
   }
   pasarTodo() {
@@ -615,21 +863,21 @@ export class ResquestNumberingChangeComponent
           motivo = 'BIEN ABANDONADO';
         }
         if (
-          this.dataGood[index].id == '316' ||
-          this.dataGood[index].id == '317' ||
-          this.dataGood[index].id == '1025' ||
-          this.dataGood[index].id == '1038'
+          this.dataGood[index].goodClassNumber == '316' ||
+          this.dataGood[index].goodClassNumber == '317' ||
+          this.dataGood[index].goodClassNumber == '1025' ||
+          this.dataGood[index].goodClassNumber == '1038'
         ) {
           motivo = 'ASEGURADO PERECEDERO';
         }
         if (
-          this.dataGood[index].id == '319' ||
-          this.dataGood[index].id == '1078'
+          this.dataGood[index].goodClassNumber == '319' ||
+          this.dataGood[index].goodClassNumber == '1078'
         ) {
           motivo = 'ASEGURADO SEMOVIENTE';
         }
         const payload = {
-          goodNumber: this.dataGood[index].id,
+          goodNumber: this.dataGood[index].goodClassNumber,
           applicationChangeCashNumber: this.idSolicitud,
           ProceedingsNumber: this.dataGood[index].fileNumber,
           situationlegal: situacionJuridica,
@@ -645,12 +893,12 @@ export class ResquestNumberingChangeComponent
           },
           error: err => {
             this.loading = false;
-            this.handleSuccess('No se creo el registro');
+            this.handleSuccess('No se Creo el Registro');
           },
         });
       }
     } else {
-      this.warningAlert('No hay registro en la tabla Bien por tipo');
+      this.warningAlert('No hay Registro en la tabla Bien x Tipo');
     }
   }
   quitarTodo() {
@@ -661,13 +909,18 @@ export class ResquestNumberingChangeComponent
     ).then(question => {
       if (question.isConfirmed) {
         if (this.dataCamNum.length != 0) {
+          console.log(this.dataCamNum);
           this.loading = true;
           this.numeraryService
             .DeleteAllCamNum(this.dataCamNum[0].applicationChangeCashNumber)
             .subscribe({
               next: async (response: any) => {
-                this.getDataTableNum();
-                this.deleteAlert();
+                this.dataCamNum = [];
+                this.data1.refresh();
+                this.data1.load([]);
+                this.totalItems1 = 0;
+                this.alert('success', 'Registros Eliminados', '');
+
                 this.loading = false;
               },
               error: err => {
@@ -711,9 +964,9 @@ export class ResquestNumberingChangeComponent
   }
   handleSuccess(message: any) {
     if (message == 'Se creo correctamente') {
-      this.onLoadToast('success', `${message}`);
+      this.alert('success', `${message}`, '');
     } else {
-      this.onLoadToast('warning', `${message}`);
+      this.alert('warning', `${message}`, '');
     }
     // this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
@@ -730,43 +983,66 @@ export class ResquestNumberingChangeComponent
     if (
       this.formaplicationData.get('dateRequestChangeNumerary').value == null
     ) {
-      message = 'La Fecha de Solicitud no debe estar vacia';
+      message = 'La Fecha de Solicitud no debe estar vacía';
       this.handleSuccess(message);
     }
     if (this.formaplicationData.get('userRequestChangeNumber').value == null) {
-      message = 'El Usuario Solicitante no debe estar vacio';
+      message = 'El Usuario Solicitante no debe estar vacío';
       this.handleSuccess(message);
     }
     if (this.formaplicationData.get('procedureProposal').value == null) {
-      message = 'El Procedimiento Propuesta no debe estar vacio';
+      message = 'Debe de seleccionar el campo Procedimiento Propuesto';
       this.handleSuccess(message);
     }
     if (this.formaplicationData.get('delegationRequestcamnum').value == null) {
-      message = 'El Cargo del Usuario no debe estar vacio';
+      message = 'El Cargo del Usuario no debe estar vacío';
       this.handleSuccess(message);
     }
     if (this.formaplicationData.get('authorizeUser').value == null) {
-      message = 'El Usuario Autoriza no debe estar vacio';
+      message = 'El campo Usuario Autoriza no debe estar vacío';
       this.handleSuccess(message);
     }
     if (this.formaplicationData.get('authorizeDate').value == null) {
-      message = 'La Fecha de Autorizacion no debe estar vacio';
+      message = 'La Fecha de Autorización no debe estar vacía';
       this.handleSuccess(message);
     }
-    if (valor == 0) {
-      if (this.dataGood[0].appraisedValue == null) {
-        console.log('ENTRO AQUI');
-        message =
-          'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enejenación';
-        this.handleSuccess(message);
-      }
-    }
 
-    if (valor == 1) {
-      for (let index = 0; index < this.dataGood.length; index++) {
+    for (let index = 0; index < this.dataGood.length; index++) {
+      if (valor == 0) {
+        if (this.dataGood[index].appraisedValue == null) {
+          console.log('ENTRO AQUI');
+          message =
+            'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
+          this.handleSuccess(message);
+        }
+
+        console.log(this.dataGood[index].expediente);
+        if (this.dataGood[index].expediente.id == null) {
+          console.log(this.dataGood[index].expediente.id);
+          message =
+            'El bien NO tiene Número de Expediente' +
+            this.dataGood[index].expediente.id;
+          this.handleSuccess(message);
+        }
+
+        if (
+          this.dataGood[index].expediente.preliminaryInquiry &&
+          this.dataGood[index].expediente.preliminaryInquiry === ''
+        ) {
+          message = 'El bien NO tiene averiguación previa';
+          this.handleSuccess(message);
+        }
+      }
+
+      if (valor == 1) {
         if (this.dataGood[index].appraisedValue == null) {
           message =
-            'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enejenación';
+            'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
+          this.handleSuccess(message);
+        }
+
+        if (this.dataGood[index].expediente.id == null) {
+          message = 'El bien NO tiene Número de Expediente';
           this.handleSuccess(message);
         }
       }
@@ -779,6 +1055,26 @@ export class ResquestNumberingChangeComponent
 
   guardarSolicitud() {
     this.loading = true;
+    // Obtener la fecha actual
+    const currentDate = new Date(); // Obtener la fecha actual
+
+    // Obtener la fecha seleccionada en el formulario
+    const fechaSeleccionada = this.formaplicationData.get(
+      'dateRequestChangeNumerary'
+    ).value;
+
+    // Comparar la fecha seleccionada con la fecha actual
+    if (fechaSeleccionada.toDateString() !== currentDate.toDateString()) {
+      // Si la fecha seleccionada no es la de hoy, mostrar un mensaje de error o realizar la acción que desees.
+      console.log('La fecha seleccionada debe ser la de hoy.');
+      this.loading = false;
+      return;
+    }
+
+    // Si la fecha seleccionada es la de hoy, continuar con el proceso de guardado
+    this.formaplicationData
+      .get('dateRequestChangeNumerary')
+      .setValue(currentDate);
     this.formaplicationData.get('applicationChangeCashNumber').setValue(null);
     this.numeraryService
       .createChangeNumerary(this.formaplicationData.getRawValue())
@@ -790,9 +1086,11 @@ export class ResquestNumberingChangeComponent
             .setValue(response.applicationChangeNumeraryNumber);
           this.successAlert();
           this.loading = false;
+          console.log(response);
         },
         error: err => {
           this.loading = false;
+          console.log(err);
         },
       });
   }
@@ -805,7 +1103,38 @@ export class ResquestNumberingChangeComponent
     this.getDataTableNum();
     this.numeraryService.getSolById(this.idSolicitud).subscribe({
       next: async (response: any) => {
+        //'userRequestChangeNumber',
+        const readonlyFields = [
+          'dateRequestChangeNumerary',
+          'applicationChangeCashNumber',
+          'userRequestChangeNumber',
+          'postUserRequestCamnum',
+          'delegationRequestcamnum',
+          'procedureProposal',
+          'authorizeUser',
+          'authorizePostUser',
+          'authorizeDelegation',
+          'authorizeDate',
+        ];
+
+        response.dateRequestChangeNumerary = new Date(
+          response.dateRequestChangeNumerary + 'T00:00:00'
+        );
+
+        response.authorizeDate = new Date(response.authorizeDate + 'T00:00:00');
+
+        // Formatear las fechas
+        // Verificar y formatear los campos de fecha solo si son válido
+
         this.formaplicationData.patchValue(response);
+        console.log('RES', this.formaplicationData.value);
+        // Establecer los campos específicos como de solo lectura
+        readonlyFields.forEach(fieldName => {
+          this.formaplicationData.get(fieldName).disable();
+        });
+
+        //this.loading = false;
+
         this.loading = false;
       },
       error: err => {
@@ -825,9 +1154,28 @@ export class ResquestNumberingChangeComponent
     this.formaplicationData.get('authorizePostUser').setValue(null);
     this.formaplicationData.get('authorizeDelegation').setValue(null);
     this.formaplicationData.get('authorizeDate').setValue(null);
-    this.totalItems1 = 0;
+    Object.keys(this.formaplicationData.controls).forEach(controlName => {
+      this.formaplicationData.get(controlName).enable();
+    }),
+      (this.totalItems1 = 0);
     this.data1.load([]);
     this.data1.refresh();
+  }
+  //data3
+  cleanFilter() {
+    this.form.get('legalStatus').setValue(null);
+    this.form.get('type').setValue(null);
+    this.form.get('delegation').setValue(null);
+    this.form.get('warehouse').setValue(null);
+    this.form.get('vault').setValue(null);
+    Object.keys(this.form.controls).forEach(controlName => {
+      this.form.get(controlName).enable();
+    }),
+      (this.totalItems1 = 0);
+    this.data.load([]);
+    this.data.refresh();
+    this.data3.load([]);
+    this.data3.refresh();
   }
 
   printScanFile() {
@@ -870,7 +1218,7 @@ export class ResquestNumberingChangeComponent
     this.alert('warning', message, '');
   }
   successAlert() {
-    this.alert('success', 'Registro guardado', '');
+    this.alert('success', 'Registro Guardado', '');
   }
 
   deleteAlert() {
@@ -880,11 +1228,11 @@ export class ResquestNumberingChangeComponent
 
   private buildForm() {
     this.form = this.fb.group({
-      legalStatus: [null, [Validators.required]],
-      delegation: [null, [Validators.required]],
-      warehouse: [null, [Validators.required]],
-      vault: [null, [Validators.required]],
-      type: [null, [Validators.required]],
+      legalStatus: [null, Validators.required],
+      delegation: [null],
+      warehouse: [null],
+      vault: [null],
+      type: [null, Validators.required],
     });
   }
 
@@ -892,32 +1240,93 @@ export class ResquestNumberingChangeComponent
     this.formaplicationData = this.fb.group({
       dateRequestChangeNumerary: [null, [Validators.required]],
       applicationChangeCashNumber: [null],
-      userRequestChangeNumber: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      userRequestChangeNumber: [null, [Validators.required]],
       postUserRequestCamnum: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       delegationRequestcamnum: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+        ],
       ],
       procedureProposal: [null, [Validators.required]],
       authorizeUser: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
       authorizePostUser: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       authorizeDelegation: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+        ],
       ],
       authorizeDate: [null, [Validators.required]],
     });
+    this.formaplicationData.controls['postUserRequestCamnum'].disable();
+    this.formaplicationData.controls['delegationRequestcamnum'].disable();
+    this.formaplicationData.controls['authorizeDelegation'].disable();
+    this.formaplicationData.controls['authorizePostUser'].disable();
+    setTimeout(() => {
+      this.getUsuario(new ListParams());
+      this.getUsuario1(new ListParams());
+    }, 1000);
+
+    this.formaplicationData.controls;
+    /*this.formaplicationData
+      .get('dateRequestChangeNumerary')
+      .valueChanges.subscribe((date: Date) => {
+        if (date) {
+          const formattedDate = moment(date).format('DD-MM-YYYY');
+          this.formaplicationData.patchValue(
+            { dateRequestChangeNumerary: formattedDate },
+            { emitEvent: false }
+          );
+        }
+      });
+
+    /*this.formaplicationData
+      .get('authorizeDate')
+      .valueChanges.subscribe((date: Date) => {
+        if (date) {
+          const formattedDate = moment(date).format('DD-MM-YYYY');
+          this.formaplicationData.patchValue(
+            { authorizeDate: formattedDate },
+            { emitEvent: false }
+          );
+        }
+      });*/
   }
+  opcionSeleccionada: any[] = [];
+
+  dropdownSettings = {
+    // Configuración del dropdown
+    singleSelection: false, // Permitir selección múltiple
+    idField: 'id', // Nombre del campo que contiene el ID de cada opción
+    textField: 'name', // Nombre del campo que contiene el texto de cada opción
+    selectAllText: 'Seleccionar todo', // Texto para seleccionar todas las opciones
+    unSelectAllText: 'Deseleccionar todo', // Texto para deseleccionar todas las opciones
+    itemsShowLimit: 3, // Número máximo de opciones que se mostrarán antes de contraer la lista
+    allowSearchFilter: true, // Permitir búsqueda de opciones
+    closeDropDownOnSelection: false, // Mantener el dropdown abierto después de seleccionar una opción
+    showSelectedItemsAtTop: true, // Mostrar las opciones seleccionadas en la parte superior
+    noDataAvailablePlaceholderText: 'No hay datos disponibles',
+  };
 }

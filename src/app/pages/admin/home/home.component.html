@@ -24,7 +24,6 @@
         <h4>Información del usuario logeado</h4>
       </div>
     </div>
-
     <div class="row">
       <div class="col-md-6" style="height: 250px; overflow-y: auto">
         <pre>{{ token | json }}</pre>
@@ -32,10 +31,19 @@
     </div>
 
     <hr class="row" />
-
     <div class="row">
       <div class="col-md-12">
         <h4>Botones</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="alert alert-danger">
+          <b
+            >A consideración del desarrollador y/o el espacio desponible en la
+            pantalla; el botón puede tener texto e icono o solo icono
+          </b>
+        </div>
       </div>
     </div>
 
@@ -134,6 +142,21 @@ imports: [
     </div>
 
     <hr class="row" />
+    <div class="row pt-3">
+      <h5>Estructura de los mensajes de alerta</h5>
+      <div class="col-md-12">
+        <ul>
+          <li>El/La <b>"ELEMENTO"</b> se ha <b>"ACCION"</b></li>
+          <li>El/La <b>"ELEMENTO"</b> ha sido <b>"ACCION"</b></li>
+        </ul>
+        Ejemplos:
+        <ul>
+          <li>El acta se ha guardado</li>
+          <li>El reporte se ha generado</li>
+          <li>El expediente ha sido eliminado</li>
+        </ul>
+      </div>
+    </div>
     <div class="row">
       <div class="col-md-12">
         <div class="col-md-3">
@@ -175,7 +198,7 @@ imports: [
         <div class="col-md-3">
           <div class="row">
             <div class="col-md-12 text-center">
-              <b>Alerta de eror</b>
+              <b>Alerta de error</b>
             </div>
           </div>
           <div class="row">
@@ -262,26 +285,49 @@ imports: [
     <div class="row">
       <h5>Ejemplo de formulario tipado</h5>
       <form [formGroup]="userExample" class="form-material">
-        <form-field
-          [control]="userExample.get('username')"
-          label="Input Usuario">
-          <input type="text" class="form-control" formControlName="username" />
-        </form-field>
-        <ng-container formGroupName="person">
+        <div class="row pt-3">
+          <div class="col-md-3">
+            <form-field
+              label="Formato de Moneda"
+              [control]="userExample.get('currency')">
+              <input
+                currencyMask
+                type="Formato Moneda"
+                class="form-control"
+                formControlName="currency" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-3">
           <form-field
-            [control]="personForm.get('name')"
-            label="Input Nombre Persona">
-            <input type="text" class="form-control" formControlName="name" />
-          </form-field>
-          <form-field
-            [control]="personForm.get('birthdate')"
-            label="Input Fecha Persona">
+            [control]="userExample.get('username')"
+            label="Input Usuario">
             <input
               type="text"
               class="form-control"
-              formControlName="birthdate"
-              bsDatepicker />
+              formControlName="username" />
           </form-field>
+        </div>
+        <ng-container formGroupName="person">
+          <div class="row pt-3">
+            <form-field
+              [control]="personForm.get('name')"
+              label="Input Nombre Persona">
+              <input type="text" class="form-control" formControlName="name" />
+            </form-field>
+          </div>
+          <div class="row pt-3">
+            <form-field
+              [control]="personForm.get('birthdate')"
+              label="Input Fecha Persona">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="birthdate"
+                bsDatepicker />
+            </form-field>
+          </div>
         </ng-container>
         <div>
           <button class="btn btn-primary active btn-sm" (click)="addRole()">

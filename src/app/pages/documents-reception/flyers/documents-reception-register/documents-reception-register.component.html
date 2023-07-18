@@ -3,20 +3,28 @@
     <div class="d-flex justify-content-between">
       <div><h5 class="title">Registro de Recepci&oacute;n Documental</h5></div>
       <div>
-        <button
+        <!-- <button
           *ngIf="flyerReceptionMode"
           class="btn btn-danger active btn-sm"
           [disabled]="loadingPostCapture"
           (click)="endProcess()">
           <i class="bx bx-chevron-left float-icon"></i>Regresar
-        </button>
+        </button> -->
         <button
+          *ngIf="flyerReceptionMode"
+          class="btn btn-primary active btn-sm m-2"
+          [disabled]="loadingPostCapture"
+          (click)="endProcess()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+        <!-- <button
           *ngIf="(changeFlyerOption || flyerEditMode) && !flyerReceptionMode"
           class="btn btn-primary active btn-sm"
           [disabled]="loadingPostCapture"
           (click)="chooseOther()">
           Seleccionar Volante
-        </button>
+        </button> -->
       </div>
     </div>
   </div>
@@ -119,6 +127,8 @@
               <button
                 type="button"
                 class="btn btn-primary btn-sm active"
+                tooltip="Seleccionar Asunto"
+                containerClass="tooltip-style"
                 (click)="openModalAffairs()">
                 <i class="bx bx-list-ul bx-sm float-icon"></i>
               </button>
@@ -128,7 +138,7 @@
 
         <div class="col-md-5">
           <div class="row mb-5 pb-5">
-            <div class="col-md-4">
+            <div class="col-md-3">
               <div class="mt-2">
                 <span
                   class="label label-{{
@@ -138,7 +148,7 @@
                 >
               </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <button
                 [disabled]="
                   (procedureStatus == 'ENVIADO' && wheelNumber.value != null) ||
@@ -147,6 +157,8 @@
                 "
                 type="button"
                 class="ml-5 btn btn-warning btn-sm"
+                tooltip="Enviar y Bloquear Volante"
+                containerClass="tooltip-style"
                 (click)="sendFlyer()">
                 <i
                   class="bx {{
@@ -156,13 +168,28 @@
                   }}"></i>
               </button>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <button
                 type="button"
                 class="ml-5 btn btn-secondary active btn-sm"
+                tooltip="Ver Documentos Relacionados"
+                containerClass="tooltip-style"
                 [disabled]="!canViewDocuments"
                 (click)="viewDocuments()">
                 <i class="bx bx-file"></i>
+              </button>
+            </div>
+            <div class="col-md-3">
+              <button
+                *ngIf="
+                  (changeFlyerOption || flyerEditMode) && !flyerReceptionMode
+                "
+                tooltip="Seleccionar Volante"
+                containerClass="tooltip-style"
+                class="btn btn-primary active btn-sm"
+                [disabled]="loadingPostCapture"
+                (click)="chooseOther()">
+                <i class="fas fa-edit bx-sm float-icon"></i>
               </button>
             </div>
           </div>
@@ -441,7 +468,6 @@
                 rows="5"
                 formControlName="observations"
                 class="form-control"
-                [readonly]="pgrInterface"
                 [max-length]="1000"
                 uppercase></textarea>
             </form-field>
@@ -468,6 +494,8 @@
               <button
                 type="button"
                 class="btn btn-primary btn-sm active"
+                tooltip="Seleccionar Clave Única"
+                containerClass="tooltip-style"
                 (click)="openModalKeys()">
                 <i class="bx bx-list-ul bx-sm float-icon"></i>
               </button>
@@ -659,6 +687,8 @@
               <button
                 type="button"
                 class="btn btn-primary btn-sm active"
+                tooltip="Nuevo Indiciado"
+                containerClass="tooltip-style"
                 (click)="openModalDefendant()">
                 <i class="bx bx-user-plus bx-sm float-icon"></i>
               </button>
@@ -699,6 +729,8 @@
               <button
                 type="button"
                 class="btn btn-primary btn-sm active"
+                tooltip="Seleccionar Área"
+                containerClass="tooltip-style"
                 (click)="openModalAreas()">
                 <i class="bx bx-list-ul bx-sm float-icon"></i>
               </button>

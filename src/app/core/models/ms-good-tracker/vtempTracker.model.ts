@@ -666,3 +666,10 @@ export interface ITempGoods {
   val119?: any;
   val120?: any;
 }
+
+export interface ITempTracker {
+  identificator: string | number;
+  goodNumber: string | number;
+  fileNumber?: string | number;
+  validate?: string;
+}

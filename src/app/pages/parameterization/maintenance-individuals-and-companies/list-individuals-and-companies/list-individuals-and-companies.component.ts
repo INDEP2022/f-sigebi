@@ -31,6 +31,7 @@ export class ListIndividualsAndCompaniesComponent
   dataPerson: IPerson[] = [];
   origin: string = '';
   no_bien: number = null;
+  no_nom: number = null;
 
   constructor(
     private modalRef: BsModalRef,
@@ -57,6 +58,7 @@ export class ListIndividualsAndCompaniesComponent
         this.origin = params['origin'] ?? null;
         if (this.origin == 'FACTJURREGDESTLEG') {
           this.no_bien = params['no_bien'] ?? null;
+          this.no_nom = params['p_nom'] ?? null;
         }
         console.log(params);
       });
@@ -111,13 +113,17 @@ export class ListIndividualsAndCompaniesComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.personsSer.remove(person.id).subscribe({
           next: () => {
-            this.alert('success', 'Ha sido eliminado', '');
             this.getPersons();
+            this.alert(
+              'success',
+              'Lista mantenimiento de personas físicas y morales',
+              'Ha sido eliminada'
+            );
           },
           error: err => this.onLoadToast('error', err.error.message, ''),
         });
@@ -143,9 +149,14 @@ export class ListIndividualsAndCompaniesComponent
   }
   goBack() {
     if (this.origin == 'FACTJURREGDESTLEG') {
-      this.router.navigate([
-        '/pages/juridical/depositary/depositary-record/' + this.no_bien,
-      ]);
+      this.router.navigate(
+        ['/pages/juridical/depositary/depositary-record/' + this.no_bien],
+        {
+          queryParams: {
+            p_nom: this.no_nom,
+          },
+        }
+      );
     } else {
       this.alert(
         'warning',

@@ -214,6 +214,36 @@ $checkbox_image: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' v
   border-color: #9d2449;
 }
 
+input[type='checkbox'] {
+  background-color: #fff;
+}
+
+input[type='checkbox'],
+input[type='checkbox']:checked {
+  appearance: none;
+  -webkit-appearance: none;
+  -o-appearance: none;
+  border: 1px solid #ccc;
+}
+
+input[type='checkbox'] {
+  border-radius: 0 !important;
+
+  &:checked {
+    background-image: url($checkbox_image);
+    background-color: #9d2449;
+    border-color: #9d2449;
+  }
+}
+
+input[type='checkbox'] {
+  border-radius: 0 !important;
+
+  &:focus {
+    outline: none !important;
+  }
+}
+
 .ng2-smart-actions input[type='checkbox'] {
   @extend %table-check;
 }
@@ -244,6 +274,11 @@ tr.ng2-smart-titles input:checked[type='checkbox'] {
 
 i {
   font-style: normal !important;
+}
+
+.fill-custom-tab li.nav-item.active > a.nav-link.active {
+  background-color: #9d2449 !important;
+  color: #f0e4d1 !important;
 }
 
 table:not(.normal-hover) tbody tr.selected {
@@ -341,6 +376,10 @@ table:not(.normal-hover) tbody tr:hover {
 
 .bg-gray-card {
   background-color: rgba(173, 181, 189, 0.25);
+}
+
+.bg-blue-card {
+  background-color: #564ab1;
 }
 
 .center-checkbox thead tr th[ng2-st-checkbox-select-all] {
@@ -609,11 +648,31 @@ ng-scrollbar.table-scrollbar {
   background-color: #fff;
 }
 
+#hooverTableDocumentViewer table tbody tr td:hover {
+  cursor: pointer !important;
+  background-color: transparent;
+}
+
 .bg-yellow-to-good {
   background-color: #e2c103 !important;
   color: black;
   font-weight: 900;
   padding: 0.3rem;
+}
+
+.bg-yellow-record {
+  background-color: #e2c103 !important;
+  color: #fff;
+}
+
+.bg-green-record {
+  background-color: #1e7e34 !important;
+  color: #fff;
+}
+
+.bg-blue-record {
+  background-color: #564ab1 !important;
+  color: #fff;
 }
 
 #fichas table:not(.normal-hover) tbody tr.selected {
@@ -641,4 +700,61 @@ ng-scrollbar.table-scrollbar {
 
 custom-view-component {
   color: black;
+}
+
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container {
+  overflow-y: auto;
+  flex-wrap: nowrap;
+}
+
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar,
+.info::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* Track */
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar-track,
+.info::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar-thumb,
+.info::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 12px;
+}
+
+/* Handle on hover */
+.ng-select.scroll-line.ng-select-multiple
+  .ng-select-container
+  .ng-value-container::-webkit-scrollbar-thumb:hover,
+.info::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+#porcentajes .ng2-smart-filter select {
+  /* Estilos específicos para los elementos de entrada (input) y selección (select) en el filtro */
+  border: 1px solid #d4d4d4 !important;
+}
+
+.swal2-html-container {
+  white-space: break-spaces;
+}
+
+.float-icon-md2 {
+  top: 9px;
+}
+
+.hidden-paginate-default .ng2-smart-pagination-nav {
+  display: none !important;
 }

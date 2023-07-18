@@ -7,6 +7,7 @@
       <div class="row pt-4">
         <div class="col-md-6 text-wrap">
           <label> Documento a Firmar&#58;&nbsp; </label>
+          <br />
           <span class="fs-4">&nbsp;{{ nameFileDictation }}</span>
         </div>
         <div class="col-md-6">
@@ -19,11 +20,19 @@
               formControlName="secpwd"
               maxlength="40" />
             <button
+              (click)="hide = !hide"
+              style="margin-top: 7px"
+              class="btn btn-primary btn-sm active mr-3">
+              {{ hide ? 'Mostrar' : 'Ocultar' }}
+              <i class="fa fa-eye" aria-hidden="true"></i>
+            </button>
+            <span>Máximo 40 carácteres</span>
+            <!-- <button
               class="btn btn-secondary btn-sm active"
               (click)="hide = !hide"
               style="margin-top: 7px">
               <span class="fa fa-eye"></span> {{ hide ? 'Mostrar' : 'Ocultar' }}
-            </button>
+            </button> -->
           </form-field>
         </div>
         <!-- <div class="col-md-6">
@@ -70,19 +79,33 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
+          [disabled]="fileForm.invalid"
+          (click)="confirm()"
+          type="button"
+          class="btn btn-primary active btn-sm">
+          Firmar
+          <i class="bx bx-edit-alt"></i>
+        </button>
+        <!-- <button
           class="btn btn-primary btn-sm active"
           [disabled]="fileForm.invalid"
           (click)="confirm()">
           Firmar
-        </button>
+        </button> -->
       </div>
       <div class="m-3">
         <button
           type="button"
-          class="btn btn-danger btn-sm active"
+          class="btn btn-danger btn-sm active mr-3"
           (click)="close()">
           Cancelar
         </button>
+        <!-- <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button> -->
       </div>
     </div>
   </div>

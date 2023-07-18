@@ -71,10 +71,6 @@ export const TARGET_IDENTIFIERS = [
 
 export const GOOD_PHOTOS_OPTIOS = [
   {
-    label: 'Todos',
-    value: null,
-  },
-  {
     label: 'Con fotografías',
     value: 'F',
   },
@@ -159,9 +155,10 @@ export class GoodTrackerForm {
   certificate = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),
   ]);
-  receptionStatus = new FormControl<string>(null, [
-    Validators.pattern(STRING_PATTERN),
-  ]);
+  receptionStatus = new FormControl<string[]>(
+    [],
+    [Validators.pattern(STRING_PATTERN)]
+  );
   statusChangeFrom = new FormControl<string>(null);
   statusChaangeTo = new FormControl<string>(null);
   devolutionDateFrom = new FormControl<string>(null);
@@ -175,8 +172,8 @@ export class GoodTrackerForm {
   transfers = new FormControl<string[]>([]);
   transmitters = new FormControl<string[]>([]);
   autorities = new FormControl<string[]>([]);
-  warehouse = new FormControl<string>(null);
-  cordination = new FormControl<string>(null);
-  autorityState = new FormControl<string>(null);
-  goodState = new FormControl<string>(null);
+  warehouse = new FormControl<string[]>([]);
+  cordination = new FormControl<string[]>([]);
+  autorityState = new FormControl<string[]>([]);
+  goodState = new FormControl<string[]>([]);
 }

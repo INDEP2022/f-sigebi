@@ -64,7 +64,7 @@ export class UploadDictamenElectronicModalComponent
     this.fileForm = this.fb.group({
       certificate: [null, [Validators.required]],
       keycertificate: [null, [Validators.required]],
-      secpwd: [null, [Validators.required, Validators.maxLength(10)]],
+      secpwd: [null, [Validators.required, Validators.maxLength(40)]],
       signature: [null],
       fileDataBase64: [null],
       DICTAMEN: [this.nameFileDictation],
@@ -188,7 +188,7 @@ export class UploadDictamenElectronicModalComponent
           this.alertInfo(
             'success',
             'Se Realizó el Proceso de Firmar el Dictamen Correctamente',
-            data.message
+            'Archivo firmado correctamente'
           ).then(() => {
             this.fileForm.controls['signature'] = data.signature;
             this.fileForm.controls['fileData'] = data.fileData;

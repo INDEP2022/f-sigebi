@@ -182,9 +182,9 @@ export class GeneralDocumentsFormComponent
   showDocsEst() {
     if (!this.rowSelected) {
       this.message(
-        'info',
-        'Error',
-        'Seleccione un data para poder ver sus documentos'
+        'warning',
+        'Seleccione una solicitud para poder ver sus documentos',
+        ''
       );
       return;
     }
@@ -405,20 +405,22 @@ export class GeneralDocumentsFormComponent
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#B38E5D',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         console.log(this.requestId, request);
         this.requestService.update(this.requestId, request).subscribe({
           next: resp => {
             Swal.fire({
-              title: `Se asocio la solicitud correctamente`,
-              text: `La Solicitud ${request.id} fue asociada al expediente ${request.recordId}. Tiene que subir el reporte de la caratula INAI`,
+              title: `Se asoció la solicitud correctamente`,
+              text: `La Solicitud ${request.id} fue asociada al expediente ${request.recordId}. Tiene que subir el reporte de la carátula INAI`,
               icon: 'success',
               showDenyButton: false,
               showCancelButton: false,
               confirmButtonText: 'Aceptar',
               denyButtonText: `Cancelar`,
               confirmButtonColor: '#9D2449',
+              allowOutsideClick: false,
             }).then(result => {
               if (result.isConfirmed) {
                 this.updateStateRequestTab();
@@ -430,7 +432,7 @@ export class GeneralDocumentsFormComponent
             this.onLoadToast(
               'error',
               'Error',
-              `Ocurrio un error al asociar la socitud con el expediente ${error.error.message}`
+              `Ocurrio un error al asociar la solicitud con el expediente ${error.error.message}`
             );
           },
         });

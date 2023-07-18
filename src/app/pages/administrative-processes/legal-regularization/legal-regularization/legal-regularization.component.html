@@ -14,36 +14,7 @@
               [max-length]="10" />
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field label="Estatus" [control]="form.get('status')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="status"
-              [disabled]="true" />
-          </form-field>
-        </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field label="Descripción" [control]="form.get('description')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description"
-              [disabled]="true" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row mt-5">
-        <div class="col-md-7 col-sm-12 col-xs-12">
-          <form-field label="Justificación" [control]="form.get('justifier')">
-            <textarea
-              type="text"
-              class="form-control"
-              formControlName="justifier"
-              [max-length]="1000"></textarea>
-          </form-field>
-        </div>
-        <div class="col-md-5 col-sm-12 col-xs-12">
+        <div class="col-md-9">
           <button
             type="button"
             class="btn btn-primary active btn-sm mr-3"
@@ -55,14 +26,52 @@
           <button class="btn btn-danger btn-sm active mr-3" (click)="clean()">
             Limpiar <i class="fas fa-eraser"></i>
           </button>
-
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field label="Estatus" [control]="form.get('status')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="status"
+              [disabled]="true" />
+          </form-field>
+        </div>
+        <div class="col-md-9 col-sm-12 col-xs-12">
+          <form-field label="Descripción" [control]="form.get('description')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description"
+              [disabled]="true" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-9 col-sm-12 col-xs-12">
+          <form-field label="Justificación" [control]="form.get('justifier')">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="justifier"
+              [max-length]="1000"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
           <button
+            [disabled]="disableButton"
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="updateStatus()">
+            Actualizar <i class="fas fa-sync-alt"> </i>
+          </button>
+          <!-- <button
             [disabled]="form.invalid"
             type="button"
             class="btn btn-success btn-sm active mr-3"
             (click)="updateStatus()">
             Actualizar
-          </button>
+          </button> -->
         </div>
       </div>
     </form>

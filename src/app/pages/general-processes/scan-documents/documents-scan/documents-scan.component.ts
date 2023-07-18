@@ -72,6 +72,13 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   expedientNumber: number = null; //no_expediente
   wheelNumber: number = null; //no_volante
   processNumber: number = null; //no_tramite
+  paramsDepositaryAppointment: any = {
+    P_NB: null,
+    P_FOLIO: null,
+    P_ND: null,
+  };
+  P_NO_TRAMITE: number = null;
+  P_GEST_OK: number = null;
 
   constructor(
     private fb: FormBuilder,
@@ -109,6 +116,19 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         }
         if (this.origin == 'FACTJURREGDESTLEG') {
           this.no_bien = params['P_NB'] ?? null;
+        }
+        if (this.origin == 'FADMAPROEXTDOM') {
+          this.origin2 = params['origin2'] ?? null;
+          this.P_NO_TRAMITE = params['P_NO_TRAMITE'] ?? null;
+          this.P_GEST_OK = params['P_GEST_OK'] ?? null;
+        }
+        if (
+          this.origin == 'FACTGENSOLICDIGIT' &&
+          this.requestOrigin == 'FACTJURREGDESTLEG'
+        ) {
+          this.paramsDepositaryAppointment.P_NB = params['P_NB'] ?? null;
+          this.paramsDepositaryAppointment.P_FOLIO = params['P_FOLIO'] ?? null;
+          this.paramsDepositaryAppointment.P_ND = params['P_ND'] ?? null;
         }
       });
     this.settings = {
@@ -340,14 +360,14 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        'No tiene permiso para borrar las imágenes. Sólo el usuario que escaneo puede borrar las imágenes.'
+        'No tiene permiso para borrar los archivos. Sólo el usuario que escaneo puede borrar los archivos.'
       );
       return;
     }
     const result = await this.alertQuestion(
       'warning',
       'Advertencia',
-      '¿Estás seguro que desea eliminar las imágenes seleccionadas?'
+      '¿Estás seguro que desea eliminar los archivos seleccionados?'
     );
 
     if (result.isConfirmed) {
@@ -362,7 +382,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     forkJoin(obs).subscribe({
       complete: () => {
         this.files = [];
-        this.alert('success', 'Escaneo y  Digitaización', 'Borrado');
+        this.alert('success', 'Escaneo y  Digitalización', 'Eliminado');
 
         this.filesToDelete = [];
         this.loadImages(this.folio).subscribe(() => {
@@ -402,7 +422,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error',
-            'Ocurrió un error al eliminar la imagen'
+            'Ocurrió un error al eliminar el archivo'
           );
           return throwError(() => error);
         })
@@ -461,7 +481,24 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         '/pages/executive-processes/destruction-authorization-management',
       ]);
     }
-    if (this.origin == 'FACTGENSOLICDIGIT') {
+    if (
+      this.origin == 'FACTGENSOLICDIGIT' &&
+      this.requestOrigin == 'FACTJURREGDESTLEG'
+    ) {
+      this.router.navigate(
+        [
+          `/pages/general-processes/scan-request/${this.originFlyer}/${this.originFolio}`,
+        ],
+        {
+          queryParams: {
+            origin: this.requestOrigin,
+            P_NB: this.paramsDepositaryAppointment.P_NB,
+            P_FOLIO: this.paramsDepositaryAppointment.P_FOLIO,
+            P_ND: this.paramsDepositaryAppointment.P_ND,
+          },
+        }
+      );
+    } else if (this.origin == 'FACTGENSOLICDIGIT') {
       this.router.navigate(
         [
           `/pages/general-processes/scan-request/${this.originFlyer}/${this.originFolio}`,
@@ -504,6 +541,23 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     if (this.origin == 'FADMAMPAROS') {
       this.router.navigateByUrl(
         `pages/juridical/depositary/maintenance-of-coverages?processNumber=${this.processNumber}&wheelNumber=${this.wheelNumber}&proceedingsNumber=${this.expedientNumber}`
+      );
+    }
+    if (this.origin == 'FMTOPAQUETE') {
+      this.router.navigate([
+        `pages/administrative-processes/unit-conversion-packages`,
+      ]);
+    }
+    if (this.origin == 'FADMAPROEXTDOM') {
+      this.router.navigate(
+        ['/pages/juridical/goods-process-validation-extdom'],
+        {
+          queryParams: {
+            origin: this.origin2 ? this.origin2 : null,
+            P_NO_TRAMITE: this.P_NO_TRAMITE,
+            P_GEST_OK: this.P_GEST_OK,
+          },
+        }
       );
     }
   }

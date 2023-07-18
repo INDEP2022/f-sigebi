@@ -30,11 +30,16 @@
         <confirm-button
           [disabled]="!responseForm.valid"
           [loading]="loading"
+          [className]="'btn-primary'"
+          [btnSmall]="true"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
+        <button
+          (click)="close()"
+          type="button"
+          class="btn btn-primary btn-sm active">
+          Regresar <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>

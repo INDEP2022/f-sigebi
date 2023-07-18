@@ -12,7 +12,7 @@ export const PHOTOGRAPHY_COLUMNS = {
   },
 
   xtipoDocumento: {
-    title: 'Tipo de documento',
+    title: 'Tipo de Documento',
     type: 'string',
     sort: false,
   },

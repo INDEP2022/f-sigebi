@@ -1,0 +1,49 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-9">
+        <h5>Parámetro</h5>
+      </div>
+      <div class="col-md-3">
+        <h5>Valor</h5>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-9">
+        <h6>{{ rateDesc }}</h6>
+      </div>
+      <div class="col-md-3">
+        <h6>{{ rateInitailValue }}</h6>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-9">
+        <h6>{{ daysDesc }}</h6>
+      </div>
+      <div class="col-md-3">
+        <h6>{{ daysInitailValue }}</h6>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-9">
+        <h6>{{ spentDesc }}</h6>
+      </div>
+      <div class="col-md-3">
+        <h6>{{ spentInitailValue }}</h6>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

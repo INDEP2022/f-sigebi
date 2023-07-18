@@ -78,6 +78,7 @@
               bindLabel="description"
               label="Seleccione un bien para ver sus menajes"
               [control]="'goodSelect'"
+              (fetchItems)="searchGoods(idExpedient, paramsSubject)"
               (change)="uploadTableMenaje($event)">
             </ngx-select>
           </form-field>
@@ -104,11 +105,17 @@
           </div>
 
           <div class="row" *ngIf="addGood">
-            <app-goods-shared
+            <ngx-select
+              [data]="goodsList"
               [form]="formGood"
-              (good)="addMenage($event)"
-              label="Menaje">
-            </app-goods-shared>
+              value="id"
+              bindLabel="description"
+              label="Menajes"
+              [control]="'goodsList'"
+              (fetchItems)="searchGood($event)"
+              (input)="goodsListChange($event.target)"
+              (change)="onSelect($event)">
+            </ngx-select>
           </div>
 
           <div class="row">

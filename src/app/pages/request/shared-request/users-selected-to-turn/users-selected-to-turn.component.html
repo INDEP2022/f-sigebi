@@ -29,15 +29,16 @@
       <div class="m-3">
         <button
           [disabled]="validBtn == false"
-          type="button"
-          class="btn btn-primary active"
-          [disabled]="validBtn == false"
+          class="btn btn-primary btn-sm active m-3"
           (click)="confirm()">
-          Aceptar
+          Seleccionar <i class="fas fa-edit bx-sm float-icon"></i>
         </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm m-3"
+          (click)="close()">
           Cancelar
         </button>
       </div>

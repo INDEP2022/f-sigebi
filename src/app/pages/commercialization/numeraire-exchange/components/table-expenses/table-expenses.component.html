@@ -1,9 +1,9 @@
 <div class="d-flex flex-row-reverse mb-4 mt-0">
   <div class="">
     <button
-      class="btn btn-sm btn-success active font-size-14"
+      class="btn btn-sm btn-info active font-size-14"
       (click)="openCreateOrEditExpense()">
-      Agregar Registro
+      Agregar Registro <i class="bx bx-plus bx-sm float-icon"></i>
     </button>
   </div>
 </div>
@@ -22,7 +22,7 @@
         {{ expense.id }}
       </td>
       <td class="w-50">
-        {{ expense.descriptionName }}
+        {{ expense.description }}
       </td>
       <td>
         {{ expense.import }}
@@ -30,48 +30,42 @@
       <td>
         <button
           (click)="openCreateOrEditExpense(expense.id)"
-          class="btn-outline-info border-0 btn-sm">
+          class="bg-transparent border-0 btn-sm text-warning">
           <i class="fas fa-pen"></i>
         </button>
         <button
           (click)="removeExpense(expense.register)"
-          class="btn-outline-danger border-0 btn-sm ml-2">
+          class="bg-transparent border-0 btn-sm ml-2 text-danger">
           <i class="fas fa-times"></i>
         </button>
       </td>
     </tr>
   </tbody>
 </table>
-
 <ng-template #dialogExpense>
   <div class="modal-header">
     <h4 class="modal-title pull-left font-size-16">
       {{ idExpense ? 'Editando Gasto' : 'Agregando Gasto' }}
     </h4>
-    <button
-      type="button"
-      class="close pull-right"
-      aria-label="Close"
-      (click)="closeDialogExpense()">
-      <span aria-hidden="true">×</span>
-    </button>
   </div>
   <div class="modal-body form-material" [formGroup]="form">
-    <form-field class="form-group" [control]="form.get('id')" label="Id Gasto">
+    <!-- <form-field class="form-group" [control]="form.get('id')" label="Id Gasto">
       <input readonly type="text" formControlName="id" class="form-control" />
-    </form-field>
+    </form-field> -->
     <form-field
       class="form-group"
-      [control]="form.get('description')"
-      label="Descripción">
+      [control]="form.get('id')"
+      label="Id Gasto - Descripción">
       <ng-custom-select
         class="form-control"
-        formControlName="description"
         path="spent/api/v1/expense-concept"
         value="id"
+        paramSearch="filter.id"
+        formControlName="id"
+        [initOption]="initOptionExpenseConcept"
         (valueChange)="selectedExpenseType($event)">
         <ng-template let-item>
-          {{ item.description }}
+          {{ item.id }} - {{ item.description }}
         </ng-template>
       </ng-custom-select>
     </form-field>
@@ -82,17 +76,17 @@
   <div class="modal-footer">
     <button
       type="button"
-      class="btn btn-default btn-sm btn-success font-weight-bold shadow-none"
+      class="btn btn-sm btn-info active"
       (click)="addExpense()">
-      Guardar
-      <i class="fas fa-paper-plane"></i>
+      Agregar
+      <i class="bx bx-plus bx-sm float-icon"></i>
     </button>
     <button
       type="button"
-      class="bg-danger btn btn-sm font-weight-bold shadow-none text-white"
+      class="btn btn-sm btn-danger active ml-2"
       (click)="closeDialogExpense()">
       Cerrar
-      <i class="fas fa-times"></i>
+      <!-- <i class="fas fa-times"></i> -->
     </button>
   </div>
 </ng-template>

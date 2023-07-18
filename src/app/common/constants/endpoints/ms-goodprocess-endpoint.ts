@@ -14,7 +14,12 @@ export enum GoodprocessEndpoints {
   GetGoodScreenSend = '/application/get-good-status-screen',
   GetDistinctTypes = 'application/get-distinct-types',
   UpdateGoodStatus = 'update-good-status/updateManagementJob',
+  PackageClose = 'update-good-status/packageClose',
   GetGoodType = 'v-good-type',
   GetGoodProceedings = 'application/get-good-proceedings',
   AppliesControl = 'update-good-status/appliesControl',
+  consultationScreenGood = 'factadbsolcamnume/consultation-post-query-good',
+  AppVWheel = 'application/get-v-steeringwheel-number',
+  ApplicationDistinctElaborationDate = 'application/distinctElaborationDate',
+  consultationScreenGood2 = 'update-good-status/getOne',
 }

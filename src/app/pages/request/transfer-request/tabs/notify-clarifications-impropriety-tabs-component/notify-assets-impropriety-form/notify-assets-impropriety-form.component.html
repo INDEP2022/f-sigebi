@@ -10,7 +10,10 @@
           *ngIf="
             infoRequest.typeOfTransfer != 'SAT_SAE' ||
             (infoRequest.typeOfTransfer == 'SAT_SAE' &&
-              dataClarifications2.chatClarification.idClarificationType == '2')
+              (dataClarifications2.chatClarification.idClarificationType ==
+                '2' ||
+                dataClarifications2.chatClarification.idClarificationType ==
+                  '1'))
           ">
           <form-field
             [control]="clarificationForm.get('addresseeName')"
@@ -27,7 +30,10 @@
           *ngIf="
             infoRequest.typeOfTransfer != 'SAT_SAE' ||
             (infoRequest.typeOfTransfer == 'SAT_SAE' &&
-              dataClarifications2.chatClarification.idClarificationType == '2')
+              (dataClarifications2.chatClarification.idClarificationType ==
+                '2' ||
+                dataClarifications2.chatClarification.idClarificationType ==
+                  '1'))
           ">
           <form-field
             [control]="clarificationForm.get('positionAddressee')"
@@ -164,6 +170,8 @@
             [control]="clarificationForm.get('webMail')"
             label="Correo Notificaci&oacute;n Respuesta SAT">
             <input
+              style="text-transform: lowercase"
+              onkeyup="javascript:this.value=this.value.toLowerCase();"
               type="text"
               class="form-control"
               maxlength="30"
@@ -177,14 +185,17 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="clarificationForm.invalid"
           [text]="'Continuar'"
           [loading]="loading"
+          [btnSmall]="true"
           (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

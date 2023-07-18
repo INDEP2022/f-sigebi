@@ -23,12 +23,19 @@
         <confirm-button
           [disabled]="!form.valid"
           [loading]="loading"
+          [btnSmall]="true"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active mr-3"
+          (click)="close()">
           Cancelar
         </button>
+        <!-- <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button> -->
       </div>
     </div>
   </div>

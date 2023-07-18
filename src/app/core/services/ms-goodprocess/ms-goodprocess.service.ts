@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { GoodprocessEndpoints } from 'src/app/common/constants/endpoints/ms-goodprocess-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
@@ -7,7 +7,10 @@ import {
   IListResponse,
   IListResponseMessage,
 } from '../../interfaces/list-response.interface';
-import { ICharacteristicsGoodDTO } from '../../models/ms-good/good';
+import {
+  ICharacteristicsGoodDTO,
+  ISecondIfMC,
+} from '../../models/ms-good/good';
 import { IGoodDistinctTypes } from '../../models/ms-good/good-distinct-types';
 
 @Injectable({
@@ -42,6 +45,32 @@ export class GoodprocessService extends HttpService {
 
   getExpedientePostQuery(params: any) {
     return this.post(`${GoodprocessEndpoints.ExpedientePostQuery}`, params);
+  }
+
+  getScreenGood(model: any): Observable<IListResponse<any>> {
+    return this.post(`${GoodprocessEndpoints.consultationScreenGood}`, model);
+  }
+
+  getScreenGood2(model: any): Observable<IListResponse<any>> {
+    return this.post(`${GoodprocessEndpoints.consultationScreenGood2}`, model);
+  }
+  getScreenGoodList(payload: any): Observable<any[]> {
+    const url = `${GoodprocessEndpoints.consultationScreenGood2}`;
+    return this.post(url, payload).pipe(
+      map((response: any) => {
+        // La respuesta del servicio debe ser un array de objetos con los datos necesarios para actualizar la apariencia visual de las filas de la tabla
+        return response.data.map((item: any) => {
+          return {
+            goodNumber: item.goodNumber,
+            vcScreen: item.vcScreen,
+          };
+        });
+      }),
+      catchError(error => {
+        console.log('error', error);
+        return throwError(error);
+      })
+    );
   }
 
   getGoodType(params?: ListParams) {
@@ -123,6 +152,10 @@ export class GoodprocessService extends HttpService {
     );
   }
 
+  packageClose(params: any) {
+    return this.post(`${GoodprocessEndpoints.PackageClose}`, params);
+  }
+
   postTransferGoodsTradeManagement(body: {
     ofManagementNumber: any;
     proceedingsNumber: any;
@@ -137,5 +170,27 @@ export class GoodprocessService extends HttpService {
 
   getAppliesControl(params: any) {
     return this.post(`${GoodprocessEndpoints.AppliesControl}`, params);
+  }
+
+  getVSteeringWhel(data: any) {
+    return this.post(GoodprocessEndpoints.AppVWheel, data);
+  }
+
+  postFMasInsNumerario(data: any) {
+    return this.post('application/fMasInsNumerario', data);
+  }
+
+  getByGood_distinctElaborationDate(id: number) {
+    return this.get<IListResponse<any>>(
+      `${GoodprocessEndpoints.ApplicationDistinctElaborationDate}/${id}`
+    );
+  }
+
+  firstIfCancelMassiveConversion(body: { noPackage: number }) {
+    return this.post('application/update-goods', body);
+  }
+
+  secondIfCancelMassiveConversion(body: ISecondIfMC) {
+    return this.post('application/fmto-package-procedure', body);
   }
 }
