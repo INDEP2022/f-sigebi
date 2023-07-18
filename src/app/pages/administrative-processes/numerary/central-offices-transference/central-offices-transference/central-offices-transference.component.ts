@@ -120,7 +120,6 @@ export class CentralOfficesTransferenceComponent
       next: response => {
         if (response.data.length > 0) {
           this.delegation = response.data[0].delegationNumber;
-          console.log(this.delegation);
         }
       },
       error: () => {},
@@ -128,7 +127,6 @@ export class CentralOfficesTransferenceComponent
   }
 
   prepareForm() {
-    console.log('PrepareForm: ');
     this.form = this.fb.group({
       noReport: [null, Validators.required],
       dateDevolution: [new Date(), Validators.required],
@@ -158,7 +156,6 @@ export class CentralOfficesTransferenceComponent
       total: [null],
     });
 
-    console.log('Form: ', this.form);
     setTimeout(() => {
       this.getCatalogDelegation();
     }, 1000);
@@ -232,22 +229,20 @@ export class CentralOfficesTransferenceComponent
   }
 
   asignarDatos(item: any) {
-    console.log('item asignarDatos: ', item);
     let registro = {
       file: item.vno_expediente,
       good: item.vno_bien_dev,
     };
-    console.log('registro: ', registro);
     this.data1.push(registro);
     this.dataTabla.load(this.data1);
     this.dataTabla.load(this.data);
     this.totalItems = this.data1.length;
-    console.log('this.data1: ', this.data1);
   }
 
   scrollToDiv() {
     const divElement = this.elementRef.nativeElement.querySelector('#miDiv');
-    divElement.scrollIntoView({ behavior: 'smooth' });
+    divElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    this.cleanFilter();
   }
 
   getDataReport() {
@@ -287,7 +282,6 @@ export class CentralOfficesTransferenceComponent
 
   getDataNoReport() {
     this.reporte = this.form.get('noReport').value;
-    console.log(this.reporte);
     this.getDataByReport(this.reporte);
     this.getDataTranferCounts(this.reporte);
   }
@@ -350,7 +344,6 @@ export class CentralOfficesTransferenceComponent
           delegation: response.description,
         };
         this.form.patchValue(dataForm);
-        console.log('Respuesta DELEGACION: ', data);
       },
       error: error => {
         console.error(error);
@@ -360,10 +353,8 @@ export class CentralOfficesTransferenceComponent
 
   getDataTranferCounts(reporte: number) {
     this.data1 = [];
-    console.log('Reporte: ', reporte);
     this.accountMovementService.getByNumberReport(reporte).subscribe({
       next: resp => {
-        console.log('resp ', resp);
         for (let i = 0; resp.data.length; i++) {
           if (resp.data[i] != undefined) {
             let item = {
@@ -444,11 +435,11 @@ export class CentralOfficesTransferenceComponent
         this.form.patchValue(resp);
         this.form.get('total').patchValue(resp.total_sum);
         this.total = resp.total_sum;
-        console.log(this.total);
+        //console.log(this.total);
         this.totalItems = this.data1.length;
         this.dataTabla.load(this.data1);
 
-        console.log('AQUI', this.dataTabla);
+        //console.log('AQUI', this.dataTabla);
       },
       error: error => {
         console.error(error);
@@ -473,7 +464,6 @@ export class CentralOfficesTransferenceComponent
     this.totalItems = 0;
     this.data1 = [];
     this.dataTabla.load([]);
-    console.log(this.data3);
     this.data3.refresh();
   }
 
@@ -501,7 +491,7 @@ export class CentralOfficesTransferenceComponent
       next: async resp => {
         this.form.get('noReport').patchValue(resp.reportDevNumber);
         this.alert('success', 'Reporte', 'Creado correctamente');
-        console.log(resp);
+        //console.log(resp);
         this.data1.map(async good => {
           await this.procedure(Number(good.good));
           await this.createTransNumDet(good);
@@ -509,7 +499,7 @@ export class CentralOfficesTransferenceComponent
       },
       error: err => {
         //this.alert('error', 'Error', err.error.message);
-        console.log('ASDASD', err);
+        //console.log('ASDASD', err);
       },
     });
   }
@@ -522,7 +512,6 @@ export class CentralOfficesTransferenceComponent
   }
 
   async createTransNumDet(data: any) {
-    console.log('VAINA', data);
     const { noReport, total } = this.form.value;
     const body: any = {
       numberReportDev: noReport,
@@ -531,7 +520,6 @@ export class CentralOfficesTransferenceComponent
       allInterestDev: data.interests,
       totalDev: total,
     };
-    console.log(body);
 
     return new Promise((resolve, reject) => {
       this.accountMovementService.createB(body).subscribe({
@@ -547,11 +535,10 @@ export class CentralOfficesTransferenceComponent
 
   async sendEmail() {
     const { noReport, total } = this.form.value;
-    console.log(noReport);
+
     if (noReport) {
       const email = await this.getDataMail();
-      console.log(email);
-      console.log({ email });
+
       if (email) {
         const emailv2 = {
           ...email,
@@ -594,7 +581,6 @@ export class CentralOfficesTransferenceComponent
       this.emailService.getIniEmailCentral(data).pipe(
         catchError(error => {
           this.alert('error', 'Error', error.error.message);
-          console.log(error);
           return of(null);
         }),
         map(resp => resp)
@@ -612,7 +598,6 @@ export class CentralOfficesTransferenceComponent
       for (let i = 0; i < this.data1.length; i++) {
         const element: any = this.data1[i];
         total = total + Number(element.total);
-        console.log(total);
       }
 
       //Monto
@@ -643,7 +628,6 @@ export class CentralOfficesTransferenceComponent
         const element: any = this.data1[i];
 
         if (!element.currency) {
-          console.log(element);
           this.alertInfo(
             'error',
             'Error',
@@ -724,8 +708,6 @@ export class CentralOfficesTransferenceComponent
 
       if (!element.total) {
         element.total = total + Number(element.total);
-        console.log(total);
-        console.log(element.total);
       }
 
       if (element.total != monto2) {
@@ -761,8 +743,6 @@ export class CentralOfficesTransferenceComponent
       this.dictationService.applicationPufRefCentral(body).pipe(
         catchError(error => {
           this.alert('error', 'Error', error.error.message);
-          console.log(error);
-
           return of(null);
         }),
         map(resp => resp)
