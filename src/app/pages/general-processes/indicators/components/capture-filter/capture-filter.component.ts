@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { catchError, tap, throwError } from 'rxjs';
 import {
   FilterParams,
@@ -26,6 +26,7 @@ export class CaptureFilterComponent implements OnInit {
   @Input() isReceptionAndDelivery: boolean = false;
   @Input() isReceptionStrategies: boolean = false;
   @Input() isConsolidated: boolean = false;
+  @Output() consultEmmit = new EventEmitter<FormGroup>();
   delegations = new DefaultSelect();
   affairName = new DefaultSelect();
   station = new DefaultSelect();
@@ -152,5 +153,9 @@ export class CaptureFilterComponent implements OnInit {
         this.users$ = new DefaultSelect(response.data, response.count);
       })
     );
+  }
+
+  consult() {
+    this.consultEmmit.emit(this.form);
   }
 }
