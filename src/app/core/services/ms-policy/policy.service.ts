@@ -51,10 +51,21 @@ export class PolicyService extends HttpService {
     return this.put(PolicyEndpoint.getPolicesXRight, params);
   }
 
-  putGood(data: IPolicyXBien) {
-    return this.put;
-  }
   postPolicyGood(params: any) {
     return this.post(PolicyEndpoint.getPolicesXRight, params);
+  }
+
+  deletePolicyGood(params: any) {
+    return this.delete(PolicyEndpoint.getPolicesXRight, params);
+  }
+
+  postPolicy(params: any) {
+    return this.delete(PolicyEndpoint.getPoliciesXSubtype, params);
+  }
+
+  getSinister(PolicyKey: string) {
+    return this.get<IListResponse>(
+      `${PolicyEndpoint.getPolicesXsinister}?filter.policyKeyId=$eq:${PolicyKey}`
+    );
   }
 }

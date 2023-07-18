@@ -69,7 +69,7 @@ export const PRORRATEGO_GOODS_COLUMNS = {
   },
   responsibleShort: {
     title: 'Responsable',
-    type: 'string',
+    type: 'text',
     sort: false,
   },
 };

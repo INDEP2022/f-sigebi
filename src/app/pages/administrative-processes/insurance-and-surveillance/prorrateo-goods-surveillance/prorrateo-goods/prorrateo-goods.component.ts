@@ -6,7 +6,6 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
-  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
@@ -35,7 +34,7 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
   dateIni: any;
   id: number;
   selectedRow: IPolicyXBien;
-  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  good: any;
   @Input() elemento: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
   constructor(
@@ -117,10 +116,11 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getByPolicyKey(this.elemento);
         }
       });
-    this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe({
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: () => {
         if (this.data) this.getByPolicyKey(this.elemento);
       },
@@ -128,10 +128,16 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
   }
 
   getByPolicyKey(Key: string) {
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.goods = [];
     this.policyService.getByKeyId(Key).subscribe({
       next: response => {
         let lista = [];
-        this.totalItems = response.data.length;
+        this.totalItems = response.count;
+        console.log('this.totalItems: ', this.totalItems);
         for (let i = 0; i < response.data.length; i++) {
           lista.push(response.data[i].Goods);
           const dueDate = new Date();
@@ -169,11 +175,11 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
           this.keyA = response.data[i].policyKeyId;
           this.dateIni = response.data[i].beginningDateId;
           this.id = response.data[i].id;
+          this.good = response.data[i].Goods.id;
         }
       },
-
       error: err => {
-        console.log(err);
+        this.onLoadToast('error', err.error.message, '');
       },
     });
   }
@@ -187,7 +193,7 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
   }
 
   loadModalgood() {
-    this.openPushModalGood(false, this.id, this.keyA);
+    this.openPushModalGood(false, this.id, this.keyA, this.dateIni);
   }
 
   formData(doc: any) {
@@ -195,12 +201,18 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
     this.openModalGood2(true, doc, this.keyA, this.dateIni, this.id);
   }
 
-  openPushModalGood(newOrEdit: boolean, id: number, keyA: string) {
+  openPushModalGood(
+    newOrEdit: boolean,
+    id: number,
+    keyA: string,
+    dateIni: Date
+  ) {
     const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
     modalConfig.initialState = {
       newOrEdit,
       id,
       keyA,
+      dateIni,
       Elemento: { Elemento: this.elemento },
       callback: (next: boolean) => {},
     };
@@ -233,5 +245,40 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
       ProrrateoGoodSurveillanceModalComponent,
       modalConfig
     );
+  }
+
+  deletePolicyGood(params: any) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        let data = {
+          goodNumberId: params.goodId,
+          policyKeyId: this.keyA,
+          beginningDateId: this.dateIni,
+        };
+        console.log('Data: ', data);
+
+        this.policyService.deletePolicyGood(data).subscribe({
+          next: response => {
+            this.alert(
+              'success',
+              'El registro se ha eliminado correctamente',
+              ''
+            );
+            this.getByPolicyKey(this.elemento);
+          },
+          error: err => {
+            this.alert(
+              'error',
+              'Error',
+              'Ocurrió un problema al eliminar el registro'
+            );
+          },
+        });
+      }
+    });
   }
 }

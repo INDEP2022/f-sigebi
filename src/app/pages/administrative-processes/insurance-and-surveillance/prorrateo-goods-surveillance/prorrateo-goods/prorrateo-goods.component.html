@@ -20,7 +20,8 @@
           [attr.class]="'table-bordered'"
           [settings]="settings"
           [source]="data"
-          (edit)="formData($event.data)">
+          (edit)="formData($event.data)"
+          (delete)="deletePolicyGood($event.data)">
         </ng2-smart-table>
       </div>
     </div>
