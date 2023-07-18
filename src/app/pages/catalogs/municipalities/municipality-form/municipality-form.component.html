@@ -18,7 +18,7 @@
         <div class="col-12 pt-4">
           <form-field
             [control]="municipalityForm.get('nameMunicipality')"
-            label="Nombre De Municipio">
+            label="Nombre de Municipio">
             <input
               type="text"
               class="form-control"
@@ -39,17 +39,35 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-12 pt-4">
-          <form-field
-            [control]="municipalityForm.get('version')"
-            label="Versi&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="version"
-              min="0" />
-          </form-field>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="municipalityForm.get('version')"
+              label="Versi&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="version"
+                min="0" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="municipalityForm.get('codMarginality')"
+              label="Código Marginalidad">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="codMarginality" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="municipalityForm.get('risk')" label="Riesgo">
+              <input type="text" class="form-control" formControlName="risk" />
+            </form-field>
+          </div>
         </div>
+
         <div class="col-12 pt-4">
           <form-field
             [control]="municipalityForm.get('description')"
@@ -60,21 +78,6 @@
               formControlName="description" />
           </form-field>
         </div>
-        <div class="col-12 pt-4">
-          <form-field
-            [control]="municipalityForm.get('codMarginality')"
-            label="Código Marginalidad">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="codMarginality" />
-          </form-field>
-        </div>
-        <div class="col-12 pt-4">
-          <form-field [control]="municipalityForm.get('risk')" label="Riesgo">
-            <input type="text" class="form-control" formControlName="risk" />
-          </form-field>
-        </div>
       </div>
     </form>
   </div>
@@ -82,7 +85,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!municipalityForm.valid"
+          [disabled]="municipalityForm.invalid"
           [loading]="loading"
           (click)="confirm()">
         </confirm-button>

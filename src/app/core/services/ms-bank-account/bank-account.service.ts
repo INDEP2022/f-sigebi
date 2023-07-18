@@ -6,7 +6,10 @@ import { Repository } from 'src/app/common/repository/repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { BankAccount } from 'src/app/pages/administrative-processes/numerary/tesofe-movements/list-banks/bank';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IBankAccount, IProReconcilesGood } from '../../models/catalogs/bank-account.model';
+import {
+  IBankAccount,
+  IProReconcilesGood,
+} from '../../models/catalogs/bank-account.model';
 import { IAccountMovement } from '../../models/ms-account-movements/account-movement.model';
 
 @Injectable({
@@ -41,7 +44,7 @@ export class BankAccountService
   }
 
   getCveBankFilter(params?: string) {
-    return this.get(`${this.api}`,params)
+    return this.get(`${this.api}`, params);
   }
 
   getById(accountNumber: Object): Observable<IBankAccount> {
@@ -89,12 +92,20 @@ export class BankAccountService
     );
   }
 
-  searchByFilterNumeraryMassive(body: IProReconcilesGood){
-    return this.post(`aplication/proReconcilesGood`,body)
+  searchByFilterNumeraryMassive(body: IProReconcilesGood) {
+    return this.post(`aplication/proReconcilesGood`, body);
   }
 
-  getListCurrencyCve(body?:{currency:string | null}){
-    return this.post(`account-movements/get-cve-currency`,body)
+  getListCurrencyCve(body?: { currency: string | null }) {
+    return this.post(`account-movements/get-cve-currency`, body);
+  }
+
+  updateAccountMovExp(body: { noGoods: any[] }) {
+    return this.post(`account-movements/update-account-movements-exp`, body);
+  }
+
+  updateAccountMovFec(body: { noGoods: any[]; fecTesofe: Date | string }) {
+    return this.post(`account-movements/update-account-movements-fec`, body);
   }
 
   //***** */

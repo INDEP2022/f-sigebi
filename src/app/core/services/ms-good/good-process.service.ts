@@ -63,6 +63,10 @@ export class GoodProcessService extends HttpService {
     return this.post<IResponse>(GoodProcessPoints.acceptGoodStatus, model);
   }
 
+  getGoodAppraise(model: any) {
+    return this.post<IResponse>(GoodProcessPoints.GetGoodAppraise, model);
+  }
+
   getAccepGoodActa(model: IAcceptGoodActa) {
     return this.post<IResponse>(GoodProcessPoints.acceptGoodActa, model);
   }
@@ -212,7 +216,11 @@ export class GoodProcessService extends HttpService {
     return this.post(GoodProcessPoints.ProcedureStatusGood, data);
   }
 
-  pupReconcilied(body: {goodNumber: number[], arrayStatus: string[], dateMasiv: Date | string}){
-    return this.post('application/pup-reconcilied', body)
+  pupReconcilied(body: {
+    goodNumber: number[];
+    arrayStatus: string[];
+    dateMasiv: Date | string;
+  }) {
+    return this.post('application/pup-reconcilied', body);
   }
 }

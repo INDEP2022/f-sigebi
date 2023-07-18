@@ -8,9 +8,13 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   INumerary,
   IProccesNum,
+  IPupAssociateGood,
+  IRequesNum,
   IRequesNumeraryCal,
   IRequesNumeraryDet,
+  IRequesNumMov,
   IRequestNumeraryEnc,
+  ISearchNumerary,
 } from '../../models/ms-numerary/numerary.model';
 
 @Injectable({
@@ -162,5 +166,29 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
       model,
       params
     );
+  }
+
+  pupSearchNumerary(body: ISearchNumerary) {
+    return this.post(`application/pup-search-numerary`, body);
+  }
+
+  getAllRequestNume(params?: string) {
+    return this.get(`request-nume`, params);
+  }
+
+  createRequestNume(body: IRequesNum) {
+    return this.post('request-nume', body);
+  }
+
+  getAllRequestNumMov(params?: string) {
+    return this.get(`nume-request-movi`, params);
+  }
+
+  createRequestNumMov(body: IRequesNumMov) {
+    return this.post(`nume-request-movi`, body);
+  }
+
+  pupAssociateGood(body: IPupAssociateGood) {
+    return this.post('application/pup-associate-good-func', body);
   }
 }

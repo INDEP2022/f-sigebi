@@ -76,7 +76,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
         [Validators.maxLength(50)],
       ],
       positionAddressee: [
-        this.request?.holderCharge || null,
+        this.request?.nameOfOwner || null,
         [Validators.maxLength(50)],
       ],
       senderName: [null, [Validators.maxLength(50)]],

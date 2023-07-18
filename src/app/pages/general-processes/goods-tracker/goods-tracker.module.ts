@@ -29,7 +29,10 @@ import { TransferAutorityFilterComponent } from './components/transfer-autority-
 import { ViewPhotosComponent } from './components/view-photos/view-photos.component';
 import { GoodsTrackerRoutingModule } from './goods-tracker-routing.module';
 import { GoodsTrackerComponent } from './goods-tracker/goods-tracker.component';
-import { trackedGoodsReducer } from './store/goods-tracker.reducer';
+import {
+  trackedGoodsReducer,
+  trackerFilterReducer,
+} from './store/goods-tracker.reducer';
 @NgModule({
   declarations: [
     GoodsTrackerComponent,
@@ -62,6 +65,7 @@ import { trackedGoodsReducer } from './store/goods-tracker.reducer';
     DocumentsViewerByFolioComponent,
     SelectFractionComponent,
     StoreModule.forFeature('trackedGoods', trackedGoodsReducer),
+    StoreModule.forFeature('trackerFilter', trackerFilterReducer),
     FormLoaderComponent,
     TooltipModule,
   ],
