@@ -46,8 +46,10 @@ import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/scre
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
+  firstFormatDate,
   firstFormatDateToSecondFormatDate,
   formatForIsoDate,
+  secondFormatDate,
 } from 'src/app/shared/utils/date';
 import { DepositAccountStatementModalComponent } from '../deposit-account-statement-modal/deposit-account-statement-modal.component';
 import { DepositAccountStatementParameterComponent } from '../deposit-account-statement-parameter/deposit-account-statement-parameter.component';
@@ -257,7 +259,14 @@ export class DepositAccountStatementComponent
           }
         },
       });
-
+    this.form
+      .get('cutoffDate')
+      .valueChanges.pipe(takeUntil(this.$unSubscribe), debounceTime(500))
+      .subscribe({
+        next: response => {
+          this.updateCutoffDate(response);
+        },
+      });
     //this.getGood(new ListParams());
     /*this.paramsActNavigate
       .pipe(takeUntil(this.$unSubscribe))
@@ -1001,7 +1010,7 @@ export class DepositAccountStatementComponent
     }
   }
 
-  async updateCutoffDate(date: Date) {
+  private async updateCutoffDate(date: Date) {
     if (!this.updatePupReturnsByDates) return;
     if (date) {
       console.log(date);
@@ -1171,20 +1180,21 @@ export class DepositAccountStatementComponent
 
   private async calculateReturn() {
     console.log('Calculate return');
-    // debugger;
+    debugger;
     if (!this.updatePupReturnsByDates) {
       return;
     }
-    let fecCorteDevolucion: any = firstFormatDateToSecondFormatDate(
-      this.form.controls['cutoffDate'].value
-    );
+    let fecCorteDevolucion: any = this.form.controls['cutoffDate'].value;
     if (!fecCorteDevolucion) {
       this.alert('error', 'Calculo de devolución', 'Falta fecha de corte');
       return;
     }
-    let tiFecInicioInteres: any = firstFormatDateToSecondFormatDate(
-      this.form.controls['transfDate'].value
-    );
+    if (fecCorteDevolucion instanceof Date) {
+      fecCorteDevolucion = firstFormatDate(fecCorteDevolucion);
+    } else {
+      fecCorteDevolucion = formatForIsoDate(fecCorteDevolucion);
+    }
+    let tiFecInicioInteres: any = this.form.controls['transfDate'].value;
     if (!tiFecInicioInteres) {
       this.alert(
         'error',
@@ -1192,6 +1202,12 @@ export class DepositAccountStatementComponent
         'Falta fecha de inicio de interés'
       );
       return;
+    }
+    if (tiFecInicioInteres instanceof Date) {
+      tiFecInicioInteres = secondFormatDate(tiFecInicioInteres);
+    } else {
+      tiFecInicioInteres =
+        firstFormatDateToSecondFormatDate(tiFecInicioInteres);
     }
     let importeSinInteres = this.form.controls['toReturn'].value;
     if (!importeSinInteres) {
@@ -1236,6 +1252,10 @@ export class DepositAccountStatementComponent
       );
       this.form.controls['subTotal'].setValue(+results.di_subtotal);
       this.form.controls['checkAmount'].setValue(+results.importe_devolucion);
+      this.form.controls['costsAdmon'].setValue(results.gastos_admon ?? 0);
+      this.form.controls['associatedCosts'].setValue(
+        results.gastos_asociados ?? 0
+      );
     }
 
     // let months: number;
@@ -1424,20 +1444,32 @@ export class DepositAccountStatementComponent
       return null;
     }
     console.log('DETAIL RETURN');
-    let fec_corte_devolucion: string = this.form.controls['cutoffDate'].value;
+    let fec_corte_devolucion: any = this.form.controls['cutoffDate'].value;
     if (!fec_corte_devolucion) {
       // this.alert('error', 'Detalle de devolución', 'Falta fecha de corte');
       return null;
     }
-    let no_devolucion: any = this.userChecks.devolutionnumber;
-    if (!no_devolucion) {
-      no_devolucion = +(this.userChecks.devolutionnumber + '');
+
+    if (fec_corte_devolucion instanceof Date) {
+      fec_corte_devolucion = secondFormatDate(fec_corte_devolucion);
+    } else {
+      fec_corte_devolucion =
+        firstFormatDateToSecondFormatDate(fec_corte_devolucion);
     }
 
-    let ti_fec_inicio_interes: string = this.form.controls['transfDate'].value;
+    let ti_fec_inicio_interes: any = this.form.controls['transfDate'].value;
     if (!ti_fec_inicio_interes) {
       return null;
     }
+
+    if (ti_fec_inicio_interes instanceof Date) {
+      ti_fec_inicio_interes = secondFormatDate(ti_fec_inicio_interes);
+    } else {
+      ti_fec_inicio_interes = firstFormatDateToSecondFormatDate(
+        ti_fec_inicio_interes
+      );
+    }
+
     let importe_sin_interes = this.form.controls['toReturn'].value;
     if (!importe_sin_interes) {
       return null;
@@ -1457,6 +1489,10 @@ export class DepositAccountStatementComponent
     let no_movimiento_origen_deposito = this.userChecks.accountnumber;
     if (!no_movimiento_origen_deposito) {
       return null;
+    }
+    let no_devolucion: any = this.userChecks.devolutionnumber;
+    if (!no_devolucion) {
+      no_devolucion = +(this.userChecks.devolutionnumber + '');
     }
     let body = {
       fec_corte_devolucion,

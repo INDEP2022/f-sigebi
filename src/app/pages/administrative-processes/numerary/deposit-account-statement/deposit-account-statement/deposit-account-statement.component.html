@@ -394,8 +394,7 @@
                 formControlName="cutoffDate"
                 class="form-control"
                 [minDate]="transferDate"
-                bsDatepicker
-                (bsValueChange)="updateCutoffDate($event)" />
+                bsDatepicker />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -444,7 +443,7 @@
                 class="form-control"
                 formControlName="costsAdmon"
                 min="0"
-                [readonly]="!userChecks"
+                readonly
                 (input)="updateCalculateData()" />
             </form-field>
           </div>
@@ -456,7 +455,7 @@
                 type="number"
                 class="form-control"
                 formControlName="associatedCosts"
-                [readonly]="!userChecks"
+                readonly
                 min="0" />
             </form-field>
           </div>
