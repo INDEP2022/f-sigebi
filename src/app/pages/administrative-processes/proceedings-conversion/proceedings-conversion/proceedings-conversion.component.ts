@@ -525,12 +525,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       next: data => this.goodSelectedChange(data.row, data.toggle),
     });
   }
-
   isGoodSelected(_good: IGood) {
     const exists = this.selectedGooods.find(good => good.id == _good.id);
     return !exists ? false : true;
   }
-
   goodSelectedChange(good: IGood, selected: boolean) {
     if (selected) {
       this.selectedGooods.push(good);
@@ -545,12 +543,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       next: data => this.goodSelectedChangeValid(data.row, data.toggle),
     });
   }
-
   isGoodSelectedValid(_good: IGood) {
     const exists = this.selectedGooodsValid.find(good => good.id == _good.id);
     return !exists ? false : true;
   }
-
   goodSelectedChangeValid(good: IGood, selected?: boolean) {
     if (selected) {
       this.selectedGooodsValid.push(good);
@@ -1036,7 +1032,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       if (this.dataRecepcionGood.count() == 0) {
         this.alertInfo(
           'warning',
-          'El acta no tiene ningún bien asignado, no se puede cerrar.',
+          'El Acta no tiene ningún Bien asignado, no se puede Cerrar.',
           ''
         );
         return;
@@ -1347,7 +1343,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Carga Masiva Completada',
-          `Expediente : ${this.fileNumber}`
+          // `Expediente : ${this.fileNumber}`
+          ``
         );
         this.getGoodsByStatus(this.fileNumber);
         console.log(data);
@@ -1654,6 +1651,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             } else {
               console.log('GOOD', good);
               this.loading2 = true;
+
               if (!this.dataRecepcion.some((v: any) => v === good)) {
                 let indexGood = this.dataTableGood_.findIndex(
                   _good => _good.id == good.id

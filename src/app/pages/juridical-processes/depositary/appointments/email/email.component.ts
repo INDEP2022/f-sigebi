@@ -31,7 +31,7 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
   list = new DefaultSelect<{ nombre: string; email: string }>();
   list2 = new DefaultSelect<{ nombre: string; email: string }>();
   isCC: boolean = false;
-  userSelected: string = '';
+  userSelected: any;
   message: string = '';
   asunto: string = '';
 
@@ -86,8 +86,8 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
         null,
         [
           Validators.required,
-          Validators.maxLength(50),
-          Validators.pattern(STRING_PATTERN),
+          // Validators.maxLength(50),
+          // Validators.pattern(STRING_PATTERN),
         ],
       ],
       // PREVIO: [null],
@@ -103,8 +103,16 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
 
     // this.form.patchValue(this.email);
 
-    this.form.get('PARA').patchValue([this.userSelected]);
-
+    this.form
+      .get('PARA')
+      .patchValue(
+        this.userSelected
+          ? this.userSelected.email
+            ? this.userSelected.email
+            : null
+          : null
+      );
+    console.log(this.form.get('PARA').value, this.userSelected);
     // this.form
     //   .get('FECHA_ENV')
     //   .patchValue(
@@ -138,10 +146,15 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
 
   getNameDist(params: ListParams) {
     params['delegationNumber'] = this.delegation;
+    // if (this.form.get('PARA').value) {
+    //   params['search'] = this.form.get('PARA').value;
+    // }
 
     this.segUserService.getDisNameEmail(params).subscribe({
+      // this.segUserService.getAll(params).subscribe({
       next: resp => {
         this.list2 = new DefaultSelect(resp.data, resp.count);
+        // console.log(this.list2, this.form.get('PARA').value);
       },
       error: () => {},
     });
@@ -167,7 +180,7 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
     //   (del: any) => del.id == delegation
     // )[0].description;
 
-    // console.log(PARA);
+    console.log(PARA);
 
     // const body = {
     //   to: PARA.join(','),
@@ -183,8 +196,8 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
     // };
     let bodyMail = {
       header: user.toUpperCase(), // encabezado
-      destination: [PARA.join(',')], // destino
-      copy: [CC], // copia
+      destination: [PARA], // destino
+      copy: CC ? [CC] : [], // copia
       subject: ASUNTO, // asunto
       message: MENSAJE, // mensaje
     };
