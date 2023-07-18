@@ -1062,6 +1062,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                 this.actasDefault.statusProceedings = 'CERRADA';
                 delete this.actasDefault.numDelegation1Description;
                 delete this.actasDefault.numDelegation2Description;
+                delete this.actasDefault.numTransfer_;
                 this.proceedingsDeliveryReceptionService
                   .editProceeding(this.actasDefault.id, this.actasDefault)
                   .subscribe({
