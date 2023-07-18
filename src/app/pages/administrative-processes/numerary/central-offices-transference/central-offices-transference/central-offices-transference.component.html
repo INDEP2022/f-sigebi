@@ -7,7 +7,7 @@
       <form action="" class="form-material table-responsive" [formGroup]="form">
         <div class="row mt-4">
           <div class="col-md-4">
-            <form-field [control]="form.get('noReport')" label="No Reporte">
+            <form-field [control]="form.get('noReport')" label="No. Reporte">
               <input
                 type="number"
                 class="form-control"
@@ -18,7 +18,7 @@
           <div class="col-md-3">
             <form-field
               [control]="form.get('dateDevolution')"
-              label="fecha devolución">
+              label="Fecha Devolución">
               <input
                 formControlName="dateDevolution"
                 class="form-control"
@@ -40,7 +40,7 @@
               containerClass="tooltip-style"
               class="btn btn-info btn-sm active ml-2 mr-2"
               (click)="scrollToDiv()">
-              NUEVO <i class="bx bx-plus bx-sm float-icon"></i>
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
             <input
               type="file"
@@ -132,7 +132,7 @@
               </form-field>
             </div>
             <div style="margin-top: 30px">
-              <form-field [control]="form.get('check')" label="No Cheque">
+              <form-field [control]="form.get('check')" label="No. Cheque">
                 <input
                   type="number"
                   class="form-control"
@@ -144,7 +144,7 @@
             <div style="margin-top: 30px">
               <form-field
                 [control]="form.get('depositDate')"
-                label="Fecha deposito">
+                label="Fecha Depósito">
                 <input
                   formControlName="depositDate"
                   class="form-control"
@@ -157,7 +157,7 @@
             <div>
               <form-field
                 [control]="form.get('cveAccount')"
-                label="Clave cuenta">
+                label="Clave Cuenta">
                 <input
                   type="number"
                   class="form-control"
@@ -169,7 +169,7 @@
             <div style="margin-top: 30px">
               <form-field
                 [control]="form.get('accountType')"
-                label="Tipo de cuenta">
+                label="Tipo de Cuenta">
                 <input
                   formControlName="accountType"
                   class="form-control"
@@ -225,7 +225,7 @@
               type="button"
               class="btn btn-primary active btn-sm"
               (click)="getAccount()">
-              <i class="bx bx-search-alt bx-sm float-icon"></i>
+              Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
           </div>
           <div style="margin-left: 2vh">
