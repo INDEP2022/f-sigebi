@@ -1067,90 +1067,113 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   //GET TIPO_TRAMITE|| typeManagement
 
   work2() {
-    //Substring 2 FIRST LETTER STATUS
-    let processStatus = this.selectedRow.processStatus.substring(0, 2);
-    //console.log(processStatus);
-    this.loader.load = true;
-    this.procedureManagementService
-      .getManagamentArea({ 'filter.id': processStatus })
-      .subscribe({
-        next: (resp: any) => {
-          this.loader.load = false;
-          //console.log(resp);
-          if (resp) {
-            if (resp.data[0].screenKey === 'FACTJURDICTAMASG') {
-              //console.log('PUP_LANZA_DICTAMEN_ABANDONO');
-              let TIPO_DIC = 'ABANDONO';
-              let wheelType = this.selectedRow.wheelType;
-              if (wheelType !== null) {
-                //console.log('call FACTJURDICTAMASG');
-                this.getGlobalVars();
-                this.globalVars = {
-                  ...this.globalVars,
-                  EXPEDIENTE: this.selectedRow.proceedingsNumber,
-                  TIPO_DIC: TIPO_DIC,
-                  VOLANTE: this.selectedRow.flierNumber,
-                  CONSULTA: 'N',
-                  TIPO_VO: wheelType,
-                  P_GEST_OK: 1,
-                  P_NO_TRAMITE: this.selectedRow.processNumber,
-                };
+    const { officeNumber } = this.selectedRow;
+    const params = new FilterParams();
+    params.addFilter('pgrJob', officeNumber);
+    console.warn('Documentos PGR');
+    this.fileBrowserService.getPgrFiles(params.getParams()).subscribe({
+      next: res => {
+        if (res.count < 1) {
+          this.alert(
+            'error',
+            'Error',
+            'El Oficio no tiene Documentos, no se podrá Trabajar'
+          );
+          return;
+        }
+        //Substring 2 FIRST LETTER STATUS
+        let processStatus = this.selectedRow.processStatus.substring(0, 2);
+        //console.log(processStatus);
+        this.loader.load = true;
+        this.procedureManagementService
+          .getManagamentArea({ 'filter.id': processStatus })
+          .subscribe({
+            next: (resp: any) => {
+              this.loader.load = false;
+              //console.log(resp);
+              if (resp) {
+                if (resp.data[0].screenKey === 'FACTJURDICTAMASG') {
+                  //console.log('PUP_LANZA_DICTAMEN_ABANDONO');
+                  let TIPO_DIC = 'ABANDONO';
+                  let wheelType = this.selectedRow.wheelType;
+                  if (wheelType !== null) {
+                    //console.log('call FACTJURDICTAMASG');
+                    this.getGlobalVars();
+                    this.globalVars = {
+                      ...this.globalVars,
+                      EXPEDIENTE: this.selectedRow.proceedingsNumber,
+                      TIPO_DIC: TIPO_DIC,
+                      VOLANTE: this.selectedRow.flierNumber,
+                      CONSULTA: 'N',
+                      TIPO_VO: wheelType,
+                      P_GEST_OK: 1,
+                      P_NO_TRAMITE: this.selectedRow.processNumber,
+                    };
 
-                this.globalVarsService.updateGlobalVars(this.globalVars);
-                this.router.navigateByUrl(
-                  '/pages/juridical/juridical-ruling-g/'
-                );
-              } else {
-                this.alert(
-                  'warning',
-                  `${resp.data[0].screenKey}`,
-                  'No se encuentra disponible en este momento'
-                );
-              }
-            } else if (resp.data[0].screenKey === 'FACTOFPREGRECDOCM') {
-              //console.log(this.docsDataService.flyersRegistrationParams);
-              this.docsDataService.flyersRegistrationParams = {
-                pIndicadorSat: null,
-                pGestOk: 1,
-                pNoVolante: null,
-                pNoTramite: parseInt(this.selectedRow.processNumber),
-                pSatTipoExp: this.P_SAT_TIPO_EXP || null,
-                noTransferente: null,
-              };
-              //console.log(this.selectedRow);
-              //console.log(this.docsDataService.flyersRegistrationParams);
-              this.router.navigateByUrl(
-                '/pages/documents-reception/flyers-registration'
-              );
-            } else if (resp.data[0].screenKey === 'FACTGENACTDATEX') {
-              this.router.navigateByUrl(
-                `/pages/juridical/file-data-update?wheelNumber=${this.selectedRow.flierNumber}`
-              );
-            } else if (resp.data[0].screenKey === 'FADMAMPAROS') {
-              this.router.navigateByUrl(
-                `/pages/juridical/depositary/maintenance-of-coverages?processNumber=${this.selectedRow.processNumber}&wheelNumber=${this.selectedRow.flierNumber}&proceedingsNumber=${this.selectedRow.proceedingsNumber}`
-              );
-            } else {
-              resp.data[0].screenKey !== null
-                ? this.alert(
-                    'warning',
-                    `${resp.data[0].screenKey}`,
-                    'No se encuentra disponible en este momento'
-                  )
-                : this.alert(
-                    'warning',
-                    `Pantalla`,
-                    'No disponible en este momento'
+                    this.globalVarsService.updateGlobalVars(this.globalVars);
+                    this.router.navigateByUrl(
+                      '/pages/juridical/juridical-ruling-g/'
+                    );
+                  } else {
+                    this.alert(
+                      'warning',
+                      `${resp.data[0].screenKey}`,
+                      'No se encuentra disponible en este momento'
+                    );
+                  }
+                } else if (resp.data[0].screenKey === 'FACTOFPREGRECDOCM') {
+                  //console.log(this.docsDataService.flyersRegistrationParams);
+                  this.docsDataService.flyersRegistrationParams = {
+                    pIndicadorSat: null,
+                    pGestOk: 1,
+                    pNoVolante: null,
+                    pNoTramite: parseInt(this.selectedRow.processNumber),
+                    pSatTipoExp: this.P_SAT_TIPO_EXP || null,
+                    noTransferente: null,
+                  };
+                  //console.log(this.selectedRow);
+                  //console.log(this.docsDataService.flyersRegistrationParams);
+                  this.router.navigateByUrl(
+                    '/pages/documents-reception/flyers-registration'
                   );
-              //console.log('other screenKey');
-              //TODO:MAP SCREENS AND ROUTING
-            }
-          }
-        },
-        error: () => {
-          this.loader.load = false;
-        },
-      });
+                } else if (resp.data[0].screenKey === 'FACTGENACTDATEX') {
+                  this.router.navigateByUrl(
+                    `/pages/juridical/file-data-update?wheelNumber=${this.selectedRow.flierNumber}`
+                  );
+                } else if (resp.data[0].screenKey === 'FADMAMPAROS') {
+                  this.router.navigateByUrl(
+                    `/pages/juridical/depositary/maintenance-of-coverages?processNumber=${this.selectedRow.processNumber}&wheelNumber=${this.selectedRow.flierNumber}&proceedingsNumber=${this.selectedRow.proceedingsNumber}`
+                  );
+                } else {
+                  resp.data[0].screenKey !== null
+                    ? this.alert(
+                        'warning',
+                        `${resp.data[0].screenKey}`,
+                        'No se encuentra disponible en este momento'
+                      )
+                    : this.alert(
+                        'warning',
+                        `Pantalla`,
+                        'No disponible en este momento'
+                      );
+                  //console.log('other screenKey');
+                  //TODO:MAP SCREENS AND ROUTING
+                }
+              }
+            },
+            error: () => {
+              this.loader.load = false;
+            },
+          });
+      },
+      error: err => {
+        this.alert(
+          'error',
+          'Error',
+          'El Oficio no tiene Documentos, no se podrá Trabajar'
+        );
+      },
+    });
   }
 
   work() {
