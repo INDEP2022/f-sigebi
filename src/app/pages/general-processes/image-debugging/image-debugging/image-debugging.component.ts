@@ -1418,33 +1418,33 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   //   });
   // }
 
-  idEvent(datos: any) {
-    this.getIdLot(datos);
-  }
+  // idEvent(datos: any) {
+  //   this.getIdLot(datos);
+  // }
 
-  getIdLot(data: any) {
-    const datos: any = {};
-    this.comerEventService.getLotId(data.lotId).subscribe({
-      next: resp => {
-        this.comerEventService.geEventId(resp.eventId).subscribe({
-          next: resp => {
-            console.log(resp);
-            //this.form.controls['idEvent'].setValue(resp.id);
-            this.eventIdSelected = new DefaultSelect([resp], 1);
-            this.form.controls['idEvent'].setValue(resp.id);
-          },
-          error: error => {
-            console.log(error);
-            this.eventIdSelected = new DefaultSelect();
-          },
-        });
-      },
-      error: error => {
-        console.log(error);
-        //this.lotIdSelected = new DefaultSelect();
-      },
-    });
-  }
+  // getIdLot(data: any) {
+  //   const datos: any = {};
+  //   this.comerEventService.getLotId(data.lotId).subscribe({
+  //     next: resp => {
+  //       this.comerEventService.geEventId(resp.eventId).subscribe({
+  //         next: resp => {
+  //           console.log(resp);
+  //           //this.form.controls['idEvent'].setValue(resp.id);
+  //           this.eventIdSelected = new DefaultSelect([resp], 1);
+  //           this.form.controls['idEvent'].setValue(resp.id);
+  //         },
+  //         error: error => {
+  //           console.log(error);
+  //           this.eventIdSelected = new DefaultSelect();
+  //         },
+  //       });
+  //     },
+  //     error: error => {
+  //       console.log(error);
+  //       //this.lotIdSelected = new DefaultSelect();
+  //     },
+  //   });
+  // }
   searchExp(id: number | string) {
     if (!id) return;
     // this.isSearch = true;
@@ -1498,38 +1498,38 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     // });
   }
 
-  getEvent(params?: ListParams) {
-    params['filter.event.statusvtaId'] = `$ilike:${params.text}`;
-    params['filter.event.id'] = `$eq:${this.idEvent}`;
-    this.comerEventService.getAllFilterComerGood(params).subscribe({
-      next: data => {
-        data.data.map(data => {
-          data.description = `${data.event}- ${data.event.statusvtaId}`;
-          return data;
-        });
-        this.eventIdSelected = new DefaultSelect(data.data, data.count);
-      },
-      error: () => {
-        this.eventIdSelected = new DefaultSelect();
-      },
-    });
-  }
-  getLot(params?: ListParams) {
-    params['filter.description'] = `$ilike:${params.text}`;
-    params['filter.lotId'] = `$eq:${this.idLot}`;
-    this.comerEventService.getAllFilterComerGood(params).subscribe({
-      next: data => {
-        data.data.map(data => {
-          data.description = `${data.lotId}- ${data.description}`;
-          return data;
-        });
-        this.lotIdSelected = new DefaultSelect(data.data, data.count);
-      },
-      error: () => {
-        this.lotIdSelected = new DefaultSelect();
-      },
-    });
-  }
+  // getEvent(params?: ListParams) {
+  //   params['filter.event.statusvtaId'] = `$ilike:${params.text}`;
+  //   params['filter.event.id'] = `$eq:${this.idEvent}`;
+  //   this.comerEventService.getAllFilterComerGood(params).subscribe({
+  //     next: data => {
+  //       data.data.map(data => {
+  //         data.description = `${data.event}- ${data.event.statusvtaId}`;
+  //         return data;
+  //       });
+  //       this.eventIdSelected = new DefaultSelect(data.data, data.count);
+  //     },
+  //     error: () => {
+  //       this.eventIdSelected = new DefaultSelect();
+  //     },
+  //   });
+  // }
+  // getLot(params?: ListParams) {
+  //   params['filter.description'] = `$ilike:${params.text}`;
+  //   params['filter.lotId'] = `$eq:${this.idLot}`;
+  //   this.comerEventService.getAllFilterComerGood(params).subscribe({
+  //     next: data => {
+  //       data.data.map(data => {
+  //         data.description = `${data.lotId}- ${data.description}`;
+  //         return data;
+  //       });
+  //       this.lotIdSelected = new DefaultSelect(data.data, data.count);
+  //     },
+  //     error: () => {
+  //       this.lotIdSelected = new DefaultSelect();
+  //     },
+  //   });
+  // }
   getImageGood() {
     this.loading = true;
     const formDatra: Object = {
@@ -1547,7 +1547,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
         if (_data.length > 0) {
           this.photographs =
             _data.length > 10 ? this.setPaginate([..._data]) : _data;
-          this.totalItems = _data.length;
+          this.totalItemsPhotos = _data.length;
           this.loading = false;
         } else {
           this.alert(
