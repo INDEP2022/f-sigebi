@@ -133,7 +133,7 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     this.goods = [];
-    this.policyService.getByKeyId(Key).subscribe({
+    this.policyService.getByKeyId(Key, params).subscribe({
       next: response => {
         let lista = [];
         this.totalItems = response.count;

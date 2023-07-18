@@ -28,6 +28,7 @@ export class ProrrateoGoodsSurveillanceComponent
   elemento = '';
   tipo: any;
   bandera: boolean = false;
+  processed: any;
   constructor(
     private fb: FormBuilder,
     private policyService: PolicyService,
@@ -127,7 +128,6 @@ export class ProrrateoGoodsSurveillanceComponent
   }
   getPolicy() {
     this.policy = this.form.get('cvePoliza').value;
-    console.log('Prueba: ', this.policy);
     this.elemento = this.policy;
     this.getByPolicyKey(this.policy);
     this.getProcess(this.policy);
@@ -196,8 +196,14 @@ export class ProrrateoGoodsSurveillanceComponent
   getProcess(PolicyKey: string) {
     this.policyService.getSinister(PolicyKey).subscribe({
       next: response => {
+        this.processed = response.data[0].indStatus;
+        if ((this.processed = 1)) {
+          this.processed = 'Si';
+        } else {
+          this.processed = 'No';
+        }
         let dataForm = {
-          processed: response.data[0].indStatus,
+          processed: this.processed,
         };
         this.form.patchValue(dataForm);
       },
