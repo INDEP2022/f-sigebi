@@ -1134,7 +1134,10 @@ export class DepositAccountStatementComponent
       return false;
     }
 
-    if (this.form.controls['cutoffDate'].value != this.scheduledFecReturn) {
+    if (
+      this.scheduledFecReturn &&
+      this.form.controls['cutoffDate'].value != this.scheduledFecReturn
+    ) {
       this.alert(
         'warning',
         'Especifico una fecha de corte',
@@ -1769,21 +1772,20 @@ export class DepositAccountStatementComponent
           this.interestaccredited
         );
       }
+      this.form.controls['toReturn'].setValue(0);
+      this.form.controls['subTotal'].setValue(
+        this.form.controls['interestCredited'].value
+      );
+      this.form.controls['costsAdmon'].setValue(0);
+      this.form.controls['associatedCosts'].setValue(0);
+      this.form.controls['checkAmount'].setValue(
+        this.form.controls['interestCredited'].value
+      );
+      this.form.controls['transferDate'].disable();
+      this.form.controls['cutoffDate'].disable();
+      this.form.controls['beneficiary'].disable();
     }
     // llamar al servicio de deposit
-
-    this.form.controls['toReturn'].setValue(0);
-    this.form.controls['subTotal'].setValue(
-      this.form.controls['interestCredited'].value
-    );
-    this.form.controls['costsAdmon'].setValue(0);
-    this.form.controls['associatedCosts'].setValue(0);
-    this.form.controls['checkAmount'].setValue(
-      this.form.controls['interestCredited'].value
-    );
-    this.form.controls['transferDate'].disable();
-    this.form.controls['cutoffDate'].disable();
-    this.form.controls['beneficiary'].disable();
   }
 
   detailCalculation() {
