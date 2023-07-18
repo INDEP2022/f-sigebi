@@ -98,7 +98,7 @@ export class MassiveNumeraryChangeModalComponent
       perPage: 10,
     },
   };
-  dataTableGoods: IMassiveNumeraryGood[] = [];
+  dataTableGoods: any[] = [];
   dataTableGoodsLocal = new LocalDataSource([]);
   dataTableSpents: any[] = [];
   dataTableSpentsLocal = new LocalDataSource([]);
@@ -131,6 +131,9 @@ export class MassiveNumeraryChangeModalComponent
   }
 
   ngOnInit(): void {
+    console.log(this.dataTableGoods);
+    console.log(this.dataTableSpents);
+
     this.dataTableGoods = this.dataTableGoods.map(item => {
       return {
         ...item,
