@@ -88,7 +88,7 @@ export class NumeraryMassiveConciliationComponent
         : 'bg-dark text-white',
     columns: NUMERARY_MASSIVE_CONCILIATION_COLUMNS,
     hideSubHeader: false,
-    noDataMessage: 'No se encontrarón registros',
+    noDataMessage: 'No se Encontrarón Registros',
     actions: {
       add: false,
       delete: false,
@@ -98,7 +98,7 @@ export class NumeraryMassiveConciliationComponent
 
   public settings2: any = {
     columns: NUMERARY_MASSIVE_CONCILIATION_COLUMNS2,
-    noDataMessage: 'No se encontrarón registros',
+    noDataMessage: 'No se Encontrarón Registros',
     hideSubHeader: false,
     actions: {
       add: false,
@@ -260,7 +260,7 @@ export class NumeraryMassiveConciliationComponent
         } else {
           this.alert(
             'warning',
-            'El clasificador no corresponde a una cuenta bancaria',
+            'El Clasificador no Corresponde a una Cuenta Bancaria',
             ''
           );
         }
@@ -559,10 +559,10 @@ export class NumeraryMassiveConciliationComponent
     this.loading = true;
     const fec = this.form.get('dateTesofe').value;
     if (goodCheck.length < 1) {
-      this.alert('warning', 'No hay bienes seleccionados', '');
+      this.alert('warning', 'No Hay Bienes Seleccionados', '');
       this.loading = false;
     } else if (fec == null) {
-      this.alert('warning', 'No seleccionó un fecha Tesofe', '');
+      this.alert('warning', 'No Seleccionó un Fecha Tesofe', '');
       this.loading = false;
     } else {
       console.log(goodCheck);
@@ -604,7 +604,7 @@ export class NumeraryMassiveConciliationComponent
                   })
                 );
 
-                this.alert('success', 'Actualización realizada', '');
+                this.alert('success', 'Actualización Realizada', '');
                 clearGoodCheck();
                 this.loading = false;
               },
@@ -634,7 +634,7 @@ export class NumeraryMassiveConciliationComponent
       const newDate = `${arrayData[2]}-${arrayData[1]}-${arrayData[0]}`;
       return { rpta: format(new Date(newDate), 'yyyy-MM-dd') };
     } else {
-      return { rpta: 'No tiene formato dd-mm-yyyy' };
+      return { rpta: 'No Tiene Formato dd-mm-yyyy' };
     }
   }
 
@@ -646,7 +646,7 @@ export class NumeraryMassiveConciliationComponent
 
     this.loading = true;
     if (goodCheck.length < 1) {
-      this.alert('warning', 'No hay bienes seleccionados', '');
+      this.alert('warning', 'No Hay Bienes Seleccionados', '');
       this.loading = false;
     } else {
       this.loading = false;
@@ -676,23 +676,23 @@ export class NumeraryMassiveConciliationComponent
                 console.log(err.error.message);
                 if (
                   err.error.message ==
-                  'La propiedad fecTesofe debe ser una fecha'
+                  'La Propiedad "fecTesofe" Debe Ser una Fecha'
                 ) {
-                  this.alert('warning', 'No tiene fecha Tesofe', '');
+                  this.alert('warning', 'No Tiene Fecha Tesofe', '');
                 }
               }
             );
           } else {
             this.alert(
               'error',
-              'Fallo al tranformar la cantidad numerica del importe',
+              'Fallo al Tranformar la Cantidad Numérica del Importe',
               ''
             );
             return;
           }
         } else {
           const date = this.validateDateddmmyyyy(item.RSPTAQUERY.val5);
-          if (date.rpta != 'No tiene formato dd-mm-yyyy') {
+          if (date.rpta != 'No Tiene Formato dd-mm-yyyy') {
             if (!isNaN(parseInt(item.RSPTAQUERY.val2))) {
               const model: ISearchNumerary = {
                 conciled: 'S',
@@ -713,16 +713,16 @@ export class NumeraryMassiveConciliationComponent
                   console.log(err);
                   if (
                     err.error.message ==
-                    'La propiedad fecTesofe debe ser una fecha'
+                    'La Propiedad "fecTesofe" Debe Ser una Fecha'
                   ) {
-                    this.alert('warning', 'No tiene fecha Tesofe', '');
+                    this.alert('warning', 'No Tiene Fecha Tesofe', '');
                   }
                 }
               );
             } else {
               this.alert(
                 'error',
-                'Fallo al tranformar la cantidad numerica del importe',
+                'Fallo al Tranformar la Cantidad Numérica del Importe',
                 ''
               );
               return;
@@ -730,7 +730,7 @@ export class NumeraryMassiveConciliationComponent
           } else {
             this.alert(
               'error',
-              'Fallo al generar formato estandar para fecha',
+              'Fallo al Generar Formato Estandar para Fecha',
               ''
             );
             return;
@@ -792,11 +792,11 @@ export class NumeraryMassiveConciliationComponent
       } catch (error) {
         console.log(error);
       } finally {
-        this.alert('success', 'Desconciliación realizada', '');
+        this.alert('success', 'Desconciliación Realizada', '');
         this.loading = false;
       }
     } else {
-      this.alert('warning', 'No se seleccionó ningún Bien', '');
+      this.alert('warning', 'No se Seleccionó Ningún Bien', '');
     }
   }
 
@@ -843,17 +843,17 @@ export class NumeraryMassiveConciliationComponent
       };
       this.numeraryService.pupAssociateGood(model).subscribe(
         res => {
-          this.alert('success', 'Se realizó la asociación', '');
+          this.alert('success', 'Se realizó la Asociación', '');
           clearGoodCheck2();
           console.log(res);
         },
         err => {
-          this.alert('error', 'Se presentó un error inesperado', '');
+          this.alert('error', 'Se Presentó un Error Inesperado', '');
           console.log(err);
         }
       );
     } else {
-      this.alert('warning', 'No se seleccionó datos de cuentas bancarias', '');
+      this.alert('warning', 'No se Seleccionó Datos de Cuentas Bancarias', '');
     }
   }
 }
