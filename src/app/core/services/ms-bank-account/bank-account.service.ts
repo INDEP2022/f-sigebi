@@ -100,5 +100,9 @@ export class BankAccountService
     return this.post(`account-movements/get-cve-currency`, body);
   }
 
+  pupInterestsDetail(body: any) {
+    return this.post(`/aplication/pup-interests-detail`, body);
+  }
+
   //***** */
 }
