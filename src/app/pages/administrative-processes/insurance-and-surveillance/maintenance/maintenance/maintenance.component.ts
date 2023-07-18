@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import * as moment from 'moment';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
 import { BasePage } from 'src/app/core/shared';
@@ -420,5 +421,10 @@ export class MaintenanceComponent extends BasePage implements OnInit {
 
   limpiarPeriodoCambiar() {
     this.changePeriodComponent.limpiarPeriodo();
+  }
+
+  returnParseDate_(data: Date) {
+    const formattedDate = moment(data).format('YYYY-MM-DD');
+    return formattedDate;
   }
 }
