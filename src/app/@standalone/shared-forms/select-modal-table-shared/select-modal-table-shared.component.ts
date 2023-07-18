@@ -46,6 +46,8 @@ export class SelectModalTableSharedComponent
   @Input() disabled: boolean;
   @Input() override haveSelectColumns: boolean = false;
   @Input() override haveColumnFilters: boolean = false;
+  @Input() override ilikeFilters: string[] = ['description'];
+  @Input() override dateFilters: string[] = [];
   @Input() widthDescription = true;
   @Input() label: string;
   @Input() labelName: string;

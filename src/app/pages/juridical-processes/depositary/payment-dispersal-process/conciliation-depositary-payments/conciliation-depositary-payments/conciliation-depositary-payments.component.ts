@@ -12,14 +12,18 @@ import {
   baseMenuDepositaria,
   baseMenuProcesoDispercionPagos,
 } from 'src/app/common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import {
-  IAppointmentDepositary,
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import {
+  IDepositaryAppointments,
   IPaymendtDepParamsDep,
   IPersonsModDepositary,
 } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { IPaymentsGensDepositary } from 'src/app/core/models/ms-depositarypayment/ms-depositarypayment.interface';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { PersonService } from 'src/app/core/services/catalogs/person.service';
 import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ConciliationDepositaryPaymentsService } from '../services/conciliation-depositary-payments.service';
 import {
@@ -33,8 +37,6 @@ import {
   NOT_FOUND_GET_VALID_BLACKLIST,
   NOT_FOUND_GET_VALID_STATUS,
   NOT_FOUND_GOOD_APPOINTMENT,
-  NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS,
-  NOT_FOUND_PERSONS_DEPOSITARY,
   NOT_FOUND_REMOVE_PAYMENTS,
 } from '../utils/conciliation-depositary-payments.messages';
 
@@ -57,7 +59,7 @@ export class ConciliationDepositaryPaymentsComponent
   public form: FormGroup;
   public formDepositario: FormGroup;
   public noBienReadOnly: number = null;
-  depositaryAppointment: IAppointmentDepositary;
+  depositaryAppointment: IDepositaryAppointments;
   good: IGood;
   dataPagosRecibidos: IPaymentsGensDepositary[] = [];
   dataPersonsDepositary: IPersonsModDepositary;
@@ -77,7 +79,8 @@ export class ConciliationDepositaryPaymentsComponent
     private router: Router,
     private datePipe: DatePipe,
     private svConciliationDepositaryPaymentsService: ConciliationDepositaryPaymentsService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private personService: PersonService
   ) {
     super();
   }
@@ -161,7 +164,7 @@ export class ConciliationDepositaryPaymentsComponent
     // DESPUES DE VALIDAR SE LLAMA LA PANTALLA FCONDEPOCONDISPAG
     if (this.form.get('noBien').valid && this.noBienReadOnly) {
       if (this.depositaryAppointment) {
-        if (this.depositaryAppointment.appointmentNumber) {
+        if (this.depositaryAppointment.appointmentNum) {
           this.getParamsDep();
         } else {
           this.alert(
@@ -211,7 +214,7 @@ export class ConciliationDepositaryPaymentsComponent
   async deletePaymentRefRemove(dateParam: string) {
     this.loading = true;
     let params: any = {
-      pOne: Number(this.depositaryAppointment.appointmentNumber),
+      pOne: Number(this.depositaryAppointment.appointmentNum),
       pDate: new Date(dateParam),
     };
     await this.svConciliationDepositaryPaymentsService
@@ -225,7 +228,7 @@ export class ConciliationDepositaryPaymentsComponent
             'success',
             'Se eliminó correctamente',
             CORRECT_REMOVE_PAYMENTS(
-              Number(this.depositaryAppointment.appointmentNumber),
+              Number(this.depositaryAppointment.appointmentNum),
               this.datePipe.transform(dateParam, 'dd/MM/yyyy')
             )
           );
@@ -238,7 +241,7 @@ export class ConciliationDepositaryPaymentsComponent
             'Error al eliminar',
             NOT_FOUND_REMOVE_PAYMENTS(
               err.error.message,
-              Number(this.depositaryAppointment.appointmentNumber),
+              Number(this.depositaryAppointment.appointmentNum),
               dateParam
             )
           );
@@ -251,7 +254,7 @@ export class ConciliationDepositaryPaymentsComponent
 
     if (this.form.get('noBien').valid && this.noBienReadOnly) {
       // Recargar los clientes
-      if (!this.depositaryAppointment.appointmentNumber) {
+      if (!this.depositaryAppointment.appointmentNum) {
         this.alert(
           'warning',
           'Número de Nombramiento',
@@ -273,7 +276,7 @@ export class ConciliationDepositaryPaymentsComponent
   depositaryRecharge() {
     this.svConciliationDepositaryPaymentsService
       .getgetAplicationcargaCliente1(
-        Number(this.depositaryAppointment.appointmentNumber)
+        Number(this.depositaryAppointment.appointmentNum)
       )
       .subscribe({
         next: res => {
@@ -327,7 +330,7 @@ export class ConciliationDepositaryPaymentsComponent
   depositaryRecharge_Delete() {
     this.svConciliationDepositaryPaymentsService
       .getgetAplicationcargaCliente2(
-        Number(this.depositaryAppointment.appointmentNumber)
+        Number(this.depositaryAppointment.appointmentNum)
       )
       .subscribe({
         next: res => {
@@ -384,40 +387,73 @@ export class ConciliationDepositaryPaymentsComponent
     if (this.form.get('noBien').valid) {
       this.loading = true;
       this.noBienReadOnly = this.form.get('noBien').value;
-      const params = new FilterParams();
-      params.removeAllFilters();
-      params.addFilter('goodNumber', this.noBienReadOnly);
-      params.addFilter('revocation', 'N');
+      // const params = new FilterParams();
+      // params.removeAllFilters();
+      // params.addFilter('goodNumber', this.noBienReadOnly);
+      // params.addFilter('revocation', 'N');
+      let params = new ListParams();
+      params['filter.goodNum'] = this.noBienReadOnly;
+      params['filter.revocation'] = 'N';
       await this.svConciliationDepositaryPaymentsService
-        .getGoodAppointmentDepositaryByNoGood(params.getParams())
+        .getGoodAppointmentDepositaryByNoGood(params)
         .subscribe({
           next: res => {
             console.log(res.data);
             this.depositaryAppointment = res.data[0];
             this.form
               .get('nombramiento')
-              .setValue(this.depositaryAppointment.appointmentNumber);
+              .setValue(this.depositaryAppointment.appointmentNum);
             this.form
               .get('nombramientoDescription')
               .setValue(this.depositaryAppointment.contractKey);
-            this.formDepositario
-              .get('idDepositario')
-              .setValue(this.depositaryAppointment.personNumber.id);
-            this.formDepositario
-              .get('depositario')
-              .setValue(this.depositaryAppointment.personNumber.name);
+            if (this.depositaryAppointment.personNum) {
+              const params = new FilterParams();
+              params.removeAllFilters();
+              params.addFilter('id', this.depositaryAppointment.personNum);
+              this.personService.getAllFilters().subscribe({
+                next: res => {
+                  console.log(res);
+                  this.depositaryAppointment.personNumber = res.data[0];
+                  this.formDepositario
+                    .get('idDepositario')
+                    .setValue(this.depositaryAppointment.personNumber.id);
+                  this.formDepositario
+                    .get('depositario')
+                    .setValue(this.depositaryAppointment.personNumber.name);
+                },
+                error: err => {
+                  console.log(err);
+                },
+              });
+            }
             this.actualDate = this.datePipe.transform(new Date(), 'dd/MM/yyyy');
             this.form.get('fecha').setValue(this.actualDate);
-            this.form
-              .get('noBien')
-              .setValue(this.depositaryAppointment.good.goodId);
-            this.form
-              .get('descripcion')
-              .setValue(this.depositaryAppointment.good.description);
+            if (this.depositaryAppointment.goodNum) {
+              const params = new FilterParams();
+              params.removeAllFilters();
+              params.addFilter('goodId', this.noBienReadOnly);
+              this.svConciliationDepositaryPaymentsService
+                .getGoodDataByFilter(params.getParams())
+                .subscribe({
+                  next: res => {
+                    this.depositaryAppointment.good = res.data[0]; // Set data good
+                    this.form
+                      .get('noBien')
+                      .setValue(this.depositaryAppointment.good.goodId);
+                    this.form
+                      .get('descripcion')
+                      .setValue(this.depositaryAppointment.good.description);
+                  },
+                  error: err => {
+                    console.log(err);
+                  },
+                });
+            }
             this.getDataPaymentsDispersion();
             this.getPersonsModDepositary();
           },
           error: err => {
+            console.log(err);
             this.loading = false;
             this.alert(
               'warning',
@@ -436,7 +472,7 @@ export class ConciliationDepositaryPaymentsComponent
     params.removeAllFilters();
     params.addFilter(
       'appointmentNum',
-      this.depositaryAppointment.appointmentNumber
+      this.depositaryAppointment.appointmentNum
     );
     await this.svConciliationDepositaryPaymentsService
       .getPersonsModDepositary(params.getParams())
@@ -453,12 +489,13 @@ export class ConciliationDepositaryPaymentsComponent
           this.loading = false;
         },
         error: err => {
+          console.log(err);
           this.loading = false;
-          this.alert(
-            'warning',
-            'Número de Bien',
-            NOT_FOUND_PERSONS_DEPOSITARY(err.error.message)
-          );
+          // this.alert(
+          //   'warning',
+          //   'Número de Bien',
+          //   NOT_FOUND_PERSONS_DEPOSITARY(err.error.message)
+          // );
         },
       });
   }
@@ -470,7 +507,7 @@ export class ConciliationDepositaryPaymentsComponent
     params.addFilter('noGoods', this.noBienReadOnly);
     params.addFilter(
       'no_appointment',
-      this.depositaryAppointment.appointmentNumber
+      this.depositaryAppointment.appointmentNum
     );
     params['sortBy'] = 'payIdGens:DESC';
     await this.svConciliationDepositaryPaymentsService
@@ -482,11 +519,11 @@ export class ConciliationDepositaryPaymentsComponent
         },
         error: err => {
           console.log(err);
-          this.alertInfo(
-            'warning',
-            'Composición de Pagos Recibidos',
-            NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS(err.error.message)
-          );
+          // this.alertInfo(
+          //   'warning',
+          //   'Composición de Pagos Recibidos',
+          //   NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS(err.error.message)
+          // );
         },
       });
   }
@@ -494,7 +531,7 @@ export class ConciliationDepositaryPaymentsComponent
   async getParamsDep() {
     this.loading = true;
     let params: IPaymendtDepParamsDep = {
-      name: Number(this.depositaryAppointment.appointmentNumber),
+      name: Number(this.depositaryAppointment.appointmentNum),
       address: 'D',
     };
     await this.svConciliationDepositaryPaymentsService
@@ -511,7 +548,7 @@ export class ConciliationDepositaryPaymentsComponent
               'Número de Nombramiento',
               NOT_FOUND_GET_PARAMSDEP_PAYMENTS(
                 res.message[0],
-                Number(this.depositaryAppointment.appointmentNumber)
+                Number(this.depositaryAppointment.appointmentNum)
               )
             );
           }
@@ -524,7 +561,7 @@ export class ConciliationDepositaryPaymentsComponent
             'Número de Nombramiento',
             NOT_FOUND_GET_PARAMSDEP_PAYMENTS(
               err.error.message,
-              Number(this.depositaryAppointment.appointmentNumber)
+              Number(this.depositaryAppointment.appointmentNum)
             )
           );
         },
@@ -533,9 +570,7 @@ export class ConciliationDepositaryPaymentsComponent
 
   getValidStatus() {
     this.svConciliationDepositaryPaymentsService
-      .getValidStatusProcess(
-        Number(this.depositaryAppointment.appointmentNumber)
-      )
+      .getValidStatusProcess(Number(this.depositaryAppointment.appointmentNum))
       .subscribe({
         next: res => {
           console.log('VALID STATUS');
@@ -547,7 +582,7 @@ export class ConciliationDepositaryPaymentsComponent
               'Número de Nombramiento',
               NOT_FOUND_GET_VALID_STATUS(
                 res.message[0] + '',
-                Number(this.depositaryAppointment.appointmentNumber)
+                Number(this.depositaryAppointment.appointmentNum)
               )
             );
           } else {
@@ -563,7 +598,7 @@ export class ConciliationDepositaryPaymentsComponent
             'Número de Nombramiento',
             NOT_FOUND_GET_VALID_STATUS(
               err.error.message,
-              Number(this.depositaryAppointment.appointmentNumber)
+              Number(this.depositaryAppointment.appointmentNum)
             )
           );
         },
@@ -573,7 +608,7 @@ export class ConciliationDepositaryPaymentsComponent
   validBlackList() {
     this.svConciliationDepositaryPaymentsService
       .getValidBlackListProcess(
-        Number(this.depositaryAppointment.appointmentNumber)
+        Number(this.depositaryAppointment.appointmentNum)
       )
       .subscribe({
         next: (res: any) => {
@@ -589,7 +624,7 @@ export class ConciliationDepositaryPaymentsComponent
               'Número de Nombramiento',
               NOT_FOUND_GET_VALID_BLACKLIST(
                 res.message[0],
-                Number(this.depositaryAppointment.appointmentNumber)
+                Number(this.depositaryAppointment.appointmentNum)
               )
             );
           }
@@ -602,7 +637,7 @@ export class ConciliationDepositaryPaymentsComponent
             'Número de Nombramiento',
             NOT_FOUND_GET_VALID_BLACKLIST(
               err.error.message,
-              Number(this.depositaryAppointment.appointmentNumber)
+              Number(this.depositaryAppointment.appointmentNum)
             )
           );
         },
@@ -623,7 +658,7 @@ export class ConciliationDepositaryPaymentsComponent
     this.actualDate = this.datePipe.transform(fecha, 'dd/MM/yyyy');
     this.form.get('fecha').setValue(this.actualDate);
     let params: any = {
-      name: Number(this.depositaryAppointment.appointmentNumber),
+      name: Number(this.depositaryAppointment.appointmentNum),
       date: fecha,
     };
     this.svConciliationDepositaryPaymentsService
@@ -641,7 +676,7 @@ export class ConciliationDepositaryPaymentsComponent
             'Número de Nombramiento',
             NOT_FOUND_GET_VALIDADEP_PAYMENTS(
               err.error.message,
-              Number(this.depositaryAppointment.appointmentNumber)
+              Number(this.depositaryAppointment.appointmentNum)
             )
           );
           // this.gotToConciliationPays();
@@ -677,7 +712,7 @@ export class ConciliationDepositaryPaymentsComponent
 
   async getPrepOI() {
     let params: any = {
-      name: Number(this.depositaryAppointment.appointmentNumber),
+      name: Number(this.depositaryAppointment.appointmentNum),
       description: this.depositaryAppointment.contractKey,
     };
     await this.svConciliationDepositaryPaymentsService
@@ -696,7 +731,7 @@ export class ConciliationDepositaryPaymentsComponent
             'Número de Nombramiento',
             NOT_FOUND_GET_VALIDADEP_PAYMENTS(
               err.error.message,
-              Number(this.depositaryAppointment.appointmentNumber)
+              Number(this.depositaryAppointment.appointmentNum)
             )
           );
           // this.gotToConciliationPays();
@@ -713,7 +748,10 @@ export class ConciliationDepositaryPaymentsComponent
     // } else
     if (this.origin == 'FCONDEPOCARGAPAG') {
       this.router.navigate([
-        '/pages/juridical/depositary/depositary-payment-charges',
+        '/pages/juridical/depositary/depositary-payment-charges/' +
+        this.noBienParams
+          ? this.noBienParams
+          : this.noBienReadOnly,
       ]);
     }
   }

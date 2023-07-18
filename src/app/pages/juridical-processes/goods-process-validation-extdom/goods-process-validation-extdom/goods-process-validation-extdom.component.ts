@@ -42,6 +42,7 @@ import {
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { offlinePagination } from 'src/app/utils/functions/offline-pagination';
+import { EmailGoodProcessValidationComponent } from '../email/email.component';
 import { HistoricalGoodsExtDomComponent } from '../historical-goods-extdom/historical-goods-extdom.component';
 import { ModalScanningFoilTableHistoricalGoodsComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
 import { GoodsProcessValidationExtdomService } from '../services/goods-process-validation-extdom.service';
@@ -1788,9 +1789,9 @@ export class GoodsProcessValidationExtdomComponent
     const document = {
       numberProceedings: this.notificationData.expedientNumber,
       keySeparator: '60',
-      keyTypeDocument: 'AMPA',
+      keyTypeDocument: 'ASEGEXTDOM', //'AMPA',
       natureDocument: 'ORIGINAL',
-      descriptionDocument: `AMPARO EXPEDIENTE ${this.notificationData.expedientNumber}`, // Clave de Oficio Armada
+      descriptionDocument: `Validación ASEG_EXTDOM EXPEDIENTE ${this.notificationData.expedientNumber}`, //`AMPARO EXPEDIENTE ${this.notificationData.expedientNumber}`, // Clave de Oficio Armada
       significantDate: format(new Date(), 'MM-yyyy'),
       scanStatus: 'SOLICITADO',
       userRequestsScan:
@@ -2366,5 +2367,22 @@ export class GoodsProcessValidationExtdomComponent
           this.selectAuthority = new DefaultSelect();
         },
       });
+  }
+
+  openModalMail() {
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        // userSelected: this.form.value.representanteSAE,
+        // message: '',
+        dataTypeSelect: {
+          expedientNumber: this.notificationData.expedientNumber,
+          previous: '',
+          wheelNumber: this.notificationData.wheelNumber,
+        },
+        asunto: 'Aviso de Amparo',
+      },
+    };
+    return this.modalService.show(EmailGoodProcessValidationComponent, config);
   }
 }
