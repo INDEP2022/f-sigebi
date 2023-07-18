@@ -660,7 +660,6 @@ export class NumeraryMassiveConciliationComponent
               val4: item.RSPTAQUERY.val4,
               val5: format(new Date(item.RSPTAQUERY.val5), 'yyyy-MM-dd'),
               val6: item.RSPTAQUERY.val6,
-              
             };
             console.log(model);
             this.numeraryService.pupSearchNumerary(model).subscribe(

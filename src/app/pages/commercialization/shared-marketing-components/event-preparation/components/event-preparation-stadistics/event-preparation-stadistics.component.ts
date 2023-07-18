@@ -9,6 +9,10 @@ import { EventStadisticsForm } from '../../utils/forms/event-stadistics-form';
 })
 export class EventPreparationStadisticsComponent implements OnInit {
   @Input() stadisticsForm: FormGroup<EventStadisticsForm>;
+
+  get controls() {
+    return this.stadisticsForm.controls;
+  }
   constructor() {}
 
   ngOnInit(): void {}
