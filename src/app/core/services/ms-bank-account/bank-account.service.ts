@@ -44,7 +44,7 @@ export class BankAccountService
   }
 
   getCveBankFilter(params?: string) {
-    return this.get(`${this.api}`, params);
+    return this.get(`${this.api}`,params)
   }
 
   getById(accountNumber: Object): Observable<IBankAccount> {
@@ -92,12 +92,20 @@ export class BankAccountService
     );
   }
 
-  searchByFilterNumeraryMassive(body: IProReconcilesGood) {
-    return this.post(`aplication/proReconcilesGood`, body);
+  searchByFilterNumeraryMassive(body: IProReconcilesGood){
+    return this.post(`aplication/proReconcilesGood`,body)
   }
 
-  getListCurrencyCve(body?: { currency: string | null }) {
-    return this.post(`account-movements/get-cve-currency`, body);
+  getListCurrencyCve(body?:{currency:string | null}){
+    return this.post(`account-movements/get-cve-currency`,body)
+  }
+
+  updateAccountMovExp(body: {noGoods: any[]}){
+    return this.post(`account-movements/update-account-movements-exp`, body)
+  }
+
+  updateAccountMovFec(body: {noGoods: any[], fecTesofe: Date | string}){
+    return this.post(`account-movements/update-account-movements-fec`, body)
   }
 
   updateAccountMovExp(body: { noGoods: any[] }) {
@@ -106,6 +114,10 @@ export class BankAccountService
 
   updateAccountMovFec(body: { noGoods: any[]; fecTesofe: Date | string }) {
     return this.post(`account-movements/update-account-movements-fec`, body);
+  }
+
+  pupInterestsDetail(body: any) {
+    return this.post(`/aplication/pup-interests-detail`, body);
   }
 
   //***** */

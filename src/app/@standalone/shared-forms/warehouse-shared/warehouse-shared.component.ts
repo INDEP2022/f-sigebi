@@ -72,7 +72,7 @@ export class WarehouseSharedComponent extends BasePage implements OnInit {
       },
       err => {
         this.warehousesType = new DefaultSelect();
-        /*  let error = '';
+       /*  let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {

@@ -8,13 +8,19 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import { IAccountMovement } from 'src/app/core/models/ms-account-movements/account-movement.model';
+import {
+  IAccountMovement,
+  IDetailAccountMovement,
+} from 'src/app/core/models/ms-account-movements/account-movement.model';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { BankAccount } from '../list-banks/bank';
 import { ListBanksComponent } from '../list-banks/list-banks.component';
 import { TesofeMovementsModalComponent } from '../tesofe-movements-modal/tesofe-movements-modal.component';
+
+import { LocalDataSource } from 'ng2-smart-table';
+import { TesofeDetailsMovementsComponent } from '../tesofe-details-movements/tesofe-details-movements.component';
 import { TESOFE_MOVEMENTS_COLUMNS } from './tesofe-movements-columns';
 
 @Component({
@@ -29,6 +35,10 @@ export class TesofeMovementsComponent extends BasePage implements OnInit {
   dataAcount: IListResponse<IAccountMovement> =
     {} as IListResponse<IAccountMovement>;
   dataSelect: BankAccount;
+  selectedRow: IDetailAccountMovement;
+  columnFilters: any = [];
+  data = new LocalDataSource();
+  totalItems: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -40,18 +50,56 @@ export class TesofeMovementsComponent extends BasePage implements OnInit {
 
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
-        edit: false,
+        edit: true,
         delete: true,
+        add: false,
         position: 'right',
       },
       columns: TESOFE_MOVEMENTS_COLUMNS,
     };
+    this.dataAcount.count = 0 as any;
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filters.field) {
+              case 'dateMotion':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'deposit':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'withdrawal':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.getMovementsAccount();
+        }
+      });
     this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: () => {
         if (this.no_cuenta) this.getMovementsAccount();
@@ -106,6 +154,9 @@ export class TesofeMovementsComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           this.dataAcount = resp;
+          //console.log(' this.dataAcount -> ', this.dataAcount);
+          this.totalItems = this.dataAcount.count;
+          this.data.load(this.dataAcount.data);
           this.loading = false;
         },
         error: () => {
@@ -123,6 +174,7 @@ export class TesofeMovementsComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       newOrEdit,
       bank,
+      additionalData: { selectedRow: this.selectedRow },
       callback: (next: boolean) => {
         if (next) this.getMovementsAccount();
       },
@@ -166,5 +218,32 @@ export class TesofeMovementsComponent extends BasePage implements OnInit {
         }
       },
     });
+  }
+
+  onRowSelect(event: any) {
+    this.selectedRow = event.data;
+    //console.log(this.selectedRow);
+    this.openModalDetMov(false, this.selectedRow);
+  }
+
+  openModalDetMov(newOrEdit: boolean, details: IDetailAccountMovement) {
+    const descMoneda = this.form.get('desc_moneda').value;
+    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    modalConfig.initialState = {
+      newOrEdit,
+      details,
+      descMoneda,
+      additionalData: { selectedRow: this.selectedRow },
+      callback: (next: boolean) => {
+        //if (next) this.getMovementsAccount();
+      },
+    };
+    this.modalService.show(TesofeDetailsMovementsComponent, modalConfig);
+  }
+
+  formData(doc: any) {
+    console.log('object -> ', doc);
+    this.selectedRow = doc;
+    this.openModal(true, doc);
   }
 }
