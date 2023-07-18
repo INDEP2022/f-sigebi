@@ -12,12 +12,14 @@ import { CuentasSharedComponent } from 'src/app/@standalone/shared-forms/cuentas
 import { AccountBanksSharedComponent } from '../../../../@standalone/shared-forms/account-banks-shared/account-banks-shared.component';
 import { DelegationSharedComponent } from '../../../../@standalone/shared-forms/delegation-shared/delegation-shared.component';
 import { ListBanksComponent } from './list-banks/list-banks.component';
+import { TesofeDetailsMovementsComponent } from './tesofe-details-movements/tesofe-details-movements.component';
 import { TesofeMovementsModalComponent } from './tesofe-movements-modal/tesofe-movements-modal.component';
 
 @NgModule({
   declarations: [
     TesofeMovementsComponent,
     TesofeMovementsModalComponent,
+    TesofeDetailsMovementsComponent,
     ListBanksComponent,
   ],
   imports: [

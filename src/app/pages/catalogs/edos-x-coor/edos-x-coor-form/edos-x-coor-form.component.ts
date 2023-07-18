@@ -9,7 +9,7 @@ import { EdosXCoorService } from 'src/app/core/services/catalogs/edos-x-coor.ser
 import { StageService } from 'src/app/core/services/catalogs/stage.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -63,7 +63,10 @@ export class EdosXCoorFormComponent extends BasePage implements OnInit {
           Validators.maxLength(80),
         ],
       ],
-      stage: [null],
+      stage: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(20)],
+      ],
     });
     if (this.edosXCoor != null) {
       this.edit = true;
