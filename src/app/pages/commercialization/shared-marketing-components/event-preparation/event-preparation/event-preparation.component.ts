@@ -3,12 +3,15 @@ import { FormBuilder } from '@angular/forms';
 //XLSX
 import { sub } from 'date-fns';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { catchError, tap, throwError } from 'rxjs';
+import { catchError, firstValueFrom, map, of, tap, throwError } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventForm } from '../utils/forms/comer-event-form';
 import { EventStadisticsForm } from '../utils/forms/event-stadistics-form';
+import { EventStadisticsDefaultValue } from '../utils/forms/stadistics-default-form';
 import { EventPreparationMain } from './event-preparation-main.component';
 
 const LOTES_TAB = 2;
@@ -45,7 +48,9 @@ export class EventPreparationComponent
   constructor(
     private fb: FormBuilder,
     private parameterModService: ParametersModService,
-    private authService: AuthService
+    private authService: AuthService,
+    private comerEventosService: ComerEventosService,
+    private lotService: LotService
   ) {
     super();
     // TODO: Recibir los parametros
@@ -125,20 +130,32 @@ export class EventPreparationComponent
 
   taskOpenEvent() {
     this.hideCanvas();
-    // TODO: Limpiar estadisticas
+    this.cleanStadistics();
     const params = new FilterParams();
     this.comerEventsListParams.next(params);
   }
 
   /**
+   * LIMPIA_ESTADISTICAS
+   */
+  cleanStadistics() {
+    this.stadisticsForm.patchValue(EventStadisticsDefaultValue);
+  }
+
+  /**
    * ABRIR_EVENTO
    */
-  onOpenEvent() {
+  async onOpenEvent() {
     this.parameters.pValids = 1;
     const user = this.loggedUser.preferred_username;
     const { statusVtaId, eventTpId, id } = this.eventControls;
-    // TODO: IMPLEMENTAR METODO DE VALIDACION DE USUARIO
-    const pass = this.validUser(id.value, user, this.parameters.pDirection);
+    const pass = await this.validUser(
+      id.value,
+      user,
+      this.parameters.pDirection
+    );
+    console.log({ pass });
+
     if (['NDIS', 'CONC'].includes(statusVtaId.value)) {
       if (pass == 0) {
         this.validPermissions(false);
@@ -233,7 +250,17 @@ export class EventPreparationComponent
   /**
    * LLENA_DATOS_ESTADISTICOS
    */
-  fillStadistics() {}
+  fillStadistics() {
+    const { id } = this.eventControls;
+    this.lotService
+      .fillEventStadistics(id.value)
+      .pipe(
+        tap(res => {
+          this.stadisticsForm.patchValue(res);
+        })
+      )
+      .subscribe();
+  }
 
   getSubDates(currentDate: Date) {
     const subDate = sub(currentDate, {
@@ -248,8 +275,13 @@ export class EventPreparationComponent
     this.canvas.main = true;
   }
 
-  validUser(eventId: string | number, user: string, direction: 'I' | 'M') {
-    return 1;
+  async validUser(event: string | number, user: string, address: 'I' | 'M') {
+    return await firstValueFrom(
+      this.comerEventosService.validUser({ event, user, address }).pipe(
+        catchError(() => of(-1)),
+        map(res => res.value)
+      )
+    );
   }
 
   validPermissions(grant: boolean) {
