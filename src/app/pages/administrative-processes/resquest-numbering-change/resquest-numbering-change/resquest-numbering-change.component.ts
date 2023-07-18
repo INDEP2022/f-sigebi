@@ -735,7 +735,7 @@ export class ResquestNumberingChangeComponent
       .subscribe(() => this.getDataTableNumDos());
   }
 
-  getDataTableNumDos() {
+  async getDataTableNumDos() {
     this.dataCamNum = [];
     this.loading = true;
     let params1 = {
@@ -879,7 +879,6 @@ export class ResquestNumberingChangeComponent
           motivo = 'ASEGURADO SEMOVIENTE';
         }
 
-        const data = this.data.getAll();
         let result = this.dataGood.map(async (_g: any) => {
           console.log('aaa', _g);
 
