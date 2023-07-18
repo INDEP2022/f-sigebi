@@ -616,7 +616,6 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
             res(res);
           },
           error: err => {
-            console.log(err)
             res('Error');
           },
         });
@@ -661,17 +660,6 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           '¿Desea continuar?'
         );
         if (response.isConfirmed) {
-          this.survillanceService
-        .fCalculaNume(this.form.get('idProcess').value, this.formBlkControl.get('commisionBanc').value)
-        .subscribe({
-          next: resp => {
-            console.log(resp);
-          },
-          error: err => {
-            console.log(err)
-          },
-        });
-
           const vResul = await this.fCalculaNume(
             this.form.get('idProcess').value,
             this.formBlkControl.get('commisionBanc').value
@@ -679,7 +667,6 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           const process = await this.getProccesNum(
             this.form.get('idProcess').value
           );
-          console.log(vResul)
           this.processService.process(process);
           if (vResul === 'Error') {
             this.alert(
