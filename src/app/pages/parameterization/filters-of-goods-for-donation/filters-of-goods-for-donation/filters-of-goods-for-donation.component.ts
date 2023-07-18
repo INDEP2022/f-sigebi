@@ -82,7 +82,7 @@ export class FiltersOfGoodsForDonationComponent
               delete this.columnFilters[field];
             }
           });
-          //this.params = this.pageFilter(this.params);
+          this.params = this.pageFilter(this.params);
           this.getPagination();
         }
       });

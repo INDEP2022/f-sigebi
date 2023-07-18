@@ -211,14 +211,14 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     let params = {
       ...this.params.getValue(),
     };
-    this.accountMovementService.getAllRatio(params).subscribe({
+    /*this.accountMovementService.getAllRatio(params).subscribe({
       next: resp => {
         console.log(resp);
       },
       error: err => {
         console.log(err);
       },
-    });
+    });*/
   }
 
   getConsecutive(year?: number | string) {
