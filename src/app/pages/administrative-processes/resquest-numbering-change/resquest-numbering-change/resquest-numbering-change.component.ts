@@ -53,19 +53,26 @@ export interface ExampleData1 {
 @Component({
   selector: 'app-resquest-numbering-change',
   templateUrl: './resquest-numbering-change.component.html',
-  styles: [
-    `
-      .row-verde {
-        background-color: green;
-        font-weight: bold;
-      }
+  // styles: [
+  //   `
+  //     .row-verde {
+  //       background-color: green;
+  //       font-weight: bold;
+  //     }
 
-      .row-negro {
-        background-color: black;
-        font-weight: bold;
-      }
-    `,
-  ],
+  //     .row-negro {
+  //       background-color: black;
+  //       font-weight: bold;
+  //     }
+
+  //     .form-group.form-static-label.form-danger label.float-label {
+  //       color: blue;
+  //     }
+
+  //   `,
+  // ],
+
+  styleUrls: ['./resquest-numbering-change.component.scss'],
 })
 export class ResquestNumberingChangeComponent
   extends BasePage

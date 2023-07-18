@@ -162,7 +162,8 @@
         <div class="col-md-3 col-sm-12 col-xs-12" style="display: flex">
           <form-field
             [control]="formaplicationData.get('applicationChangeCashNumber')"
-            label="No. Solicitud">
+            label="No. Solicitud"
+            style="top: -20px">
             <input
               type="text"
               class="form-control"
@@ -191,7 +192,7 @@
             label="Fecha Solicitud">
             <input
               type="text"
-              class="form-control"
+              class="form-control mt-2"
               formControlName="dateRequestChangeNumerary"
               bsDatepicker
               [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
@@ -208,7 +209,8 @@
               bindLabel="usuario"
               (fetchItems)="getUsuario($event)"
               (change)="searchUsuario($event)"
-              control="userRequestChangeNumber">
+              control="userRequestChangeNumber"
+              class="form-control mt-2">
             </ngx-select>
           </form-field>
         </div>
@@ -218,7 +220,7 @@
             label="Cargo">
             <input
               type="text"
-              class="form-control"
+              class="form-control mt-2"
               formControlName="postUserRequestCamnum"
               maxlength="200" />
           </form-field>
@@ -232,7 +234,7 @@
             label="No. Delegacion Solicitante">
             <input
               type="text"
-              class="form-control"
+              class="form-control mt-2"
               formControlName="delegationRequestcamnum"
               maxlength="200" />
           </form-field>
@@ -241,7 +243,9 @@
           <form-field
             [control]="formaplicationData.get('procedureProposal')"
             label="Procedimiento Propuesto">
-            <select class="form-control" formControlName="procedureProposal">
+            <select
+              class="form-control mt-2"
+              formControlName="procedureProposal">
               <option [value]="null">Seleccione un valor</option>
               <option value="LICITACION PUBLICA">LICITACION PUBLICA</option>
               <option value="INVITACION">INVITACION</option>
@@ -261,7 +265,8 @@
               bindLabel="usuario"
               (fetchItems)="getUsuario1($event)"
               (change)="searchUsuario1($event)"
-              control="authorizeUser">
+              control="authorizeUser"
+              class="form-control mt-2">
             </ngx-select>
           </form-field>
         </div>
@@ -274,7 +279,7 @@
             label="Cargo">
             <input
               type="text"
-              class="form-control"
+              class="form-control mt-2"
               formControlName="authorizePostUser" />
           </form-field>
         </div>
@@ -284,7 +289,7 @@
             label="No. Delegacion Autoriza">
             <input
               type="text"
-              class="form-control"
+              class="form-control mt-2"
               formControlName="authorizeDelegation" />
           </form-field>
         </div>
@@ -294,7 +299,7 @@
             label="Fecha Autoriza">
             <input
               type="text"
-              class="form-control"
+              class="form-control mt-2"
               formControlName="authorizeDate"
               bsDatepicker
               [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
