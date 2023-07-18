@@ -417,7 +417,7 @@
                 type="number"
                 class="form-control"
                 formControlName="interestCredited"
-                min="1"
+                min="0"
                 readonly
                 (input)="updateCalculateData()" />
             </form-field>
@@ -430,7 +430,7 @@
                 type="number"
                 class="form-control"
                 formControlName="subTotal"
-                min="1"
+                min="0"
                 readonly
                 (input)="updateCalculateData()" />
             </form-field>
@@ -443,7 +443,7 @@
                 type="number"
                 class="form-control"
                 formControlName="costsAdmon"
-                min="1"
+                min="0"
                 [readonly]="!userChecks"
                 (input)="updateCalculateData()" />
             </form-field>
