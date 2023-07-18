@@ -11,15 +11,22 @@ import { DocReceptionRegisterService } from 'src/app/core/services/document-rece
 import { TranfergoodService } from 'src/app/core/services/ms-transfergood/transfergood.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared';
-import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import {
+  GoodsProcessValidationExtdomService,
+  ITypeMailSelect,
+} from '../services/goods-process-validation-extdom.service';
 
 @Component({
-  selector: 'app-email',
+  selector: 'app-email-good-process-validation',
   templateUrl: './email.component.html',
   styles: [],
 })
-export class EmailAppointmentComponent extends BasePage implements OnInit {
+export class EmailGoodProcessValidationComponent
+  extends BasePage
+  implements OnInit
+{
   email: any;
   report: any;
   form: FormGroup;
@@ -31,9 +38,14 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
   list = new DefaultSelect<{ nombre: string; email: string }>();
   list2 = new DefaultSelect<{ nombre: string; email: string }>();
   isCC: boolean = false;
-  userSelected: any;
+  userSelected: string = '';
   message: string = '';
   asunto: string = '';
+  dataTypeSelect: ITypeMailSelect = {
+    expedientNumber: null,
+    previous: '',
+    wheelNumber: null,
+  };
 
   constructor(
     private modalRef: BsModalRef,
@@ -41,7 +53,8 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
     private user: AuthService,
     private segUserService: SegAcessXAreasService,
     private receptionService: DocReceptionRegisterService,
-    private transferGoodService: TranfergoodService
+    private transferGoodService: TranfergoodService,
+    private svGoodsProcessValidationExtdomService: GoodsProcessValidationExtdomService
   ) {
     super();
   }
@@ -72,7 +85,12 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      CC: [null, [Validators.maxLength(50), Validators.pattern(EMAIL_PATTERN)]],
+      CC: [
+        null,
+        [
+          /**Validators.maxLength(50), Validators.pattern(EMAIL_PATTERN)**/
+        ],
+      ],
       // FECHA_ENV: [null],
       MENSAJE: [
         null,
@@ -85,7 +103,7 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
       PARA: [
         null,
         [
-          Validators.required,
+          // Validators.required,
           // Validators.maxLength(50),
           // Validators.pattern(STRING_PATTERN),
         ],
@@ -95,6 +113,7 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
         null,
         [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
       ],
+      TIPO_MENSAJE: [null],
       // REPORTE: [null],
       // LPARA: [null],
       // DELEGACION: [null],
@@ -105,14 +124,8 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
 
     this.form
       .get('PARA')
-      .patchValue(
-        this.userSelected
-          ? this.userSelected.email
-            ? this.userSelected.email
-            : null
-          : null
-      );
-    console.log(this.form.get('PARA').value, this.userSelected);
+      .patchValue(this.userSelected ? [this.userSelected] : null);
+
     // this.form
     //   .get('FECHA_ENV')
     //   .patchValue(
@@ -133,28 +146,23 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  // getNameRemit(params: ListParams) {
-  //   params['delegationNumber'] = this.delegation;
+  getNameRemit(params: ListParams) {
+    params['delegationNumber'] = this.delegation;
 
-  //   this.segUserService.getNameEmail(params).subscribe({
-  //     next: resp => {
-  //       this.list = new DefaultSelect(resp.data, resp.count);
-  //     },
-  //     error: () => {},
-  //   });
-  // }
+    this.segUserService.getNameEmail(params).subscribe({
+      next: resp => {
+        this.list = new DefaultSelect(resp.data, resp.count);
+      },
+      error: () => {},
+    });
+  }
 
   getNameDist(params: ListParams) {
     params['delegationNumber'] = this.delegation;
-    // if (this.form.get('PARA').value) {
-    //   params['search'] = this.form.get('PARA').value;
-    // }
 
     this.segUserService.getDisNameEmail(params).subscribe({
-      // this.segUserService.getAll(params).subscribe({
       next: resp => {
         this.list2 = new DefaultSelect(resp.data, resp.count);
-        // console.log(this.list2, this.form.get('PARA').value);
       },
       error: () => {},
     });
@@ -180,7 +188,7 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
     //   (del: any) => del.id == delegation
     // )[0].description;
 
-    console.log(PARA);
+    // console.log(PARA);
 
     // const body = {
     //   to: PARA.join(','),
@@ -196,30 +204,49 @@ export class EmailAppointmentComponent extends BasePage implements OnInit {
     // };
     let bodyMail = {
       header: user.toUpperCase(), // encabezado
-      destination: [PARA], // destino
-      copy: CC ? [CC] : [], // copia
+      destination: PARA ? PARA.join(',') : [], // destino
+      copy: [CC], // copia
       subject: ASUNTO, // asunto
       message: MENSAJE, // mensaje
     };
-    this.transferGoodService.sendEmail(bodyMail).subscribe({
-      next: resp => {
-        console.log(resp);
-        this.modalRef.hide();
-        // this.form.get('MENSAJE').patchValue(resp.message);
-        this.alert('success', 'Correo Enviado Correctamente', '');
-      },
-      error: err => {
-        console.log(err);
-        this.alert(
-          'warning',
-          'Error al Enviar',
-          'Ocurrió un Error al Enviar el Correo, Intente Nuevamente'
-        );
-      },
-    });
+    console.log(bodyMail);
+    // this.transferGoodService.sendEmail(bodyMail).subscribe({
+    //   next: resp => {
+    //     console.log(resp);
+    //     this.modalRef.hide();
+    //     // this.form.get('MENSAJE').patchValue(resp.message);
+    //     this.alert('success', 'Correo Enviado Correctamente', '');
+    //   },
+    //   error: err => {
+    //     console.log(err);
+    //     this.alert(
+    //       'warning',
+    //       'Error al Enviar',
+    //       'Ocurrió un Error al Enviar el Correo, Intente Nuevamente'
+    //     );
+    //   },
+    // });
   }
 
   changeName(user: { name: string; email: string }) {
     console.log(user);
+  }
+
+  changeTypeSelected(event: any) {
+    // console.log(event, this.dataTypeSelect);
+    if (event) {
+      if (event.value) {
+        let text =
+          this.svGoodsProcessValidationExtdomService.validTypeMessageMail(
+            event.value,
+            this.dataTypeSelect
+          );
+        this.form.get('MENSAJE').setValue(text);
+      } else {
+        this.form.get('MENSAJE').setValue(null);
+      }
+    } else {
+      this.form.get('MENSAJE').setValue(null);
+    }
   }
 }

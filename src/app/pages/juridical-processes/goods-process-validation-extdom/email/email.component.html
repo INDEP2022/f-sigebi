@@ -21,7 +21,7 @@
                 bindLabel="nombre"
                 [searchable]="false"
                 [searchOnInit]="true"
-                [multiple]="false"
+                [multiple]="true"
                 [control]="'PARA'"
                 (change)="changeName($event)"
                 [labelTemplate]="label"
@@ -38,7 +38,7 @@
             </form-field>
           </div>
           <div class="col-md-12">
-            <form-field [control]="form.get('CC')" label="C&#46;C&#46;">
+            <!-- <form-field [control]="form.get('CC')" label="C&#46;C&#46;">
               <input
                 type="text"
                 class="form-control"
@@ -46,8 +46,8 @@
                 min="1"
                 maxlength="50"
                 oninput="if(this.value.length > 50) this.value = this.value.slice(0, 50)" />
-            </form-field>
-            <!-- <form-field class="w-100" [control]="form.get('USER')">
+            </form-field> -->
+            <form-field class="w-100" [control]="form.get('CC')">
               <ngx-select
                 (fetchItems)="getNameRemit($event)"
                 label="C.C"
@@ -59,7 +59,7 @@
                 [searchable]="false"
                 [searchOnInit]="true"
                 [multiple]="true"
-                [control]="'USER'"
+                [control]="'CC'"
                 (change)="changeName($event)"
                 [labelTemplate]="label"
                 [optionTemplate]="opt">
@@ -72,7 +72,7 @@
                   {{ item.nombre }} - {{ item.email }}
                 </div>
               </ng-template>
-            </form-field> -->
+            </form-field>
           </div>
           <div class="col-md-12">
             <form-field [control]="form.get('ASUNTO')" label="Asunto">
@@ -93,6 +93,20 @@
                 [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
             </form-field>
           </div> -->
+          <div class="col-md-12">
+            <form-field
+              [control]="form.get('TIPO_MENSAJE')"
+              label="Mensaje"
+              (change)="changeTypeSelected($event.target)">
+              <select class="form-control" formControlName="TIPO_MENSAJE">
+                <option [value]="null">Seleccione un valor</option>
+                <option [value]="'P1'">Opción 1</option>
+                <option [value]="'P2'">Opción 2</option>
+                <option [value]="'P3'">Opción 3</option>
+                <option [value]="'P4'">Opción 4</option>
+              </select>
+            </form-field>
+          </div>
           <div class="col-md-12">
             <form-field [control]="form.get('MENSAJE')" label="Mensaje">
               <textarea
