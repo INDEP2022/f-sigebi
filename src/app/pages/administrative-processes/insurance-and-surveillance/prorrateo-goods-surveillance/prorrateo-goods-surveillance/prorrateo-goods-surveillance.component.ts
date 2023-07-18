@@ -180,6 +180,7 @@ export class ProrrateoGoodsSurveillanceComponent
 
   loadModalPolicy() {
     this.form.reset();
+    this.elemento = '';
     this.openModalPolicy();
   }
 
