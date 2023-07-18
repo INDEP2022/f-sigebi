@@ -934,7 +934,9 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
           console.log('res', res);
           this.dataTableMassive = res.bienes;
           this.loading = false;
-          this.alert('warning', 'Advertencias', res.errores.join('\n'));
+          if (res.errores.length > 0) {
+            this.alert('warning', 'Advertencias', res.errores.join('\n'));
+          }
         },
         error: err => {
           console.log('err', err);
