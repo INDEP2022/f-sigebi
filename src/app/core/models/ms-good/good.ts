@@ -870,10 +870,10 @@ export interface IServiceGood {
 }
 
 export interface ISecondIfMC {
-  noPackage: number,
-  noGoodFather: number,
-  encStatus: string,
-  vcScreen: string,
-  user: string,
-  toolbarUser: string
+  noPackage: number;
+  noGoodFather: number;
+  encStatus: string;
+  vcScreen: string;
+  user: string;
+  toolbarUser: string;
 }
