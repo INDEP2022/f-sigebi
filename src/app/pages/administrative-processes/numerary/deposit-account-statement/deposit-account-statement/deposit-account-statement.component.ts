@@ -39,6 +39,7 @@ import { IPupCalculateDevolutionResult } from 'src/app/core/models/ms-parameterg
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { DetailsIndMovementService } from 'src/app/core/services/ms-account-movements/details-ind-movement.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
 import { DetailInterestReturnService } from 'src/app/core/services/ms-deposit/detail-interest-return.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
@@ -48,6 +49,7 @@ import { PaymentServicesService } from 'src/app/core/services/ms-paymentservices
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { formatForIsoDate } from 'src/app/shared/utils/date';
 import { DepositAccountStatementModalComponent } from '../deposit-account-statement-modal/deposit-account-statement-modal.component';
 import { DepositAccountStatementParameterComponent } from '../deposit-account-statement-parameter/deposit-account-statement-parameter.component';
 
@@ -115,6 +117,92 @@ export class DepositAccountStatementComponent
   dateTransfer: Date;
   transferDate: Date;
   checksDevolution: IUserChecks[] = [];
+  ilikeFilters = [
+    'nameindicated',
+    'preliminaryinvestigation',
+    'criminalcause',
+    'bankkey',
+  ];
+  dateFilters = [
+    'interestcalculationdate',
+    'scheduleddatebyconfiscationreturn',
+  ];
+  columnsType = {
+    accountkey: {
+      title: 'Cuenta',
+      type: 'string',
+      sort: false,
+    },
+    devolutionnumber: {
+      title: 'Devolución',
+      type: 'string',
+      sort: false,
+    },
+
+    goodnumber: {
+      title: 'Bien',
+      type: 'string',
+      sort: false,
+    },
+    expedientnumber: {
+      title: 'Expediente',
+      type: 'string',
+      sort: false,
+    },
+    depositnumber: {
+      title: 'Importe',
+      type: 'string',
+      sort: false,
+    },
+    returnamount: {
+      title: 'Importe Cheque',
+      type: 'string',
+      sort: false,
+    },
+    bankkey: {
+      title: 'Banco',
+      type: 'string',
+      sort: false,
+    },
+    coinkey: {
+      title: 'Moneda',
+      type: 'string',
+      sort: false,
+    },
+    interestcalculationdate: {
+      title: 'Fecha de transferencia',
+      type: 'string',
+      sort: false,
+      filter: false,
+      valuePrepareFunction: (value: string) => {
+        return formatForIsoDate(value, 'string');
+      },
+    },
+    scheduleddatebyconfiscationreturn: {
+      title: 'Fecha de corte',
+      type: 'string',
+      sort: false,
+      filter: false,
+      valuePrepareFunction: (value: string) => {
+        return formatForIsoDate(value, 'string');
+      },
+    },
+    nameindicated: {
+      title: 'Nombre indiciado',
+      type: 'string',
+      sort: false,
+    },
+    preliminaryinvestigation: {
+      title: 'Averiguación Previa',
+      type: 'string',
+      sort: false,
+    },
+    criminalcause: {
+      title: 'Causa penal',
+      type: 'string',
+      sort: false,
+    },
+  };
   constructor(
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
@@ -129,9 +217,26 @@ export class DepositAccountStatementComponent
     private expedientService: ExpedientService,
     private detailInterestReturnService: DetailInterestReturnService,
     private paymentServicesService: PaymentServicesService,
-    private authService: AuthService
+    private authService: AuthService,
+    public detailsIndMovementService: DetailsIndMovementService
   ) {
     super();
+  }
+
+  get toReturn() {
+    return this.form ? this.form.get('toReturn').value : 0;
+  }
+
+  get interestCredited() {
+    return this.form ? this.form.get('interestCredited').value : 0;
+  }
+
+  get costsAdmon() {
+    return this.form ? this.form.get('costsAdmon').value : 0;
+  }
+
+  get associatedCosts() {
+    return this.form ? this.form.get('associatedCosts').value : 0;
   }
 
   ngOnInit(): void {
@@ -153,6 +258,7 @@ export class DepositAccountStatementComponent
           }
         },
       });
+
     //this.getGood(new ListParams());
     /*this.paramsActNavigate
       .pipe(takeUntil(this.$unSubscribe))
@@ -208,6 +314,22 @@ export class DepositAccountStatementComponent
         );
       });*/
   }
+
+  public updateCalculateData() {
+    // setTimeout(() => {
+    //   let subTotal = this.toReturn + this.form.get('interestCredited').value;
+    //   this.form.get('subTotal').setValue(subTotal);
+    //   let checkAmount = subTotal;
+    //   if (this.costsAdmon) {
+    //     checkAmount -= this.costsAdmon;
+    //   }
+    //   if (this.associatedCosts) {
+    //     checkAmount -= this.associatedCosts;
+    //   }
+    //   this.form.get('checkAmount').setValue('checkAmount')
+    // }, 500);
+  }
+
   prepareForm() {
     this.form = this.fb.group({
       movementNumber: [null, Validators.required],
@@ -375,18 +497,22 @@ export class DepositAccountStatementComponent
     if (this.expedientFilter.value) {
       body = { ...body, expedientNumber: this.expedientFilter.value };
     }
-    this.accountMovementService
-      .getDetailsInd(params, body)
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: data => {
-          console.log(data.data);
-          this.accountChecksSelect = new DefaultSelect(data.data, data.count);
-        },
-        error: error => {
-          this.accountChecksSelect = new DefaultSelect();
-        },
-      });
+    // this.detailsIndMovementService
+    //   .getAll(params, body)
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe({
+    //     next: data => {
+    //       console.log(data.data);
+    //       this.accountChecksSelect = new DefaultSelect(data.data, data.count);
+    //     },
+    //     error: error => {
+    //       this.accountChecksSelect = new DefaultSelect();
+    //     },
+    //   });
+  }
+
+  changeChecks2(event: any) {
+    console.log(event);
   }
 
   async changeChecks(event: any) {
@@ -572,6 +698,7 @@ export class DepositAccountStatementComponent
       this.userChecks.scheduleddatebyconfiscationreturn
     );
     this.form.controls['cutoffDate'].setValue(formatDateReturn);
+    this.form.controls['expeditionDate'].setValue(formatDateReturn);
     this.form.controls['bank'].setValue(this.userChecks.bankkey);
     if (this.userChecks.accountnumberpayreturn) {
       this.form.controls['bankAccount'].setValue(this.userChecks.bankkey);
@@ -975,7 +1102,8 @@ export class DepositAccountStatementComponent
     if (!this.updatePupReturnsByDates) return;
     if (date) {
       console.log(date);
-
+      this.form.controls['expeditionDate'].setValue(date);
+      // this.form
       if (
         this.form.controls['toReturn'].value &&
         this.form.controls['depositDate'].value &&
@@ -1187,8 +1315,8 @@ export class DepositAccountStatementComponent
     return (
       AccountmvmntEndpoint.BasePath +
       '/api/v1/' +
-      AccountmvmntEndpoint.getDevolutionsBanks +
-      '?diMonedaDeposito=' +
+      AccountmvmntEndpoint.getAccount +
+      '?filter.cveCurrency=' +
       (this.form.get('currency').value ?? 'MN')
     );
   }
@@ -1810,7 +1938,7 @@ export class DepositAccountStatementComponent
     //return data;
   }
 
-  interestCheck() {
+  async interestCheck() {
     let priorInterest: number;
     this.validComplementary();
 
@@ -1820,7 +1948,7 @@ export class DepositAccountStatementComponent
     this.form.controls['expeditionDate'].setValue('');
     this.form.controls['collectionDate'].setValue('');
     this.transferred = '';
-    this.calculateReturn();
+    await this.calculateReturn();
     if ((priorInterest = this.form.controls['interestCredited'].value)) {
       this.alert(
         'warning',
@@ -1832,20 +1960,22 @@ export class DepositAccountStatementComponent
       INTO: blk_dev.no_devolucion
       FROM dual;*/
       this.form.controls['checkType'].setValue('INTERES');
-      this.detailReturn();
-      this.detailInterestReturnService
-        .getById(this.noReturn)
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: resp => {
-            for (let i = 0; i < resp.data.length; i++) {
-              this.interestaccredited = resp.data[i].interest;
-            }
-            this.form.controls['interestCredited'].setValue(
-              this.interestaccredited
-            );
-          },
-        });
+      await this.detailReturn();
+      const resp = await firstValueFrom(
+        this.detailInterestReturnService.getById(this.noReturn).pipe(
+          takeUntil(this.$unSubscribe),
+          catchError(x => of({ data: [] })),
+          map(x => (x ? (x.data ? x.data : []) : []))
+        )
+      );
+      for (let i = 0; i < resp.length; i++) {
+        this.interestaccredited = resp[i].interest;
+      }
+      if (resp.length > 0) {
+        this.form.controls['interestCredited'].setValue(
+          this.interestaccredited
+        );
+      }
     }
     // llamar al servicio de deposit
 

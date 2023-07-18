@@ -7,6 +7,7 @@
           class="btn btn-primary active btn-sm ml-3"
           (click)="loadModal()">
           Nuevo
+          <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
       </div>
     </div>
@@ -39,7 +40,7 @@
           </div>
           <div class="col-md-3">
             <form-field [control]="form.get('desc_moneda')" label="Moneda">
-              <input formControlName="desc_moneda" class="form-control" />
+              <input class="form-control" formControlName="desc_moneda" />
             </form-field>
           </div>
         </div>
@@ -50,14 +51,16 @@
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settings"
-                [source]="dataAcount.data"
+                [source]="data"
+                (userRowSelect)="onRowSelect($event)"
+                (edit)="formData($event.data)"
                 (delete)="deleteQuestion($event.data)">
               </ng2-smart-table>
             </div>
           </div>
           <app-pagination
             [filterParams]="filterParams"
-            [totalItems]="dataAcount.count">
+            [totalItems]="totalItems">
           </app-pagination>
         </div>
       </form>

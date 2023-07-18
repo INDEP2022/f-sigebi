@@ -43,6 +43,7 @@ export class CatalogOfDocumentTypesComponent
         edit: true,
         delete: true,
         position: 'right',
+        width: '10%',
       },
       columns: {
         id: {
@@ -126,10 +127,13 @@ export class CatalogOfDocumentTypesComponent
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (
-        this.onLoadToast('error', error.error.message, ''),
-        (this.loading = false)
-      ),
+      error: error => {
+        this.loading = false;
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 
@@ -137,13 +141,17 @@ export class CatalogOfDocumentTypesComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.documentsServ.remove(id).subscribe({
           next: () => (
-            this.onLoadToast('success', 'Eliminado correctamente', ''),
-            this.getPagination()
+            this.getPagination(),
+            this.onLoadToast(
+              'success',
+              'Tipo Documento',
+              'Borrado Correctamente'
+            )
           ),
           error: err => this.onLoadToast('error', err.error.message, ''),
         });

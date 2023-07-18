@@ -331,6 +331,7 @@ export class GoodsCaptureComponent
           const response = res.data[0].fa_concilia_bien;
           this.numerary = response;
           if (response != 'N') {
+            await this.alertInfo('success', 'El Bien ha sido Conciliado', '');
             conciliate = true;
           }
           if (!conciliate) {

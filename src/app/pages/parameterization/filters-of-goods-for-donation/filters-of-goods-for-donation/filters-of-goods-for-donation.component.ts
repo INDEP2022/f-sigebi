@@ -60,8 +60,17 @@ export class FiltersOfGoodsForDonationComponent
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'id':
-                searchFilter = SearchFilter.EQ;
+              case 'statusId':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'statusDesc':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'tagId':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'tagDesc':
+                searchFilter = SearchFilter.ILIKE;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -73,7 +82,7 @@ export class FiltersOfGoodsForDonationComponent
               delete this.columnFilters[field];
             }
           });
-          this.params = this.pageFilter(this.params);
+          //this.params = this.pageFilter(this.params);
           this.getPagination();
         }
       });
@@ -120,8 +129,10 @@ export class FiltersOfGoodsForDonationComponent
         this.data.refresh();
       },
       error: err => {
-        //this.onLoadToast('error', err.error.message, '');
         this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
       },
     });
   }
