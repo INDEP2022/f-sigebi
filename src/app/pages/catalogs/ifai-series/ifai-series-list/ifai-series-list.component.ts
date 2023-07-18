@@ -31,7 +31,7 @@ export class IfaiSeriesListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = IFAI_SERIE_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
     this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
   }
