@@ -3,40 +3,51 @@
     <h5 class="title">Proceso de Inserción masiva de gastos y numerario</h5>
   </div>
 
-  <div class="text-capitalize" body>
-    <div class="row pt-4">
+  <div body>
+    <div class="row pt-4 mt-4">
       <div class="col-md-3">
-        <a
-          class="btn d-flex align-items-center btn-success btn-sm active"
-          (click)="btnFileExcel.click()"
-          >Abrir archivo de MS Excel 4.0<input
+        <button
+          type="button"
+          class="btn btn-sm btn-success active w-auto ml-4"
+          (click)="btnFileExcel.click()">
+          <input
             #btnFileExcel
             hidden
             type="file"
             accept=".xlsx,.xls"
             (change)="onClickBtnFileExcel($event)" />
+          Abrir Archivo Excel&nbsp;
+          <i class="bi bi-file-earmark-excel-fill"></i>
+        </button>
+        <!-- <a class="btn align-items-center btn-success btn-sm active" (click)="btnFileExcel.click()">Abrir archivo de MS
+          Excel 4.0<input #btnFileExcel hidden type="file" accept=".xlsx,.xls" (change)="onClickBtnFileExcel($event)" />
           <i class="bi bi-file-earmark-excel-fill ml-2"></i>
-        </a>
+        </a> -->
       </div>
       <div class="col-md-3">
-        <a
-          class="btn d-flex align-items-center btn-success btn-sm active"
-          (click)="btnFileCsv.click()"
-          >Abrir archivo de Texto CSV<input
+        <button
+          type="button"
+          class="btn btn-sm btn-success active w-auto ml-4"
+          (click)="btnFileCsv.click()">
+          <input
             #btnFileCsv
             hidden
             type="file"
             accept=".csv"
             (change)="onClickBtnFileExcel($event)" />
+          Abrir Archivo CSV&nbsp;
+          <i class="fa fa-file-csv"></i>
+        </button>
+        <!-- <a class="btn align-items-center btn-success btn-sm active" (click)="btnFileCsv.click()">
           <i class="bi bi-file-earmark-excel-fill ml-2"></i>
-        </a>
+        </a> -->
       </div>
       <div class="col-md-3">
         <button
           [disabled]="isLoadingProcessExtraction"
           (click)="onClickBtnProcessExtraction()"
-          class="btn btn-primary btn-sm active">
-          Proceso De Extracción
+          class="btn btn-sm btn-primary active w-auto ml-4">
+          Proceso de Extracción
           <ng-container *ngIf="isLoadingProcessExtraction">
             <i class="fas fa-spinner fa-spin"></i>
           </ng-container>
@@ -45,7 +56,9 @@
       <div class="col-md-1"></div>
 
       <div class="col-md-2">
-        <button (click)="clean()" class="btn btn-danger btn-sm active w-auto">
+        <button
+          (click)="clean()"
+          class="btn btn-sm btn-danger active w-auto ml-4">
           Limpiar <i class="fas fa-eraser"></i>
         </button>
       </div>
@@ -65,7 +78,7 @@
       </div>
     </div> -->
     <div class="row mt-3 mb-3 pt-4">
-      <form action="" class="form-material text-capitalize" [formGroup]="form">
+      <form action="" class="form-material" [formGroup]="form">
         <div
           style="
             display: flex;
@@ -89,7 +102,7 @@
           </div>
         </div>
         <div class="row mt-4 m-0">
-          <h5 class="title mb-4">Origen de Datos</h5>
+          <h5>Origen de Datos</h5>
           <div class="overflow-auto pt-5">
             <div [formGroup]="formTips" class="d-flex gap-4 mb-3 form-material">
               <div *ngFor="let item of columns; let i = index">
@@ -152,7 +165,7 @@
     </div>
     <div class="row pt-4">
       <div class="col-md-3">
-        <h5 class="title">Previsualización De Datos</h5>
+        <h5 class="title">Previsualización de Datos</h5>
       </div>
       <div class="col-md-7"></div>
       <div class="col-md-2">

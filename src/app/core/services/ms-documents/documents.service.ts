@@ -8,6 +8,7 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import { IClarificationDocumentsImpro } from '../../models/ms-documents/clarification-documents-impro-model';
 import { SeparatorsDocuments } from '../../models/ms-documents/document-separators';
 import {
+  ICatDigitalizationTemp,
   IDocuments,
   IGenerateFolioMassConv,
 } from '../../models/ms-documents/documents';
@@ -254,5 +255,13 @@ export class DocumentsService extends HttpService {
 
   generateFolioMassiveConversion(body: IGenerateFolioMassConv) {
     return this.post('application/generate-folio', body);
+  }
+
+  createCatDigitalizationTmp(body: ICatDigitalizationTemp) {
+    return this.post(DocumentsEndpoints.CapDigiralizationTmp, body);
+  }
+
+  deleteCatDigitalizationTmp(body: Object) {
+    return this.delete(DocumentsEndpoints.CapDigiralizationTmp, body);
   }
 }

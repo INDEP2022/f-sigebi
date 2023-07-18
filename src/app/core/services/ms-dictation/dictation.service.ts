@@ -411,6 +411,20 @@ export class DictationService extends HttpService {
     return this.post(DictationEndpoints.ApplicationPufRef, data);
   }
 
+  vIndDictaminacion(listParams: ListParams) {
+    return this.get<IListResponse<any>>(
+      DictationEndpoints.VIndDictaminacion,
+      listParams
+    );
+  }
+
+  vIndDictaminacion1(listParams: ListParams) {
+    return this.get<IListResponse<any>>(
+      DictationEndpoints.VIndDictaminacion1,
+      listParams
+    );
+  }
+
   applicationPufRefCentral(data: Object) {
     return this.post(DictationEndpoints.ApplicationPufRefCentral, data);
   }

@@ -76,7 +76,10 @@
           </div>
           <div class="row text-center">
             <div class="col">
-              <button type="button" class="btn btn-primary btn-sm active mr-3" (click)="newProposalFn()">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="newProposalFn()">
                 Guardar
                 <i aria-hidden="true" class="fa fa-save"></i>
               </button>
@@ -113,13 +116,13 @@
         <div class="row text-center">
           <div class="col">
             <button
-            type="button"
-            tooltip="Nuevo"
-            containerClass="tooltip-style"
-            class="btn btn-info btn-sm active ml-2 mr-2"
-            (click)="openNewDetail()">
-            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
-          </button>
+              type="button"
+              tooltip="Nuevo"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2"
+              (click)="openNewDetail()">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -130,7 +133,9 @@
           <div class="row">
             <div class="col">
               <div class="col-md-6">
-                <form-field [control]="form2.get('movement')" label="Movimiento">
+                <form-field
+                  [control]="form2.get('movement')"
+                  label="Movimiento">
                   <input
                     type="number"
                     [min]="0"
@@ -150,7 +155,10 @@
           </div>
           <div class="row text-center">
             <div class="col">
-              <button type="button" class="btn btn-primary btn-sm active mr-3" (click)="newDetailFn()">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="newDetailFn()">
                 Guardar
                 <i aria-hidden="true" class="fa fa-save"></i>
               </button>

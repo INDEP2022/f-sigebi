@@ -1812,7 +1812,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       this.alert('warning', 'Debe especificar el tipo de paquete', '');
     } else if (this.form.get('packageType').value != 3) {
       if (this.warehouse.value == null) {
-        this.warehouse.markAsTouched()
+        this.warehouse.markAsTouched();
         this.alert('warning', 'Debe ingresar el Almacén', '');
       } else {
         this.newCvePackage();
@@ -2252,7 +2252,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.newDataFilled = true;
   }
 
-  updatePackage(){
+  updatePackage() {
     const modelUpdate: Partial<IPackage> = {
       paragraph1: this.paragraph1.value,
       paragraph2: this.paragraph2.value,
