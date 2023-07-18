@@ -1248,6 +1248,7 @@ $background-checkbox-bg-color: $primary, $secondary, $success, $info, $warning,
 
         .form-control {
           border-bottom-color: nth($matrial-color, $i);
+          min-width: 80px;
         }
       }
     }
