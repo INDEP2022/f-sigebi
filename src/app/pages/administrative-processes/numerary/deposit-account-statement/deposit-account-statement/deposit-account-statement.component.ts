@@ -117,6 +117,16 @@ export class DepositAccountStatementComponent
   dateTransfer: Date;
   transferDate: Date;
   checksDevolution: IUserChecks[] = [];
+  ilikeFilters = [
+    'nameindicated',
+    'preliminaryinvestigation',
+    'criminalcause',
+    'bankkey',
+  ];
+  dateFilters = [
+    'interestcalculationdate',
+    'scheduleddatebyconfiscationreturn',
+  ];
   columnsType = {
     accountkey: {
       title: 'Cuenta',
@@ -159,11 +169,11 @@ export class DepositAccountStatementComponent
       type: 'string',
       sort: false,
     },
-
     interestcalculationdate: {
       title: 'Fecha de transferencia',
       type: 'string',
       sort: false,
+      filter: false,
       valuePrepareFunction: (value: string) => {
         return formatForIsoDate(value, 'string');
       },
@@ -172,12 +182,23 @@ export class DepositAccountStatementComponent
       title: 'Fecha de corte',
       type: 'string',
       sort: false,
+      filter: false,
       valuePrepareFunction: (value: string) => {
         return formatForIsoDate(value, 'string');
       },
     },
     nameindicated: {
       title: 'Nombre indiciado',
+      type: 'string',
+      sort: false,
+    },
+    preliminaryinvestigation: {
+      title: 'Averiguación Previa',
+      type: 'string',
+      sort: false,
+    },
+    criminalcause: {
+      title: 'Causa penal',
       type: 'string',
       sort: false,
     },
