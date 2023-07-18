@@ -1315,10 +1315,9 @@ export class DepositAccountStatementComponent
     return (
       AccountmvmntEndpoint.BasePath +
       '/api/v1/' +
-      AccountmvmntEndpoint.getDevolutionsBanks +
-      (this.form.get('currency').value
-        ? '/' + this.form.get('currency').value
-        : '/MN')
+      AccountmvmntEndpoint.getAccount +
+      '?filter.cveCurrency=' +
+      (this.form.get('currency').value ?? 'MN')
     );
   }
 

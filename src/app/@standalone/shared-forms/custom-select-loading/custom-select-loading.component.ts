@@ -27,6 +27,7 @@ import {
   Subject,
   switchMap,
   takeUntil,
+  tap,
 } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -199,6 +200,13 @@ export class CustomSelectWidthLoading
       })
       .pipe(
         takeUntil(this.destroy$),
+        tap((x: any) => {
+          if (x && x.count) {
+            this.totalItems = x.count;
+          } else {
+            this.totalItems = 0;
+          }
+        }),
         catchError(() => of(this.items))
       );
   }
@@ -274,6 +282,7 @@ export class CustomSelectWidthLoading
           this.isLoading = false;
           if (resp) {
             this.items = resp;
+
             if (resp.length === 1) {
               this.getObject.emit(resp[0]);
             }

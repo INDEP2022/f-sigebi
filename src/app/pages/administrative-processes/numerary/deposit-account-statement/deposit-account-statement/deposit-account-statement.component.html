@@ -507,13 +507,12 @@
               [load]="userChecks != null"
               [form]="form"
               [readonly]="!userChecks"
-              paramLimitName="perPage"
               formControlName="bankAccount"
               label="Cuenta Bancaria"
               [path]="pathBankAccount"
-              value="cve_cuenta"
-              bindLabel="cve_cuenta"
-              paramSearch="filter.cve_cuenta"
+              value="cveAccount"
+              bindLabel="cveAccount"
+              paramSearch="filter.cveAccount"
               prefixSearch="$eq"
               (valueChange)="changeCveCuenta($event)">
             </ng-custom-select-loading>
