@@ -151,7 +151,7 @@ export class MaintenanceMailConfigurationComponent
     this.emailService.deleteSendMail(id).subscribe({
       next: () => {
         this.getEmailSend(),
-          this.alert('success', 'Registro de estado', 'Borrado Correctamente');
+          this.alert('success', 'Registro Eliminado Correctamente', '');
       },
       error: error => {
         this.alert(
