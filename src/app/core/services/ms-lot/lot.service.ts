@@ -37,4 +37,8 @@ export class LotService extends HttpService {
   fillEventStadistics(event: string | number) {
     return this.get('apps/fill-data-statistics/event/' + event);
   }
+  getByLotEventPhoto(good: number, params: ListParams) {
+    const route = `${LotEndpoints.GoodByLotsEvent}=${good}`;
+    return this.get(route, params);
+  }
 }

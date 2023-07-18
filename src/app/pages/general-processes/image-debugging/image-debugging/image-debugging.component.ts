@@ -37,6 +37,7 @@ import { DictationService } from 'src/app/core/services/ms-dictation/dictation.s
 import { AttribGoodBadService } from 'src/app/core/services/ms-good/attrib-good-bad.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
 import { GoodPhotoService } from 'src/app/core/services/ms-photogood/good-photo.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
@@ -100,7 +101,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   goodChange: number = 0;
   bodyGoodCharacteristics: ICharacteristicsGoodDTO = {};
   goodsAll: IGood[] = [];
-  goodO: IGood;
+  goodO: IGood = {};
   showPhoto = false;
   loadTypes = false;
   actualGoodNumber: number = null;
@@ -295,6 +296,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private goodService: GoodService,
     private serviceDeleg: DelegationService,
+    private lotService: LotService,
     private subdelegationService: SubdelegationService,
     private georeferencieService: SurvillanceService,
     private statusScreenService: StatusXScreenService,
@@ -577,7 +579,6 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
           );
         },
       });
-    await this.pupInsertGeoreferencia();
   }
 
   clearFilter() {
@@ -1223,40 +1224,6 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     // this.disabledBienes = false;
   }
 
-  async pupInsertGeoreferencia() {
-    let tipoBien = 1;
-    if (this.latitud.value && this.longitud.value) {
-      if (this.numberGood.value) {
-        const response = await firstValueFrom(
-          this.georeferencieService
-            .getGeoreferencieObjectById(this.numberGood.value)
-            .pipe(catchError(x => of(null)))
-        );
-        if (response) {
-          await firstValueFrom(
-            this.georeferencieService.putGeoreferencieObject({
-              id: this.numberGood.value,
-              georefLatitude: this.latitud.value,
-              georefLongituded: this.longitud.value,
-              typeId: this.type.value,
-              georeferenceId: '1',
-            })
-          );
-        } else {
-          await firstValueFrom(
-            this.georeferencieService.postGeoreferencieObject({
-              id: this.numberGood.value,
-              georefLatitude: this.latitud.value,
-              georefLongituded: this.longitud.value,
-              typeId: this.type.value,
-              georeferenceId: '1',
-            })
-          );
-        }
-      }
-    }
-  }
-
   getGoods(ssssubType: IGoodSssubtype) {
     // this.good = ssssubType.numClasifGoods;
   }
@@ -1407,12 +1374,8 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       this.location.back();
     }
   }
-  getComerGoodAll(data: any) {
-    //console.log(params);
-    console.log(data);
-    const params = new ListParams();
-    params['filter.goodNumber'] = `$eq:${data.id}`;
-    this.comerEventService.getAllFilterComerGood(params).subscribe({
+  getComerGoodAll(id: number) {
+    this.lotService.getByLotEventPhoto(id, this.params.getValue()).subscribe({
       next: resp => {
         this.lot = resp;
         console.log(resp);
@@ -1422,39 +1385,15 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       },
     });
   }
+  setGood(good: IGood) {
+    this.numberGood.setValue(good.id);
+    this.fileNumber.setValue(good.fileNumber);
+    this.descripcion.setValue(good.description);
+    this.idLot.setValue(good.lotNumber);
+  }
 
-  // idEvent(datos: any) {
-  //   this.getIdLot(datos);
-  // }
-
-  // getIdLot(data: any) {
-  //   const datos: any = {};
-  //   this.comerEventService.getLotId(data.lotId).subscribe({
-  //     next: resp => {
-  //       this.comerEventService.geEventId(resp.eventId).subscribe({
-  //         next: resp => {
-  //           console.log(resp);
-  //           //this.form.controls['idEvent'].setValue(resp.id);
-  //           this.eventIdSelected = new DefaultSelect([resp], 1);
-  //           this.form.controls['idEvent'].setValue(resp.id);
-  //         },
-  //         error: error => {
-  //           console.log(error);
-  //           this.eventIdSelected = new DefaultSelect();
-  //         },
-  //       });
-  //     },
-  //     error: error => {
-  //       console.log(error);
-  //       //this.lotIdSelected = new DefaultSelect();
-  //     },
-  //   });
-  // }
   searchExp(id: number | string) {
     if (!id) return;
-    // this.isSearch = true;
-    // this.isDisabledExp = true;
-    // this.onLoadExpedientData();
     this.params.getValue().page = 1;
     this.loading = true;
     this.goodService.getByExpedient(id, this.params.getValue()).subscribe({
@@ -1472,19 +1411,6 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
               vc_pantalla: 'FDEPURAFOTOS',
               proceso_ext_dom: good.extDomProcess ?? '',
             };
-            console.log(body);
-            // this.dictationServ.checkGoodAvaliable(body).subscribe({
-            //   next: state => {
-            //     good.est_disponible = state.est_disponible;
-            //     good.v_amp = state.v_amp ? state.v_amp : null;
-            //     good.pDiDescStatus = state.pDiDescStatus;
-            //     // this.desc_estatus_good = state.pDiDescStatus ?? '';
-            //   },
-            //   error: () => {
-            //     this.loading = false;
-            //     resolve(null);
-            //   },
-            // });
           });
         });
 
@@ -1497,44 +1423,21 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
         console.log(err);
       },
     });
-
-    // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-
-    // });
   }
 
-  // getEvent(params?: ListParams) {
-  //   params['filter.event.statusvtaId'] = `$ilike:${params.text}`;
-  //   params['filter.event.id'] = `$eq:${this.idEvent}`;
-  //   this.comerEventService.getAllFilterComerGood(params).subscribe({
-  //     next: data => {
-  //       data.data.map(data => {
-  //         data.description = `${data.event}- ${data.event.statusvtaId}`;
-  //         return data;
-  //       });
-  //       this.eventIdSelected = new DefaultSelect(data.data, data.count);
-  //     },
-  //     error: () => {
-  //       this.eventIdSelected = new DefaultSelect();
-  //     },
-  //   });
-  // }
-  // getLot(params?: ListParams) {
-  //   params['filter.description'] = `$ilike:${params.text}`;
-  //   params['filter.lotId'] = `$eq:${this.idLot}`;
-  //   this.comerEventService.getAllFilterComerGood(params).subscribe({
-  //     next: data => {
-  //       data.data.map(data => {
-  //         data.description = `${data.lotId}- ${data.description}`;
-  //         return data;
-  //       });
-  //       this.lotIdSelected = new DefaultSelect(data.data, data.count);
-  //     },
-  //     error: () => {
-  //       this.lotIdSelected = new DefaultSelect();
-  //     },
-  //   });
-  // }
+  getEvent(id: number) {
+    this.comerEventService.getAllFilterComerGood(id).subscribe({
+      next: data => {
+        data.data.map(data => {
+          return data;
+        });
+      },
+      error: () => {
+        console.error('error');
+      },
+    });
+  }
+
   getImageGood() {
     this.loading = true;
     const formDatra: Object = {
@@ -1568,31 +1471,17 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       },
     });
   }
-  getExpedient(id: string | number) {
-    // params['filter..goodId.description'] = `$ilike:${params.text}`;
-    let params = new ListParams();
-    params['filter.fileNumber'] = `$eq:${this.fileNumber}`;
-    this.goodService.getByExpedient(id, params).subscribe({
-      next: data => {
-        data.data.map(data => {
-          data.description = `${data.fileNumber}- ${data.goodDescription}`;
-          return data;
-        });
-        this.expedientSelected = new DefaultSelect(data.data, data.count);
-      },
-      error: () => {
-        this.expedientSelected = new DefaultSelect();
-      },
-    });
-  }
+
   getByIdGood(id: number | string) {
     this.goodService.getById(id).subscribe({
-      next: (data: IGood) => {
+      next: (data: any) => {
         this.goodO = data;
-        console.log(this.goodO);
-        this.fileNumber.setValue(this.good.fileNumber);
-        // this.noExpedient = this.good.fileNumber
-        // this.fio
+        this.noExpedient = data.fileNumber;
+        console.log(this.noExpedient);
+        this.searchExp(data.fileNumber);
+        this.getComerGoodAll(this.form.value.noBien);
+        this.getEvent(this.goodO.lotNumber);
+        this.setGood(this.goodO);
       },
       error: error => {
         console.error('no existe el bien');
