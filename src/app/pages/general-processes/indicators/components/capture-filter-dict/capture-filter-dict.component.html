@@ -23,9 +23,7 @@
     </form-field>
 
     <form-field
-      *ngIf="
-        !isReceptionAndDelivery && !isReceptionStrategies && !isConsolidated
-      "
+      *ngIf="!isReceptionStrategies"
       [control]="form.get('fechaTurno')"
       label="Fecha Turnado"
       class="col-md-3 mt-3">
@@ -37,9 +35,7 @@
     </form-field>
 
     <form-field
-      *ngIf="
-        !isReceptionAndDelivery && !isReceptionStrategies && !isConsolidated
-      "
+      *ngIf="!isReceptionStrategies"
       [control]="form.get('fechaDesahogo')"
       label="Fecha Desahogo"
       class="col-md-3 mt-3">
@@ -48,6 +44,20 @@
         class="form-control"
         bsDatepicker
         formControlName="fechaDesahogo" />
+    </form-field>
+
+    <form-field
+      *ngIf="isReceptionStrategies"
+      class="col-md-6 mt-3"
+      [control]="form.get('tipoEvento')">
+      <ngx-select
+        [data]="typesEvents"
+        [form]="form"
+        value="value"
+        bindLabel="label"
+        label="Tipo Evento"
+        [control]="'tipoEvento'">
+      </ngx-select>
     </form-field>
   </div>
 
@@ -58,7 +68,8 @@
       [delegationField]="'cordinador'"
       [labelDelegation]="'Cordinador Regional'"
       [showSubdelegation]="false"
-      [delegationChange]="false"></app-delegation-shared>
+      [delegationChange]="false"
+      (emitDelegation)="changeDelegation($event)"></app-delegation-shared>
     <app-user-shared
       class="col-md-6"
       [form]="form"
@@ -68,12 +79,16 @@
       (change)="onChangeUser($event)"></app-user-shared>
   </div>
 
-  <div class="row" *ngIf="!isReceptionStrategies && !isConsolidated">
+  <div class="row">
     <app-transferente-shared
+      *ngIf="!isReceptionStrategies"
       class="col-md-4"
       [transferentField]="'transferente'"
       [form]="form"></app-transferente-shared>
-    <form-field [control]="form.get('emisora')" class="col-md-4 mt-3">
+    <form-field
+      *ngIf="!isReceptionStrategies"
+      [control]="form.get('emisora')"
+      class="col-md-4 mt-3">
       <ngx-select
         (fetchItems)="getStations($event)"
         [data]="stations"
@@ -85,7 +100,10 @@
         (change)="onStationsChange($event)">
       </ngx-select>
     </form-field>
-    <form-field class="col-md-4 mt-3" [control]="form.get('autoridad')">
+    <form-field
+      *ngIf="!isReceptionStrategies"
+      class="col-md-4 mt-3"
+      [control]="form.get('autoridad')">
       <ngx-select
         (fetchItems)="getAutoritys($event)"
         [data]="autoritys"
@@ -98,14 +116,16 @@
       </ngx-select>
     </form-field>
   </div>
-  <div class="row" *ngIf="!isReceptionAndDelivery">
+  <div class="row">
     <form-field
+      *ngIf="!isReceptionStrategies"
       [control]="form.get('numeroVolante')"
       label="No. Volante"
       class="col-md-4 mt-3">
       <input type="text" class="form-control" formControlName="numeroVolante" />
     </form-field>
     <form-field
+      *ngIf="!isReceptionStrategies"
       [control]="form.get('fechaVolante')"
       label="Fecha Volante"
       class="col-md-4 mt-3">
@@ -115,24 +135,35 @@
         bsDatepicker
         formControlName="fechaVolante" />
     </form-field>
-    <form-field class="col-md-4 mt-3" [control]="form.get('tipoVolante')">
+
+    <form-field
+      *ngIf="!isReceptionStrategies"
+      class="col-md-4 mt-3"
+      [control]="form.get('tipoVolante')">
       <ngx-select
         [data]="dataSelect"
         [form]="form"
         value="value"
         bindLabel="label"
-        label="Tipo volante"
+        label="Tipo Volante"
         [control]="'tipoVolante'">
       </ngx-select>
     </form-field>
   </div>
   <div class="row">
     <div class="col-md-12">
-      <button class="btn btn-primary btn-sm active mr-3" (click)="consult()">
+      <button class="btn btn-primary btn-sm active m-3" (click)="consult()">
         Consultar
         <i class="bx bx-search-alt bx-sm float-icon"></i>
       </button>
-      <button class="btn btn-primary active btn-sm mr-3" (click)="report()">
+      <button class="btn btn-danger btn-sm active mr-3" (click)="clean()">
+        Limpiar <i class="fas fa-eraser"> </i>
+      </button>
+      <button
+        *ngIf="!isReceptionStrategies"
+        type="button"
+        class="btn btn-primary active btn-sm"
+        (click)="report()">
         Reporte <i class="bx bx-printer bx-sm float-icon"></i>
       </button>
       <button class="btn btn-sm btn-success active" (click)="export()">
