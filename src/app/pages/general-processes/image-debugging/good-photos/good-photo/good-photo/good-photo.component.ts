@@ -143,4 +143,7 @@ export class GoodPhotoComponent extends BasePage implements OnInit {
     this.subscription.unsubscribe();
     // this.sub.unsubscribe();
   }
+  onFileChange(event: any) {
+    console.log(event);
+  }
 }

@@ -80,6 +80,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   filterParams = new FilterParams();
   newLimit = new FormControl(1);
   totalItems = 0;
+  totalItemsPhotos = 0;
   count = 0;
   goods: any[];
   delegacion: number;
