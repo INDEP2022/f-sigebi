@@ -103,9 +103,7 @@ export class ProrrateoGoodSurveillanceModalComponent
     });
   }
   confirm() {
-    console.log('Prueba ', this.form);
     if (this.form.invalid) return;
-    alert('Entra al if');
     if (this.newOrEdit) {
       this.putGood();
     } else {
@@ -124,16 +122,9 @@ export class ProrrateoGoodSurveillanceModalComponent
     model.factorCostDaily = this.form.get('factorCostDaily').value;
     model.amountNoteCredit = this.form.get('amountNoteCredit').value;
     model.responsibleShort = this.user;
-    //model.registrationNumber = this.data.sumAssured;
     model.policyKeyId = this.keyA;
     model.beginningDateId = this.dateIni;
-    //model.currencySaKey = this.data.sumAssured;
     model.entryDate = new Date();
-    //model.process = this.data.sumAssured;
-    //this.policyService.putPolicyGood(this.form.value).subscribe({
-    console.log('Nota: ', this.data.amountNoteCredit);
-    console.log('Dai: ', this.data.factorCostDaily);
-    console.log('MODEL: ', model);
     this.policyService.putPolicyGood(model).subscribe({
       next: () => {
         this.handleSuccess();
@@ -161,13 +152,9 @@ export class ProrrateoGoodSurveillanceModalComponent
     model.factorCostDaily = this.form.get('factorCostDaily').value;
     model.amountNoteCredit = this.form.get('amountNoteCredit').value;
     model.responsibleShort = this.user;
-    //model.registrationNumber = this.data.sumAssured;
     model.policyKeyId = this.keyA;
     model.beginningDateId = String(this.dateIni);
-    //model.currencySaKey = this.data.sumAssured;
     model.entryDate = new Date();
-    //model.process = this.data.sumAssured;
-    //this.policyService.putPolicyGood(this.form.value).subscribe({
     console.log('MODEL: ', model);
     this.policyService.postPolicyGood(model).subscribe({
       next: () => {
