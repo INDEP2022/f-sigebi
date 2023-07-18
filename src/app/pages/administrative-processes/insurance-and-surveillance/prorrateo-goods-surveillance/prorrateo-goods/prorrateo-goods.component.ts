@@ -138,7 +138,6 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
       next: response => {
         let lista = [];
         this.totalItems = response.count;
-        console.log('this.totalItems: ', this.totalItems);
         for (let i = 0; i < response.data.length; i++) {
           lista.push(response.data[i].Goods);
           const dueDate = new Date();
