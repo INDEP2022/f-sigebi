@@ -45,7 +45,7 @@
                   bindLabel="transfer"
                   value="password"
                   control="claveTrans"
-                  label="Trans."
+                  label="Clave Transferente"
                   [searchOnInit]="true"
                   [showTooltip]="true"
                   termMaxLength="30">
@@ -58,7 +58,7 @@
             <div>
               <form-field
                 [control]="actaRecepttionForm.get('administra')"
-                label="Conv.">
+                label="Conversión">
                 <ng-select formControlName="administra" class="form-control">
                   <ng-option
                     *ngFor="let item of arrayDele"
