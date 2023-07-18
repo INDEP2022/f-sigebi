@@ -6,7 +6,7 @@ import { PolicyService } from 'src/app/core/services/ms-policy/policy.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared';
 import { GoodsRequestModalComponent } from './goods-request-modal/goods-request-modal.component';
-import { ProrrateoGoodSurveillancePolicyModalComponent } from './prorrateo-good-surveillance-policy-modal/prorrateo-good-surveillance-policy-modal.component';
+//import { ProrrateoGoodSurveillancePolicyModalComponent } from './prorrateo-good-surveillance-policy-modal/prorrateo-good-surveillance-policy-modal.component';
 
 @Component({
   selector: 'app-prorrateo-goods-surveillance',
@@ -182,15 +182,15 @@ export class ProrrateoGoodsSurveillanceComponent
   }
 
   openModalPolicy() {
-    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
-    modalConfig.initialState = {
-      Elemento: { Elemento: this.elemento },
-      callback: (next: boolean) => {},
-    };
-    this.modalService.show(
-      ProrrateoGoodSurveillancePolicyModalComponent,
-      modalConfig
-    );
+    // const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    // modalConfig.initialState = {
+    //   Elemento: { Elemento: this.elemento },
+    //   callback: (next: boolean) => {},
+    // };
+    // this.modalService.show(
+    //   ProrrateoGoodSurveillancePolicyModalComponent,
+    //   modalConfig
+    // );
   }
 
   getProcess(PolicyKey: string) {
