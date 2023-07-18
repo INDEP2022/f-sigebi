@@ -53,19 +53,26 @@ export interface ExampleData1 {
 @Component({
   selector: 'app-resquest-numbering-change',
   templateUrl: './resquest-numbering-change.component.html',
-  styles: [
-    `
-      .row-verde {
-        background-color: green;
-        font-weight: bold;
-      }
+  // styles: [
+  //   `
+  //     .row-verde {
+  //       background-color: green;
+  //       font-weight: bold;
+  //     }
 
-      .row-negro {
-        background-color: black;
-        font-weight: bold;
-      }
-    `,
-  ],
+  //     .row-negro {
+  //       background-color: black;
+  //       font-weight: bold;
+  //     }
+
+  //     .form-group.form-static-label.form-danger label.float-label {
+  //       color: blue;
+  //     }
+
+  //   `,
+  // ],
+
+  styleUrls: ['./resquest-numbering-change.component.scss'],
 })
 export class ResquestNumberingChangeComponent
   extends BasePage
@@ -606,7 +613,6 @@ export class ResquestNumberingChangeComponent
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getDataTableDos();
         }
       });
     this.params
@@ -615,7 +621,7 @@ export class ResquestNumberingChangeComponent
   }
 
   getDataTableDos() {
-    this.loading = true;
+    //this.loading = true;
     this.dataGood = [];
 
     let params = {
@@ -653,9 +659,15 @@ export class ResquestNumberingChangeComponent
     } else {
       params['filter.status'] = '';
     }
+    let alertShown = false;
     if (this.form.get('type').value != null)
       this.goodServices.getByExpedientAndParams__(params).subscribe({
         next: async (response: any) => {
+          this.alert(
+            'info',
+            'Se mostraran los datos en la tabla BIENES X TIPO',
+            ''
+          );
           let result = response.data.map(async (item: any) => {
             let obj = {
               vcScreen: 'FACTADBSOLCAMNUME',
@@ -679,11 +691,13 @@ export class ResquestNumberingChangeComponent
         },
         error: err => {
           console.log('error', err);
-          this.loading = false;
-          this.alert('error', 'No se encontraron registros', '');
+          if (!alertShown) {
+            this.alert('error', 'No se Encontraron Registros', '');
+            alertShown = true; // Marcar el flag como true después de mostrar el mensaje
+          }
         },
       });
-    this.loading = false;
+    //this.loading = false;
   }
   getDataTableNum() {
     this.totalItems1 = 0;
@@ -739,8 +753,8 @@ export class ResquestNumberingChangeComponent
       },
       error: err => {
         console.log('ERROR', err);
+        this.alert('error', 'No se Encontraron Registros', '');
         this.loading = false;
-        this.alert('error', 'No se encontraron registros', '');
       },
     });
     this.loading = false;
@@ -814,13 +828,11 @@ export class ResquestNumberingChangeComponent
         },
         error: err => {
           this.loading = false;
-          this.warningAlert('No se creo el registro');
+          this.warningAlert('No se Creo el Registro');
         },
       });
     } else {
-      this.warningAlert(
-        'Debe seleccionar un registro en la tabla Bien por tipo'
-      );
+      this.warningAlert('Debe seleccionar un Registro en la tabla Bien x Tipo');
     }
   }
   pasarTodo() {
@@ -881,12 +893,12 @@ export class ResquestNumberingChangeComponent
           },
           error: err => {
             this.loading = false;
-            this.handleSuccess('No se creo el registro');
+            this.handleSuccess('No se Creo el Registro');
           },
         });
       }
     } else {
-      this.warningAlert('No hay registro en la tabla Bien por tipo');
+      this.warningAlert('No hay Registro en la tabla Bien x Tipo');
     }
   }
   quitarTodo() {
@@ -897,13 +909,18 @@ export class ResquestNumberingChangeComponent
     ).then(question => {
       if (question.isConfirmed) {
         if (this.dataCamNum.length != 0) {
+          console.log(this.dataCamNum);
           this.loading = true;
           this.numeraryService
             .DeleteAllCamNum(this.dataCamNum[0].applicationChangeCashNumber)
             .subscribe({
               next: async (response: any) => {
-                this.getDataTableNum();
-                this.deleteAlert();
+                this.dataCamNum = [];
+                this.data1.refresh();
+                this.data1.load([]);
+                this.totalItems1 = 0;
+                this.alert('success', 'Registros Eliminados', '');
+
                 this.loading = false;
               },
               error: err => {
@@ -1002,7 +1019,9 @@ export class ResquestNumberingChangeComponent
         console.log(this.dataGood[index].expediente);
         if (this.dataGood[index].expediente.id == null) {
           console.log(this.dataGood[index].expediente.id);
-          message = 'El bien NO tiene Número de Expediente';
+          message =
+            'El bien NO tiene Número de Expediente' +
+            this.dataGood[index].expediente.id;
           this.handleSuccess(message);
         }
 
@@ -1022,7 +1041,7 @@ export class ResquestNumberingChangeComponent
           this.handleSuccess(message);
         }
 
-        if (this.dataGood[index].expedienteid == null) {
+        if (this.dataGood[index].expediente.id == null) {
           message = 'El bien NO tiene Número de Expediente';
           this.handleSuccess(message);
         }
@@ -1199,7 +1218,7 @@ export class ResquestNumberingChangeComponent
     this.alert('warning', message, '');
   }
   successAlert() {
-    this.alert('success', 'Registro guardado', '');
+    this.alert('success', 'Registro Guardado', '');
   }
 
   deleteAlert() {
@@ -1213,7 +1232,7 @@ export class ResquestNumberingChangeComponent
       delegation: [null],
       warehouse: [null],
       vault: [null],
-      type: [null],
+      type: [null, Validators.required],
     });
   }
 
