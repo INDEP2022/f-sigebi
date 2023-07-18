@@ -6,7 +6,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IOpinion } from 'src/app/core/models/catalogs/opinion.model';
 import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
@@ -25,10 +25,12 @@ export class OpinionsListComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
+  goBack: boolean = true;
 
   constructor(
     private opinionService: OpinionService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private modalRef: BsModalRef
   ) {
     super();
     this.settings.columns = OPINION_COLUMNS;
@@ -64,6 +66,12 @@ export class OpinionsListComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDeductives());
+    console.log(this.goBack);
+  }
+
+  goBackRelation() {
+    this.goBack = true;
+    this.modalRef.hide();
   }
 
   getDeductives() {

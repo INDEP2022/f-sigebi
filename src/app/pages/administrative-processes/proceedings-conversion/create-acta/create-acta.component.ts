@@ -223,11 +223,14 @@ export class CreateActaComponent extends BasePage implements OnInit {
     const miCadenaAnio = anio + '';
     const miSubcadena = miCadenaAnio.slice(2, 5);
 
-    const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${cveReceived}/${consec
+    let consec_ = consec.toString().padStart(4, '0');
+    if (consec_.length > 4) {
+      consec_ = consec_.toString().slice(0, 4);
+    }
+
+    const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${cveReceived}/${consec_}/${miSubcadena
       .toString()
-      .padStart(4, '0')}/${miSubcadena.toString().padStart(2, '0')}/${mes.value
-      .toString()
-      .padStart(2, '0')}`;
+      .padStart(2, '0')}/${mes.value.toString().padStart(2, '0')}`;
     console.log(cveActa);
 
     if (cveActa) {

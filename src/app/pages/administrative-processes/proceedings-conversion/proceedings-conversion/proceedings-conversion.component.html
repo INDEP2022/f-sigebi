@@ -129,13 +129,13 @@
                       </div> -->
                     </div>
                     <div class="row m-3">
-                      <div class="col-6"></div>
-                      <div class="col-md-6 text-end">
+                      <div class="col-5"></div>
+                      <div class="col-md-7 text-end">
                         <button
                           (click)="agregarActa()"
                           type="button"
                           class="btn btn-info active btn-sm mr-3">
-                          Agregar
+                          Nueva Acta
                           <i class="bx bx-plus bx-sm float-icon"></i>
                         </button>
                         <button
@@ -144,6 +144,13 @@
                           (click)="searchActas()">
                           Estatus Actas
                           <i class="bx bx-search bx-sm float-icon"></i>
+                        </button>
+                        <button
+                          (click)="cleanActa()"
+                          type="button"
+                          class="btn btn-danger active btn-sm mr-3">
+                          Limpiar
+                          <i class="fa fa-eraser" aria-hidden="true"></i>
                         </button>
                         <!-- <button
                           [disabled]="!actasDefault"
@@ -512,7 +519,7 @@
                 </div> -->
                 <div class="m-3">
                   <button
-                    class="btn btn-primary btn-sm active"
+                    class="btn btn-secondary btn-sm active"
                     type="button"
                     (click)="cargueMasive()">
                     Carga Masiva

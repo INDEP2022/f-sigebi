@@ -7,7 +7,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-deposit-account-statement-parameter',
   templateUrl: './deposit-account-statement-parameter.component.html',
-  styles: [],
+  styleUrls: ['./deposit-account-statement-parameter.component.scss'],
 })
 export class DepositAccountStatementParameterComponent
   extends BasePage

@@ -60,30 +60,54 @@ export class CatFinancialInformationAttributesModalComponent
   }
 
   create() {
-    this.loading = true;
-    this.attributesInfoFinancialService
-      .create(this.attributesFinancialInfoForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.attributesFinancialInfoForm.controls['name'].value.trim() == '' ||
+      this.attributesFinancialInfoForm.controls['description'].value.trim() ==
+        '' ||
+      (this.attributesFinancialInfoForm.controls['name'].value.trim() == '' &&
+        this.attributesFinancialInfoForm.controls['description'].value.trim() ==
+          '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.attributesInfoFinancialService
+        .create(this.attributesFinancialInfoForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.attributesInfoFinancialService
-      .update(
-        this.attributesFinancialInfo.id,
-        this.attributesFinancialInfoForm.value
-      )
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => {
-          this.onLoadToast('info', 'Opss..', 'Dato duplicado');
-          this.loading = false;
-          console.log(error);
-        },
-      });
+    if (
+      this.attributesFinancialInfoForm.controls['name'].value.trim() == '' ||
+      this.attributesFinancialInfoForm.controls['description'].value.trim() ==
+        '' ||
+      (this.attributesFinancialInfoForm.controls['name'].value.trim() == '' &&
+        this.attributesFinancialInfoForm.controls['description'].value.trim() ==
+          '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.attributesInfoFinancialService
+        .update(
+          this.attributesFinancialInfo.id,
+          this.attributesFinancialInfoForm.value
+        )
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => {
+            this.onLoadToast('info', 'Opss..', 'Dato duplicado');
+            this.loading = false;
+            console.log(error);
+          },
+        });
+    }
   }
 
   handleSuccess() {

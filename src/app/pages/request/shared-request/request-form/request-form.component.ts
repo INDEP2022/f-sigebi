@@ -222,7 +222,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       this.delegationId = data.id;
       this.requestForm.get('regionalDelegationId').setValue(data.id);
       this.selectRegionalDeleg = new DefaultSelect([data], data.count);
-
+      debugger;
       this.getEntity(new ListParams(), regDelId);
     });
   }
@@ -408,6 +408,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#B38E5D',
       confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cancelar',
+      allowOutsideClick: false,
     }).then(async result => {
       if (result.isConfirmed) {
         this.loadingTurn = true;
@@ -426,10 +428,11 @@ export class RequestFormComponent extends BasePage implements OnInit {
               title: 'Guardado',
               text: ` Solicitud guardada con el folio: ${this.requestId}`,
               icon: 'success',
-              showCancelButton: true,
+              //showCancelButton: true,
               confirmButtonColor: '#9D2449',
               cancelButtonColor: '#B38E5D',
               confirmButtonText: 'Aceptar',
+              allowOutsideClick: false,
             }).then(async result => {});
           }
         }
@@ -449,7 +452,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
           const createTask = await this.generateFirstTask();
           if (createTask) {
             this.msgModal(
-              'Se turna la solicitud con el Folio Nº '
+              'Se turnó la solicitud con el Folio Nº '
                 .concat(`<strong>${this.requestId}</strong>`)
                 .concat(` al usuario ${this.userName}`),
               'Solicitud Creada',
@@ -725,6 +728,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         this.requestForm.reset();

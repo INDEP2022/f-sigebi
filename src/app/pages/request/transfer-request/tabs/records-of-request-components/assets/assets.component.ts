@@ -293,8 +293,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           this.loaderProgress.load = false;
           this.message(
             'error',
-            'Error al subir el file',
-            `No se pudo cargar el archivo excel ${error.error.message}`
+            'Error al cargar el archivo',
+            `No se pudo cargar el archivo excel: ${error.error.message}`
           );
         },
       });
@@ -550,6 +550,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         confirmButtonColor: '#9D2449',
         cancelButtonColor: '#B38E5D',
         confirmButtonText: 'Aceptar',
+        allowOutsideClick: false,
       }).then(result => {
         if (result.isConfirmed) {
           this.deleteMethod();
@@ -1048,6 +1049,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         let config: ModalOptions = {
@@ -1112,6 +1114,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
+      allowOutsideClick: false,
     }).then(result => {
       if (result.isConfirmed) {
         let config: ModalOptions = {

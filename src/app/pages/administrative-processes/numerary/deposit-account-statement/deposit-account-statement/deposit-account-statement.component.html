@@ -62,13 +62,13 @@
         <div class="row pb-4">
           <div class="col text-right">
             <div class="btn-group">
-              <button
+              <!-- <button
                 type="button"
                 tooltip="Agregar"
                 containerclass="tooltip-style"
                 class="btn btn-info btn-sm active ml-2 mr-2">
                 <i class="bx bx-plus bx-sm float-icon"></i>
-              </button>
+              </button> -->
               <button
                 class="btn btn-primary btn-sm active mx-1"
                 [disabled]="!validDetail"
@@ -165,7 +165,23 @@
 
         <div class="row pt-4">
           <div class="col-md-3">
-            <form-field [control]="form.get('account')">
+            <app-select-modal-table-shared
+              [form]="form"
+              [disabled]="false"
+              [widthDescription]="false"
+              [haveSelectColumns]="true"
+              [haveColumnFilters]="true"
+              label="Cuenta"
+              formField="account"
+              [service]="detailsIndMovementService"
+              [columnsType]="columnsType"
+              searchField="description"
+              id="accountkey"
+              title="Cuenta"
+              (selectRow)="
+                changeChecks($event)
+              "></app-select-modal-table-shared>
+            <!-- <form-field [control]="form.get('account')">
               <ngx-select
                 label="Cuenta"
                 [form]="form"
@@ -195,11 +211,7 @@
                   {{ item.devolutionnumber }}
                 </div>
               </ng-template>
-              <!--<input
-                type="text"
-                class="form-control"
-                formControlName="account" />-->
-            </form-field>
+            </form-field> -->
           </div>
           <div class="col-md-3">
             <form-field [control]="form.get('bank')" label="Banco">
@@ -271,7 +283,7 @@
                 [readonly]="readonly" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3" [class]="readonly ? 'disabledInput' : ''">
             <form-field
               [control]="form.get('depositDate')"
               label="Fecha Depósito">
@@ -283,7 +295,7 @@
                 [readonly]="readonly" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3" [class]="readonly ? 'disabledInput' : ''">
             <form-field
               [control]="form.get('transfDate')"
               label="Fecha Transferencia">
@@ -345,7 +357,9 @@
     <div class="row pt-5">
       <form action="" class="form-material" [formGroup]="form">
         <div class="row mt-4">
-          <div class="col-md-3">
+          <div
+            class="col-md-3"
+            [class]="!userChecks && readonly ? 'disabledInput' : ''">
             <!---->
             <form-field
               [control]="form.get('transferDate')"
@@ -359,20 +373,21 @@
                 bsDatepicker />-->
               <input
                 type="text"
-                [maxDate]="cutoffDate"
                 formControlName="transferDate"
                 class="form-control"
-                [minDate]="depositDate"
                 bsDatepicker
+                [maxDate]="maxTransferDate"
+                [minDate]="minTransferDate"
                 (bsValueChange)="updateTransferDate($event)" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div
+            class="col-md-3"
+            [class]="!userChecks && readonly ? 'disabledInput' : ''">
             <form-field
               [control]="form.get('cutoffDate')"
               label="Fecha de Corte">
               <input
-                [maxDate]="scheduledFecReturn"
                 type="text"
                 formControlName="cutoffDate"
                 class="form-control"
@@ -456,6 +471,7 @@
     </div>
     <h5 class="title">Datos para el cheque</h5>
     <div class="row mt-4">
+      <div *ngIf="transferred === ''">{{ transferred }}</div>
       <div class="col text-right">
         <button
           class="btn btn-primary btn-sm active"
@@ -475,20 +491,36 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="checkType" />
+                formControlName="checkType"
+                [readonly]="!userChecks" />
             </form-field>
           </div>
           <div class="col-md-3">
-            <form-field
+            <ng-custom-select-loading
+              [isLoadInOnInit]="false"
+              [load]="userChecks != null"
+              [form]="form"
+              [readonly]="!userChecks"
+              paramLimitName="perPage"
+              formControlName="bankAccount"
+              label="Cuenta Bancaria"
+              [path]="pathBankAccount"
+              value="cve_cuenta"
+              bindLabel="cve_cuenta"
+              paramSearch="filter.cve_cuenta"
+              prefixSearch="$eq"
+              (valueChange)="changeCveCuenta($event)">
+            </ng-custom-select-loading>
+            <!-- <form-field
               [control]="form.get('bankAccount')"
               label="Cuenta Bancaria">
               <input
-                type="number"
                 class="form-control"
                 formControlName="bankAccount"
                 min="1"
-                pattern="^[0-9]+" />
-            </form-field>
+                pattern="^[0-9]+"
+                [readonly]="!userChecks" />
+            </form-field> -->
           </div>
           <div class="col-md-3">
             <form-field [control]="form.get('check')" label="Cheque">
@@ -497,7 +529,8 @@
                 class="form-control"
                 formControlName="check"
                 min="1"
-                pattern="^[0-9]+" />
+                pattern="^[0-9]+"
+                [readonly]="readonly && !userChecks" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -505,12 +538,15 @@
               <input
                 type="text"
                 class="form-control"
+                readonly
                 formControlName="bankCheck" />
             </form-field>
           </div>
         </div>
         <div class="row mt-4">
-          <div class="col-md-3">
+          <div
+            class="col-md-3"
+            [class]="!userChecks && readonly ? 'disabledInput' : ''">
             <form-field
               [control]="form.get('expeditionDate')"
               label="Fecha Expedici&oacute;n">
@@ -518,10 +554,14 @@
                 type="text"
                 formControlName="expeditionDate"
                 class="form-control"
-                bsDatepicker />
+                [maxDate]="maxExpeditionDate"
+                bsDatepicker
+                (bsValueChange)="validateExpeditionCheck($event)" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div
+            class="col-md-3"
+            [class]="!userChecks && readonly ? 'disabledInput' : ''">
             <form-field
               [control]="form.get('collectionDate')"
               label="Fecha Cobro">
@@ -529,17 +569,30 @@
                 type="text"
                 formControlName="collectionDate"
                 class="form-control"
+                [minDate]="minCollectionDate"
                 bsDatepicker />
             </form-field>
           </div>
           <div class="col-md-6">
+            <!-- <ng-custom-select-loading
+              [isLoadInOnInit]="false"
+              [load]="userChecks != null"
+              [form]="form"
+              paramLimitName="perPage"
+              formControlName="beneficiary"
+              label="Beneficiario"
+              [path]="pathBeneficiary"
+              value="beneficiario_cheque"
+              bindLabel="beneficiario_cheque">
+            </ng-custom-select-loading> -->
             <form-field
               [control]="form.get('beneficiary')"
-              label="Benefeciario">
+              label="Beneficiario">
               <input
                 type="text"
                 class="form-control"
-                formControlName="beneficiary" />
+                formControlName="beneficiary"
+                [readonly]="readonly && !userChecks" />
             </form-field>
           </div>
         </div>

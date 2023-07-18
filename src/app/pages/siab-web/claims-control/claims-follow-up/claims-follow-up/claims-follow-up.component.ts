@@ -45,6 +45,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       columns: {
         officialConclusion: {
           title: 'Ver Oficio Conclusión',
+          width: '5%',
           type: 'custom',
           sort: false,
           renderComponent: ButtonColumnComponent,
@@ -57,6 +58,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
         },
         officeMail: {
           title: 'Ver Oficio Correo',
+          width: '5%',
           type: 'custom',
           sort: false,
           renderComponent: ButtonColumnComponent,
@@ -69,6 +71,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
         },
         seeClaimLetter: {
           title: 'Ver Carta Reclamación',
+          width: '5%',
           type: 'custom',
           sort: false,
           renderComponent: ButtonColumnComponent,

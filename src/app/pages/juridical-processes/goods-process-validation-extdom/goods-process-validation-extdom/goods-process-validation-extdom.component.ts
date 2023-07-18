@@ -49,6 +49,7 @@ import {
   COLUMNS_GOODS_LIST_EXTDOM,
   COLUMNS_GOODS_LIST_EXTDOM_2,
   COLUMNS_GOODS_LIST_EXTDOM_3,
+  COLUMNS_GOODS_LIST_EXTDOM_4,
   RELATED_FOLIO_COLUMNS,
 } from './process-extdoom-columns';
 
@@ -77,6 +78,7 @@ export class GoodsProcessValidationExtdomComponent
   registerExistType: string = 'E';
   universalFolio: number = null;
   // TABLA DATA
+  // Bienes Disponibles
   tableSettings = {
     ...this.settings,
   };
@@ -85,14 +87,7 @@ export class GoodsProcessValidationExtdomComponent
   loadingGoods: boolean = false;
   totalGoods: number = 0;
   goodData: IGood[] | any[] = [];
-  tableSettings2 = {
-    ...this.settings,
-  };
-  dataTable2: LocalDataSource = new LocalDataSource();
-  dataTableParams2 = new BehaviorSubject<ListParams>(new ListParams());
-  loadingGoods2: boolean = false;
-  totalGoods2: number = 0;
-  goodData2: IGood[] | any[] = [];
+  // Bienes para Procesar para ASEG_EXTDOM
   tableSettings3 = {
     ...this.settings,
   };
@@ -101,6 +96,24 @@ export class GoodsProcessValidationExtdomComponent
   loadingGoods3: boolean = false;
   totalGoods3: number = 0;
   goodData3: IGood[] | any[] = [];
+  // Bienes en ASEG_EXTDOM
+  tableSettings2 = {
+    ...this.settings,
+  };
+  dataTable2: LocalDataSource = new LocalDataSource();
+  dataTableParams2 = new BehaviorSubject<ListParams>(new ListParams());
+  loadingGoods2: boolean = false;
+  totalGoods2: number = 0;
+  goodData2: IGood[] | any[] = [];
+  // Bienes en ASEG_EXTDOM para Liberar
+  tableSettings4 = {
+    ...this.settings,
+  };
+  dataTable4: LocalDataSource = new LocalDataSource();
+  dataTableParams4 = new BehaviorSubject<ListParams>(new ListParams());
+  loadingGoods4: boolean = false;
+  totalGoods4: number = 0;
+  goodData4: IGood[] | any[] = [];
   // Historico Modal
   params = new BehaviorSubject(new ListParams());
   filterParams = new BehaviorSubject(new FilterParams());
@@ -130,11 +143,15 @@ export class GoodsProcessValidationExtdomComponent
   selectedGoods: IGood[] = [];
   selectedDeleteGoods: IGood[] | any[] = [];
   goodsValid: IGood[] | any[] = [];
+  selectedDeletedGoodsValid: IGood[] | any[] = [];
   countSelectedGoods: number = 0;
   countGoodsValid: number = 0;
   localStorage_selectedGoods: string = 'selectedGoods_aseg';
   localStorage_goodData3: string = 'goodData3_aseg';
   localStorage_totalGoods3: string = 'totalGoods3_aseg';
+  localStorage_selectedGoods2: string = 'selectedGoods2_aseg';
+  localStorage_goodData4: string = 'goodData4_aseg';
+  localStorage_totalGoods4: string = 'totalGoods4_aseg';
   // Variables Ejecutar proceso
   errorsCount: number = 0;
   executionType: string = 'X';
@@ -180,21 +197,6 @@ export class GoodsProcessValidationExtdomComponent
         }
       },
     };
-    // CONFIG PARA LOS REGISTROS EXISTENTES EN EXTDOM
-    COLUMNS_GOODS_LIST_EXTDOM_2.seleccion = {
-      ...COLUMNS_GOODS_LIST_EXTDOM_2.seleccion,
-      onComponentInitFunction: this.onClickSelect_ExistExtDom.bind(this),
-    };
-    this.tableSettings2 = {
-      ...this.settings,
-      actions: {
-        columnTitle: '',
-        add: false,
-        edit: false,
-        delete: false,
-      },
-      columns: { ...COLUMNS_GOODS_LIST_EXTDOM_2 },
-    };
     // CONFIG PARA NUEVOS REGISTROS PARA EXTDOM
     COLUMNS_GOODS_LIST_EXTDOM_3.seleccion = {
       ...COLUMNS_GOODS_LIST_EXTDOM_3.seleccion,
@@ -211,6 +213,50 @@ export class GoodsProcessValidationExtdomComponent
       columns: { ...COLUMNS_GOODS_LIST_EXTDOM_3 },
       rowClassFunction: (row: any) => {
         if (row.data.register_type == this.registerType) {
+          return 'bg-success text-white';
+        } else {
+          return '';
+        }
+      },
+    };
+    // CONFIG PARA LOS REGISTROS EXISTENTES EN EXTDOM
+    COLUMNS_GOODS_LIST_EXTDOM_2.seleccion = {
+      ...COLUMNS_GOODS_LIST_EXTDOM_2.seleccion,
+      onComponentInitFunction: this.onClickSelect_ExistExtDom.bind(this),
+    };
+    this.tableSettings2 = {
+      ...this.settings,
+      actions: {
+        columnTitle: '',
+        add: false,
+        edit: false,
+        delete: false,
+      },
+      columns: { ...COLUMNS_GOODS_LIST_EXTDOM_2 },
+      rowClassFunction: (row: any) => {
+        if (row.data.disponible == this.freeLabel) {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+      },
+    };
+    // CONFIG PARA LOS REGISTROS EXISTENTES EN EXTDOM QUE SE VAN A LIBERAR
+    COLUMNS_GOODS_LIST_EXTDOM_4.seleccion = {
+      ...COLUMNS_GOODS_LIST_EXTDOM_4.seleccion,
+      onComponentInitFunction: this.onClickSelectDelete_ExistExtDom.bind(this),
+    };
+    this.tableSettings4 = {
+      ...this.settings,
+      actions: {
+        columnTitle: '',
+        add: false,
+        edit: false,
+        delete: false,
+      },
+      columns: { ...COLUMNS_GOODS_LIST_EXTDOM_4 },
+      rowClassFunction: (row: any) => {
+        if (row.data.register_type == this.registerExistType) {
           return 'bg-success text-white';
         } else {
           return '';
@@ -252,9 +298,32 @@ export class GoodsProcessValidationExtdomComponent
           this.form.get('expedientNumber').setValue(this.P_EXPEDIENTE);
           this.form.get('expedientNumber').updateValueAndValidity();
         }
+        let f_aseg = localStorage.getItem('f_aseg');
+        let e_aseg = localStorage.getItem('e_aseg');
+        let v_aseg = localStorage.getItem('v_aseg');
+        console.log('LOCALSTORAGE ', f_aseg, e_aseg, v_aseg);
+        let valid = true;
+        if (e_aseg || this.notificationData == null) {
+          valid = false;
+        }
+        if (v_aseg || this.notificationData == null) {
+          valid = false;
+        }
+        if (valid == false) {
+          localStorage.removeItem('f_aseg');
+          localStorage.removeItem('e_aseg');
+          localStorage.removeItem('v_aseg');
+          // Para crear
+          localStorage.removeItem(this.localStorage_selectedGoods);
+          localStorage.removeItem(this.localStorage_goodData3);
+          localStorage.removeItem(this.localStorage_totalGoods3);
+          // Para liberar
+          localStorage.removeItem(this.localStorage_selectedGoods2);
+          localStorage.removeItem(this.localStorage_goodData4);
+          localStorage.removeItem(this.localStorage_totalGoods4);
+        }
         this.initForm();
       });
-    this.updatePaginatedTable3();
   }
 
   updatePaginatedTable3() {
@@ -265,6 +334,17 @@ export class GoodsProcessValidationExtdomComponent
       this.dataTable3.load(paginated);
       this.dataTable3.refresh();
       this.loadingGoods3 = false;
+    });
+  }
+
+  updatePaginatedTable4() {
+    this.dataTableParams4.subscribe(params4 => {
+      this.loadingGoods4 = true;
+      const { page, limit } = params4;
+      let paginated = offlinePagination(this.goodData4, limit, page);
+      this.dataTable4.load(paginated);
+      this.dataTable4.refresh();
+      this.loadingGoods4 = false;
     });
   }
 
@@ -293,7 +373,7 @@ export class GoodsProcessValidationExtdomComponent
           this.dataTable.load(this.goodData);
           this.dataTable.refresh();
         }
-        // console.log('SELECIONADOS AL MOMENTO ###### ', this.selectedGoods);
+        console.log('SELECIONADOS AL MOMENTO ###### ', this.selectedGoods);
       });
     }
   }
@@ -331,21 +411,76 @@ export class GoodsProcessValidationExtdomComponent
   }
 
   onClickSelect_ExistExtDom(event: any) {
-    console.log('EVENTO ', event);
+    // console.log('EVENTO ', event);
+    if (event != undefined) {
+      event.toggle.subscribe((data: any) => {
+        // console.log('DATA LOG #### ', data);
+        // data.row.selection = data.toggle;
+        if (data.row.disponible == this.freeLabel) {
+          let row: IGood = data.row;
+          const index = this.goodsValid.findIndex(
+            _good => _good.goodId == row.goodId
+          ); //.indexOf(row);
+          // console.log('INDICE ', index);
+          if (index == -1 && data.toggle == true) {
+            this.goodsValid.push(row);
+          } else if (index != -1 && data.toggle == false) {
+            this.goodsValid.splice(index, 1);
+          }
+        } else {
+          const index: number = this.goodsValid.findIndex(
+            _good => _good.goodId == data.row.goodId
+          );
+          this.goodData2[index].seleccion = 0;
+          this.dataTable2.load(this.goodData2);
+          this.dataTable2.refresh();
+        }
+        console.log('SELECIONADOS AL MOMENTO ###### ', this.goodsValid);
+      });
+    }
+    // if (event != undefined) {
+    //   event.toggle.subscribe((data: any) => {
+    //     console.log('DATA LOG EXT_DOM #### ', data);
+    //     // data.row.selection = data.toggle;
+    //     if (data.row.register_type == this.registerExistType) {
+    //       let row: IGood = data.row;
+    //       const index = this.goodsValid.findIndex(
+    //         _good => _good.goodId == row.goodId
+    //       ); //.indexOf(row);
+    //       console.log('INDICE EXT_DOM', index);
+    //       if (index == -1 && data.toggle == true) {
+    //         this.goodsValid.push(row);
+    //       } else if (index != -1 && data.toggle == false) {
+    //         this.goodsValid.splice(index, 1);
+    //       }
+    //     } else {
+    //       this.alert(
+    //         'warning',
+    //         'Este Registro no se puede Eliminar, sólo es posible Liberar',
+    //         ''
+    //       );
+    //     }
+    //     console.log('SELECIONADOS AL MOMENTO ###### ', this.goodsValid);
+    //   });
+    // }
+  }
+
+  onClickSelectDelete_ExistExtDom(event: any) {
+    // console.log('EVENTO ', event);
     if (event != undefined) {
       event.toggle.subscribe((data: any) => {
         console.log('DATA LOG EXT_DOM #### ', data);
         // data.row.selection = data.toggle;
         if (data.row.register_type == this.registerExistType) {
           let row: IGood = data.row;
-          const index = this.goodsValid.findIndex(
+          const index = this.selectedDeletedGoodsValid.findIndex(
             _good => _good.goodId == row.goodId
           ); //.indexOf(row);
           console.log('INDICE EXT_DOM', index);
           if (index == -1 && data.toggle == true) {
-            this.goodsValid.push(row);
+            this.selectedDeletedGoodsValid.push(row);
           } else if (index != -1 && data.toggle == false) {
-            this.goodsValid.splice(index, 1);
+            this.selectedDeletedGoodsValid.splice(index, 1);
           }
         } else {
           this.alert(
@@ -356,7 +491,7 @@ export class GoodsProcessValidationExtdomComponent
         }
         console.log(
           'SELECIONADOS AL MOMENTO ###### ',
-          this.selectedDeleteGoods
+          this.selectedDeletedGoodsValid
         );
       });
     }
@@ -557,9 +692,57 @@ export class GoodsProcessValidationExtdomComponent
   }
 
   cleanDataform() {
+    this.showScanForm = false;
     this.form.reset();
     this.formScan.reset();
     this.notificationData = null;
+    setTimeout(() => {
+      this.showScanForm = true;
+      localStorage.removeItem('f_aseg');
+      localStorage.removeItem('e_aseg');
+      localStorage.removeItem('v_aseg');
+      // Para crear
+      localStorage.removeItem(this.localStorage_selectedGoods);
+      localStorage.removeItem(this.localStorage_goodData3);
+      localStorage.removeItem(this.localStorage_totalGoods3);
+      // Para liberar
+      localStorage.removeItem(this.localStorage_selectedGoods2);
+      localStorage.removeItem(this.localStorage_goodData4);
+      localStorage.removeItem(this.localStorage_totalGoods4);
+      // Listado Tabla Bienes Disponibles
+      this.dataTable.load([]);
+      this.dataTable.refresh();
+      this.goodData = [];
+      this.totalGoods = 0;
+      // Listado Tabla Bienes para Procesar ASEG_EXTDOM
+      this.dataTable2.load([]);
+      this.dataTable2.refresh();
+      this.goodData2 = [];
+      this.totalGoods2 = 0;
+      // Listado Tabla Bienes en Validacion EXT_DOM
+      this.dataTable3.load([]);
+      this.dataTable3.refresh();
+      this.goodData3 = [];
+      this.totalGoods3 = 0;
+      // Listado Tabla Bienes en Validacion EXT_DOM para Liberar
+      this.dataTable4.load([]);
+      this.dataTable4.refresh();
+      this.goodData4 = [];
+      this.totalGoods4 = 0;
+    }, 200);
+  }
+
+  reloadPage() {
+    this.loading = true;
+    this.reviewLocalStorage();
+    this.dataTableParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.loadGoods());
+    this.dataTableParams2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.loadGoods2());
+    this.updatePaginatedTable3();
+    this.loading = false;
   }
 
   searchNotification() {
@@ -706,6 +889,15 @@ export class GoodsProcessValidationExtdomComponent
         this.getAuthority(new ListParams(), true);
       }
     }, 200);
+    this.reviewLocalStorage();
+    // setTimeout(() => {
+    //   this.formScan.get('scanningFoli').setValue(null);
+    //   this.formScan.get('scanningFoli').updateValueAndValidity();
+    //   this.showScanForm = true; // Mostrar parte de escaneo
+    // }, 200);
+  }
+
+  reviewLocalStorage() {
     let f_aseg = localStorage.getItem('f_aseg');
     let e_aseg = localStorage.getItem('e_aseg');
     let v_aseg = localStorage.getItem('v_aseg');
@@ -721,11 +913,23 @@ export class GoodsProcessValidationExtdomComponent
       localStorage.removeItem('f_aseg');
       localStorage.removeItem('e_aseg');
       localStorage.removeItem('v_aseg');
+      // Para crear
       localStorage.removeItem(this.localStorage_selectedGoods);
       localStorage.removeItem(this.localStorage_goodData3);
       localStorage.removeItem(this.localStorage_totalGoods3);
-      return;
+      // Para liberar
+      localStorage.removeItem(this.localStorage_selectedGoods2);
+      localStorage.removeItem(this.localStorage_goodData4);
+      localStorage.removeItem(this.localStorage_totalGoods4);
+      this.showScanForm = false;
+      this.universalFolio = null;
+      this.formScan.get('scanningFoli').setValue(null);
+      setTimeout(() => {
+        this.formScan.get('scanningFoli').updateValueAndValidity();
+        this.showScanForm = true;
+      }, 200);
     } else {
+      // Para crear
       let _selectedGoods = localStorage.getItem(
         this.localStorage_selectedGoods
       );
@@ -741,25 +945,31 @@ export class GoodsProcessValidationExtdomComponent
         this.totalGoods3 = JSON.parse(_totalGoods3);
       }
       this.updatePaginatedTable3();
-    }
-    console.log('LOCALSTORAGE PASS VALID ', f_aseg, e_aseg, v_aseg);
-    this.showScanForm = false;
-    this.universalFolio = f_aseg ? Number(f_aseg) : null;
-    this.formScan.get('scanningFoli').setValue(f_aseg);
-    setTimeout(() => {
-      this.formScan.get('scanningFoli').updateValueAndValidity();
-      console.log(
-        'FOLIO DATA ',
-        this.universalFolio,
-        this.formScan.get('scanningFoli').value
+      // Para liberar
+      let _selectedGoods2 = localStorage.getItem(
+        this.localStorage_selectedGoods2
       );
-      this.showScanForm = true;
-    }, 200);
-    // setTimeout(() => {
-    //   this.formScan.get('scanningFoli').setValue(null);
-    //   this.formScan.get('scanningFoli').updateValueAndValidity();
-    //   this.showScanForm = true; // Mostrar parte de escaneo
-    // }, 200);
+      let _goodData4 = localStorage.getItem(this.localStorage_goodData4);
+      let _totalGoods4 = localStorage.getItem(this.localStorage_totalGoods4);
+      if (_selectedGoods2) {
+        this.goodsValid = JSON.parse(_selectedGoods2);
+      }
+      if (_goodData4) {
+        this.goodData4 = JSON.parse(_goodData4);
+      }
+      if (_totalGoods4) {
+        this.totalGoods4 = JSON.parse(_totalGoods4);
+      }
+      this.updatePaginatedTable4();
+      console.log('LOCALSTORAGE PASS VALID ', f_aseg, e_aseg, v_aseg);
+      this.showScanForm = false;
+      this.universalFolio = f_aseg ? Number(f_aseg) : null;
+      this.formScan.get('scanningFoli').setValue(f_aseg);
+      setTimeout(() => {
+        this.formScan.get('scanningFoli').updateValueAndValidity();
+        this.showScanForm = true;
+      }, 200);
+    }
   }
 
   loadGoods() {
@@ -815,24 +1025,49 @@ export class GoodsProcessValidationExtdomComponent
       'proceedingsNumber',
       this.notificationData.expedientNumber
     );
-    params.addFilter('userfree', SearchFilter.NULL);
-    params.addFilter('datefree', SearchFilter.NULL);
+    params.addFilter('userfree', SearchFilter.NULL, SearchFilter.NULL);
+    params.addFilter('datefree', SearchFilter.NULL, SearchFilter.NULL);
     params.limit = this.dataTableParams2.value.limit;
     params.page = this.dataTableParams2.value.page;
     this.svGoodsProcessValidationExtdomService
       .getHistoryGood(params.getParams())
       .subscribe({
         next: res => {
+          console.log('GOODS 2 ', res);
           this.loadingGoods2 = false;
           let data = res.data.map((i: any) => {
-            i['register_type'] = this.registerExistType;
-            return i;
+            i.goods['register_type'] = this.registerExistType;
+            i.goods['dateChange'] = i.dateChange;
+            i.goods['datefree'] = i.datefree;
+            i.goods['goodNumber'] = i.goodNumber;
+            i.goods['invoiceUnivChange'] = i.invoiceUnivChange;
+            i.goods['invoiceUnivfree'] = i.invoiceUnivfree;
+            i.goods['proceedingsNumber'] = i.proceedingsNumber;
+            i.goods['processExtSun'] = i.processExtSun;
+            i.goods['recordNumber'] = i.recordNumber;
+            i.goods['userChange'] = i.userChange;
+            i.goods['userfree'] = i.userfree;
+            const index2: number = this.goodsValid.findIndex(
+              (_good: IGood) => _good.goodId == i.goods.goodId
+            );
+            if (index2 > -1) {
+              i.goods['disponible'] = this.blockLabel;
+              i.goods['seleccion'] = 0;
+              return i.goods;
+            } else {
+              i.goods['disponible'] = this.freeLabel;
+              i.goods['seleccion'] = 0;
+              return i.goods;
+            }
+            // i = { i, ...i.goods };
+            // return i;
           });
+          console.log(data);
           this.totalGoods2 = res.count;
           // this.dataTable2.load(res.data);
           this.dataTable2.load(data);
           this.dataTable2.refresh();
-          this.goodData2 = res.data;
+          this.goodData2 = data;
         },
         error: error => {
           this.loadingGoods2 = false;
@@ -959,8 +1194,11 @@ export class GoodsProcessValidationExtdomComponent
         JSON.stringify(this.totalGoods3)
       );
       // Update data table bienes
-      this.dataTable.load(this.goodData);
-      this.dataTable.refresh();
+      // this.dataTable.load(this.goodData);
+      // this.dataTable.refresh();
+      this.dataTableParams
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.loadGoods());
       this.loadingGoods = false; // Detener loading de tabla bienes
       this.loadingGoods3 = false; // Detener loading de tabla a procesar
       this.updatePaginatedTable3();
@@ -972,6 +1210,149 @@ export class GoodsProcessValidationExtdomComponent
   }
 
   removeAll() {
+    console.log('Eliminar Todos');
+  }
+
+  addSelectFree() {
+    console.log('Agregar');
+    this.loadingGoods2 = true; // Iniciar loading de tabla bienes
+    this.loadingGoods4 = true; // Iniciar loading de tabla a procesar
+    this.goodsValid.forEach((data: IGood | any, count: number) => {
+      // VALIDAR QUE NO EXISTA YA EN LA TABLA A PROCESAR
+      const index3: number = this.goodData4.findIndex(
+        (_good: IGood) => _good.goodId == data.goodId
+      );
+      console.log('INDICE 3 ADD SELECT ', index3);
+      if (index3 == -1) {
+        this.goodData4.push({ ...data, register_type: this.registerExistType }); // Agregar registro a la data
+        this.totalGoods4++; // Aumentar si se agrego registro
+        // VALIDAR CON LA DATA DEL ENDPOINT IGUAL
+        const index2: number = this.goodData2.findIndex(
+          (_good: IGood) => _good.goodId == data.goodId
+        );
+        if (index2 > -1) {
+          this.goodData2[index2].disponible = this.blockLabel; // Cambiar a no disponible
+          this.goodData2[index2].seleccion = 0; // Quitar el check del registro
+        }
+      }
+    });
+    setTimeout(() => {
+      console.log(
+        ' LISTADOS ###### ',
+        this.goodsValid,
+        this.goodData4,
+        this.totalGoods4,
+        this.goodData2
+      );
+      localStorage.setItem(
+        this.localStorage_selectedGoods2,
+        JSON.stringify(this.goodsValid)
+      );
+      localStorage.setItem(
+        this.localStorage_goodData4,
+        JSON.stringify(this.goodData4)
+      );
+      localStorage.setItem(
+        this.localStorage_totalGoods4,
+        JSON.stringify(this.totalGoods4)
+      );
+      // Update data table bienes
+      this.dataTable2.load(this.goodData2);
+      this.dataTable2.refresh();
+      this.loadingGoods2 = false; // Detener loading de tabla bienes
+      this.loadingGoods4 = false; // Detener loading de tabla a procesar
+      this.updatePaginatedTable4();
+    }, 500);
+  }
+
+  removeSelectFree() {
+    console.log('Eliminar');
+    this.loadingGoods2 = true; // Iniciar loading de tabla bienes
+    this.loadingGoods4 = true; // Iniciar loading de tabla a procesar
+    let removeSelectedGoods: number[] = []; // Guardar contadores para eliminar del listado de seleccion
+    let removeGoodsSelected: number[] = []; // Guardar contadores para eliminar del listado de elimnar seleccion
+    this.selectedDeletedGoodsValid.forEach(
+      (data: IGood | any, count: number) => {
+        // VALIDAR QUE EXISTA YA EN EL LISTADO DE SELECCIONADOS
+        const index1: number = this.goodData4.findIndex(
+          (_good: IGood) => _good.goodId == data.goodId
+        );
+        console.log('INDICE 1 DELETE SELECT ', index1);
+        if (index1 > -1) {
+          this.goodData4.splice(index1, 1); // Eliminar registro del arreglo
+          this.totalGoods4--; // Dismunuye si se quito el registro
+          // VALIDAR CON LA DATA DEL ENDPOINT IGUAL
+          const index3: number = this.goodData2.findIndex(
+            (_good: IGood) => _good.goodId == data.goodId
+          );
+          if (index3 > -1) {
+            this.goodData2[index3].disponible = this.freeLabel; // Cambiar disponible
+            this.goodData2[index3].seleccion = 0; // Quitar el check del registro
+          }
+          const index4: number = this.goodsValid.findIndex(
+            (_good: IGood) => _good.goodId == data.goodId
+          );
+          if (index4 > -1) {
+            removeSelectedGoods.push(index4); // Guardar posicion para eliminar los seleccionados
+          }
+          const index2: number = this.selectedDeletedGoodsValid.findIndex(
+            (_good: IGood) => _good.goodId == data.goodId
+          );
+          if (index2 > -1) {
+            removeGoodsSelected.push(index2); // Guardar posicion para eliminar los seleccionados
+          }
+        }
+      }
+    );
+    setTimeout(() => {
+      console.log('REMOVE FROM ARRAY DELETE ', removeGoodsSelected);
+      if (removeGoodsSelected.length > 0) {
+        removeGoodsSelected.forEach(elementCount => {
+          this.selectedDeletedGoodsValid.splice(elementCount, 1); // Eliminar registro del arreglo
+        });
+      }
+      console.log('REMOVE FROM ARRAY SELECTED', removeSelectedGoods);
+      if (removeSelectedGoods.length > 0) {
+        removeSelectedGoods.forEach(elementCount => {
+          this.goodsValid.splice(elementCount, 1); // Eliminar registro del arreglo
+        });
+      }
+      console.log(
+        'LISTADOS DE SELECCIONADOS ###########',
+        this.goodsValid,
+        this.selectedDeletedGoodsValid,
+        this.goodData4,
+        this.goodData2
+      );
+      localStorage.setItem(
+        this.localStorage_selectedGoods2,
+        JSON.stringify(this.goodsValid)
+      );
+      localStorage.setItem(
+        this.localStorage_goodData4,
+        JSON.stringify(this.goodData4)
+      );
+      localStorage.setItem(
+        this.localStorage_totalGoods4,
+        JSON.stringify(this.totalGoods4)
+      );
+      // Update data table bienes
+      // this.dataTable2.load(this.goodData2);
+      // this.dataTable2.refresh();
+      this.dataTableParams2
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.loadGoods2());
+      this.loadingGoods2 = false; // Detener loading de tabla bienes
+      this.loadingGoods4 = false; // Detener loading de tabla a procesar
+      this.updatePaginatedTable4();
+    }, 500);
+  }
+
+  addAllFree() {
+    console.log('Agregar Todos');
+  }
+
+  removeAllFree() {
     console.log('Eliminar Todos');
   }
 
@@ -1093,6 +1474,7 @@ export class GoodsProcessValidationExtdomComponent
     } else {
       this.removeSelect(); // Quitar los registros procesados
       this.loadingProcess = false;
+      this.reloadPage();
       if (this.errorsCount == 0) {
         this.alert('success', 'Proceso Completado Correctamente', '');
       } else {
@@ -1112,6 +1494,7 @@ export class GoodsProcessValidationExtdomComponent
     if (this.goodsValid[this.countGoodsValid]) {
       this.updateHistoricalGoodAsegExtDom();
     } else {
+      this.removeSelectFree(); // Quitar los registros procesados
       this.loadingProcess = false;
       if (this.errorsCount == 0) {
         this.alert('success', 'Proceso Completado Correctamente', '');
@@ -1147,16 +1530,21 @@ export class GoodsProcessValidationExtdomComponent
         if (onlyUpdate == false) {
           this.insertHistoricalGoodAsegExtDom();
         } else {
+          this.selectedDeletedGoodsValid.push(
+            this.goodsValid[this.countGoodsValid]
+          ); // Guardar registros a eliminar terminando el proceso
           this.continueLoopGoodsValid();
         }
       },
       error: error => {
         console.log(error);
         if (onlyUpdate == false) {
-          this.countSelectedGoods++;
+          this.errorsCount++;
+          // this.countSelectedGoods++;
           this.continueLoopSelectedGoods();
         } else {
-          this.countGoodsValid++;
+          this.errorsCount++;
+          // this.countGoodsValid++;
           this.continueLoopGoodsValid();
         }
         // this.alert('error', 'Error al Actualizar el Estatus del Bien', '');
@@ -1185,7 +1573,8 @@ export class GoodsProcessValidationExtdomComponent
           this.continueLoopSelectedGoods();
         },
         error: error => {
-          this.countSelectedGoods++;
+          // this.countSelectedGoods++;
+          this.errorsCount++;
           console.log(error);
           this.continueLoopSelectedGoods();
           // this.alert('error', 'Error al Actualizar el Estatus del Bien', '');
@@ -1198,10 +1587,10 @@ export class GoodsProcessValidationExtdomComponent
     params.removeAllFilters();
     params.addFilter(
       'goodNumber',
-      this.selectedGoods[this.countSelectedGoods].goodId
+      this.goodsValid[this.countGoodsValid].goodId
     );
-    params.addFilter('userfree', SearchFilter.NULL);
-    params.addFilter('datefree', SearchFilter.NULL);
+    params.addFilter('userfree', SearchFilter.NULL, SearchFilter.NULL);
+    params.addFilter('datefree', SearchFilter.NULL, SearchFilter.NULL);
     params.limit = this.dataTableParams2.value.limit;
     params.page = this.dataTableParams2.value.page;
     this.svGoodsProcessValidationExtdomService
@@ -1210,8 +1599,8 @@ export class GoodsProcessValidationExtdomComponent
         next: res => {
           console.log('GET GOOD HISTORIAL', res);
           let body: Partial<IHistoricGoodsAsegExtdom> = {
-            // proceedingsNumber: this.selectedGoods[this.countSelectedGoods].fileNumber,
-            goodNumber: this.selectedGoods[this.countSelectedGoods].goodId,
+            proceedingsNumber: this.goodsValid[this.countGoodsValid].fileNumber,
+            goodNumber: this.goodsValid[this.countGoodsValid].goodId,
             datefree: new Date(),
             userfree: this.dataUserLogged.user,
             invoiceUnivfree: this.universalFolio,
@@ -1224,7 +1613,8 @@ export class GoodsProcessValidationExtdomComponent
                 this.updateGoods(true);
               },
               error: error => {
-                this.countGoodsValid++;
+                // this.countGoodsValid++;
+                this.errorsCount++;
                 console.log(error);
                 this.continueLoopGoodsValid();
                 // this.alert('error', 'Error al Actualizar el Estatus del Bien', '');
@@ -1232,7 +1622,8 @@ export class GoodsProcessValidationExtdomComponent
             });
         },
         error: error => {
-          this.countGoodsValid++;
+          // this.countGoodsValid++;
+          this.errorsCount++;
           console.log(error);
           this.continueLoopGoodsValid();
         },
@@ -1331,6 +1722,14 @@ export class GoodsProcessValidationExtdomComponent
   }
   btnEnvioCorreos() {}
   btnMantenimientoCorreo() {
+    if (this.notificationData == null) {
+      this.alert('warning', 'Realice una búsqueda para ver está opción', '');
+      return;
+    }
+    if (this.notificationData.wheelNumber == null) {
+      this.alert('warning', 'Se requiere de un Volante/Expediente', '');
+      return;
+    }
     this.router.navigate(['/pages/parameterization/mail'], {
       queryParams: {
         origin: this.screenKey,
@@ -1338,8 +1737,12 @@ export class GoodsProcessValidationExtdomComponent
         P_CVE_PANTALLA: this.screenKey,
         P_NO_TRAMITE: this.P_NO_TRAMITE,
         P_GEST_OK: this.P_GEST_OK,
-        P_VOLANTE: this.P_VOLANTE,
-        P_EXPEDIENTE: this.P_EXPEDIENTE,
+        P_VOLANTE: this.P_VOLANTE
+          ? this.P_VOLANTE
+          : this.notificationData.wheelNumber,
+        P_EXPEDIENTE: this.P_EXPEDIENTE
+          ? this.P_EXPEDIENTE
+          : this.notificationData.expedientNumber,
       },
     });
   }

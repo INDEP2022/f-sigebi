@@ -100,8 +100,9 @@ export class EmailInformationComponent {
 
     this.form.get('date').valueChanges.subscribe((date: Date) => {
       if (date) {
-        const formattedDate = moment(date).format('DD-MM-YYYY');
-        this.form.patchValue({ date: formattedDate }, { emitEvent: false });
+        const formattedDate = moment(date).format('YYYY-MM-DD');
+        this.form.value.date = formattedDate;
+        // this.form.patchValue({ date: formattedDate }, { emitEvent: false });
       }
     });
     // const fechaEscritura: any = new Date();

@@ -48,6 +48,7 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('good', this.good);
     this.prepareForm();
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -124,7 +125,7 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
       goodProg: this.good,
       programming: this.programming,
       process: 'programming',
-      callBack: (next: boolean) => {
+      callback: (next: boolean) => {
         if (next) {
           this.formLoading = true;
           loadingPhotos = loadingPhotos + 1;

@@ -78,7 +78,6 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.idPrograming'] = this.programming.id;
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
-        console.log('proceeding', response);
         this.proceedign = response.data[0];
       },
       error: error => {},
@@ -213,9 +212,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
               this.getReceipts();
             }
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
       } else {
         const form: Object = {
@@ -241,15 +238,11 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
                     this.getReceipts();
                   }
                 },
-                error: error => {
-                  console.log(error);
-                },
+                error: error => {},
               });
             }
           },
-          error: error => {
-            console.log(error);
-          },
+          error: error => {},
         });
       }
     }
