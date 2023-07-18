@@ -20,7 +20,7 @@ export interface IIndicatorParameters {
 export interface IPupCalculateDevolutionDTO {
   fecCorteDevolucion: Date;
   tiFecInicioInteres: Date;
-  importeSinInteres: string;
+  importeSinInteres: any;
   diMonedaDeposito: string;
   diInstrumento: string;
   diBienDeposito: number;
