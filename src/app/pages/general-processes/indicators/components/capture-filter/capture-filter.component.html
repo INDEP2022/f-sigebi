@@ -66,10 +66,13 @@
         <form-field [control]="form.get('cordinador')">
           <ngx-select
             [form]="form"
+            [searchOnInit]="true"
             control="cordinador"
             label="Coor. Regional"
-            [data]="select">
-          </ngx-select>
+            [data]="delegations"
+            (fetchItems)="getDelegations($event)"
+            className="scroll-line"
+            bindLabel="description"></ngx-select>
         </form-field>
       </div>
     </div>
@@ -77,11 +80,27 @@
     <div class="row pt-3" *ngIf="!isReceptionAndDelivery">
       <form-field [control]="form.get('usuario')" class="col-md-6">
         <ngx-select
-          [form]="form"
-          control="usuario"
           label="Usuario"
-          [data]="select">
+          [form]="form"
+          [readonly]="dictNumber ? true : false"
+          [data]="users$"
+          (fetchItems)="getUsers($event)"
+          bindLabel="userAndName"
+          control="usuario"
+          [searchOnInit]="true"
+          [showTooltip]="true"
+          termMaxLength="30"
+          [labelTemplate]="userLabel"
+          [optionTemplate]="userOption">
         </ngx-select>
+        <ng-template #userLabel let-item="item">
+          {{ item.id + ' - ' + item.name }}
+        </ng-template>
+        <ng-template #userOption let-item="item">
+          <div [title]="item.id + '-' + item.name">
+            {{ item.id + ' - ' + item.name }}
+          </div>
+        </ng-template>
       </form-field>
 
       <form-field
@@ -90,38 +109,51 @@
         *ngIf="!isReceptionStrategies && !isConsolidated">
         <ngx-select
           [form]="form"
+          [searchOnInit]="true"
           control="clave"
           label="Clave Asunto"
-          [data]="select">
+          [data]="affairName"
+          (fetchItems)="getSubjects($event)"
+          className="scroll-line"
+          bindLabel="description">
         </ngx-select>
       </form-field>
     </div>
 
     <div class="row pt-3" *ngIf="!isReceptionStrategies && !isConsolidated">
-      <form-field [control]="form.get('transferente')" class="col-md-4">
+      <form-field [control]="form.get('transference')" class="col-md-4">
         <ngx-select
+          [searchOnInit]="true"
+          (fetchItems)="getTransference($event)"
+          [data]="transference"
           [form]="form"
-          control="transferente"
+          bindLabel="nameTransferent"
           label="Transferente"
-          [data]="select">
+          control="transference">
         </ngx-select>
       </form-field>
 
-      <form-field [control]="form.get('emisora')" class="col-md-4">
+      <form-field [control]="form.get('station')" class="col-md-4">
         <ngx-select
+          [searchOnInit]="true"
+          (fetchItems)="getStation($event)"
+          [data]="station"
           [form]="form"
-          control="emisora"
+          bindLabel="stationName"
           label="Emisora"
-          [data]="select">
+          control="station">
         </ngx-select>
       </form-field>
 
-      <form-field [control]="form.get('autoridad')" class="col-md-4">
+      <form-field [control]="form.get('authority')" class="col-md-4">
         <ngx-select
+          [searchOnInit]="true"
+          (fetchItems)="getAuthority($event)"
+          [data]="authority"
           [form]="form"
-          control="autoridad"
+          bindLabel="authorityName"
           label="Autoridad"
-          [data]="select">
+          control="authority">
         </ngx-select>
       </form-field>
     </div>
