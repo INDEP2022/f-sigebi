@@ -99,7 +99,7 @@
             </form-field>
           </div> -->
 
-          <div class="col-md-3">
+          <!-- <div class="col-md-3">
             <form-field
               [control]="expedientFilter"
               label="Filtrar por Expediente">
@@ -108,8 +108,8 @@
                 class="form-control"
                 formControlName="expedientFilter" />
             </form-field>
-          </div>
-          <div class="col-md-3">
+          </div> -->
+          <!-- <div class="col-md-3">
             <ng-custom-select-loading
               [isLoadInOnInit]="false"
               [form]="form"
@@ -121,8 +121,8 @@
               paramSearch="filter.goodId"
               prefixSearch="$eq"
               (valueChange)="changeGood($event)">
-            </ng-custom-select-loading>
-            <!-- <form-field [control]="form.get('good')">
+            </ng-custom-select-loading> -->
+          <!-- <form-field [control]="form.get('good')">
               <ngx-select
                 label="Bien"
                 [form]="form"
@@ -134,7 +134,7 @@
                 (fetchItems)="returnChecks($event)"
                 (change)="changeGood($event)"></ngx-select>
             </form-field> -->
-          </div>
+          <!-- </div> -->
         </div>
 
         <!--<div class="row pt-4">
@@ -171,6 +171,8 @@
               [widthDescription]="false"
               [haveSelectColumns]="true"
               [haveColumnFilters]="true"
+              [ilikeFilters]="ilikeFilters"
+              [dateFilters]="dateFilters"
               label="Cuenta"
               formField="account"
               [service]="detailsIndMovementService"
@@ -403,7 +405,8 @@
                 class="form-control"
                 formControlName="toReturn"
                 min="1"
-                [readonly]="readonly" />
+                [readonly]="!userChecks"
+                (input)="updateCalculateData()" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -414,8 +417,9 @@
                 type="number"
                 class="form-control"
                 formControlName="interestCredited"
-                min="1"
-                [readonly]="readonly" />
+                min="0"
+                readonly
+                (input)="updateCalculateData()" />
             </form-field>
           </div>
         </div>
@@ -426,8 +430,9 @@
                 type="number"
                 class="form-control"
                 formControlName="subTotal"
-                min="1"
-                [readonly]="readonly" />
+                min="0"
+                readonly
+                (input)="updateCalculateData()" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -438,8 +443,9 @@
                 type="number"
                 class="form-control"
                 formControlName="costsAdmon"
-                min="1"
-                [readonly]="readonly" />
+                min="0"
+                [readonly]="!userChecks"
+                (input)="updateCalculateData()" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -450,8 +456,8 @@
                 type="number"
                 class="form-control"
                 formControlName="associatedCosts"
-                min="1"
-                [readonly]="readonly" />
+                [readonly]="!userChecks"
+                min="0" />
             </form-field>
           </div>
           <div class="col-md-3">
@@ -462,8 +468,8 @@
                 type="number"
                 class="form-control"
                 formControlName="checkAmount"
-                min="1"
-                [readonly]="readonly" />
+                min="0"
+                readonly />
             </form-field>
           </div>
         </div>
@@ -501,13 +507,12 @@
               [load]="userChecks != null"
               [form]="form"
               [readonly]="!userChecks"
-              paramLimitName="perPage"
               formControlName="bankAccount"
               label="Cuenta Bancaria"
               [path]="pathBankAccount"
-              value="cve_cuenta"
-              bindLabel="cve_cuenta"
-              paramSearch="filter.cve_cuenta"
+              value="cveAccount"
+              bindLabel="cveAccount"
+              paramSearch="filter.cveAccount"
               prefixSearch="$eq"
               (valueChange)="changeCveCuenta($event)">
             </ng-custom-select-loading>
