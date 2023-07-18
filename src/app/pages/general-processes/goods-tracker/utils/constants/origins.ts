@@ -6,6 +6,7 @@ export enum GOOD_TRACKER_ORIGINS {
   DestructionManagement = 'FESTATUSRGA',
   EventosCapture = 'FINDICA_0035_1',
   MassiveChangeStatus = 'FACTADBCAMBIOESTAT',
+  EventPreparation = 'FCOMEREVENTOS',
 }
 
 export enum GOOD_TRACKER_ORIGINS_TITLES {
@@ -15,4 +16,5 @@ export enum GOOD_TRACKER_ORIGINS_TITLES {
   'FESTATUSRGA' = 'Gestión de Autorización de Destrucción',
   'FINDICA_0035_1' = 'Capura de Eventos',
   'FACTADBCAMBIOESTAT' = 'Cambio masivo de estatus bienes',
+  'FCOMEREVENTOS' = 'Prepración del Evento',
 }

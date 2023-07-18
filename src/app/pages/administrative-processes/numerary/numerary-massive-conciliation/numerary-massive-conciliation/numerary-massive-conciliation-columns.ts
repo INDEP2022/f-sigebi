@@ -15,9 +15,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
       instance.toggle.subscribe((data: any) => {
         if (data.toggle) {
           console.log(goodCheck);
-          goodCheck.push(data.row);
+            goodCheck.push(data.row);
         } else {
-          console.log(data.row.RSPTAQUERY);
+          console.log(data.row.RSPTAQUERY)
           goodCheck = goodCheck.filter(
             valor => valor.RSPTAQUERY.no_bien != data.row.RSPTAQUERY.no_bien
           );
@@ -121,11 +121,11 @@ export function clearGoodCheck() {
 }
 
 export function clearGoodCheck2() {
-  goodCheck2 = [];
+  goodCheck2 = []
 }
 
-export function newGoodCheck(data: any[]) {
-  goodCheck = data;
+export function newGoodCheck(data: any[]){
+  goodCheck = data
 }
 
 export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
@@ -141,9 +141,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
       instance.toggle.subscribe((data: any) => {
         if (data.toggle) {
           console.log(goodCheck);
-          goodCheck2.push(data.row);
+            goodCheck2.push(data.row);
         } else {
-          console.log(data.row.RSPTAQUERY);
+          console.log(data.row.RSPTAQUERY)
           goodCheck = goodCheck2.filter(
             valor => valor.RSPTAQUERY.no_bien != data.row.RSPTAQUERY.no_bien
           );

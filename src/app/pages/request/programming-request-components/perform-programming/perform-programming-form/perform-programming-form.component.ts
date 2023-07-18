@@ -1485,7 +1485,9 @@ export class PerformProgrammingFormComponent
                   const createProgGood = await this.addGoodsGuards();
 
                   if (createProgGood) {
-                    const updateGood: any = await this.changeStatusGoodGuard();
+                    const updateGood: any = await this.changeStatusGoodGuard(
+                      data
+                    );
 
                     if (updateGood) {
                       const showGoods: any = await this.getFilterGood(
@@ -1528,7 +1530,6 @@ export class PerformProgrammingFormComponent
           version: '1',
           status: 'EN_RESGUARDO_TMP',
         };
-
         this.programmingGoodService.createGoodProgramming(formData).subscribe({
           next: () => {
             resolve(true);
@@ -1542,7 +1543,7 @@ export class PerformProgrammingFormComponent
   }
 
   /*------------Cambio de status a resguardo ------------------*/
-  changeStatusGoodGuard() {
+  changeStatusGoodGuard(warehouse: number) {
     return new Promise(async (resolve, reject) => {
       this.goodSelect.map(item => {
         const formData: Object = {
@@ -1550,6 +1551,7 @@ export class PerformProgrammingFormComponent
           goodId: item.googId,
           goodStatus: 'EN_RESGUARDO_TMP',
           programmationStatus: 'EN_RESGUARDO_TMP',
+          storeId: warehouse,
         };
         this.goodService.updateByBody(formData).subscribe({
           next: () => {
@@ -1609,13 +1611,13 @@ export class PerformProgrammingFormComponent
           config.initialState = {
             idTransferent,
             typeTransportable: 'warehouse',
-            callback: async (data: any) => {
-              if (data) {
+            callback: async (warehouse: number) => {
+              if (warehouse) {
                 const createProgGood = await this.addGoodsWarehouse();
 
                 if (createProgGood) {
                   const updateGood: any = await this.changeStatusGoodWarehouse(
-                    data
+                    warehouse
                   );
 
                   if (updateGood) {

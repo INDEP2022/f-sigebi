@@ -112,11 +112,11 @@ export interface ISearchNumerary {
 }
 
 export interface IPupAssociateGood {
-  movementNo: number;
+  movementNo: number[];
   requestId: number;
   blkDeposit: number;
-  cbdDeposit: number;
-  cbcveCurrency: string;
+  cbdDeposit: number[];
+  cbcveCurrency: string[];
 }
 
 export interface IRequesNum {
