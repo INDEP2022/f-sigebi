@@ -2,10 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import {
-  FilterParams,
-  ListParams,
-} from 'src/app/common/repository/interfaces/list-params';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
@@ -22,7 +19,7 @@ import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
 export class SearchUserFormComponent extends BasePage implements OnInit {
   usersData: LocalDataSource = new LocalDataSource();
   loadUsersData: LocalDataSource = new LocalDataSource();
-  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  params = new BehaviorSubject<ListParams>(new ListParams());
   paramsUsers = new BehaviorSubject<ListParams>(new ListParams());
   paramsShowUsers = new BehaviorSubject<ListParams>(new ListParams());
   idProgramming: number = 0;
@@ -74,7 +71,6 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.showHideErrorInterceptorService.showHideError(false);
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getUsers());
@@ -82,15 +78,12 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
 
   getUsers() {
     this.loading = true;
-    this.paramsShowUsers.getValue()['filter.role'] =
-      'SolicitudProgramacion.creaProgramacion';
-    this.paramsShowUsers.getValue()['filter.delegationreg'] =
-      this.delegationUserLog;
+    this.params.getValue()['filter.delegationreg'] = this.delegationUserLog;
     this.userProcessService
-      .getAllUsersWithRol(this.paramsShowUsers.getValue())
+      .getAllUsersWithProgramming(this.params.getValue())
       .subscribe({
         next: response => {
-          this.usersData.load(response.data);
+          this.filterUsersProg(response.data);
           this.totalItems = response.count;
           this.loading = false;
         },
@@ -102,31 +95,28 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   }
 
   //Filtrar los usuarios que ya estén programados
-  /*filterUsersProg(users: any[]) {
-    console.log('dont', users);
-    this.paramsUsers.getValue()['filter.programmingId'] = 8426;
+  filterUsersProg(users: any[]) {
+    this.paramsUsers.getValue()['filter.programmingId'] = this.idProgramming;
     this.programmingGoodService
       .getUsersProgramming(this.paramsUsers.getValue())
-      .pipe(
-        catchError(error => {
-          this.showHideErrorInterceptorService.showHideError(false);
-          if (error.status == 400) {
-            this.userProgramming(users);
-          }
-          return throwError(() => error);
-        })
-      )
-      .subscribe(data => {
-        const filter = users.filter(user => {
-          const index = data.data.findIndex(_user => _user.email == user.email);
-          return index >= 0 ? false : true;
-        });
-        console.log(data);
-        this.totalItems = this.totalItems - data.count;
-        this.usersData.load(filter);
-        this.loading = false;
+      .subscribe({
+        next: data => {
+          const filter = users.filter(user => {
+            const index = data.data.findIndex(
+              _user => _user.email == user.email
+            );
+            return index >= 0 ? false : true;
+          });
+
+          this.totalItems = this.totalItems - data.count;
+          this.usersData.load(filter);
+          this.loading = false;
+        },
+        error: error => {
+          this.userProgramming(users);
+        },
       });
-  } */
+  }
 
   userProgramming(data: any) {
     this.usersData.load(data);
