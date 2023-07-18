@@ -175,6 +175,10 @@ export class AccountMovementService extends HttpService {
   postMassNumeraryGenerate(body: any) {
     return this.post('aplication/massNumeraryGenerate', body);
   }
+
+  postValidateClosingAccounts(body: any) {
+    return this.post('aplication/get-vc-dummy', body);
+  }
 }
 
 //``
