@@ -86,8 +86,14 @@
                         type="number"
                         class="form-control"
                         formControlName="fileNumber"
-                        readonly />
+                        (keydown)="
+                          getExpedient(this.form.controls['fileNumber'].value)
+                        " />
                     </form-field>
+                    <!-- <ngx-select [form]="form" control="fileNumber"
+                      (fetchItems)="getExpedient($event, this.params.getValue())" [showTooltip]="true"
+                      [data]="expedientSelected" bindLabel="description" [searchable]="false" label="Bien"
+                      value="expedientSelected"></ngx-select> -->
                   </div>
                   <div class="row pt-3">
                     <form-field
@@ -121,18 +127,12 @@
                     </form-field>
                   </div>
                 </div>
-                <div class="col-md-4">
-                  <app-goods-types-shared
-                    [form]="form"
-                    [(loadTypes)]="loadTypes"
-                    typeField="type"
-                    subtypeField="subtype"
-                    ssubtypeField="ssubtype"
-                    sssubtypeField="sssubtype"
-                    (goodSssubtypeChange)="
+                <!-- <div class="col-md-4">
+                  <app-goods-types-shared [form]="form" [(loadTypes)]="loadTypes" typeField="type"
+                    subtypeField="subtype" ssubtypeField="ssubtype" sssubtypeField="sssubtype" (goodSssubtypeChange)="
                       getGoods($event)
                     "></app-goods-types-shared>
-                </div>
+                </div> -->
               </div>
               <div footer>
                 <div class="d-flex justify-content-center">

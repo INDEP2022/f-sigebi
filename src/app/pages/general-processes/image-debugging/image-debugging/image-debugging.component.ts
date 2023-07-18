@@ -1451,7 +1451,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     // this.onLoadExpedientData();
     this.params.getValue().page = 1;
     this.loading = true;
-    this.goodService.getByExpedient(id).subscribe({
+    this.goodService.getByExpedient(id, this.params.getValue()).subscribe({
       next: resp => {
         const data = resp.data;
         this.loading = false;
@@ -1496,6 +1496,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
 
     // });
   }
+
   getEvent(params?: ListParams) {
     params['filter.event.statusvtaId'] = `$ilike:${params.text}`;
     params['filter.event.id'] = `$eq:${this.idEvent}`;
@@ -1558,6 +1559,23 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
+      },
+    });
+  }
+  getExpedient(id: string | number) {
+    // params['filter..goodId.description'] = `$ilike:${params.text}`;
+    let params = new ListParams();
+    params['filter.fileNumber'] = `$eq:${this.fileNumber}`;
+    this.goodService.getByExpedient(id, params).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.description = `${data.fileNumber}- ${data.goodDescription}`;
+          return data;
+        });
+        this.expedientSelected = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.expedientSelected = new DefaultSelect();
       },
     });
   }

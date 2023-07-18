@@ -140,7 +140,6 @@ export class GoodPhotoComponent extends BasePage implements OnInit {
   }
 
   override ngOnDestroy() {
-    console.log('AQUI ESTAMOS');
     this.subscription.unsubscribe();
     // this.sub.unsubscribe();
   }
