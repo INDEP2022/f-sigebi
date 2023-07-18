@@ -42,6 +42,8 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.paperworks);
+
     this.paperwork = this.paperworks[0];
   }
 
@@ -115,6 +117,9 @@ export class TurnPaperworkComponent extends BasePage implements OnInit {
       user,
       observations,
       response,
+      procedureNumber: this.paperworks?.map(
+        (paper: any) => paper.processNumber
+      ),
     };
     this.loading = true;
     this.loadingText = 'Cargando ...';

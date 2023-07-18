@@ -51,7 +51,13 @@ export class EventGoodsLotsListComponent
       ...this.settings,
       columns: EVENT_LOT_GOODS_LIST_COLUMNS,
       hideSubHeader: false,
-      actions: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: false,
+        delete: true,
+        add: false,
+        position: 'right',
+      },
     };
   }
   ngOnChanges(changes: SimpleChanges): void {
