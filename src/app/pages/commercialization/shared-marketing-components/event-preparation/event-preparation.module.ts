@@ -10,6 +10,7 @@ import { ExcelService } from 'src/app/common/services/excel.service';
 import { EventTypeSharedComponent } from 'src/app/@standalone/shared-forms/event-type-shared/event-type-shared.component';
 import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-shared/events-shared.component';
 
+import { StoreModule } from '@ngrx/store';
 import { AddEditLoteModalComponent } from './add-edit-lote-modal/add-edit-lote-modal.component';
 import { AvailableGoodsTableComponent } from './available-goods-table/available-goods-table.component';
 import { CommerEventCustomersComponent } from './components/commer-event-customers/commer-event-customers.component';
@@ -30,6 +31,7 @@ import { GroundsStatusModalComponent } from './grounds-status-modal/grounds-stat
 import { ReasonsModelComponent } from './reasons-model/reasons-model.component';
 import { RejectedGoodsTableComponent } from './rejected-goods-table/rejected-goods-table.component';
 import { SelectEventModalComponent } from './select-event-modal/select-event-modal.component';
+import { eventPreparationReducer } from './store/event-preparation.reducer';
 
 @NgModule({
   declarations: [
@@ -62,6 +64,7 @@ import { SelectEventModalComponent } from './select-event-modal/select-event-mod
     EventTypeSharedComponent,
     TabsModule,
     ModalModule,
+    StoreModule.forFeature('eventPreparation', eventPreparationReducer),
   ],
   exports: [
     CustomerCatalogsTableComponent,

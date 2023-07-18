@@ -4,6 +4,16 @@
   </div>
   <div body>
     <div class="row">
+      <div class="col-md-12">
+        <button
+          (click)="backTo()"
+          *ngIf="origin"
+          class="btn btn-primary btn-sm active">
+          Regresar <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
+    </div>
+    <div class="row">
       <div class="col-md-12 d-flex justify-content-end">
         <form
           [formGroup]="formCheckbox"
@@ -13,7 +23,7 @@
           </form-check>
           <div></div>
         </form>
-        <div class="mx-1">
+        <div>
           <confirm-button
             *ngIf="showInclude"
             type="button"
@@ -23,6 +33,8 @@
             className="btn-secondary"
             [btnSmall]="true"
             (confirm)="include()"></confirm-button>
+        </div>
+        <div>
           <confirm-button
             *ngIf="showInclude"
             type="button"
@@ -32,6 +44,8 @@
             className="btn-secondary ml-2"
             [btnSmall]="true"
             (confirm)="includeAll()"></confirm-button>
+        </div>
+        <div>
           <confirm-button
             type="button"
             [loading]="excelLoading"
@@ -42,6 +56,7 @@
             [btnSmall]="true"
             (confirm)="getDataExcell()"></confirm-button>
         </div>
+
         <app-columns-select
           class="mx-1"
           [(settings)]="settings"
@@ -112,17 +127,7 @@
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-12">
-        <button
-          (click)="backTo()"
-          *ngIf="origin"
-          class="btn btn-secondary btn-sm active">
-          <i class="fa fa-arrow-left" aria-hidden="true"></i>
-          Regresar a {{ backToText() }}
-        </button>
-      </div>
-    </div>
+
     <div class="row" [ngClass]="{ 'table-loading': loading }">
       <div class="col-md-12 table-responsive">
         <ng2-smart-table

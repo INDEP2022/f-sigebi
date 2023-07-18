@@ -1,7 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
 import { BasePage } from 'src/app/core/shared';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
+import { EventPreparationService } from '../../event-preparation.service';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
 
@@ -20,27 +24,34 @@ export class EventGoodsLotsListActionsComponent
   get controls() {
     return this.eventForm.controls;
   }
-  constructor() {
+  constructor(
+    private router: Router,
+    private eventPreparationService: EventPreparationService,
+    private globalVarsService: GlobalVarsService
+  ) {
     super();
   }
 
   ngOnInit(): void {}
 
-  validItemSelected() {
+  isSomeItemSelected() {
     if (!this.lotSelected) {
       this.alert('error', 'Error', 'Primero Selecciona un Registro');
-      throw 'No item Selected';
+      return false;
     }
+    return true;
   }
 
-  onLoadFromTracker() {
-    this.validItemSelected();
+  async onLoadFromTracker() {
+    // if (!this.isSomeItemSelected()) {
+    //   return;
+    // }
     const { eventTpId, statusVtaId } = this.controls;
     if (eventTpId.value == 9) {
       this.alert(
         'error',
         'Error',
-        'Opción no disponible para este tipo de evento,lotifique desde archivo'
+        'Opción no disponible para este tipo de evento, lotifique desde archivo'
       );
       return;
     }
@@ -53,13 +64,11 @@ export class EventGoodsLotsListActionsComponent
       );
       return;
     }
-    console.log(statusVtaId.value);
-
     if (
       this.parameters.pValids == 1 &&
       ['PREP', 'APRO', 'PUB', 'ACT'].includes(statusVtaId.value)
     ) {
-      this.loadFromGoodsTracker();
+      await this.loadFromGoodsTracker();
       return;
     }
     this.alert(
@@ -72,5 +81,20 @@ export class EventGoodsLotsListActionsComponent
   /**
    * PUP_INC_BIE_RASTREADOR
    */
-  loadFromGoodsTracker() {}
+  async loadFromGoodsTracker() {
+    const global = await this.globalVarsService.getVars();
+    this.globalVarsService.updateSingleGlobal('REL_BIENES', 0, global);
+    const selfState = await this.eventPreparationService.getState();
+    this.eventPreparationService.updateState({
+      ...selfState,
+      lastLot: Number(this.lotSelected.id) ?? -1,
+      lastPublicLot: this.lotSelected.publicLot ?? 1,
+    });
+
+    this.router.navigate([GOODS_TACKER_ROUTE], {
+      queryParams: {
+        origin: 'FCOMEREVENTOS',
+      },
+    });
+  }
 }
