@@ -1,6 +1,6 @@
 export const INDICATOR_REPORT_COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'ID',
     type: 'number',
     sort: false,
   },
@@ -35,7 +35,7 @@ export const INDICATOR_REPORT_COLUMNS = {
     sort: false,
   },
   version: {
-    title: 'Version',
+    title: 'Versión',
     type: 'Date',
     sort: false,
   },

@@ -86,6 +86,7 @@ import { maxDate, minDate } from 'src/app/common/validations/date.validators';
 import { ImageMediaService } from 'src/app/core/services/catalogs/image-media.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsTypeService } from 'src/app/core/services/ms-documents-type/documents-type.service';
+import { TmpGestRegDocService } from 'src/app/core/services/ms-flier/tmp-gest-reg-doc.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
@@ -234,7 +235,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private imageMediaService: ImageMediaService,
     private goodTrackerService: GoodTrackerService,
     private satTransferService: SatTransferService,
-    private goodFinderService: GoodFinderService
+    private goodFinderService: GoodFinderService,
+    private tmpGestRegDocService: TmpGestRegDocService
   ) {
     super();
     this.settings.actions = false; // SE CAMBIO PARA NO PERMITIR EDITAR
@@ -1064,116 +1066,143 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
   }
 
-  //GET TIPO_TRAMITE|| typeManagement
-
-  work2() {
+  async getPgrDocumentsVal() {
     const { officeNumber } = this.selectedRow;
     const params = new FilterParams();
     params.addFilter('pgrJob', officeNumber);
     console.warn('Documentos PGR');
-    this.fileBrowserService.getPgrFiles(params.getParams()).subscribe({
-      next: res => {
-        if (res.count < 1) {
-          this.alert(
-            'error',
-            'Error',
-            'El Oficio no tiene Documentos, no se podrá Trabajar'
-          );
-          return;
-        }
-        //Substring 2 FIRST LETTER STATUS
-        let processStatus = this.selectedRow.processStatus.substring(0, 2);
-        //console.log(processStatus);
-        this.loader.load = true;
-        this.procedureManagementService
-          .getManagamentArea({ 'filter.id': processStatus })
-          .subscribe({
-            next: (resp: any) => {
-              this.loader.load = false;
-              //console.log(resp);
-              if (resp) {
-                if (resp.data[0].screenKey === 'FACTJURDICTAMASG') {
-                  //console.log('PUP_LANZA_DICTAMEN_ABANDONO');
-                  let TIPO_DIC = 'ABANDONO';
-                  let wheelType = this.selectedRow.wheelType;
-                  if (wheelType !== null) {
-                    //console.log('call FACTJURDICTAMASG');
-                    this.getGlobalVars();
-                    this.globalVars = {
-                      ...this.globalVars,
-                      EXPEDIENTE: this.selectedRow.proceedingsNumber,
-                      TIPO_DIC: TIPO_DIC,
-                      VOLANTE: this.selectedRow.flierNumber,
-                      CONSULTA: 'N',
-                      TIPO_VO: wheelType,
-                      P_GEST_OK: 1,
-                      P_NO_TRAMITE: this.selectedRow.processNumber,
-                    };
+    return firstValueFrom(
+      this.fileBrowserService
+        .getPgrFiles(params.getParams())
+        .pipe(catchError(() => of({ data: [], count: 0 })))
+    );
+  }
 
-                    this.globalVarsService.updateGlobalVars(this.globalVars);
-                    this.router.navigateByUrl(
-                      '/pages/juridical/juridical-ruling-g/'
-                    );
-                  } else {
-                    this.alert(
-                      'warning',
-                      `${resp.data[0].screenKey}`,
-                      'No se encuentra disponible en este momento'
-                    );
-                  }
-                } else if (resp.data[0].screenKey === 'FACTOFPREGRECDOCM') {
-                  //console.log(this.docsDataService.flyersRegistrationParams);
-                  this.docsDataService.flyersRegistrationParams = {
-                    pIndicadorSat: null,
-                    pGestOk: 1,
-                    pNoVolante: null,
-                    pNoTramite: parseInt(this.selectedRow.processNumber),
-                    pSatTipoExp: this.P_SAT_TIPO_EXP || null,
-                    noTransferente: null,
-                  };
-                  //console.log(this.selectedRow);
-                  //console.log(this.docsDataService.flyersRegistrationParams);
-                  this.router.navigateByUrl(
-                    '/pages/documents-reception/flyers-registration'
-                  );
-                } else if (resp.data[0].screenKey === 'FACTGENACTDATEX') {
-                  this.router.navigateByUrl(
-                    `/pages/juridical/file-data-update?wheelNumber=${this.selectedRow.flierNumber}`
-                  );
-                } else if (resp.data[0].screenKey === 'FADMAMPAROS') {
-                  this.router.navigateByUrl(
-                    `/pages/juridical/depositary/maintenance-of-coverages?processNumber=${this.selectedRow.processNumber}&wheelNumber=${this.selectedRow.flierNumber}&proceedingsNumber=${this.selectedRow.proceedingsNumber}`
-                  );
-                } else {
-                  resp.data[0].screenKey !== null
-                    ? this.alert(
-                        'warning',
-                        `${resp.data[0].screenKey}`,
-                        'No se encuentra disponible en este momento'
-                      )
-                    : this.alert(
-                        'warning',
-                        `Pantalla`,
-                        'No disponible en este momento'
-                      );
-                  //console.log('other screenKey');
-                  //TODO:MAP SCREENS AND ROUTING
-                }
-              }
-            },
-            error: () => {
-              this.loader.load = false;
-            },
-          });
-      },
-      error: err => {
+  async getTmpGestRecDoc() {
+    const { officeNumber } = this.selectedRow;
+    const params = new FilterParams();
+    params.addFilter('officeNumber', officeNumber);
+    return firstValueFrom(
+      this.tmpGestRegDocService
+        .getAllWithFilters(params.getParams())
+        .pipe(catchError(() => of({ data: [], count: 0 })))
+    );
+  }
+
+  async work2() {
+    const typeManagement = this.selectedRow.typeManagement;
+    if (typeManagement == 3) {
+      const pgrDocs = await this.getPgrDocumentsVal();
+      console.warn({ pgrDocs });
+
+      if (pgrDocs.count == 0) {
         this.alert(
           'error',
           'Error',
           'El Oficio no tiene Documentos, no se podrá Trabajar'
         );
-      },
-    });
+        return;
+      }
+
+      const tmpGestRecDoc = await this.getTmpGestRecDoc();
+      console.warn({ tmpGestRecDoc });
+
+      if (tmpGestRecDoc.count == 0) {
+        this.alert(
+          'error',
+          'Error',
+          'El Oficio tiene Información Incompleta, no se podrá trabajar'
+        );
+        return;
+      }
+    }
+    const { officeNumber } = this.selectedRow;
+    const params = new FilterParams();
+    params.addFilter('pgrJob', officeNumber);
+    console.warn('Documentos PGR');
+    let processStatus = this.selectedRow.processStatus.substring(0, 2);
+    //console.log(processStatus);
+    this.loader.load = true;
+    this.procedureManagementService
+      .getManagamentArea({ 'filter.id': processStatus })
+      .subscribe({
+        next: (resp: any) => {
+          this.loader.load = false;
+          //console.log(resp);
+          if (resp) {
+            if (resp.data[0].screenKey === 'FACTJURDICTAMASG') {
+              //console.log('PUP_LANZA_DICTAMEN_ABANDONO');
+              let TIPO_DIC = 'ABANDONO';
+              let wheelType = this.selectedRow.wheelType;
+              if (wheelType !== null) {
+                //console.log('call FACTJURDICTAMASG');
+                this.getGlobalVars();
+                this.globalVars = {
+                  ...this.globalVars,
+                  EXPEDIENTE: this.selectedRow.proceedingsNumber,
+                  TIPO_DIC: TIPO_DIC,
+                  VOLANTE: this.selectedRow.flierNumber,
+                  CONSULTA: 'N',
+                  TIPO_VO: wheelType,
+                  P_GEST_OK: 1,
+                  P_NO_TRAMITE: this.selectedRow.processNumber,
+                };
+
+                this.globalVarsService.updateGlobalVars(this.globalVars);
+                this.router.navigateByUrl(
+                  '/pages/juridical/juridical-ruling-g/'
+                );
+              } else {
+                this.alert(
+                  'warning',
+                  `${resp.data[0].screenKey}`,
+                  'No se encuentra disponible en este momento'
+                );
+              }
+            } else if (resp.data[0].screenKey === 'FACTOFPREGRECDOCM') {
+              //console.log(this.docsDataService.flyersRegistrationParams);
+              this.docsDataService.flyersRegistrationParams = {
+                pIndicadorSat: null,
+                pGestOk: 1,
+                pNoVolante: null,
+                pNoTramite: parseInt(this.selectedRow.processNumber),
+                pSatTipoExp: this.P_SAT_TIPO_EXP || null,
+                noTransferente: null,
+              };
+              //console.log(this.selectedRow);
+              //console.log(this.docsDataService.flyersRegistrationParams);
+              this.router.navigateByUrl(
+                '/pages/documents-reception/flyers-registration'
+              );
+            } else if (resp.data[0].screenKey === 'FACTGENACTDATEX') {
+              this.router.navigateByUrl(
+                `/pages/juridical/file-data-update?wheelNumber=${this.selectedRow.flierNumber}`
+              );
+            } else if (resp.data[0].screenKey === 'FADMAMPAROS') {
+              this.router.navigateByUrl(
+                `/pages/juridical/depositary/maintenance-of-coverages?processNumber=${this.selectedRow.processNumber}&wheelNumber=${this.selectedRow.flierNumber}&proceedingsNumber=${this.selectedRow.proceedingsNumber}`
+              );
+            } else {
+              resp.data[0].screenKey !== null
+                ? this.alert(
+                    'warning',
+                    `${resp.data[0].screenKey}`,
+                    'No se encuentra disponible en este momento'
+                  )
+                : this.alert(
+                    'warning',
+                    `Pantalla`,
+                    'No disponible en este momento'
+                  );
+              //console.log('other screenKey');
+              //TODO:MAP SCREENS AND ROUTING
+            }
+          }
+        },
+        error: () => {
+          this.loader.load = false;
+        },
+      });
   }
 
   work() {
@@ -1183,7 +1212,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     if (processStatus !== 'FNI') {
       this.loader.load = true;
       this.workService.getSatOfficeType(officeNumber).subscribe({
-        next: (resp: any) => {
+        next: async (resp: any) => {
           this.loader.load = false;
           if (resp.data) {
             //console.log(resp.data);
@@ -1196,7 +1225,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             switch (typeManagement) {
               case '2':
                 folio !== 0
-                  ? this.work2()
+                  ? await this.work2()
                   : this.alert(
                       'warning',
                       'Este trámite es un asunto SAT',
@@ -1205,7 +1234,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 break;
               case '3':
                 folio !== 0
-                  ? this.work2()
+                  ? await this.work2()
                   : this.alert(
                       'warning',
                       'Este trámite es un asunto PGR',
@@ -1214,7 +1243,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 break;
               default:
                 ////console.log('No es 2 ni 3, work()');
-                this.work2();
+                await this.work2();
                 break;
             }
 
