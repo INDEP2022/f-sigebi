@@ -252,6 +252,14 @@ export class DepositaryPaymentChargesComponent
         .subscribe({
           next: resp => {
             console.log(resp.ArrayData);
+            if (resp.ArrayData.length == 0) {
+              this.alertInfo(
+                'info',
+                'No Se cargaron los pagos',
+                'El numero de movimiento ya esta registrado'
+              );
+              return;
+            }
             this.insertRefPaymentDepositaria(resp.ArrayData);
           },
           error: eror => {
@@ -510,6 +518,7 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
       let haveReference: any = await this.getAppointmentByGoodId(item.NO_BIEN);
 
       console.log(haveReference);
+      debugger;
       if (haveReference.result == true) {
         /*const body: any = {
           appointmentNum: haveReference,
