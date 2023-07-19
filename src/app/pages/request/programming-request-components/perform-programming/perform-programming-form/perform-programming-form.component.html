@@ -56,7 +56,6 @@
       </button>
 
       <button
-        (click)="sendProgramation()"
         *ngIf="infoTask?.State == 'FINALIZADA'"
         type="submit"
         class="btn btn-primary btn-sm active disabled"
@@ -387,7 +386,7 @@
                 [form]="performForm"
                 control="storeId"
                 [data]="warehouse"
-                value="idWarehouse"
+                value="description"
                 bindLabel="description"
                 (change)="showWarehouse($event)"
                 label="Selecciona un Almac&eacute;n"
