@@ -36,6 +36,11 @@ export class DetailInterestReturnService extends HttpService {
     return this.post<IPupDetalleDevolutionResult>(route, body);
   }
 
+  getSeqNextVal() {
+    const route = `${this.endpoint}/get-seq-num-devol-next-val`;
+    return this.get<{ nextval: string }>(route);
+  }
+
   getAll(
     params?: ListParams
   ): Observable<IListResponse<IDetailInterestReturn>> {
