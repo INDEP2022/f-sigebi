@@ -3,7 +3,7 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const COLUMNS = {
-  payIdGens: {
+  no_appointment: {
     title: 'Nombramiento',
     sort: false,
   },
@@ -39,7 +39,7 @@ export const COLUMNS = {
     title: 'Imp. Sin Iva',
     sort: false,
   },
-  no_appointment: {
+  payIdGens: {
     title: 'Id Pagogens',
     sort: false,
   },
