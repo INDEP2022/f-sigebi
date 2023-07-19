@@ -3,7 +3,7 @@
     <h5 class="modal-title">Documentos</h5>
   </div>
   <div body>
-    <form [formGroup]="dateDocumentsForm" class="form-material">
+    <!--<form [formGroup]="dateDocumentsForm" class="form-material">
       <div class="row margin-input">
         <div class="col-md-4">
           <form-field
@@ -21,7 +21,7 @@
           </button>
         </div>
       </div>
-    </form>
+    </form>-->
     <div class="row">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
@@ -29,7 +29,7 @@
             [attr.class]="'table-bordered'"
             (userRowSelect)="selectRow($event.data)"
             [settings]="settings"
-            [source]="documentsForDictum">
+            [source]="data">
           </ng2-smart-table>
         </div>
       </div>
