@@ -64,20 +64,35 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
           Validators.maxLength(10),
         ],
       ],
-      key: [null, [Validators.required]],
+      key: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(8),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       typeDictum: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(15),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       dateReceipt: [null],
       userReceipt: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       insertionDate: [null, [Validators.required]],
       userInsertion: [null],
       numRegister: [null],
-      officialNumber: [null],
+      officialNumber: [null, [Validators.pattern(STRING_PATTERN)]],
       notificationDate: [null],
       secureKey: [null],
     });
@@ -89,16 +104,23 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
       this.stateNumber = this.dateDocuments.stateNumber as IState;
       this.edit = true;
       this.dateDocumentsModalForm.patchValue(this.dateDocuments);
-      let date = new Date(this.dateDocuments.insertionDate + 'T00:00:00-07:00');
+
+      let date = new Date(this.dateDocuments.insertionDate);
       if (this.dateDocuments.notificationDate) {
-        let dateNoti = new Date(
-          this.dateDocuments.notificationDate + 'T00:00:00-07:00'
+        //let dateNoti = new Date(this.dateDocuments.notificationDate); dateReceipt
+        const dateNotif = this.transformDate(
+          this.dateDocuments.notificationDate
         );
         this.dateDocumentsModalForm.controls['notificationDate'].setValue(
-          dateNoti
+          dateNotif
         );
       }
-      this.dateDocumentsModalForm.controls['insertionDate'].setValue(date);
+      const dateInsert = this.transformDate(this.dateDocuments.insertionDate);
+      this.dateDocumentsModalForm.controls['insertionDate'].setValue(
+        dateInsert
+      );
+      const dateReceipt = this.transformDate(this.dateDocuments.dateReceipt);
+      this.dateDocumentsModalForm.controls['dateReceipt'].setValue(dateReceipt);
       this.dateDocumentsModalForm.controls['key'].setValue(this.id.key);
     } else {
       this.dateDocumentsModalForm.controls['userInsertion'].setValue(
@@ -106,6 +128,14 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
       );
     }
   }
+
+  transformDate(date: Date) {
+    const date2 = new Date(date);
+    const datePipe = new DatePipe('en-US');
+    const formatTrans1 = datePipe.transform(date2, 'dd/MM/yyyy', 'UTC');
+    return formatTrans1;
+  }
+
   close() {
     this.modalRef.hide();
   }
@@ -132,7 +162,7 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
   create() {
     this.loading = true;
 
-    const newDateDocument = this.dateDocumentsModalForm.value;
+    /*const newDateDocument = this.dateDocumentsModalForm.value;
 
     Object.defineProperties(newDateDocument, {
       insertionDate: {
@@ -147,24 +177,45 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
           'dd-mm-yyyy'
         ),
       },
-    });
+    });*/
 
-    console.log('PAYLOAD', newDateDocument);
+    //console.log('PAYLOAD', newDateDocument);
 
-    this.dateDocumentsService.create(newDateDocument).subscribe({
-      next: data => {
-        console.log('success', data);
-        this.handleSuccess();
-      },
-      error: error => {
-        console.log('success', error);
-        this.loading = false;
-      },
-    });
+    this.dateDocumentsService
+      .create(this.dateDocumentsModalForm.getRawValue())
+      .subscribe({
+        next: data => {
+          console.log('success', data);
+          this.handleSuccess();
+        },
+        error: error => {
+          console.log('success', error);
+          this.loading = false;
+        },
+      });
   }
   update() {
     this.loading = true;
-    this.dateDocumentsModalForm.controls['insertionDate'].setValue(
+    const insertDate =
+      this.dateDocumentsModalForm.controls['insertionDate'].value;
+    const notifDate =
+      this.dateDocumentsModalForm.controls['notificationDate'].value;
+
+    if (
+      typeof insertDate === 'string' ||
+      typeof notifDate === 'string' ||
+      (typeof insertDate === 'string' && typeof notifDate === 'string')
+    ) {
+      const insertDate1 = new Date(insertDate);
+      this.dateDocumentsModalForm.controls['insertionDate'].setValue(
+        insertDate1
+      );
+      const notifDate1 = new Date(notifDate);
+      this.dateDocumentsModalForm.controls['notificationDate'].setValue(
+        notifDate1
+      );
+    }
+    /*this.dateDocumentsModalForm.controls['insertionDate'].setValue(
       this.datePipe.transform(
         this.dateDocumentsModalForm.controls['insertionDate'].value,
         'dd-mm-yyyy'
@@ -175,9 +226,9 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
         this.dateDocumentsModalForm.controls['notificationDate'].value,
         'dd-mm-yyyy'
       )
-    );
+    );*/
     this.dateDocumentsService
-      .update3(this.dateDocumentsModalForm.value)
+      .update3(this.dateDocumentsModalForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

@@ -5,9 +5,13 @@
       label="Rango de fechas"
       class="col-md-3 mt-3">
       <input
-        type="text"
         class="form-control"
+        ngModel
         bsDatepicker
+        [bsConfig]="{
+          dateInputFormat: 'DD/MM/YYYY',
+          displayOneMonthRange: true
+        }"
         formControlName="fechaInicio" />
     </form-field>
 
@@ -16,9 +20,14 @@
       label="A"
       class="col-md-3 mt-3">
       <input
-        type="text"
         class="form-control"
+        ngModel
         bsDatepicker
+        [bsConfig]="{
+          dateInputFormat: 'DD/MM/YYYY',
+          displayOneMonthRange: true
+        }"
+        [minDate]="fechaInicio.value"
         formControlName="fechaFin" />
     </form-field>
 

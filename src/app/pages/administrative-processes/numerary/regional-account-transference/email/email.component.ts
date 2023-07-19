@@ -77,8 +77,7 @@ export class EmailComponent extends BasePage implements OnInit {
 
     this.form.patchValue(this.email);
 
-    this.form.get('PARA').patchValue([this.email.PARA]);
-    console.log(this.email.PARA);
+    this.form.get('PARA').patchValue(this.email.PARA);
 
     this.form
       .get('FECHA_ENV')
@@ -99,6 +98,7 @@ export class EmailComponent extends BasePage implements OnInit {
 
   getNameRemit(params: ListParams) {
     params['delegationNumber'] = this.delegation;
+    params.limit = 50;
 
     this.segUserService.getNameEmail(params).subscribe({
       next: resp => {
@@ -110,6 +110,7 @@ export class EmailComponent extends BasePage implements OnInit {
 
   getNameDist(params: ListParams) {
     params['delegationNumber'] = this.delegation;
+    params.limit = 50;
 
     this.segUserService.getDisNameEmail(params).subscribe({
       next: resp => {
