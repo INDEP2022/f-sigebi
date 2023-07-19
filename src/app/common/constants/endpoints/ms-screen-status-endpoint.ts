@@ -9,4 +9,5 @@ export enum ScreenStatusEndpoints {
   cValFolRev = 'seg-app-screen/cValfoRev',
   GetGoodScreenStatus = 'application/get-good-screen-status',
   PermissionsByScreenAndUser = 'seg-app-screen/get-permissions-by-screen-and-user',
+  Application = 'application',
 }
