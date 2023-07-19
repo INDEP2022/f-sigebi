@@ -111,6 +111,7 @@ export class PerformProgrammingFormComponent
   municipailitites = new DefaultSelect<IMunicipality>();
   localities = new DefaultSelect<ILocality>();
   warehouseUbication: string = '';
+  warehouseId: number = 0;
   tranportableItems: number = 0;
   headingTransportable: string = `Transportables (0)`;
   headingGuard: string = `Resguardo (0)`;
@@ -418,6 +419,7 @@ export class PerformProgrammingFormComponent
 
   showWarehouse(warehouse: IWarehouse) {
     this.warehouseUbication = warehouse?.ubication;
+    this.warehouseId = warehouse?.idWarehouse;
     this.showUbication = true;
   }
 
@@ -1194,7 +1196,7 @@ export class PerformProgrammingFormComponent
 
   getWarehouseSelect(params: ListParams) {
     this.showWarehouseInfo = true;
-    params.limit = 6039;
+    params.limit = 300;
     //params['filter.stateCode'] = this.idState;
     this.warehouseService.getAll(params).subscribe(data => {
       this.warehouse = new DefaultSelect(data.data, data.count);
@@ -1922,6 +1924,7 @@ export class PerformProgrammingFormComponent
         this.formLoading = true;
         const folio: any = await this.generateFolio(this.performForm.value);
         this.performForm.get('folio').setValue(folio);
+        this.performForm.get('storeId').setValue(this.warehouseId);
         const task = JSON.parse(localStorage.getItem('Task'));
         const updateTask = await this.updateTask(folio, task.id);
         if (updateTask) {
@@ -2064,6 +2067,7 @@ export class PerformProgrammingFormComponent
 
       this.performForm.get('tranferId').setValue(this.transferentId);
       this.performForm.get('stationId').setValue(this.stationId);
+      this.performForm.get('storeId').setValue(this.warehouseId);
       this.performForm.get('autorityId').setValue(this.autorityId);
       this.performForm
         .get('regionalDelegationNumber')
@@ -2288,7 +2292,7 @@ export class PerformProgrammingFormComponent
       this.performForm.get('address').setValue(this.dataProgramming.address);
       this.performForm.get('city').setValue(this.dataProgramming.city);
       this.performForm.get('stateKey').setValue(this.dataProgramming.stateKey);
-      this.performForm.get('storeId').setValue(this.dataProgramming.storeId);
+
       this.performForm
         .get('emailTransfer')
         .setValue(this.dataProgramming.emailTransfer);
@@ -2336,7 +2340,8 @@ export class PerformProgrammingFormComponent
       if (this.dataProgramming.storeId) {
         this.warehouseService.getById(this.dataProgramming.storeId).subscribe({
           next: response => {
-            this.warehouseUbication = response.description;
+            this.performForm.get('storeId').setValue(response.description);
+            this.warehouseUbication = response.ubication;
           },
           error: error => {},
         });

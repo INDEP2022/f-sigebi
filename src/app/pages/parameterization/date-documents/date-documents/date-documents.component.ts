@@ -34,16 +34,20 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
     private modalService: BsModalService
   ) {
     super();
-    this.settings = {
+    /*this.settings = {
       ...this.settings,
       columns: DATEDOCUMENTS_COLUMNS,
     };
     this.settings.actions.add = false;
-    this.settings.actions.delet = false;
+    this.settings.actions.delet = true;
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
-    };
+    };*/
+    this.settings.columns = DATEDOCUMENTS_COLUMNS;
+    this.settings.actions.delete = true;
+    this.settings.actions.add = false;
+    this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -59,7 +63,17 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'expedientNumber':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'stateNumber':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'typeDictum':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'key':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
                 break;
               case 'dateReceipt':
                 console.log('dddd', filter.search);
@@ -123,6 +137,9 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
+        //this.totalItems = 0;
+        this.data.load([]);
+        this.data.refresh();
         this.totalItems = 0;
       },
     });
@@ -164,5 +181,44 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(DateDocumentsModalComponent, config);
+  }
+
+  delete1(typeService: IDateDocuments) {
+    let key: any = typeService.key;
+    const key1 = key.key;
+    let body = {
+      expedientNumber: typeService.expedientNumber,
+      stateNumber: typeService.stateNumber,
+      key: key1,
+      typeDictum: typeService.typeDictum,
+    };
+    console.log(body);
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.remove(body);
+      }
+    });
+  }
+
+  remove(body: any) {
+    console.log(body);
+    this.dateDocumentsService.removeRepuves(body).subscribe({
+      next: () => {
+        this.alert('success', 'Fecha para Documento', 'Borrado Correctamente'),
+          this.getAllDateDocuments();
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Tipo Servicio',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
+    });
   }
 }

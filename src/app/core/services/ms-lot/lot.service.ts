@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -37,8 +38,16 @@ export class LotService extends HttpService {
   fillEventStadistics(event: string | number) {
     return this.get('apps/fill-data-statistics/event/' + event);
   }
-  getByLotEventPhoto(good: number, params: ListParams) {
-    const route = `${LotEndpoints.GoodByLotsEvent}=${good}`;
-    return this.get(route, params);
+
+  eventValDesc(eventId: string | number) {
+    return this.get('apps/comer-bases-valdesc-when-button-pressed/' + eventId);
+  }
+
+  updateMandate(body: {
+    pGood: number | string;
+    pLot: number | string;
+    lotId: number | string;
+  }) {
+    return this.post('apps/act-mandate', body);
   }
 }

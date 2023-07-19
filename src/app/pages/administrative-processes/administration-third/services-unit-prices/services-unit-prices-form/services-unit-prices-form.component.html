@@ -5,7 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="serviceForm">
       <div class="row">
-        <div class="col-md-12 mt-4">
+        <div class="col-md-8 mt-4">
           <form-field
             label="Descripción"
             [control]="serviceForm.get('description')">
@@ -14,6 +14,17 @@
               class="form-control"
               maxlength="80"
               formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-4 mt-4">
+          <form-field
+            label="Número de Registro"
+            [control]="serviceForm.get('registryNumber')">
+            <input
+              type="number"
+              class="form-control"
+              maxlength="80"
+              formControlName="registryNumber" />
           </form-field>
         </div>
       </div>

@@ -60,7 +60,7 @@ export class GranteesListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'type':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'razonSocial':
                 searchFilter = SearchFilter.ILIKE;

@@ -8,6 +8,7 @@ export interface IAccountDetailInd {
   goodnumber: string;
   depositnumber: string;
   accountnumber: string;
+  accountnumberorigindeposit?: string;
   movementnumber: string;
   accountkey: string;
   preliminaryinvestigation: string;
@@ -19,7 +20,7 @@ export interface IAccountDetailInd {
   associatedexpenses: string;
   returnamount: string;
   accountnumberpayreturn?: any;
-  devolutionnumber: string;
+  devolutionnumber: string | number;
   keyratecalculationinterest?: any;
   description: string;
   status: string;
@@ -30,4 +31,5 @@ export interface IAccountDetailInd {
   expeditioncheckdate: string;
   checkcashingdate: string;
   nameindicated: string;
+  accounttras?: string;
 }

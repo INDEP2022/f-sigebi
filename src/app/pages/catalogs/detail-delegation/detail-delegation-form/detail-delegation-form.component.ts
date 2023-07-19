@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDetailDelegation } from 'src/app/core/models/catalogs/detail-delegation.model';
+import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { DetailDelegationService } from 'src/app/core/services/catalogs/detail-delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -11,6 +13,7 @@ import {
   PHONE_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-detail-delegation-form',
@@ -22,10 +25,12 @@ export class DetailDelegationFormComponent extends BasePage implements OnInit {
   title: string = 'Detalle Delegación';
   edit: boolean = false;
   detailDelegation: IDetailDelegation;
+  delegation = new DefaultSelect();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private detailDelegationService: DetailDelegationService
+    private detailDelegationService: DetailDelegationService,
+    private affairService: AffairService
   ) {
     super();
   }
@@ -37,21 +42,30 @@ export class DetailDelegationFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.detailDelegationForm = this.fb.group({
       id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      name: [null, [Validators.pattern(STRING_PATTERN)]],
-      location: [null, [Validators.pattern(STRING_PATTERN)]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      location: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       address: [null, [Validators.pattern(STRING_PATTERN)]],
-      position: [null, [Validators.pattern(STRING_PATTERN)]],
-      area: [null, [Validators.pattern(STRING_PATTERN)]],
-      mail: [null, [Validators.pattern(EMAIL_PATTERN)]],
+      position: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      area: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      mail: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
       tel1: [null, [Validators.pattern(PHONE_PATTERN)]],
       tel2: [null, [Validators.pattern(PHONE_PATTERN)]],
       tel3: [null, [Validators.pattern(PHONE_PATTERN)]],
-      numberDelegation: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      numberDelegation: [null, [Validators.required]],
     });
     if (this.detailDelegation != null) {
       this.edit = true;
       this.detailDelegationForm.patchValue(this.detailDelegation);
     }
+    setTimeout(() => {
+      this.getDelegation(new ListParams());
+    }, 1000);
   }
   close() {
     this.modalRef.hide();
@@ -88,5 +102,16 @@ export class DetailDelegationFormComponent extends BasePage implements OnInit {
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
+  }
+
+  getDelegation(params: ListParams) {
+    this.affairService.getDelegations(params).subscribe({
+      next: data => {
+        this.delegation = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.delegation = new DefaultSelect();
+      },
+    });
   }
 }
