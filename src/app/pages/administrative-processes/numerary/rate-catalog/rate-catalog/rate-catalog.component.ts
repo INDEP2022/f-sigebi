@@ -95,16 +95,20 @@ export class RateCatalogComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
 
-            const search: any = {
-              month: () => (searchFilter = SearchFilter.EQ),
-              year: () => (searchFilter = SearchFilter.EQ),
-              pesos: () => (searchFilter = SearchFilter.EQ),
-              dollars: () => (searchFilter = SearchFilter.EQ),
-              euro: () => (searchFilter = SearchFilter.EQ),
-            };
-
-            search[filter.field]();
-
+            // const search: any = {
+            //   month: () => (searchFilter = SearchFilter.EQ),
+            //   year: () => (searchFilter = SearchFilter.EQ),
+            //   pesos: () => (searchFilter = SearchFilter.EQ),
+            //   dollars: () => (searchFilter = SearchFilter.EQ),
+            //   euro: () => (searchFilter = SearchFilter.EQ),
+            // };
+            filter.field == 'month' ||
+            filter.field == 'year' ||
+            filter.field == 'pesos' ||
+            filter.field == 'dollars' ||
+            filter.field == 'euro'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {

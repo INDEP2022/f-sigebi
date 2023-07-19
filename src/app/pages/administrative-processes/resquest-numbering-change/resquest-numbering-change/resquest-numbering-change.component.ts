@@ -479,10 +479,10 @@ export class ResquestNumberingChangeComponent
       this.goodprocessService.getScreenGood2(id).subscribe({
         next: async (response: any) => {
           if (response.data) {
-            console.log('di_dispo', response);
+            //console.log('di_dispo', response);
             resolve('S');
           } else {
-            console.log('di_dispo', response);
+            //console.log('di_dispo', response);
             resolve('N');
           }
         },
@@ -516,10 +516,11 @@ export class ResquestNumberingChangeComponent
       (response: any) => {
         this.totalItems2 = response.count;
         this.data2.load(response.data);
+
         this.data2.refresh();
         // this.loading = false;
       },
-      error => (console.log('ERR', error), (this.loading = false))
+      error => (this.loading = false)
     );
   }
   getBoveda(params: ListParams, id?: string) {
@@ -533,25 +534,20 @@ export class ResquestNumberingChangeComponent
   getDelegations(params: ListParams, id?: string) {
     if (id) {
       params['filter.id'] = `$eq:${id}`;
-      console.log('AQUI', params);
     }
     this.delegationService.getAllPaginated(params).subscribe((data: any) => {
       this.itemsDelegation = new DefaultSelect(data.data, data.count);
-      console.log('AQUI', this.itemsDelegation);
-      console.log('AQUI', data);
     });
   }
 
   public searchUsuario(data: any) {
-    console.log(data);
-
     const params = new ListParams();
     params['filter.usuario'] = data.usuario;
-    console.log(data.usuario);
+
     this.securityService.getAllUser(params).subscribe({
       next: (types: any) => {
         this.itemsUser = new DefaultSelect(types.data, types.count);
-        console.log(types);
+
         this.formaplicationData.controls['postUserRequestCamnum'].setValue(
           types.data[0].otvalor
         );
@@ -563,15 +559,13 @@ export class ResquestNumberingChangeComponent
   }
 
   public searchUsuario1(dat: any) {
-    console.log(dat);
-
     const params1 = new ListParams();
     params1['filter.usuario'] = dat.usuario;
-    console.log(dat.usuario);
+
     this.securityService.getAllUser(params1).subscribe({
       next: (type: any) => {
         this.itemsUser1 = new DefaultSelect(type.data, type.count);
-        console.log(type);
+
         this.formaplicationData.controls['authorizePostUser'].setValue(
           type.data[0].otvalor
         );
@@ -593,8 +587,7 @@ export class ResquestNumberingChangeComponent
       });
 
       this.itemsUser = new DefaultSelect(res, data.count);
-      console.log(this.itemsUser);
-      console.log(data);
+
       //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
       // Llamar a getNameUser solo si se proporcionó un usuario
     });
@@ -611,8 +604,8 @@ export class ResquestNumberingChangeComponent
       });
 
       this.itemsUser1 = new DefaultSelect(res, dat.count);
-      console.log(this.itemsUser1);
-      console.log(dat);
+      // console.log(this.itemsUser1);
+      // console.log(dat);
       //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
       // Llamar a getNameUser solo si se proporcionó un usuario
     });
@@ -645,13 +638,14 @@ export class ResquestNumberingChangeComponent
           this.tiposData = new DefaultSelect(response.data, response.count);
           // this.loading = false;
         });
+        //console.log(response);
       },
       error => console.log('ERR', error)
     );
   }
 
   onOptionsSelected(options: any[]) {
-    console.log('Opciones seleccionadas:', options);
+    //console.log('Opciones seleccionadas:', options);
   }
 
   getDataTable() {
@@ -664,7 +658,7 @@ export class ResquestNumberingChangeComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
+            //console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -752,7 +746,6 @@ export class ResquestNumberingChangeComponent
             //item.di_disponible = acta != null ? 'N' : di_dispo;
           });
 
-          console.log('asaddasdasdasd', response.data);
           this.dataGood = response.data;
           this.totalItems = response.count;
           this.data.load(response.data);
@@ -760,7 +753,6 @@ export class ResquestNumberingChangeComponent
           this.loading = false;
         },
         error: err => {
-          console.log('error', err);
           if (!alertShown) {
             this.alert('warning', 'No se Encontraron Registros', '');
             this.totalItems = 0;
@@ -782,7 +774,6 @@ export class ResquestNumberingChangeComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -1482,7 +1473,6 @@ export class ResquestNumberingChangeComponent
     for (let index = 0; index < this.dataGood.length; index++) {
       if (valor == 0) {
         if (this.dataGood[index].appraisedValue == null) {
-          console.log('ENTRO AQUI');
           message =
             'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
           this.handleSuccess(message);
@@ -1570,11 +1560,9 @@ export class ResquestNumberingChangeComponent
             .setValue(response.applicationChangeNumeraryNumber);
           this.successAlert();
           this.loading = false;
-          console.log(response);
         },
         error: err => {
           this.loading = false;
-          console.log(err);
         },
       });
   }
@@ -1611,7 +1599,7 @@ export class ResquestNumberingChangeComponent
         // Verificar y formatear los campos de fecha solo si son válido
 
         this.formaplicationData.patchValue(response);
-        console.log('RES', this.formaplicationData.value);
+
         // Establecer los campos específicos como de solo lectura
         readonlyFields.forEach(fieldName => {
           this.formaplicationData.get(fieldName).disable();
