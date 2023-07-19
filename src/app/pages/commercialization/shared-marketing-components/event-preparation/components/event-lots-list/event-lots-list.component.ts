@@ -1,5 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import {
@@ -7,6 +15,7 @@ import {
   catchError,
   debounceTime,
   distinctUntilChanged,
+  Subject,
   takeUntil,
   tap,
   throwError,
@@ -17,8 +26,10 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerLotService } from 'src/app/core/services/ms-prepareevent/comer-lot.service';
 import { BasePage } from 'src/app/core/shared';
+import Swal from 'sweetalert2';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
 import { EVENT_LOT_LIST_COLUMNS } from '../../utils/table-columns/event-lots-list-columns';
@@ -34,14 +45,22 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   @Input() parameters: IEventPreparationParameters;
   @Input() params = new BehaviorSubject(new FilterParams());
   @Output() onSelectLot = new EventEmitter<IComerLot>();
+  @ViewChild('fileInput', { static: true })
+  fileInput: ElementRef<HTMLInputElement>;
   totalItems = 0;
   @Input() lots = new LocalDataSource();
+  lotSelected: IComerLot = null;
+  selectingFile = new Subject<File>();
+
+  excelControl = new FormControl(null);
   get controls() {
     return this.eventForm.controls;
   }
+
   constructor(
     private comerLotService: ComerLotService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private lotService: LotService
   ) {
     super();
     this.settings = {
@@ -51,11 +70,15 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         add: false,
         position: 'right',
       },
     };
+  }
+
+  fileChange(event: Event) {
+    console.log(event);
   }
 
   ngOnInit(): void {
@@ -125,10 +148,11 @@ export class EventLotsListComponent extends BasePage implements OnInit {
 
   userSelectLot(event: any) {
     if (event.isSelected) {
-      this.onSelectLot.emit(event.data);
+      this.lotSelected = event.data;
     } else {
-      this.onSelectLot.emit(null);
+      this.lotSelected = null;
     }
+    this.onSelectLot.emit(this.lotSelected);
   }
 
   openForm(lot?: IComerLot) {
@@ -145,5 +169,97 @@ export class EventLotsListComponent extends BasePage implements OnInit {
         },
       },
     });
+  }
+
+  isSomeLotSelected() {
+    if (!this.lotSelected) {
+      this.alert('error', 'Error', 'Primero Selecciona un Registro');
+      return false;
+    }
+    return true;
+  }
+
+  onActDesc() {
+    if (!this.isSomeLotSelected()) {
+      return;
+    }
+    this.updateDesc().subscribe();
+  }
+
+  updateDesc() {
+    return this.lotService.eventValDesc(this.lotSelected.eventId).pipe(
+      catchError(error => {
+        return throwError(() => error);
+      }),
+      tap(res => {
+        console.log(res);
+      })
+    );
+  }
+
+  onUpdateMand() {
+    if (!this.isSomeLotSelected()) {
+      return;
+    }
+    this.updateMand().subscribe();
+  }
+
+  updateMand() {
+    return this.lotService
+      .updateMandate({
+        pGood: 0,
+        pLot: 1,
+        lotId: this.lotSelected.id,
+      })
+      .pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(res => {
+          console.log(res);
+        })
+      );
+  }
+
+  async onValFile() {
+    const askIsLotifying = await this.alertQuestion(
+      'question',
+      '¿Está Lotificando?',
+      '',
+      'Si',
+      'No'
+    );
+    console.log({ askIsLotifying });
+
+    if (
+      askIsLotifying.isConfirmed ||
+      askIsLotifying.dismiss == Swal.DismissReason.cancel
+    ) {
+      this.selectExcel(askIsLotifying.isConfirmed).subscribe();
+    }
+  }
+
+  /** PUP_VALCSV */
+  validateCsv() {
+    console.warn('PUP_VALCSV');
+  }
+
+  /** PUP_VALCSV_CLIENTES */
+  validateCsvCustomers() {
+    console.warn('PUP_VALCSV_CLIENTES');
+  }
+
+  selectExcel(isLotifying: boolean) {
+    this.fileInput.nativeElement.click();
+    return this.selectingFile.pipe(
+      takeUntil(this.$unSubscribe),
+      tap(file => {
+        if (!file) {
+          this.alert('error', 'Error', 'No se selecciono ningún Archivo');
+          return;
+        }
+        isLotifying ? this.validateCsv() : this.validateCsvCustomers();
+      })
+    );
   }
 }

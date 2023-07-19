@@ -1,0 +1,203 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ status }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('no_appointment')"
+            label="Nombramiento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="no_appointment" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('noGoods')" label="No. Bien">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noGoods"
+              [max-length]="40" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('payId')" label="Id Pago">
+            <input type="text" class="form-control" formControlName="payId" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('amount')" label="Monto">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="amount"
+              [max-length]="17" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-3">
+          <form-field [control]="form.get('iva')" label="Iva">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="iva"
+              [max-length]="17" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('ivaAmount')" label="Monto Iva">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="ivaAmount"
+              [max-length]="17" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('payment')" label="Abono">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="payment"
+              [max-length]="17" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('actPay')" label="Pago Act">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="actPay"
+              [max-length]="17" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('impWithoutIva')"
+            label="Imp. Sin Iva">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="impWithoutIva"
+              [max-length]="17" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('payIdGens')" label="Id Pagogens">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="payIdGens"
+              [max-length]="10" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('status')">
+            <ngx-select
+              [data]="statusListSelect"
+              [form]="form"
+              value="value"
+              bindLabel="label"
+              label="Status"
+              [control]="'status'">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('cubrioPayId')"
+            label="Id Pago cubrido">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="cubrioPayId"
+              [max-length]="10" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('payObserv')"
+            label="Observación Pago">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="payObserv"
+              [max-length]="1000" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <form-field [control]="form.get('processDate')" label="Fecha Proceso">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="processDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('reference')" label="Referencia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="reference"
+              [max-length]="30" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('not_transferring')"
+            label="Transferente">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="not_transferring"
+              [max-length]="5" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('coveredPayment')">
+            <ngx-select
+              [data]="coveredPaymentSelect"
+              [form]="form"
+              value="value"
+              bindLabel="label"
+              label="Abono Cubierto"
+              [control]="'coveredPayment'">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

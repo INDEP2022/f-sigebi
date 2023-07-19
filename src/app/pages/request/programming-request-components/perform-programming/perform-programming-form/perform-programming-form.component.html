@@ -56,7 +56,6 @@
       </button>
 
       <button
-        (click)="sendProgramation()"
         *ngIf="infoTask?.State == 'FINALIZADA'"
         type="submit"
         class="btn btn-primary btn-sm active disabled"
@@ -374,8 +373,7 @@
           <confirm-button
             *ngIf="infoTask?.State == 'FINALIZADA'"
             [loading]="loading"
-            class="mr-2 disabled"
-            (confirm)="confirm()"></confirm-button>
+            class="mr-2 disabled"></confirm-button>
         </div>
 
         <div class="row pt-5">
@@ -388,7 +386,7 @@
                 [form]="performForm"
                 control="storeId"
                 [data]="warehouse"
-                value="idWarehouse"
+                value="description"
                 bindLabel="description"
                 (change)="showWarehouse($event)"
                 label="Selecciona un Almac&eacute;n"
@@ -568,8 +566,7 @@
         </button>
         <button
           class="btn btn-primary disabled btn-sm active"
-          *ngIf="idTypeRelevant != 1 && infoTask?.State == 'FINALIZADA'"
-          (click)="sendTransportable()">
+          *ngIf="idTypeRelevant != 1 && infoTask?.State == 'FINALIZADA'">
           Transportable <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
         <button
@@ -580,7 +577,6 @@
         </button>
         <button
           class="btn btn-primary disabled btn-sm active"
-          (click)="sendGuard()"
           *ngIf="infoTask?.State == 'FINALIZADA'">
           Resguardo <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
@@ -593,7 +589,6 @@
 
         <button
           class="btn btn-primary disabled btn-sm active"
-          (click)="sendWarehouse()"
           *ngIf="infoTask?.State == 'FINALIZADA'">
           <i class="fa fa-plus-circle" aria-hidden="true"></i> Almac&eacute;n
         </button>

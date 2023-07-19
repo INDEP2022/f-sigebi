@@ -504,7 +504,7 @@ export class LocationGoodsWarehousesStorageComponent
     this.selectedGooodsValid = event.selected;
   }
   getEstatusColor(estatus: string): string {
-    return estatus === 'S' ? 'green' : 'black';
+    return estatus === 'S' ? '#28A745' : '#343A40';
   }
   async getStatusScreen(body: any) {
     return new Promise((resolve, reject) => {

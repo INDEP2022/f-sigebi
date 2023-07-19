@@ -49,7 +49,7 @@ export const COLUMNS = {
     title: 'No Bien',
     sort: false,
   },
-  reference: {
+  appointmentNum: {
     title: 'No contrato',
     sort: false,
   },

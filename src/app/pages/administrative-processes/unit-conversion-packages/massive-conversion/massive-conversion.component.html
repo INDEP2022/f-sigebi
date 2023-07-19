@@ -16,17 +16,18 @@
               [form]="form"></ngx-select>
           </form-field>
         </div>
-        <div class="col-md-5 col-sm-12">
+        <!-- <div class="col-md-5 col-sm-12"> -->
           <form-field
             [control]="form.get('cvePackage')"
-            label="Clave del Paquete">
+            label="Clave del Paquete"
+            class="col-md-5 col-sm-12">
             <input
               type="text"
               [readOnly]="true"
               class="form-control"
               formControlName="cvePackage" />
           </form-field>
-        </div>
+        <!-- </div> -->
         <div class="col-md-5 col-sm-12">
           <form-field
             [control]="form.get('descriptionPackage')"
@@ -39,7 +40,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6 col-sm-12">
+        <div class="col-md-4 col-sm-12">
           <form-field [control]="form.get('packageType')">
             <label class="text-center">Tipo</label>
             <div class="row">
@@ -68,19 +69,11 @@
                       value="3" />
                   </form-radio>
                 </div>
-                <div class="col">
-                  <form-radio label="Otro">
-                    <input
-                      type="radio"
-                      formControlName="packageType"
-                      value="4" />
-                  </form-radio>
-                </div>
               </div>
             </div>
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 mt-3">
+        <div class="col-md-4 col-sm-12 mt-3">
           <form-field
             [control]="form.get('amountKg')"
             label="Cantidad en Kilos">
@@ -131,12 +124,20 @@
             Cierre
           </button>
           <button
+            *ngIf="!newDataFilled"
             type="button"
             tooltip="Agregar"
+            (click)="addNewPack()"
             containerClass="tooltip-style"
-            class="btn btn-info btn-sm active"
-            (click)="newPackage()">
+            class="btn btn-info btn-sm active">
             Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+          <button
+            *ngIf="newDataFilled"
+            type="submit"
+            (click)="newPackage()"
+            class="btn btn-primary active btn-sm mr-3">
+            Guardar Nuevo <i class="bx bx-save bx-sm float-icon"></i>
           </button>
         </div>
       </div>
@@ -449,7 +450,7 @@
   </div>
   <div body>
     <div class="row">
-      <div class="col-md-5 buttons">
+      <div class="col-md-12 buttons">
         <button
           type="button"
           (click)="insertParagraph()"
@@ -459,8 +460,14 @@
         <button
           (click)="downloadReport()"
           type="button"
-          class="btn btn-primary active btn-sm">
+          class="btn btn-primary active btn-sm mr-3">
           Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm mr-3"
+          (click)="updatePackage()">
+          Guardar Párrafos <i class="bx bx-save bx-sm float-icon"></i>
         </button>
       </div>
     </div>

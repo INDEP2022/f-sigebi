@@ -19,4 +19,8 @@ export class StatusXScreenService extends HttpService {
       params
     );
   }
+
+  postApplication(body: any) {
+    return this.post(ScreenStatusEndpoints.Application, body);
+  }
 }

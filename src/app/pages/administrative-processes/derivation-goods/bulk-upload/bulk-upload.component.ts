@@ -58,12 +58,12 @@ export class BulkUploadComponent extends BasePage implements OnInit {
     mode: 'external', // ventana externa
     columns: {
       CLASIFICADOR: {
-        title: 'Clasif.',
+        title: 'Clasificador',
         width: '10%',
         sort: false,
       },
       DESCRIPCION: {
-        title: 'Descripcion',
+        title: 'Descripción',
         width: '20%',
         sort: false,
       },
@@ -88,7 +88,7 @@ export class BulkUploadComponent extends BasePage implements OnInit {
         sort: false,
       },
       EDOFISICO: {
-        title: 'Edo. Fisico',
+        title: 'Edo. Físico',
         width: '10%',
         sort: false,
       },
@@ -112,7 +112,7 @@ export class BulkUploadComponent extends BasePage implements OnInit {
         sort: false,
       },
       description: {
-        title: 'Descripcion',
+        title: 'Descripción',
         width: '60%',
         sort: false,
       },
@@ -191,7 +191,7 @@ export class BulkUploadComponent extends BasePage implements OnInit {
   onFileChange(event: Event) {
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
-    this.fileName = files[0].name;
+    this.fileLoad.setValue(files[0].name);
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
     fileReader.onload = () => this.readExcel(fileReader.result);
@@ -212,7 +212,7 @@ export class BulkUploadComponent extends BasePage implements OnInit {
     console.log('TESREADER', this.ids);
     this.data.load(this.ids);
     this.loadGood(this.ids);
-
+    this.totalItems = this.ids.length;
     /*END POINT http://sigebimstest.indep.gob.mx/goodprocess/api/v1/update-good-status/curSearchGood?page=1&limit=10&filter.no_clasif_bien=$eq:1349 */
     /*this.serviceGood
         .getFolioActaConversion(this.actConvertion)

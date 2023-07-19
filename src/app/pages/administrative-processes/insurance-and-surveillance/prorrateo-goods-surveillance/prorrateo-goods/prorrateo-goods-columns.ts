@@ -1,5 +1,5 @@
 export const PRORRATEGO_GOODS_COLUMNS = {
-  NoBien: {
+  goodId: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
@@ -9,37 +9,37 @@ export const PRORRATEGO_GOODS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  sumAssured: {
+  additionInsured: {
     title: 'Suma Asegurada',
     type: 'string',
     sort: false,
   },
-  premiumAmount: {
+  amountCousin: {
     title: 'Monto Prima',
     type: 'text',
     sort: false,
   },
-  Location: {
-    title: 'Ubicacion',
+  location: {
+    title: 'Ubicación',
     type: 'text',
     sort: false,
   },
-  DateLow: {
+  shortDate: {
     title: 'Fecha Baja',
     type: 'date',
     sort: false,
   },
-  di_status_bien: {
+  statusGood: {
     title: 'Estatus Bien',
     type: 'string',
     sort: false,
   },
-  factor_costo_diario: {
-    title: 'Costo Diarío',
+  factorCostDaily: {
+    title: 'Costo Diario',
     type: 'string',
     sort: false,
   },
-  importe_Nota_Credito: {
+  amountNoteCredit: {
     title: 'Nota Crédito',
     type: 'text',
     sort: false,
@@ -48,15 +48,28 @@ export const PRORRATEGO_GOODS_COLUMNS = {
     title: 'Dias Transcurridos',
     type: 'text',
     sort: false,
+    valuePrepareFunction: (value: number) => {
+      if (value > 0) {
+        return value;
+      } else {
+        return '0';
+      }
+    },
   },
-  Di_dias_faltan: {
+  daysPassed: {
     title: 'Dias Fatantes',
-    type: 'date',
     sort: false,
+    valuePrepareFunction: (value: number) => {
+      if (value > 0) {
+        return value;
+      } else {
+        return '0';
+      }
+    },
   },
-  Di_responsable_baja: {
+  responsibleShort: {
     title: 'Responsable',
-    type: 'date',
+    type: 'text',
     sort: false,
   },
 };

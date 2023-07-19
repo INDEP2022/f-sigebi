@@ -29,4 +29,8 @@ export class DateDocumentsService implements ICrudMethods<IDateDocuments> {
   update3(model: IDateDocuments): Observable<Object> {
     return this.dateDocumentsRepository.update3(this.route, model);
   }
+
+  removeRepuves(body: any): Observable<Object> {
+    return this.dateDocumentsRepository.removeByBody(this.route, body);
+  }
 }

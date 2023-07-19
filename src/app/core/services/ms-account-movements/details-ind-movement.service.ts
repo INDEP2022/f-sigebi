@@ -23,14 +23,10 @@ export class DetailsIndMovementService extends HttpService {
     );
   }
 
-  getAllFilterSelf(
-    self?: DetailsIndMovementService,
-    body?: { goodNumber: string; expedientNumber: number },
-    params?: _Params
-  ) {
+  getAllFilterSelf(self?: DetailsIndMovementService, params?: _Params) {
     return self.post<IListResponse<IAccountDetailInd>>(
       AccountmvmntEndpoint.getDetailsInd,
-      body,
+      {},
       params
     );
   }

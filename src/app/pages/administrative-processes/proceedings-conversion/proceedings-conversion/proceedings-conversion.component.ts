@@ -404,6 +404,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.actasConvertionCommunicationService.ejecutarFuncion$.subscribe(
+      (next: any) => {
+        console.log('SI WILM', next);
+        this.ejecutarFuncion();
+      }
+    );
+
     this.getDelegation(new FilterParams());
     this.prepareForm();
     this.actaForm();
@@ -525,12 +532,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       next: data => this.goodSelectedChange(data.row, data.toggle),
     });
   }
-
   isGoodSelected(_good: IGood) {
     const exists = this.selectedGooods.find(good => good.id == _good.id);
     return !exists ? false : true;
   }
-
   goodSelectedChange(good: IGood, selected: boolean) {
     if (selected) {
       this.selectedGooods.push(good);
@@ -545,12 +550,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       next: data => this.goodSelectedChangeValid(data.row, data.toggle),
     });
   }
-
   isGoodSelectedValid(_good: IGood) {
     const exists = this.selectedGooodsValid.find(good => good.id == _good.id);
     return !exists ? false : true;
   }
-
   goodSelectedChangeValid(good: IGood, selected?: boolean) {
     if (selected) {
       this.selectedGooodsValid.push(good);
@@ -1036,7 +1039,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       if (this.dataRecepcionGood.count() == 0) {
         this.alertInfo(
           'warning',
-          'El acta no tiene ningún bien asignado, no se puede cerrar.',
+          'El Acta no tiene ningún Bien asignado, no se puede Cerrar.',
           ''
         );
         return;
@@ -1087,7 +1090,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                         pActaNumber: this.actasDefault.id,
                         pStatusActa: 'CERRADA',
                         pVcScreen: 'FACTDBCONVBIEN',
-                        pUser: 'TE_SIGEBI',
+                        pUser:
+                          this.authService.decodeToken().preferred_username,
                       };
 
                       await this.updateGoodEInsertHistoric(obj);
@@ -1347,7 +1351,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Carga Masiva Completada',
-          `Expediente : ${this.fileNumber}`
+          // `Expediente : ${this.fileNumber}`
+          ``
         );
         this.getGoodsByStatus(this.fileNumber);
         console.log(data);
@@ -1494,15 +1499,25 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   searchActas(actas?: string) {
     actas = this.cveActa;
     const expedienteNumber = this.fileNumber;
+    const actaActual = this.actasDefault;
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       actas,
+      actaActual,
       expedienteNumber,
     };
 
     let modalRef = this.modalService.show(FindActaGoodComponent, modalConfig);
     modalRef.content.onSave.subscribe(async (next: any) => {
       console.log(next);
+      if (next) {
+        this.alert(
+          'success',
+          'Se Cargó la Información del Acta',
+          next.keysProceedings
+        );
+      }
+
       this.acordionDetail = false;
       this.actasDefault = next;
       this.fCreate = this.datePipe.transform(
@@ -1545,6 +1560,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       );
       await this.getDetailProceedingsDevollution(this.actasDefault.id);
       // this.getActasByConversion(next.cve_acta_conv);
+    });
+    modalRef.content.cleanForm.subscribe(async (next: any) => {
+      if (next) {
+        this.cleanActa();
+      }
     });
   }
 
@@ -1654,6 +1674,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             } else {
               console.log('GOOD', good);
               this.loading2 = true;
+
               if (!this.dataRecepcion.some((v: any) => v === good)) {
                 let indexGood = this.dataTableGood_.findIndex(
                   _good => _good.id == good.id
@@ -2041,6 +2062,14 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
     let modalRef = this.modalService.show(CreateActaComponent, modalConfig);
     modalRef.content.onSave.subscribe(async (next: any) => {
+      if (next) {
+        this.alert(
+          'success',
+          'Se Cargó la Información del Acta',
+          next.keysProceedings
+        );
+      }
+
       console.log(next);
       this.totalItems2 = 0;
       this.acordionDetail = false;
@@ -2111,6 +2140,38 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.dataRecepcionGood.load([]);
     this.dataRecepcionGood.refresh();
     this.totalItems2 = 0;
+  }
+
+  actualizarActa() {
+    if (!this.actasDefault) {
+      this.alertInfo('warning', 'Debe Seleccionar un Acta', '');
+      return;
+    }
+    if (this.actasDefault.statusProceedings == 'CERRADA') {
+      this.alertInfo('warning', 'No puede Actualizar un Acta Cerrada', '');
+      return;
+    }
+    this.actasDefault.address = this.actaRecepttionForm.get('direccion').value;
+    delete this.actasDefault.numDelegation1Description;
+    delete this.actasDefault.numDelegation2Description;
+    delete this.actasDefault.numTransfer_;
+    this.proceedingsDeliveryReceptionService
+      .editProceeding(this.actasDefault.id, this.actasDefault)
+      .subscribe({
+        next: async data => {
+          this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
+        },
+        error: error => {
+          this.alert('error', 'Ocurrió un Error al Actualizar el Acta', '');
+          // this.loading = false
+        },
+      });
+  }
+
+  ejecutarFuncion() {
+    console.log('SIO');
+    this.cleanActa();
+    // Lógica de la función que se ejecutará sin cerrar el modal
   }
 }
 

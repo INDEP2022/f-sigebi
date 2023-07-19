@@ -12,7 +12,6 @@ export class EventFormVisualProperties {
   eventClosingDate = true;
   failureDate = true;
   requestType = true;
-  statusvtaId = true;
   tpsolavalId = true;
   statusVtaId = true;
   address = true;

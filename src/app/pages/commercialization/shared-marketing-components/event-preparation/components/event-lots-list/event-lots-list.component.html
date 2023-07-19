@@ -5,6 +5,35 @@
   <div class="col-md-12 d-flex justify-content-end">
     <div>
       <button
+        (click)="onActDesc()"
+        type="button"
+        containerClass="tooltip-style"
+        class="btn btn-secondary btn-sm active ml-2 mr-2">
+        Actualizar Descripción.
+      </button>
+    </div>
+
+    <div>
+      <button
+        (click)="onUpdateMand()"
+        type="button"
+        containerClass="tooltip-style"
+        class="btn btn-secondary btn-sm active ml-2 mr-2">
+        Actualizar Mandato
+      </button>
+    </div>
+
+    <div>
+      <button
+        (click)="onValFile()"
+        type="button"
+        containerClass="tooltip-style"
+        class="btn btn-secondary btn-sm active ml-2 mr-2">
+        Validar Archivo
+      </button>
+    </div>
+    <div>
+      <button
         (click)="openForm()"
         type="button"
         containerClass="tooltip-style"
@@ -30,50 +59,10 @@
           class="dropdown-menu dropdown-menu-right"
           role="menu"
           aria-labelledby="button-basic">
-          <li role="menuitem">
-            <a class="dropdown-item">Incorporar Bienes desde el Rastreador</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item">Exportar a Excel</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item">Lotificar bienes desde Excel</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item">Crear Acta Evento Público</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item">Carga de Clientes desde Excel</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item">Bienes no Cargados</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item">Carga Facturas</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item">Revisa Tras x Lote</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item">Traspasar Bienes</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item">Datos para Facturación</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item"
-              >Lotificar / Cargar Clientes desde Tabla Tercero</a
-            >
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item">Valida Bienes</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item">Genera Oficio Avalúo</a>
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item">Verifica Mandado</a>
-          </li>
+          <event-goods-lots-list-actions
+            [lotSelected]="lotSelected"
+            [parameters]="parameters"
+            [eventForm]="eventForm"></event-goods-lots-list-actions>
         </ul>
       </div>
     </div>
@@ -102,3 +91,11 @@
       [totalItems]="totalItems"></app-pagination>
   </div>
 </div>
+
+<input
+  #fileInput
+  [formControl]="excelControl"
+  [style.display]="'none'"
+  type="file"
+  (change)="fileChange($event)"
+  accept="image/*" />

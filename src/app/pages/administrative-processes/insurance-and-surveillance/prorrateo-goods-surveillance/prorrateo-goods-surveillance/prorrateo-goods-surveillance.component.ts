@@ -4,14 +4,20 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { PolicyService } from 'src/app/core/services/ms-policy/policy.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { BasePage } from 'src/app/core/shared';
 import { GoodsRequestModalComponent } from './goods-request-modal/goods-request-modal.component';
+import { ProrrateoGoodSurveillancePolicyModalComponent } from './prorrateo-good-surveillance-policy-modal/policy-modal.component';
+//import { ProrrateoGoodSurveillancePolicyModalComponent } from './prorrateo-good-surveillance-policy-modal/prorrateo-good-surveillance-policy-modal.component';
 
 @Component({
   selector: 'app-prorrateo-goods-surveillance',
   templateUrl: './prorrateo-goods-surveillance.component.html',
   styles: [],
 })
-export class ProrrateoGoodsSurveillanceComponent implements OnInit {
+export class ProrrateoGoodsSurveillanceComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup;
   NoRequest: any;
   date1: any;
@@ -19,13 +25,19 @@ export class ProrrateoGoodsSurveillanceComponent implements OnInit {
   userSour: any;
   dataSelect: any;
   PolicyKey: any;
-
+  policy: any;
+  elemento = '';
+  tipo: any;
+  bandera: boolean = false;
+  processed: any;
   constructor(
     private fb: FormBuilder,
     private policyService: PolicyService,
     private securityService: SecurityService,
     private modalService: BsModalService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -34,30 +46,29 @@ export class ProrrateoGoodsSurveillanceComponent implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       noRequest: [null, Validators.required],
-      requestDate: [null, Validators.required],
-      dueDate: [null, Validators.required],
-      type: [null, Validators.required],
-      applicant: [null, Validators.required],
+      requestDate: [null],
+      dueDate: [null],
+      type: [null],
+      applicant: [null],
       cvePoliza: [null, Validators.required],
-      requestedTo: [null, Validators.required],
-      destinationName: [null, Validators.required],
-      observations: [null, Validators.required],
-      originName: [null, Validators.required],
-      typePolicy: [null, Validators.required],
-      description: [null, Validators.required],
-      InsuranceCarrier: [null, Validators.required],
-      start: [null, Validators.required],
-      term: [null, Validators.required],
-      processed: [null, Validators.required],
-      dateOfAdmission: [null, Validators.required],
-      PremiumAmount: [null, Validators.required],
-      distribution: [null, Validators.required],
-      zone: [null, Validators.required],
+      requestedTo: [null],
+      destinationName: [null],
+      observations: [null],
+      originName: [null],
+      typePolicy: [null],
+      description: [null],
+      InsuranceCarrier: [null],
+      start: [null],
+      term: [null],
+      processed: [null],
+      dateOfAdmission: [null],
+      PremiumAmount: [null],
+      distribution: [null],
+      zone: [null],
     });
   }
   getDataNoRequest() {
     this.form.get('noRequest').value;
-    console.log(this.form.get('noRequest').value);
     this.NoRequest = this.form.get('noRequest').value;
     this.getNoRequest(this.NoRequest);
   }
@@ -65,7 +76,6 @@ export class ProrrateoGoodsSurveillanceComponent implements OnInit {
   getNoRequest(NoRequest: string | number) {
     this.policyService.getByNoRequest(NoRequest).subscribe({
       next: response => {
-        //console.log("Response: ", response);
         const requestDate = new Date(response.RequestsXSure.requestDate);
         const formattedRequestDate = this.formatDate(requestDate);
 
@@ -87,6 +97,7 @@ export class ProrrateoGoodsSurveillanceComponent implements OnInit {
         this.getByUserName(userDes, true);
         this.getByUserName(userSour, false);
         this.getByPolicyKey(PolicyKey);
+        this.elemento = response.Policies.policyKeyId;
       },
       error: error => {
         console.error(error);
@@ -98,7 +109,6 @@ export class ProrrateoGoodsSurveillanceComponent implements OnInit {
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear().toString();
-
     return `${day}/${month}/${year}`;
   }
 
@@ -117,6 +127,12 @@ export class ProrrateoGoodsSurveillanceComponent implements OnInit {
       },
     });
   }
+  getPolicy() {
+    this.policy = this.form.get('cvePoliza').value;
+    this.elemento = this.policy;
+    this.getByPolicyKey(this.policy);
+    this.getProcess(this.policy);
+  }
 
   loadModal() {
     this.NoRequest = this.form.get('noRequest').value;
@@ -128,31 +144,76 @@ export class ProrrateoGoodsSurveillanceComponent implements OnInit {
     modalConfig.initialState = {
       newOrEdit,
       noRequest,
+      Elemento: { Elemento: this.elemento },
       callback: (next: boolean) => {},
     };
     this.modalService.show(GoodsRequestModalComponent, modalConfig);
   }
 
   getByPolicyKey(PolicyKey: string | number) {
-    console.log('POLIcy: ', PolicyKey);
     this.policyService.getBypolicyKeyId(PolicyKey).subscribe({
       next: response => {
+        let tipo = response.data[0].Policies.type;
+        if ((tipo = 'E')) {
+          this.tipo = 'Externa';
+        } else {
+          this.tipo = 'Interna';
+        }
         let dataForm = {
           cvePoliza: response.data[0].policyKeyId,
-          typePolicy: response.data[0].Policies.type,
+          typePolicy: this.tipo,
           description: response.data[0].Policies.description,
           InsuranceCarrier: response.data[0].Policies.insurancecarrier,
           start: response.data[0].Policies.beginningDateId,
           term: response.data[0].Policies.termDate,
           dateOfAdmission: response.data[0].beginningDate,
           PremiumAmount: response.data[0].Policies.amountCousin,
+          Tramitado: response.data[0].process,
         };
         this.form.patchValue(dataForm);
       },
-
       error: err => {
-        console.log(err);
+        this.onLoadToast('error', err.error.message, '');
       },
     });
+  }
+
+  loadModalPolicy() {
+    this.form.reset();
+    this.elemento = '';
+    this.openModalPolicy();
+  }
+
+  openModalPolicy() {
+    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    modalConfig.initialState = {
+      Elemento: { Elemento: this.elemento },
+      callback: (next: boolean) => {},
+    };
+    this.modalService.show(
+      ProrrateoGoodSurveillancePolicyModalComponent,
+      modalConfig
+    );
+  }
+
+  getProcess(PolicyKey: string) {
+    this.policyService.getSinister(PolicyKey).subscribe({
+      next: response => {
+        this.processed = response.data[0].indStatus;
+        if ((this.processed = 1)) {
+          this.processed = 'Si';
+        } else {
+          this.processed = 'No';
+        }
+        let dataForm = {
+          processed: this.processed,
+        };
+        this.form.patchValue(dataForm);
+      },
+    });
+  }
+  clearform() {
+    this.form.reset();
+    this.elemento = '';
   }
 }

@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import {
   FilterParams,
@@ -79,7 +79,8 @@ export class DepositaryPaymentChargesComponent
     private usersService: UsersService,
     private bankService: BankService,
     private massiveDepositaryService: MassiveDepositaryService,
-    private nomDepositoryService: MsDepositaryService
+    private nomDepositoryService: MsDepositaryService,
+    private route: ActivatedRoute
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -117,8 +118,10 @@ export class DepositaryPaymentChargesComponent
   }
 
   ngOnInit(): void {
+    const id = this.route.snapshot.params['id'] || null;
     this.loadCargaBienes();
     this.buildForm();
+    this.form.controls['numberGood'].setValue(id);
     this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (this.form.get('numberGood').value) this.loadTablaDispersiones();
     });
@@ -167,18 +170,21 @@ export class DepositaryPaymentChargesComponent
     });
   }
 
-  loadTablaDispersiones() {
+  async loadTablaDispersiones() {
     this.loading = true;
+    const good = this.form.get('numberGood').value;
+    const appointment: any = await this.getAppointmentByGoodId(good);
     this.Service.getRefPayDepositories(
       this.filterParams.getValue().getParams()
     ).subscribe({
-      next: resp => {
+      next: (resp: any) => {
         console.log('refpayDepositaries', this.data);
         resp.data.map((item: any) => {
           item.oiDate = this.milisegundoToDate(item.oiDate);
           item.date = this.milisegundoToDate(item.date);
           item.system_val_date = this.milisegundoToDate(item.system_val_date);
           item.registrationDate = this.milisegundoToDate(item.registrationDate);
+          item['appointmentNum'] = appointment?.data.appointmentNum || '';
           console.log(item);
         });
 
@@ -246,6 +252,14 @@ export class DepositaryPaymentChargesComponent
         .subscribe({
           next: resp => {
             console.log(resp.ArrayData);
+            if (resp.ArrayData.length == 0) {
+              this.alertInfo(
+                'info',
+                'No Se cargaron los pagos',
+                'El numero de movimiento ya esta registrado'
+              );
+              return;
+            }
             this.insertRefPaymentDepositaria(resp.ArrayData);
           },
           error: eror => {
@@ -271,10 +285,10 @@ export class DepositaryPaymentChargesComponent
       this.router.navigate(
         [
           '/pages/juridical/depositary/payment-dispersion-process/conciliation-depositary-payments',
+          idBien,
         ],
         {
           queryParams: {
-            p_nom_bien: idBien,
             origin: 'FCONDEPOCARGAPAG',
           },
         }
@@ -466,6 +480,7 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
     let newData: any = [];
     data.map(async (item: any, _i: number) => {
       const index = _i + 1;
+
       let body: IRefPayDepositary = {
         movementNumber: item.NO_MOVIMIENTO,
         reference:
@@ -503,19 +518,20 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
       let haveReference: any = await this.getAppointmentByGoodId(item.NO_BIEN);
 
       console.log(haveReference);
-      if (haveReference != null) {
+      if (haveReference.result == true) {
         /*const body: any = {
           appointmentNum: haveReference,
           reference: item.RESULTADO,
         };*/
-        haveReference.reference = item.REFERENCIA || '0';
-        const updated = await this.updateReferencia(haveReference);
+        haveReference.data.reference = item.REFERENCIA || '0';
+        const updated = await this.updateReferencia(haveReference.data);
       }
       if (result) {
         this.loading = true;
         result.system_val_date = moment(result.system_val_date).format('L');
         result.registrationDate = moment(result.registrationDate).format('L');
         result.date = this.milisegundoToDate(result.date);
+        result.appointmentNum = haveReference.data.appointmentNum;
         newData.push(result);
 
         if (data.length == index) {
@@ -559,9 +575,9 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
       this.nomDepositoryService.getAppointments(params).subscribe({
         next: resp => {
           if (resp.data[0].reference != null && resp.data[0].reference != '') {
-            resolve(null);
+            resolve({ data: resp.data[0], result: false });
           } else {
-            resolve(resp.data[0]);
+            resolve({ data: resp.data[0], result: true });
           }
         },
       });

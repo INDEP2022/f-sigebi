@@ -111,6 +111,7 @@ export class PerformProgrammingFormComponent
   municipailitites = new DefaultSelect<IMunicipality>();
   localities = new DefaultSelect<ILocality>();
   warehouseUbication: string = '';
+  warehouseId: number = 0;
   tranportableItems: number = 0;
   headingTransportable: string = `Transportables (0)`;
   headingGuard: string = `Resguardo (0)`;
@@ -418,6 +419,7 @@ export class PerformProgrammingFormComponent
 
   showWarehouse(warehouse: IWarehouse) {
     this.warehouseUbication = warehouse?.ubication;
+    this.warehouseId = warehouse?.idWarehouse;
     this.showUbication = true;
   }
 
@@ -1194,7 +1196,7 @@ export class PerformProgrammingFormComponent
 
   getWarehouseSelect(params: ListParams) {
     this.showWarehouseInfo = true;
-    params.limit = 6039;
+    params.limit = 300;
     //params['filter.stateCode'] = this.idState;
     this.warehouseService.getAll(params).subscribe(data => {
       this.warehouse = new DefaultSelect(data.data, data.count);
@@ -1485,7 +1487,9 @@ export class PerformProgrammingFormComponent
                   const createProgGood = await this.addGoodsGuards();
 
                   if (createProgGood) {
-                    const updateGood: any = await this.changeStatusGoodGuard();
+                    const updateGood: any = await this.changeStatusGoodGuard(
+                      data
+                    );
 
                     if (updateGood) {
                       const showGoods: any = await this.getFilterGood(
@@ -1528,7 +1532,6 @@ export class PerformProgrammingFormComponent
           version: '1',
           status: 'EN_RESGUARDO_TMP',
         };
-
         this.programmingGoodService.createGoodProgramming(formData).subscribe({
           next: () => {
             resolve(true);
@@ -1542,7 +1545,7 @@ export class PerformProgrammingFormComponent
   }
 
   /*------------Cambio de status a resguardo ------------------*/
-  changeStatusGoodGuard() {
+  changeStatusGoodGuard(warehouse: number) {
     return new Promise(async (resolve, reject) => {
       this.goodSelect.map(item => {
         const formData: Object = {
@@ -1550,6 +1553,7 @@ export class PerformProgrammingFormComponent
           goodId: item.googId,
           goodStatus: 'EN_RESGUARDO_TMP',
           programmationStatus: 'EN_RESGUARDO_TMP',
+          storeId: warehouse,
         };
         this.goodService.updateByBody(formData).subscribe({
           next: () => {
@@ -1609,13 +1613,13 @@ export class PerformProgrammingFormComponent
           config.initialState = {
             idTransferent,
             typeTransportable: 'warehouse',
-            callback: async (data: any) => {
-              if (data) {
+            callback: async (warehouse: number) => {
+              if (warehouse) {
                 const createProgGood = await this.addGoodsWarehouse();
 
                 if (createProgGood) {
                   const updateGood: any = await this.changeStatusGoodWarehouse(
-                    data
+                    warehouse
                   );
 
                   if (updateGood) {
@@ -1920,6 +1924,7 @@ export class PerformProgrammingFormComponent
         this.formLoading = true;
         const folio: any = await this.generateFolio(this.performForm.value);
         this.performForm.get('folio').setValue(folio);
+        this.performForm.get('storeId').setValue(this.warehouseId);
         const task = JSON.parse(localStorage.getItem('Task'));
         const updateTask = await this.updateTask(folio, task.id);
         if (updateTask) {
@@ -2062,6 +2067,7 @@ export class PerformProgrammingFormComponent
 
       this.performForm.get('tranferId').setValue(this.transferentId);
       this.performForm.get('stationId').setValue(this.stationId);
+      this.performForm.get('storeId').setValue(this.warehouseId);
       this.performForm.get('autorityId').setValue(this.autorityId);
       this.performForm
         .get('regionalDelegationNumber')
@@ -2286,7 +2292,7 @@ export class PerformProgrammingFormComponent
       this.performForm.get('address').setValue(this.dataProgramming.address);
       this.performForm.get('city').setValue(this.dataProgramming.city);
       this.performForm.get('stateKey').setValue(this.dataProgramming.stateKey);
-      this.performForm.get('storeId').setValue(this.dataProgramming.storeId);
+
       this.performForm
         .get('emailTransfer')
         .setValue(this.dataProgramming.emailTransfer);
@@ -2334,7 +2340,8 @@ export class PerformProgrammingFormComponent
       if (this.dataProgramming.storeId) {
         this.warehouseService.getById(this.dataProgramming.storeId).subscribe({
           next: response => {
-            this.warehouseUbication = response.description;
+            this.performForm.get('storeId').setValue(response.description);
+            this.warehouseUbication = response.ubication;
           },
           error: error => {},
         });

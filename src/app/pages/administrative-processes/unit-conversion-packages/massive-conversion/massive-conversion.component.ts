@@ -167,6 +167,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   descLabel: string;
   descWarehouse: string;
 
+  newDataFilled: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -200,8 +202,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     //Tabla de PREVISUALIZACIÓN DE DATOS
     this.settings = {
       ...this.settings,
-      // rowClassFunction: (row: { data: { available: any } }) =>
-      //   row.data.available ? 'bg-success text-white' : 'bg-dark text-white',
+      rowClassFunction: (row: { data: { available: any } }) =>
+       row.data.available ? 'bg-dark text-white' : 'bg-success text-white',
       actions: { add: false, delete: false, edit: false },
       columns: COLUMNS,
     };
@@ -443,7 +445,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       descriptionPackage: [null, [Validators.required]],
       packageType: ['', [Validators.required]],
       amountKg: [null, [Validators.required]],
-      status: [null, [Validators.required]],
+      status: [null, []],
       fecElab: [null],
       userElab: [null],
       fecValida: [null],
@@ -470,15 +472,15 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       //Pestaña de "PÁRRAFOS"
       paragraph1: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.required],
       ],
       paragraph2: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.required],
       ], //Párrrafo inicial
       paragraph3: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.required],
       ], //Párrrafo final
     });
 
@@ -588,6 +590,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       console.log(res.numberClassifyGood);
       console.log(res);
       if (res != null) {
+        this.newDataFilled = false;
         this.contador = 0;
         //Seteo de la primera parte
         this.cvePackage.setValue(res.cvePackage);
@@ -993,6 +996,29 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       } else {
         this.alert('warning', 'Debe registrar un número de folio', '');
       }
+    } else {
+      this.form.get('scanFolio').setValue(1);
+      const modelUpdate: Partial<IPackage> = {
+        InvoiceUniversal: 1,
+      };
+
+      this.packageGoodService
+        .updatePaqDestinationEnc(
+          this.noPackage.value.numberPackage,
+          modelUpdate
+        )
+        .subscribe(
+          res => {
+            this.showButtonAlert('A');
+          },
+          err => {
+            this.alert(
+              'error',
+              'Se presentó un error inesperado al guardar el folio',
+              ''
+            );
+          }
+        );
     }
 
     // if (!this.form.valid) {
@@ -1098,7 +1124,23 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
           this.goodProcessService.packageClose(closeData).subscribe(
             res => {
+              this.alert('success','El paquete fue cerrado','')
               this.researchNoPackage(this.noPackage.value.numberPackage);
+
+              const modelUpdate: Partial<IPackage> = {
+                amount: this.form.get('amountKg').value
+              };
+          
+              this.packageGoodService
+                .updatePaqDestinationEnc(this.noPackage.value.numberPackage, modelUpdate)
+                .subscribe(
+                  res => {
+                    console.log(res);
+                  },
+                  err => {
+                    console.log(err);
+                  }
+                );
             },
             err => {
               console.log(err);
@@ -1112,6 +1154,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         'Cierre de paquete ' + noPackage,
         'No puede cerrar paquetes chatarra'
       );
+      this.amountKg.markAsTouched()
     }
     // Validar que todos los campos estén diligenciados
     // console.log(this.noPackage.value);
@@ -1369,7 +1412,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       } else if (this.transferent.value == null) {
         this.alert('warning', 'Debe ingresar la Transferente', '');
       } else if (
-        this.packageType.value == '3' &&
+        this.packageType.value != '3' &&
         this.warehouse.value == null
       ) {
         this.alert('warning', 'Debe ingresar el Almacén', '');
@@ -1406,10 +1449,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
           if (availablePrincipal) {
             this.form2.enable({ onlySelf: true, emitEvent: false });
-            this.alert('success', 'Verificar Bienes', 'Bienes Sin Errores');
+            this.alert('success', 'Bienes sin Errores', '');
           } else {
             this.form2.disable({ onlySelf: true, emitEvent: false });
-            this.alert('error', 'Verificar Bienes', 'Bienes con Errores');
+            this.alert('error', 'Bienes con Errores', '');
           }
           this.widthErrors = availablePrincipal;
           check.checked = availablePrincipal;
@@ -1769,26 +1812,31 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   //Nuevo
   newPackage() {
     console.log(this.form.get('packageType').value);
+
     if (!this.generalPermissions.Proyecto) {
       this.alert(
         'warning',
         'No cuenta con privilegios',
         'No cuenta con privilegios para guardar un nuevo paquete'
       );
+      return;
+    } else if (
+      this.delegation.value == null ||
+      this.goodClassification.value == null ||
+      this.targetTag.value == null ||
+      this.goodStatus.value == null ||
+      this.transferent.value == null
+    ) {
+      this.delegation.markAsTouched();
+      this.goodClassification.markAsTouched();
+      this.targetTag.markAsTouched();
+      this.goodStatus.markAsTouched();
+      this.transferent.markAsTouched();
     } else if (this.form.get('packageType').value == null) {
       this.alert('warning', 'Debe especificar el tipo de paquete', '');
-    } else if (this.delegation.value == null) {
-      this.alert('warning', 'Debe ingresar la coordinación que administra', '');
-    } else if (this.goodClassification.value == null) {
-      this.alert('warning', 'Debe ingresar el Clasificador', '');
-    } else if (this.targetTag.value == null) {
-      this.alert('warning', 'Debe ingresar la Etiqueta de destino', '');
-    } else if (this.goodStatus.value == null) {
-      this.alert('warning', 'Debe ingresar el Estatus', '');
-    } else if (this.transferent.value == null) {
-      this.alert('warning', 'Debe ingresar la Transferente', '');
     } else if (this.form.get('packageType').value != 3) {
       if (this.warehouse.value == null) {
+        this.warehouse.markAsTouched();
         this.alert('warning', 'Debe ingresar el Almacén', '');
       } else {
         this.newCvePackage();
@@ -1976,7 +2024,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       useClosed: null,
       useApplied: null,
       useCancelled: null,
-      numberGoodFather: 0,
+      numberGoodFather: null,
       nbOrigin: '',
     };
     console.log(model);
@@ -1989,7 +2037,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         console.log(res);
         console.log(res.numberPackage);
         this.researchNoPackage(res.numberPackage);
-        this.alert('success', 'Se creo nuevo paquete', '');
+        this.alert('success', 'Se creó un Nuevo Paquete', '');
       },
       err => {
         console.log(err);
@@ -2035,11 +2083,19 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       }
       if (this.generalPermissions.Cancelar) {
         vBtn.PB_CANCELA = true;
+         vBtn.PB_CERRAR = true;
       }
     } else if (status == 'C') {
       if (this.generalPermissions.Cancelar) {
         vBtn.PB_CANCELA = true;
+        vBtn.PB_CERRAR = false
       }
+    }else{
+      vBtn.PB_AUTORIZA = false
+      vBtn.PB_CANCELA = false
+      vBtn.PB_CERRAR = false
+      vBtn.PB_PERMISOS = false
+      vBtn.PB_VALIDA = false
     }
   }
 
@@ -2216,8 +2272,36 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       .subscribe(
         res => {
           console.log(res);
+          this.alert('success','Párrafos Insertados','')
         },
         err => {
+          console.log(err);
+          this.alert('error','Se presentó un Error al Insertar los Párrafos','')
+        }
+      );
+  }
+
+  addNewPack() {
+    this.clear();
+    this.newDataFilled = true;
+  }
+
+  updatePackage() {
+    const modelUpdate: Partial<IPackage> = {
+      paragraph1: this.paragraph1.value,
+      paragraph2: this.paragraph2.value,
+      paragraph3: this.paragraph3.value,
+    };
+
+    this.packageGoodService
+      .updatePaqDestinationEnc(this.noPackage.value.numberPackage, modelUpdate)
+      .subscribe(
+        res => {
+          this.alert('success','Párrafos actualizados','')
+          console.log(res);
+        },
+        err => {
+          this.alert('error','Se presentó un Error al Actualizar los Párrafos','')
           console.log(err);
         }
       );

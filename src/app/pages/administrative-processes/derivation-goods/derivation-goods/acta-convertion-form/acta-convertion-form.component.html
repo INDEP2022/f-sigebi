@@ -1,6 +1,6 @@
 <app-modal class="col-md-15">
   <div header>
-    <h5 class="modal-title">{{ 'Actas Conversion' }}</h5>
+    <h5 class="modal-title">{{ 'Actas Conversión' }}</h5>
   </div>
   <div body>
     <div class="row">
@@ -12,7 +12,7 @@
                 <tr>
                   <th scope="col">#</th>
                   <th style="text-align: center" scope="col">Clave Acta</th>
-                  <th scope="col">Sel</th>
+                  <th scope="col">Sel.</th>
                 </tr>
               </thead>
               <tbody>
@@ -88,8 +88,9 @@
     <app-scanning-foil
       [good]="pGoodFatherNumber"
       [numberFoli]="numberFoli"
-      [cveScreen]="selectItem2"
+      cveScreen="FCONVBIENHIJOS"
       reportPrint="RGERGENSOLICDIGIT"
+      [expedientNumber]="expedientNuember"
       [refresh]=""
       (documentEmmit)="document($event)">
     </app-scanning-foil>
@@ -119,7 +120,7 @@
     <div class="card custom-card-textareas">
       <div class="card-body">
         <div class="form-group">
-          <label for="textarea1">Parrafo Inicial</label>
+          <label for="textarea1">Párrafo Inicial</label>
           <textarea
             [(ngModel)]="parrafo1"
             class="form-control"
@@ -127,7 +128,7 @@
             rows="3"></textarea>
         </div>
         <div class="form-group">
-          <label for="textarea2">Parrafo Secundario</label>
+          <label for="textarea2">Párrafo Secundario</label>
           <textarea
             [(ngModel)]="parrafo2"
             class="form-control"
