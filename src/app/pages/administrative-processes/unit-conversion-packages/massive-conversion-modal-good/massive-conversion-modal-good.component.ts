@@ -364,16 +364,12 @@ export class MassiveConversionModalGoodComponent
             response => {
               if (response) {
                 this.onSentGoods.next(response.data);
-                Swal.fire(
-                  'success',
-                  'Operación realizada con éxito',
-                  'success'
-                );
+                this.alert('success','Bienes ingresados','')
                 this.onClose();
               }
             },
             error => {
-              Swal.fire('error', 'Error al realizar la operación', 'error');
+              this.alert('error','Se presentó un error inesperado','')
             }
           );
         }
