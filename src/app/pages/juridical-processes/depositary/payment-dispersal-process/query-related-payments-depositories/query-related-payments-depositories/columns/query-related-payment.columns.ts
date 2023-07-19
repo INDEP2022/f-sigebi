@@ -1,13 +1,13 @@
 import { DatePipe } from '@angular/common';
 
 export const PAY_BANK_COLUMNS = {
-  payId: {
-    title: 'No. Pago',
+  movementNumber: {
+    title: 'No. Movimiento',
     sort: false,
     editable: false,
   },
-  movementNumber: {
-    title: 'No. Movimiento',
+  cve_bank: {
+    title: 'Banco',
     sort: false,
     editable: false,
   },
@@ -33,11 +33,6 @@ export const PAY_BANK_COLUMNS = {
     editable: false,
     class: 'bg-info text-light',
   },
-  cve_bank: {
-    title: 'Banco',
-    sort: false,
-    editable: false,
-  },
   entryorderid: {
     title: 'No. Orden Ingreso',
     sort: false,
@@ -53,6 +48,11 @@ export const PAY_BANK_COLUMNS = {
       }
       return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
     },
+  },
+  payId: {
+    title: 'No. Pago',
+    sort: false,
+    editable: false,
   },
 };
 
@@ -111,7 +111,7 @@ export const RECEIVED_PAYS_COLUMNS = {
     editable: false,
   },
   deduvalue: {
-    title: 'Rec. Gast.',
+    title: 'Rec. Gast. Valor',
     sort: false,
     editable: false,
   },
@@ -154,7 +154,7 @@ export const RECEIVED_PAYS_COLUMNS = {
     },
   },
   payObserv: {
-    title: 'Observaciones Pago',
+    title: 'Observaciones del Pago',
     sort: false,
     editable: false,
   },
