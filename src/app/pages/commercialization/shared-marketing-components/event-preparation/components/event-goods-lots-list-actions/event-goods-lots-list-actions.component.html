@@ -4,9 +4,11 @@
   </button>
 </li>
 <li role="menuitem">
-  <button type="button" class="dropdown-item">Exportar a Excel</button>
+  <button type="button" (click)="onExportExcel()" class="dropdown-item">
+    Exportar a Excel
+  </button>
 </li>
-<li role="menuitem">
+<li role="menuitem" (click)="onLotifyFromExcel()">
   <button type="button" class="dropdown-item">
     Lotificar bienes desde Excel
   </button>
