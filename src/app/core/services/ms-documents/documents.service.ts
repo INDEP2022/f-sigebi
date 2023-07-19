@@ -264,4 +264,10 @@ export class DocumentsService extends HttpService {
   deleteCatDigitalizationTmp(body: Object) {
     return this.delete(DocumentsEndpoints.CapDigiralizationTmp, body);
   }
+  getDocCapture(
+    params?: ListParams | string
+  ): Observable<IListResponse<SeparatorsDocuments>> {
+    const route = `/${DocumentsEndpoints.IndicatorRec}`;
+    return this.get(route, params);
+  }
 }
