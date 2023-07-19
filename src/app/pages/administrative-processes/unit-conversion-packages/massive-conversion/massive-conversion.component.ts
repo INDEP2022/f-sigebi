@@ -470,18 +470,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       ],
 
       //Pestaña de "PÁRRAFOS"
-      paragraph1: [
-        null,
-        [Validators.required],
-      ],
-      paragraph2: [
-        null,
-        [Validators.required],
-      ], //Párrrafo inicial
-      paragraph3: [
-        null,
-        [Validators.required],
-      ], //Párrrafo final
+      paragraph1: [null, [Validators.required]],
+      paragraph2: [null, [Validators.required]], //Párrrafo inicial
+      paragraph3: [null, [Validators.required]], //Párrrafo final
     });
 
     //Formulario "NUEVO BIEN"
