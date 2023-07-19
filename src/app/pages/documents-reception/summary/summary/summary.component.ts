@@ -148,32 +148,30 @@ export class SummaryComponent extends BasePage implements OnInit {
       DEPARTAMENTO: this.flyersForm.controls['department'].value,
     };
 
-    this.siabService
-      .fetchReport('RGEROFPRESUMENDIAA', params)
-      .subscribe(response => {
-        if (response !== null) {
-          const blob = new Blob([response], { type: 'application/pdf' });
-          const url = URL.createObjectURL(blob);
-          let config = {
-            initialState: {
-              documento: {
-                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                type: 'pdf',
-              },
-              callback: (data: any) => {
-                if (data) {
-                  data.map((item: any) => {
-                    return item;
-                  });
-                }
-              },
-            }, //pasar datos por aca
-            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-            ignoreBackdropClick: true,
-          };
-          this.modalService.show(PreviewDocumentsComponent, config);
-        }
-      });
+    this.siabService.fetchReport('_blank', params).subscribe(response => {
+      if (response !== null) {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {
+              if (data) {
+                data.map((item: any) => {
+                  return item;
+                });
+              }
+            },
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      }
+    });
   }
 
   preview(url: string, params: ListParams) {
