@@ -19,12 +19,37 @@ export class ProfileMaintenanceComponent extends BasePage implements OnInit {
   segProfile: ISegProfile[] = [];
   screenProfile: any[] = [];
   settings2 = { ...this.settings };
+  settings1 = { ...this.settings };
   constructor(private profileMaintenanceService: ProfileMaintenanceService) {
     super();
-    this.settings.columns = COLUMNS_PERFIL;
-    this.settings.actions = false;
-    this.settings2.actions = false;
-    this.settings2.columns = COLUMNS_I;
+    this.settings1 = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        add: false,
+        position: 'right',
+      },
+      columns: { ...COLUMNS_I },
+    };
+
+    this.settings2 = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        add: false,
+        position: 'right',
+      },
+      columns: { ...COLUMNS_PERFIL },
+    };
+
+    //this.settings1.actions = false;
+    //this.settings2.actions = false;
   }
   ngOnInit(): void {
     this.params
@@ -47,4 +72,6 @@ export class ProfileMaintenanceComponent extends BasePage implements OnInit {
       },
     });
   }
+
+  openForm() {}
 }
