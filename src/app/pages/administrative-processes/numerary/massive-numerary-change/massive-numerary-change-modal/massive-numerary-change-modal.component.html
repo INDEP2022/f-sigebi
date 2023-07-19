@@ -2,22 +2,20 @@
   <div class="ch-content" header>
     <h5 class="modal-title">{{ title }}</h5>
   </div>
-  <div body>
+  <div body class="modal-body">
     <div class="row pt-4">
       <div class="legend mb-4">
         <div>
+          <div class="rectangle numeraryGood"></div>
+          <span style="font-size: 0.875em">Bien sin Acta.</span>
+        </div>
+        <div>
+          <div class="rectangle required"></div>
+          <span style="font-size: 0.875em">Numerario conciliado.</span>
+        </div>
+        <div>
           <div class="rectangle requiredAva"></div>
           <span style="font-size: 0.875em">Numerario ADM</span>
-        </div>
-        <div>
-          <div class="rectangle numerary"></div>
-          <span style="font-size: 0.875em"
-            >Numerario 'CNE','CBD','CDS','CNS','CNR'</span
-          >
-        </div>
-        <div>
-          <div class="rectangle requiredAva"></div>
-          <span style="font-size: 0.875em">Numerario TRANSFERENTE.</span>
         </div>
       </div>
     </div>
@@ -25,12 +23,14 @@
       <div class="col-md-8">
         <div class="legend mb-4">
           <div>
-            <div class="rectangle numeraryGood"></div>
-            <span style="font-size: 0.875em">Bien sin Acta.</span>
+            <div class="rectangle numerary"></div>
+            <span style="font-size: 0.875em"
+              >Numerario 'CNE','CBD','CDS','CNS','CNR'</span
+            >
           </div>
           <div>
-            <div class="rectangle required"></div>
-            <span style="font-size: 0.875em">Numerario conciliado.</span>
+            <div class="rectangle update"></div>
+            <span style="font-size: 0.875em">Numerario TRANSFERENTE.</span>
           </div>
         </div>
       </div>
@@ -74,7 +74,6 @@
       </div>
     </div>
     <div class="row mt-4">
-      <div class="col-md-2"></div>
       <div class="col-md-4">
         <button
           (click)="onClickArchoNumeraryConc()"
@@ -89,7 +88,12 @@
           Genera Numerarios
         </button>
       </div>
-      <div class="col-md-2"></div>
+      <div class="col-md-4">
+        <button class="btn btn-primary btn-sm active w-100" (click)="close()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
     </div>
   </div>
 </app-modal>

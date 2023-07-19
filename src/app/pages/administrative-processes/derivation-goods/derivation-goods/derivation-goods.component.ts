@@ -122,7 +122,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   conversionId: any;
   goodFatherNumber$ = new BehaviorSubject<any>(undefined);
   filterGood$ = new BehaviorSubject<any>(undefined);
-
   cveActaConv: any;
   tipoValue: any;
   statusCode: any;
@@ -647,8 +646,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       res => {
         this.alert(
           'success',
-          'Se ha Agregado el Bien',
-          `con el Id: ${good.goodId}`
+          'Bien Agregado Correctamente',
+          `Id: ${good.goodId}`
         );
         this.getAllGoodChild(this.goodFatherNumber$.getValue());
       },
@@ -674,7 +673,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       console.log('status2->', this.selectedRow);
       this.alertQuestion(
         'question',
-        `Se va a Eliminar el Bien ${this.selectedRow.goodId}`,
+        `Se va a Eliminar el Bien Hijo ${this.selectedRow.goodId}`,
         '¿Desea Continuar?'
       ).then(q => {
         if (q.isConfirmed) {
@@ -690,6 +689,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
                 `El Bien con id: ${this.selectedRow.goodId}, fue Eliminado`
               );
               this.getAllGoodChild(this.goodFatherNumber$.getValue());
+              this.selectedRow.clean();
             },
             err => {
               this.alert('error', 'error ', err.message);
@@ -713,7 +713,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     this.selectedRow = event.data;
     this.getAttributesGood(event.data.noClassifGood);
   }
-
   getAttributesGood(event: any) {
     this.serviceGood.getAllFilterClassification(event).subscribe(
       res => {

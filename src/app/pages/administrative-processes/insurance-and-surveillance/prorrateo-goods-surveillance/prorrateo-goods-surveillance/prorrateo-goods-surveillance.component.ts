@@ -6,6 +6,7 @@ import { PolicyService } from 'src/app/core/services/ms-policy/policy.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared';
 import { GoodsRequestModalComponent } from './goods-request-modal/goods-request-modal.component';
+import { ProrrateoGoodSurveillancePolicyModalComponent } from './prorrateo-good-surveillance-policy-modal/policy-modal.component';
 //import { ProrrateoGoodSurveillancePolicyModalComponent } from './prorrateo-good-surveillance-policy-modal/prorrateo-good-surveillance-policy-modal.component';
 
 @Component({
@@ -28,6 +29,7 @@ export class ProrrateoGoodsSurveillanceComponent
   elemento = '';
   tipo: any;
   bandera: boolean = false;
+  processed: any;
   constructor(
     private fb: FormBuilder,
     private policyService: PolicyService,
@@ -127,7 +129,6 @@ export class ProrrateoGoodsSurveillanceComponent
   }
   getPolicy() {
     this.policy = this.form.get('cvePoliza').value;
-    console.log('Prueba: ', this.policy);
     this.elemento = this.policy;
     this.getByPolicyKey(this.policy);
     this.getProcess(this.policy);
@@ -178,29 +179,41 @@ export class ProrrateoGoodsSurveillanceComponent
   }
 
   loadModalPolicy() {
+    this.form.reset();
+    this.elemento = '';
     this.openModalPolicy();
   }
 
   openModalPolicy() {
-    // const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
-    // modalConfig.initialState = {
-    //   Elemento: { Elemento: this.elemento },
-    //   callback: (next: boolean) => {},
-    // };
-    // this.modalService.show(
-    //   ProrrateoGoodSurveillancePolicyModalComponent,
-    //   modalConfig
-    // );
+    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    modalConfig.initialState = {
+      Elemento: { Elemento: this.elemento },
+      callback: (next: boolean) => {},
+    };
+    this.modalService.show(
+      ProrrateoGoodSurveillancePolicyModalComponent,
+      modalConfig
+    );
   }
 
   getProcess(PolicyKey: string) {
     this.policyService.getSinister(PolicyKey).subscribe({
       next: response => {
+        this.processed = response.data[0].indStatus;
+        if ((this.processed = 1)) {
+          this.processed = 'Si';
+        } else {
+          this.processed = 'No';
+        }
         let dataForm = {
-          processed: response.data[0].indStatus,
+          processed: this.processed,
         };
         this.form.patchValue(dataForm);
       },
     });
+  }
+  clearform() {
+    this.form.reset();
+    this.elemento = '';
   }
 }

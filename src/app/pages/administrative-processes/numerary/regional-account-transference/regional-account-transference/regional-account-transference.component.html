@@ -231,6 +231,7 @@
                 [control]="form.get('transactionDate')"
                 label="Fecha Transacción CashWindows">
                 <input
+                  (onHidden)="changeSelect()"
                   formControlName="transactionDate"
                   class="form-control"
                   bsDatepicker
