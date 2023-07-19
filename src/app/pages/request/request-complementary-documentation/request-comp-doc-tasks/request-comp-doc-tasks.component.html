@@ -65,6 +65,12 @@
             <i class="bx bx-notepad mr-1 float-icon"></i> Dictamen Resarcimiento
           </button>
         </div>
+        <div class="mx-1">
+          <button class="btn btn-primary active btn-sm" (click)="close()">
+            Regresar
+            <i class="fas fa-arrow-circle-left"></i>
+          </button>
+        </div>
       </div>
       <div class="" *ngIf="screenWidth < 1200">
         <div
@@ -106,6 +112,11 @@
               >
               <i aria-hidden="true" class="fa fa-share-square"></i>
             </li>
+            <li>
+              <a class="dropdown-item bg-primary text-light" (click)="close()">
+                Regresar <i class="fas fa-arrow-circle-left"></i>
+              </a>
+            </li>
           </ul>
         </div>
       </div>
@@ -114,8 +125,9 @@
   <div body>
     <app-request-information-similar-goods
       [request]="requestInfo"></app-request-information-similar-goods>
-    <div class="md-tabs">
-      <tabset>
+
+    <div>
+      <tabset class="md-tabs" #staticTabs>
         <tab
           *ngIf="regDocForm"
           heading="Registro de Documentación"
@@ -193,13 +205,6 @@
           </tabset>
         </tab>
       </tabset>
-    </div>
-    <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Salir
-        </button>
-      </div>
     </div>
   </div>
 </app-card>

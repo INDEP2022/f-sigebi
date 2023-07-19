@@ -117,12 +117,12 @@ export const COLUMNS2 = {
     type: 'string',
     sort: false,
   },
-  managementNumb: {
+  id: {
     title: 'No. Gestión ',
     type: 'number',
     sort: false,
   },
-  key: {
+  uniqueKey: {
     title: 'Clave Única',
     type: 'string',
     sort: false,
@@ -137,7 +137,7 @@ export const COLUMNS2 = {
     type: 'string',
     sort: false,
   },
-  inventoryNumb: {
+  inventoryNumber: {
     title: 'No. Inventario',
     type: 'number',
     sort: false,
@@ -157,7 +157,7 @@ export const COLUMNS2 = {
     type: 'string',
     sort: false,
   },
-  unitMeasure: {
+  measureUnitTransferent: {
     title: 'Unidad de Medida',
     type: 'string',
     sort: false,
@@ -172,17 +172,17 @@ export const COLUMNS2 = {
     type: 'number',
     sort: false,
   },
-  condition: {
+  descriptionPhysicalStatus: {
     title: 'Estado Físico',
     type: 'string',
     sort: false,
   },
-  conservationStatus: {
+  descriptionConservationStatus: {
     title: 'Estado de Conservación',
     type: 'string',
     sort: false,
   },
-  goodType: {
+  descriptionRelevantType: {
     title: 'Tipo de Bien',
     type: 'string',
     sort: false,
