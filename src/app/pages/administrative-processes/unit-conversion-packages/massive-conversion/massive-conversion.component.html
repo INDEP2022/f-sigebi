@@ -128,8 +128,7 @@
             tooltip="Agregar"
             (click)="addNewPack()"
             containerClass="tooltip-style"
-            class="btn btn-info btn-sm active"
-            >
+            class="btn btn-info btn-sm active">
             Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
           <button
@@ -450,7 +449,7 @@
   </div>
   <div body>
     <div class="row">
-      <div class="col-md-5 buttons">
+      <div class="col-md-12 buttons">
         <button
           type="button"
           (click)="insertParagraph()"
@@ -463,8 +462,11 @@
           class="btn btn-primary active btn-sm mr-3">
           Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
         </button>
-        <button type="button" class="btn btn-primary active btn-sm mr-3">
-          Guardar <i class="bx bx-save bx-sm float-icon"></i>
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm mr-3"
+          (click)="updatePackage()">
+          Guardar Párrafos <i class="bx bx-save bx-sm float-icon"></i>
         </button>
       </div>
     </div>

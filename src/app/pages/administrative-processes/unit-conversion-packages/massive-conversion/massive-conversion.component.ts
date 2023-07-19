@@ -996,6 +996,29 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       } else {
         this.alert('warning', 'Debe registrar un número de folio', '');
       }
+    } else {
+      this.form.get('scanFolio').setValue(1);
+      const modelUpdate: Partial<IPackage> = {
+        InvoiceUniversal: 1,
+      };
+
+      this.packageGoodService
+        .updatePaqDestinationEnc(
+          this.noPackage.value.numberPackage,
+          modelUpdate
+        )
+        .subscribe(
+          res => {
+            this.showButtonAlert('A');
+          },
+          err => {
+            this.alert(
+              'error',
+              'Se presentó un error inesperado al guardar el folio',
+              ''
+            );
+          }
+        );
     }
 
     // if (!this.form.valid) {
@@ -1372,7 +1395,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       } else if (this.transferent.value == null) {
         this.alert('warning', 'Debe ingresar la Transferente', '');
       } else if (
-        this.packageType.value == '3' &&
+        this.packageType.value != '3' &&
         this.warehouse.value == null
       ) {
         this.alert('warning', 'Debe ingresar el Almacén', '');
@@ -1796,7 +1819,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       this.alert('warning', 'Debe especificar el tipo de paquete', '');
     } else if (this.form.get('packageType').value != 3) {
       if (this.warehouse.value == null) {
-        this.warehouse.markAsTouched()
+        this.warehouse.markAsTouched();
         this.alert('warning', 'Debe ingresar el Almacén', '');
       } else {
         this.newCvePackage();
@@ -1997,7 +2020,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         console.log(res);
         console.log(res.numberPackage);
         this.researchNoPackage(res.numberPackage);
-        this.alert('success', 'Se creo nuevo paquete', '');
+        this.alert('success', 'Se creó un Nuevo Paquete', '');
       },
       err => {
         console.log(err);
@@ -2234,5 +2257,24 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   addNewPack() {
     this.clear();
     this.newDataFilled = true;
+  }
+
+  updatePackage() {
+    const modelUpdate: Partial<IPackage> = {
+      paragraph1: this.paragraph1.value,
+      paragraph2: this.paragraph2.value,
+      paragraph3: this.paragraph3.value,
+    };
+
+    this.packageGoodService
+      .updatePaqDestinationEnc(this.noPackage.value.numberPackage, modelUpdate)
+      .subscribe(
+        res => {
+          console.log(res);
+        },
+        err => {
+          console.log(err);
+        }
+      );
   }
 }

@@ -518,7 +518,6 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
       let haveReference: any = await this.getAppointmentByGoodId(item.NO_BIEN);
 
       console.log(haveReference);
-      debugger;
       if (haveReference.result == true) {
         /*const body: any = {
           appointmentNum: haveReference,

@@ -19,7 +19,6 @@ import {
   map,
   of,
   takeUntil,
-  tap,
 } from 'rxjs';
 import { AccountmvmntEndpoint } from 'src/app/common/constants/endpoints/accountmvmnt-endpoint';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -29,10 +28,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IAccountDetailInd } from 'src/app/core/models/ms-account-movements/account-detail-ind';
-import {
-  IAccountMovementShort,
-  IUserChecks,
-} from 'src/app/core/models/ms-account-movements/account-movement.model';
+import { IUserChecks } from 'src/app/core/models/ms-account-movements/account-movement.model';
 import { IPupDetalleDevolutionResult } from 'src/app/core/models/ms-deposit/detail-interest-return';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IPupCalculateDevolutionResult } from 'src/app/core/models/ms-parametergood/parameters.model';
@@ -49,7 +45,13 @@ import { PaymentServicesService } from 'src/app/core/services/ms-paymentservices
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { formatForIsoDate } from 'src/app/shared/utils/date';
+import {
+  firstFormatDate,
+  firstFormatDateToDate,
+  firstFormatDateToSecondFormatDate,
+  formatForIsoDate,
+  secondFormatDate,
+} from 'src/app/shared/utils/date';
 import { DepositAccountStatementModalComponent } from '../deposit-account-statement-modal/deposit-account-statement-modal.component';
 import { DepositAccountStatementParameterComponent } from '../deposit-account-statement-parameter/deposit-account-statement-parameter.component';
 
@@ -86,12 +88,12 @@ export class DepositAccountStatementComponent
   bodyDep: any;
   bodyPost: any;
   instrument: string;
-  transferred: string = '';
   ok: boolean = false;
   instrumentAccount: string;
   scheduledFecReturn: Date;
   userChecks: IAccountDetailInd;
   rea: any;
+  disabled = true;
   // accountPayReturn: number;
   updatePupReturnsByDates = false;
   transferAccount: number;
@@ -109,7 +111,6 @@ export class DepositAccountStatementComponent
   anio: number;
   mes: number;
   dataGoodAct = new LocalDataSource();
-  noReturn: number;
   dateEnd: Date;
   balance: number;
   interestaccredited: number;
@@ -258,7 +259,22 @@ export class DepositAccountStatementComponent
           }
         },
       });
-
+    this.form
+      .get('cutoffDate')
+      .valueChanges.pipe(takeUntil(this.$unSubscribe), debounceTime(500))
+      .subscribe({
+        next: response => {
+          this.updateCutoffDate(response);
+        },
+      });
+    this.form
+      .get('transferDate')
+      .valueChanges.pipe(takeUntil(this.$unSubscribe), debounceTime(500))
+      .subscribe({
+        next: response => {
+          this.updateTransferDate(response);
+        },
+      });
     //this.getGood(new ListParams());
     /*this.paramsActNavigate
       .pipe(takeUntil(this.$unSubscribe))
@@ -521,7 +537,7 @@ export class DepositAccountStatementComponent
       this.validCheck = true;
       this.validDetail = true;
       this.validTras = true;
-      this.transferred = '';
+      // this.userChecks.accounttras = '';
       //this.setAccount = true;
       this.userChecks = event;
       const filterParams = new FilterParams();
@@ -547,7 +563,10 @@ export class DepositAccountStatementComponent
             map(x => (x ? x.data ?? [] : []))
           )
       );
-      this.getSetReturn();
+      await this.getSetReturn();
+      await this.calculateReturn();
+      await this.detailReturn();
+
       // this.getFilterAccount(
       //   event.accountOriginDepositNumber,
       //   event.motionOriginDepositNumber
@@ -681,24 +700,26 @@ export class DepositAccountStatementComponent
     }
   }
 
-  private getSetReturn() {
+  private async getSetReturn() {
     console.log(
       +this.userChecks.returnamount - +this.userChecks.creditedinterest
     );
     this.updatePupReturnsByDates = false;
     // this.accountPayReturn = this.userChecks.accountnumberpayreturn;
+    if (this.userChecks.scheduleddatebyconfiscationreturn) {
+      const datePipeReturn = new DatePipe('en-US');
+      const formatDateReturn = datePipeReturn.transform(
+        new Date(this.userChecks.scheduleddatebyconfiscationreturn),
+        'dd/MM/yyyy',
+        'UTC'
+      );
+      this.scheduledFecReturn = new Date(
+        this.userChecks.scheduleddatebyconfiscationreturn
+      );
+      this.form.controls['cutoffDate'].setValue(formatDateReturn);
+      this.form.controls['expeditionDate'].setValue(formatDateReturn);
+    }
 
-    const datePipeReturn = new DatePipe('en-US');
-    const formatDateReturn = datePipeReturn.transform(
-      new Date(this.userChecks.scheduleddatebyconfiscationreturn),
-      'dd/MM/yyyy',
-      'UTC'
-    );
-    this.scheduledFecReturn = new Date(
-      this.userChecks.scheduleddatebyconfiscationreturn
-    );
-    this.form.controls['cutoffDate'].setValue(formatDateReturn);
-    this.form.controls['expeditionDate'].setValue(formatDateReturn);
     this.form.controls['bank'].setValue(this.userChecks.bankkey);
     if (this.userChecks.accountnumberpayreturn) {
       this.form.controls['bankAccount'].setValue(this.userChecks.bankkey);
@@ -710,14 +731,20 @@ export class DepositAccountStatementComponent
     this.status.setValue(this.userChecks.status);
     this.expedient.setValue(this.userChecks.expedientnumber);
     this.form.controls['amount'].setValue(this.userChecks.deposit);
-    this.form.controls['toReturn'].setValue(
-      +this.userChecks.returnamount - +this.userChecks.creditedinterest
-    );
+    if (this.userChecks.returnamount) {
+      this.form.controls['toReturn'].setValue(
+        +this.userChecks.returnamount - +this.userChecks.creditedinterest
+      );
+      this.form.controls['checkAmount'].setValue(this.userChecks.returnamount);
+    } else {
+      this.form.controls['toReturn'].setValue(this.userChecks.depositnumber);
+    }
+
     this.form.controls['associatedCosts'].setValue(
       this.userChecks.associatedexpenses
     );
     this.form.controls['costsAdmon'].setValue(this.userChecks.expensesadmon);
-    this.form.controls['checkAmount'].setValue(this.userChecks.returnamount);
+
     this.form.controls['interestCredited'].setValue(
       this.userChecks.creditedinterest
     );
@@ -737,10 +764,21 @@ export class DepositAccountStatementComponent
     this.form.controls['transfDate'].setValue(formatTrans);
     this.form.controls['depositDate'].setValue(formatMov);
     this.form.controls['transferDate'].setValue(formatTrans);
-    this.form.controls['instrument'].setValue(
-      this.userChecks.keyratecalculationinterest
+    const filterParams = new FilterParams();
+    filterParams.addFilter(
+      'accountNumber',
+      this.userChecks.transferaccountnumber
     );
-
+    const result = await firstValueFrom(
+      this.accountMovementService.getAccountBank(filterParams.getParams()).pipe(
+        takeUntil(this.$unSubscribe),
+        catchError(x => of({ data: [] })),
+        map(x => (x ? x.data : []))
+      )
+    );
+    if (result.length > 0) {
+      this.form.controls['instrument'].setValue(result[0].cveInterestCalcRate);
+    }
     this.form.controls['checkType'].setValue(this.userChecks.checktype);
     this.form.controls['check'].setValue(this.userChecks.checkfolio);
     this.form.controls['beneficiary'].setValue(this.userChecks.checkpayee);
@@ -755,110 +793,20 @@ export class DepositAccountStatementComponent
       this.userChecks.preliminaryinvestigation
     );
     this.form.controls['criminalCase'].setValue(this.userChecks.criminalcause);
-    let subTotal: number =
-      Number(this.form.controls['toReturn'].value) +
-      (Number(this.form.controls['interestCredited'].value) ?? 0);
-    this.form.controls['subTotal'].setValue(subTotal);
-    this.updatePupReturnsByDates = true;
+    // let subTotal: number =
+    //   Number(this.form.controls['toReturn'].value) +
+    //   (Number(this.form.controls['interestCredited'].value) ?? 0);
+    // this.form.controls['subTotal'].setValue(subTotal);
+    this.preRecord();
+    setTimeout(() => {
+      this.updatePupReturnsByDates = true;
+    }, 500);
   }
 
   formatDate(date: string) {
     const formatFecTrans = date;
     const formatTrans = this.datePipe.transform(formatFecTrans, 'yyyy/MM/dd');
     return formatTrans;
-  }
-
-  accountDeposit() {
-    // console.log(
-    //   this.userChecks.accountOriginDepositNumber,
-    //   this.userChecks.motionOriginDepositNumber
-    // );
-    //const noCuentaDeposito = this.userChecks.accountOriginDepositNumber;
-    if (!this.userChecks.accountnumber) {
-      this.alert(
-        'warning',
-        'Debe seleccionar los datos de la lista de valores',
-        ''
-      );
-    }
-    /* VALIDAR ESTA PARTE CON FORM
-    let acount: number;
-    //llamar al endpoint de cheque devolucion
-    const params = new ListParams();
-    params['filter.motionOriginDepositNumber'] = `$eq:${this.userChecks.motionOriginDepositNumber}`;
-    this.accountMovementService.getAllUsersChecks(params).subscribe({
-      next: data => {
-        acount = data.count;
-      },
-      error: error => {},
-    });
-    if (acount > 0){
-      this.alert(
-        'warning',
-        'Ya se tienen registrados cheques de devolucion',
-        'para el movimiento seleccionado'
-      );
-      return;
-
-    }*/
-
-    if (this.goodId.value != null) {
-      const params = new ListParams();
-      params['filter.id'] = `$eq:${this.form.controls['good'].value}`;
-      this.goodService
-        .getAll(params)
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: data => {
-            console.log(data.data);
-            this.form.controls['status'].setValue(data.data[0].status);
-            this.scheduledFecReturn = new Date(
-              data.data[0].scheduledDateDecoDev
-            );
-            /*this.scheduledFecReturn =
-            this.scheduledFecReturn != null
-              ? this.datePipe.transform(this.scheduledFecReturn, 'yyyy/MM/dd')
-              : null;
-              */
-            console.log(data.data[0].scheduledDateDecoDev);
-          },
-          error: error => {
-            this.loading = false;
-          },
-        });
-    }
-    console.log(this.instrumentAccount);
-    if (this.instrumentAccount == null || this.instrumentAccount == undefined) {
-      this.alert(
-        'warning',
-        'No se tiene una cuenta asociada a los depositos en cuentas concentradoras',
-        'para obtener el instrumento en el calculo de intereses'
-      );
-    } else {
-      const params = new ListParams();
-      params['filter.accountNumber'] = `$eq:${this.instrumentAccount}`;
-      this.bankAccountService
-        .getCveBank(params)
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: resp => {
-            console.log(resp.count);
-            if (resp.count > 0) {
-              this.instrumentAccount = resp.data[0].cveInterestCalcRate;
-            } else {
-              this.alert(
-                'warning',
-                'No se tiene una cuenta asociada a los depositos en cuentas concentradoras',
-                'para obtener el instrumento en el calculo de intereses'
-              );
-            }
-          },
-        });
-    }
-    this.form.controls['transferDate'].setValue(
-      this.form.controls['transfDate'].value
-    );
-    //this.form.controls['toReturn'].setValue(this.form.controls['amount'].value);
   }
 
   enableSearchMode() {
@@ -965,19 +913,29 @@ export class DepositAccountStatementComponent
   }
 
   preRecord() {
-    const traspasadoCuenta = 'TRASPASADO';
-    const tiCuentaDevolucion = 0;
-    const folioCheque = 0;
-    const fecExpedicionCheque = 0;
-    const beneficiarioCheque = 0;
     if (
-      traspasadoCuenta == 'TRASPASADO' ||
-      (tiCuentaDevolucion != null &&
-        folioCheque != null &&
-        fecExpedicionCheque != null &&
-        beneficiarioCheque != null)
+      (this.userChecks.accounttras &&
+        this.userChecks.accounttras === 'TRASPASADO') ||
+      (this.form.get('bankAccount').value &&
+        this.form.get('check').value &&
+        this.form.get('expeditionDate').value &&
+        this.form.get('collectionDate').value)
     ) {
-      // BLOQUEAR LOS SIGUIENTES INPUTS
+      this.disabled = true;
+    } else {
+      this.disabled = false;
+      this.form.controls['transferDate'].enable({
+        onlySelf: true,
+        emitEvent: false,
+      });
+      this.form.controls['cutoffDate'].enable({
+        onlySelf: true,
+        emitEvent: false,
+      });
+      this.form.controls['beneficiary'].enable({
+        onlySelf: true,
+        emitEvent: false,
+      });
     }
   }
 
@@ -1000,31 +958,6 @@ export class DepositAccountStatementComponent
     }
     */
   }
-
-  // private getFilterAccount(account: number, mov: number) {
-  //   let body = {
-  //     depOriginAccNumber: account,
-  //     depOriginMovNumber: mov,
-  //   };
-  //   this.accountMovementService
-  //     .createPostQuery(body)
-  //     .pipe(takeUntil(this.$unSubscribe))
-  //     .subscribe({
-  //       next: resp => {
-  //         if (resp && resp.data) {
-  //           this.bodyPost = resp.data;
-  //           console.log(resp.data);
-  //           this.fillOut();
-  //           // this.importe_sin_interes = this.bodyPost[0].deposito;
-  //           // this.accountDeposit();
-  //           // this.setInstrument();
-  //           //console.log(this.instrumentAccount);
-  //         }
-  //       },
-  //     });
-  //   console.log(this.instrumentAccount);
-  //   //return
-  // }
 
   setInstrument() {
     this.getInstrument(this.bodyPost[0].no_cuenta_traspaso);
@@ -1060,18 +993,28 @@ export class DepositAccountStatementComponent
   //     });
   // }
 
-  async updateTransferDate(date: Date) {
+  async updateTransferDate(date: any) {
     if (!this.updatePupReturnsByDates) return;
     if (date) {
-      this.transferDate = date;
+      if (date instanceof Date) {
+        this.transferDate = date;
+      } else {
+        this.transferDate = firstFormatDateToDate(date);
+      }
       console.log(date);
-      // debugger;
+      debugger;
       if (
         this.form.controls['toReturn'].value &&
         this.form.controls['depositDate'].value &&
         this.form.controls['cutoffDate'].value
       ) {
-        if (date < new Date(this.form.controls['depositDate'].value)) {
+        let depositDate = this.form.controls['depositDate'].value;
+        if (depositDate instanceof Date) {
+          // depositDate = depositDate;
+        } else {
+          depositDate = firstFormatDateToDate(depositDate);
+        }
+        if (this.transferDate < depositDate) {
           this.alert(
             'error',
             'La fecha de Inicio no puede ser menor a la fecha del depósito',
@@ -1079,7 +1022,14 @@ export class DepositAccountStatementComponent
           );
           return;
         }
-        if (date > new Date(this.form.controls['cutoffDate'].value)) {
+
+        let cutoffDate = this.form.controls['cutoffDate'].value;
+        if (cutoffDate instanceof Date) {
+          // cutoffDate = cutoffDate;
+        } else {
+          cutoffDate = firstFormatDateToDate(cutoffDate);
+        }
+        if (this.transferDate > cutoffDate) {
           this.alert(
             'error',
             'La fecha de inicio NO puede ser mayor a la fecha de corte',
@@ -1098,10 +1048,11 @@ export class DepositAccountStatementComponent
     }
   }
 
-  async updateCutoffDate(date: Date) {
+  private async updateCutoffDate(date: Date) {
     if (!this.updatePupReturnsByDates) return;
     if (date) {
       console.log(date);
+      debugger;
       this.form.controls['expeditionDate'].setValue(date);
       // this.form
       if (
@@ -1109,7 +1060,20 @@ export class DepositAccountStatementComponent
         this.form.controls['depositDate'].value &&
         this.form.controls['transferDate'].value
       ) {
-        if (date < new Date(this.form.controls['transferDate'].value)) {
+        let transferDate = this.form.controls['transferDate'].value;
+        if (transferDate instanceof Date) {
+          // transferDate = transferDate;
+        } else {
+          transferDate = firstFormatDateToDate(transferDate);
+        }
+        let newDate = date;
+        if (newDate instanceof Date) {
+          // this.transferDate = date;
+        } else {
+          newDate = firstFormatDateToDate(newDate);
+        }
+
+        if (newDate < transferDate) {
           this.alert(
             'error',
             'La fecha de corte no puede ser menor a la fecha de inicio',
@@ -1117,7 +1081,8 @@ export class DepositAccountStatementComponent
           );
           return;
         }
-        if (date != this.scheduledFecReturn) {
+        console.log(this.scheduledFecReturn);
+        if (this.scheduledFecReturn && date != this.scheduledFecReturn) {
           const datePipeReturn = new DatePipe('en-US');
           const formatDateReturn = datePipeReturn.transform(
             new Date(this.userChecks.scheduleddatebyconfiscationreturn),
@@ -1136,22 +1101,6 @@ export class DepositAccountStatementComponent
         await this.calculateReturn();
         await this.detailReturn();
       }
-
-      // const date = this.form.controls['transferDate'].value;
-      // const datePipe = new DatePipe('en-US');
-      // const scheduledFecReturn = datePipe.transform(date, 'dd/MM/yyyy', 'UTC');
-
-      // const date1 = data;
-      // const datePipe1 = new DatePipe('en-US');
-      // const updateCutoff = datePipe1.transform(date1, 'dd/MM/yyyy', 'UTC');
-
-      // if (scheduledFecReturn != updateCutoff) {
-      //   this.alert(
-      //     'warning',
-      //     `Especifico una fecha de corte diferente a la que se tiene programada ${scheduledFecReturn} por lo que esto sera solo una simulacion`,
-      //     ''
-      //   );
-      // }
     }
   }
 
@@ -1169,147 +1118,6 @@ export class DepositAccountStatementComponent
         },
       });
   }
-
-  // private fillOut() {
-  //   console.log(this.bodyPost);
-
-  //   this.form.controls['bank'].setValue(this.bodyPost[0].cve_banco);
-  //   this.form.controls['currency'].setValue(this.bodyPost[0].cve_moneda);
-  //   this.goodId.setValue(this.bodyPost[0].no_bien);
-
-  //   this.form.controls['amount'].setValue(this.bodyPost[0].deposito);
-
-  //   //const formatTrans = new Date(this.bodyPost[0].fec_calculo_intereses,'dd/MM/yyyy' ,'UTC');
-
-  //   const date = new Date(this.bodyPost[0].fec_calculo_intereses);
-  //   const datePipe = new DatePipe('en-US');
-  //   const formatTrans = datePipe.transform(date, 'dd/MM/yyyy', 'UTC');
-  //   var fechaString = formatTrans;
-  //   const partesFecha = fechaString.split('/');
-  //   this.transferDate = new Date(
-  //     Number(partesFecha[2]),
-  //     Number(partesFecha[1]) - 1,
-  //     Number(partesFecha[0])
-  //   );
-
-  //   const date1 = new Date(this.bodyPost[0].fec_movimiento);
-  //   const datePipe1 = new DatePipe('en-US');
-  //   const formatMov = datePipe1.transform(date1, 'dd/MM/yyyy', 'UTC');
-
-  //   this.form.controls['transfDate'].setValue(formatTrans);
-  //   this.form.controls['depositDate'].setValue(formatMov);
-  //   this.form.controls['transferDate'].setValue(formatTrans);
-  //   // this.form.controls['account'].setValue(
-  //   //   this.userChecks.accountOriginDepositNumber
-  //   // );
-  //   console.log(this.form.value);
-
-  //   this.cutoffDate = new Date();
-
-  //   var fechaString = formatMov;
-  //   const partesFecha1 = fechaString.split('/');
-  //   this.depositDate = new Date(
-  //     Number(partesFecha1[2]),
-  //     Number(partesFecha1[1]) - 1,
-  //     Number(partesFecha1[0])
-  //   );
-
-  //   console.log(this.transferDate, this.cutoffDate, this.depositDate);
-
-  //   this.instrumentAccount = this.bodyPost[0].no_cuenta_traspaso;
-
-  //   if (this.instrumentAccount != null) {
-  //     //this.getInstrument(this.instrumentAccount);
-  //     const params = new ListParams();
-  //     params['filter.accountNumber'] = `$eq:${this.instrumentAccount}`;
-  //     this.bankAccountService
-  //       .getCveBank(params)
-  //       .pipe(takeUntil(this.$unSubscribe))
-  //       .subscribe({
-  //         next: resp => {
-  //           console.log(resp.data[0].cveInterestCalcRate);
-  //           this.instrument = resp.data[0].cveInterestCalcRate;
-  //           this.form.controls['instrument'].setValue(
-  //             resp.data[0].cveInterestCalcRate
-  //           );
-  //         },
-  //       });
-  //   }
-  //   //Averiguar no_cuenta_paga_devolucion
-  //   console.log(this.userChecks.accountnumberpayreturn);
-  //   if (this.userChecks.accountnumberpayreturn != null) {
-  //     const params = new ListParams();
-  //     params[
-  //       'filter.accountNumber'
-  //     ] = `$eq:${this.userChecks.accountnumberpayreturn}`;
-  //     // this.bankAccountService
-  //     //   .getCveBank(params)
-  //     //   .pipe(takeUntil(this.$unSubscribe))
-  //     //   .subscribe({
-  //     //     next: resp => {
-  //     //       console.log(resp);
-  //     //       this.form.controls['bankAccount'].setValue(resp.data[0].cveAccount);
-  //     //       this.transferAccount = resp.data[0].accountNumberTransfer;
-  //     //       this.form.controls['bank'].setValue(resp.data[0].cveBank);
-  //     //     },
-  //     //     error: err => {},
-  //     //     //SETEAR A LAS ETIQUETAS
-  //     //     //cve_cuenta no_cuenta_traspaso cve_banco
-  //     //   });
-  //   }
-
-  //   if (this.bodyPost[0].no_bien != null) {
-  //     // this.goodService
-  //     //   .getById2(this.bodyPost[0].no_bien)
-  //     //   .pipe(takeUntil(this.$unSubscribe))
-  //     //   .subscribe({
-  //     //     next: resp => {
-  //     //       console.log(resp);
-  //     //       this.getGood(new ListParams(), this.bodyPost[0].no_bien);
-  //     //       this.form.controls['good'].setValue(this.bodyPost[0].no_bien);
-  //     //       this.form.controls['status'].setValue(resp.status);
-  //     //       this.form.controls['proceedings'].setValue(resp.fileNumber);
-  //     //       this.scheduledFecReturn = new Date(resp.scheduledDateDecoDev);
-  //     //       /*this.scheduledFecReturn =
-  //     //       this.scheduledFecReturn != null
-  //     //         ? this.datePipe.transform(this.scheduledFecReturn, 'yyyy/MM/dd')
-  //     //         : null;*/
-  //     //       console.log(this.scheduledFecReturn);
-  //     //       //this.form.controls['cutoffDate'].setValue(this.scheduledFecReturn);
-  //     //     },
-  //     //   });
-  //   }
-  //   // buscar el dato de expediente_deposito
-  //   console.log(this.expedient.value);
-  //   if (this.expedient.value != null) {
-  //     const params = new ListParams();
-  //     params['filter.id'] = `$eq:${this.expedient.value}`;
-  //     // this.expedientService
-  //     //   .getAll(params)
-  //     //   .pipe(takeUntil(this.$unSubscribe))
-  //     //   .subscribe({
-  //     //     next: resp => {
-  //     //       console.log(resp);
-  //     //       this.form.controls['indicated'].setValue(
-  //     //         resp.data[0].indicatedName
-  //     //       );
-  //     //       this.form.controls['avPrevious'].setValue(
-  //     //         resp.data[0].preliminaryInquiry
-  //     //       );
-  //     //       this.form.controls['criminalCase'].setValue(
-  //     //         resp.data[0].criminalCase
-  //     //       );
-  //     //       //VARIABLES A SETEARSE nombre_indiciado averiguacion_previa causa_penal
-  //     //     },
-  //     //   });
-  //   }
-  //   let subTotal: number =
-  //     Number(this.form.controls['toReturn'].value) +
-  //     (Number(this.form.controls['interestCredited'].value) ?? 0);
-  //   this.form.controls['subTotal'].setValue(subTotal);
-  //   console.log(subTotal);
-  //   // setear a di_subtotal := :blk_dev.importe_sin_interes + NVL(:blk_dev.interes_acreditado,0);
-  // }
 
   get pathBankAccount() {
     return (
@@ -1329,13 +1137,13 @@ export class DepositAccountStatementComponent
     );
   }
 
-  changeCveCuenta(event: IAccountMovementShort) {
+  changeCveCuenta(event: any) {
     if (event) {
-      this.form.get('bankCheck').setValue(event.cve_banco);
+      this.form.get('bankCheck').setValue(event.cveBank);
     }
   }
 
-  validComplementary() {
+  async validComplementary() {
     this.ok = true;
     if (this.userChecks.movementnumber === null) {
       this.alert(
@@ -1343,11 +1151,11 @@ export class DepositAccountStatementComponent
         'Debe registrar primero un movimiento normal',
         'Para hacer un cheque complementario'
       );
-      return;
+      return false;
     }
     if ((this.form.controls['checkAmount'].value ?? 0) == 0) {
       this.alert('warning', 'Debe haber algun importe para el cheque', '');
-      return;
+      return false;
     }
     if (this.form.controls['bankAccount'].value == null) {
       this.alert(
@@ -1355,7 +1163,7 @@ export class DepositAccountStatementComponent
         'Debe especificar la cuenta',
         'De donde se hace la salida del cheque'
       );
-      return;
+      return false;
     }
     if (this.form.controls['check'].value == null) {
       this.alert(
@@ -1363,7 +1171,7 @@ export class DepositAccountStatementComponent
         'Debe especificar',
         'El folio del cheque a devolver'
       );
-      return;
+      return false;
     }
     if (this.form.controls['expeditionDate'].value == null) {
       this.alert(
@@ -1371,20 +1179,23 @@ export class DepositAccountStatementComponent
         'Debe especificar',
         'La fecha de expedicion del cheque'
       );
-      return;
+      return false;
     }
     if (this.form.controls['beneficiary'].value == null) {
       this.alert('warning', 'Debe especificar', 'El beneficiario del cheque');
-      return;
+      return false;
     }
 
-    if (this.form.controls['cutoffDate'].value != this.scheduledFecReturn) {
+    if (
+      this.scheduledFecReturn &&
+      this.form.controls['cutoffDate'].value != this.scheduledFecReturn
+    ) {
       this.alert(
         'warning',
         'Especifico una fecha de corte',
         'Diferente a la programada'
       );
-      return;
+      return false;
     }
     if (this.form.controls['checkType'].value == 'INTERES') {
       this.alert(
@@ -1392,7 +1203,7 @@ export class DepositAccountStatementComponent
         'Se encuentra en un cheque complementario',
         'El beneficiario del cheque'
       );
-      return;
+      return false;
     } else {
       //GO_BLOCK('blk_dev')
       const params = new ListParams();
@@ -1400,85 +1211,107 @@ export class DepositAccountStatementComponent
         'filter.motionOriginDepositNumber'
       ] = `$eq:${this.userChecks.movementnumber}`;
       params['filter.checkType'] = `$eq:INTERES`;
-      this.accountMovementService
-        .getAllUsersChecks(params)
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: data => {
-            if (data.count > 0) {
-              this.ok = false;
-            }
-          },
-          error: error => {},
-        });
+      let count = await firstValueFrom(
+        this.accountMovementService.getAllUsersChecks(params).pipe(
+          takeUntil(this.$unSubscribe),
+          catchError(x => of({ count: 0 })),
+          map(x => x.count ?? 0)
+        )
+      );
+      if (count > 0) {
+        this.ok = false;
+      }
       if (!this.ok) {
         this.alert(
           'warning',
           'Ya se tiene registrado un cheque',
           'Complementario a ese movimiento'
         );
-        return;
+        return false;
       }
+      return true;
     }
   }
 
   private async calculateReturn() {
+    console.log('Calculate return');
     debugger;
     if (!this.updatePupReturnsByDates) {
-      return null;
+      return;
     }
-    let fecCorteDevolucion: Date = this.form.controls['cutoffDate'].value;
+    let fecCorteDevolucion: any = this.form.controls['cutoffDate'].value;
     if (!fecCorteDevolucion) {
-      return null;
+      this.alert('error', 'Calculo de devolución', 'Falta fecha de corte');
+      return;
     }
-    let tiFecInicioInteres: Date = this.form.controls['transfDate'].value;
+    if (fecCorteDevolucion instanceof Date) {
+      fecCorteDevolucion = firstFormatDate(fecCorteDevolucion);
+    } else {
+      fecCorteDevolucion = formatForIsoDate(fecCorteDevolucion);
+    }
+    let tiFecInicioInteres: any = this.form.controls['transfDate'].value;
     if (!tiFecInicioInteres) {
-      return null;
+      this.alert(
+        'error',
+        'Calculo de devolución',
+        'Falta fecha de inicio de interés'
+      );
+      return;
+    }
+    if (tiFecInicioInteres instanceof Date) {
+      tiFecInicioInteres = secondFormatDate(tiFecInicioInteres);
+    } else {
+      tiFecInicioInteres =
+        firstFormatDateToSecondFormatDate(tiFecInicioInteres);
     }
     let importeSinInteres = this.form.controls['toReturn'].value;
     if (!importeSinInteres) {
-      return null;
+      this.alert('error', 'Calculo de devolución', 'Falta monto a devolver');
+      return;
     }
     let diMonedaDeposito = this.form.controls['currency'].value;
     if (!diMonedaDeposito) {
-      return null;
+      this.alert('error', 'Calculo de devolución', 'Falta moneda');
+      return;
     }
-    let diInstrumento = this.form.controls['bankAccount'].value;
-    if (!diInstrumento) {
-      return null;
-    }
+    let diInstrumento = this.form.controls['instrument'].value;
+    // if (!diInstrumento) {
+    //   return;
+    // }
     let diBienDeposito = this.goodId.value;
     if (!diBienDeposito) {
-      return null;
+      return;
     }
     let body = {
       fecCorteDevolucion,
       tiFecInicioInteres,
-      importeSinInteres,
+      importeSinInteres: +importeSinInteres,
       diMonedaDeposito,
       diInstrumento,
       diBienDeposito,
     };
     console.log(body);
     // return null;
-    return await firstValueFrom(
+    const results = await firstValueFrom(
       this.parameterService.pupCalculateDevolution(body).pipe(
         takeUntil(this.$unSubscribe),
-        catchError(x => of(null as IPupCalculateDevolutionResult)),
-        tap(x => {
-          if (x) {
-            this.estimatedRate = x.tasa_estimada;
-            this.realInterest = x.interes_real;
-            this.estimatedInterest = x.interes_estimado;
-            this.form.controls['interestCredited'].setValue(
-              x.interes_acreditado
-            );
-            this.form.controls['subTotal'].setValue(x.di_subtotal);
-            this.form.controls['checkAmount'].setValue(x.importe_devolucion);
-          }
-        })
+        catchError(x => of(null as IPupCalculateDevolutionResult))
       )
     );
+    if (results) {
+      this.estimatedRate = results.tasa_estimada;
+      this.realInterest = results.interes_real;
+      this.estimatedInterest = results.interes_estimado;
+      this.form.controls['interestCredited'].setValue(
+        results.interes_acreditado
+      );
+      this.form.controls['subTotal'].setValue(+results.di_subtotal);
+      this.form.controls['checkAmount'].setValue(+results.importe_devolucion);
+      this.form.controls['costsAdmon'].setValue(results.gastos_admon ?? 0);
+      this.form.controls['associatedCosts'].setValue(
+        results.gastos_asociados ?? 0
+      );
+    }
 
     // let months: number;
     // let annual: number;
@@ -1661,19 +1494,37 @@ export class DepositAccountStatementComponent
   }
 
   private async detailReturn() {
-    let fec_corte_devolucion: string = this.form.controls['cutoffDate'].value;
+    debugger;
+    if (!this.updatePupReturnsByDates) {
+      return null;
+    }
+    console.log('DETAIL RETURN');
+    let fec_corte_devolucion: any = this.form.controls['cutoffDate'].value;
     if (!fec_corte_devolucion) {
+      // this.alert('error', 'Detalle de devolución', 'Falta fecha de corte');
       return null;
     }
-    let no_devolucion: any = this.userChecks.devolutionnumber;
-    if (!no_devolucion) {
-      return null;
+
+    if (fec_corte_devolucion instanceof Date) {
+      fec_corte_devolucion = secondFormatDate(fec_corte_devolucion);
+    } else {
+      fec_corte_devolucion =
+        firstFormatDateToSecondFormatDate(fec_corte_devolucion);
     }
-    no_devolucion = +(this.userChecks.devolutionnumber + '');
-    let ti_fec_inicio_interes: string = this.form.controls['transfDate'].value;
+
+    let ti_fec_inicio_interes: any = this.form.controls['transfDate'].value;
     if (!ti_fec_inicio_interes) {
       return null;
     }
+
+    if (ti_fec_inicio_interes instanceof Date) {
+      ti_fec_inicio_interes = secondFormatDate(ti_fec_inicio_interes);
+    } else {
+      ti_fec_inicio_interes = firstFormatDateToSecondFormatDate(
+        ti_fec_inicio_interes
+      );
+    }
+
     let importe_sin_interes = this.form.controls['toReturn'].value;
     if (!importe_sin_interes) {
       return null;
@@ -1682,17 +1533,23 @@ export class DepositAccountStatementComponent
     if (!di_moneda_deposito) {
       return null;
     }
-    let di_instrumento = this.form.controls['bankAccount'].value;
-    if (!di_instrumento) {
-      return null;
-    }
+    let di_instrumento = this.form.controls['instrument'].value;
+    // if (!di_instrumento) {
+    //   return null;
+    // }
     let tipo_cheque = this.form.controls['checkType'].value;
-    if (!tipo_cheque) {
-      return null;
-    }
-    let no_movimiento_origen_deposito = this.userChecks.accountnumber;
+    // if (!tipo_cheque) {
+    //   this.alert('error','Detalle de devolución')
+    //   return null;
+    // }
+    let no_movimiento_origen_deposito =
+      this.userChecks.accountnumberorigindeposit;
     if (!no_movimiento_origen_deposito) {
       return null;
+    }
+    let no_devolucion: any = this.userChecks.devolutionnumber;
+    if (!no_devolucion) {
+      no_devolucion = +(this.userChecks.devolutionnumber + '');
     }
     let body = {
       fec_corte_devolucion,
@@ -1706,23 +1563,16 @@ export class DepositAccountStatementComponent
     };
     console.log(body);
     // return null
-    return await firstValueFrom(
+    const results = await firstValueFrom(
       this.detailInterestReturnService.pupDetailDevolution(body).pipe(
         takeUntil(this.$unSubscribe),
-        catchError(x => of(null as IPupDetalleDevolutionResult)),
-        tap(x => {
-          if (x) {
-            // this.estimatedRate = x.tasa_estimada;
-            // this.realInterest = x.interes_real;
-            // this.estimatedInterest = x.interes_estimado;
-            // this.form.controls['interestCredited'].setValue(x.interes_acreditado);
-            // this.form.controls['subTotal'].setValue(x.di_subtotal);
-            // this.form.controls['checkAmount'].setValue(x.importe_devolucion);
-          }
-        })
+        catchError(x => of(null as IPupDetalleDevolutionResult))
       )
     );
-
+    if (results) {
+      this.userChecks.devolutionnumber = results.no_devolucion;
+    }
+    return results;
     // let today: Date = this.form.controls['cutoffDate'].value;
     // let monthsReview: number;
     // let annualRate: number;
@@ -1940,14 +1790,17 @@ export class DepositAccountStatementComponent
 
   async interestCheck() {
     let priorInterest: number;
-    this.validComplementary();
+    const valid = await this.validComplementary();
+    if (!valid) {
+      return;
+    }
 
     priorInterest = this.form.controls['interestCredited'].value;
 
-    this.form.controls['check'].setValue('');
-    this.form.controls['expeditionDate'].setValue('');
-    this.form.controls['collectionDate'].setValue('');
-    this.transferred = '';
+    this.form.controls['check'].setValue(null);
+    this.form.controls['expeditionDate'].setValue(null);
+    this.form.controls['collectionDate'].setValue(null);
+    this.userChecks.accounttras = null;
     await this.calculateReturn();
     if ((priorInterest = this.form.controls['interestCredited'].value)) {
       this.alert(
@@ -1959,14 +1812,24 @@ export class DepositAccountStatementComponent
       /*SELECT seq_num_devolucion.nextval
       INTO: blk_dev.no_devolucion
       FROM dual;*/
+      const seqNextVal = await firstValueFrom(
+        this.detailInterestReturnService
+          .getSeqNextVal()
+          .pipe(takeUntil(this.$unSubscribe))
+      );
+      if (seqNextVal) {
+        this.userChecks.devolutionnumber = seqNextVal.nextval;
+      }
       this.form.controls['checkType'].setValue('INTERES');
       await this.detailReturn();
       const resp = await firstValueFrom(
-        this.detailInterestReturnService.getById(this.noReturn).pipe(
-          takeUntil(this.$unSubscribe),
-          catchError(x => of({ data: [] })),
-          map(x => (x ? (x.data ? x.data : []) : []))
-        )
+        this.detailInterestReturnService
+          .getById(this.userChecks.devolutionnumber)
+          .pipe(
+            takeUntil(this.$unSubscribe),
+            catchError(x => of({ data: [] })),
+            map(x => (x ? (x.data ? x.data : []) : []))
+          )
       );
       for (let i = 0; i < resp.length; i++) {
         this.interestaccredited = resp[i].interest;
@@ -1976,21 +1839,29 @@ export class DepositAccountStatementComponent
           this.interestaccredited
         );
       }
+      this.form.controls['toReturn'].setValue(0);
+      this.form.controls['subTotal'].setValue(
+        this.form.controls['interestCredited'].value
+      );
+      this.form.controls['costsAdmon'].setValue(0);
+      this.form.controls['associatedCosts'].setValue(0);
+      this.form.controls['checkAmount'].setValue(
+        this.form.controls['interestCredited'].value
+      );
+      this.form.controls['transferDate'].disable({
+        onlySelf: true,
+        emitEvent: false,
+      });
+      this.form.controls['cutoffDate'].disable({
+        onlySelf: true,
+        emitEvent: false,
+      });
+      this.form.controls['beneficiary'].disable({
+        onlySelf: true,
+        emitEvent: false,
+      });
     }
     // llamar al servicio de deposit
-
-    this.form.controls['transferDate'].setValue(0);
-    /*this.form.controls['subTotal'].setValue(
-      this.form.controls['interestCredited'].value
-    );*/
-    this.form.controls['costsAdmon'].setValue(0);
-    this.form.controls['associatedCosts'].setValue(0);
-    this.form.controls['checkAmount'].setValue(
-      this.form.controls['interestCredited'].value
-    );
-    this.form.controls['transferDate'].disable();
-    this.form.controls['cutoffDate'].disable();
-    this.form.controls['beneficiary'].disable();
   }
 
   detailCalculation() {
@@ -2017,8 +1888,8 @@ export class DepositAccountStatementComponent
 
   async transferMov() {
     let concept: string = null;
-    // crear en HTML etiqueta traspasado_a_cuenta;
-    if (this.transferred == 'TRASPASADO') {
+    // crear en HTML etiqueta accounttras;
+    if (this.userChecks.accounttras == 'TRASPASADO') {
       this.alert('warning', 'Ya ha sido traspasado', '');
       return;
     }
@@ -2100,7 +1971,7 @@ export class DepositAccountStatementComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: data => {
-          this.transferred = 'TRASPASADO';
+          this.userChecks.accounttras = 'TRASPASADO';
           this.validTras = false;
         },
         error: error => {},

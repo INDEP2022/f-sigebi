@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDescriptionByNoGoodBody } from 'src/app/core/models/good/good.model';
 import {
   ISendSirSaeBody,
@@ -29,8 +30,8 @@ export class QueryRelatedPaymentsService {
   sendSirsae(params: ISendSirSaeBody) {
     return this.msMsDepositaryPaymentService.sendSirsae(params);
   }
-  getGoodAppointmentDepositaryByNoGood(params: string) {
-    return this.msDepositaryService.getAllFiltered(params);
+  getGoodAppointmentDepositaryByNoGood(params: ListParams) {
+    return this.msDepositaryService.getAppointments(params);
   }
   getGoodDataByFilter(body: string) {
     return this.msGoodService.getAllFilter(body);

@@ -34,6 +34,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { NumerarySolicitudeComponent } from '../numerary-solicitude/numerary-solicitude.component';
 import {
   clearGoodCheck,
+  clearGoodCheck2,
   goodCheck,
   goodCheck2,
   newGoodCheck,
@@ -87,7 +88,7 @@ export class NumeraryMassiveConciliationComponent
         : 'bg-dark text-white',
     columns: NUMERARY_MASSIVE_CONCILIATION_COLUMNS,
     hideSubHeader: false,
-    noDataMessage: 'No se encontrarón registros',
+    noDataMessage: 'No se Encontrarón Registros',
     actions: {
       add: false,
       delete: false,
@@ -97,7 +98,7 @@ export class NumeraryMassiveConciliationComponent
 
   public settings2: any = {
     columns: NUMERARY_MASSIVE_CONCILIATION_COLUMNS2,
-    noDataMessage: 'No se encontrarón registros',
+    noDataMessage: 'No se Encontrarón Registros',
     hideSubHeader: false,
     actions: {
       add: false,
@@ -259,7 +260,7 @@ export class NumeraryMassiveConciliationComponent
         } else {
           this.alert(
             'warning',
-            'El clasificador no corresponde a una cuenta bancaria',
+            'El Clasificador no Corresponde a una Cuenta Bancaria',
             ''
           );
         }
@@ -376,6 +377,7 @@ export class NumeraryMassiveConciliationComponent
   searchGoodBankAccount() {
     // let body: IProReconcilesGood;
     this.loading2 = true;
+    clearGoodCheck2();
     const bank = this.bank2.value;
     const bankAccount = this.bankAccount2.value;
     const currency = this.current2.value;
@@ -395,6 +397,9 @@ export class NumeraryMassiveConciliationComponent
     this.accountBankService.searchByFilterNumeraryMassive(body).subscribe(
       res => {
         console.log(res);
+        this.form2.get('total').setValue(res.total);
+        this.form2.get('totalDateTesofe').setValue(res.tDateTesof);
+        this.form2.get('totalWithoutTesofe').setValue(res.tSinTesof);
         this.dataGoods2.load(res.result);
         console.log(this.dataGoods2['data']);
         this.loading2 = false;
@@ -519,6 +524,7 @@ export class NumeraryMassiveConciliationComponent
             this.goodProcessService.pupReconcilied(model).subscribe(
               res => {
                 console.log(res);
+                /* if() */
                 this.dataGoods.load(res.data);
                 this.loading = false;
               },
@@ -554,10 +560,10 @@ export class NumeraryMassiveConciliationComponent
     this.loading = true;
     const fec = this.form.get('dateTesofe').value;
     if (goodCheck.length < 1) {
-      this.alert('warning', 'No hay bienes seleccionados', '');
+      this.alert('warning', 'No Hay Bienes Seleccionados', '');
       this.loading = false;
     } else if (fec == null) {
-      this.alert('warning', 'No seleccionó un fecha Tesofe', '');
+      this.alert('warning', 'No Seleccionó un Fecha Tesofe', '');
       this.loading = false;
     } else {
       console.log(goodCheck);
@@ -599,7 +605,7 @@ export class NumeraryMassiveConciliationComponent
                   })
                 );
 
-                this.alert('success', 'Actualización realizada', '');
+                this.alert('success', 'Actualización Realizada', '');
                 clearGoodCheck();
                 this.loading = false;
               },
@@ -629,7 +635,7 @@ export class NumeraryMassiveConciliationComponent
       const newDate = `${arrayData[2]}-${arrayData[1]}-${arrayData[0]}`;
       return { rpta: format(new Date(newDate), 'yyyy-MM-dd') };
     } else {
-      return { rpta: 'No tiene formato dd-mm-yyyy' };
+      return { rpta: 'No Tiene Formato dd-mm-yyyy' };
     }
   }
 
@@ -641,7 +647,7 @@ export class NumeraryMassiveConciliationComponent
 
     this.loading = true;
     if (goodCheck.length < 1) {
-      this.alert('warning', 'No hay bienes seleccionados', '');
+      this.alert('warning', 'No Hay Bienes Seleccionados', '');
       this.loading = false;
     } else {
       this.loading = false;
@@ -660,6 +666,7 @@ export class NumeraryMassiveConciliationComponent
               val4: item.RSPTAQUERY.val4,
               val5: format(new Date(item.RSPTAQUERY.val5), 'yyyy-MM-dd'),
               val6: item.RSPTAQUERY.val6,
+              fecTesofe: item.BFEC_TESOFE,
             };
             console.log(model);
             this.numeraryService.pupSearchNumerary(model).subscribe(
@@ -670,23 +677,23 @@ export class NumeraryMassiveConciliationComponent
                 console.log(err.error.message);
                 if (
                   err.error.message ==
-                  'La propiedad fecTesofe debe ser una fecha'
+                  'La Propiedad "fecTesofe" Debe Ser una Fecha'
                 ) {
-                  this.alert('warning', 'No tiene fecha Tesofe', '');
+                  this.alert('warning', 'No Tiene Fecha Tesofe', '');
                 }
               }
             );
           } else {
             this.alert(
               'error',
-              'Fallo al tranformar la cantidad numerica del importe',
+              'Fallo al Tranformar la Cantidad Numérica del Importe',
               ''
             );
             return;
           }
         } else {
           const date = this.validateDateddmmyyyy(item.RSPTAQUERY.val5);
-          if (date.rpta != 'No tiene formato dd-mm-yyyy') {
+          if (date.rpta != 'No Tiene Formato dd-mm-yyyy') {
             if (!isNaN(parseInt(item.RSPTAQUERY.val2))) {
               const model: ISearchNumerary = {
                 conciled: 'S',
@@ -707,16 +714,16 @@ export class NumeraryMassiveConciliationComponent
                   console.log(err);
                   if (
                     err.error.message ==
-                    'La propiedad fecTesofe debe ser una fecha'
+                    'La Propiedad "fecTesofe" Debe Ser una Fecha'
                   ) {
-                    this.alert('warning', 'No tiene fecha Tesofe', '');
+                    this.alert('warning', 'No Tiene Fecha Tesofe', '');
                   }
                 }
               );
             } else {
               this.alert(
                 'error',
-                'Fallo al tranformar la cantidad numerica del importe',
+                'Fallo al Tranformar la Cantidad Numérica del Importe',
                 ''
               );
               return;
@@ -724,7 +731,7 @@ export class NumeraryMassiveConciliationComponent
           } else {
             this.alert(
               'error',
-              'Fallo al generar formato estandar para fecha',
+              'Fallo al Generar Formato Estandar para Fecha',
               ''
             );
             return;
@@ -786,11 +793,11 @@ export class NumeraryMassiveConciliationComponent
       } catch (error) {
         console.log(error);
       } finally {
-        this.alert('success', 'Desconciliación realizada', '');
+        this.alert('success', 'Desconciliación Realizada', '');
         this.loading = false;
       }
     } else {
-      this.alert('warning', 'No se seleccionó ningún Bien', '');
+      this.alert('warning', 'No se Seleccionó Ningún Bien', '');
     }
   }
 
@@ -799,8 +806,9 @@ export class NumeraryMassiveConciliationComponent
     let modalConfig: ModalOptions = {
       initialState: {
         callback: (data: any) => {
+          console.log(data);
           if (data != null || data != undefined) {
-            this.form2.get('proposal').setValue(data.motionNumber);
+            this.form2.get('proposal').setValue(data.applicationId);
             this.form2.get('currencyDeposit').setValue(data.amountAssign);
           }
         },
@@ -814,27 +822,39 @@ export class NumeraryMassiveConciliationComponent
   //Ultimo boton de asociar
   finalAsociate() {
     if (goodCheck2.length > 0) {
-      for (let item of goodCheck2) {
-        console.log(item);
-        /* this.numeraryService.pupAssociateGood() */
-        const model: IPupAssociateGood = {
-          movementNo: 0,
-          requestId: 0,
-          blkDeposit: 0,
-          cbdDeposit: 0,
-          cbcveCurrency: '',
-        };
-        this.numeraryService.pupAssociateGood(model).subscribe(
-          res => {
-            console.log(res);
-          },
-          err => {
-            console.log(err);
-          }
-        );
-      }
+      const noMovementArray = goodCheck2.map((e: any) => {
+        return e.motionNumber;
+      });
+
+      const depositArray = goodCheck2.map((e: any) => {
+        return e.deposit;
+      });
+
+      const currencyArray = goodCheck2.map((e: any) => {
+        return e.currencyKey;
+      });
+
+      /* this.numeraryService.pupAssociateGood() */
+      const model: IPupAssociateGood = {
+        movementNo: noMovementArray,
+        requestId: this.form2.get('proposal').value,
+        blkDeposit: this.form2.get('currencyDeposit').value,
+        cbdDeposit: depositArray,
+        cbcveCurrency: currencyArray,
+      };
+      this.numeraryService.pupAssociateGood(model).subscribe(
+        res => {
+          this.alert('success', 'Se realizó la asociación', '');
+          clearGoodCheck2();
+          console.log(res);
+        },
+        err => {
+          this.alert('error', 'Se presentó un error inesperado', '');
+          console.log(err);
+        }
+      );
     } else {
-      this.alert('warning', 'No se seleccionó datos de cuentas bancarias', '');
+      this.alert('warning', 'No se Seleccionó Datos de Cuentas Bancarias', '');
     }
   }
 }

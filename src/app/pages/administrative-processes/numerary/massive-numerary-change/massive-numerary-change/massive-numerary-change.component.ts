@@ -26,11 +26,7 @@ import { SpentService } from 'src/app/core/services/ms-spent/spent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SelectConceptSpentDialogComponent } from '../components/select-concept-spent-dialog/select-concept-spent-dialog.component';
 import { MassiveNumeraryChangeModalComponent } from '../massive-numerary-change-modal/massive-numerary-change-modal.component';
-import {
-  IMassiveNumeraryGood,
-  IMassiveNumeraryTableSmall,
-  IResponseFMasInsNumerarioSpent,
-} from '../types/massive-numerary.type';
+import { IMassiveNumeraryGood } from '../types/massive-numerary.type';
 import {
   HELP_ARR,
   MASSIVE_NUMERARY_CHANGE_COLUMNS,
@@ -330,45 +326,45 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     this.isLoadingProcessExtraction = true;
     this.loader.load = true;
     this.goodProcess.postFMasInsNumerario(body).subscribe({
-      next: (res: IResponseFMasInsNumerarioSpent) => {
+      next: (res: any) => {
         this.isLoadingProcessExtraction = false;
         this.loader.load = false;
-        this.registerReads = res.T_REG_PROCESADOS;
-        this.registerProcessed = res.T_REG_PROCESADOS;
-        this.registerCorrect = res.T_REG_CORRECTOS;
-        this.registerIncorrect = res.T_REG_ERRONEOS;
+        this.registerReads = res.T_REG.T_REG_PROCESADOS;
+        this.registerProcessed = res.T_REG.T_REG_PROCESADOS;
+        this.registerCorrect = res.T_REG.T_REG_CORRECTOS;
+        this.registerIncorrect = res.T_REG.T_REG_ERRONEOS;
         console.log(res);
-        this.dataTableSpent = res.bienes.map(res => {
+        this.dataTableSpent = res.BLK_BIENES.map((res: any) => {
           return {
-            costs: res.spent,
-            cveEvent: res.processKey,
-            description: res.description,
-            entry: res.income,
-            identifier: res.identifier,
-            impNumerary: res.valueAppraisalm,
-            indNume: res.indNume,
-            noDelegation: res.delegationNumber,
-            noExpAssociated: res.associatedExpNum,
-            noExpedient: res.fileNumber,
-            noFlier: res.flyerNumber,
-            noGood: res.goodNumber,
-            noSubDelegation: res.subdelegationNumber,
-            npNUm: res.goodNumberNum as any,
-            quantity: res.quantity as any,
-            status: res.status,
-            tax: res.iva as any,
-            color: res.vColor as any,
+            costs: res.GASTO,
+            cveEvent: res.CVE_PROCESO,
+            description: res.DESCRIPCION,
+            entry: res.INGRESO,
+            identifier: res.IDENTIFICADOR,
+            impNumerary: res.VALOR_AVALUO,
+            indNume: res.IND_NUME,
+            noDelegation: res.NO_DELEGACION,
+            noExpAssociated: res.NO_EXP_ASOCIADO,
+            noExpedient: res.NO_EXPEDIENTE,
+            noFlier: res.NO_VOLANTE,
+            noGood: res.NO_BIEN,
+            noSubDelegation: res.NO_SUBDELEGACION,
+            npNUm: res.NO_BIEN_NUME as any,
+            quantity: res.CANTIDAD as any,
+            status: res.ESTATUS,
+            tax: res.IVA as any,
+            color: res.COLOR as any,
           };
         });
 
-        this.dataTableSmall = res.gastos.map(res => {
+        this.dataTableSmall = res.BLK_GASTOS.map((res: any) => {
           return {
-            amount: res.amount as any,
-            cveie: res.spentConceptNumber,
-            noGood: res.goodNumber,
-            description: res.description,
-            status: res.status,
-            type: res.type,
+            amount: res.IMPORTE as any,
+            cveie: res.NO_CONCEPTO_GASTO,
+            noGood: res.NO_BIEN,
+            description: res.DESCRIPCION,
+            status: res.ESTATUS,
+            type: res.TIPO,
           };
         });
         this.modalService.show(MassiveNumeraryChangeModalComponent, {
@@ -390,8 +386,8 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     // this.processExtraction(vColB, vColI, vColV, vColG);
   }
 
-  dataTableSpent: IMassiveNumeraryGood[] = [];
-  dataTableSmall: IMassiveNumeraryTableSmall[] = [];
+  dataTableSpent: any[] = [];
+  dataTableSmall: any[] = [];
   async processExtraction(
     // dataTablePreview: any[],
     colB: number,
