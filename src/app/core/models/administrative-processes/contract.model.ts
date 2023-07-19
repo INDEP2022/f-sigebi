@@ -39,5 +39,5 @@ export interface IZone {
   recordNumber: string;
   numberDelegation: string;
   zoneContractKey: string;
-  delegacion: IDelegacion;
+  delegationNumber: IDelegacion;
 }

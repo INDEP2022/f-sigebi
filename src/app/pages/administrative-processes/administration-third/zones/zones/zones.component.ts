@@ -48,7 +48,7 @@ export class ZonesComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getZones();
+      this.getZones(this.params.getValue());
     });
 
     this.params1.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
@@ -61,11 +61,15 @@ export class ZonesComponent extends BasePage implements OnInit {
     });
   }
 
-  getZones() {
+  getZones(params: ListParams) {
     this.loading1 = true;
-    this.zonesService.getZones().subscribe({
-      next: (data: any) => {
-        this.data1 = data.data;
+    this.zonesService.getZones(params).subscribe({
+      next: data => {
+        console.log(data);
+        this.data1 = data.data.map(item => ({
+          ...item,
+          vigente: item.statusZone === '1' ? 'Si' : 'No',
+        }));
         this.totalItems = data.count;
         this.loading1 = false;
       },
@@ -89,7 +93,7 @@ export class ZonesComponent extends BasePage implements OnInit {
       next: data => {
         this.data2 = data.data.map(item => ({
           ...item,
-          descripcion: item.delegacion.description,
+          descripcion: item.delegationNumber?.description || 'SIN DESCRIPCIÓN',
         }));
         this.totalItems1 = data.count || 0;
         this.loading2 = false;

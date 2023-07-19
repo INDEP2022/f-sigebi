@@ -9,7 +9,7 @@ export const ZONES_COLUMNS = {
     width: '30%',
     sort: false,
   },
-  statusZone: {
+  vigente: {
     title: 'Vigente',
     width: '5%',
     sort: false,
@@ -31,5 +31,5 @@ export const COORDINATIONSZONES_COLUMNS = {
 export interface IDataZones {
   id: number;
   description: string;
-  statusZone: number;
+  statusZone: string;
 }
