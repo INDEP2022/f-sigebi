@@ -9,7 +9,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
-import { DataEmailServiceCentral } from 'src/app/core/services/ms-email/data-email-central.service';
+import { DataEmailService } from 'src/app/core/services/ms-email/data-email.service';
 import { TranfergoodService } from 'src/app/core/services/ms-transfergood/transfergood.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared';
@@ -40,7 +40,7 @@ export class EmailComponentC extends BasePage implements OnInit {
     private segUserService: SegAcessXAreasService,
     private receptionService: DocReceptionRegisterService,
     private transferGoodService: TranfergoodService,
-    private emailService: DataEmailServiceCentral,
+    private emailService: DataEmailService,
     private datePipe: DatePipe
   ) {
     super();
@@ -154,7 +154,7 @@ export class EmailComponentC extends BasePage implements OnInit {
     )[0].description;
 
     const body = {
-      to: 'aetiru@gmail.com',
+      to: 'pruebasqaindep@gmail.com',
       subject: asunto,
       fecDepositDev: dateDevolution,
       description: del ?? this.description,
@@ -180,7 +180,7 @@ export class EmailComponentC extends BasePage implements OnInit {
 
         const body: any = {
           header: 'DEV',
-          destination: ['aetiru@gmail.com'],
+          destination: ['pruebasqaindep@gmail.com'],
           copy: [''],
           subject: 'DEV EMAIL',
           message: `${resp.message}`,
@@ -207,14 +207,13 @@ export class EmailComponentC extends BasePage implements OnInit {
             // };
 
             const body: any = {
-              id: REPORTE,
-              addressee: 'aetiru@gmail.com',
+              addressee: 'pruebasqaindep@gmail.com',
               sender: user.toUpperCase(),
               cc: '',
               message: `${resp.message}`,
               affair: asunto,
               sendDate: date,
-              devReportNumber: null,
+              devReportNumber: REPORTE,
             };
 
             this.emailService.create(body).subscribe({

@@ -7,6 +7,7 @@ import {
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ParameterBaseCatService } from 'src/app/core/services/catalogs/rate-catalog.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-modal-rates-catalog',
@@ -44,14 +45,31 @@ export class ModalRatesCatalogComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       keyRate: [null, [Validators.required]],
-      rate: [null, [Validators.required]],
+      rate: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       year: [null, [Validators.required]],
       month: [null, [Validators.required]],
-      coinType: [null, [Validators.required]],
-      closed: [null, [Validators.required]],
+      coinType: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(15),
+        ],
+      ],
+      closed: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
       rateClosingDate: [null, [Validators.required]],
       userClosingRate: [null, [Validators.required]],
-      registerNumber: [null, [Validators.required]],
+      registerNumber: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.allotment != null) {
       this.edit = true;
@@ -85,22 +103,22 @@ export class ModalRatesCatalogComponent extends BasePage implements OnInit {
     this.close();
   }
 
-  /*update() {
-    this.loading = true;
-    this.parameterCatService
-      .update(this.form.id, this.form.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
-  }*/
+  // update() {
+  //   this.loading = true;
+  //   this.parameterCatService
+  //     .update(this.form.registerNumber)
+  //     .subscribe({
+  //       next: data => this.handleSuccess(),
+  //       error: error => (this.loading = false),
+  //     });
+  // }
   close() {
     this.modalRef.hide();
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

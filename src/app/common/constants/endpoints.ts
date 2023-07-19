@@ -172,6 +172,8 @@ export enum ENDPOINT_LINKS {
   tevents = 'event/comer-tevents',
   usuxtpevents = 'event/application/paComerUsuxtpevents',
   security = 'security/tracking-profile',
+  accessScreen = 'security/tracking-access-screens',
+  profileXPant = 'security/traking-profile-x-pant',
 
   //request
   request = 'request',

@@ -9,6 +9,8 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+import { EventPreparationService } from '../event-preparation.service';
 import { ComerEventForm } from '../utils/forms/comer-event-form';
 import { EventStadisticsForm } from '../utils/forms/event-stadistics-form';
 import { EventStadisticsDefaultValue } from '../utils/forms/stadistics-default-form';
@@ -50,16 +52,32 @@ export class EventPreparationComponent
     private parameterModService: ParametersModService,
     private authService: AuthService,
     private comerEventosService: ComerEventosService,
-    private lotService: LotService
+    private lotService: LotService,
+    private eventPreparationService: EventPreparationService,
+    private globalVarsService: GlobalVarsService
   ) {
     super();
     // TODO: Recibir los parametros
     this.parameters.pDirection = 'M';
   }
 
-  ngOnInit(): void {
+  async checkState() {
+    const selftState = await this.eventPreparationService.getState();
+    const { eventForm } = selftState;
+    if (eventForm) {
+      this.eventForm.patchValue(eventForm.getRawValue());
+    }
+    const global = await this.globalVarsService.getVars();
+    const { REL_BIENES } = global;
+    if (REL_BIENES) {
+      await this.onOpenEvent();
+    }
+  }
+
+  async ngOnInit() {
     this.initForm();
     this.getUserInfo();
+    await this.checkState();
   }
 
   getUserInfo() {

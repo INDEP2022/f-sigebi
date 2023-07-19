@@ -24,6 +24,7 @@ import { RecordAccountStatementsAccountsService } from 'src/app/core/services/ca
 import { RecordAccountStatementsService } from 'src/app/core/services/catalogs/record-account-statements.service';
 import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
+import { IRangeDateTmp5 } from 'src/app/core/services/ms-coinciliation/comer-details';
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -34,6 +35,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { NumerarySolicitudeComponent } from '../numerary-solicitude/numerary-solicitude.component';
 import {
   clearGoodCheck,
+  clearGoodCheck2,
   goodCheck,
   goodCheck2,
   newGoodCheck,
@@ -80,6 +82,8 @@ export class NumeraryMassiveConciliationComponent
 
   loading2: boolean = false;
 
+  minDate: Date;
+
   public override settings: any = {
     rowClassFunction: (row: { data: { VISUAL_ATTRIBUTE: any } }) =>
       row.data.VISUAL_ATTRIBUTE == 'VA_VERDE'
@@ -87,7 +91,7 @@ export class NumeraryMassiveConciliationComponent
         : 'bg-dark text-white',
     columns: NUMERARY_MASSIVE_CONCILIATION_COLUMNS,
     hideSubHeader: false,
-    noDataMessage: 'No se encontrarón registros',
+    noDataMessage: 'No se Encontrarón Registros',
     actions: {
       add: false,
       delete: false,
@@ -97,7 +101,7 @@ export class NumeraryMassiveConciliationComponent
 
   public settings2: any = {
     columns: NUMERARY_MASSIVE_CONCILIATION_COLUMNS2,
-    noDataMessage: 'No se encontrarón registros',
+    noDataMessage: 'No se Encontrarón Registros',
     hideSubHeader: false,
     actions: {
       add: false,
@@ -174,6 +178,17 @@ export class NumeraryMassiveConciliationComponent
     this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       console.log(params);
       this.limit2 = new FormControl(params.limit);
+
+      if (this.dataGoods2['data'].length > 0) {
+        this.searchGoodBankAccount();
+      }
+    });
+
+    this.form.get('dateOf').valueChanges.subscribe(res => {
+      if (res != null) {
+        this.form.get('dateAt').reset();
+        this.minDate = new Date(this.form.get('dateOf').value);
+      }
     });
   }
 
@@ -259,12 +274,14 @@ export class NumeraryMassiveConciliationComponent
         } else {
           this.alert(
             'warning',
-            'El clasificador no corresponde a una cuenta bancaria',
+            'El Clasificador no Corresponde a una Cuenta Bancaria',
             ''
           );
         }
       } else {
         this.current.reset();
+        this.bank.reset();
+        this.bankAccount.reset();
       }
     });
   }
@@ -360,10 +377,34 @@ export class NumeraryMassiveConciliationComponent
   }
 
   //Trae la lista de monedas para el segundo form
+  // getCveCurrency() {
+  //   this.accountBankService.getListCurrencyCve({ currency: null }).subscribe(
+  //     res => {
+  //       console.log(res);
+  //       let currency = res.data;
+  //       console.log(currency)
+  //       currency = currency.replace(/'/g, '');
+  //       console.log(currency)
+  //       this.currentDataF2 = new DefaultSelect(currency, res.count);
+  //       console.log(this.currentDataF2)
+  //     },
+  //     err => {
+  //       console.log(err);
+  //     }
+  //   );
+  // }
+
   getCveCurrency() {
     this.accountBankService.getListCurrencyCve({ currency: null }).subscribe(
       res => {
         console.log(res);
+        // Eliminar comillas simples de las siglas de las monedas
+        res.data.forEach((currency: { cve_moneda: string }) => {
+          if (currency.cve_moneda && typeof currency.cve_moneda === 'string') {
+            currency.cve_moneda = currency.cve_moneda.replace(/'/g, '');
+          }
+        });
+
         this.currentDataF2 = new DefaultSelect(res.data, res.count);
       },
       err => {
@@ -376,6 +417,7 @@ export class NumeraryMassiveConciliationComponent
   searchGoodBankAccount() {
     // let body: IProReconcilesGood;
     this.loading2 = true;
+    clearGoodCheck2();
     const bank = this.bank2.value;
     const bankAccount = this.bankAccount2.value;
     const currency = this.current2.value;
@@ -390,20 +432,30 @@ export class NumeraryMassiveConciliationComponent
       endDate: this.form.get('dateAt').value,
     };
 
+    const paramsF = new FilterParams();
+    paramsF.page = this.params2.value.page;
+    paramsF.limit = this.params2.value.limit;
+
     console.log(body);
 
-    this.accountBankService.searchByFilterNumeraryMassive(body).subscribe(
-      res => {
-        console.log(res);
-        this.dataGoods2.load(res.result);
-        console.log(this.dataGoods2['data']);
-        this.loading2 = false;
-      },
-      err => {
-        console.log(err);
-        this.loading2 = true;
-      }
-    );
+    this.accountBankService
+      .searchByFilterNumeraryMassive(body, paramsF.getParams())
+      .subscribe(
+        res => {
+          console.log(res);
+          this.form2.get('total').setValue(res.total);
+          this.form2.get('totalDateTesofe').setValue(res.tDateTesof);
+          this.form2.get('totalWithoutTesofe').setValue(res.tSinTesof);
+          this.totalItems2 = res.total;
+          this.dataGoods2.load(res.result);
+          console.log(this.dataGoods2['data']);
+          this.loading2 = false;
+        },
+        err => {
+          console.log(err);
+          this.loading2 = true;
+        }
+      );
   }
 
   //Paginado
@@ -519,8 +571,30 @@ export class NumeraryMassiveConciliationComponent
             this.goodProcessService.pupReconcilied(model).subscribe(
               res => {
                 console.log(res);
+                this.alert('success', 'Bienes Encontrados', '');
                 this.dataGoods.load(res.data);
                 this.loading = false;
+
+                if (this.form.get('dateOf').value != null) {
+                  const model: IRangeDateTmp5 = {
+                    finalDate: format(
+                      this.form.get('dateAt').value,
+                      'yyyy-MM-dd'
+                    ),
+                    initialDate: format(
+                      this.form.get('dateOf').value,
+                      'yyyy-MM-dd'
+                    ),
+                  };
+                  this.tmpVal5Service.rangeDate(model).subscribe(
+                    res => {
+                      console.log(res);
+                    },
+                    err => {
+                      console.log(err);
+                    }
+                  );
+                }
               },
               err => {
                 console.log(err);
@@ -530,6 +604,7 @@ export class NumeraryMassiveConciliationComponent
           },
           err => {
             console.log(err);
+            this.alert('warning', 'No se Encontraron Bienes', '');
             this.loading = false;
           }
         );
@@ -554,10 +629,10 @@ export class NumeraryMassiveConciliationComponent
     this.loading = true;
     const fec = this.form.get('dateTesofe').value;
     if (goodCheck.length < 1) {
-      this.alert('warning', 'No hay bienes seleccionados', '');
+      this.alert('warning', 'No Hay Bienes Seleccionados', '');
       this.loading = false;
     } else if (fec == null) {
-      this.alert('warning', 'No seleccionó un fecha Tesofe', '');
+      this.alert('warning', 'No Seleccionó un Fecha Tesofe', '');
       this.loading = false;
     } else {
       console.log(goodCheck);
@@ -599,7 +674,7 @@ export class NumeraryMassiveConciliationComponent
                   })
                 );
 
-                this.alert('success', 'Actualización realizada', '');
+                this.alert('success', 'Actualización Realizada', '');
                 clearGoodCheck();
                 this.loading = false;
               },
@@ -629,7 +704,7 @@ export class NumeraryMassiveConciliationComponent
       const newDate = `${arrayData[2]}-${arrayData[1]}-${arrayData[0]}`;
       return { rpta: format(new Date(newDate), 'yyyy-MM-dd') };
     } else {
-      return { rpta: 'No tiene formato dd-mm-yyyy' };
+      return { rpta: 'No Tiene Formato dd-mm-yyyy' };
     }
   }
 
@@ -641,7 +716,7 @@ export class NumeraryMassiveConciliationComponent
 
     this.loading = true;
     if (goodCheck.length < 1) {
-      this.alert('warning', 'No hay bienes seleccionados', '');
+      this.alert('warning', 'No Hay Bienes Seleccionados', '');
       this.loading = false;
     } else {
       this.loading = false;
@@ -660,6 +735,7 @@ export class NumeraryMassiveConciliationComponent
               val4: item.RSPTAQUERY.val4,
               val5: format(new Date(item.RSPTAQUERY.val5), 'yyyy-MM-dd'),
               val6: item.RSPTAQUERY.val6,
+              fecTesofe: item.BFEC_TESOFE,
             };
             console.log(model);
             this.numeraryService.pupSearchNumerary(model).subscribe(
@@ -670,23 +746,23 @@ export class NumeraryMassiveConciliationComponent
                 console.log(err.error.message);
                 if (
                   err.error.message ==
-                  'La propiedad fecTesofe debe ser una fecha'
+                  'La Propiedad "fecTesofe" Debe Ser una Fecha'
                 ) {
-                  this.alert('warning', 'No tiene fecha Tesofe', '');
+                  this.alert('warning', 'No Tiene Fecha Tesofe', '');
                 }
               }
             );
           } else {
             this.alert(
               'error',
-              'Fallo al tranformar la cantidad numerica del importe',
+              'Fallo al Tranformar la Cantidad Numérica del Importe',
               ''
             );
             return;
           }
         } else {
           const date = this.validateDateddmmyyyy(item.RSPTAQUERY.val5);
-          if (date.rpta != 'No tiene formato dd-mm-yyyy') {
+          if (date.rpta != 'No Tiene Formato dd-mm-yyyy') {
             if (!isNaN(parseInt(item.RSPTAQUERY.val2))) {
               const model: ISearchNumerary = {
                 conciled: 'S',
@@ -707,16 +783,16 @@ export class NumeraryMassiveConciliationComponent
                   console.log(err);
                   if (
                     err.error.message ==
-                    'La propiedad fecTesofe debe ser una fecha'
+                    'La Propiedad "fecTesofe" Debe Ser una Fecha'
                   ) {
-                    this.alert('warning', 'No tiene fecha Tesofe', '');
+                    this.alert('warning', 'No Tiene Fecha Tesofe', '');
                   }
                 }
               );
             } else {
               this.alert(
                 'error',
-                'Fallo al tranformar la cantidad numerica del importe',
+                'Fallo al Tranformar la Cantidad Numérica del Importe',
                 ''
               );
               return;
@@ -724,7 +800,7 @@ export class NumeraryMassiveConciliationComponent
           } else {
             this.alert(
               'error',
-              'Fallo al generar formato estandar para fecha',
+              'Fallo al Generar Formato Estandar para Fecha',
               ''
             );
             return;
@@ -786,11 +862,11 @@ export class NumeraryMassiveConciliationComponent
       } catch (error) {
         console.log(error);
       } finally {
-        this.alert('success', 'Desconciliación realizada', '');
+        this.alert('success', 'Desconciliación Realizada', '');
         this.loading = false;
       }
     } else {
-      this.alert('warning', 'No se seleccionó ningún Bien', '');
+      this.alert('warning', 'No se Seleccionó Ningún Bien', '');
     }
   }
 
@@ -799,8 +875,9 @@ export class NumeraryMassiveConciliationComponent
     let modalConfig: ModalOptions = {
       initialState: {
         callback: (data: any) => {
+          console.log(data);
           if (data != null || data != undefined) {
-            this.form2.get('proposal').setValue(data.motionNumber);
+            this.form2.get('proposal').setValue(data.applicationId);
             this.form2.get('currencyDeposit').setValue(data.amountAssign);
           }
         },
@@ -814,27 +891,53 @@ export class NumeraryMassiveConciliationComponent
   //Ultimo boton de asociar
   finalAsociate() {
     if (goodCheck2.length > 0) {
-      for (let item of goodCheck2) {
-        console.log(item);
-        /* this.numeraryService.pupAssociateGood() */
-        const model: IPupAssociateGood = {
-          movementNo: 0,
-          requestId: 0,
-          blkDeposit: 0,
-          cbdDeposit: 0,
-          cbcveCurrency: '',
-        };
-        this.numeraryService.pupAssociateGood(model).subscribe(
-          res => {
-            console.log(res);
-          },
-          err => {
-            console.log(err);
-          }
-        );
-      }
+      const noMovementArray = goodCheck2.map((e: any) => {
+        return e.motionNumber;
+      });
+
+      const depositArray = goodCheck2.map((e: any) => {
+        return e.deposit;
+      });
+
+      const currencyArray = goodCheck2.map((e: any) => {
+        return e.currencyKey;
+      });
+
+      /* this.numeraryService.pupAssociateGood() */
+      const model: IPupAssociateGood = {
+        movementNo: noMovementArray,
+        requestId: this.form2.get('proposal').value,
+        blkDeposit: this.form2.get('currencyDeposit').value,
+        cbdDeposit: depositArray,
+        cbcveCurrency: currencyArray,
+      };
+      this.numeraryService.pupAssociateGood(model).subscribe(
+        res => {
+          this.alert('success', 'Se Realizó la Asociación', '');
+          clearGoodCheck2();
+          console.log(res);
+        },
+        err => {
+          this.alert('error', 'Se Presentó un Error Inesperado', '');
+          console.log(err);
+        }
+      );
     } else {
-      this.alert('warning', 'No se seleccionó datos de cuentas bancarias', '');
+      this.alert('warning', 'No se Seleccionó Datos de Cuentas Bancarias', '');
     }
+  }
+
+  cleandInfo() {
+    this.form.reset();
+    this.dataGoods = null;
+    this.loading = false;
+    this.totalItems = 0;
+  }
+
+  cleandInfo2() {
+    this.form2.reset();
+    this.dataGoods2 = null;
+    this.loading = false;
+    this.totalItems2 = 0;
   }
 }

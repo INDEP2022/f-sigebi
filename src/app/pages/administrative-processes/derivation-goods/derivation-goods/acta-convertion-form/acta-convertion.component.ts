@@ -28,6 +28,8 @@ import { ConvertiongoodService } from '../../../../../core/services/ms-convertio
 })
 export class ActaConvertionFormComponent extends BasePage implements OnInit {
   delegationForm: ModelForm<IDelegation>;
+  expedientNuember: string;
+  conversion: any;
   edit: boolean = false;
   delegation: any;
   states = new DefaultSelect<IStateOfRepublic>();

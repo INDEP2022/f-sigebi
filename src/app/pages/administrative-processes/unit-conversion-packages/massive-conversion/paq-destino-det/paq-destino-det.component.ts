@@ -66,7 +66,7 @@ export class PaqDestinoDetComponent extends BasePage {
       //   addButtonContent: '<i class="fa fa-plus text-success mx-2"></i>',
       // },
       rowClassFunction: (row: { data: { available: any } }) =>
-        row.data.available ? 'bg-success text-white' : 'bg-dark text-white',
+        row.data.available ? 'bg-dark text-white' : 'bg-success text-white',
     };
     this.searchNotServerPagination();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
@@ -213,13 +213,15 @@ export class PaqDestinoDetComponent extends BasePage {
     return true;
   }
 
-  private fillTable(data: IPackageGoodDec[]) {
-    let dataMap = data.map(item => {
-      return {
-        ...item,
-        available: this.validateGood(item),
-      };
-    });
+  private async fillTable(data: IPackageGoodDec[]) {
+    let dataMap = await Promise.all(
+      data.map(item => {
+        return {
+          ...item,
+          available: this.validateGood(item),
+        };
+      })
+    );
 
     this.dataPrevisualization = dataMap;
     this.dataTemp = [...dataMap];

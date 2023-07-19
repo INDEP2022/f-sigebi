@@ -21,8 +21,8 @@
           <div class="col-1">
             <button class="btn btn-danger btn-sm" (click)="lock = !lock">
               <i
-                class="fa"
-                [ngClass]="{ 'fa-lock': lock, 'fa-lock-open': !lock }"></i>
+                class="bx bx-sm float-icon"
+                [ngClass]="{ 'bx-lock': lock, 'bx-lock-open': !lock }"></i>
             </button>
           </div>
           <div class="col-md-2">
@@ -39,8 +39,11 @@
           <div class="col-md-7">
             <div class="row">
               <div class="col-1">
-                <button class="btn btn-danger btn-sm" (click)="callReport()">
-                  <i class="fa fa-print"></i>
+                <button
+                  type="button"
+                  class="btn btn-primary active btn-sm"
+                  (click)="callReport()">
+                  <i class="bx bx-printer bx-sm float-icon"></i>
                 </button>
               </div>
               <div class="col-5">
@@ -99,7 +102,7 @@
               formControlName="recordRead" />
           </div>-->
           <div class="col-md-4">
-            <input type="file" />
+            <input type="file" (change)="onCsvSelected($event)" />
           </div>
           <div class="col-md-2">
             <form-field
@@ -144,29 +147,23 @@
         </div>
       </form>
 
-      <div class="row pt-5">
-        <form action="" class="form-material" [formGroup]="data">
+      <div class="row pt-5" *ngFor="let d of data">
+        <form action="" class="form-material" [formGroup]="d">
           <div class="row mt-4 pt-4">
             <div class="col-md-3">
-              <form-field [control]="data.get('noGood')">
-                <ngx-select
-                  (fetchItems)="getGood($event)"
-                  label="No. Bien"
-                  [data]="goods"
-                  [form]="data"
-                  value="goodId"
-                  bindLabel="goodDescription"
-                  [control]="'noGood'"
-                  (change)="(null)"
-                  [searchOnInit]="true"
+              <form-field [control]="d.get('noGood')" label="No. Bien">
+                <!-- <ngx-select (fetchItems)="getGood($event)" label="No. Bien" [data]="goods" [form]="d" value="goodId"
+                  bindLabel="goodDescription" [control]="'noGood'" (change)="(null)" [searchOnInit]="true"
                   [showTooltip]="true">
-                </ngx-select>
+                </ngx-select> -->
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="noGood" />
               </form-field>
             </div>
             <div class="col-md-2">
-              <form-field
-                [control]="data.get('criminalCase')"
-                label="Causa Penal">
+              <form-field [control]="d.get('criminalCase')" label="Causa Penal">
                 <input
                   type="number"
                   class="form-control"
@@ -175,7 +172,7 @@
             </div>
             <div class="col-md-3">
               <form-field
-                [control]="data.get('preliminaryInvestigation')"
+                [control]="d.get('preliminaryInvestigation')"
                 label="Averiguación Previa">
                 <input
                   type="number"
@@ -186,21 +183,19 @@
               </form-field>
             </div>
             <div class="col-md-2">
-              <form-field
-                [control]="data.get('dateTesofe')"
-                label="Fecha Tesofe">
+              <form-field [control]="d.get('dateTesofe')" label="Fecha Tesofe">
                 <input
-                  type="number"
+                  type="date"
                   class="form-control"
                   formControlName="dateTesofe" />
               </form-field>
             </div>
             <div class="col-md-2">
               <form-field
-                [control]="data.get('jobTesofe')"
+                [control]="d.get('jobTesofe')"
                 label="Oficio a Tesofe">
                 <input
-                  type="number"
+                  type="text"
                   class="form-control"
                   formControlName="jobTesofe" />
               </form-field>
@@ -208,7 +203,7 @@
           </div>
           <div class="row mt-4">
             <div class="col-md-2">
-              <form-field [control]="data.get('authority')" label="Autoridad">
+              <form-field [control]="d.get('authority')" label="Autoridad">
                 <input
                   type="number"
                   class="form-control"
@@ -217,27 +212,27 @@
             </div>
             <div class="col-md-2">
               <form-field
-                [control]="data.get('dateTreasury')"
+                [control]="d.get('dateTreasury')"
                 label="Fecha Tesoreria">
                 <input
-                  type="number"
+                  type="date"
                   class="form-control"
                   formControlName="dateTreasury" />
               </form-field>
             </div>
             <div class="col-md-2">
               <form-field
-                [control]="data.get('dateJudgment')"
+                [control]="d.get('dateJudgment')"
                 label="Fecha Sentencia">
                 <input
-                  type="number"
+                  type="date"
                   class="form-control"
                   formControlName="dateJudgment" />
               </form-field>
             </div>
             <div class="col-md-2">
               <form-field
-                [control]="data.get('appraisalValue')"
+                [control]="d.get('appraisalValue')"
                 label="Valor Avaluo">
                 <input
                   type="number"
@@ -246,7 +241,7 @@
               </form-field>
             </div>
             <div class="col-md-2">
-              <form-field [control]="data.get('interests')" label="Intereses">
+              <form-field [control]="d.get('interests')" label="Intereses">
                 <input
                   type="number"
                   class="form-control"
@@ -254,7 +249,7 @@
               </form-field>
             </div>
             <div class="col-md-2">
-              <form-field [control]="data.get('results')" label="Resultado">
+              <form-field [control]="d.get('results')" label="Resultado">
                 <input
                   type="number"
                   class="form-control"
@@ -266,7 +261,7 @@
             <div class="col-md-8"></div>
             <div class="col-md-4">
               <form-field
-                [control]="data.get('totalSeizures')"
+                [control]="d.get('totalSeizures')"
                 label="Total en Decomisos:">
                 <input
                   type="number"

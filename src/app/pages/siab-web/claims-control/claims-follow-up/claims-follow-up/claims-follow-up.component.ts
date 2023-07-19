@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as FileSaver from 'file-saver';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { SeraLogService } from 'src/app/core/services/ms-audit/sera-log.service';
@@ -222,14 +222,16 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       pGoodNumber: this.claimsFollowUpForm.controls['numberGood'].value,
       pOperation: 1,
     };
-    this.seraLogService.postObtnGoodSinister(data).subscribe({
+    this.seraLogService.postObtnGoodSinister(data, new ListParams()).subscribe({
       next: data => {
         if (data) {
           this.claimsFollowUpForm.controls['description'].setValue(
             data.data[0].descripcion
           );
           this.newSiniester = true;
-          this.queryClaims();
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.queryClaims());
         } else {
           this.claimsFollowUpForm.controls['description'].setValue('');
           this.alert(
@@ -248,16 +250,18 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       pGoodNumber: this.claimsFollowUpForm.controls['numberGood'].value,
       pOperation: 2,
     };
-    this.seraLogService.postObtnGoodSinister(data).subscribe({
-      next: data => {
-        //INSERTAR DATA PARA TABLA
-        console.log(data);
-        this.lawyers = data.data;
-        this.totalItems = data.count | 0;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
+    this.seraLogService
+      .postObtnGoodSinister(data, this.params.getValue())
+      .subscribe({
+        next: data => {
+          //INSERTAR DATA PARA TABLA
+          console.log(data);
+          this.lawyers = data.data;
+          this.totalItems = data.count | 0;
+          this.loading = false;
+        },
+        error: error => (this.loading = false),
+      });
   }
   openForm(siniester?: any) {
     let good = {

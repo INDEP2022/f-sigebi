@@ -1,9 +1,7 @@
 //Components
 
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-
-export const COLUMNS_PERFIL = {
-  display: {
+/*export const COLUMNS_PERFIL = {
+  screenKey: {
     title: 'Pantalla',
     sort: false,
   },
@@ -36,6 +34,45 @@ export const COLUMNS_PERFIL = {
       });
     },
     sort: false,
+  },
+};*/
+
+export const COLUMNS_PERFIL = {
+  profile: {
+    title: 'Perfil',
+    sort: false,
+  },
+  screenKey: {
+    title: 'Pantalla',
+    sort: false,
+  },
+  permissionReading: {
+    title: 'Lectura',
+    sort: false,
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Lectura',
+        list: [
+          { value: 'N', title: 'NO' },
+          { value: 'S', title: 'SI' },
+        ],
+      },
+    },
+  },
+  permissionWriting: {
+    title: 'Escritura',
+    sort: false,
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Escritura',
+        list: [
+          { value: 'N', title: 'NO' },
+          { value: 'S', title: 'SI' },
+        ],
+      },
+    },
   },
 };
 

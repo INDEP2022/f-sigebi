@@ -252,6 +252,14 @@ export class DepositaryPaymentChargesComponent
         .subscribe({
           next: resp => {
             console.log(resp.ArrayData);
+            if (resp.ArrayData.length == 0) {
+              this.alertInfo(
+                'info',
+                'No Se cargaron los pagos',
+                'El numero de movimiento ya esta registrado'
+              );
+              return;
+            }
             this.insertRefPaymentDepositaria(resp.ArrayData);
           },
           error: eror => {
@@ -494,16 +502,17 @@ src\app\pages\juridical-processes\depositary\payment-dispersal-process\conciliat
         noGood: item.NO_BIEN,
         validSystem: item.VAL,
         type: item.TIPO,
-        entryorderid: 0,
+        entryorderid: null,
         reconciled: null,
         registrationDate: new Date(),
         oiDate: null,
         appliedto: null,
         client_id: null,
-        registerNumber: 0,
+        registerNumber: null,
         sent_oi: null,
         invoice_oi: null,
-        indicator: 0,
+        indicator: null,
+        incomeid: null,
       };
       const result: any = await this.saveRefPayDepositaryData(body);
 
