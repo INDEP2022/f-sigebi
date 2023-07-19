@@ -7,7 +7,7 @@ import { BasePage } from 'src/app/core/shared';
 
 @Component({
   selector: 'app-prorrateo-good-surveillance-policy-modal',
-  templateUrl: './prorrateo-good-surveillance-policy-modal.component.html',
+  templateUrl: './policy-modal.component.html',
   styles: [],
 })
 export class ProrrateoGoodSurveillancePolicyModalComponent
