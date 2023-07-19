@@ -996,20 +996,27 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       } else {
         this.alert('warning', 'Debe registrar un número de folio', '');
       }
-    }else{
-      this.form.get('scanFolio').setValue(1)
+    } else {
+      this.form.get('scanFolio').setValue(1);
       const modelUpdate: Partial<IPackage> = {
-        InvoiceUniversal: 1
+        InvoiceUniversal: 1,
       };
-  
+
       this.packageGoodService
-        .updatePaqDestinationEnc(this.noPackage.value.numberPackage, modelUpdate)
+        .updatePaqDestinationEnc(
+          this.noPackage.value.numberPackage,
+          modelUpdate
+        )
         .subscribe(
           res => {
             this.showButtonAlert('A');
           },
           err => {
-            this.alert('error','Se presentó un error inesperado al guardar el folio','')
+            this.alert(
+              'error',
+              'Se presentó un error inesperado al guardar el folio',
+              ''
+            );
           }
         );
     }
