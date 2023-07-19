@@ -378,10 +378,34 @@ export class NumeraryMassiveConciliationComponent
   }
 
   //Trae la lista de monedas para el segundo form
+  // getCveCurrency() {
+  //   this.accountBankService.getListCurrencyCve({ currency: null }).subscribe(
+  //     res => {
+  //       console.log(res);
+  //       let currency = res.data;
+  //       console.log(currency)
+  //       currency = currency.replace(/'/g, '');
+  //       console.log(currency)
+  //       this.currentDataF2 = new DefaultSelect(currency, res.count);
+  //       console.log(this.currentDataF2)
+  //     },
+  //     err => {
+  //       console.log(err);
+  //     }
+  //   );
+  // }
+
   getCveCurrency() {
     this.accountBankService.getListCurrencyCve({ currency: null }).subscribe(
       res => {
         console.log(res);
+        // Eliminar comillas simples de las siglas de las monedas
+        res.data.forEach((currency: { cve_moneda: string }) => {
+          if (currency.cve_moneda && typeof currency.cve_moneda === 'string') {
+            currency.cve_moneda = currency.cve_moneda.replace(/'/g, '');
+          }
+        });
+
         this.currentDataF2 = new DefaultSelect(res.data, res.count);
       },
       err => {
@@ -547,7 +571,7 @@ export class NumeraryMassiveConciliationComponent
               res => {
                 console.log(res);
                 /* if() */
-                this.alert('success', 'Bienes encontrados', '');
+                this.alert('success', 'Bienes Encontrados', '');
                 this.dataGoods.load(res.data);
                 this.loading = false;
               },
@@ -559,7 +583,7 @@ export class NumeraryMassiveConciliationComponent
           },
           err => {
             console.log(err);
-            this.alert('warning', 'No se encontraron Bienes', '');
+            this.alert('warning', 'No se Encontraron Bienes', '');
             this.loading = false;
           }
         );
@@ -868,17 +892,31 @@ export class NumeraryMassiveConciliationComponent
       };
       this.numeraryService.pupAssociateGood(model).subscribe(
         res => {
-          this.alert('success', 'Se realizó la asociación', '');
+          this.alert('success', 'Se Realizó la Asociación', '');
           clearGoodCheck2();
           console.log(res);
         },
         err => {
-          this.alert('error', 'Se presentó un error inesperado', '');
+          this.alert('error', 'Se Presentó un Error Inesperado', '');
           console.log(err);
         }
       );
     } else {
       this.alert('warning', 'No se Seleccionó Datos de Cuentas Bancarias', '');
     }
+  }
+
+  cleandInfo() {
+    this.form.reset();
+    this.dataGoods = null;
+    this.loading = false;
+    this.totalItems = 0;
+  }
+
+  cleandInfo2() {
+    this.form2.reset();
+    this.dataGoods2 = null;
+    this.loading = false;
+    this.totalItems2 = 0;
   }
 }
