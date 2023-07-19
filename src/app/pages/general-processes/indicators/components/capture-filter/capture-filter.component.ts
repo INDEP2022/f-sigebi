@@ -1,12 +1,17 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
-import { TransferenteSharedComponent } from 'src/app/@standalone/shared-forms/transferents-shared/transferents-shared.component';
-import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shared/user-shared.component';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { catchError, tap, throwError } from 'rxjs';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { IssuingInstitutionService } from 'src/app/core/services/catalogs/issuing-institution.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
-import { BasePage } from 'src/app/core/shared';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SharedModule } from 'src/app/shared/shared.module';
 
@@ -14,53 +19,37 @@ import { SharedModule } from 'src/app/shared/shared.module';
   selector: 'capture-filter',
   templateUrl: './capture-filter.component.html',
   standalone: true,
-  imports: [
-    SharedModule,
-    TransferenteSharedComponent,
-    UsersSharedComponent,
-    DelegationSharedComponent,
-  ],
+  imports: [SharedModule],
   styles: [],
 })
-export class CaptureFilterComponent extends BasePage implements OnInit {
+export class CaptureFilterComponent implements OnInit {
   @Input() isReceptionAndDelivery: boolean = false;
   @Input() isReceptionStrategies: boolean = false;
   @Input() isConsolidated: boolean = false;
   @Output() consultEmmit = new EventEmitter<FormGroup>();
-  @Output() reportEmmit = new EventEmitter<FormGroup>();
-  @Output() exportEmmit = new EventEmitter<FormGroup>();
-  form: FormGroup;
-  flyerTypes = [
-    { label: 'A', value: 'A' },
-    {
-      label: 'AP',
-      value: 'AP',
-    },
-    {
-      label: 'AS',
-      value: 'AS',
-    },
-    {
-      label: 'AT',
-      value: 'AT',
-    },
-    {
-      label: 'OF',
-      value: 'OF',
-    },
-    {
-      label: 'P',
-      value: 'P',
-    },
-    {
-      label: 'PJ',
-      value: 'PJ',
-    },
-    {
-      label: 'T',
-      value: 'T',
-    },
-  ];
+  delegations = new DefaultSelect();
+  affairName = new DefaultSelect();
+  station = new DefaultSelect();
+  authority = new DefaultSelect();
+  transference = new DefaultSelect();
+  users$ = new DefaultSelect<ISegUsers>();
+  dictNumber: string | number = undefined;
+  maxDate = new Date();
+
+  form = this.fb.group({
+    de: [null, [Validators.required]],
+    a: [null, [Validators.required]],
+    fecha: [null, [Validators.required]],
+    cordinador: [null, [Validators.required]],
+    usuario: [null, [Validators.required]],
+    transference: [null, Validators.required],
+    station: [null, Validators.required],
+    authority: [null, Validators.required],
+    clave: [null, [Validators.required]],
+    tipoVolante: [null, [Validators.required]],
+    tipoEvento: [null],
+  });
+  flyerTypes = ['A', 'AP', 'AS', 'AT', 'OF', 'P', 'PJ', 'T  '];
   eventTypes = [
     'Entrega-Comercialización',
     'Entrega-Donación',
@@ -69,92 +58,104 @@ export class CaptureFilterComponent extends BasePage implements OnInit {
     'Recepción Física',
     'Entrega',
   ];
+
   select = new DefaultSelect();
-  autoritys = new DefaultSelect();
-  stations = new DefaultSelect();
-  dataSelect = new DefaultSelect(this.flyerTypes, this.flyerTypes.length);
-  typesEvents = new DefaultSelect(this.flyerTypes, this.flyerTypes.length);
   constructor(
     private fb: FormBuilder,
+    private delegationService: DelegationService,
+    private affairService: AffairService,
+    private stationService: StationService,
+    private issuingInstitutionService: IssuingInstitutionService,
     private authorityService: AuthorityService,
-    private stationService: StationService
-  ) {
-    super();
+    private usersService: UsersService
+  ) {}
+
+  ngOnInit(): void {}
+
+  cleanForm() {
+    this.form.reset();
   }
 
-  ngOnInit(): void {
-    this.prepareForm();
-  }
-  //Desahogo
-  private prepareForm() {
-    this.form = this.fb.group({
-      fechaInicio: [null, [Validators.required]],
-      fechaFin: [null, [Validators.required]],
-      fechaTurno: [null, [Validators.required]],
-      fechaDesahogo: [null, [Validators.required]],
-      cordinador: [null, [Validators.required]],
-      usuario: [null, [Validators.required]],
-      transferente: [null, [Validators.required]],
-      emisora: [null, [Validators.required]],
-      autoridad: [null, [Validators.required]],
-      tipoVolante: [null, [Validators.required]],
-      numeroVolante: [null],
-      fechaVolante: [null, [Validators.required]],
-    });
-  }
-
-  getAutoritys(params?: ListParams) {
-    this.authorityService.getAll(params).subscribe({
-      next: resp => {
-        console.log(resp);
-        this.autoritys = new DefaultSelect(resp.data);
-      },
-      error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
+  getDelegations(params: ListParams) {
+    this.delegationService.getAll(params).subscribe({
+      next: res => (this.delegations = new DefaultSelect(res.data, res.count)),
+      error: () => {
+        this.delegations = new DefaultSelect([], 0);
       },
     });
   }
 
-  getStations(params?: ListParams) {
+  getSubjects(params: ListParams) {
+    this.affairService.getAll(params).subscribe({
+      next: data => {
+        this.affairName = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.affairName = new DefaultSelect();
+      },
+    });
+  }
+
+  getTransference(params: ListParams) {
+    this.issuingInstitutionService.getTransfers(params).subscribe({
+      next: data => {
+        this.transference = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.transference = new DefaultSelect();
+      },
+    });
+  }
+
+  getStation(params: ListParams) {
     this.stationService.getAll(params).subscribe({
-      next: resp => {
-        console.log(resp);
-        this.stations = new DefaultSelect(resp.data, resp.count);
+      next: data => {
+        this.station = new DefaultSelect(data.data, data.count);
       },
-      error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
+      error: () => {
+        this.station = new DefaultSelect();
+      },
+    });
+  }
+  getAuthority(params: ListParams) {
+    this.authorityService.getAll(params).subscribe({
+      next: data => {
+        this.authority = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.authority = new DefaultSelect();
       },
     });
   }
 
-  onAutoritysChange(event: any) {}
-  onStationsChange(event: any) {}
-  onChangeUser(event: any) {
-    console.log(event);
-    this.form.get('usuario').patchValue(event.id);
+  getUsers($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    const area = this.form.controls['usuario'].value;
+    params.search = $params.text;
+    this.getAllUsers(params).subscribe();
+  }
+
+  getAllUsers(params: FilterParams) {
+    return this.usersService.getAllSegUsers(params.getParams()).pipe(
+      catchError(error => {
+        this.users$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        if (response.count > 0) {
+          const name = this.form.get('usuario').value;
+          const data = response.data.filter(m => m.id == name);
+          console.log(data);
+          this.form.get('usuario').patchValue(data[0]);
+        }
+        this.users$ = new DefaultSelect(response.data, response.count);
+      })
+    );
   }
 
   consult() {
     this.consultEmmit.emit(this.form);
-  }
-
-  report() {
-    this.reportEmmit.emit(this.form);
-  }
-
-  export() {
-    this.exportEmmit.emit(this.form);
   }
 }

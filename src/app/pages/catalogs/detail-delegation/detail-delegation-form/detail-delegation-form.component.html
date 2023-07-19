@@ -16,7 +16,20 @@
 
       <div class="row pt-5">
         <div class="col-md-6">
-          <form-field
+          <form-field [control]="detailDelegationForm.get('numberDelegation')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="detailDelegationForm"
+              control="numberDelegation"
+              [data]="delegation"
+              value="id"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
+              (fetchItems)="getDelegation($event)">
+            </ngx-select>
+          </form-field>
+
+          <!--<form-field
             [control]="detailDelegationForm.get('numberDelegation')"
             label="Delegaci&oacute;n">
             <input
@@ -25,7 +38,7 @@
               formControlName="numberDelegation"
               min="0"
               oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
-          </form-field>
+          </form-field>-->
         </div>
         <div class="col-md-6">
           <form-field
