@@ -43,4 +43,11 @@ export class StrategyServiceService extends HttpService {
     const route = 'med-units';
     return this.get<IListResponse<IMeasurementUnits>>(route, params);
   }
+
+  getZCenterOperationRegional(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      StrategyEndpoints.ZCenterOperationRegional,
+      params
+    );
+  }
 }

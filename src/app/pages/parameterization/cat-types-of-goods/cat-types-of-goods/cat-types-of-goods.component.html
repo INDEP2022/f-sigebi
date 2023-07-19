@@ -7,14 +7,20 @@
   <div body>
     <div class="row">
       <div class="col-md-6">
-        <div class="ch-content" header>
-          <h5 class="title">Tipo de bien</h5>
-          <div class="col-md-5 buttons">
+        <div class="row">
+          <div class="ch-content">
+            <h5 class="title">Tipo de bien</h5>
+          </div>
+          <div class="col-md-8 mb-3"></div>
+          <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
             <div>
               <button
-                class="btn btn-primary active btn-sm ml-3"
+                type="button"
+                tooltip="Nuevo"
+                containerclass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2"
                 (click)="onSaveConfirm()">
-                Nuevo
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
             </div>
           </div>
@@ -33,14 +39,20 @@
         </div>
       </div>
       <div class="col-md-6" *ngIf="rowTypeGoods">
-        <div class="ch-content" header>
-          <h5 class="title">Subtipo de bien</h5>
-          <div class="col-md-5 buttons">
+        <div class="row">
+          <div class="ch-content">
+            <h5 class="title">Subtipo de bien</h5>
+          </div>
+          <div class="col-md-8 mb-3"></div>
+          <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
             <div>
               <button
-                class="btn btn-primary active btn-sm ml-3"
+                type="button"
+                tooltip="Nuevo"
+                containerclass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2"
                 (click)="onSaveConfirm1()">
-                Nuevo
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
             </div>
           </div>
@@ -60,14 +72,20 @@
     </div>
     <div class="row mt-5">
       <div class="col-md-6" *ngIf="rowsSsTypeGoods">
-        <div class="ch-content" header>
-          <h5 class="title">Subsubtipo de bien</h5>
-          <div class="col-md-5 buttons">
+        <div class="row">
+          <div class="ch-content">
+            <h5 class="title">Subsubtipo de bien</h5>
+          </div>
+          <div class="col-md-8 mb-3"></div>
+          <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
             <div>
               <button
-                class="btn btn-primary active btn-sm ml-3"
+                type="button"
+                tooltip="Nuevo"
+                containerclass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2"
                 (click)="onSaveConfirm2()">
-                Nuevo
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
             </div>
           </div>
@@ -85,14 +103,20 @@
         </div>
       </div>
       <div class="col-md-6" *ngIf="rowsSssTypeGoods">
-        <div class="ch-content" header>
-          <h5 class="title">Subsubsubtipo de bien</h5>
-          <div class="col-md-5 buttons">
+        <div class="row">
+          <div class="ch-content">
+            <h5 class="title">Subsubsubtipo de bien</h5>
+          </div>
+          <div class="col-md-8 mb-3"></div>
+          <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
             <div>
               <button
-                class="btn btn-primary active btn-sm ml-3"
+                type="button"
+                tooltip="Nuevo"
+                containerclass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2"
                 (click)="onSaveConfirm3()">
-                Nuevo
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
             </div>
           </div>

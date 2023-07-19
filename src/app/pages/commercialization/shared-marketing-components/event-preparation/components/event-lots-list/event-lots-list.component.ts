@@ -36,9 +36,11 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   @Output() onSelectLot = new EventEmitter<IComerLot>();
   totalItems = 0;
   @Input() lots = new LocalDataSource();
+  lotSelected: IComerLot = null;
   get controls() {
     return this.eventForm.controls;
   }
+
   constructor(
     private comerLotService: ComerLotService,
     private modalService: BsModalService
@@ -51,7 +53,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         add: false,
         position: 'right',
       },
@@ -125,10 +127,11 @@ export class EventLotsListComponent extends BasePage implements OnInit {
 
   userSelectLot(event: any) {
     if (event.isSelected) {
-      this.onSelectLot.emit(event.data);
+      this.lotSelected = event.data;
     } else {
-      this.onSelectLot.emit(null);
+      this.lotSelected = null;
     }
+    this.onSelectLot.emit(this.lotSelected);
   }
 
   openForm(lot?: IComerLot) {

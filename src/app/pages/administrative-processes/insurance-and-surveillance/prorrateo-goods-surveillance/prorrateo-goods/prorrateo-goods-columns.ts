@@ -20,7 +20,7 @@ export const PRORRATEGO_GOODS_COLUMNS = {
     sort: false,
   },
   location: {
-    title: 'Ubicacion',
+    title: 'Ubicación',
     type: 'text',
     sort: false,
   },

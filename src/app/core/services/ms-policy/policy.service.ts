@@ -42,9 +42,10 @@ export class PolicyService extends HttpService {
     );
   }
 
-  getByKeyId(Key: string) {
+  getByKeyId(Key: string, params: any) {
     return this.get<IListResponse>(
-      `${PolicyEndpoint.getPolicesXRight}?filter.policyKeyId=$eq:${Key}`
+      `${PolicyEndpoint.getPolicesXRight}?filter.policyKeyId=$eq:${Key}`,
+      params
     );
   }
   putPolicyGood(params: any) {

@@ -125,12 +125,7 @@ export class ServicesUnitPricesComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(service.serviceNumber);
-        // Swal.fire('Borrado', '', 'success');
-        this.alert(
-          'success',
-          'Catálogo de servicios para precios unitarios',
-          'Eliminado Correctamente'
-        );
+        this.alert('success', 'Registro eliminado correctamente', '');
       }
     });
   }

@@ -66,7 +66,7 @@ export class GoodsClasificationSharedComponent
             };
           })
         );
-        console.log(newData)
+        console.log(newData);
 
         this.classifications = new DefaultSelect(newData, data.count);
       },
