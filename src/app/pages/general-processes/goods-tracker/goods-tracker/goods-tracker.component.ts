@@ -1,7 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { format } from 'date-fns';
-import { BehaviorSubject, skip, takeUntil } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, skip, take, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -12,6 +13,8 @@ import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.m
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ResetTrackerFilter } from '../store/goods-tracker.actions';
+import { getTrackerFilter } from '../store/goods-tracker.selector';
 import {
   FilterMatchTracker,
   OperatorValues,
@@ -41,39 +44,52 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
   goods: ITrackedGood[] = [];
   subloading: boolean = false;
   filters = new GoodTrackerMap();
+  selectedGooods: ITrackedGood[] = [];
+  $trackerFilter = this.store.select(getTrackerFilter);
 
   constructor(
     private fb: FormBuilder,
     private goodTrackerService: GoodTrackerService,
     private notificationService: NotificationService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private store: Store
   ) {
     super();
   }
 
-  ngOnInit(): void {
-    this._params.pipe(takeUntil(this.$unSubscribe), skip(1)).subscribe(next => {
-      this.getGoods(next);
-    });
+  async ngOnInit() {
+    this._params
+      .pipe(takeUntil(this.$unSubscribe), skip(1))
+      .subscribe(async next => {
+        const form = this.form.value;
+        const filledFields = Object.values(form).filter(value => {
+          if (Array.isArray(value)) {
+            return value.length > 0;
+          }
+          return value ? true : false;
+        });
+        if (!filledFields.length) {
+          this.getAllGoods();
+          return;
+        }
+        this.getGoods(next);
+      });
+
+    const state = await this.getFilterState();
+    if (state) {
+      this.store.dispatch(ResetTrackerFilter());
+      this.form.patchValue({ ...state.getRawValue() });
+      this.searchGoods();
+    }
   }
 
-  async searchGoods(params: any) {
+  getFilterState() {
+    return firstValueFrom(this.$trackerFilter.pipe(take(1)));
+  }
+
+  async searchGoods(params?: any) {
+    this.selectedGooods = [];
     this.params.removeAllFilters();
-    const form = this.form.value;
-    const filledFields = Object.values(form).filter(value => {
-      if (Array.isArray(value)) {
-        return value.length > 0;
-      }
-      return value ? true : false;
-    });
-    if (!filledFields.length) {
-      this.alert(
-        'warning',
-        'Atención',
-        'Debe ingresar almenos un parámetro de búsqueda'
-      );
-      return;
-    }
     const _params = new ListParams();
     this._params.next(_params);
     // this.getGoods();
@@ -109,6 +125,26 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     return _val;
   }
 
+  getAllGoods(params?: ListParams) {
+    this.loading = true;
+    this.filters = new GoodTrackerMap();
+    this.mapFilters();
+    this.scrollTable.nativeElement.scrollIntoView();
+    this.goodTrackerService.getAll(params ?? new ListParams()).subscribe({
+      next: res => {
+        this.loading = false;
+        this.goods = res.data as any;
+        this.totalItems = res.count;
+      },
+      error: error => {
+        this.loading = false;
+        // this.alert('error', 'Error', 'Ocurrio un error al obtener los datos');
+        this.goods = [];
+        this.totalItems = 0;
+      },
+    });
+  }
+
   getGoods(params?: ListParams) {
     this.loading = true;
     this.filters = new GoodTrackerMap();
@@ -126,19 +162,7 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loading = false;
-          if (
-            error.error.message ==
-            'Debe colocar por lo menos un parámetro de búsqueda'
-          ) {
-            this.alert(
-              'warning',
-              'Atención',
-              'Debe ingresar almenos un parámetro de búsqueda'
-            );
-            return;
-          }
-          console.log('xd');
-
+          // this.alert('error', 'Error', 'Ocurrio un error al obtener los datos');
           this.goods = [];
           this.totalItems = 0;
         },
@@ -373,5 +397,8 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
 
   resetFilters() {
     this.form = this.fb.group(new GoodTrackerForm());
+    // this.searchGoods();
+    this.goods = [];
+    this.totalItems = 0;
   }
 }

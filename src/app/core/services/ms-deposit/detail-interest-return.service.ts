@@ -5,7 +5,11 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Repository } from 'src/app/common/repository/repository';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IDetailInterestReturn } from '../../models/ms-deposit/detail-interest-return';
+import {
+  IDetailInterestReturn,
+  IPupDetalleDevolutionDTO,
+  IPupDetalleDevolutionResult,
+} from '../../models/ms-deposit/detail-interest-return';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +30,17 @@ export class DetailInterestReturnService extends HttpService {
     const route = `${this.endpoint}/pubReturnDetail/${id}`;
     return this.get(route);
   }
+
+  pupDetailDevolution(body: IPupDetalleDevolutionDTO) {
+    const route = `${this.endpoint}/pupDetalleDevolucion`;
+    return this.post<IPupDetalleDevolutionResult>(route, body);
+  }
+
+  getSeqNextVal() {
+    const route = `${this.endpoint}/get-seq-num-devol-next-val`;
+    return this.get<{ nextval: string }>(route);
+  }
+
   getAll(
     params?: ListParams
   ): Observable<IListResponse<IDetailInterestReturn>> {

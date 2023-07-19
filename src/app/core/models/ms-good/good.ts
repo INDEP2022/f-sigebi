@@ -868,3 +868,12 @@ export interface IServiceGood {
   good?: IGood;
   serviceCat?: IServiceCat;
 }
+
+export interface ISecondIfMC {
+  noPackage: number;
+  noGoodFather: number;
+  encStatus: string;
+  vcScreen: string;
+  user: string;
+  toolbarUser: string;
+}

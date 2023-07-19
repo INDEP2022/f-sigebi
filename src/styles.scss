@@ -214,6 +214,10 @@ $checkbox_image: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' v
   border-color: #9d2449;
 }
 
+input[type='checkbox'] {
+  background-color: #fff;
+}
+
 input[type='checkbox'],
 input[type='checkbox']:checked {
   appearance: none;
@@ -224,6 +228,7 @@ input[type='checkbox']:checked {
 
 input[type='checkbox'] {
   border-radius: 0 !important;
+
   &:checked {
     background-image: url($checkbox_image);
     background-color: #9d2449;
@@ -233,6 +238,7 @@ input[type='checkbox'] {
 
 input[type='checkbox'] {
   border-radius: 0 !important;
+
   &:focus {
     outline: none !important;
   }
@@ -266,22 +272,13 @@ tr.ng2-smart-titles input:checked[type='checkbox'] {
   color: #9d2449;
 }
 
-.vertical-tabs > ul {
-  border-bottom: 1px solid #ddd;
-  float: left;
-  display: block;
-  margin-right: 20px;
-  border-bottom: 0;
-  border-right: 1px solid #ddd;
-  padding-right: 15px;
-}
-
-.vertical-tabs a.active {
-  background-color: #9d2449 !important;
-}
-
 i {
   font-style: normal !important;
+}
+
+.fill-custom-tab li.nav-item.active > a.nav-link.active {
+  background-color: #9d2449 !important;
+  color: #f0e4d1 !important;
 }
 
 table:not(.normal-hover) tbody tr.selected {
@@ -379,6 +376,10 @@ table:not(.normal-hover) tbody tr:hover {
 
 .bg-gray-card {
   background-color: rgba(173, 181, 189, 0.25);
+}
+
+.bg-blue-card {
+  background-color: #564ab1;
 }
 
 .center-checkbox thead tr th[ng2-st-checkbox-select-all] {
@@ -659,6 +660,21 @@ ng-scrollbar.table-scrollbar {
   padding: 0.3rem;
 }
 
+.bg-yellow-record {
+  background-color: #e2c103 !important;
+  color: #fff;
+}
+
+.bg-green-record {
+  background-color: #1e7e34 !important;
+  color: #fff;
+}
+
+.bg-blue-record {
+  background-color: #564ab1 !important;
+  color: #fff;
+}
+
 #fichas table:not(.normal-hover) tbody tr.selected {
   color: black !important;
   // font-weight: 600;
@@ -734,6 +750,7 @@ custom-view-component {
 .swal2-html-container {
   white-space: break-spaces;
 }
+
 .float-icon-md2 {
   top: 9px;
 }

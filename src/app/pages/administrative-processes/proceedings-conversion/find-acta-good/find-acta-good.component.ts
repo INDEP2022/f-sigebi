@@ -122,6 +122,11 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
       .subscribe({
         next: data => {
           console.log(data);
+          let result = data.data.map((item: any) => {
+            item['numTransfer_'] = item.numTransfer
+              ? item.numTransfer.id
+              : null;
+          });
           this.dataFactActas.load(data.data);
           this.dataFactActas.refresh();
           this.loading = false;
@@ -130,6 +135,7 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loading = false;
+          this.totalItems2 = 0;
           // console.log(error);
           // this.dataFactActas.load([]);
           // this.dataFactActas.refresh();

@@ -15,7 +15,7 @@ export const OPINION_COLUMNS = {
     sort: false,
   },
   areaProcess: {
-    title: 'Área de proceso',
+    title: 'Área de Proceso',
     type: 'string',
     sort: false,
   },

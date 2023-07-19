@@ -7,6 +7,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  SimpleChanges,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
@@ -26,6 +27,7 @@ import {
   Subject,
   switchMap,
   takeUntil,
+  tap,
 } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -56,6 +58,7 @@ export class CustomSelectWidthLoading
   @Input() multiple: boolean = false;
   @Input() addTag: boolean = false;
   @Input() isLoadInOnInit: boolean = true;
+  @Input() load = false;
   @Input() url: string = environment.API_URL;
   @Input() pathData: string = 'data';
   @Input() value: string = 'id';
@@ -67,14 +70,16 @@ export class CustomSelectWidthLoading
   @Input() paramLimitName: string = 'limit';
   @Input() limit: number = 10;
   @Input() initOption: any = null;
-  @Input() delay: number = 300;
+  @Input() delay: number = 500;
   @Input() moreParams: string[] = [];
   @Input() labelTemplate: TemplateRef<any>;
   @Input() optionTemplate: TemplateRef<any>;
   @Input() termMaxLength: string = null;
   @Input() readonly: boolean = false;
   @Input() updateValues: boolean = false;
-  @Output() valueChange = new EventEmitter<any>();
+  @Input() externalSearch: string;
+  @Output()
+  valueChange = new EventEmitter<any>();
   @Output() getObject = new EventEmitter<any>();
   input$ = new Subject<string>();
   items: any[] = [];
@@ -125,6 +130,15 @@ export class CustomSelectWidthLoading
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['externalSearch'] && changes['externalSearch'].currentValue) {
+      this.input$.next(changes['externalSearch'].currentValue);
+    }
+    if (changes['load']) {
+      this.input$.next('');
+    }
   }
 
   writeValue(obj: any): void {
@@ -186,6 +200,13 @@ export class CustomSelectWidthLoading
       })
       .pipe(
         takeUntil(this.destroy$),
+        tap((x: any) => {
+          if (x && x.count) {
+            this.totalItems = x.count;
+          } else {
+            this.totalItems = 0;
+          }
+        }),
         catchError(() => of(this.items))
       );
   }
@@ -205,20 +226,20 @@ export class CustomSelectWidthLoading
 
   fetchMore(text: any) {
     // console.log(text);
-    // if (!this.isLoading && this.items.length < this.totalItems) {
-    this.page++;
-    this.isLoading = true;
-    this.getItemsObservable(text).subscribe({
-      next: resp => {
-        this.isLoading = false;
-        const items = this.getDataForPath(resp);
-        this.items = [...this.items, ...items];
-      },
-      error: () => {
-        this.isLoading = false;
-      },
-    });
-    // }
+    if (!this.isLoading && this.items.length < this.totalItems) {
+      this.page++;
+      this.isLoading = true;
+      this.getItemsObservable(text).subscribe({
+        next: resp => {
+          this.isLoading = false;
+          const items = this.getDataForPath(resp);
+          this.items = [...this.items, ...items];
+        },
+        error: () => {
+          this.isLoading = false;
+        },
+      });
+    }
   }
 
   isRequired() {
@@ -261,6 +282,7 @@ export class CustomSelectWidthLoading
           this.isLoading = false;
           if (resp) {
             this.items = resp;
+
             if (resp.length === 1) {
               this.getObject.emit(resp[0]);
             }

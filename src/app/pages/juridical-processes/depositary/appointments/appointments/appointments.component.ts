@@ -58,6 +58,7 @@ import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-va
 import { AppointmentsAdministrativeReportComponent } from '../appointments-administrative-report/appointments-administrative-report.component';
 import { AppointmentsJuridicalReportComponent } from '../appointments-juridical-report/appointments-juridical-report.component';
 import { AppointmentsRelationsPaysComponent } from '../appointments-relations-pays/appointments-relations-pays.component';
+import { EmailAppointmentComponent } from '../email/email.component';
 import { ListDataAppointmentGoodsComponent } from '../list-data-good/list-data-good.component';
 import { ListDataAppointmentComponent } from '../list-data/list-data.component';
 import { ModalScanningFoilAppointmentTableComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
@@ -129,6 +130,8 @@ export class AppointmentsComponent
     returnFolio: number;
     universalFolio: number;
   };
+  mailSAE: string = '';
+  nombreToMail: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -292,6 +295,10 @@ export class AppointmentsComponent
       depositaria: [
         { value: '', disabled: true },
         [Validators.maxLength(40), Validators.pattern(STRING_PATTERN)],
+      ], //*
+      depositariaDesc: [
+        { value: '', disabled: true },
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
       ], //*
       representante: [
         { value: '', disabled: true },
@@ -606,7 +613,8 @@ export class AppointmentsComponent
                 : null
             );
           this.form.updateValueAndValidity();
-          this.getStatusGoodByStatus(res.data[0].id);
+          // this.getStatusGoodByStatus(res.data[0].id);
+          this.getStatusGoodByNoGood();
           this.getDataExpedientByNoExpedient(res.data[0].fileNumber);
           setTimeout(() => {
             this.form.get('noBien').setValue(res.data[0].goodId);
@@ -922,7 +930,8 @@ export class AppointmentsComponent
                   : null
               );
             this.form.updateValueAndValidity();
-            this.getStatusGoodByStatus(res.data[0].id);
+            // this.getStatusGoodByStatus(res.data[0].id);
+            this.getStatusGoodByNoGood();
             this.getDataExpedientByNoExpedient(res.data[0].fileNumber);
           } else {
             this.alert(
@@ -956,8 +965,8 @@ export class AppointmentsComponent
       .subscribe({
         next: res => {
           console.log(res);
-          this.form.get('estatusBien').setValue(res.description);
-          this.form.updateValueAndValidity();
+          // this.form.get('estatusBien').setValue(res.description);
+          // this.form.updateValueAndValidity();
         },
         error: err => {
           console.log(err);
@@ -1187,6 +1196,9 @@ export class AppointmentsComponent
 
     // this.form.get('personNumber').enable();
     // this.getPersonCatalog(new ListParams(), true);
+    this.form
+      .get('depositariaDesc')
+      .setValue(allNull ? null : this.depositaryAppointment.personNumber.name);
     this.form.get('depositaria').setValue(
       allNull ? null : this.depositaryAppointment.personNumber.personName
       // ? this.depositaryAppointment.personNumber.personName +
@@ -2607,6 +2619,8 @@ export class AppointmentsComponent
     console.log(event);
     if (event) {
       this.form.get('nombre').setValue(event.name);
+      this.mailSAE = event.email;
+      this.nombreToMail = event.name;
     } else {
       this.form.get('nombre').setValue(null);
     }
@@ -2639,7 +2653,7 @@ export class AppointmentsComponent
           }),
           data.count
         );
-        console.log(data, this.saeRepresentativeSelect);
+        console.log('REPRESENTANTE ######', data, this.saeRepresentativeSelect);
         if (getByValue) {
           // this.saeRepresentativeSelect = data.data[0].map((i: any) => {
           //   i['nameDesc'] = i.id + ' -- ' + i.name;
@@ -2747,8 +2761,10 @@ export class AppointmentsComponent
         typeDepositary: this.form.value.tipoDepositaria,
         observations: this.form.value.observaciones,
         jobRevocationNum: this.form.value.noOficio,
-        amountConsideration: this.form.value.contraprestacion,
-        amountFee: this.form.value.honorarios,
+        amountConsideration: this.form.value.contraprestacion
+          ? this.form.value.contraprestacion
+          : 0,
+        amountFee: this.form.value.honorarios ? this.form.value.honorarios : 0,
         jobProvisionalNum: null,
         exhibit: this.form.value.anexo,
         jobBoardgovtDate: this.form.value.fechaAcuerdo,
@@ -2774,8 +2790,8 @@ export class AppointmentsComponent
         amountVat: null,
         folioReturn: null,
         personNum: this.depositaryAppointment.personNumber.id,
-        reference: this.form.value.referencia,
-        vat: this.form.value.iva ? Number(this.form.value.iva) : null,
+        reference: null, //this.form.value.referencia,
+        vat: this.form.value.iva ? Number(this.form.value.iva) : 0,
         withHousehold: this.form.value.bienesMenaje,
         goodNum: this.form.value.noBien,
       };
@@ -2833,8 +2849,10 @@ export class AppointmentsComponent
         typeDepositary: this.form.value.tipoDepositaria,
         observations: this.form.value.observaciones,
         jobRevocationNum: this.form.value.noOficio,
-        amountConsideration: this.form.value.contraprestacion,
-        amountFee: this.form.value.honorarios,
+        amountConsideration: this.form.value.contraprestacion
+          ? this.form.value.contraprestacion
+          : 0,
+        amountFee: this.form.value.honorarios ? this.form.value.honorarios : 0,
         exhibit: this.form.value.anexo,
         jobBoardgovtDate: this.form.value.fechaAcuerdo,
         jobBoardgovtNum: this.form.value.noAcuerdo,
@@ -2843,8 +2861,8 @@ export class AppointmentsComponent
           : this.depositaryAppointment.personNumber.personName,
         representativeSera: this.form.value.representanteSAE,
         personNum: this.depositaryAppointment.personNumber.id,
-        reference: this.form.value.referencia,
-        vat: this.form.value.iva ? Number(this.form.value.iva) : null,
+        // reference: this.form.value.referencia,
+        vat: this.form.value.iva ? Number(this.form.value.iva) : 0,
         withHousehold: this.form.value.bienesMenaje,
         goodNum: this.form.value.noBien,
       };
@@ -2886,7 +2904,7 @@ export class AppointmentsComponent
                 this.folios.universalFolio &&
                 _saveFolioDepositary == 'A'
               ) {
-                this.updateGoodStatus('DEP');
+                this.updateGoodStatus('DEP', true);
               }
               if (
                 this.good.status == 'DEP' &&
@@ -2915,7 +2933,7 @@ export class AppointmentsComponent
     }
   }
 
-  updateGoodStatus(status: string) {
+  updateGoodStatus(status: string, sendMail: boolean = false) {
     let body: any = {
       status: status,
       goodId: this.good.goodId,
@@ -2929,7 +2947,12 @@ export class AppointmentsComponent
         console.log('UPDATE STATUS', data);
         // this.form.get('noBien').setValue(this.good.goodId);
         // this.validGoodNumberInDepositaryAppointment();
-        this.getFromGoodsAndExpedients(); // Get data good
+        if (sendMail == true) {
+          this.openModalMail();
+        }
+        setTimeout(() => {
+          this.getFromGoodsAndExpedients(); // Get data good
+        }, 500);
       },
       error: error => {
         console.log('ERROR UPDATE STATUS', error);
@@ -2962,5 +2985,26 @@ export class AppointmentsComponent
       }),
       map(response => response.count)
     );
+  }
+
+  openModalMail() {
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        userSelected: {
+          nombre: this.nombreToMail ? this.nombreToMail : null,
+          email: this.mailSAE ? this.mailSAE : null,
+        }, // this.form.value.representanteSAE,
+        message:
+          'Por este Conducto se le Informa que el Bien: ' +
+          this.noBienReadOnly +
+          ' con Descripción: ' +
+          this.good.description +
+          '. Está en la Depositaría: ' +
+          this.depositaryAppointment.personNumber.personName,
+        asunto: 'Bien: ' + this.noBienReadOnly + ' en Depositaría',
+      },
+    };
+    return this.modalService.show(EmailAppointmentComponent, config);
   }
 }

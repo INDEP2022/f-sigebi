@@ -73,8 +73,13 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
   confirm() {
     const formData = {
       id: this.idProgramming,
-      startDate: this.form.get('startDate').value,
-      endDate: this.form.get('endDate').value,
+
+      startDate: moment(this.form.get('startDate').value).format(
+        'YYYY-MM-DD HH:mm:ssZ'
+      ),
+      endDate: moment(this.form.get('endDate').value).format(
+        'YYYY-MM-DD HH:mm:ssZ'
+      ),
       concurrentMsg: this.form.get('concurrentMsg').value,
     };
     this.programmingService
@@ -94,6 +99,11 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
             next: async resp => {
               const openTaskPerfomProg = await this.openTaskPerfomProg();
               if (openTaskPerfomProg == true) {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Tarea Rechazada correctamente'
+                );
                 this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
                 this.close();
               }

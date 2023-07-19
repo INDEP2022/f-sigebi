@@ -86,6 +86,7 @@ import { maxDate, minDate } from 'src/app/common/validations/date.validators';
 import { ImageMediaService } from 'src/app/core/services/catalogs/image-media.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsTypeService } from 'src/app/core/services/ms-documents-type/documents-type.service';
+import { TmpGestRegDocService } from 'src/app/core/services/ms-flier/tmp-gest-reg-doc.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
@@ -234,7 +235,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     private imageMediaService: ImageMediaService,
     private goodTrackerService: GoodTrackerService,
     private satTransferService: SatTransferService,
-    private goodFinderService: GoodFinderService
+    private goodFinderService: GoodFinderService,
+    private tmpGestRegDocService: TmpGestRegDocService
   ) {
     super();
     this.settings.actions = false; // SE CAMBIO PARA NO PERMITIR EDITAR
@@ -1064,10 +1066,60 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     }
   }
 
-  //GET TIPO_TRAMITE|| typeManagement
+  async getPgrDocumentsVal() {
+    const { officeNumber } = this.selectedRow;
+    const params = new FilterParams();
+    params.addFilter('pgrJob', officeNumber);
+    console.warn('Documentos PGR');
+    return firstValueFrom(
+      this.fileBrowserService
+        .getPgrFiles(params.getParams())
+        .pipe(catchError(() => of({ data: [], count: 0 })))
+    );
+  }
 
-  work2() {
-    //Substring 2 FIRST LETTER STATUS
+  async getTmpGestRecDoc() {
+    const { officeNumber } = this.selectedRow;
+    const params = new FilterParams();
+    params.addFilter('officeNumber', officeNumber);
+    return firstValueFrom(
+      this.tmpGestRegDocService
+        .getAllWithFilters(params.getParams())
+        .pipe(catchError(() => of({ data: [], count: 0 })))
+    );
+  }
+
+  async work2() {
+    const typeManagement = this.selectedRow.typeManagement;
+    if (typeManagement == 3) {
+      const pgrDocs = await this.getPgrDocumentsVal();
+      console.warn({ pgrDocs });
+
+      if (pgrDocs.count == 0) {
+        this.alert(
+          'error',
+          'Error',
+          'El Oficio no tiene Documentos, no se podrá Trabajar'
+        );
+        return;
+      }
+
+      const tmpGestRecDoc = await this.getTmpGestRecDoc();
+      console.warn({ tmpGestRecDoc });
+
+      if (tmpGestRecDoc.count == 0) {
+        this.alert(
+          'error',
+          'Error',
+          'El Oficio tiene Información Incompleta, no se podrá trabajar'
+        );
+        return;
+      }
+    }
+    const { officeNumber } = this.selectedRow;
+    const params = new FilterParams();
+    params.addFilter('pgrJob', officeNumber);
+    console.warn('Documentos PGR');
     let processStatus = this.selectedRow.processStatus.substring(0, 2);
     //console.log(processStatus);
     this.loader.load = true;
@@ -1160,7 +1212,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     if (processStatus !== 'FNI') {
       this.loader.load = true;
       this.workService.getSatOfficeType(officeNumber).subscribe({
-        next: (resp: any) => {
+        next: async (resp: any) => {
           this.loader.load = false;
           if (resp.data) {
             //console.log(resp.data);
@@ -1173,7 +1225,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             switch (typeManagement) {
               case '2':
                 folio !== 0
-                  ? this.work2()
+                  ? await this.work2()
                   : this.alert(
                       'warning',
                       'Este trámite es un asunto SAT',
@@ -1182,7 +1234,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 break;
               case '3':
                 folio !== 0
-                  ? this.work2()
+                  ? await this.work2()
                   : this.alert(
                       'warning',
                       'Este trámite es un asunto PGR',
@@ -1191,7 +1243,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
                 break;
               default:
                 ////console.log('No es 2 ni 3, work()');
-                this.work2();
+                await this.work2();
                 break;
             }
 

@@ -40,3 +40,44 @@ export interface IDocumentsGood {
   nb_origen?: string | number;
   no_bien?: string | number;
 }
+
+export interface IGenerateFolioMassConv {
+  noPackage: number;
+  cvePackage: number;
+  typePackage: number;
+  noDelegation: number;
+  noSubdelegation: number;
+  toolbarNoDepartament: number;
+  user: string;
+}
+
+export interface ICatDigitalizationTemp {
+  flyerNumber: number;
+  proceedingsNumber: number;
+  indicatorNumber: number;
+  managementNumber: number;
+  area: string;
+  flyerType: string;
+  cveAffair: string;
+  transfereeNumber: number;
+  stationNumber: number;
+  authorityNumber: number;
+  cveJobExternal: string;
+  jobNumber: number;
+  flyerDate: Date;
+  cveOpinion: string;
+  coordinationRegional: string;
+  evictionDay: string;
+  ureception: string;
+  freception: string;
+  ustart: string;
+  finicia: string;
+  uends: string;
+  ends: string;
+  fscan: string;
+  fmaxima: string;
+  ffinind: string;
+  user: string;
+  recordNumber?: number;
+  complied?: string;
+}

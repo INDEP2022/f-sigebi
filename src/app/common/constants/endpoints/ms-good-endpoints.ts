@@ -45,6 +45,7 @@ export enum GoodProcessPoints {
   acceptGoodActa = `application/acceptGoodActa`,
   acceptGoodStatus = `application/acceptGoodStatus`,
   acceptGoodStatusScreen = `application/acceptGoodStatusScreen`,
+  getGoodPostQuery = `application/get-good-post-query`,
   dateRange = `util-pkg/getDate`,
   getFact = 'application/get-fact-juridict-amasg',
   getIdent = 'application/get-fact-juridict-amasg-2',
@@ -61,9 +62,11 @@ export enum GoodProcessPoints {
   pup_change_impro = 'application/pup-change-impro',
   GetDescDep = 'application/getDestDepBan',
   GetGoodSituation = 'update-good-status/pupMakeQuery2',
+  GetGoodAppraise = 'update-good-status/getGoodAppraise',
   GetNumeProrraCsv = 'application/get-f-proc-sol-numerario',
   GetFproSolNumerarioProdnumCsv = 'application/get-fpro-sol-numerario-prodnum',
   PubPrevieData = 'application/pupPreviewData',
+  ProcedureStatusGood = 'application/procedure-status-good',
 }
 
 export enum GoodFinderEndpoint {

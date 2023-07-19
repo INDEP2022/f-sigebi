@@ -15,6 +15,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { LocationGoodsWarehousesStorageComponent } from '../location-goods-warehouses-storage/location-goods-warehouses-storage.component';
@@ -29,16 +30,21 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   goods: IGood[] = [];
   goodsNotChange: number[] = [];
   selectedRow: IGood;
+  fileNumber: number | string;
   selectedGooods: IGood[] = [];
   $trackedGoods = this.store.select(getTrackedGoods);
   formVau: FormGroup;
+  activeGood: boolean = false;
   formAlm: FormGroup;
+  di_desc_est: any;
+  dataTableGood_: IGood[];
   @Input() allGoods = new LocalDataSource();
   @Input() totalItems: number;
   @Input() validarGood: Function;
   @Input() formVault: LocationGoodsWarehousesStorageComponent;
   @Input() formWarehouse: LocationGoodsWarehousesStorageComponent;
   @Output() allGoodsUpdated = new EventEmitter();
+
   //Data Table
 
   get radio() {
@@ -58,7 +64,8 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     private router: Router,
     private store: Store,
     private changeDetectorRef: ChangeDetectorRef,
-    private serviceGood: GoodService
+    private serviceGood: GoodService,
+    private GoodprocessService_: GoodprocessService
   ) {
     super();
     this.settings = {
@@ -74,11 +81,11 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
       },
       columns: {
         id: {
-          title: 'No Bien',
+          title: 'No. Bien',
           sort: false,
         },
         description: {
-          title: 'Descripcion',
+          title: 'Descripción',
           sort: false,
         },
         quantity: {
@@ -90,15 +97,15 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           sort: false,
         },
         goodClassNumber: {
-          title: 'Clasif Bien',
+          title: 'Clasif. Bien',
           sort: false,
         },
         storeNumber: {
-          title: 'Almacen',
+          title: 'Almacén',
           sort: false,
         },
         vaultNumber: {
-          title: 'Boveda',
+          title: 'Bóveda',
           sort: false,
         },
       },
@@ -116,11 +123,9 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    // this.allGoods.refresh();
     // console.log(this.totalItems);
-    this.allGoodsUpdated.next(this.allGoods);
     this.buildForm();
-    this.loading = false;
+
     // this.$trackedGoods.subscribe({
     //   next: response => {
     //     response.forEach(good => {
@@ -139,6 +144,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     this.bsModalRef.hide();
   }
   private buildForm() {
+    this.loading = false;
     this.form = this.fb.group({
       radio: [null, [Validators.required]],
       warehouse: [null, [Validators.required]],
@@ -179,7 +185,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           });
         }
       });
-      this.onLoadToast(
+      this.alert(
         'success',
         'Exito',
         'Se ha cambiado la ubicación de los bienes seleccionados'
@@ -188,7 +194,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     } catch (error) {
       console.log(error);
       this.loading = false;
-      this.onLoadToast(
+      this.alert(
         'error',
         'ERROR',
         'Ha ocurrido un error al cambiar la ubicacion del bien'
@@ -198,11 +204,11 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
 
   validar(): boolean {
     if (this.radio.value === null) {
-      this.onLoadToast('error', 'ERROR', 'Selecione un tipo de ubicacion');
+      this.alert('error', 'ERROR', 'Selecione un tipo de ubicacion');
       return true;
     }
     if (this.warehouse.value === null && this.safe.value === null) {
-      this.onLoadToast('error', 'ERROR', 'Selecione un elemento de la lista');
+      this.alert('error', 'ERROR', 'Selecione un elemento de la lista');
       return true;
     }
     return false;
@@ -229,6 +235,8 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   }
   selectData(event: { data: IGood; selected: any }) {
     this.selectedRow = event.data;
+    this.activeGood = true;
+    this.fileNumber = event.data.fileNumber;
     this.selectedGooods = event.selected;
     console.log(this.selectedRow);
     console.log(this.selectedGooods);
@@ -257,6 +265,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
             // this.add();
             console.log(res);
             this.allGoodsUpdated.emit(this.allGoods);
+            this.onLoadGoodList();
           },
           err => {
             this.alert(
@@ -267,7 +276,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           }
         );
       });
-
+      this.onLoadGoodList();
       this.alert('success', 'Bienes', `Actualizados correctamente`);
     } catch (err) {
       console.error(err);
@@ -296,6 +305,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
             // this.add();
             console.log(res);
             this.allGoodsUpdated.emit(this.allGoods);
+            this.onLoadGoodList();
           },
           err => {
             this.alert(
@@ -306,10 +316,62 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           }
         );
       });
+      this.onLoadGoodList();
       this.alert('success', 'Bienes', `Actualizados correctamente`);
     } catch (err) {
       console.error(err);
     }
+  }
+  onLoadGoodList() {
+    this.loading = true;
+    this.params.getValue().page = 1;
+    this.params.getValue().limit = 10;
+    this.serviceGood
+      .getByExpedient(this.fileNumber, this.params.getValue())
+      .subscribe({
+        next: data => {
+          this.goods = data.data;
+          this.loading = false;
+          console.log('Bienes', this.goods);
+          let result = data.data.map(async (item: any) => {
+            let obj = {
+              vcScreen: 'FACTADBUBICABIEN',
+              pNumberGood: item.id,
+            };
+            const di_dispo = await this.getStatusScreen(obj);
+            console.log(di_dispo);
+          });
+
+          Promise.all(result).then(item => {
+            this.dataTableGood_ = this.goods;
+            this.allGoods.load(this.dataTableGood_);
+            this.allGoods.refresh();
+            this.totalItems = data.count;
+            console.log(this.goods);
+          });
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
+  }
+  async getStatusScreen(body: any) {
+    return new Promise((resolve, reject) => {
+      this.GoodprocessService_.getScreenGood(body).subscribe({
+        next: async (state: any) => {
+          if (state.data) {
+            console.log('di_dispo', state);
+            resolve('S');
+          } else {
+            console.log('di_dispo', state);
+            resolve('N');
+          }
+        },
+        error: () => {
+          console.error('error');
+        },
+      });
+    });
   }
 
   goToGoodTracker() {

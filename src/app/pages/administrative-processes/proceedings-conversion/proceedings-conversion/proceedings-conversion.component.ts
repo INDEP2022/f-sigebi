@@ -67,7 +67,6 @@ import { ProceedingsConversionModalComponent } from '../proceedings-conversion-m
 import { ActasConvertionCommunicationService } from '../services/proceedings-conversionn';
 import {
   COPY,
-  GOODSEXPEDIENT_COLUMNS_GOODS,
   IGoodStatus,
   registrosMovidos,
 } from './proceedings-conversion-columns';
@@ -196,6 +195,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   goods: any[] = [];
   expedient: IExpedient;
   columnFilters: any = [];
+  columnFilters2: any = [];
   isAllDisabled = false;
   cveActa: string = '';
   fileNumber: number = 0;
@@ -271,6 +271,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   witnessOic: string = '';
   acordionDetail: boolean = false;
   dataTableGood: LocalDataSource = new LocalDataSource();
+  dataRecepcionGood: LocalDataSource = new LocalDataSource();
   dataRecepcion: any[] = [];
   dataTableGood_: any[] = [];
 
@@ -314,56 +315,58 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     private usersService: UsersService
   ) {
     super();
-    this.procs = new LocalDataSource();
+    // this.procs = new LocalDataSource();
     this.validPermisos = !this.validPermisos;
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
       actions: false,
-      selectMode: 'multi',
-      columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
-      // columns: {
-
-      //   name: {
-      //     title: '',
-      //     sort: false,
-      //     type: 'custom',
-      //     showAlways: true,
-      //     valuePrepareFunction: (isSelected: boolean, row: IGood) =>
-      //       this.isGoodSelected(row),
-      //     renderComponent: CheckboxElementComponent,
-      //     onComponentInitFunction: (instance: CheckboxElementComponent) =>
-      //       this.onGoodSelect(instance),
-      //   },
-      //   goodId: {
-      //     title: 'No. Bien',
-      //     type: 'number',
-      //     sort: false,
-      //   },
-      //   description: {
-      //     title: 'Descripción',
-      //     type: 'string',
-      //     sort: false,
-      //   },
-      //   quantity: {
-      //     title: 'Cantidad',
-      //     type: 'string',
-      //     sort: false,
-      //   },
-      //   acta_: {
-      //     title: 'Acta',
-      //     type: 'string',
-      //     sort: false,
-      //     // valuePrepareFunction: (cell: any, row: any) => {
-      //     //   return row.acta_;
-      //     // },
-      //   },
-      //   status: {
-      //     title: 'Estatus',
-      //     type: 'string',
-      //     sort: false,
-      //   },
-      // },
+      // selectMode: 'multi',
+      selectedRowIndex: -1,
+      mode: 'external',
+      // columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
+      columns: {
+        name: {
+          filter: false,
+          sort: false,
+          title: 'Selección',
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+            this.isGoodSelectedValid(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onGoodSelectValid(instance),
+        },
+        goodId: {
+          title: 'No. Bien',
+          type: 'number',
+          sort: false,
+        },
+        description: {
+          title: 'Descripción',
+          type: 'string',
+          sort: false,
+        },
+        quantity: {
+          title: 'Cantidad',
+          type: 'string',
+          sort: false,
+        },
+        acta_: {
+          title: 'Acta',
+          type: 'string',
+          sort: false,
+          // valuePrepareFunction: (cell: any, row: any) => {
+          //   return row.acta_;
+          // },
+        },
+        status: {
+          title: 'Estatus',
+          type: 'string',
+          sort: false,
+        },
+      },
       rowClassFunction: (row: any) => {
         if (row.data.di_disponible == 'S') {
           return 'bg-success text-white';
@@ -414,50 +417,107 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       console.log(this.origin);
     });
     this.initFormPostGetUserData();
-    this.dataGoodTable
+
+    this.dataTableGood
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
+        console.log('SI');
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            let field = ``;
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'goodId' ||
-            filter.field == 'description' ||
-            filter.field == 'quantity' ||
-            filter.field == 'acta'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              goodId: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.ILIKE),
+              quantity: () => (searchFilter = SearchFilter.EQ),
+              acta_: () => (searchFilter = SearchFilter.ILIKE),
+              status: () => (searchFilter = SearchFilter.ILIKE),
+            };
+
+            search[filter.field]();
+
             if (filter.search !== '') {
+              // this.columnFilters[field] = `${filter.search}`;
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+
+              // console.log(
+              //   'this.columnFilters[field]',
+              //   this.columnFilters[field]
+              // );
             } else {
               delete this.columnFilters[field];
             }
           });
-          this.paramsList = this.pageFilter(this.params);
+          this.paramsList = this.pageFilter(this.paramsList);
+          //Su respectivo metodo de busqueda de datos
           this.getGoodsByStatus(this.fileNumber);
         }
       });
-
     this.paramsList
       .pipe(
         skip(1),
         tap(() => {
           this.getGoodsByStatus(this.fileNumber);
-          // aquí colocas la función que deseas ejecutar
-          // this.getPupPreviewDatosCsv2(this.cargarDataStorage());
         }),
         takeUntil(this.$unSubscribe)
       )
       .subscribe(() => {
         // this.getGoodsByStatus(this.fileNumber)
-        // this.getPupPreviewDatosCsv2(this.cargarDataStorage());
       });
-    // this.params
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.getGoodsByStatus(this.fileNumber));
+    // this.paramsList.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+    //   this.getGoodsByStatus(this.fileNumber);
+    // });
+
+    this.dataRecepcionGood
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        console.log('SI');
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              numberGood: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.ILIKE),
+              amount: () => (searchFilter = SearchFilter.EQ),
+            };
+
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters2[field];
+            }
+          });
+          this.paramsList2 = this.pageFilter(this.paramsList2);
+          //Su respectivo metodo de busqueda de datos
+          this.getDetailProceedingsDevollution(this.actasDefault.id);
+        }
+      });
+    this.paramsList2
+      .pipe(
+        skip(1),
+        tap(() => {
+          this.getDetailProceedingsDevollution(this.actasDefault.id);
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {
+        // this.getGoodsByStatus(this.fileNumber)
+      });
   }
 
   onGoodSelect(instance: CheckboxElementComponent) {
@@ -465,12 +525,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       next: data => this.goodSelectedChange(data.row, data.toggle),
     });
   }
-
   isGoodSelected(_good: IGood) {
     const exists = this.selectedGooods.find(good => good.id == _good.id);
     return !exists ? false : true;
   }
-
   goodSelectedChange(good: IGood, selected: boolean) {
     if (selected) {
       this.selectedGooods.push(good);
@@ -485,12 +543,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       next: data => this.goodSelectedChangeValid(data.row, data.toggle),
     });
   }
-
   isGoodSelectedValid(_good: IGood) {
     const exists = this.selectedGooodsValid.find(good => good.id == _good.id);
     return !exists ? false : true;
   }
-
   goodSelectedChangeValid(good: IGood, selected?: boolean) {
     if (selected) {
       this.selectedGooodsValid.push(good);
@@ -611,7 +667,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           } else {
             this.alert(
               'info',
-              'No tiene permiso de Lectura y/o Escritura sobre la Pantalla, por lo que no podrá ingresar',
+              'No Tiene Permiso de Lectura y/o Escritura sobre la Pantalla, por lo que no podrá Ingresar',
               ''
             );
             return;
@@ -621,7 +677,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       error: (error: any) => {
         this.alert(
           'info',
-          'No tiene permiso de Lectura y/o Escritura sobre la Pantalla, por lo que no podrá ingresar',
+          'No Tiene Permiso de Lectura y/o Escritura sobre la Pantalla, por lo que no podrá Ingresar',
           ''
         );
         this.router.navigate(['/pages/general-processes/goods-tracker']);
@@ -811,6 +867,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
+    console.log('1412212', params);
     this.goodService.getByExpedient_(id, params).subscribe({
       next: data => {
         this.bienes = data.data;
@@ -832,11 +889,12 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
         Promise.all(result).then(item => {
           this.dataTableGood_ = this.bienes;
-          // this.dataTableGood.refresh();
+          this.dataTableGood.load(this.bienes);
+          this.dataTableGood.refresh();
           // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
           this.totalItems = data.count;
           this.loading = false;
-          console.log(this.bienes);
+          // console.log(this.bienes);
         });
       },
       error: error => {
@@ -967,19 +1025,24 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     console.log('this.conversion', this.conversion);
     if (this.actasDefault != null) {
       if (this.actasDefault.keysProceedings == null) {
-        this.alert('warning', 'No existe acta para cerrar', '');
+        this.alert('warning', 'No Existe Acta para Cerrar', '');
         return;
       }
 
-      // if (this.actasDefault.comptrollerWitness == null) {
-      //   this.alert('warning', 'Indique el Testigo de la Contraloría', '');
-      //   return;
-      // }
+      if (this.dataRecepcionGood.count() == 0) {
+        this.alertInfo(
+          'warning',
+          'El Acta no tiene ningún Bien asignado, no se puede Cerrar.',
+          ''
+        );
+        return;
+      }
 
-      // if (this.actasDefault == null) {
-      //   this.alert('warning', 'No existe acta para cerrar', '');
-      //   return;
-      // }
+      if (this.actasDefault.comptrollerWitness == null) {
+        this.alert('warning', 'Indique el Testigo de la Contraloría', '');
+        return;
+      }
+
       const toolbar_user = this.authService.decodeToken().preferred_username;
       const cadena = this.cveActa ? this.cveActa.indexOf('?') : 0;
       console.log('cadena', cadena);
@@ -988,21 +1051,14 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         null;
       } else {
         if (this.delete == true) {
-          this.alertQuestion('warning', '¿Desea Cerrar el Acta?', '').then(
+          this.alertQuestion('question', '¿Desea Cerrar el Acta?', '').then(
             async question => {
               if (question.isConfirmed) {
-                if (this.dataRecepcion.length == 0) {
-                  this.alertInfo(
-                    'warning',
-                    'El acta no tiene ningún bien asignado, no se puede cerrar.',
-                    ''
-                  );
-                  return;
-                }
                 // await this.createDET();
                 this.actasDefault.statusProceedings = 'CERRADA';
                 delete this.actasDefault.numDelegation1Description;
                 delete this.actasDefault.numDelegation2Description;
+                delete this.actasDefault.numTransfer_;
                 this.proceedingsDeliveryReceptionService
                   .editProceeding(this.actasDefault.id, this.actasDefault)
                   .subscribe({
@@ -1034,7 +1090,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
 
                       this.alertInfo(
                         'success',
-                        'Se cerró el acta correctamente',
+                        'Se Cerró el Acta Correctamente',
                         ''
                       );
                       // this.alert('success', 'Acta cerrada', '');
@@ -1049,7 +1105,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
                     error: error => {
                       this.alert(
                         'error',
-                        'Ocurrió un error al cerrar el acta',
+                        'Ocurrió un Error al Cerrar el Acta',
                         ''
                       );
                       // this.loading = false
@@ -1062,7 +1118,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           if (this.delete == false) {
             this.alert(
               'warning',
-              'El Usuario no está autorizado para cerrar acta',
+              'El Usuario no está Autorizado para Cerrar Acta',
               // 'El Usuario no está autorizado para cerrar acta',
               ''
             );
@@ -1070,7 +1126,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           if (this.delete == null) {
             this.alert(
               'warning',
-              'El Usuario no está autorizado para cerrar acta',
+              'El Usuario no está Autorizado para Cerrar Acta',
               // 'El Usuario no está autorizado para cerrar acta',
               ''
             );
@@ -1080,7 +1136,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'No existe ningún acta a cerrar.',
+        'No Existe Ningún Acta a Cerrar.',
         // 'El Usuario no está autorizado para cerrar acta',
         ''
       );
@@ -1286,9 +1342,11 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       next: (data: any) => {
         this.alert(
           'success',
-          'Carga masiva completada',
-          `Expediente : ${this.fileNumber}`
+          'Carga Masiva Completada',
+          // `Expediente : ${this.fileNumber}`
+          ``
         );
+        this.getGoodsByStatus(this.fileNumber);
         console.log(data);
       },
       error: error => {
@@ -1306,7 +1364,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       .subscribe({
         next: data => {
           if ((data.data.statusProceedings = 'CERRADA')) {
-            this.alert('info', 'Acta esta cerrada', '');
+            this.alert('info', 'Acta Está Cerrada', '');
             return;
           }
           // this.loading = false;
@@ -1523,7 +1581,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   savActa() {
     // this.loading = false;
     // this.changeStatus();
-    this.alert('success', 'Acta actualizada correctamente', '');
+    this.alert('success', 'Acta Actualizada Correctamente', '');
   }
   moverRegistro(registro: any, origen: any[], destino: any[]) {
     const index = origen.indexOf(registro);
@@ -1562,7 +1620,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       if (this.actasDefault == null) {
         this.alert(
           'warning',
-          'No existe un acta en la cual asignar el bien.',
+          'No Existe un Acta en la cual Asignar el Bien.',
           'Debe capturar un acta.'
         );
         return;
@@ -1570,7 +1628,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         if (this.statusConv == 'CERRADA') {
           this.alert(
             'warning',
-            'El acta ya está cerrada, no puede realizar modificaciones a esta',
+            'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
             ''
           );
           return;
@@ -1581,18 +1639,19 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             if (good.di_acta != null) {
               this.alert(
                 'warning',
-                `Ese bien ya se encuentra en el acta ${good.di_acta}`,
-                'Debe capturar un acta.'
+                `Ese Bien ya se Encuentra en el Acta ${good.di_acta}`,
+                'Debe Capturar un Acta.'
               );
             } else if (good.di_disponible == 'N') {
               this.onLoadToast(
                 'warning',
-                `El bien ${good.id} tiene un estatus inválido para ser asignado a algún acta`
+                `El Bien ${good.id} tiene un Estatus Inválido para ser Asignado a algún Acta`
               );
               return;
             } else {
               console.log('GOOD', good);
               this.loading2 = true;
+
               if (!this.dataRecepcion.some((v: any) => v === good)) {
                 let indexGood = this.dataTableGood_.findIndex(
                   _good => _good.id == good.id
@@ -1616,14 +1675,18 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         }
       }
     } else {
-      this.alert('warning', 'Seleccione primero el bien a asignar.', '');
+      this.alert('warning', 'Seleccione Primero el Bien a Asignar.', '');
     }
   }
 
   // OBTENER DATOS DE LA TABLA DET
   async getDetailProceedingsDevollution(id: any) {
     this.loading2 = true;
-    const params = new ListParams();
+    // const params = new ListParams();
+    let params: any = {
+      ...this.paramsList2.getValue(),
+      ...this.columnFilters2,
+    };
     return new Promise((resolve, reject) => {
       this.detailProceeDelRecService
         .getGoodsByProceedings(id, params)
@@ -1636,12 +1699,16 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             Promise.all(result).then(item => {
               this.ocultarPaginado = true;
               this.dataRecepcion = data.data;
+              this.dataRecepcionGood.load(this.dataRecepcion);
+              this.dataRecepcionGood.refresh();
               this.totalItems2 = data.count;
               console.log('data', data);
               this.loading2 = false;
             });
           },
           error: error => {
+            this.dataRecepcion = [];
+            this.dataRecepcionGood.load([]);
             this.loading2 = false;
             this.ocultarPaginado = false;
           },
@@ -1653,7 +1720,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     if (this.actasDefault == null) {
       this.alert(
         'warning',
-        'No existe un acta en la cual asignar el bien.',
+        'No existe un Acta en la cual Asignar el Bien.',
         'Debe capturar un acta.'
       );
       return;
@@ -1661,7 +1728,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       if (this.statusConv == 'CERRADA') {
         this.alert(
           'warning',
-          'El acta ya esta cerrada, no puede realizar modificaciones a esta',
+          'El Acta ya esta Cerrada, no puede Realizar Modificaciones a esta',
           ''
         );
         return;
@@ -1699,10 +1766,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
 
   removeSelect() {
+    if (this.dataRecepcion.length == 0) {
+      return;
+    }
     if (this.statusConv == 'CERRADA') {
       this.alert(
         'warning',
-        'El acta ya está cerrada, no puede realizar modificaciones a esta',
+        'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
         ''
       );
       return;
@@ -1710,15 +1780,15 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       if (this.actasDefault == null) {
         this.alert(
           'warning',
-          'No existe un acta en la cual asignar el bien.',
-          'Debe capturar un acta.'
+          'No Existe un Acta en la cual Asignar el Bien.',
+          'Debe Capturar un Acta.'
         );
         return;
       } else if (this.selectedGooodsValid.length == 0) {
         this.alert(
           'warning',
-          'Debe seleccionar un bien que forme parte del acta primero',
-          'Debe capturar un acta.'
+          'Debe Seleccionar un Bien que Forme Parte del Acta Primero',
+          'Debe Capturar un Acta.'
         );
         return;
       } else {
@@ -1755,15 +1825,15 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     if (this.actasDefault == null) {
       this.alert(
         'warning',
-        'No existe un acta en la cual asignar el bien.',
-        'Debe capturar un acta.'
+        'No Existe un Acta en la cual Asignar el Bien.',
+        'Debe Capturar un Acta.'
       );
       return;
     } else {
       if (this.statusConv == 'CERRADA') {
         this.alert(
           'warning',
-          'El acta ya está cerrada, no puede realizar modificaciones a esta',
+          'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
           ''
         );
         return;
@@ -1970,6 +2040,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     let modalRef = this.modalService.show(CreateActaComponent, modalConfig);
     modalRef.content.onSave.subscribe(async (next: any) => {
       console.log(next);
+      this.totalItems2 = 0;
       this.acordionDetail = false;
       this.actasDefault = next;
       // this.fCreate = this.datePipe.transform(next.dateElaborationReceipt,'dd/MM/yyyy');
@@ -2029,6 +2100,15 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         console.log('NO');
       },
     });
+  }
+
+  cleanActa() {
+    this.actasDefault = null;
+    this.actaRecepttionForm.get('cveActa').setValue('');
+    this.actaRecepttionForm.get('direccion').setValue('');
+    this.dataRecepcionGood.load([]);
+    this.dataRecepcionGood.refresh();
+    this.totalItems2 = 0;
   }
 }
 

@@ -99,3 +99,33 @@ export interface INumeraryTransfer {
   checkNumber: string;
   nbOrigin: string;
 }
+
+export interface IAccountMovementShort {
+  cve_banco: string;
+  cve_cuenta: string;
+  no_cuenta: string;
+  no_cuenta_traspaso: string;
+}
+
+export interface IDetailAccountMovement {
+  date: string | null;
+  deposit: string | null;
+  withdrawal: string | null;
+}
+
+export interface IPupInterestsDetail {
+  pAmount: number;
+  pDateToday: string;
+  pDateStartMov: string;
+  pMoneyDi: string;
+  pCalculationRate: string;
+  pBonusPoints: number;
+  pDayxAnio: number;
+}
+
+export interface IMovementDetail {
+  periodo: string;
+  dias: string;
+  Tasa: string;
+  importe: string;
+}

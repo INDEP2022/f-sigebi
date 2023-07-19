@@ -17,7 +17,13 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-create-acta',
   templateUrl: './create-acta.component.html',
-  styles: [],
+  styles: [
+    `
+      .bg-gray {
+        background-color: #eee !important;
+      }
+    `,
+  ],
 })
 export class CreateActaComponent extends BasePage implements OnInit {
   actaRecepttionForm: FormGroup;
@@ -32,6 +38,23 @@ export class CreateActaComponent extends BasePage implements OnInit {
   testigoTree: any;
   responsable: any;
   testigoTwo: any;
+  years: number[] = [];
+  currentYear: number = new Date().getFullYear();
+  months = [
+    { value: 1, label: 'Enero' },
+    { value: 2, label: 'Febrero' },
+    { value: 3, label: 'Marzo' },
+    { value: 4, label: 'Abril' },
+    { value: 5, label: 'Mayo' },
+    { value: 6, label: 'Junio' },
+    { value: 7, label: 'Julio' },
+    { value: 8, label: 'Agosto' },
+    { value: 9, label: 'Septiembre' },
+    { value: 10, label: 'Octubre' },
+    { value: 11, label: 'Noviembre' },
+    { value: 12, label: 'Diciembre' },
+  ];
+  disabledSend: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -48,6 +71,9 @@ export class CreateActaComponent extends BasePage implements OnInit {
     console.log(this.expedient);
     this.actaForm();
     this.consulREG_DEL_ADMIN();
+    for (let i = 1900; i <= this.currentYear; i++) {
+      this.years.push(i);
+    }
   }
 
   async actaForm() {
@@ -59,8 +85,8 @@ export class CreateActaComponent extends BasePage implements OnInit {
       cveReceived: [null, Validators.required],
       consec: [null, Validators.required],
       // ejecuta: [null],
-      anio: [null, Validators.required],
-      mes: [null, Validators.required],
+      anio: [null, [Validators.required]],
+      mes: [null, [Validators.required]],
       cveActa: [null],
       direccion: [null],
       observaciones: [null],
@@ -193,11 +219,18 @@ export class CreateActaComponent extends BasePage implements OnInit {
 
     const anio = this.actaRecepttionForm.value.anio;
     const mes = this.actaRecepttionForm.value.mes;
-    const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${cveReceived}/${consec
+
+    const miCadenaAnio = anio + '';
+    const miSubcadena = miCadenaAnio.slice(2, 5);
+
+    let consec_ = consec.toString().padStart(4, '0');
+    if (consec_.length > 4) {
+      consec_ = consec_.toString().slice(0, 4);
+    }
+
+    const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${cveReceived}/${consec_}/${miSubcadena
       .toString()
-      .padStart(4, '0')}/${anio.toString().padStart(2, '0')}/${mes
-      .toString()
-      .padStart(2, '0')}`;
+      .padStart(2, '0')}/${mes.value.toString().padStart(2, '0')}`;
     console.log(cveActa);
 
     if (cveActa) {
@@ -206,11 +239,11 @@ export class CreateActaComponent extends BasePage implements OnInit {
       this.proceedingsDeliveryReceptionService.getByFilter_(params).subscribe({
         next: (data: any) => {
           if (data.data.length == 1) {
-            this.alert('warning', 'Esa acta ya se tiene registrada', '');
+            this.alert('warning', 'Esa Acta ya se tiene Registrada', '');
           } else {
             this.alert(
               'warning',
-              'Actas duplicadas en ACTAS_ENTREGA_RECEPCION',
+              'Actas Duplicadas en ACTAS_ENTREGA_RECEPCION',
               ''
             );
           }
@@ -274,11 +307,11 @@ export class CreateActaComponent extends BasePage implements OnInit {
         next: (data: any) => {
           console.log('DATA', data);
           this.newRegister = data;
-          this.alert('success', 'El acta se ha creado correctamente', '');
+          this.alert('success', 'El Acta se ha Creado Correctamente', '');
           this.handleSuccess();
         },
         error: error => {
-          this.alert('error', 'Ha ocurrido al intentar crear un acta', '');
+          this.alert('error', 'Ha Ocurrido al Intentar Crear un Acta', '');
         },
       });
   }

@@ -10,7 +10,7 @@
             <form-field
               [control]="form.get('noBien')"
               class="w-100"
-              label="No Bien">
+              label="No. Bien">
               <input
                 type="number"
                 class="form-control"
@@ -86,7 +86,7 @@
             </form-field>
           </div>
           <div class="col-md-6 d-flex mt-4">
-            <form-check label="Marcar como histórico" for="histo">
+            <form-check label="Marcar como Histórico" for="histo">
               <input
                 id="histo"
                 type="checkbox"
@@ -143,13 +143,24 @@
             <form-loader *ngIf="loading"></form-loader>
             <div *ngIf="!loading">
               <ng2-smart-table
-                [attr.class]="'table-bordered table-responsive'"
+                [attr.class]="'table-bordered table-responsive mb-4'"
                 [settings]="settings"
                 [source]="dataTable">
               </ng2-smart-table>
             </div>
           </div>
+          <div class="col-md-12 d-flex justify-content-end pt-3">
+            <form-field [control]="form.get('monto2')" label="Monto total">
+              <input
+                [readOnly]="true"
+                type="number"
+                class="form-control pl-2"
+                formControlName="monto2"
+                min="1" />
+            </form-field>
+          </div>
           <app-pagination
+            *ngIf="totalItems > 0"
             [filterParams]="filterParams"
             [totalItems]="totalItems">
           </app-pagination>
@@ -207,7 +218,7 @@
             <div style="margin-top: 30px">
               <form-field
                 [control]="form.get('folioCash')"
-                label="No Folio CashWindows">
+                label="No. Folio CashWindows">
                 <input
                   type="text"
                   class="form-control"
@@ -220,6 +231,7 @@
                 [control]="form.get('transactionDate')"
                 label="Fecha Transacción CashWindows">
                 <input
+                  (onHidden)="changeSelect()"
                   formControlName="transactionDate"
                   class="form-control"
                   bsDatepicker
@@ -231,7 +243,7 @@
             <div>
               <form-field
                 [control]="form.get('cveAccount')"
-                label="Clave cuenta">
+                label="Clave Cuenta">
                 <input
                   type="number"
                   class="form-control"
@@ -243,7 +255,7 @@
             <div style="margin-top: 30px">
               <form-field
                 [control]="form.get('accountType')"
-                label="Tipo de cuenta">
+                label="Tipo de Cuenta">
                 <input
                   formControlName="accountType"
                   class="form-control"

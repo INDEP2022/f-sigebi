@@ -19,6 +19,7 @@ import { AppointmentsAdministrativeReportComponent } from './appointments-admini
 import { AppointmentsJuridicalReportComponent } from './appointments-juridical-report/appointments-juridical-report.component';
 import { AppointmentsRelationsPaysComponent } from './appointments-relations-pays/appointments-relations-pays.component';
 import { AppointmentsComponent } from './appointments/appointments.component';
+import { EmailAppointmentComponent } from './email/email.component';
 import { ListDataAppointmentGoodsComponent } from './list-data-good/list-data-good.component';
 import { ListDataAppointmentComponent } from './list-data/list-data.component';
 import { ModalScanningFoilAppointmentTableComponent } from './modal-scanning-foil/modal-scanning-foil.component';
@@ -48,6 +49,7 @@ export const customCurrencyMaskConfig = {
     PersonFormComponentAppointment,
     ListDataAppointmentComponent,
     ListDataAppointmentGoodsComponent,
+    EmailAppointmentComponent,
   ],
   imports: [
     CommonModule,

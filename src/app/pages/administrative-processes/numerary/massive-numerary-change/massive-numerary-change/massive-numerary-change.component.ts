@@ -9,7 +9,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, map, skip, take } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { readFile, showAlert } from 'src/app/common/helpers/helpers';
+import { readFile } from 'src/app/common/helpers/helpers';
 import {
   ListParams,
   SearchFilter,
@@ -26,11 +26,7 @@ import { SpentService } from 'src/app/core/services/ms-spent/spent.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SelectConceptSpentDialogComponent } from '../components/select-concept-spent-dialog/select-concept-spent-dialog.component';
 import { MassiveNumeraryChangeModalComponent } from '../massive-numerary-change-modal/massive-numerary-change-modal.component';
-import {
-  IMassiveNumeraryGood,
-  IMassiveNumeraryTableSmall,
-  IResponseFMasInsNumerarioSpent,
-} from '../types/massive-numerary.type';
+import { IMassiveNumeraryGood } from '../types/massive-numerary.type';
 import {
   HELP_ARR,
   MASSIVE_NUMERARY_CHANGE_COLUMNS,
@@ -61,11 +57,15 @@ import {
         display: flex;
         flex-direction: column;
       } */
-      .spents input {
+      .spent-container {
+        width: 250px;
+      }
+      .spent-container input {
         width: 150px;
       }
       select.selects-origin-data {
         width: 105px;
+        min-height: auto !important;
       }
       .btn-custom-search {
         position: absolute;
@@ -93,7 +93,6 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
   BLK_GASTOS = new LocalDataSource();
 
   isVisibleSpent: boolean = false;
-
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -144,6 +143,24 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     );
   }
 
+  clean() {
+    this.form.reset();
+    this.formGad.reset();
+    this.formGad.disable();
+    this.formGas.reset();
+    this.formGas.disable();
+    this.formTips.reset();
+
+    this.BLK_BIENES.reset();
+    this.BLK_GASTOS.reset();
+    this.dataPrevious = [];
+    this.dataPreviousTable = new LocalDataSource([]);
+    this.registerReads = 0;
+    this.registerProcessed = 0;
+    this.registerCorrect = 0;
+    this.registerIncorrect = 0;
+  }
+
   prepareForm() {
     this.form = this.fb.group({
       recordsRead: [null, Validators.nullValidator],
@@ -167,6 +184,9 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       console.log(res, modal.content);
       if (modal.content) {
         this.formGas.get(`GAS${num}`).setValue(modal.content.selectedItem.id);
+        this.formGad
+          .get(`GAD${num}`)
+          .setValue(modal.content.selectedItem.description);
       }
     });
   }
@@ -187,7 +207,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
 
   formTips = new FormGroup({});
   formGas = new FormGroup<any>({});
-  formGad = new FormGroup({});
+  formGad = new FormGroup<any>({});
   async onInit() {
     this.columns.forEach((column, index) => {
       this.formTips.addControl(`TIP${index + 1}`, new FormControl(''));
@@ -249,8 +269,8 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     if (vBanB === 0 || vBanB > 1) {
       messages.push(
         vBanB === 0
-          ? 'Se debe especificar la columna del No. de Bien'
-          : 'Se especificó más de una columna del No. de Bien'
+          ? 'Se Debe Especificar La Columna Del No. De Bien'
+          : 'Se Especificó Más De Una Columna Del No. De Bien'
       );
       vBan = true;
     }
@@ -258,15 +278,15 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     if (vBanI === 0 || vBanI > 1) {
       messages.push(
         vBanI === 0
-          ? 'Se debe especificar la columna del Ingreso neto'
-          : 'Se especificó más de una columna del Ingreso neto'
+          ? 'Se Debe Especificar La Columna Del Ingreso Neto'
+          : 'Se Especificó Más De Una Columna Del Ingreso Neto'
       );
       vBan = true;
     }
 
     if (vBanG) {
       messages.push(
-        'No se especificó el Concepto de Gasto en al menos una columna'
+        'No Se Especificó El Concepto De Gasto En Al Menos Una Columna'
       );
       vBan = true;
     }
@@ -274,13 +294,17 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     if (vBanV === 0 || vBanV > 1) {
       messages.push(
         vBanV === 0
-          ? 'Se debe especificar la columna del IVA'
-          : 'Se especificó más de una columna del IVA'
+          ? 'Se Debe Especificar La Columna Del IVA'
+          : 'Se Especificó Más De Una Columna Del IVA'
       );
       vBan = true;
     }
     if (messages.length > 0) {
-      this.alert('warning', 'Advertencia', messages.join('\n'));
+      this.alert(
+        'warning',
+        'Advertencia',
+        'No puede Haber Más de Una Columna con el No. Bien, Ingreso Neto o IVA'
+      );
     }
     if (vBan) {
       return;
@@ -300,45 +324,47 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     };
     console.log({ body });
     this.isLoadingProcessExtraction = true;
-
+    this.loader.load = true;
     this.goodProcess.postFMasInsNumerario(body).subscribe({
-      next: (res: IResponseFMasInsNumerarioSpent) => {
+      next: (res: any) => {
         this.isLoadingProcessExtraction = false;
-        this.registerReads = res.T_REG_PROCESADOS;
-        this.registerProcessed = res.T_REG_PROCESADOS;
-        this.registerCorrect = res.T_REG_CORRECTOS;
-        this.registerIncorrect = res.T_REG_ERRONEOS;
-        this.dataTableSpent = res.bienes.map(res => {
+        this.loader.load = false;
+        this.registerReads = res.T_REG.T_REG_PROCESADOS;
+        this.registerProcessed = res.T_REG.T_REG_PROCESADOS;
+        this.registerCorrect = res.T_REG.T_REG_CORRECTOS;
+        this.registerIncorrect = res.T_REG.T_REG_ERRONEOS;
+        console.log(res);
+        this.dataTableSpent = res.BLK_BIENES.map((res: any) => {
           return {
-            costs: res.spent,
-            cveEvent: res.processKey,
-            description: res.description,
-            entry: res.income,
-            identifier: res.identifier,
-            impNumerary: res.valueAppraisalm,
-            indNume: res.indNume,
-            noDelegation: res.delegationNumber,
-            noExpAssociated: res.associatedExpNum,
-            noExpedient: res.fileNumber,
-            noFlier: res.flyerNumber,
-            noGood: res.goodNumber,
-            noSubDelegation: res.subdelegationNumber,
-            npNUm: res.goodNumberNum as any,
-            quantity: res.quantity as any,
-            status: res.status,
-            tax: res.iva as any,
-            color: res.vColor as any,
+            costs: res.GASTO,
+            cveEvent: res.CVE_PROCESO,
+            description: res.DESCRIPCION,
+            entry: res.INGRESO,
+            identifier: res.IDENTIFICADOR,
+            impNumerary: res.VALOR_AVALUO,
+            indNume: res.IND_NUME,
+            noDelegation: res.NO_DELEGACION,
+            noExpAssociated: res.NO_EXP_ASOCIADO,
+            noExpedient: res.NO_EXPEDIENTE,
+            noFlier: res.NO_VOLANTE,
+            noGood: res.NO_BIEN,
+            noSubDelegation: res.NO_SUBDELEGACION,
+            npNUm: res.NO_BIEN_NUME as any,
+            quantity: res.CANTIDAD as any,
+            status: res.ESTATUS,
+            tax: res.IVA as any,
+            color: res.COLOR as any,
           };
         });
 
-        this.dataTableSmall = res.gastos.map(res => {
+        this.dataTableSmall = res.BLK_GASTOS.map((res: any) => {
           return {
-            amount: res.amount as any,
-            cveie: res.spentConceptNumber,
-            noGood: res.goodNumber,
-            description: res.description,
-            status: res.status,
-            type: res.type,
+            amount: res.IMPORTE as any,
+            cveie: res.NO_CONCEPTO_GASTO,
+            noGood: res.NO_BIEN,
+            description: res.DESCRIPCION,
+            status: res.ESTATUS,
+            type: res.TIPO,
           };
         });
         this.modalService.show(MassiveNumeraryChangeModalComponent, {
@@ -352,6 +378,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
         });
       },
       error: err => {
+        this.loader.load = false;
         this.isLoadingProcessExtraction = false;
       },
       complete: () => {},
@@ -359,267 +386,267 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
     // this.processExtraction(vColB, vColI, vColV, vColG);
   }
 
-  dataTableSpent: IMassiveNumeraryGood[] = [];
-  dataTableSmall: IMassiveNumeraryTableSmall[] = [];
-  // async processExtraction(
-  //   // dataTablePreview: any[],
-  //   colB: number,
-  //   colI: number,
-  //   colV: number,
-  //   colG: string
-  // ) {
-  //   this.dataTableSpent = [];
-  //   this.dataTableSmall = [];
-  //   let cont = 0;
-  //   let vItem = null;
+  dataTableSpent: any[] = [];
+  dataTableSmall: any[] = [];
+  async processExtraction(
+    // dataTablePreview: any[],
+    colB: number,
+    colI: number,
+    colV: number,
+    colG: string
+  ) {
+    this.dataTableSpent = [];
+    this.dataTableSmall = [];
+    let cont = 0;
+    let vItem = null;
 
-  //   let vType = null;
-  //   let vNoGood;
-  //   let vContm = 0;
+    let vType = null;
+    let vNoGood;
+    let vContm = 0;
 
-  //   /** @description vdescripcion, vestatus, vno_exp_asociado, vno_expediente, vcantidad,
-  //                     vno_delegacion, vno_subdelegacion, videntificador, vno_volante, vno_clasif_bien, vno_bien_padre_parcializacion */
-  //   let good: IGood | null = null;
-  //   /** @description no_bien: vno_bienn, estatus: vestatusn */
-  //   let vGoodStatus: IGood | null = null;
+    /** @description vdescripcion, vestatus, vno_exp_asociado, vno_expediente, vcantidad,
+                      vno_delegacion, vno_subdelegacion, videntificador, vno_volante, vno_clasif_bien, vno_bien_padre_parcializacion */
+    let good: IGood | null = null;
+    /** @description no_bien: vno_bienn, estatus: vestatusn */
+    let vGoodStatus: IGood | null = null;
 
-  //   // let vnoGoodN = null;
-  //   let vSpent = null;
-  //   let vcveProcess = null;
-  //   let vIndNume: number;
-  //   let vActaOk = null;
-  //   let vIncome: any = null;
-  //   let vTax: any = 0;
-  //   let vColg1 = null;
-  //   let vTotalSpent = null;
-  //   let vColgu;
-  //   let vdSpent = null;
-  //   let vDescription = null;
-  //   const mapAsync = await this.dataPrevious.map(async (item, index) => {
-  //     if (index === 0) {
-  //       return;
-  //     }
-  //     // const test = async (item: any) => {
-  //     vItem = 'COL' + colB;
-  //     vType = item[vItem];
+    // let vnoGoodN = null;
+    let vSpent = null;
+    let vcveProcess = null;
+    let vIndNume: number;
+    let vActaOk = null;
+    let vIncome: any = null;
+    let vTax: any = 0;
+    let vColg1 = null;
+    let vTotalSpent = null;
+    let vColgu;
+    let vdSpent = null;
+    let vDescription = null;
+    const mapAsync = await this.dataPrevious.map(async (item, index) => {
+      if (index === 0) {
+        return;
+      }
+      // const test = async (item: any) => {
+      vItem = 'COL' + colB;
+      vType = item[vItem];
 
-  //     if (vType) {
-  //       try {
-  //         vNoGood = Number(String(vType).replace(',', '.'));
-  //         try {
-  //           /** @description no_bien */
-  //           good = await this.selectGoodForId(vNoGood);
-  //           // vnoGoodN = null;
-  //           vcveProcess = null;
-  //           try {
-  //             vGoodStatus = await this.selectGoodFilterNoGoodReferenceAndNoGood(
-  //               vNoGood
-  //             );
-  //             // vnoGoodN = vGoodStatus?.id;
-  //             if (vGoodStatus?.status !== 'ADM') {
-  //               vIndNume = 0;
-  //               vContm++;
-  //               vcveProcess = 'Numerario <> ADM.';
-  //             } else {
-  //               try {
-  //                 const accountMovement = await this.selectMovementAccount(
-  //                   vGoodStatus.id // vnoGoodN
-  //                 );
-  //                 vIndNume = 3;
-  //                 vContm++;
-  //                 vcveProcess = 'Numerario conciliado.';
-  //               } catch (ex) {
-  //                 // vContm++;
-  //                 vIndNume = 2;
-  //               }
-  //             }
-  //             vcveProcess = await this.pufSearchEvent(vNoGood);
-  //           } catch (ex: any) {
-  //             console.log({ ex: ex.message });
-  //             if (ex?.message === 'Más de una ref.') {
-  //               vIndNume = 0;
-  //               vContm++;
-  //               vcveProcess = ex?.message;
-  //             } else {
-  //               if (
-  //                 good.identifier == 'TRANS' &&
-  //                 ['CNE', 'CBD', 'CDS', 'CNS', 'CNR'].includes(good.status)
-  //               ) {
-  //                 vIndNume = 2;
-  //                 vcveProcess = await this.pufSearchEvent(vNoGood);
-  //               } else {
-  //                 vIndNume = 1;
-  //                 if (good.identifier == 'TRANS') {
-  //                   vIndNume = 4;
-  //                 }
-  //                 vActaOk = await this.pufValidActaReception(vNoGood);
-  //                 if (
-  //                   !vActaOk &&
-  //                   this.nvl(good.goodsPartializationFatherNumber) > 0
-  //                 ) {
-  //                   vActaOk = await this.pufValidActaReception(
-  //                     good.goodsPartializationFatherNumber
-  //                   );
-  //                 }
-  //                 if (!vActaOk) {
-  //                   vIndNume = 5;
-  //                   vContm++;
-  //                   vcveProcess = 'Bien sin acta';
-  //                 }
-  //               }
-  //             }
-  //           }
-  //           vItem = 'COL' + colI;
-  //           vType = item[vItem];
-  //           if (vType) {
-  //             try {
-  //               vIncome = Number(
-  //                 Math.round(parseFloat(String(vType).replace(',', '.')))
-  //               ).toFixed(2);
-  //               vItem = 'COL' + colV;
-  //               vType = item[vItem];
-  //               if (vType) {
-  //                 try {
-  //                   vTax = Number(
-  //                     Math.round(parseFloat(String(vType).replace(',', '.')))
-  //                   ).toFixed(2);
-  //                   vColg1 = colG;
-  //                   vTotalSpent = 0;
-  //                   while (vColg1) {
-  //                     vColgu = vColg1.substring(0, vColg1.indexOf(',')); //TODO: verificar | v_colgu := SUBSTR(v_colg1,1,INSTR(v_colg1,',',1)-1);
-  //                     vItem = 'COL' + vColgu;
-  //                     vType = item[vItem];
-  //                     try {
-  //                       vSpent = Number(
-  //                         Math.round(
-  //                           parseFloat(String(vType).replace(',', '.'))
-  //                         )
-  //                       ).toFixed(2); //:TODO verificar | vgasto := NVL(ROUND(TO_NUMBER(REPLACE(v_tipo,',','.'),'99999999999999.9999999999'),2),0);
-  //                       vItem = 'GAS' + vColgu;
-  //                       vdSpent = this.formGas.get(vItem)?.value;
-  //                       vTotalSpent = vTotalSpent + Number(this.nvl(vSpent, 0));
-  //                       vItem = 'GAD' + vColgu;
-  //                       vDescription = this.formGad.get(vItem)?.value;
-  //                       if (!vDescription) {
-  //                         try {
-  //                           vDescription = (await this.getConceptSpend(vdSpent))
-  //                             .description;
-  //                         } catch (ex) {
-  //                           vDescription = 'Gasto ' + vdSpent;
-  //                         }
-  //                       }
-  //                       // GO_BLOCK('BLK_GASTOS');
-  //                       //            IF NOT FORM_SUCCESS THEN
-  //                       //               RAISE Form_Trigger_Failure;
-  //                       //            END IF;
-  //                       //            IF :BLK_GASTOS.NO_BIEN IS NOT NULL THEN
-  //                       //               CREATE_RECORD;
-  //                       //            END IF;
+      if (vType) {
+        try {
+          vNoGood = Number(String(vType).replace(',', '.'));
+          try {
+            /** @description no_bien */
+            good = await this.selectGoodForId(vNoGood);
+            // vnoGoodN = null;
+            vcveProcess = null;
+            try {
+              vGoodStatus = await this.selectGoodFilterNoGoodReferenceAndNoGood(
+                vNoGood
+              );
+              // vnoGoodN = vGoodStatus?.id;
+              if (vGoodStatus?.status !== 'ADM') {
+                vIndNume = 0;
+                vContm++;
+                vcveProcess = 'Numerario <> ADM.';
+              } else {
+                try {
+                  const accountMovement = await this.selectMovementAccount(
+                    vGoodStatus.id // vnoGoodN
+                  );
+                  vIndNume = 3;
+                  vContm++;
+                  vcveProcess = 'Numerario conciliado.';
+                } catch (ex) {
+                  // vContm++;
+                  vIndNume = 2;
+                }
+              }
+              vcveProcess = await this.pufSearchEvent(vNoGood);
+            } catch (ex: any) {
+              console.log({ ex: ex.message });
+              if (ex?.message === 'Más de una ref.') {
+                vIndNume = 0;
+                vContm++;
+                vcveProcess = ex?.message;
+              } else {
+                if (
+                  good.identifier == 'TRANS' &&
+                  ['CNE', 'CBD', 'CDS', 'CNS', 'CNR'].includes(good.status)
+                ) {
+                  vIndNume = 2;
+                  vcveProcess = await this.pufSearchEvent(vNoGood);
+                } else {
+                  vIndNume = 1;
+                  if (good.identifier == 'TRANS') {
+                    vIndNume = 4;
+                  }
+                  vActaOk = await this.pufValidActaReception(vNoGood);
+                  if (
+                    !vActaOk &&
+                    this.nvl(good.goodsPartializationFatherNumber) > 0
+                  ) {
+                    vActaOk = await this.pufValidActaReception(
+                      good.goodsPartializationFatherNumber
+                    );
+                  }
+                  if (!vActaOk) {
+                    vIndNume = 5;
+                    vContm++;
+                    vcveProcess = 'Bien sin acta';
+                  }
+                }
+              }
+            }
+            vItem = 'COL' + colI;
+            vType = item[vItem];
+            if (vType) {
+              try {
+                vIncome = Number(
+                  Math.round(parseFloat(String(vType).replace(',', '.')))
+                ).toFixed(2);
+                vItem = 'COL' + colV;
+                vType = item[vItem];
+                if (vType) {
+                  try {
+                    vTax = Number(
+                      Math.round(parseFloat(String(vType).replace(',', '.')))
+                    ).toFixed(2);
+                    vColg1 = colG;
+                    vTotalSpent = 0;
+                    while (vColg1) {
+                      vColgu = vColg1.substring(0, vColg1.indexOf(',')); //TODO: verificar | v_colgu := SUBSTR(v_colg1,1,INSTR(v_colg1,',',1)-1);
+                      vItem = 'COL' + vColgu;
+                      vType = item[vItem];
+                      try {
+                        vSpent = Number(
+                          Math.round(
+                            parseFloat(String(vType).replace(',', '.'))
+                          )
+                        ).toFixed(2); //:TODO verificar | vgasto := NVL(ROUND(TO_NUMBER(REPLACE(v_tipo,',','.'),'99999999999999.9999999999'),2),0);
+                        vItem = 'GAS' + vColgu;
+                        vdSpent = this.formGas.get(vItem)?.value;
+                        vTotalSpent = vTotalSpent + Number(this.nvl(vSpent, 0));
+                        vItem = 'GAD' + vColgu;
+                        vDescription = this.formGad.get(vItem)?.value;
+                        if (!vDescription) {
+                          try {
+                            vDescription = (await this.getConceptSpend(vdSpent))
+                              .description;
+                          } catch (ex) {
+                            vDescription = 'Gasto ' + vdSpent;
+                          }
+                        }
+                        // GO_BLOCK('BLK_GASTOS');
+                        //            IF NOT FORM_SUCCESS THEN
+                        //               RAISE Form_Trigger_Failure;
+                        //            END IF;
+                        //            IF :BLK_GASTOS.NO_BIEN IS NOT NULL THEN
+                        //               CREATE_RECORD;
+                        //            END IF;
 
-  //                       const blkSpent = {
-  //                         noGood: vNoGood,
-  //                         cveie: vdSpent,
-  //                         amount: vSpent as any,
-  //                         description: vDescription,
-  //                         status: good.status,
-  //                         type: 'E',
-  //                       };
-  //                       this.dataTableSmall.push(blkSpent);
-  //                     } catch (ex) {
-  //                       null;
-  //                     }
-  //                     vColg1 = vColg1.substring(vColg1.indexOf(',') + 1);
-  //                   }
-  //                   const blkSpent = {
-  //                     noGood: vNoGood,
-  //                     cveie: 0,
-  //                     amount: vTax,
-  //                     description: 'I.V.A.',
-  //                     status: good.status,
-  //                     type: 'i',
-  //                   };
-  //                   this.dataTableSmall.push(blkSpent);
-  //                   console.log({
-  //                     dataTableSmall: this.dataTableSmall,
-  //                     blkSpent,
-  //                   });
+                        const blkSpent = {
+                          noGood: vNoGood,
+                          cveie: vdSpent,
+                          amount: vSpent as any,
+                          description: vDescription,
+                          status: good.status,
+                          type: 'E',
+                        };
+                        this.dataTableSmall.push(blkSpent);
+                      } catch (ex) {
+                        null;
+                      }
+                      vColg1 = vColg1.substring(vColg1.indexOf(',') + 1);
+                    }
+                    const blkSpent = {
+                      noGood: vNoGood,
+                      cveie: 0,
+                      amount: vTax,
+                      description: 'I.V.A.',
+                      status: good.status,
+                      type: 'i',
+                    };
+                    this.dataTableSmall.push(blkSpent);
+                    console.log({
+                      dataTableSmall: this.dataTableSmall,
+                      blkSpent,
+                    });
 
-  //                   const prevDataTableSpent: IMassiveNumeraryGood = {
-  //                     noGood: vNoGood,
-  //                     description: good.description,
-  //                     status: good.status,
-  //                     entry: vIncome + vTotalSpent - vTax,
-  //                     costs: vTotalSpent,
-  //                     tax: vTax,
-  //                     impNumerary: vIncome,
-  //                     noExpAssociated: good.associatedFileNumber,
-  //                     noExpedient: good.fileeNumber,
-  //                     quantity: good.quantity,
-  //                     noDelegation: (good.delegationNumber as any)?.id,
-  //                     noSubDelegation: (good.subDelegationNumber as any)?.id,
-  //                     identifier: good.identifier,
-  //                     noFlier: good.flyerNumber,
-  //                     indNume: vIndNume,
-  //                     cveEvent: vcveProcess,
-  //                     npNUm: vGoodStatus?.id,
-  //                   };
+                    const prevDataTableSpent: IMassiveNumeraryGood = {
+                      noGood: vNoGood,
+                      description: good.description,
+                      status: good.status,
+                      entry: vIncome + vTotalSpent - vTax,
+                      costs: vTotalSpent,
+                      tax: vTax,
+                      impNumerary: vIncome,
+                      noExpAssociated: good.associatedFileNumber,
+                      noExpedient: good.fileeNumber,
+                      quantity: good.quantity,
+                      noDelegation: (good.delegationNumber as any)?.id,
+                      noSubDelegation: (good.subDelegationNumber as any)?.id,
+                      identifier: good.identifier,
+                      noFlier: good.flyerNumber,
+                      indNume: vIndNume,
+                      cveEvent: vcveProcess,
+                      npNUm: vGoodStatus?.id,
+                    };
 
-  //                   if (vIndNume !== 1) {
-  //                     switch (vIndNume) {
-  //                       case 0:
-  //                         prevDataTableSpent['color'] = 'bg-custom-red';
-  //                         break;
-  //                       case 2:
-  //                         prevDataTableSpent['color'] = 'bg-custom-green';
-  //                         break;
-  //                       case 4:
-  //                         prevDataTableSpent['color'] = 'bg-custom-cyan';
-  //                         break;
-  //                       case 5:
-  //                         prevDataTableSpent['color'] = 'bg-custom-orange';
-  //                         break;
-  //                       default:
-  //                         prevDataTableSpent['color'] = 'bg-custom-yellow';
-  //                     }
-  //                   }
-  //                   this.dataTableSpent.push(prevDataTableSpent);
-  //                   cont++;
-  //                 } catch (ex) {
-  //                   vContm++;
-  //                 }
-  //               }
-  //             } catch (ex) {
-  //               vContm++;
-  //             }
-  //           } else {
-  //             vContm++;
-  //           }
-  //         } catch (ex) {
-  //           vContm++;
-  //         }
-  //       } catch (ex) {
-  //         vContm++;
-  //       }
-  //     } else {
-  //       vContm++;
-  //     }
-  //     this.registerProcessed = cont + vContm;
-  //     this.registerCorrect = cont;
-  //     this.registerIncorrect = vContm;
-  //   });
+                    if (vIndNume !== 1) {
+                      switch (vIndNume) {
+                        case 0:
+                          prevDataTableSpent['color'] = 'bg-custom-red';
+                          break;
+                        case 2:
+                          prevDataTableSpent['color'] = 'bg-custom-green';
+                          break;
+                        case 4:
+                          prevDataTableSpent['color'] = 'bg-custom-cyan';
+                          break;
+                        case 5:
+                          prevDataTableSpent['color'] = 'bg-custom-orange';
+                          break;
+                        default:
+                          prevDataTableSpent['color'] = 'bg-custom-yellow';
+                      }
+                    }
+                    this.dataTableSpent.push(prevDataTableSpent);
+                    cont++;
+                  } catch (ex) {
+                    vContm++;
+                  }
+                }
+              } catch (ex) {
+                vContm++;
+              }
+            } else {
+              vContm++;
+            }
+          } catch (ex) {
+            vContm++;
+          }
+        } catch (ex) {
+          vContm++;
+        }
+      } else {
+        vContm++;
+      }
+      this.registerProcessed = cont + vContm;
+      this.registerCorrect = cont;
+      this.registerIncorrect = vContm;
+    });
 
-  //   await Promise.all(mapAsync);
+    await Promise.all(mapAsync);
 
-  //   this.isLoadingProcessExtraction = false;
-  //   this.modalService.show(MassiveNumeraryChangeModalComponent, {
-  //     initialState: {
-  //       dataTableGoods: this.dataTableSpent,
-  //       dataTableSpents: this.dataTableSmall,
-  //       user: this.getUser().preferred_username.toUpperCase(),
-  //     },
-  //     class: 'modal-lg',
-  //   });
-  // }
+    this.isLoadingProcessExtraction = false;
+    this.modalService.show(MassiveNumeraryChangeModalComponent, {
+      initialState: {
+        dataTableGoods: this.dataTableSpent,
+        dataTableSpents: this.dataTableSmall,
+        user: this.getUser().preferred_username.toUpperCase(),
+      },
+      class: 'modal-lg',
+    });
+  }
 
   getUser() {
     return this.authService.decodeToken();
@@ -723,6 +750,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
 
   //#region On click Button File Excel
   onClickBtnFileExcel(e: Event) {
+    this.loader.load = true;
     this.registerReads = 0;
     this.registerProcessed = 0;
     this.registerCorrect = 0;
@@ -732,13 +760,13 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
       readFile(file, 'BinaryString').then(data => {
         const dataExcel = this.excelService.getData(data.result);
         if (dataExcel.length < 1 || !this.validatorFileExcel()) {
-          showAlert({
-            text:
-              dataExcel.length < 1
-                ? 'El archivo no contiene datos.'
-                : 'El archivo no es valido verifique su cabecera.',
-            icon: 'error',
-          });
+          this.alert(
+            'error',
+            '',
+            dataExcel.length < 1
+              ? 'El Archivo no Contiene Datos.'
+              : 'El Archivo no es Valido Verifique su Cabecera.'
+          );
           return;
         }
         //ERROR: por implentar la validacion del archivo;
@@ -761,6 +789,7 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
         dataPreviewTable.unshift(header);
 
         // this.dataPrevious = dataPreviewTable;
+        this.loader.load = false;
         console.log({ dataPreviewTable: this.dataPrevious });
         // this.tableSpent.changePage({ page: 1, perPage: 10 });
         this.dataPreviousTable.load(dataPreviewTable);

@@ -14,11 +14,33 @@
               [searchable]="false"
               class="form-control"
               [clearable]="false">
-              <ng-option value="ADM">ASEGURADO</ng-option>
-              <ng-option value="DEA">DECOMISADO</ng-option>
-              <ng-option value="CND">ABANDONADO</ng-option>
+              <ng-option value="AS">ASEGURADO</ng-option>
+              <ng-option value="DE">DECOMISADO</ng-option>
+              <ng-option value="AB">ABANDONADO</ng-option>
             </ng-select>
           </form-field>
+          <ng-container *ngIf="form.get('legalStatus').value">
+            <ng-container *ngIf="form.get('legalStatus').value === 'AS'">
+              <ng-container *ngIf="true">
+                {{ esta }}
+                {{ es }}
+              </ng-container>
+            </ng-container>
+
+            <ng-container *ngIf="form.get('legalStatus').value === 'DE'">
+              <ng-container *ngIf="true">
+                {{ esta }}
+                {{ es }}
+              </ng-container>
+            </ng-container>
+
+            <ng-container *ngIf="form.get('legalStatus').value === 'AB'">
+              <ng-container *ngIf="true">
+                {{ esta }}
+                {{ es }}
+              </ng-container>
+            </ng-container>
+          </ng-container>
         </div>
         <div class="col-md-9 col-sm-12 col-xs-12">
           <form-field [control]="form.get('type')">
@@ -88,6 +110,7 @@
           <button
             class="btn btn-danger btn-sm active mr-3"
             (click)="cleanFilter()"
+            [disabled]="!form.valid"
             style="margin: 1vh">
             Limpiar <i class="fas fa-eraser"> </i>
           </button>
@@ -139,7 +162,8 @@
         <div class="col-md-3 col-sm-12 col-xs-12" style="display: flex">
           <form-field
             [control]="formaplicationData.get('applicationChangeCashNumber')"
-            label="No. Solicitud">
+            label="No. Solicitud"
+            style="top: -20px">
             <input
               type="text"
               class="form-control"
@@ -162,16 +186,17 @@
       </div>
       <br />
       <div class="row">
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('dateRequestChangeNumerary')"
-            label="Fecha solicitud">
+            label="Fecha Solicitud">
             <input
               type="text"
-              class="form-control"
+              class="form-control mt-2"
               formControlName="dateRequestChangeNumerary"
               bsDatepicker
-              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -185,17 +210,18 @@
               bindLabel="usuario"
               (fetchItems)="getUsuario($event)"
               (change)="searchUsuario($event)"
-              control="userRequestChangeNumber">
+              control="userRequestChangeNumber"
+              class="form-control mt-2">
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('postUserRequestCamnum')"
-            label="Nombre">
+            label="Cargo">
             <input
               type="text"
-              class="form-control"
+              class="form-control mt-2"
               formControlName="postUserRequestCamnum"
               maxlength="200" />
           </form-field>
@@ -206,19 +232,22 @@
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('delegationRequestcamnum')"
-            label="Cargo">
+            label="No. Delegacion Solicitante">
             <input
               type="text"
-              class="form-control"
+              class="form-control mt-2"
               formControlName="delegationRequestcamnum"
-              maxlength="200" />
+              maxlength="200"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('procedureProposal')"
-            label="Procedimiento propuesto">
-            <select class="form-control" formControlName="procedureProposal">
+            label="Procedimiento Propuesto">
+            <select
+              class="form-control mt-2"
+              formControlName="procedureProposal">
               <option [value]="null">Seleccione un valor</option>
               <option value="LICITACION PUBLICA">LICITACION PUBLICA</option>
               <option value="INVITACION">INVITACION</option>
@@ -238,43 +267,47 @@
               bindLabel="usuario"
               (fetchItems)="getUsuario1($event)"
               (change)="searchUsuario1($event)"
-              control="authorizeUser">
+              control="authorizeUser"
+              class="form-control mt-2">
             </ngx-select>
           </form-field>
         </div>
       </div>
       <br />
       <div class="row">
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('authorizePostUser')"
-            label="Nombre">
+            label="Cargo">
             <input
               type="text"
-              class="form-control"
-              formControlName="authorizePostUser" />
+              class="form-control mt-2"
+              formControlName="authorizePostUser"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('authorizeDelegation')"
-            label="Cargo">
+            label="No. Delegacion Autoriza">
             <input
               type="text"
-              class="form-control"
-              formControlName="authorizeDelegation" />
+              class="form-control mt-2"
+              formControlName="authorizeDelegation"
+              readonly />
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('authorizeDate')"
-            label="Fecha autoriza">
+            label="Fecha Autoriza">
             <input
               type="text"
-              class="form-control"
+              class="form-control mt-2"
               formControlName="authorizeDate"
               bsDatepicker
-              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+              readonly />
           </form-field>
         </div>
       </div>

@@ -53,6 +53,42 @@ export class GranteesListComponent extends BasePage implements OnInit {
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'puesto':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'type':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'razonSocial':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'street':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'noInside':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'noExterior':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'col':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'nommun':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'nomedo':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'cp':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'usrStatus':
+                searchFilter = SearchFilter.ILIKE;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;

@@ -151,7 +151,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'Atención',
-        'El bien cuenta con una aclaración'
+        'El bien cuenta con una notificación sin aclarar, no es posible agregar una nueva'
       );
       return;
     }
@@ -162,13 +162,14 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     clarification.creationUser = user.username;
     clarification.rejectionDate = new Date().toISOString();
     clarification['answered'] = 'NUEVA';
-
-    this.goodTransfer.map(async item => {
+    console.log(this.goodTransfer);
+    this.goodTransfer.map(async (item, _i) => {
+      const index = _i + 1;
       clarification.goodId = item.id;
       if (this.edit === true) {
         this.update(clarification);
       } else {
-        await this.save(clarification, item);
+        await this.save(clarification, item, index);
         if (this.haveGoodResDevRegister === false) {
           await this.createGoodResDev(item);
           await this.updateGood(item);
@@ -181,7 +182,11 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     });
   }
 
-  private save(clarification: ClarificationGoodRejectNotification, good: any) {
+  private save(
+    clarification: ClarificationGoodRejectNotification,
+    good: any,
+    index: number
+  ) {
     return new Promise((resolve, reject) => {
       this.rejectedGoodService.create(clarification).subscribe({
         next: val => {
@@ -190,20 +195,24 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
             //Si la notificación es de tipo aclaración el estatus de chat será NULO
             console.log('Tipo de notificación', val.clarificationType);
             this.createChatClarificationsType1(val, good);
-            this.onLoadToast(
-              'success',
-              `Aclaración guardada`,
-              `Se guardó la aclaración correctamente`
-            );
+            if (this.goodTransfer.length == index) {
+              this.onLoadToast(
+                'success',
+                `Aclaración guardada`,
+                `Se guardó la aclaración correctamente`
+              );
+            }
           } else {
             //Si la notificación es de tipo improcedencia el estatus de chat será improcedencia
             console.log('Tipo de notificación', val.clarificationType);
             this.createChatClarificationsType2(val, good);
-            this.onLoadToast(
-              'success',
-              `Aclaración guardada`,
-              `Se guardó la aclaración correctamente`
-            );
+            if (this.goodTransfer.length == index) {
+              this.onLoadToast(
+                'success',
+                `Aclaración guardada`,
+                `Se guardó la aclaración correctamente`
+              );
+            }
           }
         },
         complete: () => {
@@ -482,8 +491,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
               if (this.docClarification === undefined) {
                 reject('Existe bienes con aclaracion');
                 this.onLoadToast(
-                  'error',
-                  'Algunos bienes ya cuentas con aclaración'
+                  'info',
+                  'Algunos bienes tienen o tuvieron aclaración'
                 );
               }
             }

@@ -37,3 +37,19 @@ export interface IAccountBank {
     idProvider: string;
   };
 }
+
+export interface IBankCentral {
+  cveAccount: number | string;
+  typeAccount: string;
+  cveBank: string;
+  cveCurrency: string;
+}
+
+export interface IProReconcilesGood {
+  bankKey?: string;
+  accountKey?: string;
+  deposit?: number;
+  currencyKey?: string;
+  startDate?: Date | string;
+  endDate?: Date | string;
+}

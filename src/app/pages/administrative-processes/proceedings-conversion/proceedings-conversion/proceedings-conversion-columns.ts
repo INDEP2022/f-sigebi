@@ -66,7 +66,7 @@ export const ACTAS = {
     sort: false,
   },
   keysProceedings: {
-    title: 'Cve Acta',
+    title: 'Clave Acta',
     type: 'string',
     sort: false,
   },
@@ -93,8 +93,8 @@ export const ACTAS = {
     type: 'string',
     sort: false,
   },
-  numTransfer: {
-    title: 'Trasnfer',
+  numTransfer_: {
+    title: 'Transferente',
     type: 'number',
     sort: false,
   },

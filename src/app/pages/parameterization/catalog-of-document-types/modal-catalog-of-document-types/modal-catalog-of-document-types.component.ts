@@ -61,23 +61,34 @@ export class ModalCatalogOfDocumentTypesComponent
     }
   }
   saved() {
-    if (this.form.valid) {
-      if (this.edit) {
-        this.form.get('id').enable();
-        this.documentServ.updateDocument(this.id, this.form.value).subscribe({
-          next: () => this.handleSuccess(),
-          error: error => this.onLoadToast('error', error.error.message, ''),
-        });
-      } else {
-        this.documentServ.createDocument(this.form.value).subscribe({
-          next: () => {
-            this.handleSuccess();
-          },
-          error: error => this.onLoadToast('error', error.error.message, ''),
-        });
+    if (
+      this.form.controls['id'].value.trim() == '' ||
+      this.form.controls['description'].value.trim() == '' ||
+      (this.form.controls['id'].value.trim() == '' &&
+        this.form.controls['description'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      if (this.form.valid) {
+        if (this.edit) {
+          this.form.get('id').enable();
+          this.documentServ.updateDocument(this.id, this.form.value).subscribe({
+            next: () => this.handleSuccess(),
+            error: error => this.onLoadToast('error', error.error.message, ''),
+          });
+        } else {
+          this.documentServ.createDocument(this.form.value).subscribe({
+            next: () => {
+              this.handleSuccess();
+            },
+            error: error => this.onLoadToast('error', error.error.message, ''),
+          });
+        }
       }
     }
   }
+
   close() {
     this.modalRef.hide();
   }
@@ -86,7 +97,7 @@ export class ModalCatalogOfDocumentTypesComponent
     this.onLoadToast(
       'success',
       'Tipo de Documento',
-      `Ha sido ${this.edit ? 'actualizado' : 'creado'} correctamente`
+      `${this.edit ? 'Actualizado' : 'Guardado'} correctamente`
     );
     this.modalRef.content.callback(true);
     this.modalRef.hide();

@@ -87,7 +87,7 @@
           <div class="col-md-12 col-sm-12 col-xs-12">
             <form-field
               [control]="form.get('actConvertion')"
-              label="Acta de conversión">
+              label="Acta de Conversión">
               <input
                 type="text"
                 class="form-control"
@@ -165,7 +165,7 @@
           <div class="col-md-3 col-sm-12 col-xs-12">
             <form-field
               [control]="form.get('unitOfMeasure')"
-              label="Unidad de medida">
+              label="Unidad de Medida">
               <input
                 type="text"
                 class="form-control"
@@ -176,7 +176,7 @@
           <div class="col-md-3 col-sm-12 col-xs-12">
             <form-field
               [control]="form.get('destinationLabel')"
-              label="Etiqueta de destino">
+              label="Etiqueta de Destino">
               <input
                 type="text"
                 class="form-control"
@@ -188,16 +188,16 @@
         <div class="row mt-5 text-center">
           <div class="col-md-6 col-sm-6 col-xs-12">
             <button
-              class="btn btn-primary btn-sm active"
+              class="btn btn-primary btn-sm active mr-3"
               (click)="updateStatus()">
-              Cambiar Status
+              Cambiar Estatus
             </button>
           </div>
           <div class="col-md-6 col-sm-6 col-xs-12">
             <button
-              class="btn btn-primary btn-sm active"
+              class="btn btn-primary btn-sm active mr-3"
               (click)="updateGood()">
-              Actualizar Bien
+              Actualizar <i class="fas fa-sync-alt"> </i>
             </button>
           </div>
         </div>
@@ -209,7 +209,7 @@
     <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
       <app-card [header]="true">
         <div class="ch-content" header>
-          <h5 class="title">No Bien Hijo</h5>
+          <h5 class="title">No. Bien Hijo</h5>
         </div>
         <div body>
           <div class="row text-center mb-3">
@@ -247,15 +247,15 @@
     <div class="col-md-8 col-sm-12 col-xs-12 mt-2">
       <div class="card">
         <div class="card-header mb-3">
-          <h5>Atributos del Bien</h5>
+          <h5>ATRIBUTOS DEL BIEN</h5>
         </div>
         <div class="card-block" style="max-height: 500px; overflow-y: auto">
           <div class="row">
             <div class="col-6">
-              <h6>Atributos</h6>
+              <h6>ATRIBUTOS</h6>
             </div>
             <div class="col-6">
-              <h6>Valores</h6>
+              <h6>VALORES</h6>
             </div>
           </div>
           <div class="row" *ngFor="let attr of attributes">
@@ -279,19 +279,19 @@
       <div class="row">
         <div class="col-md-3 col-sm-6 col-xs-12">
           <button
-            class="btn btn-success btn-sm active"
+            class="btn btn-primary btn-sm active mr-3"
             (click)="showActasConvertion()"
             [disabled]="flagActa">
-            Actas conversión
+            Actas Conversión
           </button>
         </div>
 
         <div class="col-md-3 col-sm-6 col-xs-12">
           <button
-            class="btn btn-info btn-sm active"
+            class="btn btn-secondary btn-sm active"
             (click)="bulkUpload()"
             [disabled]="flagCargMasiva">
-            Carga masiva
+            Carga Masiva
           </button>
         </div>
 
@@ -300,13 +300,13 @@
             class="btn btn-danger btn-sm active"
             (click)="finishConversion()"
             [disabled]="flagFinConversion">
-            Finalizar conversión
+            Finalizar Conversión
           </button>
         </div>
 
         <div class="col-md-3 col-sm-6 col-xs-12">
           <button
-            class="btn btn-info btn-sm active"
+            class="btn btn-primary btn-sm active"
             (click)="imgUpload()"
             [disabled]="flagCargaImagenes">
             Carga Imagenes

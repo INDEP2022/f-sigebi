@@ -295,8 +295,8 @@ export class InventoryDataComponent
     if (this.inventorySelect === null) {
       this.alert(
         'warning',
-        'Datos inventario',
-        'Debe seleccionar un inventario para obtener sus atributos.'
+        'Datos Inventario',
+        'Debe Seleccionar un Inventario para Obtener sus Atributos.'
       );
       return;
     }
@@ -372,8 +372,8 @@ export class InventoryDataComponent
         if (required) {
           this.alert(
             'warning',
-            'Datos inventario',
-            'Debe llenar los valores requeridos.'
+            'Datos Inventario',
+            'Debe llenar los Valores Requeridos.'
           );
           return;
         }
@@ -386,8 +386,8 @@ export class InventoryDataComponent
         });
         this.alert(
           'success',
-          'Datos inventario',
-          'Se ha realizado la actualización correctamente'
+          'Datos Inventario',
+          'Se ha Realizado la Actualización Correctamente'
         );
       } else {
         let required: boolean = false;
@@ -399,8 +399,8 @@ export class InventoryDataComponent
         if (required) {
           this.alert(
             'warning',
-            'Datos inventario',
-            'Debe llenar los valores requeridos.'
+            'Datos Inventario',
+            'Debe llenar los Valores Requeridos.'
           );
           return;
         }
@@ -415,23 +415,23 @@ export class InventoryDataComponent
           });
           this.alert(
             'success',
-            'Datos inventario',
-            'Se ha guardado correctamente el inventario.'
+            'Datos Inventario',
+            'Se ha Guardado Correctamente el Inventario.'
           );
           this.inventoryDataForm.get('responsable').reset();
         } else {
           this.alert(
             'error',
-            'Ha ocurrido un error',
-            'No se ha podido guardar el inventario.'
+            'Ha Ocurrido un Error',
+            'No se ha Podido Guardar el Inventario.'
           );
         }
       }
     } else {
       this.alert(
         'warning',
-        'Datos inventario',
-        'Debe seleccionar un inventario o genear nuevos atributos'
+        'Datos Inventario',
+        'Debe Seleccionar un Inventario o Genear Nuevos Atributos'
       );
     }
   }
@@ -499,8 +499,8 @@ export class InventoryDataComponent
     if (this.inventoryDataForm.get('fechaInventario').value === null) {
       this.alert(
         'warning',
-        'Datos inventario',
-        'Debe registrar la fecha en la que se toma el inventario'
+        'Datos Inventario',
+        'Debe Registrar la Fecha en la que se Toma el Inventario'
       );
       return;
     }
@@ -508,8 +508,8 @@ export class InventoryDataComponent
     if (this.inventoryDataForm.get('responsable').value === null) {
       this.alert(
         'warning',
-        'Datos inventario',
-        'Es necesario que sea ingresado el nombre del responsable'
+        'Datos Inventario',
+        'Es Necesario que sea Ingresado el Nombre del Responsable'
       );
       return;
     }
@@ -526,8 +526,8 @@ export class InventoryDataComponent
     if (vb_hay_inv_anterior) {
       const response = await this.alertQuestion(
         'question',
-        'Datos inventario',
-        '¿Desea traer los valores del inventario anterior?'
+        'Datos Inventario',
+        '¿Desea Traer los Valores del Inventario Anterior?'
       );
       if (response.isConfirmed) {
         const atributes: any[] = await this.getAtributeBack(

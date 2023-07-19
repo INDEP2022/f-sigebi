@@ -51,8 +51,7 @@ export abstract class ApplyLifRequest extends BasePage {
         this.alert(
           'error',
           '',
-          'No se encontró el bien con el número de referencia ingresado',
-          'error'
+          'No se encontró el bien con el número de referencia ingresado'
         );
         throw error;
       })

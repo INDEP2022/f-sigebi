@@ -1,14 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IUnitCostDet } from 'src/app/core/models/administrative-processes/unit-cost-det.model';
 import { IUnitCost } from 'src/app/core/models/administrative-processes/unit-cost.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { StrategyServiceTypeService } from 'src/app/core/services/ms-strategy/strategy-service-type.service';
 import { UnitCostDetService } from 'src/app/core/services/unit-cost/unit-cost-det.service';
 import { UnitCostService } from 'src/app/core/services/unit-cost/unit-cost.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -41,11 +46,28 @@ export class UnitCostComponent extends BasePage implements OnInit {
   validityAndCost: boolean = false;
 
   idCost: string;
+  validity: string;
+  cveZone: string;
+  rowValidityAndCost: any;
+
+  import: number;
+
+  costUnitarian1: number;
+  porceInflation1: number;
+
+  vCont: number = 0;
+
+  value: number;
+  buttonCost: boolean = false;
 
   constructor(
     private unitCostService: UnitCostService,
     private unitCostDetService: UnitCostDetService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private strategyServiceTypeService: StrategyServiceTypeService,
+    private authService: AuthService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     this.settings = {
@@ -204,6 +226,7 @@ export class UnitCostComponent extends BasePage implements OnInit {
 
   selectValidity(event: any) {
     this.validityAndCost = true;
+    this.buttonCost = false;
     console.log(event.data.costId);
     this.idCost = event.data.costId;
     this.getUnitCostDetAll(event.data.costId);
@@ -235,6 +258,33 @@ export class UnitCostComponent extends BasePage implements OnInit {
         this.totalItems2 = 0;
       },
     });
+  }
+
+  selectDetValidity(event: any) {
+    if (event) {
+      this.buttonCost = true;
+      console.log(event.data);
+      this.rowValidityAndCost = event.data;
+      this.validity = this.rowValidityAndCost.validity;
+      this.cveZone = this.rowValidityAndCost.cveZoneContract;
+      this.costUnitarian1 = this.rowValidityAndCost.costUnitarian;
+      this.porceInflation1 = this.rowValidityAndCost.porceInflation;
+      this.totalAmount();
+      console.log(
+        this.validity,
+        this.cveZone,
+        this.costUnitarian1,
+        this.porceInflation1
+      );
+    } else {
+      this.buttonCost = false;
+    }
+  }
+
+  totalAmount() {
+    this.import =
+      (this.costUnitarian1 ?? 0) +
+      ((this.porceInflation1 ?? 0) / 100) * 1 * (this.costUnitarian1 ?? 0);
   }
 
   openForm(unitCost?: IUnitCost) {
@@ -273,27 +323,93 @@ export class UnitCostComponent extends BasePage implements OnInit {
     this.modalService.show(UnitCostDetFormComponent, config);
   }
 
-  /*openForm2(unitCostDet?: any) {
-    const unitCostDet1 = unitCostDet != null ? unitCostDet.data : null;
-    console.log(unitCostDet1);
-    const idCost = this.idCost;
-    let config: ModalOptions = {
-      initialState: {
-        unitCostDet1,
-        idCost,
-        callBack: (next: boolean) => {
-          if (next) {
-            this.params2
-              .pipe(takeUntil(this.$unSubscribe))
-              .subscribe(() => this.getUnitCostDetAll());
+  calculate() {
+    this.alertQuestion(
+      'warning',
+      '¿Está seguro que desea generar el cálculo?',
+      ''
+    ).then(question => {
+      if (question.isConfirmed) {
+        if (Number(this.validity) == 1) {
+          const fechaActual = new Date();
+          const date = fechaActual.getFullYear();
+          if (
+            date == null ||
+            date == undefined ||
+            this.idCost == null ||
+            this.idCost == undefined
+          ) {
+            this.onLoadToast('warning', 'No se puede generar el cálculo', ``);
           }
-        },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
+          //this.idCost;
+          console.log(date, this.idCost, this.cveZone);
+
+          this.costCalculation(date, this.idCost, this.cveZone);
+        } else {
+          this.onLoadToast('warning', 'No se encuentra vigente', ``);
+        }
+      }
+    });
+  }
+
+  costCalculation(dateYear: number, idCos: string, cveZone: string) {
+    /*let vCont: number = 0;
+    let value: number;
+    if (dateYear && idCos && cveZone) {
+      this.params.getValue()['filter.costId'] = idCos;
+      this.params.getValue()['filter.actDate'] = dateYear;
+      this.params.getValue()['filter.zoneContractKey'] = cveZone;
+    }
+    let params = {
+      ...this.params.getValue(),
     };
-    this.modalService.show(UnitCostDetFormComponent, config);
-  }*/
+    this.strategyServiceTypeService.getAllTmp(params).subscribe({
+      next: response => {
+        if (response.count > 0) {
+          this.onLoadToast(
+            'warning',
+            `El calculo del costo ${idCos}, para el año ${dateYear}`,
+            `de la zona ${cveZone} ya ha sido realizado.`
+          );
+          return;
+
+        } else {
+          console.log('caso contrario');
+        }
+      }, error: err => {
+        console.log(err);
+      }
+    });*/
+
+    this.value = this.import + this.import * (this.porceInflation1 / 100);
+    //: ESTRATEGIA_DET_COSTOS.COSTO_UNITARION:=VALOR;
+    const user1 = this.authService.decodeToken() as any;
+    console.log(user1);
+    const currentDate = new Date();
+    let body = {
+      id: '',
+      costId: idCos,
+      changeDate: currentDate,
+      user: user1.username,
+      actDate: dateYear,
+      zoneContractKey: cveZone,
+      nbOrigin: '',
+    };
+    this.strategyServiceTypeService.createTmp(body).subscribe({
+      next: data => {
+        this.onLoadToast('success', `Costo Actualizado`, `Correctamente`);
+      },
+      error: err => {
+        this.onLoadToast(
+          'warning',
+          `El cálculo del costo ${idCos}, para el año ${dateYear}`,
+          `de la zona ${cveZone} ya ha sido realizado.`
+        );
+      },
+    });
+  }
+
+  insertTmpCost(dateYear: number, idCos: string, cveZone: string) {}
 
   showDeleteAlert(unitCost?: IUnitCost) {
     this.alertQuestion(
@@ -333,7 +449,48 @@ export class UnitCostComponent extends BasePage implements OnInit {
     });
   }
 
-  confirm(): void {
+  report() {
+    let params = {
+      //PN_DEVOLUCION: this.data,
+    };
+    this.siabService
+      .fetchReport('FESTCOTPRE_0001', params)
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
+  }
+
+  /*confirm(): void {
     this.loading = true;
     const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
 
@@ -351,5 +508,5 @@ export class UnitCostComponent extends BasePage implements OnInit {
     //let newWin = window.open(pdfurl, 'test.pdf');
     this.onLoadToast('success', '', 'Reporte generado');
     this.loading = false;
-  }
+  }*/
 }

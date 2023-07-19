@@ -1,11 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ShowDocumentsGoodComponent } from '../expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
 import { RequestSiabFormComponent } from '../request-siab-form/request-siab-form.component';
 import { AddGoodsButtonComponent } from './add-goods-button/add-goods-button.component';
 import { ReserveGoodModalComponent } from './reserve-good-modal/reserve-good-modal.component';
@@ -25,6 +31,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   selectedGoodTotalItems: number = 0;
   goodColumns: any[] = [];
   selectedGoodColumns: any[] = [];
+  params = new BehaviorSubject<ListParams>(new ListParams());
   @Input() nombrePantalla: string = 'sinNombre';
   @Input() idRequest: number = 0;
   goodSettings = {
@@ -40,7 +47,11 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   constructor(
     private modalService: BsModalService,
     private activatedRoute: ActivatedRoute,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private genericService: GenericService,
+    private goodProcessService: GoodProcessService,
+    private requestService: RequestService,
+    private rejectedGoodService: RejectedGoodService
   ) {
     super();
     this.goodSettings.columns = SELECT_GOODS_COLUMNS;
@@ -68,7 +79,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         renderComponent: ViewFileButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
-            component.viewFile(row);
+            component.requesInfo(row.requestId);
+            //component.viewFile(row);
           });
         },
       },
@@ -82,7 +94,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         renderComponent: ViewFileButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe((row: any) => {
-            component.viewFile(row);
+            component.requesInfo(row.requestId);
           });
         },
       },
@@ -90,19 +102,90 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     };
   }
 
+  requesInfo(idRequest: number) {
+    this.requestService.getById(idRequest).subscribe({
+      next: response => {
+        response.recordId;
+        this.openModalDocument(idRequest, response.recordId);
+      },
+      error: error => {},
+    });
+  }
+
+  openModalDocument(idRequest: number, recordId: number) {
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+    };
+
+    config.initialState = {
+      idRequest,
+      recordId,
+      callback: (next: boolean) => {},
+    };
+
+    this.modalService.show(ShowDocumentsGoodComponent, config);
+  }
+
+  getInfoGoods(filters: any) {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoods(filters));
+  }
+
   getGoods(filters: any) {
     const params = new BehaviorSubject<ListParams>(new ListParams());
+    this.rejectedGoodService.getAll(params.getValue()).subscribe({
+      next: response => {
+        console.log('item', response);
+        this.goodColumns = response.data;
+        this.goodTotalItems = response.count;
+        /* const info = response.data.map(item => {
+          return item.good;
+        });
+         */
+      },
+      error: error => {},
+    });
+    /*this.goodProcessService
+      .getGoodPostQuery(this.params.getValue(), filters)
+      .subscribe({
+        next: response => {
+          console.log('response', response);
+          this.goodColumns = response.data;
+          this.goodTotalItems = response.count;
+          const filterData = response.data.map(async (item: any) => {
+          const destinyName: any = await this.destinyInfo(item.destiny);
+          item.destinyName = destinyName;
+          return item;
+        });
+
+        Promise.all(filterData).then(data => {
+          console.log('bienes', data);
+          
+        }); 
+        },
+      }); */
+    /*const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.delegationNumber'] = filters.regionalDelegationId;
     params.getValue()['filter.origin'] = '$not:$null';
 
     this.goodService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('bienes', response);
-        this.goodColumns = response.data;
-        this.goodTotalItems = response.count;
+        const filterData = response.data.map(async item => {
+          const destinyName: any = await this.destinyInfo(item.destiny);
+          item.destinyName = destinyName;
+          return item;
+        });
+
+        Promise.all(filterData).then(data => {
+          console.log('bienes', data);
+          this.goodColumns = data;
+          this.goodTotalItems = response.count;
+        });
       },
       error: error => {},
-    });
+    }); */
     //params.getValue()['filter.delegationNumber'] = this.regio;
     //Llamar servicio para obtener bienes
     /* let columns = this.goodTestData;
@@ -112,17 +195,45 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     //
   }
 
+  destinyInfo(idDestiny: number) {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.name'] = '$eq:Destino';
+      params.getValue()['filter.keyId'] = idDestiny;
+      this.genericService.getAll(params.getValue()).subscribe({
+        next: response => {
+          resolve(response.data[0].description);
+        },
+        error: error => {},
+      });
+    });
+  }
+
   viewFile(file: any) {}
 
   openReserveModal(good: any) {
-    const modalRef = this.modalService.show(ReserveGoodModalComponent, {
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+    };
+
+    config.initialState = {
+      good,
+      callback: (next: boolean) => {
+        if (next) {
+        }
+      },
+    };
+
+    this.modalService.show(ReserveGoodModalComponent, config);
+    /*const modalRef = this.modalService.show(ReserveGoodModalComponent, {
       initialState: { good },
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.onReserve.subscribe((data: boolean) => {
       if (data) this.addGood(data);
-    });
+    }); */
   }
 
   addGood(good: any) {

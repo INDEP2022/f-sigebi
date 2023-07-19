@@ -3,94 +3,98 @@
     <h5 class="title">MOVIMIENTOS CUENTAS GENERALES</h5>
   </div>
 
-  <div body>
+  <div body class="position-relative">
+    <div *ngIf="loading" class="loader loader-container"></div>
     <div [formGroup]="formGood" class="form-material">
       <div class="row">
         <ng-container [formGroup]="formGood">
-          <div class="col-md-3 d-flex form-group gap-4">
-            <form-field [control]="formGood.get('id')" label="Número bien">
+          <div class="col-md-5 d-flex form-group gap-4 align-items-center">
+            <form-field [control]="formGood.get('id')" label="Número Bien">
               <input
                 type="number"
                 class="form-control"
-                placeholder="Numero bien"
                 formControlName="id"
                 min="1"
-                pattern="^[0-9]+" />
+                oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
             </form-field>
             <button
               [disabled]="loading"
-              class="active align-items-center btn btn-primary btn-sm mb-4 w-auto"
+              class="active align-items-center btn btn-primary btn-sm w-auto"
               (click)="getGood()">
-              Buscar
-              <ng-container *ngIf="loading">
-                <i class="fas fa-spinner fa-spin ml-2"></i>
-              </ng-container>
+              Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+            <button
+              (click)="clean()"
+              class="btn btn-danger btn-sm active w-auto">
+              Limpiar <i class="fas fa-eraser"> </i>
             </button>
           </div>
-          <div class="form-group col-md-4">
+          <div class="form-group col-md-7">
             <form-field
               [control]="formGood.get('description')"
               label="Descripción">
               <input
                 type="text"
-                placeholder="Descripción"
+                [readonly]="true"
                 formControlName="description"
                 class="form-control" />
             </form-field>
           </div>
-          <div class="form-group col-md-2">
-            <form-field [control]="formGood.get('status')" label="Status">
+
+          <div class="form-group col-md-3">
+            <form-field [control]="formGood.get('status')" label="Estatus">
               <input
                 type="text"
+                [readonly]="true"
                 formControlName="status"
-                placeholder="Status"
                 class="form-control" />
             </form-field>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-3">
             <form-field
               [control]="formGood.get('fileNumber')"
               label="Número de Expediente">
               <input
                 type="number"
-                placeholder="Numero de expediente"
+                [readonly]="true"
                 class="form-control"
                 formControlName="fileNumber"
                 min="1"
                 pattern="^[0-9]+" />
             </form-field>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-3">
             <form-field
               [control]="formGood.get('identifier')"
               label="Identificador">
               <input
                 type="text"
-                placeholder="Identificador"
+                [readonly]="true"
                 formControlName="identifier"
                 class="form-control" />
             </form-field>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-3">
             <form-field
               [control]="formGood.get('extDomProcess')"
-              label="Proceso ext dom">
+              label="Proceso Ext. Dom.">
               <input
                 type="text"
-                placeholder="Procesos ext dom"
+                [readonly]="true"
                 formControlName="extDomProcess"
                 class="form-control" />
             </form-field>
           </div>
         </ng-container>
-        <div *ngIf="isContConvVisible" [formGroup]="formGood1" class="col-md-2">
+
+        <div *ngIf="isContConvVisible" [formGroup]="formGood1" class="col-md-3">
           <form-field
             [control]="formGood1.get('contConv')"
-            label="Número de conversiónes">
+            label="Número de Conversiones">
             <input
+              [readonly]="true"
               type="number"
               class="form-control"
-              placeholder="Numero de conversiones"
               formControlName="contConv"
               min="1"
               pattern="^[0-9]+" />
@@ -105,26 +109,47 @@
       <div>
         <div class="row mt-4">
           <ng-container [formGroup]="formGood1">
-            <div class="col-md-2">
+            <div class="col-md-3 form-material d-flex align-items-center">
               <form-field
                 [control]="formGood1.get('id')"
                 label="Número Bien Numerario">
                 <input
                   type="number"
-                  placeholder="Numero bien numerario"
                   class="form-control"
                   formControlName="id"
                   min="1"
-                  pattern="^[0-9]+" />
+                  oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);" />
+                <!-- <ng-custom-select
+                  formControlName="id"
+                  microService="good"
+                  class="form-control"
+                  path="good"
+                  paramSearch="filter.id"
+                  [readonly]="!this.formGood1.value.contConv"
+                  (valueChanged)="selectGood1($event)"
+                  [moreParams]="{
+                    'filter.goodReferenceNumber': this.formGood.value.id
+                  }">
+                  <ng-template let-item>
+                    <span>{{ item.id }}</span>
+                  </ng-template>
+                </ng-custom-select> -->
               </form-field>
+              <button
+                (click)="openSelectorGood()"
+                type="button"
+                [disabled]="!this.formGood1.value.contConv"
+                class="btn btn-primary btn-sm active ml-3 w-auto mr-2">
+                <i class="bx bx-list-plus bx-sm float-icon"></i>
+              </button>
             </div>
             <div class="form-group col-md-4">
               <form-field
                 [control]="formGood1.get('status')"
-                label="Status bien">
+                label="Estatus Bien">
                 <input
+                  [readonly]="true"
                   type="text"
-                  placeholder="Status bien"
                   formControlName="status"
                   class="form-control" />
               </form-field>
@@ -134,10 +159,9 @@
             <div class="form-group col-md-2">
               <form-field
                 [control]="formBlkControl.get('dateChange')"
-                label="Fecha de cambio">
+                label="Fecha de Cambio">
                 <input
                   formControlName="dateChange"
-                  placeholder="Fecha de Cambio"
                   class="form-control"
                   bsDatepicker />
               </form-field>
@@ -146,9 +170,10 @@
               <form-field
                 [control]="formBlkControl.get('motive')"
                 label="Motivo">
+                <!-- [readonly]="true" -->
                 <input
                   formControlName="motive"
-                  placeholder="Motivo"
+                  maxLength="500"
                   class="form-control" />
               </form-field>
             </div>
@@ -163,9 +188,8 @@
                 <input
                   type="number"
                   class="form-control"
-                  placeholder="Precio"
                   formControlName="val2"
-                  min="1"
+                  min="0"
                   pattern="^[0-9]+" />
               </form-field>
             </div>
@@ -177,9 +201,8 @@
                 <input
                   type="number"
                   class="form-control"
-                  placeholder="Gasto"
                   formControlName="val13"
-                  min="1"
+                  min="0"
                   pattern="^[0-9]+" />
               </form-field>
             </div>
@@ -190,26 +213,23 @@
               <form-field [control]="formGood1.get('val10')" label="Total IVA">
                 <input
                   type="number"
-                  placeholder="Total IVA"
                   class="form-control"
                   formControlName="val10"
-                  min="1"
+                  min="0"
                   pattern="^[0-9]+" />
               </form-field>
             </div>
           </div>
           <div class="row">
             <div class="col-md-5"></div>
-            <div
-              *ngIf="isVisibleVal15"
-              class="form-group col-md-3 d-flex justify-content-end">
+            <!-- *ngIf="isVisibleVal15" -->
+            <div class="form-group col-md-3 d-flex justify-content-end">
               <form-field [control]="formGood1.get('val15')" label="LIF">
                 <input
                   type="number"
-                  placeholder="LIF"
                   class="form-control"
                   formControlName="val15"
-                  min="1"
+                  min="0"
                   pattern="^[0-9]+" />
               </form-field>
             </div>
@@ -221,10 +241,9 @@
             <form-field [control]="formBlkControl.get('tTotal')" label="Total">
               <input
                 type="number"
-                placeholder="Total"
                 class="form-control"
                 formControlName="tTotal"
-                min="1"
+                min="0"
                 pattern="^[0-9]+" />
             </form-field>
           </div>
@@ -236,18 +255,21 @@
         <div class="d-flex gap-4 justify-content-center m-3">
           <button
             (click)="onClickApplyLif()"
-            class="btn btn-primary active w-auto"
+            class="btn btn-primary active w-auto btn-sm"
             [disabled]="
               !isEnableBtnLif || !formGood.value.id || !formGood1.value.id
             ">
             Aplica Lif
           </button>
           <button
-            class="btn btn-primary active w-auto"
+            class="btn btn-primary active w-auto btn-sm"
             (click)="onClickApplyRvlif()"
             [disabled]="
               !isEnableBtnRvlif || !formGood.value.id || !formGood1.value.id
             ">
+            <!-- [disabled]="
+              !isEnableBtnLif || !formGood.value.id || !formGood1.value.id
+            " -->
             Revertir Lif
           </button>
           <!-- <confirm-button

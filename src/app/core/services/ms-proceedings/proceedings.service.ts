@@ -70,6 +70,12 @@ export class ProceedingsService extends HttpService {
   getBiePosquery(model: IBlkPost) {
     return this.post<IResponse>(`${ProceedingsEndpoints.blkBienPost}`, model);
   }
+  postBlkConversions(model: any) {
+    return this.post<IResponse>(
+      `${ProceedingsEndpoints.blkConversions}`,
+      model
+    );
+  }
 
   getActByFileNumber(
     fileNumber?: number,

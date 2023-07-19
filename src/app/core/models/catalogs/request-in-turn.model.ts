@@ -26,4 +26,5 @@ export interface IRequestInTurn {
   authorityId?: string | number;
   transferenceId?: string | number;
   regionalDelegationId?: string | number;
+  keyStateOfRepublic?: string | number;
 }

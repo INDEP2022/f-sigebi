@@ -30,9 +30,14 @@ import {
   IPackageInfo,
 } from 'src/app/core/models/catalogs/package.model';
 import { IPerUser } from 'src/app/core/models/expedient/expedient.model';
+import { ISecondIfMC } from 'src/app/core/models/ms-good/good';
 import { IPackageGoodEnc } from 'src/app/core/models/ms-package-good/package-good-enc';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
+import { LabelOkeyService } from 'src/app/core/services/catalogs/label-okey.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dynamic-catalogs.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -155,8 +160,15 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   //VARIABLES DE DATA QUE SE RECIBE
   dataArrive: any[];
   //Variables de folio de escaneo
-  scanFolio: string = 'scanFolio';
+  scanFolioString: string = 'scanFolio';
   contador = 0;
+  //Descripciones
+  descGoodClass: string;
+  descLabel: string;
+  descWarehouse: string;
+
+  newDataFilled: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -165,7 +177,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     private serviceUser: UsersService,
     private lotService: LotService,
     private goodService: GoodService,
-    private documentService: DocumentsService,
     private sanitizer: DomSanitizer,
     private goodProcessService: GoodprocessService,
     private massiveGoodService: MassiveGoodService,
@@ -178,15 +189,21 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     private userService: UsersService,
     private packageGoodService: PackageGoodService,
     private delegationService: DelegationService,
-    private unitConversionDataService: UnitConversionPackagesDataService
+    private unitConversionDataService: UnitConversionPackagesDataService,
+    private serviceDocuments: DocumentsService,
+    private authService: AuthService,
+    //Para las descripciones
+    private goodSssubtypeService: GoodSssubtypeService,
+    private tagService: LabelOkeyService,
+    private warehouseService: WarehouseService
   ) {
     super();
 
     //Tabla de PREVISUALIZACIÓN DE DATOS
     this.settings = {
       ...this.settings,
-      rowClassFunction: (row: { data: { available: any } }) =>
-        row.data.available ? 'bg-success text-white' : 'bg-dark text-white',
+      // rowClassFunction: (row: { data: { available: any } }) =>
+      //   row.data.available ? 'bg-success text-white' : 'bg-dark text-white',
       actions: { add: false, delete: false, edit: false },
       columns: COLUMNS,
     };
@@ -201,6 +218,40 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.fillDataByPackage();
     this.getDataUser();
     this.getEmail();
+    this.initByLocalStorage();
+    //Descripciones
+    this.getGoodClassDescriptions();
+    this.getWarehouseDescription();
+    this.getTagDescription();
+    //Busquéda de datos del bien Padre
+    this.searchFatherGood();
+  }
+
+  searchFatherGood() {
+    this.numberGoodFather.valueChanges.subscribe(res => {
+      console.log(res);
+      this.goodService.getByIdv3(res).subscribe(
+        res => {
+          console.log(res);
+          this.form2.get('record').setValue(res.fileNumber);
+          this.form2.get('description').setValue(res.description);
+          this.form2.get('amount').setValue(res.quantity);
+          this.form2.get('unitGood').setValue(res.unit);
+          this.form2.get('statusGood').setValue(res.status);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    });
+  }
+
+  initByLocalStorage() {
+    if (localStorage.getItem('noPackage')) {
+      this.loading = true;
+      this.researchNoPackage(localStorage.getItem('noPackage'));
+      localStorage.removeItem('noPackage');
+    }
     // this.packageType.valueChanges.pipe(takeUntil(this.$unSubscribe)).subscribe({
     //   next: response => {
     //     if (this.cvePackage.value) {
@@ -378,6 +429,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     return this.unitConversionDataService.dataPrevisualization;
   }
 
+  get scanFolio() {
+    return this.form.get('scanFolio');
+  }
+
   set dataPrevisualization(value) {
     this.unitConversionDataService.dataPrevisualization = value;
   }
@@ -407,10 +462,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       goodStatus: [null, [Validators.required]],
       transferent: [null, [Validators.required]],
       warehouse: [null, [Validators.required]],
-      measurementUnit: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      measurementUnit: [null, [Validators.pattern(STRING_PATTERN)]],
       //Pestaña de "ESCANEO"
       scanFolio: [
         null,
@@ -418,18 +470,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       ],
 
       //Pestaña de "PÁRRAFOS"
-      paragraph1: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      paragraph2: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ], //Párrrafo inicial
-      paragraph3: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ], //Párrrafo final
+      paragraph1: [null, [Validators.required]],
+      paragraph2: [null, [Validators.required]], //Párrrafo inicial
+      paragraph3: [null, [Validators.required]], //Párrrafo final
     });
 
     //Formulario "NUEVO BIEN"
@@ -465,7 +508,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         paramsF.addFilter('id', resJson.usuario.delegationNumber);
         this.delegationService.getFiltered(paramsF.getParams()).subscribe(
           res => {
-            console.log(res['data'][0]['description']);
+            console.log(res['data'][0]);
             this.dataUser.desDelegation = res['data'][0]['description'];
           },
           err => {
@@ -477,11 +520,68 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     );
   }
 
+  //Descripciones
+  getTagDescription() {
+    this.targetTag.valueChanges.subscribe(res => {
+      if (this.targetTag.value != null) {
+        this.tagService.getById(this.targetTag.value).subscribe(
+          res => {
+            console.log(res);
+            this.descLabel = res.description;
+          },
+          err => {
+            this.descLabel = null;
+          }
+        );
+      }
+    });
+  }
+
+  getWarehouseDescription() {
+    this.warehouse.valueChanges.subscribe(res => {
+      if (this.warehouse.value != null) {
+        let params = { text: `filter.idWarehouse=${this.warehouse.value}` };
+        this.warehouseService.getAll(params.text).subscribe(
+          res => {
+            console.log(res);
+            this.descWarehouse = res['data'][0].description;
+          },
+          err => {
+            this.descLabel = null;
+          }
+        );
+      }
+    });
+  }
+
+  getGoodClassDescriptions() {
+    this.goodClassification.valueChanges.subscribe(res => {
+      console.log(res);
+      if (this.goodClassification.value != null) {
+        const paramsF = new FilterParams();
+        paramsF.addFilter('numClasifGoods', this.goodClassification.value);
+        this.goodSssubtypeService
+          .getAllSssubtype(paramsF.getParams())
+          .subscribe(
+            res => {
+              console.log(res);
+              this.descGoodClass = res['data'][0].description;
+            },
+            err => {
+              this.descGoodClass = null;
+            }
+          );
+      }
+    });
+  }
+
   //Llenar valores por el no. paquete
   fillDataByPackage() {
     this.noPackage.valueChanges.subscribe((res: IPackageGoodEnc) => {
+      console.log(res.numberClassifyGood);
       console.log(res);
       if (res != null) {
+        this.newDataFilled = false;
         this.contador = 0;
         //Seteo de la primera parte
         this.cvePackage.setValue(res.cvePackage);
@@ -489,6 +589,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.packageType.setValue(res.typePackage);
         this.amountKg.setValue(res.amount);
         this.status.setValue(res.statuspack.toString().toLocaleUpperCase());
+        this.scanFolio.setValue(res.InvoiceUniversal);
         //Seteo de la segunda parte
         this.fecElab.setValue(res.dateElaboration);
         this.userElab.setValue(res.useElaboration);
@@ -502,7 +603,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.userCancelado.setValue(res.useCancelled);
         //Setep de la tercera parte
         this.delegation.setValue(res.numberDelegation);
-        this.goodClassification.setValue(res.numberClassifyGood);
+        this.form.get('goodClassification').setValue(res.numberClassifyGood);
         this.targetTag.setValue(res.numberLabel);
         this.transferent.setValue(res.numbertrainemiaut);
         this.warehouse.setValue(res.numberStore);
@@ -834,15 +935,20 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       );
       return;
     }
-    this.alertQuestion(
-      'info',
-      'Confirmación',
-      '¿Está seguro de ' + messageInit + ' el paquete ' + noPackage
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.updatePackageFirstBlock('V', titleInit);
-      }
-    });
+
+    if (['V', 'A'].includes(status)) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Está seguro de ' + messageInit + ' el paquete ' + noPackage + '?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.updatePackageFirstBlock(status, titleInit);
+        }
+      });
+    } else {
+      this.updatePackageFirstBlock(status, titleInit);
+    }
   }
 
   showConfirmAlert() {
@@ -859,7 +965,53 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   showAutorizateAlert() {
-    this.showButtonAlert('A');
+    if (this.packageType.value != 3) {
+      if (this.form.get('scanFolio').value != null) {
+        this.serviceDocuments
+          .getByFolio(this.form.get('scanFolio').value)
+          .subscribe(
+            res => {
+              const data = JSON.parse(JSON.stringify(res));
+              const scanStatus = data.data[0]['scanStatus'];
+              console.log(scanStatus);
+              if (scanStatus === 'ESCANEADO') {
+                this.showButtonAlert('A');
+              } else {
+                this.alert('warning', 'El folio no ha sido escaneaddo', '');
+              }
+            },
+            err => {
+              this.alert('warning', 'El folio no ha sido escaneaddo', '');
+            }
+          );
+      } else {
+        this.alert('warning', 'Debe registrar un número de folio', '');
+      }
+    } else {
+      this.form.get('scanFolio').setValue(1);
+      const modelUpdate: Partial<IPackage> = {
+        InvoiceUniversal: 1,
+      };
+
+      this.packageGoodService
+        .updatePaqDestinationEnc(
+          this.noPackage.value.numberPackage,
+          modelUpdate
+        )
+        .subscribe(
+          res => {
+            this.showButtonAlert('A');
+          },
+          err => {
+            this.alert(
+              'error',
+              'Se presentó un error inesperado al guardar el folio',
+              ''
+            );
+          }
+        );
+    }
+
     // if (!this.form.valid) {
     //   Swal.fire(`Existe inconsistencia en los bienes ${this.form}`);
     //   return;
@@ -933,8 +1085,44 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           'Cierre de paquete ' + noPackage,
           'Se debe tener el folio de escaneo'
         );
+        return;
       }
-      this.showButtonAlert('C');
+      this.alertQuestion(
+        'question',
+        `Se generará un nuevo número de bien, agrupando los bienes del paquete: ${noPackage}`,
+        'Una vez generado ya no se podrán hacer cambios, ¿Desea continuar?',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          const lv_ACCION = 'PARINV';
+
+          let goods = this.dataPrevisualization.map(
+            (good: { numberGood: any }) => {
+              return good.numberGood;
+            }
+          );
+          let closeData = {
+            packageNumber: this.noPackage.value.numberPackage,
+            packageUnit: this.measurementUnit.value,
+            packageStatus: this.goodStatus.value,
+            packageType: this.packageType.value,
+            user: localStorage.getItem('username').toUpperCase(), // 'sigebiadmon',
+            screenKey: 'FMTOPAQUETE',
+            amount: this.amountKg.value,
+            goodNumberArray: goods,
+            goodClasifNumber: this.goodClassification.value,
+          };
+
+          this.goodProcessService.packageClose(closeData).subscribe(
+            res => {
+              this.researchNoPackage(this.noPackage.value.numberPackage);
+            },
+            err => {
+              console.log(err);
+            }
+          );
+        }
+      });
     } else {
       this.alert(
         'error',
@@ -1030,7 +1218,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     // }
   }
 
-  updatePackageFirstBlock(status: string, pAsuntoInit: string) {
+  async updatePackageFirstBlock(status: string, pAsuntoInit: string) {
     // if (['C', 'L'].includes(status) && this.amountKg.value <= 0) {
     //   this.alert(
     //     'error',
@@ -1044,20 +1232,40 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     console.log(this.form.value);
     const noPack: IPackageGoodEnc = this.noPackage.value;
     if (!check.checked) {
-      result = this.verifyGoods();
+      result = await this.verifyGoods();
     }
     if (!result) return;
     let currentDate = new Date();
     let formattedDate = currentDate.toISOString().substring(0, 10);
-    let packageUpdate: Partial<IPackage> = {
+    let packageUpdateV: Partial<IPackage> = {
       numberPackage: +noPack.numberPackage,
       statuspack: status,
       dateValid: formattedDate,
       useValid: localStorage.getItem('username').toUpperCase(),
     };
 
+    let packageUpdateA: Partial<IPackage> = {
+      numberPackage: +noPack.numberPackage,
+      statuspack: status,
+      dateauthorize: formattedDate,
+      useauthorize: localStorage.getItem('username').toUpperCase(),
+    };
+
+    let packageUpdateC: Partial<IPackage> = {
+      amount: this.amountKg.value,
+    };
+
     this.packageGoodService
-      .updatePaqDestinationEnc(packageUpdate.numberPackage, packageUpdate)
+      .updatePaqDestinationEnc(
+        this.noPackage.value.numberPackage,
+        status == 'V'
+          ? packageUpdateV
+          : status == 'A'
+          ? packageUpdateA
+          : status == 'C'
+          ? packageUpdateC
+          : null
+      )
       .subscribe({
         next: response => {
           let pMessageStatus = '';
@@ -1085,7 +1293,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
               break;
           }
           this.pupIniCorreo(
-            packageUpdate.numberPackage,
+            this.noPackage.value.numberPackage,
             pAsuntoInit,
             pMessageStatus
           );
@@ -1096,7 +1304,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           // this.form.patchValue({
           //   status: status,
           // });
-
+          this.researchNoPackage(this.noPackage.value.numberPackage);
           this.validateButtons(status);
         },
         error: err => {
@@ -1154,9 +1362,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     }
   }
 
-  verifyGoods() {
+  async verifyGoods() {
     // console.log(this.data['data']);
-    console.log('Sí');
     if (!['L', 'X'].includes(this.status.value)) {
       let _status: string;
 
@@ -1178,7 +1385,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.alert('warning', 'Debe ingresar el Estatus', '');
       } else if (this.transferent.value == null) {
         this.alert('warning', 'Debe ingresar la Transferente', '');
-      } else if (this.packageType.value == 3 && this.warehouse.value == null) {
+      } else if (
+        this.packageType.value != '3' &&
+        this.warehouse.value == null
+      ) {
         this.alert('warning', 'Debe ingresar el Almacén', '');
       } else {
         //Validacion de bienes
@@ -1206,9 +1416,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
                 descError: message,
               });
             }
+
             availablePrincipal = availablePrincipal && available;
             // this.unitConversionDataService.descError = message;
           });
+
           if (availablePrincipal) {
             this.form2.enable({ onlySelf: true, emitEvent: false });
             this.alert('success', 'Verificar Bienes', 'Bienes Sin Errores');
@@ -1234,6 +1446,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     const noPack: IPackageGoodEnc = this.noPackage.value;
     let LV_VALIDA: string;
     let lv_DESC_ERROR = '';
+    console.log(noPack);
     if (noPack.numberDelegation != good.bienes.delegationNumber) {
       console.log({
         valpack: noPack.numberDelegation,
@@ -1516,8 +1729,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   downloadReport() {
+    this.loading = true;
     let params: any = {};
-    params['NO_PAQUETE'] = this.form.get('package').value;
+    params['NO_PAQUETE'] = this.form.get('noPackage').value.numberPackage;
 
     this.loadingText = 'Generando reporte ...';
     this.siabService.fetchReport('RGENACTACONVUNIDAD', params).subscribe({
@@ -1571,26 +1785,32 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   //Funciones Agregadar por Grigork Farfan
   //Nuevo
   newPackage() {
+    console.log(this.form.get('packageType').value);
+
     if (!this.generalPermissions.Proyecto) {
       this.alert(
         'warning',
         'No cuenta con privilegios',
         'No cuenta con privilegios para guardar un nuevo paquete'
       );
-    } else if (this.packageType.value == null) {
+      return;
+    } else if (
+      this.delegation.value == null ||
+      this.goodClassification.value == null ||
+      this.targetTag.value == null ||
+      this.goodStatus.value == null ||
+      this.transferent.value == null
+    ) {
+      this.delegation.markAsTouched();
+      this.goodClassification.markAsTouched();
+      this.targetTag.markAsTouched();
+      this.goodStatus.markAsTouched();
+      this.transferent.markAsTouched();
+    } else if (this.form.get('packageType').value == null) {
       this.alert('warning', 'Debe especificar el tipo de paquete', '');
-    } else if (this.delegation.value == null) {
-      this.alert('warning', 'Debe ingresar la coordinación que administra', '');
-    } else if (this.goodClassification.value == null) {
-      this.alert('warning', 'Debe ingresar el Clasificador', '');
-    } else if (this.targetTag.value == null) {
-      this.alert('warning', 'Debe ingresar la Etiqueta de destino', '');
-    } else if (this.goodStatus.value == null) {
-      this.alert('warning', 'Debe ingresar el Estatus', '');
-    } else if (this.transferent.value == null) {
-      this.alert('warning', 'Debe ingresar la Transferente', '');
-    } else if (this.packageType.value != 3) {
+    } else if (this.form.get('packageType').value != 3) {
       if (this.warehouse.value == null) {
+        this.warehouse.markAsTouched();
         this.alert('warning', 'Debe ingresar el Almacén', '');
       } else {
         this.newCvePackage();
@@ -1620,7 +1840,6 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   newCvePackage() {
-    debugger;
     //Variables
     let v_clave: string; //V_DESC_TRANS es el mismo valor
     let v_id_tipo_acta: string;
@@ -1644,6 +1863,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.rNomenclaService
           .getPhaseEdo(`date=${format(new Date(), 'yyyy-MM-dd')}`)
           .subscribe(res => {
+            console.log(res);
             let edo = JSON.parse(JSON.stringify(res));
             console.log(edo);
             const paramsF2 = new FilterParams();
@@ -1659,14 +1879,17 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
                 const resJson = JSON.parse(JSON.stringify(res.data[0]));
                 const paramsF3 = new FilterParams();
                 paramsF3.addFilter('stageedo', edo.stagecreated);
-                paramsF3.addFilter3(
+                paramsF3.addFilter(
                   'numberDelegation2',
                   this.dataUser.delegation
                 );
+                console.log(paramsF3.getParams());
                 this.rNomenclaService
                   .getRNomencla(paramsF3.getParams())
                   .subscribe(
                     res => {
+                      console.log(res);
+                      console.log(res['data'][0]);
                       v_ejecuta = JSON.parse(
                         JSON.stringify(res['data'][0])
                       ).delegation;
@@ -1713,6 +1936,30 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     );
   }
 
+  researchNoPackage(noPack: string) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('numberPackage', noPack);
+    this.unitConversionDataService.selectedPackage = noPack;
+    this.packageGoodService.getPaqDestinationEnc(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        if (res && res.data && res.data.length > 0) {
+          this.noPackage.setValue(res.data[0]);
+          this.loading = false;
+          this.validateButtons(this.noPackage.value.statusPaq);
+        } else {
+          // this.dataPackageEnc = null;
+        }
+      },
+      err => {
+        console.log(err);
+        this.dataPackage = new DefaultSelect([]);
+        this.alert('error', 'ERROR', 'Paquete no encontrado');
+        this.loading = false;
+      }
+    );
+  }
+
   generate() {
     const user =
       localStorage.getItem('username') == 'sigebiadmon'
@@ -1740,7 +1987,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       dateApplied: null,
       cvePackage: this.cvePackage.value,
       dateCancelled: null,
-      InvoiceUniversal: 0,
+      InvoiceUniversal: null,
       paragraph1: null,
       paragraph2: null,
       paragraph3: null,
@@ -1763,28 +2010,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       res => {
         console.log(res);
         console.log(res.numberPackage);
-
-        const paramsF = new FilterParams();
-        paramsF.addFilter('numberPackage', res.numberPackage);
-        this.unitConversionDataService.selectedPackage = res.numberPackage;
-        this.packageGoodService
-          .getPaqDestinationEnc(paramsF.getParams())
-          .subscribe(
-            res => {
-              console.log(res);
-              if (res && res.data && res.data.length > 0) {
-                this.noPackage.setValue(res.data[0]);
-                this.alert('success', 'Se creo nuevo paquete', '');
-              } else {
-                // this.dataPackageEnc = null;
-              }
-            },
-            err => {
-              console.log(err);
-              this.dataPackage = new DefaultSelect([]);
-              this.alert('error', 'ERROR', 'Paquete no encontrado');
-            }
-          );
+        this.researchNoPackage(res.numberPackage);
+        this.alert('success', 'Se creó un Nuevo Paquete', '');
       },
       err => {
         console.log(err);
@@ -1794,6 +2021,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   clear() {
     this.form.reset({}, { onlySelf: true, emitEvent: false });
+
     this.form.enable({ onlySelf: true, emitEvent: false });
     this.form2.reset({}, { onlySelf: true, emitEvent: false });
     this.form2.enable({ onlySelf: true, emitEvent: false });
@@ -1857,6 +2085,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
   //Boton de Cancelar
   cancelPackFunction() {
+    console.log(this.noPackage.value.numberPackage);
     if (
       this.noPackage.value.numberPackage != null &&
       !['L', 'C', 'X'].includes(this.status.value)
@@ -1867,9 +2096,21 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         ''
       ).then(q => {
         if (q.isConfirmed) {
-          if (this.dataArrive.length > 0) {
-            this.alert('success', 'Funciona', '');
-          }
+          const model = {
+            noPackage: this.noPackage.value.numberPackage,
+          };
+
+          this.goodProcessService
+            .firstIfCancelMassiveConversion(model)
+            .subscribe(
+              res => {
+                this.researchNoPackage(this.noPackage.value.numberPackage);
+                this.alert('success', 'El Paquete fue cancelado', '');
+              },
+              err => {
+                console.log(err);
+              }
+            );
         }
       });
     } else if (this.status.value == 'C') {
@@ -1879,9 +2120,152 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         ''
       ).then(q => {
         if (q.isConfirmed) {
-          this.alert('success', 'Funciona con paquete cerrado', '');
+          let token = this.authService.decodeToken();
+          const noPack = this.noPackage.value;
+          console.log(this.noPackage.value);
+
+          const model: ISecondIfMC = {
+            noPackage: this.noPackage.value.numberPackage,
+            noGoodFather: this.noPackage.value.numberGoodFather,
+            encStatus: this.noPackage.value.status,
+            vcScreen: 'FMTOPAQUETE',
+            user:
+              localStorage.getItem('username') == 'sigebiadmon'
+                ? localStorage.getItem('username')
+                : localStorage.getItem('username').toLocaleUpperCase(),
+            toolbarUser:
+              localStorage.getItem('username') == 'sigebiadmon'
+                ? localStorage.getItem('username')
+                : localStorage.getItem('username').toLocaleUpperCase(),
+          };
+          console.log(model);
+          this.goodProcessService
+            .secondIfCancelMassiveConversion(model)
+            .subscribe(
+              res => {
+                this.researchNoPackage(this.noPackage.value.numberPackage);
+                this.alert('success', 'El Paquete fue cancelado', '');
+              },
+              err => {
+                console.log(err);
+              }
+            );
         }
       });
     }
+  }
+
+  //Insertar párrafos
+  insertParagraph() {
+    if (
+      this.noPackage.value.numberPackage != null &&
+      !['L', 'X'].includes(this.noPackage.value.statuspack.toString())
+    ) {
+      if (this.form.get('paragraph1').value != null) {
+        this.alertQuestion(
+          'question',
+          '¿El proceso reinicializa los párrafos, se continua?',
+          '',
+          'Continuar'
+        ).then(q => {
+          if (q.isConfirmed) {
+            this.insertParagraphFn();
+          }
+        });
+      } else {
+        this.insertParagraphFn();
+      }
+    } else {
+      this.alert(
+        'warning',
+        'No hay registrado un número de paquete o el estatus no es el correcto',
+        ''
+      );
+    }
+  }
+
+  insertParagraphFn() {
+    let V_DESC_TIP: string;
+
+    switch (this.noPackage.value.typePackage.toString()) {
+      case '1':
+        V_DESC_TIP = 'Destrucción';
+        break;
+      case '1':
+        V_DESC_TIP = 'Donación';
+        break;
+      case '1':
+        V_DESC_TIP = 'Chatarra';
+        break;
+      default:
+        V_DESC_TIP = 'Indeterminado';
+        break;
+    }
+
+    const p1 = `- - - En la Ciudad de ______________, siendo las _____ horas, del día ____de ________ de 200__, se encuentran presentes en la Bodega ubicada en la calle de ________________________ de esta Ciudad, el C. _____________________ con cargo de ___________________, de la empresa ______________ y el C. ________________ adscrito a _______________ del Servicio de Administración y Enajenación de Bienes (SAE), Organismo Descentralizado de la Administración Pública Federal; ambos con el fin de llevar a cabo la validación y conversión de los bienes transferidos al SAE.- - - - - - - - - - - - - - - - - - - - - - - - - - - - \n
+    - - -Intervienen como testigos de asistencia los CC. _______________________, y ___________________________, - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n
+    -------------------------------------------------- A N T E C E D E N T E S ------------------------------------------\n
+
+    - - - l. Los bienes fueron transferidos al SAE por [_____________________________], con fundamento en los artículos 3 de la LFAEBSP, 12 y 13 del Reglamento de la ley en comento. - - \n
+    - - - II.- Los bienes sujetos ha validación y conversión de unidad, se encuentran en administración del SAE y bajo la custodia de _____________________ los cuales se incorporan a este procedimiento a efecto de facilitar la ejecución de su destino.- - - - - - - - - - - - '\n
+    ----------------------------------------------------- DECLARACIONES ---------------------------------------------'\n
+    - - - PRIMERA.- El C. _________________ manifiesta que los bienes que fueron transferidos al SAE se encuentran bajo su custodia y con el fin de dar cumplimento al destino final sugerido por la Entidad Transferente se sujetaran a un procedimiento de validación y conversión en virtud de que fueron puestos a disposición con un tipo de unidad diferente al de kilogramos.- - - \n
+    - - - SEGUNDA.- Que para realizar el proceso de validación y conversión se verifican las cantidades físicas, contra las cantidades señaladas en los documentos y registros oficiales para posteriormente determinar el valor de conversión a kilogramos. - - - - - - - - - - - - - - - - - - - - - - -'\n
+    - - - TERCERA.- La conversión integra un paquete de bienes, que puede estar conformado por uno o varios registros y que son consistentes en las siguientes características: a) Autoridad ${this.noPackage.value.numbertrainemiaut}, b) Clasificador del bien ${this.descGoodClass}, c) Estatus del bien ${this.noPackage.value.status}, d) Etiqueta de destino ${this.descLabel}, e) La custodia se encuentra a cargo del almacén ${this.descWarehouse}, y f) La administración de los bienes esta a cargo de la Coordinación (s) Regional (es)_________________________________.- - - - - - - - - - - - - `;
+
+    const p2 = `- - - CUARTA.- Una vez validada la existencia física de los bienes descritos en la declaratoria anterior, se determinó que su valor de conversión a kilogramos corresponde a: `;
+    const p3 = `- - - QUINTA.- El valor de conversión a kilogramos determinado en la Cláusula Cuarta es una referencia para ejecutar el destino de ${V_DESC_TIP} de los bienes  que conforman en paquete, por lo que cada registro conserva la referencia de cantidad y unidad recibidas del transferente - - - - - - - - - - -  -- - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - -'\n
+    '- - - - - - - - - - - - - - - - - - - - - - - - - - -  CIERRE DEL ACTA -------------------------------------------------'\n
+    'Se da por concluida la presente acta, siendo las ____ horas del día ____ de __________ de 200__, firmando  al margen y al calce por las personas que en ella intervienen, para todos los efectos a que haya lugar. - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'\n\n\n\n
+    \t\t\t'CUSTODIA, VALIDA Y EJECUTA CONVERSIÓN'\t\t\t'POR EL S.A.E.'\n\n\n\n\n\n
+    \t\t\t'C. _____________________'\t\t\t\t\t'C. _____________________'\n\n\n
+    'Ultima página del Acta Administrativa de Validación y Conversión de Bienes con Clave ${this.noPackage.value.cvePackage}' de fecha ___ de  _________ de 2008, constante de ____ fojas. - - - - - - - - - - - - `;
+
+    //Insertar en el parrafo
+    this.paragraph1.setValue(p1);
+    this.paragraph2.setValue(p2);
+    this.paragraph3.setValue(p3);
+
+    //Actualizar paq_dest_enc
+    const modelUpdate: Partial<IPackage> = {
+      paragraph1: this.paragraph1.value,
+      paragraph2: this.paragraph2.value,
+      paragraph3: this.paragraph3.value,
+    };
+
+    this.packageGoodService
+      .updatePaqDestinationEnc(this.noPackage.value.numberPackage, modelUpdate)
+      .subscribe(
+        res => {
+          console.log(res);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+  }
+
+  addNewPack() {
+    this.clear();
+    this.newDataFilled = true;
+  }
+
+  updatePackage() {
+    const modelUpdate: Partial<IPackage> = {
+      paragraph1: this.paragraph1.value,
+      paragraph2: this.paragraph2.value,
+      paragraph3: this.paragraph3.value,
+    };
+
+    this.packageGoodService
+      .updatePaqDestinationEnc(this.noPackage.value.numberPackage, modelUpdate)
+      .subscribe(
+        res => {
+          console.log(res);
+        },
+        err => {
+          console.log(err);
+        }
+      );
   }
 }

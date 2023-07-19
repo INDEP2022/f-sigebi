@@ -1,17 +1,20 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">
-      Reporte historico de las situaciones procesales de los bienes
+      Reporte histórico de las situaciones procesales de los bienes
     </h5>
   </div>
 
   <div body>
-    <form
-      [formGroup]="proceduralHistoryForm"
-      (ngSubmit)="onSubmit()"
-      class="form-material">
+    <form [formGroup]="proceduralHistoryForm" class="form-material">
+      <app-delegation-shared
+        [form]="proceduralHistoryForm"
+        [subdelegationField]="'subdelegation'"
+        [delegationField]="'delegation'"
+        [showDelegation]="true"
+        [showSubdelegation]="true"></app-delegation-shared>
       <div class="row margin-input">
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <form-field
             [control]="proceduralHistoryForm.get('delegation')"
             label="Delegación">
@@ -31,6 +34,8 @@
               formControlName="subdelegation" />
           </form-field>
         </div>
+      -->
+        <div class="col-md-4"></div>
       </div>
       <div class="row margin-input">
         <div class="col-md-4">
@@ -64,7 +69,7 @@
             [control]="proceduralHistoryForm.get('ofTheGood')"
             label="Del Bien">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="ofTheGood" />
           </form-field>
@@ -73,13 +78,13 @@
           <form-field
             [control]="proceduralHistoryForm.get('toGood')"
             label="Al Bien">
-            <input type="text" class="form-control" formControlName="toGood" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="toGood" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <!-- <form-field [control]="proceduralHistoryForm.get('users')" label="Usuario">
-            <input type="text" class="form-control" formControlName="users" />
-          </form-field> -->
           <form-field class="mb-3 mt-3" [control]="filterForm.get('user')">
             <ngx-select
               [form]="filterForm"
@@ -88,31 +93,28 @@
               bindLabel="userAndName"
               control="user"
               label="Usuario"
+              value="id"
               [searchOnInit]="true"
               termMaxLength="30">
             </ngx-select>
           </form-field>
-          <!-- <form-field
-            [control]="proceduralHistoryForm.get('users')"
-            label="Usuario">
-            <ngx-select
-              [form]="filterForm"
-              [data]="users$"
-              (fetchItems)="getUsers($event)"
-              bindLabel="userAndName"
-              label=""
-              control="user"
-              [searchOnInit]="true"
-              termMaxLength="30">
-            </ngx-select>
-          </form-field> -->
         </div>
       </div>
-      <div class="row mt-5">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-          <div class="justify-content-center">
-            <button type="submit" class="btn btn-primary btn-sm active">
-              Reporte
+      <div footer>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              class="btn btn-primary active btn-sm"
+              (click)="onSubmit()"
+              [disabled]="!proceduralHistoryForm.valid || !filterForm.valid">
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div>
+            <button
+              class="btn btn-danger btn-sm active m-3"
+              (click)="cleanForm()">
+              Limpiar <i class="fas fa-eraser"> </i>
             </button>
           </div>
         </div>

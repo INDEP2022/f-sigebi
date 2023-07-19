@@ -4,207 +4,259 @@
   </div>
 
   <div body>
-    <div class="ch-content">
-      <h5 class="title">DATOS GENERALES</h5>
-    </div>
     <form [formGroup]="form" class="form-material">
+      <div class="row mt-12">
+        <div class="col-md-12" style="display: flex; justify-content: flex-end">
+          <button
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="clearform()">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+        </div>
+      </div>
       <div class="row mt-4">
-        <div class="col-md-4">
-          <form-field [control]="form.get('cveContract')" label="Cve Contrato">
+        <div class="col-md-3">
+          <form-field [control]="form.get('noRequest')" label="No. Solicitud">
             <input
               type="text"
               class="form-control"
-              formControlName="cveContract" />
+              change="activar()"
+              formControlName="noRequest"
+              id="norequest" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-1">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="getDataNoRequest()">
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="col-md-3">
           <form-field
-            [control]="form.get('movementType')"
-            label="Tipo de movimiento">
+            [control]="form.get('requestDate')"
+            label="Fecha de Solicitud">
             <input
               type="text"
-              formControlName="movementType"
-              class="form-control" />
+              formControlName="requestDate"
+              class="form-control"
+              [readonly]="true"
+              id="requestdate" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('reportNumber')" label="No Reporte">
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('dueDate')"
+            label="Fecha de Vencimiento">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="reportNumber"
-              min="1"
-              pattern="^[0-9]+" />
+              formControlName="dueDate"
+              [readonly]="true"
+              id="duedate" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('type')" label="Tipo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="type"
+              readonly
+              id="type" />
           </form-field>
         </div>
       </div>
 
-      <div class="row mt-4">
-        <div class="col-md-4">
-          <form-field [control]="form.get('startDate')" label="Fecha de page">
+      <div class="row mt-3">
+        <div class="col-md-2">
+          <form-field [control]="form.get('applicant')" label="Solicitante">
             <input
               type="text"
-              formControlName="startDate"
+              formControlName="applicant"
               class="form-control"
-              bsDatepicker />
+              readonly
+              id="applicant" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="form.get('finishedDate')"
-            label="Fecha de Termino">
+          <form-field [control]="form.get('originName')">
             <input
               type="text"
-              formControlName="finishedDate"
+              formControlName="originName"
               class="form-control"
-              bsDatepicker />
+              readonly
+              id="originname" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('requestedTo')" label="Solicitado a">
+            <input
+              type="text"
+              formControlName="requestedTo"
+              class="form-control"
+              readonly
+              id="requestto" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="form.get('applicationDate')"
-            label="Fecha de Aplicación">
+          <form-field [control]="form.get('destinationName')">
             <input
               type="text"
-              formControlName="applicationDate"
+              formControlName="destinationName"
               class="form-control"
-              bsDatepicker />
+              readonly
+              id="destinationame" />
           </form-field>
         </div>
       </div>
-
-      <div class="row mt-4">
-        <div class="col-md-6">
-          <form-field
-            [control]="form.get('requestArea')"
-            label="Area solicitada">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="requestArea" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field
-            [control]="form.get('entregaPerson')"
-            label="Persona Entrega">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="entregaPerson" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row mt-4">
-        <div class="col-md-6">
-          <form-field [control]="form.get('entregaArea')" label="Area Entrega">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="entregaArea" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field
-            [control]="form.get('receptionDate')"
-            label="Fecha de recepción">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="receptionDate"
-              bsDatepicker />
-          </form-field>
-        </div>
-      </div>
-      <div class="row mt-4">
-        <div class="col-md-6">
-          <form-field [control]="form.get('requestPerson')" label="Solicitante">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="requestPerson" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row mt-4">
-        <div class="col-md-4">
-          <form-field
-            [control]="form.get('requestSign')"
-            label="Firma solicitante">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="requestSign" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('userSign')" label="Firma de Usuario">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="userSign" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="form.get('entregaMotivo')"
-            label="Motivo de entrega">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="entregaMotivo" />
-          </form-field>
-        </div>
-      </div>
-
       <div class="row mt-4">
         <div class="col-md-6">
           <form-field
             [control]="form.get('observations')"
-            label="Motivo de entrega">
+            label="Observaciones">
             <textarea
               type="text"
               rows="2"
               class="form-control"
-              formControlName="observations"></textarea>
+              formControlName="observations"
+              id="observation"
+              readonly></textarea>
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field
-            [control]="form.get('prorrateo')"
-            label="Identifique el prorrateo">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="prorrateo" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row mt-4">
-        <div class="col-md-6">
-          <form-field [control]="form.get('zone')" label="Zona">
-            <input type="text" class="form-control" formControlName="zone" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <button type="submit" class="btn btn-primary btn-sm active mx-4">
-            RECUPERA DATOS
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm active mx-4"
+            (click)="loadModal()">
+            Bienes <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
       </div>
+      <hr />
+      <div class="ch-content">
+        <h6 class="title">Póliza</h6>
+        <button
+          type="button"
+          tooltip="Nuevo"
+          containerClass="tooltip-style"
+          class="btn btn-info btn-sm active ml-2 mr-2"
+          (click)="loadModalPolicy()">
+          Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-3">
+          <form-field [control]="form.get('cvePoliza')" label="Clave Póliza">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cvePoliza" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="getPolicy()">
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('typePolicy')" label="Tipo de Póliza">
+            <input
+              type="text"
+              formControlName="typePolicy"
+              class="form-control"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description"
+              [readonly]="true" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('InsuranceCarrier')"
+            label="Aseguradora">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="InsuranceCarrier"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('start')" label="Inicio">
+            <input
+              type="text"
+              formControlName="start"
+              class="form-control"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('term')" label="Término">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="term"
+              [readonly]="true" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('processed')" label="Tramitado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="processed"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('dateOfAdmission')"
+            label="Fecha de Ingreso">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateOfAdmission"
+              [readonly]="true" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('PremiumAmount')"
+            label="Importe Prima">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="PremiumAmount"
+              [readonly]="true" />
+          </form-field>
+        </div>
+      </div>
     </form>
-
     <div class="row mt-4" style="padding-top: 40px">
       <div class="md-tabs">
         <tabset>
-          <tab heading="Conceptos" id="tab1">
-            <app-prorrateo-concepts></app-prorrateo-concepts>
-          </tab>
           <tab heading="Bienes en Vigilancia" id="tab2">
-            <app-prorrateo-goods></app-prorrateo-goods>
+            <div
+              class="table-responsive"
+              style="overflow-x: auto"
+              *ngIf="elemento != ''">
+              <app-prorrateo-goods [elemento]="elemento"></app-prorrateo-goods>
+            </div>
           </tab>
         </tabset>
       </div>

@@ -2,12 +2,12 @@ import { InputCellComponent } from 'src/app/@standalone/smart-table/input-cell/i
 
 export const REGIONAL_ACCOUNT_COLUMNS = {
   file: {
-    title: 'No Expediente',
+    title: 'No. Expediente',
     type: 'string',
     sort: false,
   },
   goodNumber: {
-    title: 'No Bien',
+    title: 'No. Bien',
     type: 'string',
     sort: false,
   },
@@ -17,7 +17,7 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
     sort: false,
   },
   status: {
-    title: 'Status',
+    title: 'Estatus',
     type: 'string',
     sort: false,
   },
