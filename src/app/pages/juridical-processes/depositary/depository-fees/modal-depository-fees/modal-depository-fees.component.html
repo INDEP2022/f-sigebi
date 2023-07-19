@@ -6,11 +6,13 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="form.get('payIdGens')" label="Nombramiento">
+          <form-field
+            [control]="form.get('no_appointment')"
+            label="Nombramiento">
             <input
               type="text"
               class="form-control"
-              formControlName="payIdGens" />
+              formControlName="no_appointment" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -90,13 +92,11 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field
-            [control]="form.get('no_appointment')"
-            label="Id Pagogens">
+          <form-field [control]="form.get('payIdGens')" label="Id Pagogens">
             <input
               type="number"
               class="form-control"
-              formControlName="no_appointment"
+              formControlName="payIdGens"
               [max-length]="10" />
           </form-field>
         </div>
