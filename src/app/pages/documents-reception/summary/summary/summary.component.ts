@@ -127,6 +127,7 @@ export class SummaryComponent extends BasePage implements OnInit {
     this.end = this.datePipe.transform(end, 'dd/MM/yyyy');
 
     console.log(this.start);
+    console.log(this.end);
     if (this.end < this.start) {
       this.onLoadToast(
         'warning',
@@ -148,7 +149,7 @@ export class SummaryComponent extends BasePage implements OnInit {
     };
 
     this.siabService
-      .fetchReport('FGEROFPRESUMENDIAA', params)
+      .fetchReport('RGEROFPRESUMENDIAA', params)
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
