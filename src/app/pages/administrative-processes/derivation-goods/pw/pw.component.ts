@@ -32,7 +32,8 @@ export class PwComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private serviceConversion: ConvertiongoodService,
     private modalService: BsModalRef,
-    private router: Router
+    private router: Router,
+    private modalRef: BsModalRef
   ) {
     super();
   }
@@ -96,5 +97,7 @@ export class PwComponent extends BasePage implements OnInit {
     }
   }
 
-  close() {}
+  close() {
+    this.modalRef.hide();
+  }
 }

@@ -207,14 +207,13 @@ export class EmailComponentC extends BasePage implements OnInit {
             // };
 
             const body: any = {
-              id: REPORTE,
               addressee: 'aetiru@gmail.com',
               sender: user.toUpperCase(),
               cc: '',
               message: `${resp.message}`,
               affair: asunto,
               sendDate: date,
-              devReportNumber: null,
+              devReportNumber: REPORTE,
             };
 
             this.emailService.create(body).subscribe({
