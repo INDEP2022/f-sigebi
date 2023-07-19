@@ -55,17 +55,13 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
 
     console.log('availableAmount', availableAmount);
     console.log('good', this.good);
-    const object = {
-      id: this.good.goodId,
-      goodId: this.good.goodId,
-      amount: this.good.amount,
-    };
+    const object = {};
     /*this.onReserve.emit({
       ...this.good,
       ...this.reserveForm.value,
       reservedAmount: this.reserveForm.controls['reserve'].value,
       availableAmount,
     }); */
-    this.modalRef.hide();
+    //this.modalRef.hide();
   }
 }
