@@ -103,7 +103,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.wheelNumber = params['wheelNumber'] ?? null;
         this.processNumber = params['processNumber'] ?? null;
         //fin
-        console.log(params);
+        console.log(this.expedientNumber);
         if (this.origin == 'FACTJURDICTAMOFICIO') {
           for (const key in this.paramsScreen) {
             if (Object.prototype.hasOwnProperty.call(params, key)) {
@@ -559,6 +559,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           },
         }
       );
+    }
+    if (this.origin == 'FCONVBIENHIJOS') {
+      this.router.navigate([`pages/administrative-processes/derivation-goods`]);
     }
   }
 }

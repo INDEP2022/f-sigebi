@@ -81,6 +81,8 @@ export class NumeraryMassiveConciliationComponent
 
   loading2: boolean = false;
 
+  minDate: Date;
+
   public override settings: any = {
     rowClassFunction: (row: { data: { VISUAL_ATTRIBUTE: any } }) =>
       row.data.VISUAL_ATTRIBUTE == 'VA_VERDE'
@@ -175,6 +177,17 @@ export class NumeraryMassiveConciliationComponent
     this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       console.log(params);
       this.limit2 = new FormControl(params.limit);
+
+      if (this.dataGoods2['data'].length > 0) {
+        this.searchGoodBankAccount();
+      }
+    });
+
+    this.form.get('dateOf').valueChanges.subscribe(res => {
+      if (res != null) {
+        this.form.get('dateAt').reset();
+        this.minDate = new Date(this.form.get('dateOf').value);
+      }
     });
   }
 
@@ -266,6 +279,8 @@ export class NumeraryMassiveConciliationComponent
         }
       } else {
         this.current.reset();
+        this.bank.reset();
+        this.bankAccount.reset();
       }
     });
   }
@@ -361,10 +376,34 @@ export class NumeraryMassiveConciliationComponent
   }
 
   //Trae la lista de monedas para el segundo form
+  // getCveCurrency() {
+  //   this.accountBankService.getListCurrencyCve({ currency: null }).subscribe(
+  //     res => {
+  //       console.log(res);
+  //       let currency = res.data;
+  //       console.log(currency)
+  //       currency = currency.replace(/'/g, '');
+  //       console.log(currency)
+  //       this.currentDataF2 = new DefaultSelect(currency, res.count);
+  //       console.log(this.currentDataF2)
+  //     },
+  //     err => {
+  //       console.log(err);
+  //     }
+  //   );
+  // }
+
   getCveCurrency() {
     this.accountBankService.getListCurrencyCve({ currency: null }).subscribe(
       res => {
         console.log(res);
+        // Eliminar comillas simples de las siglas de las monedas
+        res.data.forEach((currency: { cve_moneda: string }) => {
+          if (currency.cve_moneda && typeof currency.cve_moneda === 'string') {
+            currency.cve_moneda = currency.cve_moneda.replace(/'/g, '');
+          }
+        });
+
         this.currentDataF2 = new DefaultSelect(res.data, res.count);
       },
       err => {
@@ -392,23 +431,30 @@ export class NumeraryMassiveConciliationComponent
       endDate: this.form.get('dateAt').value,
     };
 
+    const paramsF = new FilterParams();
+    paramsF.page = this.params2.value.page;
+    paramsF.limit = this.params2.value.limit;
+
     console.log(body);
 
-    this.accountBankService.searchByFilterNumeraryMassive(body).subscribe(
-      res => {
-        console.log(res);
-        this.form2.get('total').setValue(res.total);
-        this.form2.get('totalDateTesofe').setValue(res.tDateTesof);
-        this.form2.get('totalWithoutTesofe').setValue(res.tSinTesof);
-        this.dataGoods2.load(res.result);
-        console.log(this.dataGoods2['data']);
-        this.loading2 = false;
-      },
-      err => {
-        console.log(err);
-        this.loading2 = true;
-      }
-    );
+    this.accountBankService
+      .searchByFilterNumeraryMassive(body, paramsF.getParams())
+      .subscribe(
+        res => {
+          console.log(res);
+          this.form2.get('total').setValue(res.total);
+          this.form2.get('totalDateTesofe').setValue(res.tDateTesof);
+          this.form2.get('totalWithoutTesofe').setValue(res.tSinTesof);
+          this.totalItems2 = res.total;
+          this.dataGoods2.load(res.result);
+          console.log(this.dataGoods2['data']);
+          this.loading2 = false;
+        },
+        err => {
+          console.log(err);
+          this.loading2 = true;
+        }
+      );
   }
 
   //Paginado
@@ -525,6 +571,7 @@ export class NumeraryMassiveConciliationComponent
               res => {
                 console.log(res);
                 /* if() */
+                this.alert('success', 'Bienes Encontrados', '');
                 this.dataGoods.load(res.data);
                 this.loading = false;
               },
@@ -536,6 +583,7 @@ export class NumeraryMassiveConciliationComponent
           },
           err => {
             console.log(err);
+            this.alert('warning', 'No se Encontraron Bienes', '');
             this.loading = false;
           }
         );
@@ -844,17 +892,31 @@ export class NumeraryMassiveConciliationComponent
       };
       this.numeraryService.pupAssociateGood(model).subscribe(
         res => {
-          this.alert('success', 'Se realizó la asociación', '');
+          this.alert('success', 'Se Realizó la Asociación', '');
           clearGoodCheck2();
           console.log(res);
         },
         err => {
-          this.alert('error', 'Se presentó un error inesperado', '');
+          this.alert('error', 'Se Presentó un Error Inesperado', '');
           console.log(err);
         }
       );
     } else {
       this.alert('warning', 'No se Seleccionó Datos de Cuentas Bancarias', '');
     }
+  }
+
+  cleandInfo() {
+    this.form.reset();
+    this.dataGoods = null;
+    this.loading = false;
+    this.totalItems = 0;
+  }
+
+  cleandInfo2() {
+    this.form2.reset();
+    this.dataGoods2 = null;
+    this.loading = false;
+    this.totalItems2 = 0;
   }
 }

@@ -92,8 +92,8 @@ export class BankAccountService
     );
   }
 
-  searchByFilterNumeraryMassive(body: IProReconcilesGood) {
-    return this.post(`aplication/proReconcilesGood`, body);
+  searchByFilterNumeraryMassive(body: IProReconcilesGood, params?: string) {
+    return this.post(`aplication/proReconcilesGood`, body, params);
   }
 
   getListCurrencyCve(body?: { currency: string | null }) {

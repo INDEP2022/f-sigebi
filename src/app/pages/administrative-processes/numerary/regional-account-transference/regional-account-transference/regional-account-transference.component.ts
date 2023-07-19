@@ -345,10 +345,11 @@ export class RegionalAccountTransferenceComponent
   }
 
   clear() {
+    this.form.get('transactionDate').patchValue(null);
     this.files.nativeElement.value = '';
-    this.form.reset();
     this.totalItems = 0;
     this.dataTable = [];
+    this.form.reset();
   }
 
   async sendEmail() {
@@ -356,13 +357,17 @@ export class RegionalAccountTransferenceComponent
 
     if (transferenceReport) {
       const email = await this.getDataMail();
-      console.log(email);
 
       if (email) {
+        if (email.ALERTA) {
+          this.alert('warning', email.ALERTA, '');
+        }
+
         const emailv2 = {
           ...email,
           REPORTE: transferenceReport,
         };
+
         let config: ModalOptions = {
           initialState: {
             email: emailv2,
@@ -394,12 +399,10 @@ export class RegionalAccountTransferenceComponent
       transNumeraryRegNoReport: Number(transferenceReport),
       transNumeraryRegNoDelegation: Number(delegation),
     };
-    console.log(data);
     return firstValueFrom(
       this.securityService.getIniEmail(data).pipe(
         catchError(error => {
           this.alert('error', 'Error', error.error.message);
-          console.log(error);
           return of(null);
         }),
         map(resp => resp)
@@ -745,7 +748,10 @@ export class RegionalAccountTransferenceComponent
 
     const { currencyType, delegation, transactionDate } = this.form.value;
 
+    if (!currencyType || !delegation || !transactionDate) return;
+
     let date = '';
+
     if (transactionDate) {
       if (typeof transactionDate == 'string') {
         date = transactionDate.split('/').reverse().join('-');
