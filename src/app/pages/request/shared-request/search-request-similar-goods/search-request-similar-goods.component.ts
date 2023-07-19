@@ -189,8 +189,6 @@ export class SearchRequestSimilarGoodsComponent
                 this.loading = false;
               },
             });
-          //this.data2.load(event.data.goods);
-          //this.onLoadToast('success', 'Asociada', 'Solicitud Asociada');
         }
       });
     }
@@ -202,9 +200,7 @@ export class SearchRequestSimilarGoodsComponent
 
   onUserRowSelect($event: any) {
     this.selectedRows = $event.selected;
-    //this.data2.load($event.data.goods);
     this.showDetails = $event.isSelected ? true : false;
-    //this.alert('warning', 'falta', 'falta implementar esta función');
     this.getGoods($event.data.id);
   }
 
