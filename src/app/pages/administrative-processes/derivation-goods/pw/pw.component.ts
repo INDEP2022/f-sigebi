@@ -41,12 +41,26 @@ export class PwComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.buildForm();
   }
-
+  onBeforeUnload(): void {
+    // Lógica para eliminar el elemento del almacenamiento local
+    localStorage.removeItem('conversion');
+  }
   private buildForm() {
     this.form = this.fb.group({
       idConversion: [null, [Validators.required]],
       password: [null, [Validators.required]],
     });
+    const conversion = localStorage.getItem('conversion');
+    if (conversion != null) {
+      this.loader.load = true;
+      this.conversionData = JSON.parse(conversion);
+      this.idConversion.setValue(this.conversionData);
+      this.password.setValue(this.conversionData.pwAccess);
+      console.log(this.conversionData);
+      setTimeout(() => {
+        this.sigin();
+      }, 1000);
+    }
   }
 
   serachIdConversion(e?: any) {
@@ -79,8 +93,10 @@ export class PwComponent extends BasePage implements OnInit {
           );
         } else {
           if (this.conversionData.goodFatherNumber != null) {
+            console.log(this.conversionData);
             this.modalService.content.callback(this.conversionData);
             this.modalService.hide();
+            this.loader.load = false;
           } else {
             this.alert(
               'warning',
