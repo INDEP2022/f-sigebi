@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { format } from 'date-fns';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { catchError, of, switchMap, tap, throwError } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -691,7 +692,7 @@ export class GoodsCaptureComponent
   }
 
   saveGood() {
-    console.log(this.goodToSave);
+    const goodClasifNum = this.formControls.noClasifBien.value;
     if (this.goodToSave.identifier == 'TRANS') {
       this.goodToSave.extDomProcess = 'TRANSFERENTE';
     } else {
@@ -699,6 +700,14 @@ export class GoodsCaptureComponent
     }
     this.goodToSave.delegationNumber = this.delegation;
     this.goodToSave.subDelegationNumber = this.subdelegation;
+
+    if (CASH_CODES.find(clasifNum => clasifNum == goodClasifNum)) {
+      console.log('Cambiar formato de fecha para numerario');
+      this.goodToSave.val5 = format(
+        new Date(this.goodToSave.val5),
+        'yyyy-MM-dd'
+      );
+    }
     this.goodsCaptureService.createGood(this.goodToSave).subscribe({
       next: good => {
         this.handleSuccesSave(good);

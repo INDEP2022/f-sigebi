@@ -367,14 +367,23 @@ export class MassiveNumeraryChangeComponent extends BasePage implements OnInit {
             type: res.TIPO,
           };
         });
-        this.modalService.show(MassiveNumeraryChangeModalComponent, {
-          initialState: {
-            dataTableGoods: this.dataTableSpent,
-            dataTableSpents: this.dataTableSmall,
-            user: this.getUser().preferred_username.toUpperCase(),
-          },
-          class: 'modal-lg',
-          ignoreBackdropClick: true,
+        const modalRef = this.modalService.show(
+          MassiveNumeraryChangeModalComponent,
+          {
+            initialState: {
+              dataTableGoods: this.dataTableSpent,
+              dataTableSpents: this.dataTableSmall,
+              user: this.getUser().preferred_username.toUpperCase(),
+            },
+            class: 'modal-lg',
+            ignoreBackdropClick: true,
+          }
+        );
+        modalRef.content.refresh.subscribe((next: any) => {
+          if (next) {
+            this.clean();
+            this.totalItems = 0;
+          }
         });
       },
       error: err => {
