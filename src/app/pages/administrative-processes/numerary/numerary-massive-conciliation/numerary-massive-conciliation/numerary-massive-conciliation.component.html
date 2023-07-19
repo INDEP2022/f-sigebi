@@ -90,7 +90,6 @@
               <div class="col-md-3">
                 <form-field [control]="form.get('dateOf')" label="Fecha desde:">
                   <input
-                    type="text"
                     class="form-control"
                     bsDatepicker
                     formControlName="dateOf" />
@@ -99,10 +98,9 @@
               <div class="col-md-3">
                 <form-field [control]="form.get('dateAt')" label="Fecha hasta:">
                   <input
-                    type="text"
                     class="form-control"
-                    [readOnly]="form.get('dateOf').value == null"
-                    [minDate]="form.get('dateOf').value"
+                    [class]="form.get('dateOf').value == null ? 'disabled' : ''"
+                    [minDate]="minDate"
                     bsDatepicker
                     formControlName="dateAt" />
                 </form-field>
