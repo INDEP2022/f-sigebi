@@ -23,6 +23,8 @@ import {
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { IPhotos } from 'src/app/core/models/catalogs/photograph-media.model';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
+import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import {
   IAttribGoodBad,
   ICharacteristicsGoodDTO,
@@ -62,6 +64,7 @@ import {
   thirdFormatDate,
 } from 'src/app/shared/utils/date';
 import { SubdelegationService } from '../../../../core/services/catalogs/subdelegation.service';
+import { AllExpedientComponent } from '../all-expedient/all-expedient/all-expedient.component';
 import { GoodsPhotoService } from '../services/image-debugging-service';
 import { IMAGE_DEBUGGING_COLUMNS } from './image-debugging-columns';
 @Component({
@@ -81,6 +84,8 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   LVALIDA = true;
   showAvaluo = true;
   lot: any;
+  event: IComerEvent;
+  expedients: IExpedient[] = [];
   photographs: any[] = [];
   programming: Iprogramming;
   filterParams = new FilterParams();
@@ -1046,7 +1051,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
             this.subdelegacion = subdelegacion;
             this.subdelegation.setValue(subdelegacion);
           }
-          this.getLatitudLongitud(item.goodid);
+          // this.getLatitudLongitud(item.goodid);
           this.numberClassification.setValue(item.goodclassnumber);
           this.goodStatus.setValue(item.status);
           this.fileNumber.setValue(item.fileNumber);
@@ -1228,20 +1233,20 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     // this.good = ssssubType.numClasifGoods;
   }
 
-  getLatitudLongitud(id: number) {
-    this.georeferencieService.getGeoreferencieObjectById(id).subscribe({
-      next: response => {
-        // console.log(response);
-        if (response) {
-          this.latitud.setValue(response.georefLatitude);
-          this.longitud.setValue(response.georefLongituded);
-        }
-      },
-      error: err => {
-        console.log(err);
-      },
-    });
-  }
+  // getLatitudLongitud(id: number) {
+  //   this.georeferencieService.getGeoreferencieObjectById(id).subscribe({
+  //     next: response => {
+  //       // console.log(response);
+  //       if (response) {
+  //         this.latitud.setValue(response.georefLatitude);
+  //         this.longitud.setValue(response.georefLongituded);
+  //       }
+  //     },
+  //     error: err => {
+  //       console.log(err);
+  //     },
+  //   });
+  // }
   loadImages() {
     let loadingPhotos = 0;
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
@@ -1385,11 +1390,28 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       },
     });
   }
+  getComerGoodLotes(id: number) {
+    this.comerEventService
+      .getAllFilterComerGoodEvent(id, this.params.getValue())
+      .subscribe({
+        next: (resp: any) => {
+          this.lot = resp.data;
+          console.log(this.lot);
+          this.idLot.setValue(this.lot.lotId);
+          this.lotDesc.setValue(this.lot.lotDescription);
+          console.log(resp);
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+  }
   setGood(good: IGood) {
     this.numberGood.setValue(good.id);
-    this.fileNumber.setValue(good.fileNumber);
+    this.fileNumber.setValue(this.noExpedient);
     this.descripcion.setValue(good.description);
     this.idLot.setValue(good.lotNumber);
+    this.form.controls['fileNumber'].setValue(this.noExpedient);
   }
 
   searchExp(id: number | string) {
@@ -1441,7 +1463,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   getImageGood() {
     this.loading = true;
     const formDatra: Object = {
-      xidBien: this.form.controls['goodNumber'].value,
+      xidBien: this.form.value.noBien,
     };
     this.wcontentService.getDocumentos(formDatra).subscribe({
       next: response => {
@@ -1476,15 +1498,40 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     this.goodService.getById(id).subscribe({
       next: (data: any) => {
         this.goodO = data;
-        this.noExpedient = data.fileNumber;
+        data.data.filter((good: IGood) => {
+          this.noExpedient = good.fileNumber;
+        });
+
         console.log(this.noExpedient);
-        this.searchExp(data.fileNumber);
-        this.getComerGoodAll(this.form.value.noBien);
+        this.searchExp(this.noExpedient);
+        this.getComerGoodLotes(this.form.value.noBien);
+        this.getIdLot(this.goodO);
         this.getEvent(this.goodO.lotNumber);
         this.setGood(this.goodO);
       },
       error: error => {
         console.error('no existe el bien');
+      },
+    });
+  }
+
+  getIdLot(data: any) {
+    const datos: any = {};
+    this.comerEventService.getLotId(data.lotId).subscribe({
+      next: resp => {
+        this.comerEventService.geEventId(resp.eventId).subscribe({
+          next: resp => {
+            //console.log(resp);
+            //this.form.controls['idEvent'].setValue(resp.id);
+            this.form.controls['idEvent'].setValue(resp.id);
+          },
+          error: error => {
+            console.log(error);
+          },
+        });
+      },
+      error: error => {
+        console.log(error);
       },
     });
   }
@@ -1501,6 +1548,24 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
         console.log(this.goodPhoto);
       },
       error: error => (this.loading = false),
+    });
+  }
+
+  searchExpModal(expedient?: IExpedient[]) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      expedient,
+    };
+    let modalRef = this.modalService.show(AllExpedientComponent, modalConfig);
+    modalRef.content.onSave.subscribe(async (next: any) => {
+      console.log(next);
+      this.good.id = next.id;
+      this.good.fileNumber = next.fileNumber.id;
+
+      this.form.patchValue({
+        noBien: next.good.id,
+        fileNumber: next.good.fileNumber,
+      });
     });
   }
 }

@@ -78,6 +78,12 @@
                   </div>
                 </div>
                 <div class="col-md-6">
+                  <!-- <div class="float-right pl-3">
+                    <button (click)="searchExpModal()" class="btn btn-primary btn-sm active m-1" tooltip="Expedientes"
+                      containerClass="tooltip-style">
+                      <i class="bx bx-list-plus bx-sm float-icon"></i>
+                    </button>
+                  </div> -->
                   <div class="row pt-4">
                     <form-field
                       [control]="form.get('fileNumber')"
@@ -85,19 +91,9 @@
                       <input
                         type="number"
                         class="form-control"
-                        formControlName="fileNumber" />
+                        formControlName="fileNumber"
+                        readonly />
                     </form-field>
-                    <!-- <ngx-select [form]=" form" control="fileNumber"
-                        (fetchItems)="getExpedient($event, this.params.getValue())" [showTooltip]="true"
-                        [data]="expedientSelected" bindLabel="description" [searchable]="false" label="Bien"
-                        value="expedientSelected"></ngx-select>
-                      <form-field [control]="form.get('fileNumber')" label="No. Expediente">
-                        <input type="number" class="form-control" formControlName="fileNumber" (keydown)="
-                                                  getExpedient(this.form.controls['fileNumber'].value)
-                                                " />
-                      </form-field>
-
-                      -->
                   </div>
                   <div class="row pt-4">
                     <form-field
@@ -106,7 +102,8 @@
                       <input
                         type="number"
                         class="form-control"
-                        formControlName="idEvent" />
+                        formControlName="idEvent"
+                        readonly />
                     </form-field>
                   </div>
                   <div class="row pt-4">
@@ -114,7 +111,8 @@
                       <input
                         type="number"
                         class="form-control"
-                        formControlName="idLot" />
+                        formControlName="idLot"
+                        readonly />
                     </form-field>
                   </div>
                   <div class="row pt-4">
@@ -136,6 +134,7 @@
                     "></app-goods-types-shared>
                 </div> -->
               </div>
+
               <div footer>
                 <div class="d-flex justify-content-center">
                   <div class="m-3">
@@ -187,24 +186,6 @@
                       [totalItems]="totalItemsPhotos"></app-pagination>
                   </div>
                 </div>
-                <!-- <div [class]="loading ? 'table-loading' : ''">
-                    <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="photographs"
-                      (edit)="viewImage($event.data)">
-                    </ng2-smart-table>
-                    <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
-                  </div> -->
-                <!-- <div class="justify-content-end btn-toolbar pt-5">
-                    <app-columns-select
-                      [(settings)]="settings"></app-columns-select>
-                  </div> -->
-                <!-- <div class="row pt-3">
-                    <div [class]="loading ? 'table-loading' : ''">
-                      <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="photographs"
-                        (edit)="viewImage($event.data)">
-                      </ng2-smart-table>
-                      <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
-                    </div>
-                  </div> -->
               </div>
             </tab>
             <tab heading="Fotos">
