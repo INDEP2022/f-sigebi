@@ -39,4 +39,9 @@ export class ParameterBaseCatService {
 
     return this.http.post<IListResponse<any>>(URL, payload);
   }
+
+  update(id: any) {
+    const URL = `${environment.API_URL}${this.route}/api/v1/rates`;
+    return this.http.put<IListResponse<any>>(id, URL);
+  }
 }

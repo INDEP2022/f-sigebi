@@ -75,38 +75,37 @@
           </div>
 
           <div class="row">
-            <form-field
-              [control]="form.get('dateTesofe')"
-              label="Aplicar Fecha Tesofe:"
-              class="col-md-4">
-              <input
-                type="text"
-                class="form-control"
-                bsDatepicker
-                formControlName="dateTesofe" />
-            </form-field>
-
-            <form-field
-              [control]="form.get('dateOf')"
-              label="Fecha desde:"
-              class="col-md-4">
-              <input
-                type="text"
-                class="form-control"
-                bsDatepicker
-                formControlName="dateOf" />
-            </form-field>
-
-            <form-field
-              [control]="form.get('dateAt')"
-              label="Fecha hasta:"
-              class="col-md-4">
-              <input
-                type="text"
-                class="form-control"
-                bsDatepicker
-                formControlName="dateAt" />
-            </form-field>
+            <div class="col-md-12 mt-4">
+              <div class="col-md-3">
+                <form-field
+                  [control]="form.get('dateTesofe')"
+                  label="Aplicar Fecha Tesofe:">
+                  <input
+                    type="text"
+                    class="form-control"
+                    bsDatepicker
+                    formControlName="dateTesofe" />
+                </form-field>
+              </div>
+              <div class="col-md-3">
+                <form-field [control]="form.get('dateOf')" label="Fecha desde:">
+                  <input
+                    class="form-control"
+                    bsDatepicker
+                    formControlName="dateOf" />
+                </form-field>
+              </div>
+              <div class="col-md-3">
+                <form-field [control]="form.get('dateAt')" label="Fecha hasta:">
+                  <input
+                    class="form-control"
+                    [class]="form.get('dateOf').value == null ? 'disabled' : ''"
+                    [minDate]="minDate"
+                    bsDatepicker
+                    formControlName="dateAt" />
+                </form-field>
+              </div>
+            </div>
           </div>
 
           <div class="row text-center">

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
 import { TransferenteSharedComponent } from 'src/app/@standalone/shared-forms/transferents-shared/transferents-shared.component';
 import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shared/user-shared.component';
@@ -103,6 +103,24 @@ export class CaptureFilterDictComponent extends BasePage implements OnInit {
       numeroVolante: [null],
       fechaVolante: [null],
     });
+  }
+
+  get fechaInicio() {
+    return this.form.get('fechaInicio');
+  }
+
+  validarFechas(control: AbstractControl) {
+    const fechaInicio = new Date(control.get('fechaInicio').value);
+    const fechaFin = new Date(control.get('fechaFin').value);
+
+    if (fechaFin < fechaInicio) {
+      this.alert(
+        'warning',
+        'Campo invalido',
+        'La fecha final debe ser mayos a la fecha inicial'
+      );
+      control.get('fechaFin').setErrors({ fechasInvalidas: true });
+    }
   }
 
   getAutoritys(params?: ListParams) {

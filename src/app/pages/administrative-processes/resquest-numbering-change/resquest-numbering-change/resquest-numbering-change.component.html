@@ -190,7 +190,7 @@
       </div>
       <br />
       <div class="row">
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('dateRequestChangeNumerary')"
             label="Fecha Solicitud">
@@ -199,7 +199,8 @@
               class="form-control mt-2"
               formControlName="dateRequestChangeNumerary"
               bsDatepicker
-              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -218,7 +219,7 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('postUserRequestCamnum')"
             label="Cargo">
@@ -240,7 +241,8 @@
               type="text"
               class="form-control mt-2"
               formControlName="delegationRequestcamnum"
-              maxlength="200" />
+              maxlength="200"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -281,14 +283,15 @@
       </div>
       <br />
       <div class="row">
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('authorizePostUser')"
             label="Cargo">
             <input
               type="text"
               class="form-control mt-2"
-              formControlName="authorizePostUser" />
+              formControlName="authorizePostUser"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -298,10 +301,11 @@
             <input
               type="text"
               class="form-control mt-2"
-              formControlName="authorizeDelegation" />
+              formControlName="authorizeDelegation"
+              readonly />
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('authorizeDate')"
             label="Fecha Autoriza">
@@ -310,7 +314,8 @@
               class="form-control mt-2"
               formControlName="authorizeDate"
               bsDatepicker
-              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
+              readonly />
           </form-field>
         </div>
       </div>

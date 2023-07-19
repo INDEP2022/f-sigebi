@@ -46,14 +46,22 @@ export class IndicatorReportListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            /*filter.field == 'id' ||
             filter.field == 'startingPercentageRange' ||
             filter.field == 'finalPercentageRange' ||
             filter.field == 'contractualPenalty' ||
             filter.field == 'status' ||
             filter.field == 'version'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {

@@ -5,7 +5,10 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IValidatorsProceedings } from 'src/app/core/models/catalogs/validators-proceedings-model';
 import { ValidatorsProceedingsService } from 'src/app/core/services/catalogs/validators-proceedings.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-maintenance-document-validators-model',
@@ -35,7 +38,14 @@ export class MaintenanceDocumentValidatorsModalComponent
   }
   private prepareForm() {
     this.validatorsProceedingsForm = this.fb.group({
-      proceedingsType: [null, [Validators.required]],
+      proceedingsType: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(50),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       secVal: [
         null,
         [
@@ -44,8 +54,22 @@ export class MaintenanceDocumentValidatorsModalComponent
           Validators.maxLength(2),
         ],
       ],
-      descVal: [null, [Validators.required]],
-      scriptVal: [null, [Validators.required]],
+      descVal: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(150),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      scriptVal: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(400),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       numRegister: [null],
     });
     if (this.validatorsProceedings != null) {
