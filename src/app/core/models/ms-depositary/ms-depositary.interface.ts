@@ -1,5 +1,5 @@
 import { IPerson } from '../catalogs/person.model';
-import { IGood } from '../good/good.model';
+import { IGood } from '../ms-good/good';
 import { ISegUsers } from '../ms-users/seg-users-model';
 
 export interface IAppointmentDepositary {
@@ -160,6 +160,8 @@ export interface IDepositaryAppointments {
   vat: number;
   withHousehold: string;
   nbOrigin: string;
+  personNumber?: IPerson; // Opcional para cargar los datos de la persona
+  good?: IGood; // Opcional para cargar los datos del bien
 
   // appointmentNum: string | number;
   // nameProvDete: string | number;
