@@ -25,7 +25,6 @@ import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.servi
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
 import { BasePage } from 'src/app/core/shared';
-import Swal from 'sweetalert2';
 import { GOODS_SELECTIONS_COLUMNS } from '../massive-conversion/columns';
 
 interface packageData {
@@ -364,16 +363,12 @@ export class MassiveConversionModalGoodComponent
             response => {
               if (response) {
                 this.onSentGoods.next(response.data);
-                Swal.fire(
-                  'success',
-                  'Operación realizada con éxito',
-                  'success'
-                );
+                this.alert('success', 'Bienes ingresados', '');
                 this.onClose();
               }
             },
             error => {
-              Swal.fire('error', 'Error al realizar la operación', 'error');
+              this.alert('error', 'Se presentó un error inesperado', '');
             }
           );
         }

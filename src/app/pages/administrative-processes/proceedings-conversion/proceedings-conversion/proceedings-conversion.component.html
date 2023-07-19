@@ -93,7 +93,7 @@
                                   <div class="col-md-3">
                                     <div>
                                       <label for="">Hora de Creación: </label>
-                                      {{ time | date: 'hh:mm' }}
+                                      {{ time | date : 'hh:mm' }}
                                     </div>
                                   </div>
                                 </div>
@@ -129,8 +129,16 @@
                       </div> -->
                     </div>
                     <div class="row m-3">
-                      <div class="col-5"></div>
-                      <div class="col-md-7 text-end">
+                      <div class="col-4"></div>
+                      <div class="col-md-8 text-end">
+                        <button
+                          [disabled]="!actasDefault"
+                          (click)="actualizarActa()"
+                          type="button"
+                          class="btn btn-primary active btn-sm mr-3">
+                          Guardar
+                          <i aria-hidden="true" class="fa fa-save"></i>
+                        </button>
                         <button
                           (click)="agregarActa()"
                           type="button"
@@ -282,7 +290,6 @@
                                       "
                                       label="Direcci&oacute;n">
                                       <textarea
-                                        readonly
                                         maxlength="2000"
                                         type="text"
                                         class="form-control"

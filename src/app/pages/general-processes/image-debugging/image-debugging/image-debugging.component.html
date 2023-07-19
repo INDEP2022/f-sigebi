@@ -34,8 +34,8 @@
           <tabset #staticTabs>
             <tab heading="Parámetros de B&uacute;squeda">
               <div class="row">
-                <div class="col-md-4">
-                  <div class="row pt-3">
+                <div class="col-md-6">
+                  <div class="row pt-4">
                     <form-field
                       [control]="form.get('noBien')"
                       label="No. de Bien">
@@ -45,7 +45,7 @@
                         maxlength="10" />
                     </form-field>
                   </div>
-                  <div class="row pt-3">
+                  <div class="row pt-4">
                     <form-field
                       [control]="form.get('descripcion')"
                       label="Descripci&oacute;n">
@@ -56,7 +56,7 @@
                         maxlength="1250"></textarea>
                     </form-field>
                   </div>
-                  <div class="row pt-3">
+                  <div class="row pt-4">
                     <form-field [control]="form.get('status')" label="Estatus">
                       <input
                         type="text"
@@ -65,7 +65,7 @@
                         readonly />
                     </form-field>
                   </div>
-                  <div class="row pt-3">
+                  <div class="row pt-4">
                     <form-field
                       [control]="form.get('lotDesc')"
                       label="Descripción de Lote">
@@ -77,8 +77,14 @@
                     </form-field>
                   </div>
                 </div>
-                <div class="col-md-4">
-                  <div class="row pt-3">
+                <div class="col-md-6">
+                  <!-- <div class="float-right pl-3">
+                    <button (click)="searchExpModal()" class="btn btn-primary btn-sm active m-1" tooltip="Expedientes"
+                      containerClass="tooltip-style">
+                      <i class="bx bx-list-plus bx-sm float-icon"></i>
+                    </button>
+                  </div> -->
+                  <div class="row pt-4">
                     <form-field
                       [control]="form.get('fileNumber')"
                       label="No. Expediente">
@@ -89,7 +95,7 @@
                         readonly />
                     </form-field>
                   </div>
-                  <div class="row pt-3">
+                  <div class="row pt-4">
                     <form-field
                       [control]="form.get('idEvent')"
                       label="Id. Evento">
@@ -100,7 +106,7 @@
                         readonly />
                     </form-field>
                   </div>
-                  <div class="row pt-3">
+                  <div class="row pt-4">
                     <form-field [control]="form.get('idLot')" label="Id. Lote">
                       <input
                         type="number"
@@ -109,7 +115,7 @@
                         readonly />
                     </form-field>
                   </div>
-                  <div class="row pt-3">
+                  <div class="row pt-4">
                     <form-field
                       [control]="form.get('eventDesc')"
                       label="Descripción de Evento">
@@ -121,19 +127,14 @@
                     </form-field>
                   </div>
                 </div>
-                <div class="col-md-4">
-                  <app-goods-types-shared
-                    [form]="form"
-                    [(loadTypes)]="loadTypes"
-                    typeField="type"
-                    subtypeField="subtype"
-                    ssubtypeField="ssubtype"
-                    sssubtypeField="sssubtype"
-                    (goodSssubtypeChange)="
+                <!-- <div class="col-md-4">
+                  <app-goods-types-shared [form]="form" [(loadTypes)]="loadTypes" typeField="type"
+                    subtypeField="subtype" ssubtypeField="ssubtype" sssubtypeField="sssubtype" (goodSssubtypeChange)="
                       getGoods($event)
                     "></app-goods-types-shared>
-                </div>
+                </div> -->
               </div>
+
               <div footer>
                 <div class="d-flex justify-content-center">
                   <div class="m-3">
@@ -164,52 +165,26 @@
                 <div *ngIf="errorMessage" class="errorMessage">
                   {{ errorMessage }}
                 </div>
-                <div
-                  class="mb-5"
-                  style="
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                  ">
-                  <div class="justify-content-right btn-toolbar pt-5">
-                    <app-columns-select
-                      [(settings)]="settings"></app-columns-select>
-                    <!-- <input #file style="display: none" type="file" id="photo" class="inputfile inputfile-3" />
-
-                    <button type="button" class="btn btn-info btn-sm active">
-                      <i class="fa fa-search"></i> Buscar
-                    </button> -->
-                    &nbsp;
+                <div class="ch-content" header>
+                  <div class="d-flex justify-content-end">
+                    <div class="d-inline mr-2">
+                      <app-columns-select
+                        [(settings)]="settings"></app-columns-select>
+                    </div>
                   </div>
+                </div>
+                <div class="card">
                   <div [class]="loading ? 'table-loading' : ''">
                     <ng2-smart-table
-                      [attr.class]="'table-bordered'"
+                      [attr.class]="'table-bordered table-responsive'"
                       [settings]="settings"
-                      [source]="photographs"
+                      [source]="goodPhoto"
                       (edit)="viewImage($event.data)">
                     </ng2-smart-table>
                     <app-pagination
                       [params]="params"
-                      [totalItems]="totalItems"></app-pagination>
+                      [totalItems]="totalItemsPhotos"></app-pagination>
                   </div>
-                  <!-- <div [class]="loading ? 'table-loading' : ''">
-                    <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="photographs"
-                      (edit)="viewImage($event.data)">
-                    </ng2-smart-table>
-                    <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
-                  </div> -->
-                  <!-- <div class="justify-content-end btn-toolbar pt-5">
-                    <app-columns-select
-                      [(settings)]="settings"></app-columns-select>
-                  </div> -->
-                  <!-- <div class="row pt-3">
-                    <div [class]="loading ? 'table-loading' : ''">
-                      <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="photographs"
-                        (edit)="viewImage($event.data)">
-                      </ng2-smart-table>
-                      <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
-                    </div>
-                  </div> -->
                 </div>
               </div>
             </tab>

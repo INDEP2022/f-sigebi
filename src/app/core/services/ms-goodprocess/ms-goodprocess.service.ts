@@ -193,4 +193,12 @@ export class GoodprocessService extends HttpService {
   secondIfCancelMassiveConversion(body: ISecondIfMC) {
     return this.post('application/fmto-package-procedure', body);
   }
+
+  deleteStatusBien(body: any) {
+    return this.post(GoodprocessEndpoints.deleteStatusBien, body);
+  }
+
+  insertStatusBien(body: any) {
+    return this.post(GoodprocessEndpoints.insertStatusBien, body);
+  }
 }

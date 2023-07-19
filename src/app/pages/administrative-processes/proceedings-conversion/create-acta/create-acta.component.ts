@@ -173,7 +173,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
   consultREG_TRANSFERENTES(lparams: ListParams) {
     let obj = {
       transfereeNumber: this.expedient.transferNumber,
-      expedientType: this.fileNumber,
+      expedientType: this.expedient.expedientType,
     };
 
     const params = new FilterParams();
