@@ -84,12 +84,12 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           this.filterUsersProg(response.data);
-          this.totalItems = response.count;
           this.loading = false;
         },
         error: error => {
           this.loading = false;
           this.alert('warning', 'Usuarios no encontrados', '');
+          this.totalItems = 0;
         },
       });
   }
@@ -110,6 +110,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
 
           this.totalItems = this.totalItems - data.count;
           this.usersData.load(filter);
+          this.totalItems = this.usersData.count();
           this.loading = false;
         },
         error: error => {
@@ -120,6 +121,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
 
   userProgramming(data: any) {
     this.usersData.load(data);
+    this.totalItems = this.usersData.count();
     this.loading = false;
   }
 

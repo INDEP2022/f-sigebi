@@ -317,7 +317,11 @@ export class ProceedingsConversionDetailComponent
         .subscribe({
           next: (res: any) => {
             this.valUpdate = true;
-            this.alert('success', 'El Acta se Actualizó Correctamente', '');
+            this.alert(
+              'success',
+              'El Detalle de Acta se Actualizó Correctamente',
+              ''
+            );
             console.log(res);
           },
           error: error => {
@@ -382,7 +386,7 @@ export class ProceedingsConversionDetailComponent
       this.convertiongoodService.creatConvertionActa(obj).subscribe({
         next: (res: any) => {
           this.valUpdate = true;
-          this.alert('success', 'El Acta se Creó Correctamente', '');
+          this.alert('success', 'El Detalle de Acta se Creó Correctamente', '');
           console.log(res);
         },
         error: error => {
