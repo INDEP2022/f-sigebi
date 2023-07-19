@@ -41,6 +41,7 @@ import {
   NUMERARY_MASSIVE_CONCILIATION_COLUMNS,
   NUMERARY_MASSIVE_CONCILIATION_COLUMNS2,
 } from './numerary-massive-conciliation-columns';
+import { IRangeDateTmp5 } from 'src/app/core/services/ms-coinciliation/comer-details';
 
 @Component({
   selector: 'app-numerary-massive-conciliation',
@@ -81,7 +82,7 @@ export class NumeraryMassiveConciliationComponent
 
   loading2: boolean = false;
 
-  minDate: Date
+  minDate: Date;
 
   public override settings: any = {
     rowClassFunction: (row: { data: { VISUAL_ATTRIBUTE: any } }) =>
@@ -178,19 +179,17 @@ export class NumeraryMassiveConciliationComponent
       console.log(params);
       this.limit2 = new FormControl(params.limit);
 
-      if(this.dataGoods2['data'].length > 0){
-        this.searchGoodBankAccount()
+      if (this.dataGoods2['data'].length > 0) {
+        this.searchGoodBankAccount();
       }
     });
 
-    this.form.get('dateOf').valueChanges.subscribe(
-      res => {
-        if(res != null){
-          this.form.get('dateAt').reset()
-          this.minDate = new Date(this.form.get('dateOf').value)
-        }
+    this.form.get('dateOf').valueChanges.subscribe(res => {
+      if (res != null) {
+        this.form.get('dateAt').reset();
+        this.minDate = new Date(this.form.get('dateOf').value);
       }
-    )
+    });
   }
 
   //Gets form 1
@@ -281,8 +280,8 @@ export class NumeraryMassiveConciliationComponent
         }
       } else {
         this.current.reset();
-        this.bank.reset()
-        this.bankAccount.reset()
+        this.bank.reset();
+        this.bankAccount.reset();
       }
     });
   }
@@ -433,28 +432,30 @@ export class NumeraryMassiveConciliationComponent
       endDate: this.form.get('dateAt').value,
     };
 
-    const paramsF = new FilterParams()
-    paramsF.page = this.params2.value.page
-    paramsF.limit = this.params2.value.limit
+    const paramsF = new FilterParams();
+    paramsF.page = this.params2.value.page;
+    paramsF.limit = this.params2.value.limit;
 
     console.log(body);
 
-    this.accountBankService.searchByFilterNumeraryMassive(body, paramsF.getParams()).subscribe(
-      res => {
-        console.log(res);
-        this.form2.get('total').setValue(res.total);
-        this.form2.get('totalDateTesofe').setValue(res.tDateTesof);
-        this.form2.get('totalWithoutTesofe').setValue(res.tSinTesof);
-        this.totalItems2 = res.total
-        this.dataGoods2.load(res.result);
-        console.log(this.dataGoods2['data']);
-        this.loading2 = false;
-      },
-      err => {
-        console.log(err);
-        this.loading2 = true;
-      }
-    );
+    this.accountBankService
+      .searchByFilterNumeraryMassive(body, paramsF.getParams())
+      .subscribe(
+        res => {
+          console.log(res);
+          this.form2.get('total').setValue(res.total);
+          this.form2.get('totalDateTesofe').setValue(res.tDateTesof);
+          this.form2.get('totalWithoutTesofe').setValue(res.tSinTesof);
+          this.totalItems2 = res.total;
+          this.dataGoods2.load(res.result);
+          console.log(this.dataGoods2['data']);
+          this.loading2 = false;
+        },
+        err => {
+          console.log(err);
+          this.loading2 = true;
+        }
+      );
   }
 
   //Paginado
@@ -545,6 +546,7 @@ export class NumeraryMassiveConciliationComponent
         val6 != null ? paramsF.addFilter('val6', val6.cveAccount) : '';
         val2 != null ? paramsF.addFilter('val2', val2) : '';
 
+      
         this.goodService.getAllFilter(paramsF.getParams()).subscribe(
           res => {
             console.log(res);
@@ -570,10 +572,24 @@ export class NumeraryMassiveConciliationComponent
             this.goodProcessService.pupReconcilied(model).subscribe(
               res => {
                 console.log(res);
-                /* if() */
                 this.alert('success', 'Bienes Encontrados', '');
                 this.dataGoods.load(res.data);
                 this.loading = false;
+
+                if(this.form.get('dateOf').value != null){
+                  const model: IRangeDateTmp5 = {
+                    finalDate: format(this.form.get('dateAt').value, 'yyyy-MM-dd'),
+                    initialDate: format(this.form.get('dateOf').value, 'yyyy-MM-dd')
+                  }
+                    this.tmpVal5Service.rangeDate(model).subscribe(
+                      res => {
+                        console.log(res)
+                      },
+                      err => {
+                        console.log(err)
+                      }
+                    )
+                }
               },
               err => {
                 console.log(err);
