@@ -50,4 +50,9 @@ export class RejectedGoodService extends HttpService {
       params
     );
   }
+
+  updateGoodsResDev(idGoodResDev: number, formData: Object) {
+    const route = `${RejectedGoodEndpoint.GoodsResDev}/${idGoodResDev}`;
+    return this.put(route, formData);
+  }
 }

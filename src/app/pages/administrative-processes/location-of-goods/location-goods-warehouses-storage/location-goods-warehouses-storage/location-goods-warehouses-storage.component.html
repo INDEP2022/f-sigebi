@@ -58,6 +58,7 @@
                         [style.background-color]="
                           getEstatusColor(this.di_desc_est)
                         "
+                        [style.color]="getEstatusColor(this.di_desc_est)"
                         >{{ this.di_desc_est }}</span
                       >
                     </div>
@@ -144,6 +145,7 @@
                     <div class="m-3">
                       <button
                         class="btn btn-primary btn-sm active"
+                        [disabled]="formWarehouse.invalid"
                         (click)="changeLocation()">
                         Actualizar
                         <i class="fas fa-sync bx-sm float-icon"></i>
@@ -191,6 +193,7 @@
                     <div class="m-3">
                       <button
                         class="btn btn-primary btn-sm active"
+                        [disabled]="formVault.invalid"
                         (click)="changeLocationVault()">
                         Actualizar<i class="fas fa-sync bx-sm float-icon"></i>
                       </button>
