@@ -310,42 +310,42 @@ export class GoodsProcessValidationExtdomComponent
           this.form.get('expedientNumber').setValue(this.P_EXPEDIENTE);
           this.form.get('expedientNumber').updateValueAndValidity();
         }
-        let e_aseg = localStorage.getItem('e_aseg');
-        let v_aseg = localStorage.getItem('v_aseg');
-        console.log('LOCALSTORAGE ', e_aseg, v_aseg);
-        let valid = true;
-        if (!e_aseg && this.P_EXPEDIENTE) {
-          valid = false;
-        }
-        if (!v_aseg && this.P_VOLANTE) {
-          valid = false;
-        }
-        if (valid == false) {
-          localStorage.removeItem('f_aseg');
-          localStorage.removeItem('e_aseg');
-          localStorage.removeItem('v_aseg');
-          // Para crear
-          localStorage.removeItem(this.localStorage_selectedGoods);
-          localStorage.removeItem(this.localStorage_goodData3);
-          localStorage.removeItem(this.localStorage_totalGoods3);
-          // Para liberar
-          localStorage.removeItem(this.localStorage_selectedGoods2);
-          localStorage.removeItem(this.localStorage_goodData4);
-          localStorage.removeItem(this.localStorage_totalGoods4);
-        }
-        if (this.P_NO_TRAMITE == null) {
-          localStorage.removeItem('f_aseg');
-          localStorage.removeItem('e_aseg');
-          localStorage.removeItem('v_aseg');
-          // Para crear
-          localStorage.removeItem(this.localStorage_selectedGoods);
-          localStorage.removeItem(this.localStorage_goodData3);
-          localStorage.removeItem(this.localStorage_totalGoods3);
-          // Para liberar
-          localStorage.removeItem(this.localStorage_selectedGoods2);
-          localStorage.removeItem(this.localStorage_goodData4);
-          localStorage.removeItem(this.localStorage_totalGoods4);
-        }
+        // let e_aseg = localStorage.getItem('e_aseg');
+        // let v_aseg = localStorage.getItem('v_aseg');
+        // console.log('LOCALSTORAGE ', e_aseg, v_aseg);
+        // let valid = true;
+        // if (!e_aseg && this.P_EXPEDIENTE) {
+        //   valid = false;
+        // }
+        // if (!v_aseg && this.P_VOLANTE) {
+        //   valid = false;
+        // }
+        // if (valid == false) {
+        //   localStorage.removeItem('f_aseg');
+        //   localStorage.removeItem('e_aseg');
+        //   localStorage.removeItem('v_aseg');
+        //   // Para crear
+        //   localStorage.removeItem(this.localStorage_selectedGoods);
+        //   localStorage.removeItem(this.localStorage_goodData3);
+        //   localStorage.removeItem(this.localStorage_totalGoods3);
+        //   // Para liberar
+        //   localStorage.removeItem(this.localStorage_selectedGoods2);
+        //   localStorage.removeItem(this.localStorage_goodData4);
+        //   localStorage.removeItem(this.localStorage_totalGoods4);
+        // }
+        // if (this.P_NO_TRAMITE == null) {
+        //   localStorage.removeItem('f_aseg');
+        //   localStorage.removeItem('e_aseg');
+        //   localStorage.removeItem('v_aseg');
+        //   // Para crear
+        //   localStorage.removeItem(this.localStorage_selectedGoods);
+        //   localStorage.removeItem(this.localStorage_goodData3);
+        //   localStorage.removeItem(this.localStorage_totalGoods3);
+        //   // Para liberar
+        //   localStorage.removeItem(this.localStorage_selectedGoods2);
+        //   localStorage.removeItem(this.localStorage_goodData4);
+        //   localStorage.removeItem(this.localStorage_totalGoods4);
+        // }
         this.initForm();
       });
   }
@@ -728,17 +728,17 @@ export class GoodsProcessValidationExtdomComponent
     this.notificationData = null;
     setTimeout(() => {
       this.showScanForm = true;
-      localStorage.removeItem('f_aseg');
-      localStorage.removeItem('e_aseg');
-      localStorage.removeItem('v_aseg');
-      // Para crear
-      localStorage.removeItem(this.localStorage_selectedGoods);
-      localStorage.removeItem(this.localStorage_goodData3);
-      localStorage.removeItem(this.localStorage_totalGoods3);
-      // Para liberar
-      localStorage.removeItem(this.localStorage_selectedGoods2);
-      localStorage.removeItem(this.localStorage_goodData4);
-      localStorage.removeItem(this.localStorage_totalGoods4);
+      // localStorage.removeItem('f_aseg');
+      // localStorage.removeItem('e_aseg');
+      // localStorage.removeItem('v_aseg');
+      // // Para crear
+      // localStorage.removeItem(this.localStorage_selectedGoods);
+      // localStorage.removeItem(this.localStorage_goodData3);
+      // localStorage.removeItem(this.localStorage_totalGoods3);
+      // // Para liberar
+      // localStorage.removeItem(this.localStorage_selectedGoods2);
+      // localStorage.removeItem(this.localStorage_goodData4);
+      // localStorage.removeItem(this.localStorage_totalGoods4);
       // Listado Tabla Bienes Disponibles
       this.dataTable.load([]);
       this.dataTable.refresh();
@@ -896,8 +896,8 @@ export class GoodsProcessValidationExtdomComponent
       externalOfficeDate: new Date(this.notificationData.externalOfficeDate),
     };
     this.form.patchValue(data);
-    localStorage.setItem('e_aseg', '' + this.notificationData.expedientNumber);
-    localStorage.setItem('v_aseg', '' + this.notificationData.wheelNumber);
+    // localStorage.setItem('e_aseg', '' + this.notificationData.expedientNumber);
+    // localStorage.setItem('v_aseg', '' + this.notificationData.wheelNumber);
     console.log(this.form.value);
 
     this.formReserved.get('reserved').setValue(data.reserved);
@@ -933,36 +933,36 @@ export class GoodsProcessValidationExtdomComponent
       if (data.authority) {
         this.getAuthority(new ListParams(), true);
       }
-      let e_aseg = localStorage.getItem('e_aseg');
-      let v_aseg = localStorage.getItem('v_aseg');
-      console.log('LOCALSTORAGE ', e_aseg, v_aseg);
-      let valid = false;
-      if (this.notificationData == null) {
-        valid = false;
-      } else {
-        if (this.notificationData.expedientNumber) {
-          if (e_aseg != this.notificationData.expedientNumber.toString()) {
-            valid = false;
-          }
-        }
-        if (this.notificationData.wheelNumber) {
-          if (v_aseg != this.notificationData.wheelNumber.toString()) {
-            valid = false;
-          }
-        }
-      }
-      if (valid == false) {
-        localStorage.removeItem('e_aseg');
-        localStorage.removeItem('v_aseg');
-        // Para crear
-        localStorage.removeItem(this.localStorage_selectedGoods);
-        localStorage.removeItem(this.localStorage_goodData3);
-        localStorage.removeItem(this.localStorage_totalGoods3);
-        // Para liberar
-        localStorage.removeItem(this.localStorage_selectedGoods2);
-        localStorage.removeItem(this.localStorage_goodData4);
-        localStorage.removeItem(this.localStorage_totalGoods4);
-      }
+      // let e_aseg = localStorage.getItem('e_aseg');
+      // let v_aseg = localStorage.getItem('v_aseg');
+      // console.log('LOCALSTORAGE ', e_aseg, v_aseg);
+      // let valid = false;
+      // if (this.notificationData == null) {
+      //   valid = false;
+      // } else {
+      //   if (this.notificationData.expedientNumber) {
+      //     if (e_aseg != this.notificationData.expedientNumber.toString()) {
+      //       valid = false;
+      //     }
+      //   }
+      //   if (this.notificationData.wheelNumber) {
+      //     if (v_aseg != this.notificationData.wheelNumber.toString()) {
+      //       valid = false;
+      //     }
+      //   }
+      // }
+      // if (valid == false) {
+      //   localStorage.removeItem('e_aseg');
+      //   localStorage.removeItem('v_aseg');
+      //   // Para crear
+      //   localStorage.removeItem(this.localStorage_selectedGoods);
+      //   localStorage.removeItem(this.localStorage_goodData3);
+      //   localStorage.removeItem(this.localStorage_totalGoods3);
+      //   // Para liberar
+      //   localStorage.removeItem(this.localStorage_selectedGoods2);
+      //   localStorage.removeItem(this.localStorage_goodData4);
+      //   localStorage.removeItem(this.localStorage_totalGoods4);
+      // }
     }, 200);
     this.reviewLocalStorage();
     // setTimeout(() => {
@@ -973,87 +973,87 @@ export class GoodsProcessValidationExtdomComponent
   }
 
   reviewLocalStorage() {
-    let f_aseg = localStorage.getItem('f_aseg');
-    let e_aseg = localStorage.getItem('e_aseg');
-    let v_aseg = localStorage.getItem('v_aseg');
-    console.log('LOCALSTORAGE ', f_aseg, e_aseg, v_aseg);
-    let valid = true;
-    if (this.notificationData == null) {
-      valid = false;
-    } else {
-      if (this.notificationData.expedientNumber) {
-        if (e_aseg != this.notificationData.expedientNumber.toString()) {
-          valid = false;
-        }
-      }
-      if (this.notificationData.wheelNumber) {
-        if (v_aseg != this.notificationData.wheelNumber.toString()) {
-          valid = false;
-        }
-      }
-    }
-    if (valid == false) {
-      localStorage.removeItem('f_aseg');
-      localStorage.removeItem('e_aseg');
-      localStorage.removeItem('v_aseg');
-      // Para crear
-      localStorage.removeItem(this.localStorage_selectedGoods);
-      localStorage.removeItem(this.localStorage_goodData3);
-      localStorage.removeItem(this.localStorage_totalGoods3);
-      // Para liberar
-      localStorage.removeItem(this.localStorage_selectedGoods2);
-      localStorage.removeItem(this.localStorage_goodData4);
-      localStorage.removeItem(this.localStorage_totalGoods4);
-      this.showScanForm = false;
-      this.universalFolio = null;
-      this.formScan.get('scanningFoli').setValue(null);
-      setTimeout(() => {
-        this.formScan.get('scanningFoli').updateValueAndValidity();
-        // this.showScanForm = true;
-        this.getFolioDocument();
-      }, 200);
-    } else {
-      // Para crear
-      let _selectedGoods = localStorage.getItem(
-        this.localStorage_selectedGoods
-      );
-      let _goodData3 = localStorage.getItem(this.localStorage_goodData3);
-      let _totalGoods3 = localStorage.getItem(this.localStorage_totalGoods3);
-      if (_selectedGoods) {
-        this.selectedGoods = JSON.parse(_selectedGoods);
-      }
-      if (_goodData3) {
-        this.goodData3 = JSON.parse(_goodData3);
-      }
-      if (_totalGoods3) {
-        this.totalGoods3 = JSON.parse(_totalGoods3);
-      }
-      this.updatePaginatedTable3();
-      // Para liberar
-      let _selectedGoods2 = localStorage.getItem(
-        this.localStorage_selectedGoods2
-      );
-      let _goodData4 = localStorage.getItem(this.localStorage_goodData4);
-      let _totalGoods4 = localStorage.getItem(this.localStorage_totalGoods4);
-      if (_selectedGoods2) {
-        this.goodsValid = JSON.parse(_selectedGoods2);
-      }
-      if (_goodData4) {
-        this.goodData4 = JSON.parse(_goodData4);
-      }
-      if (_totalGoods4) {
-        this.totalGoods4 = JSON.parse(_totalGoods4);
-      }
-      this.updatePaginatedTable4();
-      console.log('LOCALSTORAGE PASS VALID ', f_aseg, e_aseg, v_aseg);
-      this.showScanForm = false;
-      this.universalFolio = f_aseg ? Number(f_aseg) : null;
-      this.formScan.get('scanningFoli').setValue(f_aseg);
-      setTimeout(() => {
-        this.formScan.get('scanningFoli').updateValueAndValidity();
-        this.showScanForm = true;
-      }, 200);
-    }
+    // let f_aseg = localStorage.getItem('f_aseg');
+    // let e_aseg = localStorage.getItem('e_aseg');
+    // let v_aseg = localStorage.getItem('v_aseg');
+    // console.log('LOCALSTORAGE ', f_aseg, e_aseg, v_aseg);
+    // let valid = true;
+    // if (this.notificationData == null) {
+    //   valid = false;
+    // } else {
+    //   if (this.notificationData.expedientNumber) {
+    //     if (e_aseg != this.notificationData.expedientNumber.toString()) {
+    //       valid = false;
+    //     }
+    //   }
+    //   if (this.notificationData.wheelNumber) {
+    //     if (v_aseg != this.notificationData.wheelNumber.toString()) {
+    //       valid = false;
+    //     }
+    //   }
+    // }
+    // if (valid == false) {
+    // localStorage.removeItem('f_aseg');
+    // localStorage.removeItem('e_aseg');
+    // localStorage.removeItem('v_aseg');
+    // // Para crear
+    // localStorage.removeItem(this.localStorage_selectedGoods);
+    // localStorage.removeItem(this.localStorage_goodData3);
+    // localStorage.removeItem(this.localStorage_totalGoods3);
+    // // Para liberar
+    // localStorage.removeItem(this.localStorage_selectedGoods2);
+    // localStorage.removeItem(this.localStorage_goodData4);
+    // localStorage.removeItem(this.localStorage_totalGoods4);
+    this.showScanForm = false;
+    this.universalFolio = null;
+    this.formScan.get('scanningFoli').setValue(null);
+    setTimeout(() => {
+      this.formScan.get('scanningFoli').updateValueAndValidity();
+      // this.showScanForm = true;
+      this.getFolioDocument();
+    }, 200);
+    // } else {
+    // Para crear
+    // let _selectedGoods = localStorage.getItem(
+    //   this.localStorage_selectedGoods
+    // );
+    // let _goodData3 = localStorage.getItem(this.localStorage_goodData3);
+    // let _totalGoods3 = localStorage.getItem(this.localStorage_totalGoods3);
+    // if (_selectedGoods) {
+    //   this.selectedGoods = JSON.parse(_selectedGoods);
+    // }
+    // if (_goodData3) {
+    //   this.goodData3 = JSON.parse(_goodData3);
+    // }
+    // if (_totalGoods3) {
+    //   this.totalGoods3 = JSON.parse(_totalGoods3);
+    // }
+    // this.updatePaginatedTable3();
+    // // Para liberar
+    // let _selectedGoods2 = localStorage.getItem(
+    //   this.localStorage_selectedGoods2
+    // );
+    // let _goodData4 = localStorage.getItem(this.localStorage_goodData4);
+    // let _totalGoods4 = localStorage.getItem(this.localStorage_totalGoods4);
+    // if (_selectedGoods2) {
+    //   this.goodsValid = JSON.parse(_selectedGoods2);
+    // }
+    // if (_goodData4) {
+    //   this.goodData4 = JSON.parse(_goodData4);
+    // }
+    // if (_totalGoods4) {
+    //   this.totalGoods4 = JSON.parse(_totalGoods4);
+    // }
+    // this.updatePaginatedTable4();
+    // console.log('LOCALSTORAGE PASS VALID ', f_aseg, e_aseg, v_aseg);
+    // this.showScanForm = false;
+    // this.universalFolio = f_aseg ? Number(f_aseg) : null;
+    // this.formScan.get('scanningFoli').setValue(f_aseg);
+    // setTimeout(() => {
+    //   this.formScan.get('scanningFoli').updateValueAndValidity();
+    //   this.showScanForm = true;
+    // }, 200);
+    // }
   }
 
   getFolioDocument() {
@@ -1242,18 +1242,18 @@ export class GoodsProcessValidationExtdomComponent
 
   afterAddSelect() {
     setTimeout(() => {
-      localStorage.setItem(
-        this.localStorage_selectedGoods,
-        JSON.stringify(this.selectedGoods.slice(0, 100))
-      );
-      localStorage.setItem(
-        this.localStorage_goodData3,
-        JSON.stringify(this.goodData3.slice(0, 100))
-      );
-      localStorage.setItem(
-        this.localStorage_totalGoods3,
-        JSON.stringify(this.totalGoods3 > 100 ? 100 : this.totalGoods3)
-      );
+      // localStorage.setItem(
+      //   this.localStorage_selectedGoods,
+      //   JSON.stringify(this.selectedGoods.slice(0, 100))
+      // );
+      // localStorage.setItem(
+      //   this.localStorage_goodData3,
+      //   JSON.stringify(this.goodData3.slice(0, 100))
+      // );
+      // localStorage.setItem(
+      //   this.localStorage_totalGoods3,
+      //   JSON.stringify(this.totalGoods3 > 100 ? 100 : this.totalGoods3)
+      // );
       // Update data table bienes
       this.dataTable.load(this.goodData);
       this.dataTable.refresh();
@@ -1320,18 +1320,18 @@ export class GoodsProcessValidationExtdomComponent
         this.goodData3,
         this.goodData
       );
-      localStorage.setItem(
-        this.localStorage_selectedGoods,
-        JSON.stringify(this.selectedGoods)
-      );
-      localStorage.setItem(
-        this.localStorage_goodData3,
-        JSON.stringify(this.goodData3)
-      );
-      localStorage.setItem(
-        this.localStorage_totalGoods3,
-        JSON.stringify(this.totalGoods3)
-      );
+      // localStorage.setItem(
+      //   this.localStorage_selectedGoods,
+      //   JSON.stringify(this.selectedGoods)
+      // );
+      // localStorage.setItem(
+      //   this.localStorage_goodData3,
+      //   JSON.stringify(this.goodData3)
+      // );
+      // localStorage.setItem(
+      //   this.localStorage_totalGoods3,
+      //   JSON.stringify(this.totalGoods3)
+      // );
       // Update data table bienes
       // this.dataTable.load(this.goodData);
       // this.dataTable.refresh();
@@ -1383,18 +1383,18 @@ export class GoodsProcessValidationExtdomComponent
         this.totalGoods4,
         this.goodData2
       );
-      localStorage.setItem(
-        this.localStorage_selectedGoods2,
-        JSON.stringify(this.goodsValid)
-      );
-      localStorage.setItem(
-        this.localStorage_goodData4,
-        JSON.stringify(this.goodData4)
-      );
-      localStorage.setItem(
-        this.localStorage_totalGoods4,
-        JSON.stringify(this.totalGoods4)
-      );
+      // localStorage.setItem(
+      //   this.localStorage_selectedGoods2,
+      //   JSON.stringify(this.goodsValid)
+      // );
+      // localStorage.setItem(
+      //   this.localStorage_goodData4,
+      //   JSON.stringify(this.goodData4)
+      // );
+      // localStorage.setItem(
+      //   this.localStorage_totalGoods4,
+      //   JSON.stringify(this.totalGoods4)
+      // );
       // Update data table bienes
       this.dataTable2.load(this.goodData2);
       this.dataTable2.refresh();
@@ -1463,18 +1463,18 @@ export class GoodsProcessValidationExtdomComponent
         this.goodData4,
         this.goodData2
       );
-      localStorage.setItem(
-        this.localStorage_selectedGoods2,
-        JSON.stringify(this.goodsValid)
-      );
-      localStorage.setItem(
-        this.localStorage_goodData4,
-        JSON.stringify(this.goodData4)
-      );
-      localStorage.setItem(
-        this.localStorage_totalGoods4,
-        JSON.stringify(this.totalGoods4)
-      );
+      // localStorage.setItem(
+      //   this.localStorage_selectedGoods2,
+      //   JSON.stringify(this.goodsValid)
+      // );
+      // localStorage.setItem(
+      //   this.localStorage_goodData4,
+      //   JSON.stringify(this.goodData4)
+      // );
+      // localStorage.setItem(
+      //   this.localStorage_totalGoods4,
+      //   JSON.stringify(this.totalGoods4)
+      // );
       // Update data table bienes
       // this.dataTable2.load(this.goodData2);
       // this.dataTable2.refresh();
@@ -2032,9 +2032,9 @@ export class GoodsProcessValidationExtdomComponent
         tap(_document => {
           this.formScan.get('scanningFoli').setValue(_document.id);
           this.universalFolio = Number(_document.id);
-          localStorage.setItem('f_aseg', '' + _document.id);
-          localStorage.setItem('e_aseg', '' + document.numberProceedings);
-          localStorage.setItem('v_aseg', '' + document.flyerNumber);
+          // localStorage.setItem('f_aseg', '' + _document.id);
+          // localStorage.setItem('e_aseg', '' + document.numberProceedings);
+          // localStorage.setItem('v_aseg', '' + document.flyerNumber);
         }),
         switchMap(_document => this.generateScanRequestReport())
       )
