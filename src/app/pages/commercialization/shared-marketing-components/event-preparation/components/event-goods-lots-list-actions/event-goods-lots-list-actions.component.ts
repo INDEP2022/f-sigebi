@@ -43,9 +43,9 @@ export class EventGoodsLotsListActionsComponent
   }
 
   async onLoadFromTracker() {
-    // if (!this.isSomeItemSelected()) {
-    //   return;
-    // }
+    if (!this.isSomeItemSelected()) {
+      return;
+    }
     const { eventTpId, statusVtaId } = this.controls;
     if (eventTpId.value == 9) {
       this.alert(
@@ -98,4 +98,50 @@ export class EventGoodsLotsListActionsComponent
       },
     });
   }
+
+  async onExportExcel() {
+    if (!this.isSomeItemSelected()) {
+      return;
+    }
+    const forThirdQuestion = await this.alertQuestion(
+      'question',
+      '¿Archivo para Tercero?',
+      '',
+      'Si',
+      'No'
+    );
+    if (forThirdQuestion.isConfirmed) {
+      this.thirdFile();
+      return;
+    }
+    const { eventTpId } = this.controls;
+    if (['PREP', 'APRO', 'PUB', 'ACT'].includes(eventTpId.value)) {
+      this.exportExcelLotGoods(this.parameters.pDirection);
+    } else {
+      this.exportExcelCustomers(this.parameters.pDirection);
+    }
+  }
+
+  /**
+   * ARCHIVO_TERCERO
+   */
+  thirdFile() {
+    console.log('ARCHIVO_TERCERO');
+  }
+
+  /**
+   * PUP_EXP_EXCEL_BIE_LOTE
+   */
+  exportExcelLotGoods(direction: 'M' | 'I') {
+    console.log('PUP_EXP_EXCEL_BIE_LOTE');
+  }
+
+  /**
+   * PUP_EXP_EXCEL_CLIENTES
+   */
+  exportExcelCustomers(direction: 'M' | 'I') {
+    console.log('PUP_EXP_EXCEL_CLIENTES');
+  }
+
+  onLotifyFromExcel() {}
 }
