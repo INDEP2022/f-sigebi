@@ -1542,7 +1542,8 @@ export class DepositAccountStatementComponent
     //   this.alert('error','Detalle de devolución')
     //   return null;
     // }
-    let no_movimiento_origen_deposito = this.userChecks.accountnumber;
+    let no_movimiento_origen_deposito =
+      this.userChecks.accountnumberorigindeposit;
     if (!no_movimiento_origen_deposito) {
       return null;
     }

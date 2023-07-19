@@ -8,6 +8,7 @@ export interface IAccountDetailInd {
   goodnumber: string;
   depositnumber: string;
   accountnumber: string;
+  accountnumberorigindeposit?: string;
   movementnumber: string;
   accountkey: string;
   preliminaryinvestigation: string;
