@@ -16,17 +16,18 @@
               [form]="form"></ngx-select>
           </form-field>
         </div>
-        <div class="col-md-5 col-sm-12">
+        <!-- <div class="col-md-5 col-sm-12"> -->
           <form-field
             [control]="form.get('cvePackage')"
-            label="Clave del Paquete">
+            label="Clave del Paquete"
+            class="col-md-5 col-sm-12">
             <input
               type="text"
               [readOnly]="true"
               class="form-control"
               formControlName="cvePackage" />
           </form-field>
-        </div>
+        <!-- </div> -->
         <div class="col-md-5 col-sm-12">
           <form-field
             [control]="form.get('descriptionPackage')"
@@ -162,35 +163,35 @@
               <td>
                 <form-field [control]="form.get('fecElab')">
                   <span>{{
-                    form.get('fecElab').value | date: 'dd-MM-yyyy'
+                    form.get('fecElab').value | date : 'dd-MM-yyyy'
                   }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecValida')">
                   <span>{{
-                    form.get('fecValida').value | date: 'dd-MM-yyyy'
+                    form.get('fecValida').value | date : 'dd-MM-yyyy'
                   }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecAutoriza')">
                   <span>{{
-                    form.get('fecAutoriza').value | date: 'dd-MM-yyyy'
+                    form.get('fecAutoriza').value | date : 'dd-MM-yyyy'
                   }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecCerrado')">
                   <span>{{
-                    form.get('fecCerrado').value | date: 'dd-MM-yyyy'
+                    form.get('fecCerrado').value | date : 'dd-MM-yyyy'
                   }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecCancelado')">
                   <span>{{
-                    form.get('fecCancelado').value | date: 'dd-MM-yyyy'
+                    form.get('fecCancelado').value | date : 'dd-MM-yyyy'
                   }}</span>
                 </form-field>
               </td>

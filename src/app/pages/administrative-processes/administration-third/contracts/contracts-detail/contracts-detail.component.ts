@@ -20,6 +20,7 @@ export class ContractsDetailComponent extends BasePage implements OnInit {
   contractForm: ModelForm<IContract>;
   contract: IContract;
   zoneContracts = new DefaultSelect();
+  status = new DefaultSelect();
 
   title: string = 'Contrato';
   edit: boolean = false;
@@ -35,17 +36,33 @@ export class ContractsDetailComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.asignarDatos();
     this.getZoneContracts(new ListParams());
+  }
+
+  asignarDatos() {
+    let itemVigente = {
+      id: '1',
+      descripcion: 'Vigente',
+    };
+    let itemNoVigente = {
+      id: '0',
+      descripcion: 'No vigente',
+    };
+    let lstDatos = [];
+    lstDatos.push(itemVigente);
+    lstDatos.push(itemNoVigente);
+    this.status = new DefaultSelect(lstDatos, lstDatos.length);
   }
 
   private prepareForm() {
     this.contractForm = this.fb.group({
       id: [null, []],
       description: [null, [Validators.pattern(STRING_PATTERN)]],
-      contractKey: [null],
-      endDate: [null],
+      contractKey: [null, Validators.required],
+      endDate: [null, Validators.required],
       registerNumber: [null],
-      startDate: [null],
+      startDate: [null, Validators.required],
       statusContract: [null],
       vigContract: [false],
       zone: [null],
@@ -62,7 +79,9 @@ export class ContractsDetailComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.edit ? this.update() : this.create();
+    if (this.validarFecha()) {
+      this.edit ? this.update() : this.create();
+    }
   }
 
   create() {
@@ -107,5 +126,19 @@ export class ContractsDetailComponent extends BasePage implements OnInit {
       next: data =>
         (this.zoneContracts = new DefaultSelect(data.data, data.count)),
     });
+  }
+
+  validarFecha() {
+    if (
+      this.contractForm.get('startDate').value >=
+      this.contractForm.get('endDate').value
+    ) {
+      this.onLoadToast(
+        'warning',
+        `La fecha inicial no puede ser mayor o igual a la fecha final`
+      );
+      return false;
+    }
+    return true;
   }
 }
