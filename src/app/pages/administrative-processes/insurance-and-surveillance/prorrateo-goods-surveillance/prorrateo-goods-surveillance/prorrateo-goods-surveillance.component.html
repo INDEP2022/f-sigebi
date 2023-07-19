@@ -5,6 +5,15 @@
 
   <div body>
     <form [formGroup]="form" class="form-material">
+      <div class="row mt-12">
+        <div class="col-md-12" style="display: flex; justify-content: flex-end">
+          <button
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="clearform()">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+        </div>
+      </div>
       <div class="row mt-4">
         <div class="col-md-3">
           <form-field [control]="form.get('noRequest')" label="No. Solicitud">
