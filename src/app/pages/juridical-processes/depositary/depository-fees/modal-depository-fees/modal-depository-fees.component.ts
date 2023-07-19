@@ -62,7 +62,7 @@ export class ModalDepositoryFeesComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      payIdGens: [null, [Validators.required]],
+      no_appointment: [null, [Validators.required]],
       noGoods: [
         null,
         /* [
@@ -77,7 +77,7 @@ export class ModalDepositoryFeesComponent extends BasePage implements OnInit {
       payment: [null],
       actPay: [null],
       impWithoutIva: [null],
-      no_appointment: [null],
+      payIdGens: [null, Validators.required],
       status: [null],
       cubrioPayId: [null],
       coveredPayment: [null],
@@ -91,6 +91,7 @@ export class ModalDepositoryFeesComponent extends BasePage implements OnInit {
       this.form.controls['processDate'].setValue(
         this.formatDate(this.pay.processDate)
       );
+      this.form.controls['no_appointment'].disable();
       this.form.controls['payIdGens'].disable();
       this.form.controls['payId'].disable();
     }

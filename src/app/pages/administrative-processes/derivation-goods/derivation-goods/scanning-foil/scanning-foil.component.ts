@@ -10,7 +10,7 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -42,6 +42,7 @@ export class ScanningFoilComponent
   generateFo: boolean = true;
   @Input() numberFoli: string | number = '';
   @Input() cveScreen: string | number = '';
+  @Input() expedientNumber: string | number = '';
   @Input() reportPrint: string = '';
   @Input() refresh: boolean = false;
   @Input() good: IGood;
@@ -61,7 +62,8 @@ export class ScanningFoilComponent
     private readonly router: Router,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private modalRef: BsModalRef
   ) {
     super();
   }
@@ -115,7 +117,7 @@ export class ScanningFoilComponent
       this.alert(
         'info',
         'Información',
-        'El Número de Bien para este Proceso ya Tiene folio de Escaneo.'
+        'El Número de Bien para este Proceso ya Tiene Folio de Escaneo.'
       );
       return;
     }
@@ -212,7 +214,7 @@ export class ScanningFoilComponent
     if (this.form.get('scanningFoli').value !== '') {
       this.alertQuestion(
         'question',
-        'Se abrirá la pantalla de escaneo para el folio de escaneo del acta abierta',
+        'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Acta Abierta',
         '¿Deseas continuar?',
         'Continuar'
       ).then(q => {
@@ -230,13 +232,15 @@ export class ScanningFoilComponent
       this.change.emit('Se hizo el change');
       localStorage.setItem('documentLegal', JSON.stringify(this.document));
     }
-    console.log(this.cveScreen);
+    console.log(this.expedientNumber);
     this.router.navigate([`/pages/general-processes/scan-documents`], {
       queryParams: {
         origin: this.cveScreen,
         folio: this.form.get('scanningFoli').value,
+        expedientNumber: Number(this.expedientNumber),
       },
     });
+    this.modalRef.hide();
   }
   seeImages() {
     if (this.good === undefined) {
