@@ -55,8 +55,8 @@
                   <!-- <button
                     type="button"
                     class="btn btn-primary active btn-sm m-2"
-                    (click)="openModalMail()">
-                    TEST MAIL
+                    (click)="startLoopGoods()">
+                    TEST LOOP
                     <i class="fa fa-eraser ml-1"></i>
                   </button> -->
                 </div>
@@ -554,6 +554,43 @@
     <!-- tabla Bienes -->
 
     <div class="row pt-2">
+      <div
+        *ngIf="showReservedForm"
+        class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+        <div class="card">
+          <form
+            [formGroup]="formReserved"
+            class="container-fluid form-material p-0">
+            <div class="card-body m-4">
+              <div class="row">
+                <div class="col-12 col-sm-12 col-md-12">
+                  <form-field
+                    [control]="formReserved.get('reserved')"
+                    label="Reservado">
+                    <textarea
+                      class="form-control"
+                      rows="3"
+                      maxLength="200"
+                      formControlName="reserved"></textarea>
+                  </form-field>
+                </div>
+                <div class="col-12 col-sm-12 col-md-12 text-center">
+                  <button
+                    class="btn btn-primary btn-sm active m-3"
+                    (click)="applyReserved()">
+                    Aplicar <i class="fa fa-check" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    class="btn btn-primary btn-sm active mr-3"
+                    (click)="closeApplyReserved()">
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
       <div
         class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
         *ngIf="loadingProcess">
