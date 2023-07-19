@@ -9,4 +9,5 @@ export enum GoodsQueryEndpoints {
   AtributesClassificationGood = 'attributes-classification-good',
   MeasureUnitsView = 'goodsquery/api/v1/views/catMeasureUnitsView',
   OpinionDelRegSeq = 'application/opinionDelRegSeq',
+  getUnits = 'ligie-units-measure',
 }

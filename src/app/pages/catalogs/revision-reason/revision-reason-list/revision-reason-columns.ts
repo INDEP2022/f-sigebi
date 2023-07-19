@@ -5,7 +5,7 @@ export const REVISION_REASON_COLUMNS = {
     sort: false,
   },
   initialStatus: {
-    title: 'Estado inicial',
+    title: 'Estado Inicial',
     type: 'string',
     sort: false,
   },
@@ -15,22 +15,22 @@ export const REVISION_REASON_COLUMNS = {
     sort: false,
   },
   goodType: {
-    title: 'Tipo bien',
+    title: 'Tipo Bien',
     type: 'string',
     sort: false,
   },
   statusRev: {
-    title: 'Estado de revisión',
+    title: 'Estado de Revisión',
     type: 'string',
     sort: false,
   },
   managerArea: {
-    title: 'Área responsable',
+    title: 'Área Responsable',
     type: 'string',
     sort: false,
   },
   statusPurpose: {
-    title: 'Estado final',
+    title: 'Estado Final',
     type: 'string',
     sort: false,
   },

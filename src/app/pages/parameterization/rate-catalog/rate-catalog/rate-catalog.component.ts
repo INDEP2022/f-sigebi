@@ -106,7 +106,7 @@ export class RateCatalogComponent extends BasePage implements OnInit {
     modalRef.content.refresh.subscribe(next => {
       if (next) {
         this.getData();
-        this.onLoadToast('success', 'Guardado Correctamente', '');
+        this.alert('success', 'Guardado Correctamente', '');
       }
     });
   }
@@ -167,7 +167,7 @@ export class RateCatalogComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.onLoadToast('success', 'Eliminado correctamente', '');
+        this.alert('success', 'Eliminado correctamente', '');
       }
     });
   }
