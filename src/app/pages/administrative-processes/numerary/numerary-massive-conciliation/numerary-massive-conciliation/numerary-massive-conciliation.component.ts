@@ -24,6 +24,7 @@ import { RecordAccountStatementsAccountsService } from 'src/app/core/services/ca
 import { RecordAccountStatementsService } from 'src/app/core/services/catalogs/record-account-statements.service';
 import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
+import { IRangeDateTmp5 } from 'src/app/core/services/ms-coinciliation/comer-details';
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -177,6 +178,7 @@ export class NumeraryMassiveConciliationComponent
     this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       console.log(params);
       this.limit2 = new FormControl(params.limit);
+
       if (this.dataGoods2['data'].length > 0) {
         this.searchGoodBankAccount();
       }
@@ -375,10 +377,34 @@ export class NumeraryMassiveConciliationComponent
   }
 
   //Trae la lista de monedas para el segundo form
+  // getCveCurrency() {
+  //   this.accountBankService.getListCurrencyCve({ currency: null }).subscribe(
+  //     res => {
+  //       console.log(res);
+  //       let currency = res.data;
+  //       console.log(currency)
+  //       currency = currency.replace(/'/g, '');
+  //       console.log(currency)
+  //       this.currentDataF2 = new DefaultSelect(currency, res.count);
+  //       console.log(this.currentDataF2)
+  //     },
+  //     err => {
+  //       console.log(err);
+  //     }
+  //   );
+  // }
+
   getCveCurrency() {
     this.accountBankService.getListCurrencyCve({ currency: null }).subscribe(
       res => {
         console.log(res);
+        // Eliminar comillas simples de las siglas de las monedas
+        res.data.forEach((currency: { cve_moneda: string }) => {
+          if (currency.cve_moneda && typeof currency.cve_moneda === 'string') {
+            currency.cve_moneda = currency.cve_moneda.replace(/'/g, '');
+          }
+        });
+
         this.currentDataF2 = new DefaultSelect(res.data, res.count);
       },
       err => {
@@ -545,10 +571,30 @@ export class NumeraryMassiveConciliationComponent
             this.goodProcessService.pupReconcilied(model).subscribe(
               res => {
                 console.log(res);
-                /* if() */
-                this.alert('success', 'Bienes encontrados', '');
+                this.alert('success', 'Bienes Encontrados', '');
                 this.dataGoods.load(res.data);
                 this.loading = false;
+
+                if (this.form.get('dateOf').value != null) {
+                  const model: IRangeDateTmp5 = {
+                    finalDate: format(
+                      this.form.get('dateAt').value,
+                      'yyyy-MM-dd'
+                    ),
+                    initialDate: format(
+                      this.form.get('dateOf').value,
+                      'yyyy-MM-dd'
+                    ),
+                  };
+                  this.tmpVal5Service.rangeDate(model).subscribe(
+                    res => {
+                      console.log(res);
+                    },
+                    err => {
+                      console.log(err);
+                    }
+                  );
+                }
               },
               err => {
                 console.log(err);
@@ -558,7 +604,7 @@ export class NumeraryMassiveConciliationComponent
           },
           err => {
             console.log(err);
-            this.alert('warning', 'No se encontraron Bienes', '');
+            this.alert('warning', 'No se Encontraron Bienes', '');
             this.loading = false;
           }
         );
@@ -867,17 +913,31 @@ export class NumeraryMassiveConciliationComponent
       };
       this.numeraryService.pupAssociateGood(model).subscribe(
         res => {
-          this.alert('success', 'Se realizó la asociación', '');
+          this.alert('success', 'Se Realizó la Asociación', '');
           clearGoodCheck2();
           console.log(res);
         },
         err => {
-          this.alert('error', 'Se presentó un error inesperado', '');
+          this.alert('error', 'Se Presentó un Error Inesperado', '');
           console.log(err);
         }
       );
     } else {
       this.alert('warning', 'No se Seleccionó Datos de Cuentas Bancarias', '');
     }
+  }
+
+  cleandInfo() {
+    this.form.reset();
+    this.dataGoods = null;
+    this.loading = false;
+    this.totalItems = 0;
+  }
+
+  cleandInfo2() {
+    this.form2.reset();
+    this.dataGoods2 = null;
+    this.loading = false;
+    this.totalItems2 = 0;
   }
 }

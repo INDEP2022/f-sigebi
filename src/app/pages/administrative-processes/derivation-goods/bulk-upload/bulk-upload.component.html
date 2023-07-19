@@ -8,31 +8,33 @@
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('numberGoodFather')"
-            label="No Bien Padre">
+            label="No. Bien Padre">
             <input
               type="text"
               class="form-control"
-              formControlName="numberGoodFather" />
+              formControlName="numberGoodFather"
+              [readOnly]="true" />
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('numberDossier')"
-            label="No Expediente">
+            label="No. Expediente">
             <input
               type="text"
               class="form-control"
-              formControlName="numberDossier" />
+              formControlName="numberDossier"
+              [readOnly]="true" />
           </form-field>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <input type="text" class="form-control" [value]="fileName" readonly />
-          <!--<form-field [control]="form.get('fileLoad')" label="Archivo a cargar">
+          <form-field [control]="form.get('fileLoad')" label="Nombre Archivo">
             <input
-              type="file"
+              type="text"
               class="form-control"
-              formControlName="fileLoad" />
-          </form-field>-->
+              formControlName="fileLoad"
+              readonly />
+          </form-field>
         </div>
       </div>
     </div>
@@ -89,17 +91,19 @@
         (change)="onFileChange($event)" />
     </div>
 
-    <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="col-md-2 col-sm-6 col-xs-12">
       <button
         class="btn btn-info btn-sm active"
-        (click)="postDatatableItemBtn()">
+        (click)="postDatatableItemBtn()"
+        [disabled]="!(totalItems > 0)">
         Ingresar Bien
       </button>
     </div>
-
+    <div class="col-md-4 col-sm-6 col-xs-12"></div>
     <div class="col-md-3 col-sm-6 col-xs-12">
-      <button class="btn btn-danger btn-sm active" (click)="exit()">
-        Salir
+      <button class="btn btn-primary active btn-sm m-2" (click)="exit()">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
       </button>
     </div>
   </div>
