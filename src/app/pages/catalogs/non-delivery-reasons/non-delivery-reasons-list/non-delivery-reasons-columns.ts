@@ -5,12 +5,12 @@ export const NON_DELIVERY_REASONS_COLUMNS = {
     sort: false,
   },
   reasonType: {
-    title: 'Tipo motivo',
+    title: 'Tipo Motivo',
     type: 'string',
     sort: false,
   },
   eventType: {
-    title: 'Tipo evento',
+    title: 'Tipo Evento',
     type: 'string',
     sort: false,
   },

@@ -186,6 +186,7 @@ export class ResquestNumberingChangeComponent
   //Reactive Forms
   form: FormGroup;
   authorizeDate: any;
+  datePipe: any;
 
   get legalStatus() {
     return this.form.get('legalStatus');
@@ -663,11 +664,11 @@ export class ResquestNumberingChangeComponent
     if (this.form.get('type').value != null)
       this.goodServices.getByExpedientAndParams__(params).subscribe({
         next: async (response: any) => {
-          this.alert(
-            'info',
-            'Se mostraran los datos en la tabla BIENES X TIPO',
-            ''
-          );
+          // this.alert(
+          //   'info',
+          //   'Se mostraran los datos en la tabla BIENES X TIPO',
+          //   ''
+          // );
           let result = response.data.map(async (item: any) => {
             let obj = {
               vcScreen: 'FACTADBSOLCAMNUME',
@@ -1144,7 +1145,9 @@ export class ResquestNumberingChangeComponent
   }
 
   clean() {
-    this.formaplicationData.get('dateRequestChangeNumerary').setValue(null);
+    this.formaplicationData
+      .get('dateRequestChangeNumerary')
+      .setValue(new Date());
     this.formaplicationData.get('applicationChangeCashNumber').setValue(null);
     this.formaplicationData.get('userRequestChangeNumber').setValue(null);
     this.formaplicationData.get('postUserRequestCamnum').setValue(null);
@@ -1153,7 +1156,7 @@ export class ResquestNumberingChangeComponent
     this.formaplicationData.get('authorizeUser').setValue(null);
     this.formaplicationData.get('authorizePostUser').setValue(null);
     this.formaplicationData.get('authorizeDelegation').setValue(null);
-    this.formaplicationData.get('authorizeDate').setValue(null);
+    this.formaplicationData.get('authorizeDate').setValue(new Date());
     Object.keys(this.formaplicationData.controls).forEach(controlName => {
       this.formaplicationData.get(controlName).enable();
     }),
@@ -1235,10 +1238,19 @@ export class ResquestNumberingChangeComponent
       type: [null, Validators.required],
     });
   }
+  getDate(date: any) {
+    let newDate;
+    if (typeof date == 'string') {
+      newDate = String(date).split('/').reverse().join('-');
+    } else {
+      newDate = this.datePipe.transform(date, 'yyyy-MM-dd');
+    }
+    return newDate;
+  }
 
   private buildFormaplicationData() {
     this.formaplicationData = this.fb.group({
-      dateRequestChangeNumerary: [null, [Validators.required]],
+      dateRequestChangeNumerary: [new Date(), [Validators.required]],
       applicationChangeCashNumber: [null],
       userRequestChangeNumber: [null, [Validators.required]],
       postUserRequestCamnum: [
@@ -1278,12 +1290,15 @@ export class ResquestNumberingChangeComponent
           Validators.maxLength(200),
         ],
       ],
-      authorizeDate: [null, [Validators.required]],
+      authorizeDate: [new Date(), [Validators.required]],
     });
     this.formaplicationData.controls['postUserRequestCamnum'].disable();
     this.formaplicationData.controls['delegationRequestcamnum'].disable();
     this.formaplicationData.controls['authorizeDelegation'].disable();
     this.formaplicationData.controls['authorizePostUser'].disable();
+    this.formaplicationData.controls['authorizeDate'].disable();
+    this.formaplicationData.controls['dateRequestChangeNumerary'].disable();
+
     setTimeout(() => {
       this.getUsuario(new ListParams());
       this.getUsuario1(new ListParams());

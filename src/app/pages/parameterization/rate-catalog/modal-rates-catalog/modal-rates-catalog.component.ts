@@ -85,22 +85,22 @@ export class ModalRatesCatalogComponent extends BasePage implements OnInit {
     this.close();
   }
 
-  /*update() {
-    this.loading = true;
-    this.parameterCatService
-      .update(this.form.id, this.form.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
-  }*/
+  // update() {
+  //   this.loading = true;
+  //   this.parameterCatService
+  //     .update(this.form.registerNumber)
+  //     .subscribe({
+  //       next: data => this.handleSuccess(),
+  //       error: error => (this.loading = false),
+  //     });
+  // }
   close() {
     this.modalRef.hide();
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
