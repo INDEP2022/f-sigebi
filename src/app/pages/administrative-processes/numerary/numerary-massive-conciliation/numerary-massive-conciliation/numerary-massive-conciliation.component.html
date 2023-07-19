@@ -80,7 +80,6 @@
               label="Aplicar Fecha Tesofe:"
               class="col-md-4">
               <input
-                type="text"
                 class="form-control"
                 bsDatepicker
                 formControlName="dateTesofe" />
@@ -91,7 +90,6 @@
               label="Fecha desde:"
               class="col-md-4">
               <input
-                type="text"
                 class="form-control"
                 bsDatepicker
                 formControlName="dateOf" />
@@ -102,8 +100,9 @@
               label="Fecha hasta:"
               class="col-md-4">
               <input
-                type="text"
                 class="form-control"
+                [minDate]="minDate"
+                [class]="form.get('dateOf').value == null ? 'disabled' : ''"
                 bsDatepicker
                 formControlName="dateAt" />
             </form-field>
