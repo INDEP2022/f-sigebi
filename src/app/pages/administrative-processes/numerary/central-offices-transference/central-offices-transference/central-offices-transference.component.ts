@@ -380,15 +380,17 @@ export class CentralOfficesTransferenceComponent
         }
       },
       error: err => {
-        if (err.status == 400) {
-          this.alert(
-            'error',
-            'Error',
-            'Este bien no se encuentra en una solicitud de numerario'
-          );
-        } else {
-          //this.alert('error', 'Error', err.error.message);
-        }
+        this.alert('error', 'Error', err.error.message);
+        // if (err.status == 400) {
+        //   this.alert('error', 'Error', err.error.message);
+        //   this.alert(
+        //     'error',
+        //     'Error',
+        //     'Este bien no se encuentra en una solicitud de numerario'
+        //   );
+        // } else {
+        //   this.alert('error', 'Error', err.error.message);
+        // }
       },
     });
   }

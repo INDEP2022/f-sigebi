@@ -5,6 +5,8 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGoodsResDev } from 'src/app/core/models/ms-rejectedgood/goods-res-dev-model';
+import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
@@ -51,7 +53,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     private genericService: GenericService,
     private goodProcessService: GoodProcessService,
     private requestService: RequestService,
-    private rejectedGoodService: RejectedGoodService
+    private rejectedGoodService: RejectedGoodService,
+    private affairService: AffairService
   ) {
     super();
     this.goodSettings.columns = SELECT_GOODS_COLUMNS;
@@ -67,8 +70,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         sort: false,
         renderComponent: AddGoodsButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
-          instance.action.subscribe((row: any) => {
-            component.openReserveModal(row);
+          instance.action.subscribe(async (row: any) => {
+            const process = await component.checkInfoProcess(row);
+            if (process) {
+              console.log('process', process);
+              component.openReserveModal(row);
+            }
           });
         },
       },
@@ -137,7 +144,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     this.rejectedGoodService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('item', response);
         this.goodColumns = response.data;
         this.goodTotalItems = response.count;
         /* const info = response.data.map(item => {
@@ -210,6 +216,37 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   viewFile(file: any) {}
+
+  checkInfoProcess(goodsResDev: IGoodsResDev) {
+    return new Promise((resolve, reject) => {
+      this.requestService.getById(this.idRequest).subscribe({
+        next: response => {
+          const params = new BehaviorSubject<ListParams>(new ListParams());
+          params.getValue()['filter.nbOrigen'] = 'SAMI';
+          params.getValue()['filter.id'] = response.affair;
+          this.affairService.getAll(params.getValue()).subscribe({
+            next: response => {
+              const processDetonate = response.data[0].processDetonate;
+              if (
+                processDetonate == 'DEVOLUCION' ||
+                processDetonate == 'RES_NUMERARIO'
+              ) {
+                goodsResDev.amountToReserve = null;
+                resolve(true);
+              } else if (processDetonate != 'INFORMACION') {
+                goodsResDev.amountToReserve = null;
+                resolve(true);
+              } else {
+                console.log('goodsResDev', goodsResDev);
+              }
+            },
+            error: error => {},
+          });
+        },
+        error: error => {},
+      });
+    });
+  }
 
   openReserveModal(good: any) {
     let config = {
