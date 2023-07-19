@@ -139,7 +139,16 @@ export class DepositAccountStatementComponent
       type: 'string',
       sort: false,
     },
-
+    accounttras: {
+      title: 'Cuenta con traspaso',
+      type: 'string',
+      sort: false,
+    },
+    checkfolio: {
+      title: 'Cuenta con cheque',
+      type: 'string',
+      sort: false,
+    },
     goodnumber: {
       title: 'Bien',
       type: 'string',
@@ -247,7 +256,7 @@ export class DepositAccountStatementComponent
       .get('check')
       .valueChanges.pipe(takeUntil(this.$unSubscribe), debounceTime(500))
       .subscribe({
-        next: response => {
+        next: (response: any) => {
           if (this.checksDevolution.length > 0 && response) {
             if (
               this.checksDevolution.filter(x => x.InvoiceCheck === response)
@@ -263,7 +272,7 @@ export class DepositAccountStatementComponent
       .get('cutoffDate')
       .valueChanges.pipe(takeUntil(this.$unSubscribe), debounceTime(500))
       .subscribe({
-        next: response => {
+        next: (response: Date) => {
           this.updateCutoffDate(response);
         },
       });
@@ -271,7 +280,7 @@ export class DepositAccountStatementComponent
       .get('transferDate')
       .valueChanges.pipe(takeUntil(this.$unSubscribe), debounceTime(500))
       .subscribe({
-        next: response => {
+        next: (response: any) => {
           this.updateTransferDate(response);
         },
       });
@@ -837,7 +846,7 @@ export class DepositAccountStatementComponent
     this.goodParametersService
       .getById('DIASCALINT')
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(data => {
+      .subscribe((data: { initialValue: string }) => {
         this.anualBassis = data.initialValue;
         this.anual = Number(this.anualBassis);
         if (this.anual === null) {
@@ -866,12 +875,12 @@ export class DepositAccountStatementComponent
         .getAllFiltro(params)
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
-          next: data => {
+          next: (data: { count: number }) => {
             if (data.count > 0) {
               this.vb_valid = true;
             }
           },
-          error: error => {},
+          error: (error: any) => {},
         });
     } else {
       this.alert(
@@ -1153,6 +1162,14 @@ export class DepositAccountStatementComponent
       );
       return false;
     }
+    if (this.form.controls['transferDate'].value == null) {
+      this.alert('warning', 'Debe especificar', 'La fecha de transferencia');
+      return false;
+    }
+    if (this.form.controls['cutoffDate'].value == null) {
+      this.alert('warning', 'Debe especificar', 'La fecha de corte');
+      return false;
+    }
     if ((this.form.controls['checkAmount'].value ?? 0) == 0) {
       this.alert('warning', 'Debe haber algun importe para el cheque', '');
       return false;
@@ -1211,11 +1228,11 @@ export class DepositAccountStatementComponent
         'filter.motionOriginDepositNumber'
       ] = `$eq:${this.userChecks.movementnumber}`;
       params['filter.checkType'] = `$eq:INTERES`;
-      let count = await firstValueFrom(
+      let count: number = await firstValueFrom(
         this.accountMovementService.getAllUsersChecks(params).pipe(
           takeUntil(this.$unSubscribe),
           catchError(x => of({ count: 0 })),
-          map(x => x.count ?? 0)
+          map((x: any) => (x ? x.count ?? 0 : 0))
         )
       );
       if (count > 0) {
@@ -1457,7 +1474,7 @@ export class DepositAccountStatementComponent
       .getById(good)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
-        next: resp => {
+        next: (resp: { spent: any; cost: any }) => {
           //: blk_dev.gastos_admon, : blk_dev.gastos_asociados
           this.form.controls['costsAdmon'].setValue(resp ? resp.spent ?? 0 : 0);
           this.form.controls['associatedCosts'].setValue(
@@ -1779,7 +1796,7 @@ export class DepositAccountStatementComponent
       .getDepOriginMov(noOriginMov)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
-        next: resp => {
+        next: (resp: { data: { saldo: number; fec_fin: any }[] }) => {
           this.dateEnd = resp.data[0].fec_fin;
           this.balance = resp.data[0].saldo;
         },
@@ -1874,7 +1891,7 @@ export class DepositAccountStatementComponent
         .getById(this.userChecks.devolutionnumber)
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
-          next: resp => {
+          next: (resp: { data: any }) => {
             this.rea = { data: resp.data };
             this.rea = {
               ...this.rea,
@@ -1970,11 +1987,11 @@ export class DepositAccountStatementComponent
       .create(body)
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
-        next: data => {
+        next: (data: any) => {
           this.userChecks.accounttras = 'TRASPASADO';
           this.validTras = false;
         },
-        error: error => {},
+        error: (error: any) => {},
       });
   }
 }
