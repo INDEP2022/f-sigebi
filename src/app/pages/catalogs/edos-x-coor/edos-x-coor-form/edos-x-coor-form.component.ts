@@ -20,7 +20,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class EdosXCoorFormComponent extends BasePage implements OnInit {
   //edosXCoorForm: ModelForm<IEdosXCoor>;
   edosXCoorForm: FormGroup = new FormGroup({});
-  title: string = 'Estado por coordinación';
+  title: string = 'Estado por Coordinación';
   edit: boolean = false;
   edosXCoor: IEdosXCoor;
   delegations: IDelegation;

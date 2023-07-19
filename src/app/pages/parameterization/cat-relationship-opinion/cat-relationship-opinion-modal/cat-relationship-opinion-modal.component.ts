@@ -115,7 +115,10 @@ export class CatRelationshipOpinionModalComponent
     this.loading = true;
     this.rAsuntDicService.create(this.rAsuntDicForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.alert('warning', 'El código o el tipo de volante no existe', ``);
+      },
     });
   }
 

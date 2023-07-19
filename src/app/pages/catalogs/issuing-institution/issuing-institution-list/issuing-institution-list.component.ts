@@ -64,7 +64,7 @@ export class IssuingInstitutionListComponent
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         add: false,
         position: 'right',
       },

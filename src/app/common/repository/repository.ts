@@ -274,6 +274,11 @@ export class Repository<T> implements IRepository<T> {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.delete(`${fullRoute}`, obj);
   }
+
+  removeDateDocuments(route: string, body?: {}) {
+    return this.httpClient.delete(`${environment.API_URL}${route}`, { body });
+  }
+
   update4(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.put(`${fullRoute}`, formData);
