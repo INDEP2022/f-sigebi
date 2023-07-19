@@ -1568,4 +1568,14 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       });
     });
   }
+  getLotebyEvent(id: number, params: ListParams) {
+    this.lotService.getLotbyEvent(id, params).subscribe({
+      next: (data: any) => {
+        console.log(data);
+      },
+      error: () => {
+        console.log('error');
+      },
+    });
+  }
 }
