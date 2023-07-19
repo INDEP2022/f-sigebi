@@ -16,7 +16,7 @@ export class NonDeliveryReasonsFormComponent
   implements OnInit
 {
   nonDeliveryReasonsForm: FormGroup = new FormGroup({});
-  title: string = 'Motivo No Entrega';
+  title: string = 'Motivo no Entrega';
   edit: boolean = false;
   nonDeliveryReasons: INonDeliveryReason;
   typeEvent: any[];

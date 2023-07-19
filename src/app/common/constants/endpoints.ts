@@ -171,7 +171,7 @@ export enum ENDPOINT_LINKS {
   NumeraryCategoriesAutom = 'categorization-autom-numerary',
   tevents = 'event/comer-tevents',
   usuxtpevents = 'event/application/paComerUsuxtpevents',
-  security = 'security/seg-profile',
+  security = 'security/tracking-profile',
 
   //request
   request = 'request',

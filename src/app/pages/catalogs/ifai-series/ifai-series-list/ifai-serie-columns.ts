@@ -5,7 +5,7 @@ export const IFAI_SERIE_COLUMNS = {
     sort: false,
   },
   typeProcedure: {
-    title: 'Tipo trámite',
+    title: 'Tipo Trámite',
     type: 'string',
     sort: false,
   },
