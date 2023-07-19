@@ -647,8 +647,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       res => {
         this.alert(
           'success',
-          'Se ha Agregado el Bien',
-          `con el Id: ${good.goodId}`
+          'Bien Agregado Correctamente',
+          `Id: ${good.goodId}`
         );
         this.getAllGoodChild(this.goodFatherNumber$.getValue());
       },
