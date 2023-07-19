@@ -123,6 +123,7 @@ export class GoodsProcessValidationExtdomComponent
   // Forms
   public form: FormGroup;
   public formScan: FormGroup;
+  public formReserved: FormGroup;
   // Params
   origin: string = '';
   P_NO_TRAMITE: number = null;
@@ -159,8 +160,17 @@ export class GoodsProcessValidationExtdomComponent
   loadingProcess: boolean = false;
   // Scanning
   showScanForm: boolean = false;
+  // Reservado
+  showReservedForm: boolean = false;
   // Usuario actual
   dataUserLogged: any;
+  // Good Loop
+  goodLoopCurrent: number = 0;
+  goodLoopTotal: number = 0;
+  goodLoopPage: number = 0;
+  goodLoopLimit: number = 0;
+  goodLoopTmp: IGood[] | any[] = [];
+  goodLoopLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -267,6 +277,7 @@ export class GoodsProcessValidationExtdomComponent
   }
 
   ngOnInit(): void {
+    this.showReservedForm = false;
     const token = this.authService.decodeToken();
     console.log(token);
     if (token.preferred_username) {
@@ -299,18 +310,30 @@ export class GoodsProcessValidationExtdomComponent
           this.form.get('expedientNumber').setValue(this.P_EXPEDIENTE);
           this.form.get('expedientNumber').updateValueAndValidity();
         }
-        let f_aseg = localStorage.getItem('f_aseg');
         let e_aseg = localStorage.getItem('e_aseg');
         let v_aseg = localStorage.getItem('v_aseg');
-        console.log('LOCALSTORAGE ', f_aseg, e_aseg, v_aseg);
+        console.log('LOCALSTORAGE ', e_aseg, v_aseg);
         let valid = true;
-        if (e_aseg || this.notificationData == null) {
+        if (!e_aseg && this.P_EXPEDIENTE) {
           valid = false;
         }
-        if (v_aseg || this.notificationData == null) {
+        if (!v_aseg && this.P_VOLANTE) {
           valid = false;
         }
         if (valid == false) {
+          localStorage.removeItem('f_aseg');
+          localStorage.removeItem('e_aseg');
+          localStorage.removeItem('v_aseg');
+          // Para crear
+          localStorage.removeItem(this.localStorage_selectedGoods);
+          localStorage.removeItem(this.localStorage_goodData3);
+          localStorage.removeItem(this.localStorage_totalGoods3);
+          // Para liberar
+          localStorage.removeItem(this.localStorage_selectedGoods2);
+          localStorage.removeItem(this.localStorage_goodData4);
+          localStorage.removeItem(this.localStorage_totalGoods4);
+        }
+        if (this.P_NO_TRAMITE == null) {
           localStorage.removeItem('f_aseg');
           localStorage.removeItem('e_aseg');
           localStorage.removeItem('v_aseg');
@@ -618,6 +641,12 @@ export class GoodsProcessValidationExtdomComponent
       scanningFoli: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
     });
     this.showScanForm = true; // Mostrar parte de escaneo
+    this.formReserved = this.fb.group({
+      reserved: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(200)],
+      ],
+    });
   }
 
   initForm() {
@@ -817,6 +846,16 @@ export class GoodsProcessValidationExtdomComponent
         error: error => {
           console.log(error);
           this.loading = false;
+          localStorage.removeItem('e_aseg');
+          localStorage.removeItem('v_aseg');
+          // Para crear
+          localStorage.removeItem(this.localStorage_selectedGoods);
+          localStorage.removeItem(this.localStorage_goodData3);
+          localStorage.removeItem(this.localStorage_totalGoods3);
+          // Para liberar
+          localStorage.removeItem(this.localStorage_selectedGoods2);
+          localStorage.removeItem(this.localStorage_goodData4);
+          localStorage.removeItem(this.localStorage_totalGoods4);
         },
       });
   }
@@ -857,7 +896,12 @@ export class GoodsProcessValidationExtdomComponent
       externalOfficeDate: new Date(this.notificationData.externalOfficeDate),
     };
     this.form.patchValue(data);
+    localStorage.setItem('e_aseg', '' + this.notificationData.expedientNumber);
+    localStorage.setItem('v_aseg', '' + this.notificationData.wheelNumber);
     console.log(this.form.value);
+
+    this.formReserved.get('reserved').setValue(data.reserved);
+    this.formReserved.get('reserved').updateValueAndValidity();
     setTimeout(() => {
       if (data.affairKey) {
         this.getAffair(new ListParams(), true);
@@ -889,6 +933,36 @@ export class GoodsProcessValidationExtdomComponent
       if (data.authority) {
         this.getAuthority(new ListParams(), true);
       }
+      let e_aseg = localStorage.getItem('e_aseg');
+      let v_aseg = localStorage.getItem('v_aseg');
+      console.log('LOCALSTORAGE ', e_aseg, v_aseg);
+      let valid = false;
+      if (this.notificationData == null) {
+        valid = false;
+      } else {
+        if (this.notificationData.expedientNumber) {
+          if (e_aseg != this.notificationData.expedientNumber.toString()) {
+            valid = false;
+          }
+        }
+        if (this.notificationData.wheelNumber) {
+          if (v_aseg != this.notificationData.wheelNumber.toString()) {
+            valid = false;
+          }
+        }
+      }
+      if (valid == false) {
+        localStorage.removeItem('e_aseg');
+        localStorage.removeItem('v_aseg');
+        // Para crear
+        localStorage.removeItem(this.localStorage_selectedGoods);
+        localStorage.removeItem(this.localStorage_goodData3);
+        localStorage.removeItem(this.localStorage_totalGoods3);
+        // Para liberar
+        localStorage.removeItem(this.localStorage_selectedGoods2);
+        localStorage.removeItem(this.localStorage_goodData4);
+        localStorage.removeItem(this.localStorage_totalGoods4);
+      }
     }, 200);
     this.reviewLocalStorage();
     // setTimeout(() => {
@@ -904,11 +978,19 @@ export class GoodsProcessValidationExtdomComponent
     let v_aseg = localStorage.getItem('v_aseg');
     console.log('LOCALSTORAGE ', f_aseg, e_aseg, v_aseg);
     let valid = true;
-    if (e_aseg != this.notificationData.expedientNumber.toString()) {
+    if (this.notificationData == null) {
       valid = false;
-    }
-    if (v_aseg != this.notificationData.wheelNumber.toString()) {
-      valid = false;
+    } else {
+      if (this.notificationData.expedientNumber) {
+        if (e_aseg != this.notificationData.expedientNumber.toString()) {
+          valid = false;
+        }
+      }
+      if (this.notificationData.wheelNumber) {
+        if (v_aseg != this.notificationData.wheelNumber.toString()) {
+          valid = false;
+        }
+      }
     }
     if (valid == false) {
       localStorage.removeItem('f_aseg');
@@ -927,7 +1009,8 @@ export class GoodsProcessValidationExtdomComponent
       this.formScan.get('scanningFoli').setValue(null);
       setTimeout(() => {
         this.formScan.get('scanningFoli').updateValueAndValidity();
-        this.showScanForm = true;
+        // this.showScanForm = true;
+        this.getFolioDocument();
       }, 200);
     } else {
       // Para crear
@@ -971,6 +1054,37 @@ export class GoodsProcessValidationExtdomComponent
         this.showScanForm = true;
       }, 200);
     }
+  }
+
+  getFolioDocument() {
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', this.notificationData.wheelNumber);
+    // params.addFilter('scanStatus', 'ESCANEADO');
+    // params.addFilter('keyTypeDocument', 'ASEGEXTDOM');
+    // params.addFilter('id', this.universalFolio);
+    this.hideError();
+    return this.documentsService.getAllFilter(params.getParams()).subscribe({
+      next: data => {
+        console.log('FOLIO DATA DATA ', data);
+        this.universalFolio = Number(data.data[0].id);
+        this.formScan.get('scanningFoli').setValue(data.data[0].id);
+        setTimeout(() => {
+          this.formScan.get('scanningFoli').updateValueAndValidity();
+          this.showScanForm = true;
+        }, 200);
+      },
+      error: error => {
+        console.log(error);
+        if (error.status >= 500) {
+          this.alert(
+            'error',
+            'Ocurrió un Error al Obtener el Folio de Escaneo',
+            ''
+          );
+        }
+        this.showScanForm = true;
+      },
+    });
   }
 
   loadGoods() {
@@ -1103,18 +1217,42 @@ export class GoodsProcessValidationExtdomComponent
         }
       }
     });
+    this.afterAddSelect();
+    // setTimeout(() => {
+    //   localStorage.setItem(
+    //     this.localStorage_selectedGoods,
+    //     JSON.stringify(this.selectedGoods)
+    //   );
+    //   localStorage.setItem(
+    //     this.localStorage_goodData3,
+    //     JSON.stringify(this.goodData3)
+    //   );
+    //   localStorage.setItem(
+    //     this.localStorage_totalGoods3,
+    //     JSON.stringify(this.totalGoods3)
+    //   );
+    //   // Update data table bienes
+    //   this.dataTable.load(this.goodData);
+    //   this.dataTable.refresh();
+    //   this.loadingGoods = false; // Detener loading de tabla bienes
+    //   this.loadingGoods3 = false; // Detener loading de tabla a procesar
+    //   this.updatePaginatedTable3();
+    // }, 500);
+  }
+
+  afterAddSelect() {
     setTimeout(() => {
       localStorage.setItem(
         this.localStorage_selectedGoods,
-        JSON.stringify(this.selectedGoods)
+        JSON.stringify(this.selectedGoods.slice(0, 100))
       );
       localStorage.setItem(
         this.localStorage_goodData3,
-        JSON.stringify(this.goodData3)
+        JSON.stringify(this.goodData3.slice(0, 100))
       );
       localStorage.setItem(
         this.localStorage_totalGoods3,
-        JSON.stringify(this.totalGoods3)
+        JSON.stringify(this.totalGoods3 > 100 ? 100 : this.totalGoods3)
       );
       // Update data table bienes
       this.dataTable.load(this.goodData);
@@ -1698,15 +1836,20 @@ export class GoodsProcessValidationExtdomComponent
       this.alert('warning', 'Se Requiere un Folio de Escaneo', '');
       return;
     }
+    this.loadingProcess = true;
     const params = new FilterParams();
     params.addFilter('id', this.universalFolio);
     params.addFilter('scanStatus', 'ESCANEADO');
     this.documentsService.getAllFilter(params.getParams()).subscribe({
       next: resp => {
+        this.loadingProcess = false;
         console.log(resp);
         // NOTIFICACIONES.RESERVADO
+        this.showReservedForm = true;
       },
       error: error => {
+        console.log(error);
+        this.loadingProcess = false;
         if (error.status >= 500) {
           this.alert(
             'error',
@@ -1716,12 +1859,91 @@ export class GoodsProcessValidationExtdomComponent
         } else {
           if (['13', '14'].includes(this.form.get('affairKey').value)) {
             this.alert('warning', 'Se debe ingresar el Folio de Escaneo', '');
+          } else {
+            this.alert(
+              'warning',
+              'Se Requieren Documentos Cargados a este Folio: ' +
+                this.universalFolio,
+              ''
+            );
           }
         }
       },
     });
   }
-  btnEnvioCorreos() {}
+  closeApplyReserved() {
+    this.showReservedForm = false;
+  }
+  applyReserved() {
+    if (this.formReserved.invalid) {
+      this.alert('warning', 'Complete el Campo Correctamente', '');
+      return;
+    }
+    if (this.P_NO_TRAMITE == null) {
+      this.alert(
+        'warning',
+        'Se Requiere un Número de Trámite para Continuar con este Proceso',
+        ''
+      );
+      return;
+    }
+    let bodyNotification: Partial<INotification> = {
+      dictumKey: 'CONOCIMIENTO',
+      wheelNumber: this.notificationData.wheelNumber,
+      reserved: this.formReserved.value.reserved,
+    };
+    this.svGoodsProcessValidationExtdomService
+      .updateNotification(this.notificationData.wheelNumber, bodyNotification)
+      .subscribe({
+        next: data => {
+          console.log('UPDATE NOTIFICATION ', data);
+          // GESTION TRAMITE UPDATE
+          let body: Partial<IProceduremanagement> = {
+            id: this.P_NO_TRAMITE,
+            status: 'FNI',
+          };
+          this.svGoodsProcessValidationExtdomService
+            .updateProcedureManagement(this.P_NO_TRAMITE, body)
+            .subscribe({
+              next: data => {
+                console.log('UPDATE GESTION TRAMITE DATA ', data);
+                this.openModalMail();
+              },
+              error: error => {
+                console.log(error);
+                this.alert(
+                  'error',
+                  'Ocurrió un Error al Actualizar el Estatus del Trámite',
+                  ''
+                );
+              },
+            });
+        },
+        error: error => {
+          console.log(error);
+          this.alert(
+            'error',
+            'Ocurrió un Error al Actualizar la Clave del Dictamen de la Notificación',
+            ''
+          );
+        },
+      });
+  }
+  btnEnvioCorreos() {
+    if (this.notificationData == null) {
+      this.alert('warning', 'Realice una búsqueda para ver está opción', '');
+      return;
+    }
+    if (this.notificationData.wheelNumber == null) {
+      this.alert('warning', 'Se requiere de un Volante', '');
+      return;
+    }
+    if (this.notificationData.expedientNumber == null) {
+      this.alert('warning', 'Se requiere de un Expediente', '');
+      return;
+    }
+    this.openModalMail();
+  }
   btnMantenimientoCorreo() {
     if (this.notificationData == null) {
       this.alert('warning', 'Realice una búsqueda para ver está opción', '');
@@ -2385,4 +2607,109 @@ export class GoodsProcessValidationExtdomComponent
     };
     return this.modalService.show(EmailGoodProcessValidationComponent, config);
   }
+
+  /** LOOP BIENES DISPONIBLES */
+
+  startLoopGoods() {
+    this.goodLoopCurrent = 0;
+    this.goodLoopPage = 1;
+    this.goodLoopTotal = 0;
+    this.goodLoopLimit = 100;
+    this.goodLoopTmp = [];
+    this.goodLoopLoading = true; // Iniciar loading de procesando todos los bienes
+    this.loadingGoods = true; // Iniciar loading de tabla bienes
+    this.loadingGoods3 = true; // Iniciar loading de tabla a procesar
+    this.loopGoods();
+  }
+
+  loopGoods() {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('fileNumber', this.notificationData.expedientNumber);
+    params.addFilter('extDomProcess', 'ASEG_EXTDOM', SearchFilter.NOT);
+    params.limit = this.goodLoopLimit;
+    params.page = this.goodLoopPage;
+    this.svGoodsProcessValidationExtdomService
+      .getGoods(params.getParams())
+      .subscribe({
+        next: res => {
+          this.goodLoopTotal = res.count;
+          // this.goodLoopTotal = 23;
+          let data = res.data.map((i: any) => {
+            const index2: number = this.selectedGoods.findIndex(
+              (_good: IGood) => _good.goodId == i.goodId
+            );
+            if (index2 == -1) {
+              i['disponible'] = this.freeLabel;
+              i['seleccion'] = 0;
+              return i;
+            } else {
+              i['disponible'] = this.blockLabel;
+              i['seleccion'] = 0;
+              return i;
+            }
+          });
+          this.goodLoopTmp = data;
+          this.goodLoopTmp.forEach(element => {
+            if (element.disponible == this.freeLabel) {
+              let row: IGood = element;
+              const index = this.selectedGoods.findIndex(
+                _good => _good.goodId == row.goodId
+              );
+              if (index == -1) {
+                this.selectedGoods.push(row);
+              }
+            }
+          });
+          this.goodLoopCurrent =
+            this.goodLoopCurrent + this.goodLoopLimit > this.goodLoopTotal
+              ? this.goodLoopTotal
+              : this.goodLoopCurrent + this.goodLoopLimit;
+          this.goodLoopPage++; // Next page
+          this.controlGoodLoop();
+        },
+        error: error => {
+          console.log(error);
+          this.goodLoopCurrent =
+            this.goodLoopCurrent + this.goodLoopLimit > this.goodLoopTotal
+              ? this.goodLoopTotal
+              : this.goodLoopCurrent + this.goodLoopLimit;
+          this.goodLoopPage++; // Next page
+          this.controlGoodLoop();
+        },
+      });
+  }
+
+  controlGoodLoop() {
+    this.goodLoopTmp = [];
+    if (this.goodLoopCurrent < this.goodLoopTotal) {
+      this.loopGoods();
+    } else if ((this.goodLoopCurrent = this.goodLoopTotal)) {
+      // FIN PROCESO
+      this._endProcess_LooopGood();
+    }
+  }
+
+  _endProcess_LooopGood() {
+    this.goodLoopLoading = false;
+    this.selectedGoods.forEach(selected => {
+      this.goodData3.push({
+        ...selected,
+        register_type: this.registerType,
+      }); // Agregar registro a la data
+      // VALIDAR CON LA DATA DEL ENDPOINT IGUAL
+      const index2: number = this.goodData.findIndex(
+        (_good: IGood) => _good.goodId == selected.goodId
+      );
+      if (index2 > -1) {
+        this.goodData[index2].disponible = this.blockLabel; // Cambiar a no disponible
+        this.goodData[index2].seleccion = 0; // Quitar el check del registro
+      }
+    });
+    console.log('FIN PROCESO', this.selectedGoods, this.goodData3);
+    this.totalGoods3 = this.selectedGoods.length; // Aumentar si se agrego registro
+    this.afterAddSelect();
+  }
+
+  /** LOOP BIENES DISPONIBLES */
 }

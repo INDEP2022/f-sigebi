@@ -37,9 +37,9 @@ export class SeraLogService extends HttpService {
     const route = `application/obtnObtenUnidadesResp`;
     return this.get<IListResponse<any>>(route, params);
   }
-  postObtnGoodSinister(data: any) {
+  postObtnGoodSinister(data: any, params: _Params) {
     const route = `application/obtnGoodSinister`;
-    return this.post(route, data);
+    return this.post(route, data, params);
   }
   postSaveSinisterRecord(body: FormData): Observable<any> {
     const url = `${environment.API_URL}ldocument/api/v1/file-sinister-record/saveSinisterRecord`;

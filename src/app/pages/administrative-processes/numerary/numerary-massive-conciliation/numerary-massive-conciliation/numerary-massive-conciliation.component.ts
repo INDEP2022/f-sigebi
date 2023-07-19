@@ -177,6 +177,7 @@ export class NumeraryMassiveConciliationComponent
     this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       console.log(params);
       this.limit2 = new FormControl(params.limit);
+
       if(this.dataGoods2['data'].length > 0){
         this.searchGoodBankAccount()
       }

@@ -7,6 +7,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { GENERAL_RECEPTION_STRATEGIES_COLUNNS } from './reception-strategies-columns';
@@ -14,6 +15,9 @@ interface IBlkcontrol {
   totalcumplido: number;
   totalNocumplido: number;
   porcentajeCunplido: number;
+}
+interface IGlobal {
+  numberIndicator: number;
 }
 @Component({
   selector: 'app-reception-strategies',
@@ -31,10 +35,14 @@ export class ReceptionStrategiesComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
   consulto: boolean = false;
+  global: IGlobal = {
+    numberIndicator: 0,
+  };
 
   constructor(
     private excelService: ExcelService,
-    private strategyService: StrategyServiceService
+    private strategyService: StrategyServiceService,
+    private parameterCatService: ParameterCatService
   ) {
     super();
     this.settings.actions = false;
@@ -43,6 +51,7 @@ export class ReceptionStrategiesComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initForms();
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -87,6 +96,20 @@ export class ReceptionStrategiesComponent extends BasePage implements OnInit {
       });
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (this.consulto) this.getData();
+    });
+  }
+
+  initForms() {
+    const params: ListParams = {};
+    params['filter.certificateType'] = `$eq:EVENTREC`;
+    this.parameterCatService.getParametrs(params).subscribe({
+      next: resp => {
+        this.global.numberIndicator = Number(resp.data[0].id);
+        console.log(this.global);
+      },
+      error: err => {
+        this.global.numberIndicator = 5;
+      },
     });
   }
 

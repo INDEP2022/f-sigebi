@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IGoodsResDev } from 'src/app/core/models/ms-rejectedgood/goods-res-dev-model';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -15,7 +16,11 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
   reserveForm: FormGroup = new FormGroup({});
   @Output() onReserve = new EventEmitter<any>();
 
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
+  constructor(
+    private fb: FormBuilder,
+    private modalRef: BsModalRef,
+    private rejectedGoodService: RejectedGoodService
+  ) {
     super();
   }
 
@@ -52,20 +57,25 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
     let availableAmount: number =
       parseInt(String(this.good.amount)) -
       parseInt(this.reserveForm.controls['reserve'].value);
-
-    console.log('availableAmount', availableAmount);
-    console.log('good', this.good);
-    const object = {
-      id: this.good.goodId,
-      goodId: this.good.goodId,
-      amount: this.good.amount,
+    const data = {
+      amount: availableAmount,
+      amountToReserve: this.reserveForm.controls['reserve'].value,
     };
+    this.rejectedGoodService
+      .updateGoodsResDev(this.good.goodresdevId, data)
+      .subscribe({
+        next: response => {
+          console.log('good', response);
+          this.modalRef.hide();
+        },
+        error: error => {},
+      });
     /*this.onReserve.emit({
       ...this.good,
       ...this.reserveForm.value,
       reservedAmount: this.reserveForm.controls['reserve'].value,
       availableAmount,
     }); */
-    this.modalRef.hide();
+    //
   }
 }
