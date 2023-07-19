@@ -397,9 +397,9 @@ export class NumeraryMassiveConciliationComponent
     this.accountBankService.searchByFilterNumeraryMassive(body).subscribe(
       res => {
         console.log(res);
-        this.form2.get('total').setValue(res.total);
-        this.form2.get('totalDateTesofe').setValue(res.tDateTesof);
-        this.form2.get('totalWithoutTesofe').setValue(res.tSinTesof);
+        this.form2.get('total').setValue(res.total)
+        this.form2.get('totalDateTesofe').setValue(res.tDateTesof)
+        this.form2.get('totalWithoutTesofe').setValue(res.tSinTesof)
         this.dataGoods2.load(res.result);
         console.log(this.dataGoods2['data']);
         this.loading2 = false;
@@ -524,6 +524,7 @@ export class NumeraryMassiveConciliationComponent
             this.goodProcessService.pupReconcilied(model).subscribe(
               res => {
                 console.log(res);
+                /* if() */
                 this.dataGoods.load(res.data);
                 this.loading = false;
               },
@@ -665,7 +666,7 @@ export class NumeraryMassiveConciliationComponent
               val4: item.RSPTAQUERY.val4,
               val5: format(new Date(item.RSPTAQUERY.val5), 'yyyy-MM-dd'),
               val6: item.RSPTAQUERY.val6,
-              fecTesofe: item.BFEC_TESOFE,
+              fecTesofe: item.BFEC_TESOFE
             };
             console.log(model);
             this.numeraryService.pupSearchNumerary(model).subscribe(
@@ -805,7 +806,7 @@ export class NumeraryMassiveConciliationComponent
     let modalConfig: ModalOptions = {
       initialState: {
         callback: (data: any) => {
-          console.log(data);
+          console.log(data)
           if (data != null || data != undefined) {
             this.form2.get('proposal').setValue(data.applicationId);
             this.form2.get('currencyDeposit').setValue(data.amountAssign);
@@ -821,37 +822,37 @@ export class NumeraryMassiveConciliationComponent
   //Ultimo boton de asociar
   finalAsociate() {
     if (goodCheck2.length > 0) {
-      const noMovementArray = goodCheck2.map((e: any) => {
-        return e.motionNumber;
-      });
+      const noMovementArray = goodCheck2.map((e:any) => {
+        return e.motionNumber
+      })
 
-      const depositArray = goodCheck2.map((e: any) => {
-        return e.deposit;
-      });
+      const depositArray = goodCheck2.map((e:any) => {
+        return e.deposit
+      })
 
-      const currencyArray = goodCheck2.map((e: any) => {
-        return e.currencyKey;
-      });
+      const currencyArray = goodCheck2.map((e:any) => {
+        return e.currencyKey
+      })
 
-      /* this.numeraryService.pupAssociateGood() */
-      const model: IPupAssociateGood = {
-        movementNo: noMovementArray,
-        requestId: this.form2.get('proposal').value,
-        blkDeposit: this.form2.get('currencyDeposit').value,
-        cbdDeposit: depositArray,
-        cbcveCurrency: currencyArray,
-      };
-      this.numeraryService.pupAssociateGood(model).subscribe(
-        res => {
-          this.alert('success', 'Se realizó la Asociación', '');
-          clearGoodCheck2();
-          console.log(res);
-        },
-        err => {
-          this.alert('error', 'Se Presentó un Error Inesperado', '');
-          console.log(err);
-        }
-      );
+        /* this.numeraryService.pupAssociateGood() */
+        const model: IPupAssociateGood = {
+          movementNo: noMovementArray,
+          requestId: this.form2.get('proposal').value,
+          blkDeposit: this.form2.get('currencyDeposit').value,
+          cbdDeposit: depositArray,
+          cbcveCurrency: currencyArray
+        };
+        this.numeraryService.pupAssociateGood(model).subscribe(
+          res => {
+            this.alert('success','Se realizó la asociación','')
+            clearGoodCheck2()
+            console.log(res);
+          },
+          err => {
+            this.alert('error','Se presentó un error inesperado','')
+            console.log(err);
+          }
+        );
     } else {
       this.alert('warning', 'No se Seleccionó Datos de Cuentas Bancarias', '');
     }
