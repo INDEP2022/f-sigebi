@@ -1,10 +1,9 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, firstValueFrom, map, skip } from 'rxjs';
-import { showQuestion } from 'src/app/common/helpers/helpers';
 import {
   ListParams,
   SearchFilter,
@@ -15,10 +14,7 @@ import { AccountMovementService } from 'src/app/core/services/ms-account-movemen
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IMassiveNumeraryGood } from '../types/massive-numerary.type';
-import {
-  MASSIVE_NUMERARY_CHANGE_MODAL_COLUMNS,
-  WIN_BIENES_MODAL_COLUMNS,
-} from './massive-numerary-change-modal-columns';
+import { WIN_BIENES_MODAL_COLUMNS } from './massive-numerary-change-modal-columns';
 
 @Component({
   selector: 'app-massive-numerary-change-modal',
@@ -26,7 +22,6 @@ import {
   styles: [
     `
       .legend {
-        justify-content: center;
         display: flex;
         column-gap: 10px;
         > div {
@@ -42,7 +37,11 @@ import {
           flex-direction: column;
         }
       }
-
+      .modal-body {
+        padding: 0px 40px 20px !important;
+        position: relative;
+        flex: 1 1 auto;
+      }
       .requiredAva {
         background-color: #dc3545;
       }
@@ -88,6 +87,8 @@ export class MassiveNumeraryChangeModalComponent
   extends BasePage
   implements OnInit
 {
+  @Output() refresh = new EventEmitter<true>();
+
   title: string = 'Bienes';
   form: FormGroup;
   settings2 = {
@@ -98,7 +99,7 @@ export class MassiveNumeraryChangeModalComponent
       perPage: 10,
     },
   };
-  dataTableGoods: IMassiveNumeraryGood[] = [];
+  dataTableGoods: any[] = [];
   dataTableGoodsLocal = new LocalDataSource([]);
   dataTableSpents: any[] = [];
   dataTableSpentsLocal = new LocalDataSource([]);
@@ -109,28 +110,96 @@ export class MassiveNumeraryChangeModalComponent
 
   constructor(
     private modalRef: BsModalRef,
-    // private fb: FormBuilder,
     private goodServices: GoodService,
     private excelService: ExcelService,
     private accountMovementService: AccountMovementService
   ) {
     super();
+
+    this.settings2.columns = WIN_BIENES_MODAL_COLUMNS;
+  }
+
+  ngOnInit(): void {
+    console.log(this.dataTableGoods);
+    console.log(this.dataTableSpents);
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: MASSIVE_NUMERARY_CHANGE_MODAL_COLUMNS,
+      columns: {
+        noGood: {
+          //NO_BIEN
+          title: 'No. Bien',
+          type: 'number',
+          sort: false,
+        },
+        noNum: {
+          title: 'No. Num',
+          type: 'number',
+          sort: false,
+        },
+        description: {
+          //DESCRIPCION
+          title: 'Descripción',
+          type: 'string',
+          sort: false,
+        },
+        cveEvent: {
+          title: 'Clave Evento',
+          type: 'string',
+          sort: false,
+        },
+        status: {
+          //ESTATUS
+          title: 'Estatus',
+          type: 'string',
+          sort: false,
+        },
+        entry: {
+          //INGRESO
+          title: 'Ingreso',
+          type: 'number',
+          sort: false,
+        },
+        costs: {
+          //GASTO
+          title: 'Gastos',
+          type: 'number',
+          sort: false,
+        },
+        tax: {
+          //IVA
+          title: 'I.V.A',
+          type: 'number',
+          sort: false,
+        },
+        impNumerary: {
+          //VALOR_AVALUO
+          title: 'Imp. Numerario',
+          type: 'number',
+          sort: false,
+        },
+      },
       rowClassFunction: (row: any) => {
-        return row?.data?.color;
+        console.log(row.data.color);
+        let colors = '';
+        if (row.data.color == 'VA_ROJO') {
+          colors = 'bg-danger text-white';
+        } else if (row.data.color == 'VA_VERDE') {
+          colors = 'bg-success text-white';
+        } else if (row.data.color == 'VA_CYAN') {
+          colors = 'bg-cyan text-white';
+        } else if (row.data.color == 'VA_NARANJA') {
+          colors = 'bg-orange text-white';
+        } else if (row.data.color == 'VA_AMARILLO') {
+          colors = 'bg-yellow text-white';
+        }
+        return colors;
       },
       hideSubHeader: false,
       pager: {
         perPage: 10,
       },
     };
-    this.settings2.columns = WIN_BIENES_MODAL_COLUMNS;
-  }
-
-  ngOnInit(): void {
     this.dataTableGoods = this.dataTableGoods.map(item => {
       return {
         ...item,
@@ -319,59 +388,63 @@ export class MassiveNumeraryChangeModalComponent
       this.vBAN = dataTableGoods.some(element => element.indNume == 2);
 
       if (this.vBAN) {
-        this.vCHECA = (
-          await showQuestion({
-            title: 'Confirmación',
-            text: 'Se Actualizan Los Importes De Los Numerarios En ADM Sin Conciliar?',
-            confirmButtonText: 'SI',
-            cancelButtonText: 'NO',
-          })
-        ).isConfirmed;
-      }
-      const body = {
-        goodArray: dataTableGoods.map(item => {
-          return {
-            goodNumber: item.noGood,
-            indNume: item.indNume,
-            income: item.entry,
-            iva: item.tax,
-            appraisalValue: item.impNumerary,
-            spent: item.costs,
-            numeGoodNumber: item.npNUm,
-            status: item.status,
-            description: item.description,
-            expAssocNumber: item.noExpAssociated,
-            fileNumber: item.noExpedient,
-            delegationNumber: item.noDelegation,
-            subdelegationNumber: item.noSubDelegation,
-            identifier: item.identifier,
-            flyerNumber: item.noFlier,
+        const response = await this.alertQuestion(
+          'question',
+          'Confirmación',
+          '¿Desea Actualizar los Importes de los Numerarios en ADM Sin Conciliar?'
+        );
+        this.vCHECA = response.isConfirmed;
+        if (response.isConfirmed && this.vCHECA) {
+          const body = {
+            goodArray: dataTableGoods.map(item => {
+              return {
+                goodNumber: item.noGood,
+                indNume: item.indNume,
+                income: item.entry,
+                iva: item.tax,
+                appraisalValue: item.impNumerary,
+                spent: item.costs,
+                numeGoodNumber: item.npNUm,
+                status: item.status,
+                description: item.description,
+                expAssocNumber: item.noExpAssociated,
+                fileNumber: item.noExpedient,
+                delegationNumber: item.noDelegation,
+                subdelegationNumber: item.noSubDelegation,
+                identifier: item.identifier,
+                flyerNumber: item.noFlier,
+              };
+            }),
+            user: this.user,
+            chk_movban: this.chkMovBan,
+            di_moneda_new: this.DI_MONEDA_NEW,
+            ti_ficha_new: this.TI_FICHA_NEW,
+            ti_banco_new: this.TI_BANCO_NEW,
+            ti_fecha_new:
+              this.TI_FECHA_NEW || formatDate(new Date(), 'yyyy/MM/dd', 'en'),
+            di_cuenta_new: this.DI_CUENTA_NEW,
+            di_no_cuenta_deposito: this.DI_NO_CUENTA_DEPOSITO,
+            di_categoria: this.DI_CATEGORIA,
+            di_no_movimiento: this.DI_NO_MOVIMIENTO,
           };
-        }),
-        user: this.user,
-        chk_movban: this.chkMovBan,
-        di_moneda_new: this.DI_MONEDA_NEW,
-        ti_ficha_new: this.TI_FICHA_NEW,
-        ti_banco_new: this.TI_BANCO_NEW,
-        ti_fecha_new:
-          this.TI_FECHA_NEW || formatDate(new Date(), 'yyyy/MM/dd', 'en'),
-        di_cuenta_new: this.DI_CUENTA_NEW,
-        di_no_cuenta_deposito: this.DI_NO_CUENTA_DEPOSITO,
-        di_categoria: this.DI_CATEGORIA,
-        di_no_movimiento: this.DI_NO_MOVIMIENTO,
-      };
-      this.accountMovementService.postMassNumeraryGenerate(body).subscribe({
-        next: (res: any) => {
-          this.alert(
-            'success',
-            'Operación Terminada Correctamente',
-            'Proceso Terminado'
-          );
-        },
-        error: (err: any) => {
-          this.alert('error', 'Error', 'Ocurrió un Error al Procesar');
-        },
-      });
+          this.accountMovementService.postMassNumeraryGenerate(body).subscribe({
+            next: (res: any) => {
+              this.alert('success', 'Operación Terminada Correctamente', '');
+              this.refresh.emit(true);
+              this.modalRef.hide();
+            },
+            error: (err: any) => {
+              this.alert('error', 'Error', 'Ocurrió un Error al Procesar');
+            },
+          });
+        }
+      } else {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Con estos Datos no se Puede Generar Numerarios.'
+        );
+      }
     } else {
       this.alert(
         'warning',

@@ -1,43 +1,65 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const GENERAL_RECEPTION_STRATEGIES_COLUNNS = {
-  regional: {
+  proceedings: {
     title: 'Expediente',
     sort: false,
   },
-  cve: {
+  id: {
     title: 'Bien',
     sort: false,
   },
-  expediente: {
+  statusGood: {
     title: 'Estatus Bien',
     sort: false,
   },
-  noVolante: {
+  keyCodeMinutesReception: {
     title: 'Clave Acta Recepción',
     sort: false,
   },
-  tramite: {
+  coordinationRegional: {
     title: 'Coordinación Regional',
     sort: false,
   },
-  usuario: {
+  userNameruleOrigin: {
     title: 'Usuario',
     sort: false,
   },
-  page: {
+  captureMinutesReceptionDate: {
     title: 'Fecha de Estrategia',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   fin: {
     title: 'Fecha page Programación',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
-  max: {
+  receptionPhysicalDate: {
     title: 'Fecha Fin Programación',
     sort: false,
-  },
-  cumplio: {
-    title: 'Cumplio',
-    sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
 };
 function getData() {

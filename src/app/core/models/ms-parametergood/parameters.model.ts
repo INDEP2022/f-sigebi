@@ -20,7 +20,7 @@ export interface IIndicatorParameters {
 export interface IPupCalculateDevolutionDTO {
   fecCorteDevolucion: Date;
   tiFecInicioInteres: Date;
-  importeSinInteres: string;
+  importeSinInteres: any;
   diMonedaDeposito: string;
   diInstrumento: string;
   diBienDeposito: number;
@@ -33,4 +33,6 @@ export interface IPupCalculateDevolutionResult {
   di_subtotal: string;
   importe_devolucion: string;
   tasa_estimada: number;
+  gastos_admon?: number;
+  gastos_asociados?: number;
 }

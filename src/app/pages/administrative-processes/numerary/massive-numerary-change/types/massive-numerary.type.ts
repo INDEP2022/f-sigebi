@@ -75,9 +75,7 @@ export interface IFMasInsNumerarioSpent {
 }
 
 export interface IResponseFMasInsNumerarioSpent {
-  T_REG_CORRECTOS: number;
-  T_REG_ERRONEOS: number;
-  T_REG_PROCESADOS: number;
-  bienes: IFMasInsNumerarioGood[];
-  gastos: IFMasInsNumerarioSpent[];
+  T_REG: any;
+  BLK_BIENES: IFMasInsNumerarioGood[];
+  BLK_GASTOS: IFMasInsNumerarioSpent[];
 }

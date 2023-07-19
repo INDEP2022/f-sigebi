@@ -28,13 +28,27 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class ConfiscationRatioComponent extends BasePage implements OnInit {
   form: FormGroup;
   file: FormGroup;
-  data: FormGroup;
+  data: FormGroup[];
   lock: boolean = false;
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
   filterParams = new BehaviorSubject<ListParams>(new ListParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
   goods: DefaultSelect<IGood>;
   columnFilters: any = [];
+  dataTemplate = this.fb.group({
+    noGood: [null, Validators.required],
+    criminalCase: [null, Validators.required],
+    preliminaryInvestigation: [null, Validators.required],
+    dateTesofe: [null, Validators.required],
+    jobTesofe: [null, Validators.required],
+    authority: [null, Validators.required],
+    dateTreasury: [null, Validators.required],
+    dateJudgment: [null, Validators.required],
+    appraisalValue: [null, Validators.required],
+    interests: [null, Validators.required],
+    results: [null, Validators.required],
+    totalSeizures: [null, Validators.required],
+  });
   constructor(
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
@@ -74,20 +88,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       processed: [null, Validators.required],
       wrong: [null, Validators.required],
     });
-    this.data = this.fb.group({
-      noGood: [null, Validators.required],
-      criminalCase: [null, Validators.required],
-      preliminaryInvestigation: [null, Validators.required],
-      dateTesofe: [null, Validators.required],
-      jobTesofe: [null, Validators.required],
-      authority: [null, Validators.required],
-      dateTreasury: [null, Validators.required],
-      dateJudgment: [null, Validators.required],
-      appraisalValue: [null, Validators.required],
-      interests: [null, Validators.required],
-      results: [null, Validators.required],
-      totalSeizures: [null, Validators.required],
-    });
+    this.data = [this.dataTemplate];
   }
   openPrevPdf() {
     let config: ModalOptions = {
@@ -160,6 +161,70 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   }
 
   brings() {}
+
+  onCsvSelected(event: any) {
+    //cargar csv a campos
+    const file: File = event.target.files[0];
+    const fileReader: FileReader = new FileReader();
+
+    fileReader.onload = e => {
+      const content: string = fileReader.result as string;
+      const lines: string[] = content.split('\n');
+
+      this.data.length = 1;
+      this.data[0].reset();
+
+      let i = 0;
+      let startFlag = true;
+      for (let line of lines) {
+        if (startFlag) {
+          //se salta la primera linea
+          startFlag = false;
+          continue;
+        }
+        // Aquí puedes realizar las acciones que deseas con cada línea del archivo
+        console.log(line);
+        let params = line.replace(/[\r\n]+/g, '').split(',');
+        if (i != 0) {
+          this.data.push(
+            this.fb.group({
+              noGood: [null, Validators.required],
+              criminalCase: [null, Validators.required],
+              preliminaryInvestigation: [null, Validators.required],
+              dateTesofe: [null, Validators.required],
+              jobTesofe: [null, Validators.required],
+              authority: [null, Validators.required],
+              dateTreasury: [null, Validators.required],
+              dateJudgment: [null, Validators.required],
+              appraisalValue: [null, Validators.required],
+              interests: [null, Validators.required],
+              results: [null, Validators.required],
+              totalSeizures: [null, Validators.required],
+            })
+          );
+        }
+        console.log(params);
+        const rowData = params;
+        if (rowData[0]) {
+          const formValues = {
+            noGood: +rowData[0],
+            dateTransfer: rowData[1],
+            dateSentencia: rowData[2],
+            interests: +rowData[3],
+            dateTesofe: rowData[4],
+            jobTesofe: rowData[5],
+          };
+
+          console.log(formValues);
+
+          this.data[i].patchValue(formValues);
+        }
+        i++;
+      }
+    };
+
+    fileReader.readAsText(file);
+  }
 
   getClasificGood() {}
 
