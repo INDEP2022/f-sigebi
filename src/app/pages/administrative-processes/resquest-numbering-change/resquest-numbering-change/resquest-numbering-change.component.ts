@@ -1800,6 +1800,14 @@ export class ResquestNumberingChangeComponent
   }
 
   printScanFile() {
+    if (!this.idSolicitud) {
+      this.handleSuccess2('Debe Indicar el ID de la Solicitud');
+      this.formaplicationData
+        .get('applicationChangeCashNumber')
+        .markAsTouched();
+      // this.validate = true;
+      return;
+    }
     // if (this.form.get(this.formControlName).value != null) {
     const params = {
       PARAMFORM: 'NO',

@@ -67,11 +67,11 @@ export class ChangePeriodComponent extends BasePage {
     this.dateDestino();
   }
   dateDestino() {
-    this.currentYear2 = this.anio;
+    // this.currentYear2 = this.anio;
     this.years2 = [];
-    const aaa = this.anio - 1;
-    for (let i = aaa; i <= this.anio; i++) {
-      if (i == 2009) return;
+    const aaa = this.currentYear2 - 1;
+    for (let i = aaa; i <= this.currentYear2; i++) {
+      // if (i == 2009) return;
       this.years2.push(i);
     }
   }
@@ -271,14 +271,14 @@ export class ChangePeriodComponent extends BasePage {
     this.anio = event;
 
     if (event) {
-      this.currentYear2 = event;
-      this.years2 = [];
-      const aaa = this.anio - 1;
-      for (let i = aaa; i <= this.anio; i++) {
-        if (i >= 2010) {
-          this.years2.push(i);
-        }
-      }
+      // this.currentYear2 = event;
+      // this.years2 = [];
+      // const aaa = this.anio - 1;
+      // for (let i = aaa; i <= this.anio; i++) {
+      //   if (i >= 2010) {
+      //     this.years2.push(i);
+      //   }
+      // }
 
       if (this.delegationDefault && this.anio && this.process) {
         this.disabledPeriod = true;
