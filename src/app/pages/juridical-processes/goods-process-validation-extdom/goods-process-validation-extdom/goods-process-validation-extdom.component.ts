@@ -171,6 +171,13 @@ export class GoodsProcessValidationExtdomComponent
   goodLoopLimit: number = 0;
   goodLoopTmp: IGood[] | any[] = [];
   goodLoopLoading: boolean = false;
+  // Good Loop Free
+  goodLoopFreeCurrent: number = 0;
+  goodLoopFreeTotal: number = 0;
+  goodLoopFreePage: number = 0;
+  goodLoopFreeLimit: number = 0;
+  goodLoopFreeTmp: IGood[] | any[] = [];
+  goodLoopFreeLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -310,42 +317,42 @@ export class GoodsProcessValidationExtdomComponent
           this.form.get('expedientNumber').setValue(this.P_EXPEDIENTE);
           this.form.get('expedientNumber').updateValueAndValidity();
         }
-        let e_aseg = localStorage.getItem('e_aseg');
-        let v_aseg = localStorage.getItem('v_aseg');
-        console.log('LOCALSTORAGE ', e_aseg, v_aseg);
-        let valid = true;
-        if (!e_aseg && this.P_EXPEDIENTE) {
-          valid = false;
-        }
-        if (!v_aseg && this.P_VOLANTE) {
-          valid = false;
-        }
-        if (valid == false) {
-          localStorage.removeItem('f_aseg');
-          localStorage.removeItem('e_aseg');
-          localStorage.removeItem('v_aseg');
-          // Para crear
-          localStorage.removeItem(this.localStorage_selectedGoods);
-          localStorage.removeItem(this.localStorage_goodData3);
-          localStorage.removeItem(this.localStorage_totalGoods3);
-          // Para liberar
-          localStorage.removeItem(this.localStorage_selectedGoods2);
-          localStorage.removeItem(this.localStorage_goodData4);
-          localStorage.removeItem(this.localStorage_totalGoods4);
-        }
-        if (this.P_NO_TRAMITE == null) {
-          localStorage.removeItem('f_aseg');
-          localStorage.removeItem('e_aseg');
-          localStorage.removeItem('v_aseg');
-          // Para crear
-          localStorage.removeItem(this.localStorage_selectedGoods);
-          localStorage.removeItem(this.localStorage_goodData3);
-          localStorage.removeItem(this.localStorage_totalGoods3);
-          // Para liberar
-          localStorage.removeItem(this.localStorage_selectedGoods2);
-          localStorage.removeItem(this.localStorage_goodData4);
-          localStorage.removeItem(this.localStorage_totalGoods4);
-        }
+        // let e_aseg = localStorage.getItem('e_aseg');
+        // let v_aseg = localStorage.getItem('v_aseg');
+        // console.log('LOCALSTORAGE ', e_aseg, v_aseg);
+        // let valid = true;
+        // if (!e_aseg && this.P_EXPEDIENTE) {
+        //   valid = false;
+        // }
+        // if (!v_aseg && this.P_VOLANTE) {
+        //   valid = false;
+        // }
+        // if (valid == false) {
+        //   localStorage.removeItem('f_aseg');
+        //   localStorage.removeItem('e_aseg');
+        //   localStorage.removeItem('v_aseg');
+        //   // Para crear
+        //   localStorage.removeItem(this.localStorage_selectedGoods);
+        //   localStorage.removeItem(this.localStorage_goodData3);
+        //   localStorage.removeItem(this.localStorage_totalGoods3);
+        //   // Para liberar
+        //   localStorage.removeItem(this.localStorage_selectedGoods2);
+        //   localStorage.removeItem(this.localStorage_goodData4);
+        //   localStorage.removeItem(this.localStorage_totalGoods4);
+        // }
+        // if (this.P_NO_TRAMITE == null) {
+        //   localStorage.removeItem('f_aseg');
+        //   localStorage.removeItem('e_aseg');
+        //   localStorage.removeItem('v_aseg');
+        //   // Para crear
+        //   localStorage.removeItem(this.localStorage_selectedGoods);
+        //   localStorage.removeItem(this.localStorage_goodData3);
+        //   localStorage.removeItem(this.localStorage_totalGoods3);
+        //   // Para liberar
+        //   localStorage.removeItem(this.localStorage_selectedGoods2);
+        //   localStorage.removeItem(this.localStorage_goodData4);
+        //   localStorage.removeItem(this.localStorage_totalGoods4);
+        // }
         this.initForm();
       });
   }
@@ -728,17 +735,17 @@ export class GoodsProcessValidationExtdomComponent
     this.notificationData = null;
     setTimeout(() => {
       this.showScanForm = true;
-      localStorage.removeItem('f_aseg');
-      localStorage.removeItem('e_aseg');
-      localStorage.removeItem('v_aseg');
-      // Para crear
-      localStorage.removeItem(this.localStorage_selectedGoods);
-      localStorage.removeItem(this.localStorage_goodData3);
-      localStorage.removeItem(this.localStorage_totalGoods3);
-      // Para liberar
-      localStorage.removeItem(this.localStorage_selectedGoods2);
-      localStorage.removeItem(this.localStorage_goodData4);
-      localStorage.removeItem(this.localStorage_totalGoods4);
+      // localStorage.removeItem('f_aseg');
+      // localStorage.removeItem('e_aseg');
+      // localStorage.removeItem('v_aseg');
+      // // Para crear
+      // localStorage.removeItem(this.localStorage_selectedGoods);
+      // localStorage.removeItem(this.localStorage_goodData3);
+      // localStorage.removeItem(this.localStorage_totalGoods3);
+      // // Para liberar
+      // localStorage.removeItem(this.localStorage_selectedGoods2);
+      // localStorage.removeItem(this.localStorage_goodData4);
+      // localStorage.removeItem(this.localStorage_totalGoods4);
       // Listado Tabla Bienes Disponibles
       this.dataTable.load([]);
       this.dataTable.refresh();
@@ -896,8 +903,8 @@ export class GoodsProcessValidationExtdomComponent
       externalOfficeDate: new Date(this.notificationData.externalOfficeDate),
     };
     this.form.patchValue(data);
-    localStorage.setItem('e_aseg', '' + this.notificationData.expedientNumber);
-    localStorage.setItem('v_aseg', '' + this.notificationData.wheelNumber);
+    // localStorage.setItem('e_aseg', '' + this.notificationData.expedientNumber);
+    // localStorage.setItem('v_aseg', '' + this.notificationData.wheelNumber);
     console.log(this.form.value);
 
     this.formReserved.get('reserved').setValue(data.reserved);
@@ -933,36 +940,36 @@ export class GoodsProcessValidationExtdomComponent
       if (data.authority) {
         this.getAuthority(new ListParams(), true);
       }
-      let e_aseg = localStorage.getItem('e_aseg');
-      let v_aseg = localStorage.getItem('v_aseg');
-      console.log('LOCALSTORAGE ', e_aseg, v_aseg);
-      let valid = false;
-      if (this.notificationData == null) {
-        valid = false;
-      } else {
-        if (this.notificationData.expedientNumber) {
-          if (e_aseg != this.notificationData.expedientNumber.toString()) {
-            valid = false;
-          }
-        }
-        if (this.notificationData.wheelNumber) {
-          if (v_aseg != this.notificationData.wheelNumber.toString()) {
-            valid = false;
-          }
-        }
-      }
-      if (valid == false) {
-        localStorage.removeItem('e_aseg');
-        localStorage.removeItem('v_aseg');
-        // Para crear
-        localStorage.removeItem(this.localStorage_selectedGoods);
-        localStorage.removeItem(this.localStorage_goodData3);
-        localStorage.removeItem(this.localStorage_totalGoods3);
-        // Para liberar
-        localStorage.removeItem(this.localStorage_selectedGoods2);
-        localStorage.removeItem(this.localStorage_goodData4);
-        localStorage.removeItem(this.localStorage_totalGoods4);
-      }
+      // let e_aseg = localStorage.getItem('e_aseg');
+      // let v_aseg = localStorage.getItem('v_aseg');
+      // console.log('LOCALSTORAGE ', e_aseg, v_aseg);
+      // let valid = false;
+      // if (this.notificationData == null) {
+      //   valid = false;
+      // } else {
+      //   if (this.notificationData.expedientNumber) {
+      //     if (e_aseg != this.notificationData.expedientNumber.toString()) {
+      //       valid = false;
+      //     }
+      //   }
+      //   if (this.notificationData.wheelNumber) {
+      //     if (v_aseg != this.notificationData.wheelNumber.toString()) {
+      //       valid = false;
+      //     }
+      //   }
+      // }
+      // if (valid == false) {
+      //   localStorage.removeItem('e_aseg');
+      //   localStorage.removeItem('v_aseg');
+      //   // Para crear
+      //   localStorage.removeItem(this.localStorage_selectedGoods);
+      //   localStorage.removeItem(this.localStorage_goodData3);
+      //   localStorage.removeItem(this.localStorage_totalGoods3);
+      //   // Para liberar
+      //   localStorage.removeItem(this.localStorage_selectedGoods2);
+      //   localStorage.removeItem(this.localStorage_goodData4);
+      //   localStorage.removeItem(this.localStorage_totalGoods4);
+      // }
     }, 200);
     this.reviewLocalStorage();
     // setTimeout(() => {
@@ -973,87 +980,87 @@ export class GoodsProcessValidationExtdomComponent
   }
 
   reviewLocalStorage() {
-    let f_aseg = localStorage.getItem('f_aseg');
-    let e_aseg = localStorage.getItem('e_aseg');
-    let v_aseg = localStorage.getItem('v_aseg');
-    console.log('LOCALSTORAGE ', f_aseg, e_aseg, v_aseg);
-    let valid = true;
-    if (this.notificationData == null) {
-      valid = false;
-    } else {
-      if (this.notificationData.expedientNumber) {
-        if (e_aseg != this.notificationData.expedientNumber.toString()) {
-          valid = false;
-        }
-      }
-      if (this.notificationData.wheelNumber) {
-        if (v_aseg != this.notificationData.wheelNumber.toString()) {
-          valid = false;
-        }
-      }
-    }
-    if (valid == false) {
-      localStorage.removeItem('f_aseg');
-      localStorage.removeItem('e_aseg');
-      localStorage.removeItem('v_aseg');
-      // Para crear
-      localStorage.removeItem(this.localStorage_selectedGoods);
-      localStorage.removeItem(this.localStorage_goodData3);
-      localStorage.removeItem(this.localStorage_totalGoods3);
-      // Para liberar
-      localStorage.removeItem(this.localStorage_selectedGoods2);
-      localStorage.removeItem(this.localStorage_goodData4);
-      localStorage.removeItem(this.localStorage_totalGoods4);
-      this.showScanForm = false;
-      this.universalFolio = null;
-      this.formScan.get('scanningFoli').setValue(null);
-      setTimeout(() => {
-        this.formScan.get('scanningFoli').updateValueAndValidity();
-        // this.showScanForm = true;
-        this.getFolioDocument();
-      }, 200);
-    } else {
-      // Para crear
-      let _selectedGoods = localStorage.getItem(
-        this.localStorage_selectedGoods
-      );
-      let _goodData3 = localStorage.getItem(this.localStorage_goodData3);
-      let _totalGoods3 = localStorage.getItem(this.localStorage_totalGoods3);
-      if (_selectedGoods) {
-        this.selectedGoods = JSON.parse(_selectedGoods);
-      }
-      if (_goodData3) {
-        this.goodData3 = JSON.parse(_goodData3);
-      }
-      if (_totalGoods3) {
-        this.totalGoods3 = JSON.parse(_totalGoods3);
-      }
-      this.updatePaginatedTable3();
-      // Para liberar
-      let _selectedGoods2 = localStorage.getItem(
-        this.localStorage_selectedGoods2
-      );
-      let _goodData4 = localStorage.getItem(this.localStorage_goodData4);
-      let _totalGoods4 = localStorage.getItem(this.localStorage_totalGoods4);
-      if (_selectedGoods2) {
-        this.goodsValid = JSON.parse(_selectedGoods2);
-      }
-      if (_goodData4) {
-        this.goodData4 = JSON.parse(_goodData4);
-      }
-      if (_totalGoods4) {
-        this.totalGoods4 = JSON.parse(_totalGoods4);
-      }
-      this.updatePaginatedTable4();
-      console.log('LOCALSTORAGE PASS VALID ', f_aseg, e_aseg, v_aseg);
-      this.showScanForm = false;
-      this.universalFolio = f_aseg ? Number(f_aseg) : null;
-      this.formScan.get('scanningFoli').setValue(f_aseg);
-      setTimeout(() => {
-        this.formScan.get('scanningFoli').updateValueAndValidity();
-        this.showScanForm = true;
-      }, 200);
-    }
+    // let f_aseg = localStorage.getItem('f_aseg');
+    // let e_aseg = localStorage.getItem('e_aseg');
+    // let v_aseg = localStorage.getItem('v_aseg');
+    // console.log('LOCALSTORAGE ', f_aseg, e_aseg, v_aseg);
+    // let valid = true;
+    // if (this.notificationData == null) {
+    //   valid = false;
+    // } else {
+    //   if (this.notificationData.expedientNumber) {
+    //     if (e_aseg != this.notificationData.expedientNumber.toString()) {
+    //       valid = false;
+    //     }
+    //   }
+    //   if (this.notificationData.wheelNumber) {
+    //     if (v_aseg != this.notificationData.wheelNumber.toString()) {
+    //       valid = false;
+    //     }
+    //   }
+    // }
+    // if (valid == false) {
+    // localStorage.removeItem('f_aseg');
+    // localStorage.removeItem('e_aseg');
+    // localStorage.removeItem('v_aseg');
+    // // Para crear
+    // localStorage.removeItem(this.localStorage_selectedGoods);
+    // localStorage.removeItem(this.localStorage_goodData3);
+    // localStorage.removeItem(this.localStorage_totalGoods3);
+    // // Para liberar
+    // localStorage.removeItem(this.localStorage_selectedGoods2);
+    // localStorage.removeItem(this.localStorage_goodData4);
+    // localStorage.removeItem(this.localStorage_totalGoods4);
+    this.showScanForm = false;
+    this.universalFolio = null;
+    this.formScan.get('scanningFoli').setValue(null);
+    setTimeout(() => {
+      this.formScan.get('scanningFoli').updateValueAndValidity();
+      // this.showScanForm = true;
+      this.getFolioDocument();
+    }, 200);
+    // } else {
+    // Para crear
+    // let _selectedGoods = localStorage.getItem(
+    //   this.localStorage_selectedGoods
+    // );
+    // let _goodData3 = localStorage.getItem(this.localStorage_goodData3);
+    // let _totalGoods3 = localStorage.getItem(this.localStorage_totalGoods3);
+    // if (_selectedGoods) {
+    //   this.selectedGoods = JSON.parse(_selectedGoods);
+    // }
+    // if (_goodData3) {
+    //   this.goodData3 = JSON.parse(_goodData3);
+    // }
+    // if (_totalGoods3) {
+    //   this.totalGoods3 = JSON.parse(_totalGoods3);
+    // }
+    // this.updatePaginatedTable3();
+    // // Para liberar
+    // let _selectedGoods2 = localStorage.getItem(
+    //   this.localStorage_selectedGoods2
+    // );
+    // let _goodData4 = localStorage.getItem(this.localStorage_goodData4);
+    // let _totalGoods4 = localStorage.getItem(this.localStorage_totalGoods4);
+    // if (_selectedGoods2) {
+    //   this.goodsValid = JSON.parse(_selectedGoods2);
+    // }
+    // if (_goodData4) {
+    //   this.goodData4 = JSON.parse(_goodData4);
+    // }
+    // if (_totalGoods4) {
+    //   this.totalGoods4 = JSON.parse(_totalGoods4);
+    // }
+    // this.updatePaginatedTable4();
+    // console.log('LOCALSTORAGE PASS VALID ', f_aseg, e_aseg, v_aseg);
+    // this.showScanForm = false;
+    // this.universalFolio = f_aseg ? Number(f_aseg) : null;
+    // this.formScan.get('scanningFoli').setValue(f_aseg);
+    // setTimeout(() => {
+    //   this.formScan.get('scanningFoli').updateValueAndValidity();
+    //   this.showScanForm = true;
+    // }, 200);
+    // }
   }
 
   getFolioDocument() {
@@ -1242,18 +1249,18 @@ export class GoodsProcessValidationExtdomComponent
 
   afterAddSelect() {
     setTimeout(() => {
-      localStorage.setItem(
-        this.localStorage_selectedGoods,
-        JSON.stringify(this.selectedGoods.slice(0, 100))
-      );
-      localStorage.setItem(
-        this.localStorage_goodData3,
-        JSON.stringify(this.goodData3.slice(0, 100))
-      );
-      localStorage.setItem(
-        this.localStorage_totalGoods3,
-        JSON.stringify(this.totalGoods3 > 100 ? 100 : this.totalGoods3)
-      );
+      // localStorage.setItem(
+      //   this.localStorage_selectedGoods,
+      //   JSON.stringify(this.selectedGoods.slice(0, 100))
+      // );
+      // localStorage.setItem(
+      //   this.localStorage_goodData3,
+      //   JSON.stringify(this.goodData3.slice(0, 100))
+      // );
+      // localStorage.setItem(
+      //   this.localStorage_totalGoods3,
+      //   JSON.stringify(this.totalGoods3 > 100 ? 100 : this.totalGoods3)
+      // );
       // Update data table bienes
       this.dataTable.load(this.goodData);
       this.dataTable.refresh();
@@ -1320,18 +1327,18 @@ export class GoodsProcessValidationExtdomComponent
         this.goodData3,
         this.goodData
       );
-      localStorage.setItem(
-        this.localStorage_selectedGoods,
-        JSON.stringify(this.selectedGoods)
-      );
-      localStorage.setItem(
-        this.localStorage_goodData3,
-        JSON.stringify(this.goodData3)
-      );
-      localStorage.setItem(
-        this.localStorage_totalGoods3,
-        JSON.stringify(this.totalGoods3)
-      );
+      // localStorage.setItem(
+      //   this.localStorage_selectedGoods,
+      //   JSON.stringify(this.selectedGoods)
+      // );
+      // localStorage.setItem(
+      //   this.localStorage_goodData3,
+      //   JSON.stringify(this.goodData3)
+      // );
+      // localStorage.setItem(
+      //   this.localStorage_totalGoods3,
+      //   JSON.stringify(this.totalGoods3)
+      // );
       // Update data table bienes
       // this.dataTable.load(this.goodData);
       // this.dataTable.refresh();
@@ -1346,10 +1353,26 @@ export class GoodsProcessValidationExtdomComponent
 
   addAll() {
     console.log('Agregar Todos');
+    this.startLoopGoods();
   }
 
   removeAll() {
     console.log('Eliminar Todos');
+    this.loadingGoods = true; // Iniciar loading de tabla bienes
+    this.loadingGoods3 = true; // Iniciar loading de tabla a procesar
+    for (let index = 0; index < this.goodData.length; index++) {
+      this.goodData[index].disponible = this.freeLabel; // Cambiar a no disponible
+      this.goodData[index].seleccion = 0; // Quitar el check del registro
+    }
+    this.selectedDeleteGoods = [];
+    this.goodData3 = [];
+    this.totalGoods3 = 0;
+    this.dataTableParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.loadGoods());
+    this.loadingGoods = false; // Detener loading de tabla bienes
+    this.loadingGoods3 = false; // Detener loading de tabla a procesar
+    this.updatePaginatedTable3();
   }
 
   addSelectFree() {
@@ -1383,18 +1406,18 @@ export class GoodsProcessValidationExtdomComponent
         this.totalGoods4,
         this.goodData2
       );
-      localStorage.setItem(
-        this.localStorage_selectedGoods2,
-        JSON.stringify(this.goodsValid)
-      );
-      localStorage.setItem(
-        this.localStorage_goodData4,
-        JSON.stringify(this.goodData4)
-      );
-      localStorage.setItem(
-        this.localStorage_totalGoods4,
-        JSON.stringify(this.totalGoods4)
-      );
+      // localStorage.setItem(
+      //   this.localStorage_selectedGoods2,
+      //   JSON.stringify(this.goodsValid)
+      // );
+      // localStorage.setItem(
+      //   this.localStorage_goodData4,
+      //   JSON.stringify(this.goodData4)
+      // );
+      // localStorage.setItem(
+      //   this.localStorage_totalGoods4,
+      //   JSON.stringify(this.totalGoods4)
+      // );
       // Update data table bienes
       this.dataTable2.load(this.goodData2);
       this.dataTable2.refresh();
@@ -1463,18 +1486,18 @@ export class GoodsProcessValidationExtdomComponent
         this.goodData4,
         this.goodData2
       );
-      localStorage.setItem(
-        this.localStorage_selectedGoods2,
-        JSON.stringify(this.goodsValid)
-      );
-      localStorage.setItem(
-        this.localStorage_goodData4,
-        JSON.stringify(this.goodData4)
-      );
-      localStorage.setItem(
-        this.localStorage_totalGoods4,
-        JSON.stringify(this.totalGoods4)
-      );
+      // localStorage.setItem(
+      //   this.localStorage_selectedGoods2,
+      //   JSON.stringify(this.goodsValid)
+      // );
+      // localStorage.setItem(
+      //   this.localStorage_goodData4,
+      //   JSON.stringify(this.goodData4)
+      // );
+      // localStorage.setItem(
+      //   this.localStorage_totalGoods4,
+      //   JSON.stringify(this.totalGoods4)
+      // );
       // Update data table bienes
       // this.dataTable2.load(this.goodData2);
       // this.dataTable2.refresh();
@@ -1489,10 +1512,25 @@ export class GoodsProcessValidationExtdomComponent
 
   addAllFree() {
     console.log('Agregar Todos');
+    this.startLoopGoodsFree();
   }
 
   removeAllFree() {
     console.log('Eliminar Todos');
+    this.loadingGoods2 = true; // Iniciar loading de tabla bienes
+    this.loadingGoods4 = true; // Iniciar loading de tabla a procesar
+    for (let index = 0; index < this.goodData2.length; index++) {
+      this.goodData2[index].disponible = this.freeLabel; // Cambiar a no disponible
+      this.goodData2[index].seleccion = 0; // Quitar el check del registro
+    }
+    this.goodData4 = [];
+    this.totalGoods4 = 0;
+    this.dataTableParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.loadGoods2());
+    this.loadingGoods2 = false; // Detener loading de tabla bienes
+    this.loadingGoods4 = false; // Detener loading de tabla a procesar
+    this.updatePaginatedTable4();
   }
 
   btnEjecutarCambios() {
@@ -2032,9 +2070,9 @@ export class GoodsProcessValidationExtdomComponent
         tap(_document => {
           this.formScan.get('scanningFoli').setValue(_document.id);
           this.universalFolio = Number(_document.id);
-          localStorage.setItem('f_aseg', '' + _document.id);
-          localStorage.setItem('e_aseg', '' + document.numberProceedings);
-          localStorage.setItem('v_aseg', '' + document.flyerNumber);
+          // localStorage.setItem('f_aseg', '' + _document.id);
+          // localStorage.setItem('e_aseg', '' + document.numberProceedings);
+          // localStorage.setItem('v_aseg', '' + document.flyerNumber);
         }),
         switchMap(_document => this.generateScanRequestReport())
       )
@@ -2712,4 +2750,145 @@ export class GoodsProcessValidationExtdomComponent
   }
 
   /** LOOP BIENES DISPONIBLES */
+
+  /** LOOP BIENES A LIBERAR */
+
+  startLoopGoodsFree() {
+    this.goodLoopFreeCurrent = 0;
+    this.goodLoopFreePage = 1;
+    this.goodLoopFreeTotal = 0;
+    this.goodLoopFreeLimit = 100;
+    this.goodLoopFreeTmp = [];
+    this.goodLoopFreeLoading = true; // Iniciar loading de procesando todos los bienes
+    this.loadingGoods2 = true; // Iniciar loading de tabla bienes
+    this.loadingGoods4 = true; // Iniciar loading de tabla a procesar
+    this.loopGoodsFree();
+  }
+
+  loopGoodsFree() {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter(
+      'proceedingsNumber',
+      this.notificationData.expedientNumber
+    );
+    params.addFilter('userfree', SearchFilter.NULL, SearchFilter.NULL);
+    params.addFilter('datefree', SearchFilter.NULL, SearchFilter.NULL);
+    params.limit = this.goodLoopFreeLimit;
+    params.page = this.goodLoopFreePage;
+    this.svGoodsProcessValidationExtdomService
+      .getHistoryGood(params.getParams())
+      .subscribe({
+        next: res => {
+          this.goodLoopFreeTotal = res.count;
+          // this.goodLoopFreeTotal = 23;
+          // let data = res.data.map((i: any) => {
+          //   const index2: number = this.goodsValid.findIndex(
+          //     (_good: IGood) => _good.goodId == i.goodId
+          //   );
+          //   if (index2 == -1) {
+          //     i['disponible'] = this.freeLabel;
+          //     i['seleccion'] = 0;
+          //     return i;
+          //   } else {
+          //     i['disponible'] = this.blockLabel;
+          //     i['seleccion'] = 0;
+          //     return i;
+          //   }
+          // });
+          let data = res.data.map((i: any) => {
+            i.goods['register_type'] = this.registerExistType;
+            i.goods['dateChange'] = i.dateChange;
+            i.goods['datefree'] = i.datefree;
+            i.goods['goodNumber'] = i.goodNumber;
+            i.goods['invoiceUnivChange'] = i.invoiceUnivChange;
+            i.goods['invoiceUnivfree'] = i.invoiceUnivfree;
+            i.goods['proceedingsNumber'] = i.proceedingsNumber;
+            i.goods['processExtSun'] = i.processExtSun;
+            i.goods['recordNumber'] = i.recordNumber;
+            i.goods['userChange'] = i.userChange;
+            i.goods['userfree'] = i.userfree;
+            const index2: number = this.goodsValid.findIndex(
+              (_good: IGood) => _good.goodId == i.goods.goodId
+            );
+            if (index2 > -1) {
+              i.goods['disponible'] = this.blockLabel;
+              i.goods['seleccion'] = 0;
+              return i.goods;
+            } else {
+              i.goods['disponible'] = this.freeLabel;
+              i.goods['seleccion'] = 0;
+              return i.goods;
+            }
+          });
+          this.goodLoopFreeTmp = data;
+          this.goodLoopFreeTmp.forEach(element => {
+            if (element.disponible == this.freeLabel) {
+              let row: IGood = element;
+              const index = this.goodsValid.findIndex(
+                _good => _good.goodId == row.goodId
+              );
+              if (index == -1) {
+                this.goodsValid.push(row);
+              }
+            }
+          });
+          this.goodLoopFreeCurrent =
+            this.goodLoopFreeCurrent + this.goodLoopFreeLimit >
+            this.goodLoopFreeTotal
+              ? this.goodLoopFreeTotal
+              : this.goodLoopFreeCurrent + this.goodLoopFreeLimit;
+          this.goodLoopFreePage++; // Next page
+          this.controlGoodLoopFree();
+        },
+        error: error => {
+          console.log(error);
+          this.goodLoopFreeCurrent =
+            this.goodLoopFreeCurrent + this.goodLoopFreeLimit >
+            this.goodLoopFreeTotal
+              ? this.goodLoopFreeTotal
+              : this.goodLoopFreeCurrent + this.goodLoopFreeLimit;
+          this.goodLoopFreePage++; // Next page
+          this.controlGoodLoopFree();
+        },
+      });
+  }
+
+  controlGoodLoopFree() {
+    this.goodLoopFreeTmp = [];
+    if (this.goodLoopFreeCurrent < this.goodLoopFreeTotal) {
+      this.loopGoodsFree();
+    } else if ((this.goodLoopFreeCurrent = this.goodLoopFreeTotal)) {
+      // FIN PROCESO
+      this._endProcess_LooopGoodFree();
+    }
+  }
+
+  _endProcess_LooopGoodFree() {
+    this.goodLoopFreeLoading = false;
+    this.goodsValid.forEach(selected => {
+      this.goodData4.push({
+        ...selected,
+        register_type: this.registerType,
+      }); // Agregar registro a la data
+      // VALIDAR CON LA DATA DEL ENDPOINT IGUAL
+      const index2: number = this.goodData2.findIndex(
+        (_good: IGood) => _good.goodId == selected.goodId
+      );
+      if (index2 > -1) {
+        this.goodData2[index2].disponible = this.blockLabel; // Cambiar a no disponible
+        this.goodData2[index2].seleccion = 0; // Quitar el check del registro
+      }
+    });
+    console.log('FIN PROCESO', this.goodsValid, this.goodData4);
+    this.totalGoods4 = this.goodsValid.length; // Aumentar si se agrego registro
+    // Update data table bienes
+    this.dataTable2.load(this.goodData2);
+    this.dataTable2.refresh();
+    this.loadingGoods2 = false; // Detener loading de tabla bienes
+    this.loadingGoods4 = false; // Detener loading de tabla a procesar
+    this.updatePaginatedTable4();
+  }
+
+  /** LOOP BIENES A LIBERAR */
 }

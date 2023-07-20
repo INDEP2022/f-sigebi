@@ -81,6 +81,8 @@
       <div class="m-3">
         <confirm-button
           text="Imprimir"
+          [btnSmall]="true"
+          icon="bx bx-printer bx-sm float-icon"
           [disabled]="flyersForm.invalid"
           [loading]="loading"
           (confirm)="Generar()">
@@ -89,9 +91,10 @@
       <div class="m-3">
         <button
           type="button"
-          class="btn btn-danger active"
+          class="btn btn-danger btn-sm active"
           (click)="cleanForm()">
           Limpiar
+          <i class="fas fa-eraser"> </i>
         </button>
       </div>
     </div>
