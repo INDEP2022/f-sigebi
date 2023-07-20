@@ -46,8 +46,8 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       { value: '3', description: '1ER CAPA / 2DA CAPA' },
     ]);
     this.status = new DefaultSelect([
-      { value: 1, description: 'ABIERTO' },
-      { value: 2, description: 'CERRADO' },
+      { value: '1', description: 'ABIERTO' },
+      { value: '2', description: 'CERRADO' },
     ]);
     this.prepareForm();
   }
