@@ -20,7 +20,10 @@ export class FielSetUncollectedComponent extends BasePage implements OnInit {
   data: IListResponse<IGoodType>;
 
   @Input() set content(data: IListResponse<IGoodType>) {
-    if (!data.data) return;
+    if (!data.data) {
+      this.data = null;
+      return;
+    }
     data.data = countTotalsGet(data.data);
     this.data = data;
   }
