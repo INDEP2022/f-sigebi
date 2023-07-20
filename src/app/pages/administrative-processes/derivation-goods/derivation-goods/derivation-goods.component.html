@@ -36,7 +36,7 @@
               <select
                 class="form-control"
                 formControlName="tipo"
-                readOnly="true">
+                [disabled]="true">
                 <option value="1">Derivado</option>
                 <option value="2">Conversión</option>
               </select>
@@ -197,6 +197,7 @@
         <div class="row mt-5 text-center">
           <div class="col-md-6 col-sm-6 col-xs-12">
             <button
+              [disabled]="flagCambia"
               class="btn btn-primary btn-sm active mr-3"
               (click)="updateStatus()">
               Cambiar Estatus
@@ -204,6 +205,7 @@
           </div>
           <div class="col-md-6 col-sm-6 col-xs-12">
             <button
+              [disabled]="flagUpdate"
               class="btn btn-primary btn-sm active mr-3"
               (click)="updateGood()">
               Actualizar <i class="fas fa-sync-alt"> </i>
@@ -227,6 +229,7 @@
                 type="button"
                 data-toggle="tooltop"
                 title="Agregar Bien"
+                [disabled]="flagGoodNew"
                 class="btn btn-info btn-sm active ml-2 mr-2"
                 (click)="applyGood(selectedRow)">
                 <i class="bx bx-plus bx-sm float-icon"></i>
@@ -236,6 +239,7 @@
                 type="button"
                 data-toggle="tooltop"
                 title="Eliminar Bien"
+                [disabled]="flagGoodDelete"
                 class="btn btn-danger btn-sm active ml-2 mr-2"
                 (click)="deletGood($event)">
                 <i class="bx bx-minus bx-sm float-icon"></i>
