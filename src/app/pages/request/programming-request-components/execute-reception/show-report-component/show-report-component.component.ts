@@ -31,7 +31,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   receiptId: number = 0;
   idReportAclara: any; //ID de los reportes
   isPdfLoaded = false;
-  title: string = 'Imprimir Reporte';
+  title: string = '';
   btnTitle: string = 'Firmar Reporte';
   printReport: boolean = true;
   listSigns: boolean = false;
@@ -54,7 +54,11 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   nomReport: string = '';
   actId: number = 0;
   formLoading: boolean = false;
+  loadingButton: boolean = false;
+  showTDR: boolean = false;
   receiptGuards: any;
+  goodId: number = 0;
+
   constructor(
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
@@ -85,6 +89,11 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.showTDR) {
+      this.title = 'ETIQUETA';
+    } else {
+      this.title = 'Imprimir Reporte';
+    }
     this.formLoading = true;
     this.showReportByTypeDoc();
     this.getReceipt();
@@ -122,6 +131,12 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
 
     if (this.idTypeDoc == 185 || this.idTypeDoc == 186) {
       let linkDoc: string = `${this.urlBaseReport}Recibo_Resguardo.jasper&ID_RECIBO_RESGUARDO=${this.receiptGuards.id}`;
+      this.src = linkDoc;
+      this.formLoading = false;
+    }
+
+    if (this.showTDR) {
+      let linkDoc: string = `${this.urlBaseReport}Etiqueta_TDR.jasper&idSolicitud=${this.programming.id}&CID_BIEN=${this.goodId}`;
       this.src = linkDoc;
       this.formLoading = false;
     }
@@ -279,6 +294,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   openMessage(message: string): void {
+    this.loadingButton = true;
     this.alertQuestion('question', 'Confirmación', `${message}`).then(
       question => {
         if (question.isConfirmed) {
@@ -288,9 +304,15 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
               .subscribe({
                 next: response => {
                   this.msjCheck = true;
+                  this.loadingButton = false;
                 },
                 error: error => {
-                  this.msjCheck = true;
+                  this.alert(
+                    'error',
+                    'Acción Invalida',
+                    'Errror al firmar el documento'
+                  );
+                  this.loadingButton = false;
                 },
               });
           }
