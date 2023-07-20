@@ -64,8 +64,11 @@
             <input
               type="text"
               placeholder=""
+              (bsValueChange)="eventDateChange($event)"
               class="form-control"
               bsDatepicker
+              [minDate]="minEventDate"
+              [maxDate]="maxEventDate"
               formControlName="eventDate"
               [bsConfig]="{ isAnimated: true }" />
           </form-field>
@@ -76,6 +79,7 @@
             label="Fecha de Cierre">
             <input
               type="text"
+              (bsValueChange)="closingDateChange()"
               placeholder=""
               class="form-control"
               bsDatepicker
@@ -88,6 +92,7 @@
             [control]="eventForm.get('failureDate')"
             label="Fecha del Fallo">
             <input
+              (bsValueChange)="failureDateChange($event)"
               type="text"
               placeholder=""
               class="form-control"
