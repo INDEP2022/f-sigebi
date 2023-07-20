@@ -1057,6 +1057,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
           this.numberClassification.setValue(item.goodclassnumber);
           this.goodStatus.setValue(item.status);
           this.fileNumber.setValue(this.noExpedient);
+          this.idLot.setValue(this.lot);
           this.descripcion.setValue(item.description);
           this.goodUnit.setValue(item.unit);
           this.goodQuantity.setValue(item.quantity);
@@ -1399,6 +1400,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   getComerGoodLotes(id: number) {
     this.lotService.getGlobalGoodEventLot(id).subscribe({
       next: (data: any) => {
+        this.lot = data;
         console.log(data);
       },
       error: () => {
