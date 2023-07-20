@@ -40,7 +40,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.idGood = this.data.id;
+    if (this.idGood) this.idGood = this.data.id;
     if (this.idRequest) this.infoRequest();
     this.obtainDate();
     this.getInfoUserLog();
@@ -124,7 +124,7 @@ export class UploadFileComponent extends BasePage implements OnInit {
             )
             .subscribe({
               next: data => {
-                this.bsModalRef.content.callBack(true);
+                this.bsModalRef.content.callback(true);
                 this.close();
               },
               error: error => {},
