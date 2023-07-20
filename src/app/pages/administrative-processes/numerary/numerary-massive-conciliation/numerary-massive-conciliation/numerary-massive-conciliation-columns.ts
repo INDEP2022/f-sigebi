@@ -1,5 +1,7 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 // import { CheckboxElementRecordAccountStatementsComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element-record-account-statements';
+import { formatDate } from '@angular/common';
+import { CustomDateDayFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
 
 export let goodCheck: any[] = [];
 export let goodCheck2: any[] = [];
@@ -180,10 +182,28 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
     title: 'Fec. Depósito',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (date: any) => {
+      // Formatear la fecha utilizando la función formatDate
+      const formattedDate = formatDate(date, 'dd/MM/yyyy', 'en');
+      return formattedDate;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateDayFilterComponent,
+    },
   },
   interestCalculationDate: {
-    title: 'Fec. Tesofe',
+    title: 'Fec. Depósito',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (date: any) => {
+      // Formatear la fecha utilizando la función formatDate
+      const formattedDate = formatDate(date, 'dd/MM/yyyy', 'en');
+      return formattedDate;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateDayFilterComponent,
+    },
   },
 };
