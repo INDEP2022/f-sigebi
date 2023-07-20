@@ -21,6 +21,6 @@ export class ComerDetailsService extends HttpService {
   }
 
   rangeDate(body: IRangeDateTmp5) {
-    return this.post('application/rangeDate', body)
+    return this.post('application/rangeDate', body);
   }
 }

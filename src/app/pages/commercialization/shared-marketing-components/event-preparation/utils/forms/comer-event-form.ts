@@ -1,32 +1,32 @@
 import { FormControl, Validators } from '@angular/forms';
 
 export class ComerEventForm {
-  id = new FormControl({ value: null, disabled: true });
-  processKey = new FormControl(null, [
+  id = new FormControl<number>({ value: null, disabled: true });
+  processKey = new FormControl<string>(null, [
     Validators.required,
     Validators.maxLength(60),
   ]);
-  eventTpId = new FormControl(null, [Validators.required]);
-  place = new FormControl(null, [
+  eventTpId = new FormControl<number | string>(null, [Validators.required]);
+  place = new FormControl<string>(null, [
     Validators.required,
     Validators.maxLength(100),
   ]);
-  observations = new FormControl(null, [
+  observations = new FormControl<string>(null, [
     Validators.required,
     Validators.maxLength(300),
   ]);
-  eventDate = new FormControl(null, []);
-  username = new FormControl(null, []);
-  delegationNumber = new FormControl(null, []);
-  thirdId = new FormControl(null);
-  baseCost = new FormControl(null, [Validators.maxLength(15)]);
-  eventClosingDate = new FormControl(null);
-  failureDate = new FormControl(null);
-  requestType = new FormControl(null);
-  tpsolavalId = new FormControl(null);
-  statusVtaId = new FormControl(null);
-  address = new FormControl(null);
-  user = new FormControl(null);
-  month = new FormControl(null);
-  year = new FormControl(null);
+  eventDate = new FormControl<Date>(null, []);
+  username = new FormControl<string>(null, []);
+  delegationNumber = new FormControl<string | number>(null, []);
+  thirdId = new FormControl<number | string>(null);
+  baseCost = new FormControl<number>(null, [Validators.maxLength(15)]);
+  eventClosingDate = new FormControl<Date>(null);
+  failureDate = new FormControl<Date>(null);
+  requestType = new FormControl<number | string>(null);
+  tpsolavalId = new FormControl<number | string>(null);
+  statusVtaId = new FormControl<string>(null);
+  address = new FormControl<string>(null);
+  user = new FormControl<string>(null);
+  month = new FormControl<number | string>(null);
+  year = new FormControl<number | string>(null);
 }
