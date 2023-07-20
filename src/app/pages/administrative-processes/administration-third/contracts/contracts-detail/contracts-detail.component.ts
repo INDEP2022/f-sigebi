@@ -165,7 +165,7 @@ export class ContractsDetailComponent extends BasePage implements OnInit {
 
   transformDateI(fechaInput: string) {
     const partesFecha = fechaInput.split('-'); // Dividir la fecha en partes: [dia, mes, año]
-    const fechaFormateada = `${partesFecha[0]}-${partesFecha[1]}-${partesFecha[2]}`;
+    const fechaFormateada = `${partesFecha[2]}-${partesFecha[1]}-${partesFecha[0]}`;
 
     this.contractForm.patchValue({
       startDate: fechaFormateada,
@@ -174,7 +174,7 @@ export class ContractsDetailComponent extends BasePage implements OnInit {
 
   transformDateF(fechaInput: string) {
     const partesFecha = fechaInput.split('-'); // Dividir la fecha en partes: [dia, mes, año]
-    const fechaFormateada = `${partesFecha[0]}-${partesFecha[1]}-${partesFecha[2]}`;
+    const fechaFormateada = `${partesFecha[2]}-${partesFecha[1]}-${partesFecha[0]}`;
 
     this.contractForm.patchValue({
       endDate: fechaFormateada,
