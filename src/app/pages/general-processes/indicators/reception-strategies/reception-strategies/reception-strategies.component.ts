@@ -197,7 +197,7 @@ export class ReceptionStrategiesComponent extends BasePage implements OnInit {
     if (jsonToCsv.length === 0) {
       this.alert(
         'warning',
-        'Estrategia Recepción',
+        'Estrategia de Recepción',
         'No hay información para descargar'
       );
       return;
