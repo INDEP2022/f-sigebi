@@ -37,6 +37,7 @@ export class RegisterDocumentationFormComponent
   maxDate: Date = new Date();
   @Input() requestId: number;
   @Input() subject: string;
+  @Input() process?: string = '';
   registerForm: FormGroup = new FormGroup({});
   @Output() onRegister = new EventEmitter<any>();
 
@@ -119,6 +120,7 @@ export class RegisterDocumentationFormComponent
       destinationManagement: [null, [Validators.pattern(STRING_PATTERN)]],
       domainExtinction: [null, [Validators.pattern(STRING_PATTERN)]],
       transferEntNotes: [null, [Validators.pattern(STRING_PATTERN)]],
+      emailNotification: [null],
     });
   }
 
