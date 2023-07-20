@@ -11,6 +11,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
 //Components
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { ResquestNumberingChangeRoutingModule } from './resquest-numbering-change-routing.module';
@@ -32,6 +33,7 @@ import { ResquestNumberingChangeComponent } from './resquest-numbering-change/re
     ModalModule.forChild(),
     GoodsTypesSharedComponent,
     FormLoaderComponent,
+    TooltipModule.forRoot(),
   ],
 })
 export class ResquestNumberingChangeModule {}
