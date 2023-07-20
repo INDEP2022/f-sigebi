@@ -88,7 +88,7 @@ export class DepositoryFeesComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
-              case 'payIdGens':
+              case 'no_appointment':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'noGoods':
@@ -111,14 +111,13 @@ export class DepositoryFeesComponent extends BasePage implements OnInit {
             }
 
             if (filter.search !== '') {
-              console.log(
-                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
-              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              this.params.value.page = 1;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getData();
         }
       });
@@ -179,22 +178,37 @@ export class DepositoryFeesComponent extends BasePage implements OnInit {
         },
       });
   }
+
   search() {
     this.consult = true;
     console.log();
+    if (this.appointment.value === '') this.appointment.setValue(null);
+    if (this.idPayment.value === '') this.idPayment.setValue(null);
     if (this.appointment.value !== null) {
       this.params.getValue()[
-        'filter.payIdGens'
+        'filter.no_appointment'
       ] = `$eq:${this.appointment.value}`;
+    } else {
+      delete this.params.getValue()['filter.no_appointment'];
     }
     if (this.idPayment.value !== null) {
       this.params.getValue()['filter.payId'] = `$eq:${this.idPayment.value}`;
+    } else {
+      delete this.params.getValue()['filter.payId'];
     }
     this.getData();
   }
 
   clean() {
-    this.params = new BehaviorSubject<ListParams>(new ListParams());
+    delete this.params.getValue()['filter.payId'];
+    delete this.params.getValue()['filter.no_appointment'];
+    this.params.getValue().text = '';
+    this.params.getValue().page = 1;
+    //this.params.getValue().limit = 10;
+    this.params.getValue().inicio = 1;
+    this.params.getValue().pageSize = 10;
+    this.params.getValue().take = 10;
+    //this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.form.reset();
     this.data.load([]);
     this.data.refresh();

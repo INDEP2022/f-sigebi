@@ -737,7 +737,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.name'] = 'Destino';
     this.genericService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('response', response);
         this.transfersDestinity = response.data;
       },
       error: error => {},
@@ -1136,7 +1135,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   updateInfo(data: IGood) {
-    console.log('data', data);
     this.alertQuestion(
       'question',
       'Confirmación',
@@ -1161,7 +1159,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           unitMeasure: data.unitMeasure,
           saeDestiny: data.transferentDestiny,
         };
-        console.log('info', info);
+
         this.goodService.updateByBody(info).subscribe({
           next: response => {
             this.alert('success', 'Correcto', 'Bien actualizado correctamente');
@@ -2336,7 +2334,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   showGood(data: IGood) {
-    console.log('antony');
     let config: ModalOptions = {
       initialState: {
         showTDR: true,

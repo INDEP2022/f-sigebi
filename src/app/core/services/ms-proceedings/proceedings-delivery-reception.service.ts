@@ -323,4 +323,10 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   getStatusConversion(id: string | number) {
     return this.get(`${this.endpoint2}/${id}`);
   }
+
+  deleteProceedingsDeliveryReception(id?: any) {
+    return this.delete(
+      `${ProceedingsEndpoints.ProceedingsDeliveryReception}/${id}`
+    );
+  }
 }

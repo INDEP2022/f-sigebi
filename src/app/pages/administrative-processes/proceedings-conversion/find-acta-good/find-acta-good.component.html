@@ -6,14 +6,17 @@
   </div>
   <div body>
     <div class="table-padding"></div>
+    <div class="justify-content-end d-flex mb-2">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
     <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
       <div [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table
-          class="table-responsive"
           [attr.class]="'table-responsive table-bordered'"
           [settings]="settings"
           [source]="dataFactActas"
-          (userRowSelect)="onUserRowSelect($event)">
+          (userRowSelect)="onUserRowSelect($event)"
+          (delete)="showDeleteMsg($event)">
         </ng2-smart-table>
         <app-pagination [params]="params" [totalItems]="totalItems2">
         </app-pagination>

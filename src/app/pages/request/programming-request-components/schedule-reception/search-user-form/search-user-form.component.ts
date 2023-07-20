@@ -80,7 +80,6 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
 
   getUsers() {
     this.loading = true;
-    //
     const user = this.authService.decodeToken();
     const deleRegionalId = user.delegacionreg;
     this.params.getValue()['filter.regionalDelegation'] = deleRegionalId;
