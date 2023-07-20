@@ -73,7 +73,7 @@
             </li>
             <!-- sub menu de importacion -->
             <!-- *ngIf="transferente == 'PGR_SAE' || transferente === 'SAT_SAE'" -->
-            <li role="menuitem">
+            <li role="menuitem" *ngIf="typeRequest == 'MANUAL'">
               <a class="dropdown-item" (click)="fileInmueble.click()"
                 ><i class="bx bx-import"></i> Importar Archivo Excel &#47; CSV
               </a>
