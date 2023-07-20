@@ -216,7 +216,11 @@ export class GoodProcessService extends HttpService {
     return this.post(GoodProcessPoints.ProcedureStatusGood, data);
   }
 
-  pupReconcilied(body: {goodNumber: number[], arrayStatus: string[], dateMasiv: Date | string}){
-    return this.post('application/pup-reconcilied', body)
+  pupReconcilied(body: {
+    goodNumber: number[];
+    arrayStatus: string[];
+    dateMasiv: Date | string;
+  }) {
+    return this.post('application/pup-reconcilied', body);
   }
 }

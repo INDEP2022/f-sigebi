@@ -10,7 +10,7 @@ import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModalGoodForDonationComponent } from '../modal-good-for-donation/modal-good-for-donation.component';
-import { COLUMNS } from './columns';
+import { COLUMNS_1 } from './columns';
 
 @Component({
   selector: 'app-filters-of-goods-for-donation',
@@ -44,7 +44,7 @@ export class FiltersOfGoodsForDonationComponent
         add: false,
         position: 'right',
       },
-      columns: { ...COLUMNS },
+      columns: { ...COLUMNS_1 },
     };
   }
 
@@ -63,14 +63,16 @@ export class FiltersOfGoodsForDonationComponent
               case 'statusId':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'statusDesc':
+              case 'status':
                 searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
                 break;
-              case 'tagId':
-                searchFilter = SearchFilter.ILIKE;
+              case 'noLabel':
+                searchFilter = SearchFilter.EQ;
                 break;
-              case 'tagDesc':
+              case 'tag':
                 searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -82,7 +84,7 @@ export class FiltersOfGoodsForDonationComponent
               delete this.columnFilters[field];
             }
           });
-          //this.params = this.pageFilter(this.params);
+          this.params = this.pageFilter(this.params);
           this.getPagination();
         }
       });
@@ -116,17 +118,18 @@ export class FiltersOfGoodsForDonationComponent
 
     this.donationServ.getAll(newParams).subscribe({
       next: response => {
-        if (response.data.length > 0) {
+        /*if (response.data.length > 0) {
           response.data.map(donation => {
             donation.statusDesc = donation.status.description;
             donation.tagId = donation.tag.id;
             donation.tagDesc = donation.tag.description;
           });
           this.loading = false;
-        }
+        }*/
         this.data.load(response.data);
         this.totalItems = response.count;
         this.data.refresh();
+        this.loading = false;
       },
       error: err => {
         this.loading = false;

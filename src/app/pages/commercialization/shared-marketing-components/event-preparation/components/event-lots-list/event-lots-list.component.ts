@@ -1,5 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import {
@@ -17,13 +25,16 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerLotService } from 'src/app/core/services/ms-prepareevent/comer-lot.service';
 import { BasePage } from 'src/app/core/shared';
+import Swal from 'sweetalert2';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
 import { EVENT_LOT_LIST_COLUMNS } from '../../utils/table-columns/event-lots-list-columns';
 import { EventLotFormComponent } from '../event-lot-form/event-lot-form.component';
 
+const ALLOWED_EXTENSIONS = ['xls', 'xlsx', 'csv'];
 @Component({
   selector: 'event-lots-list',
   templateUrl: './event-lots-list.component.html',
@@ -34,16 +45,21 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   @Input() parameters: IEventPreparationParameters;
   @Input() params = new BehaviorSubject(new FilterParams());
   @Output() onSelectLot = new EventEmitter<IComerLot>();
+  @ViewChild('validFileInput', { static: true })
+  validFileInput: ElementRef<HTMLInputElement>;
   totalItems = 0;
   @Input() lots = new LocalDataSource();
   lotSelected: IComerLot = null;
+
+  excelControl = new FormControl(null);
   get controls() {
     return this.eventForm.controls;
   }
 
   constructor(
     private comerLotService: ComerLotService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private lotService: LotService
   ) {
     super();
     this.settings = {
@@ -58,6 +74,10 @@ export class EventLotsListComponent extends BasePage implements OnInit {
         position: 'right',
       },
     };
+  }
+
+  fileChange(event: Event) {
+    console.log(event);
   }
 
   ngOnInit(): void {
@@ -100,6 +120,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   }
 
   getLots(params: FilterParams) {
+    this.onSelectLot.emit(null);
     this.loading = true;
     const { id } = this.controls;
     if (id.value) {
@@ -148,5 +169,116 @@ export class EventLotsListComponent extends BasePage implements OnInit {
         },
       },
     });
+  }
+
+  isSomeLotSelected() {
+    if (!this.lotSelected) {
+      this.alert('error', 'Error', 'Primero Selecciona un Registro');
+      return false;
+    }
+    return true;
+  }
+
+  onActDesc() {
+    if (!this.isSomeLotSelected()) {
+      return;
+    }
+    this.updateDesc().subscribe();
+  }
+
+  updateDesc() {
+    return this.lotService.eventValDesc(this.lotSelected.eventId).pipe(
+      catchError(error => {
+        return throwError(() => error);
+      }),
+      tap(res => {
+        console.log(res);
+      })
+    );
+  }
+
+  onUpdateMand() {
+    if (!this.isSomeLotSelected()) {
+      return;
+    }
+    this.updateMand().subscribe();
+  }
+
+  updateMand() {
+    return this.lotService
+      .updateMandate({
+        pGood: 0,
+        pLot: 1,
+        lotId: this.lotSelected.id,
+      })
+      .pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(res => {
+          console.log(res);
+        })
+      );
+  }
+
+  onValFile() {
+    this.validFileInput.nativeElement.click();
+  }
+
+  async valFileChange(event: Event) {
+    if (!this.isValidFile(event)) {
+      this.excelControl.reset();
+      return;
+    }
+    const askIsLotifying = await this.alertQuestion(
+      'question',
+      '¿Está Lotificando?',
+      '',
+      'Si',
+      'No'
+    );
+    if (askIsLotifying.isConfirmed) {
+      this.validateCsv();
+      return;
+    }
+
+    if (askIsLotifying.dismiss == Swal.DismissReason.cancel) {
+      this.validateCsvCustomers();
+      return;
+    }
+    this.excelControl.reset();
+  }
+
+  isValidFile(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (!target.files.length) {
+      return false;
+    }
+    if (target.files.length > 1) {
+      this.alert('error', 'Error', 'Solo puede seleccionar un Archivo');
+      return false;
+    }
+    const file = target.files[0];
+    const filename = file.name;
+    const extension = filename.split('.').at(-1);
+    if (!extension) {
+      this.alert('error', 'Error', 'Archivo Inválido');
+      return false;
+    }
+    if (!ALLOWED_EXTENSIONS.includes(extension.toLowerCase())) {
+      this.alert('error', 'Error', 'Archivo Inválido');
+      return false;
+    }
+    return true;
+  }
+
+  /** PUP_VALCSV */
+  validateCsv() {
+    console.warn('PUP_VALCSV');
+  }
+
+  /** PUP_VALCSV_CLIENTES */
+  validateCsvCustomers() {
+    console.warn('PUP_VALCSV_CLIENTES');
   }
 }

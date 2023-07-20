@@ -82,6 +82,14 @@ export class SearchRequestSimilarGoodsComponent
     this.requestId = Number(this.route.snapshot.paramMap.get('request'));
     //this.data.load(DATA);
     this.getInfoRequest();
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      if (this.data2['data'].length != 0) {
+        this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+          this.getGoods(0);
+        });
+      }
+    });
   }
 
   getInfoRequest() {
@@ -181,8 +189,6 @@ export class SearchRequestSimilarGoodsComponent
                 this.loading = false;
               },
             });
-          //this.data2.load(event.data.goods);
-          //this.onLoadToast('success', 'Asociada', 'Solicitud Asociada');
         }
       });
     }
@@ -193,15 +199,21 @@ export class SearchRequestSimilarGoodsComponent
   }
 
   onUserRowSelect($event: any) {
-    /*this.selectedRows = $event.selected;
-    this.data2.load($event.data.goods);
-    this.showDetails = $event.isSelected ? true : false;*/
-    //this.alert('warning', 'falta', 'falta implementar esta función');
+    this.selectedRows = $event.selected;
+    this.showDetails = $event.isSelected ? true : false;
+    this.getGoods($event.data.id);
   }
 
-  getGoods() {
-    this.goodFinderSerice.goodFinder().subscribe({
-      next: resp => {},
+  getGoods(id: number) {
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    this.data2.empty();
+    this.goodFinderSerice.goodFinder(params).subscribe({
+      next: resp => {
+        console.log(resp.data);
+        this.data2.load(resp.data);
+        this.totalItems2 = resp.count;
+      },
     });
   }
 

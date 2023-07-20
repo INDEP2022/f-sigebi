@@ -53,9 +53,15 @@ export class NonDeliveryReasonsListComponent
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -123,7 +129,7 @@ export class NonDeliveryReasonsListComponent
     this.nonDeliveryReasonsService.remove(id).subscribe({
       next: () => {
         this.getExample(),
-          this.alert('success', 'Motivo no entrega', 'Borrado Correctamente');
+          this.alert('success', 'Motivo no Entrega', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

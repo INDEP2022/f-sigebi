@@ -13,6 +13,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 //Components
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
@@ -24,7 +25,8 @@ import { RejectRequestModalComponent } from '../../shared-request/reject-request
   styles: [],
 })
 export class RequestCompDocTasksComponent extends BasePage implements OnInit {
-  @ViewChild('staticTab', { static: false }) staticTabs?: TabsetComponent;
+  /* CALL TABS DINAMICALY */
+  @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
   /**
    * SET STATUS OF TABS
    **/
@@ -47,6 +49,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
 
   requestId: number = 0;
   contributor: string = '';
+  processDetonate: string = '';
   title: string;
   requestInfo: any;
   screenWidth: number;
@@ -55,9 +58,12 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   typeModule: string = '';
   displayExpedient: boolean = false;
   complementaryDoc: boolean = false;
-  /* injections */
+
+  /* INJECTIONS
+  ============== */
   private requestService = inject(RequestService);
   private requestHelperService = inject(RequestHelperService);
+  private affairService = inject(AffairService);
   /*  */
   constructor(
     private location: Location,
@@ -106,6 +112,9 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.titleView();
         this.requestId = resp.data[0].id;
         this.mapTasks(process, resp.data[0].affair);
+        this.getAffair(resp.data[0].affair);
+        //cierra el tab de buscar bienes solicitudes
+        this.closeSearchRequestSimGoodsTab(resp.data[0].recordId);
       },
     });
     this.contributor = 'CARLOS G. PALMA';
@@ -310,15 +319,26 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
     }
   }
 
+  /*METODO QUE OYE CUANDO LA CARATULA SE CREO
+  ============================================= */
   expedientEventTrigger() {
     this.requestHelperService.currentExpedient.subscribe({
       next: resp => {
         if (resp == true) {
           const requestId = Number(this.route.snapshot.paramMap.get('request'));
+          this.staticTabs.tabs[0].active = true;
           this.getRequestInfo(requestId);
         }
       },
     });
+  }
+
+  /* METODO QUE CIERRA EL TAB DE CREAR CARATULA
+  ============================================== */
+  closeSearchRequestSimGoodsTab(recordId: number) {
+    if (recordId) {
+      this.searchRequestSimGoods = false;
+    }
   }
 
   endRequest() {
@@ -330,6 +350,17 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
       if (question) {
         //Cerrar tarea//
       }
+    });
+  }
+
+  getAffair(id: string | number) {
+    this.affairService.getByIdAndOrigin(id, 'SAMI').subscribe({
+      next: data => {
+        this.processDetonate = data.processDetonate;
+      },
+      error: error => {
+        console.log('no se encontraron datos en asuntos ', error);
+      },
     });
   }
 }

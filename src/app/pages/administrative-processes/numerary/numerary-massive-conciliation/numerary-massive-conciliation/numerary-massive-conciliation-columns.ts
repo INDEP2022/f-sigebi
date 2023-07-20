@@ -1,5 +1,7 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 // import { CheckboxElementRecordAccountStatementsComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element-record-account-statements';
+import { formatDate } from '@angular/common';
+import { CustomDateDayFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
 
 export let goodCheck: any[] = [];
 export let goodCheck2: any[] = [];
@@ -15,9 +17,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
       instance.toggle.subscribe((data: any) => {
         if (data.toggle) {
           console.log(goodCheck);
-            goodCheck.push(data.row);
+          goodCheck.push(data.row);
         } else {
-          console.log(data.row.RSPTAQUERY)
+          console.log(data.row.RSPTAQUERY);
           goodCheck = goodCheck.filter(
             valor => valor.RSPTAQUERY.no_bien != data.row.RSPTAQUERY.no_bien
           );
@@ -121,11 +123,11 @@ export function clearGoodCheck() {
 }
 
 export function clearGoodCheck2() {
-  goodCheck2 = []
+  goodCheck2 = [];
 }
 
-export function newGoodCheck(data: any[]){
-  goodCheck = data
+export function newGoodCheck(data: any[]) {
+  goodCheck = data;
 }
 
 export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
@@ -141,9 +143,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
       instance.toggle.subscribe((data: any) => {
         if (data.toggle) {
           console.log(goodCheck);
-            goodCheck2.push(data.row);
+          goodCheck2.push(data.row);
         } else {
-          console.log(data.row.RSPTAQUERY)
+          console.log(data.row.RSPTAQUERY);
           goodCheck = goodCheck2.filter(
             valor => valor.RSPTAQUERY.no_bien != data.row.RSPTAQUERY.no_bien
           );
@@ -180,10 +182,28 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
     title: 'Fec. Depósito',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (date: any) => {
+      // Formatear la fecha utilizando la función formatDate
+      const formattedDate = formatDate(date, 'dd/MM/yyyy', 'en');
+      return formattedDate;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateDayFilterComponent,
+    },
   },
   interestCalculationDate: {
-    title: 'Fec. Tesofe',
+    title: 'Fec. Depósito',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (date: any) => {
+      // Formatear la fecha utilizando la función formatDate
+      const formattedDate = formatDate(date, 'dd/MM/yyyy', 'en');
+      return formattedDate;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateDayFilterComponent,
+    },
   },
 };

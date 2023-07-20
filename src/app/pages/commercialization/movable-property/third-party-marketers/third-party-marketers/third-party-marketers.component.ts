@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, map, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Columns
 import {
@@ -11,13 +14,14 @@ import {
 //Services
 import { ThirdPartyService } from 'src/app/core/services/ms-thirdparty/thirdparty.service';
 //Models
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import {
   IComiXThird,
   IThirdParty,
   ITypeEventXtercomer,
 } from 'src/app/core/models/ms-thirdparty/third-party.model';
+import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { ComiXThirdService } from 'src/app/core/services/ms-thirdparty/comi-xthird.service';
 import { TypeEventXterComerService } from 'src/app/core/services/ms-thirdparty/type-events-xter-comer.service';
 import { AmountThirdModalComponent } from '../amount-third-modal/amount-third-modal.component';
@@ -38,10 +42,12 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   totalItems2: number = 0;
   totalItems3: number = 0;
-
-  thirdPartyList: IThirdParty[] = [];
-  typeEventList: ITypeEventXtercomer[] = [];
-  amountList: IComiXThird[] = [];
+  thirdPartyList: LocalDataSource = new LocalDataSource();
+  typeEventList: LocalDataSource = new LocalDataSource();
+  amountList: LocalDataSource = new LocalDataSource();
+  // thirdPartyList: IThirdParty[] = [];
+  // typeEventList: ITypeEventXtercomer[] = [];
+  // amountList: IComiXThird[] = [];
 
   thirPartys: IThirdParty;
   typeEvents: ITypeEventXtercomer;
@@ -50,18 +56,28 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   settings2;
   settings3;
 
+  columnFilters: any = [];
+  columnFilters2: any = [];
+  columnFilters3: any = [];
+
+  loading2: boolean = false;
+  loading3: boolean = false;
+
   constructor(
     private thirdPartyService: ThirdPartyService,
     private typeEventXterComerService: TypeEventXterComerService,
     private comiXThirdService: ComiXThirdService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private comerTpEventosService: ComerTpEventosService
   ) {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
+        add: false,
         delete: false,
         position: 'right',
       },
@@ -70,10 +86,12 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
 
     this.settings2 = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: false,
+        add: false,
         position: 'right',
       },
       columns: { ...TYPE_EVENT_THIRD_COLUMNS },
@@ -81,10 +99,12 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
 
     this.settings3 = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
         delete: false,
+        add: false,
         position: 'right',
       },
       columns: { ...COMI_XTHIRC_COLUMNS },
@@ -92,17 +112,167 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    // TERCEROS COMERCIALIZADORES //
+    this.thirdPartyList
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        console.log('SI');
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              id: () => (searchFilter = SearchFilter.EQ),
+              nameReason: () => (searchFilter = SearchFilter.ILIKE),
+              calculationRoutine: () => (searchFilter = SearchFilter.EQ),
+            };
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              // this.columnFilters[field] = `${filter.search}`;
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          //Su respectivo metodo de busqueda de datos
+          this.getThirdPartyAll();
+        }
+      });
+
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getThirdPartyAll());
+
+    // TIPOS DE EVENTOS QUE ATIENDE EL TERCERO
+    this.getTypeEventFilters();
+
+    // MONTOS //
+    this.getAmountsFilters();
   }
+
+  // TIPOS DE EVENTOS QUE ATIENDE EL TERCERO //
+  getTypeEventFilters() {
+    this.typeEventList
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        console.log('SI');
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              typeEventId: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.ILIKE),
+            };
+
+            // search[filter.field]();
+
+            if (filter.search !== '') {
+              // this.columnFilters[field] = `${filter.search}`;
+              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
+
+              // console.log(
+              //   'this.columnFilters[field]',
+              //   this.columnFilters[field]
+              // );
+            } else {
+              delete this.columnFilters2[field];
+            }
+          });
+          this.params2 = this.pageFilter(this.params2);
+          //Su respectivo metodo de busqueda de datos
+          this.getTypeEvent(this.thirPartys);
+        }
+      });
+    this.params2
+      .pipe(
+        skip(1),
+        tap(() => {
+          this.getTypeEvent(this.thirPartys);
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {});
+  }
+
+  // MONTOS //
+  getAmountsFilters() {
+    this.thirdPartyList
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        console.log('SI');
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              startingAmount: () => (searchFilter = SearchFilter.EQ),
+              pctCommission: () => (searchFilter = SearchFilter.ILIKE),
+              finalAmount: () => (searchFilter = SearchFilter.EQ),
+            };
+
+            // search[filter.field]();
+
+            if (filter.search !== '') {
+              // this.columnFilters[field] = `${filter.search}`;
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+
+              // console.log(
+              //   'this.columnFilters[field]',
+              //   this.columnFilters[field]
+              // );
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          //Su respectivo metodo de busqueda de datos
+          this.getThirdPartyAll();
+        }
+      });
+    this.params
+      .pipe(
+        skip(1),
+        tap(() => {
+          this.getTypeEvent(this.thirPartys);
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {});
+  }
+
+  // --------------------------------------------------------------------- //
 
   getThirdPartyAll() {
     this.loading = true;
-    this.thirdPartyService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.thirdPartyService.getAll(params).subscribe({
       next: response => {
         console.log(response);
-        this.thirdPartyList = response.data;
+        this.thirdPartyList.load(response.data);
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -115,7 +285,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
 
   rowsSelected(event: any) {
     this.totalItems2 = 0;
-    this.typeEventList = [];
+    // this.typeEventList = [];
     this.thirPartys = event.data;
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
@@ -123,32 +293,57 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   }
 
   getTypeEvent(thirdParty?: IThirdParty) {
-    this.loading = true;
-    this.typeEventXterComerService
-      .getById(thirdParty.id)
-      .pipe(
-        map((data2: any) => {
-          let list: IListResponse<ITypeEventXtercomer> =
-            {} as IListResponse<ITypeEventXtercomer>;
-          const array2: ITypeEventXtercomer[] = [{ ...data2 }];
-          list.data = array2;
-          return list;
-        })
-      )
-      .subscribe({
-        next: response => {
-          console.log(response);
-          this.typeEventList = response.data;
+    this.loading2 = true;
+    let params = {
+      ...this.params2.getValue(),
+      ...this.columnFilters2,
+    };
+    this.typeEventXterComerService.getById(thirdParty.id).subscribe({
+      next: response => {
+        console.log(response);
+        let result = response.data.map(async (item: any) => {
+          const description = await this.getDescript();
+          item['description'] = description;
+        });
+
+        Promise.all(result).then(resp => {
+          this.typeEventList.load(response.data);
           this.totalItems2 = response.count;
-          this.loading = false;
+          this.loading2 = false;
+        });
+      },
+      error: error => {
+        this.totalItems2 = 0;
+        this.loading2 = false;
+      },
+    });
+    // .pipe(
+    //     map((data2: any) => {
+    //       let list: IListResponse<ITypeEventXtercomer> =
+    //         {} as IListResponse<ITypeEventXtercomer>;
+    //       const array2: ITypeEventXtercomer[] = [{ ...data2 }];
+    //       list.data = array2;
+    //       return list;
+    //     })
+    //   )
+  }
+
+  getDescript() {
+    return new Promise((resolve, reject) => {
+      this.comerTpEventosService.getEventsByTypeAll().subscribe({
+        next: response => {
+          resolve(response.data);
         },
-        error: error => (this.loading = false),
+        error: error => {
+          resolve(null);
+        },
       });
+    });
   }
 
   rowsSelected2(event: any) {
     this.totalItems3 = 0;
-    this.amountList = [];
+    // this.amountList = [];
     this.typeEvents = event.data;
     this.params3
       .pipe(takeUntil(this.$unSubscribe))
@@ -156,15 +351,22 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   }
 
   getAmount(typeEvent?: ITypeEventXtercomer) {
-    this.loading = true;
+    this.loading3 = true;
+    let params = {
+      ...this.params3.getValue(),
+      ...this.columnFilters3,
+    };
     this.comiXThirdService.getById(typeEvent.thirdPartyId).subscribe({
       next: response => {
         console.log(response);
-        this.amountList = response.data;
+        this.amountList.load(response.data);
         this.totalItems3 = response.count;
-        this.loading = false;
+        this.loading3 = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.totalItems2 = 0;
+        this.loading3 = false;
+      },
     });
   }
 

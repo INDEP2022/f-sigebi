@@ -27,6 +27,14 @@ export const DATEDOCUMENTS_COLUMNS = {
     valuePrepareFunction: (value: IKey) => {
       return value.key + ' - ' + value.description;
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
 
     sort: false,
   },
@@ -68,6 +76,7 @@ export const DATEDOCUMENTS_COLUMNS = {
     type: 'html',
     width: '13%',
     valuePrepareFunction: (text: string) => {
+      console.log(text);
       return `
         ${text ? text.split('T')[0].split('-').reverse().join('-') : ''}
       `;

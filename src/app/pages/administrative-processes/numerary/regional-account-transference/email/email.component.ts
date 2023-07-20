@@ -77,8 +77,7 @@ export class EmailComponent extends BasePage implements OnInit {
 
     this.form.patchValue(this.email);
 
-    this.form.get('PARA').patchValue([this.email.PARA]);
-    console.log(this.email.PARA);
+    this.form.get('PARA').patchValue(this.email.PARA);
 
     this.form
       .get('FECHA_ENV')
@@ -99,6 +98,7 @@ export class EmailComponent extends BasePage implements OnInit {
 
   getNameRemit(params: ListParams) {
     params['delegationNumber'] = this.delegation;
+    params.limit = 50;
 
     this.segUserService.getNameEmail(params).subscribe({
       next: resp => {
@@ -110,6 +110,7 @@ export class EmailComponent extends BasePage implements OnInit {
 
   getNameDist(params: ListParams) {
     params['delegationNumber'] = this.delegation;
+    params.limit = 50;
 
     this.segUserService.getDisNameEmail(params).subscribe({
       next: resp => {
@@ -136,7 +137,7 @@ export class EmailComponent extends BasePage implements OnInit {
     )[0].description;
 
     const body = {
-      to: PARA.join(','),
+      to: PARA ? PARA.join(',') : 'pruebasqaindep@gmail.com', // ['pruebasqaindep@gmail.com'], ,
       subject: ASUNTO,
       fecTrans: transactionDate,
       cveDescription: del ?? this.description,
@@ -152,21 +153,21 @@ export class EmailComponent extends BasePage implements OnInit {
       next: resp => {
         this.form.get('MENSAJE').patchValue(resp.message);
 
-        const body: any = {
-          header: 'infosaedwh@sae.gob.mx',
-          destination: PARA,
-          copy: CC,
-          subject: ASUNTO,
-          message: `${resp.message}`,
-        };
-
         // const body: any = {
-        //   header: 'Test Email',
-        //   destination: ['amydla194@gmail.com'],
-        //   copy: ['amydla194@hotmail.com'],
+        //   header: 'infosaedwh@sae.gob.mx',
+        //   destination: PARA,
+        //   copy: CC,
         //   subject: ASUNTO,
         //   message: `${resp.message}`,
         // };
+
+        const body: any = {
+          header: 'Test Email',
+          destination: ['pruebasqaindep@gmail.com'],
+          copy: [''],
+          subject: ASUNTO,
+          message: `${resp.message}`,
+        };
 
         this.transferGoodService.sendEmail(body).subscribe({
           next: () => {
@@ -177,27 +178,27 @@ export class EmailComponent extends BasePage implements OnInit {
                 ? FECHA_ENV.split('/').reverse().join('-')
                 : FECHA_ENV;
 
-            const body = {
-              id: REPORTE,
-              addressee: PARA ? PARA.join(',') : [],
-              sender: user.toUpperCase(),
-              cc: CC ? CC.join(',') : [],
-              message: `${resp.message}`,
-              affair: ASUNTO,
-              sendDate: date,
-              devReportNumber: '',
-            };
-
-            // const body: any = {
+            // const body = {
             //   id: REPORTE,
-            //   addressee: 'amydla194@gmail.com',
+            //   addressee: PARA ? PARA.join(',') : [],
             //   sender: user.toUpperCase(),
-            //   cc: 'amydla194@hotmail.com',
+            //   cc: CC ? CC.join(',') : [],
             //   message: `${resp.message}`,
             //   affair: ASUNTO,
             //   sendDate: date,
-            //   devReportNumber: null,
+            //   devReportNumber: '',
             // };
+
+            const body: any = {
+              reportNumber: REPORTE,
+              addressee: 'pruebasqaindep@gmail.com',
+              sender: user.toUpperCase(),
+              cc: '',
+              message: `${resp.message}`,
+              affair: ASUNTO,
+              sendDate: date,
+              devReportNumber: null,
+            };
 
             this.emailService.create(body).subscribe({
               next: () => {

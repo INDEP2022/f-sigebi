@@ -40,6 +40,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   flagActa: boolean = false;
   flagFinConversion: boolean = false;
   flagCargaImagenes: boolean = false;
+  flagUpdate: boolean = false;
+  flagCambia: boolean = false;
+  flagGoodNew: boolean = false;
+  flagGoodDelete: boolean = false;
   //Variables de BLK_TIPO_BIEN
 
   no_bien_blk_tipo_bien: number;
@@ -122,11 +126,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   conversionId: any;
   goodFatherNumber$ = new BehaviorSubject<any>(undefined);
   filterGood$ = new BehaviorSubject<any>(undefined);
-
   cveActaConv: any;
   tipoValue: any;
   statusCode: any;
-
+  conversionData: any;
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -148,7 +151,12 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.buildForm();
     this.pw();
+    this.tipo.disable();
     //Inicializando el modal
+  }
+  onBeforeUnload(): void {
+    // Lógica para eliminar el elemento del almacenamiento local
+    localStorage.removeItem('conversion');
   }
   pw() {
     let config = MODAL_CONFIG;
@@ -158,6 +166,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         callback: (data: any) => {
           if (data != null) {
             console.log(data);
+            this.conversionData = data;
             this.no_bien_blk_tipo_bien = data.goodFatherNumber;
             this.idConversion.setValue(data.id);
             this.numberDossier.setValue(data.fileNumber.id);
@@ -317,10 +326,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.searchStatus(res.data[0]['status']);
             this.getAttributesGood(res.data[0]['goodClassNumber']);
 
-            // this.flagActa = true;
-            // this.flagCargMasiva = false;
-            // this.flagCargaImagenes = false;
-            // this.flagFinConversion = false;
+            this.flagActa = true;
+            this.flagCargMasiva = true;
+            this.flagCargaImagenes = true;
+            this.flagFinConversion = true;
+            this.flagCambia = true;
+            this.flagUpdate = true;
+            this.flagGoodNew = true;
+            this.flagGoodDelete = true;
           } else if (conversionData.typeConv === '1') {
             this.observation.setValue('');
             this.descriptionSon.setValue('');
@@ -332,9 +345,9 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.searchStatus('');
 
             this.flagActa = false;
-            this.flagCargMasiva = true;
-            this.flagCargaImagenes = true;
-            this.flagFinConversion = true;
+            this.flagCargMasiva = false;
+            this.flagCargaImagenes = false;
+            this.flagFinConversion = false;
           }
 
           this.lastIdConversion = value.idConversion;
@@ -549,6 +562,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       async res => {
         if (res.statusCode === 200 && res.message[0] === 'ok') {
           this.alert('success', 'Conversión Finalizada', '');
+          localStorage.removeItem('conversion');
           this.pw();
         }
       },
@@ -559,6 +573,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   bulkUpload() {
+    console.log(this.conversionData);
+    localStorage.setItem('conversion', JSON.stringify(this.conversionData));
     this.router.navigate(
       ['pages/administrative-processes/derivation-goods/bulk-upload'],
       {
@@ -571,6 +587,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   imgUpload() {
+    localStorage.setItem('conversion', JSON.stringify(this.conversionData));
     let numberGoodFather = this.form.get('numberGoodFather').value;
 
     this.serviceGood.getById(numberGoodFather).subscribe(
@@ -647,8 +664,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       res => {
         this.alert(
           'success',
-          'Se ha Agregado el Bien',
-          `con el Id: ${good.goodId}`
+          'Bien Agregado Correctamente',
+          `Id: ${good.goodId}`
         );
         this.getAllGoodChild(this.goodFatherNumber$.getValue());
       },
@@ -674,7 +691,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       console.log('status2->', this.selectedRow);
       this.alertQuestion(
         'question',
-        `Se va a Eliminar el Bien ${this.selectedRow.goodId}`,
+        `Se va a Eliminar el Bien Hijo ${this.selectedRow.goodId}`,
         '¿Desea Continuar?'
       ).then(q => {
         if (q.isConfirmed) {
@@ -690,6 +707,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
                 `El Bien con id: ${this.selectedRow.goodId}, fue Eliminado`
               );
               this.getAllGoodChild(this.goodFatherNumber$.getValue());
+              delete this.selectedRow;
             },
             err => {
               this.alert('error', 'error ', err.message);
@@ -713,7 +731,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     this.selectedRow = event.data;
     this.getAttributesGood(event.data.noClassifGood);
   }
-
   getAttributesGood(event: any) {
     this.serviceGood.getAllFilterClassification(event).subscribe(
       res => {
@@ -746,10 +763,12 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   } */
 
   showActasConvertion() {
+    localStorage.setItem('conversion', JSON.stringify(this.conversionData));
     let config = { ...MODAL_CONFIG, class: 'modal-xl modal-dialog-centered' };
     config.initialState = {
       proceeding: {},
       idProgramming: 1,
+      expedientNuember: this.form.value.numberDossier,
       callback: (receipt: any, keyDoc: string) => {
         if (receipt && keyDoc) {
         }

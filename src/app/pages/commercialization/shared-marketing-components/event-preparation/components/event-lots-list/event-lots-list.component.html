@@ -5,6 +5,35 @@
   <div class="col-md-12 d-flex justify-content-end">
     <div>
       <button
+        (click)="onActDesc()"
+        type="button"
+        containerClass="tooltip-style"
+        class="btn btn-secondary btn-sm active ml-2 mr-2">
+        Actualizar Descripción.
+      </button>
+    </div>
+
+    <div>
+      <button
+        (click)="onUpdateMand()"
+        type="button"
+        containerClass="tooltip-style"
+        class="btn btn-secondary btn-sm active ml-2 mr-2">
+        Actualizar Mandato
+      </button>
+    </div>
+
+    <div>
+      <button
+        (click)="onValFile()"
+        type="button"
+        containerClass="tooltip-style"
+        class="btn btn-secondary btn-sm active ml-2 mr-2">
+        Validar Archivo
+      </button>
+    </div>
+    <div>
+      <button
         (click)="openForm()"
         type="button"
         containerClass="tooltip-style"
@@ -31,6 +60,7 @@
           role="menu"
           aria-labelledby="button-basic">
           <event-goods-lots-list-actions
+            [params]="params"
             [lotSelected]="lotSelected"
             [parameters]="parameters"
             [eventForm]="eventForm"></event-goods-lots-list-actions>
@@ -62,3 +92,11 @@
       [totalItems]="totalItems"></app-pagination>
   </div>
 </div>
+
+<input
+  #validFileInput
+  [formControl]="excelControl"
+  [style.display]="'none'"
+  type="file"
+  (change)="valFileChange($event)"
+  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />

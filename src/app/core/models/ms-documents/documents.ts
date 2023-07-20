@@ -1,3 +1,5 @@
+import { IExpedient } from '../ms-expedient/expedient';
+
 export interface IDocuments {
   id?: string | number;
   natureDocument: string;
@@ -49,4 +51,54 @@ export interface IGenerateFolioMassConv {
   noSubdelegation: number;
   toolbarNoDepartament: number;
   user: string;
+}
+
+export interface ICatDigitalizationTemp {
+  flyerNumber: number;
+  proceedingsNumber: number;
+  indicatorNumber: number;
+  managementNumber: number;
+  area: string;
+  flyerType: string;
+  cveAffair: string;
+  transfereeNumber: number;
+  stationNumber: number;
+  authorityNumber: number;
+  cveJobExternal: string;
+  jobNumber: number;
+  flyerDate: Date;
+  cveOpinion: string;
+  coordinationRegional: string;
+  evictionDay: string;
+  ureception: string;
+  freception: string;
+  ustart: string;
+  finicia: string;
+  uends: string;
+  ends: string;
+  fscan: string;
+  fmaxima: string;
+  ffinind: string;
+  user: string;
+  recordNumber?: number;
+  complied?: string;
+}
+
+export interface ICaptureDig {
+  coordinacion_regional: number;
+  cve_oficio_externo: string;
+  no_expediente: IExpedient;
+  no_volante: number;
+  no_tramite: number;
+  urecepcion: number;
+  programa: string;
+  finicia: string;
+  fmaxima: string;
+  cumplio: boolean;
+}
+
+export interface Info {
+  total_cumplio: number;
+  total_no_cumplio: number;
+  porcen_cumplidos: number;
 }

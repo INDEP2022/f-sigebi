@@ -32,6 +32,7 @@ import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ShowDocumentsGoodComponent } from '../../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
 import { ESTATE_COLUMNS_VIEW } from '../../acept-programming/columns/estate-columns';
 import {
   RECEIPT_COLUMNS_FORMALIZE,
@@ -1204,5 +1205,21 @@ export class FormalizeProgrammingFormComponent
     });
   }
 
-  documents() {}
+  documents() {
+    let config: ModalOptions = {
+      initialState: {
+        idGood: this.goodIdSelect,
+        programming: this.programming,
+        process: 'programming',
+        parameter: '',
+        typeDoc: 'request-assets',
+        callback: (next: boolean) => {
+          //if(next) this.getExample();
+        },
+      },
+      class: `modalSizeXL modal-dialog-centered`,
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowDocumentsGoodComponent, config);
+  }
 }

@@ -9,4 +9,6 @@ export enum DocumentsEndpoints {
   DocumentRequestPerGood = 'documents-request-per-good',
   DocumentsForDictum = 'documents-for-dictum',
   Count1 = 'application/getCount1',
+  CapDigiralizationTmp = 'cap-digitalization-tmp',
+  IndicatorRec = 'application/get-data-ind-rec-doc',
 }
