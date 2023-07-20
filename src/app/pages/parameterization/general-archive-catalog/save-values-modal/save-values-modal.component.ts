@@ -15,7 +15,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class SaveValuesModalComponent extends BasePage implements OnInit {
-  title: string = 'Guardavalor';
+  title: string = 'Guarda Valor';
   edit: boolean = false;
 
   saveValuesForm: ModelForm<ISaveValue>;
@@ -35,18 +35,37 @@ export class SaveValuesModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.saveValuesForm = this.fb.group({
-      id: [null, [Validators.required, Validators.min(0)]],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(5),
+        ],
+      ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(60),
+        ],
       ],
       location: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(60),
+        ],
       ],
       responsible: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
     });
     if (this.saveValues != null) {
@@ -68,7 +87,14 @@ export class SaveValuesModalComponent extends BasePage implements OnInit {
     console.log(this.saveValuesForm.value);
     this.saveValueService.create(this.saveValuesForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.onLoadToast(
+          'warning',
+          'La CVE Guarda Valor ya fue registrada',
+          ``
+        );
+      },
     });
   }
 

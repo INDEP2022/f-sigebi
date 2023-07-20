@@ -207,26 +207,30 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
     return formatTrans1;
   }
 
+  incognitDateToDate(date: any) {
+    if (date) {
+      // console.log(date);
+      if (date instanceof Date) {
+        return date;
+      }
+      if (date.includes('/')) {
+        const partesFecha = date.split('/');
+        const newDate = new Date(
+          Number(partesFecha[2]),
+          Number(partesFecha[1]) - 1,
+          Number(partesFecha[0])
+        );
+        // console.log(newDate);
+        return newDate;
+      } else {
+        new Date(date);
+      }
+    }
+    return null;
+  }
+
   update() {
     this.loading = true;
-    /*const dateReceipt = this.dateDocumentsModalForm.controls['dateReceipt'].value;
-    const insertDate =
-      this.dateDocumentsModalForm.controls['insertionDate'].value;
-    const notifDate =
-      this.dateDocumentsModalForm.controls['notificationDate'].value;
-
-    const recep = this.transformDateUpdate(dateReceipt);
-    this.dateDocumentsModalForm.controls['dateReceipt'].setValue(
-      recep
-    );
-    const insert = this.transformDateUpdate(insertDate);
-    this.dateDocumentsModalForm.controls['insertionDate'].setValue(
-      insert
-    );
-    const notif = this.transformDateUpdate(notifDate);
-    this.dateDocumentsModalForm.controls['notificationDate'].setValue(
-      notif
-    );*/
 
     this.dateDocumentsService
       .update3(this.dateDocumentsModalForm.getRawValue())
