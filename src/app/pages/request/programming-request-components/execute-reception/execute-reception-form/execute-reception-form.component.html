@@ -408,7 +408,7 @@
                       <td scope="row" class="align-baseline">
                         {{ good.get('goodId')?.value }}
                       </td>
-                      <td class="align-baseline">
+                      <td class="align-baseline text-nowrap">
                         {{ good.get('uniqueKey')?.value }}
                       </td>
                       <td class="align-baseline">
@@ -762,7 +762,7 @@
                                   <td scope="row" class="align-baseline">
                                     {{ good.get('goodId')?.value }}
                                   </td>
-                                  <td class="align-baseline">
+                                  <td class="align-baseline text-nowrap">
                                     {{ good.get('uniqueKey')?.value }}
                                   </td>
                                   <td class="align-baseline">
@@ -911,6 +911,15 @@
                                         class="fa fa-file mr-2"
                                         style="cursor: pointer">
                                         Ver Etiqueta</i
+                                      >
+                                    </a>
+
+                                    <a class="text-center">
+                                      <i
+                                        (click)="updateInfo(good.value)"
+                                        class="fa fa-retweet mr-2"
+                                        style="cursor: pointer">
+                                        Actualizar</i
                                       >
                                     </a>
                                   </td>
@@ -1085,7 +1094,7 @@
                               <td scope="row" class="align-baseline">
                                 {{ good.get('goodId')?.value }}
                               </td>
-                              <td class="align-baseline">
+                              <td class="align-baseline text-nowrap">
                                 {{ good.get('uniqueKey')?.value }}
                               </td>
                               <td class="align-baseline">
@@ -1403,7 +1412,7 @@
                               <td scope="row" class="align-baseline">
                                 {{ good.get('goodId')?.value }}
                               </td>
-                              <td class="align-baseline">
+                              <td class="align-baseline text-nowrap">
                                 {{ good.get('uniqueKey')?.value }}
                               </td>
                               <td class="align-baseline">
@@ -1729,7 +1738,7 @@
                                 <td scope="row" class="align-baseline">
                                   {{ good.get('goodId')?.value }}
                                 </td>
-                                <td class="align-baseline">
+                                <td class="align-baseline text-nowrap">
                                   {{ good.get('uniqueKey')?.value }}
                                 </td>
                                 <td class="align-baseline">
@@ -2011,7 +2020,7 @@
                               <td scope="row" class="align-baseline">
                                 {{ good.get('goodId')?.value }}
                               </td>
-                              <td class="align-baseline">
+                              <td class="align-baseline text-nowrap">
                                 {{ good.get('uniqueKey')?.value }}
                               </td>
                               <td class="align-baseline">

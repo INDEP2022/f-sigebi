@@ -200,7 +200,15 @@ export class DepositoryFeesComponent extends BasePage implements OnInit {
   }
 
   clean() {
-    this.params = new BehaviorSubject<ListParams>(new ListParams());
+    delete this.params.getValue()['filter.payId'];
+    delete this.params.getValue()['filter.no_appointment'];
+    this.params.getValue().text = '';
+    this.params.getValue().page = 1;
+    //this.params.getValue().limit = 10;
+    this.params.getValue().inicio = 1;
+    this.params.getValue().pageSize = 10;
+    this.params.getValue().take = 10;
+    //this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.form.reset();
     this.data.load([]);
     this.data.refresh();

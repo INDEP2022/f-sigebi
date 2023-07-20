@@ -290,4 +290,15 @@ export abstract class BasePage
       this.alert('error', 'Error', message);
     }
   }
+
+  protected _downloadExcelFromBase64(base64String: string, filename: string) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = `${filename ?? 'Descarga'}.xlsx`;
+    link.click();
+    link.remove();
+    this.alert('success', 'Archivo Descargado Correctamente', '');
+  }
 }

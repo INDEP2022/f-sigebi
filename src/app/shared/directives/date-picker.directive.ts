@@ -1,18 +1,35 @@
-import { Directive, ElementRef } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  HostListener,
+  Optional,
+  Self,
+} from '@angular/core';
+import { NgControl } from '@angular/forms';
 
 @Directive({
   selector: 'input[bsDatepicker]',
   host: {
-    '(input)': '$event',
+    '(change)': '$event',
   },
 })
 export class DatePickerDirective {
-  constructor(public ref: ElementRef<HTMLInputElement>) {
-    this.ref.nativeElement.readOnly = true;
-    this.ref.nativeElement.style.backgroundColor = 'white';
-  }
+  constructor(
+    public ref: ElementRef<HTMLInputElement>,
+    @Optional()
+    @Self()
+    private model: NgControl
+  ) {}
 
-  //   @HostListener('input', ['$event']) onInput($event: InputEvent) {
-  //     ($event.target as HTMLInputElement).readOnly = true;
-  //   }
+  @HostListener('change', ['$event']) keyDown($event: InputEvent) {
+    const value = ($event.target as HTMLInputElement).value;
+    const validDate = new Date(value);
+    if (validDate.getTime()) {
+      return;
+    }
+    ($event.target as HTMLInputElement).value = '';
+    if (this.model) {
+      this.model.control.setErrors(null);
+    }
+  }
 }
