@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { BehaviorSubject, firstValueFrom, map, of, takeUntil } from 'rxjs';
@@ -22,11 +23,14 @@ import {
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { IPhotos } from 'src/app/core/models/catalogs/photograph-media.model';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
+import { IExpedient } from 'src/app/core/models/ms-expedient/expedient';
 import {
   IAttribGoodBad,
   ICharacteristicsGoodDTO,
   IGood,
 } from 'src/app/core/models/ms-good/good';
+import { IPhoto } from 'src/app/core/models/ms-parametercomer/parameter';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ParameterCatService } from 'src/app/core/services/catalogs/parameter.service';
 import { AccountMovements } from 'src/app/core/services/ms-account-movements/account-movements.service';
@@ -35,7 +39,9 @@ import { DictationService } from 'src/app/core/services/ms-dictation/dictation.s
 import { AttribGoodBadService } from 'src/app/core/services/ms-good/attrib-good-bad.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
+import { GoodPhotoService } from 'src/app/core/services/ms-photogood/good-photo.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { SurvillanceService } from 'src/app/core/services/ms-survillance/survillance.service';
@@ -58,6 +64,7 @@ import {
   thirdFormatDate,
 } from 'src/app/shared/utils/date';
 import { SubdelegationService } from '../../../../core/services/catalogs/subdelegation.service';
+import { AllExpedientComponent } from '../all-expedient/all-expedient/all-expedient.component';
 import { GoodsPhotoService } from '../services/image-debugging-service';
 import { IMAGE_DEBUGGING_COLUMNS } from './image-debugging-columns';
 @Component({
@@ -69,18 +76,26 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
   formLoading = false;
+  goodPhoto: IPhoto[] = [];
   showConciliado = false;
   expedientSelected = new DefaultSelect();
   lotIdSelected = new DefaultSelect();
   eventIdSelected = new DefaultSelect();
   LVALIDA = true;
   showAvaluo = true;
+  lot: any;
+  event: IComerEvent;
+  expedients: IExpedient[] = [];
   photographs: any[] = [];
   programming: Iprogramming;
   filterParams = new FilterParams();
   newLimit = new FormControl(1);
   totalItems = 0;
+  goodDateTable: LocalDataSource = new LocalDataSource();
+  totalItemsPhotos = 0;
+
   count = 0;
+  noExpedient = 0;
   goods: any[];
   delegacion: number;
   subdelegacion: number;
@@ -91,7 +106,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   goodChange: number = 0;
   bodyGoodCharacteristics: ICharacteristicsGoodDTO = {};
   goodsAll: IGood[] = [];
-  goodO: IGood;
+  goodO: IGood = {};
   showPhoto = false;
   loadTypes = false;
   actualGoodNumber: number = null;
@@ -286,6 +301,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private goodService: GoodService,
     private serviceDeleg: DelegationService,
+    private lotService: LotService,
     private subdelegationService: SubdelegationService,
     private georeferencieService: SurvillanceService,
     private statusScreenService: StatusXScreenService,
@@ -298,6 +314,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     private goodPartialize: GoodPartializeService,
     private comerDetailService: ComerDetailsService,
     private comerEventService: ComerEventService,
+    private goodPhotoService: GoodPhotoService,
     private attribGoodBadService: AttribGoodBadService,
     private fb: FormBuilder,
     public router: Router
@@ -567,7 +584,6 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
           );
         },
       });
-    await this.pupInsertGeoreferencia();
   }
 
   clearFilter() {
@@ -970,7 +986,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   async searchGood(byPage = false) {
     // debugger;
     this.loading = true;
-
+    this.getByIdGood(this.form.value.noBien);
     if (this.fillParams(byPage)) {
       const newListParams = new ListParams();
       newListParams.limit = this.filterParams.limit;
@@ -1021,7 +1037,6 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
             this.showPhoto = false;
           }
           this.numberGood.setValue(item.id);
-          this.fileNumber.setValue(item.fileNumber);
           // this.subtype.setValue(item.no_subtipo);
           // this.form.get('ssubtype').setValue(item.no_ssubtipo);
           // this.form.get('sssubtype').setValue(item.no_sssubtipo);
@@ -1036,7 +1051,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
             this.subdelegacion = subdelegacion;
             this.subdelegation.setValue(subdelegacion);
           }
-          this.getLatitudLongitud(item.goodid);
+          // this.getLatitudLongitud(item.goodid);
           this.numberClassification.setValue(item.goodclassnumber);
           this.goodStatus.setValue(item.status);
           this.fileNumber.setValue(item.fileNumber);
@@ -1214,58 +1229,24 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     // this.disabledBienes = false;
   }
 
-  async pupInsertGeoreferencia() {
-    let tipoBien = 1;
-    if (this.latitud.value && this.longitud.value) {
-      if (this.numberGood.value) {
-        const response = await firstValueFrom(
-          this.georeferencieService
-            .getGeoreferencieObjectById(this.numberGood.value)
-            .pipe(catchError(x => of(null)))
-        );
-        if (response) {
-          await firstValueFrom(
-            this.georeferencieService.putGeoreferencieObject({
-              id: this.numberGood.value,
-              georefLatitude: this.latitud.value,
-              georefLongituded: this.longitud.value,
-              typeId: this.type.value,
-              georeferenceId: '1',
-            })
-          );
-        } else {
-          await firstValueFrom(
-            this.georeferencieService.postGeoreferencieObject({
-              id: this.numberGood.value,
-              georefLatitude: this.latitud.value,
-              georefLongituded: this.longitud.value,
-              typeId: this.type.value,
-              georeferenceId: '1',
-            })
-          );
-        }
-      }
-    }
-  }
-
   getGoods(ssssubType: IGoodSssubtype) {
     // this.good = ssssubType.numClasifGoods;
   }
 
-  getLatitudLongitud(id: number) {
-    this.georeferencieService.getGeoreferencieObjectById(id).subscribe({
-      next: response => {
-        // console.log(response);
-        if (response) {
-          this.latitud.setValue(response.georefLatitude);
-          this.longitud.setValue(response.georefLongituded);
-        }
-      },
-      error: err => {
-        console.log(err);
-      },
-    });
-  }
+  // getLatitudLongitud(id: number) {
+  //   this.georeferencieService.getGeoreferencieObjectById(id).subscribe({
+  //     next: response => {
+  //       // console.log(response);
+  //       if (response) {
+  //         this.latitud.setValue(response.georefLatitude);
+  //         this.longitud.setValue(response.georefLongituded);
+  //       }
+  //     },
+  //     error: err => {
+  //       console.log(err);
+  //     },
+  //   });
+  // }
   loadImages() {
     let loadingPhotos = 0;
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
@@ -1398,60 +1379,46 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       this.location.back();
     }
   }
-  // getComerGoodAll(data: any) {
-  //   //console.log(params);
-  //   console.log(data);
-  //   const params = new ListParams();
-  //   params['filter.goodNumber'] = `$eq:${data.id}`;
-  //   console.log(this.form.controls['goodNumber'].value);
-  //   this.comerEventService.getAllFilterComerGood(params).subscribe({
-  //     next: resp => {
-  //       this.lot = resp;
-  //       console.log(resp);
-  //       this.lotIdSelected = new DefaultSelect(resp.data, resp.count);
-  //     },
-  //     error: error => {
-  //       console.log(error);
-  //       this.lotIdSelected = new DefaultSelect();
-  //     },
-  //   });
-  // }
-
-  idEvent(datos: any) {
-    this.getIdLot(datos);
-  }
-
-  getIdLot(data: any) {
-    const datos: any = {};
-    this.comerEventService.getLotId(data.lotId).subscribe({
+  getComerGoodAll(id: number) {
+    this.lotService.getByLotEventPhoto(id, this.params.getValue()).subscribe({
       next: resp => {
-        this.comerEventService.geEventId(resp.eventId).subscribe({
-          next: resp => {
-            console.log(resp);
-            //this.form.controls['idEvent'].setValue(resp.id);
-            this.eventIdSelected = new DefaultSelect([resp], 1);
-            this.form.controls['idEvent'].setValue(resp.id);
-          },
-          error: error => {
-            console.log(error);
-            this.eventIdSelected = new DefaultSelect();
-          },
-        });
+        this.lot = resp;
+        console.log(resp);
       },
       error: error => {
         console.log(error);
-        //this.lotIdSelected = new DefaultSelect();
       },
     });
   }
+  getComerGoodLotes(id: number) {
+    this.comerEventService
+      .getAllFilterComerGoodEvent(id, this.params.getValue())
+      .subscribe({
+        next: (resp: any) => {
+          this.lot = resp.data;
+          console.log(this.lot);
+          this.idLot.setValue(this.lot.lotId);
+          this.lotDesc.setValue(this.lot.lotDescription);
+          console.log(resp);
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+  }
+  setGood(good: IGood) {
+    this.numberGood.setValue(good.id);
+    this.fileNumber.setValue(this.noExpedient);
+    this.descripcion.setValue(good.description);
+    this.idLot.setValue(good.lotNumber);
+    this.form.controls['fileNumber'].setValue(this.noExpedient);
+  }
+
   searchExp(id: number | string) {
     if (!id) return;
-    // this.isSearch = true;
-    // this.isDisabledExp = true;
-    // this.onLoadExpedientData();
     this.params.getValue().page = 1;
     this.loading = true;
-    this.goodService.getByExpedient(id).subscribe({
+    this.goodService.getByExpedient(id, this.params.getValue()).subscribe({
       next: resp => {
         const data = resp.data;
         this.loading = false;
@@ -1466,19 +1433,6 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
               vc_pantalla: 'FDEPURAFOTOS',
               proceso_ext_dom: good.extDomProcess ?? '',
             };
-            console.log(body);
-            // this.dictationServ.checkGoodAvaliable(body).subscribe({
-            //   next: state => {
-            //     good.est_disponible = state.est_disponible;
-            //     good.v_amp = state.v_amp ? state.v_amp : null;
-            //     good.pDiDescStatus = state.pDiDescStatus;
-            //     // this.desc_estatus_good = state.pDiDescStatus ?? '';
-            //   },
-            //   error: () => {
-            //     this.loading = false;
-            //     resolve(null);
-            //   },
-            // });
           });
         });
 
@@ -1491,47 +1445,25 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
         console.log(err);
       },
     });
-
-    // this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-
-    // });
   }
-  getEvent(params?: ListParams) {
-    params['filter.event.statusvtaId'] = `$ilike:${params.text}`;
-    params['filter.event.id'] = `$eq:${this.idEvent}`;
-    this.comerEventService.getAllFilterComerGood(params).subscribe({
+
+  getEvent(id: number) {
+    this.comerEventService.getAllFilterComerGood(id).subscribe({
       next: data => {
         data.data.map(data => {
-          data.description = `${data.event}- ${data.event.statusvtaId}`;
           return data;
         });
-        this.eventIdSelected = new DefaultSelect(data.data, data.count);
       },
       error: () => {
-        this.eventIdSelected = new DefaultSelect();
+        console.error('error');
       },
     });
   }
-  getLot(params?: ListParams) {
-    params['filter.description'] = `$ilike:${params.text}`;
-    params['filter.lotId'] = `$eq:${this.idLot}`;
-    this.comerEventService.getAllFilterComerGood(params).subscribe({
-      next: data => {
-        data.data.map(data => {
-          data.description = `${data.lotId}- ${data.description}`;
-          return data;
-        });
-        this.lotIdSelected = new DefaultSelect(data.data, data.count);
-      },
-      error: () => {
-        this.lotIdSelected = new DefaultSelect();
-      },
-    });
-  }
+
   getImageGood() {
     this.loading = true;
     const formDatra: Object = {
-      xidBien: this.form.controls['goodNumber'].value,
+      xidBien: this.form.value.noBien,
     };
     this.wcontentService.getDocumentos(formDatra).subscribe({
       next: response => {
@@ -1545,7 +1477,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
         if (_data.length > 0) {
           this.photographs =
             _data.length > 10 ? this.setPaginate([..._data]) : _data;
-          this.totalItems = _data.length;
+          this.totalItemsPhotos = _data.length;
           this.loading = false;
         } else {
           this.alert(
@@ -1558,6 +1490,91 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
+      },
+    });
+  }
+
+  getByIdGood(id: number | string) {
+    this.goodService.getById(id).subscribe({
+      next: (data: any) => {
+        this.goodO = data;
+        data.data.filter((good: IGood) => {
+          this.noExpedient = good.fileNumber;
+        });
+
+        console.log(this.noExpedient);
+        this.searchExp(this.noExpedient);
+        this.getComerGoodLotes(this.form.value.noBien);
+        this.getIdLot(this.goodO);
+        this.getEvent(this.goodO.lotNumber);
+        this.setGood(this.goodO);
+      },
+      error: error => {
+        console.error('no existe el bien');
+      },
+    });
+  }
+
+  getIdLot(data: any) {
+    const datos: any = {};
+    this.comerEventService.getLotId(data.lotId).subscribe({
+      next: resp => {
+        this.comerEventService.geEventId(resp.eventId).subscribe({
+          next: resp => {
+            //console.log(resp);
+            //this.form.controls['idEvent'].setValue(resp.id);
+            this.form.controls['idEvent'].setValue(resp.id);
+          },
+          error: error => {
+            console.log(error);
+          },
+        });
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
+  getGoodPhoto(params: ListParams) {
+    this.loading = true;
+    params['filter.goodNumber'] = `$eq:${this.form.value.noBien}`;
+    this.goodPhotoService.getFilterGoodPhoto(params).subscribe({
+      next: response => {
+        this.goodPhoto = response.data;
+        this.totalItems = response.count;
+        this.goodDateTable.load(response.data);
+        this.goodDateTable.refresh();
+        this.loading = false;
+        console.log(this.goodPhoto);
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
+  searchExpModal(expedient?: IExpedient[]) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      expedient,
+    };
+    let modalRef = this.modalService.show(AllExpedientComponent, modalConfig);
+    modalRef.content.onSave.subscribe(async (next: any) => {
+      console.log(next);
+      this.good.id = next.id;
+      this.good.fileNumber = next.fileNumber.id;
+
+      this.form.patchValue({
+        noBien: next.good.id,
+        fileNumber: next.good.fileNumber,
+      });
+    });
+  }
+  getLotebyEvent(id: number, params: ListParams) {
+    this.lotService.getLotbyEvent(id, params).subscribe({
+      next: (data: any) => {
+        console.log(data);
+      },
+      error: () => {
+        console.log('error');
       },
     });
   }
