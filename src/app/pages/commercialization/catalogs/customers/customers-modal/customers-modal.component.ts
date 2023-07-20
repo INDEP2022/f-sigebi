@@ -54,7 +54,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.customerForm = this.fb.group({
-      id: [null, []],
+      id: [null, [Validators.required]],
       reasonName: [
         null,
         [
@@ -134,11 +134,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
       ],
       curp: [
         null,
-        [
-          Validators.required,
-          Validators.maxLength(20),
-          Validators.pattern(CURP_PATTERN),
-        ],
+        [Validators.maxLength(20), Validators.pattern(CURP_PATTERN)],
       ],
       blackList: [null, [Validators.pattern(STRING_PATTERN)]],
       paternalSurname: [
@@ -227,25 +223,51 @@ export class CustomersModalComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    console.log(this.customers.id);
+    console.log(this.customerForm.value);
     this.customerService
       .updateCustomers(this.customers.id, this.customerForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: (error: any) => {
+          this.alert('warning', `${error.error.message}`, '');
+          this.loading = false;
+        },
       });
   }
 
   create() {
     this.loading = true;
-    this.customerService.create(this.customerForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (this.customerForm.valid) {
+      this.customerService.create(this.customerForm.value).subscribe({
+        next: data => {
+          this.handleSuccess();
+          this.modalRef.hide();
+        },
+        error: error => {
+          this.alert(
+            'warning',
+            `No es Posible Crear el Cliente: ${error.error.message}`,
+            ''
+          );
+          this.loading = false;
+        },
+      });
+    } else {
+      this.alert(
+        'warning',
+        'El Formulario no es Válido. Revise los Campos Requeridos',
+        ''
+      );
+      this.loading = false;
+    }
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    const message: string = this.edit
+      ? 'Cliente Actualizado(a)'
+      : 'Cliente Creado(a)';
+    this.alert('success', `${message} Correctamente`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
@@ -257,3 +279,5 @@ export class CustomersModalComponent extends BasePage implements OnInit {
     });
   }
 }
+
+//http://sigebimsdev.indep.gob.mx/catalog/api/v1/city-sera?filter.nameCity=$eq:MONTERREY
