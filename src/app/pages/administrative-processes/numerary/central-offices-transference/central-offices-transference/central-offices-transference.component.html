@@ -4,9 +4,9 @@
   </div>
   <div body>
     <div class="row mt-3 mb-3">
-      <form action="" class="form-material table-responsive" [formGroup]="form">
+      <form class="form-material" [formGroup]="form">
         <div class="row mt-4">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <form-field [control]="form.get('noReport')" label="No. Reporte">
               <input
                 type="number"
@@ -25,51 +25,51 @@
                 bsDatepicker />
             </form-field>
           </div>
-          <div
-            class="col-md-4"
-            style="display: flex; justify-content: start; align-items: center">
-            <button
-              type="button"
-              class="btn btn-primary active btn-sm"
-              (click)="getDataNoReport()">
-              <i class="bx bx-search-alt bx-sm float-icon"></i></button
-            >`
-            <button
-              type="button"
-              tooltip="Nuevo"
-              containerClass="tooltip-style"
-              class="btn btn-info btn-sm active ml-2 mr-2"
-              (click)="scrollToDiv()">
-              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
-            </button>
-            <input
-              type="file"
-              name="file"
-              #file
-              class="d-none"
-              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-              (change)="onFileChange($event)" />
-            <button
-              type="button"
-              class="btn btn-sm btn-success active m-3"
-              (click)="file.click()">
-              Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
-            </button>
-            <input
-              type="file"
-              name="file"
-              #file
-              class="d-none"
-              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-              (change)="onFileChange($event)" />
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              tooltip="Enviar"
-              (click)="sendEmail()"
-              containerClass="tooltip-style">
-              Enviar <i class="bx bx-send"></i>
-            </button>
+          <div class="col-md-6">
+            <div class="d-inline">
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm"
+                (click)="getDataNoReport()">
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                type="button"
+                tooltip="Nuevo"
+                containerClass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2"
+                (click)="scrollToDiv()">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+              <input
+                type="file"
+                name="file"
+                #file
+                class="d-none"
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                (change)="onFileChange($event)" />
+              <button
+                type="button"
+                class="btn btn-sm btn-success active m-3"
+                (click)="file.click()">
+                Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
+              </button>
+              <input
+                type="file"
+                name="file"
+                #file
+                class="d-none"
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                (change)="onFileChange($event)" />
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                tooltip="Enviar"
+                (click)="sendEmail()"
+                containerClass="tooltip-style">
+                Enviar <i class="bx bx-send"></i>
+              </button>
+            </div>
           </div>
         </div>
 

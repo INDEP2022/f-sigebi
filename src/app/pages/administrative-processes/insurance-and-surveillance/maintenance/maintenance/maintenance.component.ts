@@ -59,10 +59,12 @@ export class MaintenanceComponent extends BasePage implements OnInit {
     const textNotPass =
       'Debe seleccionar un periodo de origen y destino en el bloque de cambio de periodo';
     const textQuestion = `¿Está seguro de cambiar la información del periodo ${changePeriodInitValue} al periodo ${changePeriodEndValue}?`;
+    const title = 'Cambiar Periodo';
     this.onClickStructure(
       Boolean(changePeriodInitValue) && Boolean(changePeriodEndValue),
       textNotPass,
-      textQuestion
+      textQuestion,
+      title
     ).then(res => {
       const params = this.getParamsForChangePeriod();
       this.saveInServerChangePeriod(params);

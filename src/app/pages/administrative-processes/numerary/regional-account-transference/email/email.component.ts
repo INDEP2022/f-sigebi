@@ -190,7 +190,7 @@ export class EmailComponent extends BasePage implements OnInit {
             // };
 
             const body: any = {
-              id: REPORTE,
+              reportNumber: REPORTE,
               addressee: 'pruebasqaindep@gmail.com',
               sender: user.toUpperCase(),
               cc: '',
