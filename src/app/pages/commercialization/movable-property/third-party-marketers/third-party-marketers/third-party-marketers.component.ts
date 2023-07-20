@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, map, skip, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
 import {
   ListParams,
   SearchFilter,
@@ -16,12 +16,12 @@ import { ThirdPartyService } from 'src/app/core/services/ms-thirdparty/thirdpart
 //Models
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import {
   IComiXThird,
   IThirdParty,
   ITypeEventXtercomer,
 } from 'src/app/core/models/ms-thirdparty/third-party.model';
+import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { ComiXThirdService } from 'src/app/core/services/ms-thirdparty/comi-xthird.service';
 import { TypeEventXterComerService } from 'src/app/core/services/ms-thirdparty/type-events-xter-comer.service';
 import { AmountThirdModalComponent } from '../amount-third-modal/amount-third-modal.component';
@@ -67,7 +67,8 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
     private thirdPartyService: ThirdPartyService,
     private typeEventXterComerService: TypeEventXterComerService,
     private comiXThirdService: ComiXThirdService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private comerTpEventosService: ComerTpEventosService
   ) {
     super();
     this.settings = {
@@ -131,7 +132,6 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
               nameReason: () => (searchFilter = SearchFilter.ILIKE),
               calculationRoutine: () => (searchFilter = SearchFilter.EQ),
             };
-
             search[filter.field]();
 
             if (filter.search !== '') {
@@ -175,11 +175,11 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              thirdPartyId: () => (searchFilter = SearchFilter.EQ),
-              typeEventId: () => (searchFilter = SearchFilter.ILIKE),
+              typeEventId: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.ILIKE),
             };
 
-            search[filter.field]();
+            // search[filter.field]();
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
@@ -226,14 +226,12 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              goodId: () => (searchFilter = SearchFilter.EQ),
-              description: () => (searchFilter = SearchFilter.ILIKE),
-              quantity: () => (searchFilter = SearchFilter.EQ),
-              acta_: () => (searchFilter = SearchFilter.ILIKE),
-              status: () => (searchFilter = SearchFilter.ILIKE),
+              startingAmount: () => (searchFilter = SearchFilter.EQ),
+              pctCommission: () => (searchFilter = SearchFilter.ILIKE),
+              finalAmount: () => (searchFilter = SearchFilter.EQ),
             };
 
-            search[filter.field]();
+            // search[filter.field]();
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
@@ -300,26 +298,47 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       ...this.params2.getValue(),
       ...this.columnFilters2,
     };
-    this.typeEventXterComerService
-      .getById(thirdParty.id)
-      .pipe(
-        map((data2: any) => {
-          let list: IListResponse<ITypeEventXtercomer> =
-            {} as IListResponse<ITypeEventXtercomer>;
-          const array2: ITypeEventXtercomer[] = [{ ...data2 }];
-          list.data = array2;
-          return list;
-        })
-      )
-      .subscribe({
-        next: response => {
-          console.log(response);
+    this.typeEventXterComerService.getById(thirdParty.id).subscribe({
+      next: response => {
+        console.log(response);
+        let result = response.data.map(async (item: any) => {
+          const description = await this.getDescript();
+          item['description'] = description;
+        });
+
+        Promise.all(result).then(resp => {
           this.typeEventList.load(response.data);
           this.totalItems2 = response.count;
           this.loading2 = false;
+        });
+      },
+      error: error => {
+        this.totalItems2 = 0;
+        this.loading2 = false;
+      },
+    });
+    // .pipe(
+    //     map((data2: any) => {
+    //       let list: IListResponse<ITypeEventXtercomer> =
+    //         {} as IListResponse<ITypeEventXtercomer>;
+    //       const array2: ITypeEventXtercomer[] = [{ ...data2 }];
+    //       list.data = array2;
+    //       return list;
+    //     })
+    //   )
+  }
+
+  getDescript() {
+    return new Promise((resolve, reject) => {
+      this.comerTpEventosService.getEventsByTypeAll().subscribe({
+        next: response => {
+          resolve(response.data);
         },
-        error: error => (this.loading2 = false),
+        error: error => {
+          resolve(null);
+        },
       });
+    });
   }
 
   rowsSelected2(event: any) {
@@ -344,7 +363,10 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
         this.totalItems3 = response.count;
         this.loading3 = false;
       },
-      error: error => (this.loading3 = false),
+      error: error => {
+        this.totalItems2 = 0;
+        this.loading3 = false;
+      },
     });
   }
 
