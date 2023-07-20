@@ -171,6 +171,13 @@ export class GoodsProcessValidationExtdomComponent
   goodLoopLimit: number = 0;
   goodLoopTmp: IGood[] | any[] = [];
   goodLoopLoading: boolean = false;
+  // Good Loop Free
+  goodLoopFreeCurrent: number = 0;
+  goodLoopFreeTotal: number = 0;
+  goodLoopFreePage: number = 0;
+  goodLoopFreeLimit: number = 0;
+  goodLoopFreeTmp: IGood[] | any[] = [];
+  goodLoopFreeLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -1346,10 +1353,26 @@ export class GoodsProcessValidationExtdomComponent
 
   addAll() {
     console.log('Agregar Todos');
+    this.startLoopGoods();
   }
 
   removeAll() {
     console.log('Eliminar Todos');
+    this.loadingGoods = true; // Iniciar loading de tabla bienes
+    this.loadingGoods3 = true; // Iniciar loading de tabla a procesar
+    for (let index = 0; index < this.goodData.length; index++) {
+      this.goodData[index].disponible = this.freeLabel; // Cambiar a no disponible
+      this.goodData[index].seleccion = 0; // Quitar el check del registro
+    }
+    this.selectedDeleteGoods = [];
+    this.goodData3 = [];
+    this.totalGoods3 = 0;
+    this.dataTableParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.loadGoods());
+    this.loadingGoods = false; // Detener loading de tabla bienes
+    this.loadingGoods3 = false; // Detener loading de tabla a procesar
+    this.updatePaginatedTable3();
   }
 
   addSelectFree() {
@@ -1489,10 +1512,25 @@ export class GoodsProcessValidationExtdomComponent
 
   addAllFree() {
     console.log('Agregar Todos');
+    this.startLoopGoodsFree();
   }
 
   removeAllFree() {
     console.log('Eliminar Todos');
+    this.loadingGoods2 = true; // Iniciar loading de tabla bienes
+    this.loadingGoods4 = true; // Iniciar loading de tabla a procesar
+    for (let index = 0; index < this.goodData2.length; index++) {
+      this.goodData2[index].disponible = this.freeLabel; // Cambiar a no disponible
+      this.goodData2[index].seleccion = 0; // Quitar el check del registro
+    }
+    this.goodData4 = [];
+    this.totalGoods4 = 0;
+    this.dataTableParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.loadGoods2());
+    this.loadingGoods2 = false; // Detener loading de tabla bienes
+    this.loadingGoods4 = false; // Detener loading de tabla a procesar
+    this.updatePaginatedTable4();
   }
 
   btnEjecutarCambios() {
@@ -2712,4 +2750,145 @@ export class GoodsProcessValidationExtdomComponent
   }
 
   /** LOOP BIENES DISPONIBLES */
+
+  /** LOOP BIENES A LIBERAR */
+
+  startLoopGoodsFree() {
+    this.goodLoopFreeCurrent = 0;
+    this.goodLoopFreePage = 1;
+    this.goodLoopFreeTotal = 0;
+    this.goodLoopFreeLimit = 100;
+    this.goodLoopFreeTmp = [];
+    this.goodLoopFreeLoading = true; // Iniciar loading de procesando todos los bienes
+    this.loadingGoods2 = true; // Iniciar loading de tabla bienes
+    this.loadingGoods4 = true; // Iniciar loading de tabla a procesar
+    this.loopGoodsFree();
+  }
+
+  loopGoodsFree() {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter(
+      'proceedingsNumber',
+      this.notificationData.expedientNumber
+    );
+    params.addFilter('userfree', SearchFilter.NULL, SearchFilter.NULL);
+    params.addFilter('datefree', SearchFilter.NULL, SearchFilter.NULL);
+    params.limit = this.goodLoopFreeLimit;
+    params.page = this.goodLoopFreePage;
+    this.svGoodsProcessValidationExtdomService
+      .getHistoryGood(params.getParams())
+      .subscribe({
+        next: res => {
+          this.goodLoopFreeTotal = res.count;
+          // this.goodLoopFreeTotal = 23;
+          // let data = res.data.map((i: any) => {
+          //   const index2: number = this.goodsValid.findIndex(
+          //     (_good: IGood) => _good.goodId == i.goodId
+          //   );
+          //   if (index2 == -1) {
+          //     i['disponible'] = this.freeLabel;
+          //     i['seleccion'] = 0;
+          //     return i;
+          //   } else {
+          //     i['disponible'] = this.blockLabel;
+          //     i['seleccion'] = 0;
+          //     return i;
+          //   }
+          // });
+          let data = res.data.map((i: any) => {
+            i.goods['register_type'] = this.registerExistType;
+            i.goods['dateChange'] = i.dateChange;
+            i.goods['datefree'] = i.datefree;
+            i.goods['goodNumber'] = i.goodNumber;
+            i.goods['invoiceUnivChange'] = i.invoiceUnivChange;
+            i.goods['invoiceUnivfree'] = i.invoiceUnivfree;
+            i.goods['proceedingsNumber'] = i.proceedingsNumber;
+            i.goods['processExtSun'] = i.processExtSun;
+            i.goods['recordNumber'] = i.recordNumber;
+            i.goods['userChange'] = i.userChange;
+            i.goods['userfree'] = i.userfree;
+            const index2: number = this.goodsValid.findIndex(
+              (_good: IGood) => _good.goodId == i.goods.goodId
+            );
+            if (index2 > -1) {
+              i.goods['disponible'] = this.blockLabel;
+              i.goods['seleccion'] = 0;
+              return i.goods;
+            } else {
+              i.goods['disponible'] = this.freeLabel;
+              i.goods['seleccion'] = 0;
+              return i.goods;
+            }
+          });
+          this.goodLoopFreeTmp = data;
+          this.goodLoopFreeTmp.forEach(element => {
+            if (element.disponible == this.freeLabel) {
+              let row: IGood = element;
+              const index = this.goodsValid.findIndex(
+                _good => _good.goodId == row.goodId
+              );
+              if (index == -1) {
+                this.goodsValid.push(row);
+              }
+            }
+          });
+          this.goodLoopFreeCurrent =
+            this.goodLoopFreeCurrent + this.goodLoopFreeLimit >
+            this.goodLoopFreeTotal
+              ? this.goodLoopFreeTotal
+              : this.goodLoopFreeCurrent + this.goodLoopFreeLimit;
+          this.goodLoopFreePage++; // Next page
+          this.controlGoodLoopFree();
+        },
+        error: error => {
+          console.log(error);
+          this.goodLoopFreeCurrent =
+            this.goodLoopFreeCurrent + this.goodLoopFreeLimit >
+            this.goodLoopFreeTotal
+              ? this.goodLoopFreeTotal
+              : this.goodLoopFreeCurrent + this.goodLoopFreeLimit;
+          this.goodLoopFreePage++; // Next page
+          this.controlGoodLoopFree();
+        },
+      });
+  }
+
+  controlGoodLoopFree() {
+    this.goodLoopFreeTmp = [];
+    if (this.goodLoopFreeCurrent < this.goodLoopFreeTotal) {
+      this.loopGoodsFree();
+    } else if ((this.goodLoopFreeCurrent = this.goodLoopFreeTotal)) {
+      // FIN PROCESO
+      this._endProcess_LooopGoodFree();
+    }
+  }
+
+  _endProcess_LooopGoodFree() {
+    this.goodLoopFreeLoading = false;
+    this.goodsValid.forEach(selected => {
+      this.goodData4.push({
+        ...selected,
+        register_type: this.registerType,
+      }); // Agregar registro a la data
+      // VALIDAR CON LA DATA DEL ENDPOINT IGUAL
+      const index2: number = this.goodData2.findIndex(
+        (_good: IGood) => _good.goodId == selected.goodId
+      );
+      if (index2 > -1) {
+        this.goodData2[index2].disponible = this.blockLabel; // Cambiar a no disponible
+        this.goodData2[index2].seleccion = 0; // Quitar el check del registro
+      }
+    });
+    console.log('FIN PROCESO', this.goodsValid, this.goodData4);
+    this.totalGoods4 = this.goodsValid.length; // Aumentar si se agrego registro
+    // Update data table bienes
+    this.dataTable2.load(this.goodData2);
+    this.dataTable2.refresh();
+    this.loadingGoods2 = false; // Detener loading de tabla bienes
+    this.loadingGoods4 = false; // Detener loading de tabla a procesar
+    this.updatePaginatedTable4();
+  }
+
+  /** LOOP BIENES A LIBERAR */
 }
