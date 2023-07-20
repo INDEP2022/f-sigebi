@@ -7,29 +7,45 @@
   <div body>
     <div class="ch-content" header>
       <h5 class="title"></h5>
-      <div class="col-md-5 buttons">
+      <div class="col-md-5 buttons m-3">
         <div>
           <button
             (click)="openForm1()"
-            class="btn btn-primary active btn-sm ml-3">
-            Nuevo
+            type="button"
+            tooltip="Agregar"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
       </div>
     </div>
-    <div [class]="loading ? 'table-loading' : ''">
-      <div class="table-responsive">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="settings"
-          [source]="thirdPartyList"
-          (userRowSelect)="rowsSelected($event)"
-          (edit)="openForm1($event.data)"></ng2-smart-table>
+    <div class="row">
+      <div class="col-md-12">
+        <form-loader *ngIf="loading"></form-loader>
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
+            [settings]="settings"
+            [source]="thirdPartyList"
+            (userRowSelect)="rowsSelected($event)"
+            (edit)="openForm1($event.data)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
       </div>
     </div>
-    <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+
+    <!-- <div [class]="loading ? 'table-loading' : ''">
+      <div class="table-responsive">
+        <ng2-smart-table [attr.class]="'table-bordered'"></ng2-smart-table>
+      </div>
+    </div> -->
   </div>
 </app-card>
 
@@ -42,25 +58,38 @@
   <div body>
     <div class="ch-content" header>
       <h5 class="title"></h5>
-      <div class="col-md-5 buttons">
+      <div class="col-md-5 buttons m-3">
         <div>
           <button
             (click)="openForm2()"
-            class="btn btn-primary active btn-sm ml-3">
-            Nuevo
+            type="button"
+            tooltip="Agregar"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
       </div>
     </div>
-    <div [class]="loading ? 'table-loading' : ''">
-      <div class="table-responsive">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          [settings]="settings2"
-          [source]="typeEventList"
-          (userRowSelect)="rowsSelected2($event)"
-          (edit)="openForm2($event.data)"></ng2-smart-table>
+    <div class="row">
+      <div class="col-md-12">
+        <form-loader *ngIf="loading2"></form-loader>
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading2 ? '0px' : '300px' }">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
+            [settings]="settings2"
+            [source]="typeEventList"
+            (userRowSelect)="rowsSelected2($event)"
+            (edit)="openForm2($event.data)">
+          </ng2-smart-table>
+        </ng-scrollbar>
       </div>
+      <app-pagination
+        [params]="params2"
+        [totalItems]="totalItems2"></app-pagination>
     </div>
   </div>
 </app-card>
@@ -74,20 +103,37 @@
   <div body>
     <div class="ch-content" header>
       <h5 class="title"></h5>
-      <div class="col-md-5 buttons">
+      <div class="col-md-5 buttons m-3">
         <div>
           <button
             (click)="openForm3()"
-            class="btn btn-primary active btn-sm ml-3">
-            Nuevo
+            type="button"
+            tooltip="Agregar"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
       </div>
     </div>
-    <ng2-smart-table
-      [attr.class]="'table-bordered'"
-      [settings]="settings3"
-      [source]="amountList"
-      (edit)="openForm3($event.data)"></ng2-smart-table>
+    <div class="row">
+      <div class="col-md-12">
+        <form-loader *ngIf="loading3"></form-loader>
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading3 ? '0px' : '300px' }">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
+            [settings]="settings3"
+            [source]="amountList"
+            (edit)="openForm3($event.data)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+      </div>
+      <app-pagination
+        [params]="params3"
+        [totalItems]="totalItems3"></app-pagination>
+    </div>
   </div>
 </app-card>

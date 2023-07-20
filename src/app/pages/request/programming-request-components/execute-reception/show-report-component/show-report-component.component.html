@@ -13,10 +13,11 @@
     <div *ngIf="printReport">
       <div class="row">
         <div class="d-flex">
-          <h5 class="mr-auto p-2">{{ btnSubTitle }}</h5>
+          <h5 *ngIf="!showTDR" class="mr-auto p-2">{{ btnSubTitle }}</h5>
           <div class="p-2">
             <button
               (click)="signDocument()"
+              *ngIf="!showTDR"
               class="btn btn-primary btn-sm active">
               {{ btnTitle }} <i class="bx bx-edit-alt"></i>
             </button>
@@ -55,13 +56,17 @@
     </div>
 
     <div *ngIf="listSigns">
+      <h5 class="mr-auto p-2">Listado de Firmantes Electr&oacute;nicos</h5>
       <div class="row">
-        <div class="d-flex">
-          <h5 class="mr-auto p-2">Listado de Firmantes Electr&oacute;nicos</h5>
+        <div class="d-flex justify-content-end">
           <div class="p-2" *ngIf="showButtonFirm == true">
-            <button class="btn btn-primary btn-sm active" (click)="sendSign()">
-              Enviar a Firmar <i class="bx bxs-right-arrow-square"></i>
-            </button>
+            <confirm-button
+              [text]="'Enviar a firmar'"
+              [loadingText]="'Firmando'"
+              [loading]="loadingButton"
+              [btnSmall]="true"
+              [icon]="'bx bxs-right-arrow-square'"
+              (confirm)="sendSign()"></confirm-button>
           </div>
           <div class="p-2">
             <button (click)="backStep()" class="btn btn-primary btn-sm active">
