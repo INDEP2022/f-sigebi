@@ -435,7 +435,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
           this.openMoreOneResults(res);
         } else {
           this.changeDeposit(res.data[0]);
-          this.onLoadToast('success', 'Éxito', 'Depósito Encontrado');
+          this.onLoadToast('success', 'Depósito Encontrado', '');
         }
       },
       error: () => {
@@ -911,7 +911,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
             //   :
             'Proceso Terminado correctamente';
 
-          this.alert('success', 'message', '');
+          this.alert('success', message, '');
           this.clear();
           this.loader.load = false;
         }),
