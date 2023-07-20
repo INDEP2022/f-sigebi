@@ -48,7 +48,6 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('good', this.good);
     this.prepareForm();
     this.params
       .pipe(takeUntil(this.$unSubscribe))
