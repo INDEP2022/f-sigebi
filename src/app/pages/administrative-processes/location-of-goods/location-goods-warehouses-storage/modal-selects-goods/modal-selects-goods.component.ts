@@ -19,6 +19,7 @@ import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-good
 import { BasePage } from 'src/app/core/shared/base-page';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { LocationGoodsWarehousesStorageComponent } from '../location-goods-warehouses-storage/location-goods-warehouses-storage.component';
+
 @Component({
   selector: 'app-modal-selects-goods',
   templateUrl: './modal-selects-goods.component.html',
@@ -38,6 +39,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   formAlm: FormGroup;
   di_desc_est: any;
   dataTableGood_: IGood[];
+  formSafe: FormGroup;
   @Input() allGoods = new LocalDataSource();
   @Input() totalItems: number;
   @Input() validarGood: Function;
@@ -125,6 +127,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     this.loading = true;
     // console.log(this.totalItems);
     this.buildForm();
+    this.vaulForm();
 
     // this.$trackedGoods.subscribe({
     //   next: response => {
@@ -148,6 +151,11 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       radio: [null, [Validators.required]],
       warehouse: [null, [Validators.required]],
+    });
+  }
+  private vaulForm() {
+    this.loading = false;
+    this.formSafe = this.fb.group({
       safe: [null, [Validators.required]],
     });
   }
@@ -236,13 +244,47 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   selectData(event: { data: IGood; selected: any }) {
     this.selectedRow = event.data;
     this.activeGood = true;
-    this.fileNumber = event.data.fileNumber;
+    // this.fileNumber = event.data.fileNumber;
     this.selectedGooods = event.selected;
     console.log(this.selectedRow);
     console.log(this.selectedGooods);
     this.changeDetectorRef.detectChanges();
   }
+  // updateGoodsVault() {
+  //   try {
+  //     const observables = this.selectedGooods.map(good => {
+  //       const data = {
+  //         id: good.id,
+  //         goodId: good.goodId,
+  //         observations: good.observations,
+  //         quantity: good.quantity,
+  //         goodClassNumber: good.goodClassNumber,
+  //         unit: good.unit,
+  //         labelNumber: good.labelNumber,
+  //         vaultNumber: this.form.get('safe').value,
+  //       };
+  //       return this.serviceGood.update(data);
+  //     });
 
+  //     forkJoin(observables).subscribe(
+  //       res => {
+  //         console.log(res);
+  //         this.alert('success', 'Bienes', `Actualizados correctamente`);
+  //         this.allGoodsUpdated.emit(this.allGoods);
+  //         this.onLoadGoodList();
+  //       },
+  //       err => {
+  //         this.alert(
+  //           'error',
+  //           'Bien',
+  //           'No se pudo actualizar el bien, por favor intentelo nuevamente'
+  //         );
+  //       }
+  //     );
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }
   updateGoodsVault() {
     try {
       this.selectedGooods.forEach(good => {
@@ -316,7 +358,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           }
         );
       });
-      this.onLoadGoodList();
+      // this.onLoadGoodList();
       this.alert('success', 'Bienes', `Actualizados correctamente`);
     } catch (err) {
       console.error(err);

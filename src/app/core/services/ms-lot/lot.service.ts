@@ -50,4 +50,8 @@ export class LotService extends HttpService {
   }) {
     return this.post('apps/act-mandate', body);
   }
+  getByLotEventPhoto(good: number, params: ListParams) {
+    const route = `${LotEndpoints.GoodByLotsEvent}?filter.good=${good}`;
+    return this.get(route, params);
+  }
 }

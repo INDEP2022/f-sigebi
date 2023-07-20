@@ -222,4 +222,12 @@ export class ProceedingsService extends HttpService {
       params
     );
   }
+
+  pupLaunchesReport(body: any) {
+    return this.post('aplication/get-pup-lanza-reporte', body);
+  }
+
+  pupLaunchesReport2(body: any) {
+    return this.post('aplication/get-pup-lanza-reporte-2', body);
+  }
 }
