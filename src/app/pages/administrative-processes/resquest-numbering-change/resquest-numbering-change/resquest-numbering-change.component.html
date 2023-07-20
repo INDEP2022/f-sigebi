@@ -416,9 +416,9 @@
           <div class="col-md-12">
             <ng-scrollbar
               [track]="'all'"
-              [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
+              [ngStyle]="{ height: loading2 ? '0px' : '300px' }">
               <ng2-smart-table
-                [attr.class]="'table-bordered'"
+                [attr.class]="'table-bordered table-responsive'"
                 [settings]="settings1"
                 [source]="data1"
                 (userRowSelect)="selectDataCamNum($event)">
