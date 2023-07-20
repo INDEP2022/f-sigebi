@@ -22,6 +22,7 @@ import { EventGoodsLotsListComponent } from './components/event-goods-lots-list/
 import { EventLotFormComponent } from './components/event-lot-form/event-lot-form.component';
 import { EventLotsListComponent } from './components/event-lots-list/event-lots-list.component';
 import { EventPreparationStadisticsComponent } from './components/event-preparation-stadistics/event-preparation-stadistics.component';
+import { RejectedGoodsListComponent } from './components/rejected-goods-list/rejected-goods-list.component';
 import { ReservedGoodsComponent } from './components/reserved-goods/reserved-goods.component';
 import { CreateNewEventModalComponent } from './create-new-event-modal/create-new-event-modal.component';
 import { CustomerCatalogsTableComponent } from './customer-catalogs-table/customer-catalogs-table.component';
@@ -54,6 +55,7 @@ import { eventPreparationReducer } from './store/event-preparation.reducer';
     EventGoodsLotsListComponent,
     EventLotFormComponent,
     EventGoodsLotsListActionsComponent,
+    RejectedGoodsListComponent,
   ],
   imports: [
     CommonModule,
