@@ -70,6 +70,7 @@ export class MovementsGoodsSurveillanceComponent
           sort: false,
           type: 'custom',
           showAlways: true,
+          filter: false,
           valuePrepareFunction: (isSelected: boolean, row: any) =>
             this.isGoodSelected(row),
           renderComponent: CheckboxElementComponent,
