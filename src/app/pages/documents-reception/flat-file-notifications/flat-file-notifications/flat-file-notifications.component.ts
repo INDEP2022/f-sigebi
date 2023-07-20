@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { dateRangeValidator } from 'src/app/common/validations/date.validators';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { FlatFileNotificationsService } from '../flat-file-notifications.service';
 
@@ -10,7 +16,13 @@ import { FlatFileNotificationsService } from '../flat-file-notifications.service
 })
 export class FlatFileNotificationsComponent extends BasePage implements OnInit {
   notificationsForm: FormGroup;
-
+  invalidDate = false;
+  get startDate(): AbstractControl {
+    return this.notificationsForm.get('startDate');
+  }
+  get endDate(): AbstractControl {
+    return this.notificationsForm.get('endDate');
+  }
   constructor(
     private fb: FormBuilder,
     private fileNotificationServices: FlatFileNotificationsService
@@ -23,18 +35,32 @@ export class FlatFileNotificationsComponent extends BasePage implements OnInit {
   }
 
   prepareForm() {
-    this.notificationsForm = this.fb.group({
-      delegation: [null, [Validators.required]],
-      subdelegation: [null],
-      from: [null, [Validators.required]],
-      to: [null, [Validators.required]],
-      file: [null],
-    });
+    this.notificationsForm = this.fb.group(
+      {
+        delegation: [null, [Validators.required]],
+        subdelegation: [null],
+        startDate: [null, [Validators.required]],
+        endDate: [null, [Validators.required]],
+        file: [null],
+        name: [null, [Validators.required]],
+      },
+      { validator: dateRangeValidator() }
+    );
+  }
+  getEndDateErrorMessage(fin: any, ini: any) {
+    const stard = new Date(ini.value).getTime();
+    const end = new Date(fin.value).getTime();
+    if (fin && ini) {
+      return stard <= end
+        ? null
+        : 'La fecha de finalización debe ser mayor que la fecha de inicio.';
+    }
+    return '';
   }
 
   Generar() {
-    const start = new Date(this.notificationsForm.get('from').value);
-    const end = new Date(this.notificationsForm.get('to').value);
+    const start = new Date(this.notificationsForm.get('startDate').value);
+    const end = new Date(this.notificationsForm.get('endDate').value);
 
     const startTemp = `${start.getFullYear()}-0${
       start.getUTCMonth() + 1
@@ -67,7 +93,6 @@ export class FlatFileNotificationsComponent extends BasePage implements OnInit {
               'Sin datos para los rangos de fechas suministrados'
             );
           }
-
           return;
         },
       });
@@ -76,10 +101,14 @@ export class FlatFileNotificationsComponent extends BasePage implements OnInit {
   downloadExcel(pdf: any) {
     const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${pdf}`;
     const downloadLink = document.createElement('a');
-    //console.log(linkSource);
+    downloadLink.download = `${this.notificationsForm.value.name}`;
     downloadLink.href = linkSource;
     downloadLink.target = '_blank';
     downloadLink.click();
     this.onLoadToast('success', '', 'Archivo generado');
+  }
+
+  cleanForm() {
+    this.notificationsForm.reset();
   }
 }
