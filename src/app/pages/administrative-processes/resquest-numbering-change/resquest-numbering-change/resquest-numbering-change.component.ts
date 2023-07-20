@@ -1049,7 +1049,7 @@ export class ResquestNumberingChangeComponent
             toobarUser: this.token.decodeToken().preferred_username,
           };
           console.log(payload);
-          const aaa = await this.createRegistroGood(payload);
+          await this.createRegistroGood(payload);
           // const payload = {
           //   goodNumber: good.id,
           //   applicationChangeCashNumber: this.idSolicitud,
@@ -1203,7 +1203,7 @@ export class ResquestNumberingChangeComponent
             toobarUser: this.token.decodeToken().preferred_username,
           };
           console.log(payload);
-          const aaa = await this.createRegistroGood(payload);
+          await this.createRegistroGood(payload);
 
           // const payload = {
           //   goodNumber: good.id,
@@ -1225,6 +1225,22 @@ export class ResquestNumberingChangeComponent
   }
 
   async createRegistroGood(payload: any) {
+    return new Promise<any>((resolve, reject) => {
+      this.goodprocessService.insertStatusBien(payload).subscribe({
+        next: value => {
+          this.alert(
+            'success',
+            'Se Agregó Correctamente el No. Bien ' + payload.goodNumber,
+            ''
+          );
+          resolve(true);
+        },
+        error: err => {
+          this.handleSuccess('No se Agregó el No. Bien ' + payload.goodNumber);
+          resolve(false);
+        },
+      });
+    });
     return await firstValueFrom(
       this.goodprocessService.insertStatusBien(payload).pipe(
         catchError(error => {

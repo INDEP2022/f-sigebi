@@ -129,7 +129,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
             const search: any = {
               id: () => (searchFilter = SearchFilter.EQ),
               nameReason: () => (searchFilter = SearchFilter.ILIKE),
-              calculationRoutine: () => (searchFilter = SearchFilter.ILIKE),
+              calculationRoutine: () => (searchFilter = SearchFilter.EQ),
             };
 
             search[filter.field]();
