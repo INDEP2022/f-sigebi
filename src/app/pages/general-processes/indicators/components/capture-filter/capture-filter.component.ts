@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { catchError, tap, throwError } from 'rxjs';
 import {
   FilterParams,
@@ -26,7 +26,7 @@ export class CaptureFilterComponent implements OnInit {
   @Input() isReceptionAndDelivery: boolean = false;
   @Input() isReceptionStrategies: boolean = false;
   @Input() isConsolidated: boolean = false;
-  @Output() consultEmmit = new EventEmitter<FormGroup>();
+  @Output() consultEmmit = new EventEmitter<ListParams>();
   delegations = new DefaultSelect();
   affairName = new DefaultSelect();
   station = new DefaultSelect();
@@ -37,16 +37,16 @@ export class CaptureFilterComponent implements OnInit {
   maxDate = new Date();
 
   form = this.fb.group({
-    de: [null, [Validators.required]],
-    a: [null, [Validators.required]],
-    fecha: [null, [Validators.required]],
-    cordinador: [null, [Validators.required]],
-    usuario: [null, [Validators.required]],
-    transference: [null, Validators.required],
-    station: [null, Validators.required],
-    authority: [null, Validators.required],
-    clave: [null, [Validators.required]],
-    tipoVolante: [null, [Validators.required]],
+    de: [null],
+    a: [null],
+    fecha: [null],
+    cordinador: [null],
+    usuario: [null],
+    transference: [null],
+    station: [null],
+    authority: [null],
+    clave: [null],
+    tipoVolante: [null],
     tipoEvento: [null],
   });
   flyerTypes = ['A', 'AP', 'AS', 'AT', 'OF', 'P', 'PJ', 'T  '];
@@ -156,6 +156,9 @@ export class CaptureFilterComponent implements OnInit {
   }
 
   consult() {
-    this.consultEmmit.emit(this.form);
+    console.log('Emitiendo evento');
+    let params = new ListParams();
+    params['filter.tipo_volante'] = this.form.controls['tipoVolante'].value;
+    this.consultEmmit.emit(params);
   }
 }
