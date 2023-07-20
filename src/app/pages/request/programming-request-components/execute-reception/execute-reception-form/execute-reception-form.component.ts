@@ -418,6 +418,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       saePhysicalState: [null],
       stateConservationSae: [null],
       selectColumn: [null],
+      transferentDestiny: [null],
     });
   }
 
@@ -436,6 +437,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       saePhysicalState: [null],
       stateConservationSae: [null],
       selectColumn: [null],
+      transferentDestiny: [null],
     });
   }
 
@@ -454,6 +456,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       saePhysicalState: [null],
       stateConservationSae: [null],
       selectColumn: [null],
+      transferentDestiny: [null],
     });
   }
 
@@ -472,6 +475,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       saePhysicalState: [null],
       stateConservationSae: [null],
       selectColumn: [null],
+      transferentDestiny: [null],
     });
   }
 
@@ -756,7 +760,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           _data.push(response.data[0]);
 
           this.goodsReception.clear();
-          _data.forEach(item => {
+          _data.forEach(async item => {
             if (item.physicalStatus == 1) {
               item.physicalStatusName = 'BUENO';
             } else if (item.physicalStatus == 2) {
@@ -767,6 +771,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             } else if (item.stateConservation == 2) {
               item.stateConservationName = 'MALO';
             }
+            await this.getDestinyIndep(item.saeDestiny);
             this.goodData = item;
             const form = this.fb.group({
               id: [item?.id],
@@ -790,6 +795,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               destiny: [item?.destiny],
               transferentDestiny: [item?.saeDestiny],
             });
+
             this.goodsReception.push(form);
             this.showReception = true;
           });
@@ -816,7 +822,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           _data.push(response.data[0]);
 
           this.goodsGuards.clear();
-          _data.forEach(item => {
+          _data.forEach(async item => {
             if (item.physicalStatus == 1) {
               item.physicalStatusName = 'BUENO';
             } else if (item.physicalStatus == 2) {
@@ -827,6 +833,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             } else if (item.stateConservation == 2) {
               item.stateConservationName = 'MALO';
             }
+            await this.getDestinyIndep(item.saeDestiny);
             this.goodData = item;
             const form = this.fb.group({
               id: [item?.id],
@@ -845,6 +852,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               stateConservation: [item?.stateConservation],
               stateConservationName: [item?.stateConservationName],
               stateConservationSae: [item?.stateConservationSae],
+              transferentDestiny: [item?.saeDestiny],
               regionalDelegationNumber: [item?.regionalDelegationNumber],
             });
             this.goodsGuards.push(form);
@@ -872,7 +880,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         next: response => {
           _data.push(response.data[0]);
           this.goodsWarehouse.clear();
-          _data.forEach(item => {
+          _data.forEach(async item => {
             if (item.physicalStatus == 1) {
               item.physicalStatusName = 'BUENO';
             } else if (item.physicalStatus == 2) {
@@ -883,7 +891,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             } else if (item.stateConservation == 2) {
               item.stateConservationName = 'MALO';
             }
-
+            await this.getDestinyIndep(item.saeDestiny);
             this.goodData = item;
             const form = this.fb.group({
               id: [item?.id],
@@ -931,7 +939,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           _data.push(response.data[0]);
 
           this.goodsReprog.clear();
-          _data.forEach(item => {
+          _data.forEach(async item => {
             if (item.physicalStatus == 1) {
               item.physicalStatusName = 'BUENO';
             } else if (item.physicalStatus == 2) {
@@ -942,6 +950,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             } else if (item.stateConservation == 2) {
               item.stateConservationName = 'MALO';
             }
+            await this.getDestinyIndep(item.saeDestiny);
             this.goodData = item;
             const form = this.fb.group({
               id: [item?.id],
@@ -1001,6 +1010,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             } else if (response.stateConservation == 2) {
               response.stateConservationName = 'MALO';
             }
+
             this.goodsCancelation.clear();
             this.goodData = response;
 

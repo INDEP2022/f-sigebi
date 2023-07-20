@@ -85,7 +85,6 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
     this.params.getValue()['filter.regionalDelegation'] = deleRegionalId;
     this.userProcessService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        console.log('users', response);
         this.filterUsersProg(response.data);
         this.loading = false;
       },
