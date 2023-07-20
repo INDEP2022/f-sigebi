@@ -373,6 +373,7 @@ export class CentralOfficesTransferenceComponent
             this.data1.push(item);
             this.form.patchValue(dataForm);
             this.dataTabla.load(this.data1);
+            this.totalItems = resp.count;
           } else {
             this.dataTabla.refresh();
             break;
@@ -381,6 +382,9 @@ export class CentralOfficesTransferenceComponent
       },
       error: err => {
         this.alert('error', 'Error', err.error.message);
+        this.dataTabla.load([]);
+        this.dataTabla.refresh();
+        this.totalItems = 0;
         // if (err.status == 400) {
         //   this.alert('error', 'Error', err.error.message);
         //   this.alert(
