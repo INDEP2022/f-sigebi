@@ -14,7 +14,7 @@ export class ActasConvertionCommunicationService {
   private _actasCoversionParams: IParamsProceedingsParamsActasConvertion = null;
   private _derviationGoodsParams: IParamsProceedingsParamsDerivationGoods =
     null;
-
+  private ejecutarFuncionSource = new Subject<any>();
   private datosEnviadosSource = new Subject<any>();
   datosEnviados$ = this.datosEnviadosSource.asObservable();
 
@@ -51,5 +51,12 @@ export class ActasConvertionCommunicationService {
 
   setInputValue(datos: any) {
     this.inputValue.next(datos);
+  }
+
+  ejecutarFuncion$ = this.ejecutarFuncionSource.asObservable();
+
+  ejecutarFuncion(data: boolean) {
+    console.log('data', data);
+    return this.ejecutarFuncionSource.next(data);
   }
 }

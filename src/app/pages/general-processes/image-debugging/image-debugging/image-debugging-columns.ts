@@ -155,3 +155,39 @@ export const IMAGE_DEBUGGING_COLUMNS = {
 //     sort: false,
 //   },
 // };
+
+export const EXPEDIENT_COLUMNS = {
+  id: {
+    title: 'No. Expedient',
+    type: 'string',
+    sort: false,
+  },
+
+  preliminaryInquiry: {
+    title: 'Averiguación Previa',
+    type: 'string',
+    sort: false,
+  },
+
+  criminalCase: {
+    title: 'Causa Pemal',
+    type: 'string',
+    sort: false,
+  },
+
+  expedientType: {
+    title: 'Tipo de Expediente',
+    type: 'string',
+    sort: false,
+  },
+  expedientStatus: {
+    title: 'Estatus de Expediente',
+    type: 'string',
+    sort: false,
+  },
+  stationNumber: {
+    title: 'Número de Estación',
+    type: 'string',
+    sort: false,
+  },
+};

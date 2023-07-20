@@ -10,6 +10,8 @@ import { GoodsFilterSharedComponent } from '../../../@standalone/shared-forms/go
 import { GoodPhotosModule } from '../good-photos/good-photos.module';
 import { GoodPhotoComponent } from '../image-debugging/good-photos/good-photo/good-photo/good-photo.component';
 import { GoodPhotosComponent } from '../image-debugging/good-photos/good-photos.component';
+import { AllExpedientComponent } from './all-expedient/all-expedient/all-expedient.component';
+import { AllLotEventComponent } from './all-lot-event/all-lot-event/all-lot-event.component';
 import { ImageDebuggingModalComponent } from './image-debugging-modal/image-debugging-modal.component';
 import { ImageDebuggingRoutingModule } from './image-debugging-routing.module';
 import { GoodCharacteristicCellValueComponent } from './image-debugging/good-table-vals/good-cell-value/good-cell-value/good-cell-value.component';
@@ -32,6 +34,8 @@ import { ImageDebuggingComponent } from './image-debugging/image-debugging.compo
     GoodCharacteristicCellValueComponent,
     GoodPhotosComponent,
     GoodPhotoComponent,
+    AllExpedientComponent,
+    AllLotEventComponent,
   ],
   imports: [
     CommonModule,
