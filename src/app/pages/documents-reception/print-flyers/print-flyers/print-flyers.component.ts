@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -15,6 +15,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 //Services
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 //Components
+import { DatePipe } from '@angular/common';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   FilterParams,
@@ -47,13 +48,15 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
   maxDateStart: Date;
   minDateEnd: Date;
 
+  @Output() submit = new EventEmitter();
   constructor(
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
     private siabService: SiabService,
     private fb: FormBuilder,
     private serviceDeleg: DelegationService,
-    private printFlyersService: PrintFlyersService
+    private printFlyersService: PrintFlyersService,
+    private datePipe: DatePipe
   ) {
     super();
     this.maxDateStart = new Date(
@@ -143,6 +146,10 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
 
   confirm(): void {
     this.loading = true;
+    this.submit.emit(this.flyersForm);
+    let dateInit = this.datePipe.transform(this.PF_FECINI.value, 'yyyy-MM-dd');
+
+    let dateEnd = this.datePipe.transform(this.PF_FECFIN.value, 'yyyy-MM-dd');
 
     let params = {
       PN_NODELEGACION: this.PN_NODELEGACION.value,
@@ -151,12 +158,10 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
       PN_VOLANTEINI: this.PN_VOLANTEINI.value,
       PN_VOLANTEFIN: this.PN_VOLANTEFIN.value,
       PN_TIPOASUNTO: this.PN_TIPOASUNTO.value,
-      PF_FECINI: this.PF_FECINI.value,
-      PF_FECFIN: this.PF_FECFIN.value,
+      PF_FECINI: dateInit,
+      PF_FECFIN: dateEnd,
       P_IDENTIFICADOR: this.P_IDENTIFICADOR.value,
     };
-
-    console.log('params', params);
 
     this.siabService
       .fetchReport('RCONCOGVOLANTESRE', params)
@@ -176,7 +181,6 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
             class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
             ignoreBackdropClick: true, //ignora el click fuera del modal
           };
-          console.log(config);
           this.modalService.show(PreviewDocumentsComponent, config);
         } else {
           const blob = new Blob([response], { type: 'application/pdf' });
