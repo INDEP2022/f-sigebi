@@ -9,7 +9,7 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
-import { ICaptureDig } from 'src/app/core/models/ms-documents/documents';
+import { ICaptureDigFilter } from 'src/app/core/models/ms-documents/documents';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
@@ -44,23 +44,40 @@ export class CaptureFilterComponent implements OnInit {
   maxDate = new Date();
   from: string = '';
   to: string = '';
+  activeRadio: boolean = true;
   isLoading = false;
-  captura: ICaptureDig;
-  capturasDig: ICaptureDig[] = [];
+  captura: ICaptureDigFilter;
+  capturasDig: ICaptureDigFilter[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
-  // form = this.fb.group({
-  //   de: [null, [Validators.required]],
-  //   a: [null, [Validators.required]],
-  //   fecha: [null, [Validators.required]],
-  //   cordinador: [null, [Validators.required]],
-  //   usuario: [null, [Validators.required]],
-  //   transference: [null, Validators.required],
-  //   station: [null, Validators.required],
-  //   authority: [null, Validators.required],
-  //   clave: [null, [Validators.required]],
-  //   tipoVolante: [null, [Validators.required]],
-  //   tipoEvento: [null],
-  // });
+
+  get cvCoors() {
+    return this.formCapture.get('cvCoors');
+  }
+  get cveJobExternal() {
+    return this.formCapture.get('cveJobExternal');
+  }
+  get user() {
+    return this.formCapture.get('user');
+  }
+  get fecStart() {
+    return this.formCapture.get('fecStart');
+  }
+  get fecEnd() {
+    return this.formCapture.get('fecEnd');
+  }
+  get tipoVolante() {
+    return this.formCapture.get('tipoVolante');
+  }
+  get noTransfere() {
+    return this.formCapture.get('noTransfere');
+  }
+  get noStation() {
+    return this.formCapture.get('noStation');
+  }
+  get noAuthority() {
+    return this.formCapture.get('noAuthority');
+  }
+
   flyerTypes = ['A', 'AP', 'AS', 'AT', 'OF', 'P', 'PJ', 'T  '];
   eventTypes = [
     'Entrega-Comercialización',
@@ -96,42 +113,37 @@ export class CaptureFilterComponent implements OnInit {
   }
   prepareForm() {
     this.formCapture = this.fb.group({
-      coordinacion_regional: [null],
-      cve_oficio_externo: [null],
-      no_expediente: [null],
-      no_volante: [null],
-      no_tramite: [null],
-      urecepcion: [null],
-      programa: [null],
-      finicia: [null],
-      fmaxima: [null],
-      cumplio: [null],
+      cvCoors: [null],
+      cveJobExternal: [null],
+      user: [null],
+      fecStart: [null],
+      fecEnd: [null],
       tipoVolante: [null],
-      transference: [null],
-      station: [null],
-      authority: [null],
+      noTransfere: [null],
+      noStation: [null],
+      noAuthority: [null],
     });
   }
 
-  getDelegations(params: ListParams) {
-    this.delegationService.getAll(params).subscribe({
-      next: res => (this.delegations = new DefaultSelect(res.data, res.count)),
-      error: () => {
-        this.delegations = new DefaultSelect([], 0);
-      },
-    });
-  }
+  // getDelegations(params: ListParams) {
+  //   this.delegationService.getAll(params).subscribe({
+  //     next: res => (this.delegations = new DefaultSelect(res.data, res.count)),
+  //     error: () => {
+  //       this.delegations = new DefaultSelect([], 0);
+  //     },
+  //   });
+  // }
 
-  getSubjects(params: ListParams) {
-    this.affairService.getAll(params).subscribe({
-      next: data => {
-        this.affairName = new DefaultSelect(data.data, data.count);
-      },
-      error: () => {
-        this.affairName = new DefaultSelect();
-      },
-    });
-  }
+  // getSubjects(params: ListParams) {
+  //   this.affairService.getAll(params).subscribe({
+  //     next: data => {
+  //       this.affairName = new DefaultSelect(data.data, data.count);
+  //     },
+  //     error: () => {
+  //       this.affairName = new DefaultSelect();
+  //     },
+  //   });
+  // }
 
   getTransference(params: ListParams) {
     this.issuingInstitutionService.getTransfers(params).subscribe({
@@ -169,7 +181,7 @@ export class CaptureFilterComponent implements OnInit {
     let params = new FilterParams();
     params.page = $params.page;
     params.limit = $params.limit;
-    const area = this.formCapture.controls['urecepcion'].value;
+    const area = this.formCapture.controls['user'].value;
     params.search = $params.text;
     this.getAllUsers(params).subscribe();
   }
@@ -182,10 +194,10 @@ export class CaptureFilterComponent implements OnInit {
       }),
       tap(response => {
         if (response.count > 0) {
-          const name = this.formCapture.get('urecepcion').value;
+          const name = this.formCapture.get('user').value;
           const data = response.data.filter(m => m.id == name);
           console.log(data);
-          this.formCapture.get('urecepcion').patchValue(data[0]);
+          this.formCapture.get('user').patchValue(data[0]);
         }
         this.users$ = new DefaultSelect(response.data, response.count);
       })
@@ -254,8 +266,8 @@ export class CaptureFilterComponent implements OnInit {
         }
       });
   }
-  find(find: ICaptureDig) {
-    this.documentsService.getDocCapture(find).subscribe({
+  find(find: ICaptureDigFilter) {
+    this.documentsService.getDocCaptureFind(find).subscribe({
       next: data => {
         this.capturasDig = data.data;
         this.consultEmmit.emit(this.formCapture);
