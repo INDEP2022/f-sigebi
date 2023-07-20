@@ -336,6 +336,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loading = false;
     this.prepareForm();
     this.activatedRoute.queryParams.subscribe({
       next: param => {
@@ -588,6 +589,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
 
   clearFilter() {
     this.bodyGoodCharacteristics = {};
+    this.noExpedient = null;
     this.actualGoodNumber = null;
     this.selectedBad = null;
     this.service.files = [];

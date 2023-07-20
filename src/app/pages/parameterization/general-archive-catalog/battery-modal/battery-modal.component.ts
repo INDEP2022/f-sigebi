@@ -9,6 +9,7 @@ import { ISaveValue } from 'src/app/core/models/catalogs/save-value.model';
 //service
 import { SaveValueService } from 'src/app/core/services/catalogs/save-value.service';
 import { BatterysService } from 'src/app/core/services/save-values/battery.service';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -42,9 +43,23 @@ export class BatteryModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.batteryForm = this.fb.group({
-      storeCode: [null, [, Validators.min(0)]],
-      idBattery: [null, [Validators.min(0)]],
-      description: [null, [Validators.required]],
+      storeCode: [null, [Validators.min(0)]],
+      idBattery: [
+        null,
+        [
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(5),
+          Validators.required,
+        ],
+      ],
+      description: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+          Validators.required,
+        ],
+      ],
       status: [
         null,
         [

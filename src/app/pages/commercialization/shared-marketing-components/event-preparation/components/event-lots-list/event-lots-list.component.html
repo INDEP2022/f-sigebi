@@ -60,6 +60,7 @@
           role="menu"
           aria-labelledby="button-basic">
           <event-goods-lots-list-actions
+            [params]="params"
             [lotSelected]="lotSelected"
             [parameters]="parameters"
             [eventForm]="eventForm"></event-goods-lots-list-actions>
@@ -93,9 +94,9 @@
 </div>
 
 <input
-  #fileInput
+  #validFileInput
   [formControl]="excelControl"
   [style.display]="'none'"
   type="file"
-  (change)="fileChange($event)"
-  accept="image/*" />
+  (change)="valFileChange($event)"
+  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
