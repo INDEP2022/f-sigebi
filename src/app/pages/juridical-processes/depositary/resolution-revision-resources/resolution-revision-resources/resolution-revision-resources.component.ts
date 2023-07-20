@@ -1,8 +1,17 @@
 /** BASE IMPORT */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { RESOLUTION_REVISION_COLUMNS } from './resolution-revision-columns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -20,52 +29,45 @@ export class ResolutionRevisionResourcesComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
-  tableSettings = {
-    actions: {
-      columnTitle: '',
-      add: false,
-      edit: false,
-      delete: false,
-    },
-    hideSubHeader: true, //oculta subheaader de filtro
-    mode: 'external', // ventana externa
-
-    columns: {
-      noBien: { title: 'No. Bien' },
-      descripcion: { title: 'Descripción' },
-      cantidad: { title: 'Cantidad' },
-      estatus: { title: 'Estatus' },
-      motivoRecursoRevision: { title: 'Motivo de Recurso de Revisión' },
-      fechaRecepcion: { title: 'Fecha de Recepción' },
-      fechaEmisionResolucion: { title: 'Fecha de Emisión de Resolución' },
-      observacionesRecursoRevision: {
-        title: 'Observaciones del Recurso de Revisión',
-      },
-    },
-  };
-  // Data table
-  dataTable = [
-    {
-      noBien: 'DATA',
-      descripcion: 'DATA',
-      cantidad: 'DATA',
-      estatus: 'DATA',
-      motivoRecursoRevision: 'DATA',
-      fechaRecepcion: 'DATA',
-      fechaEmisionResolucion: 'DATA',
-      observacionesRecursoRevision: 'DATA',
-    },
-  ];
+  @Output() loadingData = new EventEmitter<boolean>();
   showResolucion: boolean = false;
   public form: FormGroup;
+  data: any[] = [];
+  selectedRow: any;
+  formLoading = false;
+  params = new BehaviorSubject(new ListParams());
+  totalItems: number = 0;
 
   constructor(private fb?: FormBuilder) {
     super();
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: false,
+        delete: false,
+        add: false,
+        position: 'right',
+      },
+      columns: RESOLUTION_REVISION_COLUMNS,
+    };
   }
 
   ngOnInit(): void {
     this.startApp();
-    this.loading = true;
+
+    this.data.push({
+      noBien: 'DATA',
+      descripcion: 'DATA',
+      cantidad: 'DATA',
+      estatus: 'DATA',
+      motivoRecRevision: 'DATA',
+      fechaRecepcion: 'DATA',
+      fechaEmResolucion: 'DATA',
+      obRecursoRevision: 'DATA',
+    });
+    this.totalItems = Number(this.data.length);
   }
 
   startApp() {
@@ -84,5 +86,15 @@ export class ResolutionRevisionResourcesComponent
   btnCloseResolucion() {
     console.log(this.form.value);
     this.showResolucion = false;
+  }
+
+  onRowSelect(event: any) {
+    this.selectedRow = event.data;
+    //console.log(this.selectedRow);
+  }
+
+  formData(doc: any) {
+    console.log('object -> ', doc);
+    this.selectedRow = doc;
   }
 }
