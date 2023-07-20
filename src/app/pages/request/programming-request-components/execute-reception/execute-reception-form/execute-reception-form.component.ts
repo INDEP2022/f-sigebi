@@ -737,6 +737,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.name'] = 'Destino';
     this.genericService.getAll(params.getValue()).subscribe({
       next: response => {
+        console.log('response', response);
         this.transfersDestinity = response.data;
       },
       error: error => {},
@@ -1135,6 +1136,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   updateInfo(data: IGood) {
+    console.log('data', data);
     this.alertQuestion(
       'question',
       'Confirmación',
@@ -1157,9 +1159,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           stateConservationSae: data.stateConservationSae,
           uniqueKey: data.uniqueKey,
           unitMeasure: data.unitMeasure,
+          saeDestiny: data.transferentDestiny,
         };
+        console.log('info', info);
         this.goodService.updateByBody(info).subscribe({
           next: response => {
+            this.alert('success', 'Correcto', 'Bien actualizado correctamente');
             //this.getInfoGoodsProgramming();
           },
           error: error => {},
@@ -1932,7 +1937,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     if (this.goodIdSelect) {
       let config = {
         ...MODAL_CONFIG,
-        class: 'modalSizeXL modal-dialog-centered table-responsive',
+        class: 'modalSizeXL modal-dialog-centered ',
       };
       config.initialState = {
         good: this.goodIdSelect,
@@ -2331,8 +2336,21 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   showGood(data: IGood) {
-    let report = '/showReport?nombreReporte=Etiqueta_TDR.jasper&CID_BIEN=';
-    report += [data.goodId];
+    console.log('antony');
+    let config: ModalOptions = {
+      initialState: {
+        showTDR: true,
+        goodId: data.goodId,
+        programming: this.programming,
+        callback: (next: boolean) => {
+          if (next) {
+          }
+        },
+      },
+      class: 'modal-xl modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowReportComponentComponent, config);
   }
 
   delete(receipt: IReceipt) {

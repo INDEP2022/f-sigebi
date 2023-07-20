@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
@@ -34,7 +35,8 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
     private programmingGoodService: ProgrammingGoodService,
     private userProcessService: UserProcessService,
     private showHideErrorInterceptorService: showHideErrorInterceptorService,
-    private programmingService: ProgrammingRequestService
+    private programmingService: ProgrammingRequestService,
+    private authService: AuthService
   ) {
     super();
     this.settings = {
@@ -78,20 +80,22 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
 
   getUsers() {
     this.loading = true;
-    this.params.getValue()['filter.delegationreg'] = this.delegationUserLog;
-    this.userProcessService
-      .getAllUsersWithProgramming(this.params.getValue())
-      .subscribe({
-        next: response => {
-          this.filterUsersProg(response.data);
-          this.loading = false;
-        },
-        error: error => {
-          this.loading = false;
-          this.alert('warning', 'Usuarios no encontrados', '');
-          this.totalItems = 0;
-        },
-      });
+    //
+    const user = this.authService.decodeToken();
+    const deleRegionalId = user.delegacionreg;
+    this.params.getValue()['filter.regionalDelegation'] = deleRegionalId;
+    this.userProcessService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        console.log('users', response);
+        this.filterUsersProg(response.data);
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.alert('warning', 'Usuarios no encontrados', '');
+        this.totalItems = 0;
+      },
+    });
   }
 
   //Filtrar los usuarios que ya estén programados
