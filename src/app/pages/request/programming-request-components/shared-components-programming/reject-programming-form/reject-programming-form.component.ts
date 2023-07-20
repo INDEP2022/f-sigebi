@@ -136,6 +136,7 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
                 resolve(true);
               },
               error: error => {
+                console.log('error', error);
                 resolve(false);
               },
             });
