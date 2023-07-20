@@ -240,27 +240,27 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
 
     switch (process) {
       case 'register-request':
-        /* if (affair == 13) { */
-        this.regDocForm = true;
-        this.regDocView = false;
-        this.searchRequestSimGoods = true;
-        this.selectGoods = false;
-        this.viewSelectedGoods = false;
-        this.guidelines = false;
-        this.docRequest = false;
-        this.expRequest = true;
-        this.saveRequest = true;
-        this.dictumValidate = false;
+        if (affair == 13) {
+          this.regDocForm = true;
+          this.regDocView = false;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = false;
+          this.viewSelectedGoods = false;
+          this.guidelines = false;
+          this.docRequest = false;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.dictumValidate = false;
 
-        this.turnReq = true;
-        this.createReport = false;
-        this.rejectReq = false;
-        /* } else if (affair == 10) {
+          this.turnReq = true;
+          this.createReport = false;
+          this.rejectReq = false;
+        } else if (affair == 10) {
           this.searchRequestSimGoods = true;
           this.regDocForm = true;
           this.selectGoods = true;
           this.expRequest = true;
-        } */
+        }
 
         break;
       case 'guidelines-review':
