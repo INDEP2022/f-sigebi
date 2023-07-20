@@ -2,7 +2,7 @@ import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filt
 
 export const MOVEMENTS_COLUMNS = {
   goodnumber: {
-    title: 'No Bien',
+    title: 'No. Bien',
     type: 'number',
     sort: false,
   },
