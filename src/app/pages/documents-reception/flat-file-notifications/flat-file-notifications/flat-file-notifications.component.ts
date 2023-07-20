@@ -69,13 +69,6 @@ export class FlatFileNotificationsComponent extends BasePage implements OnInit {
       end.getUTCMonth() + 1
     }-0${end.getDate()}`;
 
-    // const body = {
-    //  delegation: this.notificationsForm.get('delegation').value,
-    //  subdelegation: this.notificationsForm.get('subdelegation').value,
-    //  from: this.notificationsForm.get('from').value,
-    //  to: this.notificationsForm.get('to').value,
-    // }
-
     this.fileNotificationServices
       .getFileNotification(
         this.notificationsForm.get('delegation').value,
