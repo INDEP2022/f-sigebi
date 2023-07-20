@@ -233,8 +233,14 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
           this.tipoConv = params['tipoConv'] || null;
           this.pGoodFatherNumber = params['pGoodFatherNumber'] || null;
           console.log(this.pGoodFatherNumber);
-          this.fetchItems();
         });
+        console.log(this.tipoConv);
+        if (this.tipoConv === 2) {
+          this.fetchItems();
+        } else {
+          this.alert('warning', `Tipo debe ser Derivado`, '');
+          this.close();
+        }
       },
       error: err => {
         console.log(err);
@@ -262,6 +268,11 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
             this.alert('error', 'ERROR', err.error.message);
           },
         });
+        this.serviceGood
+          .getFolioActaConversion(this.actConvertion)
+          .subscribe(item => {
+            this.numberFoli = item.data[0].folio_universal;
+          });
       } else {
         console.log(this.user.usuario.delegationNumber);
         const payload = {
@@ -273,11 +284,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
           console.log(item);
           this.selectItem2 = item;
           this.items = [{ cve_acta_conv: item }];
-          // this.serviceGood
-          //   .getFolioActaConversion(this.selectItem2)
-          //   .subscribe(item => {
-          //     this.numberFoli = item.data[0].folio_universal;
-          //   });
+
           this.selectedIndex = 0;
           this.flagAsignaActa = true;
         });
@@ -308,6 +315,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
       //     });
       //     console.log(item);
       //   });
+    } else {
     }
   }
 
