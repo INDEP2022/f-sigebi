@@ -40,6 +40,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   flagActa: boolean = false;
   flagFinConversion: boolean = false;
   flagCargaImagenes: boolean = false;
+  flagUpdate: boolean = false;
+  flagCambia: boolean = false;
+  flagGoodNew: boolean = false;
+  flagGoodDelete: boolean = false;
   //Variables de BLK_TIPO_BIEN
 
   no_bien_blk_tipo_bien: number;
@@ -49,7 +53,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   good: any;
   relDocuments: any;
   bkConversionsCveActaCon: any;
-
+  typeAction: boolean = true;
   get id() {
     return this.form.get('id');
   }
@@ -147,6 +151,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.buildForm();
     this.pw();
+    // this.tipo.disable();
     //Inicializando el modal
   }
   onBeforeUnload(): void {
@@ -175,7 +180,9 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.searchGoodSon(data.goodFatherNumber);
             this.searchSituation(data.goodFatherNumber);
             this.searchGoodRelDocuments(data.goodFatherNumber);
-            this.getAllGoodChild(data.goodFatherNumber);
+            if (data.typeConv === 2) {
+              this.getAllGoodChild(data.goodFatherNumber);
+            }
           }
         },
       }, //pasar datos por aca
@@ -321,10 +328,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.searchStatus(res.data[0]['status']);
             this.getAttributesGood(res.data[0]['goodClassNumber']);
 
-            // this.flagActa = true;
-            // this.flagCargMasiva = false;
-            // this.flagCargaImagenes = false;
-            // this.flagFinConversion = false;
+            this.flagActa = false;
+            this.flagCargMasiva = true;
+            this.flagCargaImagenes = true;
+            this.flagFinConversion = true;
+            this.flagCambia = true;
+            this.flagUpdate = true;
+            this.flagGoodNew = true;
+            this.flagGoodDelete = true;
           } else if (conversionData.typeConv === '1') {
             this.observation.setValue('');
             this.descriptionSon.setValue('');
@@ -336,9 +347,9 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.searchStatus('');
 
             this.flagActa = false;
-            this.flagCargMasiva = true;
-            this.flagCargaImagenes = true;
-            this.flagFinConversion = true;
+            this.flagCargMasiva = false;
+            this.flagCargaImagenes = false;
+            this.flagFinConversion = false;
           }
 
           this.lastIdConversion = value.idConversion;
@@ -765,6 +776,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         }
       },
     };
+    console.log(this.form.value.tipo);
     this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
       queryParams: {
         actConvertion: this.form.value.actConvertion,

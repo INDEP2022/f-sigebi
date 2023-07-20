@@ -52,12 +52,30 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
           Validators.min(0),
         ],
       ],
-      id: [null, [Validators.pattern(NUMBERS_PATTERN), Validators.min(0)]],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
+      ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
-      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      status: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
       registerNumber: [null, []],
     });
     if (this.shelves != null) {

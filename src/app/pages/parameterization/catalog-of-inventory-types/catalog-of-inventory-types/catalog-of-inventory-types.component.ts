@@ -16,7 +16,7 @@ export class CatalogOfInventoryTypesComponent
 {
   form: FormGroup = new FormGroup({});
   edit: boolean = false;
-  title: string = 'CATÁLOGO DE TIPOS DE INVENTARIO';
+  title: string = 'TIPO DE INVENTARIO';
   allotment: any;
   constructor(
     private fb: FormBuilder,
@@ -68,7 +68,7 @@ export class CatalogOfInventoryTypesComponent
       }
       this.inventoryServ.getInventotyById(cveTypeInventory).subscribe({
         next: () => {
-          this.onLoadToast(
+          this.alert(
             'error',
             `La clave ${cveTypeInventory} ya existe, favor de verificar.`,
             ''
@@ -76,11 +76,7 @@ export class CatalogOfInventoryTypesComponent
         },
         error: err => {
           if (err.status === 400) {
-            this.onLoadToast(
-              'info',
-              `La clave ${cveTypeInventory} es valida`,
-              ''
-            );
+            this.alert('info', `La clave ${cveTypeInventory} es valida`, '');
             this.insert();
           }
         },
@@ -98,7 +94,7 @@ export class CatalogOfInventoryTypesComponent
             this.handleSuccess();
           },
           error: err => {
-            this.onLoadToast('warning', err.error.message, '');
+            this.alert('warning', err.error.message, '');
           },
         });
     } else {
@@ -107,7 +103,7 @@ export class CatalogOfInventoryTypesComponent
           this.handleSuccess();
         },
         error: err => {
-          this.onLoadToast('warning', err.error.message, '');
+          this.alert('warning', err.error.message, '');
         },
       });
     }
@@ -121,7 +117,7 @@ export class CatalogOfInventoryTypesComponent
       if (question.isConfirmed) {
         this.inventoryServ.remove(event).subscribe({
           next: () => {
-            this.onLoadToast('success', 'Eliminado correctamente', '');
+            this.alert('success', 'Eliminado correctamente', '');
           },
           error: err => this.onLoadToast('error', err.error.message, ''),
         });
@@ -131,7 +127,7 @@ export class CatalogOfInventoryTypesComponent
   handleSuccess() {
     this.loading = false;
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `${message} Correctamente`, this.title);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

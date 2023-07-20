@@ -128,7 +128,7 @@ export class ListTypeOfInventoryComponent extends BasePage implements OnInit {
       },
       error: err => {
         this.loading = false;
-        this.onLoadToast('error', err.error.message, '');
+        this.alert('error', err.error.message, '');
       },
     });
   }
@@ -149,7 +149,7 @@ export class ListTypeOfInventoryComponent extends BasePage implements OnInit {
       },
       error: err => {
         this.loading = false;
-        this.onLoadToast('error', err.error.message, '');
+        this.alert('error', err.error.message, '');
       },
     });
   }
@@ -186,8 +186,7 @@ export class ListTypeOfInventoryComponent extends BasePage implements OnInit {
                         .pipe(takeUntil(this.$unSubscribe))
                         .subscribe(() => this.getInventory());
                     },
-                    error: err =>
-                      this.onLoadToast('error', err.error.message, ''),
+                    error: err => this.alert('error', err.error.message, ''),
                   });
               }
             });
@@ -205,10 +204,10 @@ export class ListTypeOfInventoryComponent extends BasePage implements OnInit {
         this.inventoryServ.remove(typeDetail.noTypeInventory).subscribe({
           next: () => {
             this.params1 = new BehaviorSubject<ListParams>(new ListParams());
-            this.alert('success', 'Ha sido eliminado', '');
+            this.alert('success', 'Registro Eliminado Correctamente', '');
             this.getInventoryType();
           },
-          error: err => this.onLoadToast('error', err.error.message, ''),
+          error: err => this.alert('error', err.error.message, ''),
         });
       }
     });

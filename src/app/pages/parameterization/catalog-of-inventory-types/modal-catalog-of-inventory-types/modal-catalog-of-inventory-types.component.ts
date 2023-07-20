@@ -15,7 +15,7 @@ export class ModalCatalogOfInventoryTypesComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'DETALLE INVENTARIO';
+  title: string = 'INVENTARIO DETALLADO';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   allotment: any;
@@ -72,7 +72,7 @@ export class ModalCatalogOfInventoryTypesComponent
         },
         error: err => {
           this.loading = false;
-          this.onLoadToast('error', 'Error', err.error.message);
+          this.alert('error', 'Error', err.error.message);
         },
       });
     } else {
@@ -82,7 +82,7 @@ export class ModalCatalogOfInventoryTypesComponent
         },
         error: err => {
           this.loading = false;
-          this.onLoadToast('error', 'Error', err.error.message);
+          this.alert('error', 'Error', err.error.message);
         },
       });
     }

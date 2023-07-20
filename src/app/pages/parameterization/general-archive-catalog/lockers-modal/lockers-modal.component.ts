@@ -57,12 +57,32 @@ export class LockersModalComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(NUMBERS_PATTERN), Validators.min(0)],
       ],
-      id: [null, [Validators.pattern(NUMBERS_PATTERN), Validators.min(0)]],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.min(0),
+          Validators.maxLength(5),
+        ],
+      ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
-      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      status: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          ,
+          Validators.maxLength(1),
+        ],
+      ],
       numRegister: [null, []],
     });
     if (this.locker != null) {

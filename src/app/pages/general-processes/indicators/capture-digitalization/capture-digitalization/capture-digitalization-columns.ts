@@ -1,44 +1,52 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+
 export const GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS = {
-  regional: {
+  coordinacion_regional: {
     title: 'Regional',
     sort: false,
   },
-  cve: {
+  cve_oficio_externo: {
     title: 'Cve Oficio Externo',
     sort: false,
   },
-  expediente: {
-    title: 'No Expediente',
+  no_expediente: {
+    title: 'No. Expediente',
     sort: false,
   },
-  noVolante: {
-    title: 'No Volante',
+  no_volante: {
+    title: 'No. Volante',
     sort: false,
   },
-  tramite: {
+  no_tramite: {
     title: 'No Tramite',
     sort: false,
   },
-  usuario: {
+  urecepcion: {
     title: 'Usuario',
     sort: false,
   },
-  page: {
-    title: 'Fecha page Ind.',
+  programa: {
+    title: 'Programa',
     sort: false,
   },
-  fin: {
+  finicia: {
+    title: 'Fecha Inicio Ind.',
+    sort: false,
+  },
+  fmaxima: {
     title: 'Fecha Fin Ind.',
     sort: false,
   },
-  max: {
-    title: 'Fecha Máxima',
+  cumplio: {
+    title: 'Cumplió',
     sort: false,
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
   },
-  // cumplio: {
-  //     title: 'Cumplio',
-  //     sort: false
-  // },
 };
 function getData() {
   const data = [];
