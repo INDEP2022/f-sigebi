@@ -53,7 +53,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   good: any;
   relDocuments: any;
   bkConversionsCveActaCon: any;
-
+  typeAction: boolean = true;
   get id() {
     return this.form.get('id');
   }
@@ -151,7 +151,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.buildForm();
     this.pw();
-    this.tipo.disable();
+    // this.tipo.disable();
     //Inicializando el modal
   }
   onBeforeUnload(): void {
@@ -180,7 +180,9 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.searchGoodSon(data.goodFatherNumber);
             this.searchSituation(data.goodFatherNumber);
             this.searchGoodRelDocuments(data.goodFatherNumber);
-            this.getAllGoodChild(data.goodFatherNumber);
+            if (data.typeConv === 2) {
+              this.getAllGoodChild(data.goodFatherNumber);
+            }
           }
         },
       }, //pasar datos por aca
@@ -326,7 +328,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.searchStatus(res.data[0]['status']);
             this.getAttributesGood(res.data[0]['goodClassNumber']);
 
-            this.flagActa = true;
+            this.flagActa = false;
             this.flagCargMasiva = true;
             this.flagCargaImagenes = true;
             this.flagFinConversion = true;
@@ -774,6 +776,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         }
       },
     };
+    console.log(this.form.value.tipo);
     this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
       queryParams: {
         actConvertion: this.form.value.actConvertion,
