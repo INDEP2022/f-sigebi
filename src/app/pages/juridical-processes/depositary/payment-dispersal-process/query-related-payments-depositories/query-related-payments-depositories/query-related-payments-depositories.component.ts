@@ -714,13 +714,14 @@ export class QueryRelatedPaymentsDepositoriesComponent
   ) {
     this.sendSirsae = {
       process: 1,
-      appointment: Number(this.depositaryAppointment.appointmentDate),
+      appointment: Number(this.depositaryAppointment.appointmentNum),
       idorderincome: String(dataComplete[count].entryorderid),
       validSystem: dataComplete[count].validSystem,
       shipmentOi: dataComplete[count].sent_oi,
       peopleNumber: Number(dataComplete[count].client_id),
       idPay: dataComplete[count].payId,
     };
+    console.log(this.sendSirsae);
     this.svQueryRelatedPaymentsService.sendSirsae(this.sendSirsae).subscribe({
       next: (res: any) => {
         this.currentItemSirsae++;
