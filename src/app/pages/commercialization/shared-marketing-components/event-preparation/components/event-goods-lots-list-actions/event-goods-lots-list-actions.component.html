@@ -8,16 +8,18 @@
     Exportar a Excel
   </button>
 </li>
-<li role="menuitem" (click)="onLotifyFromExcel()">
+<li role="menuitem" (click)="onLotifyGoodsFromExcel()">
   <button type="button" class="dropdown-item">
     Lotificar bienes desde Excel
   </button>
 </li>
 <li role="menuitem">
-  <button type="button" class="dropdown-item">Crear Acta Evento Público</button>
+  <button type="button" class="dropdown-item" (click)="onCreateCertificate()">
+    Crear Acta Evento Público
+  </button>
 </li>
 <li role="menuitem">
-  <button type="button" class="dropdown-item">
+  <button type="button" class="dropdown-item" (click)="onLotifyCustomers()">
     Carga de Clientes desde Excel
   </button>
 </li>
@@ -48,5 +50,21 @@
   <button type="button" class="dropdown-item">Genera Oficio Avalúo</button>
 </li>
 <li role="menuitem">
-  <button type="button" class="dropdown-item">Verifica Mandado</button>
+  <button type="bulotifyGoodsChangetton" class="dropdown-item">
+    Verifica Mandado
+  </button>
 </li>
+
+<input
+  type="file"
+  (change)="lotifyGoodsChange($event)"
+  [formControl]="goodsLotifyControl"
+  [style.display]="'none'"
+  #goodsLotifyInput />
+
+<input
+  type="file"
+  (change)="onCustomersImport($event)"
+  [formControl]="goodsLotifyControl"
+  [style.display]="'none'"
+  #customersImportInput />
