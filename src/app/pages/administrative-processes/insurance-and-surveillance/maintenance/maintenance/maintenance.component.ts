@@ -146,9 +146,17 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       next: response => {
         console.log({ response });
         if (response.P_EST_PROCESO === 1) {
-          this.alert('success', 'Cambiar Periodos', response.P_MSG_PROCESO);
+          this.alert(
+            'success',
+            'Cambio Bienes de Número Aleatorio',
+            response.P_MSG_PROCESO
+          );
         } else {
-          this.alert('warning', 'Cambiar Periodos', response.P_MSG_PROCESO);
+          this.alert(
+            'warning',
+            'Cambio Bienes de Número Aleatorio',
+            response.P_MSG_PROCESO
+          );
         }
       },
       error: error => {
