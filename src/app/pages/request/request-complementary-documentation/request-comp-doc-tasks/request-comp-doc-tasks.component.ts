@@ -188,7 +188,11 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
       'Turnar'
     ).then(question => {
       if (question.isConfirmed) {
-        this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        if (this.process == 'similar-good-register-documentation') {
+          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        } else {
+          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        }
       }
     });
   }
@@ -324,6 +328,22 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.viewSelectedGoods = false;
         this.guidelines = false;
         this.docRequest = false;
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.dictumValidate = false;
+
+        this.turnReq = true;
+        this.createReport = false;
+        this.rejectReq = false;
+        break;
+      case 'similar-good-notify-transferor':
+        this.regDocForm = false;
+        this.regDocView = true;
+        this.searchRequestSimGoods = false;
+        this.selectGoods = false;
+        this.viewSelectedGoods = true;
+        this.guidelines = false;
+        this.docRequest = true;
         this.expRequest = true;
         this.saveRequest = true;
         this.dictumValidate = false;

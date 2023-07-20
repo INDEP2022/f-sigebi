@@ -54,6 +54,8 @@ export class RegisterDocumentationFormComponent
   selectOriginInfo = new DefaultSelect<any>();
   selectMinPub = new DefaultSelect<any>();
 
+  displayNotifyMails: boolean = false;
+
   /* injections */
   private readonly requestService = inject(RequestService);
   private readonly affairService = inject(AffairService);
@@ -74,6 +76,7 @@ export class RegisterDocumentationFormComponent
     this.getTypeExpedient(new ListParams());
     this.getOriginInfo(new ListParams());
     this.getRequestInfo();
+    this.displayNotifyMailsInput();
   }
 
   prepareForm() {
@@ -337,5 +340,13 @@ export class RegisterDocumentationFormComponent
         console.log('no se encontraron datos en asuntos ', error);
       },
     });
+  }
+
+  /* METODO PARA VISUALIZAR EL INPUT NOTIFICACIONES ELECTRONICAS
+  =============================================================== */
+  displayNotifyMailsInput() {
+    if (this.process == 'similar-good-register-documentation') {
+      this.displayNotifyMails = true;
+    }
   }
 }

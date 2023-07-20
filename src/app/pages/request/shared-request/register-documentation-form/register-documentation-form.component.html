@@ -9,7 +9,7 @@
         Datos de la Solicitud
       </h6>
       <ng-template #titleMail>
-        <h6>Correo(s)</h6>
+        <h6>Correo(s) Electr&oacute;nicos(s) Notificaci&oacute;n</h6>
       </ng-template>
     </div>
     <div class="col-md-6">
@@ -33,15 +33,13 @@
     </div>
   </div>
   <br />
-  <div
-    class="row pt-5"
-    *ngIf="process == 'similar-good-register-documentation'">
+  <div class="row pt-5" *ngIf="displayNotifyMails == true">
     <div class="col-md-6">
       <form-field
         [control]="registerForm.get('emailNotification')"
-        label="Observaciones">
+        label="Correo(s) Electr&oacute;nicos(s) Notificaci&oacute;n">
         <textarea
-          rows="5"
+          rows="4"
           formControlName="emailNotification"
           maxlength="1000"
           class="form-control"></textarea>
@@ -49,6 +47,11 @@
     </div>
   </div>
   <hr />
+  <div class="row" *ngIf="displayNotifyMails == true">
+    <div class="col-md-12">
+      <h6>Datos de la Solicitud</h6>
+    </div>
+  </div>
   <div class="row mt-5" *ngIf="priorityCheck == true">
     <div class="col-md-3">
       <form-field
@@ -290,7 +293,7 @@
     <div class="col-md-4">
       <form-field
         [control]="registerForm.get('transferEntNotes')"
-        label="Notas Ent. Trasferente">
+        label="Notas Ent&#46; Trasferente">
         <textarea
           rows="3"
           formControlName="transferEntNotes"
