@@ -78,4 +78,9 @@ export class LotService extends HttpService {
   updateTmpComer(body: { pEvent: string | number; pdirec: string }) {
     return this.post('apps/query-get-act-tmp-eat', body);
   }
+
+  getByLotEventPhoto(good: number, params: ListParams) {
+    const route = `${LotEndpoints.GoodByLotsEvent}?filter.good=${good}`;
+    return this.get(route, params);
+  }
 }

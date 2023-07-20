@@ -11,7 +11,7 @@ export const USER_COLUMNS = {
     sort: false,
   },
 
-  employeetype: {
+  employeeType: {
     title: 'Tipo Usuario',
     type: 'string',
     sort: false,

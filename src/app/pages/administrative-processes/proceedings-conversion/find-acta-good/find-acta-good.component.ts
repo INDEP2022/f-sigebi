@@ -12,9 +12,11 @@ import { IActasConversion } from 'src/app/core/models/ms-convertiongood/converti
 import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings';
+import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ACTAS } from '../proceedings-conversion/proceedings-conversion-columns';
 import { IInitFormProceedingsBody } from '../proceedings-conversion/proceedings-conversion.component';
+import { ActasConvertionCommunicationService } from '../services/proceedings-conversionn';
 @Component({
   selector: 'app-find-acta-good',
   templateUrl: './find-acta-good.component.html',
@@ -38,8 +40,10 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
   dataTableGoodsActa: LocalDataSource = new LocalDataSource();
   dataFactActas: LocalDataSource = new LocalDataSource();
   @Output() onSave = new EventEmitter<any>();
+  @Output() cleanForm = new EventEmitter<any>();
   @Input() idConversion: number | string;
-
+  actaActual: any;
+  valDelete: boolean = false;
   // @Output() onConfirm = new EventEmitter<any>();
   constructor(
     private modalRef: BsModalRef,
@@ -49,13 +53,20 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
     private opcion: ModalOptions,
     private convertiongoodService: ConvertiongoodService,
     protected goodprocessService: GoodProcessService,
-    private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService
+    private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
+    private detailProceeDelRecService: DetailProceeDelRecService,
+    private sharedService: ActasConvertionCommunicationService
   ) {
     super();
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
-      actions: false,
+      actions: {
+        title: 'Acciones',
+        delete: true,
+        edit: false,
+        add: false,
+      },
       columns: {
         ...ACTAS,
       },
@@ -105,6 +116,10 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
   }
 
   return() {
+    console.log('SIIII', this.valDelete);
+    if (this.valDelete) {
+      this.ejecutarFuncionDesdeModal(true);
+    }
     this.modalRef.hide();
   }
 
@@ -172,5 +187,62 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
     //     },
     //   }
     // );
+  }
+
+  showDeleteMsg($event: any) {
+    const data = $event.data;
+    this.detailProceeDelRecService.getGoodsByProceedings(data.id).subscribe({
+      next: data => {
+        this.alert(
+          'warning',
+          'No Puede Borrar Registro Maestro Cuando Existen Registros Detalles Coincidentes.',
+          ''
+        );
+      },
+      error: error => {
+        this.deleteD(data);
+      },
+    });
+  }
+
+  deleteD(data: any) {
+    const dataaaID = data.id;
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea Eliminar Este Registro?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        this.proceedingsDeliveryReceptionService
+          .deleteProceedingsDeliveryReception(data.id)
+          .subscribe({
+            next: data => {
+              if (this.actaActual.id == dataaaID) {
+                this.valDelete = true;
+                this.ejecutarFuncionDesdeModal(true);
+              }
+              this.alert('success', 'Acta Eliminada Correctamente', '');
+              this.getStatusDeliveryCve();
+              // console.log(this.dataTableGoodsActa);
+            },
+            error: error => {
+              this.loading = false;
+              this.totalItems2 = 0;
+              this.alert(
+                'error',
+                'Ocurrió un error al Intentar Eliminar el Acta',
+                ''
+              );
+              // console.log(error);
+              // this.dataFactActas.load([]);
+              // this.dataFactActas.refresh();
+            },
+          });
+      }
+    });
+  }
+
+  ejecutarFuncionDesdeModal(val: boolean) {
+    this.sharedService.ejecutarFuncion(val);
   }
 }
