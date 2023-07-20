@@ -6,6 +6,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
+  IMassiveReqNumEnc,
   INumerary,
   IProccesNum,
   IPupAssociateGood,
@@ -88,6 +89,13 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
     );
   }
 
+  getNumeraryRequestNumeEncFilter(params?: string) {
+    return this.get<IListResponse<IRequestNumeraryEnc>>(
+      NumeraryEndpoints.RequestEnc,
+      params
+    );
+  }
+
   getNumeraryRequestNumeDet(params?: ListParams) {
     return this.get<IListResponse<IRequesNumeraryDet>>(
       NumeraryEndpoints.RequestDet,
@@ -107,6 +115,10 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
       procNum: procNum,
     };
     return this.post('application/fp-sol-numerary', model);
+  }
+
+  pupSonDate(model:{lvIdSolnum:string | number, lvIdProcnum:string | number,lvBpParcializado:string | number}){
+    return this.post('application/pup-son-date',model)
   }
 
   pupSonDelDate(model: Object) {
@@ -155,9 +167,13 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
     return this.get(NumeraryEndpoints.CloseNumerary, params);
   }
 
-  updateNumeraryRequestNumeEnc(model: IRequestNumeraryEnc) {
-    const route = `${NumeraryEndpoints.RequestEnc}/${model.solnumId}`;
+  updateNumeraryRequestNumeEnc(model: IRequestNumeraryEnc, id:string) {
+    const route = `${NumeraryEndpoints.RequestEnc}/${id}`;
     return this.put<IRequestNumeraryEnc>(route, model);
+  }
+
+  updateMasiveReqNumEnc(model: IMassiveReqNumEnc){
+    return this.post('requests-nume-enc/update-masive', model)
   }
 
   getSolNumerary(model: any, params?: ListParams) {
@@ -190,5 +206,9 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
 
   pupAssociateGood(body: IPupAssociateGood) {
     return this.post('application/pup-associate-good-func', body);
+  }
+
+  reqNumEnc(params:string){
+    return this.get('application/reqNumEnc',params)
   }
 }

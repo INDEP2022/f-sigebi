@@ -23,7 +23,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row mt-5">
+      <div class="row mt-3">
         <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field [control]="form.get('cveAccount')" label="Cuenta">
             <input
@@ -38,7 +38,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row mt-2">
+      <div class="row mt-3">
         <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field [control]="form.get('branch')" label="Sucursal">
             <input type="text" class="form-control" formControlName="branch" />
@@ -53,7 +53,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row mt-2">
+      <div class="row mt-3">
         <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
           <form-field
             [control]="form.get('accountType')"
@@ -81,8 +81,8 @@
       <div *ngIf="rowSelecc">
         <div class="row mb-3">
           <strong
-            >Si hay traspasos entre cuentas ind&iacute;quelo
-            aqu&iacute;&#58;</strong
+            >Si Hay Traspasos entre Cuentas, Ind&iacute;quelo
+            Aqu&iacute;&#58;</strong
           >
         </div>
         <div class="row mt-2">
@@ -128,7 +128,7 @@
           <div class="col-md-4 col-sm-12 col-xs-12">
             <form-field
               [control]="form.get('accountType_I')"
-              label="Tipo de cuenta">
+              label="Tipo de Cuenta">
               <ng-select
                 formControlName="accountType_I"
                 [searchable]="false"

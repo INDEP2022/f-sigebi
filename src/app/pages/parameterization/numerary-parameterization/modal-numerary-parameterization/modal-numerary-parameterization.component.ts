@@ -9,7 +9,7 @@ import {
 } from 'src/app/core/models/catalogs/numerary-categories-model';
 import { NumeraryParameterizationAutomService } from 'src/app/core/services/catalogs/numerary-parameterization-autom.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NAME_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -47,7 +47,7 @@ export class ModalNumeraryParameterizationComponent
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
+          Validators.pattern(NAME_PATTERN),
           Validators.maxLength(11),
         ],
       ],

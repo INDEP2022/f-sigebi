@@ -29,9 +29,12 @@
             <app-columns-select [(settings)]="settings"></app-columns-select>
             <div>
               <button
-                class="btn btn-primary active btn-sm ml-3"
+                type="button"
+                tooltip="Nuevo"
+                containerClass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2"
                 (click)="openFormSaveValues()">
-                Nuevo
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
             </div>
           </div>
@@ -89,9 +92,12 @@
                 [(settings)]="settingsBattery"></app-columns-select>
               <div>
                 <button
-                  (click)="openFormBattery()"
-                  class="btn btn-primary active btn-sm ml-3">
-                  Nuevo
+                  type="button"
+                  tooltip="Nuevo"
+                  containerClass="tooltip-style"
+                  class="btn btn-info btn-sm active ml-2 mr-2"
+                  (click)="openFormBattery()">
+                  Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
               </div>
             </div>
@@ -142,9 +148,12 @@
               <app-columns-select
                 [(settings)]="settingsShelves"></app-columns-select>
               <button
-                (click)="openFormShelves()"
-                class="btn btn-primary active btn-sm ml-3">
-                Nuevo
+                type="button"
+                tooltip="Nuevo"
+                containerClass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2"
+                (click)="openFormShelves()">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
             </div>
           </div>-->
@@ -193,9 +202,12 @@
               <app-columns-select
                 [(settings)]="settingsLockers"></app-columns-select>
               <button
-                (click)="openFormLocker()"
-                class="btn btn-primary active btn-sm ml-3">
-                Nuevo Casillero
+                type="button"
+                tooltip="Nuevo"
+                containerClass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2"
+                (click)="openFormLocker()">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
             </div>
           </div>-->

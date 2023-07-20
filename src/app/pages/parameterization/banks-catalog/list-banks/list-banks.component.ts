@@ -123,12 +123,12 @@ export class ListBanksComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      'Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.bankService.remove(accountNumber).subscribe({
           next: () => {
-            this.alert('success', 'Borrado', '');
+            this.alert('success', 'Borrado Correctamente', '');
             this.getCourts();
           },
           error: error => {
