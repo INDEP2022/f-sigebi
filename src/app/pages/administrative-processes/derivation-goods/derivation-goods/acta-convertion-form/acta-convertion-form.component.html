@@ -26,7 +26,7 @@
                         type="checkbox"
                         [checked]="i === selectedIndex"
                         (change)="onCheckboxChange($event, i)"
-                        [disabled]="disableAllChecks" />
+                        [disabled]="disableAllChecks == true" />
                       <label class="form-check-label" for="check{{ i }}">
                       </label>
                     </div>
@@ -91,7 +91,7 @@
       cveScreen="FCONVBIENHIJOS"
       reportPrint="RGERGENSOLICDIGIT"
       [expedientNumber]="expedientNuember"
-      [refresh]=""
+      [refresh]="refresh"
       (documentEmmit)="document($event)">
     </app-scanning-foil>
     <div class="row text-center mb-3">
@@ -152,7 +152,8 @@
         <button
           type="button"
           class="btn btn-primary active"
-          (click)="createMinuteConversion()">
+          (click)="createMinuteConversion()"
+          [disabled]="save">
           Guardar
           <i aria-hidden="true" class="fa fa-save"></i>
         </button>
