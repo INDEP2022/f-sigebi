@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
@@ -462,24 +463,24 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
       paragraph3: this.parrafo3,
     };
     console.log('minute-conversions -> ', payload);
-    // this.convertiongoodService.createMinuteConversion(payload).subscribe({
-    //   next: (res: IListResponse<any>) => {
-    //     this.alert('success', `Acta Creada Correctamente`, '');
-    //     console.log('minute-conversions res -> ', res);
-    //     this.router.navigate(
-    //       ['/pages/administrative-processes/derivation-goods'],
-    //       {
-    //         queryParams: {
-    //           newActConvertion: this.selectItem2,
-    //           // expedientNumber: this.form.value.numberDossier,
-    //         },
-    //       }
-    //     );
-    //     this.modalRef.hide();
-    //   },
-    //   error: error => {
-    //     this.alert('error', 'error', error.message);
-    //   },
-    // });
+    this.convertiongoodService.createMinuteConversion(payload).subscribe({
+      next: (res: IListResponse<any>) => {
+        this.alert('success', `Acta Creada Correctamente`, '');
+        console.log('minute-conversions res -> ', res);
+        this.router.navigate(
+          ['/pages/administrative-processes/derivation-goods'],
+          {
+            queryParams: {
+              newActConvertion: this.selectItem2,
+              // expedientNumber: this.form.value.numberDossier,
+            },
+          }
+        );
+        this.modalRef.hide();
+      },
+      error: error => {
+        this.alert('error', 'error', error.message);
+      },
+    });
   }
 }
