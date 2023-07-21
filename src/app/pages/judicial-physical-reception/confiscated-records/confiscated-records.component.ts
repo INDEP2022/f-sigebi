@@ -40,6 +40,7 @@ import {
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { ICveAct } from 'src/app/core/models/ms-proceedings/update-proceedings.model';
 import { IBlkPost } from 'src/app/core/models/ms-proceedings/warehouse-vault.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
@@ -224,7 +225,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private serviceTransferent: TransferenteService,
     private serviceHistoryGood: HistoryGoodService,
     private serviceNotification: NotificationService,
-    private attribGoodBadService: AttribGoodBadService
+    private attribGoodBadService: AttribGoodBadService,
+    private authService: AuthService
   ) {
     super();
   }
@@ -311,12 +313,15 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   }
 
   getDataUser() {
+    const token = this.authService.decodeToken();
+    console.log(token);
     const user =
       localStorage.getItem('username') == 'sigebiadmon'
         ? localStorage.getItem('username')
         : localStorage.getItem('username').toLocaleUpperCase();
-    const routeUser = `?filter.name=$eq:${user}`;
+    const routeUser = `?filter.id=$eq:${token.preferred_username}`;
     this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
+      console.log(res);
       const resJson = JSON.parse(JSON.stringify(res.data[0]));
       this.delUser = resJson.usuario.delegationNumber;
       this.subDelUser = resJson.usuario.subdelegationNumber;
@@ -1477,17 +1482,38 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         }
       });
       this.form.get('admin').valueChanges.subscribe(res => {
-        if (res != null && res != undefined && res.numberDelegation2) {
-          if (res.numberDelegation2 != this.delUser) {
-            this.alert(
-              'warning',
-              'La delegación seleccionada es diferente a la del usuario',
-              ''
-            );
-            this.adminSelect = new DefaultSelect();
-            this.form.get('admin').reset();
-          } else {
-            this.fillActTwo();
+        const acta = this.form.get('acta2').value;
+        const arrAct = acta.split('/');
+        const valAct = arrAct[0];
+        if (valAct[0] != 'N') {
+          if (res != null && res != undefined && res.numberDelegation2) {
+            if (res.numberDelegation2 != this.delUser) {
+              this.alert(
+                'warning',
+                'La delegación seleccionada es diferente a la del usuario',
+                ''
+              );
+              this.adminSelect = new DefaultSelect();
+              this.form.get('admin').reset();
+            } else {
+              this.fillActTwo();
+            }
+          }
+        }else{
+          if(res.delegation != 'CCB'){
+            if (res != null && res != undefined && res.numberDelegation2) {
+              if (res.numberDelegation2 != this.delUser) {
+                this.alert(
+                  'warning',
+                  'La delegación seleccionada es diferente a la del usuario',
+                  ''
+                );
+                this.adminSelect = new DefaultSelect();
+                this.form.get('admin').reset();
+              } else {
+                this.fillActTwo();
+              }
+            }
           }
         }
       });
