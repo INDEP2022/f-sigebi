@@ -637,9 +637,10 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           } else {
             this.alert(
               'success',
-              'Cálculo de numerario',
-              'El proceso se realizó correctamente.'
+              'Se eliminó el Cálculo de Numerario',
+              ''
             );
+            this.searchProcess();
           }
         }
       } else {
@@ -769,9 +770,10 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           } else {
             this.alert(
               'success',
-              'Cálculo de numerario',
-              'El proceso se realizó correctamente.'
+              'Se realizó el Cálculo de Numerario',
+              ''
             );
+            this.searchProcess();
           }
         }
       } else {
@@ -883,7 +885,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   async exportarTotal() {
     const filename: string = 'Numerario Total';
     const jsonToCsv = await this.returnJsonToTotalCsv(
-      Number(this.process.procnumId)
+      Number(this.idProcess)
     );
     console.log('jsonToCsv', jsonToCsv);
     if (jsonToCsv.length === 0) {
