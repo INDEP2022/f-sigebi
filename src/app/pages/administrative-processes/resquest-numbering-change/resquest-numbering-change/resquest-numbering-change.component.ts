@@ -1043,27 +1043,27 @@ export class ResquestNumberingChangeComponent
           return;
         }
 
-        if (good.expediente) {
-          if (!good.expediente.id) {
-            message = 'El Bien ' + good.id + ' No tiene Número de Expediente';
-            this.handleSuccess(message);
-            // this.validate = true;
-            return;
-          }
-        } else {
-          message = 'El Bien ' + good.id + ' No tiene Número de Expediente';
-          this.handleSuccess(message);
-          // this.validate = true;
-          return;
-        }
+        // if (good.expediente) {
+        //   if (!good.expediente.id) {
+        //     message = 'El Bien ' + good.id + ' No tiene Número de Expediente';
+        //     this.handleSuccess(message);
+        //     // this.validate = true;
+        //     return;
+        //   }
+        // } else {
+        //   message = 'El Bien ' + good.id + ' No tiene Número de Expediente';
+        //   this.handleSuccess(message);
+        //   // this.validate = true;
+        //   return;
+        // }
 
-        if (good.expediente)
-          if (!good.expediente.preliminaryInquiry) {
-            message = 'El Bien' + good.id + ' No tiene Averiguación Previa';
-            this.handleSuccess(message);
-            // this.validate = true;
-            return;
-          }
+        // if (good.expediente)
+        //   if (!good.expediente.preliminaryInquiry) {
+        //     message = 'El Bien' + good.id + ' No tiene Averiguación Previa';
+        //     this.handleSuccess(message);
+        //     // this.validate = true;
+        //     return;
+        //   }
 
         if (good.status == 'ADM') {
           situacionJuridica = 'ASEGURADO';
@@ -1221,27 +1221,27 @@ export class ResquestNumberingChangeComponent
           return;
         }
 
-        if (good.expediente) {
-          if (!good.expediente.id) {
-            message = 'El Bien ' + good.id + ' No tiene Número de Expediente';
-            this.handleSuccess(message);
-            // this.validate = true;
-            return;
-          }
-        } else {
-          message = 'El Bien ' + good.id + ' No tiene Número de Expediente';
-          this.handleSuccess(message);
-          // this.validate = true;
-          return;
-        }
+        // if (good.expediente) {
+        //   if (!good.expediente.id) {
+        //     message = 'El Bien ' + good.id + ' No tiene Número de Expediente';
+        //     this.handleSuccess(message);
+        //     // this.validate = true;
+        //     return;
+        //   }
+        // } else {
+        //   message = 'El Bien ' + good.id + ' No tiene Número de Expediente';
+        //   this.handleSuccess(message);
+        //   // this.validate = true;
+        //   return;
+        // }
 
-        if (good.expediente)
-          if (!good.expediente.preliminaryInquiry) {
-            message = 'El Bien' + good.id + ' No tiene Averiguación Previa';
-            this.handleSuccess(message);
-            // this.validate = true;
-            return;
-          }
+        // if (good.expediente)
+        //   if (!good.expediente.preliminaryInquiry) {
+        //     message = 'El Bien ' + good.id + ' No tiene Averiguación Previa';
+        //     this.handleSuccess(message);
+        //     // this.validate = true;
+        //     return;
+        //   }
         if (good.status == 'ADM') {
           situacionJuridica = 'ASEGURADO';
         }
@@ -1446,7 +1446,7 @@ export class ResquestNumberingChangeComponent
           // this.loading = false;
           this.alert(
             'success',
-            'Registro Eliminado Correctamente ' + body.goodNumber,
+            'No. Bien ' + body.goodNumber + ' Eliminado Correctamente ',
             ''
           );
           resolve(true);
@@ -1659,7 +1659,7 @@ export class ResquestNumberingChangeComponent
         if (this.dataGood[index].appraisedValue == null) {
           console.log('ENTRO AQUI');
           message =
-            'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
+            'El bien No tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
           this.handleSuccess(message);
           // this.validate = true;
           return;
