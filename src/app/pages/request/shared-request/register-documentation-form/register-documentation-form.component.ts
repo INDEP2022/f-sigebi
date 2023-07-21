@@ -37,6 +37,7 @@ export class RegisterDocumentationFormComponent
   maxDate: Date = new Date();
   @Input() requestId: number;
   @Input() subject: string;
+  @Input() process?: string = '';
   registerForm: FormGroup = new FormGroup({});
   @Output() onRegister = new EventEmitter<any>();
 
@@ -52,6 +53,8 @@ export class RegisterDocumentationFormComponent
   selectTypeExpedient = new DefaultSelect<any>();
   selectOriginInfo = new DefaultSelect<any>();
   selectMinPub = new DefaultSelect<any>();
+
+  displayNotifyMails: boolean = false;
 
   /* injections */
   private readonly requestService = inject(RequestService);
@@ -73,6 +76,7 @@ export class RegisterDocumentationFormComponent
     this.getTypeExpedient(new ListParams());
     this.getOriginInfo(new ListParams());
     this.getRequestInfo();
+    this.displayNotifyMailsInput();
   }
 
   prepareForm() {
@@ -119,6 +123,7 @@ export class RegisterDocumentationFormComponent
       destinationManagement: [null, [Validators.pattern(STRING_PATTERN)]],
       domainExtinction: [null, [Validators.pattern(STRING_PATTERN)]],
       transferEntNotes: [null, [Validators.pattern(STRING_PATTERN)]],
+      emailNotification: [null],
     });
   }
 
@@ -335,5 +340,13 @@ export class RegisterDocumentationFormComponent
         console.log('no se encontraron datos en asuntos ', error);
       },
     });
+  }
+
+  /* METODO PARA VISUALIZAR EL INPUT NOTIFICACIONES ELECTRONICAS
+  =============================================================== */
+  displayNotifyMailsInput() {
+    if (this.process == 'similar-good-register-documentation') {
+      this.displayNotifyMails = true;
+    }
   }
 }

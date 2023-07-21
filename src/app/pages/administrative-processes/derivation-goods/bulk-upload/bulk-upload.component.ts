@@ -24,6 +24,7 @@ interface IDs {
 })
 export class BulkUploadComponent extends BasePage implements OnInit {
   totalItems: number = 0;
+  totalItems1: number = 0;
   pGoodFatherNumber: any;
   expedientNumber: any;
   Number: any;
@@ -107,7 +108,7 @@ export class BulkUploadComponent extends BasePage implements OnInit {
     mode: 'external', // ventana externa
     columns: {
       numberGood: {
-        title: 'No. Renglon',
+        title: 'No. Renglón',
         width: '20%',
         sort: false,
       },

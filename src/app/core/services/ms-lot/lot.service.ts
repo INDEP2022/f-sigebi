@@ -66,7 +66,7 @@ export class LotService extends HttpService {
   }
 
   validLotifying(eventId: string | number) {
-    return this.get(
+    return this.get<{ aux: number }>(
       `apps/blk-ctr-bie-lots-img-inc-lots-excel-when-image-pressed/${eventId}`
     );
   }
