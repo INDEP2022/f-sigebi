@@ -1,7 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import { DefaultEditor } from 'ng2-smart-table';
 import {
   formatForIsoDate,
+  secondFormatDate,
   secondFormatDateTofirstFormatDate,
 } from 'src/app/shared/utils/date';
 import { IGood } from './good.model';
@@ -48,26 +49,32 @@ export class CharacteristicEditorCell extends DefaultEditor {
   }
   today: Date = new Date();
 
-  // updateDate(value: any) {
-  //   console.log(value, secondFormatDate(value));
-  //   this.service.data.forEach(x => {
-  //     if (x.column === this.value.column) {
-  //       x.value = secondFormatDate(value);
-  //     }
-  //   });
-  // }
+  constructor(
+    @Inject({ data: [] }) protected service: { data: ICharacteristicValue[] }
+  ) {
+    super();
+  }
 
-  // updateCell(value: any) {
-  //   // console.log(value, this.value, this.isAddCat(value));
-  //   if (!this.haveError(this.value)) {
-  //     console.log(value);
-  //     this.service.data.forEach(x => {
-  //       if (x.column === this.value.column) {
-  //         x.value = value;
-  //       }
-  //     });
-  //   }
-  // }
+  updateDate(value: any) {
+    console.log(value, secondFormatDate(value));
+    this.service.data.forEach(x => {
+      if (x.column === this.row.column) {
+        x.value = secondFormatDate(value);
+      }
+    });
+  }
+
+  updateCell(value: any) {
+    // console.log(value, this.value, this.isAddCat(value));
+    if (!this.haveError(this.row)) {
+      console.log(value);
+      this.service.data.forEach(x => {
+        if (x.column === this.row.column) {
+          x.value = value;
+        }
+      });
+    }
+  }
 
   haveError(row: ICharacteristicValue) {
     if (!row) return true;

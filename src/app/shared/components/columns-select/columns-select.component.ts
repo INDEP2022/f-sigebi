@@ -23,7 +23,7 @@ interface ISettings {
         margin-right: 0px !important;
       }
       #dropdown-basic.left {
-        inset: 100% auto auto -100% !important;
+        inset: 0% auto auto -93px !important;
         width: 200px !important;
         max-width: 200px !important;
       }
@@ -38,9 +38,9 @@ export class ColumnsSelectComponent implements OnInit {
   }
   @Input()
   defaultColumns: number = 6;
-  /* 
+  /*
   ! Si se desea cambiar el numero de columnas para una pantalla en especifoco,
-  ! se debe mandar el numero de columnas como input, 
+  ! se debe mandar el numero de columnas como input,
   ! POR DEFECTO SIEMPRE SERA 6
   */
   @Input() settings: ISettings = { columns: {} };
