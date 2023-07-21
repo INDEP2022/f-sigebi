@@ -48,6 +48,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   flagGoodNew: boolean = false;
   flagGoodDelete: boolean = false;
   //Variables de BLK_TIPO_BIEN
+  numberFoli: number;
   classificationOfGoods: number;
   no_bien_blk_tipo_bien: number;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -177,18 +178,26 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         return row.data.tableCd ? '' : 'notTableCd';
       },
     };
-
-    this.route.queryParams.subscribe(params => {
-      if (params['newActConvertion']) {
-        this.actConvertion.setValue(params['newActConvertion']);
-      }
-    });
   }
   ngOnInit(): void {
     this.buildForm();
     this.pw();
     this.tipo.disable();
     //Inicializando el modal
+    this.route.queryParams.subscribe(params => {
+      if (params['newActConvertion']) {
+        this.actConvertion.setValue(params['newActConvertion']);
+      }
+      this.numberFoli = params['folio'] ?? null;
+      this.actConvertion.setValue(params['expedientNumber'] ?? null);
+      this.tipo.setValue(params['tipoConv'] ?? null);
+      this.numberGoodFather.setValue(params['pGoodFatherNumber'] ?? null);
+      this.numberDossier.setValue(params['expedientNumber'] ?? null);
+      console.log(this.numberFoli);
+      // if (this.numberFoli) {
+      //   this.showActasConvertion();
+      // }
+    });
   }
 
   pw() {
@@ -708,6 +717,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       );
     }*/
     //crear segun el nuemero pardre en referencia y copiar los demas valores al bien
+    console.log(this.good);
     this.alertQuestion(
       'question',
       `Se Agregará un Bien Hijo`,
@@ -718,7 +728,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         delete good.id;
         delete good.goodId;
         good.goodReferenceNumber = this.goodFatherNumber$.getValue();
-        good.almacen = this.good.almacen.idWarehouse;
+        good.almacen =
+          this.good.almacen != null ? this.good.almacen.idWarehouse : '';
         good.delegationNumber = this.good.delegationNumber.id;
         good.expediente = this.good.expediente.id;
         good.subDelegationNumber = this.good.subDelegationNumber.id;
@@ -849,15 +860,17 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
 
   showActasConvertion() {
     console.log(this.tipo.value);
-    if (this.tipo.value == 2) {
+    if (this.tipo.value == '2') {
       if (this.goodData.status == 'CVD') {
         localStorage.removeItem('conversion');
       } else {
         localStorage.setItem('conversion', JSON.stringify(this.conversionData));
       }
       let config = { ...MODAL_CONFIG, class: 'modal-xl modal-dialog-centered' };
+      console.log(this.tipo.value);
       config.initialState = {
         proceeding: {},
+        numberFoli: this.numberFoli,
         actConvertion: this.actConvertion.value,
         tipoConv: this.tipo.value,
         pGoodFatherNumber: this.numberGoodFather.value,
@@ -886,5 +899,9 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         'Para Cargar el Acta debe ser Tipo Conversión'
       );
     }
+  }
+  session() {
+    localStorage.removeItem('conversion');
+    this.pw();
   }
 }
