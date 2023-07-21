@@ -163,9 +163,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       actions: false,
       columns: USER_COLUMNS_SHOW,
     };
-    this.programmingId = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as unknown as number;
+    this.programmingId = Number(
+      this.activatedRoute.snapshot.paramMap.get('id')
+    );
   }
 
   ngOnInit(): void {
