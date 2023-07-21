@@ -528,9 +528,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       ).then(question => {
         if (question.isConfirmed) {
           this.sendEmailUsers();
-          this.createTaskNotification();
-          this.createTaskExecuteProgramming();
-          this.createTaskFormalize();
         }
       });
     } else {
@@ -626,6 +623,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             'Notificación',
             'Se envio el correo electrónico a los usuarios correctamente'
           );
+
+          this.createTaskNotification();
+          this.createTaskExecuteProgramming();
+          this.createTaskFormalize();
         },
         error: error => {},
       });
