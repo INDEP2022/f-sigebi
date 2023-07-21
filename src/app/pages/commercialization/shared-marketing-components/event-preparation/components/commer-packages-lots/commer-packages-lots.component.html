@@ -1,20 +1,31 @@
-<div class="row">
-  <div class="col-md-12">
-    <event-lots-list
-      [lots]="lots"
-      [eventForm]="eventForm"
-      [parameters]="parameters"
-      [params]="comerLotsListParams"
-      (onSelectLot)="onLotSelect($event)"></event-lots-list>
+<ng-container *ngIf="!viewRejectedGoods">
+  <div class="row">
+    <div class="col-md-12">
+      <event-lots-list
+        [(viewRejectedGoods)]="viewRejectedGoods"
+        [lots]="lots"
+        [eventForm]="eventForm"
+        [parameters]="parameters"
+        [params]="comerLotsListParams"
+        (onSelectLot)="onLotSelect($event)"></event-lots-list>
+    </div>
   </div>
-</div>
 
-<div class="row" *ngIf="!onlyBase">
+  <div class="row" *ngIf="!onlyBase">
+    <div class="col-md-12">
+      <event-goods-lots-list
+        [eventForm]="eventForm"
+        [parameters]="parameters"
+        [lot]="comerLot"></event-goods-lots-list>
+    </div>
+  </div>
+</ng-container>
+
+<div class="row" *ngIf="viewRejectedGoods">
   <div class="col-md-12">
-    <event-goods-lots-list
-      [eventForm]="eventForm"
-      [parameters]="parameters"
-      [lot]="comerLot"></event-goods-lots-list>
+    <rejected-goods-list
+      [(viewRejectedGoods)]="viewRejectedGoods"
+      [eventForm]="eventForm"></rejected-goods-list>
   </div>
 </div>
 

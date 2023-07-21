@@ -39,6 +39,8 @@ export class GoodsListComponent extends BasePage implements OnInit {
     },
   ];
 
+  /* INJECTIONS */
+
   constructor(private modalService: BsModalService) {
     super();
     this.selectedGoodSettings.columns = SELECT_GOODS_COLUMNS;

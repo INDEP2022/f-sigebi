@@ -9,7 +9,7 @@
         type="button"
         containerClass="tooltip-style"
         class="btn btn-secondary btn-sm active ml-2 mr-2">
-        Actualizar Descripción.
+        Actualizar Descripción
       </button>
     </div>
 
@@ -42,7 +42,7 @@
       </button>
     </div>
     <div>
-      <div class="btn-group mx-1" dropdown>
+      <div class="btn-group mx-2" dropdown>
         <button
           id="button-basic"
           dropdownToggle
@@ -60,6 +60,8 @@
           role="menu"
           aria-labelledby="button-basic">
           <event-goods-lots-list-actions
+            [viewRejectedGoods]="viewRejectedGoods"
+            (viewRejectedGoodsChange)="viewRejectedGoodsChange.emit($event)"
             [params]="params"
             [lotSelected]="lotSelected"
             [parameters]="parameters"
@@ -67,9 +69,7 @@
         </ul>
       </div>
     </div>
-    <div>
-      <app-columns-select [(settings)]="settings"></app-columns-select>
-    </div>
+    <app-columns-select [(settings)]="settings"></app-columns-select>
   </div>
 </div>
 <div class="row pt-2">
