@@ -42,6 +42,7 @@ export class ScanningFoilComponent
   generateFo: boolean = true;
   @Input() numberFoli: string | number = '';
   @Input() cveScreen: string | number = '';
+  @Input() tipoConv: string | number = '';
   @Input() expedientNumber: string | number = '';
   @Input() reportPrint: string = '';
   @Input() refresh: boolean = false;
@@ -69,7 +70,7 @@ export class ScanningFoilComponent
   }
 
   ngOnInit(): void {
-    console.log(this.numberFoli);
+    console.log(this.good);
 
     this.buildForm();
 
@@ -128,7 +129,8 @@ export class ScanningFoilComponent
     //   );
     //   return;
     // }
-    if (this.numberFoli !== undefined) {
+    console.log(this.numberFoli);
+    if (this.numberFoli !== undefined && this.numberFoli !== null) {
       this.alert(
         'question',
         'Información',
@@ -262,6 +264,8 @@ export class ScanningFoilComponent
         origin: this.cveScreen,
         folio: this.form.get('scanningFoli').value,
         expedientNumber: Number(this.expedientNumber),
+        tipoConv: this.tipoConv,
+        pGoodFatherNumber: this.good,
       },
     });
     this.modalRef.hide();

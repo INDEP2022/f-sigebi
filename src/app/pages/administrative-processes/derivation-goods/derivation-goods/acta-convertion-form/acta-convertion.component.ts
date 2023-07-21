@@ -31,7 +31,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   expedientNuember: string;
   conversion: any;
   edit: boolean = false;
-  flagNewActa: boolean = true;
+  flagNewActa: boolean = false;
   flagAsignaActa: boolean = false;
   disableAllChecks: boolean = false;
   delegation: any;
