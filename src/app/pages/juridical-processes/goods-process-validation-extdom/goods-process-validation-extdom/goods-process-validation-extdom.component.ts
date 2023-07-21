@@ -178,6 +178,11 @@ export class GoodsProcessValidationExtdomComponent
   goodLoopFreeLimit: number = 0;
   goodLoopFreeTmp: IGood[] | any[] = [];
   goodLoopFreeLoading: boolean = false;
+  // Nombres de tablas
+  nameTable1: string = '"Bienes Disponibles"';
+  nameTable2: string = '"Bienes a Procesar para Validación ASEG_EXTDOM"';
+  nameTable3: string = '"Bienes en Validación ASEG_EXTDOM"';
+  nameTable4: string = '"Bienes en Validación ASEG_EXTDOM para Liberar"';
 
   constructor(
     private fb: FormBuilder,
@@ -500,7 +505,7 @@ export class GoodsProcessValidationExtdomComponent
     // console.log('EVENTO ', event);
     if (event != undefined) {
       event.toggle.subscribe((data: any) => {
-        console.log('DATA LOG EXT_DOM #### ', data);
+        console.log('DATA LOG EXT_DOM #### ', data, this.registerExistType);
         // data.row.selection = data.toggle;
         if (data.row.register_type == this.registerExistType) {
           let row: IGood = data.row;
@@ -1203,6 +1208,15 @@ export class GoodsProcessValidationExtdomComponent
 
   addSelect() {
     console.log('Agregar');
+    if (this.selectedGoods.length == 0) {
+      this.alert(
+        'warning',
+        'Se Requiere Seleccionar por lo Menos un Bien de la Tabla ' +
+          this.nameTable1,
+        ''
+      );
+      return;
+    }
     this.loadingGoods = true; // Iniciar loading de tabla bienes
     this.loadingGoods3 = true; // Iniciar loading de tabla a procesar
     this.selectedGoods.forEach((data: IGood | any, count: number) => {
@@ -1272,6 +1286,15 @@ export class GoodsProcessValidationExtdomComponent
 
   removeSelect() {
     console.log('Eliminar');
+    if (this.selectedDeleteGoods.length == 0) {
+      this.alert(
+        'warning',
+        'Se Requiere Seleccionar por lo Menos un Bien de la Tabla ' +
+          this.nameTable2,
+        ''
+      );
+      return;
+    }
     this.loadingGoods = true; // Iniciar loading de tabla bienes
     this.loadingGoods3 = true; // Iniciar loading de tabla a procesar
     let removeSelectedGoods: number[] = []; // Guardar contadores para eliminar del listado de seleccion
@@ -1351,13 +1374,51 @@ export class GoodsProcessValidationExtdomComponent
     }, 500);
   }
 
-  addAll() {
+  async addAll() {
     console.log('Agregar Todos');
+    if (this.goodData.length == 0) {
+      this.alert(
+        'warning',
+        'Se Requiere por lo Menos un Bien de la Tabla ' +
+          this.nameTable1 +
+          ' para Continuar',
+        ''
+      );
+      return;
+    }
+    let confirm = await this.alertQuestion(
+      'question',
+      '¿Quiere Agregar TODOS los Bienes de la Tabla ' +
+        this.nameTable1 +
+        ' a la Tabla ' +
+        this.nameTable2 +
+        '?',
+      ''
+    );
+    if (confirm.isConfirmed == false) {
+      return;
+    }
     this.startLoopGoods();
   }
 
-  removeAll() {
+  async removeAll() {
     console.log('Eliminar Todos');
+    if (this.goodData3.length == 0) {
+      this.alert(
+        'warning',
+        'La Tabla ' + this.nameTable2 + ' NO Tiene Bienes para Continuar',
+        ''
+      );
+      return;
+    }
+    let confirm = await this.alertQuestion(
+      'question',
+      '¿Quiere Eliminar TODOS los Bienes de la Tabla ' + this.nameTable2 + '?',
+      ''
+    );
+    if (confirm.isConfirmed == false) {
+      return;
+    }
     this.loadingGoods = true; // Iniciar loading de tabla bienes
     this.loadingGoods3 = true; // Iniciar loading de tabla a procesar
     for (let index = 0; index < this.goodData.length; index++) {
@@ -1365,6 +1426,7 @@ export class GoodsProcessValidationExtdomComponent
       this.goodData[index].seleccion = 0; // Quitar el check del registro
     }
     this.selectedDeleteGoods = [];
+    this.selectedGoods = [];
     this.goodData3 = [];
     this.totalGoods3 = 0;
     this.dataTableParams
@@ -1377,6 +1439,15 @@ export class GoodsProcessValidationExtdomComponent
 
   addSelectFree() {
     console.log('Agregar');
+    if (this.goodsValid.length == 0) {
+      this.alert(
+        'warning',
+        'Se Requiere Seleccionar por lo Menos un Bien de la Tabla ' +
+          this.nameTable3,
+        ''
+      );
+      return;
+    }
     this.loadingGoods2 = true; // Iniciar loading de tabla bienes
     this.loadingGoods4 = true; // Iniciar loading de tabla a procesar
     this.goodsValid.forEach((data: IGood | any, count: number) => {
@@ -1429,6 +1500,15 @@ export class GoodsProcessValidationExtdomComponent
 
   removeSelectFree() {
     console.log('Eliminar');
+    if (this.selectedDeletedGoodsValid.length == 0) {
+      this.alert(
+        'warning',
+        'Se Requiere Seleccionar por lo Menos un Bien de la Tabla ' +
+          this.nameTable4,
+        ''
+      );
+      return;
+    }
     this.loadingGoods2 = true; // Iniciar loading de tabla bienes
     this.loadingGoods4 = true; // Iniciar loading de tabla a procesar
     let removeSelectedGoods: number[] = []; // Guardar contadores para eliminar del listado de seleccion
@@ -1510,19 +1590,59 @@ export class GoodsProcessValidationExtdomComponent
     }, 500);
   }
 
-  addAllFree() {
+  async addAllFree() {
     console.log('Agregar Todos');
+    if (this.goodData2.length == 0) {
+      this.alert(
+        'warning',
+        'Se Requiere por lo Menos un Bien de la Tabla ' +
+          this.nameTable3 +
+          ' para Continuar',
+        ''
+      );
+      return;
+    }
+    let confirm = await this.alertQuestion(
+      'question',
+      '¿Quiere Agregar TODOS los Bienes de la Tabla ' +
+        this.nameTable3 +
+        ' a la Tabla ' +
+        this.nameTable4 +
+        '?',
+      ''
+    );
+    if (confirm.isConfirmed == false) {
+      return;
+    }
     this.startLoopGoodsFree();
   }
 
-  removeAllFree() {
+  async removeAllFree() {
     console.log('Eliminar Todos');
+    if (this.goodData4.length == 0) {
+      this.alert(
+        'warning',
+        'La Tabla ' + this.nameTable4 + ' NO Tiene Bienes para Continuar',
+        ''
+      );
+      return;
+    }
+    let confirm = await this.alertQuestion(
+      'question',
+      '¿Quiere Eliminar TODOS los Bienes de la Tabla ' + this.nameTable4 + '?',
+      ''
+    );
+    if (confirm.isConfirmed == false) {
+      return;
+    }
     this.loadingGoods2 = true; // Iniciar loading de tabla bienes
     this.loadingGoods4 = true; // Iniciar loading de tabla a procesar
     for (let index = 0; index < this.goodData2.length; index++) {
       this.goodData2[index].disponible = this.freeLabel; // Cambiar a no disponible
       this.goodData2[index].seleccion = 0; // Quitar el check del registro
     }
+    this.goodsValid = [];
+    this.selectedDeletedGoodsValid = [];
     this.goodData4 = [];
     this.totalGoods4 = 0;
     this.dataTableParams
@@ -2099,6 +2219,7 @@ export class GoodsProcessValidationExtdomComponent
     const pn_folio = this.formScan.get('scanningFoli').value;
     return this.siabService.fetchReport('RGERGENSOLICDIGIT', { pn_folio }).pipe(
       catchError(error => {
+        console.log(error);
         return throwError(() => error);
       }),
       tap(response => {
@@ -2159,7 +2280,31 @@ export class GoodsProcessValidationExtdomComponent
     console.log(event);
     if (event == true) {
       if (this.formScan.get('scanningFoli').value && this.universalFolio) {
-        this.generateScanRequestReport();
+        const pn_folio = this.formScan.get('scanningFoli').value;
+        console.log(pn_folio);
+        this.siabService
+          .fetchReport('RGERGENSOLICDIGIT', { pn_folio })
+          .subscribe(response => {
+            console.log(response);
+            if (response !== null) {
+              const blob = new Blob([response], { type: 'application/pdf' });
+              const url = URL.createObjectURL(blob);
+              let config = {
+                initialState: {
+                  documento: {
+                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                    type: 'pdf',
+                  },
+                  callback: (data: any) => {},
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(PreviewDocumentsComponent, config);
+            } else {
+              this.alert('warning', 'Reporte no disponible por el momento', '');
+            }
+          });
       } else {
         this.alertInfo(
           'warning',
@@ -2869,7 +3014,7 @@ export class GoodsProcessValidationExtdomComponent
     this.goodsValid.forEach(selected => {
       this.goodData4.push({
         ...selected,
-        register_type: this.registerType,
+        register_type: this.registerExistType,
       }); // Agregar registro a la data
       // VALIDAR CON LA DATA DEL ENDPOINT IGUAL
       const index2: number = this.goodData2.findIndex(

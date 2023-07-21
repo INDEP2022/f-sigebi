@@ -564,7 +564,7 @@ export class DetailAssetsTabComponentComponent
         ],
       ],
       certLibLienDate: [null],
-      pffDate: [null, [Validators.required]], //Edson 20 07 2023 Será requerido solo cuando es tipo MANUAL la solicitud
+      pffDate: [null],
       gravFavorThird: [
         null,
         [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(40)],
@@ -666,6 +666,20 @@ export class DetailAssetsTabComponentComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
     });
+
+    /* METODO QUE CAMBIA LOS CAMPOS DEL DOMICILIO A REQUERIDOS
+    ========================================================== */
+    this.setDomiciliesFieldRequired();
+  }
+
+  setDomiciliesFieldRequired() {
+    console.log('TIPO DE TRANSFERENCIA ', this.typeOfRequest);
+    if (this.typeOfRequest === 'MANUAL') {
+      this.goodDomicilieForm.controls['pffDate'].setValidators([
+        Validators.required,
+      ]);
+    }
+    this.goodDomicilieForm.updateValueAndValidity();
   }
 
   getPhysicalState(params: ListParams) {

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -39,6 +39,8 @@ export class GoodsListComponent extends BasePage implements OnInit {
     },
   ];
 
+  /* INJECTIONS */
+
   constructor(private modalService: BsModalService) {
     super();
     this.selectedGoodSettings.columns = SELECT_GOODS_COLUMNS;
@@ -60,14 +62,24 @@ export class GoodsListComponent extends BasePage implements OnInit {
       },
       ...this.selectedGoodSettings.columns,
     };
-    this.getData();
+
+    this.selectedGoodParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(data => {
+        if (this.requestId) {
+          this.getData();
+        }
+      });
   }
 
   getData() {
-    const good: any = Object.assign({ viewFile: '' }, this.goodTestData[0]);
+    //const good: any = Object.assign({ viewFile: '' }, this.goodTestData[0]);
+    const good: any = Object.assign(this.goodTestData[0]);
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
     this.selectedGoodTotalItems = this.selectedGoodColumns.length;
   }
 
-  viewFile(file: any) {}
+  viewFile(file: any) {
+    console.log(file);
+  }
 }
