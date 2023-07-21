@@ -97,13 +97,13 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div #scrollContainer class="col-md-3 col-sm-12 col-xs-12">
           <button
             type="submit"
             class="btn btn-primary btn-sm active"
             tooltip="Enviar"
             containerClass="tooltip-style"
-            (click)="getDataTable()"
+            (click)="getDataTable('si')"
             [disabled]="!form.valid">
             Ejecutar
           </button>
@@ -149,6 +149,7 @@
             [totalItems]="totalItems"></app-pagination>
         </div>
       </div>
+
       <!-- <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data">
       </ng2-smart-table>
       <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination> -->
@@ -169,10 +170,13 @@
             label="No. Solicitud"
             style="top: -20px">
             <input
-              type="text"
+              type="number"
               class="form-control"
+              [max]="9999999"
+              [min]="1"
               formControlName="applicationChangeCashNumber"
-              maxlength="7" />
+              [max-length]="7"
+              pattern="^[0-9]+" />
           </form-field>
           <button
             type="button"
@@ -180,8 +184,7 @@
             style="margin-left: 5vh"
             (click)="search()"
             [disabled]="
-              formaplicationData.get('applicationChangeCashNumber').value ==
-              null
+              !formaplicationData.get('applicationChangeCashNumber').value
             ">
             Buscar
             <i class="bx bx-search-alt bx-sm float-icon"></i>
@@ -189,7 +192,7 @@
         </div>
       </div>
       <br />
-      <div class="row">
+      <div #scrollContainer2 class="row">
         <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('dateRequestChangeNumerary')"
@@ -327,7 +330,10 @@
                 type="button"
                 class="btn btn-primary btn-sm active"
                 (click)="guardarSolicitud()"
-                [disabled]="!formaplicationData.valid"
+                [disabled]="
+                  !formaplicationData.valid &&
+                  formaplicationData.get('applicationChangeCashNumber')
+                "
                 style="margin: 1vh">
                 Guardar
                 <i aria-hidden="true" class="fa fa-save"></i>
@@ -384,31 +390,6 @@
               </button>
             </div>
           </div>
-          <!-- <button
-            type="button"
-            class="btn btn-primary btn-sm active"
-            style="margin-left: 1vh"
-            (click)="pasar()">
-            Pasar
-          </button>
-          <button
-            class="btn btn-primary btn-sm active"
-            style="margin-left: 1vh"
-            (click)="pasarTodo()">
-            Pasar Todo
-          </button>
-          <button
-            class="btn btn-primary btn-sm active"
-            style="margin-left: 1vh"
-            (click)="quitarTodo()">
-            Borrar Todo
-          </button>
-          <button
-            class="btn btn-primary btn-sm active"
-            style="margin-left: 1vh"
-            (click)="quitar()">
-            Borrar
-          </button> -->
         </div>
         <div class="col-md-12 col-sm-12 col-xs-12">
           <!-- <div [class]="loading ? 'table-loading' : ''"> -->
@@ -416,9 +397,9 @@
           <div class="col-md-12">
             <ng-scrollbar
               [track]="'all'"
-              [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
+              [ngStyle]="{ height: loading2 ? '0px' : '300px' }">
               <ng2-smart-table
-                [attr.class]="'table-bordered'"
+                [attr.class]="'table-bordered table-responsive'"
                 [settings]="settings1"
                 [source]="data1"
                 (userRowSelect)="selectDataCamNum($event)">
@@ -437,7 +418,6 @@
       </div>
       <div class="row">
         <div class="container"></div>
-
         <div footer>
           <div class="d-flex justify-content-center">
             <div class="m-3">
@@ -454,6 +434,7 @@
     </div>
   </app-card>
 </form>
+
 <div
   #modal="bs-modal"
   [config]="{ ignoreBackdropClick: true }"

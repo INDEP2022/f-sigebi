@@ -4,6 +4,9 @@
   </div>
 
   <div body>
+    <div class="row" *ngIf="formLoading" style="margin-bottom: 3rem">
+      <form-loader></form-loader>
+    </div>
     <div class="row w-100">
       <div
         class="col-sm-12 col-12 col-md-12 p-2 loading ? 'table-loading' : ''">

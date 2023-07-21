@@ -38,12 +38,17 @@ export class ComerEventService extends HttpService {
   }
 
   geEventId(eventId: string) {
-    return this.get(PrepareEventEndpoints.ComerEvent + '/' + eventId);
+    return this.get<IComerEvent>(
+      PrepareEventEndpoints.ComerEvent + '/' + eventId
+    );
   }
   getAllFilterComerGoodEvent(id: number, params: ListParams) {
     return this.get<IListResponse<any>>(
       `comer-good-xlot?filter.goodNumber=${id}`,
       params
     );
+  }
+  getAllFilterComerGoodLot(params: any) {
+    return this.get<any>(`comer-good-xlot?filter.goodNumber=${params}`);
   }
 }

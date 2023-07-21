@@ -3,6 +3,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IAccountMovement } from 'src/app/core/models/ms-account-movements/account-movement.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import {
@@ -25,8 +28,15 @@ export class ImplementationReportsInvoicesComponent
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  billId: boolean | null = null;
+  estado: boolean | null = null;
+  application: boolean | null = null;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private msInvoiceService: MsInvoiceService,
+    private authService: AuthService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -50,7 +60,7 @@ export class ImplementationReportsInvoicesComponent
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      scanFolio: [null, Validators.required],
+      scanFolio: [null],
     });
     this.delegationForm = this.fb.group({
       number: [null, Validators.required],
@@ -59,5 +69,55 @@ export class ImplementationReportsInvoicesComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
     });
+  }
+  validNoInvoice(No: string | number) {
+    this.msInvoiceService.getByNoInvoice(No).subscribe({
+      next: response => {
+        if (response.count > 0) {
+          this.billId = true;
+        } else {
+          this.billId = false;
+        }
+      },
+      error: error => {
+        console.error('Error en la llamada al servicio:', error);
+        this.billId = false;
+      },
+    });
+  }
+
+  onInvoiceInputChange(event: Event) {
+    const inputValue = (event.target as HTMLInputElement).value;
+    this.validNoInvoice(inputValue);
+  }
+  onInvoiceInputChangeestate(event: Event) {
+    const inputValue = (event.target as HTMLInputElement).value;
+    this.isStatusFieldNull();
+  }
+
+  isStatusFieldNull() {
+    const statusControl = this.invoiceDetailsForm.get('status');
+    this.estado = statusControl ? statusControl.value === null : true;
+    if ((this.estado = true)) {
+      console.log('es null');
+    } else {
+      this.estado = false;
+    }
+  }
+
+  validApplication() {
+    if ((this.billId = false) && (this.estado = false)) {
+      this.application = true;
+    } else {
+      this.application = false;
+    }
+  }
+
+  Application() {
+    const model = {} as IAccountMovement;
+    let token = this.authService.decodeToken();
+    model.userinsert = token.name.toUpperCase();
+
+    console.log('Token: ', token.name.toUpperCase());
   }
 }

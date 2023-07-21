@@ -104,8 +104,6 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('idRequest', this.idRequest);
-    console.log('idRequest', this.recordId);
     this.prepareForm();
     this.getDocType(new ListParams());
     this.getDocuemntByGood();
@@ -179,7 +177,6 @@ export class ShowDocumentsGoodComponent extends BasePage implements OnInit {
     };
     this.docRequestForm.get('noRequest').setValue(this.idGood);
     this.wContentService.getDocumentos(filter).subscribe(data => {
-      console.log('documents', data);
       this.loading = true;
       const info = data.data.filter((doc: any) => {
         if (doc.dDocType == 'Document') return doc;

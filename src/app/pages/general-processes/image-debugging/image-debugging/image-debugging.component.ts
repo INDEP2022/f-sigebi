@@ -336,6 +336,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loading = false;
     this.prepareForm();
     this.activatedRoute.queryParams.subscribe({
       next: param => {
@@ -588,6 +589,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
 
   clearFilter() {
     this.bodyGoodCharacteristics = {};
+    this.noExpedient = null;
     this.actualGoodNumber = null;
     this.selectedBad = null;
     this.service.files = [];
@@ -1037,7 +1039,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
             this.showPhoto = false;
           }
           this.numberGood.setValue(item.id);
-          // this.subtype.setValue(item.no_subtipo);
+          this.fileNumber.setValue(this.noExpedient);
           // this.form.get('ssubtype').setValue(item.no_ssubtipo);
           // this.form.get('sssubtype').setValue(item.no_sssubtipo);
           this.loadTypes = true;
@@ -1054,7 +1056,8 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
           // this.getLatitudLongitud(item.goodid);
           this.numberClassification.setValue(item.goodclassnumber);
           this.goodStatus.setValue(item.status);
-          this.fileNumber.setValue(item.fileNumber);
+          this.fileNumber.setValue(this.noExpedient);
+          this.idLot.setValue(this.lot);
           this.descripcion.setValue(item.description);
           this.goodUnit.setValue(item.unit);
           this.goodQuantity.setValue(item.quantity);
@@ -1233,20 +1236,6 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     // this.good = ssssubType.numClasifGoods;
   }
 
-  // getLatitudLongitud(id: number) {
-  //   this.georeferencieService.getGeoreferencieObjectById(id).subscribe({
-  //     next: response => {
-  //       // console.log(response);
-  //       if (response) {
-  //         this.latitud.setValue(response.georefLatitude);
-  //         this.longitud.setValue(response.georefLongituded);
-  //       }
-  //     },
-  //     error: err => {
-  //       console.log(err);
-  //     },
-  //   });
-  // }
   loadImages() {
     let loadingPhotos = 0;
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
@@ -1390,28 +1379,42 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       },
     });
   }
+  // getComerGoodLotes(id: number) {
+  //   this.comerEventService
+  //     .getAllFilterComerGoodEvent(id, this.params.getValue())
+  //     .subscribe({
+  //       next: (resp: any) => {
+  //         this.lot = resp.data;
+  //         console.log(this.lot);
+  //         this.form.get('idLot').patchValue(this.lot.idLot);
+  //         this.form.get('lotDesc').patchValue(this.lot.lotDescription);
+  //         // this.idLot.setValue(this.lot.lotId);
+  //         // this.lotDesc.setValue(this.lot.lotDescription);
+  //         console.log(resp);
+  //       },
+  //       error: error => {
+  //         console.log(error);
+  //       },
+  //     });
+  // }
   getComerGoodLotes(id: number) {
-    this.comerEventService
-      .getAllFilterComerGoodEvent(id, this.params.getValue())
-      .subscribe({
-        next: (resp: any) => {
-          this.lot = resp.data;
-          console.log(this.lot);
-          this.idLot.setValue(this.lot.lotId);
-          this.lotDesc.setValue(this.lot.lotDescription);
-          console.log(resp);
-        },
-        error: error => {
-          console.log(error);
-        },
-      });
+    this.lotService.getGlobalGoodEventLot(id).subscribe({
+      next: (data: any) => {
+        this.lot = data;
+        console.log(data);
+      },
+      error: () => {
+        console.log('error');
+      },
+    });
   }
   setGood(good: IGood) {
     this.numberGood.setValue(good.id);
     this.fileNumber.setValue(this.noExpedient);
     this.descripcion.setValue(good.description);
     this.idLot.setValue(good.lotNumber);
-    this.form.controls['fileNumber'].setValue(this.noExpedient);
+    // this.form.get('lotDesc').patchValue(good.lotDescription);
+    // this.form.controls['fileNumber'].setValue(this.noExpedient);
   }
 
   searchExp(id: number | string) {
@@ -1500,14 +1503,13 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
         this.goodO = data;
         data.data.filter((good: IGood) => {
           this.noExpedient = good.fileNumber;
+          this.fileNumber.setValue(good.fileNumber);
         });
-
         console.log(this.noExpedient);
         this.searchExp(this.noExpedient);
-        this.getComerGoodLotes(this.form.value.noBien);
-        this.getIdLot(this.goodO);
-        this.getEvent(this.goodO.lotNumber);
-        this.setGood(this.goodO);
+        // this.setGood(this.goodO);
+        this.getComerGoodLotes(this.goodO.lotNumber);
+        // this.getEvent(this.goodO.lotNumber);
       },
       error: error => {
         console.error('no existe el bien');
@@ -1515,20 +1517,13 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     });
   }
 
-  getIdLot(data: any) {
+  getIdLot(id: number) {
     const datos: any = {};
-    this.comerEventService.getLotId(data.lotId).subscribe({
+    this.comerEventService.getAllFilterComerGoodLot(id).subscribe({
       next: resp => {
-        this.comerEventService.geEventId(resp.eventId).subscribe({
-          next: resp => {
-            //console.log(resp);
-            //this.form.controls['idEvent'].setValue(resp.id);
-            this.form.controls['idEvent'].setValue(resp.id);
-          },
-          error: error => {
-            console.log(error);
-          },
-        });
+        //console.log(resp);
+        this.form.controls['idEvent'].setValue(resp.id);
+        // this.form.get['idEvent'].setValue(resp.id);
       },
       error: error => {
         console.log(error);

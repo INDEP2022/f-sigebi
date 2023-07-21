@@ -163,9 +163,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       actions: false,
       columns: USER_COLUMNS_SHOW,
     };
-    this.programmingId = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as unknown as number;
+    this.programmingId = Number(
+      this.activatedRoute.snapshot.paramMap.get('id')
+    );
   }
 
   ngOnInit(): void {
@@ -334,10 +334,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       },
     };
 
-    const confirmPro = this.modalService.show(
-      ConfirmProgrammingComponent,
-      config
-    );
+    this.modalService.show(ConfirmProgrammingComponent, config);
   }
 
   viewOffice() {
@@ -531,9 +528,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       ).then(question => {
         if (question.isConfirmed) {
           this.sendEmailUsers();
-          this.createTaskNotification();
-          this.createTaskExecuteProgramming();
-          this.createTaskFormalize();
         }
       });
     } else {
@@ -629,6 +623,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             'Notificación',
             'Se envio el correo electrónico a los usuarios correctamente'
           );
+
+          this.createTaskNotification();
+          this.createTaskExecuteProgramming();
+          this.createTaskFormalize();
         },
         error: error => {},
       });

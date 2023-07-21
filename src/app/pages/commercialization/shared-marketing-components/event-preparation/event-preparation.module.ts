@@ -13,6 +13,7 @@ import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-s
 import { StoreModule } from '@ngrx/store';
 import { AddEditLoteModalComponent } from './add-edit-lote-modal/add-edit-lote-modal.component';
 import { AvailableGoodsTableComponent } from './available-goods-table/available-goods-table.component';
+import { ComerEventTraspComponent } from './components/comer-event-trasp/comer-event-trasp.component';
 import { CommerEventCustomersComponent } from './components/commer-event-customers/commer-event-customers.component';
 import { CommerEventsListComponent } from './components/commer-events-list/commer-events-list.component';
 import { CommerPackagesLotsComponent } from './components/commer-packages-lots/commer-packages-lots.component';
@@ -22,6 +23,7 @@ import { EventGoodsLotsListComponent } from './components/event-goods-lots-list/
 import { EventLotFormComponent } from './components/event-lot-form/event-lot-form.component';
 import { EventLotsListComponent } from './components/event-lots-list/event-lots-list.component';
 import { EventPreparationStadisticsComponent } from './components/event-preparation-stadistics/event-preparation-stadistics.component';
+import { RejectedGoodsListComponent } from './components/rejected-goods-list/rejected-goods-list.component';
 import { ReservedGoodsComponent } from './components/reserved-goods/reserved-goods.component';
 import { CreateNewEventModalComponent } from './create-new-event-modal/create-new-event-modal.component';
 import { CustomerCatalogsTableComponent } from './customer-catalogs-table/customer-catalogs-table.component';
@@ -54,6 +56,8 @@ import { eventPreparationReducer } from './store/event-preparation.reducer';
     EventGoodsLotsListComponent,
     EventLotFormComponent,
     EventGoodsLotsListActionsComponent,
+    RejectedGoodsListComponent,
+    ComerEventTraspComponent,
   ],
   imports: [
     CommonModule,

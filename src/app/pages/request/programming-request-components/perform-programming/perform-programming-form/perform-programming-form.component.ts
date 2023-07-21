@@ -466,6 +466,9 @@ export class PerformProgrammingFormComponent
         this.performForm.get('autorityId').setValue(this.autorityId);
       }
 
+      if (this.warehouseId != 0) {
+        this.performForm.get('storeId').setValue(this.warehouseId);
+      }
       this.performForm
         .get('regionalDelegationNumber')
         .setValue(this.delegationId);
@@ -489,7 +492,7 @@ export class PerformProgrammingFormComponent
                 const regDelData = this.regionalDelegationUser;
                 let config = {
                   ...MODAL_CONFIG,
-                  class: 'modal-lg modal-dialog-centered',
+                  class: 'modal-xl modal-dialog-centered',
                 };
                 config.initialState = {
                   programmingId: this.idProgramming,
@@ -499,7 +502,13 @@ export class PerformProgrammingFormComponent
                       this.performForm
                         .get('regionalDelegationNumber')
                         .setValue(this.delegation);
-                      //this.setDataProgramming();
+
+                      this.performForm
+                        .get('stationId')
+                        .setValue(Number(this.dataProgramming.stationId));
+                      this.setDataProgramming();
+                    } else {
+                      this.setDataProgramming();
                     }
                   },
                 };
@@ -1924,7 +1933,8 @@ export class PerformProgrammingFormComponent
         this.formLoading = true;
         const folio: any = await this.generateFolio(this.performForm.value);
         this.performForm.get('folio').setValue(folio);
-        this.performForm.get('storeId').setValue(this.warehouseId);
+        if (this.warehouseId > 0)
+          this.performForm.get('storeId').setValue(this.warehouseId);
         const task = JSON.parse(localStorage.getItem('Task'));
         const updateTask = await this.updateTask(folio, task.id);
         if (updateTask) {
@@ -2337,10 +2347,11 @@ export class PerformProgrammingFormComponent
           error: error => {},
         });
 
-      if (this.dataProgramming.storeId) {
+      if (this.dataProgramming.storeId > 0) {
         this.warehouseService.getById(this.dataProgramming.storeId).subscribe({
           next: response => {
             this.performForm.get('storeId').setValue(response.description);
+            this.warehouseId = response?.idWarehouse;
             this.warehouseUbication = response.ubication;
           },
           error: error => {},

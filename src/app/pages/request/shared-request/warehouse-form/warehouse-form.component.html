@@ -24,6 +24,7 @@
               control="nbusername"
               [data]="users"
               value="username"
+              [showTooltip]="true"
               bindLabel="nomComplete"
               label="Usuario Reponsable"
               (change)="userSelect($event)"
@@ -51,6 +52,7 @@
               [form]="warehouseForm"
               control="tpThird"
               [data]="typeTercero"
+              [showTooltip]="true"
               value="code"
               bindLabel="description"
               label="Tipo Tercero"
@@ -92,6 +94,7 @@
             <ngx-select
               [form]="warehouseForm"
               control="idState"
+              [showTooltip]="true"
               [data]="states"
               value="id"
               bindLabel="descCondition"
@@ -106,7 +109,7 @@
             [control]="warehouseForm.get('nbidstore')"
             label="N&uacute;mero de Gesti&oacute;n Inmueble">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="nbidstore" />
           </form-field>
@@ -123,6 +126,7 @@
               control="wildebeestmunicipality"
               [data]="municipalities"
               value="idMunicipality"
+              [showTooltip]="true"
               bindLabel="nameMunicipality"
               label="Municipio"
               (change)="municipalitySelect($event)"
@@ -137,6 +141,7 @@
               control="wildebeestmunicipality"
               [data]="municipalities"
               value="idMunicipality"
+              [showTooltip]="true"
               bindLabel="nameMunicipality"
               label="Municipio"
               (fetchItems)="getMunicipalitiesSelect($event)"></ngx-select>
@@ -158,6 +163,7 @@
               [form]="warehouseForm"
               control="idCity"
               [data]="cities"
+              [showTooltip]="true"
               value="idCity"
               bindLabel="nameCity"
               label="Ciudad"
@@ -171,6 +177,7 @@
               control="idCity"
               [data]="cities"
               [searchable]="show_city_municipality"
+              [showTooltip]="true"
               value="id"
               bindLabel="nameCity"
               label="Ciudad"
@@ -201,6 +208,7 @@
               control="wildebeestSettlement"
               [data]="localities"
               value="id"
+              [showTooltip]="true"
               bindLabel="nameLocation"
               label="Localidad"
               (change)="localitySelect($event)"
@@ -216,6 +224,7 @@
               [data]="localities"
               value="id"
               bindLabel="nameLocation"
+              [showTooltip]="true"
               label="Localidad"
               (fetchItems)="getLocalitySelect($event)"></ngx-select>
           </form-field>
@@ -244,6 +253,7 @@
               control="nbzipcode"
               [data]="zipCode"
               value="codePostal"
+              [showTooltip]="true"
               bindLabel="codePostal"
               label="C&oacute;digo Postal"
               (fetchItems)="getZipCodeSelect($event)"></ngx-select>
@@ -255,6 +265,7 @@
               [form]="warehouseForm"
               control="nbzipcode"
               [data]="zipCode"
+              [showTooltip]="true"
               [searchable]="showZipCode"
               value="id"
               bindLabel="codePostal"
@@ -340,6 +351,7 @@
               [form]="warehouseForm"
               control="tpstore"
               [data]="typeWarehouse"
+              [showTooltip]="true"
               value="id"
               bindLabel="description"
               label="Tipo de Almac&eacute;n"

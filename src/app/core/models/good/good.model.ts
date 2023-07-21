@@ -670,3 +670,12 @@ export interface IbulkLoadGoods {
   material?: string;
   edoPhisical?: string;
 }
+
+export interface NumerGood_ {
+  goodNumber: number;
+  applicationChangeCashNumber: number;
+  ProceedingsNumber: number;
+  situationlegal: string;
+  recordNumber: any;
+  reasonApplication: any;
+}
