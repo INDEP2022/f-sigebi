@@ -1571,8 +1571,8 @@
               <div
                 class="row pt-5"
                 *ngIf="
-                  receiptGuardGood?.statusReceiptGuard == 'ABIERTO' &&
-                  receiptGuardGood?.typeReceipt == 'ALMACEN'
+                  receiptWarehouseGood?.statusReceiptGuard == 'ABIERTO' &&
+                  receiptWarehouseGood?.typeReceipt == 'ALMACEN'
                 ">
                 <ng2-smart-table
                   [attr.class]="'table-bordered pt-3'"
@@ -1586,8 +1586,8 @@
               <div
                 class="row pt-5"
                 *ngIf="
-                  receiptGuardGood?.statusReceiptGuard == 'CERRADO' &&
-                  receiptGuardGood?.typeReceipt == 'ALMACEN'
+                  receiptWarehouseGood?.statusReceiptGuard == 'CERRADO' &&
+                  receiptWarehouseGood?.typeReceipt == 'ALMACEN'
                 ">
                 <ng2-smart-table
                   [attr.class]="'table-bordered pt-3'"
