@@ -159,14 +159,22 @@ export class ProrrateoGoodsSurveillanceComponent
         } else {
           this.tipo = 'Interna';
         }
+        const start = new Date(response.data[0].Policies.beginningDateId);
+        const formattedstart = this.formatDate(start);
+
+        const term = new Date(response.data[0].Policies.termDate);
+        const formattedterm = this.formatDate(term);
+
+        const dateOfAdmission = new Date(response.data[0].beginningDate);
+        const formatteddateOfAdmission = this.formatDate(dateOfAdmission);
         let dataForm = {
           cvePoliza: response.data[0].policyKeyId,
           typePolicy: this.tipo,
           description: response.data[0].Policies.description,
           InsuranceCarrier: response.data[0].Policies.insurancecarrier,
-          start: response.data[0].Policies.beginningDateId,
-          term: response.data[0].Policies.termDate,
-          dateOfAdmission: response.data[0].beginningDate,
+          start: formattedstart,
+          term: formattedterm,
+          dateOfAdmission: formatteddateOfAdmission,
           PremiumAmount: response.data[0].Policies.amountCousin,
           Tramitado: response.data[0].process,
         };
