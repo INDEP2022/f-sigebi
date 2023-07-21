@@ -24,6 +24,7 @@
               [control]="flyersForm.get('PF_FECINI')"
               label="Recepci&oacute;n desde">
               <input
+                (bsValueChange)="onDateChange($event)"
                 formControlName="PF_FECINI"
                 class="form-control"
                 bsDatepicker />
@@ -33,8 +34,10 @@
           <div class="row pt-3">
             <form-field [control]="flyersForm.get('PF_FECFIN')" label="Hasta">
               <input
+                id="toDate"
                 formControlName="PF_FECFIN"
                 class="form-control"
+                [minDate]="minDate"
                 bsDatepicker />
             </form-field>
           </div>
