@@ -364,11 +364,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          this.alert(
-            'success',
-            'Actualizadas correctamente',
-            'Características del bien ' + this.good.id
-          );
+          this.alert('success', 'Valores Actualizados correctamente', '');
+          this.getAllGoodChild(this.goodFatherNumber$.getValue());
         },
       });
   }
@@ -408,11 +405,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.numberGoodSon.setValue(e);
             this.searchStatus(res.data[0]['status']);
             // this.getAttributesGood(res.data[0]['goodClassNumber']);
-
-            this.flagActa = false;
-            this.flagCargMasiva = false;
-            this.flagCargaImagenes = false;
-            this.flagFinConversion = false;
           } else if (conversionData.typeConv == '1') {
             this.observation.setValue('');
             this.descriptionSon.setValue('');
@@ -422,7 +414,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.destinationLabel.setValue('');
             this.numberGoodSon.setValue('');
             this.searchStatus('');
-            this.flagActa = false;
+            this.classificationOfGoods = Number(res.data[0]['goodClassNumber']);
+            if (this.classificationOfGoods) {
+              this.goodChange++;
+            }
             this.flagCargMasiva = true;
             this.flagCargaImagenes = true;
             this.flagFinConversion = true;
@@ -728,18 +723,18 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         good.expediente = this.good.expediente.id;
         good.subDelegationNumber = this.good.subDelegationNumber.id;
         console.log(good);
-        // this.serviceGood.crateGood(good).subscribe(
-        //   res => {
-        //     this.createRelDocument(res);
-        //   },
-        //   err => {
-        //     this.alert(
-        //       'error',
-        //       'No Bien Hijo',
-        //       'Error Inesperado, Por Favor Intentelo Nuevamente'
-        //     );
-        //   }
-        // );
+        this.serviceGood.crateGood(good).subscribe(
+          res => {
+            this.createRelDocument(res);
+          },
+          err => {
+            this.alert(
+              'error',
+              'No Bien Hijo',
+              'Error Inesperado, Por Favor Intentelo Nuevamente'
+            );
+          }
+        );
       }
     });
   }
@@ -778,7 +773,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       console.log('status2->', this.selectedRow);
       this.alertQuestion(
         'question',
-        `Se va a Eliminar el Bien Hijo ${this.selectedRow.goodId}`,
+        `Bien Hijo a Eliminar No. ${this.selectedRow.goodId}`,
         '¿Desea Continuar?'
       ).then(q => {
         if (q.isConfirmed) {
@@ -855,7 +850,11 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   showActasConvertion() {
     console.log(this.tipo.value);
     if (this.tipo.value == 2) {
-      localStorage.setItem('conversion', JSON.stringify(this.conversionData));
+      if (this.goodData.status == 'CVD') {
+        localStorage.removeItem('conversion');
+      } else {
+        localStorage.setItem('conversion', JSON.stringify(this.conversionData));
+      }
       let config = { ...MODAL_CONFIG, class: 'modal-xl modal-dialog-centered' };
       config.initialState = {
         proceeding: {},
@@ -881,7 +880,11 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       //   }
       // );
     } else {
-      this.alert('warning', `Tipo debe ser Derivado`, '');
+      this.alert(
+        'warning',
+        `Advertencia`,
+        'Para Cargar el Acta debe ser Tipo Conversión'
+      );
     }
   }
 }
