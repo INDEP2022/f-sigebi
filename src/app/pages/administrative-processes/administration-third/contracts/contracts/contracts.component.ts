@@ -54,7 +54,7 @@ export class ContractsComponent extends BasePage implements OnInit {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
+            let searchFilter = SearchFilter.EQ;
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filters.field) {
@@ -62,10 +62,10 @@ export class ContractsComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'startDate':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'endDate':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'statusContract':
                 searchFilter = SearchFilter.EQ;
@@ -75,7 +75,7 @@ export class ContractsComponent extends BasePage implements OnInit {
                 field = `filter.${filter.field}.description`;
                 break;
               default:
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
             }
 
@@ -85,12 +85,15 @@ export class ContractsComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getContractsAll();
         }
       });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getContractsAll());
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: () => {
+        if (this.data) this.getContractsAll();
+      },
+    });
   }
 
   getContractsAll() {
@@ -99,9 +102,10 @@ export class ContractsComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-
+    this.columns = [];
     this.contractService.getAll(params).subscribe({
       next: response => {
+        console.log(response.data);
         this.columns = response.data;
         this.data.load(this.columns);
         this.totalItems = response.count || 0;
@@ -110,11 +114,13 @@ export class ContractsComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
+        this.data.load(this.columns);
       },
     });
   }
 
   openForm(contract?: IContract) {
+    console.log('antes modal ', contract);
     let config: ModalOptions = {
       initialState: {
         contract,
@@ -143,7 +149,13 @@ export class ContractsComponent extends BasePage implements OnInit {
 
   delete(id: number) {
     this.contractService.remove(id).subscribe({
-      next: () => this.getContractsAll(),
+      next: response => {
+        console.log(response);
+        this.getContractsAll();
+      },
+      error: err => {
+        console.log(err);
+      },
     });
   }
 }

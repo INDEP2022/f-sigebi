@@ -1,7 +1,16 @@
 <form [formGroup]="registerForm" class="form-material pb-0 mb-0">
   <div class="row mt-3">
     <div class="col-md-6">
-      <h6>Datos de la Solicitud</h6>
+      <h6
+        *ngIf="
+          process != 'similar-good-register-documentation';
+          else titleMail
+        ">
+        Datos de la Solicitud
+      </h6>
+      <ng-template #titleMail>
+        <h6>Correo(s) Electr&oacute;nicos(s) Notificaci&oacute;n</h6>
+      </ng-template>
     </div>
     <div class="col-md-6">
       <div class="d-flex flex-row-reverse">
@@ -24,6 +33,25 @@
     </div>
   </div>
   <br />
+  <div class="row pt-5" *ngIf="displayNotifyMails == true">
+    <div class="col-md-6">
+      <form-field
+        [control]="registerForm.get('emailNotification')"
+        label="Correo(s) Electr&oacute;nicos(s) Notificaci&oacute;n">
+        <textarea
+          rows="4"
+          formControlName="emailNotification"
+          maxlength="1000"
+          class="form-control"></textarea>
+      </form-field>
+    </div>
+  </div>
+  <hr />
+  <div class="row" *ngIf="displayNotifyMails == true">
+    <div class="col-md-12">
+      <h6>Datos de la Solicitud</h6>
+    </div>
+  </div>
   <div class="row mt-5" *ngIf="priorityCheck == true">
     <div class="col-md-3">
       <form-field
@@ -265,7 +293,7 @@
     <div class="col-md-4">
       <form-field
         [control]="registerForm.get('transferEntNotes')"
-        label="Notas Ent. Trasferente">
+        label="Notas Ent&#46; Trasferente">
         <textarea
           rows="3"
           formControlName="transferEntNotes"

@@ -44,7 +44,10 @@
               (click)="newProcess()">
               Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
-            <button class="btn btn-primary btn-sm active" (click)="newProcessFn()" *ngIf="fillNewData">
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="newProcessFn()"
+              *ngIf="fillNewData">
               Guardar Nuevo
               <i aria-hidden="true" class="fa fa-save"></i>
             </button>
@@ -268,8 +271,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
-            [source]="data3"
-            >
+            [source]="data3">
           </ng2-smart-table>
         </div>
       </div>
