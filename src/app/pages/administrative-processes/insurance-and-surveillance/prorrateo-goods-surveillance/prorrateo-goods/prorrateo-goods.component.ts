@@ -108,7 +108,7 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               default:
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
             }
             if (filter.search !== '') {
@@ -157,7 +157,7 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
           let dataForm = {
             goodNumberId: response.data[i].Goods.id,
             description: response.data[i].Goods.description,
-            amountCousin: response.data[i].Policies.amountCousin,
+            amountCousin: response.data[i].amountCousin,
             additionInsured: response.data[i].additionInsured,
             location: response.data[i].Goods.ubicationType,
             shortDate: response.data[i].shortDate,
@@ -178,7 +178,12 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
         }
       },
       error: err => {
-        this.onLoadToast('error', err.error.message, '');
+        this.onLoadToast(
+          'error',
+          'Se produjo un error, intentelo nuevamente',
+          ''
+        );
+        this.goods = [];
       },
     });
   }
@@ -246,14 +251,16 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
   }
 
   deletePolicyGood(params: any) {
+    this.goods = [];
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
+        console.log('Params: ', params);
         let data = {
-          goodNumberId: params.goodId,
+          goodNumberId: params.goodNumberId,
           policyKeyId: this.keyA,
           beginningDateId: this.dateIni,
         };
@@ -267,6 +274,7 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
               ''
             );
             this.getByPolicyKey(this.elemento);
+            this.data.load(this.goods);
           },
           error: err => {
             this.alert(
@@ -274,6 +282,8 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
               'Error',
               'Ocurrió un problema al eliminar el registro'
             );
+            this.getByPolicyKey(this.elemento);
+            this.data.load(this.goods);
           },
         });
       }
