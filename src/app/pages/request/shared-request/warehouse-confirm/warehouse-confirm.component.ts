@@ -5,6 +5,10 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITask } from 'src/app/core/models/ms-task/task-model';
+import { CityService } from 'src/app/core/services/catalogs/city.service';
+import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
+import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { StoreAliasStockService } from 'src/app/core/services/ms-store/store-alias-stock.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
@@ -26,7 +30,11 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
     private router: Router,
     private warehouseService: WarehouseService,
     private storeService: StoreAliasStockService,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private localityService: LocalityService,
+    private municipalityService: MunicipalityService,
+    private cityService: CityService,
+    private stateOfRepublicService: StateOfRepublicService
   ) {
     super();
   }
@@ -54,9 +62,31 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         const updateInfo = await this.updateInfoStore();
         if (updateInfo) {
+          console.log('store', this.store);
+
+          const localityName: any = await this.getLocalityName();
+          const municipalityName: any = await this.getMunicipalityName();
+          const cityName: any = await this.getCityName();
+          const stateName: any = await this.getStateName();
+
+          const warehouse =
+            this.responseForm.get('nbidnewstore').value +
+            ' ' +
+            this.store.nbstoresiab +
+            ' - ' +
+            this.store.nbstreet +
+            ', ' +
+            localityName +
+            ', ' +
+            municipalityName +
+            ', ' +
+            cityName +
+            ', ' +
+            stateName;
+
           const warehouseForm = {
-            description: this.store.nbstoresiab,
-            ubication: this.store.nbstreet,
+            description: warehouse,
+            ubication: warehouse,
             manager: this.store.nbadmonby,
             registerNumber: this.store.nbidstore,
             stateCode: this.store.idState,
@@ -67,7 +97,6 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
             type: this.store.tpstore,
             responsibleDelegation: this.store.wildebeestDelegationregion,
           };
-          this.close();
 
           this.warehouseService.create(warehouseForm).subscribe({
             next: async () => {
@@ -91,6 +120,63 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
           });
         }
       }
+    });
+  }
+
+  getLocalityName() {
+    return new Promise((resolve, reject) => {
+      const paramsLocality = new BehaviorSubject<ListParams>(new ListParams());
+      paramsLocality.getValue()['filter.stateKey'] = this.store.idState;
+      paramsLocality.getValue()['filter.municipalityId'] =
+        this.store.wildebeestmunicipality;
+      paramsLocality.getValue()['filter.id'] = this.store.wildebeestSettlement;
+      this.localityService.getAll(paramsLocality.getValue()).subscribe({
+        next: response => {
+          console.log('localida', response);
+          resolve(response.data[0].description);
+        },
+        error: error => {},
+      });
+    });
+  }
+
+  getMunicipalityName() {
+    return new Promise((resolve, reject) => {
+      const paramsMun = new BehaviorSubject<ListParams>(new ListParams());
+      paramsMun.getValue()['filter.idMunicipality'] =
+        this.store.wildebeestmunicipality;
+      paramsMun.getValue()['filter.stateKey'] = this.store.idState;
+      this.municipalityService.getAll(paramsMun.getValue()).subscribe({
+        next: response => {
+          resolve(response.data[0].nameMunicipality);
+        },
+        error: error => {},
+      });
+    });
+  }
+
+  getCityName() {
+    return new Promise((resolve, reject) => {
+      const paramsCity = new BehaviorSubject<ListParams>(new ListParams());
+      paramsCity.getValue()['filter.idCity'] = this.store.idCity;
+      this.cityService.getAll(paramsCity.getValue()).subscribe({
+        next: response => {
+          resolve(response.data[0].nameCity);
+        },
+        error: error => {},
+      });
+    });
+  }
+
+  getStateName() {
+    return new Promise((resolve, reject) => {
+      const paramsState = new BehaviorSubject<ListParams>(new ListParams());
+      paramsState.getValue()['filter.id'] = this.store.idState;
+      this.stateOfRepublicService.getAll(paramsState.getValue()).subscribe({
+        next: response => {
+          resolve(response.data[0].descCondition);
+        },
+      });
     });
   }
 
