@@ -50,9 +50,14 @@ export class CharacteristicEditorCell extends DefaultEditor {
   today: Date = new Date();
 
   constructor(
-    @Inject({ data: [] }) protected service: { data: ICharacteristicValue[] }
+    @Inject({ data: [] })
+    protected service: { data: ICharacteristicValue[]; disabledTable: boolean }
   ) {
     super();
+  }
+
+  get disabledTable() {
+    return this.service.disabledTable;
   }
 
   updateDate(value: any) {
