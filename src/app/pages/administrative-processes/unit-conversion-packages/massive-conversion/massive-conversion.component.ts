@@ -1312,11 +1312,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
             default:
               break;
           }
-          this.pupIniCorreo(
+          /* this.pupIniCorreo(
             this.noPackage.value.numberPackage,
             pAsuntoInit,
             pMessageStatus
-          );
+          ); */
           // if (statusMessage !== '') {
           //   Swal.fire(statusMessage, '', 'success');
           // }

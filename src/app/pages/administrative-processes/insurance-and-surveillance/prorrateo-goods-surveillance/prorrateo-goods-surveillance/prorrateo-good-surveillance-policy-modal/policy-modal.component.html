@@ -33,7 +33,7 @@
         <div class="col-md-6">
           <form-field [control]="form.get('typeNumberId')" label="Tipo">
             <input
-              type="text"
+              type="number"
               formControlName="typeNumberId"
               class="form-control" />
           </form-field>
@@ -41,7 +41,7 @@
         <div class="col-md-6">
           <form-field [control]="form.get('subtypeNumberId')" label="Subtipo">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="subtypeNumberId" />
           </form-field>
@@ -51,7 +51,7 @@
         <div class="col-md-6">
           <form-field [control]="form.get('ssubtypeNumberId')" label="Ssubtipo">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="ssubtypeNumberId" />
           </form-field>
@@ -61,7 +61,7 @@
             [control]="form.get('sssubtypeNumberId')"
             label="Sssubtipo">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="sssubtypeNumberId" />
           </form-field>
@@ -80,7 +80,7 @@
             [control]="form.get('currencyCousinKey')"
             label="Clave de prima">
             <input
-              type="money"
+              type="text"
               class="form-control"
               formControlName="currencyCousinKey" />
           </form-field>
@@ -99,9 +99,9 @@
           <div class="col-md-8">
             <form-field
               [control]="form.get('registrationNumber')"
-              label="Numero de registro">
+              label="Número de registro">
               <input
-                type="money"
+                type="number"
                 class="form-control"
                 formControlName="registrationNumber" />
             </form-field>
@@ -109,7 +109,7 @@
           <div class="col-md-4">
             <form-field [control]="form.get('consecPol')" label="consecPol">
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 formControlName="consecPol" />
             </form-field>
@@ -132,7 +132,8 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active"
-          (click)="confirm()">
+          (click)="confirm()"
+          [disabled]="!form.valid">
           Guardar
           <i aria-hidden="true" class="fa fa-save"></i>
         </button>

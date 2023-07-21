@@ -152,3 +152,18 @@ export interface IComerLotEvent {
   idEvent: number;
   processKey: string;
 }
+
+export interface EventXSerie {
+  idInvoiceFolio: string;
+  idTpevent: IdTpevent;
+  commentary: any;
+}
+
+export interface IdTpevent {
+  id: string;
+  description: string;
+  descReceipt: string;
+  use: string;
+  typeDispId: string;
+  typeFailedpId: string;
+}

@@ -13,6 +13,8 @@ import {
 import { ListParams } from './../../../../common/repository/interfaces/list-params';
 import { COLUMNSTABL1 } from './columnsTable1';
 import { COLUMNSTABLE2 } from './columnsTable2';
+import { LocalDataSource } from 'ng2-smart-table';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-destruction-acts',
@@ -20,13 +22,12 @@ import { COLUMNSTABLE2 } from './columnsTable2';
   styles: [],
 })
 export class DestructionActsComponent extends BasePage implements OnInit {
-  actForm: FormGroup;
   formTable1: FormGroup;
   formTable2: FormGroup;
   response: boolean = false; //data backend
   settings2: any;
-  data = EXAMPLE_DATA;
-  data2 = EXAMPLE_DATA2;
+  data = new LocalDataSource();
+  data2 = new LocalDataSource();
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   bsValueFromMonth: Date = new Date();
@@ -35,6 +36,12 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   bsValueFromYear: Date = new Date();
   minModeFromYear: BsDatepickerViewMode = 'year';
   bsConfigFromYear: Partial<BsDatepickerConfig>;
+
+  //Variables
+  actForm: FormGroup;
+
+  records = new DefaultSelect()
+
 
   constructor(private fb: FormBuilder) {
     super();
@@ -46,91 +53,23 @@ export class DestructionActsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.startCalendars();
   }
 
-  search(term: string | number) {
-    this.response = !this.response;
-  }
-
-  settingsChange(event: any, op: number) {
-    op === 1 ? (this.settings = event) : (this.settings2 = event);
-  }
-
-  startCalendars() {
-    this.bsConfigFromMonth = Object.assign(
-      {},
-      {
-        minMode: this.minModeFromMonth,
-        dateInputFormat: 'MM',
-      }
-    );
-    this.bsConfigFromYear = Object.assign(
-      {},
-      {
-        minMode: this.minModeFromYear,
-        dateInputFormat: 'YYYY',
-      }
-    );
-  }
 
   initForm() {
     this.actForm = this.fb.group({
-      statusAct: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      preliminaryAscertainment: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      causePenal: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      elabDate: [null, [Validators.required]],
-      destructDate: [null, [Validators.required]],
-      actSelect: [null, [Validators.required]],
-      status: [null, [Validators.required]],
-      trans: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      destr: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      admin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      folio: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
-      year: [this.bsValueFromYear, [Validators.required]],
-      month: [this.bsValueFromMonth, [Validators.required]],
-      act: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      address: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      observations: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      responsible: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      witness1: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      witness2: [null, [Validators.pattern(STRING_PATTERN)]],
-      methodDestruct: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      witnessContr: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      folioScan: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
+      expedient: [null],
+      prevAv: [null],
+      criminalCase: [null],
+      //Acta
+      act: [null],
+      status: [null],
+      transferent: [null],
+      destructor: [null],
+      admin: [null],
+      folio: [null],
+      year: [null],
+      month: [null]
     });
 
     this.formTable1 = this.fb.group({
@@ -144,148 +83,3 @@ export class DestructionActsComponent extends BasePage implements OnInit {
 
   onSubmit() {}
 }
-
-const EXAMPLE_DATA = [
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: false,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: true,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: true,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: true,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: true,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: false,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: false,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: true,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: false,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: 'ASEGURADO',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    acta: 'A/PGR/6/JCS',
-    status: true,
-  },
-];
-
-const EXAMPLE_DATA2 = [
-  {
-    noBien: 321,
-    clasificacion: 1139,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    proceso: 'DECOMISO',
-    cantidad: 2,
-  },
-  {
-    noBien: 321,
-    clasificacion: 1139,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    proceso: 'DECOMISO',
-    cantidad: 2,
-  },
-  {
-    noBien: 321,
-    clasificacion: 1139,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    proceso: 'DECOMISO',
-    cantidad: 2,
-  },
-  {
-    noBien: 321,
-    clasificacion: 1139,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    proceso: 'DECOMISO',
-    cantidad: 2,
-  },
-  {
-    noBien: 321,
-    clasificacion: 1139,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    proceso: 'DECOMISO',
-    cantidad: 2,
-  },
-  {
-    noBien: 321,
-    clasificacion: 1139,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    proceso: 'DECOMISO',
-    cantidad: 2,
-  },
-  {
-    noBien: 321,
-    clasificacion: 1139,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    proceso: 'DECOMISO',
-    cantidad: 2,
-  },
-];
