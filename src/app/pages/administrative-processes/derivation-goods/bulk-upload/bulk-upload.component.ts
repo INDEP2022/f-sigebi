@@ -32,10 +32,10 @@ export class BulkUploadComponent extends BasePage implements OnInit {
   //Reactive Forms
   form: FormGroup;
   data: LocalDataSource = new LocalDataSource();
-  ids: IDs[];
+  ids: any[];
   fileName: string = '';
   good: IbulkLoadGoods;
-
+  classificationOfGoods: number;
   get numberGoodFather() {
     return this.form.get('numberGoodFather');
   }
@@ -107,7 +107,7 @@ export class BulkUploadComponent extends BasePage implements OnInit {
     noDataMessage: 'No se encontraron registros',
     mode: 'external', // ventana externa
     columns: {
-      numberGood: {
+      noGoodFather: {
         title: 'No. Renglón',
         width: '20%',
         sort: false,
@@ -120,7 +120,8 @@ export class BulkUploadComponent extends BasePage implements OnInit {
     },
   };
 
-  data1: any[] = [];
+  data1: LocalDataSource = new LocalDataSource();
+  goodData: any;
 
   constructor(
     private fb: FormBuilder,
@@ -134,6 +135,8 @@ export class BulkUploadComponent extends BasePage implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.pGoodFatherNumber = params['pGoodFatherNumber'] || null;
       this.expedientNumber = params['expedientNumber'] || null;
+      this.classificationOfGoods = params['classificationOfGoods'] || null;
+      this.statusGood(this.pGoodFatherNumber);
     });
   }
 
@@ -285,21 +288,58 @@ export class BulkUploadComponent extends BasePage implements OnInit {
     //console.log((JSON.stringify(mappedData)));
     //console.log(this.good);
   }
-
+  statusGood(numberGoodFather: string) {
+    this.serviceGood.getById(numberGoodFather).subscribe(
+      async res => {
+        this.goodData = res;
+        console.log('res:', res);
+      },
+      err => {
+        console.log(err);
+        this.loader.load = false;
+      }
+    );
+  }
   postDatatableItemBtn() {
-    if (!this.good) {
-      this.alert('error', 'No se tiene bienes a ingresar S', '');
-    } else {
-      this.goodProcessService.postGoodMasiveForm(this.good).subscribe(
-        async res => {
-          //console.log("res -> " + JSON.stringify(res));
-          const message = res['message'][0];
-          this.alert('success', 'Guardado', message);
-        },
-        err => {
-          this.alert('error', 'Error', err);
-        }
-      );
+    console.log(this.classificationOfGoods);
+    if (this.classificationOfGoods == null) {
+      this.alert('warning', 'No se Tiene Bienes a Ingresar', '');
+      return;
     }
+    if (this.goodData.status == 'CVD') {
+      this.alert('warning', 'El Bien ya ha Sido Convertido', '');
+      return;
+    }
+    this.ids.length;
+    const mappedData: any = [];
+    for (let i = 0; i < this.ids.length; i++) {
+      mappedData.push({
+        noClasifGood: this.ids[i].CLASIFICADOR,
+        noGoodFather: this.pGoodFatherNumber,
+        quantity: this.ids[i].CANTIDAD,
+        description: this.ids[i].DESCRIPCION,
+        unit: this.ids[i].UNIDAD ?? null,
+        type: this.ids[i].TIPO ?? null,
+        material: this.ids[i].MATERIAL ?? null,
+        edoPhisical: this.ids[i].EDOFISICO ?? null,
+      });
+    }
+    console.log(mappedData);
+    let data = {
+      data: mappedData,
+    };
+    console.log(data);
+    this.goodProcessService.postGoodMasiveForm(data).subscribe(
+      async res => {
+        console.log('res ' + JSON.stringify(res));
+        const datas = res;
+        this.data1.load(datas['errors']);
+        this.data1.refresh();
+        this.alert('success', 'Bienes Cargados Correctamente', '');
+      },
+      err => {
+        console.log('res -> ' + JSON.stringify(err));
+      }
+    );
   }
 }
