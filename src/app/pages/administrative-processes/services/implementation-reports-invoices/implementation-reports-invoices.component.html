@@ -147,34 +147,24 @@
     </form>
     <div class="pt-4">
       <h5 class="title">Delegación</h5>
-      <form [formGroup]="delegationForm" class="form-material">
+      <form [formGroup]="proceduralHistoryForm" class="form-material">
         <div class="row margin-input">
-          <div class="col-md-2">
-            <form-field [control]="delegationForm.get('number')" label="No.">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="number"
-                min="1"
-                pattern="^[0-9]+" />
-            </form-field>
+          <div class="col-md-6">
+            <app-delegation-shared
+              [form]="proceduralHistoryForm"
+              [subdelegationField]="'subdelegation'"
+              [delegationField]="'delegation'"
+              [showDelegation]="true"
+              [showSubdelegation]="false">
+            </app-delegation-shared>
           </div>
-          <div class="col-md-4">
-            <form-field
-              [control]="delegationForm.get('description')"
-              label="Descripción">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="description" />
-            </form-field>
-          </div>
-          <div class="col-md-2">
-            <div class="justify-content-center">
-              <button type="submit" class="btn btn-primary btn-sm active">
-                Consultar
-              </button>
-            </div>
+          <div class="col-md-2 justify-content-center" style="margin: 1.4%">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="Application()">
+              Buscar<i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
           </div>
         </div>
       </form>
@@ -186,13 +176,30 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data1">
+            [source]="data"
+            (userRowSelect)="onRowSelect($event)">
           </ng2-smart-table>
         </div>
         <app-pagination
           [params]="params"
           [totalItems]="totalItems"></app-pagination>
       </div>
+    </div>
+    <div class="col-md-12 text-center mt-4 mb-4">
+      <button
+        class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+        type="button"
+        (click)="addSelect()">
+        <!-- Mover uno -->
+        <i class="bx bx-chevron-down bx-md"></i>
+      </button>
+      <button
+        class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+        type="button"
+        (click)="removeSelect()">
+        <!-- Quitar uno -->
+        <i class="bx bx-chevron-up bx-md"></i>
+      </button>
     </div>
     <div class="row">
       <div class="col-md-12">
@@ -201,7 +208,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
-            [source]="data1">
+            [source]="strategy">
           </ng2-smart-table>
         </div>
         <app-pagination
