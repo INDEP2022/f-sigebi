@@ -854,7 +854,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     }
     const filename: string = 'Numerario Prorraneo';
     const jsonToCsv = await this.returnJsonToCsv(
-      Number(this.idProcess)
+      Number(this.idProcess.value)
     );
     console.log('jsonToCsv', jsonToCsv);
     if (jsonToCsv.length === 0) {
@@ -876,6 +876,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           res(resp.data);
         },
         error: err => {
+          console.log(err)
           res([]);
         },
       });
@@ -885,7 +886,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   async exportarTotal() {
     const filename: string = 'Numerario Total';
     const jsonToCsv = await this.returnJsonToTotalCsv(
-      Number(this.idProcess)
+      Number(this.idProcess.value)
     );
     console.log('jsonToCsv', jsonToCsv);
     if (jsonToCsv.length === 0) {
