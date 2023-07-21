@@ -198,6 +198,7 @@
           <form-field
             [control]="claimsFollowUpDetailForm.get('firstSecondLaterIn')">
             <ngx-select
+              [searchable]="false"
               [data]="tipeFirstSecondLater"
               [form]="claimsFollowUpDetailForm"
               value="value"
@@ -224,15 +225,17 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field
-            [control]="claimsFollowUpDetailForm.get('dateIndemnizationIn')"
-            label="Fecha Indemnización">
-            <input
-              type="text"
-              formControlName="dateIndemnizationIn"
-              class="form-control"
-              bsDatepicker />
-          </form-field>
+          <div class="row">
+            <form-field
+              [control]="claimsFollowUpDetailForm.get('dateIndemnizationIn')"
+              label="Fecha Indemnización">
+              <input
+                type="text"
+                formControlName="dateIndemnizationIn"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
         </div>
       </div>
       <div class="row margin-input">
@@ -251,6 +254,7 @@
           <form-field [control]="claimsFollowUpDetailForm.get('statusIn')">
             <ngx-select
               [data]="status"
+              [searchable]="false"
               [form]="claimsFollowUpDetailForm"
               value="value"
               bindLabel="description"
@@ -266,13 +270,16 @@
       </div>
       <div class="row margin-input">
         <div class="col-md-12">
+          <label
+            for=""
+            style="font-size: 10px; font-weight: 600; color: #74788d"
+            >Carta Reclamación (pdf)</label
+          >
           <form-field
-            label="Carta Reclamación (pdf)"
             [control]="claimsFollowUpDetailForm.get('docLetterRelcamationIn')">
             <input
               type="file"
               accept="application/pdf"
-              class="form-control pt-4"
               formControlName="docLetterRelcamationIn"
               (change)="chargeFileLetterClaimIn($event)" />
           </form-field>
@@ -280,13 +287,16 @@
       </div>
       <div class="row margin-input">
         <div class="col-md-12">
+          <label
+            for=""
+            style="font-size: 10px; font-weight: 600; color: #74788d"
+            >Oficio de Conclusión/Minuta de Conclusión (pdf)</label
+          >
           <form-field
-            label="Oficio de Conclusión/Minuta de Conclusión (pdf)"
             [control]="claimsFollowUpDetailForm.get('docOfficeMinConcluIn')">
             <input
               type="file"
               accept="application/pdf"
-              class="form-control pt-4"
               formControlName="docOfficeMinConcluIn"
               (change)="chargeFileDocOfficeMinConcluIn($event)" />
           </form-field>
@@ -294,13 +304,17 @@
       </div>
       <div class="row margin-input">
         <div class="col-md-12">
+          <label
+            for=""
+            style="font-size: 10px; font-weight: 600; color: #74788d"
+            >Oficio/Correo (pdf)</label
+          >
           <form-field
-            label="Oficio/Correo (pdf)"
+            label=""
             [control]="claimsFollowUpDetailForm.get('docOfficeMailIn')">
             <input
               type="file"
               accept="application/pdf"
-              class="form-control pt-4"
               formControlName="docOfficeMailIn"
               (change)="chargeFileDocOfficeMailIn($event)" />
           </form-field>

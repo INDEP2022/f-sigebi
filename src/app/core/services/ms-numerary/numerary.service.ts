@@ -117,8 +117,12 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
     return this.post('application/fp-sol-numerary', model);
   }
 
-  pupSonDate(model:{lvIdSolnum:string | number, lvIdProcnum:string | number,lvBpParcializado:string | number}){
-    return this.post('application/pup-son-date',model)
+  pupSonDate(model: {
+    lvIdSolnum: string | number;
+    lvIdProcnum: string | number;
+    lvBpParcializado: string | number;
+  }) {
+    return this.post('application/pup-son-date', model);
   }
 
   pupSonDelDate(model: Object) {

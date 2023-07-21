@@ -36,7 +36,7 @@
               <select
                 class="form-control"
                 formControlName="tipo"
-                [disabled]="true">
+                [disabled]="typeAction">
                 <option value="1">Derivado</option>
                 <option value="2">Conversión</option>
               </select>
@@ -262,28 +262,47 @@
         <div class="card-header mb-3">
           <h5>ATRIBUTOS DEL BIEN</h5>
         </div>
-        <div class="card-block" style="max-height: 500px; overflow-y: auto">
-          <div class="row">
+        <div *ngIf="classificationOfGoods" class="p-3">
+          <div style="text-align: right">
+            <button
+              type="button"
+              data-toggle="tooltop"
+              title="Guardar"
+              class="btn btn-primary btn-sm active"
+              (click)="updateAttributes()">
+              Guardar
+              <i class="bx bx-save bx-sm float-icon"></i>
+            </button>
+          </div>
+          <app-good-characteristics-table
+            [goodChange]="goodChange"
+            [clasification]="classificationOfGoods"
+            [settings]="atributNewSettings"
+            [avaluo]="false"
+            [good]="goodForTableChar"
+            [disabled]="false"
+            [service]="service"
+            [initValue]="true"></app-good-characteristics-table>
+        </div>
+
+        <!-- <div class="card-block" style="max-height: 500px; overflow-y: auto"> -->
+        <!-- <div class="row">
             <div class="col-6">
               <h6>ATRIBUTOS</h6>
             </div>
             <div class="col-6">
               <h6>VALORES</h6>
             </div>
-          </div>
-          <div class="row" *ngFor="let attr of attributes">
+          </div> -->
+        <!-- <div class="row" *ngFor="let attr of attributes">
             <div class="col-6">
               <label class="label-first">{{ attr.attributes }}:</label>
             </div>
             <div class="col-6">
-              <input
-                type="text"
-                placeholder="Introduce un valor"
-                [readOnly]="true"
-                [value]="attr.value" />
+              <input type="text" placeholder="Introduce un valor" [readOnly]="true" [value]="attr.value" />
             </div>
-          </div>
-        </div>
+          </div> -->
+        <!-- </div> -->
       </div>
     </div>
   </div>
