@@ -47,7 +47,7 @@ const routes: Routes = [
         './partializes-general-goods-1/partializes-general-goods.module'
       ).then(m => m.PartializesGeneralGoodsModule),
     data: {
-      screen: 'FACTGENPARCBIEN_2 ',
+      screen: 'FACTGENPARCBIEN',
       title: 'Parcialización de Bienes Generales',
     },
   },

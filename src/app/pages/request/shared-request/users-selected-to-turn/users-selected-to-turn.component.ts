@@ -103,9 +103,6 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
       this.deleRegionalId,
       SearchFilter.ILIKE
     );
-    if (this.op == 2) {
-      this.params.value.addFilter('position', this.role);
-    }
 
     const filter = this.params.getValue().getParams();
 
