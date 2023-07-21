@@ -622,7 +622,7 @@
                 [attr.class]="'table-bordered table-responsive pt-3'"
                 [settings]="settingsTransportableGoods"
                 [source]="goodsTranportables"
-                (edit)="showGood($event.data)"
+                (edit)="showGoodWarehouse($event.data)"
                 (delete)="removeGoodTrans($event.data)">
               </ng2-smart-table>
 
@@ -648,7 +648,7 @@
                 [attr.class]="'table-bordered table-responsive pt-3'"
                 [settings]="settingGuardGoods"
                 [source]="goodsGuards"
-                (edit)="showGood($event.data)"
+                (edit)="showGoodWarehouse($event.data)"
                 (delete)="removeGoodGuard($event.data)">
               </ng2-smart-table>
 
