@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { GoodprocessEndpoints } from 'src/app/common/constants/endpoints/ms-goodprocess-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import {
   IListResponse,
   IListResponseMessage,
@@ -192,5 +192,20 @@ export class GoodprocessService extends HttpService {
 
   secondIfCancelMassiveConversion(body: ISecondIfMC) {
     return this.post('application/fmto-package-procedure', body);
+  }
+
+  deleteStatusBien(body: any) {
+    return this.post(GoodprocessEndpoints.deleteStatusBien, body);
+  }
+
+  insertStatusBien(body: any) {
+    return this.post(GoodprocessEndpoints.insertStatusBien, body);
+  }
+
+  getGoodType_(params?: _Params) {
+    return this.get<IListResponse<any>>(
+      GoodprocessEndpoints.GetGoodType,
+      params
+    );
   }
 }

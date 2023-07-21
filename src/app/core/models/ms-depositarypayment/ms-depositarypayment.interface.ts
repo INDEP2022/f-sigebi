@@ -24,6 +24,7 @@ export interface IRefPayDepositary {
   invoice_oi: string;
   indicator: number;
   system_val_date: Date;
+  incomeid?: number;
 }
 
 export interface IPaymentsGensDepositary {

@@ -97,13 +97,13 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div #scrollContainer class="col-md-3 col-sm-12 col-xs-12">
           <button
             type="submit"
             class="btn btn-primary btn-sm active"
             tooltip="Enviar"
             containerClass="tooltip-style"
-            (click)="getDataTable()"
+            (click)="getDataTable('si')"
             [disabled]="!form.valid">
             Ejecutar
           </button>
@@ -129,15 +129,19 @@
       <div class="d-flex justify-content-end mb-2">
         <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>
-      <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          class="table-responsive"
-          [attr.class]="'table-responsive table-bordered'"
-          [source]="data"
-          [settings]="settings"
-          (userRowSelect)="selectData($event.data)"
-          (edit)="showReceipt($event.data)">
-        </ng2-smart-table>
+      <form-loader *ngIf="loading"></form-loader>
+      <div class="col-md-12">
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '400px' }">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [source]="data"
+            [settings]="settings"
+            (userRowSelect)="selectData($event)"
+            (edit)="showReceipt($event.data)">
+          </ng2-smart-table>
+        </ng-scrollbar>
         <br />
         <div>
           <app-pagination
@@ -145,6 +149,7 @@
             [totalItems]="totalItems"></app-pagination>
         </div>
       </div>
+
       <!-- <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data">
       </ng2-smart-table>
       <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination> -->
@@ -165,10 +170,11 @@
             label="No. Solicitud"
             style="top: -20px">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="applicationChangeCashNumber"
-              maxlength="7" />
+              [max-length]="7"
+              pattern="^[0-9]+" />
           </form-field>
           <button
             type="button"
@@ -176,8 +182,7 @@
             style="margin-left: 5vh"
             (click)="search()"
             [disabled]="
-              formaplicationData.get('applicationChangeCashNumber').value ==
-              null
+              !formaplicationData.get('applicationChangeCashNumber').value
             ">
             Buscar
             <i class="bx bx-search-alt bx-sm float-icon"></i>
@@ -185,7 +190,7 @@
         </div>
       </div>
       <br />
-      <div class="row">
+      <div #scrollContainer2 class="row">
         <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
             [control]="formaplicationData.get('dateRequestChangeNumerary')"
@@ -245,16 +250,20 @@
           <form-field
             [control]="formaplicationData.get('procedureProposal')"
             label="Procedimiento Propuesto">
-            <select
+            <ng-select
               class="form-control mt-2"
               formControlName="procedureProposal">
-              <option [value]="null">Seleccione un valor</option>
-              <option value="LICITACION PUBLICA">LICITACION PUBLICA</option>
-              <option value="INVITACION">INVITACION</option>
-              <option value="LICITACION DIRECTA">ADJUDICACION DIRECTA</option>
-              <option value="SUBASTA">SUBASTA</option>
-              <option value="REMATE">REMATE</option>
-            </select>
+              <!-- <ng- [value]="null">Seleccione un valor</ng-option> -->
+              <ng-option value="LICITACION PUBLICA"
+                >LICITACION PUBLICA</ng-option
+              >
+              <ng-option value="INVITACION">INVITACION</ng-option>
+              <ng-option value="LICITACION DIRECTA"
+                >ADJUDICACION DIRECTA</ng-option
+              >
+              <ng-option value="SUBASTA">SUBASTA</ng-option>
+              <ng-option value="REMATE">REMATE</ng-option>
+            </ng-select>
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -335,52 +344,75 @@
         </div>
       </div>
       <hr />
-      <div class="row mb-6 mt-6">
+      <div class="row">
         <div class="col-md-12">
-          <button
-            type="button"
-            class="btn btn-primary btn-sm active"
-            style="margin-left: 1vh"
-            (click)="pasar()">
-            Pasar
-          </button>
-          <button
-            class="btn btn-primary btn-sm active"
-            style="margin-left: 1vh"
-            (click)="pasarTodo()">
-            Pasar Todo
-          </button>
-          <button
-            class="btn btn-primary btn-sm active"
-            style="margin-left: 1vh"
-            (click)="quitarTodo()">
-            Borrar Todo
-          </button>
-          <button
-            class="btn btn-primary btn-sm active"
-            style="margin-left: 1vh"
-            (click)="quitar()">
-            Borrar
-          </button>
-        </div>
-        <hr />
-        <div class="col-md-11 col-sm-12 col-xs-12">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings1"
-              [source]="data1"
-              (userRowSelect)="selectDataCamNum($event.data)">
-            </ng2-smart-table>
-            <app-pagination
-              [params]="params1"
-              [totalItems]="totalItems1"></app-pagination>
+          <div class="row pt-2">
+            <div class="col-md-12 text-center mt-4 mb-4">
+              <button
+                tooltip="Agregar Bien"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="pasar()">
+                <!-- Mover uno -->
+                <i class="bx bx-chevron-down bx-md"></i>
+              </button>
+              <button
+                tooltip="Agregar Bienes"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="pasarTodo()">
+                <!-- Mover todos -->
+                <i class="bx bx-chevrons-down bx-md"></i>
+              </button>
+              <button
+                tooltip="Quitar Bienes"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="quitarTodo()">
+                <i class="bx bx-chevrons-up bx-md"></i>
+              </button>
+              <button
+                tooltip="Quitar Bien"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                type="button"
+                (click)="quitar()">
+                <!-- Quitar uno -->
+                <i class="bx bx-chevron-up bx-md"></i>
+              </button>
+            </div>
           </div>
+        </div>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+          <form-loader *ngIf="loading2"></form-loader>
+          <div class="col-md-12">
+            <ng-scrollbar
+              [track]="'all'"
+              [ngStyle]="{ height: loading2 ? '0px' : '300px' }">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings1"
+                [source]="data1"
+                (userRowSelect)="selectDataCamNum($event)">
+              </ng2-smart-table>
+            </ng-scrollbar>
+            <br />
+            <div>
+              <app-pagination
+                [params]="params1"
+                [totalItems]="totalItems1"></app-pagination>
+            </div>
+          </div>
+
+          <!-- </div> -->
         </div>
       </div>
       <div class="row">
         <div class="container"></div>
-
         <div footer>
           <div class="d-flex justify-content-center">
             <div class="m-3">
@@ -397,6 +429,7 @@
     </div>
   </app-card>
 </form>
+
 <div
   #modal="bs-modal"
   [config]="{ ignoreBackdropClick: true }"

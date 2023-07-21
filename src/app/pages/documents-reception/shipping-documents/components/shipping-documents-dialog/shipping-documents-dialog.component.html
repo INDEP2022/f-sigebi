@@ -6,20 +6,25 @@
     <form class="form-material" (submit)="getJob()">
       <div class="row" *ngIf="queryMode == null">
         <div class="col-md-12 d-flex justify-content-between">
-          <div>
-            <button
-              type="button"
-              class="btn btn-primary active"
-              (click)="queryMode = true">
-              Consultar envio
-            </button>
+          <div class="col-md-1"></div>
+          <div class="col-md-5">
+            <div>
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="queryMode = true">
+                Consultar envio
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+            </div>
           </div>
-          <div>
+          <div class="col-md-7">
             <button
               type="button"
-              class="btn btn-secondary active"
+              class="btn btn-info btn-sm active ml-2 mr-2"
               (click)="close()">
               Nuevo envio
+              <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
           </div>
         </div>
@@ -27,6 +32,15 @@
 
       <ng-container *ngIf="queryMode">
         <div class="row">
+          <div class="col-md-9"></div>
+          <div class="col-md-1">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm m-2"
+              (click)="queryMode = null">
+              Regresar <i class="fas fa-arrow-circle-left"></i>
+            </button>
+          </div>
           <div class="col-md-12">
             <form-field
               class="col-md-6"
@@ -42,20 +56,8 @@
               <confirm-button
                 [loading]="loading"
                 loadingText="Buscando..."
-                text="Buscar"></confirm-button>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-12 d-flex justify-content-end">
-            <div>
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm active"
-                (click)="queryMode = null">
-                Regresar
-              </button>
+                text="Buscar"
+                [btnSmall]="true"></confirm-button>
             </div>
           </div>
         </div>
@@ -64,20 +66,21 @@
   </div>
 
   <div footer>
-    <div class="d-flex justify-content-end">
+    <div class="col-md-8">
+      <!--  <div class="m-3">
+                <confirm-button
+          text="Buscar "
+          loadingText="Buscando ... "
+          [loading]="loading "
+          [disabled]="!form.valid "
+          (confirm)="confirm() "></confirm-button> 
+        </div>-->
       <div class="m-3">
-        <!-- <confirm-button
-          text="Buscar"
-          loadingText="Buscando ..."
-          [loading]="loading"
-          [disabled]="!form.valid"
-          (confirm)="confirm()"></confirm-button> -->
-      </div>
-      <div class="m-3">
+        <div class="col-md-8"></div>
         <button
-          type="button"
+          type="button "
           class="btn btn-sm btn-danger active"
-          (click)="cancel()">
+          (click)="close()">
           Cancelar
         </button>
       </div>

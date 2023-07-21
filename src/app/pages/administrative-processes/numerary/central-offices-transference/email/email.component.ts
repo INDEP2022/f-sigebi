@@ -154,7 +154,7 @@ export class EmailComponentC extends BasePage implements OnInit {
     )[0].description;
 
     const body = {
-      to: 'aetiru@gmail.com',
+      to: 'pruebasqaindep@gmail.com',
       subject: asunto,
       fecDepositDev: dateDevolution,
       description: del ?? this.description,
@@ -180,7 +180,7 @@ export class EmailComponentC extends BasePage implements OnInit {
 
         const body: any = {
           header: 'DEV',
-          destination: ['aetiru@gmail.com'],
+          destination: ['pruebasqaindep@gmail.com'],
           copy: [''],
           subject: 'DEV EMAIL',
           message: `${resp.message}`,
@@ -207,7 +207,7 @@ export class EmailComponentC extends BasePage implements OnInit {
             // };
 
             const body: any = {
-              addressee: 'aetiru@gmail.com',
+              addressee: 'pruebasqaindep@gmail.com',
               sender: user.toUpperCase(),
               cc: '',
               message: `${resp.message}`,

@@ -37,6 +37,7 @@ export class RegisterDocumentationFormComponent
   maxDate: Date = new Date();
   @Input() requestId: number;
   @Input() subject: string;
+  @Input() process?: string = '';
   registerForm: FormGroup = new FormGroup({});
   @Output() onRegister = new EventEmitter<any>();
 
@@ -46,11 +47,14 @@ export class RegisterDocumentationFormComponent
   bsPaperValue: any;
   affair: string = '';
   transference: number = null;
+  typeTransference: string = '';
   processDetonate: string = '';
 
   selectTypeExpedient = new DefaultSelect<any>();
   selectOriginInfo = new DefaultSelect<any>();
   selectMinPub = new DefaultSelect<any>();
+
+  displayNotifyMails: boolean = false;
 
   /* injections */
   private readonly requestService = inject(RequestService);
@@ -72,6 +76,7 @@ export class RegisterDocumentationFormComponent
     this.getTypeExpedient(new ListParams());
     this.getOriginInfo(new ListParams());
     this.getRequestInfo();
+    this.displayNotifyMailsInput();
   }
 
   prepareForm() {
@@ -118,6 +123,7 @@ export class RegisterDocumentationFormComponent
       destinationManagement: [null, [Validators.pattern(STRING_PATTERN)]],
       domainExtinction: [null, [Validators.pattern(STRING_PATTERN)]],
       transferEntNotes: [null, [Validators.pattern(STRING_PATTERN)]],
+      emailNotification: [null],
     });
   }
 
@@ -181,9 +187,11 @@ export class RegisterDocumentationFormComponent
           }
 
           this.transference = +resp.transferenceId;
+          this.typeTransference = resp.typeOfTransfer;
           this.registerForm.patchValue(resp);
           this.getAffair(resp.affair);
           this.getPublicMinister(new ListParams());
+          this.setFieldsRequired();
         },
         error: error => {
           console.log('No se cargaron datos de la solicitud. ', error);
@@ -192,12 +200,47 @@ export class RegisterDocumentationFormComponent
     }
   }
 
+  /* METODO QUE ESTABLECE CAMPOS COMO REQUERIDOS
+  ================================================ */
+  setFieldsRequired() {
+    if (this.transference == 1) {
+      this.registerForm.controls['previousInquiry'].setValidators([
+        Validators.required,
+      ]);
+      this.registerForm.controls['circumstantialRecord'].setValidators([
+        Validators.required,
+      ]);
+    } else if (this.transference == 3) {
+      this.registerForm.controls['lawsuit'].setValidators([
+        Validators.required,
+      ]);
+      this.registerForm.controls['tocaPenal'].setValidators([
+        Validators.required,
+      ]);
+      this.registerForm.controls['protectNumber'].setValidators([
+        Validators.required,
+      ]);
+    } else if (this.transference == 120) {
+      this.registerForm.controls['trialType'].setValidators([
+        Validators.required,
+      ]);
+    }
+
+    if (this.processDetonate == 'AMPARO') {
+      this.registerForm.controls['protectNumber'].setValidators([
+        Validators.required,
+      ]);
+    }
+
+    this.registerForm.updateValueAndValidity();
+  }
+
   cancelRequest() {
     this.alertQuestion(
       'question',
       '¿Desea cancelar el registro de la solicitud actual?',
       '',
-      'Cancelar Solicitud'
+      'Continuar'
     ).then(question => {
       if (question.isConfirmed) {
         this.registerForm.reset();
@@ -224,7 +267,8 @@ export class RegisterDocumentationFormComponent
           return;
         }
         request.receptionDate = this.bsReceptionValue.toISOString();
-
+        request.transferEntNotes =
+          request.transferEntNotes == '' ? null : request.transferEntNotes;
         console.log(request);
         this.requestService.update(request.id, request).subscribe({
           next: resp => {
@@ -296,5 +340,13 @@ export class RegisterDocumentationFormComponent
         console.log('no se encontraron datos en asuntos ', error);
       },
     });
+  }
+
+  /* METODO PARA VISUALIZAR EL INPUT NOTIFICACIONES ELECTRONICAS
+  =============================================================== */
+  displayNotifyMailsInput() {
+    if (this.process == 'similar-good-register-documentation') {
+      this.displayNotifyMails = true;
+    }
   }
 }

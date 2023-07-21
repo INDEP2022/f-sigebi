@@ -203,7 +203,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       rowClassFunction: (row: { data: { available: any } }) =>
-       row.data.available ? 'bg-dark text-white' : 'bg-success text-white',
+        row.data.available ? 'bg-dark text-white' : 'bg-success text-white',
       actions: { add: false, delete: false, edit: false },
       columns: COLUMNS,
     };
@@ -470,18 +470,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       ],
 
       //Pestaña de "PÁRRAFOS"
-      paragraph1: [
-        null,
-        [Validators.required],
-      ],
-      paragraph2: [
-        null,
-        [Validators.required],
-      ], //Párrrafo inicial
-      paragraph3: [
-        null,
-        [Validators.required],
-      ], //Párrrafo final
+      paragraph1: [null, [Validators.required]],
+      paragraph2: [null, [Validators.required]], //Párrrafo inicial
+      paragraph3: [null, [Validators.required]], //Párrrafo final
     });
 
     //Formulario "NUEVO BIEN"
@@ -1124,15 +1115,18 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
 
           this.goodProcessService.packageClose(closeData).subscribe(
             res => {
-              this.alert('success','El paquete fue cerrado','')
+              this.alert('success', 'El paquete fue cerrado', '');
               this.researchNoPackage(this.noPackage.value.numberPackage);
 
               const modelUpdate: Partial<IPackage> = {
-                amount: this.form.get('amountKg').value
+                amount: this.form.get('amountKg').value,
               };
-          
+
               this.packageGoodService
-                .updatePaqDestinationEnc(this.noPackage.value.numberPackage, modelUpdate)
+                .updatePaqDestinationEnc(
+                  this.noPackage.value.numberPackage,
+                  modelUpdate
+                )
                 .subscribe(
                   res => {
                     console.log(res);
@@ -1154,7 +1148,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         'Cierre de paquete ' + noPackage,
         'No puede cerrar paquetes chatarra'
       );
-      this.amountKg.markAsTouched()
+      this.amountKg.markAsTouched();
     }
     // Validar que todos los campos estén diligenciados
     // console.log(this.noPackage.value);
@@ -2083,19 +2077,19 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       }
       if (this.generalPermissions.Cancelar) {
         vBtn.PB_CANCELA = true;
-         vBtn.PB_CERRAR = true;
+        vBtn.PB_CERRAR = true;
       }
     } else if (status == 'C') {
       if (this.generalPermissions.Cancelar) {
         vBtn.PB_CANCELA = true;
-        vBtn.PB_CERRAR = false
+        vBtn.PB_CERRAR = false;
       }
-    }else{
-      vBtn.PB_AUTORIZA = false
-      vBtn.PB_CANCELA = false
-      vBtn.PB_CERRAR = false
-      vBtn.PB_PERMISOS = false
-      vBtn.PB_VALIDA = false
+    } else {
+      vBtn.PB_AUTORIZA = false;
+      vBtn.PB_CANCELA = false;
+      vBtn.PB_CERRAR = false;
+      vBtn.PB_PERMISOS = false;
+      vBtn.PB_VALIDA = false;
     }
   }
 
@@ -2272,11 +2266,15 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       .subscribe(
         res => {
           console.log(res);
-          this.alert('success','Párrafos Insertados','')
+          this.alert('success', 'Párrafos Insertados', '');
         },
         err => {
           console.log(err);
-          this.alert('error','Se presentó un Error al Insertar los Párrafos','')
+          this.alert(
+            'error',
+            'Se presentó un Error al Insertar los Párrafos',
+            ''
+          );
         }
       );
   }
@@ -2297,11 +2295,15 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       .updatePaqDestinationEnc(this.noPackage.value.numberPackage, modelUpdate)
       .subscribe(
         res => {
-          this.alert('success','Párrafos actualizados','')
+          this.alert('success', 'Párrafos actualizados', '');
           console.log(res);
         },
         err => {
-          this.alert('error','Se presentó un Error al Actualizar los Párrafos','')
+          this.alert(
+            'error',
+            'Se presentó un Error al Actualizar los Párrafos',
+            ''
+          );
           console.log(err);
         }
       );

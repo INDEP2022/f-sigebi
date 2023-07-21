@@ -513,7 +513,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./third-party-company/third-party-company.module'))
         .ThirdPartyCompanyModule,
-    data: { title: 'Lista de Emisoras' },
+    data: { title: 'Lista de Empresas de Terceros' },
   },
   {
     path: 'status-transfer',

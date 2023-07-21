@@ -38,6 +38,12 @@
                 bsDatepicker />
             </form-field>
           </div>
+          <div
+            class="invalid-feedback animated fadeInUp"
+            style="display: block"
+            *ngIf="PF_FECFIN.touched">
+            {{ getEndDateErrorMessage(PF_FECFIN, PF_FECINI) }}
+          </div>
 
           <!-- (change)="onDptossChange($event)" -->
 
@@ -67,7 +73,6 @@
               [showTooltip]="true"
               [data]="selectedSubDelegation"
               bindLabel="description"
-              [searchable]="false"
               (change)="onSubDelegationsChange($event)"
               label="Subdelegación destino"
               value="id"></ngx-select>
@@ -81,6 +86,8 @@
       <div class="m-3">
         <confirm-button
           text="Imprimir"
+          [btnSmall]="true"
+          icon="bx bx-printer bx-sm float-icon"
           [disabled]="flyersForm.invalid"
           [loading]="loading"
           (confirm)="Generar()">
@@ -89,9 +96,10 @@
       <div class="m-3">
         <button
           type="button"
-          class="btn btn-danger active"
+          class="btn btn-danger btn-sm active"
           (click)="cleanForm()">
           Limpiar
+          <i class="fas fa-eraser"> </i>
         </button>
       </div>
     </div>

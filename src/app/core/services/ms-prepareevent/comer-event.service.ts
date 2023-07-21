@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PrepareEventEndpoints } from 'src/app/common/constants/endpoints/ms-prepareevent-endpoints';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IComerEvent } from '../../models/ms-event/event.model';
@@ -37,6 +38,14 @@ export class ComerEventService extends HttpService {
   }
 
   geEventId(eventId: string) {
-    return this.get(PrepareEventEndpoints.ComerEvent + '/' + eventId);
+    return this.get<IComerEvent>(
+      PrepareEventEndpoints.ComerEvent + '/' + eventId
+    );
+  }
+  getAllFilterComerGoodEvent(id: number, params: ListParams) {
+    return this.get<IListResponse<any>>(
+      `comer-good-xlot?filter.goodNumber=${id}`,
+      params
+    );
   }
 }

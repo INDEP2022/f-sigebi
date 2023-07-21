@@ -2,6 +2,10 @@ import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import {
+  BsDatepickerConfig,
+  BsDatepickerViewMode,
+} from 'ngx-bootstrap/datepicker';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -16,6 +20,10 @@ export class AccumulatedMonthlyAssetsComponent implements OnInit {
   form: FormGroup;
   months = MONTHS;
   date: string;
+  bsValue: Date = new Date();
+  minMode: BsDatepickerViewMode = 'year'; // change for month:year
+
+  bsConfig: Partial<BsDatepickerConfig>;
 
   @Output() submit = new EventEmitter();
 
@@ -28,6 +36,12 @@ export class AccumulatedMonthlyAssetsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.bsConfig = Object.assign(
+      {},
+      {
+        minMode: this.minMode,
+      }
+    );
     this.prepareForm();
   }
   private prepareForm() {
