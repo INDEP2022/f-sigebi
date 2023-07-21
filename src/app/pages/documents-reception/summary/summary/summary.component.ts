@@ -235,4 +235,10 @@ export class SummaryComponent extends BasePage implements OnInit {
     // this.delegation.setValue(subdelegation.delegation.id);
     this.emitSubdelegation.emit(subdelegation);
   }
+  minDate: Date;
+  onDateChange(event: any) {
+    console.log('onDateChange' + event);
+    //change mindate #toDate
+    this.minDate = event;
+  }
 }
