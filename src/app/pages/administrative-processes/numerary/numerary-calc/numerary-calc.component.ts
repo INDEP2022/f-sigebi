@@ -423,7 +423,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     this.isLoadingStatusAccount = true;
     const params = {
       P_PROCNUM: this.idProcess.value,
-      P_FEC_PROCNUM: new Date(this.date.value)
+      P_FEC_PROCNUM: new Date(this.date.value),
     };
     this.downloadReport('blank', params, () => {
       this.isLoadingStatusAccount = false;
@@ -435,7 +435,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     this.isLoadingDetailMovi = true;
     const params = {
       P_PROCNUM: this.idProcess.value,
-      P_FEC_PROCNUM: new Date(this.date.value)
+      P_FEC_PROCNUM: new Date(this.date.value),
     };
     this.downloadReport('blank', params, () => {
       this.isLoadingDetailMovi = false;
@@ -447,7 +447,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     if (this.currency.value === 'P') {
       const params = {
         P_PROCNUM: this.idProcess.value,
-        P_FEC_PROCNUM: new Date(this.date.value)
+        P_FEC_PROCNUM: new Date(this.date.value),
       };
       this.downloadReport('blank', params, () => {
         this.isLoadingProrraComission = false;
@@ -625,12 +625,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           '¿Desea continuar?'
         );
         if (response.isConfirmed) {
-          const vResul = await this.pupElimCalculNume(
-            this.idProcess.value
-          );
-          const process = await this.getProccesNum(
-            this.idProcess.value
-          );
+          const vResul = await this.pupElimCalculNume(this.idProcess.value);
+          const process = await this.getProccesNum(this.idProcess.value);
           this.processService.process(process);
           if (vResul === 'Error') {
             this.alert('error', 'Ha ocurrido un error', '');
@@ -669,7 +665,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           res(res);
         },
         error: err => {
-          console.log(err)
+          console.log(err);
           res('Error');
         },
       });
@@ -719,10 +715,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     });
   }
 
-  pupSonDelDate(
-    lvIdSolnum: string | number,
-    lvIdProcnum: string,
-  ) {
+  pupSonDelDate(lvIdSolnum: string | number, lvIdProcnum: string) {
     return new Promise<boolean>((res, rej) => {
       const model = {
         lvIdSolnum,
@@ -781,7 +774,6 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       this.alert('error', 'No se especificó el proceso a calcular', '');
     }
   }
-
 
   onChangeTable2(event: any) {
     console.log(event);
@@ -851,9 +843,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       return;
     }
     const filename: string = 'Numerario Prorraneo';
-    const jsonToCsv = await this.returnJsonToCsv(
-      Number(this.idProcess)
-    );
+    const jsonToCsv = await this.returnJsonToCsv(Number(this.idProcess));
     console.log('jsonToCsv', jsonToCsv);
     if (jsonToCsv.length === 0) {
       this.alert(

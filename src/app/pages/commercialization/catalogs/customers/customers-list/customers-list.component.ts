@@ -46,6 +46,7 @@ export class CustomersListComponent
       actions: {
         columnTitle: 'Acciones',
         edit: true,
+        add: false,
         delete: false,
         position: 'right',
       },
@@ -75,18 +76,13 @@ export class CustomersListComponent
   exportAllClients(): void {
     this.massiveClientService.exportAllClients().subscribe({
       next: (data: any) => {
-        console.log(data);
         if (data.file.base64) {
           this.downloadFile(
             data.file.base64,
             `TotalClientes${new Date().getTime()}`
           );
         } else {
-          this.onLoadToast(
-            'warning',
-            '',
-            NOT_FOUND_MESSAGE('Exporta todos los Clientes')
-          );
+          this.alert('warning', 'Exporta Todos los Clientes', '');
         }
         this.downloading = false;
       },
@@ -110,7 +106,7 @@ export class CustomersListComponent
   }
 
   errorGet(err: any) {
-    this.onLoadToast(
+    this.alert(
       'error',
       'Error',
       err.status === 0 ? ERROR_INTERNET : err.error.message
@@ -118,12 +114,11 @@ export class CustomersListComponent
   }
 
   openFormClients(customers?: any) {
-    const modalConfig = MODAL_CONFIG;
     console.log(customers);
+    const modalConfig = MODAL_CONFIG;
     if (customers) {
       customers = { ...customers, sellerId: customers.sellerId?.id ?? null };
     }
-
     modalConfig.initialState = {
       customers,
       callback: (next: boolean) => {
@@ -139,14 +134,13 @@ export class CustomersListComponent
     this.modalService.show(CustomersBlackListComponent, modalConfig);*/
     this.massiveClientService.exportBlackList().subscribe({
       next: (data: any) => {
-        console.log(data);
         if (data.file.base64) {
           this.downloadFile(
             data.file.base64,
             `listanegra${new Date().getTime()}`
           );
         } else {
-          this.onLoadToast('warning', '', NOT_FOUND_MESSAGE('Listanegra'));
+          this.alert('warning', NOT_FOUND_MESSAGE('Listanegra'), '');
         }
         this.downloading = false;
       },
@@ -163,24 +157,45 @@ export class CustomersListComponent
     this.modalService.show(CustomersWhiteListComponent, modalConfig);*/
     this.massiveClientService.exportwoutProblem().subscribe({
       next: (data: any) => {
-        console.log(data);
         if (data.file.base64) {
           this.downloadFile(
             data.file.base64,
             `Sinproblema${new Date().getTime()}`
           );
         } else {
-          this.onLoadToast(
-            'warning',
-            '',
-            NOT_FOUND_MESSAGE('Exporta sin problema')
-          );
+          this.alert('warning', NOT_FOUND_MESSAGE('Exporta sin problema'), '');
         }
         this.downloading = false;
       },
       error: error => {
         this.downloading = false;
         this.errorGet(error);
+      },
+    });
+  }
+
+  showDeleteAlert(customer: ICustomer) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este cliente?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(customer);
+      }
+    });
+  }
+
+  delete(customer: ICustomer) {
+    console.log(customer);
+    console.log(customer.id);
+    this.customerService.remove(customer.id).subscribe({
+      next: response => {
+        this.alert('success', 'Cliente Eliminado Correctamente', ''); // Sin coma al final de esta línea
+        // this.getExample();
+      },
+      error: err => {
+        this.alert('warning', 'No se Puede Eliminar el Cliente', '');
       },
     });
   }
