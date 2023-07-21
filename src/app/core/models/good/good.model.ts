@@ -55,6 +55,11 @@ export interface IGood {
   fecConfAbandoment?: any;
   delegationNumber?: { id: string; description: string };
   subDelegationNumber?: { id: string; description: string };
+  physicalReceptionDate?: string;
+  revRecObservations?: string;
+  resolutionEmissionRecRevDate?: string;
+  revRecCause?: string;
+  statusDetails?: any;
   observationss?: string;
   referenceValue?: string;
   appraisedValue?: string;
