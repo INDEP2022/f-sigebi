@@ -68,7 +68,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
   }
 
   private getData() {
-    // console.log(this.clasification);
+    console.log(this.clasification);
     this.loading = true;
     const filterParams = new FilterParams();
     filterParams.limit = 120;
@@ -121,12 +121,12 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
                 dataType: item.dataType,
               };
             });
-            console.log(this.data);
-
+            
             this.totalItems = this.data.length;
             this.dataTemp = [...this.data];
             this.getPaginated(this.params.value);
             this.loading = false; */
+            console.log(this.data);
             if (this.loadInventary) {
               this.data = newData.map((item, index) => {
                 const column = 'val' + item.columnNumber;

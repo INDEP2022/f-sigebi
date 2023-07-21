@@ -14,7 +14,7 @@ import { CUSTOMERS_LIST_COLUMNS } from '../customers-black-list/customers-list-c
   styles: [],
 })
 export class CustomersWhiteListComponent extends BasePage implements OnInit {
-  title: string = 'Clientes sin problemas';
+  title: string = 'Clientes Sin Problemas';
   edit: boolean = false;
 
   totalItems: number = 0;
@@ -60,7 +60,7 @@ export class CustomersWhiteListComponent extends BasePage implements OnInit {
   exportClientsWhiteList(): void {
     this.excelService.exportAsExcelFile(
       this.customers,
-      'Clientes sin problemas'
+      'Clientes Sin Problemas'
     );
   }
 
