@@ -24,4 +24,5 @@ export enum GoodprocessEndpoints {
   consultationScreenGood2 = 'update-good-status/getOne',
   deleteStatusBien = 'application/delete-status-bien',
   insertStatusBien = 'application/insert-status-bien',
+  DeleteStatusGoodnumber = 'application/delete-status-goodnumber',
 }
