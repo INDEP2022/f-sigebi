@@ -129,7 +129,6 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   getAllUsersSchedule(typeUser: string, delegation: string, role: string) {
     this.loading = true;
 
-    this.params.value.addFilter('position', role);
     this.params.value.addFilter('employeeType', typeUser);
     this.params.value.addFilter(
       'regionalDelegation',
