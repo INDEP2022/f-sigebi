@@ -1,14 +1,25 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { EventXSerie } from 'src/app/core/models/ms-event/event.model';
+import {
+  InvoiceFolio,
+  InvoiceFolioSeparate,
+} from 'src/app/core/models/ms-invoicefolio/invoicefolio.model';
+import { ComerEventosXSerieService } from 'src/app/core/services/ms-event/comer-eventosxserie.service';
+import { InvoicefolioService } from 'src/app/core/services/ms-invoicefolio/invoicefolio.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { SeriesEventModalComponent } from '../series-event-modal/series-event-modal.component';
 import { SeriesFoliosControlModalComponent } from '../series-folios-control-modal/series-folios-control-modal.component';
-import { SERIES_FOLIOS_CONTROL_SEPARATE_PAGES_COLUMNS } from '../series-folios-control-modal/series-folios-control-separate-pages-columns';
-import { SERIES_FOLIOS_CONTROL_TYPE_EVENT_COLUMNS } from '../series-folios-control-modal/series-folios-control-type-event-columns';
+import { SeriesFoliosSeparateModalComponent } from '../series-foliseparate-modal/series-folioseparate-modal.component';
 import { SERIES_FOLIOS_CONTROL_COLUMNS } from './series-folios-control-columns';
+import { SERIES_FOLIOS_CONTROL_SEPARATE_PAGES_COLUMNS } from './series-folios-control-separate-pages-columns';
+import { SERIES_FOLIOS_CONTROL_TYPE_EVENT_COLUMNS } from './series-folios-control-type-event-columns';
 
 @Component({
   selector: 'app-series-folios-control',
@@ -16,30 +27,49 @@ import { SERIES_FOLIOS_CONTROL_COLUMNS } from './series-folios-control-columns';
   styles: [],
 })
 export class SeriesFoliosControlComponent extends BasePage implements OnInit {
+  @ViewChild('content') private folios: ElementRef<HTMLElement>;
+
+  form: FormGroup = new FormGroup([]);
+  filter = new BehaviorSubject<FilterParams>(new FilterParams());
+  filter2 = new BehaviorSubject<FilterParams>(new FilterParams());
+  filter3 = new BehaviorSubject<FilterParams>(new FilterParams());
+
+  //nuevo
+  data: InvoiceFolio[] = [];
+  data3: EventXSerie[] = [];
+  data2: InvoiceFolioSeparate[] = [];
+  totalItems: number = 0;
+  totalItems2: number = 0;
+  totalItems3: number = 0;
+  loading2: boolean = false;
+  loading3: boolean = false;
+  isSelect: InvoiceFolio = {} as InvoiceFolio;
   settings1 = {
     ...this.settings,
-    actions: false,
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'right',
+      edit: true,
+      delete: false,
+    },
+    columns: { ...SERIES_FOLIOS_CONTROL_TYPE_EVENT_COLUMNS },
   };
   settings2 = {
     ...this.settings,
-    actions: false,
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'right',
+      edit: true,
+      delete: false,
+    },
+    columns: { ...SERIES_FOLIOS_CONTROL_SEPARATE_PAGES_COLUMNS },
   };
-
-  form: FormGroup = new FormGroup([]);
-
-  params = new BehaviorSubject<ListParams>(new ListParams());
-  selectedCoord: any = null;
-  coordItems = new DefaultSelect();
-
-  columns: any[] = [];
-  totalItems: number = 0;
-
-  constructor(private modalService: BsModalService, private fb: FormBuilder) {
+  constructor(
+    private modalService: BsModalService,
+    private invoiceService: InvoicefolioService,
+    private eventService: ComerEventosXSerieService
+  ) {
     super();
-    this.settings1.columns = { ...SERIES_FOLIOS_CONTROL_TYPE_EVENT_COLUMNS };
-    this.settings2.columns = {
-      ...SERIES_FOLIOS_CONTROL_SEPARATE_PAGES_COLUMNS,
-    };
 
     this.settings = {
       ...this.settings,
@@ -54,140 +84,213 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.prepareForm();
-    this.getCoord({ page: 1, text: '' });
-  }
+    this.filter.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: () => {
+        if (this.totalItems > 0) this.getInvoiceFolio();
+      },
+    });
 
-  private prepareForm() {
-    this.form = this.fb.group({
-      id: [null, [Validators.required]],
+    this.filter2.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: () => {
+        if (this.totalItems2 > 0) this.getInvoiceFolioSeparate();
+      },
+    });
+
+    this.filter3.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: () => {
+        if (this.totalItems3 > 0) this.getEventXSerie();
+      },
     });
   }
 
-  //Datos de prueba para Tabla COORDINACIÓN
-  data = [
-    {
-      id: '81',
-      coord: '0',
-      regional: 'OFICINAS CENTRALES',
-      serie: 'H',
-      foInicial: '13886',
-      foFinal: '14200',
-      validez: '10/11/2010',
-      tipo: 'Factura',
-      estatus: 'CER',
-      totalFolios: '315',
-      folRegistrados: '0',
-      folUtilizados: '315',
-      fecUsuario: 'GBLANCO',
-      fecRegistro: '28/12/2009',
-      direccion: 'M',
-    },
-    {
-      id: '101',
-      coord: '0',
-      regional: 'OFICINAS CENTRALES',
-      serie: 'E',
-      foInicial: '35001',
-      foFinal: '40000',
-      validez: '10/11/2010',
-      tipo: 'Factura',
-      estatus: 'CER',
-      totalFolios: '5000',
-      folRegistrados: '0',
-      folUtilizados: '5000',
-      fecUsuario: 'VFIESCO',
-      fecRegistro: '12/01/2010',
-      direccion: '',
-    },
-    {
-      id: '262',
-      coord: '0',
-      regional: 'OFICINAS CENTRALES',
-      serie: 'INGRB',
-      foInicial: '1',
-      foFinal: '1000000',
-      validez: '30/10/2023',
-      tipo: 'Factura CFDI',
-      estatus: 'ACT',
-      totalFolios: '1000000',
-      folRegistrados: '965350',
-      folUtilizados: '34650',
-      fecUsuario: 'GBLANCO',
-      fecRegistro: '12/12/2011',
-      direccion: 'M',
-    },
-  ];
-
-  //Datos de prueba para Tabla EVENTO x SERIE
-  data1 = [
-    {
-      evento: 'SUBASTA ELECTRÓNICA',
-      comentario: '0',
-    },
-  ];
-
-  //Datos de prueba para Tabla FOLIOS APARTADOS
-  data2 = [
-    {
-      folio: '',
-      apartado: '',
-      usuarioRegistro: 'M',
-      fechaRegsitro: '',
-    },
-  ];
-
-  //Datos de prueba para SELECCIONAR
-  data3: any[] = [
-    {
-      id: 0,
-      name: '0 - OFICINAS CENTRALES',
-    },
-    {
-      id: 1,
-      name: '1 - COORD. REGIONAL TIJUANA',
-    },
-    {
-      id: 2,
-      name: '2 - COORD. REGIONAL HERMOSILLO',
-    },
-  ];
-
-  getCoord(params: ListParams) {
-    if (params.text == '') {
-      this.coordItems = new DefaultSelect(this.data3, 3);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.data3.filter((i: any) => i.id == id)];
-      this.coordItems = new DefaultSelect(item[0], 1);
-    }
-  }
-
-  selectCoord(event: any) {
-    this.selectedCoord = event;
-  }
-
-  //Rellena input con datos de la tabla
-
-  getData() {
+  getInvoiceFolio() {
     this.loading = true;
-    this.columns = this.data;
-    this.totalItems = this.data.length;
-    this.loading = false;
+    this.invoiceService.getAll(this.filter.getValue().getParams()).subscribe({
+      next: resp => {
+        this.loading = false;
+        resp.data.map(folio => {
+          folio.totalFolios =
+            Number(folio.availableFolios ?? 0) + Number(folio.usedFolios ?? 0);
+          folio.validity = folio.validity
+            ? folio.validity.split('-').reverse().join('/')
+            : '';
+          folio.recordDate = folio.recordDate
+            ? folio.recordDate.split('-').reverse().join('/')
+            : '';
+        });
+        this.data = resp.data;
+        this.totalItems = resp.count;
+      },
+      error: err => {
+        this.loading = false;
+        this.data = [];
+        this.totalItems = 0;
+        this.alert('error', 'Error', err.error.message);
+      },
+    });
   }
 
-  openModal(context?: Partial<SeriesFoliosControlModalComponent>) {
-    const modalRef = this.modalService.show(SeriesFoliosControlModalComponent, {
-      initialState: { ...context },
+  getInvoiceFolioSeparate(folio?: InvoiceFolio) {
+    if (folio && folio.folioinvoiceId) {
+      this.isSelect = folio;
+      this.filter2.getValue().removeAllFilters();
+      this.filter2.getValue().page = 1;
+      this.filter2
+        .getValue()
+        .addFilter('folioinvoiceId', folio.folioinvoiceId, SearchFilter.EQ);
+    }
+    this.loading2 = true;
+    this.invoiceService
+      .getAllFolioSepate(this.filter2.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          this.loading2 = false;
+          resp.data.map(folio => {
+            folio.recordDate = folio.recordDate
+              ? folio.recordDate.split('-').reverse().join('/')
+              : '';
+          });
+          this.data2 = resp.data ?? [];
+          this.totalItems2 = resp.count ?? 0;
+          this.folios.nativeElement.scrollIntoView({ block: 'center' });
+        },
+        error: err => {
+          this.loading2 = false;
+          this.data2 = [];
+          this.totalItems2 = 0;
+          if (err.status == 400) {
+            this.alert(
+              'error',
+              'Error',
+              `No se encontraron Folios Apartados para este Id Folio: ${this.isSelect.folioinvoiceId}`
+            );
+          }
+        },
+      });
+  }
+
+  getEventXSerie(folio?: InvoiceFolio) {
+    if (folio && folio.folioinvoiceId) {
+      this.isSelect = folio;
+      this.filter3.getValue().removeAllFilters();
+      this.filter3.getValue().page = 1;
+      this.filter3
+        .getValue()
+        .addFilter('idInvoiceFolio', folio.folioinvoiceId, SearchFilter.EQ);
+    }
+    this.loading3 = true;
+    this.eventService
+      .getAllEvents(this.filter3.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          this.loading3 = false;
+          this.data3 = resp.data ?? [];
+          this.totalItems3 = resp.count ?? 0;
+          this.folios.nativeElement.scrollIntoView({ block: 'center' });
+        },
+        error: err => {
+          this.loading3 = false;
+          this.data3 = [];
+          this.totalItems3 = 0;
+          if (err.status == 400) {
+            this.alert(
+              'error',
+              'Error',
+              `No se encontraron Tipos de Eventos por Serie para este Id Folio: ${this.isSelect.folioinvoiceId}`
+            );
+          }
+        },
+      });
+  }
+
+  openModal(context?: InvoiceFolio) {
+    let config: ModalOptions = {
+      initialState: {
+        allotment: context,
+        callback: (next: boolean) => {
+          if (next) {
+            this.filter.getValue().removeAllFilters();
+            this.filter.getValue().page = 1;
+            this.filter.getValue().limit = 10;
+            this.getInvoiceFolio();
+          }
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getData();
-    });
+    };
+    this.modalService.show(SeriesFoliosControlModalComponent, config);
   }
 
   openForm(allotment?: any) {
-    this.openModal({ allotment });
+    this.openModal(allotment);
+  }
+
+  openModalSeparate(context?: InvoiceFolio) {
+    let config: ModalOptions = {
+      initialState: {
+        allotment: context,
+        folio: this.isSelect,
+        callback: (next: boolean, newData: InvoiceFolio) => {
+          if (next) {
+            this.filter2.getValue().removeAllFilters();
+            this.filter2.getValue().page = 1;
+            this.filter2.getValue().limit = 10;
+            this.isSelect = newData;
+            this.getInvoiceFolio();
+            this.getInvoiceFolioSeparate(this.isSelect);
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(SeriesFoliosSeparateModalComponent, config);
+  }
+
+  openFormSeparate(allotment?: any) {
+    if (this.isSelect.folioinvoiceId) {
+      this.openModalSeparate(allotment);
+    } else {
+      this.alert(
+        'warning',
+        'Creación',
+        'Consulte un Folio para crear un Folio Apartado',
+        ''
+      );
+    }
+  }
+
+  openModalEvent(context?: InvoiceFolio) {
+    let config: ModalOptions = {
+      initialState: {
+        allotment: context,
+        folio: this.isSelect,
+        callback: (next: boolean) => {
+          if (next) {
+            this.filter3.getValue().removeAllFilters();
+            this.filter3.getValue().page = 1;
+            this.filter3.getValue().limit = 10;
+            this.getEventXSerie(this.isSelect);
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(SeriesEventModalComponent, config);
+  }
+
+  openFormEvent(allotment?: any) {
+    if (this.isSelect.folioinvoiceId) {
+      this.openModalEvent(allotment);
+    } else {
+      this.alert(
+        'warning',
+        'Creación',
+        'Consulte un Folio para crear un Tipo de Evento por Serie',
+        ''
+      );
+    }
   }
 }
