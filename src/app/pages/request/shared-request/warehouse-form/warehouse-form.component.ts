@@ -173,13 +173,13 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.loading = true;
     this.alertQuestion(
       'question',
       'Confirmación',
       '¿Seguro de mandar a solicitar un nuevo almacén?'
     ).then(async question => {
       if (question.isConfirmed) {
+        this.loading = true;
         this.warehouseForm
           .get('wildebeestDelegationregion')
           .setValue(this.regDelData.id);
