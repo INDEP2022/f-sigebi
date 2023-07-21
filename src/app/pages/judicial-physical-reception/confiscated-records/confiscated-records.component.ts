@@ -1499,8 +1499,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
               this.fillActTwo();
             }
           }
-        }else{
-          if(res.delegation != 'CCB'){
+        } else {
+          if (res.delegation != 'CCB') {
             if (res != null && res != undefined && res.numberDelegation2) {
               if (res.numberDelegation2 != this.delUser) {
                 this.alert(

@@ -46,6 +46,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
   clickTimer: any;
   @Input() rowData: any;
   @Output() funcionEjecutada = new EventEmitter<void>();
+  @Output() loadingConciliar = new EventEmitter<boolean>();
   loadingBtn: boolean = false;
   constructor(
     private modalService: BsModalService,
@@ -84,12 +85,13 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
       // Lógica a ejecutar en caso de doble clic en una celda con valor
       this.alert(
         'warning',
-        'No puede realizar una conciliacion debido a que ya tiene especificado un bien',
+        'No puede Realizar una Conciliacion Debido a que ya tiene Especificado un Bien',
         ''
       );
       console.log('Celda seleccionada:', this.value);
     }
   }
+
   onContextMenu(event: MouseEvent) {
     event.preventDefault();
   }
@@ -114,7 +116,12 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
     this.funcionEjecutada.emit();
   }
 
+  ejecutarloadingConciliar() {
+    this.loadingConciliar.emit(true);
+  }
+
   async seleccionarBien_() {
+    this.ejecutarloadingConciliar();
     this.loadingBtn = true;
 
     let V_BIEN_VALIDO: any;
@@ -170,14 +177,16 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
       if (!vb_encontrado) {
         this.alert(
           'warning',
-          'No se encontró ningún bien que cumpliera con el criterio de conciliación',
+          'No se Encontró ningún bien que Cumpliera con el Criterio de Conciliación',
           ''
         );
       }
+      this.ejecutarloadingConciliar();
     } else {
+      this.ejecutarloadingConciliar();
       this.alert(
         'warning',
-        'No tiene capturados todos los criterios para realizar la conciliación',
+        'No tiene Capturados todos los Criterios para Realizar la Conciliación',
         ''
       );
     }
@@ -242,7 +251,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.accountMovementService.update(data).subscribe({
         next: async (response: any) => {
-          this.alert('success', `Datos actualizados correctamente`, '');
+          this.alert('success', `Datos Actualizados Correctamente`, '');
 
           // this.modalRef.content.callback(true);
           // this.close();
@@ -251,7 +260,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
           resolve(true);
         },
         error: err => {
-          this.alert('error', `Error al actualizar los datos`, '');
+          this.alert('error', `Error al Actualizar los Datos`, '');
           // this.loading = false;
           resolve(false);
         },
