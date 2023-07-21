@@ -35,6 +35,7 @@ import {
 } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { ICveAct } from 'src/app/core/models/ms-proceedings/update-proceedings.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
@@ -253,7 +254,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private serviceNotification: NotificationService,
     private serviceProceeding: ProceedingsService,
-    private serviceHistoryGood: HistoryGoodService
+    private serviceHistoryGood: HistoryGoodService,
+    private authService: AuthService
   ) {
     super();
   }
@@ -326,11 +328,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   getDataUser() {
+    const token = this.authService.decodeToken();
+    console.log(token);
     const user =
       localStorage.getItem('username') == 'sigebiadmon'
         ? localStorage.getItem('username')
         : localStorage.getItem('username').toLocaleUpperCase();
-    const routeUser = `?filter.name=$eq:${user}`;
+    const routeUser = `?filter.id=$eq:${token.preferred_username}`;
     this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
       const resJson = JSON.parse(JSON.stringify(res.data[0]));
       this.delUser = resJson.usuario.delegationNumber;
