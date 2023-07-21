@@ -9,9 +9,9 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { ICaptureDigFilter } from 'src/app/core/models/ms-documents/documents';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
-import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { IssuingInstitutionService } from 'src/app/core/services/catalogs/issuing-institution.service';
@@ -19,8 +19,19 @@ import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
+import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SharedModule } from 'src/app/shared/shared.module';
+import * as XLSX from 'xlsx';
+
+interface IExcelToJson {
+  id: number;
+  utf8: string;
+  column1: string;
+  column2: number;
+  column3: string;
+}
+
 @Component({
   selector: 'capture-filter',
   templateUrl: './capture-filter.component.html',
@@ -28,15 +39,20 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [SharedModule],
   styles: [],
 })
-export class CaptureFilterComponent implements OnInit {
+export class CaptureFilterComponent extends BasePage implements OnInit {
   formCapture: FormGroup;
   @Input() isReceptionAndDelivery: boolean = false;
   @Input() isReceptionStrategies: boolean = false;
   @Input() isConsolidated: boolean = false;
   @Output() consultEmmit = new EventEmitter<any>();
   delegations = new DefaultSelect();
+  data: IExcelToJson[] = [];
+  authorityName: string = '';
+  stationName: string = '';
   affairName = new DefaultSelect();
   station = new DefaultSelect();
+  reporte_flag: boolean = false;
+  showFileErrorMessage2 = false;
   authority = new DefaultSelect();
   transference = new DefaultSelect();
   users$ = new DefaultSelect<ISegUsers>();
@@ -46,9 +62,15 @@ export class CaptureFilterComponent implements OnInit {
   to: string = '';
   activeRadio: boolean = true;
   isLoading = false;
-  captura: ICaptureDigFilter;
+  capture: ICaptureDigFilter;
   capturasDig: ICaptureDigFilter[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
+  titelFileForfeiture: string = 'Nombre del Archivo Excel(CapturayDigital)';
+  dataDelivery: any[] = [];
+  P_T_CUMP: number = 0;
+  P_T_NO_CUMP: number = 0;
+  P_CUMP: number = 0;
+  selectedItems: any[] = [];
 
   get cvCoors() {
     return this.formCapture.get('cvCoors');
@@ -91,21 +113,24 @@ export class CaptureFilterComponent implements OnInit {
   select = new DefaultSelect();
   constructor(
     private fb: FormBuilder,
+    private excelService: ExcelService,
     private documentsService: DocumentsService,
-    private delegationService: DelegationService,
-    private affairService: AffairService,
     private stationService: StationService,
     private issuingInstitutionService: IssuingInstitutionService,
     private authorityService: AuthorityService,
     private usersService: UsersService,
     private datePipe: DatePipe,
+    private delegationService: DelegationService,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getTransference(this.params.getValue());
   }
 
   cleanForm() {
@@ -118,21 +143,22 @@ export class CaptureFilterComponent implements OnInit {
       user: [null],
       fecStart: [null],
       fecEnd: [null],
-      tipoVolante: [null],
+      typeSteering: [null],
       noTransfere: [null],
       noStation: [null],
       noAuthority: [null],
+      file1: [null],
     });
   }
 
-  // getDelegations(params: ListParams) {
-  //   this.delegationService.getAll(params).subscribe({
-  //     next: res => (this.delegations = new DefaultSelect(res.data, res.count)),
-  //     error: () => {
-  //       this.delegations = new DefaultSelect([], 0);
-  //     },
-  //   });
-  // }
+  getDelegations(params: ListParams) {
+    this.delegationService.getAll(params).subscribe({
+      next: res => (this.delegations = new DefaultSelect(res.data, res.count)),
+      error: () => {
+        this.delegations = new DefaultSelect([], 0);
+      },
+    });
+  }
 
   // getSubjects(params: ListParams) {
   //   this.affairService.getAll(params).subscribe({
@@ -156,24 +182,60 @@ export class CaptureFilterComponent implements OnInit {
     });
   }
 
-  getStation(params: ListParams) {
-    this.stationService.getAll(params).subscribe({
-      next: data => {
-        this.station = new DefaultSelect(data.data, data.count);
-      },
-      error: () => {
-        this.station = new DefaultSelect();
-      },
+  // getStation(params: ListParams) {
+  //   this.stationService.getAll(params).subscribe({
+  //     next: data => {
+  //       this.station = new DefaultSelect(data.data, data.count);
+  //     },
+  //     error: () => {
+  //       this.station = new DefaultSelect();
+  //     },
+  //   });
+  // }
+  // getAuthority(params: ListParams) {
+  //   this.authorityService.getAll(params).subscribe({
+  //     next: data => {
+  //       this.authority = new DefaultSelect(data.data, data.count);
+  //     },
+  //     error: () => {
+  //       this.authority = new DefaultSelect();
+  //     },
+  //   });
+  // }
+  getAuthority(idTransferent: number, idStation: number, idAuthority: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.idStation'] = `$eq:${idStation}`;
+      params['filter.idTransferer'] = `$eq:${idTransferent}`;
+      params['filter.idAuthority'] = `$eq:${idAuthority}`;
+      this.authorityService.getAll(params).subscribe({
+        next: data => {
+          this.authorityName = data.data[0].authorityName;
+          resolve(true);
+        },
+        error: error => {
+          this.authorityName = '';
+          resolve(true);
+        },
+      });
     });
   }
-  getAuthority(params: ListParams) {
-    this.authorityService.getAll(params).subscribe({
-      next: data => {
-        this.authority = new DefaultSelect(data.data, data.count);
-      },
-      error: () => {
-        this.authority = new DefaultSelect();
-      },
+
+  getStation(idTransferent: number, idStation: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.id'] = `$eq:${idStation}`;
+      params['filter.idTransferent'] = `$eq:${idTransferent}`;
+      this.stationService.getAll(params).subscribe({
+        next: data => {
+          this.stationName = data.data[0].stationName;
+          resolve(true);
+        },
+        error: error => {
+          this.stationName = '';
+          resolve(true);
+        },
+      });
     });
   }
 
@@ -208,23 +270,23 @@ export class CaptureFilterComponent implements OnInit {
     this.isLoading = true;
     this.consultEmmit.emit(this.formCapture);
     this.from = this.datePipe.transform(
-      this.formCapture.controls['from'].value,
-      'dd/MM/yyyy'
+      this.formCapture.controls['fecStart'].value,
+      'yyyy-mm-dd'
     );
 
     this.to = this.datePipe.transform(
-      this.formCapture.controls['to'].value,
-      'dd/MM/yyyy'
+      this.formCapture.controls['fecEnd'].value,
+      'yyyy-mm-dd'
     );
 
-    // let params = {
-    //   P_T_CUMP: this.formCapture.controls['delegation'].value
-    //   P_T_NO_CUMP:
-    //     P_CUMP:
-    //   P_USR: this.formCapture.controls['delegation'].value
-    // };
+    let params = {
+      P_T_CUMP: this.P_T_CUMP,
+      P_T_NO_CUMP: this.P_T_NO_CUMP,
+      P_CUMP: this.P_CUMP,
+      P_USR: this.formCapture.controls['user'].value,
+    };
 
-    // console.log('params', params);
+    console.log('params', params);
 
     this.siabService
       // .fetchReport('RGERADBCONCNUMEFE', params)
@@ -263,13 +325,72 @@ export class CaptureFilterComponent implements OnInit {
         }
       });
   }
-  find(find: ICaptureDigFilter) {
-    this.documentsService.getDocCaptureFind(find).subscribe({
+  find(search: ICaptureDigFilter) {
+    console.log(search);
+    search.cveJobExternal = this.formCapture.value.cveJobExternal;
+    search.user = this.formCapture.value.user;
+    let idDelegation: number[] = [];
+    for (let item of this.formCapture.value.cvCoors) {
+      idDelegation.push(parseInt(item));
+    }
+    search.cvCoors = idDelegation;
+    search.typeSteering = this.formCapture.value.typeSteering;
+    search.fecStart = this.formCapture.value.fecStart;
+    search.fecEnd = this.formCapture.value.fecStart;
+    search.noTransfere = this.formCapture.value.noTransfere;
+    search.noStation = this.formCapture.value.noStation;
+
+    this.documentsService.getDocCaptureFind(search).subscribe({
       next: data => {
         this.capturasDig = data.data;
+        this.selectedItems = data.data.map((items: any) => {
+          console.log(items);
+        });
         this.consultEmmit.emit(this.formCapture);
         console.log(this.capturasDig);
       },
     });
+  }
+
+  onFileChangeDelivery(event: Event) {
+    this.exportExcel();
+  }
+
+  exportExcel() {
+    const workSheet = XLSX.utils.json_to_sheet(this.dataDelivery, {
+      skipHeader: true,
+    });
+    const workBook: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workBook, workSheet, 'Hoja1');
+    this.cleanPlaceholder('nameFileA', 'reporteindicator.xlsx');
+    XLSX.writeFile(workBook, 'reporteindicator.xlsx');
+  }
+
+  cleanPlaceholder(element: string, newMsg: string) {
+    const nameFile = document.getElementById(element) as HTMLInputElement;
+    nameFile.placeholder = `${newMsg}`;
+  }
+
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      this.data = this.excelService.getData<IExcelToJson>(binaryExcel);
+      console.log('data excel: ', this.data);
+    } catch (error) {
+      this.alert('error', 'Ocurrio un error al leer el archivo', 'Error');
+    }
+  }
+
+  onFileChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    const archivo = files[0];
+    this.titelFileForfeiture = archivo.name;
+    this.showFileErrorMessage2 = false;
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => this.readExcel(fileReader.result);
+  }
+  onItemsSelected() {
+    console.log(this.selectedItems);
   }
 }

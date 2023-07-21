@@ -22,8 +22,14 @@
           class="form-control"
           bsDatepicker
           formControlName="fecEnd"
-          [maxDate]="maxDate"
-          [minDate]="formCapture.get('fecEnd').value" />
+          [min]="formCapture.get('fecStart').value"
+          [minDate]="formCapture.get('fecStart').value"
+          [ngModel]="
+            formCapture.get('fecEnd').value < formCapture.get('fecStart').value
+              ? formCapture.get('fecStart').value
+              : formCapture.get('fecEnd').value
+          "
+          bsDatepicker />
       </form-field>
 
       <!-- <form-field *ngIf="
@@ -33,11 +39,11 @@
       </form-field> -->
 
       <form-field
-        [control]="formCapture.get('tipoVolante')"
+        [control]="formCapture.get('typeSteering')"
         class="col-md-3"
         label="Tipo Volante"
         *ngIf="!isReceptionStrategies && !isConsolidated">
-        <select class="form-control" formControlName="tipoVolante">
+        <select class="form-control" formControlName="typeSteering">
           <option *ngFor="let type of flyerTypes" [value]="type">
             {{ type }}
           </option>
@@ -97,6 +103,19 @@
           [data]="affairName" (fetchItems)="getSubjects($event)" className="scroll-line" bindLabel="description">
         </ngx-select>
       </form-field> -->
+
+      <form-field [control]="formCapture.get('cvCoors')">
+        <ngx-select
+          [form]="formCapture"
+          [searchOnInit]="true"
+          control="cvCoors"
+          label="Coor. Regional"
+          [data]="delegations"
+          (fetchItems)="getDelegations($event)"
+          className="scroll-line"
+          bindLabel="description"
+          [multiple]="true"></ngx-select>
+      </form-field>
     </div>
 
     <div class="row pt-3" *ngIf="!isReceptionStrategies && !isConsolidated">
@@ -115,7 +134,12 @@
       <form-field [control]="formCapture.get('noStation')" class="col-md-4">
         <ngx-select
           [searchOnInit]="true"
-          (fetchItems)="getStation($event)"
+          (fetchItems)="
+            getStation(
+              formCapture.get('noTransfere').value,
+              formCapture.get('noStation').value
+            )
+          "
           [data]="station"
           [form]="formCapture"
           bindLabel="stationName"
@@ -123,11 +147,16 @@
           control="noStation">
         </ngx-select>
       </form-field>
-
       <form-field [control]="formCapture.get('noAuthority')" class="col-md-4">
         <ngx-select
           [searchOnInit]="true"
-          (fetchItems)="getAuthority($event)"
+          (fetchItems)="
+            getAuthority(
+              formCapture.get('noTransfere').value,
+              formCapture.get('noStation').value,
+              formCapture.get('noAuthority').value
+            )
+          "
           [data]="authority"
           [form]="formCapture"
           bindLabel="authorityName"
@@ -143,7 +172,7 @@
           <button
             type="button"
             class="btn btn-primary active btn-sm"
-            (click)="find(captura)">
+            (click)="find(this.capture)">
             Consulta <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
@@ -155,6 +184,7 @@
             Reporte <i class="fas fa-print bx-sm float-icon"></i>
           </button>
         </div>
+
         <div class="m-3">
           <button
             type="button"
@@ -162,6 +192,29 @@
             (click)="cleanForm()">
             Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
           </button>
+        </div>
+      </div>
+    </div>
+
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button
+            class="btn btn-success btn-sm ml-2 active"
+            [disabled]="formCapture.invalid"
+            type="button"
+            (click)="exportExcel()">
+            Exportar a Excel
+            <i class="bx bx-download float-icon"></i>
+          </button>
+          <input
+            type="file"
+            name="file1"
+            #file1
+            class="d-none"
+            formControlName="file1"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            (change)="onFileChangeDelivery($event)" />
         </div>
       </div>
     </div>

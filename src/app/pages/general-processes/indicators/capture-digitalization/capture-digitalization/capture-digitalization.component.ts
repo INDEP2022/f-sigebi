@@ -77,7 +77,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
   }
 
   getFilterCaptura(find: ICaptureDig) {
-    this.documentsService.getDocCapture(find).subscribe({
+    this.documentsService.getDocCapture(this.formCapture.value).subscribe({
       next: data => {
         this.capturasDig = data.data;
         console.log(this.capturasDig);

@@ -272,9 +272,7 @@ export class DocumentsService extends HttpService {
   getDocCaptureCoordinator(params: any): Observable<IListResponse<any>> {
     return this.post(DocumentsEndpoints.IndicatorRec, params);
   }
-  getDocCaptureFind(
-    body: ICaptureDigFilter
-  ): Observable<IListResponse<ICaptureDigFilter>> {
+  getDocCaptureFind(body: ICaptureDigFilter) {
     return this.post(DocumentsEndpoints.IndicatorRec, body);
   }
 }

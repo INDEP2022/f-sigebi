@@ -99,7 +99,7 @@ export interface ICaptureDig {
 export interface ICaptureDigFilter {
   cveJobExternal: string;
   user: string;
-  cvCoors: [];
+  cvCoors: number[];
   typeSteering: string;
   fecStart: string;
   fecEnd: string;
