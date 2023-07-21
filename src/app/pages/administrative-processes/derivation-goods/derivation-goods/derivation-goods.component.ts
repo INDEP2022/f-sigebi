@@ -214,7 +214,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.searchGoodSon(data.goodFatherNumber);
             this.searchSituation(data.goodFatherNumber);
             this.searchGoodRelDocuments(data.goodFatherNumber);
-            if (data.typeConv === 2) {
+            if (data.typeConv == 2) {
               this.getAllGoodChild(data.goodFatherNumber);
             }
           }
@@ -338,7 +338,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   updateAttributes() {
-    debugger;
+    // debugger;
     let body: any = {
       id: this.goodForTableChar.id,
       goodId: this.goodForTableChar.goodId,
@@ -391,7 +391,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           // debugger;
           console.log(this.good, conversionData);
 
-          if (conversionData.typeConv === '2') {
+          if (conversionData.typeConv == '2') {
             this.id.setValue(res.data[0]['id']);
             this.observation.setValue(res.data[0]['observations']);
             this.descriptionSon.setValue(res.data[0]['description']);
@@ -413,7 +413,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.flagCargMasiva = false;
             this.flagCargaImagenes = false;
             this.flagFinConversion = false;
-          } else if (conversionData.typeConv === '1') {
+          } else if (conversionData.typeConv == '1') {
             this.observation.setValue('');
             this.descriptionSon.setValue('');
             this.quantity.setValue('');
@@ -646,7 +646,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
 
     this.convertiongoodService.update(idConversion, conversions).subscribe(
       async res => {
-        if (res.statusCode === 200 && res.message[0] === 'ok') {
+        if (res.statusCode == 200 && res.message[0] == 'ok') {
           this.alert('success', 'Conversión Finalizada', '');
           localStorage.removeItem('conversion');
           this.pw();
@@ -667,6 +667,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         queryParams: {
           pGoodFatherNumber: this.form.value.numberGoodFather,
           expedientNumber: this.form.value.numberDossier,
+          classificationOfGoods: this.classificationOfGoods,
         },
       }
     );
@@ -727,18 +728,18 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         good.expediente = this.good.expediente.id;
         good.subDelegationNumber = this.good.subDelegationNumber.id;
         console.log(good);
-        this.serviceGood.crateGood(good).subscribe(
-          res => {
-            this.createRelDocument(res);
-          },
-          err => {
-            this.alert(
-              'error',
-              'No Bien Hijo',
-              'Error Inesperado, Por Favor Intentelo Nuevamente'
-            );
-          }
-        );
+        // this.serviceGood.crateGood(good).subscribe(
+        //   res => {
+        //     this.createRelDocument(res);
+        //   },
+        //   err => {
+        //     this.alert(
+        //       'error',
+        //       'No Bien Hijo',
+        //       'Error Inesperado, Por Favor Intentelo Nuevamente'
+        //     );
+        //   }
+        // );
       }
     });
   }
@@ -766,7 +767,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     if (event != null && this.selectedRow != undefined) {
       //console.log("el evento es -> ",JSON.stringify(this.selectedRow));
       console.log('status->', this.selectedRow);
-      if (this.selectedRow.status === 'CVD') {
+      if (this.selectedRow.status == 'CVD') {
         this.alert(
           'error',
           `El Bien con Id: ${this.numberGoodFather.value}`,
@@ -807,13 +808,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   onRowSelect(event: any) {
+    console.log(event.data);
     this.numberGoodSon.setValue(event.data.goodId);
-    this.observation.setValue(event.data.descriptionConv);
-    this.descriptionSon.setValue(event.data.descriptionSon);
-    this.quantity.setValue(event.data.amount);
-    this.classifier.setValue(event.data.noClassifGood);
+    this.observation.setValue(event.data.observations);
+    this.descriptionSon.setValue(event.data.description);
+    this.quantity.setValue(event.data.quantity);
+    this.classifier.setValue(event.data.goodClassNumber);
     this.unitOfMeasure.setValue(event.data.unit);
-    this.destinationLabel.setValue(event.data.noLabel);
+    this.destinationLabel.setValue(event.data.labelNumber);
     this.selectedRow = event.data;
     this.goodForTableChar = event.data;
     this.goodChange++;

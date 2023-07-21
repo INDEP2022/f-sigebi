@@ -154,7 +154,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
       if (this.items[this.items.length - 1].parrafo1) {
         this.alertQuestion(
           'question',
-          `¿El proceso reinicializa los párrafos, se continua?`,
+          `¿El Proceso Reinicializa los Párrafos, se Continua?`,
           ''
         ).then(q => {
           if (q.isConfirmed) {
