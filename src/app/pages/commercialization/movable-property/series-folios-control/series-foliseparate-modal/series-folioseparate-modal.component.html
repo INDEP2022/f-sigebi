@@ -1,0 +1,70 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('invoice')" label="Folio">
+            <input
+              type="text"
+              [readOnly]="edit"
+              class="form-control"
+              formControlName="invoice"
+              oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6)" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('pulledapart')" label="Apartado">
+            <input
+              oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)"
+              type="text"
+              class="form-control"
+              formControlName="pulledapart" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('recordNumber')"
+            label="Usuario Registra">
+            <input
+              type="text"
+              [readOnly]="true"
+              class="form-control"
+              formControlName="recordNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('recordDate')" label="Fecha Registro">
+            <input
+              formControlName="recordDate"
+              class="form-control"
+              bsDatepicker
+              [readOnly]="true"
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [btnSmall]="true"
+          [loading]="loading"
+          (click)="saveData()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
