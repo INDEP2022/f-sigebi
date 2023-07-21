@@ -503,6 +503,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.programmingId'] = this.programmingId;
     this.receptionGoodService.getReceptions(params.getValue()).subscribe({
       next: response => {
+        console.log('response', response);
         this.receiptGuardGood = response.data[0];
 
         const filterWarehouse = response.data.map((item: any) => {
@@ -1328,8 +1329,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     if (this.selectGood.length > 0) {
       this.alertQuestion(
         'question',
-        'Confirmación',
         '¿Seguro que quiere asignar los bienes  a una acta?',
+        'Acción irreversible',
         'Aceptar'
       ).then(question => {
         if (question.isConfirmed) {
