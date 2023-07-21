@@ -59,6 +59,12 @@ export class SummaryComponent extends BasePage implements OnInit {
     adaptivePosition: true,
     dateInputFormat: 'MMMM YYYY',
   };
+  get PF_FECINI(): AbstractControl {
+    return this.flyersForm.get('PF_FECINI');
+  }
+  get PF_FECFIN(): AbstractControl {
+    return this.flyersForm.get('PF_FECFIN');
+  }
 
   get includeArea() {
     return this.flyersForm.get('includeArea');
@@ -120,12 +126,28 @@ export class SummaryComponent extends BasePage implements OnInit {
   }
   save() {}
 
+  getEndDateErrorMessage(fin: any, ini: any) {
+    const stard = new Date(ini.value).getTime();
+    const end = new Date(fin.value).getTime();
+    if (fin && ini) {
+      return stard <= end
+        ? null
+        : 'La fecha de finalización debe ser mayor que la fecha de inicio.';
+    }
+    return '';
+  }
+
   Generar() {
-    const dateI = this.flyersForm.value.PF_FECINI;
-    const dateF = this.flyersForm.value.PF_FECFIN;
-    if (dateF < dateI) {
+    const start = this.flyersForm.get('PF_FECINI').value;
+    const end = this.flyersForm.get('PF_FECFIN').value;
+    this.start = this.datePipe.transform(start, 'dd/MM/yyyy');
+    this.end = this.datePipe.transform(end, 'dd/MM/yyyy');
+
+    /// console.log(this.start);
+    if (this.end < this.start) {
       this.onLoadToast(
-        'error',
+        'warning',
+        'advertencia',
         'Fecha final no puede ser menor a fecha de inicio'
       );
       return;
@@ -142,7 +164,8 @@ export class SummaryComponent extends BasePage implements OnInit {
       DEPARTAMENTO: this.flyersForm.controls['department'].value,
     };
 
-    this.siabService.fetchReport('blank').subscribe(response => {
+    this.siabService.fetchReport('blank', params).subscribe(response => {
+      //  response= null;
       if (response !== null) {
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
@@ -164,6 +187,12 @@ export class SummaryComponent extends BasePage implements OnInit {
           ignoreBackdropClick: true,
         };
         this.modalService.show(PreviewDocumentsComponent, config);
+      } else {
+        this.onLoadToast(
+          'warning',
+          'advertencia',
+          'Sin datos para los rangos de fechas suministrados'
+        );
       }
     });
   }
@@ -234,5 +263,11 @@ export class SummaryComponent extends BasePage implements OnInit {
     // this.delegations = new DefaultSelect([subdelegation.delegation], 1);
     // this.delegation.setValue(subdelegation.delegation.id);
     this.emitSubdelegation.emit(subdelegation);
+  }
+  minDate: Date;
+  onDateChange(event: any) {
+    console.log('onDateChange' + event);
+    //change mindate #toDate
+    this.minDate = event;
   }
 }

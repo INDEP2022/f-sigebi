@@ -99,7 +99,17 @@ export interface ICaptureDig {
   cumplio: boolean;
   column5: string;
 }
-
+export interface ICaptureDigFilter {
+  cveJobExternal: string;
+  user: string;
+  cvCoors: [];
+  typeSteering: string;
+  fecStart: string;
+  fecEnd: string;
+  noTransfere: number;
+  noStation: number;
+  noAuthority: number;
+}
 export interface Info {
   total_cumplio: number;
   total_no_cumplio: number;

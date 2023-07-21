@@ -40,6 +40,8 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       'Debe seleccionar un bien de número aleatorio y periodo en cambio de bienes de número aleatorio';
     const textQuestion = `¿Está seguro de cambiar el bien de número aleatorio ${numberAleatory} del periodo ${period}?`;
     const title = 'Cambio Bienes de Número Aleatorio';
+
+    const delegationName = this.changeGoodsRandomComponent.DelegacionName_();
     this.onClickStructure(
       Boolean(numberAleatory) && Boolean(period),
       textNotPass,
@@ -47,7 +49,7 @@ export class MaintenanceComponent extends BasePage implements OnInit {
       title
     ).then(res => {
       const params = this.getParamsForChangeGoodsRandom();
-      this.saveInServerChangeGoodsRandom(params);
+      this.saveInServerChangeGoodsRandom(params, delegationName);
     });
   }
 
@@ -59,10 +61,12 @@ export class MaintenanceComponent extends BasePage implements OnInit {
     const textNotPass =
       'Debe seleccionar un periodo de origen y destino en el bloque de cambio de periodo';
     const textQuestion = `¿Está seguro de cambiar la información del periodo ${changePeriodInitValue} al periodo ${changePeriodEndValue}?`;
+    const title = 'Cambiar Periodo';
     this.onClickStructure(
       Boolean(changePeriodInitValue) && Boolean(changePeriodEndValue),
       textNotPass,
-      textQuestion
+      textQuestion,
+      title
     ).then(res => {
       const params = this.getParamsForChangePeriod();
       this.saveInServerChangePeriod(params);
@@ -139,14 +143,34 @@ export class MaintenanceComponent extends BasePage implements OnInit {
     });
   }
 
-  saveInServerChangeGoodsRandom(params: any) {
+  saveInServerChangeGoodsRandom(params: any, delegationName: any) {
     this.survillanceService.postChangeGoodAle(params).subscribe({
       next: response => {
         console.log({ response });
         if (response.P_EST_PROCESO === 1) {
-          this.alert('success', 'Cambiar Periodos', response.P_MSG_PROCESO);
+          let proceso = null;
+          if (params.pProcessChange == 1) {
+            proceso = 'Supervisión';
+          } else {
+            proceso = 'Validación';
+          }
+          this.alert(
+            'success',
+            'Cambio Bienes de Número Aleatorio',
+            `Se Realizó el Cambio de Bien ${params.pGoodNumber} en el Número Aleatorio ${params.pRandom}, para la ${delegationName} del proceso de ${proceso}`
+          );
         } else {
-          this.alert('warning', 'Cambiar Periodos', response.P_MSG_PROCESO);
+          let proceso = null;
+          if (params.pProcessChange == 1) {
+            proceso = 'Supervisión';
+          } else {
+            proceso = 'Validación';
+          }
+          this.alert(
+            'success',
+            'Cambio Bienes de Número Aleatorio',
+            `Se Realizó el Cambio de Bien ${params.pGoodNumber} en el Número Aleatorio ${params.pRandom}, para la ${delegationName} del proceso de ${proceso}`
+          );
         }
       },
       error: error => {

@@ -385,17 +385,21 @@
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 text-center">
         <div class="form-group">
           <button
-            [disabled]="loadingProcess"
+            [disabled]="loadingProcess || totalGoods3 == totalGoods"
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
+            tooltip="Agregar Seleccionados"
+            containerClass="tooltip-style"
             (click)="addSelect()">
             <!-- Mover uno -->
             <i class="bx bx-chevron-down bx-md"></i>
           </button>
           <button
-            [disabled]="loadingProcess"
+            [disabled]="loadingProcess || totalGoods3 == totalGoods"
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
+            tooltip="Agregar Todos"
+            containerClass="tooltip-style"
             (click)="addAll()">
             <!-- Mover todos -->
             <i class="bx bx-chevrons-down bx-md"></i>
@@ -404,6 +408,8 @@
             [disabled]="loadingProcess"
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
+            tooltip="Remover Todos"
+            containerClass="tooltip-style"
             (click)="removeAll()">
             <!-- Quitar todos -->
             <i class="bx bx-chevrons-up bx-md"></i>
@@ -412,6 +418,8 @@
             [disabled]="loadingProcess"
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
+            tooltip="Remover Seleccionados"
+            containerClass="tooltip-style"
             (click)="removeSelect()">
             <!-- Quitar uno -->
             <i class="bx bx-chevron-up bx-md"></i>
@@ -488,6 +496,8 @@
             [disabled]="loadingProcess"
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
+            tooltip="Agregar Seleccionados"
+            containerClass="tooltip-style"
             (click)="addSelectFree()">
             <!-- Mover uno -->
             <i class="bx bx-chevron-down bx-md"></i>
@@ -496,6 +506,8 @@
             [disabled]="loadingProcess"
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
+            tooltip="Agregar Todos"
+            containerClass="tooltip-style"
             (click)="addAllFree()">
             <!-- Mover todos -->
             <i class="bx bx-chevrons-down bx-md"></i>
@@ -504,6 +516,8 @@
             [disabled]="loadingProcess"
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
+            tooltip="Remover Todos"
+            containerClass="tooltip-style"
             (click)="removeAllFree()">
             <!-- Quitar todos -->
             <i class="bx bx-chevrons-up bx-md"></i>
@@ -512,6 +526,8 @@
             [disabled]="loadingProcess"
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
+            tooltip="Remover Seleccionados"
+            containerClass="tooltip-style"
             (click)="removeSelectFree()">
             <!-- Quitar uno -->
             <i class="bx bx-chevron-up bx-md"></i>

@@ -31,6 +31,7 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
   form: FormGroup;
   public delegations = new DefaultSelect();
   @Output() eventChangeGoodsRandom = new EventEmitter();
+  @Output() DelegacionName = new EventEmitter();
   processes = [
     { value: 1, label: 'Supervisión' },
     { value: 2, label: 'Validación' },
@@ -66,7 +67,7 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
       let per = period.toString().slice(0, 5);
       this.form.value.period = Number(per);
     }
-
+    this.DelegacionName_();
     this.eventChangeGoodsRandom.emit(this.form.value);
   }
 
@@ -412,4 +413,7 @@ export class ChangeGoodsRandomComponent extends BasePage implements OnInit {
   }
 
   seleccionarNumero(event: any) {}
+  DelegacionName_() {
+    return this.delegationDefault.description;
+  }
 }

@@ -31,6 +31,9 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   expedientNuember: string;
   conversion: any;
   edit: boolean = false;
+  flagNewActa: boolean = false;
+  flagAsignaActa: boolean = false;
+  disableAllChecks: boolean = false;
   delegation: any;
   states = new DefaultSelect<IStateOfRepublic>();
   zones = new DefaultSelect<IZoneGeographic>();
@@ -41,13 +44,15 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   parrafo2: string = '';
   parrafo3: string = '';
   actConvertion: string = '';
-  tipoConv: any;
+  tipoConv: string;
   pGoodFatherNumber: any;
   numberFoli: any;
   selectedIndex: number | null = null;
   selectItem: string = '';
   selectItem2: string = '';
   user: ISegUsers;
+  refresh: boolean = false;
+  save: boolean = false;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -63,12 +68,11 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
     private token: AuthService
   ) {
     super();
+    this.getDataUser();
   }
 
   ngOnInit(): void {
     //nombre de reporte RGERGENSOLICDIGIT
-
-    this.getDataUser();
   }
 
   insertarParrafos(descTransferente: string) {
@@ -151,7 +155,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
       if (this.items[this.items.length - 1].parrafo1) {
         this.alertQuestion(
           'question',
-          `¿El proceso reinicializa los párrafos, se continua?`,
+          `¿El Proceso Reinicializa los Párrafos, se Continua?`,
           ''
         ).then(q => {
           if (q.isConfirmed) {
@@ -228,13 +232,15 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
       next: response => {
         console.log(response);
         this.user = response.data[0];
-        this.route.queryParams.subscribe(params => {
-          this.actConvertion = params['actConvertion'] || null;
-          this.tipoConv = params['tipoConv'] || null;
-          this.pGoodFatherNumber = params['pGoodFatherNumber'] || null;
-          console.log(this.pGoodFatherNumber);
-          this.fetchItems();
-        });
+        // this.route.queryParams.subscribe(params => {
+        //   this.actConvertion = params['actConvertion'] || null;
+        //   this.tipoConv = params['tipoConv'] || null;
+        //   this.pGoodFatherNumber = params['pGoodFatherNumber'] || null;
+        //   console.log(this.pGoodFatherNumber);
+        //
+        // });
+        this.fetchItems();
+        console.log(this.tipoConv);
       },
       error: err => {
         console.log(err);
@@ -243,7 +249,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   }
   fetchItems() {
     this.items = [];
-    //console.log("tipoConv -> ",this.tipoConv);
+    console.log('tipoConv -> ', this.tipoConv);
     if (this.tipoConv === '2') {
       //console.log(this.tipoConv);
       if (this.actConvertion) {
@@ -251,12 +257,22 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
         this.flagNewActa = true;
         this.flagAsignaActa = true;
         this.disableAllChecks = true;
+        this.save = true;
         let filter = {
           pDelivery: this.actConvertion,
           vFilter: 'false',
         };
         this.proceedingsService.postBlkConversions(filter).subscribe({
-          next: response => {},
+          next: response => {
+            console.log(response);
+            this.items = response.data;
+            this.numberFoli = response.data[0].folio_universal;
+            this.parrafo1 = response.data[0].parrafo1;
+            this.parrafo2 = response.data[0].parrafo2;
+            this.parrafo3 = response.data[0].parrafo3;
+            console.log(this.numberFoli);
+            this.refresh = true;
+          },
           error: err => {
             console.error(err);
             this.alert('error', 'ERROR', err.error.message);
@@ -273,11 +289,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
           console.log(item);
           this.selectItem2 = item;
           this.items = [{ cve_acta_conv: item }];
-          // this.serviceGood
-          //   .getFolioActaConversion(this.selectItem2)
-          //   .subscribe(item => {
-          //     this.numberFoli = item.data[0].folio_universal;
-          //   });
+
           this.selectedIndex = 0;
           this.flagAsignaActa = true;
         });
@@ -295,19 +307,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
           },
         });
       }
-      this.flagNewActa = false;
-      // this.flagAsignaActa = false
-      this.disableAllChecks = false;
-      console.log('getActasConversion por -> ' + this.actConvertion);
-      // this.serviceGood
-      //   .getActasConversion(this.actConvertion)
-      //   .subscribe((item: any) => {
-      //     this.items = item.data.map((item: any) => {
-      //       item.cve_acta_conv = item.cveActaConvId;
-      //       return item;
-      //     });
-      //     console.log(item);
-      //   });
+    } else {
     }
   }
 
@@ -325,9 +325,6 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
       this.selectItem = '';
     }
   }
-  flagNewActa: boolean = false;
-  flagAsignaActa: boolean = false;
-  disableAllChecks: boolean = false;
 
   generateAsignarActa() {
     console.log(this.selectItem);
@@ -452,6 +449,8 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
     this.numberFoli = doc.id;
   }
   createMinuteConversion() {
+    console.log('tipoConv -> ', this.tipoConv);
+
     const payload: any = {
       cveActaConvId: this.selectItem2,
       typeActa: this.tipoConv,

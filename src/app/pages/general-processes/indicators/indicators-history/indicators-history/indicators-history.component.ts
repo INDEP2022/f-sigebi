@@ -23,7 +23,6 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
   danger: boolean = false;
 
   //
-
   constructor(private viewService: GoodsQueryService) {
     super();
     this.settings = {
@@ -41,8 +40,6 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {}
-
-  //
 
   getData(params: any) {
     this.viewService.getViewIncRecDoc(params).subscribe({

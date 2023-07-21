@@ -123,6 +123,8 @@ export class DepositAccountStatementComponent
     'preliminaryinvestigation',
     'criminalcause',
     'bankkey',
+    'accounttras',
+    'checkfolio',
   ];
   dateFilters = [
     'interestcalculationdate',
