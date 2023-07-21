@@ -39,6 +39,8 @@ export class GoodsListComponent extends BasePage implements OnInit {
     },
   ];
 
+  /* INJECTIONS */
+
   constructor(private modalService: BsModalService) {
     super();
     this.selectedGoodSettings.columns = SELECT_GOODS_COLUMNS;
@@ -72,9 +74,9 @@ export class GoodsListComponent extends BasePage implements OnInit {
 
   getData() {
     //const good: any = Object.assign({ viewFile: '' }, this.goodTestData[0]);
-    const good: any = Object.assign(this.goodTestData[0]);
+    /*const good: any = Object.assign(this.goodTestData[0]);
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
-    this.selectedGoodTotalItems = this.selectedGoodColumns.length;
+    this.selectedGoodTotalItems = this.selectedGoodColumns.length;*/
   }
 
   viewFile(file: any) {
