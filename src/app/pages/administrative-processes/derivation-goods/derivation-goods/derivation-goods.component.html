@@ -263,7 +263,7 @@
           <h5>ATRIBUTOS DEL BIEN</h5>
         </div>
         <div *ngIf="classificationOfGoods" class="p-3">
-          <div style="text-align: right">
+          <!-- <div style="text-align: right">
             <button
               type="button"
               data-toggle="tooltop"
@@ -273,14 +273,14 @@
               Guardar
               <i class="bx bx-save bx-sm float-icon"></i>
             </button>
-          </div>
+          </div> -->
           <app-good-characteristics-table
             [goodChange]="goodChange"
             [clasification]="classificationOfGoods"
             [settings]="atributNewSettings"
             [avaluo]="false"
             [good]="goodForTableChar"
-            [disabled]="false"
+            [disabled]="true"
             [service]="service"
             [initValue]="true"></app-good-characteristics-table>
         </div>

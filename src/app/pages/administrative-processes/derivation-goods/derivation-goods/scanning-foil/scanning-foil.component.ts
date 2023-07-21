@@ -234,14 +234,6 @@ export class ScanningFoilComponent
       this.alert('question', 'Información', 'No Existe Folio de Escaneo', '');
       return;
     }
-    if (this.numberFoli !== undefined) {
-      this.alert(
-        'question',
-        'Información',
-        'El Paquete ya tiene Folio de Escaneo.'
-      );
-      return;
-    }
     console.log(this.form.get('scanningFoli').value);
     if (this.form.get('scanningFoli').value !== '') {
       this.alertQuestion(

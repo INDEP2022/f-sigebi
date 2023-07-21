@@ -708,6 +708,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       );
     }*/
     //crear segun el nuemero pardre en referencia y copiar los demas valores al bien
+    console.log(this.good);
     this.alertQuestion(
       'question',
       `Se Agregará un Bien Hijo`,
@@ -718,7 +719,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         delete good.id;
         delete good.goodId;
         good.goodReferenceNumber = this.goodFatherNumber$.getValue();
-        good.almacen = this.good.almacen.idWarehouse;
+        good.almacen =
+          this.good.almacen != null ? this.good.almacen.idWarehouse : '';
         good.delegationNumber = this.good.delegationNumber.id;
         good.expediente = this.good.expediente.id;
         good.subDelegationNumber = this.good.subDelegationNumber.id;
