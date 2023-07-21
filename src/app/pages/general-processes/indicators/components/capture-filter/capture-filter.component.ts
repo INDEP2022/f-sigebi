@@ -184,7 +184,6 @@ export class CaptureFilterComponent implements OnInit {
         if (response.count > 0) {
           const name = this.formCapture.get('urecepcion').value;
           const data = response.data.filter(m => m.id == name);
-          console.log(data);
           this.formCapture.get('urecepcion').patchValue(data[0]);
         }
         this.users$ = new DefaultSelect(response.data, response.count);
@@ -194,7 +193,6 @@ export class CaptureFilterComponent implements OnInit {
 
   Generar() {
     this.isLoading = true;
-    this.consultEmmit.emit(this.formCapture);
     this.from = this.datePipe.transform(
       this.formCapture.controls['from'].value,
       'dd/MM/yyyy'
@@ -252,13 +250,42 @@ export class CaptureFilterComponent implements OnInit {
       });
   }
 
+  // find(find: ICaptureDig) {
+  //   this.documentsService.getDocCapture(find).subscribe({
+  //     next: data => {
+  //       this.capturasDig = data.data;
+  //       this.consultEmmit.emit(this.formCapture);
+  //       console.log(this.capturasDig);
+  //     },
+  //   });
+  // }
+
   find(find: ICaptureDig) {
-    this.documentsService.getDocCapture(find).subscribe({
-      next: data => {
-        this.capturasDig = data.data;
-        this.consultEmmit.emit(this.formCapture);
-        console.log(this.capturasDig);
-      },
-    });
+    let params = new ListParams();
+    // params['filter.finicia'] = this.formCapture.controls['finicia'].value;
+    // params['filter.fmaxima'] = this.formCapture.controls['fmaxima'].value;
+    // params['filter.finingrs'] = this.formCapture.controls['finingrs'].value;
+    if (this.formCapture.controls['tipoVolante'].value) {
+      params['filter.tipo_volante'] =
+        this.formCapture.controls['tipoVolante'].value;
+    }
+    if (this.formCapture.controls['coordinacion_regional'].value != null) {
+      params['filter.coordinacion_regional'] =
+        this.formCapture.controls['coordinacion_regional'].value.id;
+    }
+    // params['filter.urecepcion'] = this.formCapture.controls['urecepcion'].value;
+    // params['filter.cve_oficio_externo'] = this.formCapture.controls['cve_oficio_externo'].value;
+    // params['filter.no_transferente'] = this.formCapture.controls['transference'].value;
+    // params['filter.no_emisora'] = this.formCapture.controls['station'].value;
+    // params['filter.no_autoridad'] = this.formCapture.controls['authority'].value;
+    console.log('Estos son los parametros: ', params);
+    this.consultEmmit.emit(params);
+  }
+
+  valid(value: any) {
+    if (value == null) {
+      return '';
+    }
+    return value;
   }
 }
