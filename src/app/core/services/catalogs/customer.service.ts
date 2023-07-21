@@ -78,7 +78,10 @@ export class CustomerService extends HttpService {
     return this.customerRepository.remove(this.route, id);
   }
 
-  getRepresentativeByClients(id: string | number, params?: ListParams) {
+  getRepresentativeByClients(
+    id: string | number,
+    params?: ListParams
+  ): Observable<IRepresentative> {
     const route = `${this.endpointRepresentative}/${id}`;
     return this.get(route, params);
   }

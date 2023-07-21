@@ -66,7 +66,7 @@ export class LotService extends HttpService {
   }
 
   validLotifying(eventId: string | number) {
-    return this.get(
+    return this.get<{ aux: number }>(
       `apps/blk-ctr-bie-lots-img-inc-lots-excel-when-image-pressed/${eventId}`
     );
   }
@@ -82,5 +82,8 @@ export class LotService extends HttpService {
   getByLotEventPhoto(good: number, params: ListParams) {
     const route = `${LotEndpoints.GoodByLotsEvent}?filter.good=${good}`;
     return this.get(route, params);
+  }
+  getGlobalGoodEventLot(idLot: number) {
+    return this.get(`${LotEndpoints.ComerLot}?filter.idLot=${idLot}`);
   }
 }

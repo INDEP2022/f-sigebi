@@ -1,12 +1,12 @@
 <div class="ch-content">
-  <h5 class="title">Representantes por cliente</h5>
+  <h5 class="title">Representantes por Cliente</h5>
   <div class="col-md-8 buttons">
     <app-columns-select [(settings)]="settings"> </app-columns-select>
     <div class="">
       <button
         class="btn btn-success active btn-sm ml-3"
         (click)="exportAllRepresentative()">
-        Exportar todos
+        Exportar Todos <i class="bx bx-download float-icon"></i>
       </button>
     </div>
   </div>
@@ -24,4 +24,4 @@
     </div>
   </div>
 </div>
-<!-- <app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination> -->
+<app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>
