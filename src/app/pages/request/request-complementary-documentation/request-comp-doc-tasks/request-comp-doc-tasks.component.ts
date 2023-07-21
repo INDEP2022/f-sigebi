@@ -9,7 +9,6 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
 //Components
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
@@ -18,13 +17,17 @@ import { RequestService } from 'src/app/core/services/requests/request.service';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
+import { CompDocTasksComponent } from './comp-doc-task.component';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
   templateUrl: './request-comp-doc-tasks.component.html',
   styles: [],
 })
-export class RequestCompDocTasksComponent extends BasePage implements OnInit {
+export class RequestCompDocTasksComponent
+  extends CompDocTasksComponent
+  implements OnInit
+{
   /* CALL TABS DINAMICALY */
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
   /**
@@ -39,6 +42,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   expRequest: boolean = false;
   viewSelectedGoods: boolean = false;
   dictumValidate: boolean = false;
+  notifyReport: boolean = false;
   /**
    * SET STATUS ACTIONS
    **/
@@ -50,6 +54,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   requestId: number = 0;
   contributor: string = '';
   processDetonate: string = '';
+  process: string = '';
   title: string;
   requestInfo: any;
   screenWidth: number;
@@ -80,7 +85,8 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     const requestId = Number(this.route.snapshot.paramMap.get('request'));
-    const process = this.route.snapshot.paramMap.get('process');
+    this.process = this.route.snapshot.paramMap.get('process');
+    console.log('process', this.process);
     //this.route.paramMap.subscribe(params => {
     if (requestId) {
       //this.requestId = parseInt(params.get('request'));
@@ -102,7 +108,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
 
   getRequestInfo(requestId: number) {
     // Llamar servicio para obtener informacion de la solicitud
-    const process = this.route.snapshot.paramMap.get('process');
+    //const process = this.route.snapshot.paramMap.get('process');
     const param = new FilterParams();
     param.addFilter('id', requestId);
     const filter = param.getParams();
@@ -111,7 +117,8 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.requestInfo = resp.data[0];
         this.titleView();
         this.requestId = resp.data[0].id;
-        this.mapTasks(process, resp.data[0].affair);
+        //this.mapTasks(this.process, resp.data[0].affair);
+        this.mapTask(this.process);
         this.getAffair(resp.data[0].affair);
         //cierra el tab de buscar bienes solicitudes
         this.closeSearchRequestSimGoodsTab(resp.data[0].recordId);
@@ -186,7 +193,11 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
       'Turnar'
     ).then(question => {
       if (question.isConfirmed) {
-        this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        if (this.process == 'similar-good-register-documentation') {
+          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        } else {
+          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        }
       }
     });
   }
@@ -251,6 +262,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
           this.expRequest = true;
           this.saveRequest = true;
           this.dictumValidate = false;
+          this.notifyReport = false;
 
           this.turnReq = true;
           this.createReport = false;
@@ -274,6 +286,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.expRequest = true;
         this.saveRequest = true;
         this.dictumValidate = false;
+        this.notifyReport = false;
 
         this.turnReq = true;
         this.createReport = true;
@@ -291,6 +304,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.expRequest = true;
         this.saveRequest = true;
         this.dictumValidate = false;
+        this.notifyReport = false;
 
         this.turnReq = true;
         this.createReport = true;
@@ -308,11 +322,46 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.expRequest = true;
         this.saveRequest = true;
         this.dictumValidate = true;
+        this.notifyReport = false;
 
         this.turnReq = true;
         this.createReport = true;
         this.rejectReq = true;
 
+        break;
+      case 'similar-good-register-documentation':
+        this.regDocForm = true;
+        this.regDocView = false;
+        this.searchRequestSimGoods = true;
+        this.selectGoods = true;
+        this.viewSelectedGoods = false;
+        this.guidelines = false;
+        this.docRequest = false;
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.dictumValidate = false;
+        this.notifyReport = false;
+
+        this.turnReq = true;
+        this.createReport = false;
+        this.rejectReq = false;
+        break;
+      case 'similar-good-notify-transferor':
+        this.regDocForm = false;
+        this.regDocView = true;
+        this.searchRequestSimGoods = false;
+        this.selectGoods = false;
+        this.viewSelectedGoods = true;
+        this.guidelines = false;
+        this.docRequest = true;
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.dictumValidate = false;
+        this.notifyReport = true;
+
+        this.turnReq = true;
+        this.createReport = false;
+        this.rejectReq = false;
         break;
       default:
         break;
@@ -363,4 +412,6 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
       },
     });
   }
+
+  openNotifyReport() {}
 }

@@ -128,7 +128,16 @@ export class RequestRecordTabComponent
     if (this.requestForm.controls['affair'].value != null) {
       this.getAffair(this.requestForm.controls['affair'].value);
     }
+
+    /* COPIA EL REGISTRO DEL CAMPO PAMA A AVERIGUACION PREVIA */
+    if (this.typeOfTransfer == 'PGR_SAE') {
+      if (this.requestForm.controls['transferenceFile'].value) {
+        const value = this.requestForm.controls['transferenceFile'].value;
+        this.requestForm.controls['previousInquiry'].setValue(value);
+      }
+    }
   }
+
   prepareForm() {
     //formulario de solicitudes
     this.requestForm = this.fb.group({

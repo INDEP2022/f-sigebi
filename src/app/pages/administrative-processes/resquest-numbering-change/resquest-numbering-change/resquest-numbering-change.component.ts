@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -19,6 +19,7 @@ import {
 } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
@@ -37,7 +38,10 @@ import { NumeraryService } from 'src/app/core/services/ms-numerary/numerary.serv
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUM_POSITIVE_LETTERS,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -117,7 +121,7 @@ export class ResquestNumberingChangeComponent
   itemName = new DefaultSelect();
   itemsAlmacen = new DefaultSelect();
   columnFilters4: any = [];
-  idSolicitud: string = '';
+  idSolicitud: any = null;
   selectGood: any = [];
   selectCamNum: any = [];
   dataCamNum: any = [];
@@ -272,6 +276,8 @@ export class ResquestNumberingChangeComponent
     return this.formaplicationData.get('dateAutorized');
   }
 
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
+  @ViewChild('scrollContainer2') scrollContainer2!: ElementRef;
   constructor(
     private fb: FormBuilder,
     private safeService: SafeService,
@@ -473,7 +479,7 @@ export class ResquestNumberingChangeComponent
     this.getAlmacen(new ListParams());
     this.getTodos(new ListParams());
     this.getUsuario(new ListParams());
-    this.getDataTable();
+    this.getDataTable('no');
     this.getDataTableNum();
     if (this.modal?.isShown) {
     }
@@ -662,11 +668,28 @@ export class ResquestNumberingChangeComponent
   }
   getTodos(params: ListParams, id?: string) {
     // this.loading = true;
+    const params_ = new FilterParams();
 
-    this.goodprocessService.getGoodType(params).subscribe(
+    params_.page = params.page;
+    params_.limit = params.limit;
+
+    let params__ = '';
+    if (params?.text.length > 0)
+      if (!isNaN(parseInt(params?.text))) {
+        console.log('SI');
+        params_.addFilter('clasifGoodNumber', params.text, SearchFilter.EQ);
+      } else {
+        console.log('NO');
+        params_.search = params.text;
+      }
+
+    this.goodprocessService.getGoodType_(params_.getParams()).subscribe(
       (response: any) => {
+        console.log('rrr', response);
         let result = response.data.map(async (item: any) => {
           item['tipoSupbtipoDescription'] =
+            item.clasifGoodNumber +
+            ' - ' +
             item.typeDesc +
             ' - ' +
             item.subTypeDesc +
@@ -680,7 +703,10 @@ export class ResquestNumberingChangeComponent
           // this.loading = false;
         });
       },
-      error => console.log('ERR', error)
+      error => {
+        this.tiposData = new DefaultSelect([], 0);
+        console.log('ERR', error);
+      }
     );
   }
 
@@ -688,7 +714,10 @@ export class ResquestNumberingChangeComponent
     console.log('Opciones seleccionadas:', options);
   }
 
-  getDataTable() {
+  getDataTable(filter: any) {
+    if (filter == 'si') {
+      this.performScroll();
+    }
     this.loading = false;
     this.totalItems = 0;
     this.data
@@ -706,6 +735,23 @@ export class ResquestNumberingChangeComponent
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
+
+              case 'quantity':
+                searchFilter = SearchFilter.EQ;
+                break;
+
+              case 'status':
+                searchFilter = SearchFilter.EQ;
+                break;
+
+              case 'appraisedValue':
+                searchFilter = SearchFilter.EQ;
+                break;
+
+              case 'expedienteid':
+                searchFilter = SearchFilter.EQ;
+                break;
+
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -717,14 +763,27 @@ export class ResquestNumberingChangeComponent
             }
           });
           this.params = this.pageFilter(this.params);
+          this.getDataTableDos('no');
         }
       });
+
+    // this.params
+    //   .pipe(
+    //     skip(1),
+    //     tap(() => {
+    //       this.getDataTableDos()
+    //     }),
+    //     takeUntil(this.$unSubscribe)
+    //   )
+    //   .subscribe(() => {
+    //     // this.getGoodsByStatus(this.fileNumber)
+    //   });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDataTableDos());
+      .subscribe(() => this.getDataTableDos('si'));
   }
 
-  async getDataTableDos() {
+  async getDataTableDos(filter: any) {
     this.loading = true;
     this.dataGood = [];
 
@@ -764,14 +823,10 @@ export class ResquestNumberingChangeComponent
       params['filter.status'] = '';
     }
     let alertShown = false;
-    if (this.form.get('type').value != null)
+    if (this.form.get('type').value != null) {
+      this.totalItems = 0;
       this.goodServices.getByExpedientAndParams__(params).subscribe({
         next: async (response: any) => {
-          // this.alert(
-          //   'info',
-          //   'Se mostrarán los datos en la tabla BIENES X TIPO',
-          //   ''
-          // );
           let result = response.data.map(async (item: any) => {
             let obj = {
               vcScreen: 'FACTADBSOLCAMNUME',
@@ -779,11 +834,6 @@ export class ResquestNumberingChangeComponent
             };
             const di_dispo = await this.validationScreen(obj);
             item['di_disponible'] = di_dispo;
-
-            // const acta = await this.getActaGood(item);
-            //console.log('acta', acta);
-            //item['acta'] = acta;
-            //item.di_disponible = acta != null ? 'N' : di_dispo;
           });
 
           console.log('asaddasdasdasd', response.data);
@@ -795,16 +845,21 @@ export class ResquestNumberingChangeComponent
         },
         error: err => {
           console.log('error', err);
-          if (!alertShown) {
+          // if (!alertShown) {
+          if (filter == 'si') {
             this.alert('warning', 'No se Encontraron Registros', '');
-            this.totalItems = 0;
-            this.data.load([]);
-            this.data.refresh();
-            alertShown = true; // Marcar el flag como true después de mostrar el mensaje
           }
+
+          this.totalItems = 0;
+          this.data.load([]);
+          this.data.refresh();
+          alertShown = true; // Marcar el flag como true después de mostrar el mensaje
+          // }
           this.loading = false;
         },
       });
+    }
+
     //this.loading = false;
   }
   async getDataTableNum() {
@@ -913,16 +968,21 @@ export class ResquestNumberingChangeComponent
     var situacionJuridica = '';
     var motivo: any = null;
     var message = '';
-    if (this.selectGood.length != 0) {
-      // if (this.formaplicationData.get('dateRequest').value == null) {
-      //   message = "El bien ya esta en una solicitud"
-      //   this.handleSuccess(message)
-      // }
+    if (this.selectedGooods.length != 0) {
+      if (!this.idSolicitud) {
+        message = 'Debe Indicar el ID de la Solicitud';
+        this.handleSuccess2(message);
+        this.formaplicationData
+          .get('applicationChangeCashNumber')
+          .markAsTouched();
+        // this.validate = true;
+        return;
+      }
       if (
         this.formaplicationData.get('dateRequestChangeNumerary').value == null
       ) {
         message = 'La Fecha de Solicitud no debe estar vacía';
-        this.handleSuccess(message);
+        this.handleSuccess2(message);
         this.formaplicationData
           .get('dateRequestChangeNumerary')
           .markAsTouched();
@@ -933,14 +993,14 @@ export class ResquestNumberingChangeComponent
         this.formaplicationData.get('userRequestChangeNumber').value == null
       ) {
         message = 'El Usuario Solicitante no debe estar vacío';
-        this.handleSuccess(message);
+        this.handleSuccess2(message);
         this.formaplicationData.get('userRequestChangeNumber').markAsTouched();
         // this.validate = true;
         return;
       }
       if (this.formaplicationData.get('procedureProposal').value == null) {
         message = 'Debe de seleccionar el campo Procedimiento Propuesto';
-        this.handleSuccess(message);
+        this.handleSuccess2(message);
         this.formaplicationData.get('procedureProposal').markAsTouched();
         // this.validate = true;
         return;
@@ -949,21 +1009,21 @@ export class ResquestNumberingChangeComponent
         this.formaplicationData.get('delegationRequestcamnum').value == null
       ) {
         message = 'El Cargo del Usuario no debe estar vacío';
-        this.handleSuccess(message);
+        this.handleSuccess2(message);
         this.formaplicationData.get('delegationRequestcamnum').markAsTouched();
         // this.validate = true;
         return;
       }
       if (this.formaplicationData.get('authorizeUser').value == null) {
         message = 'El campo Usuario Autoriza no debe estar vacío';
-        this.handleSuccess(message);
+        this.handleSuccess2(message);
         this.formaplicationData.get('authorizeUser').markAsTouched();
         // this.validate = true;
         return;
       }
       if (this.formaplicationData.get('authorizeDate').value == null) {
         message = 'La Fecha de Autorización no debe estar vacía';
-        this.handleSuccess(message);
+        this.handleSuccess2(message);
         this.formaplicationData.get('authorizeDate').markAsTouched();
         // this.validate = true;
         return;
@@ -1062,11 +1122,25 @@ export class ResquestNumberingChangeComponent
       });
 
       Promise.all(result).then(async item => {
+        this.selectedGooods = [];
         await this.getDataTableNumDos('no');
+        await this.getDataTableDos('no');
+
         // await this.getDataTableNum();
       });
     } else {
-      this.warningAlert('Debe seleccionar un Registro en la tabla Bien x Tipo');
+      this.alertInfo(
+        'warning',
+        'Debe seleccionar un Registro en la tabla Bien x Tipo',
+        ''
+      ).then(question => {
+        if (question.isConfirmed) {
+          setTimeout(() => {
+            this.performScroll();
+          }, 300);
+        }
+      });
+      // this.warningAlert('Debe seleccionar un Registro en la tabla Bien x Tipo');
     }
   }
 
@@ -1075,11 +1149,20 @@ export class ResquestNumberingChangeComponent
     var motivo: any = null;
     var message = '';
     if (this.dataGood.length != 0) {
+      if (!this.idSolicitud) {
+        message = 'Debe Indicar el ID de la Solicitud';
+        this.handleSuccess2(message);
+        this.formaplicationData
+          .get('applicationChangeCashNumber')
+          .markAsTouched();
+        // this.validate = true;
+        return;
+      }
       if (
         this.formaplicationData.get('dateRequestChangeNumerary').value == null
       ) {
         message = 'La Fecha de Solicitud no debe estar vacía';
-        this.handleSuccess(message);
+        this.handleSuccess2(message);
         this.formaplicationData
           .get('dateRequestChangeNumerary')
           .markAsTouched();
@@ -1090,14 +1173,15 @@ export class ResquestNumberingChangeComponent
         this.formaplicationData.get('userRequestChangeNumber').value == null
       ) {
         message = 'El Usuario Solicitante no debe estar vacío';
-        this.handleSuccess(message);
+        this.handleSuccess2(message);
+
         this.formaplicationData.get('userRequestChangeNumber').markAsTouched();
         // this.validate = true;
         return;
       }
       if (this.formaplicationData.get('procedureProposal').value == null) {
         message = 'Debe de seleccionar el campo Procedimiento Propuesto';
-        this.handleSuccess(message);
+        this.handleSuccess2(message);
         this.formaplicationData.get('procedureProposal').markAsTouched();
         // this.validate = true;
         return;
@@ -1106,21 +1190,21 @@ export class ResquestNumberingChangeComponent
         this.formaplicationData.get('delegationRequestcamnum').value == null
       ) {
         message = 'El Cargo del Usuario no debe estar vacío';
-        this.handleSuccess(message);
+        this.handleSuccess2(message);
         this.formaplicationData.get('delegationRequestcamnum').markAsTouched();
         // this.validate = true;
         return;
       }
       if (this.formaplicationData.get('authorizeUser').value == null) {
         message = 'El campo Usuario Autoriza no debe estar vacío';
-        this.handleSuccess(message);
+        this.handleSuccess2(message);
         this.formaplicationData.get('authorizeUser').markAsTouched();
         // this.validate = true;
         return;
       }
       if (this.formaplicationData.get('authorizeDate').value == null) {
         message = 'La Fecha de Autorización no debe estar vacía';
-        this.handleSuccess(message);
+        this.handleSuccess2(message);
         this.formaplicationData.get('authorizeDate').markAsTouched();
         // this.validate = true;
         return;
@@ -1217,10 +1301,24 @@ export class ResquestNumberingChangeComponent
       });
       Promise.all(result).then(async item => {
         await this.getDataTableNumDos('no');
+        this.selectedGooods = [];
+        await this.getDataTableDos('no');
+
         // await this.getDataTableNum();
       });
     } else {
-      this.warningAlert('No hay Registro en la tabla Bien x Tipo');
+      this.alertInfo(
+        'warning',
+        'No hay Registro en la tabla Bien x Tipo',
+        ''
+      ).then(question => {
+        if (question.isConfirmed) {
+          setTimeout(() => {
+            this.performScroll();
+          }, 300);
+        }
+      });
+      // this.warningAlert('No hay Registro en la tabla Bien x Tipo');
     }
   }
 
@@ -1263,7 +1361,7 @@ export class ResquestNumberingChangeComponent
       'warning',
       'Eliminar',
       '¿Desea Eliminar Todos los Registros?'
-    ).then(question => {
+    ).then(async question => {
       if (question.isConfirmed) {
         if (this.dataCamNum.length != 0) {
           console.log(this.dataCamNum);
@@ -1274,7 +1372,9 @@ export class ResquestNumberingChangeComponent
             vcScreen: 'FACTADBSOLCAMNUME',
             toobarUser: this.token.decodeToken().preferred_username,
           };
-          this.deleteRegistrosVarios(obj);
+          await this.deleteRegistrosVarios(obj);
+          await this.getDataTableDos('no');
+
           // this.numeraryService
           //   .DeleteAllCamNum(this.dataCamNum[0].applicationChangeCashNumber)
           //   .subscribe({
@@ -1332,6 +1432,8 @@ export class ResquestNumberingChangeComponent
 
       Promise.all(result).then(async resp => {
         await this.getDataTableNumDos('no');
+        await this.getDataTableDos('no');
+
         await this.deleteAlert();
       });
     } else {
@@ -1417,23 +1519,27 @@ export class ResquestNumberingChangeComponent
   }
 
   async deleteRegistrosVarios(body: any) {
-    this.goodprocessService.deleteStatusBien(body).subscribe({
-      next: async (response: any) => {
-        // this.loading = false;
-        this.dataCamNum = [];
-        this.data1.refresh();
-        this.data1.load([]);
-        this.totalItems1 = 0;
-        this.alert('success', 'Registros Eliminados Correctamente', '');
-      },
-      error: err => {
-        this.alert(
-          'error',
-          'Ocurrió un Error al Intentar Eliminar los Registros',
-          ''
-        );
-        // this.loading = false;
-      },
+    return new Promise<any>((resolve, reject) => {
+      this.goodprocessService.deleteStatusBien(body).subscribe({
+        next: async (response: any) => {
+          // this.loading = false;
+          this.dataCamNum = [];
+          this.data1.refresh();
+          this.data1.load([]);
+          this.totalItems1 = 0;
+          this.alert('success', 'Registros Eliminados Correctamente', '');
+          resolve(true);
+        },
+        error: err => {
+          this.alert(
+            'error',
+            'Ocurrió un Error al Intentar Eliminar los Registros',
+            ''
+          );
+          resolve(false);
+          // this.loading = false;
+        },
+      });
     });
   }
 
@@ -1447,6 +1553,30 @@ export class ResquestNumberingChangeComponent
     this.loading = false;
     //this.modalRef.content.callback(true);
     this.modalRef.hide();
+  }
+
+  handleSuccess2(message: any) {
+    if (message == 'Debe Indicar el ID de la Solicitud') {
+      this.alertInfo(
+        'warning',
+        message,
+        'Realice una Búsqueda o Agregue una Nueva Solicitud'
+      ).then(question => {
+        if (question.isConfirmed) {
+          setTimeout(() => {
+            this.performScroll2();
+          }, 300);
+        }
+      });
+    } else {
+      this.alertInfo('warning', message, '').then(question => {
+        if (question.isConfirmed) {
+          setTimeout(() => {
+            this.performScroll2();
+          }, 300);
+        }
+      });
+    }
   }
 
   async validation(valor: any) {
@@ -1605,7 +1735,7 @@ export class ResquestNumberingChangeComponent
     this.idSolicitud = this.formaplicationData.get(
       'applicationChangeCashNumber'
     ).value;
-    this.getDataTableNumDos('si');
+
     this.numeraryService.getSolById(this.idSolicitud).subscribe({
       next: async (response: any) => {
         //'userRequestChangeNumber',
@@ -1639,16 +1769,19 @@ export class ResquestNumberingChangeComponent
         });
 
         //this.loading = false;
-
+        this.getDataTableNumDos('si');
         this.loading = false;
       },
       error: err => {
+        this.idSolicitud = null;
+        this.alert('warning', 'No se Encontraron Datos de la Solicitud', '');
         this.loading = false;
       },
     });
   }
 
   clean() {
+    this.formaplicationData.reset();
     this.formaplicationData
       .get('dateRequestChangeNumerary')
       .setValue(new Date());
@@ -1665,6 +1798,7 @@ export class ResquestNumberingChangeComponent
       this.formaplicationData.get(controlName).enable();
     }),
       (this.totalItems1 = 0);
+    this.idSolicitud = null;
     this.data1.load([]);
     this.data1.refresh();
   }
@@ -1679,6 +1813,7 @@ export class ResquestNumberingChangeComponent
       this.form.get(controlName).enable();
     }),
       (this.totalItems1 = 0);
+    this.totalItems = 0;
     this.data.load([]);
     this.data.refresh();
     this.data3.load([]);
@@ -1686,6 +1821,14 @@ export class ResquestNumberingChangeComponent
   }
 
   printScanFile() {
+    if (!this.idSolicitud) {
+      this.handleSuccess2('Debe Indicar el ID de la Solicitud');
+      this.formaplicationData
+        .get('applicationChangeCashNumber')
+        .markAsTouched();
+      // this.validate = true;
+      return;
+    }
     // if (this.form.get(this.formControlName).value != null) {
     const params = {
       PARAMFORM: 'NO',
@@ -1755,7 +1898,10 @@ export class ResquestNumberingChangeComponent
   private buildFormaplicationData() {
     this.formaplicationData = this.fb.group({
       dateRequestChangeNumerary: [new Date(), [Validators.required]],
-      applicationChangeCashNumber: [null],
+      applicationChangeCashNumber: [
+        null,
+        [Validators.required, Validators.pattern(NUM_POSITIVE_LETTERS)],
+      ],
       userRequestChangeNumber: [null, [Validators.required]],
       postUserRequestCamnum: [
         null,
@@ -1848,4 +1994,22 @@ export class ResquestNumberingChangeComponent
     showSelectedItemsAtTop: true, // Mostrar las opciones seleccionadas en la parte superior
     noDataAvailablePlaceholderText: 'No hay datos disponibles',
   };
+
+  performScroll() {
+    if (this.scrollContainer) {
+      this.scrollContainer.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  }
+
+  performScroll2() {
+    if (this.scrollContainer) {
+      this.scrollContainer2.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }
 }

@@ -38,6 +38,12 @@
                 bsDatepicker />
             </form-field>
           </div>
+          <div
+            class="invalid-feedback animated fadeInUp"
+            style="display: block"
+            *ngIf="PF_FECFIN.touched">
+            {{ getEndDateErrorMessage(PF_FECFIN, PF_FECINI) }}
+          </div>
 
           <!-- (change)="onDptossChange($event)" -->
 
@@ -67,7 +73,6 @@
               [showTooltip]="true"
               [data]="selectedSubDelegation"
               bindLabel="description"
-              [searchable]="false"
               (change)="onSubDelegationsChange($event)"
               label="Subdelegación destino"
               value="id"></ngx-select>

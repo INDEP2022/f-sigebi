@@ -573,7 +573,6 @@ export class NumeraryMassiveConciliationComponent
                 console.log(res);
                 this.alert('success', 'Bienes Encontrados', '');
                 this.dataGoods.load(res.data);
-                this.loading = false;
 
                 if (this.form.get('dateOf').value != null) {
                   const model: IRangeDateTmp5 = {
@@ -591,10 +590,16 @@ export class NumeraryMassiveConciliationComponent
                       console.log(res);
                     },
                     err => {
-                      console.log(err);
+                      this.dataGoods.load([]);
+                      this.alert(
+                        'warning',
+                        'No existe bienes entre las fechas seleccionadas',
+                        ''
+                      );
                     }
                   );
                 }
+                this.loading = false;
               },
               err => {
                 console.log(err);

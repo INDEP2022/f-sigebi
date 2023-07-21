@@ -50,6 +50,35 @@ export class LotService extends HttpService {
   }) {
     return this.post('apps/act-mandate', body);
   }
+
+  getGoodsExcel(eventId: string | number) {
+    return this.get<{
+      nameFile: string;
+      base64File: string;
+    }>(`apps/pup-exp-excel-good-lot/${eventId}`);
+  }
+
+  getCustomersExcel(eventId: string | number) {
+    return this.get<{
+      nameFile: string;
+      base64File: string;
+    }>(`apps/pup-exp-excel-clients/${eventId}`);
+  }
+
+  validLotifying(eventId: string | number) {
+    return this.get<{ aux: number }>(
+      `apps/blk-ctr-bie-lots-img-inc-lots-excel-when-image-pressed/${eventId}`
+    );
+  }
+
+  fillTmpComer(body: { pEvent: string | number; pdirec: string }) {
+    return this.post('apps/query-fill-tmp-eat', body);
+  }
+
+  updateTmpComer(body: { pEvent: string | number; pdirec: string }) {
+    return this.post('apps/query-get-act-tmp-eat', body);
+  }
+
   getByLotEventPhoto(good: number, params: ListParams) {
     const route = `${LotEndpoints.GoodByLotsEvent}?filter.good=${good}`;
     return this.get(route, params);
