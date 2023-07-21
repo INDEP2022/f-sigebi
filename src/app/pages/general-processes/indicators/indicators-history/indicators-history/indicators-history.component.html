@@ -4,7 +4,7 @@
   </div>
   <div body>
     <div class="row">
-      <capture-filter></capture-filter>
+      <capture-filter (consultEmmit)="getData($event)"></capture-filter>
     </div>
     <!-- <div class="row pt-3">
       <div class="col-md-12 d-flex justify-content-between">
@@ -21,14 +21,24 @@
     </div> -->
     <div class="row pt-3 table-content">
       <div class="mb-3">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <app-columns-select
+          [(settings)]="settings"
+          [defaultColumns]="4"></app-columns-select>
       </div>
       <div>
         <ng2-smart-table
           [settings]="settings"
           [source]="data"></ng2-smart-table>
       </div>
-      <app-pagination></app-pagination>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <div>
+      <button class="btn btn-sm btn-success active">
+        Exportar a Excel
+        <i class="bx bx-download float-icon"></i>
+      </button>
     </div>
   </div>
 </app-card>

@@ -183,7 +183,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.buildForm();
     this.pw();
-    this.tipo.disable();
+    // this.tipo.disable();
     //Inicializando el modal
   }
   onBeforeUnload(): void {

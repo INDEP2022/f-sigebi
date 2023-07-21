@@ -232,7 +232,6 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
           this.tipoConv = params['tipoConv'] || null;
           this.pGoodFatherNumber = params['pGoodFatherNumber'] || null;
           console.log(this.pGoodFatherNumber);
-          this.fetchItems();
         });
         console.log(this.tipoConv);
       },
@@ -309,6 +308,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
       //     });
       //     console.log(item);
       //   });
+    } else {
     }
   }
 
