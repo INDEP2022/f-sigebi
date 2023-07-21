@@ -139,6 +139,22 @@ export class ReceptionStrategiesComponent extends BasePage implements OnInit {
 
   async consult(form: FormGroup) {
     this.consulto = true;
+    if (form.get('fechaInicio').value === '') {
+      form.get('fechaInicio').setValue(null);
+    }
+
+    if (form.get('fechaFin').value === '') {
+      form.get('fechaFin').setValue(null);
+    }
+
+    if (form.get('cordinador').value === '') {
+      form.get('cordinador').setValue(null);
+    }
+
+    if (form.get('usuario').value === '') {
+      form.get('usuario').setValue(null);
+    }
+
     if (
       form.get('fechaInicio').value !== null ||
       form.get('fechaFin').value !== null
@@ -149,19 +165,28 @@ export class ReceptionStrategiesComponent extends BasePage implements OnInit {
       ] = `$btw:${this.formatDate(
         form.get('fechaInicio').value
       )},${this.formatDate(form.get('fechaFin').value)}`;
+    } else {
+      delete this.params.getValue()['filter.receptionPhysicalDate'];
     }
+
     if (form.get('cordinador').value !== null) {
       /// coordinateAdmin
       this.params.getValue()['filter.coordinateAdmin'] = `$ilike:${
         form.get('cordinadorName').value
       }`;
+    } else {
+      delete this.params.getValue()['filter.coordinateAdmin'];
     }
+
     if (form.get('usuario').value !== null) {
       /// userNameruleOrigin
       this.params.getValue()['filter.userNameruleOrigin'] = `$ilike:${
         form.get('usuario').value
       }`;
+    } else {
+      delete this.params.getValue()['filter.userNameruleOrigin'];
     }
+
     this.getData();
   }
 
@@ -172,7 +197,7 @@ export class ReceptionStrategiesComponent extends BasePage implements OnInit {
     if (jsonToCsv.length === 0) {
       this.alert(
         'warning',
-        'Estrategia Recepción',
+        'Estrategia de Recepción',
         'No hay información para descargar'
       );
       return;

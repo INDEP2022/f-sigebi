@@ -15,7 +15,6 @@ import {
   catchError,
   debounceTime,
   distinctUntilChanged,
-  Subject,
   takeUntil,
   tap,
   throwError,
@@ -35,6 +34,7 @@ import { IEventPreparationParameters } from '../../utils/interfaces/event-prepar
 import { EVENT_LOT_LIST_COLUMNS } from '../../utils/table-columns/event-lots-list-columns';
 import { EventLotFormComponent } from '../event-lot-form/event-lot-form.component';
 
+const ALLOWED_EXTENSIONS = ['xls', 'xlsx', 'csv'];
 @Component({
   selector: 'event-lots-list',
   templateUrl: './event-lots-list.component.html',
@@ -45,12 +45,14 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   @Input() parameters: IEventPreparationParameters;
   @Input() params = new BehaviorSubject(new FilterParams());
   @Output() onSelectLot = new EventEmitter<IComerLot>();
-  @ViewChild('fileInput', { static: true })
-  fileInput: ElementRef<HTMLInputElement>;
+
+  @Input() viewRejectedGoods: boolean;
+  @Output() viewRejectedGoodsChange = new EventEmitter<boolean>();
+  @ViewChild('validFileInput', { static: true })
+  validFileInput: ElementRef<HTMLInputElement>;
   totalItems = 0;
   @Input() lots = new LocalDataSource();
   lotSelected: IComerLot = null;
-  selectingFile = new Subject<File>();
 
   excelControl = new FormControl(null);
   get controls() {
@@ -75,6 +77,11 @@ export class EventLotsListComponent extends BasePage implements OnInit {
         position: 'right',
       },
     };
+  }
+
+  refreshTable() {
+    const params = new FilterParams();
+    this.params.next(params);
   }
 
   fileChange(event: Event) {
@@ -121,6 +128,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   }
 
   getLots(params: FilterParams) {
+    this.onSelectLot.emit(null);
     this.loading = true;
     const { id } = this.controls;
     if (id.value) {
@@ -163,8 +171,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
         lot: lot,
         callback: (refresh: boolean) => {
           if (refresh) {
-            const params = new FilterParams();
-            this.params.next(params);
+            this.refreshTable();
           }
         },
       },
@@ -180,19 +187,24 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   }
 
   onActDesc() {
-    if (!this.isSomeLotSelected()) {
-      return;
-    }
+    // if (!this.isSomeLotSelected()) {
+    //   return;
+    // }
     this.updateDesc().subscribe();
   }
 
   updateDesc() {
-    return this.lotService.eventValDesc(this.lotSelected.eventId).pipe(
+    this.loader.load = true;
+    const { id } = this.controls;
+    return this.lotService.eventValDesc(id.value).pipe(
       catchError(error => {
+        this.loader.load = false;
         return throwError(() => error);
       }),
       tap(res => {
-        console.log(res);
+        this.loader.load = false;
+        this.alert('success', 'Proceso Terminado', '');
+        this.refreshTable();
       })
     );
   }
@@ -205,6 +217,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   }
 
   updateMand() {
+    this.loader.load = true;
     return this.lotService
       .updateMandate({
         pGood: 0,
@@ -213,15 +226,26 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       })
       .pipe(
         catchError(error => {
+          this.loader.load = false;
           return throwError(() => error);
         }),
         tap(res => {
-          console.log(res);
+          this.loader.load = false;
+          this.alert('success', 'Proceso Terminado', '');
+          this.refreshTable();
         })
       );
   }
 
-  async onValFile() {
+  onValFile() {
+    this.validFileInput.nativeElement.click();
+  }
+
+  async valFileChange(event: Event) {
+    if (!this.isValidFile(event)) {
+      this.excelControl.reset();
+      return;
+    }
     const askIsLotifying = await this.alertQuestion(
       'question',
       '¿Está Lotificando?',
@@ -229,14 +253,39 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       'Si',
       'No'
     );
-    console.log({ askIsLotifying });
-
-    if (
-      askIsLotifying.isConfirmed ||
-      askIsLotifying.dismiss == Swal.DismissReason.cancel
-    ) {
-      this.selectExcel(askIsLotifying.isConfirmed).subscribe();
+    if (askIsLotifying.isConfirmed) {
+      this.validateCsv();
+      return;
     }
+
+    if (askIsLotifying.dismiss == Swal.DismissReason.cancel) {
+      this.validateCsvCustomers();
+      return;
+    }
+    this.excelControl.reset();
+  }
+
+  isValidFile(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (!target.files.length) {
+      return false;
+    }
+    if (target.files.length > 1) {
+      this.alert('error', 'Error', 'Solo puede seleccionar un Archivo');
+      return false;
+    }
+    const file = target.files[0];
+    const filename = file.name;
+    const extension = filename.split('.').at(-1);
+    if (!extension) {
+      this.alert('error', 'Error', 'Archivo Inválido');
+      return false;
+    }
+    if (!ALLOWED_EXTENSIONS.includes(extension.toLowerCase())) {
+      this.alert('error', 'Error', 'Archivo Inválido');
+      return false;
+    }
+    return true;
   }
 
   /** PUP_VALCSV */
@@ -247,19 +296,5 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   /** PUP_VALCSV_CLIENTES */
   validateCsvCustomers() {
     console.warn('PUP_VALCSV_CLIENTES');
-  }
-
-  selectExcel(isLotifying: boolean) {
-    this.fileInput.nativeElement.click();
-    return this.selectingFile.pipe(
-      takeUntil(this.$unSubscribe),
-      tap(file => {
-        if (!file) {
-          this.alert('error', 'Error', 'No se selecciono ningún Archivo');
-          return;
-        }
-        isLotifying ? this.validateCsv() : this.validateCsvCustomers();
-      })
-    );
   }
 }

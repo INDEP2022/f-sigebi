@@ -214,12 +214,14 @@ export class PaqDestinoDetComponent extends BasePage {
   }
 
   private async fillTable(data: IPackageGoodDec[]) {
-    let dataMap = await Promise.all(data.map(item => {
-      return {
-        ...item,
-        available: this.validateGood(item),
-      };
-    }));
+    let dataMap = await Promise.all(
+      data.map(item => {
+        return {
+          ...item,
+          available: this.validateGood(item),
+        };
+      })
+    );
 
     this.dataPrevisualization = dataMap;
     this.dataTemp = [...dataMap];

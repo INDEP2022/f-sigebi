@@ -1,37 +1,63 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const GENERAL_PROCESSES_OPINION_COLUNNS = {
-  regional: {
-    title: 'Regional',
+  coordinacion_regional: {
+    title: 'Coordinación Regional',
     sort: false,
   },
-  cve: {
+  cve_dictamen: {
     title: 'Tipo de Desahogo',
     sort: false,
   },
-  expediente: {
+  no_oficio: {
     title: 'Número de Oficio',
     sort: false,
   },
-  noVolante: {
+  no_expediente: {
     title: 'Número de Expediente',
     sort: false,
   },
-  tramite: {
+  no_volante: {
     title: 'Número Volante',
     sort: false,
   },
-  usuario: {
+  finiind: {
     title: 'Fecha Volante',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
-  page: {
+  ffinaliza: {
     title: 'Fecha Desahogo',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
-  fin: {
+  fmaxima: {
     title: 'Fecha Máxima',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
-  max: {
+  uinicia: {
     title: 'Usuario',
     sort: false,
   },

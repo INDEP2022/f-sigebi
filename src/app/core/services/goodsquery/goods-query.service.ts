@@ -227,4 +227,11 @@ export class GoodsQueryService extends HttpService {
   remove(numero: number | string) {
     return this.delete(`${GoodsQueryEndpoints.getUnits}/${numero}`);
   }
+
+  getViewIncRecDoc(params: ListParams) {
+    return this.get<IListResponse<any>>(
+      GoodsQueryEndpoints.getViewIndRecDoc,
+      params
+    );
+  }
 }

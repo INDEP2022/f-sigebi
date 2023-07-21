@@ -19,26 +19,36 @@
     </div>
     <div class="">
       <div class="d-flex flex-row-reverse mt-2" *ngIf="screenWidth >= 1200">
-        <div class="mx-1" *ngIf="turnReq && !complementaryDoc">
-          <button
-            type="button"
-            class="btn btn-primary btn-sm active"
-            (click)="turnRequest()"
-            [disabled]="">
-            Turnar <i aria-hidden="true" class="fa fa-share-square"></i>
-          </button>
-        </div>
+        <ng-template #turnar>
+          <div class="mx-1" *ngIf="turnReq && !complementaryDoc">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="turnRequest()"
+              [disabled]="">
+              Turnar <i aria-hidden="true" class="fa fa-share-square"></i>
+            </button>
+          </div>
+        </ng-template>
 
-        <div class="mx-1" *ngIf="complementaryDoc">
-          <button
-            type="button"
-            class="btn btn-primary btn-sm active"
-            (click)="endRequest()"
-            [disabled]="">
-            Finalizar <i aria-hidden="true" class="fa fa-check"></i>
-          </button>
+        <div
+          *ngIf="
+            processDetonate === 'DECOMISO' ||
+              processDetonate === 'EXT_DOMINIO' ||
+              processDetonate === 'ABANDONO' ||
+              processDetonate === 'complementaryDoc';
+            else turnar
+          ">
+          <div class="mx-1">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="endRequest()"
+              [disabled]="">
+              Finalizar <i aria-hidden="true" class="fa fa-check"></i>
+            </button>
+          </div>
         </div>
-
         <div class="mx-1">
           <button
             type="button"
@@ -54,6 +64,16 @@
             [disabled]=""
             (click)="rejectRequest()">
             <i class="bx bx-x-circle mr-1 float-icon"></i> Rechazar
+          </button>
+        </div>
+        <div class="mx-1" *ngIf="notifyReport">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="openNotifyReport()">
+            <i class="bx bx-notepad mr-1 float-icon"></i> Reporte de
+            Notificacion
           </button>
         </div>
         <div class="mx-1" *ngIf="createReport">
@@ -94,23 +114,44 @@
             aria-labelledby="processBtn">
             <li role="menuitem">
               <a class="dropdown-item bg-primary text-light" (click)="(true)"
-                ><i class="bx bxs-right-arrow-square mr-1 float-icon"></i
-                >Dictamen Resarcimiento</a
-              >
+                >Dictamen Resarcimiento
+                <i class="bx bxs-right-arrow-square mr-1 float-icon"></i>
+              </a>
             </li>
             <li role="menuitem">
-              <a class="dropdown-item bg-primary text-light" (click)="(true)"
-                ><i class="bx bxs-right-arrow-square mr-1 float-icon"></i>
-                Guardar</a
-              >
+              <a class="dropdown-item bg-primary text-light" (click)="(true)">
+                Guardar
+                <i class="bx bxs-right-arrow-square mr-1 float-icon"></i>
+              </a>
             </li>
             <li role="menuitem">
               <a
+                *ngIf="
+                  processDetonate === 'DECOMISO' ||
+                    processDetonate === 'EXT_DOMINIO' ||
+                    processDetonate === 'ABANDONO' ||
+                    processDetonate === 'complementaryDoc';
+                  else turnarresp
+                "
                 class="dropdown-item bg-primary text-light"
-                (click)="turnRequest()">
-                Turnar</a
-              >
-              <i aria-hidden="true" class="fa fa-share-square"></i>
+                (click)="endRequest()">
+                Finalizar <i aria-hidden="true" class="fa fa-check"></i
+              ></a>
+            </li>
+            <ng-template #turnarresp>
+              <li role="menuitem">
+                <a
+                  class="dropdown-item bg-primary text-light"
+                  (click)="turnRequest()">
+                  Turnar</a
+                >
+                <i aria-hidden="true" class="fa fa-share-square"></i>
+              </li>
+            </ng-template>
+            <li>
+              <a class="dropdown-item bg-primary text-light" (click)="close()">
+                Regresar <i class="fas fa-arrow-circle-left"></i>
+              </a>
             </li>
             <li>
               <a class="dropdown-item bg-primary text-light" (click)="close()">
@@ -133,7 +174,8 @@
           heading="Registro de Documentación"
           id="documentationTab">
           <app-register-documentation-form
-            [requestId]="requestId"></app-register-documentation-form>
+            [requestId]="requestId"
+            [process]="process"></app-register-documentation-form>
         </tab>
         <tab
           *ngIf="regDocView"
