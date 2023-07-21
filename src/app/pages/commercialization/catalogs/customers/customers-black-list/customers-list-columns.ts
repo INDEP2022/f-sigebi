@@ -1,10 +1,10 @@
 export const CUSTOMERS_LIST_COLUMNS = {
   id: {
-    title: 'Clave Clientes',
+    title: 'Clave Cliente',
     sort: false,
   },
   reasonName: {
-    title: 'Nombre Razón',
+    title: 'Nombre o Razón Social',
     sort: false,
   },
   rfc: {
@@ -16,7 +16,7 @@ export const CUSTOMERS_LIST_COLUMNS = {
     sort: false,
   },
   blackList: {
-    title: 'Lista negra',
+    title: 'Lista Negra',
     sort: false,
   },
 };

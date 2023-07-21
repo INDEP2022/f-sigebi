@@ -24,6 +24,7 @@ import { RecordAccountStatementsAccountsService } from 'src/app/core/services/ca
 import { RecordAccountStatementsService } from 'src/app/core/services/catalogs/record-account-statements.service';
 import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
+import { IRangeDateTmp5 } from 'src/app/core/services/ms-coinciliation/comer-details';
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -41,7 +42,6 @@ import {
   NUMERARY_MASSIVE_CONCILIATION_COLUMNS,
   NUMERARY_MASSIVE_CONCILIATION_COLUMNS2,
 } from './numerary-massive-conciliation-columns';
-import { IRangeDateTmp5 } from 'src/app/core/services/ms-coinciliation/comer-details';
 
 @Component({
   selector: 'app-numerary-massive-conciliation',
@@ -546,7 +546,6 @@ export class NumeraryMassiveConciliationComponent
         val6 != null ? paramsF.addFilter('val6', val6.cveAccount) : '';
         val2 != null ? paramsF.addFilter('val2', val2) : '';
 
-      
         this.goodService.getAllFilter(paramsF.getParams()).subscribe(
           res => {
             console.log(res);
@@ -575,23 +574,32 @@ export class NumeraryMassiveConciliationComponent
                 this.alert('success', 'Bienes Encontrados', '');
                 this.dataGoods.load(res.data);
 
-                if(this.form.get('dateOf').value != null){
+                if (this.form.get('dateOf').value != null) {
                   const model: IRangeDateTmp5 = {
-                    finalDate: format(this.form.get('dateAt').value, 'yyyy-MM-dd'),
-                    initialDate: format(this.form.get('dateOf').value, 'yyyy-MM-dd')
-                  }
-                    this.tmpVal5Service.rangeDate(model).subscribe(
-                      res => {
-                        console.log(res)
-                      },
-                      err => {
-                        this.dataGoods.load([]);
-                        this.alert('warning','No existe bienes entre las fechas seleccionadas','')
-                      }
-                    )
+                    finalDate: format(
+                      this.form.get('dateAt').value,
+                      'yyyy-MM-dd'
+                    ),
+                    initialDate: format(
+                      this.form.get('dateOf').value,
+                      'yyyy-MM-dd'
+                    ),
+                  };
+                  this.tmpVal5Service.rangeDate(model).subscribe(
+                    res => {
+                      console.log(res);
+                    },
+                    err => {
+                      this.dataGoods.load([]);
+                      this.alert(
+                        'warning',
+                        'No existe bienes entre las fechas seleccionadas',
+                        ''
+                      );
+                    }
+                  );
                 }
                 this.loading = false;
-
               },
               err => {
                 console.log(err);
