@@ -6,18 +6,19 @@ import {
   Validators,
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import {
   IProccesNum,
-  IRequesNumeraryCal,
   IRequesNumeraryDet,
   IRequestNumeraryEnc,
 } from 'src/app/core/models/ms-numerary/numerary.model';
@@ -54,6 +55,44 @@ interface ICurrencyRes {
   styleUrls: ['./numerary-calc.component.scss'],
 })
 export class NumeraryCalcComponent extends BasePage implements OnInit {
+  //Habilitar
+  fillNewData = false; //Datos para un nuevo proceso
+  searchedData = false; //Datos ya buscados
+  calcButton = false; //Boton de calcular y eliminar
+
+  //Get form Process Num
+  get idProcess() {
+    return this.formProcessNum.get('idProcess');
+  }
+
+  get date() {
+    return this.formProcessNum.get('date');
+  }
+
+  get description() {
+    return this.formProcessNum.get('description');
+  }
+
+  get type() {
+    return this.formProcessNum.get('type');
+  }
+
+  get totalInterest() {
+    return this.formProcessNum.get('totalInterest');
+  }
+
+  get totalImport() {
+    return this.formProcessNum.get('totalImport');
+  }
+
+  get currency() {
+    return this.formProcessNum.get('currency');
+  }
+
+  get bankCommision() {
+    return this.formProcessNum.get('bankCommision');
+  }
+
   form = new FormGroup({
     idProcess: new FormControl(null), // [null],
     date: new FormControl(null), // [null],
@@ -64,6 +103,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     user: new FormControl(null, [Validators.required]), // ,
   });
   formBlkControl: FormGroup;
+  formProcessNum: FormGroup;
 
   loading1 = this.loading;
   data1: any[] = [];
@@ -126,7 +166,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   }
   constructor(
     private fb: FormBuilder,
-    private readonly numeraryService: NumeraryService,
+    private numeraryService: NumeraryService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
     private siabService: SiabService,
@@ -151,7 +191,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.dataSelect = new DefaultSelect(this.DATA, this.DATA.length);
-    this.prepareForm();
+    this.prepareFormProcessNum();
     this.form.disable();
     this.form.get('type').enable();
     this.form.get('idProcess').enable();
@@ -216,29 +256,49 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       this.clean();
       this.processService.process(event);
       this.process = event;
-      this.form
-        .get('date')
-        .patchValue(
-          event.procnumDate.split('T')[0].split('-').reverse().join('/')
-        );
-      this.form.get('concept').patchValue(event.description);
-      this.form.get('totalInterests').patchValue(event.interestAll);
-      this.form.get('totalImport').patchValue(event.numeraryAll);
+      this.date.setValue(
+        event.procnumDate.split('T')[0].split('-').reverse().join('/')
+      );
+      this.description.setValue(event.description);
+      this.totalInterest.setValue(event.interestAll);
+      this.totalImport.setValue(event.numeraryAll);
+      this.type.setValue(event.procnumType);
       this.tCurrency();
     } else {
       this.clean();
     }
   }
 
+  clearAll() {
+    this.idProcess.reset();
+    this.clean();
+  }
+
   clean() {
-    this.form.reset();
-    this.formBlkControl.reset();
+    this.date.reset();
+    this.description.reset();
+    this.type.reset();
+    this.totalInterest.reset();
+    this.totalImport.reset();
+    this.currency.reset();
+    this.bankCommision.reset();
+    // this.formBlkControl.reset();
     this.data.load([]);
     this.data3.load([]);
     this.data2.load([]);
   }
 
-  prepareForm() {
+  private prepareFormProcessNum() {
+    this.formProcessNum = this.fb.group({
+      idProcess: [null],
+      date: [null],
+      description: [null],
+      type: [null],
+      totalInterest: [null],
+      totalImport: [null],
+      currency: [null],
+      bankCommision: [null],
+    });
     // this.form = this.fb.group({
     //   idProcess: [null],
     //   date: [null],
@@ -248,28 +308,31 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     //   totalImport: [null, Validators.required],
     //   user: [null, Validators.required],
     // });
-    this.formBlkControl = this.fb.group({
+    /* this.formBlkControl = this.fb.group({
       tMoneda: [null, Validators.required],
       commisionBanc: [null, Validators.required],
       sumCommision: [null, Validators.required],
-    });
+    }); */
   }
 
-  getRequestNumeEnc(listParams: ListParams = null) {
+  getRequestNumeEnc(listParams: FilterParams) {
     this.loading1 = true;
-    const params = listParams || this.params.getValue();
-    this.numeraryService.getNumeraryRequestNumeEnc(params).subscribe({
-      next: resp => {
-        console.log(resp.data);
-        this.data1 = resp.data;
-        this.data.load(resp.data);
-        this.totalItems = resp.count;
-        this.loading1 = false;
-      },
-      error: err => {
-        this.loading1 = false;
-      },
-    });
+    console.log(listParams);
+    this.numeraryService
+      .getNumeraryRequestNumeEncFilter(listParams.getParams())
+      .subscribe({
+        next: resp => {
+          console.log(resp.data);
+          this.data1 = resp.data;
+          this.data.load(resp.data);
+          this.totalItems = resp.count;
+          this.loading1 = false;
+        },
+        error: err => {
+          console.log(err);
+          this.loading1 = false;
+        },
+      });
   }
 
   getRequestNumeDet(idProcess?: number | string) {
@@ -316,9 +379,11 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           this.data3.refresh();
           this.totalItems2 = resp.count;
           this.loading3 = false;
+          this.postQuery();
         },
         error: err => {
           this.data3.load([]);
+          this.postQuery();
           this.data3.refresh();
           this.loading3 = false;
         },
@@ -326,7 +391,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   }
 
   async selectRequest() {
-    if (this.form.get('type').value === null) {
+    if (this.type.value === null) {
       this.alert(
         'warning',
         'Cálculo de numerario',
@@ -334,8 +399,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       );
       return;
     }
-    console.log(this.formBlkControl.get('tMoneda').value);
-    if (this.formBlkControl.get('tMoneda').value === null) {
+    console.log(this.currency.value);
+    if (this.currency.value === null) {
       this.alert(
         'warning',
         'Cálculo de numerario',
@@ -357,7 +422,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   printStatusAccount() {
     this.isLoadingStatusAccount = true;
     const params = {
-      pn_folio: '',
+      P_PROCNUM: this.idProcess.value,
+      P_FEC_PROCNUM: new Date(this.date.value)
     };
     this.downloadReport('blank', params, () => {
       this.isLoadingStatusAccount = false;
@@ -368,7 +434,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   printDetailMovi() {
     this.isLoadingDetailMovi = true;
     const params = {
-      pn_folio: '',
+      P_PROCNUM: this.idProcess.value,
+      P_FEC_PROCNUM: new Date(this.date.value)
     };
     this.downloadReport('blank', params, () => {
       this.isLoadingDetailMovi = false;
@@ -377,9 +444,10 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
 
   isLoadingProrraComission = false;
   printProrraComission() {
-    if (this.formBlkControl.get('tMoneda').value === 'P') {
+    if (this.currency.value === 'P') {
       const params = {
-        pn_folio: '',
+        P_PROCNUM: this.idProcess.value,
+        P_FEC_PROCNUM: new Date(this.date.value)
       };
       this.downloadReport('blank', params, () => {
         this.isLoadingProrraComission = false;
@@ -438,7 +506,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
         Number(this.process.procnumId)
       );
       if (deleteExi) {
-        this.clean();
+        this.clearAll();
         this.alert(
           'success',
           'Cálculo de numerario',
@@ -482,16 +550,15 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   openModal() {
     let config: ModalOptions = {
       initialState: {
-        process: this.process,
+        process: this.idProcess.value,
         userAuth: this.userAuth,
-        type: this.form.get('type').value,
-        typeMoney: this.formBlkControl.get('tMoneda').value,
+        type: this.type.value,
+        typeMoney: this.currency.value,
         callback: (next: any) => {
           if (next) {
-            this.requestNumeEnc = next[0];
-            this.totalItems = next.length;
-            this.data.load(next);
-            this.data.refresh();
+            console.log(next);
+            this.idProcess.setValue(next);
+            this.searchProcess();
           }
         },
       },
@@ -502,24 +569,26 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   }
 
   searchProcess() {
-    if (!this.form.value.idProcess) {
-      return this.onLoadToast('warning', 'Debe especificar un proceso.');
+    console.log(this.idProcess.value);
+    if (this.idProcess.value == null) {
+      return this.alert('warning', 'Debe especificar un proceso.', '');
     }
-    this.numeraryService
-      .getProcessNumById(this.form.value.idProcess)
-      .subscribe({
-        next: response => {
-          console.log(response);
-          this.onProcesosNum(response);
-          const params = new ListParams();
-          params['filter.procnumId'] = this.form.value.idProcess;
-          this.getRequestNumeEnc(params);
-        },
-        error: () => {
-          this.clean();
-          this.onLoadToast('error', 'No se encontró el proceso.');
-        },
-      });
+    this.numeraryService.getProcessNumById(this.idProcess.value).subscribe({
+      next: response => {
+        console.log(response);
+        this.onProcesosNum(response);
+        const params = new FilterParams();
+        params.addFilter('procnumId', this.idProcess.value);
+        console.log(params);
+        this.getRequestNumeEnc(params);
+        this.searchedData = true;
+      },
+      error: () => {
+        this.clean();
+        this.searchedData = false;
+        this.alert('error', 'No se encontró el proceso.', '');
+      },
+    });
   }
 
   async onChangeProcces(event: IRequestNumeraryEnc) {
@@ -541,15 +610,15 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   }
 
   async PUP_DESCALCULA() {
-    if (this.formBlkControl.get('tMoneda').value === 'P') {
-      this.formBlkControl.get('commisionBanc').reset();
+    if (this.currency.value === 'P') {
+      this.bankCommision.reset();
     }
-    const res = await this.pupSonDelDate(
-      this.requestNumeEnc.solnumId,
-      this.form.get('idProcess').value
+    await this.pupSonDelDate(
+      this.requestNumeDet.solnumId,
+      this.idProcess.value
     );
-    if (this.form.get('idProcess').value !== null) {
-      if (this.requestNumeEnc.solnumId !== null) {
+    if (this.idProcess.value !== null) {
+      if (this.requestNumeDet.solnumId !== null) {
         const response = await this.alertQuestion(
           'question',
           '¿Se ejecuta el cálculo?',
@@ -557,10 +626,10 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
         );
         if (response.isConfirmed) {
           const vResul = await this.pupElimCalculNume(
-            this.form.get('idProcess').value
+            this.idProcess.value
           );
           const process = await this.getProccesNum(
-            this.form.get('idProcess').value
+            this.idProcess.value
           );
           this.processService.process(process);
           if (vResul === 'Error') {
@@ -568,9 +637,10 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           } else {
             this.alert(
               'success',
-              'Cálculo de numerario',
-              'El proceso se realizó correctamente.'
+              'Se eliminó el Cálculo de Numerario',
+              ''
             );
+            this.searchProcess();
           }
         }
       } else {
@@ -600,6 +670,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           res(res);
         },
         error: err => {
+          console.log(err)
           res('Error');
         },
       });
@@ -607,6 +678,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   }
 
   fCalculaNume(pIdProcNum: number | string, commisionBanc: number) {
+    commisionBanc == null ? 0 : commisionBanc;
+
     return new Promise((res, rej) => {
       this.survillanceService
         .fCalculaNume(pIdProcNum, commisionBanc)
@@ -616,13 +689,41 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
             res(res);
           },
           error: err => {
+            console.log(err);
             res('Error');
           },
         });
     });
   }
 
-  pupSonDelDate(lvIdSolnum: number | string, lvIdProcnum: number | string) {
+  pupSonDate(
+    lvIdSolnum: string | number,
+    lvIdProcnum: string,
+    lvBpParcializado: string | number
+  ) {
+    return new Promise<boolean>((res, rej) => {
+      const model = {
+        lvIdSolnum,
+        lvIdProcnum,
+        lvBpParcializado,
+      };
+      this.numeraryService.pupSonDate(model).subscribe({
+        next: resp => {
+          console.log(resp);
+          res(true);
+        },
+        error: err => {
+          console.log(err);
+          res(false);
+        },
+      });
+    });
+  }
+
+  pupSonDelDate(
+    lvIdSolnum: string | number,
+    lvIdProcnum: string,
+  ) {
     return new Promise<boolean>((res, rej) => {
       const model = {
         lvIdSolnum,
@@ -634,6 +735,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           res(true);
         },
         error: err => {
+          console.log(err);
           res(false);
         },
       });
@@ -641,62 +743,47 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   }
 
   async PUP_CALCULA() {
-    if (this.formBlkControl.get('tMoneda').value === 'P') {
-      this.formBlkControl.get('commisionBanc').reset();
-    }
-
-    if (!['CN', 'CD'].includes(this.formBlkControl.get('tMoneda').value)) {
-      const res = await this.pupSonDelDate(
-        this.requestNumeEnc.solnumId,
-        this.form.get('idProcess').value
+    if (!['CN', 'CD'].includes(this.currency.value)) {
+      await this.pupSonDate(
+        this.requestNumeDet.solnumId,
+        this.idProcess.value,
+        this.requestNumeDet.goodNumber
       );
     }
 
-    if (this.form.get('idProcess').value !== null) {
-      if (this.requestNumeEnc.solnumId !== null) {
+    if (this.idProcess.value != null) {
+      if (this.requestNumeDet.solnumId != null) {
         const response = await this.alertQuestion(
           'question',
           '¿Se ejecuta el cálculo?',
-          '¿Desea continuar?'
+          ''
         );
+
         if (response.isConfirmed) {
           const vResul = await this.fCalculaNume(
-            this.form.get('idProcess').value,
-            this.formBlkControl.get('commisionBanc').value
+            this.idProcess.value,
+            this.bankCommision.value
           );
-          const process = await this.getProccesNum(
-            this.form.get('idProcess').value
-          );
-          this.processService.process(process);
+          console.log(vResul);
           if (vResul === 'Error') {
-            this.alert(
-              'error',
-              'Ha ocurrido un error',
-              'No se calculó el numerario'
-            );
+            this.alert('error', 'Ha ocurrido un error', '');
           } else {
             this.alert(
               'success',
-              'Cálculo de numerario',
-              'Se calculó el numerario correctamente'
+              'Se realizó el Cálculo de Numerario',
+              ''
             );
+            this.searchProcess();
           }
         }
       } else {
-        this.alert(
-          'warning',
-          'Cálculo de numerario',
-          'No se encontró la solicitud.'
-        );
+        this.alert('error', 'No se encontró la solicitud', '');
       }
     } else {
-      this.alert(
-        'warning',
-        'Cálculo de numerario',
-        'No se especificó el proceso a calcular.'
-      );
+      this.alert('error', 'No se especificó el proceso a calcular', '');
     }
   }
+
 
   onChangeTable2(event: any) {
     console.log(event);
@@ -705,16 +792,16 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   }
 
   async tCurrency() {
-    if (this.form.get('idProcess').value !== null) {
-      const res: ICurrencyRes = await this.getIndMoneda(
-        this.form.get('idProcess').value
-      );
+    if (this.idProcess.value !== null) {
+      const res: ICurrencyRes = await this.getIndMoneda(this.idProcess.value);
+      console.log(res);
       if (res.registers === 0) {
         this.alert(
           'warning',
           'Cálculo de numerario',
-          'No se encontro el tipo de moneda en este proceso.'
+          'No se encontro el tipo de moneda en este proceso. \n Debe seleccionar uno para continuar con el proceso'
         );
+        this.currency.enable();
         return;
       }
       if (res.registers > 1) {
@@ -726,9 +813,9 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
         return;
       }
       if (res.data.ind_moneda) {
-        this.formBlkControl.get('tMoneda').patchValue(res.data.ind_moneda);
+        this.currency.setValue(res.data.ind_moneda);
       }
-      this.formBlkControl.get('tMoneda').disable();
+      this.currency.disable();
     }
   }
 
@@ -757,7 +844,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   }
 
   async exportar() {
-    if (this.formBlkControl.get('tMoneda').value === 'P') {
+    if (this.currency.value === 'P') {
       this.alert(
         'warning',
         'Cálculo de numerario',
@@ -767,7 +854,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     }
     const filename: string = 'Numerario Prorraneo';
     const jsonToCsv = await this.returnJsonToCsv(
-      Number(this.process.procnumId)
+      Number(this.idProcess.value)
     );
     console.log('jsonToCsv', jsonToCsv);
     if (jsonToCsv.length === 0) {
@@ -789,6 +876,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           res(resp.data);
         },
         error: err => {
+          console.log(err)
           res([]);
         },
       });
@@ -798,7 +886,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   async exportarTotal() {
     const filename: string = 'Numerario Total';
     const jsonToCsv = await this.returnJsonToTotalCsv(
-      Number(this.process.procnumId)
+      Number(this.idProcess.value)
     );
     console.log('jsonToCsv', jsonToCsv);
     if (jsonToCsv.length === 0) {
@@ -839,25 +927,23 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     return fecha.split('T')[0].split('-').reverse().join('/');
   }
 
-  async postQuery(event: IRequesNumeraryCal) {
-    console.log(event);
-    this.valido = await this.vValido(
-      this.process.procnumId,
-      this.process.procnumDate
-    );
-    if ((event.amount !== null || event.amount !== '') && this.valido === 'N') {
-      this.textButton = 'Elimina Cálculo';
-      this.disableButton = true;
-    } else if (
-      (event.amount !== null || event.amount !== '') &&
-      this.valido === 'S'
-    ) {
-      this.textButton = 'Elimina Cálculo';
-      this.disableButton = false;
-      this.global.process = 'D';
-    } else if (event.amount === null || event.amount === '') {
+  async postQuery() {
+    if (this.data3['data'].length > 0) {
+      this.valido = await this.vValido(
+        this.process.procnumId,
+        this.process.procnumDate
+      );
+      if (this.valido === 'N') {
+        this.textButton = 'Elimina Cálculo';
+        this.calcButton = false;
+      } else if (this.valido === 'S') {
+        this.calcButton = true;
+        this.textButton = 'Elimina Cálculo';
+        this.global.process = 'D';
+      }
+    } else {
       this.textButton = 'Calcula Intereses';
-      this.disableButton = false;
+      this.calcButton = true;
       this.global.process = 'C';
     }
   }
@@ -885,5 +971,63 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
         error: err => res('N'),
       });
     });
+  }
+
+  //Funciones agregadas por Grigork
+  cancelNewProcess() {
+    this.fillNewData = false;
+    this.currency.enable();
+    this.clean();
+  }
+
+  newProcess() {
+    this.fillNewData = true;
+    this.searchedData = false;
+    this.currency.enable();
+    this.clearAll();
+  }
+
+  newProcessFn() {
+    if (this.type.value == null) {
+      this.alert('warning', 'Debe seleccionar un tipo', '');
+    } else if (this.currency.value == null) {
+      this.alert('warning', 'Debe seleccionar un tipo de moneda', '');
+    } else {
+      const model: IProccesNum = {
+        procnumDate: format(new Date(), 'yyyy-MM-dd'),
+        description: this.description.value,
+        user:
+          localStorage.getItem('username') == 'sigebiadmon'
+            ? localStorage.getItem('username')
+            : localStorage.getItem('username').toLocaleUpperCase(),
+        procnumType: this.type.value,
+        interestAll: 0,
+        numeraryAll: 0,
+      };
+
+      this.numeraryService.createProccesNum(model).subscribe(
+        res => {
+          this.alert('success', 'Proceso creado', '');
+          this.fillNewData = false;
+          this.searchedData = true;
+          this.currency.disable();
+          this.idProcess.setValue(JSON.parse(JSON.stringify(res)).procnumId);
+          this.date.setValue(new Date());
+        },
+        err => {
+          this.alert(
+            'error',
+            'Se presentó un Error Inesperado',
+            'No se creó el Proceso, intentelo nuevamente'
+          );
+        }
+      );
+    }
+  }
+
+  validateComissionBank() {
+    if (['P', 'C'].includes(this.currency.value)) {
+      this.bankCommision.reset();
+    }
   }
 }

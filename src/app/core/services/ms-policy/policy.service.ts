@@ -42,12 +42,23 @@ export class PolicyService extends HttpService {
     );
   }
 
-  getByKeyId(Key: string, params: any) {
+  getByKeyId(
+    Key: string,
+    params?: ListParams | string
+  ): Observable<IListResponse> {
     return this.get<IListResponse>(
       `${PolicyEndpoint.getPolicesXRight}?filter.policyKeyId=$eq:${Key}`,
       params
     );
   }
+
+  /*getAllK(params?: ListParams | string): Observable<IListResponse<IDocuments>> {
+    return this.get<IListResponse<IDocuments>>(
+      DocumentsEndpoints.Documents,
+      params
+    );
+  }*/
+
   putPolicyGood(params: any) {
     return this.put(PolicyEndpoint.getPolicesXRight, params);
   }
@@ -61,7 +72,7 @@ export class PolicyService extends HttpService {
   }
 
   postPolicy(params: any) {
-    return this.delete(PolicyEndpoint.getPoliciesXSubtype, params);
+    return this.post(PolicyEndpoint.getPoliciesXSubtype, params);
   }
 
   getSinister(PolicyKey: string) {

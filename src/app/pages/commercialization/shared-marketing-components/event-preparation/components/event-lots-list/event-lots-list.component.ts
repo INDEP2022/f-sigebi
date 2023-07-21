@@ -45,6 +45,9 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   @Input() parameters: IEventPreparationParameters;
   @Input() params = new BehaviorSubject(new FilterParams());
   @Output() onSelectLot = new EventEmitter<IComerLot>();
+
+  @Input() viewRejectedGoods: boolean;
+  @Output() viewRejectedGoodsChange = new EventEmitter<boolean>();
   @ViewChild('validFileInput', { static: true })
   validFileInput: ElementRef<HTMLInputElement>;
   totalItems = 0;
@@ -74,6 +77,11 @@ export class EventLotsListComponent extends BasePage implements OnInit {
         position: 'right',
       },
     };
+  }
+
+  refreshTable() {
+    const params = new FilterParams();
+    this.params.next(params);
   }
 
   fileChange(event: Event) {
@@ -163,8 +171,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
         lot: lot,
         callback: (refresh: boolean) => {
           if (refresh) {
-            const params = new FilterParams();
-            this.params.next(params);
+            this.refreshTable();
           }
         },
       },
@@ -180,19 +187,24 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   }
 
   onActDesc() {
-    if (!this.isSomeLotSelected()) {
-      return;
-    }
+    // if (!this.isSomeLotSelected()) {
+    //   return;
+    // }
     this.updateDesc().subscribe();
   }
 
   updateDesc() {
-    return this.lotService.eventValDesc(this.lotSelected.eventId).pipe(
+    this.loader.load = true;
+    const { id } = this.controls;
+    return this.lotService.eventValDesc(id.value).pipe(
       catchError(error => {
+        this.loader.load = false;
         return throwError(() => error);
       }),
       tap(res => {
-        console.log(res);
+        this.loader.load = false;
+        this.alert('success', 'Proceso Terminado', '');
+        this.refreshTable();
       })
     );
   }
@@ -205,6 +217,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   }
 
   updateMand() {
+    this.loader.load = true;
     return this.lotService
       .updateMandate({
         pGood: 0,
@@ -213,10 +226,13 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       })
       .pipe(
         catchError(error => {
+          this.loader.load = false;
           return throwError(() => error);
         }),
         tap(res => {
-          console.log(res);
+          this.loader.load = false;
+          this.alert('success', 'Proceso Terminado', '');
+          this.refreshTable();
         })
       );
   }

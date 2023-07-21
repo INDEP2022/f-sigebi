@@ -19,6 +19,7 @@ import {
 } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
@@ -667,11 +668,28 @@ export class ResquestNumberingChangeComponent
   }
   getTodos(params: ListParams, id?: string) {
     // this.loading = true;
+    const params_ = new FilterParams();
 
-    this.goodprocessService.getGoodType(params).subscribe(
+    params_.page = params.page;
+    params_.limit = params.limit;
+
+    let params__ = '';
+    if (params?.text.length > 0)
+      if (!isNaN(parseInt(params?.text))) {
+        console.log('SI');
+        params_.addFilter('clasifGoodNumber', params.text, SearchFilter.EQ);
+      } else {
+        console.log('NO');
+        params_.search = params.text;
+      }
+
+    this.goodprocessService.getGoodType_(params_.getParams()).subscribe(
       (response: any) => {
+        console.log('rrr', response);
         let result = response.data.map(async (item: any) => {
           item['tipoSupbtipoDescription'] =
+            item.clasifGoodNumber +
+            ' - ' +
             item.typeDesc +
             ' - ' +
             item.subTypeDesc +
@@ -685,7 +703,10 @@ export class ResquestNumberingChangeComponent
           // this.loading = false;
         });
       },
-      error => console.log('ERR', error)
+      error => {
+        this.tiposData = new DefaultSelect([], 0);
+        console.log('ERR', error);
+      }
     );
   }
 
@@ -1800,6 +1821,14 @@ export class ResquestNumberingChangeComponent
   }
 
   printScanFile() {
+    if (!this.idSolicitud) {
+      this.handleSuccess2('Debe Indicar el ID de la Solicitud');
+      this.formaplicationData
+        .get('applicationChangeCashNumber')
+        .markAsTouched();
+      // this.validate = true;
+      return;
+    }
     // if (this.form.get(this.formControlName).value != null) {
     const params = {
       PARAMFORM: 'NO',

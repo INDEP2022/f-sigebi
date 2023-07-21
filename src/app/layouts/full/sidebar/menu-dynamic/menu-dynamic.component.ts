@@ -18,7 +18,6 @@ export class MenuDynamicComponent implements OnInit {
   }
 
   updateStorage(item: IMenuItem) {
-    console.log(item);
     if (item.label === 'Características del Bien') {
       localStorage.removeItem('selectedBad');
     }

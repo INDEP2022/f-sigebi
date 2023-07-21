@@ -1,12 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import {
+  IMassiveReqNumEnc,
   IProccesNum,
   IRequestNumeraryEnc,
 } from 'src/app/core/models/ms-numerary/numerary.model';
@@ -24,10 +27,10 @@ export class ModalRequestComponent extends BasePage implements OnInit {
   data1: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  @Input() process: IProccesNum;
+  process: string;
   @Input() userAuth: string;
-  @Input() type: string;
-  @Input() typeMoney: string;
+  type: string;
+  typeMoney: string;
   requestNumeEnc: IRequestNumeraryEnc;
   columnFilters: any = [];
 
@@ -46,6 +49,7 @@ export class ModalRequestComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.process);
     this.data1
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -104,16 +108,11 @@ export class ModalRequestComponent extends BasePage implements OnInit {
   }
 
   getRequestNumeEnc() {
-    this.loading = true;
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-    const model = {
-      pTypeProcNum: this.type,
-      pTMoney: this.typeMoney,
-    };
-    this.numeraryService.getSolNumerary(model, params).subscribe({
+    const paramsF = new FilterParams();
+    paramsF.addFilter('tCoin', this.typeMoney);
+    paramsF.addFilter('solNumType', this.type);
+    console.log(this.columnFilters);
+    this.numeraryService.reqNumEnc(paramsF.getParams()).subscribe({
       next: resp => {
         console.log(resp);
         //this.data1 = resp.data;
@@ -135,15 +134,6 @@ export class ModalRequestComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  handleSuccess() {
-    const message: string = 'Guardado';
-    this.alert('success', 'Registro de inventario', `${message} correctamente`);
-    this.loading = false;
-    this.modalRef.content.callback(goodCheck);
-    clearGoodCheck();
-    this.modalRef.hide();
-  }
-
   async confirm() {
     if (this.process === undefined || this.process === null) {
       const resp = await this.alertQuestion(
@@ -153,10 +143,57 @@ export class ModalRequestComponent extends BasePage implements OnInit {
       );
       if (resp.isConfirmed) {
         /// se genera el pre Inset
-        this.process = await this.processService.createProccesNum(
-          this.userAuth,
-          this.type
+        const model: IProccesNum = {
+          procnumDate: format(new Date(), 'yyyy-MM-dd'),
+          description: null,
+          user:
+            localStorage.getItem('username') == 'sigebiadmon'
+              ? localStorage.getItem('username')
+              : localStorage.getItem('username').toLocaleUpperCase(),
+          procnumType: this.type,
+          interestAll: 0,
+          numeraryAll: 0,
+        };
+
+        this.numeraryService.createProccesNum(model).subscribe(
+          res => {
+            this.process = JSON.parse(JSON.stringify(res)).procnumId;
+
+            const arraySolId = goodCheck.map((e: any) => {
+              return e.id_solnum;
+            });
+
+            const model: IMassiveReqNumEnc = {
+              solnumId: arraySolId,
+              procnumId: this.process,
+            };
+
+            this.numeraryService.updateMasiveReqNumEnc(model).subscribe(
+              res => {
+                this.alert('success', 'Se agregó la Solicitud al Proceso', '');
+                this.modalRef.content.callback(this.process);
+                this.modalRef.hide();
+                console.log('SE CREO EL PROCESO');
+              },
+              err => {
+                this.alert(
+                  'error',
+                  'Se presentó un Error al agregar la Solicitud al Proceso',
+                  ''
+                );
+                console.log(err);
+              }
+            );
+          },
+          err => {
+            this.alert(
+              'error',
+              'Se presentó un Error Inesperado',
+              'No se creó el Proceso, intentelo nuevamente'
+            );
+          }
         );
+
         console.log('SE CREO EL POCESO');
       } else {
         clearGoodCheck();
@@ -173,52 +210,33 @@ export class ModalRequestComponent extends BasePage implements OnInit {
         clearGoodCheck();
         this.modalRef.hide();
         return;
+      } else {
+        const arraySolId = goodCheck.map((e: any) => {
+          return e.id_solnum;
+        });
+
+        const model: IMassiveReqNumEnc = {
+          solnumId: arraySolId,
+          procnumId: this.process,
+        };
+
+        this.numeraryService.updateMasiveReqNumEnc(model).subscribe(
+          res => {
+            this.alert('success', 'Se agregó la Solicitud al Proceso', '');
+            this.modalRef.content.callback(this.process);
+            this.modalRef.hide();
+            console.log('SE ACTUALIZO EL PROCESO');
+          },
+          err => {
+            this.alert(
+              'error',
+              'Se presentó un Error al agregar la Solicitud al Proceso',
+              ''
+            );
+            console.log(err);
+          }
+        );
       }
     }
-
-    if (this.process) {
-      /// AGREGARLE ESTO AL REGISTER DEL REGISTRO
-      // :SOLICITUDES_NUME_ENC1.ID_PROCNUM := :PROCESOS_NUME.ID_PROCNUM;
-      // :SOLICITUDES_NUME_ENC1.ESTATUS_SOLNUM := 'P';
-      // Y GUARDAR ESTO
-      this.requestNumeEnc.procnumId = this.process.procnumId;
-      this.requestNumeEnc.solnumStatus = 'P';
-      const resp: IRequestNumeraryEnc =
-        await this.updateNumeraryRequestNumeEnc();
-      this.requestNumeEnc = resp;
-      console.log(resp);
-      this.modalRef.content.callback([this.requestNumeEnc]);
-      this.modalRef.hide();
-    } else {
-      this.alert(
-        'warning',
-        'Cálculo de numerario',
-        'No se identificó el proceso.'
-      );
-      this.modalRef.hide();
-    }
-  }
-
-  updateNumeraryRequestNumeEnc() {
-    return new Promise<IRequestNumeraryEnc>((res, _rej) => {
-      const model: IRequestNumeraryEnc = {
-        delegationNumber: this.requestNumeEnc.delegationNumber,
-        description: this.requestNumeEnc.description,
-        procnumId: this.requestNumeEnc.procnumId,
-        solnumDate: this.requestNumeEnc.solnumDate,
-        solnumStatus: this.requestNumeEnc.solnumStatus,
-        solnumType: this.requestNumeEnc.solnumType,
-        user: this.requestNumeEnc.user,
-        solnumId: this.requestNumeEnc.solnumId,
-      };
-      this.numeraryService.updateNumeraryRequestNumeEnc(model).subscribe({
-        next: response => {
-          res(response);
-        },
-        error: err => {
-          res(null);
-        },
-      });
-    });
   }
 }
