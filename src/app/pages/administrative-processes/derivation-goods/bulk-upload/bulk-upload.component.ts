@@ -32,7 +32,7 @@ export class BulkUploadComponent extends BasePage implements OnInit {
   //Reactive Forms
   form: FormGroup;
   data: LocalDataSource = new LocalDataSource();
-  ids: IDs[];
+  ids: any[];
   fileName: string = '';
   good: IbulkLoadGoods;
 
@@ -287,19 +287,35 @@ export class BulkUploadComponent extends BasePage implements OnInit {
   }
 
   postDatatableItemBtn() {
+    console.log(this.ids);
     if (!this.good) {
       this.alert('error', 'No se tiene bienes a ingresar S', '');
     } else {
-      this.goodProcessService.postGoodMasiveForm(this.good).subscribe(
-        async res => {
-          //console.log("res -> " + JSON.stringify(res));
-          const message = res['message'][0];
-          this.alert('success', 'Guardado', message);
-        },
-        err => {
-          this.alert('error', 'Error', err);
-        }
-      );
+      this.ids.length;
+      const mappedData: any = [];
+      for (let i = 0; i < this.ids.length; i++) {
+        mappedData.push({
+          noClasifGood: this.ids[i].CLASIFICADOR,
+          noGoodFather: this.pGoodFatherNumber,
+          quantity: this.ids[i].CANTIDAD,
+          description: this.ids[i].DESCRIPCION,
+          unit: this.ids[i].UNIDAD ?? null,
+          type: this.ids[i].TIPO ?? null,
+          material: this.ids[i].MATERIAL ?? null,
+          edoPhisical: this.ids[i].EDOFISICO ?? null,
+        });
+      }
+      console.log(mappedData);
+      // this.goodProcessService.postGoodMasiveForm(this.good).subscribe(
+      //   async res => {
+      //     //console.log("res -> " + JSON.stringify(res));
+      //     const message = res['message'][0];
+      //     this.alert('success', 'Guardado', message);
+      //   },
+      //   err => {
+      //     this.alert('error', 'Error', err);
+      //   }
+      // );
     }
   }
 }

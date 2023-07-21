@@ -183,14 +183,12 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.buildForm();
     this.pw();
-    // this.tipo.disable();
+    this.tipo.disable();
     //Inicializando el modal
   }
-  onBeforeUnload(): void {
-    // Lógica para eliminar el elemento del almacenamiento local
-    localStorage.removeItem('conversion');
-  }
+
   pw() {
+    this.loader.load = true;
     let config = MODAL_CONFIG;
     config = {
       initialState: {
@@ -361,11 +359,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.numberGoodSon.setValue(e);
             this.searchStatus(res.data[0]['status']);
             this.getAttributesGood(res.data[0]['goodClassNumber']);
-
-            this.flagActa = false;
-            this.flagCargMasiva = false;
-            this.flagCargaImagenes = false;
-            this.flagFinConversion = false;
           } else if (conversionData.typeConv === '1') {
             this.observation.setValue('');
             this.descriptionSon.setValue('');
@@ -481,22 +474,26 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         this.goodData = res;
         console.log('res:', res);
         this.goodData = this.goodData.data[0];
-
-        // this.finishConversionBeforeValidation(
-        //   this.goodData.goodId,
-        //   this.goodData.id
-        // );
-        // return;
-
         if (this.goodData.status == 'CVD') {
-          this.flagActa = true;
           this.flagCargMasiva = true;
           this.flagCargaImagenes = true;
           this.flagFinConversion = true;
+          this.flagCambia = true;
+          this.flagUpdate = true;
+          this.flagGoodNew = true;
+          this.flagGoodDelete = true;
+          this.loader.load = false;
+        } else {
+          this.flagActa = false;
+          this.flagCargMasiva = false;
+          this.flagCargaImagenes = false;
+          this.flagFinConversion = false;
+          this.loader.load = false;
         }
       },
       err => {
         console.log(err);
+        this.loader.load = false;
       }
     );
   }
@@ -805,25 +802,27 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       let config = { ...MODAL_CONFIG, class: 'modal-xl modal-dialog-centered' };
       config.initialState = {
         proceeding: {},
-        idProgramming: 1,
-        expedientNuember: this.form.value.numberDossier,
+        actConvertion: this.actConvertion.value,
+        tipoConv: this.tipo.value,
+        pGoodFatherNumber: this.numberGoodFather.value,
+        expedientNuember: this.numberDossier.value,
         callback: (receipt: any, keyDoc: string) => {
           if (receipt && keyDoc) {
           }
         },
       };
-      console.log(this.form.value.tipo);
-      this.router.navigate(
-        ['/pages/administrative-processes/derivation-goods'],
-        {
-          queryParams: {
-            actConvertion: this.actConvertion.value,
-            tipoConv: this.tipo.value,
-            pGoodFatherNumber: this.numberGoodFather.value,
-          },
-        }
-      );
       this.modalService.show(ActaConvertionFormComponent, config);
+      console.log(this.form.value.tipo);
+      // this.router.navigate(
+      //   ['/pages/administrative-processes/derivation-goods'],
+      //   {
+      //     queryParams: {
+      //       actConvertion: this.actConvertion.value,
+      //       tipoConv: this.tipo.value,
+      //       pGoodFatherNumber: this.numberGoodFather.value,
+      //     },
+      //   }
+      // );
     } else {
       this.alert('warning', `Tipo debe ser Derivado`, '');
     }
