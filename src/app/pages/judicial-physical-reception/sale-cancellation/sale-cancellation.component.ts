@@ -63,6 +63,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EdoFisicoComponent } from '../confiscated-records/edo-fisico/edo-fisico.component.component';
 import { columnsGoodAct } from '../confiscated-records/settings-tables';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 
 @Component({
   selector: 'app-sale-cancellation',
@@ -253,7 +254,8 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private serviceNotification: NotificationService,
     private serviceProceeding: ProceedingsService,
-    private serviceHistoryGood: HistoryGoodService
+    private serviceHistoryGood: HistoryGoodService,
+    private authService: AuthService
   ) {
     super();
   }
@@ -326,11 +328,13 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
   }
 
   getDataUser() {
+    const token = this.authService.decodeToken();
+    console.log(token)
     const user =
       localStorage.getItem('username') == 'sigebiadmon'
         ? localStorage.getItem('username')
         : localStorage.getItem('username').toLocaleUpperCase();
-    const routeUser = `?filter.name=$eq:${user}`;
+    const routeUser = `?filter.id=$eq:${token.preferred_username}`;
     this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
       const resJson = JSON.parse(JSON.stringify(res.data[0]));
       this.delUser = resJson.usuario.delegationNumber;

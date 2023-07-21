@@ -47,6 +47,7 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from '../../../shared/components/select/default-select';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 
 @Component({
   selector: 'app-cancellation-recepcion',
@@ -285,7 +286,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     private serviceProceeding: ProceedingsService,
     private serviceUser: UsersService,
     private serviceNotification: NotificationService,
-    private serviceHistoryGood: HistoryGoodService
+    private serviceHistoryGood: HistoryGoodService,
+    private authService: AuthService
   ) {
     super();
   }
@@ -353,11 +355,13 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   }
 
   getDataUser() {
+    const token = this.authService.decodeToken();
+    console.log(token)
     const user =
       localStorage.getItem('username') == 'sigebiadmon'
         ? localStorage.getItem('username')
         : localStorage.getItem('username').toLocaleUpperCase();
-    const routeUser = `?filter.name=$eq:${user}`;
+    const routeUser = `?filter.id=$eq:${token.preferred_username}`;
     this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
       const resJson = JSON.parse(JSON.stringify(res.data[0]));
       this.delUser = resJson.usuario.delegationNumber;
