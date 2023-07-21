@@ -1,20 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  KEYGENERATION_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ListParams } from './../../../../common/repository/interfaces/list-params';
 import { COLUMNSTABL1 } from './columnsTable1';
 import { COLUMNSTABLE2 } from './columnsTable2';
-import { LocalDataSource } from 'ng2-smart-table';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-destruction-acts',
@@ -40,8 +36,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   //Variables
   actForm: FormGroup;
 
-  records = new DefaultSelect()
-
+  records = new DefaultSelect();
 
   constructor(private fb: FormBuilder) {
     super();
@@ -54,7 +49,6 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.initForm();
   }
-
 
   initForm() {
     this.actForm = this.fb.group({
@@ -69,7 +63,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
       admin: [null],
       folio: [null],
       year: [null],
-      month: [null]
+      month: [null],
     });
 
     this.formTable1 = this.fb.group({

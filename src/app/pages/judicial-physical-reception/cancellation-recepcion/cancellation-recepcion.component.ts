@@ -28,6 +28,7 @@ import {
 } from 'src/app/core/models/ms-proceedings/detail-proceedings-delivery-reception.model';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
 import { ICveAct } from 'src/app/core/models/ms-proceedings/update-proceedings.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
@@ -47,7 +48,6 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from '../../../shared/components/select/default-select';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
 
 @Component({
   selector: 'app-cancellation-recepcion',
@@ -356,7 +356,7 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
 
   getDataUser() {
     const token = this.authService.decodeToken();
-    console.log(token)
+    console.log(token);
     const user =
       localStorage.getItem('username') == 'sigebiadmon'
         ? localStorage.getItem('username')

@@ -228,10 +228,22 @@ export class JuridicalRulingGComponent
     },
     rowClassFunction: (row: any) => {
       if (row.data.est_disponible == 'S') {
-        if (row.data.v_amp == 'S') {
-          return 'bg-success text-danger';
+        if (row.data.di_es_numerario == 'S') {
+          if (row.data.di_esta_conciliado == 'N') {
+            return 'bg-dark text-white';
+          } else {
+            if (row.data.v_amp == 'S') {
+              return 'bg-success text-danger';
+            } else {
+              return 'bg-success text-white';
+            }
+          }
         } else {
-          return 'bg-success text-white';
+          if (row.data.v_amp == 'S') {
+            return 'bg-success text-danger';
+          } else {
+            return 'bg-success text-white';
+          }
         }
       } else {
         if (row.data.v_amp == 'S') {
@@ -554,7 +566,7 @@ export class JuridicalRulingGComponent
       fechaNotificacionAseg: [null],
       autoriza_remitente: [null],
       criminalCase: [null, [Validators.pattern(STRING_PATTERN)]],
-      autoriza_nombre: [null, [Validators.pattern(STRING_PATTERN)]],
+      autoriza_nombre: ['', [Validators.pattern(STRING_PATTERN)]],
       cveOficio: [null],
       estatus: [null],
     });
@@ -573,6 +585,7 @@ export class JuridicalRulingGComponent
     this.gestionDestinoForm = this.fb.group({
       estatus: [null, [Validators.pattern(STRING_PATTERN)]],
     });
+    // this.dictaminacionesForm.get('autoriza_nombre').setValue(null);
   }
 
   dateValidS: any;
@@ -742,7 +755,7 @@ export class JuridicalRulingGComponent
     this.expedientesForm.get('delito').setValue(null);
 
     // ..dictaminación
-    this.dictaminacionesForm.get('wheelNumber').setValue(null);
+    // this.dictaminacionesForm.get('wheelNumber').setValue(null);
     this.dictaminacionesForm.get('criminalCase').setValue(null);
     this.dictaminacionesForm.get('etiqueta').setValue(null);
     this.dictaminacionesForm.get('fechaPPFF').setValue(null);
@@ -817,9 +830,9 @@ export class JuridicalRulingGComponent
           // this.dictaminacionesForm
           //   .get('autoriza_remitente')
           //   .setValue(response.identifier);
-          this.dictaminacionesForm
-            .get('autoriza_nombre')
-            .setValue(response.indicatedName);
+          // this.dictaminacionesForm
+          //   .get('autoriza_nombre')
+          //   .setValue(response.indicatedName);
           // ..Datos del expediente
           this.expedientesForm
             .get('criminalCase')
@@ -852,6 +865,11 @@ export class JuridicalRulingGComponent
       params.addFilter('id', id, SearchFilter.EQ);
     }
 
+    params.addFilter(
+      'typeDict',
+      this.expedientesForm.get('tipoDictaminacion').value,
+      SearchFilter.EQ
+    );
     // params['filter.wheelNumber'] = `$eq:${noWheel}`
     // params['filter.expedientNumber'] = `$eq:${noExpediente}`
     this.dictationService.getAllWithFilters(params.getParams()).subscribe({
@@ -881,9 +899,9 @@ export class JuridicalRulingGComponent
         this.dictaminacionesForm
           .get('fechaInstructora')
           .setValue(new Date(res.data[0]?.instructorDate) || undefined);
-        this.dictaminacionesForm
-          .get('wheelNumber')
-          .setValue(res.data[0].wheelNumber || undefined);
+        // this.dictaminacionesForm
+        //   .get('wheelNumber')
+        //   .setValue(res.data[0].wheelNumber || undefined);
         this.dictaminacionesForm
           .get('fechaDictaminacion')
           .setValue(
@@ -1220,6 +1238,7 @@ export class JuridicalRulingGComponent
       this.alert('warning', 'No existe dictamen a eliminar', '');
       return;
     }
+
     const toolbar_user = this.authService.decodeToken().preferred_username;
     const cadena = this.dictamen.passOfficeArmy
       ? this.dictamen.passOfficeArmy.indexOf('?')
@@ -1232,6 +1251,15 @@ export class JuridicalRulingGComponent
     if (cadena != 0 && this.dictamen.userDict == toolbar_user) {
       null;
     } else {
+      if (this.dictamen.userDict != toolbar_user) {
+        this.alert(
+          'warning',
+          'El Usuario no está Autorizado para Eliminar este Dictamen',
+          ''
+        );
+        return;
+      }
+
       if (V_BAN == true) {
         V_ELIMINA = await this.getRTdictaAarusr(toolbar_user);
 
@@ -1272,6 +1300,32 @@ export class JuridicalRulingGComponent
           }
         }
       }
+    }
+
+    // MISMO MES //
+    const fechaEspecifica = new Date(this.dictamen.dictDate); // Meses se cuentan desde 0 (enero) hasta 11 (diciembre)
+    // Obtener la fecha actual
+    const fechaActual = new Date();
+    // Comprobar si pertenecen al mismo mes
+    const esMismoMes =
+      fechaEspecifica.getMonth() === fechaActual.getMonth() &&
+      fechaEspecifica.getFullYear() === fechaActual.getFullYear();
+    if (esMismoMes) {
+      console.log(
+        'La fecha específica y la fecha actual pertenecen al mismo mes.'
+      );
+    } else {
+      console.log(
+        'La fecha específica y la fecha actual NO pertenecen al mismo mes.'
+      );
+    }
+    if (!esMismoMes) {
+      this.alert(
+        'warning',
+        'No puede Eliminar el Dictamen',
+        'El mes de Dictaminación y el Actual no coinciden'
+      );
+      return;
     }
 
     if (V_BAN == true && V_ELIMINA == 'S') {
