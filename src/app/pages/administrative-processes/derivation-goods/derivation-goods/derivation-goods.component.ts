@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -17,10 +17,10 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { CharacteristicGoodCellComponent } from '../../change-of-good-classification/change-of-good-classification/characteristicGoodCell/characteristic-good-cell.component';
 import { GoodsComponent } from '../goods/goods.component';
 import { PwComponent } from '../pw/pw.component';
 import { ActaConvertionFormComponent } from './acta-convertion-form/acta-convertion.component'; // Importa el componente de tu modal
+import { DerivationCharGoodCellComponent } from './derivation-char-good-cell/derivation-char-good-cell.component';
 import { DerivationGoodsService } from './derivation-goods.service';
 import { ATRIBUT_ACT_COLUMNS } from './devation-columns';
 //import { MatDialog } from '@angular/material/dialog';
@@ -57,6 +57,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   relDocuments: any;
   bkConversionsCveActaCon: any;
   typeAction: boolean = true;
+  goodForTableChar: any;
 
   service = inject(DerivationGoodsService);
   get id() {
@@ -126,7 +127,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     },
     noDataMessage: 'No se encontrarón registros',
   };
-
+  goodChange = 0;
   dataGoods = new LocalDataSource();
   dataGoods2: any[] = [];
   conversionId: any;
@@ -169,8 +170,11 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           valuePrepareFunction: (cell: any, row: any) => {
             return { value: row, good: this.good };
           },
-          renderComponent: CharacteristicGoodCellComponent,
+          renderComponent: DerivationCharGoodCellComponent,
         },
+      },
+      rowClassFunction: (row: any) => {
+        return row.data.tableCd ? '' : 'notTableCd';
       },
     };
 
@@ -329,6 +333,46 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
 
   lastIdConversion: any = null;
 
+  get dataCharacteristics() {
+    return this.service.data;
+  }
+
+  updateAttributes() {
+    debugger;
+    let body: any = {
+      id: this.goodForTableChar.id,
+      goodId: this.goodForTableChar.goodId,
+    };
+    let tableValid = true;
+    this.dataCharacteristics.forEach(row => {
+      if (row.required && !row.value) {
+        this.alert(
+          'error',
+          'Características del bien ' + this.goodForTableChar.id,
+          'Complete el atributo ' + row.attribute
+        );
+        tableValid = false;
+        return;
+      }
+      body[row.column] = row.value;
+    });
+    if (!tableValid) {
+      return;
+    }
+    this.serviceGood
+      .update(body)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          this.alert(
+            'success',
+            'Actualizadas correctamente',
+            'Características del bien ' + this.good.id
+          );
+        },
+      });
+  }
+
   async searchGoodSon(e: any) {
     this.form.valueChanges.subscribe(async value => {
       if (this.lastIdConversion !== value.idConversion) {
@@ -343,7 +387,9 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             .toPromise();
           // if (conversionData.typeConv === '1') {
           this.good = res.data[0];
-          console.log(this.good);
+          this.goodForTableChar = res.data[0];
+          // debugger;
+          console.log(this.good, conversionData);
 
           if (conversionData.typeConv === '2') {
             this.id.setValue(res.data[0]['id']);
@@ -352,13 +398,21 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.quantity.setValue(res.data[0]['quantity']);
             this.classifier.setValue(res.data[0]['goodClassNumber']);
             this.classificationOfGoods = Number(res.data[0]['goodClassNumber']);
+            if (this.classificationOfGoods) {
+              this.goodChange++;
+            }
             console.log(Number(res.data[0]['goodClassNumber']));
             this.unitOfMeasure.setValue(res.data[0]['unit']);
             this.destinationLabel.setValue(res.data[0]['labelNumber']);
             this.statusCode = res.data[0]['status'];
             this.numberGoodSon.setValue(e);
             this.searchStatus(res.data[0]['status']);
-            this.getAttributesGood(res.data[0]['goodClassNumber']);
+            // this.getAttributesGood(res.data[0]['goodClassNumber']);
+
+            this.flagActa = false;
+            this.flagCargMasiva = false;
+            this.flagCargaImagenes = false;
+            this.flagFinConversion = false;
           } else if (conversionData.typeConv === '1') {
             this.observation.setValue('');
             this.descriptionSon.setValue('');
@@ -368,7 +422,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.destinationLabel.setValue('');
             this.numberGoodSon.setValue('');
             this.searchStatus('');
-
             this.flagActa = false;
             this.flagCargMasiva = true;
             this.flagCargaImagenes = true;
@@ -762,34 +815,36 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     this.unitOfMeasure.setValue(event.data.unit);
     this.destinationLabel.setValue(event.data.noLabel);
     this.selectedRow = event.data;
-    this.getAttributesGood(event.data.noClassifGood);
+    this.goodForTableChar = event.data;
+    this.goodChange++;
+    // this.getAttributesGood(event.data.noClassifGood);
   }
-  getAttributesGood(event: any) {
-    this.serviceGood.getAllFilterClassification(event).subscribe(
-      res => {
-        this.attributes = [];
-        console.log('getAllFilterClassification -> ', res);
-        for (let i = 0; i < res.data.length; i++) {
-          let value = '';
-          for (const index in this.good) {
-            if (index === `val${res.data[i].columnNumber}`) {
-              console.log('this.good -> ', this.good[index]);
-              value = this.good[index];
-            }
-          }
-          this.attributes.push({
-            attributes: res.data[i].attribute,
-            value: value,
-          });
-        }
-        // this.attributes = res.data.map(objeto => objeto.attribute);
-        // console.log(this.attributes);
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
+  // getAttributesGood(event: any) {
+  //   this.serviceGood.getAllFilterClassification(event).subscribe(
+  //     res => {
+  //       this.attributes = [];
+  //       console.log('getAllFilterClassification -> ', res);
+  //       for (let i = 0; i < res.data.length; i++) {
+  //         let value = '';
+  //         for (const index in this.good) {
+  //           if (index === `val${res.data[i].columnNumber}`) {
+  //             console.log('this.good -> ', this.good[index]);
+  //             value = this.good[index];
+  //           }
+  //         }
+  //         this.attributes.push({
+  //           attributes: res.data[i].attribute,
+  //           value: value,
+  //         });
+  //       }
+  //       // this.attributes = res.data.map(objeto => objeto.attribute);
+  //       // console.log(this.attributes);
+  //     },
+  //     err => {
+  //       console.log(err);
+  //     }
+  //   );
+  // }
 
   /* showToast(status: NbComponentStatus) {
     this.toastrService.show(status, 'Estado cambiado exitosamente !!', { status });

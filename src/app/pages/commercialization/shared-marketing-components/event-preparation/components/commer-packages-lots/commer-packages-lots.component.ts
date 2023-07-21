@@ -36,6 +36,7 @@ export class CommerPackagesLotsComponent
   @Output() fillStadistics = new EventEmitter<void>();
   comerLot: IComerLot;
   @Input() loggedUser: TokenInfoModel;
+  viewRejectedGoods = false;
   constructor(
     private globalVarsService: GlobalVarsService,
     private eventPreparationService: EventPreparationService,

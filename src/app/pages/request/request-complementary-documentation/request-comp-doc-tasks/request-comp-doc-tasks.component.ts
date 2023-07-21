@@ -9,7 +9,6 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
 //Components
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
@@ -18,13 +17,17 @@ import { RequestService } from 'src/app/core/services/requests/request.service';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
+import { CompDocTasksComponent } from './comp-doc-task.component';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
   templateUrl: './request-comp-doc-tasks.component.html',
   styles: [],
 })
-export class RequestCompDocTasksComponent extends BasePage implements OnInit {
+export class RequestCompDocTasksComponent
+  extends CompDocTasksComponent
+  implements OnInit
+{
   /* CALL TABS DINAMICALY */
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
   /**
@@ -39,6 +42,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   expRequest: boolean = false;
   viewSelectedGoods: boolean = false;
   dictumValidate: boolean = false;
+  notifyReport: boolean = false;
   /**
    * SET STATUS ACTIONS
    **/
@@ -113,7 +117,8 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.requestInfo = resp.data[0];
         this.titleView();
         this.requestId = resp.data[0].id;
-        this.mapTasks(this.process, resp.data[0].affair);
+        //this.mapTasks(this.process, resp.data[0].affair);
+        this.mapTask(this.process);
         this.getAffair(resp.data[0].affair);
         //cierra el tab de buscar bienes solicitudes
         this.closeSearchRequestSimGoodsTab(resp.data[0].recordId);
@@ -257,6 +262,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
           this.expRequest = true;
           this.saveRequest = true;
           this.dictumValidate = false;
+          this.notifyReport = false;
 
           this.turnReq = true;
           this.createReport = false;
@@ -280,6 +286,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.expRequest = true;
         this.saveRequest = true;
         this.dictumValidate = false;
+        this.notifyReport = false;
 
         this.turnReq = true;
         this.createReport = true;
@@ -297,6 +304,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.expRequest = true;
         this.saveRequest = true;
         this.dictumValidate = false;
+        this.notifyReport = false;
 
         this.turnReq = true;
         this.createReport = true;
@@ -314,6 +322,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.expRequest = true;
         this.saveRequest = true;
         this.dictumValidate = true;
+        this.notifyReport = false;
 
         this.turnReq = true;
         this.createReport = true;
@@ -331,6 +340,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.expRequest = true;
         this.saveRequest = true;
         this.dictumValidate = false;
+        this.notifyReport = false;
 
         this.turnReq = true;
         this.createReport = false;
@@ -347,6 +357,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.expRequest = true;
         this.saveRequest = true;
         this.dictumValidate = false;
+        this.notifyReport = true;
 
         this.turnReq = true;
         this.createReport = false;
@@ -401,4 +412,6 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
       },
     });
   }
+
+  openNotifyReport() {}
 }
