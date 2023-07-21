@@ -24,10 +24,14 @@
   </button>
 </li>
 <li role="menuitem">
-  <button type="button" class="dropdown-item">Bienes no Cargados</button>
+  <button type="button" class="dropdown-item" (click)="onRejectedGoods()">
+    Bienes no Cargados
+  </button>
 </li>
 <li role="menuitem">
-  <button type="button" class="dropdown-item">Carga Facturas</button>
+  <button type="button" class="dropdown-item" (click)="onLoadInvoices()">
+    Carga Facturas
+  </button>
 </li>
 <li role="menuitem">
   <button type="button" class="dropdown-item">Revisa Tras x Lote</button>
@@ -65,6 +69,13 @@
 <input
   type="file"
   (change)="onCustomersImport($event)"
-  [formControl]="goodsLotifyControl"
+  [formControl]="customersImportControl"
   [style.display]="'none'"
   #customersImportInput />
+
+<input
+  type="file"
+  (change)="loadInvoiceChange($event)"
+  [formControl]="invoiceControl"
+  [style.display]="'none'"
+  #invoiceInput />
