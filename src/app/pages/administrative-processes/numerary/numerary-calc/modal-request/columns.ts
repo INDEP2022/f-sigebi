@@ -49,7 +49,9 @@ export const REQUESTS_COLUMNS_MODAL = {
           console.log(goodCheck);
           goodCheck.push(data.row);
         } else {
-          goodCheck = goodCheck.filter(valor => valor.id_solnum != data.id_solnum);
+          goodCheck = goodCheck.filter(
+            valor => valor.id_solnum != data.id_solnum
+          );
         }
       });
     },
