@@ -334,10 +334,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       },
     };
 
-    const confirmPro = this.modalService.show(
-      ConfirmProgrammingComponent,
-      config
-    );
+    this.modalService.show(ConfirmProgrammingComponent, config);
   }
 
   viewOffice() {

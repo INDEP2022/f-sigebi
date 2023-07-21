@@ -59,6 +59,12 @@ export class SummaryComponent extends BasePage implements OnInit {
     adaptivePosition: true,
     dateInputFormat: 'MMMM YYYY',
   };
+  get PF_FECINI(): AbstractControl {
+    return this.flyersForm.get('PF_FECINI');
+  }
+  get PF_FECFIN(): AbstractControl {
+    return this.flyersForm.get('PF_FECFIN');
+  }
 
   get includeArea() {
     return this.flyersForm.get('includeArea');
@@ -120,14 +126,24 @@ export class SummaryComponent extends BasePage implements OnInit {
   }
   save() {}
 
+  getEndDateErrorMessage(fin: any, ini: any) {
+    const stard = new Date(ini.value).getTime();
+    const end = new Date(fin.value).getTime();
+    if (fin && ini) {
+      return stard <= end
+        ? null
+        : 'La fecha de finalización debe ser mayor que la fecha de inicio.';
+    }
+    return '';
+  }
+
   Generar() {
     const start = this.flyersForm.get('PF_FECINI').value;
     const end = this.flyersForm.get('PF_FECFIN').value;
     this.start = this.datePipe.transform(start, 'dd/MM/yyyy');
     this.end = this.datePipe.transform(end, 'dd/MM/yyyy');
 
-    console.log(this.start);
-    console.log(this.end);
+    /// console.log(this.start);
     if (this.end < this.start) {
       this.onLoadToast(
         'warning',
@@ -148,7 +164,8 @@ export class SummaryComponent extends BasePage implements OnInit {
       DEPARTAMENTO: this.flyersForm.controls['department'].value,
     };
 
-    this.siabService.fetchReport('_blank', params).subscribe(response => {
+    this.siabService.fetchReport('blank', params).subscribe(response => {
+      //  response= null;
       if (response !== null) {
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
@@ -170,6 +187,12 @@ export class SummaryComponent extends BasePage implements OnInit {
           ignoreBackdropClick: true,
         };
         this.modalService.show(PreviewDocumentsComponent, config);
+      } else {
+        this.onLoadToast(
+          'warning',
+          'advertencia',
+          'Sin datos para los rangos de fechas suministrados'
+        );
       }
     });
   }

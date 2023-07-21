@@ -50,6 +50,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   requestId: number = 0;
   contributor: string = '';
   processDetonate: string = '';
+  process: string = '';
   title: string;
   requestInfo: any;
   screenWidth: number;
@@ -80,7 +81,8 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     const requestId = Number(this.route.snapshot.paramMap.get('request'));
-    const process = this.route.snapshot.paramMap.get('process');
+    this.process = this.route.snapshot.paramMap.get('process');
+    console.log('process', this.process);
     //this.route.paramMap.subscribe(params => {
     if (requestId) {
       //this.requestId = parseInt(params.get('request'));
@@ -102,7 +104,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
 
   getRequestInfo(requestId: number) {
     // Llamar servicio para obtener informacion de la solicitud
-    const process = this.route.snapshot.paramMap.get('process');
+    //const process = this.route.snapshot.paramMap.get('process');
     const param = new FilterParams();
     param.addFilter('id', requestId);
     const filter = param.getParams();
@@ -111,7 +113,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.requestInfo = resp.data[0];
         this.titleView();
         this.requestId = resp.data[0].id;
-        this.mapTasks(process, resp.data[0].affair);
+        this.mapTasks(this.process, resp.data[0].affair);
         this.getAffair(resp.data[0].affair);
         //cierra el tab de buscar bienes solicitudes
         this.closeSearchRequestSimGoodsTab(resp.data[0].recordId);
@@ -186,7 +188,11 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
       'Turnar'
     ).then(question => {
       if (question.isConfirmed) {
-        this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        if (this.process == 'similar-good-register-documentation') {
+          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        } else {
+          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        }
       }
     });
   }
@@ -240,27 +246,27 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
 
     switch (process) {
       case 'register-request':
-        /* if (affair == 13) { */
-        this.regDocForm = true;
-        this.regDocView = false;
-        this.searchRequestSimGoods = true;
-        this.selectGoods = false;
-        this.viewSelectedGoods = false;
-        this.guidelines = false;
-        this.docRequest = false;
-        this.expRequest = true;
-        this.saveRequest = true;
-        this.dictumValidate = false;
+        if (affair == 13) {
+          this.regDocForm = true;
+          this.regDocView = false;
+          this.searchRequestSimGoods = true;
+          this.selectGoods = false;
+          this.viewSelectedGoods = false;
+          this.guidelines = false;
+          this.docRequest = false;
+          this.expRequest = true;
+          this.saveRequest = true;
+          this.dictumValidate = false;
 
-        this.turnReq = true;
-        this.createReport = false;
-        this.rejectReq = false;
-        /* } else if (affair == 10) {
+          this.turnReq = true;
+          this.createReport = false;
+          this.rejectReq = false;
+        } else if (affair == 10) {
           this.searchRequestSimGoods = true;
           this.regDocForm = true;
           this.selectGoods = true;
           this.expRequest = true;
-        } */
+        }
 
         break;
       case 'guidelines-review':
@@ -313,6 +319,38 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.createReport = true;
         this.rejectReq = true;
 
+        break;
+      case 'similar-good-register-documentation':
+        this.regDocForm = true;
+        this.regDocView = false;
+        this.searchRequestSimGoods = true;
+        this.selectGoods = true;
+        this.viewSelectedGoods = false;
+        this.guidelines = false;
+        this.docRequest = false;
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.dictumValidate = false;
+
+        this.turnReq = true;
+        this.createReport = false;
+        this.rejectReq = false;
+        break;
+      case 'similar-good-notify-transferor':
+        this.regDocForm = false;
+        this.regDocView = true;
+        this.searchRequestSimGoods = false;
+        this.selectGoods = false;
+        this.viewSelectedGoods = true;
+        this.guidelines = false;
+        this.docRequest = true;
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.dictumValidate = false;
+
+        this.turnReq = true;
+        this.createReport = false;
+        this.rejectReq = false;
         break;
       default:
         break;

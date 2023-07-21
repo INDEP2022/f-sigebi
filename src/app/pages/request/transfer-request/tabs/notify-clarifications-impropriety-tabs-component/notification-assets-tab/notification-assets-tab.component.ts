@@ -835,7 +835,10 @@ export class NotificationAssetsTabComponent
               InappropriatenessPgrSatFormComponent,
               config
             );
-          } else if (this.requestData.transferent.type === 'NO') {
+          } else if (
+            this.requestData.transferent.type === 'NO' ||
+            this.requestData.typeOfTransfer === 'MANUAL'
+          ) {
             console.log('Abrir formulario para impro manual');
             const token = this.authService.decodeToken();
             this.delegationUser = token.department;

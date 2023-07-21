@@ -33,7 +33,7 @@ export class CaptureFilterComponent implements OnInit {
   @Input() isReceptionAndDelivery: boolean = false;
   @Input() isReceptionStrategies: boolean = false;
   @Input() isConsolidated: boolean = false;
-  @Output() consultEmmit = new EventEmitter<FormGroup>();
+  @Output() consultEmmit = new EventEmitter<any>();
   delegations = new DefaultSelect();
   affairName = new DefaultSelect();
   station = new DefaultSelect();
@@ -204,9 +204,6 @@ export class CaptureFilterComponent implements OnInit {
     );
   }
 
-  consult() {
-    this.consultEmmit.emit(this.formCapture);
-  }
   Generar() {
     this.isLoading = true;
     this.consultEmmit.emit(this.formCapture);
