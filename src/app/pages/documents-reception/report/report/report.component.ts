@@ -100,8 +100,9 @@ export class ReportComponent extends BasePage implements OnInit {
 
     this.siabService
       // .fetchReport('RGEROFPRECEPDOCUM', params)
-      .fetchReport('blank', params)
+      .fetchReport('RGEROFPRECEPDOCUM', params)
       .subscribe(response => {
+        // response=null;
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
           const url = URL.createObjectURL(blob);
@@ -118,20 +119,11 @@ export class ReportComponent extends BasePage implements OnInit {
           };
           this.modalService.show(PreviewDocumentsComponent, config);
         } else {
-          const blob = new Blob([response], { type: 'application/pdf' });
-          const url = URL.createObjectURL(blob);
-          let config = {
-            initialState: {
-              documento: {
-                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                type: 'pdf',
-              },
-              callback: (data: any) => {},
-            }, //pasar datos por aca
-            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-            ignoreBackdropClick: true, //ignora el click fuera del modal
-          };
-          this.modalService.show(PreviewDocumentsComponent, config);
+          this.onLoadToast(
+            'warning',
+            'advertencia',
+            'Sin datos para los rangos de fechas suministrados'
+          );
         }
       });
   }
