@@ -133,13 +133,13 @@ export interface IRequesNumMov {
 }
 
 export interface IMassiveReqNumEnc {
-  solnumId: string[],
-  solnumDate?: Date | string,
-  description?: string,
-  solnumType?: string,
-  delegationNumber?: number,
-  user?: string,
-  solnumStatus?: string,
-  procnumId?: string,
-  recordNumber?: number
+  solnumId: string[];
+  solnumDate?: Date | string;
+  description?: string;
+  solnumType?: string;
+  delegationNumber?: number;
+  user?: string;
+  solnumStatus?: string;
+  procnumId?: string;
+  recordNumber?: number;
 }
