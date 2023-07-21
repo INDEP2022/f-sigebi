@@ -1,5 +1,5 @@
 export const PRORRATEGO_GOODS_COLUMNS = {
-  goodId: {
+  goodNumberId: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
