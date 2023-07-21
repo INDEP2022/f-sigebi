@@ -69,6 +69,7 @@
         <confirm-button
           text="Aceptar"
           loadingText="Cargando"
+          [btnSmall]="true"
           [disabled]="!flyerForm.valid || !notificationExists"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>

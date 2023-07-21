@@ -492,7 +492,7 @@ export class PerformProgrammingFormComponent
                 const regDelData = this.regionalDelegationUser;
                 let config = {
                   ...MODAL_CONFIG,
-                  class: 'modal-lg modal-dialog-centered',
+                  class: 'modal-xl modal-dialog-centered',
                 };
                 config.initialState = {
                   programmingId: this.idProgramming,
@@ -502,7 +502,13 @@ export class PerformProgrammingFormComponent
                       this.performForm
                         .get('regionalDelegationNumber')
                         .setValue(this.delegation);
-                      //this.setDataProgramming();
+
+                      this.performForm
+                        .get('stationId')
+                        .setValue(Number(this.dataProgramming.stationId));
+                      this.setDataProgramming();
+                    } else {
+                      this.setDataProgramming();
                     }
                   },
                 };

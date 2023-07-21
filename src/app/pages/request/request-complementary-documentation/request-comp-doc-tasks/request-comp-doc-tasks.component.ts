@@ -12,6 +12,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 //Components
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
@@ -56,7 +57,7 @@ export class RequestCompDocTasksComponent
   processDetonate: string = '';
   process: string = '';
   title: string;
-  requestInfo: any;
+  requestInfo: IRequest;
   screenWidth: number;
   public typeDoc: string = '';
   public updateInfo: boolean = false;
@@ -86,17 +87,9 @@ export class RequestCompDocTasksComponent
   ngOnInit(): void {
     const requestId = Number(this.route.snapshot.paramMap.get('request'));
     this.process = this.route.snapshot.paramMap.get('process');
-    console.log('process', this.process);
-    //this.route.paramMap.subscribe(params => {
     if (requestId) {
-      //this.requestId = parseInt(params.get('request'));
       this.getRequestInfo(requestId);
-      /**
-       *MAP TASKS
-       * */
     }
-    //});
-
     this.expedientEventTrigger();
   }
 
@@ -107,34 +100,20 @@ export class RequestCompDocTasksComponent
   }
 
   getRequestInfo(requestId: number) {
-    // Llamar servicio para obtener informacion de la solicitud
-    //const process = this.route.snapshot.paramMap.get('process');
     const param = new FilterParams();
     param.addFilter('id', requestId);
     const filter = param.getParams();
     this.requestService.getAll(filter).subscribe({
       next: resp => {
         this.requestInfo = resp.data[0];
-        this.titleView();
         this.requestId = resp.data[0].id;
-        //this.mapTasks(this.process, resp.data[0].affair);
-        this.mapTask(this.process);
+        this.mapTask(this.process, resp.data[0].affair);
+        this.titleView(resp.data[0].affair);
         this.getAffair(resp.data[0].affair);
-        //cierra el tab de buscar bienes solicitudes
         this.closeSearchRequestSimGoodsTab(resp.data[0].recordId);
       },
     });
     this.contributor = 'CARLOS G. PALMA';
-  }
-
-  titleView() {
-    if (this.requestInfo?.affair == 13) {
-      this.title = `DOCUMENTACIÓN COMPLEMENTARIA: Registro de Documentación Complementaria, No. Solicitud ${this.requestInfo.id}`;
-      this.complementaryDoc = true;
-    } else if (this.requestInfo?.affair == 10) {
-      this.title = `Devolución: Registro de documentación complementaria, No. Solicitud ${this.requestInfo.id}`;
-      this.complementaryDoc = true;
-    }
   }
 
   expedientSelected(event: any) {
@@ -166,8 +145,6 @@ export class RequestCompDocTasksComponent
   }
 
   close() {
-    // this.registRequestForm.reset();
-    //this.router.navigate(['pages/request/list']);
     this.location.back();
   }
 
@@ -218,158 +195,6 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  mapTasks(process: string, affair: number): void {
-    console.log('process', process);
-    console.log('affair', affair);
-    //REGISTRAR SOLICITUD
-    /*regRequest
-    associateReqSimGoods
-    selectOriginGoods
-    requestSiabSearch
-    integrateDocFile
-    turn
-    //Revision de lineamientos
-    receive
-    guidelinesReview
-    integrateDocFile
-    createReport
-    turn
-    //GENERAR RESULTADOS
-    receiveRequest
-    reject//AnalysisResults
-    guidelinesReview
-    integrateDocFile
-    sign
-    turn
-    //Validar dictamen
-    receive// request for opinion validation
-    reject// opinion validation
-    regOpinionValidation
-    integrateDocFile
-    createReport
-    turn*/
-
-    switch (process) {
-      case 'register-request':
-        if (affair == 13) {
-          this.regDocForm = true;
-          this.regDocView = false;
-          this.searchRequestSimGoods = true;
-          this.selectGoods = false;
-          this.viewSelectedGoods = false;
-          this.guidelines = false;
-          this.docRequest = false;
-          this.expRequest = true;
-          this.saveRequest = true;
-          this.dictumValidate = false;
-          this.notifyReport = false;
-
-          this.turnReq = true;
-          this.createReport = false;
-          this.rejectReq = false;
-        } else if (affair == 10) {
-          this.searchRequestSimGoods = true;
-          this.regDocForm = true;
-          this.selectGoods = true;
-          this.expRequest = true;
-        }
-
-        break;
-      case 'guidelines-review':
-        this.regDocForm = false;
-        this.regDocView = true;
-        this.searchRequestSimGoods = false;
-        this.selectGoods = false;
-        this.viewSelectedGoods = true;
-        this.guidelines = true;
-        this.docRequest = false;
-        this.expRequest = true;
-        this.saveRequest = true;
-        this.dictumValidate = false;
-        this.notifyReport = false;
-
-        this.turnReq = true;
-        this.createReport = true;
-        this.rejectReq = false;
-
-        break;
-      case 'analysis-result':
-        this.regDocForm = false;
-        this.regDocView = true;
-        this.searchRequestSimGoods = false;
-        this.selectGoods = true;
-        this.viewSelectedGoods = false;
-        this.guidelines = true;
-        this.docRequest = false;
-        this.expRequest = true;
-        this.saveRequest = true;
-        this.dictumValidate = false;
-        this.notifyReport = false;
-
-        this.turnReq = true;
-        this.createReport = true;
-        this.rejectReq = true;
-
-        break;
-      case 'dictum-validate':
-        this.regDocForm = false;
-        this.regDocView = true;
-        this.searchRequestSimGoods = false;
-        this.selectGoods = true;
-        this.viewSelectedGoods = false;
-        this.guidelines = true;
-        this.docRequest = false;
-        this.expRequest = true;
-        this.saveRequest = true;
-        this.dictumValidate = true;
-        this.notifyReport = false;
-
-        this.turnReq = true;
-        this.createReport = true;
-        this.rejectReq = true;
-
-        break;
-      case 'similar-good-register-documentation':
-        this.regDocForm = true;
-        this.regDocView = false;
-        this.searchRequestSimGoods = true;
-        this.selectGoods = true;
-        this.viewSelectedGoods = false;
-        this.guidelines = false;
-        this.docRequest = false;
-        this.expRequest = true;
-        this.saveRequest = true;
-        this.dictumValidate = false;
-        this.notifyReport = false;
-
-        this.turnReq = true;
-        this.createReport = false;
-        this.rejectReq = false;
-        break;
-      case 'similar-good-notify-transferor':
-        this.regDocForm = false;
-        this.regDocView = true;
-        this.searchRequestSimGoods = false;
-        this.selectGoods = false;
-        this.viewSelectedGoods = true;
-        this.guidelines = false;
-        this.docRequest = true;
-        this.expRequest = true;
-        this.saveRequest = true;
-        this.dictumValidate = false;
-        this.notifyReport = true;
-
-        this.turnReq = true;
-        this.createReport = false;
-        this.rejectReq = false;
-        break;
-      default:
-        break;
-    }
-  }
-
-  /*METODO QUE OYE CUANDO LA CARATULA SE CREO
-  ============================================= */
   expedientEventTrigger() {
     this.requestHelperService.currentExpedient.subscribe({
       next: resp => {
@@ -382,8 +207,6 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  /* METODO QUE CIERRA EL TAB DE CREAR CARATULA
-  ============================================== */
   closeSearchRequestSimGoodsTab(recordId: number) {
     if (recordId) {
       this.searchRequestSimGoods = false;
