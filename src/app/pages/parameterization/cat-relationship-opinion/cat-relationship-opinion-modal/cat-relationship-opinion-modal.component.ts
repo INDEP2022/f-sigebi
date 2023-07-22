@@ -100,7 +100,7 @@ export class CatRelationshipOpinionModalComponent
     this.rAsuntDicValue = rAsuntDicChange;
     this.rAsuntDicForm.controls['dictum'].setValue(rAsuntDicChange.id);
 
-    this.dictums = new DefaultSelect();
+    //this.dictums = new DefaultSelect();
   }
 
   close() {

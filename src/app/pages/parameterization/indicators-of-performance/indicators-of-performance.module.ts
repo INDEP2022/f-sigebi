@@ -3,11 +3,15 @@ import { NgModule } from '@angular/core';
 
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { IndicatorsOfPerformanceFormComponent } from './indicators-of-performance-form/indicators-of-performance-form.component';
 import { IndicatorsOfPerformanceRoutingModule } from './indicators-of-performance-routing.module';
 import { IndicatorsOfPerformanceComponent } from './indicators-of-performance/indicators-of-performance.component';
 
 @NgModule({
-  declarations: [IndicatorsOfPerformanceComponent],
+  declarations: [
+    IndicatorsOfPerformanceComponent,
+    IndicatorsOfPerformanceFormComponent,
+  ],
   imports: [
     CommonModule,
     IndicatorsOfPerformanceRoutingModule,

@@ -26,6 +26,7 @@ export class CPMtaCMaximumTimesForAbandonmentComponent
   totalItems1: number = 0;
   contentData: IListResponse<IGoodType> = {} as IListResponse<IGoodType>;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params1 = new BehaviorSubject<ListParams>(new ListParams());
   data: any = [];
   columnFilters: any = [];
   dataTable: LocalDataSource = new LocalDataSource();
@@ -160,7 +161,7 @@ export class CPMtaCMaximumTimesForAbandonmentComponent
         console.log(response);
         this.dataTable.load(response.data);
         this.dataTable.refresh();
-        this.contentData = response;
+        //this.contentData = response;
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -184,18 +185,13 @@ export class CPMtaCMaximumTimesForAbandonmentComponent
     }
   }
 
-  desSelect() {
-    console.log('deselecciono');
-    this.selectRow(null);
-  }
-
   getAllGoodTypesFilter(id?: string | number) {
     this.loading = true;
     if (id) {
-      this.params.getValue()['filter.id'] = id;
+      this.params1.getValue()['filter.id'] = id;
     }
     let params = {
-      ...this.params.getValue(),
+      ...this.params1.getValue(),
       ...this.columnFilters,
     };
     this.goodTypeServ.getAll(params).subscribe({

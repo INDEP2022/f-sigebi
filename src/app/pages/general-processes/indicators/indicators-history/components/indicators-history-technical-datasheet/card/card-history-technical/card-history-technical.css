@@ -1,0 +1,9 @@
+.title {
+    font-size: small;
+}
+
+.card-information {
+    border: 1px solid grey;
+    border-radius: 20px;
+    border-top: none;
+}

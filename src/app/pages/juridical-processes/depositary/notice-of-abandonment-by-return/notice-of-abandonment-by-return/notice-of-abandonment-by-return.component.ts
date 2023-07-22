@@ -125,13 +125,23 @@ export class NoticeOfAbandonmentByReturnComponent
     this.loading = true;
     this.loadingText = 'Cargando';
 
-    this.goodService
-      .getAll(this.filterParams.getValue().getParams())
+    this.notificationService
+      .getNotificationxPropertyFilter({
+        numberProperty: this.form.value.goodId,
+      })
       .subscribe({
         next: response => {
-          console.log('Goods Response: ', response);
+          console.log('notificacionxbien Response: ', response);
+          response.data.forEach(data => {
+            data.notificationDate = data.notificationDate
+              .toString()
+              .substring(0, data.notificationDate.toString().length - 9);
+          });
           this.loading = false;
           this.data = response.data;
+          this.data.forEach(d => {
+            d['number'] = d['id'];
+          });
 
           this.totalItems = this.data.length;
           this.searching = true;
@@ -171,23 +181,25 @@ export class NoticeOfAbandonmentByReturnComponent
     });
   }
   onGoodIdDescription(goodChange: any) {
-    let param = `filter.goodId=$eq:${goodChange.goodId}`;
-    this.goodService.getAll(param).subscribe({
-      next: data => {
-        console.log('data filter', data.data[0].quantity);
-        this.executeCamps(data.data[0]);
-      },
-      error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
+    if (goodChange && goodChange != null) {
+      let param = `filter.goodId=$eq:${goodChange.goodId}`;
+      this.goodService.getAll(param).subscribe({
+        next: data => {
+          console.log('data filter', data.data[0].quantity);
+          this.executeCamps(data.data[0]);
+        },
+        error: err => {
+          let error = '';
+          if (err.status === 0) {
+            error = 'Revise su conexión de Internet.';
+          } else {
+            error = err.message;
+          }
 
-        this.onLoadToast('error', 'Error', error);
-      },
-    });
+          this.onLoadToast('error', 'Error', error);
+        },
+      });
+    }
   }
   executeCamps(data: any) {
     this.quantity.setValue(data.quantity);
@@ -231,5 +243,9 @@ export class NoticeOfAbandonmentByReturnComponent
   }
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
+  }
+  accept() {
+    //Trae el registro seleccionado
+    //Verifica si el numero de notificaciones DE es mayor a 2
   }
 }
