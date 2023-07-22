@@ -45,6 +45,7 @@ export class EventTypeSharedComponent extends BasePage implements OnInit {
         },
       ]);
     }
+    this.getEvents(new ListParams());
   }
 
   getEvents(params: ListParams) {
