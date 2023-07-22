@@ -19,7 +19,6 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
-  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
@@ -241,7 +240,6 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     const url = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPOFIVOLANTE.pdf?NO_OFICIO=${this.officeNumber}`;
     window.open(url, `${this.officeKey}.pdf`);
   }
-
   save() {
     if (this.queryMode) {
       this.printPdf();
@@ -479,12 +477,13 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
       this.documentsForm.markAllAsTouched();
       return;
     }
+
     const { delegation, subdelegation, department } = this.formControls;
-    const params = this.params.getValue();
-    params.addFilter('delDestinyNumber', delegation.value);
+    const params = new FilterParams(); //this.params.getValue();
+    params.addFilter('delDestinyNumber', this.formControls.delegation.value);
     params.addFilter('subDelDestinyNumber', subdelegation.value);
     params.addFilter('departamentDestinyNumber', department.value);
-    params.addFilter('officeNumber', SearchFilter.NULL);
+    //params.addFilter('officeNumber', SearchFilter.NULL);
     this.params.next(params);
   }
 
