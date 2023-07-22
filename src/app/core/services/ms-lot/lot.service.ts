@@ -83,4 +83,7 @@ export class LotService extends HttpService {
     const route = `${LotEndpoints.GoodByLotsEvent}?filter.good=${good}`;
     return this.get(route, params);
   }
+  getGlobalGoodEventLot(idLot: number) {
+    return this.get(`${LotEndpoints.ComerLot}?filter.idLot=${idLot}`);
+  }
 }

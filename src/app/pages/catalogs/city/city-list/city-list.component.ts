@@ -179,7 +179,7 @@ export class CityListComponent extends BasePage implements OnInit {
     this.cityService.remove2(id).subscribe({
       next: () => {
         this.getCities();
-        this.alert('success', 'Ciudad', 'Borrada Correctamente');
+        this.alert('success', 'Ciudad', 'Borrado Correctamente');
       },
     });
   }
