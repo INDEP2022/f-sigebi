@@ -107,21 +107,29 @@ export class ReliefDeleteComponent
       dictumKey: null,
     };
 
-    this.notificationService.update(idWheel, WheelObj).subscribe({
-      next: (data: any) => {
-        if (data) {
-          this.cleanForm();
-          this.alert(
-            'success',
-            'Desahogo',
-            'El Desahogo se ha aplicado con éxito'
-          );
-          this.selectWheel = new DefaultSelect();
-        }
-      },
-      error: error => {
-        this.alert('error', 'Desahogo', error.error.message);
-      },
+    this.alertQuestion(
+      'question',
+      'Continuar',
+      '¿Desea aplicar el desahogo?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        this.notificationService.update(idWheel, WheelObj).subscribe({
+          next: (data: any) => {
+            if (data) {
+              this.cleanForm();
+              this.alert(
+                'success',
+                'Desahogo',
+                'El Desahogo se ha aplicado con éxito'
+              );
+              this.selectWheel = new DefaultSelect();
+            }
+          },
+          error: error => {
+            this.alert('error', 'Desahogo', error.error.message);
+          },
+        });
+      }
     });
   }
 }

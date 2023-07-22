@@ -51,7 +51,7 @@ export class ProrrateoGoodSurveillancePolicyModalComponent
       currencyCousinKey: [null],
       currencySaKkey: [null],
       registrationNumber: [null, Validators.required],
-      consecPol: [null],
+      consecPol: [null, Validators.required],
     });
   }
 
@@ -94,11 +94,7 @@ export class ProrrateoGoodSurveillancePolicyModalComponent
         this.onLoadToast('success', 'Registro creado con exito', '');
       },
       error: error => {
-        this.onLoadToast(
-          'error',
-          'Compruebe que la fecha, tipo y sutipos sean correctos',
-          ''
-        );
+        this.onLoadToast('error', error.error.message, '');
       },
     });
   }

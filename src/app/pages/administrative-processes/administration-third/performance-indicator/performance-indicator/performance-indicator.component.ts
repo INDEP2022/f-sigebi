@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { StrategyServiceTypeService } from 'src/app/core/services/ms-strategy/strategy-service-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -19,21 +20,31 @@ import {
 })
 export class PerformanceIndicatorComponent extends BasePage implements OnInit {
   performanceIndicatorForm: FormGroup;
-  settings2 = { ...this.settings, actions: false };
+  settings2 = {
+    ...this.settings,
+    hideSubHeader: false,
+    actions: false,
+    columns: REPORTPERFORMANCEINDICATOR_COLUMNS,
+  };
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
-  totalItems: number = 0;
+  totalItemsA: number = 0;
+  totalItemsI: number = 0;
 
   public regionalCoordination = new DefaultSelect();
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private strategyServiceTypeService: StrategyServiceTypeService
+  ) {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: false,
       columns: PERFORMANCEINDICATOR_COLUMNS,
     };
-    this.settings2.columns = REPORTPERFORMANCEINDICATOR_COLUMNS;
   }
 
   ngOnInit(): void {
