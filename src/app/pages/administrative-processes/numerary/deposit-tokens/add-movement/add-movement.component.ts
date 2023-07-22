@@ -60,7 +60,7 @@ export class AddMovementComponent extends BasePage implements OnInit {
       // accountType: [null, Validators.nullValidator],
       deposit: [null, [Validators.required]],
       // square: [null, Validators.nullValidator],
-      dateCalculationInterests: [null, [Validators.required]],
+      dateCalculationInterests: [null],
       dateMovement: [null, [Validators.required]],
       category: [null, [Validators.required]],
       // balanceOf: [null, Validators.nullValidator],
@@ -241,6 +241,6 @@ export class AddMovementComponent extends BasePage implements OnInit {
   returnParseDate_(data: Date) {
     console.log('DATEEEE', data);
     const formattedDate = moment(data).format('YYYY-MM-DD');
-    return formattedDate;
+    return data ? formattedDate : null;
   }
 }

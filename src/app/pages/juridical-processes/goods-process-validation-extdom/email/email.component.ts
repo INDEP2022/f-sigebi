@@ -170,6 +170,7 @@ export class EmailGoodProcessValidationComponent
 
   sendEmail() {
     if (this.form.invalid) {
+      this.form.markAllAsTouched();
       this.alert('warning', 'Complete los Campos Correctamente', '');
       return;
     }
@@ -204,8 +205,8 @@ export class EmailGoodProcessValidationComponent
     // };
     let bodyMail = {
       header: user.toUpperCase(), // encabezado
-      destination: PARA ? PARA.join(',') : [], // destino
-      copy: [CC], // copia
+      destination: PARA ? [PARA.join(',')] : [], // destino
+      copy: CC ? [CC.join(',')] : [], // copia
       subject: ASUNTO, // asunto
       message: MENSAJE, // mensaje
     };

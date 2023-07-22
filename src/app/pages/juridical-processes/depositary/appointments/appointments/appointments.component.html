@@ -744,6 +744,17 @@
               rows="3"></textarea>
           </form-field>
         </div>
+
+        <div
+          class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+          *ngIf="loadingRadioSelect">
+          <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center">
+              <div class="loader"></div>
+              <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+            </div>
+          </div>
+        </div>
         <div
           *ngIf="showScanRadio"
           class="col-sm-12 col-12 col-md-12 p-2 mb-5 card">

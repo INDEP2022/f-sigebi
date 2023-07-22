@@ -9,6 +9,7 @@ import { IClarificationDocumentsImpro } from '../../models/ms-documents/clarific
 import { SeparatorsDocuments } from '../../models/ms-documents/document-separators';
 import {
   ICaptureDig,
+  ICaptureDigFilter,
   ICatDigitalizationTemp,
   IDocuments,
   IGenerateFolioMassConv,
@@ -266,6 +267,14 @@ export class DocumentsService extends HttpService {
     return this.delete(DocumentsEndpoints.CapDigiralizationTmp, body);
   }
   getDocCapture(body: ICaptureDig): Observable<IListResponse<ICaptureDig>> {
+    return this.post(DocumentsEndpoints.IndicatorRec, body);
+  }
+  getDocCaptureCoordinator(params: any): Observable<IListResponse<any>> {
+    return this.post(DocumentsEndpoints.IndicatorRec, params);
+  }
+  getDocCaptureFind(
+    body: ICaptureDigFilter
+  ): Observable<IListResponse<ICaptureDigFilter>> {
     return this.post(DocumentsEndpoints.IndicatorRec, body);
   }
 }

@@ -67,4 +67,9 @@ export class DetailProceeDelRecService extends HttpService {
       numberProceedings,
     });
   }
+
+  getReport(report: number) {
+    const route = `${ProceedingsEndpoints.GetProcedding}${report}`;
+    return this.get(route);
+  }
 }

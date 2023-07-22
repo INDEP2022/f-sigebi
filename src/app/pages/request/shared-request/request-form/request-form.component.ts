@@ -299,6 +299,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   getTransferent(params?: ListParams) {
     params['sortBy'] = 'nameTransferent:ASC';
     params['filter.status'] = `$eq:${1}`;
+    params['filter.typeTransferent'] = `$eq:NO`;
     this.transferentService.getAll(params).subscribe({
       next: data => {
         const text = this.replaceAccents(params.text);
@@ -457,7 +458,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
               'Solicitud Creada',
               'success'
             );
-            this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+            debugger;
+            //crea tareas de prueba se puede eliminar
+            this.turnRequestTest();
           }
         } else {
           if (this.requestForm.controls['targetUser'].value === null) {
@@ -563,7 +566,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       form.requestStatus = this.op != 2 ? 'A_TURNAR' : 'Recepcion';
       form.receiptRoute = 'FISICA';
-      form.affair = 37;
+      form.affair = this.op == 2 ? form.affair : 37;
       form.typeOfTransfer = 'MANUAL';
       form.regionalDelegationId = this.delegationId;
       //form.originInfo = 'SOL_TRANSFERENCIA'
@@ -622,6 +625,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   createOnlyTask(task: any) {
+    debugger;
     return new Promise((resolve, reject) => {
       this.taskService.createTask(task).subscribe({
         next: resp => {
@@ -737,5 +741,72 @@ export class RequestFormComponent extends BasePage implements OnInit {
         this.loadingTurn = false;
       }
     });
+  }
+
+  async turnRequestTest() {
+    this.getRegionalDeleg(new ListParams());
+    const createTask = await this.generateFirstTask();
+
+    if (createTask) {
+      this.loadingTurn = true;
+      const form = this.requestForm.getRawValue();
+      form.id = this.requestId;
+      const idRequest = form.id;
+      const title =
+        'BIENES SIMILARES Registro de Documentación Complementaria,No. Solicitud: ' +
+        idRequest;
+      const urlNb = 'pages/request/request-comp-doc';
+      const processName = 'similar-good-register-documentation';
+
+      const requestResult: any = await this.updateTurnedRequest(form);
+      if (requestResult) {
+        const actualUser: any = this.authService.decodeToken();
+        let body: any = {};
+        // debugger;
+        body['idTask'] = this.taskId;
+        body['userProcess'] = actualUser.username;
+
+        body['type'] = 'SOLICITUD_TRANSFERENCIA';
+        body['subtype'] = 'Nueva_Solicitud';
+        body['ssubtype'] = 'TURNAR';
+
+        let task: any = {};
+        task['id'] = 0;
+        task['assignees'] = this.nickName;
+        task['assigneesDisplayname'] = this.userName;
+        task['creator'] = actualUser.username;
+        task['taskNumber'] = Number(idRequest);
+        task['title'] = title;
+        task['programmingId'] = 0;
+        task['requestId'] = idRequest;
+        task['expedientId'] = 0;
+        task['urlNb'] = urlNb;
+        task['processName'] = processName;
+        task['idDelegationRegional'] = actualUser.department;
+        body['task'] = task;
+
+        let orderservice: any = {};
+        orderservice['pActualStatus'] = 'REGISTRO_SOLICITUD';
+        orderservice['pNewStatus'] = 'REGISTRO_SOLICITUD';
+        orderservice['pIdApplication'] = idRequest;
+        orderservice['pCurrentDate'] = new Date().toISOString();
+        orderservice['pOrderServiceIn'] = '';
+
+        body['orderservice'] = orderservice;
+
+        const taskResult = await this.createTaskOrderService(body);
+        if (taskResult) {
+          this.loadingTurn = false;
+          this.msgModal(
+            'Se turna la solicitud con el Folio Nº '
+              .concat(`<strong>${idRequest}</strong>`)
+              .concat(` al usuario ${this.userName}`),
+            'Solicitud Creada',
+            'success'
+          );
+          this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+        }
+      }
+    }
   }
 }

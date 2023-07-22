@@ -17,7 +17,7 @@
         <div class="col-md-6">
           <form-field [control]="form.get('sumAssured')" label="Suma Asegurada">
             <input
-              type="money"
+              type="number"
               class="form-control"
               formControlName="sumAssured" />
           </form-field>
@@ -25,7 +25,7 @@
         <div class="col-md-6">
           <form-field [control]="form.get('premiumAmount')" label="Monto Prima">
             <input
-              type="text"
+              type="number"
               formControlName="premiumAmount"
               class="form-control" />
           </form-field>
@@ -67,23 +67,23 @@
           </form-field>
         </div>
       </div>
-      <div class="row mt-5">
-        <div class="col-md-4">
+      <div class="row mt-4">
+        <div class="col-md-6">
           <form-field
             [control]="form.get('factorCostDaily')"
             label="Costo diario">
             <input
-              type="money"
+              type="number"
               class="form-control"
               formControlName="factorCostDaily" />
           </form-field>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-6">
           <form-field
             [control]="form.get('amountNoteCredit')"
-            label="Nota Crédito">
+            label="Cantidad neta Crédito">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="amountNoteCredit" />
           </form-field>

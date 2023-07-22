@@ -58,7 +58,6 @@ export class UserFormComponent extends BasePage implements OnInit {
       this.edit = true;
       if (this.userData.userCharge)
         this.userData.userCharge = this.userData.charge.keyId;
-      console.log('this.userData', this.userData);
       this.userForm.patchValue(this.userData);
     }
   }
@@ -119,7 +118,6 @@ export class UserFormComponent extends BasePage implements OnInit {
       '¿Desea editar el usuario?'
     ).then(question => {
       if (question.isConfirmed) {
-        console.log(this.userForm.value);
         let formData: Object = {
           programmingId: Number(this.idProgramming),
           email: this.userForm.get('email').value,

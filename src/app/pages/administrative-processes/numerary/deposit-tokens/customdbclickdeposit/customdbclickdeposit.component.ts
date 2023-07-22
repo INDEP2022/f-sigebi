@@ -21,7 +21,7 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
   clickTimer: any;
   @Input() rowData: any;
   @Output() funcionEjecutada = new EventEmitter<void>();
-
+  @Output() loadingConciliar = new EventEmitter<boolean>();
   constructor(
     private modalService: BsModalService,
     private accountMovementService: AccountMovementService
@@ -72,7 +72,12 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
     this.funcionEjecutada.emit();
   }
 
+  ejecutarloadingConciliar() {
+    this.loadingConciliar.emit(true);
+  }
+
   async seleccionarBien_() {
+    this.ejecutarloadingConciliar();
     let V_BIEN_VALIDO: any;
     let vb_encontrado: any = false;
     if (
@@ -132,7 +137,9 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
           ''
         );
       }
+      this.ejecutarloadingConciliar();
     } else {
+      this.ejecutarloadingConciliar();
       this.alert(
         'warning',
         'No tiene capturados todos los criterios para realizar la conciliación',
