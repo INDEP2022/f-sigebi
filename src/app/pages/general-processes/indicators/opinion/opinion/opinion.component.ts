@@ -10,6 +10,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dynamic-catalogs.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
@@ -44,7 +45,8 @@ export class OpinionComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private documentsService: DocumentsService,
     private excelService: ExcelService,
-    private dictationService: DictationService
+    private dictationService: DictationService,
+    private dynamicCatalogService: DynamicCatalogService
   ) {
     super();
     this.settings.columns = GENERAL_PROCESSES_OPINION_COLUNNS;
@@ -109,11 +111,11 @@ export class OpinionComponent extends BasePage implements OnInit {
           });
           this.params = this.pageFilter(this.params);
           console.error(this.params.getValue());
-          this.consult();
+          if (this.consulto) this.consult();
         }
       });
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      /* if (this.consulto)  */ this.consult();
+      if (this.consulto) this.consult();
     });
   }
 
@@ -157,6 +159,7 @@ export class OpinionComponent extends BasePage implements OnInit {
 
   async consult(form?: FormGroup) {
     this.consulto = true;
+    let vEtapa: number = 1;
     this.params.getValue()['filter.no_gestion'] = `2`;
     this.params.getValue()['filter.desalojo_diadia'] = `0`;
     if (form) {
@@ -178,6 +181,14 @@ export class OpinionComponent extends BasePage implements OnInit {
 
       if (form.get('autoridad').value === '') {
         form.get('autoridad').setValue(null);
+      }
+
+      if (form.get('numeroVolante').value === '') {
+        form.get('numeroVolante').setValue(null);
+      }
+
+      if (form.get('tipoVolante').value === '') {
+        form.get('tipoVolante').setValue(null);
       }
 
       if (form.get('emisora').value === '') {
@@ -292,7 +303,11 @@ export class OpinionComponent extends BasePage implements OnInit {
         delete this.params.getValue()['filter.no_autoridad'];
       }
     }
-    const vEtapa: number = 2; //await this.vEtapa();
+    if (form.get('fechaInicio').value !== null) {
+      vEtapa = await this.vEtapa(
+        this.formatDate(form.get('fechaInicio').value)
+      );
+    }
     if (vEtapa === 1) {
       this.vIndDictaminacion(this.params.getValue());
     } else {
@@ -300,8 +315,16 @@ export class OpinionComponent extends BasePage implements OnInit {
     }
   }
 
-  vEtapa() {
-    return new Promise<number>((res, _rej) => {});
+  vEtapa(fecha: string) {
+    return new Promise<number>((res, _rej) => {
+      this.dynamicCatalogService.faEtapaind(fecha).subscribe({
+        next: resp => {
+          console.log(resp);
+          res(Number(resp.data[0].fa_etapaind));
+        },
+        error: _err => res(1),
+      });
+    });
   }
 
   report(form: FormGroup) {
