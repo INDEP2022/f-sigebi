@@ -8,7 +8,10 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { IGeneric } from '../../../../core/models/catalogs/generic.model';
 import { GenericService } from './../../../../core/services/catalogs/generic.service';
 
@@ -39,12 +42,22 @@ export class GenericsFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.genericsForm = this.fb.group({
-      name: [null, [Validators.required, Validators.maxLength(50)]],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(50),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       keyId: [
         null,
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      description: [null, [Validators.maxLength(100)]],
+      description: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
       version: [
         null,
         [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
@@ -78,7 +91,10 @@ export class GenericsFormComponent extends BasePage implements OnInit {
     console.log(this.genericsForm.value);
     this.genericsService.create(this.genericsForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.alert('error', 'El Registro ya Existe', '');
+        this.loading = false;
+      },
     });
   }
 

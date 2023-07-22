@@ -11,7 +11,8 @@
               type="text"
               class="form-control"
               formControlName="name"
-              id="inputName" />
+              id="inputName"
+              pattern="^[^\s].*" />
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
@@ -22,7 +23,8 @@
               type="number"
               class="form-control"
               formControlName="keyId"
-              id="inputKeyId" />
+              id="inputKeyId"
+              min="1" />
           </form-field>
         </div>
       </div>
@@ -34,7 +36,8 @@
             <textarea
               rows="2"
               class="form-control pt-3"
-              formControlName="description">
+              formControlName="description"
+              pattern="^[^\s].*">
             </textarea>
           </form-field>
         </div>
