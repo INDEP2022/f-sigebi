@@ -46,4 +46,13 @@ export class DocumentsDictumStatetMService extends HttpService {
   }) {
     return this.delete(this.route.DocumentsDictuXStateM, body);
   }
+
+  getSeqDocument() {
+    const route = `${DocumentsEndpoints.SeqDocument}`;
+    return this.post(route, null);
+  }
+
+  /*postDocument(model: IInventoryQuery): Observable<IListResponse<TypesDocuments>> {
+    return this.requestRepository.create(this.route, model);
+  }*/
 }
