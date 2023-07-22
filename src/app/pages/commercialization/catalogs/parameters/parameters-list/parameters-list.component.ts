@@ -88,6 +88,7 @@ export class ParametersListComponent extends BasePage implements OnInit {
     };
     this.parameterModService.getAll(params).subscribe({
       next: response => {
+        console.log(response.data);
         this.parametersD = response.data;
         this.totalItems = response.count || 0;
         this.data.load(response.data);
@@ -119,7 +120,11 @@ export class ParametersListComponent extends BasePage implements OnInit {
         this.parameterModService.newRemove(parameter).subscribe({
           next: (resp: any) => {
             if (resp) {
-              this.alert('success', 'Parámetro comercialización', 'Borrado');
+              this.alert(
+                'success',
+                'Parámetro Comercialización',
+                'Borrado Correctamente'
+              );
               this.getParameters();
             }
           },
