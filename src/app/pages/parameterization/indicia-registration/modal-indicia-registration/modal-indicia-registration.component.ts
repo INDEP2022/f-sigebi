@@ -37,7 +37,14 @@ export class ModalIndiciaRegistrationComponent
   private prepareForm() {
     this.form = this.fb.group({
       id: [null],
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
       curp: [
         null,
         [Validators.maxLength(40), Validators.pattern(CURP_PATTERN)],
