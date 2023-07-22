@@ -1,0 +1,77 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field [control]="form.get('columnId')">
+            <ngx-select
+              [readonly]="edit"
+              [data]="valid"
+              [searchOnInit]="true"
+              (fetchItems)="getValidate($event)"
+              [form]="form"
+              value="id"
+              bindLabel="description"
+              label="Columna"
+              [control]="'columnId'"
+              [searchable]="false"
+              [labelTemplate]="delg"
+              [optionTemplate]="delgd">
+            </ngx-select>
+            <ng-template #delg let-item="item">
+              {{ item.id }} - {{ item.description }}
+            </ng-template>
+            <ng-template #delgd let-item="item">
+              <div [title]="item.id + '-' + item.description">
+                {{ item.id }} - {{ item.description }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('invoiceFieldId')"
+            label="Campo en Factura">
+            <input
+              [readOnly]="edit"
+              type="text"
+              class="form-control"
+              formControlName="invoiceFieldId"
+              oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('table')" label="Tabla">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="table"
+              oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [btnSmall]="true"
+          [loading]="loading"
+          (confirm)="saveData()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

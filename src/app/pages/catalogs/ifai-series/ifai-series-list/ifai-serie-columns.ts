@@ -18,6 +18,9 @@ export const IFAI_SERIE_COLUMNS = {
     title: 'Estatus',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (_cell: any, row: any) => {
+      return row.status == '1' ? 'Activo' : 'Inactivo';
+    },
   },
   // registryNumber: {
   //   title: 'No. de registro',

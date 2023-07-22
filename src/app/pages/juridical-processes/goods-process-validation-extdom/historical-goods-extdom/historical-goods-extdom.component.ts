@@ -41,9 +41,9 @@ export class HistoricalGoodsExtDomComponent extends BasePage implements OnInit {
       actions: { delete: false, add: false, edit: false, columnTitle: '' },
       rowClassFunction: (row: any) => {
         if (row.data.datefree == null) {
-          return 'bg-danger';
+          return 'bg-danger text-white';
         } else {
-          return 'bg-info';
+          return 'bg-info text-white';
         }
       },
     };

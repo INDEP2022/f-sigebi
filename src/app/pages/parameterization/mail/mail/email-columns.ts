@@ -5,21 +5,15 @@ export const EMAIL_COLUMNS = {
   //   title: 'cve Pantalla',
   //   sort: false,
   // },
-
-  id: {
-    title: 'Usuario',
+  registryNumber: {
+    title: 'No. Registro',
     sort: false,
-    type: 'string',
+    type: 'number',
   },
-  name: {
-    title: 'Nombre',
+  zipCode: {
+    title: 'Código Postal',
     sort: false,
-    type: 'string',
-  },
-  rfc: {
-    title: 'RFC',
-    sort: false,
-    type: 'string',
+    type: 'number',
   },
   userDetail: {
     title: 'Delegación',
@@ -43,16 +37,38 @@ export const EMAIL_COLUMNS = {
       }
     },
   },
+  sendEmail: {
+    title: 'Env. Correo',
+    sort: false,
+    type: 'number',
+  },
+  attribAsign: {
+    title: 'Asig. Atributos',
+    sort: false,
+    type: 'number',
+  },
+  id: {
+    title: 'Usuario',
+    sort: false,
+    type: 'string',
+  },
+  name: {
+    title: 'Nombre',
+    sort: false,
+    type: 'string',
+  },
+  rfc: {
+    title: 'RFC',
+    sort: false,
+    type: 'string',
+  },
+
   email: {
     title: 'Email',
     sort: false,
     type: 'string',
   },
-  registryNumber: {
-    title: 'No. registro',
-    sort: false,
-    type: 'number',
-  },
+
   curp: {
     title: 'Cv. Reg. Poblacion',
     sort: false,
@@ -68,11 +84,7 @@ export const EMAIL_COLUMNS = {
     sort: false,
     type: 'string',
   },
-  zipCode: {
-    title: 'Código postal',
-    sort: false,
-    type: 'number',
-  },
+
   phone: {
     title: 'Teléfono',
     sort: false,
@@ -89,7 +101,7 @@ export const EMAIL_COLUMNS = {
     type: 'string',
   },
   firstTimeLoginDate: {
-    title: 'Fecha inicio',
+    title: 'Fecha Inicio',
     sort: false,
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
@@ -114,16 +126,7 @@ export const EMAIL_COLUMNS = {
     sort: false,
     type: 'string',
   },
-  sendEmail: {
-    title: 'Env. Correo',
-    sort: false,
-    type: 'number',
-  },
-  attribAsign: {
-    title: 'Asig. Atributos',
-    sort: false,
-    type: 'number',
-  },
+
   clkdetSirsae: {
     title: 'Clkdet SIRSAE',
     sort: false,

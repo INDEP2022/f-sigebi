@@ -13,6 +13,7 @@ import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-s
 import { StoreModule } from '@ngrx/store';
 import { AddEditLoteModalComponent } from './add-edit-lote-modal/add-edit-lote-modal.component';
 import { AvailableGoodsTableComponent } from './available-goods-table/available-goods-table.component';
+import { ComerEventTraspComponent } from './components/comer-event-trasp/comer-event-trasp.component';
 import { CommerEventCustomersComponent } from './components/commer-event-customers/commer-event-customers.component';
 import { CommerEventsListComponent } from './components/commer-events-list/commer-events-list.component';
 import { CommerPackagesLotsComponent } from './components/commer-packages-lots/commer-packages-lots.component';
@@ -56,6 +57,7 @@ import { eventPreparationReducer } from './store/event-preparation.reducer';
     EventLotFormComponent,
     EventGoodsLotsListActionsComponent,
     RejectedGoodsListComponent,
+    ComerEventTraspComponent,
   ],
   imports: [
     CommonModule,

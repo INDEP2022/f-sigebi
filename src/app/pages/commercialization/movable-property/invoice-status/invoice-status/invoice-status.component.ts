@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { StatusInvoiceService } from 'src/app/core/services/ms-parameterinvoice/status-invoice.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { InvoiceStatusModalComponent } from '../invoice-status-modal/invoice-status-modal.component';
 import { INVOICE_STATUS_COLUMNS } from './invoice-status-columns';
@@ -13,8 +16,13 @@ import { INVOICE_STATUS_COLUMNS } from './invoice-status-columns';
 export class InvoiceStatusComponent extends BasePage implements OnInit {
   columns: any[] = [];
   totalItems: number = 0;
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  data: { id: string; description: string }[] = [];
 
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private statusInvoiceService: StatusInvoiceService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -28,46 +36,46 @@ export class InvoiceStatusComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {}
-
-  data = [
-    {
-      id: 'CER',
-      descripcion: 'Documento cerrado se terminó su función',
-    },
-    {
-      id: 'CEDI',
-      descripcion: 'Documento en espera de timbrado',
-    },
-    {
-      id: 'ACT',
-      descripcion: 'Documento Activo',
-    },
-    {
-      id: 'FOL',
-      descripcion: 'Documento foliado',
-    },
-  ];
-
-  openForm(allotment?: any) {
-    this.openModal({ allotment });
+  ngOnInit(): void {
+    this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: () => this.getData(),
+    });
   }
 
-  openModal(context?: Partial<InvoiceStatusModalComponent>) {
-    const modalRef = this.modalService.show(InvoiceStatusModalComponent, {
-      initialState: { ...context },
+  openForm(allotment?: any) {
+    this.openModal(allotment);
+  }
+
+  openModal(context?: any) {
+    let config: ModalOptions = {
+      initialState: {
+        allotment: context,
+        callback: (next: boolean) => {
+          if (next) this.getData();
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getData();
-    });
+    };
+    this.modalService.show(InvoiceStatusModalComponent, config);
   }
 
   getData() {
     this.loading = true;
-    this.columns = this.data;
-    this.totalItems = this.data.length;
-    this.loading = false;
+    this.statusInvoiceService
+      .getAll(this.filterParams.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          this.loading = false;
+          this.data = resp.data;
+          this.totalItems = resp.count;
+        },
+        error: err => {
+          this.data = [];
+          this.totalItems = 0;
+          this.alert('error', 'Error', err.error.message);
+          this.loading = false;
+        },
+      });
   }
 }

@@ -44,12 +44,12 @@ export class PenaltyListComponent extends BasePage implements OnInit {
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
+        console.info(change);
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
             field = `filter.${filter.field}`;
             filter.field == 'id'
               ? (searchFilter = SearchFilter.EQ)
@@ -61,6 +61,7 @@ export class PenaltyListComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
+          console.info('AQUI', this.params);
           this.getExample();
         }
       });
@@ -76,14 +77,15 @@ export class PenaltyListComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     this.penaltyService.getAll(params).subscribe({
-      next: response => {
+      next: (response: any) => {
         this.paragraphs = response.data;
         this.totalItems = response.count || 0;
         this.data.load(this.paragraphs);
         this.data.refresh();
         this.loading = false;
+        //console.log('ALL', response)
       },
-      error: error => (this.loading = false),
+      error: error => ((this.loading = false), console.log(error)),
     });
   }
 

@@ -12,7 +12,7 @@ export const COLUMNS_HISTORICAL_GOODS_EXTDOM = {
       if (!value) {
         return '';
       }
-      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy hh:mm:ss');
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy HH:mm:ss');
     },
   },
   userChange: {
@@ -30,7 +30,7 @@ export const COLUMNS_HISTORICAL_GOODS_EXTDOM = {
       if (!value) {
         return '';
       }
-      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy hh:mm:ss');
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy HH:mm:ss');
     },
   },
   userfree: {

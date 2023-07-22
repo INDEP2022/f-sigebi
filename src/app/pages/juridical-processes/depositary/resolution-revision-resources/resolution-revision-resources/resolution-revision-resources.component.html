@@ -4,19 +4,20 @@
   </div>
 
   <div body>
-    <div class="row" *ngIf="formLoading" style="margin-bottom: 3rem">
-      <form-loader></form-loader>
-    </div>
     <div class="row w-100">
       <div
         class="col-sm-12 col-12 col-md-12 p-2 loading ? 'table-loading' : ''">
+        <form-loader *ngIf="formLoading"></form-loader>
         <ng2-smart-table
-          [attr.class]="'table-bordered'"
+          *ngIf="!formLoading"
+          [attr.class]="'table-bordered table-responsive'"
           [settings]="settings"
           (userRowSelect)="onRowSelect($event)"
+          (dblclick)="doubleClick($event)"
           (edit)="formData($event.data)"
           [source]="data"></ng2-smart-table>
         <app-pagination
+          *ngIf="!formLoading"
           [params]="params"
           [totalItems]="totalItems"></app-pagination>
       </div>
@@ -27,8 +28,9 @@
       <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
         <div class="form-group">
           <button
-            *ngIf="showResolucion == false"
+            *ngIf="showResolucion == false && !formLoading"
             type="button"
+            [disabled]="!resolutionBtn"
             class="btn btn-primary btn-sm active p-2"
             (click)="btnResolucion()">
             Resoluci&oacute;n
@@ -36,6 +38,7 @@
           </button>
           <button
             *ngIf="showResolucion == true"
+            [disabled]="!validUp"
             type="button"
             class="btn btn-info btn-sm active p-2"
             (click)="btnCloseResolucion()">
@@ -63,6 +66,7 @@
             <textarea
               class="form-control"
               rows="6"
+              (input)="flag($event)"
               formControlName="resolucion"></textarea>
           </form-field>
         </div>

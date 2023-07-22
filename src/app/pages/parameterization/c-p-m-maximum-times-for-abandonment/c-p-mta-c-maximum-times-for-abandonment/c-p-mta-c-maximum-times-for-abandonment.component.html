@@ -23,7 +23,8 @@
         <div class="table-responsive">
           <ng2-smart-table
             [settings]="settings"
-            [source]="dataTable"></ng2-smart-table>
+            [source]="dataTable"
+            (rowSelect)="selectRow($event.data)"></ng2-smart-table>
         </div>
         <app-pagination [params]="params" [totalItems]="totalItems">
         </app-pagination>

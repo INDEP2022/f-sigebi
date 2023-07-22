@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IIfaiSerie } from 'src/app/core/models/catalogs/ifai-serie.model';
 import { IfaiSerieService } from 'src/app/core/services/catalogs/ifai-serie.service';
@@ -34,12 +33,7 @@ export class IfaiSeriesFormComponent extends BasePage implements OnInit {
     this.ifaiSerieForm = this.fb.group({
       code: [
         null,
-        [
-          Validators.required,
-          Validators.minLength(1),
-          Validators.maxLength(8),
-          Validators.pattern(STRING_PATTERN),
-        ],
+        [Validators.required, Validators.minLength(1), Validators.maxLength(8)],
       ],
       typeProcedure: [
         null,
@@ -59,15 +53,7 @@ export class IfaiSeriesFormComponent extends BasePage implements OnInit {
         ],
       ],
       registryNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      status: [
-        null,
-        [
-          Validators.required,
-          Validators.maxLength(1),
-          Validators.minLength(1),
-          Validators.pattern(STRING_PATTERN),
-        ],
-      ],
+      status: [null, [Validators.required]],
     });
     if (this.ifaiSerie != null) {
       this.edit = true;
@@ -85,38 +71,9 @@ export class IfaiSeriesFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    const params: ListParams = new ListParams();
-    let count: number;
-    params['filter.status'] = this.ifaiSerieForm.controls['status'].value;
-    this.ifaiSeriService.getAll(params).subscribe({
-      next: response => {
-        count = response.count;
-        if (response.count > 0) {
-          this.alert('warning', 'Series Ifai', 'El estatus esta ya existe.');
-        } else {
-          this.ifaiSeriService
-            .create(this.ifaiSerieForm.getRawValue())
-            .subscribe({
-              next: data => this.handleSuccess(),
-              error: error => (this.loading = false),
-            });
-        }
-        this.loading = false;
-      },
-      error: error => {
-        if (count > 0) {
-          this.alert('warning', 'Series Ifai', 'El estatus esta ya existe.');
-        } else {
-          this.ifaiSeriService
-            .create(this.ifaiSerieForm.getRawValue())
-            .subscribe({
-              next: data => this.handleSuccess(),
-              error: error => (this.loading = false),
-            });
-        }
-
-        this.loading = false;
-      },
+    this.ifaiSeriService.create(this.ifaiSerieForm.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => ((this.loading = false), console.log(error)),
     });
   }
 

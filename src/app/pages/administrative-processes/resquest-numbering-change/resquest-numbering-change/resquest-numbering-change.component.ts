@@ -19,6 +19,7 @@ import {
 } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
@@ -660,11 +661,28 @@ export class ResquestNumberingChangeComponent
   }
   getTodos(params: ListParams, id?: string) {
     // this.loading = true;
+    const params_ = new FilterParams();
 
-    this.goodprocessService.getGoodType(params).subscribe(
+    params_.page = params.page;
+    params_.limit = params.limit;
+
+    let params__ = '';
+    if (params?.text.length > 0)
+      if (!isNaN(parseInt(params?.text))) {
+        console.log('SI');
+        params_.addFilter('clasifGoodNumber', params.text, SearchFilter.EQ);
+      } else {
+        console.log('NO');
+        params_.search = params.text;
+      }
+
+    this.goodprocessService.getGoodType_(params_.getParams()).subscribe(
       (response: any) => {
+        console.log('rrr', response);
         let result = response.data.map(async (item: any) => {
           item['tipoSupbtipoDescription'] =
+            item.clasifGoodNumber +
+            ' - ' +
             item.typeDesc +
             ' - ' +
             item.subTypeDesc +
@@ -679,7 +697,10 @@ export class ResquestNumberingChangeComponent
         });
         //console.log(response);
       },
-      error => console.log('ERR', error)
+      error => {
+        this.tiposData = new DefaultSelect([], 0);
+        console.log('ERR', error);
+      }
     );
   }
 
@@ -690,6 +711,8 @@ export class ResquestNumberingChangeComponent
   getDataTable(filter: any) {
     if (filter == 'si') {
       this.performScroll();
+      this.params.getValue().limit = 10;
+      this.params.getValue().page = 1;
     }
     this.loading = false;
     this.totalItems = 0;
@@ -753,7 +776,7 @@ export class ResquestNumberingChangeComponent
     //   });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDataTableDos('si'));
+      .subscribe(() => this.getDataTableDos(filter));
   }
 
   async getDataTableDos(filter: any) {
@@ -986,14 +1009,14 @@ export class ResquestNumberingChangeComponent
         return;
       }
       if (this.formaplicationData.get('authorizeUser').value == null) {
-        message = 'El campo Usuario Autoriza no debe estar vacío';
+        message = 'El campo Usuario Autoriza no debe estar Vacío';
         this.handleSuccess2(message);
         this.formaplicationData.get('authorizeUser').markAsTouched();
         // this.validate = true;
         return;
       }
       if (this.formaplicationData.get('authorizeDate').value == null) {
-        message = 'La Fecha de Autorización no debe estar vacía';
+        message = 'La Fecha de Autorización no debe estar Vacía';
         this.handleSuccess2(message);
         this.formaplicationData.get('authorizeDate').markAsTouched();
         // this.validate = true;
@@ -1001,33 +1024,38 @@ export class ResquestNumberingChangeComponent
       }
 
       let result = this.selectedGooods.map(async (good: any) => {
-        if (good.appraisedValue == null) {
+        if (!good.appraisedValue) {
           console.log('ENTRO AQUI');
-          message =
-            'El Bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
-          this.handleSuccess(message);
+          message = 'El Bien ' + good.id + ' No tiene Valor Avalúo';
+          this.handleSuccess3(
+            message,
+            'Verifique el Punto 2.1 del Manual de Procedimientos para Enajenación'
+          );
           // this.validate = true;
           return;
         }
 
-        if (good.expediente)
-          if (good.expediente.id == null) {
-            message =
-              'El Bien NO tiene Número de Expediente ' + good.expediente.id;
-            this.handleSuccess(message);
-            // this.validate = true;
-            return;
-          }
-        if (good.expediente)
-          if (
-            good.expediente.preliminaryInquiry &&
-            good.expediente.preliminaryInquiry === ''
-          ) {
-            message = 'El Bien NO tiene averiguación previa';
-            this.handleSuccess(message);
-            // this.validate = true;
-            return;
-          }
+        // if (good.expediente) {
+        //   if (!good.expediente.id) {
+        //     message = 'El Bien ' + good.id + ' No tiene Número de Expediente';
+        //     this.handleSuccess(message);
+        //     // this.validate = true;
+        //     return;
+        //   }
+        // } else {
+        //   message = 'El Bien ' + good.id + ' No tiene Número de Expediente';
+        //   this.handleSuccess(message);
+        //   // this.validate = true;
+        //   return;
+        // }
+
+        // if (good.expediente)
+        //   if (!good.expediente.preliminaryInquiry) {
+        //     message = 'El Bien' + good.id + ' No tiene Averiguación Previa';
+        //     this.handleSuccess(message);
+        //     // this.validate = true;
+        //     return;
+        //   }
 
         if (good.status == 'ADM') {
           situacionJuridica = 'ASEGURADO';
@@ -1063,13 +1091,6 @@ export class ResquestNumberingChangeComponent
           console.log('GOOD', good);
           this.loading2 = true;
 
-          // if (!this.dataCamNum.some((v: any) => v === good)) {
-          // let indexGood = this.dataGood.findIndex(
-          //   (_good: any) => _good.id == good.goodNumber
-          // );
-          // console.log('indexGood', indexGood);
-          // if (indexGood != -1)
-          // this.dataTableGood_[indexGood].di_disponible = 'N';
           const payload = {
             goodNumber: good.id,
             applicationChangeCashNumber: this.idSolicitud,
@@ -1081,14 +1102,6 @@ export class ResquestNumberingChangeComponent
           };
           console.log(payload);
           await this.createRegistroGood(payload);
-          // const payload = {
-          //   goodNumber: good.id,
-          //   applicationChangeCashNumber: this.idSolicitud,
-          //   ProceedingsNumber: good.fileNumber,
-          //   situationlegal: situacionJuridica,
-          //   reasonApplication: motivo,
-          // };
-          // await this.createSolCamNum(payload, 'si');
         }
       });
 
@@ -1102,7 +1115,7 @@ export class ResquestNumberingChangeComponent
     } else {
       this.alertInfo(
         'warning',
-        'Debe seleccionar un Registro en la tabla Bien x Tipo',
+        'Debe Seleccionar un Registro en la tabla Bien x Tipo',
         ''
       ).then(question => {
         if (question.isConfirmed) {
@@ -1181,40 +1194,6 @@ export class ResquestNumberingChangeComponent
         return;
       }
 
-      for (let index = 0; index < this.dataGood.length; index++) {
-        if (this.dataGood[index].appraisedValue == null) {
-          console.log('ENTRO AQUI');
-          message =
-            'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
-          this.handleSuccess(message);
-          // this.validate = true;
-          return;
-        }
-
-        console.log(this.dataGood[index].expediente);
-        if (this.dataGood[index].expediente)
-          if (this.dataGood[index].expediente.id == null) {
-            console.log(this.dataGood[index].expediente.id);
-            message =
-              'El bien NO tiene Número de Expediente' +
-              this.dataGood[index].expediente.id;
-            this.handleSuccess(message);
-            // this.validate = true;
-            return;
-          }
-
-        if (this.dataGood[index].expediente)
-          if (
-            this.dataGood[index].expediente.preliminaryInquiry &&
-            this.dataGood[index].expediente.preliminaryInquiry === ''
-          ) {
-            message = 'El bien NO tiene averiguación previa';
-            this.handleSuccess(message);
-            // this.validate = true;
-            return;
-          }
-      }
-
       this.loading2 = true;
       let result = this.dataGood.map(async (good: any) => {
         console.log(good);
@@ -1223,6 +1202,38 @@ export class ResquestNumberingChangeComponent
           return;
         }
 
+        if (!good.appraisedValue) {
+          console.log('ENTRO AQUI');
+          message = 'El Bien ' + good.id + ' No tiene Valor Avalúo';
+          this.handleSuccess3(
+            message,
+            'Verifique el Punto 2.1 del Manual de Procedimientos para Enajenación'
+          );
+          // this.validate = true;
+          return;
+        }
+
+        // if (good.expediente) {
+        //   if (!good.expediente.id) {
+        //     message = 'El Bien ' + good.id + ' No tiene Número de Expediente';
+        //     this.handleSuccess(message);
+        //     // this.validate = true;
+        //     return;
+        //   }
+        // } else {
+        //   message = 'El Bien ' + good.id + ' No tiene Número de Expediente';
+        //   this.handleSuccess(message);
+        //   // this.validate = true;
+        //   return;
+        // }
+
+        // if (good.expediente)
+        //   if (!good.expediente.preliminaryInquiry) {
+        //     message = 'El Bien ' + good.id + ' No tiene Averiguación Previa';
+        //     this.handleSuccess(message);
+        //     // this.validate = true;
+        //     return;
+        //   }
         if (good.status == 'ADM') {
           situacionJuridica = 'ASEGURADO';
         }
@@ -1377,35 +1388,41 @@ export class ResquestNumberingChangeComponent
       // this.loading = true;
       let result = this.selectedGooodsValid.map(async item => {
         let obj = {
-          cveShape: 'FACTADBSOLCAMNUME',
           goodNumber: item.goodNumber,
+          vcScreen: 'FACTADBSOLCAMNUME',
+          toobarUser: this.token.decodeToken().preferred_username,
         };
-        const statusScreen = await this.getstatusXScreenService(obj);
+        await this.deleteRegistro(obj);
+        // let obj = {
+        //   cveShape: 'FACTADBSOLCAMNUME',
+        //   goodNumber: item.goodNumber,
+        // };
+        // const statusScreen = await this.getstatusXScreenService(obj);
 
-        if (statusScreen) {
-          let objGood = {
-            id: item.goodNumber,
-            goodId: item.goodNumber,
-            status: statusScreen,
-          };
-          const cccc = await this.updateGood(objGood);
+        // if (statusScreen) {
+        //   let objGood = {
+        //     id: item.goodNumber,
+        //     goodId: item.goodNumber,
+        //     status: statusScreen,
+        //   };
+        //   const cccc = await this.updateGood(objGood);
 
-          let objHistoric = {
-            id: item.goodNumber,
-            status: statusScreen,
-          };
-          const aaa = await this.saveHistoric(objHistoric);
-          const bbb = await this.deleteRegistros(item.goodNumber);
-        } else {
-          await this.deleteRegistros(item.goodNumber);
-        }
+        //   let objHistoric = {
+        //     id: item.goodNumber,
+        //     status: statusScreen,
+        //   };
+        //   const aaa = await this.saveHistoric(objHistoric);
+        //   const bbb = await this.deleteRegistros(item.goodNumber);
+        // } else {
+        //   await this.deleteRegistros(item.goodNumber);
+        // }
       });
 
       Promise.all(result).then(async resp => {
         await this.getDataTableNumDos('no');
         await this.getDataTableDos('no');
 
-        await this.deleteAlert();
+        // await this.deleteAlert();
       });
     } else {
       this.warningAlert(
@@ -1414,6 +1431,30 @@ export class ResquestNumberingChangeComponent
     }
   }
 
+  async deleteRegistro(body: any) {
+    return new Promise<any>((resolve, reject) => {
+      this.goodprocessService.getDeleteStatusGoodnumber(body).subscribe({
+        next: async (response: any) => {
+          // this.loading = false;
+          this.alert(
+            'success',
+            'No. Bien ' + body.goodNumber + ' Eliminado Correctamente ',
+            ''
+          );
+          resolve(true);
+        },
+        error: err => {
+          this.alert(
+            'error',
+            'No se pudo Eliminar el Registro' + body.goodNumber,
+            ''
+          );
+          resolve(false);
+          // this.loading = false;
+        },
+      });
+    });
+  }
   async updateGood(objGood: any) {
     // return new Promise<any>((resolve, reject) => {
     return await firstValueFrom(this.goodServices.update(objGood));
@@ -1526,6 +1567,10 @@ export class ResquestNumberingChangeComponent
     this.modalRef.hide();
   }
 
+  handleSuccess3(message: any, msg: any) {
+    this.alert('warning', `${message}`, msg);
+  }
+
   handleSuccess2(message: any) {
     if (message == 'Debe Indicar el ID de la Solicitud') {
       this.alertInfo(
@@ -1605,7 +1650,7 @@ export class ResquestNumberingChangeComponent
       if (valor == 0) {
         if (this.dataGood[index].appraisedValue == null) {
           message =
-            'El bien NO tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
+            'El bien No tiene valor avalúo, verifique el punto 2.1 del manual de procedimientos para enajenación';
           this.handleSuccess(message);
           // this.validate = true;
           return;
@@ -1836,7 +1881,7 @@ export class ResquestNumberingChangeComponent
     this.alert('warning', message, '');
   }
   successAlert() {
-    this.alert('success', 'Registro Guardado', '');
+    this.alert('success', 'Registro Creado Correctamente', '');
   }
 
   async deleteAlert() {
@@ -1868,7 +1913,7 @@ export class ResquestNumberingChangeComponent
       dateRequestChangeNumerary: [new Date(), [Validators.required]],
       applicationChangeCashNumber: [
         null,
-        [Validators.required, Validators.pattern(NUM_POSITIVE_LETTERS)],
+        [Validators.pattern(NUM_POSITIVE_LETTERS)],
       ],
       userRequestChangeNumber: [null, [Validators.required]],
       postUserRequestCamnum: [

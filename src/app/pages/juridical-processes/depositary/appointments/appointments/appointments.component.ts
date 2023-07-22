@@ -117,6 +117,7 @@ export class AppointmentsComponent
     lv_VALESCAN: 0,
     lv_TIPOFOL: '',
   };
+  loadingRadioSelect: boolean = false;
   personSelect = new DefaultSelect();
   dataUserLogged: any;
   depositaryTypeSelect = new DefaultSelect();
@@ -2136,8 +2137,10 @@ export class AppointmentsComponent
     console.log(event);
     this.formRadioScan.get('scanningFolio').setValue('D');
     this.formRadioScan.get('scanningFolio').updateValueAndValidity();
-    this.showScanRadio = true;
-    this.globalVars.procgenimg = 1;
+    setTimeout(() => {
+      this.showScanRadio = true;
+      this.globalVars.procgenimg = 1;
+    }, 300);
   }
 
   showScanningPage(event: any) {
@@ -2158,8 +2161,12 @@ export class AppointmentsComponent
       return;
     }
     console.log(event);
-    this.showScanRadio = true;
-    this.globalVars.procgenimg = 2;
+    this.formRadioScan.get('scanningFolio').setValue('D');
+    this.formRadioScan.get('scanningFolio').updateValueAndValidity();
+    setTimeout(() => {
+      this.showScanRadio = true;
+      this.globalVars.procgenimg = 2;
+    }, 300);
   }
 
   closeRadioScan() {
@@ -2170,6 +2177,7 @@ export class AppointmentsComponent
     console.log(option);
     if (this.globalVars.procgenimg == 1) {
       if (this.formRadioScan.get('scanningFolio').value == 'A') {
+        this.loadingRadioSelect = true;
         this.appointmentsService
           .getCValFoUni({
             adminTypeKey: this.depositaryAppointment.cveGuyAdministrator,
@@ -2187,6 +2195,7 @@ export class AppointmentsComponent
                 );
 
                 if (!response.isConfirmed) {
+                  this.loadingRadioSelect = false;
                   this.showScanRadio = false;
                 } else {
                   this.valuesChangeRadio.lv_VALESCAN = 1;
@@ -2200,6 +2209,7 @@ export class AppointmentsComponent
                 );
 
                 if (!response.isConfirmed) {
+                  this.loadingRadioSelect = false;
                   this.showScanRadio = false;
                 } else {
                   this.valuesChangeRadio.lv_VALESCAN = 1;
@@ -2209,6 +2219,7 @@ export class AppointmentsComponent
             },
             error: error => {
               console.log(error);
+              this.loadingRadioSelect = false;
               this.onLoadToast(
                 'error',
                 'Error al Validar el Folio Universal',
@@ -2217,6 +2228,7 @@ export class AppointmentsComponent
             },
           });
       } else if (this.formRadioScan.get('scanningFolio').value == 'R') {
+        this.loadingRadioSelect = true;
         this.appointmentsService
           .getCValFoRev({
             adminTypeKey: this.depositaryAppointment.cveGuyAdministrator,
@@ -2232,6 +2244,7 @@ export class AppointmentsComponent
                   'No se Puede Generar el Folio de Escaneo por Remoción, Porque no Tiene el Estatus Adecuado',
                   ''
                 );
+                this.loadingRadioSelect = false;
                 this.showScanRadio = false;
               } else {
                 const response = await this.alertQuestion(
@@ -2243,18 +2256,21 @@ export class AppointmentsComponent
                 if (response.isConfirmed) {
                   if (this.form.get('remocion').value == 'N') {
                     this.alertInfo('warning', 'No Tiene Datos de Remoción', '');
+                    this.loadingRadioSelect = false;
                     this.showScanRadio = false;
                   } else {
                     this.valuesChangeRadio.lv_VALESCAN = 1;
                     this.validValScanFolio();
                   }
                 } else {
+                  this.loadingRadioSelect = false;
                   this.showScanRadio = false;
                 }
               }
             },
             error: error => {
               console.log(error);
+              this.loadingRadioSelect = false;
               this.onLoadToast(
                 'error',
                 'Error al Validar el Folio Universal',
@@ -2314,6 +2330,7 @@ export class AppointmentsComponent
 
   validValScanFolio() {
     if (!this.noBienReadOnly) {
+      this.loadingRadioSelect = false;
       this.alert(
         'warning',
         'No se Puede Generar el Folio de Escaneo si no Existe un Bien',
@@ -2323,11 +2340,13 @@ export class AppointmentsComponent
     }
     console.log('APPOINTMENT DATA ', this.depositaryAppointment);
     if (this.depositaryAppointment.numberAppointment == null) {
+      this.loadingRadioSelect = false;
       this.alert('warning', 'Se Requiere Guardar para Continuar', '');
       return;
     }
     this.appointmentsService.getCFlyer(this.good.fileNumber).subscribe({
       next: async data => {
+        this.loadingRadioSelect = false;
         console.log('DATA ', data);
         let wheeelNumber = null;
         if (data.data[0].min) {
@@ -2359,6 +2378,7 @@ export class AppointmentsComponent
       },
       error: error => {
         console.log(error);
+        this.loadingRadioSelect = false;
         this.onLoadToast('error', 'Error al validar el Folio Universal', '');
       },
     });

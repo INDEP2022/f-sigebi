@@ -53,16 +53,22 @@ export class NotaryListComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.LIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });

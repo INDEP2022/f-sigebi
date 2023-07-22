@@ -5,12 +5,12 @@ export const DOC_COMPENSATION_COLUMNNS = {
     sort: false,
   },
   satTypeJob: {
-    title: 'Tipo oficio',
+    title: 'Tipo Oficio',
     type: 'string',
     sort: false,
   },
   typeDocSae: {
-    title: 'Tipo doc SAE',
+    title: 'Tipo Doc SAE',
     type: 'string',
     sort: false,
   },
@@ -20,12 +20,12 @@ export const DOC_COMPENSATION_COLUMNNS = {
     sort: false,
   },
   idTypeDocSat: {
-    title: 'Tipo doc SAT',
+    title: 'Tipo Doc SAT',
     type: 'string',
     sort: false,
   },
   idTypeDocSatXml: {
-    title: 'Tipo doc SAT XML',
+    title: 'Tipo Doc SAT XML',
     type: 'string',
     sort: false,
   },
