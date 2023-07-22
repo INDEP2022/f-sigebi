@@ -113,37 +113,40 @@ export class CaptureFilterComponent implements OnInit {
   }
   prepareForm() {
     this.formCapture = this.fb.group({
-      cvCoors: [null],
-      cveJobExternal: [null],
-      user: [null],
+      finicia: [null],
+      fmaxima: [null],
+      finingrs: [null],
       fecStart: [null],
-      fecEnd: [null],
       tipoVolante: [null],
-      noTransfere: [null],
-      noStation: [null],
-      noAuthority: [null],
+      // tipoEvento: [null],
+      coordinacion_regional: [null],
+      urecepcion: [null],
+      cve_oficio_externo: [null],
+      transference: [null],
+      station: [null],
+      authority: [null],
     });
   }
 
-  // getDelegations(params: ListParams) {
-  //   this.delegationService.getAll(params).subscribe({
-  //     next: res => (this.delegations = new DefaultSelect(res.data, res.count)),
-  //     error: () => {
-  //       this.delegations = new DefaultSelect([], 0);
-  //     },
-  //   });
-  // }
+  getDelegations(params: ListParams) {
+    this.delegationService.getAll(params).subscribe({
+      next: res => (this.delegations = new DefaultSelect(res.data, res.count)),
+      error: () => {
+        this.delegations = new DefaultSelect([], 0);
+      },
+    });
+  }
 
-  // getSubjects(params: ListParams) {
-  //   this.affairService.getAll(params).subscribe({
-  //     next: data => {
-  //       this.affairName = new DefaultSelect(data.data, data.count);
-  //     },
-  //     error: () => {
-  //       this.affairName = new DefaultSelect();
-  //     },
-  //   });
-  // }
+  getSubjects(params: ListParams) {
+    this.affairService.getAll(params).subscribe({
+      next: data => {
+        this.affairName = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.affairName = new DefaultSelect();
+      },
+    });
+  }
 
   getTransference(params: ListParams) {
     this.issuingInstitutionService.getTransfers(params).subscribe({
@@ -181,12 +184,12 @@ export class CaptureFilterComponent implements OnInit {
     let params = new FilterParams();
     params.page = $params.page;
     params.limit = $params.limit;
-    const area = this.formCapture.controls['user'].value;
+    const area = this.formCapture.controls['urecepcion'].value;
     params.search = $params.text;
     this.getAllUsers(params).subscribe();
   }
 
-  getAllUsers(params: FilterParams) {
+  getAllUsers(params: any) {
     return this.usersService.getAllSegUsers(params.getParams()).pipe(
       catchError(error => {
         this.users$ = new DefaultSelect([], 0, true);
@@ -194,10 +197,10 @@ export class CaptureFilterComponent implements OnInit {
       }),
       tap(response => {
         if (response.count > 0) {
-          const name = this.formCapture.get('user').value;
+          const name = this.formCapture.get('urecepcion').value;
           const data = response.data.filter(m => m.id == name);
           console.log(data);
-          this.formCapture.get('user').patchValue(data[0]);
+          this.formCapture.get('urecepcion').patchValue(data[0]);
         }
         this.users$ = new DefaultSelect(response.data, response.count);
       })
@@ -206,7 +209,6 @@ export class CaptureFilterComponent implements OnInit {
 
   Generar() {
     this.isLoading = true;
-    this.consultEmmit.emit(this.formCapture);
     this.from = this.datePipe.transform(
       this.formCapture.controls['from'].value,
       'dd/MM/yyyy'
@@ -263,13 +265,43 @@ export class CaptureFilterComponent implements OnInit {
         }
       });
   }
-  find(find: ICaptureDigFilter) {
-    this.documentsService.getDocCaptureFind(find).subscribe({
-      next: data => {
-        this.capturasDig = data.data;
-        this.consultEmmit.emit(this.formCapture);
-        console.log(this.capturasDig);
-      },
-    });
+
+  // find(find: ICaptureDig) {
+  //   this.documentsService.getDocCapture(find).subscribe({
+  //     next: data => {
+  //       this.capturasDig = data.data;
+  //       this.consultEmmit.emit(this.formCapture);
+  //       console.log(this.capturasDig);
+  //     },
+  //   });
+  // }
+
+  find() {
+    let params = new ListParams();
+    // params['filter.finicia'] = this.formCapture.controls['finicia'].value;
+    // params['filter.fmaxima'] = this.formCapture.controls['fmaxima'].value;
+    // params['filter.finingrs'] = this.formCapture.controls['finingrs'].value;
+    if (this.formCapture.controls['tipoVolante'].value) {
+      params['filter.tipo_volante'] =
+        this.formCapture.controls['tipoVolante'].value;
+    }
+    if (this.formCapture.controls['coordinacion_regional'].value != null) {
+      params['filter.coordinacion_regional'] =
+        this.formCapture.controls['coordinacion_regional'].value.id;
+    }
+    // params['filter.urecepcion'] = this.formCapture.controls['urecepcion'].value;
+    // params['filter.cve_oficio_externo'] = this.formCapture.controls['cve_oficio_externo'].value;
+    // params['filter.no_transferente'] = this.formCapture.controls['transference'].value;
+    // params['filter.no_emisora'] = this.formCapture.controls['station'].value;
+    // params['filter.no_autoridad'] = this.formCapture.controls['authority'].value;
+    console.log('Estos son los parametros: ', params);
+    this.consultEmmit.emit(params);
+  }
+
+  valid(value: any) {
+    if (value == null) {
+      return '';
+    }
+    return value;
   }
 }

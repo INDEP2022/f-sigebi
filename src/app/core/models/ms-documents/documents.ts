@@ -92,9 +92,12 @@ export interface ICaptureDig {
   no_tramite: number;
   urecepcion: number;
   programa: string;
+  fescaneo: string;
+  cant_bien: number;
   finicia: string;
   fmaxima: string;
   cumplio: boolean;
+  column5: string;
 }
 export interface ICaptureDigFilter {
   cveJobExternal: string;
