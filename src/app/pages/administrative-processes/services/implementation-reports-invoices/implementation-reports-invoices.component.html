@@ -149,16 +149,17 @@
       <h5 class="title">Delegación</h5>
       <form [formGroup]="proceduralHistoryForm" class="form-material">
         <div class="row margin-input">
-          <div class="col-md-6">
+          <div class="col-md-4">
             <app-delegation-shared
               [form]="proceduralHistoryForm"
               [subdelegationField]="'subdelegation'"
               [delegationField]="'delegation'"
               [showDelegation]="true"
-              [showSubdelegation]="false">
+              [showSubdelegation]="true"
+              (emitSubdelegation)="seleccionarSubDelegacion($event)">
             </app-delegation-shared>
           </div>
-          <div class="col-md-2 justify-content-center" style="margin: 1.4%">
+          <div class="col-md-2 justify-content-center" style="margin: 5%">
             <button
               type="button"
               class="btn btn-primary active btn-sm"

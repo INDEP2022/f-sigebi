@@ -10,6 +10,7 @@ import {
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IAccountMovement } from 'src/app/core/models/ms-account-movements/account-movement.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
 import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
@@ -50,9 +51,14 @@ export class ImplementationReportsInvoicesComponent
   cantidad: any;
   status: boolean = false;
   report: any;
+  descripcion: any;
   lnu_folio: number;
   t_reportes: string;
   expediente: number;
+  zone: any;
+  factura: any;
+  iddelegation: any;
+  idsubdelegation: any;
 
   constructor(
     private fb: FormBuilder,
@@ -60,7 +66,8 @@ export class ImplementationReportsInvoicesComponent
     private authService: AuthService,
     private strategyProcessService: StrategyProcessService,
     private detailProceeDelRecService: DetailProceeDelRecService,
-    private documentsDictumStatetMService: DocumentsDictumStatetMService
+    private documentsDictumStatetMService: DocumentsDictumStatetMService,
+    private departamentService: DepartamentService
   ) {
     super();
     this.settings.columns = IMPLEMENTATION_COLUMNS;
@@ -148,6 +155,7 @@ export class ImplementationReportsInvoicesComponent
     });
     this.proceduralHistoryForm = this.fb.group({
       delegation: [null, [Validators.required]],
+      subdelegation: [null, [Validators.required]],
     });
   }
   validNoInvoice(No: string | number) {
@@ -202,6 +210,11 @@ export class ImplementationReportsInvoicesComponent
     }
     this.getAmount(this.selectedRow.no_reporte);
   }
+  seleccionarSubDelegacion(subdelegacion: any) {
+    this.descripcion = subdelegacion.description;
+    let iddelegation = this.proceduralHistoryForm.value.delegation;
+    this.departament(iddelegation, this.descripcion);
+  }
 
   DelegationI() {
     this.data1 = [];
@@ -213,10 +226,12 @@ export class ImplementationReportsInvoicesComponent
     let token = this.authService.decodeToken();
     model.userinsert = token.name.toUpperCase();
     console.log('Token: ', token.name.toUpperCase());
-    let iddelegation = this.proceduralHistoryForm.value.delegation;
-    console.log('Delegacion', iddelegation);
+    this.iddelegation = this.proceduralHistoryForm.value.delegation;
+    this.idsubdelegation = this.proceduralHistoryForm.value.subdelegation;
+    console.log('Delegacion', this.iddelegation);
+    console.log('subdelegacion ', this.idsubdelegation);
     this.strategyProcessService
-      .getByDelegation(iddelegation, params)
+      .getByDelegation(this.iddelegation, params)
       .subscribe({
         next: response => {
           let lista = [];
@@ -227,8 +242,7 @@ export class ImplementationReportsInvoicesComponent
 
             const Capture = new Date(response.data[i].fec_captura);
             const formattedfecCapture = this.formatDate(Capture);
-
-            console.log('fecha: ', response.data[i].fec_autoriza);
+            console.log('prueba: ', response.data[0]);
             let dataForm = {
               cveReport: response.data[i].cve_reporte,
               status: response.data[i].estatus,
@@ -237,15 +251,24 @@ export class ImplementationReportsInvoicesComponent
               observations: response.data[i].observaciones,
               no_reporte: response.data[i].no_reporte,
               no_formato: response.data[i].no_formato,
+              delegation: this.iddelegation,
+              subdelegation: this.idsubdelegation,
             };
             this.disponible = 'S';
-            console.log('pppp ', response.data[i].cve_reporte);
             this.data1.push(dataForm);
             this.data.load(this.data1);
             this.data.refresh();
           }
         },
       });
+  }
+
+  departament(id: number, description: string) {
+    this.departamentService.getbyDelegation(id, description).subscribe({
+      next: response => {
+        this.zone = response.data[0].id;
+      },
+    });
   }
 
   formatDate(date: Date): string {
@@ -277,7 +300,11 @@ export class ImplementationReportsInvoicesComponent
         quantity: this.cantidad,
         no_report: this.selectedRow.no_reporte,
         no_formato: this.selectedRow.no_formato,
+        delegation: this.selectedRow.delegation,
+        subdelegation: this.selectedRow.subdelegation,
+        zona: this.zone,
       };
+      console.log('Prueba: ', dataForm);
       this.data2.push(dataForm);
       this.strategy.load(this.data2);
     }
@@ -292,36 +319,85 @@ export class ImplementationReportsInvoicesComponent
       return;
     }
   }
-
-  Application() {
+  /*
+    Application() {
+      console.log('Data 2 ', this.data2);
+      for (let i = 0; i < this.data2.length; i++) {
+        if (this.data2[i].cveReport != null) {
+          this.report = this.data2[i].no_report;
+          this.detailProceeDelRecService.getReport(this.report).subscribe({
+            next: response => {
+              this.expediente = response.data[0].max;
+              console.log("expediente ", this.expediente);
+            },
+          });
+          this.expediente = this.expediente;
+          this.t_reportes = this.data2[i].cveReport + ' ' + this.data2[i].quantity;
+        }
+        this.documentsDictumStatetMService.getSeqDocument().subscribe({
+          next: response => {
+            this.lnu_folio = response.data;
+          },
+        });
+        this.factura = this.invoiceDetailsForm.get('invoice').value;
+        const item = {
+          fileNumber: this.expediente,
+          reports: 'FACTURA ' + this.factura + '  REPORTES: ' + this.t_reportes,
+          fractureId: this.factura,
+          delegationNumber: this.data2[i].delegation,
+          subDelegationNumber: this.data2[i].subdelegation,
+          departamentNumber: this.data2[i].zona,
+        };
+        console.log("PRUEBA:  -> ", item)
+        //this.documentsTypeService.postDocument().subscribe({});
+      }
+    }
+  */
+  async Application() {
     console.log('Data 2 ', this.data2);
     for (let i = 0; i < this.data2.length; i++) {
       if (this.data2[i].cveReport != null) {
-        this.report = this.data2[i].cveReport;
-        this.detailProceeDelRecService.getReport(this.report).subscribe({
-          next: response => {
-            this.expediente = response.data.max;
-          },
-        });
-        this.t_reportes =
-          this.t_reportes + this.data2[i].cveReport + this.data2[i].quantity;
-      } else {
-        return;
+        this.report = this.data2[i].no_report;
+        try {
+          const response = await this.detailProceeDelRecService
+            .getReport(this.report)
+            .toPromise();
+          this.expediente = response.data[0].max;
+          console.log('expediente ', this.expediente);
+          this.factura = this.invoiceDetailsForm.get('invoice').value;
+          this.t_reportes =
+            this.data2[i].cveReport + ' ' + this.data2[i].quantity;
+          const item = {
+            fileNumber: this.expediente,
+            reports:
+              'FACTURA ' + this.factura + '  REPORTES: ' + this.t_reportes,
+            fractureId: this.factura,
+            delegationNumber: this.data2[i].delegation,
+            subDelegationNumber: this.data2[i].subdelegation,
+            departamentNumber: this.data2[i].zona,
+          };
+          console.log('PRUEBA:  -> ', item);
+          this.documentsDictumStatetMService.postDocument(item).subscribe({
+            next: response => {
+              console.log('Succefull: ', response);
+            },
+          });
+        } catch (error) {
+          console.error('Error al obtener el reporte:', error);
+        }
       }
-      this.documentsDictumStatetMService.getSeqDocument().subscribe({
-        next: response => {
-          this.lnu_folio = response.data;
-        },
-      });
-      const item = {
-        FOLIO_UNIVERSAL: this.lnu_folio,
-        NO_EXPEDIENTE: this.expediente,
-        CVE_SEPARADOR: '60',
-        CVE_TIPO_DOCUMENTO: 'ESTIMP',
-        NATURALEZA_DOCUMENTO: 'ORIGINAL',
-        DESCRIPCION_DOCUMENTO: 'FACTURA',
-      };
-      //this.documentsTypeService.postDocument().subscribe({});
+      try {
+        const response = await this.documentsDictumStatetMService
+          .getSeqDocument()
+          .toPromise();
+        this.lnu_folio = response.data;
+      } catch (error) {
+        console.error('Error al obtener el documento:', error);
+      }
     }
+  }
+
+  PupFolEscMas() {
+    for (let i = 0; i < this.data2.length; i++) {}
   }
 }
