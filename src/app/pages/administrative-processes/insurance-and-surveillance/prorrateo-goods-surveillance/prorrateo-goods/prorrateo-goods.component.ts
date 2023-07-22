@@ -58,7 +58,7 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.getByPolicyKey(this.elemento);
+    this.getByPolicyKey(this.elemento);
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -67,11 +67,11 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
+            let searchFilter = SearchFilter.EQ;
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filters.field) {
-              case 'goodId':
+              case 'goodNumberId':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'description':
@@ -81,13 +81,13 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'amountCousin':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'location':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'shortDate':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'statusGood':
                 searchFilter = SearchFilter.ILIKE;
@@ -96,19 +96,19 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'amountNoteCredit':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'di_dias_trans':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'daysPassed':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'responsibleShort':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               default:
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
             }
             if (filter.search !== '') {
@@ -121,11 +121,9 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
           this.getByPolicyKey(this.elemento);
         }
       });
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: () => {
-        if (this.data) this.getByPolicyKey(this.elemento);
-      },
-    });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getByPolicyKey(this.elemento));
   }
 
   getByPolicyKey(Key: string) {
@@ -157,9 +155,9 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
             daysTrans = differenceInDays(parseISO(dateIni), parseISO(dateLim));
           }
           let dataForm = {
-            goodId: response.data[i].Goods.id,
+            goodNumberId: response.data[i].Goods.id,
             description: response.data[i].Goods.description,
-            amountCousin: response.data[i].Policies.amountCousin,
+            amountCousin: response.data[i].amountCousin,
             additionInsured: response.data[i].additionInsured,
             location: response.data[i].Goods.ubicationType,
             shortDate: response.data[i].shortDate,
@@ -170,6 +168,7 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
             daysPassed: this.daysF,
             responsibleShort: response.data[i].responsibleShort,
           };
+          this.data.refresh();
           this.goods.push(dataForm);
           this.data.load(this.goods);
           this.keyA = response.data[i].policyKeyId;
@@ -179,7 +178,12 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
         }
       },
       error: err => {
-        this.onLoadToast('error', err.error.message, '');
+        this.onLoadToast(
+          'error',
+          'Se produjo un error, intentelo nuevamente',
+          ''
+        );
+        this.goods = [];
       },
     });
   }
@@ -247,14 +251,16 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
   }
 
   deletePolicyGood(params: any) {
+    this.goods = [];
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
+        console.log('Params: ', params);
         let data = {
-          goodNumberId: params.goodId,
+          goodNumberId: params.goodNumberId,
           policyKeyId: this.keyA,
           beginningDateId: this.dateIni,
         };
@@ -268,6 +274,7 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
               ''
             );
             this.getByPolicyKey(this.elemento);
+            this.data.load(this.goods);
           },
           error: err => {
             this.alert(
@@ -275,6 +282,8 @@ export class ProrrateoGoodsComponent extends BasePage implements OnInit {
               'Error',
               'Ocurrió un problema al eliminar el registro'
             );
+            this.getByPolicyKey(this.elemento);
+            this.data.load(this.goods);
           },
         });
       }

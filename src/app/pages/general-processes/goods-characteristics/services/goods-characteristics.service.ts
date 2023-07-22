@@ -11,13 +11,13 @@ export class ICharacteristicsWidthData {
     info: string | number;
   }[];
   good: any;
+  disabledTable: boolean = true;
 }
 @Injectable({
   providedIn: 'root',
 })
 export class GoodsCharacteristicsService extends ICharacteristicsWidthData {
   // disabledBienes = true;
-  disabledTable = true;
   disabledNoClasifBien = true;
   disabledDescripcion = true;
   haveTdictaUser = false;

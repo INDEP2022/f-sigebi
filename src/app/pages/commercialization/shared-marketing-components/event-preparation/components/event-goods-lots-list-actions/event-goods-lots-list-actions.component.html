@@ -33,14 +33,20 @@
     Carga Facturas
   </button>
 </li>
+<!-- <li role="menuitem">
+  <button type="button" (click)="onTrasp()" class="dropdown-item">
+    Revisa Tras x Lote
+  </button>
+</li> -->
 <li role="menuitem">
-  <button type="button" class="dropdown-item">Revisa Tras x Lote</button>
+  <button type="button" class="dropdown-item" (click)="onTrasp()">
+    Traspasar Bienes
+  </button>
 </li>
 <li role="menuitem">
-  <button type="button" class="dropdown-item">Traspasar Bienes</button>
-</li>
-<li role="menuitem">
-  <button type="button" class="dropdown-item">Datos para Facturación</button>
+  <button type="button" class="dropdown-item" (click)="onInvoiceData()">
+    Datos para Facturación
+  </button>
 </li>
 <li role="menuitem">
   <button type="button" class="dropdown-item">
@@ -64,6 +70,7 @@
   (change)="lotifyGoodsChange($event)"
   [formControl]="goodsLotifyControl"
   [style.display]="'none'"
+  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
   #goodsLotifyInput />
 
 <input
@@ -71,6 +78,7 @@
   (change)="onCustomersImport($event)"
   [formControl]="customersImportControl"
   [style.display]="'none'"
+  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
   #customersImportInput />
 
 <input
@@ -78,4 +86,13 @@
   (change)="loadInvoiceChange($event)"
   [formControl]="invoiceControl"
   [style.display]="'none'"
+  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
   #invoiceInput />
+
+<input
+  type="file"
+  (change)="loadInvoiceDataChange($event)"
+  [formControl]="invoiceDataControl"
+  [style.display]="'none'"
+  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+  #invoiceDataInput />

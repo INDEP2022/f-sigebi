@@ -153,7 +153,7 @@ const routes: Routes = [
           './shared-marketing-components/expense-concepts/expense-concepts.module'
         )
       ).ExpenseConceptsModule,
-    data: { title: 'Conceptos de Gasto' },
+    data: { title: 'Conceptos de Gasto', screen: 'FCOMER083' },
   },
   {
     path: 'referenced-payment',

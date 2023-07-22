@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { ParameterInvoiceService } from 'src/app/core/services/ms-parameterinvoice/parameterinvoice.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RebillingCausesModalComponent } from '../rebilling-causes-modal/rebilling-causes-modal.component';
 import { REBILLING_CAUSES_COLUMNS } from './rebilling-causes-columns';
@@ -11,10 +13,14 @@ import { REBILLING_CAUSES_COLUMNS } from './rebilling-causes-columns';
   styles: [],
 })
 export class RebillingCausesComponent extends BasePage implements OnInit {
-  columns: any[] = [];
   totalItems: number = 0;
+  filter = new BehaviorSubject<FilterParams>(new FilterParams());
+  data: any[] = [];
 
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private comerRebilService: ParameterInvoiceService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -28,59 +34,47 @@ export class RebillingCausesComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {}
-
-  data = [
-    {
-      id: '41',
-      descripcion: 'CORRECIÓN DE DATOS',
-      refCan: 'REFACTURA',
-      aplica: 'FACTURA',
-      comentarios: 'CORRECIÓN DE FACTURA',
-    },
-    {
-      id: '121',
-      descripcion: 'COMPROBANTE EN DOS CFDIS',
-      refCan: 'REFACTURA',
-      aplica: 'AMBAS',
-      comentarios: 'SE DIVIDE FACTURA EN DOS POR LOS BIENES',
-    },
-    {
-      id: '2',
-      descripcion: 'SE ATASCO PAPEL EN IMPRESORA',
-      refCan: 'REFACTURA',
-      aplica: 'FACTURA',
-      comentarios: 'AL LLEVAR A CABO LA IMPRESIÓN SE ATASCO EL PAPEL',
-    },
-    {
-      id: '2',
-      descripcion: 'DATOS DE LA FACTURA INCORRECTOS',
-      refCan: 'CANCELA',
-      aplica: 'DEVOLUCIÓN',
-      comentarios: 'DATOS DEL CLIENTE INCORRECTOS',
-    },
-  ];
+  ngOnInit(): void {
+    this.filter.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: () => this.getData(),
+    });
+  }
 
   //Rellenar formulario con datos de la tabla
   openForm(allotment?: any) {
-    this.openModal({ allotment });
+    this.openModal(allotment);
   }
 
-  openModal(context?: Partial<RebillingCausesModalComponent>) {
-    const modalRef = this.modalService.show(RebillingCausesModalComponent, {
-      initialState: { ...context },
+  openModal(context?: any) {
+    let config: ModalOptions = {
+      initialState: {
+        allotment: context,
+        callback: (next: boolean) => {
+          if (next) this.getData();
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getData();
-    });
+    };
+    this.modalService.show(RebillingCausesModalComponent, config);
   }
 
   getData() {
     this.loading = true;
-    this.columns = this.data;
-    this.totalItems = this.data.length;
-    this.loading = false;
+    this.comerRebilService
+      .getAll(this.filter.getValue().getParams())
+      .subscribe({
+        next: resp => {
+          this.data = resp.data;
+          this.totalItems = resp.count;
+          this.loading = false;
+        },
+        error: err => {
+          this.data = [];
+          this.totalItems = 0;
+          this.loading = false;
+          this.alert('error', 'Error', err.error.message);
+        },
+      });
   }
 }

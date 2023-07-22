@@ -1,0 +1,13 @@
+:host ::ng-deep accordion {
+  ::ng-deep {
+    .panel-default > .panel-heading + .panel-collapse > .panel-body {
+      padding: 0px !important;
+
+      app-card {
+        .card {
+          box-shadow: 0 0 !important;
+        }
+      }
+    }
+  }
+}

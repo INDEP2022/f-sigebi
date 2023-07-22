@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
@@ -17,6 +18,7 @@ import {
   tap,
   throwError,
 } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
@@ -28,6 +30,7 @@ import Swal from 'sweetalert2';
 import { EventPreparationService } from '../../event-preparation.service';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
+import { ComerEventTraspComponent } from '../comer-event-trasp/comer-event-trasp.component';
 
 const ALLOWED_EXTENSIONS = ['xls', 'xlsx', 'csv'];
 @Component({
@@ -48,10 +51,13 @@ export class EventGoodsLotsListActionsComponent
   customersImportInput: ElementRef<HTMLInputElement>;
   @ViewChild('invoiceInput', { static: true })
   invoiceInput: ElementRef<HTMLInputElement>;
+  @ViewChild('invoiceDataInput', { static: true })
+  invoiceDataInput: ElementRef<HTMLInputElement>;
   @Input() params: BehaviorSubject<FilterParams>;
   goodsLotifyControl = new FormControl(null);
   customersImportControl = new FormControl(null);
   invoiceControl = new FormControl(null);
+  invoiceDataControl = new FormControl(null);
   get controls() {
     return this.eventForm.controls;
   }
@@ -62,7 +68,8 @@ export class EventGoodsLotsListActionsComponent
     private eventPreparationService: EventPreparationService,
     private globalVarsService: GlobalVarsService,
     private comerEventService: ComerEventService,
-    private lotService: LotService
+    private lotService: LotService,
+    private modalService: BsModalService
   ) {
     super();
   }
@@ -436,4 +443,59 @@ export class EventGoodsLotsListActionsComponent
     // TODO: IMPLEMENTAR CUANDO ESTE LISTO
     console.warn('C_FACTURA');
   }
+
+  // ? ---------------------- Revisa Trasf x Lote
+
+  // ? ---------------------- Traspasar Bienes
+  onTrasp() {
+    this.modalService.show(ComerEventTraspComponent, {
+      ...MODAL_CONFIG,
+      class: 'modal-dialog-centered',
+    });
+  }
+
+  // ? --------------------- Datos Para Facturación
+  async onInvoiceData() {
+    if (!this.lotSelected) {
+      const askForAllEvent = await this.alertQuestion(
+        'question',
+        'Se Cargaran los Datos de Facturación para todo el Evento',
+        '¿Desea Continuar?'
+      );
+      const { isConfirmed } = askForAllEvent;
+      if (isConfirmed) {
+        this.invoiceDataInput.nativeElement.click();
+        return;
+      }
+    } else {
+      const askForAllEvent = await this.alertQuestion(
+        'question',
+        `Se Cargaran los Datos de Facturación para el lote ${this.lotSelected.publicLot}`,
+        '¿Desea Continuar?'
+      );
+      const { isConfirmed } = askForAllEvent;
+      if (isConfirmed) {
+        this.invoiceDataInput.nativeElement.click();
+        return;
+      }
+    }
+  }
+
+  /**CARGA_DATOS_FACTURACION */
+  loadInvoiceData(publicLot: string | number) {
+    console.log(publicLot ? `Para el lote ${publicLot}` : 'Para todo el vento');
+    // TODO: IMPLEMENTAR CUANDO SE TENGA
+    console.warn('CARGA_DATOS_FACTURACION');
+  }
+
+  loadInvoiceDataChange(event: Event) {
+    if (!this.isValidFile(event)) {
+      this.invoiceDataControl.reset();
+      return;
+    }
+
+    this.loadInvoiceData(this.lotSelected?.publicLot ?? null);
+  }
+
+  // ? Clientes desde Tabla Tercero
 }

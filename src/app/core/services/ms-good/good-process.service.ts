@@ -178,7 +178,7 @@ export class GoodProcessService extends HttpService {
   }
 
   postGoodMasiveForm(body: any): Observable<IListResponse<any>> {
-    return this.post('application/get-conv-good-children', body);
+    return this.post('application/get-conv-good-children-masive', body);
   }
   getNumeProrraCsv(idProcnum: number) {
     const route = GoodProcessPoints.GetNumeProrraCsv;
