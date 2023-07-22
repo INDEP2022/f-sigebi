@@ -182,14 +182,14 @@ export class CaptureFilterComponent extends BasePage implements OnInit {
       },
     });
   }
-  getDelegations(params: ListParams) {
-    this.delegationService.getAll(params).subscribe({
-      next: res => (this.delegations = new DefaultSelect(res.data, res.count)),
-      error: () => {
-        this.delegations = new DefaultSelect([], 0);
-      },
-    });
-  }
+  // getDelegations(params: ListParams) {
+  //   this.delegationService.getAll(params).subscribe({
+  //     next: res => (this.delegations = new DefaultSelect(res.data, res.count)),
+  //     error: () => {
+  //       this.delegations = new DefaultSelect([], 0);
+  //     },
+  //   });
+  // }
 
   getSubjects(params: ListParams) {
     this.affairService.getAll(params).subscribe({
@@ -201,16 +201,16 @@ export class CaptureFilterComponent extends BasePage implements OnInit {
       },
     });
   }
-  getSubjects(params: ListParams) {
-    this.affairService.getAll(params).subscribe({
-      next: data => {
-        this.affairName = new DefaultSelect(data.data, data.count);
-      },
-      error: () => {
-        this.affairName = new DefaultSelect();
-      },
-    });
-  }
+  // getSubjects(params: ListParams) {
+  //   this.affairService.getAll(params).subscribe({
+  //     next: data => {
+  //       this.affairName = new DefaultSelect(data.data, data.count);
+  //     },
+  //     error: () => {
+  //       this.affairName = new DefaultSelect();
+  //     },
+  //   });
+  // }
 
   getTransference(params: ListParams) {
     this.issuingInstitutionService.getTransfers(params).subscribe({
