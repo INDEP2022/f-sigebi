@@ -210,21 +210,23 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           if (data != null) {
             console.log(data);
             this.conversionData = data;
-            this.no_bien_blk_tipo_bien = data.goodFatherNumber;
-            this.idConversion.setValue(data.id);
-            this.numberDossier.setValue(data.fileNumber.id);
-            this.numberGoodFather.setValue(data.goodFatherNumber);
-            this.goodFatherNumber$.next(data.goodFatherNumber);
-            this.wrongModal = false;
-            this.tipo.setValue(data.typeConv);
-            this.actConvertion.setValue(data.cveActaConv);
-            this.statusGood(data.goodFatherNumber);
-            this.searchGoods(data.goodFatherNumber);
-            this.searchGoodSon(data.goodFatherNumber);
-            this.searchSituation(data.goodFatherNumber);
-            this.searchGoodRelDocuments(data.goodFatherNumber);
-            if (data.typeConv == 2) {
-              this.getAllGoodChild(data.goodFatherNumber);
+            if (this.conversionData) {
+              this.no_bien_blk_tipo_bien = data.goodFatherNumber;
+              this.idConversion.setValue(data.id);
+              this.numberDossier.setValue(data.fileNumber.id);
+              this.numberGoodFather.setValue(data.goodFatherNumber);
+              this.goodFatherNumber$.next(data.goodFatherNumber);
+              this.wrongModal = false;
+              this.tipo.setValue(data.typeConv);
+              this.actConvertion.setValue(data.cveActaConv);
+              this.statusGood(data.goodFatherNumber);
+              this.searchGoods(data.goodFatherNumber);
+              this.searchGoodSon(data.goodFatherNumber);
+              this.searchSituation(data.goodFatherNumber);
+              this.searchGoodRelDocuments(data.goodFatherNumber);
+              if (data.typeConv == 2) {
+                this.getAllGoodChild(data.goodFatherNumber);
+              }
             }
           }
         },
@@ -380,23 +382,15 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   async searchGoodSon(e: any) {
-    this.form.valueChanges.subscribe(async value => {
-      if (this.lastIdConversion !== value.idConversion) {
-        try {
-          const conversionData = await this.convertiongoodService
-            .getById(value.idConversion)
-            .toPromise();
-          const paramsF = new FilterParams();
-          paramsF.addFilter('goodId', e);
-          const res = await this.serviceGood
-            .getAllFilter(paramsF.getParams())
-            .toPromise();
-          // if (conversionData.typeConv === '1') {
+    if (this.lastIdConversion !== this.idConversion.value) {
+      const conversionData = this.conversionData;
+      const paramsF = new FilterParams();
+      paramsF.addFilter('goodId', e);
+      this.serviceGood.getAllFilter(paramsF.getParams()).subscribe({
+        next: res => {
           this.good = res.data[0];
           this.goodForTableChar = res.data[0];
-          // debugger;
-          console.log(this.good, conversionData);
-
+          console.log(this.goodForTableChar);
           if (conversionData.typeConv == '2') {
             this.id.setValue(res.data[0]['id']);
             this.observation.setValue(res.data[0]['observations']);
@@ -404,10 +398,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.quantity.setValue(res.data[0]['quantity']);
             this.classifier.setValue(res.data[0]['goodClassNumber']);
             this.classificationOfGoods = Number(res.data[0]['goodClassNumber']);
+            // debugger;
             if (this.classificationOfGoods) {
-              this.goodChange++;
+              console.log(this.classificationOfGoods);
+              setTimeout(() => {
+                this.goodChange++;
+              }, 1000);
             }
-            console.log(Number(res.data[0]['goodClassNumber']));
+
             this.unitOfMeasure.setValue(res.data[0]['unit']);
             this.destinationLabel.setValue(res.data[0]['labelNumber']);
             this.statusCode = res.data[0]['status'];
@@ -435,14 +433,29 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.flagGoodNew = true;
             this.flagGoodDelete = true;
           }
+        },
+      });
+    }
 
-          this.lastIdConversion = value.idConversion;
-        } catch (err) {
-          console.error(err);
-          // maneja el error
-        }
-      }
-    });
+    // this.form.valueChanges.subscribe(async value => {
+    //   if (this.lastIdConversion !== value.idConversion) {
+    //     try {
+    //       const conversionData = await this.convertiongoodService
+    //         .getById(value.idConversion)
+    //         .toPromise();
+    //       const paramsF = new FilterParams();
+    //       paramsF.addFilter('goodId', e);
+    //       const res = await this.serviceGood
+    //         .getAllFilter(paramsF.getParams())
+    //         .toPromise();
+
+    //       this.lastIdConversion = value.idConversion;
+    //     } catch (err) {
+    //       console.error(err);
+    //       // maneja el error
+    //     }
+    //   }
+    // });
   }
   async searchSituation(e: any) {
     this.serviceGoodProcess.getByIdSituation(e).subscribe(
@@ -653,6 +666,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         if (res.statusCode == 200 && res.message[0] == 'ok') {
           this.alert('success', 'Conversión Finalizada', '');
           localStorage.removeItem('conversion');
+          this.form.reset();
+          this.good = [];
+          this.goodForTableChar = [];
+          this.classificationOfGoods = 0;
+          this.goodChange = 0;
+          this.conversionData = [];
+          this.dataGoods2 = [];
+          this.form.reset();
           this.pw();
         }
       },
@@ -902,6 +923,13 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
   session() {
     localStorage.removeItem('conversion');
+    this.form.reset();
+    this.good = [];
+    this.goodForTableChar = [];
+    this.classificationOfGoods = 0;
+    this.goodChange = 0;
+    this.conversionData = [];
+    this.dataGoods2 = [];
     this.pw();
   }
 }

@@ -20,15 +20,13 @@ import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { SharedModule } from 'src/app/shared/shared.module';
+
 @Component({
-  selector: 'capture-filter',
-  templateUrl: './capture-filter.component.html',
-  standalone: true,
-  imports: [SharedModule],
+  selector: 'app-capture-filter-history-indicators',
+  templateUrl: './capture-filter-history-indicators.component.html',
   styles: [],
 })
-export class CaptureFilterComponent implements OnInit {
+export class CaptureFilterHistoryIndicatorsComponent implements OnInit {
   formCapture: FormGroup;
   @Input() isReceptionAndDelivery: boolean = false;
   @Input() isReceptionStrategies: boolean = false;
@@ -50,33 +48,33 @@ export class CaptureFilterComponent implements OnInit {
   capturasDig: ICaptureDigFilter[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  get cvCoors() {
-    return this.formCapture.get('cvCoors');
-  }
-  get cveJobExternal() {
-    return this.formCapture.get('cveJobExternal');
-  }
-  get user() {
-    return this.formCapture.get('user');
-  }
-  get fecStart() {
-    return this.formCapture.get('fecStart');
-  }
-  get fecEnd() {
-    return this.formCapture.get('fecEnd');
-  }
-  get tipoVolante() {
-    return this.formCapture.get('tipoVolante');
-  }
-  get noTransfere() {
-    return this.formCapture.get('noTransfere');
-  }
-  get noStation() {
-    return this.formCapture.get('noStation');
-  }
-  get noAuthority() {
-    return this.formCapture.get('noAuthority');
-  }
+  // get cvCoors() {
+  //   return this.formCapture.get('cvCoors');
+  // }
+  // get cveJobExternal() {
+  //   return this.formCapture.get('cveJobExternal');
+  // }
+  // get user() {
+  //   return this.formCapture.get('user');
+  // }
+  // get fecStart() {
+  //   return this.formCapture.get('fecStart');
+  // }
+  // get fecEnd() {
+  //   return this.formCapture.get('fecEnd');
+  // }
+  // get tipoVolante() {
+  //   return this.formCapture.get('tipoVolante');
+  // }
+  // get noTransfere() {
+  //   return this.formCapture.get('noTransfere');
+  // }
+  // get noStation() {
+  //   return this.formCapture.get('noStation');
+  // }
+  // get noAuthority() {
+  //   return this.formCapture.get('noAuthority');
+  // }
 
   flyerTypes = ['A', 'AP', 'AS', 'AT', 'OF', 'P', 'PJ', 'T  '];
   eventTypes = [
@@ -114,14 +112,14 @@ export class CaptureFilterComponent implements OnInit {
   prepareForm() {
     this.formCapture = this.fb.group({
       finicia: [null],
-      fmaxima: [null],
+      finmaxima: [null],
       finingrs: [null],
       fecStart: [null],
       tipoVolante: [null],
       // tipoEvento: [null],
       coordinacion_regional: [null],
       urecepcion: [null],
-      cve_oficio_externo: [null],
+      cve_asunto: [null],
       transference: [null],
       station: [null],
       authority: [null],
@@ -173,6 +171,7 @@ export class CaptureFilterComponent implements OnInit {
     this.authorityService.getAll(params).subscribe({
       next: data => {
         this.authority = new DefaultSelect(data.data, data.count);
+        console.log('Las autoridades: ', this.authority);
       },
       error: () => {
         this.authority = new DefaultSelect();
@@ -277,23 +276,33 @@ export class CaptureFilterComponent implements OnInit {
   // }
 
   find() {
-    let params = new ListParams();
-    // params['filter.finicia'] = this.formCapture.controls['finicia'].value;
-    // params['filter.fmaxima'] = this.formCapture.controls['fmaxima'].value;
-    // params['filter.finingrs'] = this.formCapture.controls['finingrs'].value;
-    if (this.formCapture.controls['tipoVolante'].value) {
-      params['filter.tipo_volante'] =
-        this.formCapture.controls['tipoVolante'].value;
+    const params = new ListParams();
+
+    const controlParamMap: any = {
+      finicia: 'filter.finicia',
+      finmaxima: 'filter.fmaxima',
+      finingrs: 'filter.fescaneo',
+      tipoVolante: 'filter.tipo_volante',
+      coordinacion_regional: 'filter.coordinacion_regional',
+      urecepcion: 'filter.urecepcion',
+      cve_asunto: 'filter.cve_asunto',
+      transference: 'filter.no_transferente',
+      station: 'filter.no_emisora',
+      authority: 'filter.no_autoridad',
+    };
+
+    // Iterar sobre el objeto de mapeo
+    for (const controlName in controlParamMap) {
+      if (this.formCapture.controls[controlName].value != null) {
+        // Verificar si se necesita convertir la fecha
+        const value = controlName.includes('fin')
+          ? this.convertDate(this.formCapture.controls[controlName].value)
+          : this.formCapture.controls[controlName].value;
+        params[controlParamMap[controlName]] =
+          value?.id || value?.idAuthority || value || this.convertDate(value);
+      }
     }
-    if (this.formCapture.controls['coordinacion_regional'].value != null) {
-      params['filter.coordinacion_regional'] =
-        this.formCapture.controls['coordinacion_regional'].value.id;
-    }
-    // params['filter.urecepcion'] = this.formCapture.controls['urecepcion'].value;
-    // params['filter.cve_oficio_externo'] = this.formCapture.controls['cve_oficio_externo'].value;
-    // params['filter.no_transferente'] = this.formCapture.controls['transference'].value;
-    // params['filter.no_emisora'] = this.formCapture.controls['station'].value;
-    // params['filter.no_autoridad'] = this.formCapture.controls['authority'].value;
+
     console.log('Estos son los parametros: ', params);
     this.consultEmmit.emit(params);
   }
@@ -303,5 +312,11 @@ export class CaptureFilterComponent implements OnInit {
       return '';
     }
     return value;
+  }
+
+  convertDate(value: string) {
+    let date: string;
+    date = this.datePipe.transform(value, 'dd/MM/yyyy');
+    return date;
   }
 }

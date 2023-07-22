@@ -14,22 +14,19 @@
       </form-field>
 
       <form-field
-        [control]="formCapture.get('fmaxima')"
+        [control]="formCapture.get('finmaxima')"
         label="A"
         class="col-md-3">
         <input
           type="text"
           class="form-control"
           bsDatepicker
-          formControlName="fmaxima"
+          formControlName="finmaxima"
           [maxDate]="maxDate"
           [minDate]="formCapture.get('finicia').value" />
       </form-field>
 
       <form-field
-        *ngIf="
-          !isReceptionAndDelivery && !isReceptionStrategies && !isConsolidated
-        "
         [control]="formCapture.get('finingrs')"
         label="Fecha Ingreso"
         class="col-md-3">
@@ -44,8 +41,7 @@
       <form-field
         [control]="formCapture.get('tipoVolante')"
         class="col-md-3"
-        label="Tipo Volante"
-        *ngIf="!isReceptionStrategies && !isConsolidated">
+        label="Tipo Volante">
         <select class="form-control" formControlName="tipoVolante">
           <option *ngFor="let type of flyerTypes" [value]="type">
             {{ type }}
@@ -80,7 +76,7 @@
       </div>
     </div>
 
-    <div class="row pt-3" *ngIf="!isReceptionAndDelivery">
+    <div class="row pt-3">
       <form-field [control]="formCapture.get('urecepcion')" class="col-md-6">
         <ngx-select
           label="Usuario"
@@ -106,15 +102,12 @@
         </ng-template>
       </form-field>
 
-      <form-field
-        [control]="formCapture.get('cve_oficio_externo')"
-        class="col-md-6"
-        *ngIf="!isReceptionStrategies && !isConsolidated">
+      <form-field [control]="formCapture.get('cve_asunto')" class="col-md-6">
         <ngx-select
           [form]="formCapture"
           [searchOnInit]="true"
-          control="cve_oficio_externo"
-          label="Clave Oficio Externo"
+          control="cve_asunto"
+          label="Clave Asunto"
           [data]="affairName"
           (fetchItems)="getSubjects($event)"
           className="scroll-line"
@@ -123,7 +116,7 @@
       </form-field>
     </div>
 
-    <div class="row pt-3" *ngIf="!isReceptionStrategies && !isConsolidated">
+    <div class="row pt-3">
       <form-field [control]="formCapture.get('transference')" class="col-md-4">
         <ngx-select
           [searchOnInit]="true"
