@@ -6,6 +6,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, catchError, takeUntil, tap, throwError } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
@@ -52,6 +53,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
   captura: ICaptureDigFilter;
   capturasDig: ICaptureDigFilter[] = [];
   info: Info;
+  flyerTypes: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters: any = [];
   P_T_CUMP: number = 0;
@@ -109,7 +111,6 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     return this.formCapture.get('noAuthority');
   }
 
-  flyerTypes = ['A', 'AP', 'AS', 'AT', 'OF', 'P', 'PJ', 'T  '];
   eventTypes = [
     'Entrega-Comercialización',
     'Entrega-Donación',
@@ -137,17 +138,24 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     private affairService: AffairService
   ) {
     super();
+    this.userName = this.token.decodeToken().username;
+    // this.settings = {
+    //   actions: false,
+    //   ...this.settings,
+    //   columns: GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS,
+
+    // };
     this.settings = {
-      ...this.settings,
-      columns: GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS,
-      // edit: {
-      //   editButtonContent: '<i  class="fa fa-eye text-info mx-2" > Ver</i>',
-      // },
+      ...TABLE_SETTINGS,
+      actions: false,
+      columns: {
+        ...GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS,
+      },
+      noDataMessage: 'No se encontraron registros',
     };
   }
 
   ngOnInit(): void {
-    this.userName = this.token.decodeToken().username;
     this.prepareForm();
     this.dataFactCapt
       .onChanged()
@@ -182,7 +190,10 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
   }
   cleanForm() {
     this.formCapture.reset();
-    this.formExcel.reset();
+  }
+
+  getEvent() {
+    this.flyerTypes = ['A', 'AP', 'AS', 'AT', 'OF', 'P', 'PJ', 'T  '];
   }
   prepareForm() {
     this.formCapture = this.fb.group({
@@ -321,7 +332,15 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
 
   Generar() {
     this.isLoading = true;
-    // this.consultEmmit.emit(this.formCapture);
+    if (this.formCapture.value.user == null && this.dataFactCapt.empty) {
+      this.alert(
+        'info',
+        'debe seleccionar un usuario para generar reporte',
+        ''
+      );
+      return;
+    }
+
     let params = {
       P_T_CUMP: this.P_T_CUMP,
       P_T_NO_CUMP: this.P_T_NO_CUMP,
@@ -332,8 +351,8 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     console.log('params', params);
 
     this.siabService
-      // .fetchReport('RGERADBCONCNUMEFE', params)
-      .fetchReportBlank('blank')
+      .fetchReport('RINDICA_0001', params)
+      // .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
@@ -396,25 +415,27 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       noStation: this.formCapture.value.noStation,
       noAuthorityts: this.formCapture.value.noStation,
     };
-    this.documentsService.getDocCaptureFind(this.search).subscribe({
-      next: data => {
-        this.loading = false;
-        this.capturasDig = data.result;
-        this.dataFactCapt.load(data.result);
-        this.totalItemsCaptura = data.count;
-        this.dataFactCapt.refresh();
-        this.P_T_NO_CUMP = data.info.total_no_cumplio;
-        this.P_T_CUMP = data.info.total_cumplio;
-        this.P_T_CUMP = data.info.porcen_cumplidos;
-        // this.selectedItems = data.result.map((items: any) => {
-        //   console.log(items);
-        // });
-        console.log(this.dataFactCapt);
-      },
-      error: () => {
-        this.isData = false;
-      },
-    });
+    this.documentsService
+      .getDocCaptureFind(this.search, this.params.getValue())
+      .subscribe({
+        next: data => {
+          this.loading = false;
+          this.capturasDig = data.result;
+          this.dataFactCapt.load(data.result);
+          this.totalItemsCaptura = data.count;
+          this.dataFactCapt.refresh();
+          this.P_T_NO_CUMP = data.info.total_no_cumplio;
+          this.P_T_CUMP = data.info.total_cumplio;
+          this.P_T_CUMP = data.info.porcen_cumplidos;
+          // this.selectedItems = data.result.map((items: any) => {
+          //   console.log(items);
+          // });
+          console.log(this.dataFactCapt);
+        },
+        error: () => {
+          this.isData = false;
+        },
+      });
   }
   exportToExcel() {
     const filename: string = this.userName + '-CapturaYdigita';
@@ -422,44 +443,6 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     this.excelService.export(this.capturasDig, { filename });
   }
 
-  // onFileChangeDelivery(event: Event) {
-  //   this.exportExcel();
-  // }
-
-  // exportExcel() {
-  //   const workSheet = XLSX.utils.json_to_sheet(this.capturasDig, {
-  //     skipHeader: true,
-  //   });
-  //   const workBook: XLSX.WorkBook = XLSX.utils.book_new();
-  //   XLSX.utils.book_append_sheet(workBook, workSheet, 'Hoja1');
-  //   this.cleanPlaceholder('nameFileA', 'reporteindicator.xlsx');
-  //   XLSX.writeFile(workBook, 'reporteindicator.xlsx');
-  // }
-
-  // cleanPlaceholder(element: string, newMsg: string) {
-  //   const nameFile = document.getElementById(element) as HTMLInputElement;
-  //   nameFile.placeholder = `${newMsg}`;
-  // }
-
-  // readExcel(binaryExcel: string | ArrayBuffer) {
-  //   try {
-  //     this.data = this.excelService.getData<IExcelToJson>(binaryExcel);
-  //     console.log('data excel: ', this.data);
-  //   } catch (error) {
-  //     this.alert('error', 'Ocurrio un error al leer el archivo', 'Error');
-  //   }
-  // }
-
-  // onFileChange(event: Event) {
-  //   const files = (event.target as HTMLInputElement).files;
-  //   if (files.length != 1) throw 'No files selected, or more than of allowed';
-  //   const archivo = files[0];
-  //   this.titelFileForfeiture = archivo.name;
-  //   this.showFileErrorMessage2 = false;
-  //   const fileReader = new FileReader();
-  //   fileReader.readAsBinaryString(files[0]);
-  //   fileReader.onload = () => this.readExcel(fileReader.result);
-  // }
   onItemsSelected() {
     console.log(this.selectedItems);
   }
