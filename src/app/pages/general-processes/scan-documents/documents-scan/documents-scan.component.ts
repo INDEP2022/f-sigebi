@@ -53,6 +53,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   noDocumentsFound: boolean = false;
   noFoliosFound: boolean = false;
   registerUser: string = INVALID_USER;
+  pGoodFatherNumber: number;
   get controls() {
     return this.form.controls;
   }
@@ -73,6 +74,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   expedientNumber: number = null; //no_expediente
   wheelNumber: number = null; //no_volante
   processNumber: number = null; //no_tramite
+  tipoConv: number;
   paramsDepositaryAppointment: any = {
     P_NB: null,
     P_FOLIO: null,
@@ -130,6 +132,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           this.paramsDepositaryAppointment.P_NB = params['P_NB'] ?? null;
           this.paramsDepositaryAppointment.P_FOLIO = params['P_FOLIO'] ?? null;
           this.paramsDepositaryAppointment.P_ND = params['P_ND'] ?? null;
+        }
+        if (this.origin == 'FCONVBIENHIJOS') {
+          this.tipoConv = params['tipoConv'] ?? null;
         }
       });
     this.settings = {
@@ -596,7 +601,17 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
       );
     }
     if (this.origin == 'FCONVBIENHIJOS') {
-      this.router.navigate([`pages/administrative-processes/derivation-goods`]);
+      this.router.navigate(
+        [`pages/administrative-processes/derivation-goods`],
+        {
+          queryParams: {
+            folio: this.originFolio,
+            expedientNumber: this.expedientNumber,
+            tipoConv: this.tipoConv,
+            pGoodFatherNumber: this.pGoodFatherNumber,
+          },
+        }
+      );
     }
   }
 }
