@@ -12,7 +12,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="initialStatus" />
+              formControlName="initialStatus"
+              pattern="^(?!\s*$).+" />
           </form-field>
         </div>
       </div>
@@ -24,7 +25,8 @@
             <textarea
               rows="2"
               class="form-control pt-3"
-              formControlName="descriptionCause">
+              formControlName="descriptionCause"
+              pattern="^(?!\s*$).+">
             </textarea>
           </form-field>
         </div>
@@ -37,7 +39,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="goodType" />
+              formControlName="goodType"
+              pattern="^(?!\s*$).+" />
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
@@ -47,7 +50,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="statusRev" />
+              formControlName="statusRev"
+              pattern="^(?!\s*$).+" />
           </form-field>
         </div>
       </div>
@@ -59,7 +63,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="managerArea" />
+              formControlName="managerArea"
+              pattern="^(?!\s*$).+" />
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
@@ -69,7 +74,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="statusPurpose" />
+              formControlName="statusPurpose"
+              pattern="^(?!\s*$).+" />
           </form-field>
         </div>
       </div>
@@ -78,7 +84,11 @@
           <form-field
             [control]="revisionReasonForm.get('screen')"
             label="Pantalla">
-            <input type="text" class="form-control" formControlName="screen" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="screen"
+              pattern="^(?!\s*$).+" />
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
@@ -88,7 +98,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="parameter" />
+              formControlName="parameter"
+              pattern="^(?!\s*$).+" />
           </form-field>
         </div>
       </div>

@@ -74,6 +74,7 @@ export class StatesListComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
+          console.info(this.params);
           this.getStates();
         }
       });

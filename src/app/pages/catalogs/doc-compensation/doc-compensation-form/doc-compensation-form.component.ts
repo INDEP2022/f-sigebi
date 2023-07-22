@@ -37,25 +37,19 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.docCompensationForm = this.fb.group({
-      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      id: [null, [Validators.pattern(NUMBERS_PATTERN), Validators.required]],
       satTypeJob: [
         null,
-        [
-          // Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
       idTypeDocSat: [
         null,
-        [
-          // Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
       idTypeDocSatXml: [
         null,
         [
-          // Validators.required,
+          Validators.required,
           Validators.maxLength(4),
           Validators.pattern(NUMBERS_PATTERN),
         ],
@@ -63,14 +57,18 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
       typeDocSae: [
         null,
         [
-          // Validators.required,
+          Validators.required,
           Validators.maxLength(250),
           Validators.pattern(STRING_PATTERN),
         ],
       ],
       type: [
         null,
-        [Validators.maxLength(2), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.maxLength(2),
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.required,
+        ],
       ],
     });
     if (this.docCompensation != null) {

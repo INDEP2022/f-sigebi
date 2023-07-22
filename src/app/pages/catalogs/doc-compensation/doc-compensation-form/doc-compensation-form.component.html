@@ -24,7 +24,9 @@
             <input
               type="text"
               class="form-control"
-              formControlName="typeDocSae" />
+              formControlName="typeDocSae"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);"
+              pattern="^(?!\s*$).+" />
           </form-field>
         </div>
       </div>

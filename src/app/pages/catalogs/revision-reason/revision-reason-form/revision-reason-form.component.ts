@@ -34,22 +34,69 @@ export class RevisionReasonFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.revisionReasonForm = this.fb.group({
-      initialStatus: [null, [Validators.maxLength(3)]],
+      initialStatus: [
+        null,
+        [
+          Validators.maxLength(3),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
+      ],
       descriptionCause: [
         null,
-        [Validators.maxLength(80), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(80),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
-      goodType: [null, [Validators.maxLength(1)]],
-      statusRev: [null, [Validators.maxLength(3)]],
+      goodType: [
+        null,
+        [
+          Validators.maxLength(1),
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      statusRev: [
+        null,
+        [
+          Validators.maxLength(3),
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       managerArea: [
         null,
-        [Validators.maxLength(50), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(50),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
-      statusPurpose: [null, [Validators.maxLength(3)]],
-      screen: [null, [Validators.maxLength(80)]],
+      statusPurpose: [
+        null,
+        [
+          Validators.maxLength(3),
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      screen: [
+        null,
+        [
+          Validators.maxLength(80),
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       parameter: [
         null,
-        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
     });
     if (this.revisionReason != null) {
