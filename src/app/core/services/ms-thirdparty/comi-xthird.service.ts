@@ -35,4 +35,9 @@ export class ComiXThirdService extends HttpService {
   create(model: IComiXThird) {
     return this.post(ThirdPartyEndpoints.ComiXthird, model);
   }
+
+  remove(id: string | number) {
+    const route = `${ThirdPartyEndpoints.ComiXthird}/${id}`;
+    return this.delete(route);
+  }
 }
