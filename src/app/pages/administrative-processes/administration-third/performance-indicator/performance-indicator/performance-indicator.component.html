@@ -55,20 +55,16 @@
           </div>
           <div class="row margin-input">
             <div class="col-md-8">
-              <form-field
-                [control]="
-                  performanceIndicatorForm.get('regionalCoordination')
-                ">
-                <ngx-select
-                  (fetchItems)="getRegionalCoordination($event)"
-                  [data]="regionalCoordination"
-                  [form]="performanceIndicatorForm"
-                  value="regionalCoordination"
-                  bindLabel="description"
-                  label="Coordinación Regional"
-                  control="regionalCoordination">
-                </ngx-select>
-              </form-field>
+              <ng-custom-select-loading
+                [form]="performanceIndicatorForm"
+                formControlName="regionalCoordination"
+                [multiple]="false"
+                label="Coordinación Regional"
+                value="description"
+                bindLabel="description"
+                paramSearch="search"
+                path="catalog/api/v1/delegation/get-all">
+              </ng-custom-select-loading>
             </div>
             <div class="col-md-3">
               <form-field
