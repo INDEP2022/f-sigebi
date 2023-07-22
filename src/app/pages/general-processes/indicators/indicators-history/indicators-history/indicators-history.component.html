@@ -5,7 +5,10 @@
   <div body>
     <div class="row">
       <div>
-        <capture-filter (consultEmmit)="getData($event)"></capture-filter>
+        <app-capture-filter-history-indicators
+          (consultEmmit)="
+            getData($event)
+          "></app-capture-filter-history-indicators>
       </div>
       <div class="d-flex justify-content-end" style="margin-bottom: -55px">
         <div>
@@ -21,7 +24,7 @@
         </div>
       </div>
       <div class="row pt-3 table-content">
-        <div class="mb-3">
+        <div class="mb-3 ml-1">
           <div class="d-inline-block">
             <app-columns-select
               [(settings)]="settings"
@@ -45,6 +48,15 @@
         Exportar a Excel
         <i class="bx bx-download float-icon"></i>
       </button>
+    </div>
+    <div class="mt-5">
+      <app-indicators-history-detail></app-indicators-history-detail>
+    </div>
+    <div class="mt-5">
+      <app-indicators-history-service-orders></app-indicators-history-service-orders>
+    </div>
+    <div class="mt-5">
+      <app-indicators-history-technical-datasheet></app-indicators-history-technical-datasheet>
     </div>
   </div>
 </app-card>
