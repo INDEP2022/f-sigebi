@@ -4,31 +4,40 @@
   </div>
   <div body>
     <div class="row">
-      <capture-filter (consultEmmit)="getData($event)"></capture-filter>
-    </div>
-    <!-- <div class="row pt-3">
-      <div class="col-md-12 d-flex justify-content-between">
-        <span class="text-success">
-          <i class="fa fa-check" aria-hidden="true"></i> Total Cumplidos&#58;
-          <b>123</b>
-        </span>
-        <span class="text-danger"><i class="fa fa-ban" aria-hidden="true"></i> Total No Cumplidos&#58;
-          <b>123</b></span>
-        <span class="text-info"><i class="fa fa-percent" aria-hidden="true"></i> Cumplidos&#58;
-          <b>100&#37;</b></span>
-        <app-columns-select [(settings)]="settings"></app-columns-select>
+      <div>
+        <app-capture-filter-history-indicators
+          (consultEmmit)="
+            getData($event)
+          "></app-capture-filter-history-indicators>
       </div>
-    </div> -->
-    <div class="row pt-3 table-content">
-      <div class="mb-3">
-        <app-columns-select
-          [(settings)]="settings"
-          [defaultColumns]="4"></app-columns-select>
+      <div class="d-flex justify-content-end" style="margin-bottom: -55px">
+        <div>
+          <p class="text-success m-1">
+            <i class="fa fa-check" aria-hidden="true"></i> Cumplido
+          </p>
+          <p class="text-info m-1">
+            <i class="fa fa-times-circle" aria-hidden="true"></i> Destiempo
+          </p>
+          <p class="text-danger m-1">
+            <i class="fa fa-ban" aria-hidden="true"></i> No Cumplido
+          </p>
+        </div>
+      </div>
+      <div class="row pt-3 table-content">
+        <div class="mb-3 ml-1">
+          <div class="d-inline-block">
+            <app-columns-select
+              [(settings)]="settings"
+              [defaultColumns]="4"></app-columns-select>
+          </div>
+        </div>
       </div>
       <div>
         <ng2-smart-table
           [settings]="settings"
-          [source]="data"></ng2-smart-table>
+          [source]="data"
+          (onContentRender)="onContentRender($event)">
+        </ng2-smart-table>
       </div>
       <app-pagination
         [params]="params"
@@ -39,6 +48,15 @@
         Exportar a Excel
         <i class="bx bx-download float-icon"></i>
       </button>
+    </div>
+    <div class="mt-5">
+      <app-indicators-history-detail></app-indicators-history-detail>
+    </div>
+    <div class="mt-5">
+      <app-indicators-history-service-orders></app-indicators-history-service-orders>
+    </div>
+    <div class="mt-5">
+      <app-indicators-history-technical-datasheet></app-indicators-history-technical-datasheet>
     </div>
   </div>
 </app-card>

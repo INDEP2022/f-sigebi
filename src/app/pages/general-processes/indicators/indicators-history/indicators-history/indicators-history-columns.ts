@@ -1,17 +1,17 @@
 export const INDICATORS_HISTORY_COLUMNS = {
-  column: {
+  coordinacion_regional: {
     title: 'Regional',
     sort: false,
   },
-  column2: {
+  cve_oficio_externo: {
     title: 'Cve. Oficio Externo',
     sort: false,
   },
-  column3: {
+  no_expediente: {
     title: 'No. Expediente',
     sort: false,
   },
-  column4: {
+  no_volante: {
     title: 'No. Volante',
     sort: false,
   },
