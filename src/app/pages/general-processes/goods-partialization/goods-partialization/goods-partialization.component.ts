@@ -196,7 +196,8 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
         this.handleErrorGoHome(LIMIT_REACHED);
       }
       this.controls.isNume.setValue(false);
-      this.controls.original.setValue(quantity);
+      console.log(Number(quantity));
+      this.controls.original.setValue(Number(quantity));
       this.controls.en.addValidators(Validators.max(quantity - 1));
       this.controls.y.addValidators(Validators.max(quantity - 1));
       this.originalPlaceholder = QUANTITY_PLACEHOLDER;
@@ -340,7 +341,7 @@ export class GoodsPartializationComponent extends BasePage implements OnInit {
 
     const result = await this.alertQuestion(
       'warning',
-      'Advertencia',
+      'Parcialización de Bienes',
       '¿Seguro que desea parcializar el bien?'
     );
     if (result.isConfirmed) {

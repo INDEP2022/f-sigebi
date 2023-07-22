@@ -161,9 +161,9 @@ export class CaptureFilterComponent extends BasePage implements OnInit {
   }
   prepareForm() {
     this.formCapture = this.fb.group({
-      cvCoors: [null],
-      cveJobExternal: [null],
-      user: [null],
+      finicia: [null],
+      fmaxima: [null],
+      finingrs: [null],
       fecStart: [null],
       fecEnd: [null],
       typeSteering: [null],
@@ -182,7 +182,25 @@ export class CaptureFilterComponent extends BasePage implements OnInit {
       },
     });
   }
+  getDelegations(params: ListParams) {
+    this.delegationService.getAll(params).subscribe({
+      next: res => (this.delegations = new DefaultSelect(res.data, res.count)),
+      error: () => {
+        this.delegations = new DefaultSelect([], 0);
+      },
+    });
+  }
 
+  getSubjects(params: ListParams) {
+    this.affairService.getAll(params).subscribe({
+      next: data => {
+        this.affairName = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.affairName = new DefaultSelect();
+      },
+    });
+  }
   getSubjects(params: ListParams) {
     this.affairService.getAll(params).subscribe({
       next: data => {
@@ -266,12 +284,12 @@ export class CaptureFilterComponent extends BasePage implements OnInit {
     let params = new FilterParams();
     params.page = $params.page;
     params.limit = $params.limit;
-    const area = this.formCapture.controls['user'].value;
+    const area = this.formCapture.controls['urecepcion'].value;
     params.search = $params.text;
     this.getAllUsers(params).subscribe();
   }
 
-  getAllUsers(params: FilterParams) {
+  getAllUsers(params: any) {
     return this.usersService.getAllSegUsers(params.getParams()).pipe(
       catchError(error => {
         this.users$ = new DefaultSelect([], 0, true);
@@ -279,10 +297,10 @@ export class CaptureFilterComponent extends BasePage implements OnInit {
       }),
       tap(response => {
         if (response.count > 0) {
-          const name = this.formCapture.get('user').value;
+          const name = this.formCapture.get('urecepcion').value;
           const data = response.data.filter(m => m.id == name);
           console.log(data);
-          this.formCapture.get('user').patchValue(data[0]);
+          this.formCapture.get('urecepcion').patchValue(data[0]);
         }
         this.users$ = new DefaultSelect(response.data, response.count);
       })
