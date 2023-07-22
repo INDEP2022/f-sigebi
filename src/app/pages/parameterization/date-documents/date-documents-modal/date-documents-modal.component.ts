@@ -127,6 +127,10 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
       const dateReceipt = this.transformDate(this.dateDocuments.dateReceipt);
       this.dateDocumentsModalForm.controls['dateReceipt'].setValue(dateReceipt);
       this.dateDocumentsModalForm.controls['key'].setValue(this.id.key);
+      this.dateDocumentsModalForm.controls['expedientNumber'].disable();
+      this.dateDocumentsModalForm.controls['stateNumber'].disable();
+      this.dateDocumentsModalForm.controls['typeDictum'].disable();
+      this.dateDocumentsModalForm.controls['key'].disable();
     } else {
       this.dateDocumentsModalForm.controls['userInsertion'].setValue(
         this.authService.decodeToken().preferred_username

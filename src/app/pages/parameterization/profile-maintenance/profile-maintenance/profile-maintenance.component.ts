@@ -7,6 +7,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ISegProfile } from 'src/app/core/models/catalogs/profile-maintenance.model';
+import { ISegProfileXPant } from 'src/app/core/models/catalogs/profile-traking-x-pant';
 import { ProfileMaintenanceService } from 'src/app/core/services/catalogs/profile-maintenance.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ProfileMaintenanceFormProfileComponent } from '../profile-maintenance-form-profile/profile-maintenance-form-profile.component';
@@ -127,7 +128,7 @@ export class ProfileMaintenanceComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getValuesAll());
-    this.params
+    this.params2
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getAccessScreen());
   }
@@ -224,5 +225,67 @@ export class ProfileMaintenanceComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(ProfileMaintenanceFormComponent, config);
+  }
+
+  showDeleteAlert(segProfile?: ISegProfile) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        console.log(segProfile.profile);
+        this.delete(segProfile.profile);
+      }
+    });
+  }
+
+  delete(profile: string | number) {
+    this.profileMaintenanceService.remove(profile).subscribe({
+      next: () => {
+        this.getValuesAll();
+        this.alert(
+          'success',
+          'Mantenimiento a Perfil',
+          'Borrado Correctamente'
+        );
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Relación de Mantenimiento a Perfil',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
+    });
+  }
+
+  showDeleteAlert1(segProfileXPant?: ISegProfileXPant) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        console.log(segProfileXPant);
+        this.delete1(segProfileXPant);
+      }
+    });
+  }
+
+  delete1(rAsuntDic?: ISegProfileXPant) {
+    /*this.profileMaintenanceService.remove(rAsuntDic).subscribe({
+      next: () => {
+        this.getRAsuntDic();
+        this.alert('success', 'Dictamen', 'Borrado Correctamente');
+      },
+      error: error => {
+        this.alert(
+          'warning',
+          'Relación de asunto dictamen',
+          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+        );
+      },
+    });*/
   }
 }

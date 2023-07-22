@@ -13,42 +13,6 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form1.get('screenKey')" label="Pantalla">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="screenKey" />
-          </form-field>
-        </div>
-        <div class="pt-4 col-md-6">
-          <form-field
-            label="Lectura"
-            [control]="form1.get('permissionReading')">
-            <ng-select
-              formControlName="permissionReading"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="S">Si</ng-option>
-              <ng-option value="N">No</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
-        <div class="pt-4 col-md-6">
-          <form-field
-            label="Lectura"
-            [control]="form1.get('permissionWriting')">
-            <ng-select
-              formControlName="permissionWriting"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option value="S">Si</ng-option>
-              <ng-option value="N">No</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
-        <div class="pt-4 col-md-6">
           <form-field
             [control]="form1.get('recordNumber')"
             label="No. Registro">
@@ -57,6 +21,51 @@
               class="form-control"
               formControlName="recordNumber" />
           </form-field>
+        </div>
+
+        <div class="pt-4 col-md-6">
+          <form-field [control]="form1.get('screenKey')">
+            <ngx-select
+              [form]="form1"
+              [searchable]="true"
+              control="screenKey"
+              [data]="screen"
+              value="screenKey"
+              bindLabel="screenKey"
+              label="Pantalla"
+              (fetchItems)="getScreenAll($event)"
+              [readonly]="false"></ngx-select>
+          </form-field>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              label="Lectura"
+              [control]="form1.get('permissionReading')">
+              <ng-select
+                formControlName="permissionReading"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="S">Si</ng-option>
+                <ng-option value="N">No</ng-option>
+              </ng-select>
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              label="Escritura"
+              [control]="form1.get('permissionWriting')">
+              <ng-select
+                formControlName="permissionWriting"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="S">Si</ng-option>
+                <ng-option value="N">No</ng-option>
+              </ng-select>
+            </form-field>
+          </div>
         </div>
       </div>
     </form>
