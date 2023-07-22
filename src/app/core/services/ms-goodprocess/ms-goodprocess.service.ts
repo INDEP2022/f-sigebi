@@ -208,4 +208,8 @@ export class GoodprocessService extends HttpService {
       params
     );
   }
+
+  getDeleteStatusGoodnumber(body: any) {
+    return this.post(GoodprocessEndpoints.DeleteStatusGoodnumber, body);
+  }
 }

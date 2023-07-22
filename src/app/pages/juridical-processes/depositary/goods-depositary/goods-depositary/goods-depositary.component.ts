@@ -47,6 +47,7 @@ export class GoodsDepositaryComponent
   federativeEntityData = new DefaultSelect();
   goodTypeData = new DefaultSelect();
   goodSubTypeData = new DefaultSelect();
+  maxDate = new Date();
 
   public form: FormGroup;
 
@@ -347,5 +348,8 @@ export class GoodsDepositaryComponent
     //   this.form.get('from').clearValidators();
     //   this.form.get('to').clearValidators();
     // }
+  }
+  cleanForm() {
+    this.form.reset();
   }
 }

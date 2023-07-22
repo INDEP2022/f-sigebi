@@ -631,11 +631,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           if (vResul === 'Error') {
             this.alert('error', 'Ha ocurrido un error', '');
           } else {
-            this.alert(
-              'success',
-              'Cálculo de numerario',
-              'El proceso se realizó correctamente.'
-            );
+            this.alert('success', 'Se eliminó el Cálculo de Numerario', '');
+            this.searchProcess();
           }
         }
       } else {
@@ -760,11 +757,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           if (vResul === 'Error') {
             this.alert('error', 'Ha ocurrido un error', '');
           } else {
-            this.alert(
-              'success',
-              'Cálculo de numerario',
-              'El proceso se realizó correctamente.'
-            );
+            this.alert('success', 'Se realizó el Cálculo de Numerario', '');
+            this.searchProcess();
           }
         }
       } else {
@@ -843,7 +837,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       return;
     }
     const filename: string = 'Numerario Prorraneo';
-    const jsonToCsv = await this.returnJsonToCsv(Number(this.idProcess));
+    const jsonToCsv = await this.returnJsonToCsv(Number(this.idProcess.value));
     console.log('jsonToCsv', jsonToCsv);
     if (jsonToCsv.length === 0) {
       this.alert(
@@ -864,6 +858,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           res(resp.data);
         },
         error: err => {
+          console.log(err);
           res([]);
         },
       });
@@ -873,7 +868,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   async exportarTotal() {
     const filename: string = 'Numerario Total';
     const jsonToCsv = await this.returnJsonToTotalCsv(
-      Number(this.process.procnumId)
+      Number(this.idProcess.value)
     );
     console.log('jsonToCsv', jsonToCsv);
     if (jsonToCsv.length === 0) {

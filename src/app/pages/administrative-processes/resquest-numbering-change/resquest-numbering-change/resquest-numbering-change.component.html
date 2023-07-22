@@ -172,6 +172,8 @@
             <input
               type="number"
               class="form-control"
+              [max]="9999999"
+              [min]="1"
               formControlName="applicationChangeCashNumber"
               [max-length]="7"
               pattern="^[0-9]+" />
@@ -328,7 +330,10 @@
                 type="button"
                 class="btn btn-primary btn-sm active"
                 (click)="guardarSolicitud()"
-                [disabled]="!formaplicationData.valid"
+                [disabled]="
+                  !formaplicationData.valid &&
+                  formaplicationData.get('applicationChangeCashNumber')
+                "
                 style="margin: 1vh">
                 Guardar
                 <i aria-hidden="true" class="fa fa-save"></i>
