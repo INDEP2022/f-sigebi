@@ -131,7 +131,11 @@ export class ProrrateoGoodSurveillanceModalComponent
         this.onLoadToast('success', 'Bien actualizado con exito', '');
       },
       error: error => {
-        this.onLoadToast('error', error.error.message, '');
+        this.onLoadToast(
+          'error',
+          'Ha ocurrido un error, por favor intentelo de nuevo',
+          ''
+        );
       },
     });
   }
@@ -162,7 +166,11 @@ export class ProrrateoGoodSurveillanceModalComponent
         this.onLoadToast('success', 'Bien creado con exito', '');
       },
       error: error => {
-        this.onLoadToast('error', error.error.message, '');
+        this.onLoadToast(
+          'error',
+          'Ha ocurrido un error, por favor intentelo de nuevo',
+          ''
+        );
       },
     });
   }
