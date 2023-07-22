@@ -140,7 +140,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   showWarehouse: boolean = false;
   showReprog: boolean = false;
   showCancel: boolean = false;
+  //receiptGuardGood: IRecepitGuard;
   receiptGuardGood: IRecepitGuard;
+  receiptWarehouseGood: IRecepitGuard;
   receiptData: IReceipt;
   goodData: IGood;
   transfersDestinity: any[] = [];
@@ -503,7 +505,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.programmingId'] = this.programmingId;
     this.receptionGoodService.getReceptions(params.getValue()).subscribe({
       next: response => {
-        this.receiptGuardGood = response.data[0];
+        //this.receiptGuardGood = response.data[0];
 
         const filterWarehouse = response.data.map((item: any) => {
           if (item.typeReceipt == 'ALMACEN') return item;
@@ -513,7 +515,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           return item;
         });
 
+        this.receiptWarehouseGood = infoWarehouse[0];
         this.receiptWarehouse.load(infoWarehouse);
+
         const filterGuard = response.data.map((item: any) => {
           if (item.typeReceipt == 'RESGUARDO') return item;
         });
@@ -521,7 +525,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           const infoGuard = filterGuard.filter((item: IRecepitGuard) => {
             return item;
           });
-
+          this.receiptGuardGood = infoGuard[0];
           this.receiptGuards.load(infoGuard);
         }
       },
@@ -1328,8 +1332,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     if (this.selectGood.length > 0) {
       this.alertQuestion(
         'question',
-        'Confirmación',
         '¿Seguro que quiere asignar los bienes  a una acta?',
+        'Acción irreversible',
         'Aceptar'
       ).then(question => {
         if (question.isConfirmed) {

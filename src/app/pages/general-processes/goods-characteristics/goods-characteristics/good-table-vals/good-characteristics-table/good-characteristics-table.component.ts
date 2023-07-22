@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { isArray } from 'ngx-bootstrap/chronos';
@@ -121,7 +121,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
                 dataType: item.dataType,
               };
             });
-            
+
             this.totalItems = this.data.length;
             this.dataTemp = [...this.data];
             this.getPaginated(this.params.value);
@@ -277,6 +277,12 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     //     }
     //   },
     // });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['service'] && changes['disabled']) {
+      this.service.disabledTable = changes['disabled'].currentValue;
+    }
   }
 
   get data() {
