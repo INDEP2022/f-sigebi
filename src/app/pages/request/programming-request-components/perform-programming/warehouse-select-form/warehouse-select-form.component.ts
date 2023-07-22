@@ -20,6 +20,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   data: any[] = [];
   warehouses = new DefaultSelect<IWarehouse>();
   warehouse: IWarehouse;
+  delegation: number = 0;
   typeTransportable: string = '';
   constructor(
     private modalRef: BsModalRef,
@@ -33,7 +34,8 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getWarehouses(new ListParams());
+    if (this.typeTransportable == 'warehouse')
+      this.getWarehouses(new ListParams());
   }
 
   prepareForm() {
@@ -44,15 +46,13 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
 
   getWarehouses(params: ListParams) {
     params['filter.name'] = `$ilike:${params.text}`;
+    params['filter.regionalDelegation'] = this.delegation;
     this.goodsQueryService.getCatStoresView(params).subscribe(data => {
       this.warehouses = new DefaultSelect(data.data, data.count);
     });
   }
 
   confirm() {
-    // this.formValue.emit(this.form.value(this.warehouse));
-    // console.log('entrada', this.form.value(this.warehouse));
-    // const dato = this.form.value.warehouse;
     if (this.typeTransportable == 'guard') {
       this.alertQuestion(
         'warning',
@@ -68,7 +68,6 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
         }
       });
     } else if (this.typeTransportable == 'warehouse') {
-      console.log('entrada2', this.form.value.warehouse);
       this.alertQuestion(
         'warning',
         'Advertencia',
