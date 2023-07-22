@@ -12,6 +12,7 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { ICaptureDigFilter } from 'src/app/core/models/ms-documents/documents';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
+import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { IssuingInstitutionService } from 'src/app/core/services/catalogs/issuing-institution.service';
@@ -41,10 +42,15 @@ interface IExcelToJson {
 })
 export class CaptureFilterComponent extends BasePage implements OnInit {
   formCapture: FormGroup;
+
   @Input() isReceptionAndDelivery: boolean = false;
   @Input() isReceptionStrategies: boolean = false;
   @Input() isConsolidated: boolean = false;
   @Output() consultEmmit = new EventEmitter<any>();
+  @Input() P_T_CUMP: number;
+  @Input() P_T_NO_CUMP: number;
+  @Input() P_CUMP: number;
+
   delegations = new DefaultSelect();
   data: IExcelToJson[] = [];
   authorityName: string = '';
@@ -52,6 +58,7 @@ export class CaptureFilterComponent extends BasePage implements OnInit {
   affairName = new DefaultSelect();
   station = new DefaultSelect();
   reporte_flag: boolean = false;
+  idDelegation: number[] = [];
   showFileErrorMessage2 = false;
   authority = new DefaultSelect();
   transference = new DefaultSelect();
@@ -62,14 +69,11 @@ export class CaptureFilterComponent extends BasePage implements OnInit {
   to: string = '';
   activeRadio: boolean = true;
   isLoading = false;
-  capture: ICaptureDigFilter;
+  search: ICaptureDigFilter;
   capturasDig: ICaptureDigFilter[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   titelFileForfeiture: string = 'Nombre del Archivo Excel(CapturayDigital)';
   dataDelivery: any[] = [];
-  P_T_CUMP: number = 0;
-  P_T_NO_CUMP: number = 0;
-  P_CUMP: number = 0;
   selectedItems: any[] = [];
 
   get cvCoors() {
@@ -123,14 +127,33 @@ export class CaptureFilterComponent extends BasePage implements OnInit {
     private delegationService: DelegationService,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private affairService: AffairService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getTransference(this.params.getValue());
+
+    // this.stationService.getAll().subscribe({
+    //   next: data => {
+    //     this.stationName = data.data[0].stationName;
+    //   },
+    //   error: error => {
+    //     this.stationName = '';
+    //   },
+    // });
+
+    // this.authorityService.getAll().subscribe({
+    //   next: data => {
+    //     this.authorityName = data.data[0].authorityName;
+    //   },
+    //   error: error => {
+    //     this.authorityName = '';
+
+    //   },
+    // });
   }
 
   cleanForm() {
@@ -160,16 +183,16 @@ export class CaptureFilterComponent extends BasePage implements OnInit {
     });
   }
 
-  // getSubjects(params: ListParams) {
-  //   this.affairService.getAll(params).subscribe({
-  //     next: data => {
-  //       this.affairName = new DefaultSelect(data.data, data.count);
-  //     },
-  //     error: () => {
-  //       this.affairName = new DefaultSelect();
-  //     },
-  //   });
-  // }
+  getSubjects(params: ListParams) {
+    this.affairService.getAll(params).subscribe({
+      next: data => {
+        this.affairName = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.affairName = new DefaultSelect();
+      },
+    });
+  }
 
   getTransference(params: ListParams) {
     this.issuingInstitutionService.getTransfers(params).subscribe({
@@ -268,17 +291,7 @@ export class CaptureFilterComponent extends BasePage implements OnInit {
 
   Generar() {
     this.isLoading = true;
-    this.consultEmmit.emit(this.formCapture);
-    this.from = this.datePipe.transform(
-      this.formCapture.controls['fecStart'].value,
-      'yyyy-mm-dd'
-    );
-
-    this.to = this.datePipe.transform(
-      this.formCapture.controls['fecEnd'].value,
-      'yyyy-mm-dd'
-    );
-
+    // this.consultEmmit.emit(this.formCapture);
     let params = {
       P_T_CUMP: this.P_T_CUMP,
       P_T_NO_CUMP: this.P_T_NO_CUMP,
@@ -325,31 +338,35 @@ export class CaptureFilterComponent extends BasePage implements OnInit {
         }
       });
   }
-  find(search: ICaptureDigFilter) {
-    console.log(search);
-    search.cveJobExternal = this.formCapture.value.cveJobExternal;
-    search.user = this.formCapture.value.user;
-    let idDelegation: number[] = [];
+  getTotalDelegation() {
     for (let item of this.formCapture.value.cvCoors) {
-      idDelegation.push(parseInt(item));
+      this.idDelegation.push(parseInt(item));
     }
-    search.cvCoors = idDelegation;
-    search.typeSteering = this.formCapture.value.typeSteering;
-    search.fecStart = this.formCapture.value.fecStart;
-    search.fecEnd = this.formCapture.value.fecStart;
-    search.noTransfere = this.formCapture.value.noTransfere;
-    search.noStation = this.formCapture.value.noStation;
+  }
 
-    this.documentsService.getDocCaptureFind(search).subscribe({
-      next: data => {
-        this.capturasDig = data.data;
-        this.selectedItems = data.data.map((items: any) => {
-          console.log(items);
-        });
-        this.consultEmmit.emit(this.formCapture);
-        console.log(this.capturasDig);
-      },
-    });
+  find() {
+    this.loading = true;
+    this.from = this.datePipe.transform(
+      this.formCapture.controls['fecStart'].value,
+      'yyyy-MM-dd'
+    );
+
+    this.to = this.datePipe.transform(
+      this.formCapture.controls['fecEnd'].value,
+      'yyyy-MM-dd'
+    );
+    this.search = {
+      cvCoors: this.idDelegation,
+      cveJobExternal: this.formCapture.value.cveJobExternal,
+      user: this.formCapture.value.user,
+      typeSteering: this.formCapture.value.typeSteering,
+      fecStart: this.from,
+      fecEnd: this.to,
+      noTransfere: this.formCapture.value.noTransfere,
+      noStation: this.formCapture.value.noStation,
+      noAuthorityts: this.formCapture.value.noStation,
+    };
+    this.consultEmmit.emit(this.search);
   }
 
   onFileChangeDelivery(event: Event) {

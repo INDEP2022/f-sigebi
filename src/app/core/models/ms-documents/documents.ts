@@ -105,7 +105,7 @@ export interface ICaptureDigFilter {
   fecEnd: string;
   noTransfere: number;
   noStation: number;
-  noAuthority: number;
+  noAuthorityts: number;
 }
 export interface Info {
   total_cumplio: number;

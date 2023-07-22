@@ -1,5 +1,5 @@
 <div>
-  <form [formGroup]="formCapture" class="form-material">
+  <form [formGroup]="formCapture" class="form-material" (ngSubmit)="find()">
     <div class="row pt-3">
       <form-field
         [control]="formCapture.get('fecStart')"
@@ -41,8 +41,7 @@
       <form-field
         [control]="formCapture.get('typeSteering')"
         class="col-md-3"
-        label="Tipo Volante"
-        *ngIf="!isReceptionStrategies && !isConsolidated">
+        label="Tipo Volante">
         <select class="form-control" formControlName="typeSteering">
           <option *ngFor="let type of flyerTypes" [value]="type">
             {{ type }}
@@ -71,7 +70,7 @@
       </div>
     </div> -->
 
-    <div class="row pt-3" *ngIf="!isReceptionAndDelivery">
+    <div class="row pt-3">
       <form-field [control]="formCapture.get('user')" class="col-md-6">
         <ngx-select
           label="Usuario"
@@ -97,28 +96,37 @@
         </ng-template>
       </form-field>
 
-      <!-- <form-field [control]="formCapture.get('cveJobExternal')" class="col-md-6"
-        *ngIf="!isReceptionStrategies && !isConsolidated">
-        <ngx-select [form]="formCapture" [searchOnInit]="true" control="cveJobExternal" label="Clave Oficio Externo"
+      <form-field
+        [control]="formCapture.get('cveJobExternal')"
+        class="col-md-6">
+        <!-- <ngx-select [form]="formCapture" [searchOnInit]="true" control="cveJobExternal" label="Clave Oficio Externo"
           [data]="affairName" (fetchItems)="getSubjects($event)" className="scroll-line" bindLabel="description">
-        </ngx-select>
-      </form-field> -->
+        </ngx-select> -->
+        <input
+          type="text"
+          class="form-control"
+          formControlName="cveJobExternal" />
+      </form-field>
 
       <form-field [control]="formCapture.get('cvCoors')">
+        <!-- <ngx-select [form]="formCapture" [searchOnInit]="true" control="cvCoors" label="Coor. Regional"
+          [data]="delegations" (change)="getTotalDelegation()" (fetchItems)="getDelegations($event)"
+          className="scroll-line" bindLabel="description" [multiple]="true"></ngx-select>
+      -->
         <ngx-select
           [form]="formCapture"
-          [searchOnInit]="true"
           control="cvCoors"
-          label="Coor. Regional"
-          [data]="delegations"
           (fetchItems)="getDelegations($event)"
-          className="scroll-line"
+          [showTooltip]="true"
+          [data]="delegations"
           bindLabel="description"
+          label="Coor. Regional"
+          value="id"
           [multiple]="true"></ngx-select>
       </form-field>
     </div>
 
-    <div class="row pt-3" *ngIf="!isReceptionStrategies && !isConsolidated">
+    <div class="row pt-3">
       <form-field [control]="formCapture.get('noTransfere')" class="col-md-4">
         <ngx-select
           [searchOnInit]="true"
@@ -172,7 +180,7 @@
           <button
             type="button"
             class="btn btn-primary active btn-sm"
-            (click)="find(this.capture)">
+            type="submit">
             Consulta <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
@@ -192,29 +200,6 @@
             (click)="cleanForm()">
             Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
           </button>
-        </div>
-      </div>
-    </div>
-
-    <div footer>
-      <div class="d-flex justify-content-center">
-        <div class="m-3">
-          <button
-            class="btn btn-success btn-sm ml-2 active"
-            [disabled]="formCapture.invalid"
-            type="button"
-            (click)="exportExcel()">
-            Exportar a Excel
-            <i class="bx bx-download float-icon"></i>
-          </button>
-          <input
-            type="file"
-            name="file1"
-            #file1
-            class="d-none"
-            formControlName="file1"
-            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-            (change)="onFileChangeDelivery($event)" />
         </div>
       </div>
     </div>
