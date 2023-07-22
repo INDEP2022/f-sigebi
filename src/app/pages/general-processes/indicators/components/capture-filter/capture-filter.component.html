@@ -2,35 +2,44 @@
   <form [formGroup]="formCapture" class="form-material">
     <div class="row pt-3">
       <form-field
-        [control]="formCapture.get('fecStart')"
+        [control]="formCapture.get('finicia')"
         label="Rango de fechas"
         class="col-md-3">
         <input
           type="text"
           class="form-control"
           bsDatepicker
-          formControlName="fecStart"
+          formControlName="finicia"
           [maxDate]="maxDate" />
       </form-field>
 
       <form-field
-        [control]="formCapture.get('fecEnd')"
+        [control]="formCapture.get('fmaxima')"
         label="A"
         class="col-md-3">
         <input
           type="text"
           class="form-control"
           bsDatepicker
-          formControlName="fecEnd"
+          formControlName="fmaxima"
           [maxDate]="maxDate"
-          [minDate]="formCapture.get('fecEnd').value" />
+          [minDate]="formCapture.get('finicia').value" />
       </form-field>
 
-      <!-- <form-field *ngIf="
+      <form-field
+        *ngIf="
           !isReceptionAndDelivery && !isReceptionStrategies && !isConsolidated
-        " [control]="formCapture.get('fecEnd')" label="Fecha Ingreso" class="col-md-3">
-        <input type="text" class="form-control" bsDatepicker formControlName="fecEnd" [maxDate]="maxDate" />
-      </form-field> -->
+        "
+        [control]="formCapture.get('finingrs')"
+        label="Fecha Ingreso"
+        class="col-md-3">
+        <input
+          type="text"
+          class="form-control"
+          bsDatepicker
+          formControlName="finingrs"
+          [maxDate]="maxDate" />
+      </form-field>
 
       <form-field
         [control]="formCapture.get('tipoVolante')"
@@ -47,26 +56,32 @@
 
     <!-- <form-field *ngIf="
         (isReceptionAndDelivery || isReceptionStrategies) && !isConsolidated
-      " [control]="form.get('tipoEvento')" class="col-md-3" label="Tipo Evento">
+      " [control]="formCapture.get('tipoEvento')" class="col-md-3" label="Tipo Evento">
       <select class="form-control" formControlName="tipoEvento">
         <option *ngFor="let event of eventTypes" [value]="event">
           {{ event }}
         </option>
       </select>
     </form-field> -->
-    <!-- 
+
     <div class="row mt-4">
       <div class="col-md-12">
         <form-field [control]="formCapture.get('coordinacion_regional')">
-          <ngx-select [form]="formCapture" [searchOnInit]="true" control="coordinacion_regional" label="Coor. Regional"
-            [data]="delegations" (fetchItems)="getDelegations($event)" className="scroll-line"
+          <ngx-select
+            [form]="formCapture"
+            [searchOnInit]="true"
+            control="coordinacion_regional"
+            label="Coor. Regional"
+            [data]="delegations"
+            (fetchItems)="getDelegations($event)"
+            className="scroll-line"
             bindLabel="description"></ngx-select>
         </form-field>
       </div>
-    </div> -->
+    </div>
 
     <div class="row pt-3" *ngIf="!isReceptionAndDelivery">
-      <form-field [control]="formCapture.get('user')" class="col-md-6">
+      <form-field [control]="formCapture.get('urecepcion')" class="col-md-6">
         <ngx-select
           label="Usuario"
           [form]="formCapture"
@@ -74,7 +89,7 @@
           [data]="users$"
           (fetchItems)="getUsers($event)"
           bindLabel="userAndName"
-          control="user"
+          control="urecepcion"
           [searchOnInit]="true"
           [showTooltip]="true"
           termMaxLength="30"
@@ -91,16 +106,25 @@
         </ng-template>
       </form-field>
 
-      <!-- <form-field [control]="formCapture.get('cveJobExternal')" class="col-md-6"
+      <form-field
+        [control]="formCapture.get('cve_oficio_externo')"
+        class="col-md-6"
         *ngIf="!isReceptionStrategies && !isConsolidated">
-        <ngx-select [form]="formCapture" [searchOnInit]="true" control="cveJobExternal" label="Clave Oficio Externo"
-          [data]="affairName" (fetchItems)="getSubjects($event)" className="scroll-line" bindLabel="description">
+        <ngx-select
+          [form]="formCapture"
+          [searchOnInit]="true"
+          control="cve_oficio_externo"
+          label="Clave Oficio Externo"
+          [data]="affairName"
+          (fetchItems)="getSubjects($event)"
+          className="scroll-line"
+          bindLabel="description">
         </ngx-select>
-      </form-field> -->
+      </form-field>
     </div>
 
     <div class="row pt-3" *ngIf="!isReceptionStrategies && !isConsolidated">
-      <form-field [control]="formCapture.get('noTransfere')" class="col-md-4">
+      <form-field [control]="formCapture.get('transference')" class="col-md-4">
         <ngx-select
           [searchOnInit]="true"
           (fetchItems)="getTransference($event)"
@@ -108,11 +132,11 @@
           [form]="formCapture"
           bindLabel="nameTransferent"
           label="Transferente"
-          control="noTransfere">
+          control="transference">
         </ngx-select>
       </form-field>
 
-      <form-field [control]="formCapture.get('noStation')" class="col-md-4">
+      <form-field [control]="formCapture.get('station')" class="col-md-4">
         <ngx-select
           [searchOnInit]="true"
           (fetchItems)="getStation($event)"
@@ -120,11 +144,11 @@
           [form]="formCapture"
           bindLabel="stationName"
           label="Emisora"
-          control="noStation">
+          control="station">
         </ngx-select>
       </form-field>
 
-      <form-field [control]="formCapture.get('noAuthority')" class="col-md-4">
+      <form-field [control]="formCapture.get('authority')" class="col-md-4">
         <ngx-select
           [searchOnInit]="true"
           (fetchItems)="getAuthority($event)"
@@ -132,7 +156,7 @@
           [form]="formCapture"
           bindLabel="authorityName"
           label="Autoridad"
-          control="noAuthority">
+          control="authority">
         </ngx-select>
       </form-field>
     </div>
@@ -143,7 +167,7 @@
           <button
             type="button"
             class="btn btn-primary active btn-sm"
-            (click)="find(captura)">
+            (click)="find()">
             Consulta <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>

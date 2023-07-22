@@ -11,4 +11,5 @@ export enum DocumentsEndpoints {
   Count1 = 'application/getCount1',
   CapDigiralizationTmp = 'cap-digitalization-tmp',
   IndicatorRec = 'application/get-data-ind-rec-doc',
+  SeqDocument = 'application/getSeqDocument',
 }

@@ -1,15 +1,15 @@
 export const RECTIFICATION_FIELDS_COLUMNS = {
-  column: {
+  columnId: {
     title: 'Columna',
     sort: false,
     widht: '10px',
   },
-  fieldInvoice: {
-    title: 'Campo en facturación',
+  invoiceFieldId: {
+    title: 'Campo en Factura',
     sort: false,
     widht: '33%',
   },
-  table: {
+  tabla: {
     title: 'Tabla',
     sort: false,
     widht: '25%',
