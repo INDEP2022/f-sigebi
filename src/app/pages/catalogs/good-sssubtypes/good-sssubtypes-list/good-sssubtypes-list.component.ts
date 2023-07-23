@@ -116,7 +116,7 @@ export class GoodSssubtypesListComponent extends BasePage implements OnInit {
       next: response => {
         console.log('response:', response);
         this.paragraphs = response.data;
-        this.data1.load(this.paragraphs);
+        this.data1.load(response.data);
         this.data1.refresh();
         this.totalItems = response.count;
         this.loading = false;
