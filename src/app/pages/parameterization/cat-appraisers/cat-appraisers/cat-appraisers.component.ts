@@ -51,15 +51,30 @@ export class CatAppraisersComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'name':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'position':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getProficient();
         }
       });
@@ -77,13 +92,13 @@ export class CatAppraisersComponent extends BasePage implements OnInit {
     this.proficientSer.getAll(params).subscribe({
       next: resp => {
         this.proficient = resp.data;
-        this.data.load(this.proficient);
+        this.data.load(resp.data);
         this.data.refresh();
         this.totalItems = resp.count;
         this.loading = false;
       },
       error: err => {
-        this.onLoadToast('error', err.error.message, '');
+        this.alert('error', err.error.message, '');
         this.loading = false;
       },
     });

@@ -122,7 +122,7 @@ export class CityListComponent extends BasePage implements OnInit {
         this.columns = response.data;
         console.log(this.columns);
         this.totalItems = response.count || 0;
-        this.data.load(this.columns);
+        this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
       },

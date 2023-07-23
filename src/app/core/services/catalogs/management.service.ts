@@ -11,10 +11,11 @@ import { IManagement } from '../../models/catalogs/management.model';
 })
 export class ManagementService implements ICrudMethods<IManagement> {
   private readonly route: string = ENDPOINT_LINKS.Management;
+  private readonly route1: string = ENDPOINT_LINKS.ManagementAll;
   constructor(private managementRepository: Repository<IManagement>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IManagement>> {
-    return this.managementRepository.getAllPaginated(this.route, params);
+    return this.managementRepository.getAllPaginated(this.route1, params);
   }
 
   getById(id: string | number): Observable<IManagement> {

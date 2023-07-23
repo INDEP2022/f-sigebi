@@ -65,6 +65,7 @@ export class GoodTypesListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });
@@ -110,11 +111,12 @@ export class GoodTypesListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.goodTypesService.remove(goodType.id).subscribe(
           res => {
+            this.alert('success', 'Tipo Bien', 'Borrado Correctamente');
             this.getExample();
           },
           err => {

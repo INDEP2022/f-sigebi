@@ -41,7 +41,7 @@ export class InstitutionClasificationModalComponent
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      numRegister: [null, []],
+      numRegister: [null, [Validators.required]],
     });
     if (this.institute != null) {
       console.log('datos', this.institute);

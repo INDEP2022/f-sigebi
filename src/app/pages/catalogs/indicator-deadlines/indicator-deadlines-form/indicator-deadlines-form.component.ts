@@ -43,10 +43,21 @@ export class IndicatorDeadlinesFormComponent
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      formula: [null, [Validators.required]],
+      formula: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       deadline: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(2),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       usuario_creacion: [null],
       fecha_creacion: [null],

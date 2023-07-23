@@ -70,6 +70,7 @@ export class LegalAffairListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getLegalAffairAll();
         }
       });
@@ -91,7 +92,7 @@ export class LegalAffairListComponent extends BasePage implements OnInit {
         this.columns = response.data;
         this.totalItems = response.count || 0;
 
-        this.data.load(this.columns);
+        this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
       },

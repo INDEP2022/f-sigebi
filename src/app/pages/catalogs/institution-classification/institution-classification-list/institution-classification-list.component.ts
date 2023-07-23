@@ -61,6 +61,7 @@ export class InstitutionClassificationListComponent
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getInstitutions();
         }
       });
@@ -104,7 +105,7 @@ export class InstitutionClassificationListComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      'Desea eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(institution.id);
@@ -119,7 +120,7 @@ export class InstitutionClassificationListComponent
         this.getInstitutions();
         this.alert(
           'success',
-          'Clasificación de institución',
+          'Clasificación de Institución',
           'Borrado Correctamente'
         );
       },

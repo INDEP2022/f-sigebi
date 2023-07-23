@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">lista de conclusi&oacute;n de siniestro</h5>
+    <h5 class="title">lista de conclusi&oacute;n de siniestros</h5>
   </div>
 
   <div body>
@@ -25,7 +25,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="paragraphs"
+            [source]="data"
             (edit)="openForm($event.data)"
             (delete)="delete($event.data)">
           </ng2-smart-table>
