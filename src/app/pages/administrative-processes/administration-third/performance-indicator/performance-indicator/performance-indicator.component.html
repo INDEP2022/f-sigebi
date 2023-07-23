@@ -23,7 +23,7 @@
               </form-field>
             </div>
             <div class="col-md-4">
-              <h6 class="title">CERRADO</h6>
+              <h6 class="title">{{ status }}</h6>
             </div>
           </div>
           <div class="row margin-input">
@@ -79,7 +79,10 @@
             </div>
 
             <div class="col-md-3 mr-4">
-              <button type="button" class="btn btn-primary active btn-sm">
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm"
+                (click)="search()">
                 Buscar
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
@@ -88,42 +91,89 @@
         </form>
       </div>
       <div class="col-md-6">
-        <h5 class="title">Estrategia y Reportes que se debieron entregar</h5>
-        <div class="row margin-input">
-          <div class="col-md-8">
-            <h6 class="title">Estrategia de administración:</h6>
+        <form [formGroup]="performanceIndicatorFormE_I" class="form-material">
+          <h5 class="title">Estrategia y Reportes que se debieron entregar</h5>
+          <div class="row margin-input">
+            <div class="col-md-8">
+              <h6 class="title">Estrategia de administración:</h6>
+            </div>
+            <div class="col-md-2">
+              <form-field
+                [control]="performanceIndicatorFormE_I.get('strategyAdmin')">
+                <input
+                  type="number"
+                  placeholder="0"
+                  class="form-control"
+                  formControlName="strategyAdmin"
+                  id="strategyAdmin"
+                  (input)="validateEAE($event)" />
+              </form-field>
+            </div>
           </div>
-          <div class="col-md-2">
-            <input type="text" placeholder="0" class="form-control" />
+          <div class="row margin-input">
+            <div class="col-md-8">
+              <h6 class="title">Reportes de Implementacón:</h6>
+            </div>
+            <div class="col-md-2">
+              <form-field
+                [control]="performanceIndicatorFormE_I.get('reportImp')">
+                <input
+                  type="number"
+                  placeholder="0"
+                  class="form-control"
+                  formControlName="reportImp"
+                  id="ReportImp"
+                  (input)="validateRI($event)" />
+              </form-field>
+            </div>
           </div>
-        </div>
-        <div class="row margin-input">
-          <div class="col-md-8">
-            <h6 class="title">Reportes de Implementacón:</h6>
+          <h5 class="title">Estrategia y Reportes entregados en tiempo</h5>
+          <div class="row margin-input">
+            <div class="col-md-8">
+              <h6 class="title">Estrategia de administración:</h6>
+            </div>
+            <div class="col-md-2">
+              <form-field
+                [control]="performanceIndicatorFormE_I.get('strategyAdmin2')">
+                <input
+                  type="number"
+                  placeholder="0"
+                  class="form-control"
+                  formControlName="strategyAdmin2"
+                  id="stategyAdmin2"
+                  (input)="validateEAE2($event)" />
+              </form-field>
+            </div>
           </div>
-          <div class="col-md-2">
-            <input type="text" placeholder="0" class="form-control" />
+          <div class="row margin-input">
+            <div class="col-md-8">
+              <h6 class="title">Reportes de Implementacón:</h6>
+            </div>
+            <div class="col-md-2">
+              <form-field
+                [control]="performanceIndicatorFormE_I.get('reportImp2')">
+                <input
+                  type="number"
+                  placeholder="0"
+                  class="form-control"
+                  formControlName="reportImp2"
+                  id="ReportImp2"
+                  (input)="validateRI2($event)" />
+              </form-field>
+            </div>
           </div>
-        </div>
-        <h5 class="title">Estrategia y Reportes entregados en tiempo</h5>
-        <div class="row margin-input">
-          <div class="col-md-8">
-            <h6 class="title">Estrategia de administración:</h6>
-          </div>
-          <div class="col-md-2">
-            <input type="text" placeholder="0" class="form-control" />
-          </div>
-        </div>
-        <div class="row margin-input">
-          <div class="col-md-8">
-            <h6 class="title">Reportes de Implementacón:</h6>
-          </div>
-          <div class="col-md-2">
-            <input type="text" placeholder="0" class="form-control" />
-          </div>
+        </form>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-12 text-right">
+          <span
+            >Porcentaje de Cumplimiento&#58; <b>{{ compliance }}&#37;</b></span
+          >
         </div>
       </div>
     </div>
+
     <div class="row pt-4">
       <div class="col-md-6">
         <h5 class="title">Estrategia de Administración</h5>

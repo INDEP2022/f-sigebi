@@ -9,4 +9,5 @@ export enum StrategyEndpoints {
   ZCenterOperationRegional = 'z-center-operation-regional/getAllDescriptionCenterZOperationRegional',
   getStrategy = 'aplication/getStrategy',
   StrategyAmount = 'strategy-rep-amounts',
+  StrategyAdmin = 'strategies-admin',
 }

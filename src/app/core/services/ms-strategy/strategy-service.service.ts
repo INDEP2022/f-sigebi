@@ -65,4 +65,8 @@ export class StrategyServiceService extends HttpService {
       { params, headers }
     );
   }
+
+  getStrategiesAdmin(model: any) {
+    return this.post(`${StrategyEndpoints.StrategyAdmin}/id`, model);
+  }
 }
