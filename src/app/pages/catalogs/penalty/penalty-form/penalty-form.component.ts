@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import {
-  PERCENTAGE_NUMBERS_PATTERN,
-  POSITVE_NUMBERS_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -47,11 +43,11 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
       ],
       penaltyPercentage: [
         null,
-        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_PATTERN)],
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
       equivalentDays: [
         null,
-        Validators.maxLength(5),
+        [Validators.maxLength(5), Validators.required],
         // [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
       version: [1],
@@ -60,8 +56,7 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
         null,
         [
           Validators.required,
-          Validators.pattern(POSITVE_NUMBERS_PATTERN),
-          Validators.minLength(0),
+          Validators.pattern(NUMBERS_PATTERN),
           Validators.maxLength(50),
         ],
       ],
@@ -80,6 +75,10 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.penaltyForm.controls['serviceType'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.penaltyService.create(this.penaltyForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),

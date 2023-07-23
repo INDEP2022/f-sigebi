@@ -51,7 +51,10 @@ export class PenaltyListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id'
+            filter.field == 'id' ||
+            filter.field == 'penaltyPercentage' ||
+            filter.field == 'equivalentDays' ||
+            filter.field == 'contractNumber'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {

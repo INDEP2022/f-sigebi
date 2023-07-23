@@ -75,7 +75,10 @@ export class FlyerSubjectCatalogModelComponent
     this.loading = true;
     this.affairTypeService.create(this.affairTypeForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.alert('error', error.error.message, '');
+      },
     });
   }
 

@@ -75,7 +75,7 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
     this.originCisiService.getAll(params).subscribe({
       next: response => {
         this.originCisis = response.data;
-        this.totalItems = response.count || 0;
+        this.totalItems = response.count;
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
@@ -100,7 +100,7 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(originCisi.id);
@@ -111,7 +111,7 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.originCisiService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Procedencia CiSi', 'BorradO Correctemente');
+        this.alert('success', 'Procedencia CiSi', 'Borrado Correctemente');
         this.getOriginCisi();
       },
       error: error => {

@@ -13,7 +13,7 @@
               type="text"
               class="form-control"
               formControlName="nameGoodType"
-              maxlength="70" />
+              pattern="^\S.*$" />
           </form-field>
         </div>
       </div>
@@ -27,7 +27,7 @@
               type="number"
               class="form-control"
               formControlName="maxAsseguranceTime"
-              min="0"
+              min="1"
               oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
@@ -39,7 +39,7 @@
               type="number"
               class="form-control"
               formControlName="maxFractionTime"
-              min="0"
+              min="1"
               oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
@@ -51,7 +51,7 @@
               type="number"
               class="form-control"
               formControlName="maxExtensionTime"
-              min="0"
+              min="1"
               oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
@@ -63,7 +63,7 @@
               type="number"
               class="form-control"
               formControlName="maxStatementTime"
-              min="0"
+              min="1"
               oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
@@ -77,7 +77,7 @@
               type="number"
               class="form-control"
               formControlName="maxLimitTime1"
-              min="0"
+              min="1"
               oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
@@ -89,7 +89,7 @@
               type="number"
               class="form-control"
               formControlName="maxLimitTime2"
-              min="0"
+              min="1"
               oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
@@ -101,7 +101,7 @@
               type="number"
               class="form-control"
               formControlName="maxLimitTime3"
-              min="0"
+              min="1"
               oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
@@ -113,7 +113,7 @@
               type="number"
               class="form-control"
               formControlName="noRegister"
-              min="0" />
+              min="1" />
           </form-field>
         </div>
       </div>
@@ -126,7 +126,8 @@
             <input
               type="number"
               class="form-control"
-              formControlName="version" />
+              formControlName="version"
+              min="1" />
           </form-field>
         </div>
       </div>

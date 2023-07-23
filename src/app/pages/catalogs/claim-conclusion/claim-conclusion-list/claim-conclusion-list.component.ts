@@ -49,14 +49,9 @@ export class ClaimConclusionListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            switch (filter.field) {
-              case 'keyId':
-                searchFilter = SearchFilter.EQ;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
+            filter.field == 'id'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -74,7 +69,11 @@ export class ClaimConclusionListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.claimConclusionService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.claimConclusionService.getAll(params).subscribe({
       next: response => {
         this.paragraphs = response.data;
         this.data.load(response.data);

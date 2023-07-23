@@ -38,7 +38,7 @@ export class ModalCatAppraisersComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(200),
+          Validators.maxLength(80),
         ],
       ],
       position: [
@@ -87,6 +87,14 @@ export class ModalCatAppraisersComponent extends BasePage implements OnInit {
           ),
         });
       } else {
+        if (
+          this.form.controls['name'].value.trim() === '' &&
+          this.form.controls['position'].value.trim() === ''
+        ) {
+          this.alert('warning', 'No se puede guardar campos vacíos', ``);
+          return; // Retorna temprano si el campo está vacío.
+        }
+        this.loading = true;
         this.proficientSer.create(this.form.value).subscribe({
           next: () => this.handleSuccess(),
           error: err => (
