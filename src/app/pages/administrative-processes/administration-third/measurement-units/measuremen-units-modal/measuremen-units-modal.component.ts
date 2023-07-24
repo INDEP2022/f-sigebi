@@ -17,7 +17,7 @@ export class MeasuremenUnitsModalComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   title: string = 'Catálogo de Unidad de Medida';
   catalogo: IUnits;
-  newOrEdit: boolean;
+  newOrEdit: boolean = false;
   dataSelect: IUnits;
   data: IUnits;
 
@@ -33,6 +33,7 @@ export class MeasuremenUnitsModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.title = '  Catálogo ';
+
     this.prepareForm();
     this.newOrEdit;
     console.log('NewOrEdir: ', this.newOrEdit);
@@ -43,12 +44,13 @@ export class MeasuremenUnitsModalComponent extends BasePage implements OnInit {
         description: this.data.description,
         registryNumber: this.data.registryNumber,
       });
+    } else {
+      this.newOrEdit = false;
     }
   }
 
   close() {
     this.modalRef.hide();
-    this.newOrEdit = false;
   }
 
   /*confirm() {
@@ -102,6 +104,7 @@ export class MeasuremenUnitsModalComponent extends BasePage implements OnInit {
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
           this.onLoadToast('error', 'Error', error);
+          //this.newOrEdit = false;
         } else {
           this.onLoadToast('error', 'Error', err.error.message);
         }
