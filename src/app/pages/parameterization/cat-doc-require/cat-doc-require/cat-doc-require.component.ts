@@ -69,7 +69,12 @@ export class CatDocRequireComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.totalItems = change.count || 0;
+          console.log(this.totalItems);
+          console.log(change);
+
           this.params = this.pageFilter(this.params);
+
           this.getDocumentsForDictum();
         }
       });

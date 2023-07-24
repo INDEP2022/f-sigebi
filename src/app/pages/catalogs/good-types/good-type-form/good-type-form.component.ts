@@ -45,34 +45,68 @@ export class GoodTypeFormComponent extends BasePage implements OnInit {
       ],
       maxAsseguranceTime: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxFractionTime: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxExtensionTime: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxStatementTime: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxLimitTime1: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxLimitTime2: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxLimitTime3: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
-      noRegister: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      version: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      noRegister: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      version: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.goodType != null) {
       this.edit = true;
@@ -89,21 +123,31 @@ export class GoodTypeFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.goodTypeService.create(this.goodTypeForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    this.goodTypeService
-      .update(this.goodType.id, this.goodTypeForm.value)
-      .subscribe({
+    if (this.goodTypeForm.controls['nameGoodType'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.goodTypeService.create(this.goodTypeForm.value).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (this.goodTypeForm.controls['nameGoodType'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.goodTypeService
+        .update(this.goodType.id, this.goodTypeForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

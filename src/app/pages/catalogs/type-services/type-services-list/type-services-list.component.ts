@@ -48,7 +48,7 @@ export class TypeServicesListComponent extends BasePage implements OnInit {
               field = `filter.${filter.field}`;
               switch (filter.field) {
                 case 'id':
-                  searchFilter = SearchFilter.ILIKE;
+                  searchFilter = SearchFilter.EQ;
                   break;
                 case 'type':
                   searchFilter = SearchFilter.ILIKE;
@@ -57,7 +57,7 @@ export class TypeServicesListComponent extends BasePage implements OnInit {
                   searchFilter = SearchFilter.ILIKE;
                   break;
                 case 'version':
-                  searchFilter = SearchFilter.ILIKE;
+                  searchFilter = SearchFilter.EQ;
                   break;
                 default:
                   searchFilter = SearchFilter.ILIKE;
@@ -69,6 +69,7 @@ export class TypeServicesListComponent extends BasePage implements OnInit {
                 delete this.columnFilters[field];
               }
             });
+            this.params = this.pageFilter(this.params);
             this.getExample();
           }
         });
@@ -79,11 +80,20 @@ export class TypeServicesListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.typeServicesService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.typeServicesService.getAll(params).subscribe({
       next: response => {
+        this.totalItems = response.count;
+        this.data.load(response.data);
+        this.data.refresh();
+        this.loading = false;
+        /*
         this.paragraphs = response.data;
         this.totalItems = response.count;
-        this.loading = false;
+        this.loading = false;*/
       },
       error: error => (this.loading = false),
     });
@@ -119,7 +129,7 @@ export class TypeServicesListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.typeServicesService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Tipo servicio', 'Borrado Correctamente'),
+        this.alert('success', 'Tipo Servicio', 'Borrado Correctamente'),
           this.getExample();
       },
       error: error => {

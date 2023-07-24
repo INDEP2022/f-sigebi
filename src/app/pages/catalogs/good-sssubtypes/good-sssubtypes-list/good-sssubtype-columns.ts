@@ -51,11 +51,11 @@ export const GOOD_SSSUBTYPE_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  numClasifAlterna: {
-    title: 'No. Clasif alterna',
-    type: 'number',
-    sort: false,
-  },
+  // numClasifAlterna: {
+  //   title: 'No. Clasif alterna',
+  //   type: 'number',
+  //   sort: false,
+  // },
   // numRegister: {
   //   title: 'No. Registro',
   //   type: 'number',

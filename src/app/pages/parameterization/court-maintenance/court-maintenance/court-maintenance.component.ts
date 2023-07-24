@@ -205,16 +205,29 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
         this.courtServ.update(this.id, this.form.getRawValue()).subscribe({
           next: () => (
             this.alert('success', 'Juzgado', 'Actualizado Correctamente'),
-            this.onLoadToast('success', 'Juzgado', 'Se ha actualizado'),
             this.clean()
           ),
           error: err => this.onLoadToast('error', err.error.message, ''),
         });
       } else {
+        if (
+          this.form.controls['description'].value.trim() === '' ||
+          this.form.controls['manager'].value.trim() === '' ||
+          this.form.controls['street'].value.trim() === '' ||
+          this.form.controls['numExterior'].value.trim() === '' ||
+          this.form.controls['numInside'].value.trim() === '' ||
+          this.form.controls['cologne'].value.trim() === '' ||
+          this.form.controls['delegationMun'].value.trim() === ''
+        ) {
+          this.alert('warning', 'No se puede guardar campos vacíos', ``);
+          return; // Retorna temprano si el campo está vacío.
+        }
+        this.loading = true;
         this.courtServ.create(this.form.value).subscribe({
           next: data => {
+            console.log(data);
+
             this.alert('success', 'Juzgado', 'Guardado Correctamente');
-            this.onLoadToast('success', 'Juzgado', 'Se ha guardado');
             this.form.patchValue(data);
             this.form.get('id').disable();
             this.isPresent = true;

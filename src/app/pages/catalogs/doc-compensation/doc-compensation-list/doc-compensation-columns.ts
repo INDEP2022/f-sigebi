@@ -20,12 +20,12 @@ export const DOC_COMPENSATION_COLUMNNS = {
     sort: false,
   },
   idTypeDocSat: {
-    title: 'Tipo Doc SAT',
+    title: 'Doc Resarcimiento SAT',
     type: 'string',
     sort: false,
   },
   idTypeDocSatXml: {
-    title: 'Tipo Doc SAT XML',
+    title: 'Doc Resarcimiento SAT XML',
     type: 'string',
     sort: false,
   },

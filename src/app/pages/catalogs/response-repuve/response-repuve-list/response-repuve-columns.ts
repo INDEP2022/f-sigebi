@@ -1,6 +1,6 @@
 export const RESPONSE_REPUVE_COLUMNS = {
   id: {
-    title: 'ID',
+    title: 'Id',
     type: 'number',
     sort: false,
   },

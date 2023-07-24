@@ -120,7 +120,7 @@ export class DeductivesVerificationListComponent
         this.getData(),
           this.alert(
             'success',
-            'Deductiva verificación',
+            'Deductiva Verificación',
             'Borrada Correctamente'
           );
       },

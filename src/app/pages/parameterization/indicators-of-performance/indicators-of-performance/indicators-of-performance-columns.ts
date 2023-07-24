@@ -28,7 +28,7 @@ export const INDICATORSOFPERFORMANCE_COLUMNS = {
     sort: false,
   },
   certificateType: {
-    title: 'Etiqueta acta',
+    title: 'Etiqueta Acta',
     //width: '10%',
     sort: false,
   },
@@ -70,7 +70,7 @@ export const INDICATORSPERFORMANCE_COLUMNS = {
     sort: false,
   },
   initialDDate: {
-    title: 'Fecha Ind.page',
+    title: 'Fecha Ind. Page',
     //width: '20%',
     sort: false,
   },

@@ -59,7 +59,7 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'noPhotography':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'descriptionPhotography':
                 searchFilter = SearchFilter.ILIKE;
@@ -138,7 +138,7 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
     this.goodTypesService.removeByIds(ids).subscribe({
       next: () => {
         this.getExample(),
-          this.alert('success', 'Subtipo bien', 'Borrado Correctemente');
+          this.alert('success', 'Subtipo Bien', 'Borrado Correctemente');
       },
       error: err => {
         this.alert(

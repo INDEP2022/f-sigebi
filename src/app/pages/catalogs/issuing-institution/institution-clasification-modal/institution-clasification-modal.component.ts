@@ -16,7 +16,7 @@ export class InstitutionClasificationModalComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Clasificación de instituciones';
+  title: string = 'Clasificación de Institución';
   edit: boolean = false;
 
   instituteForm: ModelForm<IInstitutionClassification>;
@@ -41,7 +41,7 @@ export class InstitutionClasificationModalComponent
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      numRegister: [null, []],
+      numRegister: [null, [Validators.required]],
     });
     if (this.institute != null) {
       console.log('datos', this.institute);

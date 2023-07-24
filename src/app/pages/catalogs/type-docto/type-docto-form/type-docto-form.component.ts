@@ -5,7 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITypeDocto } from 'src/app/core/models/catalogs/type-docto.model';
 import { TypeDoctoService } from 'src/app/core/services/catalogs/type-docto.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-type-docto-form',
@@ -31,17 +31,30 @@ export class TypeDoctoFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.typeDoctoForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
+      ],
       description: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.maxLength(200),
           Validators.pattern(STRING_PATTERN),
-        ]),
+        ],
       ],
-      version: [null, Validators.compose([Validators.required])],
-      status: [null, Validators.compose([Validators.required])],
+      version: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      status: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.typeDocto != null) {
       this.edit = true;
@@ -57,21 +70,33 @@ export class TypeDoctoFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.typeDoctoService.create(this.typeDoctoForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    this.typeDoctoService
-      .update(this.typeDocto.id, this.typeDoctoForm.getRawValue())
-      .subscribe({
+    if (this.typeDoctoForm.controls['description'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.typeDoctoService.create(this.typeDoctoForm.getRawValue()).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (this.typeDoctoForm.controls['description'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.typeDoctoService
+        .update(this.typeDocto.id, this.typeDoctoForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

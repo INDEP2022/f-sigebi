@@ -17,7 +17,7 @@ import {
 })
 export class StatusClaimsFormComponent extends BasePage implements OnInit {
   statusClaimsForm: ModelForm<IStatusClaims>;
-  title: string = 'Estatus Siniestros';
+  title: string = 'Estatus Siniestro';
   edit: boolean = false;
   statusClaims: IStatusClaims;
   constructor(

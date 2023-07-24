@@ -1,5 +1,5 @@
 <div>
-  <form [formGroup]="formCapture" class="form-material">
+  <form [formGroup]="formCapture" class="form-material" (ngSubmit)="find()">
     <div class="row pt-3">
       <form-field
         [control]="formCapture.get('finicia')"
@@ -21,9 +21,15 @@
           type="text"
           class="form-control"
           bsDatepicker
-          formControlName="fmaxima"
-          [maxDate]="maxDate"
-          [minDate]="formCapture.get('finicia').value" />
+          formControlName="fecEnd"
+          [min]="formCapture.get('fecStart').value"
+          [minDate]="formCapture.get('fecStart').value"
+          [ngModel]="
+            formCapture.get('fecEnd').value < formCapture.get('fecStart').value
+              ? formCapture.get('fecStart').value
+              : formCapture.get('fecEnd').value
+          "
+          bsDatepicker />
       </form-field>
 
       <form-field
@@ -42,11 +48,10 @@
       </form-field>
 
       <form-field
-        [control]="formCapture.get('tipoVolante')"
+        [control]="formCapture.get('typeSteering')"
         class="col-md-3"
-        label="Tipo Volante"
-        *ngIf="!isReceptionStrategies && !isConsolidated">
-        <select class="form-control" formControlName="tipoVolante">
+        label="Tipo Volante">
+        <select class="form-control" formControlName="typeSteering">
           <option *ngFor="let type of flyerTypes" [value]="type">
             {{ type }}
           </option>
@@ -80,8 +85,8 @@
       </div>
     </div>
 
-    <div class="row pt-3" *ngIf="!isReceptionAndDelivery">
-      <form-field [control]="formCapture.get('urecepcion')" class="col-md-6">
+    <div class="row pt-3">
+      <form-field [control]="formCapture.get('user')" class="col-md-6">
         <ngx-select
           label="Usuario"
           [form]="formCapture"
@@ -107,24 +112,37 @@
       </form-field>
 
       <form-field
-        [control]="formCapture.get('cve_oficio_externo')"
-        class="col-md-6"
-        *ngIf="!isReceptionStrategies && !isConsolidated">
+        [control]="formCapture.get('cveJobExternal')"
+        class="col-md-6">
+        <!-- <ngx-select [form]="formCapture" [searchOnInit]="true" control="cveJobExternal" label="Clave Oficio Externo"
+          [data]="affairName" (fetchItems)="getSubjects($event)" className="scroll-line" bindLabel="description">
+        </ngx-select> -->
+        <input
+          type="text"
+          class="form-control"
+          formControlName="cveJobExternal" />
+      </form-field>
+
+      <form-field [control]="formCapture.get('cvCoors')">
+        <!-- <ngx-select [form]="formCapture" [searchOnInit]="true" control="cvCoors" label="Coor. Regional"
+          [data]="delegations" (change)="getTotalDelegation()" (fetchItems)="getDelegations($event)"
+          className="scroll-line" bindLabel="description" [multiple]="true"></ngx-select>
+      -->
         <ngx-select
           [form]="formCapture"
-          [searchOnInit]="true"
-          control="cve_oficio_externo"
-          label="Clave Oficio Externo"
-          [data]="affairName"
-          (fetchItems)="getSubjects($event)"
-          className="scroll-line"
-          bindLabel="description">
-        </ngx-select>
+          control="cvCoors"
+          (fetchItems)="getDelegations($event)"
+          [showTooltip]="true"
+          [data]="delegations"
+          bindLabel="description"
+          label="Coor. Regional"
+          value="id"
+          [multiple]="true"></ngx-select>
       </form-field>
     </div>
 
-    <div class="row pt-3" *ngIf="!isReceptionStrategies && !isConsolidated">
-      <form-field [control]="formCapture.get('transference')" class="col-md-4">
+    <div class="row pt-3">
+      <form-field [control]="formCapture.get('noTransfere')" class="col-md-4">
         <ngx-select
           [searchOnInit]="true"
           (fetchItems)="getTransference($event)"
@@ -139,7 +157,12 @@
       <form-field [control]="formCapture.get('station')" class="col-md-4">
         <ngx-select
           [searchOnInit]="true"
-          (fetchItems)="getStation($event)"
+          (fetchItems)="
+            getStation(
+              formCapture.get('noTransfere').value,
+              formCapture.get('noStation').value
+            )
+          "
           [data]="station"
           [form]="formCapture"
           bindLabel="stationName"
@@ -147,11 +170,16 @@
           control="station">
         </ngx-select>
       </form-field>
-
-      <form-field [control]="formCapture.get('authority')" class="col-md-4">
+      <form-field [control]="formCapture.get('noAuthority')" class="col-md-4">
         <ngx-select
           [searchOnInit]="true"
-          (fetchItems)="getAuthority($event)"
+          (fetchItems)="
+            getAuthority(
+              formCapture.get('noTransfere').value,
+              formCapture.get('noStation').value,
+              formCapture.get('noAuthority').value
+            )
+          "
           [data]="authority"
           [form]="formCapture"
           bindLabel="authorityName"
@@ -167,7 +195,7 @@
           <button
             type="button"
             class="btn btn-primary active btn-sm"
-            (click)="find()">
+            type="submit">
             Consulta <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
@@ -179,6 +207,7 @@
             Reporte <i class="fas fa-print bx-sm float-icon"></i>
           </button>
         </div>
+
         <div class="m-3">
           <button
             type="button"

@@ -63,6 +63,10 @@ export class ClaimConclusionFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.ClaimConclusionForm.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.claimConclusionService
       .create(this.ClaimConclusionForm.getRawValue())

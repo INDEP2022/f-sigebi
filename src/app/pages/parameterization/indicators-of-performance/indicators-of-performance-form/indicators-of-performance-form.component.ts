@@ -23,6 +23,8 @@ export class IndicatorsOfPerformanceFormComponent
   event: any;
   indicatorNumber: string;
   zoneContracts = new DefaultSelect();
+  maxDate: Date;
+  minDate: Date;
 
   constructor(
     private fb: FormBuilder,
@@ -100,6 +102,11 @@ export class IndicatorsOfPerformanceFormComponent
         this.loading = false;
       },
     });
+  }
+
+  validateDate(event: Date) {
+    this.minDate = event;
+    console.log(event);
   }
 
   confirm() {

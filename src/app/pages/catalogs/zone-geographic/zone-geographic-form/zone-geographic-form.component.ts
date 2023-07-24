@@ -14,7 +14,7 @@ import { IVA_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class ZoneGeographicFormComponent extends BasePage implements OnInit {
   zoneGeographicForm: ModelForm<IZoneGeographic>;
-  title: string = 'Zona Geográficas';
+  title: string = 'Zona Geográfica';
   edit: boolean = false;
   zoneGeographic: IZoneGeographic;
   constructor(
@@ -67,23 +67,51 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.zoneGeographicService
-      .create(this.zoneGeographicForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.zoneGeographicForm.controls['description'].value.trim() == '' ||
+      this.zoneGeographicForm.controls['thirdPartySpecialized'].value.trim() ==
+        '' ||
+      (this.zoneGeographicForm.controls['description'].value.trim() == '' &&
+        this.zoneGeographicForm.controls[
+          'thirdPartySpecialized'
+        ].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.zoneGeographicService
+        .create(this.zoneGeographicForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.zoneGeographicService
-      .update(this.zoneGeographic.id, this.zoneGeographicForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.zoneGeographicForm.controls['description'].value.trim() == '' ||
+      this.zoneGeographicForm.controls['thirdPartySpecialized'].value.trim() ==
+        '' ||
+      (this.zoneGeographicForm.controls['description'].value.trim() == '' &&
+        this.zoneGeographicForm.controls[
+          'thirdPartySpecialized'
+        ].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.zoneGeographicService
+        .update(this.zoneGeographic.id, this.zoneGeographicForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {
