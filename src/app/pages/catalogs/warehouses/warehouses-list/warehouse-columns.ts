@@ -5,7 +5,7 @@ import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic
 
 export const WAREHOUSE_COLUMNS = {
   idWarehouse: {
-    title: 'N.Almacen',
+    title: 'No. Almacen',
     type: 'string',
     sort: false,
   },

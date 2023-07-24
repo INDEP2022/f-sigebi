@@ -50,6 +50,18 @@ export class IndicatorReportListComponent extends BasePage implements OnInit {
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'startingPercentageRange':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'finalPercentageRange':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'contractualPenalty':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -68,6 +80,7 @@ export class IndicatorReportListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });

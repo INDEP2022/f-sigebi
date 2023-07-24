@@ -12,9 +12,9 @@ export const COMPENSATION_COLUMNS = {
     width: '15%',
   },
   typeDocSatXml: {
-    title: 'Tipo documento',
+    title: 'Tipo Documento',
     type: 'string',
     sort: false,
-    width: '55%',
+    width: '60%',
   },
 };

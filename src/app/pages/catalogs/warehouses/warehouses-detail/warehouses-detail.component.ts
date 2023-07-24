@@ -23,7 +23,7 @@ import { WarehouseService } from '../../../../core/services/catalogs/warehouse.s
 export class WarehousesDetailComponent extends BasePage implements OnInit {
   warehouseForm: ModelForm<IWarehouse>;
   warehouse: IWarehouse;
-  title: string = 'Categoria para almacenes';
+  title: string = 'Categoria para Almacen';
   edit: boolean = false;
 
   public states = new DefaultSelect();
@@ -156,51 +156,73 @@ export class WarehousesDetailComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.warehouseService.create(this.warehouseForm.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    if (
+      this.warehouseForm.controls['ubication'].value.trim() == '' ||
+      this.warehouseForm.controls['description'].value.trim() == '' ||
+      (this.warehouseForm.controls['ubication'].value.trim() == '' &&
+        this.warehouseForm.controls['description'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.warehouseService.create(this.warehouseForm.value).subscribe(
+        data => this.handleSuccess(),
+        error => (this.loading = false)
+      );
+    }
   }
 
   update() {
-    this.loading = true;
-    console.log(this.warehouseForm.value);
-    let data = {
-      idWarehouse: this.warehouseForm.controls['idWarehouse'].value,
-      description: this.warehouseForm.controls['description'].value,
-      ubication: this.warehouseForm.controls['ubication'].value,
-      manager: this.warehouseForm.controls['manager'].value,
-      registerNumber: this.warehouseForm.controls['registerNumber'].value,
-      stateCode:
-        this.warehouse.stateCode.descCondition !=
-        this.warehouseForm.get('stateCode').value
-          ? this.warehouseForm.get('stateCode').value
-          : this.warehouseForm.controls['stateCodeID'].value,
-      cityCode:
-        this.warehouse.cityCode.nameCity !=
-        this.warehouseForm.get('cityCode').value
-          ? this.warehouseForm.controls['cityCode'].value
-          : this.warehouseForm.controls['cityCodeID'].value,
-      municipalityCode:
-        this.warehouse.municipalityCode.nameMunicipality !=
-        this.warehouseForm.get('municipalityCode').value
-          ? this.warehouseForm.controls['municipalityCode'].value
-          : this.warehouseForm.controls['municipalityCodeID'].value,
-      localityCode:
-        this.warehouse.localityCode.nameLocation !=
-        this.warehouseForm.get('localityCode').value
-          ? this.warehouseForm.controls['localityCode'].value
-          : this.warehouseForm.controls['localityCodeID'].value,
-      indActive: this.warehouseForm.controls['indActive'].value,
-      type: this.warehouseForm.controls['type'].value,
-      responsibleDelegation:
-        this.warehouseForm.controls['responsibleDelegation'].value,
-    };
-    this.warehouseService.update(this.warehouse.idWarehouse, data).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (
+      this.warehouseForm.controls['ubication'].value.trim() == '' ||
+      this.warehouseForm.controls['description'].value.trim() == '' ||
+      (this.warehouseForm.controls['ubication'].value.trim() == '' &&
+        this.warehouseForm.controls['description'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      console.log(this.warehouseForm.value);
+      let data = {
+        idWarehouse: this.warehouseForm.controls['idWarehouse'].value,
+        description: this.warehouseForm.controls['description'].value,
+        ubication: this.warehouseForm.controls['ubication'].value,
+        manager: this.warehouseForm.controls['manager'].value,
+        registerNumber: this.warehouseForm.controls['registerNumber'].value,
+        stateCode:
+          this.warehouse.stateCode.descCondition !=
+          this.warehouseForm.get('stateCode').value
+            ? this.warehouseForm.get('stateCode').value
+            : this.warehouseForm.controls['stateCodeID'].value,
+        cityCode:
+          this.warehouse.cityCode.nameCity !=
+          this.warehouseForm.get('cityCode').value
+            ? this.warehouseForm.controls['cityCode'].value
+            : this.warehouseForm.controls['cityCodeID'].value,
+        municipalityCode:
+          this.warehouse.municipalityCode.nameMunicipality !=
+          this.warehouseForm.get('municipalityCode').value
+            ? this.warehouseForm.controls['municipalityCode'].value
+            : this.warehouseForm.controls['municipalityCodeID'].value,
+        localityCode:
+          this.warehouse.localityCode.nameLocation !=
+          this.warehouseForm.get('localityCode').value
+            ? this.warehouseForm.controls['localityCode'].value
+            : this.warehouseForm.controls['localityCodeID'].value,
+        indActive: this.warehouseForm.controls['indActive'].value,
+        type: this.warehouseForm.controls['type'].value,
+        responsibleDelegation:
+          this.warehouseForm.controls['responsibleDelegation'].value,
+      };
+      this.warehouseService.update(this.warehouse.idWarehouse, data).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+    }
   }
 
   handleSuccess() {

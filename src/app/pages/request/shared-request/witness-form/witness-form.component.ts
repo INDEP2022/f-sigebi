@@ -23,6 +23,7 @@ export class WitnessFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('proceeding', this.proceeding);
     this.prepareForm();
   }
 
