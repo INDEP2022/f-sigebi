@@ -1,6 +1,8 @@
+import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { StrategyEndpoints } from 'src/app/common/constants/endpoints/ms-strategy-endpoint';
+import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.interceptor';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
@@ -44,10 +46,23 @@ export class StrategyServiceService extends HttpService {
     return this.get<IListResponse<IMeasurementUnits>>(route, params);
   }
 
-  getZCenterOperationRegional(params?: ListParams) {
-    return this.get<IListResponse<any>>(
+  getZCenterOperationRegional(
+    model: Object,
+    params?: ListParams
+  ): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
       StrategyEndpoints.ZCenterOperationRegional,
+      model,
       params
+    );
+  }
+
+  getZCenterOperationRegional1(model: Object, params?: ListParams) {
+    const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    return this.httpClient.post(
+      `${this.url}${this.microservice}/${this.prefix}z-center-operation-regional/getAllDescriptionCenterZOperationRegional`,
+      model,
+      { params, headers }
     );
   }
 }
