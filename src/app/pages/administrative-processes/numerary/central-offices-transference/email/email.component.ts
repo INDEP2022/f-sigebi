@@ -147,7 +147,7 @@ export class EmailComponentC extends BasePage implements OnInit {
       delegation,
     } = this.report;
     const { asunto, PARA, REPORTE, CC, fechaEnv } = this.form.value;
-    const user: string = this.user.decodeToken().name;
+    const user: string = this.user.decodeToken().username;
     console.log(this.report);
     const del = this.delegations.data.filter(
       (del: any) => del.id == delegation
