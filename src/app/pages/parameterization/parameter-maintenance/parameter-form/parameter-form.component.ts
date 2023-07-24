@@ -53,8 +53,18 @@ export class ParameterFormComponent extends BasePage implements OnInit {
           Validators.maxLength(60),
         ],
       ],
-      initialValue: [null, [Validators.required, Validators.maxLength(200)]],
-      finalValue: [null, Validators.maxLength(200)],
+      initialValue: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      finalValue: [
+        null,
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+      ],
       startDate: [null, Validators.required],
       endDate: [null],
     });
