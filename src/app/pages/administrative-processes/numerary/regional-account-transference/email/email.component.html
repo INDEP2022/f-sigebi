@@ -153,7 +153,8 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active"
-          (click)="sendEmail()">
+          (click)="sendEmail()"
+          [disabled]="!form.valid">
           Enviar <i class="bx bx-send"></i>
         </button>
         <button

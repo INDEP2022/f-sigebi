@@ -154,7 +154,7 @@ export class EmailComponentC extends BasePage implements OnInit {
     )[0].description;
 
     const body = {
-      to: 'pruebasqaindep@gmail.com',
+      to: PARA ? PARA.join(',') : 'pruebasqaindep@gmail.com',
       subject: asunto,
       fecDepositDev: dateDevolution,
       description: del ?? this.description,
@@ -165,26 +165,26 @@ export class EmailComponentC extends BasePage implements OnInit {
       amountTotalDev: total,
       cveAccountDev: cveAccount,
     };
-    console.log(body);
+
     this.transferGoodService.getEmailCentral(body).subscribe({
       next: resp => {
         this.form.get('MENSAJE').patchValue(resp.message);
 
-        // const body: any = {
-        //   header: 'aetiru@gmail.com',
-        //   destination: PARA,
-        //   copy: CC,
-        //   subject: ASUNTO,
-        //   message: `${resp.message}`,
-        // };
-
         const body: any = {
-          header: 'DEV',
-          destination: ['pruebasqaindep@gmail.com'],
-          copy: [''],
-          subject: 'DEV EMAIL',
+          header: 'aetiru@gmail.com',
+          destination: PARA ?? [],
+          copy: CC ?? [],
+          subject: asunto,
           message: `${resp.message}`,
         };
+
+        // const body: any = {
+        //   header: 'DEV',
+        //   destination: ['pruebasqaindep@gmail.com'],
+        //   copy: [''],
+        //   subject: 'DEV EMAIL',
+        //   message: `${resp.message}`,
+        // };
 
         this.transferGoodService.sendEmail(body).subscribe({
           next: () => {
@@ -195,26 +195,25 @@ export class EmailComponentC extends BasePage implements OnInit {
                 ? fechaEnv.split('/').reverse().join('-')
                 : fechaEnv;
 
-            // const body = {
-            //   id: REPORTE,
-            //   addressee: PARA.join(','),
-            //   sender: user.toUpperCase(),
-            //   cc: CC ? CC.join(',') : [],
-            //   message: `${resp.message}`,
-            //   affair: ASUNTO,
-            //   sendDate: date,
-            //   devReportNumber: '',
-            // };
-
-            const body: any = {
-              addressee: 'pruebasqaindep@gmail.com',
+            const body = {
+              addressee: PARA ? PARA.join(',') : '',
               sender: user.toUpperCase(),
-              cc: '',
+              cc: CC ? CC.join(',') : [],
               message: `${resp.message}`,
               affair: asunto,
               sendDate: date,
               devReportNumber: REPORTE,
             };
+
+            // const body: any = {
+            //   addressee: 'pruebasqaindep@gmail.com',
+            //   sender: user.toUpperCase(),
+            //   cc: '',
+            //   message: `${resp.message}`,
+            //   affair: asunto,
+            //   sendDate: date,
+            //   devReportNumber: REPORTE,
+            // };
 
             this.emailService.create(body).subscribe({
               next: () => {
