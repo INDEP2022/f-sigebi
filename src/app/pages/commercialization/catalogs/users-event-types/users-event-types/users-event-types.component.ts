@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITevents } from 'src/app/core/models/catalogs/tevents.model';
 import { IUsersEventTypes } from 'src/app/core/models/catalogs/users-event-types.model';
 import { UserEventTypesService } from 'src/app/core/services/catalogs/users-event-types.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { UsersEventTypesFormsComponent } from '../users-event-types-forms/users-event-types-forms.component';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -21,17 +24,23 @@ export class UsersEventTypesComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   rowSelected: boolean = false;
   selectedRow: any = null;
+  columnFilters: any = [];
 
   constructor(
     private fb: FormBuilder,
-    private userEventTypesService: UserEventTypesService
+    private userEventTypesService: UserEventTypesService,
+    private modalService: BsModalService
   ) {
     super();
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
-      actions: false,
-      mode: '',
+      actions: {
+        ...this.settings.actions,
+        add: false,
+        edit: false,
+        delete: true,
+      },
       columns: COLUMNS,
     };
   }
@@ -50,6 +59,7 @@ export class UsersEventTypesComponent extends BasePage implements OnInit {
     this.loading = true;
     this.userEventTypesService.getAll(params).subscribe({
       next: response => {
+        console.log(response.data);
         const newData = response.data.filter((item: any) => {
           return item.id_tpevento === id;
         });
@@ -73,5 +83,17 @@ export class UsersEventTypesComponent extends BasePage implements OnInit {
       this.valuesList = [];
       this.totalItems = 0;
     }
+  }
+  openForm(userEvent?: any) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      userEvent,
+      callback: (next: boolean) => {
+        if (next) {
+          console.log(next);
+        }
+      },
+    };
+    this.modalService.show(UsersEventTypesFormsComponent, modalConfig);
   }
 }

@@ -29,6 +29,8 @@ export class ParametersFormComponent extends BasePage implements OnInit {
   typeEvents = new DefaultSelect<IComerTpEvent>();
   parameters = new DefaultSelect<IParameters>();
   tipo = new DefaultSelect();
+  addressList = new DefaultSelect<any>();
+
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -42,6 +44,12 @@ export class ParametersFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.addressList = new DefaultSelect([
+      { value: 'I', description: 'Inmuebles' },
+      { value: 'M', description: 'Muebles' },
+      { value: 'C', description: 'Comercial' },
+      { value: 'D', description: 'Conciliación' },
+    ]);
     this.getTypeEvent(new ListParams());
   }
 
