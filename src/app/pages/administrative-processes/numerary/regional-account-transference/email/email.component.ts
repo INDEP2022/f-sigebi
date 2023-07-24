@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import {
@@ -66,7 +66,7 @@ export class EmailComponent extends BasePage implements OnInit {
       CC: [null],
       FECHA_ENV: [null],
       MENSAJE: [null],
-      PARA: [null],
+      PARA: [null, Validators.required],
       PREVIO: [null],
       REMITENTE: [null],
       REPORTE: [null],
@@ -153,21 +153,21 @@ export class EmailComponent extends BasePage implements OnInit {
       next: resp => {
         this.form.get('MENSAJE').patchValue(resp.message);
 
+        const body: any = {
+          header: 'infosaedwh@sae.gob.mx',
+          destination: PARA ?? [],
+          copy: CC ?? [],
+          subject: ASUNTO ?? '',
+          message: `${resp.message}`,
+        };
+
         // const body: any = {
-        //   header: 'infosaedwh@sae.gob.mx',
-        //   destination: PARA,
-        //   copy: CC,
+        //   header: 'Test Email',
+        //   destination: ['pruebasqaindep@gmail.com'],
+        //   copy: [''],
         //   subject: ASUNTO,
         //   message: `${resp.message}`,
         // };
-
-        const body: any = {
-          header: 'Test Email',
-          destination: ['pruebasqaindep@gmail.com'],
-          copy: [''],
-          subject: ASUNTO,
-          message: `${resp.message}`,
-        };
 
         this.transferGoodService.sendEmail(body).subscribe({
           next: () => {
@@ -178,27 +178,27 @@ export class EmailComponent extends BasePage implements OnInit {
                 ? FECHA_ENV.split('/').reverse().join('-')
                 : FECHA_ENV;
 
-            // const body = {
-            //   id: REPORTE,
-            //   addressee: PARA ? PARA.join(',') : [],
-            //   sender: user.toUpperCase(),
-            //   cc: CC ? CC.join(',') : [],
-            //   message: `${resp.message}`,
-            //   affair: ASUNTO,
-            //   sendDate: date,
-            //   devReportNumber: '',
-            // };
-
-            const body: any = {
-              reportNumber: REPORTE,
-              addressee: 'pruebasqaindep@gmail.com',
+            const body = {
+              id: REPORTE,
+              addressee: PARA ? PARA.join(',') : '',
               sender: user.toUpperCase(),
-              cc: '',
+              cc: CC ? CC.join(',') : '',
               message: `${resp.message}`,
               affair: ASUNTO,
               sendDate: date,
-              devReportNumber: null,
+              devReportNumber: '',
             };
+
+            // const body: any = {
+            //   reportNumber: REPORTE,
+            //   addressee: 'pruebasqaindep@gmail.com',
+            //   sender: user.toUpperCase(),
+            //   cc: '',
+            //   message: `${resp.message}`,
+            //   affair: ASUNTO,
+            //   sendDate: date,
+            //   devReportNumber: null,
+            // };
 
             this.emailService.create(body).subscribe({
               next: () => {
