@@ -50,7 +50,6 @@
             <input type="text" class="form-control" formControlName="colony" />
           </form-field>
         </div>
-
         <div class="col-md-4">
           <form-field
             [control]="officeForm.get('municipalDelegate')"
@@ -61,11 +60,10 @@
               formControlName="municipalDelegate" />
           </form-field>
         </div>
-
         <div class="col-md-4">
           <form-field
             [control]="officeForm.get('postalCode')"
-            label="C&oacute;digo Postal">
+            label="Codigo Postal">
             <input
               type="number"
               class="form-control"
@@ -74,37 +72,34 @@
               oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
           </form-field>
         </div>
-      </div>
+        <div class="row pt-5">
+          <div class="col-md-4">
+            <form-field [control]="officeForm.get('rfc')" label="RFC">
+              <input type="text" class="form-control" formControlName="rfc" />
+            </form-field>
+          </div>
 
-      <div class="row pt-5">
-        <div class="col-md-4">
-          <form-field [control]="officeForm.get('rfc')" label="RFC">
-            <input type="text" class="form-control" formControlName="rfc" />
-          </form-field>
-        </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="officeForm.get('phone')"
+              label="Tel&eacute;fono">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="phone" />
+            </form-field>
+          </div>
 
-        <div class="col-md-4">
-          <form-field
-            [control]="officeForm.get('phone')"
-            label="Tel&eacute;fono">
-            <input type="number" class="form-control" formControlName="phone" />
-          </form-field>
-        </div>
-
-        <div class="col-md-4">
-          <form-field
-            [control]="officeForm.get('phoneTwo')"
-            label="Segundo Tel&eacute;fono">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="phoneTwo" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-5">
-        <div class="col-md-6">
+          <div class="col-md-4">
+            <form-field
+              [control]="officeForm.get('phoneTwo')"
+              label="Segundo Tel&eacute;fono">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="phoneTwo" />
+            </form-field>
+          </div>
           <form-field [control]="officeForm.get('fax')" label="Fax">
             <input type="text" class="form-control" formControlName="fax" />
           </form-field>
