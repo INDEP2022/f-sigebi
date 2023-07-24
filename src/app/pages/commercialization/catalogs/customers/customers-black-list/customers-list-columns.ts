@@ -7,6 +7,14 @@ export const CUSTOMERS_LIST_COLUMNS = {
     title: 'Nombre o Razón Social',
     sort: false,
   },
+  paternalSurname: {
+    title: 'Apellido Paterno',
+    sort: false,
+  },
+  maternalSurname: {
+    title: 'Apellido Materno',
+    sort: false,
+  },
   rfc: {
     title: 'RFC',
     sort: false,

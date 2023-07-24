@@ -15,9 +15,9 @@ export class CustomerService extends HttpService {
   private readonly route: string = ENDPOINT_LINKS.Customer;
   private readonly endpointClients: string = 'comer-clients';
   private readonly clientsBlackList: string =
-    'comer-clients?filter.blackList=S';
+    'comer-clients?filter.blackList=$eq:S';
   private readonly clientsWhiteList: string =
-    'comer-clients?filter.blackList=N';
+    'comer-clients?filter.blackList=$eq:N';
   private readonly endpointRepresentative: string =
     'comer-clients-representative';
   constructor(private customerRepository: Repository<ICustomer>) {
@@ -29,20 +29,24 @@ export class CustomerService extends HttpService {
     return this.get<IListResponse<ICustomer>>(this.endpointClients, params);
   }
 
-  getAllClients(params?: string): Observable<IListResponse<ICustomer>> {
-    return this.get<IListResponse<ICustomer>>(this.endpointClients, params);
+  getAllClients(params?: string): Observable<IListResponse<IRepresentative>> {
+    return this.get<IListResponse<any>>(this.endpointClients, params);
+  }
+
+  getAllAgendId(): Observable<IListResponse<ICustomer>> {
+    return this.get<IListResponse<ICustomer>>(this.endpointClients);
   }
 
   getAllClientsBlackList(
     params?: ListParams
-  ): Observable<IListResponse<ICustomer>> {
-    return this.get<IListResponse<ICustomer>>(this.clientsBlackList, params);
+  ): Observable<IListResponse<IRepresentative>> {
+    return this.get<IListResponse<any>>(this.clientsBlackList, params);
   }
 
   getAllClientsWhiteList(
     params?: ListParams
-  ): Observable<IListResponse<ICustomer>> {
-    return this.get<IListResponse<ICustomer>>(this.clientsWhiteList, params);
+  ): Observable<IListResponse<IRepresentative>> {
+    return this.get<IListResponse<any>>(this.clientsWhiteList, params);
   }
 
   getAllRepresentative(
@@ -61,12 +65,11 @@ export class CustomerService extends HttpService {
   create(model: ICustomer): Observable<ICustomer> {
     const route = `${this.endpointClients}`;
     return this.post(route, model);
-    // return this.customerRepository.create(this.route, model);
   }
 
-  updateCustomers(id: string | number, customer: ICustomer) {
+  updateCustomers(id: string | number, model: ICustomer) {
     const route = `${this.endpointClients}/${id}`;
-    return this.put(route, customer);
+    return this.put(route, model);
   }
 
   updateRepresentatives(id: string | number, representative: IRepresentative) {
