@@ -140,7 +140,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   showWarehouse: boolean = false;
   showReprog: boolean = false;
   showCancel: boolean = false;
+  //receiptGuardGood: IRecepitGuard;
   receiptGuardGood: IRecepitGuard;
+  receiptWarehouseGood: IRecepitGuard;
   receiptData: IReceipt;
   goodData: IGood;
   transfersDestinity: any[] = [];
@@ -284,6 +286,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   search: FormControl = new FormControl({});
   programming: Iprogramming;
   task: ITask;
+  goodId: string = '';
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
@@ -503,7 +506,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.programmingId'] = this.programmingId;
     this.receptionGoodService.getReceptions(params.getValue()).subscribe({
       next: response => {
-        this.receiptGuardGood = response.data[0];
+        //this.receiptGuardGood = response.data[0];
 
         const filterWarehouse = response.data.map((item: any) => {
           if (item.typeReceipt == 'ALMACEN') return item;
@@ -513,7 +516,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           return item;
         });
 
+        this.receiptWarehouseGood = infoWarehouse[0];
         this.receiptWarehouse.load(infoWarehouse);
+
         const filterGuard = response.data.map((item: any) => {
           if (item.typeReceipt == 'RESGUARDO') return item;
         });
@@ -521,7 +526,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           const infoGuard = filterGuard.filter((item: IRecepitGuard) => {
             return item;
           });
-
+          this.receiptGuardGood = infoGuard[0];
           this.receiptGuards.load(infoGuard);
         }
       },
@@ -1328,8 +1333,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     if (this.selectGood.length > 0) {
       this.alertQuestion(
         'question',
-        'Confirmación',
         '¿Seguro que quiere asignar los bienes  a una acta?',
+        'Acción irreversible',
         'Aceptar'
       ).then(question => {
         if (question.isConfirmed) {
@@ -1832,6 +1837,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           idTypeDoc,
           programming: this.programming,
           receiptGuards: receiptGuards,
+          guardReception: this.goodsReception,
           callback: (next: boolean) => {
             if (next) {
               this.uploadData(receiptGuards, idTypeDoc);
@@ -1972,9 +1978,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       idProgramming: this.programmingId,
       programming: this.programming,
 
-      callback: (receipt: IProceedings, keyDoc: string) => {
+      callback: (receipt: IProceedings, keyDoc: string, typeFirm: string) => {
         if (receipt && keyDoc) {
-          this.openReportReceipt(receipt, keyDoc);
+          this.openReportReceipt(receipt, keyDoc, typeFirm);
         }
       },
     };
@@ -1982,7 +1988,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.modalService.show(GenerateReceiptFormComponent, config);
   }
 
-  openReportReceipt(_receipt: IProceedings, keyDoc: string) {
+  openReportReceipt(_receipt: IProceedings, keyDoc: string, typeFirm: string) {
     const idTypeDoc = 103;
     const idProg = this.programmingId;
     const receiptId = _receipt.id;
@@ -1995,9 +2001,17 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         keyDoc,
         receipt: _receipt,
         programming: this.programming,
+        typeFirm,
+        guardReception: this.goodsReception,
         callback: (next: boolean) => {
           if (next) {
-            this.uplodadReceiptDelivery();
+            if (typeFirm != 'electronic') {
+              this.uplodadReceiptDelivery();
+            } else {
+              this.getReceipts();
+              this.getInfoGoodsProgramming();
+              this.goodsReception.clear();
+            }
           }
         },
       },
@@ -2710,5 +2724,591 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   close() {
     this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
+  }
+
+  saveInfoGoodReception() {
+    if (this.goodsReception.value.length > 0) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea editar el bien?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.goodsReception.value.map((good: IGood) => {
+            const info = {
+              id: good.id,
+              descriptionGoodSae: good.descriptionGoodSae,
+              fileNumber: good.fileNumber,
+              goodDescription: good.descriptionGood,
+              goodId: good.goodId,
+              physicalStatus: good.physicalStatus,
+              quantity: good.quantity,
+              quantitySae: good.quantitySae,
+              regionalDelegationNumber: good.delegationNumber,
+              saeMeasureUnit: good.saeMeasureUnit,
+              saePhysicalState: good.saePhysicalState,
+              stateConservation: good.stateConservation,
+              stateConservationSae: good.stateConservationSae,
+              uniqueKey: good.uniqueKey,
+              unitMeasure: good.unitMeasure,
+              saeDestiny: good.transferentDestiny,
+            };
+
+            this.goodService.updateByBody(info).subscribe({
+              next: () => {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+              },
+              error: error => {},
+            });
+          });
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'No se encontraron bienes para actualizar'
+      );
+    }
+  }
+
+  saveInfoGoodTransportable() {
+    if (this.goodsTransportable.value.length > 0) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea editar el bien?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.goodsTransportable.value.map((good: IGood) => {
+            const info = {
+              id: good.id,
+              descriptionGoodSae: good.descriptionGoodSae,
+              fileNumber: good.fileNumber,
+              goodDescription: good.descriptionGood,
+              goodId: good.goodId,
+              physicalStatus: good.physicalStatus,
+              quantity: good.quantity,
+              quantitySae: good.quantitySae,
+              regionalDelegationNumber: good.delegationNumber,
+              saeMeasureUnit: good.saeMeasureUnit,
+              saePhysicalState: good.saePhysicalState,
+              stateConservation: good.stateConservation,
+              stateConservationSae: good.stateConservationSae,
+              uniqueKey: good.uniqueKey,
+              unitMeasure: good.unitMeasure,
+              saeDestiny: good.transferentDestiny,
+            };
+
+            this.goodService.updateByBody(info).subscribe({
+              next: () => {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+              },
+              error: error => {},
+            });
+          });
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'No se encontraron bienes para actualizar'
+      );
+    }
+  }
+
+  saveInfoGoodGuard() {
+    if (this.goodsGuards.value.length > 0) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea editar el bien?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.goodsGuards.value.map((good: IGood) => {
+            const info = {
+              id: good.id,
+              descriptionGoodSae: good.descriptionGoodSae,
+              fileNumber: good.fileNumber,
+              goodDescription: good.descriptionGood,
+              goodId: good.goodId,
+              physicalStatus: good.physicalStatus,
+              quantity: good.quantity,
+              quantitySae: good.quantitySae,
+              regionalDelegationNumber: good.delegationNumber,
+              saeMeasureUnit: good.saeMeasureUnit,
+              saePhysicalState: good.saePhysicalState,
+              stateConservation: good.stateConservation,
+              stateConservationSae: good.stateConservationSae,
+              uniqueKey: good.uniqueKey,
+              unitMeasure: good.unitMeasure,
+              saeDestiny: good.transferentDestiny,
+            };
+
+            this.goodService.updateByBody(info).subscribe({
+              next: () => {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+              },
+              error: error => {},
+            });
+          });
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'No se encontraron bienes para actualizar'
+      );
+    }
+  }
+
+  saveInfoGoodWarehouse() {
+    if (this.goodsWarehouse.value.length > 0) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea editar el bien?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.goodsWarehouse.value.map((good: IGood) => {
+            const info = {
+              id: good.id,
+              descriptionGoodSae: good.descriptionGoodSae,
+              fileNumber: good.fileNumber,
+              goodDescription: good.descriptionGood,
+              goodId: good.goodId,
+              physicalStatus: good.physicalStatus,
+              quantity: good.quantity,
+              quantitySae: good.quantitySae,
+              regionalDelegationNumber: good.delegationNumber,
+              saeMeasureUnit: good.saeMeasureUnit,
+              saePhysicalState: good.saePhysicalState,
+              stateConservation: good.stateConservation,
+              stateConservationSae: good.stateConservationSae,
+              uniqueKey: good.uniqueKey,
+              unitMeasure: good.unitMeasure,
+              saeDestiny: good.transferentDestiny,
+            };
+
+            this.goodService.updateByBody(info).subscribe({
+              next: () => {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+              },
+              error: error => {},
+            });
+          });
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'No se encontraron bienes para actualizar'
+      );
+    }
+  }
+
+  saveInfoGoodReprog() {
+    if (this.goodsReprog.value.length > 0) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea editar el bien?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.goodsReprog.value.map((good: IGood) => {
+            const info = {
+              id: good.id,
+              descriptionGoodSae: good.descriptionGoodSae,
+              fileNumber: good.fileNumber,
+              goodDescription: good.descriptionGood,
+              goodId: good.goodId,
+              physicalStatus: good.physicalStatus,
+              quantity: good.quantity,
+              quantitySae: good.quantitySae,
+              regionalDelegationNumber: good.delegationNumber,
+              saeMeasureUnit: good.saeMeasureUnit,
+              saePhysicalState: good.saePhysicalState,
+              stateConservation: good.stateConservation,
+              stateConservationSae: good.stateConservationSae,
+              uniqueKey: good.uniqueKey,
+              unitMeasure: good.unitMeasure,
+              saeDestiny: good.transferentDestiny,
+            };
+
+            this.goodService.updateByBody(info).subscribe({
+              next: () => {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+              },
+              error: error => {},
+            });
+          });
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'No se encontraron bienes para actualizar'
+      );
+    }
+  }
+
+  saveInfoGoodCancelation() {
+    if (this.goodsCancelation.value.length > 0) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea editar el bien?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          this.goodsCancelation.value.map((good: IGood) => {
+            const info = {
+              id: good.id,
+              descriptionGoodSae: good.descriptionGoodSae,
+              fileNumber: good.fileNumber,
+              goodDescription: good.descriptionGood,
+              goodId: good.goodId,
+              physicalStatus: good.physicalStatus,
+              quantity: good.quantity,
+              quantitySae: good.quantitySae,
+              regionalDelegationNumber: good.delegationNumber,
+              saeMeasureUnit: good.saeMeasureUnit,
+              saePhysicalState: good.saePhysicalState,
+              stateConservation: good.stateConservation,
+              stateConservationSae: good.stateConservationSae,
+              uniqueKey: good.uniqueKey,
+              unitMeasure: good.unitMeasure,
+              saeDestiny: good.transferentDestiny,
+            };
+
+            this.goodService.updateByBody(info).subscribe({
+              next: () => {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+              },
+              error: error => {},
+            });
+          });
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'No se encontraron bienes para actualizar'
+      );
+    }
+  }
+
+  showLabelTDRTransportable() {
+    if (this.goodsTransportable.value.length) {
+      this.goodsTransportable.value.map((good: IGood) => {
+        this.goodId += good.goodId + ',';
+      });
+
+      let config: ModalOptions = {
+        initialState: {
+          showTDR: true,
+          goodsId: this.goodId,
+          programming: this.programming,
+          callback: (next: boolean) => {
+            if (next) {
+            }
+          },
+        },
+        class: 'modal-xl modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(ShowReportComponentComponent, config);
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'No hay etiquetas que visualizar'
+      );
+    }
+  }
+
+  showLabelTDRReception() {
+    if (this.goodsReception.value.length) {
+      this.goodsReception.value.map((good: IGood) => {
+        this.goodId += good.goodId + ',';
+      });
+
+      let config: ModalOptions = {
+        initialState: {
+          showTDR: true,
+          goodsId: this.goodId,
+          programming: this.programming,
+          callback: (next: boolean) => {
+            if (next) {
+            }
+          },
+        },
+        class: 'modal-xl modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(ShowReportComponentComponent, config);
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'No hay etiquetas que visualizar'
+      );
+    }
+  }
+
+  showLabelTDRGuard() {
+    if (this.goodsGuards.value.length) {
+      this.goodsGuards.value.map((good: IGood) => {
+        this.goodId += good.goodId + ',';
+      });
+
+      let config: ModalOptions = {
+        initialState: {
+          showTDR: true,
+          goodsId: this.goodId,
+          programming: this.programming,
+          callback: (next: boolean) => {
+            if (next) {
+            }
+          },
+        },
+        class: 'modal-xl modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(ShowReportComponentComponent, config);
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'No hay etiquetas que visualizar'
+      );
+    }
+  }
+
+  showLabelTDRWarehouse() {
+    if (this.goodsWarehouse.value.length > 0) {
+      this.goodsWarehouse.value.map((good: IGood) => {
+        this.goodId += good.goodId + ',';
+      });
+
+      let config: ModalOptions = {
+        initialState: {
+          showTDR: true,
+          goodsId: this.goodId,
+          programming: this.programming,
+          callback: (next: boolean) => {
+            if (next) {
+            }
+          },
+        },
+        class: 'modal-xl modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(ShowReportComponentComponent, config);
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'No hay etiquetas que visualizar'
+      );
+    }
+  }
+
+  showLabelTDRReprog() {
+    if (this.goodsReprog.value.length > 0) {
+      this.goodsReprog.value.map((good: IGood) => {
+        this.goodId += good.goodId + ',';
+      });
+
+      let config: ModalOptions = {
+        initialState: {
+          showTDR: true,
+          goodsId: this.goodId,
+          programming: this.programming,
+          callback: (next: boolean) => {
+            if (next) {
+            }
+          },
+        },
+        class: 'modal-xl modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(ShowReportComponentComponent, config);
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'No hay etiquetas que visualizar'
+      );
+    }
+  }
+
+  showLabelTDRCancel() {
+    if (this.goodsCancelation.value.length > 0) {
+      this.goodsCancelation.value.map((good: IGood) => {
+        this.goodId += good.goodId + ',';
+      });
+
+      let config: ModalOptions = {
+        initialState: {
+          showTDR: true,
+          goodsId: this.goodId,
+          programming: this.programming,
+          callback: (next: boolean) => {
+            if (next) {
+            }
+          },
+        },
+        class: 'modal-xl modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(ShowReportComponentComponent, config);
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'No hay etiquetas que visualizar'
+      );
+    }
+  }
+
+  generateReportTransportable() {
+    this.programmingService
+      .reportProgrammingGoods(this.programmingId, 'EN_TRANSPORTABLE')
+      .subscribe({
+        next: response => {
+          this.downloadExcel(response.data);
+        },
+        error: error => {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No hay bienes para generar el reporte'
+          );
+        },
+      });
+  }
+
+  generateReportReception() {
+    this.programmingService
+      .reportProgrammingGoods(this.programmingId, 'EN_RECEPCION_TMP')
+      .subscribe({
+        next: response => {
+          this.downloadExcel(response.data);
+        },
+        error: error => {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No hay bienes para generar el reporte'
+          );
+        },
+      });
+  }
+
+  generateReportGuard() {
+    this.programmingService
+      .reportProgrammingGoods(this.programmingId, 'EN_RESGUARDO_TMP')
+      .subscribe({
+        next: response => {
+          this.downloadExcel(response.data);
+        },
+        error: error => {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No hay bienes para generar el reporte'
+          );
+        },
+      });
+  }
+
+  generateReportWarehouse() {
+    this.programmingService
+      .reportProgrammingGoods(this.programmingId, 'EN_ALMACEN_TMP')
+      .subscribe({
+        next: response => {
+          this.downloadExcel(response.data);
+        },
+        error: error => {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No hay bienes para generar el reporte'
+          );
+        },
+      });
+  }
+
+  generateReportReprog() {
+    this.programmingService
+      .reportProgrammingGoods(this.programmingId, 'EN_PROGRAMACION_TMP')
+      .subscribe({
+        next: response => {
+          this.downloadExcel(response.data);
+        },
+        error: error => {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No hay bienes para generar el reporte'
+          );
+        },
+      });
+  }
+
+  generateReportCancelation() {
+    this.programmingService
+      .reportProgrammingGoods(this.programmingId, 'EN_CANCELACION_TMP')
+      .subscribe({
+        next: response => {
+          this.downloadExcel(response.data);
+        },
+        error: error => {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'No hay bienes para generar el reporte'
+          );
+        },
+      });
+  }
+
+  downloadExcel(excel: any) {
+    const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${excel}`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = linkSource;
+    downloadLink.target = '_blank';
+    downloadLink.download = 'Bienes.xlsx';
+    downloadLink.click();
+    this.alert('success', 'Acción Correcta', 'Archivo generado');
   }
 }

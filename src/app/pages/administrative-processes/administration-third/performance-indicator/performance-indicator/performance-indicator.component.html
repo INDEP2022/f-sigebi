@@ -81,6 +81,13 @@
                   class="form-control" />
               </form-field>
             </div>
+
+            <div class="col-md-3 mr-4">
+              <button type="button" class="btn btn-primary active btn-sm">
+                Buscar
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+            </div>
           </div>
         </form>
       </div>
@@ -133,17 +140,20 @@
         </div>
         <app-pagination
           [params]="params"
-          [totalItems]="totalItems"></app-pagination>
-        <div class="row">
-          <div class="col-md-2">
+          [totalItems]="totalItemsA"></app-pagination>
+        <div class="row justify-content-space-evenly">
+          <div class="col-md-3">
             <button
               class="btn btn-primary btn-sm active"
               (click)="openStrategy('')">
               Incorpora
             </button>
           </div>
-          <div class="col-md-2">
-            <button class="btn btn-danger btn-sm active">Eliminar</button>
+          <div class="col-md-3">
+            <button class="btn btn-danger btn-sm active">
+              Eliminar
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -158,12 +168,12 @@
         </div>
         <app-pagination
           [params]="params"
-          [totalItems]="totalItems"></app-pagination>
-        <div class="row">
-          <div class="col-md-2">
+          [totalItems]="totalItemsI"></app-pagination>
+        <div class="row justify-content-space-evenly">
+          <div class="col-md-3">
             <button class="btn btn-primary btn-sm active">Reporte</button>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-3">
             <button class="btn btn-danger btn-sm active">Cerrar</button>
           </div>
         </div>

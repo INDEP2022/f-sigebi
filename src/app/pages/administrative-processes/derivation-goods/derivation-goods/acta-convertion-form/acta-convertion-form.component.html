@@ -26,7 +26,7 @@
                         type="checkbox"
                         [checked]="i === selectedIndex"
                         (change)="onCheckboxChange($event, i)"
-                        [disabled]="disableAllChecks" />
+                        [disabled]="disableAllChecks == true" />
                       <label class="form-check-label" for="check{{ i }}">
                       </label>
                     </div>
@@ -88,10 +88,11 @@
     <app-scanning-foil
       [good]="pGoodFatherNumber"
       [numberFoli]="numberFoli"
+      [tipoConv]="tipoConv"
       cveScreen="FCONVBIENHIJOS"
       reportPrint="RGERGENSOLICDIGIT"
       [expedientNumber]="expedientNuember"
-      [refresh]=""
+      [refresh]="refresh"
       (documentEmmit)="document($event)">
     </app-scanning-foil>
     <div class="row text-center mb-3">
@@ -101,7 +102,8 @@
           data-toggle="tooltop"
           title="Agregar Bien"
           class="btn btn-info btn-sm active ml-2 mr-2 float-center"
-          (click)="insertParaph()">
+          (click)="insertParaph()"
+          [disabled]="insertParaphs">
           <i class=""></i> Insertar Párrafos
         </button>
       </div>
@@ -152,7 +154,8 @@
         <button
           type="button"
           class="btn btn-primary active"
-          (click)="createMinuteConversion()">
+          (click)="createMinuteConversion()"
+          [disabled]="save">
           Guardar
           <i aria-hidden="true" class="fa fa-save"></i>
         </button>

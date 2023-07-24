@@ -41,15 +41,12 @@ export class PwComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.buildForm();
   }
-  onBeforeUnload(): void {
-    // Lógica para eliminar el elemento del almacenamiento local
-    localStorage.removeItem('conversion');
-  }
   private buildForm() {
     this.form = this.fb.group({
       idConversion: [null, [Validators.required]],
       password: [null, [Validators.required]],
     });
+    this.loader.load = false;
     const conversion = localStorage.getItem('conversion');
     if (conversion != null) {
       this.loader.load = true;
@@ -57,6 +54,7 @@ export class PwComponent extends BasePage implements OnInit {
       this.idConversion.setValue(this.conversionData);
       this.password.setValue(this.conversionData.pwAccess);
       console.log(this.conversionData);
+      localStorage.removeItem('conversion');
       setTimeout(() => {
         this.sigin();
       }, 1000);

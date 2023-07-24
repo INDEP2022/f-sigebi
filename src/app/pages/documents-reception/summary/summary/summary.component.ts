@@ -146,8 +146,7 @@ export class SummaryComponent extends BasePage implements OnInit {
     /// console.log(this.start);
     if (this.end < this.start) {
       this.onLoadToast(
-        'warning',
-        'advertencia',
+        'error',
         'Fecha final no puede ser menor a fecha de inicio'
       );
       return;
@@ -263,5 +262,11 @@ export class SummaryComponent extends BasePage implements OnInit {
     // this.delegations = new DefaultSelect([subdelegation.delegation], 1);
     // this.delegation.setValue(subdelegation.delegation.id);
     this.emitSubdelegation.emit(subdelegation);
+  }
+  minDate: Date;
+  onDateChange(event: any) {
+    console.log('onDateChange' + event);
+    //change mindate #toDate
+    this.minDate = event;
   }
 }

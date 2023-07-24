@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
@@ -30,6 +31,9 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   expedientNuember: string;
   conversion: any;
   edit: boolean = false;
+  flagNewActa: boolean = false;
+  flagAsignaActa: boolean = false;
+  disableAllChecks: boolean = false;
   delegation: any;
   states = new DefaultSelect<IStateOfRepublic>();
   zones = new DefaultSelect<IZoneGeographic>();
@@ -47,6 +51,9 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   selectItem: string = '';
   selectItem2: string = '';
   user: ISegUsers;
+  refresh: boolean = false;
+  save: boolean = true;
+  insertParaphs: boolean = true;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -62,12 +69,11 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
     private token: AuthService
   ) {
     super();
+    this.getDataUser();
   }
 
   ngOnInit(): void {
     //nombre de reporte RGERGENSOLICDIGIT
-
-    this.getDataUser();
   }
 
   insertarParrafos(descTransferente: string) {
@@ -129,17 +135,18 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
         paragraph3: null,
       };
       console.log('Acta a enviar: ', payload);
-      this.serviceGood
-        .createActaConversion(payload)
-        .subscribe(_ => this.fetchItems());
-      this.router.navigate(
-        ['/pages/administrative-processes/derivation-goods'],
-        {
-          queryParams: {
-            newActConvertion: this.selectItem2,
-          },
-        }
-      );
+      // this.serviceGood
+      //   .createActaConversion(payload)
+      //   .subscribe(_ => this.fetchItems());
+      // this.router.navigate(
+      //   ['/pages/administrative-processes/derivation-goods'],
+      //   {
+      //     queryParams: {
+      //       newActConvertion: this.selectItem2,
+      //     },
+      //   }
+      // );
+      this.insertParaphs = false;
     }
     if (this.actConvertion) {
       /*this.alert(
@@ -150,7 +157,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
       if (this.items[this.items.length - 1].parrafo1) {
         this.alertQuestion(
           'question',
-          `¿El proceso reinicializa los párrafos, se continua?`,
+          `¿El Proceso Reinicializa los Párrafos, se Continua?`,
           ''
         ).then(q => {
           if (q.isConfirmed) {
@@ -211,6 +218,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
     this.convertiongoodService.postPupInsertParaph(payload).subscribe({
       next: (res: any) => {
         this.insertarParrafos(res.data[0].v_desc_transferente);
+        this.save = false;
       },
       error: error => {
         this.alert('error', 'error', error.message);
@@ -227,12 +235,14 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
       next: response => {
         console.log(response);
         this.user = response.data[0];
-        this.route.queryParams.subscribe(params => {
-          this.actConvertion = params['actConvertion'] || null;
-          this.tipoConv = params['tipoConv'] || null;
-          this.pGoodFatherNumber = params['pGoodFatherNumber'] || null;
-          console.log(this.pGoodFatherNumber);
-        });
+        // this.route.queryParams.subscribe(params => {
+        //   this.actConvertion = params['actConvertion'] || null;
+        //   this.tipoConv = params['tipoConv'] || null;
+        //   this.pGoodFatherNumber = params['pGoodFatherNumber'] || null;
+        //   console.log(this.pGoodFatherNumber);
+        //
+        // });
+        this.fetchItems();
         console.log(this.tipoConv);
       },
       error: err => {
@@ -250,22 +260,27 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
         this.flagNewActa = true;
         this.flagAsignaActa = true;
         this.disableAllChecks = true;
+        this.save = true;
         let filter = {
           pDelivery: this.actConvertion,
           vFilter: 'false',
         };
         this.proceedingsService.postBlkConversions(filter).subscribe({
-          next: response => {},
+          next: response => {
+            console.log(response);
+            this.items = response.data;
+            this.numberFoli = response.data[0].folio_universal;
+            this.parrafo1 = response.data[0].parrafo1;
+            this.parrafo2 = response.data[0].parrafo2;
+            this.parrafo3 = response.data[0].parrafo3;
+            console.log(this.numberFoli);
+            this.refresh = true;
+          },
           error: err => {
             console.error(err);
             this.alert('error', 'ERROR', err.error.message);
           },
         });
-        this.serviceGood
-          .getFolioActaConversion(this.actConvertion)
-          .subscribe(item => {
-            this.numberFoli = item.data[0].folio_universal;
-          });
       } else {
         console.log(this.user.usuario.delegationNumber);
         const payload = {
@@ -295,19 +310,6 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
           },
         });
       }
-      this.flagNewActa = false;
-      // this.flagAsignaActa = false
-      this.disableAllChecks = false;
-      console.log('getActasConversion por -> ' + this.actConvertion);
-      // this.serviceGood
-      //   .getActasConversion(this.actConvertion)
-      //   .subscribe((item: any) => {
-      //     this.items = item.data.map((item: any) => {
-      //       item.cve_acta_conv = item.cveActaConvId;
-      //       return item;
-      //     });
-      //     console.log(item);
-      //   });
     } else {
     }
   }
@@ -326,9 +328,6 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
       this.selectItem = '';
     }
   }
-  flagNewActa: boolean = false;
-  flagAsignaActa: boolean = false;
-  disableAllChecks: boolean = false;
 
   generateAsignarActa() {
     console.log(this.selectItem);
@@ -451,8 +450,11 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   document(doc: IDocuments) {
     console.log(doc.id);
     this.numberFoli = doc.id;
+    this.flagNewActa = false;
   }
   createMinuteConversion() {
+    console.log('tipoConv -> ', this.tipoConv);
+
     const payload: any = {
       cveActaConvId: this.selectItem2,
       typeActa: this.tipoConv,
@@ -465,24 +467,24 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
       paragraph3: this.parrafo3,
     };
     console.log('minute-conversions -> ', payload);
-    // this.convertiongoodService.createMinuteConversion(payload).subscribe({
-    //   next: (res: IListResponse<any>) => {
-    //     this.alert('success', `Acta Creada Correctamente`, '');
-    //     console.log('minute-conversions res -> ', res);
-    //     this.router.navigate(
-    //       ['/pages/administrative-processes/derivation-goods'],
-    //       {
-    //         queryParams: {
-    //           newActConvertion: this.selectItem2,
-    //           // expedientNumber: this.form.value.numberDossier,
-    //         },
-    //       }
-    //     );
-    //     this.modalRef.hide();
-    //   },
-    //   error: error => {
-    //     this.alert('error', 'error', error.message);
-    //   },
-    // });
+    this.convertiongoodService.createMinuteConversion(payload).subscribe({
+      next: (res: IListResponse<any>) => {
+        this.alert('success', `Acta Creada Correctamente`, '');
+        console.log('minute-conversions res -> ', res);
+        this.router.navigate(
+          ['/pages/administrative-processes/derivation-goods'],
+          {
+            queryParams: {
+              newActConvertion: this.selectItem2,
+              // expedientNumber: this.form.value.numberDossier,
+            },
+          }
+        );
+        this.modalRef.hide();
+      },
+      error: error => {
+        this.alert('error', 'error', error.message);
+      },
+    });
   }
 }

@@ -48,6 +48,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   flagGoodNew: boolean = false;
   flagGoodDelete: boolean = false;
   //Variables de BLK_TIPO_BIEN
+  numberFoli: number;
   classificationOfGoods: number;
   no_bien_blk_tipo_bien: number;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -177,24 +178,30 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         return row.data.tableCd ? '' : 'notTableCd';
       },
     };
-
-    this.route.queryParams.subscribe(params => {
-      if (params['newActConvertion']) {
-        this.actConvertion.setValue(params['newActConvertion']);
-      }
-    });
   }
   ngOnInit(): void {
     this.buildForm();
     this.pw();
-    // this.tipo.disable();
+    this.tipo.disable();
     //Inicializando el modal
+    this.route.queryParams.subscribe(params => {
+      if (params['newActConvertion']) {
+        this.actConvertion.setValue(params['newActConvertion']);
+      }
+      this.numberFoli = params['folio'] ?? null;
+      this.actConvertion.setValue(params['expedientNumber'] ?? null);
+      this.tipo.setValue(params['tipoConv'] ?? null);
+      this.numberGoodFather.setValue(params['pGoodFatherNumber'] ?? null);
+      this.numberDossier.setValue(params['expedientNumber'] ?? null);
+      console.log(this.numberFoli);
+      // if (this.numberFoli) {
+      //   this.showActasConvertion();
+      // }
+    });
   }
-  onBeforeUnload(): void {
-    // Lógica para eliminar el elemento del almacenamiento local
-    localStorage.removeItem('conversion');
-  }
+
   pw() {
+    this.loader.load = true;
     let config = MODAL_CONFIG;
     config = {
       initialState: {
@@ -203,21 +210,23 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           if (data != null) {
             console.log(data);
             this.conversionData = data;
-            this.no_bien_blk_tipo_bien = data.goodFatherNumber;
-            this.idConversion.setValue(data.id);
-            this.numberDossier.setValue(data.fileNumber.id);
-            this.numberGoodFather.setValue(data.goodFatherNumber);
-            this.goodFatherNumber$.next(data.goodFatherNumber);
-            this.wrongModal = false;
-            this.tipo.setValue(data.typeConv);
-            this.actConvertion.setValue(data.cveActaConv);
-            this.statusGood(data.goodFatherNumber);
-            this.searchGoods(data.goodFatherNumber);
-            this.searchGoodSon(data.goodFatherNumber);
-            this.searchSituation(data.goodFatherNumber);
-            this.searchGoodRelDocuments(data.goodFatherNumber);
-            if (data.typeConv === 2) {
-              this.getAllGoodChild(data.goodFatherNumber);
+            if (this.conversionData) {
+              this.no_bien_blk_tipo_bien = data.goodFatherNumber;
+              this.idConversion.setValue(data.id);
+              this.numberDossier.setValue(data.fileNumber.id);
+              this.numberGoodFather.setValue(data.goodFatherNumber);
+              this.goodFatherNumber$.next(data.goodFatherNumber);
+              this.wrongModal = false;
+              this.tipo.setValue(data.typeConv);
+              this.actConvertion.setValue(data.cveActaConv);
+              this.statusGood(data.goodFatherNumber);
+              this.searchGoods(data.goodFatherNumber);
+              this.searchGoodSon(data.goodFatherNumber);
+              this.searchSituation(data.goodFatherNumber);
+              this.searchGoodRelDocuments(data.goodFatherNumber);
+              if (data.typeConv == 2) {
+                this.getAllGoodChild(data.goodFatherNumber);
+              }
             }
           }
         },
@@ -340,7 +349,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   updateAttributes() {
-    debugger;
+    // debugger;
     let body: any = {
       id: this.goodForTableChar.id,
       goodId: this.goodForTableChar.goodId,
@@ -366,56 +375,44 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          this.alert(
-            'success',
-            'Actualizadas correctamente',
-            'Características del bien ' + this.good.id
-          );
+          this.alert('success', 'Valores Actualizados correctamente', '');
+          this.getAllGoodChild(this.goodFatherNumber$.getValue());
         },
       });
   }
 
   async searchGoodSon(e: any) {
-    this.form.valueChanges.subscribe(async value => {
-      if (this.lastIdConversion !== value.idConversion) {
-        try {
-          const conversionData = await this.convertiongoodService
-            .getById(value.idConversion)
-            .toPromise();
-          const paramsF = new FilterParams();
-          paramsF.addFilter('goodId', e);
-          const res = await this.serviceGood
-            .getAllFilter(paramsF.getParams())
-            .toPromise();
-          // if (conversionData.typeConv === '1') {
+    if (this.lastIdConversion !== this.idConversion.value) {
+      const conversionData = this.conversionData;
+      const paramsF = new FilterParams();
+      paramsF.addFilter('goodId', e);
+      this.serviceGood.getAllFilter(paramsF.getParams()).subscribe({
+        next: res => {
           this.good = res.data[0];
           this.goodForTableChar = res.data[0];
-          // debugger;
-          console.log(this.good, conversionData);
-
-          if (conversionData.typeConv === '2') {
+          console.log(this.goodForTableChar);
+          if (conversionData.typeConv == '2') {
             this.id.setValue(res.data[0]['id']);
             this.observation.setValue(res.data[0]['observations']);
             this.descriptionSon.setValue(res.data[0]['description']);
             this.quantity.setValue(res.data[0]['quantity']);
             this.classifier.setValue(res.data[0]['goodClassNumber']);
             this.classificationOfGoods = Number(res.data[0]['goodClassNumber']);
+            // debugger;
             if (this.classificationOfGoods) {
-              this.goodChange++;
+              console.log(this.classificationOfGoods);
+              setTimeout(() => {
+                this.goodChange++;
+              }, 1000);
             }
-            console.log(Number(res.data[0]['goodClassNumber']));
+
             this.unitOfMeasure.setValue(res.data[0]['unit']);
             this.destinationLabel.setValue(res.data[0]['labelNumber']);
             this.statusCode = res.data[0]['status'];
             this.numberGoodSon.setValue(e);
             this.searchStatus(res.data[0]['status']);
             // this.getAttributesGood(res.data[0]['goodClassNumber']);
-
-            this.flagActa = false;
-            this.flagCargMasiva = false;
-            this.flagCargaImagenes = false;
-            this.flagFinConversion = false;
-          } else if (conversionData.typeConv === '1') {
+          } else if (conversionData.typeConv == '1') {
             this.observation.setValue('');
             this.descriptionSon.setValue('');
             this.quantity.setValue('');
@@ -424,7 +421,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.destinationLabel.setValue('');
             this.numberGoodSon.setValue('');
             this.searchStatus('');
-            this.flagActa = false;
+            this.classificationOfGoods = Number(res.data[0]['goodClassNumber']);
+            if (this.classificationOfGoods) {
+              this.goodChange++;
+            }
             this.flagCargMasiva = true;
             this.flagCargaImagenes = true;
             this.flagFinConversion = true;
@@ -433,14 +433,29 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.flagGoodNew = true;
             this.flagGoodDelete = true;
           }
+        },
+      });
+    }
 
-          this.lastIdConversion = value.idConversion;
-        } catch (err) {
-          console.error(err);
-          // maneja el error
-        }
-      }
-    });
+    // this.form.valueChanges.subscribe(async value => {
+    //   if (this.lastIdConversion !== value.idConversion) {
+    //     try {
+    //       const conversionData = await this.convertiongoodService
+    //         .getById(value.idConversion)
+    //         .toPromise();
+    //       const paramsF = new FilterParams();
+    //       paramsF.addFilter('goodId', e);
+    //       const res = await this.serviceGood
+    //         .getAllFilter(paramsF.getParams())
+    //         .toPromise();
+
+    //       this.lastIdConversion = value.idConversion;
+    //     } catch (err) {
+    //       console.error(err);
+    //       // maneja el error
+    //     }
+    //   }
+    // });
   }
   async searchSituation(e: any) {
     this.serviceGoodProcess.getByIdSituation(e).subscribe(
@@ -529,22 +544,26 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         this.goodData = res;
         console.log('res:', res);
         this.goodData = this.goodData.data[0];
-
-        // this.finishConversionBeforeValidation(
-        //   this.goodData.goodId,
-        //   this.goodData.id
-        // );
-        // return;
-
         if (this.goodData.status == 'CVD') {
-          this.flagActa = true;
           this.flagCargMasiva = true;
           this.flagCargaImagenes = true;
           this.flagFinConversion = true;
+          this.flagCambia = true;
+          this.flagUpdate = true;
+          this.flagGoodNew = true;
+          this.flagGoodDelete = true;
+          this.loader.load = false;
+        } else {
+          this.flagActa = false;
+          this.flagCargMasiva = false;
+          this.flagCargaImagenes = false;
+          this.flagFinConversion = false;
+          this.loader.load = false;
         }
       },
       err => {
         console.log(err);
+        this.loader.load = false;
       }
     );
   }
@@ -644,9 +663,17 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
 
     this.convertiongoodService.update(idConversion, conversions).subscribe(
       async res => {
-        if (res.statusCode === 200 && res.message[0] === 'ok') {
+        if (res.statusCode == 200 && res.message[0] == 'ok') {
           this.alert('success', 'Conversión Finalizada', '');
           localStorage.removeItem('conversion');
+          this.form.reset();
+          this.good = [];
+          this.goodForTableChar = [];
+          this.classificationOfGoods = 0;
+          this.goodChange = 0;
+          this.conversionData = [];
+          this.dataGoods2 = [];
+          this.form.reset();
           this.pw();
         }
       },
@@ -665,6 +692,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         queryParams: {
           pGoodFatherNumber: this.form.value.numberGoodFather,
           expedientNumber: this.form.value.numberDossier,
+          classificationOfGoods: this.classificationOfGoods,
         },
       }
     );
@@ -710,6 +738,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       );
     }*/
     //crear segun el nuemero pardre en referencia y copiar los demas valores al bien
+    console.log(this.good);
     this.alertQuestion(
       'question',
       `Se Agregará un Bien Hijo`,
@@ -720,7 +749,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         delete good.id;
         delete good.goodId;
         good.goodReferenceNumber = this.goodFatherNumber$.getValue();
-        good.almacen = this.good.almacen.idWarehouse;
+        good.almacen =
+          this.good.almacen != null ? this.good.almacen.idWarehouse : '';
         good.delegationNumber = this.good.delegationNumber.id;
         good.expediente = this.good.expediente.id;
         good.subDelegationNumber = this.good.subDelegationNumber.id;
@@ -764,7 +794,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     if (event != null && this.selectedRow != undefined) {
       //console.log("el evento es -> ",JSON.stringify(this.selectedRow));
       console.log('status->', this.selectedRow);
-      if (this.selectedRow.status === 'CVD') {
+      if (this.selectedRow.status == 'CVD') {
         this.alert(
           'error',
           `El Bien con Id: ${this.numberGoodFather.value}`,
@@ -775,7 +805,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       console.log('status2->', this.selectedRow);
       this.alertQuestion(
         'question',
-        `Se va a Eliminar el Bien Hijo ${this.selectedRow.goodId}`,
+        `Bien Hijo a Eliminar No. ${this.selectedRow.goodId}`,
         '¿Desea Continuar?'
       ).then(q => {
         if (q.isConfirmed) {
@@ -805,13 +835,14 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
   }
 
   onRowSelect(event: any) {
+    console.log(event.data);
     this.numberGoodSon.setValue(event.data.goodId);
-    this.observation.setValue(event.data.descriptionConv);
-    this.descriptionSon.setValue(event.data.descriptionSon);
-    this.quantity.setValue(event.data.amount);
-    this.classifier.setValue(event.data.noClassifGood);
+    this.observation.setValue(event.data.observations);
+    this.descriptionSon.setValue(event.data.description);
+    this.quantity.setValue(event.data.quantity);
+    this.classifier.setValue(event.data.goodClassNumber);
     this.unitOfMeasure.setValue(event.data.unit);
-    this.destinationLabel.setValue(event.data.noLabel);
+    this.destinationLabel.setValue(event.data.labelNumber);
     this.selectedRow = event.data;
     this.goodForTableChar = event.data;
     this.goodChange++;
@@ -850,32 +881,55 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
 
   showActasConvertion() {
     console.log(this.tipo.value);
-    if (this.tipo.value == 2) {
-      localStorage.setItem('conversion', JSON.stringify(this.conversionData));
+    if (this.tipo.value == '2') {
+      if (this.goodData.status == 'CVD') {
+        localStorage.removeItem('conversion');
+      } else {
+        localStorage.setItem('conversion', JSON.stringify(this.conversionData));
+      }
       let config = { ...MODAL_CONFIG, class: 'modal-xl modal-dialog-centered' };
+      console.log(this.tipo.value);
       config.initialState = {
         proceeding: {},
-        idProgramming: 1,
-        expedientNuember: this.form.value.numberDossier,
+        numberFoli: this.numberFoli,
+        actConvertion: this.actConvertion.value,
+        tipoConv: this.tipo.value,
+        pGoodFatherNumber: this.numberGoodFather.value,
+        expedientNuember: this.numberDossier.value,
         callback: (receipt: any, keyDoc: string) => {
           if (receipt && keyDoc) {
           }
         },
       };
-      console.log(this.form.value.tipo);
-      this.router.navigate(
-        ['/pages/administrative-processes/derivation-goods'],
-        {
-          queryParams: {
-            actConvertion: this.actConvertion.value,
-            tipoConv: this.tipo.value,
-            pGoodFatherNumber: this.numberGoodFather.value,
-          },
-        }
-      );
       this.modalService.show(ActaConvertionFormComponent, config);
+      console.log(this.form.value.tipo);
+      // this.router.navigate(
+      //   ['/pages/administrative-processes/derivation-goods'],
+      //   {
+      //     queryParams: {
+      //       actConvertion: this.actConvertion.value,
+      //       tipoConv: this.tipo.value,
+      //       pGoodFatherNumber: this.numberGoodFather.value,
+      //     },
+      //   }
+      // );
     } else {
-      this.alert('warning', `Tipo debe ser Derivado`, '');
+      this.alert(
+        'warning',
+        `Advertencia`,
+        'Para Cargar el Acta debe ser Tipo Conversión'
+      );
     }
+  }
+  session() {
+    localStorage.removeItem('conversion');
+    this.form.reset();
+    this.good = [];
+    this.goodForTableChar = [];
+    this.classificationOfGoods = 0;
+    this.goodChange = 0;
+    this.conversionData = [];
+    this.dataGoods2 = [];
+    this.pw();
   }
 }

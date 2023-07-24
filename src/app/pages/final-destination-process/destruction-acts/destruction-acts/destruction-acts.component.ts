@@ -89,7 +89,6 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   newLimitparamsActNavigate = new FormControl(1)
   navigateProceedings:boolean = false
 
-
   constructor(
     private fb: FormBuilder,
     private serviceUser: UsersService,
@@ -241,6 +240,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
       comptrollerWitness: [null],
       //Folio universal
       universalFolio: [null],
+
     });
 
     this.formTable1 = this.fb.group({
