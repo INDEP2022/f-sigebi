@@ -15,7 +15,7 @@
     <div class="row">
       <div class="col-md-12">
         <accordion [isAnimated]="true">
-          <accordion-group [isOpen]="true">
+          <accordion-group [isOpen]="false">
             <div accordion-heading class="d-flex justify-content-between">
               <h5>
                 <i class="fa fa-filter" aria-hidden="true"></i>
@@ -58,26 +58,29 @@
                   <form-field
                     [control]="formCapture.get('typeSteering')"
                     label="Tipo Volante">
-                    <!-- <select class="form-control" formControlName="typeSteering">
+                    <select class="form-control" formControlName="typeSteering">
                       <option *ngFor="let type of flyerTypes" [value]="type">
+                        &nbsp;&nbsp;
                         {{ type }}
                       </option>
+                    </select>
+                    <!-- <select ng-options="n for n in []" class="form-select shadow-none" aria-label="Tipo Volante"
+                      formControlName="typeSteering" (change)="getEvent()">
+                      <option [ngValue]="range" *ngFor="let range of flyerTypes">${{range}}</option>
                     </select> -->
-                    <ngx-select
-                      [form]="formCapture"
-                      control="typeSteering"
-                      (fetchItems)="getEvent()"
-                      [showTooltip]="true"
-                      [data]="flyerTypes"
-                      bindLabel="description"
-                      label="Tipo Volante"></ngx-select>
+
+                    <!-- <ngx-select [form]="formCapture" control="typeSteering" (fetchItems)="getEvent()"
+                      [showTooltip]="true" [data]="flyerTypes" bindLabel="description"
+                      label="Tipo Volante"></ngx-select> -->
                   </form-field>
                   <!-- <form-field [control]="formCapture.get('typeSteering')" label="Tipo Volante">
                     <ngx-select [formControlName]="typeSteering" [items]="flyerTypes"></ngx-select>
                   </form-field> -->
                 </div>
                 <div class="col-md-6">
-                  <form-field [control]="formCapture.get('user')">
+                  <form-field
+                    [control]="formCapture.get('user')"
+                    label="Usuario">
                     <ngx-select
                       label="Usuario"
                       [form]="formCapture"
@@ -89,6 +92,7 @@
                       [searchOnInit]="true"
                       [showTooltip]="true"
                       termMaxLength="50"
+                      value="id"
                       [labelTemplate]="userLabel"
                       [optionTemplate]="userOption">
                     </ngx-select>
@@ -105,17 +109,35 @@
               </div>
               <div class="row mt-4">
                 <div class="col-md-6">
-                  <form-field [control]="formCapture.get('cvCoors')">
+                  <!-- <form-field [control]="formCapture.get('cvCoors')">
+                    <ngx-select [form]="formCapture" control="cvCoors" (fetchItems)="getDelegations($event)"
+                      [showTooltip]="true" [data]="delegations" bindLabel="description" label="Coor. Regional"
+                      value="id" [multiple]="true"></ngx-select>
+                  </form-field> -->
+                  <form-field
+                    [control]="formCapture.get('cvCoors')"
+                    label="Coor. Regional">
                     <ngx-select
+                      label="Usuario"
                       [form]="formCapture"
-                      control="cvCoors"
-                      (fetchItems)="getDelegations($event)"
-                      [showTooltip]="true"
-                      [data]="delegations"
+                      [data]="delegations$"
+                      (fetchItems)="getDels($event)"
                       bindLabel="description"
-                      label="Coor. Regional"
+                      control="cvCoors"
+                      [searchOnInit]="true"
+                      [showTooltip]="true"
+                      termMaxLength="50"
                       value="id"
-                      [multiple]="true"></ngx-select>
+                      [multiple]="true">
+                    </ngx-select>
+                    <ng-template #userLabel let-item="item">
+                      {{ item.id + ' - ' + item.description }}
+                    </ng-template>
+                    <ng-template #userOption let-item="item">
+                      <div [title]="item.id + '-' + item.description">
+                        {{ item.id + ' - ' + item.description }}
+                      </div>
+                    </ng-template>
                   </form-field>
                 </div>
                 <div class="col-md-6">
@@ -135,12 +157,7 @@
                   <form-field [control]="formCapture.get('noStation')">
                     <ngx-select
                       [searchOnInit]="true"
-                      (fetchItems)="
-                        getStation(
-                          formCapture.get('noTransfere').value,
-                          formCapture.get('noStation').value
-                        )
-                      "
+                      (fetchItems)="getStation($event)"
                       [data]="station"
                       [form]="formCapture"
                       bindLabel="stationName"
@@ -153,13 +170,7 @@
                   <form-field [control]="formCapture.get('noAuthority')">
                     <ngx-select
                       [searchOnInit]="true"
-                      (fetchItems)="
-                        getAuthority(
-                          formCapture.get('noTransfere').value,
-                          formCapture.get('noStation').value,
-                          formCapture.get('noAuthority').value
-                        )
-                      "
+                      (fetchItems)="getAuthority($event)"
                       [data]="authority"
                       [form]="formCapture"
                       bindLabel="authorityName"
@@ -235,14 +246,27 @@
         <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>
     </div>
-    <div class="row pt-3 table-content">
-      <ng2-smart-table
-        [attr.class]="'table-bordered table-responsive'"
-        [settings]="settings"
-        [source]="dataFactCapt"></ng2-smart-table>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItemsCaptura"></app-pagination>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div class="col-md-12 table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="dataFactCapt">
+            </ng2-smart-table>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItemsCaptura"></app-pagination>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- <div class="row pt-3 table-content">
+      <ng2-smart-table [attr.class]="'table-bordered table-responsive'" [settings]="settings"
+        [source]="dataFactCapt"></ng2-smart-table>
+      <app-pagination [params]="params" [totalItems]="totalItemsCaptura"></app-pagination>
+    </div> -->
   </div>
 </app-card>
