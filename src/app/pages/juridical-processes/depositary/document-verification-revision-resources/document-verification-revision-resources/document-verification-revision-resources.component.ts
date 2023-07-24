@@ -94,9 +94,10 @@ export class DocumentVerificationRevisionResourcesComponent
             }
 
             if (now > day.valueOf()) {
-              this.onLoadToast(
+              this.alert(
                 'info',
-                'No puedes solicitar documentación después de 5 días habiles'
+                'No puedes solicitar documentación después de 5 días habiles',
+                ''
               );
             } else {
               if (di_disponible == 'S') {
@@ -111,7 +112,7 @@ export class DocumentVerificationRevisionResourcesComponent
                     data.row.situacion_documentos = null;
                   }
                 } else {
-                  this.onLoadToast('info', 'Seleccione primero el documento');
+                  this.alert('info', 'Seleccione primero el documento', '');
                   data.row.cb_solicitar_doctos = 'N';
                 }
               } else {
@@ -291,7 +292,7 @@ export class DocumentVerificationRevisionResourcesComponent
 
     this.solicServ.create(dataSend).subscribe({
       next: () => {
-        this.onLoadToast('success', 'Solicitud documento bien ha sido creado');
+        this.alert('success', 'Solicitud documento bien ha sido creado', '');
       },
       error: error => {
         this.onLoadToast('error', error.error.message);
@@ -304,7 +305,7 @@ export class DocumentVerificationRevisionResourcesComponent
     const { goodId } = this.form.value;
     this.solicServ.remove(goodId).subscribe({
       next: () => {
-        this.onLoadToast('success', 'Solicitud eliminada correctamente');
+        this.alert('success', 'Solicitud eliminada correctamente', '');
         data.fec_inserto_sol = null;
       },
       error: () => {
@@ -494,17 +495,19 @@ export class DocumentVerificationRevisionResourcesComponent
       const { id, dateAgreementAssurance } = this.formExp.value;
       if (di_disponible == 'S') {
         if (di_situacion_bien == 'DICTAMINADO') {
-          this.onLoadToast(
+          this.alert(
             'info',
-            'No se pueden realizar modificaciones porque el bien está dictaminado'
+            'No se pueden realizar modificaciones porque el bien está dictaminado',
+            ''
           );
         }
         if (!id) {
-          this.onLoadToast('info', 'Obligatorio seleccionar un expediente');
+          this.alert('info', 'Obligatorio seleccionar un expediente', '');
         } else if (!dateAgreementAssurance) {
-          this.onLoadToast(
+          this.alert(
             'info',
-            'Obligatorio la fecha de presentación del recurso de revisión'
+            'Obligatorio la fecha de presentación del recurso de revisión',
+            ''
           );
         }
       }
@@ -520,15 +523,16 @@ export class DocumentVerificationRevisionResourcesComponent
     const { id, dateAgreementAssurance } = this.formExp.value;
 
     if (di_situacion_bien == 'DICTAMINADO') {
-      this.onLoadToast('info', 'Bien ya dictaminado', '');
+      this.alert('info', 'Bien ya dictaminado', '');
     } else {
       if (!id) {
-        this.onLoadToast('info', 'Falta seleccionar expediente', '');
+        this.alert('info', 'Falta seleccionar expediente', '');
       } else {
         if (!dateAgreementAssurance) {
-          this.onLoadToast(
+          this.alert(
             'info',
-            'Obligatoria la fecha de presentación del recurso de revisión'
+            'Obligatoria la fecha de presentación del recurso de revisión',
+            ''
           );
         }
       }
@@ -575,14 +579,15 @@ export class DocumentVerificationRevisionResourcesComponent
           }
         });
       } else {
-        this.onLoadToast('success', 'Operación realizada dictámen autorizado');
+        this.alert('success', 'Operación realizada dictámen autorizado', '');
         this.form.get('di_fec_dictaminacion').patchValue(new Date());
         this.form.get('di_situacion_bien').patchValue('DICTAMINADO');
       }
     } else {
-      this.onLoadToast(
+      this.alert(
         'info',
-        'Debe iniciar el proceso de dictaminación y elegir al menos un documento'
+        'Debe iniciar el proceso de dictaminación y elegir al menos un documento',
+        ''
       );
     }
   }
@@ -612,24 +617,26 @@ export class DocumentVerificationRevisionResourcesComponent
     }
 
     if (now > day.valueOf()) {
-      this.onLoadToast(
+      this.alert(
         'info',
-        'No puedes solicitar documentación después de 5 días hábiles'
+        'No puedes solicitar documentación después de 5 días hábiles',
+        ''
       );
     } else {
       if (di_situacion_bien == 'DICTAMINADO') {
-        this.onLoadToast('info', 'Bien ya dictaminado');
+        this.alert('info', 'Bien ya dictaminado', '');
       } else {
         if (!id) {
-          this.onLoadToast('info', 'Obligatorio seleccionar un expediente');
+          this.alert('info', 'Obligatorio seleccionar un expediente', '');
         } else {
           if (!goodId) {
-            this.onLoadToast('info', 'Obligatorio seleccionar un bien');
+            this.alert('info', 'Obligatorio seleccionar un bien', '');
           } else {
             if (!dateAgreementAssurance) {
-              this.onLoadToast(
+              this.alert(
                 'info',
-                'Obligatorio la fecha de presentación del recurso de revisión'
+                'Obligatorio la fecha de presentación del recurso de revisión',
+                ''
               );
             } else {
               for (let index = 0; index < this.dataTable.data.length; index++) {
@@ -721,14 +728,15 @@ export class DocumentVerificationRevisionResourcesComponent
   btnEjecutarAutoridad() {
     const { ti_autoridad_ordena_dictamen } = this.form.value;
     if (ti_autoridad_ordena_dictamen) {
-      this.onLoadToast('success', 'Operación realizada dictámen autorizado');
+      this.alert('success', 'Operación realizada dictámen autorizado', '');
       this.autoridad = false;
       this.form.get('di_fec_dictaminacion').patchValue(new Date());
       this.form.get('di_situacion_bien').patchValue('DICTAMINADO');
     } else {
-      this.onLoadToast(
+      this.alert(
         'info',
-        'Debe ingresar el nombre de la autoridad que aprueba el dictámen'
+        'Debe ingresar el nombre de la autoridad que aprueba el dictámen',
+        ''
       );
     }
   }
@@ -739,7 +747,7 @@ export class DocumentVerificationRevisionResourcesComponent
 
   btnEjecutarInformes() {
     const { id, goodId } = this.formInforme.value;
-    this.onLoadToast('success', 'Generando reporte...', '');
+    this.alert('success', 'Generando reporte...', '');
     const params = {
       PN_EXPINI: id,
       PN_BIEN: goodId,
@@ -819,9 +827,10 @@ export class DocumentVerificationRevisionResourcesComponent
         },
         error: () => {
           this.formExp.get('date_parameter').patchValue(null);
-          this.onLoadToast(
+          this.alert(
             'info',
-            'No hay parámetros para obtener la fecha de aseguramiento de ley'
+            'No hay parámetros para obtener la fecha de aseguramiento de ley',
+            ''
           );
           resolve(null);
         },
@@ -883,10 +892,10 @@ export class DocumentVerificationRevisionResourcesComponent
 
       this.dictaminationServ.create(data).subscribe({
         next: () => {
-          this.onLoadToast('success', 'Ha sido creado con éxito el dictamen');
+          this.alert('success', 'Ha sido creado con éxito el dictamen', '');
         },
         error: error => {
-          this.onLoadToast('error', error.error.message);
+          this.alert('error', error.error.message, '');
         },
       });
     } else if (exist > 0) {
@@ -894,13 +903,14 @@ export class DocumentVerificationRevisionResourcesComponent
       delete existData.goods;
       this.dictaminationServ.update(existData, existData.goodNumber).subscribe({
         next: () => {
-          this.onLoadToast(
+          this.alert(
             'success',
-            'Dictamen ha sido actualizado correctamente'
+            'Dictamen ha sido actualizado correctamente',
+            ''
           );
         },
         error: error => {
-          this.onLoadToast('error', error.error.message);
+          this.alert('error', error.error.message, '');
         },
       });
     }
