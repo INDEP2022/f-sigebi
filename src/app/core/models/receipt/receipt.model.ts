@@ -5,6 +5,8 @@ export interface IReceipt {
   catIdWitnessOne?: number;
   catIdWitnessTwo?: number;
   chargeSae?: string;
+  seal?: string;
+  plateNumber?: string;
   chargeSeg?: string;
   closingDate?: string;
   companySeg?: string;
@@ -15,6 +17,7 @@ export interface IReceipt {
   expIdWitnessIne?: number;
   expIdWitnessTwo?: number;
   nameWitnessOne?: string;
+  typeTransport?: string;
   nameWitnessTwo?: string;
   noIdFuncSeg?: number;
   noIdWitnessOne?: number;
@@ -31,8 +34,8 @@ export interface IReceipt {
   chargeReceipt?: string;
   nameDelivery?: string;
   chargeDelivery?: string;
-  electronicSignatureEnt?: boolean;
-  electronicSignatureReceipt?: boolean;
+  electronicSignatureEnt?: number;
+  electronicSignatureReceipt?: number;
   folioReceipt?: string;
 }
 
@@ -44,6 +47,7 @@ export interface IRecepitGuard {
   chargeSeg?: string;
   officialSae?: string;
   chargeSae?: string;
+  typeTransport?: string;
   guard?: number;
   idGood?: number;
   goodId?: number;

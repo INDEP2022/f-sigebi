@@ -85,22 +85,11 @@ export class RepresentativesModalComponent extends BasePage implements OnInit {
     });
     if (this.representative != null) {
       this.edit = true;
-      // const formattedDate = this.formatDate(this.representative.dateBorn);
       this.representativeForm.patchValue({
         ...this.representative,
-        // dateBorn: formattedDate,
       });
     }
   }
-
-  // private formatDate(date: string): string {
-  //   if (!date) return '';
-  //   const dateObj = new Date(date);
-  //   const day = dateObj.getDate().toString().padStart(2, '0');
-  //   const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
-  //   const year = dateObj.getFullYear();
-  //   return `${day}/${month}/${year}`;
-  // }
 
   close() {
     this.modalRef.hide();

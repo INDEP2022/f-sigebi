@@ -28,9 +28,9 @@ export class ReceptionStrategiesComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   blkcontrol: IBlkcontrol = {
-    totalcumplido: 20,
-    totalNocumplido: 10,
-    porcentajeCunplido: 70,
+    totalcumplido: 0,
+    totalNocumplido: 0,
+    porcentajeCunplido: 0,
   };
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
@@ -119,13 +119,23 @@ export class ReceptionStrategiesComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    console.log(params);
-    this.strategyService.getZCenterOperationRegional(params).subscribe({
-      next: resp => {
-        console.log(resp.data);
-        this.data.load(resp.data);
-        this.data.refresh();
-        this.totalItems = resp.count;
+    const model = {
+      no_indicador: this.global.numberIndicator,
+    };
+    this.strategyService.getZCenterOperationRegional1(model, params).subscribe({
+      next: (resp: any) => {
+        if (resp.message[0] !== null) {
+          this.data.load(resp.data.registros);
+          this.data.refresh();
+          this.blkcontrol.totalNocumplido = resp.data.totalNoCumplidos;
+          this.blkcontrol.totalcumplido = resp.data.totalCumplidos;
+          this.blkcontrol.porcentajeCunplido =
+            (this.blkcontrol.totalcumplido /
+              (this.blkcontrol.totalcumplido +
+                this.blkcontrol.totalNocumplido)) *
+            100;
+          this.totalItems = resp.count;
+        }
         this.loading = false;
       },
       error: err => {
@@ -180,11 +190,11 @@ export class ReceptionStrategiesComponent extends BasePage implements OnInit {
 
     if (form.get('usuario').value !== null) {
       /// userNameruleOrigin
-      this.params.getValue()['filter.userNameruleOrigin'] = `$ilike:${
+      this.params.getValue()['filter.usrActrecep'] = `$ilike:${
         form.get('usuario').value
       }`;
     } else {
-      delete this.params.getValue()['filter.userNameruleOrigin'];
+      delete this.params.getValue()['filter.usrActrecep'];
     }
 
     this.getData();
@@ -193,7 +203,7 @@ export class ReceptionStrategiesComponent extends BasePage implements OnInit {
   async export(event: FormGroup) {
     console.log(event.value);
     const filename: string = 'Estrategia Recepción';
-    const jsonToCsv = await this.data.getAll();
+    const jsonToCsv: any[] = await this.getDataCumplido();
     if (jsonToCsv.length === 0) {
       this.alert(
         'warning',
@@ -205,11 +215,42 @@ export class ReceptionStrategiesComponent extends BasePage implements OnInit {
     this.excelService.export(jsonToCsv, { type: 'csv', filename });
   }
 
+  getDataCumplido() {
+    return new Promise<any[]>((res, _rej) => {
+      let params = {
+        ...this.params.getValue(),
+        ...this.columnFilters,
+      };
+      const model = {
+        no_indicador: this.global.numberIndicator,
+      };
+      params.limit = 999999999;
+      this.strategyService
+        .getZCenterOperationRegional1(model, params)
+        .subscribe({
+          next: (resp: any) => {
+            console.log(resp);
+            if (resp.message[0] !== null) {
+              res(resp.data.registros);
+            } else {
+              res([]);
+            }
+          },
+          error: err => {
+            res([]);
+          },
+        });
+    });
+  }
+
   clean(event: any) {
     this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.data.load([]);
     this.data.refresh();
     this.totalItems = 0;
+    this.blkcontrol.porcentajeCunplido = 0;
+    this.blkcontrol.totalNocumplido = 0;
+    this.blkcontrol.totalNocumplido = 0;
   }
 
   formatDate(fecha: Date): string {

@@ -11,7 +11,6 @@ export const CUSTOMERS_COLUMNS = {
     title: 'RFC',
     sort: false,
   },
-
   street: {
     title: 'Calle',
     sort: false,
