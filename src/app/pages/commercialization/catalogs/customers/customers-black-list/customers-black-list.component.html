@@ -20,16 +20,18 @@
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
-            [source]="customers">
+            [source]="data">
           </ng2-smart-table>
         </div>
       </div>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
   </div>
+
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">

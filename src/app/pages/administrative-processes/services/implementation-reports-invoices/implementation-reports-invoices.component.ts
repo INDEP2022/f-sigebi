@@ -10,7 +10,9 @@ import {
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IAccountMovement } from 'src/app/core/models/ms-account-movements/account-movement.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
 import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
+import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { StrategyProcessService } from 'src/app/core/services/ms-strategy/strategy-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -46,14 +48,29 @@ export class ImplementationReportsInvoicesComponent
   selectedRow: any;
   disponible: string;
   cantidad: any;
+  status: boolean = false;
+  report: any;
+  lnu_folio: number;
+  t_reportes: string;
+  expediente: number;
 
   constructor(
     private fb: FormBuilder,
     private msInvoiceService: MsInvoiceService,
     private authService: AuthService,
-    private strategyProcessService: StrategyProcessService
+    private strategyProcessService: StrategyProcessService,
+    private detailProceeDelRecService: DetailProceeDelRecService,
+    private documentsDictumStatetMService: DocumentsDictumStatetMService
   ) {
     super();
+    this.settings.columns = IMPLEMENTATION_COLUMNS;
+    this.settings.actions = false;
+    this.settings.rowClassFunction = (row: { data: { status: any } }) =>
+      row.data.status != null
+        ? row.data.status === 'AUTORIZADA'
+          ? 'bg-success text-white'
+          : 'bg-dark text-white'
+        : '';
     this.settings = {
       ...this.settings,
       actions: false,
@@ -102,12 +119,12 @@ export class ImplementationReportsInvoicesComponent
             }
           });
           this.params = this.pageFilter(this.params);
-          this.Application();
+          this.DelegationI();
         }
       });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.Application());
+      .subscribe(() => this.DelegationI());
   }
   private prepareForm() {
     this.invoiceDetailsForm = this.fb.group({
@@ -177,12 +194,16 @@ export class ImplementationReportsInvoicesComponent
   }
 
   onRowSelect(event: any) {
-    console.log('salida 0', event.data);
     this.selectedRow = event.data;
+    if (this.selectedRow.status == 'AUTORIZADA') {
+      this.status = true;
+    } else {
+      this.status = false;
+    }
     this.getAmount(this.selectedRow.no_reporte);
   }
 
-  Application() {
+  DelegationI() {
     this.data1 = [];
     let params = {
       ...this.params.getValue(),
@@ -254,8 +275,9 @@ export class ImplementationReportsInvoicesComponent
         status: this.selectedRow.status,
         observations: this.selectedRow.observations,
         quantity: this.cantidad,
+        no_report: this.selectedRow.no_reporte,
+        no_formato: this.selectedRow.no_formato,
       };
-      console.log('form: ', dataForm);
       this.data2.push(dataForm);
       this.strategy.load(this.data2);
     }
@@ -268,6 +290,38 @@ export class ImplementationReportsInvoicesComponent
         'El bien ya esta Dictaminado... Imposible borrar'
       );
       return;
+    }
+  }
+
+  Application() {
+    console.log('Data 2 ', this.data2);
+    for (let i = 0; i < this.data2.length; i++) {
+      if (this.data2[i].cveReport != null) {
+        this.report = this.data2[i].cveReport;
+        this.detailProceeDelRecService.getReport(this.report).subscribe({
+          next: response => {
+            this.expediente = response.data.max;
+          },
+        });
+        this.t_reportes =
+          this.t_reportes + this.data2[i].cveReport + this.data2[i].quantity;
+      } else {
+        return;
+      }
+      this.documentsDictumStatetMService.getSeqDocument().subscribe({
+        next: response => {
+          this.lnu_folio = response.data;
+        },
+      });
+      const item = {
+        FOLIO_UNIVERSAL: this.lnu_folio,
+        NO_EXPEDIENTE: this.expediente,
+        CVE_SEPARADOR: '60',
+        CVE_TIPO_DOCUMENTO: 'ESTIMP',
+        NATURALEZA_DOCUMENTO: 'ORIGINAL',
+        DESCRIPCION_DOCUMENTO: 'FACTURA',
+      };
+      //this.documentsTypeService.postDocument().subscribe({});
     }
   }
 }

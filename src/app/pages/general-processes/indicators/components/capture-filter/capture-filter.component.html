@@ -1,20 +1,20 @@
 <div>
-  <form [formGroup]="formCapture" class="form-material">
+  <form [formGroup]="formCapture" class="form-material" (ngSubmit)="find()">
     <div class="row pt-3">
       <form-field
-        [control]="formCapture.get('fecStart')"
+        [control]="formCapture.get('finicia')"
         label="Rango de fechas"
         class="col-md-3">
         <input
           type="text"
           class="form-control"
           bsDatepicker
-          formControlName="fecStart"
+          formControlName="finicia"
           [maxDate]="maxDate" />
       </form-field>
 
       <form-field
-        [control]="formCapture.get('fecEnd')"
+        [control]="formCapture.get('fmaxima')"
         label="A"
         class="col-md-3">
         <input
@@ -22,22 +22,36 @@
           class="form-control"
           bsDatepicker
           formControlName="fecEnd"
-          [maxDate]="maxDate"
-          [minDate]="formCapture.get('fecEnd').value" />
+          [min]="formCapture.get('fecStart').value"
+          [minDate]="formCapture.get('fecStart').value"
+          [ngModel]="
+            formCapture.get('fecEnd').value < formCapture.get('fecStart').value
+              ? formCapture.get('fecStart').value
+              : formCapture.get('fecEnd').value
+          "
+          bsDatepicker />
       </form-field>
 
-      <!-- <form-field *ngIf="
+      <form-field
+        *ngIf="
           !isReceptionAndDelivery && !isReceptionStrategies && !isConsolidated
-        " [control]="formCapture.get('fecEnd')" label="Fecha Ingreso" class="col-md-3">
-        <input type="text" class="form-control" bsDatepicker formControlName="fecEnd" [maxDate]="maxDate" />
-      </form-field> -->
+        "
+        [control]="formCapture.get('finingrs')"
+        label="Fecha Ingreso"
+        class="col-md-3">
+        <input
+          type="text"
+          class="form-control"
+          bsDatepicker
+          formControlName="finingrs"
+          [maxDate]="maxDate" />
+      </form-field>
 
       <form-field
-        [control]="formCapture.get('tipoVolante')"
+        [control]="formCapture.get('typeSteering')"
         class="col-md-3"
-        label="Tipo Volante"
-        *ngIf="!isReceptionStrategies && !isConsolidated">
-        <select class="form-control" formControlName="tipoVolante">
+        label="Tipo Volante">
+        <select class="form-control" formControlName="typeSteering">
           <option *ngFor="let type of flyerTypes" [value]="type">
             {{ type }}
           </option>
@@ -47,25 +61,31 @@
 
     <!-- <form-field *ngIf="
         (isReceptionAndDelivery || isReceptionStrategies) && !isConsolidated
-      " [control]="form.get('tipoEvento')" class="col-md-3" label="Tipo Evento">
+      " [control]="formCapture.get('tipoEvento')" class="col-md-3" label="Tipo Evento">
       <select class="form-control" formControlName="tipoEvento">
         <option *ngFor="let event of eventTypes" [value]="event">
           {{ event }}
         </option>
       </select>
     </form-field> -->
-    <!-- 
+
     <div class="row mt-4">
       <div class="col-md-12">
         <form-field [control]="formCapture.get('coordinacion_regional')">
-          <ngx-select [form]="formCapture" [searchOnInit]="true" control="coordinacion_regional" label="Coor. Regional"
-            [data]="delegations" (fetchItems)="getDelegations($event)" className="scroll-line"
+          <ngx-select
+            [form]="formCapture"
+            [searchOnInit]="true"
+            control="coordinacion_regional"
+            label="Coor. Regional"
+            [data]="delegations"
+            (fetchItems)="getDelegations($event)"
+            className="scroll-line"
             bindLabel="description"></ngx-select>
         </form-field>
       </div>
-    </div> -->
+    </div>
 
-    <div class="row pt-3" *ngIf="!isReceptionAndDelivery">
+    <div class="row pt-3">
       <form-field [control]="formCapture.get('user')" class="col-md-6">
         <ngx-select
           label="Usuario"
@@ -74,7 +94,7 @@
           [data]="users$"
           (fetchItems)="getUsers($event)"
           bindLabel="userAndName"
-          control="user"
+          control="urecepcion"
           [searchOnInit]="true"
           [showTooltip]="true"
           termMaxLength="30"
@@ -91,15 +111,37 @@
         </ng-template>
       </form-field>
 
-      <!-- <form-field [control]="formCapture.get('cveJobExternal')" class="col-md-6"
-        *ngIf="!isReceptionStrategies && !isConsolidated">
-        <ngx-select [form]="formCapture" [searchOnInit]="true" control="cveJobExternal" label="Clave Oficio Externo"
+      <form-field
+        [control]="formCapture.get('cveJobExternal')"
+        class="col-md-6">
+        <!-- <ngx-select [form]="formCapture" [searchOnInit]="true" control="cveJobExternal" label="Clave Oficio Externo"
           [data]="affairName" (fetchItems)="getSubjects($event)" className="scroll-line" bindLabel="description">
-        </ngx-select>
-      </form-field> -->
+        </ngx-select> -->
+        <input
+          type="text"
+          class="form-control"
+          formControlName="cveJobExternal" />
+      </form-field>
+
+      <form-field [control]="formCapture.get('cvCoors')">
+        <!-- <ngx-select [form]="formCapture" [searchOnInit]="true" control="cvCoors" label="Coor. Regional"
+          [data]="delegations" (change)="getTotalDelegation()" (fetchItems)="getDelegations($event)"
+          className="scroll-line" bindLabel="description" [multiple]="true"></ngx-select>
+      -->
+        <ngx-select
+          [form]="formCapture"
+          control="cvCoors"
+          (fetchItems)="getDelegations($event)"
+          [showTooltip]="true"
+          [data]="delegations"
+          bindLabel="description"
+          label="Coor. Regional"
+          value="id"
+          [multiple]="true"></ngx-select>
+      </form-field>
     </div>
 
-    <div class="row pt-3" *ngIf="!isReceptionStrategies && !isConsolidated">
+    <div class="row pt-3">
       <form-field [control]="formCapture.get('noTransfere')" class="col-md-4">
         <ngx-select
           [searchOnInit]="true"
@@ -108,31 +150,41 @@
           [form]="formCapture"
           bindLabel="nameTransferent"
           label="Transferente"
-          control="noTransfere">
+          control="transference">
         </ngx-select>
       </form-field>
 
-      <form-field [control]="formCapture.get('noStation')" class="col-md-4">
+      <form-field [control]="formCapture.get('station')" class="col-md-4">
         <ngx-select
           [searchOnInit]="true"
-          (fetchItems)="getStation($event)"
+          (fetchItems)="
+            getStation(
+              formCapture.get('noTransfere').value,
+              formCapture.get('noStation').value
+            )
+          "
           [data]="station"
           [form]="formCapture"
           bindLabel="stationName"
           label="Emisora"
-          control="noStation">
+          control="station">
         </ngx-select>
       </form-field>
-
       <form-field [control]="formCapture.get('noAuthority')" class="col-md-4">
         <ngx-select
           [searchOnInit]="true"
-          (fetchItems)="getAuthority($event)"
+          (fetchItems)="
+            getAuthority(
+              formCapture.get('noTransfere').value,
+              formCapture.get('noStation').value,
+              formCapture.get('noAuthority').value
+            )
+          "
           [data]="authority"
           [form]="formCapture"
           bindLabel="authorityName"
           label="Autoridad"
-          control="noAuthority">
+          control="authority">
         </ngx-select>
       </form-field>
     </div>
@@ -143,7 +195,7 @@
           <button
             type="button"
             class="btn btn-primary active btn-sm"
-            (click)="find(captura)">
+            type="submit">
             Consulta <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
@@ -155,6 +207,7 @@
             Reporte <i class="fas fa-print bx-sm float-icon"></i>
           </button>
         </div>
+
         <div class="m-3">
           <button
             type="button"

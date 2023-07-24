@@ -67,8 +67,8 @@
           <i class="fa fa-search"></i> Buscar
         </button>
 
-        <button class="btn btn-danger btn-sm active" (click)="clean()">
-          Limpiar
+        <button class="btn btn-danger btn-sm active mr-3" (click)="clean()">
+          Limpiar <i class="fas fa-eraser"> </i>
         </button>
       </div>
       <div class="row pt-4">
@@ -86,8 +86,10 @@
       <div class="row pt-4" *ngIf="searching">
         <div class="d-flex">
           <div class="p-2">
-            <button class="btn btn-success btn-sm active">
-              <i class="bx bx-check"></i> Aceptar
+            <button
+              class="btn btn-primary btn-sm active mr-3"
+              (click)="accept()">
+              Aceptar
             </button>
           </div>
         </div>
