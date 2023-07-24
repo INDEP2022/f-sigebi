@@ -52,7 +52,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('this.typeDoc', this.typeDoc);
     this.prepareForm();
     if (this.typeDoc == 185 || this.typeDoc == 186) {
       this.getGoodsRelReceipt();
@@ -289,14 +288,13 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         .subscribe({
           next: async response => {
             const updateReceipt = await this.updateReceipt(response.dDocName);
-            console.log('updateReceipt', updateReceipt);
+
             if (updateReceipt) {
               const updateProgrammingGood = await this.updateProgrammingGood();
 
-              console.log('updateProgrammingGood', updateProgrammingGood);
               if (updateProgrammingGood) {
                 const updateGood = await this.updateGood();
-                console.log('updateGood', updateGood);
+
                 if (updateGood) {
                   this.alertInfo(
                     'success',
@@ -336,7 +334,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       const extension = '.pdf';
       const docName = this.folioPro;
 
-      console.log('formData', formData);
       this.wContentService
         .addDocumentToContent(
           docName,
@@ -385,7 +382,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       const extension = '.pdf';
       const docName = this.folioPro;
 
-      console.log('formData', formData);
       this.wContentService
         .addDocumentToContent(
           docName,
@@ -492,7 +488,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       const goodsReception = this.guardReception.value;
       goodsReception.map((item: IGood) => {
-        console.log('item', item);
         const formData: Object = {
           id: item.id,
           goodId: item.goodId,
@@ -502,9 +497,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {
-            console.log('error update good', error);
-          },
+          error: error => {},
         });
       });
     });
