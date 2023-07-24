@@ -34,6 +34,8 @@ export class MailComponent extends BasePage implements OnInit {
   P_CVE_PANTALLA: string = '';
   P_NO_TRAMITE: number = null;
   P_GEST_OK: number = null;
+  P_VOLANTE: number = null;
+  P_EXPEDIENTE: number = null;
 
   constructor(
     private modalService: BsModalService,
@@ -76,6 +78,8 @@ export class MailComponent extends BasePage implements OnInit {
           this.origin2 = params['origin2'] ?? null;
           this.P_NO_TRAMITE = params['P_NO_TRAMITE'] ?? null;
           this.P_GEST_OK = params['P_GEST_OK'] ?? null;
+          this.P_VOLANTE = params['P_VOLANTE'] ?? null;
+          this.P_EXPEDIENTE = params['P_EXPEDIENTE'] ?? null;
         }
       });
     this.data
@@ -228,6 +232,8 @@ export class MailComponent extends BasePage implements OnInit {
             origin: this.origin2 ? this.origin2 : null,
             P_NO_TRAMITE: this.P_NO_TRAMITE,
             P_GEST_OK: this.P_GEST_OK,
+            P_VOLANTE: this.P_VOLANTE,
+            P_EXPEDIENTE: this.P_EXPEDIENTE,
           },
         }
       );
