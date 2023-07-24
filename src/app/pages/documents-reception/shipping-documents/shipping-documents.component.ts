@@ -32,6 +32,7 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 
+import { TmpNotificationService } from 'src/app/core/services/ms-notification/tmp-notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -86,7 +87,8 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     private reportService: ReportService,
     private goodParameterService: GoodParametersService,
     private securityService: SecurityService,
-    private jwtHelper: JwtHelperService
+    private jwtHelper: JwtHelperService,
+    private tmpNotificationService: TmpNotificationService
   ) {
     super();
     this.settings = {
@@ -229,6 +231,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   sendNotification(notification: any, selected: boolean) {
     if (selected) {
       this.selectedNotifications.push(notification);
+      console.log('this.selectedNotifications ', this.selectedNotifications);
     } else {
       this.selectedNotifications = this.selectedNotifications.filter(
         _notification => _notification.wheelNumber != notification.wheelNumber
@@ -261,6 +264,10 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     this.getDepartmentById().subscribe({
       next: (department: any) => this.setOfficeKey(department),
     });
+
+    for (let i = 0; i < this.selectedNotifications.length; i++) {
+      this.saveNotification(this.selectedNotifications[i]);
+    }
   }
 
   setOfficeKey(department: IDepartment) {
@@ -511,5 +518,19 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
 
   getSubjectById(code: string) {
     return this.affairService.getById(code);
+  }
+
+  saveNotification(notificacion: any) {
+    notificacion.institutionNumber = notificacion.institutionNumber.id;
+    this.notificationService.create(notificacion).subscribe({
+      next: data => {
+        console.log(data);
+        this.onLoadToast('success', 'Notificación exitosa', '');
+      },
+      error: err => {
+        console.log(err);
+        this.onLoadToast('error', 'Error', 'No se logro guardar notificación');
+      },
+    });
   }
 }
