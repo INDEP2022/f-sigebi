@@ -1,10 +1,25 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Agregar' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="amountForm">
       <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="amountForm.get('idThirdParty')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="amountForm"
+              control="idThirdParty"
+              [data]="thirdPartySelect"
+              value="id"
+              bindLabel="id"
+              label="ID Tercero Comercializador"
+              (fetchItems)="getThirdPartyAll($event)">
+            </ngx-select>
+            <!-- <input type="text" class="form-control" formControlName="idThirdParty" /> -->
+          </form-field>
+        </div>
         <div class="col-md-4">
           <form-field
             label="Monto inicial"
@@ -37,38 +52,36 @@
         </div>
       </div>
 
-      <div class="row pt-5">
+      <!-- <div class="row pt-5">
         <div class="col-md-4">
           <form-field label="ID" [control]="amountForm.get('idComiXThird')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="idComiXThird" />
+            <input type="text" class="form-control" formControlName="idComiXThird" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field
-            label="ID 3ro comer"
-            [control]="amountForm.get('idThirdParty')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="idThirdParty" />
-          </form-field>
-        </div>
-      </div>
+      </div> -->
     </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [type]="'button'"
+        <button
           [disabled]="amountForm.invalid"
-          (confirm)="confirm()"></confirm-button>
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          {{ edit ? 'Actualizar' : 'Guardar' }}
+          <span *ngIf="edit"><i class="fas fa-sync-alt"> </i></span>
+          <span *ngIf="!edit"
+            ><i aria-hidden="true" class="fa fa-save"></i
+          ></span>
+        </button>
+        <!-- <confirm-button [type]="'button'" [disabled]="amountForm.invalid" (confirm)="confirm()"></confirm-button> -->
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
           Cancelar
         </button>
       </div>
