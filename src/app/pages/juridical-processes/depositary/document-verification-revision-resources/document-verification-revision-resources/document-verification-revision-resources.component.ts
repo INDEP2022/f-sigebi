@@ -755,7 +755,8 @@ export class DocumentVerificationRevisionResourcesComponent
     };
     const msg = setTimeout(() => {
       this.jasperService
-        .fetchReport('RCONJURDOCSPENDIE', params)
+        // .fetchReport('RCONJURDOCSPENDIE', params)
+        .fetchReportBlank('blank')
         .pipe(
           tap(response => {
             const blob = new Blob([response], { type: 'application/pdf' });
