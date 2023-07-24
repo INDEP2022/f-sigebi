@@ -60,7 +60,7 @@ export class CityDetailComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private cityService: CityService,
-    private stateOfRepublicService: StateOfRepublicService,
+    private stateService: StateOfRepublicService,
     private delegationService: DelegationService,
     private subdelegationService: SubdelegationService
   ) {
@@ -90,7 +90,7 @@ export class CityDetailComponent extends BasePage implements OnInit {
   }
 
   getStates(params: ListParams) {
-    this.stateOfRepublicService.getAll(params).subscribe({
+    this.stateService.getAll(params).subscribe({
       next: data => {
         this.states = new DefaultSelect(data.data, data.count);
       },
@@ -98,11 +98,16 @@ export class CityDetailComponent extends BasePage implements OnInit {
   }
 
   getDelegations(params: ListParams) {
+    this.delegations = new DefaultSelect([], 0);
     if (this.selectedState.id) params['filter.id'] = this.selectedState.id;
-
-    this.delegationService.getAll(params).subscribe({
+    this.delegationService.getAllPaginated(params).subscribe({
       next: data => {
         this.delegations = new DefaultSelect(data.data, data.count);
+        console.log('DL', data);
+      },
+      error: err => {
+        this.alert('error', 'Error', '');
+        this.loading = false;
       },
     });
   }

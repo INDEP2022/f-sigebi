@@ -1,6 +1,6 @@
 export const ORIGIN_CISI_COLUMNS = {
   id: {
-    title: 'ID',
+    title: 'Id',
     type: 'number',
     width: '15%',
     sort: false,

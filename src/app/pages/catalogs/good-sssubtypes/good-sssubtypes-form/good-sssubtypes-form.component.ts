@@ -75,14 +75,6 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
       numRegister: [null],
-      numClasifAlterna: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.maxLength(2),
-        ],
-      ],
       numClasifGoods: [
         null,
         [
@@ -278,19 +270,17 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
       return; // Retorna temprano si el campo está vacío.
     }
     this.loading = true;
-    this.goodSssubtypeService
-      .create(this.goodSssubtypeForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => {
-          this.loading = false;
-          this.alert(
-            'error',
-            'Ya existe un registro con los mismos identificadores',
-            ''
-          );
-        },
-      });
+    this.goodSssubtypeService.create(this.goodSssubtypeForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => {
+        this.loading = false;
+        this.alert(
+          'error',
+          'Ya existe un registro con los mismos identificadores',
+          ''
+        );
+      },
+    });
   }
 
   update() {

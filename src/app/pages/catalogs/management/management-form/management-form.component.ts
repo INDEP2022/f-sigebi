@@ -55,7 +55,7 @@ export class ManagementFormComponent extends BasePage implements OnInit {
 
   create() {
     if (
-      this.managementForm.controls['description'].value.trim() === '' &&
+      this.managementForm.controls['description'].value.trim() === '' ||
       this.managementForm.controls['transactId'].value.trim() === ''
     ) {
       this.alert('warning', 'No se puede guardar campos vacíos', ``);

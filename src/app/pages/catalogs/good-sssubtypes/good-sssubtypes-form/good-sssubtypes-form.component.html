@@ -73,18 +73,11 @@
           </form-field>
         </div> -->
 
-        <div class="col-md-4">
-          <form-field
-            [control]="goodSssubtypeForm.get('numClasifAlterna')"
-            label="Clasificaci&oacute;n alterna">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="numClasifAlterna"
-              maxlength="2"
-              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
+        <!--<div class="col-md-4">
+          <form-field [control]="goodSssubtypeForm.get('numClasifAlterna')" label="Clasificaci&oacute;n alterna">
+            <input type="number" class="form-control" formControlName="numClasifAlterna" />
           </form-field>
-        </div>
+        </div>-->
         <div class="col-md-4">
           <form-field
             [control]="goodSssubtypeForm.get('numClasifGoods')"

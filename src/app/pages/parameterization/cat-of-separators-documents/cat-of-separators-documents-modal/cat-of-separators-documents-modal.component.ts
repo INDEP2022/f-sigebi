@@ -67,7 +67,7 @@ export class CatOfSeparatorsDocumentsModalComponent
   }
   create() {
     if (
-      this.separatorsDocumentsModalForm.controls['key'].value.trim() === '' &&
+      this.separatorsDocumentsModalForm.controls['key'].value.trim() === '' ||
       this.separatorsDocumentsModalForm.controls['description'].value.trim() ===
         ''
     ) {

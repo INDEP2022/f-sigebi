@@ -6,6 +6,7 @@ import { IDeductive } from 'src/app/core/models/catalogs/deductive.model';
 import { DeductiveService } from 'src/app/core/services/catalogs/deductive.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
+  NUMBERS_PATTERN,
   PERCENTAGE_NUMBERS_PATTERN,
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
@@ -60,7 +61,7 @@ export class DeductiveFormComponent extends BasePage implements OnInit {
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
+          Validators.pattern(NUMBERS_PATTERN),
           Validators.maxLength(50),
         ],
       ],
@@ -84,6 +85,10 @@ export class DeductiveFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.deductiveForm.controls['serviceType'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.deductiveService.create(this.deductiveForm.value).subscribe({
       next: data => this.handleSuccess(),
@@ -102,7 +107,7 @@ export class DeductiveFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.alert('success', this.title, `${message} Correctamente`);
     //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;

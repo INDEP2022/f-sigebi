@@ -14,7 +14,7 @@ import { IRevisionReason } from '../../../../core/models/catalogs/revision-reaso
 })
 export class RevisionReasonFormComponent extends BasePage implements OnInit {
   revisionReasonForm: FormGroup = new FormGroup({});
-  title: string = 'Motivo Revisión';
+  title: string = 'MOTIVO PARA ESTATUS REV';
   edit: boolean = false;
   revisionReason: IRevisionReason;
   items = new DefaultSelect<IRevisionReason>();

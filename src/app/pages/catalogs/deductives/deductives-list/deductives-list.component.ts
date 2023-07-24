@@ -81,7 +81,7 @@ export class DeductivesListComponent extends BasePage implements OnInit {
       next: response => {
         this.deductives = response.data;
         this.totalItems = response.count || 0;
-        this.data.load(this.deductives);
+        this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
       },
@@ -104,7 +104,7 @@ export class DeductivesListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(deductive.id);
@@ -116,7 +116,7 @@ export class DeductivesListComponent extends BasePage implements OnInit {
     this.deductiveService.remove(id).subscribe({
       next: () => {
         this.getDeductives(),
-          this.alert('success', 'Deductiva', 'Borrada Correctamente');
+          this.alert('success', 'Deductiva', 'Borrado Correctamente');
       },
       error: err => {
         this.alert(

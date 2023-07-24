@@ -221,7 +221,7 @@ export class GoodsQueryService extends HttpService {
     return this.post(`${GoodsQueryEndpoints.getUnits}`, data);
   }
 
-  putUnits(data: IUnits, numero: number | string) {
+  putUnits(data: IUnits, numero: string) {
     return this.put(`${GoodsQueryEndpoints.getUnits}/${numero}`, data);
   }
 

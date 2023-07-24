@@ -87,7 +87,15 @@ export class GenericsFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.genericsForm.controls['name'].value.trim() === '' &&
+      this.genericsForm.controls['description'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
+
     console.log(this.genericsForm.value);
     this.genericsService.create(this.genericsForm.value).subscribe({
       next: data => this.handleSuccess(),

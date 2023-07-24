@@ -216,7 +216,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea borrar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(affair.id, affair.nbOrigen);
@@ -229,13 +229,13 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.affairService.remove2(id, nb).subscribe({
       next: () => {
         this.getAffairAll();
-        this.alert('success', 'Asunto para volante', 'Borrado');
+        this.alert('success', 'Asunto para Volante', 'Borrado Correctamente');
         this.rowSelected = false;
       },
       error: err => {
         this.alert(
           'warning',
-          'Asunto para volante',
+          'Asunto para Volante',
           'Primero elimine sus tipos de volante'
         );
       },
@@ -247,7 +247,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea borrar este registro?'
+      '¿Desea Borrar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete2(affairType);
@@ -261,7 +261,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.affairTypeService.remove(affairType).subscribe({
       next: () => {
         this.getAffairType(affair);
-        this.alert('success', 'Tipo Volante', 'Borrado');
+        this.alert('success', 'Tipo Volante', 'Borrado Correctamente');
       },
       error: erro => {
         this.alert(
@@ -277,8 +277,8 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
   showNullRegister() {
     this.alertQuestion(
       'warning',
-      'Asunto sin volantes',
-      '¿Desea agregarlos ahora?'
+      'Asunto sin Volantes',
+      '¿Desea Agregarlos Ahora?'
     ).then(question => {
       if (question.isConfirmed) {
         this.openForm();
