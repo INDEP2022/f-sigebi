@@ -7,12 +7,15 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import {
   ICustomersPenalties,
   IHistoryCustomersPenalties,
 } from 'src/app/core/models/catalogs/customer.model';
 import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
+
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CustomersPenaltiesExportHistoricComponent } from '../../customer-penalties-export-historic/customer-penalties-export-historic.component';
 import { COLUMNS2 } from '../columns';
 
 @Component({
@@ -31,7 +34,6 @@ export class HistoryCustomersPenaltiesComponent
   data2: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
 
-  //Trae la información que le paso desde la tabla de CustomersPenaltiesComponent
   private _penalties: ICustomersPenalties;
   @Input() get penalties(): ICustomersPenalties {
     return this._penalties;
@@ -46,7 +48,8 @@ export class HistoryCustomersPenaltiesComponent
 
   constructor(
     private modalService: BsModalService,
-    private clientPenaltyService: ClientPenaltyService
+    private clientPenaltyService: ClientPenaltyService,
+    private excelService: ExcelService
   ) {
     super();
     this.settings.columns = COLUMNS2;
@@ -162,7 +165,6 @@ export class HistoryCustomersPenaltiesComponent
 
   rowsSelected(event: any) {
     const dat = event.data;
-    console.log(dat);
   }
 
   getData() {
@@ -173,7 +175,6 @@ export class HistoryCustomersPenaltiesComponent
     };
     if (this.penalties) {
       this.clientId = this.penalties.clientId.id;
-      console.log(this.clientId);
       this.loading = true;
       this.clientPenaltyService
         .getByIdComerPenaltyHis(this.clientId, params)
@@ -200,7 +201,6 @@ export class HistoryCustomersPenaltiesComponent
   }
 
   openForm(iHistoryCustomersPenalties?: IHistoryCustomersPenalties) {
-    console.log(iHistoryCustomersPenalties);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       iHistoryCustomersPenalties,
@@ -208,126 +208,16 @@ export class HistoryCustomersPenaltiesComponent
         if (next) this.getData();
       },
     };
-    // this.modalService.show(RepresentativesModalComponent, modalConfig);
+    this.modalService.show(
+      CustomersPenaltiesExportHistoricComponent,
+      modalConfig
+    );
+  }
+
+  all(): void {
+    this.excelService.exportAsExcelFile(
+      this.customersPenalties,
+      'PenalizacionesDeCliente'
+    );
   }
 }
-
-/*
-import { DatePipe } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
-import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { ICustomersPenalties, IHistoryCustomersPenalties } from 'src/app/core/models/catalogs/customer.model';
-
-import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
-import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
-
-
-import { BasePage } from 'src/app/core/shared/base-page';
-import { COLUMNS2 } from '../columns';
-
-
-
-
-@Component({
-  selector: 'app-history-customers-penalties',
-  templateUrl: './history-customers-penalties.component.html',
-  styles: [],
-})
-export class HistoryCustomersPenaltiesComponent extends BasePageWidhtDinamicFilters implements OnInit {
-  private _penalties: ICustomersPenalties;
-  @Input() get penalties(): ICustomersPenalties {
-    return this._penalties;
-  }
-  set penalties(value: ICustomersPenalties) {
-    this._penalties = value;
-    this.getData();
-  }
-  // data: ICustomersPenalties[] = [];
-  // totalItems: number = 0;
-  // params = new BehaviorSubject<ListParams>(new ListParams());
-
-  downloading: boolean = false;
-  override columnFilters: any = [];
-  override data: LocalDataSource = new LocalDataSource();
-  data2: LocalDataSource = new LocalDataSource();
-  clientId: number;
-
-  constructor(
-    private datePipe: DatePipe,
-    private modalService: BsModalService,
-    private clientPenaltyService: ClientPenaltyService,
-  ) {
-    super();
-    this.settings.columns = COLUMNS2;
-    this.service = this.clientPenaltyService;
-    this.settings.hideSubHeader = false;
-    this.settings.actions.columnTitle = 'Acciones';
-    this.settings.actions.edit = true;
-    this.settings.actions.add = false;
-    this.settings.actions.delete = false;
-    this.settings.actions.position = 'right';
-  }
-
-  settingsChange($event: any): void {
-    this.settings = $event;
-  }
-
-  rowsSelected(event: any) {
-    const dat = event.data;
-    console.log(dat)
-  }
-
-  override getData() {
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-    if (this.penalties) {
-      if (!this.penalties.clientId) {
-        this.alert('warning', 'Cliente no Histórico de Penalizacion', '');
-        return;
-      }
-      this.clientId = this.penalties.clientId.id;
-      console.log(this.clientId)
-      this.loading = true;
-      this.clientPenaltyService
-        .getByIdComerPenaltyHis(this.clientId)
-        .subscribe({
-          next: response => {
-            this.data.load([response]);
-            this.data2.load([response]);
-            console.log(this.data)
-            const data5 = response.data;
-            this.data.refresh();
-            // this.totalItems = 1;
-
-            this.loading = false;
-          },
-          error: error => {
-            this.loading = false;
-            this.alert(
-              'error',
-              'No es Posible Traer el Histórico de Penalizaciones',
-              ''
-            );
-          },
-        });
-    }
-  }
-
-  openForm(iHistoryCustomersPenalties?: IHistoryCustomersPenalties) {
-    console.log(iHistoryCustomersPenalties)
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      iHistoryCustomersPenalties,
-      callback: (next: boolean) => {
-        if (next) this.getData();
-      },
-    };
-    // this.modalService.show(RepresentativesModalComponent, modalConfig);
-  }
-}
-
-*/
