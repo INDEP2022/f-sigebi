@@ -101,7 +101,7 @@ export class ResponseRepuveListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.remove(responseRepuve.id);
@@ -112,7 +112,7 @@ export class ResponseRepuveListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.responseRepuveService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Respuesta repuve', 'Borrado Correctamente');
+        this.alert('success', 'Respuesta Repuve', 'Borrado Correctamente');
         this.getExample();
       },
       error: error => {

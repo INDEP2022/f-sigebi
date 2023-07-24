@@ -87,7 +87,7 @@ export class DocCompensationSatFormComponent
 
   create() {
     if (
-      this.docCompesationSatForm.controls['addressee'].value.trim() === '' &&
+      this.docCompesationSatForm.controls['addressee'].value.trim() === '' ||
       this.docCompesationSatForm.controls['typeDocSat'].value.trim() === ''
     ) {
       this.alert('warning', 'No se puede guardar campos vacíos', ``);

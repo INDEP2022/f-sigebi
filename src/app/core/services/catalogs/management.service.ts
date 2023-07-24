@@ -15,7 +15,7 @@ export class ManagementService implements ICrudMethods<IManagement> {
   constructor(private managementRepository: Repository<IManagement>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IManagement>> {
-    return this.managementRepository.getAllPaginated(this.route1, params);
+    return this.managementRepository.getAllPaginated(this.route, params);
   }
 
   getById(id: string | number): Observable<IManagement> {

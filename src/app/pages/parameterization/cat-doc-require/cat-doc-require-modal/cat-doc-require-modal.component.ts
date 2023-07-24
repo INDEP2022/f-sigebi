@@ -71,6 +71,7 @@ export class CatDocRequireModalComponent extends BasePage implements OnInit {
 
   create() {
     if (
+      this.documentsForDictumForm.controls['id'].value.trim() === '' ||
       this.documentsForDictumForm.controls['description'].value.trim() === ''
     ) {
       this.alert('warning', 'No se puede guardar campos vacíos', ``);

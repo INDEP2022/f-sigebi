@@ -211,12 +211,12 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
         });
       } else {
         if (
-          this.form.controls['description'].value.trim() === '' &&
-          this.form.controls['manager'].value.trim() === '' &&
-          this.form.controls['street'].value.trim() === '' &&
-          this.form.controls['numExterior'].value.trim() === '' &&
-          this.form.controls['numInside'].value.trim() === '' &&
-          this.form.controls['cologne'].value.trim() === '' &&
+          this.form.controls['description'].value.trim() === '' ||
+          this.form.controls['manager'].value.trim() === '' ||
+          this.form.controls['street'].value.trim() === '' ||
+          this.form.controls['numExterior'].value.trim() === '' ||
+          this.form.controls['numInside'].value.trim() === '' ||
+          this.form.controls['cologne'].value.trim() === '' ||
           this.form.controls['delegationMun'].value.trim() === ''
         ) {
           this.alert('warning', 'No se puede guardar campos vacíos', ``);

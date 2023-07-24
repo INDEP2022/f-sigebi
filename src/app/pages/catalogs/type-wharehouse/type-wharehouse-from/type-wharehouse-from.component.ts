@@ -37,25 +37,19 @@ export class TypeWharehouseFromComponent extends BasePage implements OnInit {
       id: [null],
       description: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.maxLength(80),
           Validators.pattern(STRING_PATTERN),
-        ]),
+        ],
       ],
       version: [
         null,
-        Validators.compose([
-          Validators.required,
-          Validators.pattern(POSITVE_NUMBERS_PATTERN),
-        ]),
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
       status: [
         null,
-        Validators.compose([
-          Validators.required,
-          Validators.pattern(POSITVE_NUMBERS_PATTERN),
-        ]),
+        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
     });
     if (this.typeWarehouse != null) {

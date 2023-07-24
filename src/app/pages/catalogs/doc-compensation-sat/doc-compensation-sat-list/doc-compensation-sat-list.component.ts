@@ -131,7 +131,7 @@ export class DocCompensationSatListComponent
       next: response => {
         this.alert(
           'success',
-          'Documento resarcimiento SAT',
+          'Documento Resarcimiento SAT',
           'Borrado Correctamente'
         ),
           this.getExample();

@@ -73,6 +73,7 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getDinamicTables();
         }
       });
@@ -92,7 +93,7 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
         this.columns = response.data;
         this.totalItems = response.count || 0;
 
-        this.data.load(this.columns);
+        this.data.load(response.data);
         this.data.refresh();
         //this.dinamicTables = response.data;
         //this.totalItems = response.count;
@@ -121,7 +122,7 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       console.log(dinamicTables);
       if (question.isConfirmed) {
@@ -134,7 +135,7 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
     this.dinamicTablesService.remove2(id).subscribe({
       next: () => {
         this.getDinamicTables();
-        this.alert('success', 'Tablas Lógicas', 'Borrado');
+        this.alert('success', 'Tablas Lógicas', 'Borrado Correctamente');
       },
       error: erro => {
         this.alert(

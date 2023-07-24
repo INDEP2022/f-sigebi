@@ -112,6 +112,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
           this.form.get('manager').patchValue(null);
           this.form.get('numberDeep').patchValue(null);
         }
+        this.value = value;
       },
     });
 
@@ -142,35 +143,28 @@ export class MaintenanceIndividualsAndCompaniesComponent
           },
         });
       } else {
-        if (this.value === 'M') {
+        if (this.value == 'M') {
           if (
-            this.form.controls['personName'].value.trim() === '' &&
-            this.form.controls['name'].value.trim() === '' &&
-            this.form.controls['street'].value.trim() === '' &&
-            this.form.controls['streetNumber'].value.trim() === '' &&
-            this.form.controls['apartmentNumber'].value.trim() === '' &&
-            this.form.controls['suburb'].value.trim() === '' &&
-            this.form.controls['observations'].value.trim() === '' &&
-            this.form.controls['profile'].value.trim() === '' &&
-            this.form.controls['manager'].value.trim() === '' &&
+            this.form.controls['personName'].value.trim() === '' ||
+            this.form.controls['name'].value.trim() === '' ||
+            this.form.controls['observations'].value.trim() === '' ||
+            this.form.controls['profile'].value.trim() === '' ||
+            this.form.controls['manager'].value.trim() === '' ||
             this.form.controls['numberDeep'].value.trim() === ''
           ) {
             this.alert('warning', 'No se puede guardar campos vacíos', '');
             return;
-          } else if (this.value !== 'M') {
-            if (
-              this.form.controls['personName'].value.trim() === '' &&
-              this.form.controls['name'].value.trim() === '' &&
-              this.form.controls['street'].value.trim() === '' &&
-              this.form.controls['streetNumber'].value.trim() === '' &&
-              this.form.controls['apartmentNumber'].value.trim() === '' &&
-              this.form.controls['suburb'].value.trim() === '' &&
-              this.form.controls['observations'].value.trim() === '' &&
-              this.form.controls['profile'].value.trim() === ''
-            ) {
-              this.alert('warning', 'No se puede guardar campos vacíos', '');
-              return;
-            }
+          }
+        }
+        if (this.value == 'F') {
+          if (
+            this.form.controls['personName'].value.trim() === '' ||
+            this.form.controls['name'].value.trim() === '' ||
+            this.form.controls['observations'].value.trim() === '' ||
+            this.form.controls['profile'].value.trim() === ''
+          ) {
+            this.alert('warning', 'No se puede guardar campos vacíos', '');
+            return;
           }
         }
         console.log();
@@ -189,7 +183,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
   handleSuccess() {
     this.loading = false;
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `${message} Correctamente`, this.title);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
