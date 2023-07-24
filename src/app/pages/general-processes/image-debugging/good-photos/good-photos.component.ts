@@ -132,7 +132,8 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
     const config = {
       ...MODAL_CONFIG,
       initialState: {
-        accept: 'image/*',
+        multiple: true,
+        accept: 'image/zip',
         uploadFiles: false,
         service: this.filePhotoService,
         identificator: this.goodNumber + '',

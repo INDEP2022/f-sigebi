@@ -146,8 +146,7 @@ export class SummaryComponent extends BasePage implements OnInit {
     /// console.log(this.start);
     if (this.end < this.start) {
       this.onLoadToast(
-        'warning',
-        'advertencia',
+        'error',
         'Fecha final no puede ser menor a fecha de inicio'
       );
       return;

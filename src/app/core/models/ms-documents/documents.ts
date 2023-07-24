@@ -92,20 +92,23 @@ export interface ICaptureDig {
   no_tramite: number;
   urecepcion: number;
   programa: string;
+  fescaneo: string;
+  cant_bien: number;
   finicia: string;
   fmaxima: string;
   cumplio: boolean;
+  column5: string;
 }
 export interface ICaptureDigFilter {
   cveJobExternal: string;
   user: string;
-  cvCoors: [];
+  cvCoors: number[];
   typeSteering: string;
   fecStart: string;
   fecEnd: string;
   noTransfere: number;
   noStation: number;
-  noAuthority: number;
+  noAuthorityts: number;
 }
 export interface Info {
   total_cumplio: number;

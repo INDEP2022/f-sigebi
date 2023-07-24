@@ -34,6 +34,15 @@ export class UserProcessService extends HttpService {
     );
   }
 
+  getAllUsersWithRolDistint(
+    params?: ListParams
+  ): Observable<IListResponse<IUserProcess>> {
+    return this.get<IListResponse<IUserProcess>>(
+      UserProcessEndpoint.UserListWithRolDistint,
+      params
+    );
+  }
+
   getAllUsersWithProgramming(
     _params?: ListParams
   ): Observable<IListResponse<IUserProcess>> {

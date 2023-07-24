@@ -7,14 +7,14 @@
   <div body>
     <div class="ch-content" header>
       <h5 class="title"></h5>
-      <div class="col-md-5 buttons m-3">
+      <div class="col-md-5 buttons mb-3">
         <div>
           <button
             (click)="openForm1()"
             type="button"
             tooltip="Agregar"
             containerClass="tooltip-style"
-            class="btn btn-info btn-sm active ml-2 mr-2">
+            class="btn btn-info btn-sm active ml-2">
             Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
@@ -32,7 +32,8 @@
             [settings]="settings"
             [source]="thirdPartyList"
             (userRowSelect)="rowsSelected($event)"
-            (edit)="openForm1($event.data)">
+            (edit)="openForm1($event.data)"
+            (delete)="questionDelete1($event.data)">
           </ng2-smart-table>
         </ng-scrollbar>
         <app-pagination
@@ -58,14 +59,14 @@
   <div body>
     <div class="ch-content" header>
       <h5 class="title"></h5>
-      <div class="col-md-5 buttons m-3">
+      <div class="col-md-5 buttons mb-3">
         <div>
           <button
             (click)="openForm2()"
             type="button"
             tooltip="Agregar"
             containerClass="tooltip-style"
-            class="btn btn-info btn-sm active ml-2 mr-2">
+            class="btn btn-info btn-sm active ml-2">
             Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
@@ -82,8 +83,8 @@
             class="table-responsive"
             [settings]="settings2"
             [source]="typeEventList"
-            (userRowSelect)="rowsSelected2($event)"
-            (edit)="openForm2($event.data)">
+            (edit)="openForm2($event.data)"
+            (delete)="questionDelete2($event.data)">
           </ng2-smart-table>
         </ng-scrollbar>
       </div>
@@ -103,14 +104,14 @@
   <div body>
     <div class="ch-content" header>
       <h5 class="title"></h5>
-      <div class="col-md-5 buttons m-3">
+      <div class="col-md-5 buttons mb-3">
         <div>
           <button
             (click)="openForm3()"
             type="button"
             tooltip="Agregar"
             containerClass="tooltip-style"
-            class="btn btn-info btn-sm active ml-2 mr-2">
+            class="btn btn-info btn-sm active ml-2">
             Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
@@ -127,7 +128,8 @@
             class="table-responsive"
             [settings]="settings3"
             [source]="amountList"
-            (edit)="openForm3($event.data)">
+            (edit)="openForm3($event.data)"
+            (delete)="questionDelete3($event.data)">
           </ng2-smart-table>
         </ng-scrollbar>
       </div>
