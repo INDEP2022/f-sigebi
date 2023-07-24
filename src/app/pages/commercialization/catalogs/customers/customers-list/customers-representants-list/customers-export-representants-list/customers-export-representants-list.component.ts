@@ -10,16 +10,20 @@ import { ExcelService } from 'src/app/common/services/excel.service';
 import { IRepresentative } from 'src/app/core/models/catalogs/representative-model';
 import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { CUSTOMERS_LIST_COLUMNS } from '../customers-black-list/customers-list-columns';
+import { CUSTOMERS_LIST_COLUMNS } from '../../..//customers-black-list/customers-list-columns';
 
 @Component({
-  selector: 'app-customers-white-list',
-  templateUrl: './customers-white-list.component.html',
+  selector: 'app-customers-export-representants-list.component',
+  templateUrl: './customers-export-representants-list.component.html',
   styles: [],
 })
-export class CustomersWhiteListComponent extends BasePage implements OnInit {
-  title: string = 'Clientes Sin Problemas';
+export class CustomersExportRepresentantsListComponent
+  extends BasePage
+  implements OnInit
+{
+  title: string = 'Todos los Representantes del Cliente';
   customers: IRepresentative[] = [];
+  agentId: number;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
@@ -55,6 +59,12 @@ export class CustomersWhiteListComponent extends BasePage implements OnInit {
               case 'reasonName':
                 searchFilter = SearchFilter.ILIKE;
                 break;
+              case 'paternalSurname':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'maternalSurname':
+                searchFilter = SearchFilter.ILIKE;
+                break;
               case 'rfc':
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -75,38 +85,39 @@ export class CustomersWhiteListComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getCustomers();
+          this.getRepresentats();
         }
       });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getCustomers());
+      .subscribe(() => this.getRepresentats());
   }
 
-  //Tabla de lista blanca de clientes
-  getCustomers() {
-    this.loading = true;
+  //Tabla con todos los clientes
+  getRepresentats() {
+    this.data = new LocalDataSource();
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.customerService.getAllClientsWhiteList(params).subscribe({
-      next: response => {
-        this.customers = response.data;
-        this.data.load(response.data);
-        this.data.refresh();
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
+    this.customerService
+      .getRepresentativeByClients(this.agentId, params)
+      .subscribe({
+        next: response => {
+          this.data.load([response]);
+          this.data.refresh();
+          this.totalItems = 1;
+          this.loading = false;
+        },
+        error: error => (this.loading = false),
+      });
   }
 
   //Exportar lista blanca de clientes
   exportClientsWhiteList(): void {
     this.excelService.exportAsExcelFile(
       this.customers,
-      'ClientesEnListaBlanca'
+      'TodosLosRepresentantesDelCliente'
     );
   }
 

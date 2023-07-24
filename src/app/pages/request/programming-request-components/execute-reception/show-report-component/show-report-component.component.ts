@@ -322,8 +322,9 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
               .firmDocument(this.programming.id, 'ProgramacionRecibo', {})
               .subscribe({
                 next: response => {
-                  this.msjCheck = true;
                   this.loadingButton = false;
+                  this.msjCheck = true;
+
                   this.alert(
                     'success',
                     'Correcto',
