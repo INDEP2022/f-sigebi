@@ -15,13 +15,14 @@ export class RevisionReasonService
   implements ICrudMethods<IRevisionReason>
 {
   private readonly route: string = ENDPOINT_LINKS.RevisionReason;
+  private readonly route1: string = ENDPOINT_LINKS.RevisionReasonAll;
   constructor(private revisionReasonRepository: Repository<IRevisionReason>) {
     super();
     this.microservice = 'catalog';
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IRevisionReason>> {
-    return this.revisionReasonRepository.getAllPaginated(this.route, params);
+    return this.revisionReasonRepository.getAllPaginated(this.route1, params);
   }
 
   getById(id: string | number): Observable<IRevisionReason> {

@@ -162,7 +162,7 @@
             <button
               type="button"
               class="btn btn-primary active btn-sm"
-              (click)="Application()">
+              (click)="DelegationI()">
               Buscar<i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
           </div>
@@ -189,7 +189,8 @@
       <button
         class="btn btn-secondary btn-sm active m-3 p-1 pointer"
         type="button"
-        (click)="addSelect()">
+        (click)="addSelect()"
+        [disabled]="!status">
         <!-- Mover uno -->
         <i class="bx bx-chevron-down bx-md"></i>
       </button>

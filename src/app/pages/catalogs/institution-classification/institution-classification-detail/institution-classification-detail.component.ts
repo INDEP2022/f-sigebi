@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IInstitutionClassification } from 'src/app/core/models/catalogs/institution-classification.model';
 import { InstitutionClasificationService } from 'src/app/core/services/catalogs/institution-classification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-institution-classification-detail',
@@ -38,11 +39,20 @@ export class InstitutionClassificationDetailComponent
       id: [null],
       description: [
         null,
-        Validators.compose([Validators.required, Validators.maxLength(100)]),
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       numRegister: [
         null,
-        Validators.compose([Validators.minLength(1), Validators.pattern('')]),
+        [
+          Validators.required,
+          Validators.minLength(1),
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
     });
     if (this.institution != null) {
@@ -78,7 +88,7 @@ export class InstitutionClassificationDetailComponent
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

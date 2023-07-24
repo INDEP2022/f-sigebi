@@ -203,19 +203,19 @@ export class CityDetailComponent extends BasePage implements OnInit {
         value: newCity.noSubDelegation.id,
       },
     });
-    this.edit ? this.update(newCity) : this.create(newCity);
+    this.edit ? this.update(newCity) : this.create();
   }
 
   close() {
     this.modalRef.hide();
   }
 
-  create(newCity: ICity) {
+  create() {
     this.loading = true;
-    this.cityService.create2(newCity).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    this.cityService.create2(this.cityForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: err => (this.loading = false),
+    });
   }
 
   update(newCity: ICity) {
@@ -231,7 +231,7 @@ export class CityDetailComponent extends BasePage implements OnInit {
     this.alert('success', this.title, `${message} Correctamente`);
     //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.modalRef.content.callback(true);
+    this.refresh.emit(true);
     this.modalRef.hide();
   }
 }

@@ -72,6 +72,13 @@ export class TypeWharehouseFromComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.typeWarehouseForm.controls['description'].value.trim() === '' &&
+      this.typeWarehouseForm.controls['status'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.typeWarehouseService
       .create(this.typeWarehouseForm.getRawValue())

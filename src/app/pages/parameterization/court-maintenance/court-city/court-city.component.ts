@@ -48,7 +48,9 @@ export class CourtCityComponent extends BasePage implements OnInit {
       //subDelegation: [{ value: null, disabled: true }],
     });
 
-    this.getCiities(new ListParams());
+    setTimeout(() => {
+      this.getCiities(new ListParams());
+    }, 1000);
   }
 
   onValuesChange(cityChange: ICity) {

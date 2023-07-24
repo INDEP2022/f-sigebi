@@ -38,7 +38,7 @@ export class ModalCatAppraisersComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(200),
+          Validators.maxLength(80),
         ],
       ],
       position: [

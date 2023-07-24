@@ -45,34 +45,68 @@ export class GoodTypeFormComponent extends BasePage implements OnInit {
       ],
       maxAsseguranceTime: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxFractionTime: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxExtensionTime: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxStatementTime: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxLimitTime1: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxLimitTime2: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxLimitTime3: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
-      noRegister: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      version: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      noRegister: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      version: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.goodType != null) {
       this.edit = true;

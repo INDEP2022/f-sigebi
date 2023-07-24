@@ -70,3 +70,10 @@ export interface IComerCommissionsPerGood {
   processIt: number;
   saleTc: number;
 }
+
+export interface IThirdParty_ {
+  //Terceros comercializadores
+  id: number;
+  nameReason: string;
+  calculationRoutine: string;
+}
