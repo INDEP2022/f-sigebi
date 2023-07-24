@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   ListParams,
   SearchFilter,
@@ -12,6 +16,7 @@ import { IAccountMovement } from 'src/app/core/models/ms-account-movements/accou
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { StrategyProcessService } from 'src/app/core/services/ms-strategy/strategy-process.service';
@@ -59,7 +64,9 @@ export class ImplementationReportsInvoicesComponent
   factura: any;
   iddelegation: any;
   idsubdelegation: any;
-
+  datos: any;
+  loadingDoc: boolean = false;
+  no_report: any;
   constructor(
     private fb: FormBuilder,
     private msInvoiceService: MsInvoiceService,
@@ -67,7 +74,11 @@ export class ImplementationReportsInvoicesComponent
     private strategyProcessService: StrategyProcessService,
     private detailProceeDelRecService: DetailProceeDelRecService,
     private documentsDictumStatetMService: DocumentsDictumStatetMService,
-    private departamentService: DepartamentService
+    private departamentService: DepartamentService,
+    private jasperService: SiabService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService,
+    private router: Router
   ) {
     super();
     this.settings.columns = IMPLEMENTATION_COLUMNS;
@@ -376,28 +387,100 @@ export class ImplementationReportsInvoicesComponent
             subDelegationNumber: this.data2[i].subdelegation,
             departamentNumber: this.data2[i].zona,
           };
-          console.log('PRUEBA:  -> ', item);
+          this.no_report = this.data2[i].no_report;
+          console.log('PRUEBA:  -> ', this.no_report);
+          this.datos = item;
           this.documentsDictumStatetMService.postDocument(item).subscribe({
             next: response => {
-              console.log('Succefull: ', response);
+              console.log('Succefull1: ', response);
+              this.PupFolEscMas(this.datos);
             },
           });
         } catch (error) {
           console.error('Error al obtener el reporte:', error);
         }
       }
-      try {
-        const response = await this.documentsDictumStatetMService
-          .getSeqDocument()
-          .toPromise();
-        this.lnu_folio = response.data;
-      } catch (error) {
-        console.error('Error al obtener el documento:', error);
-      }
     }
   }
 
-  PupFolEscMas() {
-    for (let i = 0; i < this.data2.length; i++) {}
+  PupFolEscMas(datos: any) {
+    this.documentsDictumStatetMService.getSeqDocument().subscribe({
+      next: response => {
+        this.lnu_folio = response;
+        const item = {
+          fileNumber: datos.fileNumber,
+          folioUniversal: this.lnu_folio,
+          reports: datos.reports,
+          reportNumber: this.no_report,
+          fractureId: datos.fractureId,
+          delegationNumber: datos.delegationNumber,
+          subDelegationNumber: datos.subDelegationNumber,
+          departamentNumber: datos.departamentNumber,
+        };
+        console.log('Prueba: ', item);
+        this.invoiceDetailsForm.patchValue({
+          scanFolio: this.lnu_folio,
+        });
+        this.documentsDictumStatetMService.postPupFol(item).subscribe({
+          next: response => {
+            console.log('Succefull2: ', response);
+            this.proccesReport();
+          },
+        });
+      },
+    });
+  }
+
+  proccesReport() {
+    if (this.lnu_folio) {
+      const msg = setTimeout(() => {
+        this.jasperService
+          .fetchReport('RGERGENSOLICDIGIT', { pn_folio: this.lnu_folio })
+          .pipe(
+            tap(response => {
+              this.alert(
+                'success',
+                'Generado correctamente',
+                'Generado correctamente con folio: ' + this.lnu_folio
+              );
+              const blob = new Blob([response], { type: 'application/pdf' });
+              const url = URL.createObjectURL(blob);
+              let config = {
+                initialState: {
+                  documento: {
+                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                    type: 'pdf',
+                  },
+                  callback: (data: any) => {},
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(PreviewDocumentsComponent, config);
+              this.loadingDoc = false;
+              clearTimeout(msg);
+            })
+          )
+          .subscribe();
+      }, 1000);
+    } else {
+      this.alert(
+        'error',
+        'ERROR',
+        'Debe tener el folio en pantalla para poder reimprimir'
+      );
+    }
+  }
+
+  goToScan() {
+    localStorage.setItem('numberExpedient', this.lnu_folio.toString());
+
+    this.router.navigate([`/pages/general-processes/scan-documents`], {
+      queryParams: {
+        origin:
+          '/pages/administrative-processes/services/implementation-reports-invoices',
+        folio: this.lnu_folio,
+      },
+    });
   }
 }

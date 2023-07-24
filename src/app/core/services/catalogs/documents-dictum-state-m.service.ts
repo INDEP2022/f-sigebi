@@ -53,6 +53,10 @@ export class DocumentsDictumStatetMService extends HttpService {
   }
 
   postDocument(data: any) {
-    return this.post(DocumentsEndpoints.posdocument, data);
+    return this.post(DocumentsEndpoints.postdocument, data);
+  }
+
+  postPupFol(data: any) {
+    return this.post(DocumentsEndpoints.postPup, data);
   }
 }

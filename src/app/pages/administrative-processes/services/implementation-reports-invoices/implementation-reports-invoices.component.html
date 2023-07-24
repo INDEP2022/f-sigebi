@@ -110,7 +110,10 @@
           </div>
           <div class="col-md-2" style="text-align: center">
             <div class="justify-content-center margin-input">
-              <button class="btn btn-info active btn-sm" [disabled]="billId">
+              <button
+                class="btn btn-info active btn-sm"
+                [disabled]="billId"
+                (click)="goToScan()">
                 Escanear <i class="bx bx-file bx-sm float-icon"></i>
               </button>
             </div>
@@ -129,7 +132,10 @@
           </div>
           <div class="col-md-2" style="text-align: center">
             <div class="justify-content-center margin-input">
-              <button type="button" class="btn btn-primary active btn-sm">
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm"
+                (click)="proccesReport()">
                 Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
               </button>
             </div>
