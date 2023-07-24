@@ -53,6 +53,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
   captura: ICaptureDigFilter;
   capturasDig: ICaptureDigFilter[] = [];
   info: Info;
+  nombreUser: string = '';
   flyerTypes: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters: any = [];
@@ -139,12 +140,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
   ) {
     super();
     this.userName = this.token.decodeToken().username;
-    // this.settings = {
-    //   actions: false,
-    //   ...this.settings,
-    //   columns: GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS,
-
-    // };
+    this.flyerTypes = ['A', 'AP', 'AS', 'AT', 'OF', 'P', 'PJ', 'T  '];
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -190,6 +186,9 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
   }
   cleanForm() {
     this.formCapture.reset();
+    this.capturasDig = [];
+    this.nombreUser = '';
+    this.dataFactCapt.refresh();
   }
 
   getEvent() {
@@ -217,7 +216,13 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
   }
   getDelegations(params: ListParams) {
     this.delegationService.getAll(params).subscribe({
-      next: res => (this.delegations = new DefaultSelect(res.data, res.count)),
+      next: res => {
+        this.delegations = new DefaultSelect(res.data, res.count);
+        const name = this.formCapture.get('cvCoors').value;
+        const data = res.data.filter(m => m.id == name);
+        console.log(data);
+      },
+
       error: () => {
         this.delegations = new DefaultSelect([], 0);
       },
@@ -246,62 +251,62 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     });
   }
 
-  // getStation(params: ListParams) {
-  //   this.stationService.getAll(params).subscribe({
-  //     next: data => {
-  //       this.station = new DefaultSelect(data.data, data.count);
-  //     },
-  //     error: () => {
-  //       this.station = new DefaultSelect();
-  //     },
-  //   });
-  // }
-  // getAuthority(params: ListParams) {
-  //   this.authorityService.getAll(params).subscribe({
-  //     next: data => {
-  //       this.authority = new DefaultSelect(data.data, data.count);
-  //     },
-  //     error: () => {
-  //       this.authority = new DefaultSelect();
-  //     },
-  //   });
-  // }
-  getAuthority(idTransferent: number, idStation: number, idAuthority: number) {
-    return new Promise((resolve, reject) => {
-      const params = new ListParams();
-      params['filter.idStation'] = `$eq:${idStation}`;
-      params['filter.idTransferer'] = `$eq:${idTransferent}`;
-      params['filter.idAuthority'] = `$eq:${idAuthority}`;
-      this.authorityService.getAll(params).subscribe({
-        next: data => {
-          this.authorityName = data.data[0].authorityName;
-          resolve(true);
-        },
-        error: error => {
-          this.authorityName = '';
-          resolve(true);
-        },
-      });
+  getStation(params: ListParams) {
+    this.stationService.getAll(params).subscribe({
+      next: data => {
+        this.station = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.station = new DefaultSelect();
+      },
     });
   }
+  getAuthority(params: ListParams) {
+    this.authorityService.getAll(params).subscribe({
+      next: data => {
+        this.authority = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.authority = new DefaultSelect();
+      },
+    });
+  }
+  // getAuthority(idTransferent: number, idStation: number, idAuthority: number) {
+  //   return new Promise((resolve, reject) => {
+  //     const params = new ListParams();
+  //     params['filter.idStation'] = `$eq:${idStation}`;
+  //     params['filter.idTransferer'] = `$eq:${idTransferent}`;
+  //     params['filter.idAuthority'] = `$eq:${idAuthority}`;
+  //     this.authorityService.getAll(params).subscribe({
+  //       next: data => {
+  //         this.authorityName = data.data[0].authorityName;
+  //         resolve(true);
+  //       },
+  //       error: error => {
+  //         this.authorityName = '';
+  //         resolve(true);
+  //       },
+  //     });
+  //   });
+  // }
 
-  getStation(idTransferent: number, idStation: number) {
-    return new Promise((resolve, reject) => {
-      const params = new ListParams();
-      params['filter.id'] = `$eq:${idStation}`;
-      params['filter.idTransferent'] = `$eq:${idTransferent}`;
-      this.stationService.getAll(params).subscribe({
-        next: data => {
-          this.stationName = data.data[0].stationName;
-          resolve(true);
-        },
-        error: error => {
-          this.stationName = '';
-          resolve(true);
-        },
-      });
-    });
-  }
+  // getStation(idTransferent: number, idStation: number) {
+  //   return new Promise((resolve, reject) => {
+  //     const params = new ListParams();
+  //     params['filter.id'] = `$eq:${idStation}`;
+  //     params['filter.idTransferent'] = `$eq:${idTransferent}`;
+  //     this.stationService.getAll(params).subscribe({
+  //       next: data => {
+  //         this.stationName = data.data[0].stationName;
+  //         resolve(true);
+  //       },
+  //       error: error => {
+  //         this.stationName = '';
+  //         resolve(true);
+  //       },
+  //     });
+  //   });
+  // }
 
   getUsers($params: ListParams) {
     let params = new FilterParams();
@@ -321,8 +326,10 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       tap(response => {
         if (response.count > 0) {
           const name = this.formCapture.get('user').value;
-          const data = response.data.filter(m => m.id == name);
-          console.log(data);
+          const data = response.data.filter(m => {
+            m.id == name;
+          });
+          console.log(data[0]);
           this.formCapture.get('user').patchValue(data[0]);
         }
         this.users$ = new DefaultSelect(response.data, response.count);
@@ -331,11 +338,11 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
   }
 
   Generar() {
-    this.isLoading = true;
-    if (this.formCapture.value.user == null && this.dataFactCapt.empty) {
+    this.loading = true;
+    if (this.formCapture.value.user == null) {
       this.alert(
         'info',
-        'debe seleccionar un usuario para generar reporte',
+        'Debe seleccionar un usuario para generar reporte',
         ''
       );
       return;
@@ -345,7 +352,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       P_T_CUMP: this.P_T_CUMP,
       P_T_NO_CUMP: this.P_T_NO_CUMP,
       P_CUMP: this.P_CUMP,
-      P_USR: this.formCapture.controls['user'].value,
+      P_USR: this.formCapture.value.user,
     };
 
     console.log('params', params);
@@ -404,16 +411,18 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       this.formCapture.controls['fecEnd'].value,
       'yyyy-MM-dd'
     );
+    const cvCoorsId: number[] = this.idDelegation.map(p => p);
+    console.log(cvCoorsId);
     this.search = {
-      cvCoors: this.idDelegation,
+      cvCoors: cvCoorsId,
       cveJobExternal: this.formCapture.value.cveJobExternal,
-      user: this.formCapture.value.user,
+      user: this.nombreUser,
       typeSteering: this.formCapture.value.typeSteering,
       fecStart: this.from,
       fecEnd: this.to,
-      noTransfere: this.formCapture.value.noTransfere,
-      noStation: this.formCapture.value.noStation,
-      noAuthorityts: this.formCapture.value.noStation,
+      noTransfere: Number(this.formCapture.value.noTransfere),
+      noStation: Number(this.formCapture.value.noStation),
+      noAuthorityts: Number(this.formCapture.value.noStation),
     };
     this.documentsService
       .getDocCaptureFind(this.search, this.params.getValue())
@@ -421,25 +430,43 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
         next: data => {
           this.loading = false;
           this.capturasDig = data.result;
+          console.log(this.capturasDig);
+          let noCumple = data.result.filter(
+            (elemento: any) => elemento.cumplio == 0
+          );
+          let cumple = data.result.filter(
+            (elemento: any) => elemento.cumplio == 1
+          );
+          this.P_T_CUMP = cumple.length;
+          this.P_T_NO_CUMP = noCumple.length;
+          this.P_CUMP = (this.P_T_CUMP / data.result.length) * 100;
+          console.log(this.P_CUMP, this.P_T_NO_CUMP, this.P_T_CUMP);
           this.dataFactCapt.load(data.result);
           this.totalItemsCaptura = data.count;
           this.dataFactCapt.refresh();
-          this.P_T_NO_CUMP = data.info.total_no_cumplio;
-          this.P_T_CUMP = data.info.total_cumplio;
-          this.P_T_CUMP = data.info.porcen_cumplidos;
-          // this.selectedItems = data.result.map((items: any) => {
-          //   console.log(items);
-          // });
-          console.log(this.dataFactCapt);
+          // this.P_T_NO_CUMP = data.info.total_no_cumplio;
+          // this.P_T_CUMP = data.info.total_cumplio;
+          // this.P_CUMP = data.info.porcen_cumplidos;
         },
         error: () => {
+          this.loading = false;
           this.isData = false;
+          this.capturasDig = [];
+          this.nombreUser = '';
+          this.dataFactCapt.refresh();
         },
       });
   }
+
   exportToExcel() {
+    this.isLoading = true;
+    if (this.dataFactCapt == null) {
+      this.alert('info', 'No hay información para descargar', '');
+      return;
+    }
     const filename: string = this.userName + '-CapturaYdigita';
     // El type no es necesario ya que por defecto toma 'xlsx'
+    this.loading = false;
     this.excelService.export(this.capturasDig, { filename });
   }
 
