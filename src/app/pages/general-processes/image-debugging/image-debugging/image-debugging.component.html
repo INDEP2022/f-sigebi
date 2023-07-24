@@ -173,7 +173,7 @@
               </div>
             </tab>
             <tab heading="Bienes Fotos">
-              <div class="row">
+              <!-- <div class="row">
                 <div *ngIf="errorMessage" class="errorMessage">
                   {{ errorMessage }}
                 </div>
@@ -190,7 +190,7 @@
                     <ng2-smart-table
                       [attr.class]="'table-bordered table-responsive'"
                       [settings]="settings"
-                      [source]="goodPhoto"
+                      [source]="photographs"
                       (edit)="viewImage($event.data)">
                     </ng2-smart-table>
                     <app-pagination
@@ -198,13 +198,14 @@
                       [totalItems]="totalItemsPhotos"></app-pagination>
                   </div>
                 </div>
-              </div>
-            </tab>
-            <tab heading="Fotos">
+              </div> -->
               <app-photos-tabs
                 [goodNumber]="actualGoodNumber + ''"
                 [disabled]="false"></app-photos-tabs>
             </tab>
+            <!-- <tab heading="Fotos">
+              <app-photos-tabs [goodNumber]="actualGoodNumber + ''" [disabled]="false"></app-photos-tabs>
+            </tab> -->
           </tabset>
         </form>
       </div>
