@@ -1,41 +1,41 @@
 export const RESOLUTION_REVISION_COLUMNS = {
-  noBien: {
+  NoBien: {
     title: 'No Bien',
     type: 'string',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  cantidad: {
+  quantity: {
     title: 'Cantidad',
     type: 'number',
     sort: false,
   },
-  estatus: {
+  status: {
     title: 'Estatus',
     type: 'string',
     sort: false,
   },
-  motivoRecRevision: {
+  motiveReRe: {
     title: 'Motivo de Recurso de Revisión',
     type: 'string',
     sort: false,
     width: '20%',
   },
-  fechaRecepcion: {
+  dateRecep: {
     title: 'Fecha de Recepción',
     type: 'string',
     sort: false,
   },
-  fechaEmResolucion: {
+  dateEmitRes: {
     title: 'Fecha de Emisión de Resolución',
     type: 'string',
     sort: false,
   },
-  obRecursoRevision: {
+  obResourceRe: {
     title: 'Observaciones del Recurso de Revisión',
     type: 'string',
     sort: false,

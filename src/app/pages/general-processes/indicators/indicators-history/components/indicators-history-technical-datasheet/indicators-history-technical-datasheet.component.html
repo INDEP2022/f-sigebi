@@ -1,0 +1,24 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Ordenes de Servicio</h5>
+  </div>
+  <div body>
+    <div>
+      <div>
+        <app-card-history-technical></app-card-history-technical>
+      </div>
+      <div class="d-inline-block mb-3">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+      <div>
+        <ng2-smart-table [settings]="settings" [source]="data">
+        </ng2-smart-table>
+      </div>
+      <div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -124,6 +124,7 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
   }
 
   getStatusDeliveryCve() {
+    this.loading = true;
     // console.log(this.providerForm.value.cveActa.replace(/\//g, ''));
     // console.log(nuevaCadena);
     // console.log(this.providerForm.value.cve);
@@ -217,10 +218,11 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
           .deleteProceedingsDeliveryReception(data.id)
           .subscribe({
             next: data => {
-              if (this.actaActual.id == dataaaID) {
-                this.valDelete = true;
-                this.ejecutarFuncionDesdeModal(true);
-              }
+              if (this.actaActual)
+                if (this.actaActual.id == dataaaID) {
+                  this.valDelete = true;
+                  this.ejecutarFuncionDesdeModal(true);
+                }
               this.alert('success', 'Acta Eliminada Correctamente', '');
               this.getStatusDeliveryCve();
               // console.log(this.dataTableGoodsActa);

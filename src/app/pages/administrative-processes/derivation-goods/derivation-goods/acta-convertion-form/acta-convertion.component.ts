@@ -52,7 +52,8 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   selectItem2: string = '';
   user: ISegUsers;
   refresh: boolean = false;
-  save: boolean = false;
+  save: boolean = true;
+  insertParaphs: boolean = true;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -134,17 +135,18 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
         paragraph3: null,
       };
       console.log('Acta a enviar: ', payload);
-      this.serviceGood
-        .createActaConversion(payload)
-        .subscribe(_ => this.fetchItems());
-      this.router.navigate(
-        ['/pages/administrative-processes/derivation-goods'],
-        {
-          queryParams: {
-            newActConvertion: this.selectItem2,
-          },
-        }
-      );
+      // this.serviceGood
+      //   .createActaConversion(payload)
+      //   .subscribe(_ => this.fetchItems());
+      // this.router.navigate(
+      //   ['/pages/administrative-processes/derivation-goods'],
+      //   {
+      //     queryParams: {
+      //       newActConvertion: this.selectItem2,
+      //     },
+      //   }
+      // );
+      this.insertParaphs = false;
     }
     if (this.actConvertion) {
       /*this.alert(
@@ -216,6 +218,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
     this.convertiongoodService.postPupInsertParaph(payload).subscribe({
       next: (res: any) => {
         this.insertarParrafos(res.data[0].v_desc_transferente);
+        this.save = false;
       },
       error: error => {
         this.alert('error', 'error', error.message);
@@ -447,6 +450,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   document(doc: IDocuments) {
     console.log(doc.id);
     this.numberFoli = doc.id;
+    this.flagNewActa = false;
   }
   createMinuteConversion() {
     console.log('tipoConv -> ', this.tipoConv);
