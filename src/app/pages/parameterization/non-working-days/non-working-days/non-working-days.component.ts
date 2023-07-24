@@ -51,7 +51,8 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             switch (filter.field) {
               case 'id':
-                searchFilter = SearchFilter.ILIKE;
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'description':
                 searchFilter = SearchFilter.ILIKE;
@@ -91,7 +92,7 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
     this.calendarService.getAll(params).subscribe({
       next: response => {
         this.calendar = response.data;
-        this.data.load(this.calendar);
+        this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count || 0;
         this.loading = false;
@@ -106,7 +107,7 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
       next: response => {
         this.calendar = response.data;
         this.totalItems = response.count;
-        this.data.load(this.calendar);
+        this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
       },
@@ -142,7 +143,7 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
         };
         this.calendarService.remove(data).subscribe({
           next: () => {
-            this.onLoadToast('success', 'Se ha eliminado', '');
+            this.onLoadToast('success', 'Día Inhábil', 'Borrado Correctamente');
             this.getCalendarAll();
           },
           error: err => this.onLoadToast('error', err.error.message, ''),

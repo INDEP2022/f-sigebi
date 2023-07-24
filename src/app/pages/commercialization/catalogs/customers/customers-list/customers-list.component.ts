@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 //Components
+import { CustomersAllListComponent } from '../customers-all-list/customers-all-list.component';
+import { CustomersBlackListComponent } from '../customers-black-list/customers-black-list.component';
 import { CustomersModalComponent } from '../customers-modal/customers-modal.component';
+import { CustomersWhiteListComponent } from '../customers-white-list/customers-white-list.component';
 //Columns
 import { CUSTOMERS_COLUMNS } from './customers-columns';
 //Models
@@ -12,10 +15,7 @@ import { IRepresentative } from 'src/app/core/models/catalogs/representative-mod
 import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
 import { MassiveClientService } from 'src/app/core/services/ms-massiveclient/massiveclient.service';
 import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
-import {
-  ERROR_INTERNET,
-  NOT_FOUND_MESSAGE,
-} from 'src/app/pages/documents-reception/subjects-register/utils/pgr-subjects-register.messages';
+import { ERROR_INTERNET } from 'src/app/pages/documents-reception/subjects-register/utils/pgr-subjects-register.messages';
 
 @Component({
   selector: 'app-customers-list',
@@ -28,10 +28,8 @@ export class CustomersListComponent
 {
   customers: ICustomer[] = [];
   representative: IRepresentative[] = [];
-
   client: ICustomer;
   show: boolean = false;
-
   downloading: boolean = false;
 
   constructor(
@@ -63,11 +61,10 @@ export class CustomersListComponent
       'paternalSurname',
       'maternalSurname',
     ];
-    // this.ilikeFilters = ['reasonName', 'street'];
     this.show = true;
   }
 
-  //Table de todos los clientes
+  //Fila seleccionada de la tabla de clientes
   rowsSelected(event: any) {
     this.client = event.data;
   }
@@ -91,8 +88,6 @@ export class CustomersListComponent
         this.errorGet(error);
       },
     });
-
-    // this.excelService.exportAsExcelFile(this.customers, 'Todos los clientes');
   }
 
   downloadFile(base64: any, fileName: any) {
@@ -113,8 +108,8 @@ export class CustomersListComponent
     );
   }
 
+  //Modal para crear o editar clientes
   openFormClients(customers?: any) {
-    console.log(customers);
     const modalConfig = MODAL_CONFIG;
     if (customers) {
       customers = { ...customers, sellerId: customers.sellerId?.id ?? null };
@@ -130,48 +125,35 @@ export class CustomersListComponent
 
   //Abrir modal de lista negra
   openBlackList() {
-    /*const modalConfig = MODAL_CONFIG;
-    this.modalService.show(CustomersBlackListComponent, modalConfig);*/
-    this.massiveClientService.exportBlackList().subscribe({
-      next: (data: any) => {
-        if (data.file.base64) {
-          this.downloadFile(
-            data.file.base64,
-            `listanegra${new Date().getTime()}`
-          );
-        } else {
-          this.alert('warning', NOT_FOUND_MESSAGE('Listanegra'), '');
-        }
-        this.downloading = false;
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      callback: (next: boolean) => {
+        if (next) this.getData();
       },
-      error: error => {
-        this.downloading = false;
-        this.errorGet(error);
-      },
-    });
+    };
+    this.modalService.show(CustomersBlackListComponent, modalConfig);
   }
 
   //Abrir modal de lista blanca
   openWhiteList() {
-    /*const modalConfig = MODAL_CONFIG;
-    this.modalService.show(CustomersWhiteListComponent, modalConfig);*/
-    this.massiveClientService.exportwoutProblem().subscribe({
-      next: (data: any) => {
-        if (data.file.base64) {
-          this.downloadFile(
-            data.file.base64,
-            `Sinproblema${new Date().getTime()}`
-          );
-        } else {
-          this.alert('warning', NOT_FOUND_MESSAGE('Exporta sin problema'), '');
-        }
-        this.downloading = false;
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      callback: (next: boolean) => {
+        if (next) this.getData();
       },
-      error: error => {
-        this.downloading = false;
-        this.errorGet(error);
+    };
+    this.modalService.show(CustomersWhiteListComponent, modalConfig);
+  }
+
+  //Abrir modal con todos los clientes
+  openAllClient() {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      callback: (next: boolean) => {
+        if (next) this.getData();
       },
-    });
+    };
+    this.modalService.show(CustomersAllListComponent, modalConfig);
   }
 
   showDeleteAlert(customer: ICustomer) {
@@ -187,12 +169,9 @@ export class CustomersListComponent
   }
 
   delete(customer: ICustomer) {
-    console.log(customer);
-    console.log(customer.id);
     this.customerService.remove(customer.id).subscribe({
       next: response => {
-        this.alert('success', 'Cliente Eliminado Correctamente', ''); // Sin coma al final de esta línea
-        // this.getExample();
+        this.alert('success', 'Cliente Eliminado Correctamente', '');
       },
       error: err => {
         this.alert('warning', 'No se Puede Eliminar el Cliente', '');

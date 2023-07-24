@@ -47,7 +47,11 @@ export class DocCompensationSatXmlFormComponent
       ],
       typeDocSatXml: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(250)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(250),
+        ],
       ],
     });
 

@@ -17,7 +17,7 @@ export const REGIONAL_DELEGATIONS_COLUMNS = {
   //   sort: false,
   // },
   zoneGeographic: {
-    title: 'Zona geográfica',
+    title: 'Zona Geográfica',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: IZoneGeographic) => {
@@ -43,7 +43,7 @@ export const REGIONAL_DELEGATIONS_COLUMNS = {
     sort: false,
   },
   officeAddress: {
-    title: 'Domicilio oficina',
+    title: 'Domicilio Oficina',
     type: 'string',
     sort: false,
   },

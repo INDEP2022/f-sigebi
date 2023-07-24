@@ -50,6 +50,7 @@ export class CatAppraisersComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'id':

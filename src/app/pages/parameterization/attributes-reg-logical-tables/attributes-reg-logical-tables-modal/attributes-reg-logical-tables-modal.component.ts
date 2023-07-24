@@ -23,7 +23,7 @@ export class AttributesRegLogicalTablesModalComponent
 {
   tdescAtribForm: ModelForm<ITdescAtrib>;
   tdescAtrib: ITdescAtrib;
-  title: string = 'Registro de atributos para tablas lógicas';
+  title: string = 'Registro de Atributos para Tablas Lógicas';
   edit: boolean = false;
 
   tables = new DefaultSelect();
@@ -73,6 +73,7 @@ export class AttributesRegLogicalTablesModalComponent
       this.edit = true;
       console.log(this.tdescAtrib);
       this.tdescAtribForm.patchValue(this.tdescAtrib);
+      this.tdescAtribForm.controls['keyAtrib'].disable();
     } else {
       this.edit = false;
       this.tdescAtribForm.controls['idNmTable'].setValue(this._id);
@@ -101,19 +102,31 @@ export class AttributesRegLogicalTablesModalComponent
   }
 
   create() {
-    this.loading = true;
-    this.tdesAtribService.create(this.tdescAtribForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (this.tdescAtribForm.controls['descriptionAtrib'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.tdesAtribService.create(this.tdescAtribForm.value).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.tdesAtribService.update(this.tdescAtribForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (this.tdescAtribForm.controls['descriptionAtrib'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.tdesAtribService.update(this.tdescAtribForm.value).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+    }
   }
 
   handleSuccess() {

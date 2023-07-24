@@ -2,7 +2,7 @@ export const AFFAIR_COLUMNS = {
   id: {
     title: 'Código',
     sort: false,
-    width: '35px',
+    width: '10%',
   },
   description: {
     title: 'Descripción',
@@ -12,7 +12,7 @@ export const AFFAIR_COLUMNS = {
     },
   },
   processDetonate: {
-    title: 'Proceso detona',
+    title: 'Proceso Detona',
     sort: false,
   },
 };

@@ -62,18 +62,22 @@ export class CatFinancialInformationAttributesComponent
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
-            filter.field == 'city'
-              ? (field = `filter.${filter.field}.nameCity`)
-              : (field = `filter.${filter.field}`);
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getAttributesFinancialInfo();
         }
       });
@@ -94,7 +98,7 @@ export class CatFinancialInformationAttributesComponent
         this.columns = response.data;
         this.totalItems = response.count || 0;
 
-        this.data.load(this.columns);
+        this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
       },
@@ -135,7 +139,7 @@ export class CatFinancialInformationAttributesComponent
         this.alert(
           'success',
           'Atributos de Informaci&oacute;n Financiera',
-          'Borrado'
+          'Borrado Correctamente'
         );
       },
       error: erro => {
